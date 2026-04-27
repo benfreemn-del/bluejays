@@ -130,7 +130,10 @@ export default async function AuditPage({
           <Link href="https://bluejayportfolio.com" className="text-sm text-slate-400 hover:text-white transition-colors">
             ← BlueJays
           </Link>
-          <span className="text-xs text-slate-500 font-mono">Audit · {id.slice(0, 8)}</span>
+          <span className="text-xs text-slate-400">
+            By <span className="text-white font-medium">Ben</span>
+            <span className="hidden sm:inline text-slate-600"> · BlueJays</span>
+          </span>
         </div>
       </header>
 
@@ -171,10 +174,10 @@ export default async function AuditPage({
                 in customers your site is missing. Every month.
               </p>
 
-              {/* Score moves to a small chip below the money number */}
+              {/* Capability chip */}
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8">
-                <span className="text-xs uppercase tracking-wider text-slate-400">Site score</span>
-                <span className={`text-base font-bold ${scoreColor}`}>{score}/100</span>
+                <span className={`text-base font-bold ${scoreColor}`}>~{score}%</span>
+                <span className="text-xs text-slate-400">of visitors reached</span>
                 <span className="text-slate-600">·</span>
                 <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
               </div>
@@ -433,7 +436,7 @@ function FindingSection({
             {title}
           </h2>
           {score !== undefined && (
-            <span className="text-sm text-slate-400 font-mono">{score}/100</span>
+            <span className="text-sm text-slate-400">~{score}% there</span>
           )}
         </div>
         <div className="space-y-3">
