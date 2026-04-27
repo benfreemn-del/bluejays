@@ -62,7 +62,7 @@ export default function AuditLandingPage() {
           </div>
 
           <p className="mt-6 text-xs text-slate-500">
-            Audit takes ~3-5 minutes to generate. We&apos;ll email it to you the moment it&apos;s ready.
+            Audit generates in about 60 seconds. We&apos;ll email it to you the moment it&apos;s ready.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
@@ -73,7 +73,7 @@ export default function AuditLandingPage() {
             <span className="text-slate-700 hidden sm:block">·</span>
             <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
               <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-sky-500 shrink-0" aria-hidden="true"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4a.75.75 0 011.5 0v3.25l1.75 1.75a.75.75 0 11-1.06 1.06l-2-2A.75.75 0 017.25 8.5V5z" /><path fillRule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z" clipRule="evenodd" /></svg>
-              Results in minutes
+              Results in ~60 seconds
             </span>
             <span className="text-slate-700 hidden sm:block">·</span>
             <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
@@ -115,7 +115,7 @@ export default function AuditLandingPage() {
         <div className="mx-auto max-w-4xl px-6 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-3">How it works</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Three steps. Five minutes. A report you can actually use.</p>
+            <p className="text-slate-400 max-w-xl mx-auto">Three steps. About 60 seconds. A report you can actually use.</p>
           </div>
           <div className="relative">
             {/* Connector line on desktop */}
@@ -160,7 +160,7 @@ export default function AuditLandingPage() {
       <section>
         <div className="mx-auto max-w-2xl px-6 py-16 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to see your score?</h2>
-          <p className="text-slate-400 mb-8">It&apos;s free. It&apos;s 60 seconds. The audit lands in your inbox in 5 minutes.</p>
+          <p className="text-slate-400 mb-8">It&apos;s free. It&apos;s 60 seconds. The audit lands in your inbox in about a minute.</p>
           <a
             href="#audit-top"
             className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
