@@ -535,7 +535,7 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
     return { success: false, message: `Prospect status is '${prospect.status}' — cannot enroll in funnel` };
   }
 
-  const canEnroll = ["approved", "ready_to_review", "generated", "contacted"].includes(prospect.status);
+  const canEnroll = ["approved", "ready_to_review", "generated", "contacted", "audit_lead"].includes(prospect.status);
   if (!canEnroll) {
     return { success: false, message: `Prospect status is '${prospect.status}' — must be approved or ready to review first` };
   }

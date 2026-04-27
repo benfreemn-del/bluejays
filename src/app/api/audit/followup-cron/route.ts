@@ -79,11 +79,42 @@ export async function POST(request?: NextRequest) {
   const DAY_MS = 24 * 60 * 60 * 1000;
   let sent = 0;
   let failed = 0;
+  let graduated = 0;
   const log: Array<{ auditId: string; step: number; result: string }> = [];
 
   for (const audit of audits) {
     const step = audit.audit_email_step ?? 1; // Step 1 is the Day-0 email already sent
-    if (step >= 5) continue; // Sequence complete
+    if (step >= 5) {
+      // Sequence complete. Check if the prospect can graduate to the cold funnel.
+      // Graduation requires: still audit_lead (not converted), has a generated
+      // preview site (Ben reviewed and built one), and 3+ days since last email
+      // (enough time to respond to Email 5 before we move them on).
+      const daysSinceFinal = audit.last_audit_email_at
+        ? (now - new Date(audit.last_audit_email_at).getTime()) / DAY_MS
+        : 999;
+
+      if (daysSinceFinal >= 3) {
+        const { data: gradProspect } = await supabase
+          .from("prospects")
+          .select("id, status, generated_site_url")
+          .eq("id", audit.prospect_id)
+          .maybeSingle();
+
+        if (
+          gradProspect &&
+          gradProspect.status === "audit_lead" &&
+          gradProspect.generated_site_url
+        ) {
+          await supabase
+            .from("prospects")
+            .update({ status: "approved" })
+            .eq("id", gradProspect.id);
+          graduated++;
+          log.push({ auditId: audit.id, step: 5, result: "graduated_to_approved" });
+        }
+      }
+      continue;
+    }
 
     // Compute days since last touch
     const lastTouchAt = audit.last_audit_email_at
@@ -175,13 +206,15 @@ export async function POST(request?: NextRequest) {
   await logHeartbeat("audit_followup", {
     sent,
     failed,
+    graduated,
     inspected: audits.length,
   });
 
   return NextResponse.json({
-    message: `Audit follow-up cron: ${sent} sent, ${failed} failed`,
+    message: `Audit follow-up cron: ${sent} sent, ${failed} failed, ${graduated} graduated to cold funnel`,
     sent,
     failed,
+    graduated,
     inspected: audits.length,
     log,
   });
