@@ -1,41 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { analyzeAll, type VariantMetrics } from "@/lib/hyperloop-analysis";
+import {
+  generateVariants,
+  type ExistingVariant,
+  type VariantKind,
+} from "@/lib/hyperloop-variant-gen";
 
 /**
- * Weekly Hyperloop cron — Karpathy auto-research loop.
+ * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
+ * path (2026-04-26 evening — commits db2db2a-onward).
  *
- * Built DORMANT per Q10A. Schema + cron + auth are wired so flipping
- * to active is a 1-line change in the dormancy gate below.
+ * Per Ben's 10-question answers:
+ *   3A — auto-rollout new variants without approval (writes status='active')
+ *   4A — auto-pause losers immediately (writes status='loser')
+ *   5A — weekly cadence (Mondays 16:00 UTC)
+ *   6B — $50/wk Anthropic cost cap (hyperloop_config.weekly_cost_cap_usd)
+ *   7A — Ben writes seed variants; AI evolves from there
+ *  10B — kill-switch in DB (hyperloop_config.paused), one-click pause
  *
- * Dormancy gate: requires ≥100 ready audits AND ≥5 paid customers
- * before the loop wakes up. Below that the dataset is too small for
- * Claude's analysis to be meaningful — better to log a "dormant"
- * heartbeat than spend $0.50 of Anthropic credits on noise.
+ * Flow per active tick:
+ *   1. Read hyperloop_config (paused? cost cap? thresholds?)
+ *   2. Dormancy check (audits_ready + customers_paid vs thresholds)
+ *   3. If active: pull all variants, analyze with Bayesian/Wilson math
+ *   4. Auto-pause losers (status → 'loser', stamp retired_at + reason)
+ *   5. Promote winners (status → 'winner') — keeps them in the pool
+ *      but flags them for the AI generator as seed material
+ *   6. For each kind with at least 1 winner OR loser: ask Claude to
+ *      generate 5 new variants seeded from winners, avoiding losers
+ *   7. Insert new variants with status='active', parent_variant_id
+ *      pointing at the seed winner
+ *   8. Cost cap: skip steps 6-7 entirely if week-to-date AI cost
+ *      already exceeds the cap. Log run with cost_cap_hit=true.
  *
- * When active, the loop will:
- *   1. Pull `hyperloop_variants` rows where status='active'
- *   2. Group by `kind` and compute per-variant conversion + CPA
- *   3. Flag statistically-significant winners/losers
- *   4. (Optional) Call Claude to suggest 2-3 new variants per kind,
- *      seeded from the current winner's content
- *   5. Insert new variants with status='active'
- *   6. Log a `hyperloop_runs` row with the full summary
- *
- * For now: every tick logs a `hyperloop_runs` row with active=false
- * and gate_reason explaining why we're still dormant. Heartbeat
- * confirms the cron is firing on schedule.
- *
- * Schedule: Mondays 16:00 UTC (9am PT) — once per week per Q10A.
- * Auth: Vercel cron passes Bearer CRON_SECRET. Manual triggers same.
- *
- * Public via PUBLIC_API_PATHS (`/api/hyperloop/`) — gated by CRON_SECRET
- * inside the handler, same pattern as /api/funnel/run.
+ * Stage 2 (future commit) adds: Meta + Google Ads API push for the
+ * new variants + auto-pause on the platform side. Stage 1 surfaces
+ * variants in /dashboard/hyperloop where Ben can manually copy them
+ * to Meta/Google until then.
  */
 
-// Dormancy gate — flip these to lower thresholds (or to 0) to wake
-// the loop up after Ben confirms enough audit + sale signal exists.
-const MIN_READY_AUDITS_TO_WAKE = 100;
-const MIN_PAID_CUSTOMERS_TO_WAKE = 5;
+// Fallback constants — used only if hyperloop_config row is missing.
+// Normal operation reads from the table so values can be tuned without
+// a redeploy.
+const FALLBACK_MIN_AUDITS = 100;
+const FALLBACK_MIN_PAID = 5;
+const FALLBACK_WEEKLY_COST_CAP = 50;
+const VARIANTS_PER_KIND_PER_RUN = 5;
+
+interface HyperloopConfig {
+  paused: boolean;
+  weekly_cost_cap_usd: number;
+  min_audits_to_wake: number;
+  min_paid_to_wake: number;
+}
 
 export async function POST(req?: NextRequest) {
   return runHyperloop(req);
@@ -61,7 +78,24 @@ async function runHyperloop(req?: NextRequest) {
     });
   }
 
-  // Dormancy check ─────────────────────────────────────────────────
+  // ─── Load config (kill-switch, cost cap, thresholds) ───────────────
+  const config = await loadConfig();
+
+  if (config.paused) {
+    await supabase.from("hyperloop_runs").insert({
+      active: false,
+      gate_reason: "Operator paused via dashboard kill-switch (10B).",
+      status: "dormant",
+      notes: "Heartbeat — Hyperloop is paused. Flip hyperloop_config.paused = false to resume.",
+    });
+    return NextResponse.json({
+      dormant: true,
+      paused: true,
+      message: "Hyperloop is paused. Flip the kill-switch in /dashboard/hyperloop to resume.",
+    });
+  }
+
+  // ─── Dormancy check (audits + paid thresholds) ────────────────────
   const [{ count: auditCount }, { count: paidCount }] = await Promise.all([
     supabase
       .from("site_audits")
@@ -76,13 +110,13 @@ async function runHyperloop(req?: NextRequest) {
   const auditsReady = auditCount ?? 0;
   const customersPaid = paidCount ?? 0;
   const dormant =
-    auditsReady < MIN_READY_AUDITS_TO_WAKE ||
-    customersPaid < MIN_PAID_CUSTOMERS_TO_WAKE;
+    auditsReady < config.min_audits_to_wake ||
+    customersPaid < config.min_paid_to_wake;
 
   if (dormant) {
     const gateReason =
-      `Dormant: ${auditsReady}/${MIN_READY_AUDITS_TO_WAKE} ready audits, ` +
-      `${customersPaid}/${MIN_PAID_CUSTOMERS_TO_WAKE} paid customers. ` +
+      `Dormant: ${auditsReady}/${config.min_audits_to_wake} ready audits, ` +
+      `${customersPaid}/${config.min_paid_to_wake} paid customers. ` +
       `Will wake when both thresholds are met.`;
 
     await supabase.from("hyperloop_runs").insert({
@@ -92,8 +126,8 @@ async function runHyperloop(req?: NextRequest) {
       notes: "Heartbeat — confirms weekly cron is firing on schedule.",
       metadata: {
         thresholds: {
-          minReadyAudits: MIN_READY_AUDITS_TO_WAKE,
-          minPaidCustomers: MIN_PAID_CUSTOMERS_TO_WAKE,
+          minReadyAudits: config.min_audits_to_wake,
+          minPaidCustomers: config.min_paid_to_wake,
         },
         observed: { auditsReady, customersPaid },
       },
@@ -104,25 +138,16 @@ async function runHyperloop(req?: NextRequest) {
       gateReason,
       auditsReady,
       customersPaid,
-      thresholds: {
-        minReadyAudits: MIN_READY_AUDITS_TO_WAKE,
-        minPaidCustomers: MIN_PAID_CUSTOMERS_TO_WAKE,
-      },
     });
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  // ACTIVE PATH — wired but intentionally minimal until thresholds hit.
-  // Day-1 active behavior: pull active variants per kind, log a run
-  // summary, flag obvious losers (zero conversions over ≥1k impressions).
-  // The Claude-suggested-new-variants step lands in a follow-up commit
-  // when there's signal worth feeding it.
-  // ─────────────────────────────────────────────────────────────────
-
-  const { data: variants, error: variantErr } = await supabase
+  // ─── Active path: load variants + analyze ─────────────────────────
+  const { data: variantRows, error: variantErr } = await supabase
     .from("hyperloop_variants")
-    .select("id, kind, variant_name, impressions, clicks, conversions, cost_usd")
-    .eq("status", "active");
+    .select(
+      "id, kind, variant_name, content, status, impressions, clicks, conversions, cost_usd",
+    )
+    .in("status", ["active", "winner"]); // include current winners as seed candidates
 
   if (variantErr) {
     await supabase.from("hyperloop_runs").insert({
@@ -130,45 +155,247 @@ async function runHyperloop(req?: NextRequest) {
       status: "failed",
       notes: `Active query failed: ${variantErr.message}`,
     });
-    return NextResponse.json(
-      { error: variantErr.message },
-      { status: 500 },
+    return NextResponse.json({ error: variantErr.message }, { status: 500 });
+  }
+
+  const variants: VariantMetrics[] = (variantRows ?? []).map((r) => ({
+    id: r.id as string,
+    kind: r.kind as string,
+    variantName: r.variant_name as string,
+    status: r.status as VariantMetrics["status"],
+    impressions: (r.impressions ?? 0) as number,
+    clicks: (r.clicks ?? 0) as number,
+    conversions: (r.conversions ?? 0) as number,
+    costUsd: parseFloat(String(r.cost_usd ?? 0)),
+  }));
+
+  // Side map for content — analysis lib stays focused on metrics, but
+  // the AI generator needs to see the actual copy/payload.
+  const variantContents = new Map<string, Record<string, unknown>>();
+  for (const r of variantRows ?? []) {
+    variantContents.set(
+      r.id as string,
+      (r.content ?? {}) as Record<string, unknown>,
     );
   }
 
-  const rows = variants || [];
-  let losersFound = 0;
+  const analyses = analyzeAll(variants);
 
-  // Crude initial heuristic: ≥1,000 impressions + 0 conversions = obvious
-  // loser, retire it. Will be replaced with proper confidence-interval
-  // math once we have meaningful data.
-  for (const v of rows) {
-    if ((v.impressions ?? 0) >= 1000 && (v.conversions ?? 0) === 0) {
-      await supabase
-        .from("hyperloop_variants")
-        .update({ status: "loser", updated_at: new Date().toISOString() })
-        .eq("id", v.id);
+  // ─── Apply verdicts: auto-pause losers, promote winners ───────────
+  let losersFound = 0;
+  let winnersFound = 0;
+
+  for (const v of variants) {
+    const a = analyses.get(v.id);
+    if (!a) continue;
+    const newStatus =
+      a.verdict === "loser"
+        ? "loser"
+        : a.verdict === "winner"
+          ? "winner"
+          : null;
+    if (!newStatus || newStatus === v.status) continue;
+
+    const update: Record<string, unknown> = {
+      status: newStatus,
+      bayesian_p_better: Math.round(a.wilsonLowerBound * 1000) / 1000,
+      updated_at: new Date().toISOString(),
+    };
+    if (newStatus === "loser") {
+      update.retired_at = new Date().toISOString();
+      update.retired_reason = a.reason;
       losersFound++;
+    } else if (newStatus === "winner") {
+      winnersFound++;
+    }
+    await supabase.from("hyperloop_variants").update(update).eq("id", v.id);
+  }
+
+  // ─── Cost cap check (6B: $50/wk Anthropic credit cap) ─────────────
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentRuns } = await supabase
+    .from("hyperloop_runs")
+    .select("ai_cost_usd")
+    .gte("ran_at", sevenDaysAgo);
+  const weekToDateCost = (recentRuns ?? []).reduce(
+    (sum, r) => sum + parseFloat(String(r.ai_cost_usd ?? 0)),
+    0,
+  );
+
+  if (weekToDateCost >= config.weekly_cost_cap_usd) {
+    await supabase.from("hyperloop_runs").insert({
+      active: true,
+      variants_analyzed: variants.length,
+      losers_found: losersFound,
+      winners_found: winnersFound,
+      new_variants_created: 0,
+      ai_cost_usd: 0,
+      week_to_date_cost_usd: weekToDateCost,
+      cost_cap_hit: true,
+      status: "completed",
+      notes: `Cost cap hit: weekToDate=$${weekToDateCost.toFixed(2)} >= cap=$${config.weekly_cost_cap_usd}. Skipped variant generation.`,
+      metadata: { auditsReady, customersPaid },
+    });
+    return NextResponse.json({
+      active: true,
+      costCapHit: true,
+      weekToDateCost,
+      cap: config.weekly_cost_cap_usd,
+      variantsAnalyzed: variants.length,
+      losersFound,
+      winnersFound,
+      newVariantsCreated: 0,
+    });
+  }
+
+  // ─── AI variant generation ───────────────────────────────────────
+  const KINDS: VariantKind[] = [
+    "ad_copy_meta",
+    "ad_copy_google",
+    "audit_prompt",
+    "email_subject_pitch",
+    "email_subject_followup",
+    "cta_text_audit_buy",
+    "cta_text_audit_preview",
+    "sms_body_pitch",
+  ];
+
+  let totalGenCost = 0;
+  let totalNewVariants = 0;
+  const generationResults: Array<{ kind: string; created: number; cost: number; error?: string }> = [];
+
+  for (const kind of KINDS) {
+    // Stop generating mid-loop if we cross the cost cap
+    if (weekToDateCost + totalGenCost >= config.weekly_cost_cap_usd) {
+      generationResults.push({ kind, created: 0, cost: 0, error: "cost_cap_reached_mid_run" });
+      continue;
+    }
+
+    const kindVariants = variants.filter((v) => v.kind === kind);
+    if (kindVariants.length === 0) {
+      // Nothing to seed from for this kind — skip silently. Ben needs
+      // to write the first variants per Q7A.
+      continue;
+    }
+
+    const winnersForKind: ExistingVariant[] = kindVariants
+      .filter((v) => analyses.get(v.id)?.verdict === "winner")
+      .slice(0, 3)
+      .map((v) => ({
+        id: v.id,
+        variantName: v.variantName,
+        content: variantContents.get(v.id) ?? {},
+        conversionRate: analyses.get(v.id)!.conversionRate,
+        impressions: v.impressions,
+        conversions: v.conversions,
+        verdict: "winner" as const,
+      }));
+
+    const losersForKind: ExistingVariant[] = kindVariants
+      .filter((v) => analyses.get(v.id)?.verdict === "loser")
+      .slice(0, 3)
+      .map((v) => ({
+        id: v.id,
+        variantName: v.variantName,
+        content: variantContents.get(v.id) ?? {},
+        conversionRate: analyses.get(v.id)!.conversionRate,
+        impressions: v.impressions,
+        conversions: v.conversions,
+        verdict: "loser" as const,
+      }));
+
+    // Need either winners OR losers as signal — skip if all variants
+    // are still in 'testing' / 'insufficient_data' state
+    if (winnersForKind.length === 0 && losersForKind.length === 0) {
+      continue;
+    }
+
+    const result = await generateVariants({
+      kind,
+      winners: winnersForKind,
+      losers: losersForKind,
+      count: VARIANTS_PER_KIND_PER_RUN,
+    });
+
+    totalGenCost += result.costUsd;
+
+    if (result.error || result.variants.length === 0) {
+      generationResults.push({ kind, created: 0, cost: result.costUsd, error: result.error });
+      continue;
+    }
+
+    // Insert new variants
+    const seedVariantId = winnersForKind[0]?.id ?? null;
+    const inserts = result.variants.map((g) => ({
+      kind,
+      variant_name: g.variantName,
+      content: g.content,
+      status: "active",
+      parent_variant_id: seedVariantId,
+      metadata: {
+        rationale: g.rationale,
+        generatedBy: "hyperloop_cron",
+        generatedAt: new Date().toISOString(),
+        modelUsed: result.modelUsed,
+      },
+    }));
+
+    const { error: insertErr } = await supabase
+      .from("hyperloop_variants")
+      .insert(inserts);
+
+    if (insertErr) {
+      generationResults.push({ kind, created: 0, cost: result.costUsd, error: insertErr.message });
+    } else {
+      totalNewVariants += inserts.length;
+      generationResults.push({ kind, created: inserts.length, cost: result.costUsd });
     }
   }
 
+  // ─── Log the run ──────────────────────────────────────────────────
   await supabase.from("hyperloop_runs").insert({
     active: true,
-    variants_analyzed: rows.length,
+    variants_analyzed: variants.length,
     losers_found: losersFound,
-    winners_found: 0,
-    new_variants_created: 0,
+    winners_found: winnersFound,
+    new_variants_created: totalNewVariants,
+    ai_cost_usd: totalGenCost,
+    week_to_date_cost_usd: weekToDateCost + totalGenCost,
+    cost_cap_hit: false,
     status: "completed",
-    notes: `Day-1 active path. ${rows.length} variants analyzed, ${losersFound} obvious losers retired. Claude-suggested new variants land in follow-up.`,
-    metadata: { auditsReady, customersPaid },
+    notes: `Stage 1 active path. Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}.`,
+    metadata: {
+      auditsReady,
+      customersPaid,
+      perKind: generationResults,
+    },
   });
 
   return NextResponse.json({
-    dormant: false,
-    variantsAnalyzed: rows.length,
+    active: true,
+    variantsAnalyzed: variants.length,
     losersFound,
-    winnersFound: 0,
-    newVariantsCreated: 0,
-    note: "Day-1 active path. Claude-suggested-variants step lands in a follow-up.",
+    winnersFound,
+    newVariantsCreated: totalNewVariants,
+    aiCostUsd: totalGenCost,
+    weekToDateCostUsd: weekToDateCost + totalGenCost,
+    perKind: generationResults,
   });
 }
+
+// ─── Helpers ─────────────────────────────────────────────────────────
+
+async function loadConfig(): Promise<HyperloopConfig> {
+  const { data } = await supabase
+    .from("hyperloop_config")
+    .select("paused, weekly_cost_cap_usd, min_audits_to_wake, min_paid_to_wake")
+    .eq("id", 1)
+    .maybeSingle();
+  return {
+    paused: !!data?.paused,
+    weekly_cost_cap_usd: parseFloat(String(data?.weekly_cost_cap_usd ?? FALLBACK_WEEKLY_COST_CAP)),
+    min_audits_to_wake: (data?.min_audits_to_wake ?? FALLBACK_MIN_AUDITS) as number,
+    min_paid_to_wake: (data?.min_paid_to_wake ?? FALLBACK_MIN_PAID) as number,
+  };
+}
+
