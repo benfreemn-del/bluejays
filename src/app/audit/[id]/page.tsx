@@ -256,14 +256,12 @@ export default async function AuditPage({
                 {capabilityLine}
               </p>
 
-              {/* Score moves to a small chip below the money number */}
+              {/* Capability chip — framed as % not "Score" */}
               <div className="inline-flex flex-wrap justify-center items-center gap-x-2 gap-y-1 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8 max-w-xs sm:max-w-none">
-                <span className="text-xs uppercase tracking-wider text-slate-400">Score</span>
-                <span className={`text-base font-bold ${scoreColor}`}>{score}/100</span>
+                <span className={`text-base font-bold ${scoreColor}`}>~{score}%</span>
+                <span className="text-xs text-slate-400">of visitors reached</span>
                 <span className="text-slate-600">·</span>
                 <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
-                <span className="hidden sm:inline text-slate-600">·</span>
-                <span className="hidden sm:inline text-xs text-slate-400">~{score}% of potential</span>
               </div>
             </>
           ) : (
@@ -706,7 +704,7 @@ function FindingSection({
             {title}
           </h2>
           {score !== undefined && (
-            <span className="text-sm text-slate-400 font-mono">{score}/100</span>
+            <span className="text-sm text-slate-400">~{score}% there</span>
           )}
         </div>
         <div className="space-y-3">
