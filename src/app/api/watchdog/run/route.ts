@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { runAllHealthChecks } from "@/lib/health-checks";
 
 /**
  * Daily watchdog cron — implements Rule 66.
@@ -24,6 +25,10 @@ import { sendOwnerAlert } from "@/lib/alerts";
  *
  * Auth: CRON_SECRET via Bearer header (Vercel cron + manual curl).
  */
+
+// Vendor health checks add up to ~5s parallel (10 vendors × 5s timeout
+// in Promise.all) on top of the normal watchdog work. 60s is plenty.
+export const maxDuration = 60;
 
 interface WatchedCron {
   name: string;
@@ -201,6 +206,28 @@ async function runWatchdog(req?: NextRequest) {
     alerts.push(`${stuckCount} audits stuck > 10min: ${ids}`);
   }
 
+  // ─── Vendor health checks (Hormozi review #4) ─────────────────
+  // Pings every external dependency (Stripe, SendGrid, Anthropic, OpenAI,
+  // Twilio, Lob, Namecheap, Meta Ads, Google Ads, Supabase) and adds
+  // any failing vendors to the alert list. Skipped vendors (no creds)
+  // don't alert — silent gaps are fine while we ramp.
+  let vendorChecks: Awaited<ReturnType<typeof runAllHealthChecks>> | null = null;
+  try {
+    vendorChecks = await runAllHealthChecks();
+    const failingVendors = vendorChecks.checks.filter((c) => c.status === "fail");
+    if (failingVendors.length > 0) {
+      const list = failingVendors
+        .map((v) => `${v.vendor}(${v.detail || "unknown"})`)
+        .join(", ");
+      alerts.push(`${failingVendors.length} vendor(s) failing: ${list}`);
+    }
+  } catch (err) {
+    // Vendor check itself crashed — log but don't crash the watchdog.
+    alerts.push(
+      `vendor_health_check crashed: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
   // ─── Fire SMS to Ben if anything's wrong ─────────────────────
   if (alerts.length > 0) {
     void sendOwnerAlert(`🚨 Watchdog alert:\n${alerts.join("\n")}`).catch(() => {});
@@ -214,11 +241,15 @@ async function runWatchdog(req?: NextRequest) {
     status: "completed",
     notes:
       alerts.length === 0
-        ? "All watched crons fresh + no stuck audits."
+        ? "All watched crons fresh + no stuck audits + all vendors healthy."
         : alerts.join(" | "),
     metadata: {
       checks: checkResults,
       stuckAuditIds: stuckAudits?.map((a) => a.id) ?? [],
+      vendorChecks: vendorChecks?.checks ?? null,
+      vendorOkCount: vendorChecks?.okCount ?? 0,
+      vendorFailCount: vendorChecks?.failCount ?? 0,
+      vendorSkippedCount: vendorChecks?.skippedCount ?? 0,
     },
   });
 
@@ -227,7 +258,11 @@ async function runWatchdog(req?: NextRequest) {
     watchedCrons: WATCHED_CRONS.length,
     alertsFired: alerts.length,
     stuckAuditsCount: stuckCount,
+    vendorOkCount: vendorChecks?.okCount ?? 0,
+    vendorFailCount: vendorChecks?.failCount ?? 0,
+    vendorSkippedCount: vendorChecks?.skippedCount ?? 0,
     alerts,
     checks: checkResults,
+    vendorChecks: vendorChecks?.checks ?? [],
   });
 }
