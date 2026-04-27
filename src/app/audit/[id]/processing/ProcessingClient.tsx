@@ -30,7 +30,7 @@ function toEmbedUrl(raw: string | null): string | null {
 
 const STAGE_MESSAGES: Record<string, string> = {
   pending: "Audit is queued — kicking it off in a moment…",
-  generating: "Our AI is reading your site, comparing to category benchmarks, and finding the conversion leaks. About 3-5 minutes total.",
+  generating: "Reading your site, scoring every section, and finding the conversion leaks. Usually done in 60–90 seconds.",
   ready: "Audit is ready. Redirecting you to your full report…",
   failed: "Something went wrong generating your audit. Email bluejaycontactme@gmail.com and we'll send a real human's review by tomorrow.",
   cancelled: "This audit was cancelled. Email us if this looks wrong.",
@@ -55,7 +55,7 @@ const TRACKER_STAGES = [
   { key: "ready", label: "Ready", icon: "🎉", percentTrigger: 100 },
 ];
 
-const ESTIMATED_TOTAL_SECONDS = 240; // ~4 min — matches typical audit duration
+const ESTIMATED_TOTAL_SECONDS = 90; // ~60-90s — actual observed audit duration
 
 export default function ProcessingClient({
   auditId,
@@ -216,7 +216,7 @@ export default function ProcessingClient({
               </div>
 
               <p className="mt-6 text-xs text-slate-500">
-                Don&apos;t close this tab. We&apos;ll auto-redirect when it&apos;s ready.
+                Your full report opens here the moment it&apos;s done — usually 60–90 seconds. We&apos;ll also email you a copy.
               </p>
             </>
           )}
@@ -271,7 +271,11 @@ export default function ProcessingClient({
                 Audit progress
               </span>
               <span className="text-xs text-slate-400 font-mono">
-                {status === "ready" ? "Done" : `~${Math.max(0, Math.ceil((ESTIMATED_TOTAL_SECONDS - elapsedSec) / 60))} min remaining`}
+                {status === "ready"
+                  ? "Done"
+                  : elapsedSec < ESTIMATED_TOTAL_SECONDS
+                    ? `~${Math.max(5, ESTIMATED_TOTAL_SECONDS - elapsedSec)}s remaining`
+                    : "Almost there…"}
               </span>
             </div>
 

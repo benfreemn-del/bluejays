@@ -67,7 +67,7 @@ export default function AuditLandingPage() {
           </div>
 
           <p className="mt-6 text-xs text-slate-500">
-            Audit takes ~3-5 minutes to generate. We&apos;ll email it to you the moment it&apos;s ready.
+            Your report opens in this tab in about 60–90 seconds. We&apos;ll also email you a copy to keep.
           </p>
         </div>
       </section>
