@@ -124,6 +124,8 @@ export async function POST(
         template.subject,
         template.body,
         400, // sequence 400-404 reserved for the Hormozi 5-email audit followup
+        undefined,
+        { transactional: true }, // user requested this audit — bypass warming cap
       );
       await supabase
         .from("site_audits")

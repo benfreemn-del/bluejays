@@ -149,6 +149,8 @@ export async function POST(request?: NextRequest) {
         template.subject,
         template.body,
         template.sequence,
+        undefined,
+        { transactional: true }, // prospect opted in via audit form
       );
       await supabase
         .from("site_audits")

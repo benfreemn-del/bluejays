@@ -188,6 +188,7 @@ export async function sendEmail(
   body: string,
   sequence: number,
   htmlBody?: string,
+  options?: { transactional?: boolean },
 ): Promise<SentEmail> {
   // Check if email has hard-bounced — skip sending
   if (isEmailBounced(to)) {
@@ -196,8 +197,11 @@ export async function sendEmail(
   }
 
   // PARALLEL WARMING: pick whichever domain has capacity today (primary or backup).
+  // Transactional emails (audit delivery, welcome, onboarding) bypass the warming
+  // cap — the user explicitly requested them and dropping them is worse than
+  // slightly exceeding the daily cold-outreach ramp limit.
   const { domain: sendingDomain, capacity } = await pickSendingDomain();
-  if (!capacity.canSend) {
+  if (!capacity.canSend && !options?.transactional) {
     console.log(`  [Deliverability] All sender domains capped for today (primary+backup both at limit).`);
     throw new Error(`Daily warm-up limit reached across all sender domains. Try again tomorrow.`);
   }
