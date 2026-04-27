@@ -5634,3 +5634,159 @@ Reference implementation: `/api/audit/postcard-cron/route.ts`
 
 ---
 
+## Locked-In Rules — Session 2026-04-27 (Stage-2 Hyperloop hardening)
+
+These came out of the adversarial Hormozi review of the Hyperloop
+self-improving ad system. Each captures a class of failure that's
+expensive in money OR debuggability.
+
+### Locked-In Rule 63 — Cost caps protect the EXPENSIVE thing, not the cheap one (NON-NEGOTIABLE)
+
+When building any AI-driven autonomous system that triggers downstream
+spend on a paid platform (ads, registrar fees, API mailings, infra),
+the cost cap MUST bound the largest downstream cost surface, NOT just
+the AI/inference cost.
+
+**Why this rule exists:** Hyperloop v1 had a $50/wk cap on Anthropic
+credits but ZERO cap on the platform-side ad spend it could trigger.
+Claude could generate 10 bad-tone variants for $0.20 in credits and
+Hyperloop would auto-roll-out all 10 to Meta + Google, where the
+combined daily ad budgets (e.g. $50 Meta + $50 Google = $100/day)
+would burn ~$700 over the 7-day analysis window before the Bayesian
+loop could pause them. **The cheap input was capped; the expensive
+output wasn't.**
+
+**The rule:**
+1. For every autonomous loop that creates downstream spend, identify
+   the single largest dollar leak surface (usually NOT the AI cost).
+2. Add a cap on THAT surface FIRST. AI cost cap is secondary.
+3. The cap belongs at the ENTRY of every cron tick — read current
+   spend (from internal logs OR platform API) and short-circuit
+   variant generation/rollout if cap is breached.
+4. Make the cap configurable from a DB row (`hyperloop_config`,
+   `system_settings`, etc.) so Ben can adjust without redeploy.
+5. Surface week-to-date spend on the operator dashboard as a
+   progress bar against the cap, color-graded (green/amber/red).
+
+**Apply to:** any future "AI generates → platform creates → platform
+spends" loop. Same shape: ad gen, content posting, programmatic
+outreach, automated marketplace listings.
+
+### Locked-In Rule 64 — Mock implementations must self-flag at the data layer (NON-NEGOTIABLE)
+
+Any mock client that returns data which gets persisted (mock ad IDs,
+mock user IDs, mock domain IDs, etc.) MUST include a sentinel prefix
+(`mock_`) in those values. The cron/route writing the data MUST
+detect mock-prefixed values and refuse to persist them when env
+configuration says we're in LIVE mode for that platform.
+
+**Why this rule exists:** mock-mode pollution is silent and
+catastrophic. If a deploy ever runs with one platform configured
+(LIVE) but another not yet configured (mock), the mock client
+happily returns `mock_meta_ad_xxx` strings, the cron stamps them
+into `platform_ad_id` columns, and the next sync hits the real
+Meta API with `mock_meta_ad_xxx`, gets a 400, logs `[ERROR]`, and
+the row is broken forever. Manual SQL cleanup required.
+
+**The rule:**
+1. Every mock client returns a value with `mock_` prefix on any field
+   that gets persisted to a column whose name reads as a foreign-key
+   to the platform (`platform_ad_id`, `stripe_customer_id`,
+   `namecheap_order_id`, etc.).
+2. Every route/cron that PERSISTS such a value MUST call a guard
+   helper (e.g. `isSafeAdId()`) before INSERT/UPDATE.
+3. The guard returns `true` ONLY when EITHER:
+    - the value is non-mock (no `mock_` prefix), OR
+    - ALL relevant platforms are unconfigured (i.e. we're fully in dev mode)
+4. On guard failure: `console.error()` with a clear message naming
+   the env var that should be set, and SKIP the persist (don't crash
+   the cron — just refuse the dirty write).
+
+**Reference:** `isSafeAdId()` in `src/app/api/hyperloop/run/route.ts`.
+
+**Apply to:** any new platform integration that has a mock fallback
++ persistent state. Same shape: domain registrar, payments, email
+service providers, SMS providers, file storage providers.
+
+### Locked-In Rule 65 — Every platform API mutation must have a retry-on-orphan path (NON-NEGOTIABLE)
+
+If a cron creates a row in our DB and ALSO mutates external state
+(creates an ad on Meta/Google, registers a domain, sends a postcard,
+fires a payment), the cron MUST have a separate retry pass at the
+NEXT tick that finds rows in inconsistent state (DB row exists but
+external write didn't land) and retries the external mutation
+idempotently.
+
+**Why this rule exists:** Without retry, network blips become
+permanent orphans. A single Meta 429 during rollout means the variant
+lands in `hyperloop_variants` with no `platform_ad_id`. The cron's
+existing rollout-step only fires for FRESHLY generated variants, not
+older orphans. Sync skips the variant (no platform_ad_id to query).
+Bayesian sees 0 impressions, parks it as 'insufficient_data', forever.
+The variant is invisible to every subsequent cron tick.
+
+**The rule:**
+1. At the START of every cron that creates DB rows + external state,
+   add an "orphan retry" pass:
+    - Query rows where DB exists, external write missing, age >
+      threshold (typically 1 hour)
+    - For each, retry the external mutation
+    - On success: stamp the missing field
+    - On error: log + leave for next tick
+2. The retry must be idempotent — calling the platform API twice
+   for the same logical operation must not duplicate state on the
+   platform side.
+3. Surface orphan-retry stats in the run summary so Ben sees if a
+   particular orphan keeps failing (signals deeper API issue).
+
+**Reference:** orphan-retry pass at top of active path in
+`src/app/api/hyperloop/run/route.ts`. Retries variants where
+`status='active' AND kind in (ad_copy_meta, ad_copy_google) AND
+platform_ad_id IS NULL AND created_at < now() - 1 hour`.
+
+**Apply to:** any future cron that does the "create DB row →
+external mutation" two-step. Domain registration, postcard send,
+ad creation, Stripe customer creation, etc.
+
+### Locked-In Rule 66 — Every cron must have a heartbeat alert path (NON-NEGOTIABLE)
+
+A daily check MUST alert Ben if any expected cron hasn't logged a
+row in N×schedule_period (e.g. weekly cron without a run in 8 days,
+daily cron without a run in 36 hours, per-minute cron without a run
+in 5 minutes). Silent crons are systemic disasters that go undetected
+for weeks.
+
+**Why this rule exists:** Vercel cron platform issues, env-var
+deletions, Supabase RLS changes, Stripe key rotations, A2P 10DLC
+revocations — any of these can silently break a cron. Without a
+dedicated heartbeat check, the failure is invisible until the
+downstream impact (e.g. "no audits getting generated", "no welcome
+emails sent") is noticed manually. By that point you've burned days
+of pipeline time.
+
+**The rule:**
+1. EVERY cron (scheduled task, weekly Hyperloop, daily renewal
+   check, hourly digest, per-minute reply processor) MUST log a row
+   in a runs/heartbeat table at the END of every tick — including
+   ticks where the cron decided to no-op.
+2. A separate watchdog cron (daily) MUST check each expected cron's
+   most recent heartbeat row. If older than the threshold, SMS Ben
+   via `sendOwnerAlert()` with the cron name + last-seen timestamp.
+3. Watchdog thresholds default to 2× the cron's schedule period
+   (e.g. weekly cron → 14-day threshold). Tunable per-cron via
+   config row.
+4. Watchdog's own failure must also alert (canary problem) — make
+   the watchdog itself a tick-counted cron that logs to a
+   `watchdog_runs` table the same way.
+
+**Reference (in progress):** the watchdog pattern hasn't been built
+yet. Hyperloop logs heartbeats correctly into `hyperloop_runs` but
+no daily checker monitors that table. Adding the watchdog itself is
+a follow-up task — track in the operator todo list.
+
+**Apply to:** every existing + future cron. Audit `vercel.json`
+crons periodically — any cron without a corresponding heartbeat-table
+INSERT is a silent-failure risk.
+
+---
+

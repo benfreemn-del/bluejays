@@ -44,8 +44,21 @@ export interface VariantAnalysis {
 const Z_95 = 1.96;
 // Below these floors a variant is "still testing" — too little signal
 // to call winner or loser yet.
-const MIN_IMPRESSIONS_FOR_VERDICT = 500;
-const MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC = 1000;
+//
+// Calibration (2026-04-27 hardening pass per adversarial review):
+// At SMB ad budgets ($50-100/day Meta + Google) split across 5-8
+// active variants per kind in one adset, each variant accumulates
+// roughly 200-400 impressions/week. The original thresholds (500
+// for verdict / 1000 for loser) meant the analyzer would NEVER
+// render a verdict on those budgets — every variant stayed in
+// 'insufficient_data' forever and the loop stalled.
+//
+// New thresholds (200 / 400) match observed weekly impression volume
+// for $50-100/day budgets. If you scale to $200+/day, the upper
+// thresholds will trigger faster but small variants will also get
+// more signal so the absolute numbers still hold.
+const MIN_IMPRESSIONS_FOR_VERDICT = 200;
+const MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC = 400;
 
 /**
  * Wilson score 95% CI for a Bernoulli proportion. Returns [lower, upper]

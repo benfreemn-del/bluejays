@@ -9,10 +9,14 @@ import {
 import { syncAllVariants } from "@/lib/hyperloop-sync";
 import {
   rolloutBatch,
+  rolloutVariant,
   pauseVariantOnPlatform,
   type RolloutResult,
   type PauseResult,
 } from "@/lib/hyperloop-rollout";
+import { isMetaAdsConfigured } from "@/lib/meta-ads-client";
+import { isGoogleAdsConfigured } from "@/lib/google-ads-client";
+import { sendOwnerAlert } from "@/lib/alerts";
 
 /**
  * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
@@ -53,6 +57,28 @@ const FALLBACK_MIN_AUDITS = 100;
 const FALLBACK_MIN_PAID = 5;
 const FALLBACK_WEEKLY_COST_CAP = 50;
 const VARIANTS_PER_KIND_PER_RUN = 5;
+
+// Orphan retry window — variants older than this with no platform_ad_id
+// get a retry pass at the start of every cron tick. Skip very-fresh
+// variants because they were just inserted by THIS cron tick (rollout
+// might still be mid-flight if we ever switch to async).
+const ORPHAN_RETRY_MIN_AGE_MS = 60 * 60 * 1000; // 1 hour
+
+/**
+ * Rule 64 — refuse to write a mock-prefixed ad ID into a column whose
+ * env config says we're in LIVE mode for that platform. The mock client
+ * uses `mock_meta_ad_xxx` / `mock_google_ad_xxx` for deterministic dev.
+ * Persisting those to a row tied to LIVE Meta/Google credentials would
+ * pollute the DB — next sync hits the real API with a fake ID, gets
+ * 400, then the row stays broken forever.
+ */
+function isSafeAdId(adId: string | null | undefined): boolean {
+  if (!adId) return false;
+  if (!adId.startsWith("mock_")) return true;
+  // Mock prefix detected — only safe if NEITHER platform is configured
+  // (i.e. we're running fully in mock mode, expected in dev/CI).
+  return !isMetaAdsConfigured() && !isGoogleAdsConfigured();
+}
 
 interface HyperloopConfig {
   paused: boolean;
@@ -155,6 +181,59 @@ async function runHyperloop(req?: NextRequest) {
   // Partial failures are OK (Q9A) — synced variants get fresh metrics,
   // failed ones keep their last-known state.
   const syncResult = await syncAllVariants();
+
+  // ─── Orphan-retry pass (Rule 65) ─────────────────────────────────
+  // Find variants from previous cron runs that should have a
+  // platform_ad_id but don't (network blip during rollout, Meta 429,
+  // etc.). Retry the rollout once per cron tick until it lands. Without
+  // this, a single transient API error means the variant is invisible
+  // to sync forever — Bayesian sees 0 impressions and parks it as
+  // 'insufficient_data' indefinitely.
+  let orphansRetried = 0;
+  let orphansRetrySucceeded = 0;
+  let orphansRetryFailed = 0;
+  const orphanResults: RolloutResult[] = [];
+  const orphanCutoff = new Date(Date.now() - ORPHAN_RETRY_MIN_AGE_MS).toISOString();
+
+  const { data: orphanRows } = await supabase
+    .from("hyperloop_variants")
+    .select("id, kind, variant_name, content")
+    .in("kind", ["ad_copy_meta", "ad_copy_google"])
+    .eq("status", "active")
+    .is("platform_ad_id", null)
+    .lt("created_at", orphanCutoff);
+
+  if (orphanRows && orphanRows.length > 0) {
+    for (const o of orphanRows) {
+      orphansRetried++;
+      const r = await rolloutVariant({
+        variantId: o.id as string,
+        kind: o.kind as string,
+        variantName: o.variant_name as string,
+        content: (o.content ?? {}) as Record<string, unknown>,
+      });
+      orphanResults.push(r);
+      if (r.success && r.platformAdId) {
+        if (!isSafeAdId(r.platformAdId)) {
+          console.error(
+            `[hyperloop] orphan retry returned mock ID for variant ${o.id} while LIVE — skipping write`,
+          );
+          orphansRetryFailed++;
+          continue;
+        }
+        await supabase
+          .from("hyperloop_variants")
+          .update({
+            platform_ad_id: r.platformAdId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", o.id);
+        orphansRetrySucceeded++;
+      } else if (r.error) {
+        orphansRetryFailed++;
+      }
+    }
+  }
 
   // ─── Active path: load variants + analyze ─────────────────────────
   const { data: variantRows, error: variantErr } = await supabase
@@ -422,6 +501,15 @@ async function runHyperloop(req?: NextRequest) {
       // Stamp platform_ad_id on the variants that successfully landed
       for (const r of rollouts) {
         if (r.success && r.platformAdId) {
+          // Rule 64: never persist a mock ad ID when env says LIVE
+          if (!isSafeAdId(r.platformAdId)) {
+            console.error(
+              `[hyperloop] REFUSING to write mock ad ID "${r.platformAdId}" for variant ${r.variantId} ` +
+                `— platform creds are LIVE but rollout returned a mock ID. Check META_ADS_SYSTEM_TOKEN / GOOGLE_ADS_DEVELOPER_TOKEN env vars.`,
+            );
+            totalRolloutFailed++;
+            continue;
+          }
           await supabase
             .from("hyperloop_variants")
             .update({
@@ -435,6 +523,31 @@ async function runHyperloop(req?: NextRequest) {
         }
       }
     }
+  }
+
+  // ─── Empty-adset alert (Hardening fix #4) ──────────────────────
+  // After all status flips this tick, count remaining ACTIVE variants
+  // per ad_copy_* kind. If a kind has 0 active variants, the parent
+  // adset/adgroup has nothing eligible to spend on — Meta/Google will
+  // either burn the daily budget on whatever they can find or stall
+  // the campaign. Either way, Ben needs to know so he can seed new
+  // variants manually.
+  const emptyKinds: string[] = [];
+  for (const platformKind of ["ad_copy_meta", "ad_copy_google"] as const) {
+    const { count } = await supabase
+      .from("hyperloop_variants")
+      .select("id", { count: "exact", head: true })
+      .eq("kind", platformKind)
+      .eq("status", "active");
+    if ((count ?? 0) === 0) {
+      emptyKinds.push(platformKind);
+    }
+  }
+  if (emptyKinds.length > 0) {
+    void sendOwnerAlert(
+      `⚠️ Hyperloop alert: ${emptyKinds.join(" + ")} have ZERO active variants. ` +
+        `Your Meta/Google adset has no eligible ads to spend on. Seed new variants in /dashboard/hyperloop or pause the campaign.`,
+    ).catch(() => {});
   }
 
   // ─── Log the run ──────────────────────────────────────────────────
@@ -452,7 +565,11 @@ async function runHyperloop(req?: NextRequest) {
     week_to_date_cost_usd: weekToDateCost + totalGenCost,
     cost_cap_hit: false,
     status: "completed",
-    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants. Analyzed ${variants.length}, promoted ${winnersFound} winners, marked ${losersFound} losers (${losersPausedOnPlatform} paused on platform, ${losersPauseFailed} pause-failed). Generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}, rolled out ${totalRolledOut} to platforms (${totalRolloutFailed} failed).`,
+    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants. ` +
+      `Orphans retried: ${orphansRetried} (${orphansRetrySucceeded} ok, ${orphansRetryFailed} failed). ` +
+      `Analyzed ${variants.length}, promoted ${winnersFound} winners, marked ${losersFound} losers (${losersPausedOnPlatform} paused on platform, ${losersPauseFailed} pause-failed). ` +
+      `Generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}, rolled out ${totalRolledOut} to platforms (${totalRolloutFailed} failed). ` +
+      (emptyKinds.length > 0 ? `⚠️ EMPTY ADSETS: ${emptyKinds.join(", ")}` : ""),
     metadata: {
       auditsReady,
       customersPaid,
@@ -468,12 +585,24 @@ async function runHyperloop(req?: NextRequest) {
         paused: losersPausedOnPlatform,
         failed: losersPauseFailed,
       },
+      orphans: orphanResults,
+      orphanSummary: {
+        retried: orphansRetried,
+        succeeded: orphansRetrySucceeded,
+        failed: orphansRetryFailed,
+      },
+      emptyKinds,
     },
   });
 
   return NextResponse.json({
     active: true,
     sync: syncResult,
+    orphans: {
+      retried: orphansRetried,
+      succeeded: orphansRetrySucceeded,
+      failed: orphansRetryFailed,
+    },
     variantsAnalyzed: variants.length,
     losersFound,
     winnersFound,
@@ -487,6 +616,7 @@ async function runHyperloop(req?: NextRequest) {
     perKind: generationResults,
     rollouts: rolloutResults,
     pauses: pauseResults,
+    emptyKinds,
   });
 }
 
