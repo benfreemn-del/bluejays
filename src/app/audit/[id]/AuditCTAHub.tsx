@@ -32,6 +32,35 @@ type RequestState =
   | { status: "success"; message: string; already: boolean }
   | { status: "error"; message: string };
 
+/**
+ * Fire a fork-click telemetry event to /api/audit/[id]/cta-click.
+ * Uses navigator.sendBeacon() so the request lands even when the
+ * caller is about to navigate away (Buy → Stripe, Schedule → /schedule).
+ * Falls back to a fire-and-forget fetch when sendBeacon isn't available.
+ */
+function logForkClick(auditId: string, fork: "buy" | "schedule" | "preview") {
+  if (typeof window === "undefined") return;
+  const url = `/api/audit/${auditId}/cta-click`;
+  const payload = JSON.stringify({ fork });
+  try {
+    if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
+      const blob = new Blob([payload], { type: "application/json" });
+      navigator.sendBeacon(url, blob);
+      return;
+    }
+  } catch {
+    // sendBeacon failed for some reason — fall through to fetch
+  }
+  // Fallback: keepalive fetch so the browser can still complete it
+  // during navigation. Not as guaranteed as sendBeacon but good enough.
+  void fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: payload,
+    keepalive: true,
+  }).catch(() => {});
+}
+
 export default function AuditCTAHub({
   auditId,
   prospectId,
@@ -43,6 +72,9 @@ export default function AuditCTAHub({
   async function handleRequestPreview() {
     if (request.status === "loading" || request.status === "success") return;
     setRequest({ status: "loading" });
+    // Log the fork click BEFORE the request-preview POST so even if the
+    // POST fails we still capture the intent signal.
+    logForkClick(auditId, "preview");
     try {
       const res = await fetch(`/api/audit/${auditId}/request-preview`, {
         method: "POST",
@@ -105,6 +137,7 @@ export default function AuditCTAHub({
           {/* 1. BUY — primary commitment */}
           <a
             href={primaryButtonUrl}
+            onClick={() => logForkClick(auditId, "buy")}
             className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-6 hover:border-emerald-400 hover:bg-emerald-500/15 transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(16,185,129,0.15)]"
           >
             <span className="absolute -top-2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow">
@@ -123,6 +156,7 @@ export default function AuditCTAHub({
           {/* 2. SCHEDULE A CALL — middle commitment */}
           <a
             href={`/schedule/${prospectId}?source=audit`}
+            onClick={() => logForkClick(auditId, "schedule")}
             className="group flex flex-col items-center text-center rounded-2xl border border-sky-500/30 bg-sky-500/5 p-6 hover:border-sky-400 hover:bg-sky-500/10 transition-all hover:scale-[1.02]"
           >
             <div className="text-4xl mb-3">📞</div>
