@@ -227,19 +227,19 @@ export default async function AuditPage({
           {monthlyLeak > 0 && score < 80 ? (
             <>
               {/* Money leak hero — clean card treatment */}
-              <div className="relative mx-auto max-w-lg mb-8 rounded-2xl border border-rose-500/20 bg-rose-950/20 p-8 overflow-hidden">
-                {/* Subtle glow behind the number */}
-                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+              <div className="relative mx-auto max-w-lg mb-8 rounded-2xl border border-rose-500/20 bg-rose-950/20 p-6 sm:p-8">
+                {/* Subtle glow behind the number — clipped inside its own div so the card doesn't clip the /mo */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none" aria-hidden="true">
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-600/15 blur-3xl" />
                 </div>
                 <p className="relative text-xs font-semibold uppercase tracking-widest text-rose-400 mb-4">
-                  Estimated monthly revenue slipping away
+                  Money slipping away each month
                 </p>
-                <div className="relative flex items-end justify-center gap-2 mb-4">
-                  <span className="text-7xl md:text-8xl font-black text-rose-400 leading-none tabular-nums" style={{ textShadow: "0 0 40px rgba(244,63,94,0.35)" }}>
+                <div className="relative flex items-baseline justify-center gap-1.5 mb-4 whitespace-nowrap">
+                  <span className="text-5xl sm:text-6xl md:text-7xl font-black text-rose-400 leading-none tabular-nums" style={{ textShadow: "0 0 40px rgba(244,63,94,0.35)" }}>
                     ${content.moneyLeak.monthlyEstimate.toLocaleString()}
                   </span>
-                  <span className="text-2xl text-slate-500 font-bold mb-2">/mo</span>
+                  <span className="text-xl sm:text-2xl text-slate-500 font-bold">/mo</span>
                 </div>
                 {content.moneyLeak?.avgCustomerValue ? (
                   <p className="relative text-sm text-slate-400 leading-relaxed">
