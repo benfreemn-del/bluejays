@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import FloatingAuditCTA from "@/components/FloatingAuditCTA";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -99,7 +100,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Floating audit-CTA pill — appears top-right on homepage + V2
+            showcases + /templates. Self-gates via usePathname(). Lead-
+            magnet entry point for warm-but-not-ready portfolio visitors. */}
+        <FloatingAuditCTA />
+        {children}
+      </body>
     </html>
   );
 }
