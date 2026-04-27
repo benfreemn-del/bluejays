@@ -256,27 +256,134 @@ function estimateMoneyLeak(args: {
 }
 
 const BLUEJAYS_BENCHMARK_BY_CATEGORY: Record<string, { template: string; url: string }> = {
-  dental:           { template: "Emerald City Dental", url: "https://bluejayportfolio.com/v2/dental" },
-  electrician:      { template: "Cascade Electric Co.", url: "https://bluejayportfolio.com/v2/electrician" },
-  plumber:          { template: "Emerald City Plumbing", url: "https://bluejayportfolio.com/v2/plumber" },
-  hvac:             { template: "Summit Heating & Air", url: "https://bluejayportfolio.com/v2/hvac" },
-  roofing:          { template: "Summit Roofing NW", url: "https://bluejayportfolio.com/v2/roofing" },
-  "auto-repair":    { template: "Pacific Auto Works", url: "https://bluejayportfolio.com/v2/auto-repair" },
-  "law-firm":       { template: "Pacific Law Group", url: "https://bluejayportfolio.com/v2/law-firm" },
-  salon:            { template: "Velvet Hair Studio", url: "https://bluejayportfolio.com/v2/salon" },
-  fitness:          { template: "Iron & Oak Fitness", url: "https://bluejayportfolio.com/v2/fitness" },
-  "real-estate":    { template: "Puget Sound Realty", url: "https://bluejayportfolio.com/v2/real-estate" },
-  veterinary:       { template: "Northshore Vet Clinic", url: "https://bluejayportfolio.com/v2/veterinary" },
-  photography:      { template: "Cascade Lens Photography", url: "https://bluejayportfolio.com/v2/photography" },
-  landscaping:      { template: "Cascade Landscapes", url: "https://bluejayportfolio.com/v2/landscaping" },
-  cleaning:         { template: "Crystal Clean Co.", url: "https://bluejayportfolio.com/v2/cleaning" },
-  chiropractic:     { template: "Align Chiropractic", url: "https://bluejayportfolio.com/v2/chiropractic" },
-  accounting:       { template: "Evergreen Tax & Advisory", url: "https://bluejayportfolio.com/v2/accounting" },
-  insurance:        { template: "Puget Sound Insurance Group", url: "https://bluejayportfolio.com/v2/insurance" },
-  "interior-design":{ template: "Cascadia Interiors", url: "https://bluejayportfolio.com/v2/interior-design" },
-  moving:           { template: "Cascade Movers", url: "https://bluejayportfolio.com/v2/moving" },
-  "pest-control":   { template: "Evergreen Pest Solutions", url: "https://bluejayportfolio.com/v2/pest-control" },
+  // Healthcare
+  dental:             { template: "Emerald City Dental",          url: "https://bluejayportfolio.com/v2/dental" },
+  veterinary:         { template: "Northshore Vet Clinic",        url: "https://bluejayportfolio.com/v2/veterinary" },
+  chiropractic:       { template: "Align Chiropractic",           url: "https://bluejayportfolio.com/v2/chiropractic" },
+  "physical-therapy": { template: "Summit PT & Rehab",            url: "https://bluejayportfolio.com/v2/physical-therapy" },
+  medical:            { template: "Cascade Medical Group",        url: "https://bluejayportfolio.com/v2/medical" },
+  "med-spa":          { template: "Radiance Med Spa",             url: "https://bluejayportfolio.com/v2/med-spa" },
+  daycare:            { template: "Sunshine Daycare Center",      url: "https://bluejayportfolio.com/v2/daycare" },
+  // Trades
+  electrician:        { template: "Cascade Electric Co.",         url: "https://bluejayportfolio.com/v2/electrician" },
+  plumber:            { template: "Emerald City Plumbing",        url: "https://bluejayportfolio.com/v2/plumber" },
+  hvac:               { template: "Summit Heating & Air",         url: "https://bluejayportfolio.com/v2/hvac" },
+  roofing:            { template: "Summit Roofing NW",            url: "https://bluejayportfolio.com/v2/roofing" },
+  "auto-repair":      { template: "Pacific Auto Works",           url: "https://bluejayportfolio.com/v2/auto-repair" },
+  "general-contractor":{ template: "Summit Builders NW",         url: "https://bluejayportfolio.com/v2/general-contractor" },
+  construction:       { template: "Cascade Construction Co.",     url: "https://bluejayportfolio.com/v2/construction" },
+  "garage-door":      { template: "Northwest Garage Door",        url: "https://bluejayportfolio.com/v2/garage-door" },
+  fencing:            { template: "Pacific Fence & Gate",         url: "https://bluejayportfolio.com/v2/fencing" },
+  painting:           { template: "Cascade Painting Pros",        url: "https://bluejayportfolio.com/v2/painting" },
+  "pressure-washing": { template: "NW Pressure Washing",         url: "https://bluejayportfolio.com/v2/pressure-washing" },
+  "tree-service":     { template: "Cascade Tree Service",         url: "https://bluejayportfolio.com/v2/tree-service" },
+  "pool-spa":         { template: "Pacific Pool & Spa",           url: "https://bluejayportfolio.com/v2/pool-spa" },
+  locksmith:          { template: "Cascade Lock & Key",           url: "https://bluejayportfolio.com/v2/locksmith" },
+  towing:             { template: "Northwest Towing",             url: "https://bluejayportfolio.com/v2/towing" },
+  "appliance-repair": { template: "ProFix Appliance Repair",      url: "https://bluejayportfolio.com/v2/appliance-repair" },
+  "carpet-cleaning":  { template: "FreshStart Carpet Cleaning",   url: "https://bluejayportfolio.com/v2/carpet-cleaning" },
+  "junk-removal":     { template: "CleanSlate Junk Removal",      url: "https://bluejayportfolio.com/v2/junk-removal" },
+  // Professional services
+  "law-firm":         { template: "Pacific Law Group",            url: "https://bluejayportfolio.com/v2/law-firm" },
+  accounting:         { template: "Evergreen Tax & Advisory",     url: "https://bluejayportfolio.com/v2/accounting" },
+  insurance:          { template: "Puget Sound Insurance Group",  url: "https://bluejayportfolio.com/v2/insurance" },
+  "real-estate":      { template: "Puget Sound Realty",           url: "https://bluejayportfolio.com/v2/real-estate" },
+  // Lifestyle / beauty
+  salon:              { template: "Velvet Hair Studio",           url: "https://bluejayportfolio.com/v2/salon" },
+  fitness:            { template: "Iron & Oak Fitness",           url: "https://bluejayportfolio.com/v2/fitness" },
+  "martial-arts":     { template: "Cascade Martial Arts",         url: "https://bluejayportfolio.com/v2/martial-arts" },
+  tattoo:             { template: "Cascade Tattoo Studio",        url: "https://bluejayportfolio.com/v2/tattoo" },
+  photography:        { template: "Cascade Lens Photography",     url: "https://bluejayportfolio.com/v2/photography" },
+  "interior-design":  { template: "Cascadia Interiors",          url: "https://bluejayportfolio.com/v2/interior-design" },
+  florist:            { template: "Bloom & Branch Florals",       url: "https://bluejayportfolio.com/v2/florist" },
+  // Home services
+  landscaping:        { template: "Cascade Landscapes",           url: "https://bluejayportfolio.com/v2/landscaping" },
+  cleaning:           { template: "Crystal Clean Co.",            url: "https://bluejayportfolio.com/v2/cleaning" },
+  "pest-control":     { template: "Evergreen Pest Solutions",     url: "https://bluejayportfolio.com/v2/pest-control" },
+  moving:             { template: "Cascade Movers",               url: "https://bluejayportfolio.com/v2/moving" },
+  // Food & events
+  restaurant:         { template: "Cascade Kitchen",              url: "https://bluejayportfolio.com/v2/restaurant" },
+  catering:           { template: "Ember & Oak Catering",         url: "https://bluejayportfolio.com/v2/catering" },
+  "event-planning":   { template: "Elevate Events",               url: "https://bluejayportfolio.com/v2/event-planning" },
+  // Education & community
+  tutoring:           { template: "Bright Minds Tutoring",        url: "https://bluejayportfolio.com/v2/tutoring" },
+  church:             { template: "Grace Community Church",       url: "https://bluejayportfolio.com/v2/church" },
+  // Pet & animal
+  "pet-services":     { template: "Happy Tails Pet Care",         url: "https://bluejayportfolio.com/v2/pet-services" },
 };
+
+// Similarity map: unknown/variant category names → closest V2 category
+const CATEGORY_SIMILARITY: Record<string, string> = {
+  // Healthcare variants
+  orthodontist: "dental", dentist: "dental", teeth: "dental",
+  optometrist: "medical", doctor: "medical", clinic: "medical",
+  chiropractor: "chiropractic",
+  therapist: "physical-therapy", rehab: "physical-therapy", pt: "physical-therapy",
+  spa: "med-spa", medspa: "med-spa",
+  childcare: "daycare", preschool: "daycare", nursery: "daycare",
+  vet: "veterinary", "animal-hospital": "veterinary",
+  // Trade variants
+  electrical: "electrician", electric: "electrician",
+  plumbing: "plumber", drain: "plumber",
+  heating: "hvac", cooling: "hvac", "air-conditioning": "hvac",
+  roofer: "roofing",
+  mechanic: "auto-repair", automotive: "auto-repair", "car-repair": "auto-repair",
+  contractor: "general-contractor", builder: "general-contractor", handyman: "general-contractor", remodeling: "general-contractor",
+  "home-improvement": "general-contractor",
+  exterminator: "pest-control", "bug-control": "pest-control",
+  mover: "moving", movers: "moving",
+  "carpet-cleaner": "carpet-cleaning", carpets: "carpet-cleaning",
+  "pressure-washer": "pressure-washing", "power-washing": "pressure-washing",
+  arborist: "tree-service", "tree-trimming": "tree-service",
+  locksmith: "locksmith", locks: "locksmith",
+  tow: "towing", "tow-truck": "towing",
+  "junk-hauling": "junk-removal", "debris-removal": "junk-removal",
+  appliances: "appliance-repair",
+  // Professional services variants
+  lawyer: "law-firm", attorney: "law-firm", legal: "law-film",
+  cpa: "accounting", bookkeeper: "accounting", taxes: "accounting",
+  "insurance-agent": "insurance",
+  realtor: "real-estate", "real-estate-agent": "real-estate", realty: "real-estate",
+  // Lifestyle variants
+  "hair-salon": "salon", barbershop: "salon", barber: "salon", "nail-salon": "salon",
+  gym: "fitness", crossfit: "fitness", yoga: "fitness",
+  "martial-art": "martial-arts", karate: "martial-arts", judo: "martial-arts", bjj: "martial-arts",
+  "tattoo-shop": "tattoo", "tattoo-parlor": "tattoo",
+  photographer: "photography",
+  "interior-decorator": "interior-design", "home-design": "interior-design",
+  flowers: "florist", "flower-shop": "florist",
+  // Home services variants
+  "lawn-care": "landscaping", "lawn-mowing": "landscaping",
+  "house-cleaning": "cleaning", maid: "cleaning",
+  "pool-cleaning": "pool-spa", pool: "pool-spa",
+  // Food variants
+  cafe: "restaurant", diner: "restaurant", "coffee-shop": "restaurant",
+  "food-catering": "catering",
+  "event-planner": "event-planning", "wedding-planner": "event-planning",
+  // Education variants
+  tutor: "tutoring", "test-prep": "tutoring",
+  // Pet variants
+  "dog-grooming": "pet-services", "pet-grooming": "pet-services",
+  "dog-walker": "pet-services", "pet-boarding": "pet-services",
+  kennel: "pet-services",
+};
+
+function findBestBenchmark(category: string): { template: string; url: string } {
+  const norm = category.toLowerCase().trim();
+  // Exact match
+  if (BLUEJAYS_BENCHMARK_BY_CATEGORY[norm]) return BLUEJAYS_BENCHMARK_BY_CATEGORY[norm];
+  // Similarity map match
+  if (CATEGORY_SIMILARITY[norm]) {
+    const mapped = CATEGORY_SIMILARITY[norm];
+    if (BLUEJAYS_BENCHMARK_BY_CATEGORY[mapped]) return BLUEJAYS_BENCHMARK_BY_CATEGORY[mapped];
+  }
+  // Partial substring match against known keys
+  const keys = Object.keys(BLUEJAYS_BENCHMARK_BY_CATEGORY);
+  const partial = keys.find((k) => norm.includes(k.replace("-", "")) || k.replace("-", "").includes(norm));
+  if (partial) return BLUEJAYS_BENCHMARK_BY_CATEGORY[partial];
+  // Final fallback
+  return { template: "BlueJays Premium Examples", url: "https://bluejayportfolio.com/v2" };
+}
 
 /**
  * Fetch the target site and extract the key elements we'll feed to the
@@ -887,10 +994,7 @@ function synthesizeAudit(args: {
   technicalResult: TechnicalAnalysisResult;
 }): AuditContent {
   const { url, businessCategory, businessName, ctx, heroResult, technicalResult } = args;
-  const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[businessCategory] || {
-    template: "BlueJays examples",
-    url: "https://bluejayportfolio.com/templates",
-  };
+  const benchmark = findBestBenchmark(businessCategory);
 
   const heroFindings = heroResult.findings.filter((f) =>
     ["hero", "copy", "cta", "structure", "brand_fit"].includes(f.category),
