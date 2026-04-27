@@ -752,7 +752,14 @@ TONE — non-negotiable:
 - Address the owner as "you". Never "the user" or "the website".
 - 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
   - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
-  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template, tag (use "page title" not "title tag").
+  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template.
+  - BANNED tech jargon (CRITICAL — these never appear in your output, not in titles, not anywhere): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, ElectricalContractor schema, favicon, script, scripts, render, lazy-load, lazy-loading, viewport, DOM, CSS, SEO (say 'Google ranking' instead).
+  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
+  - When you mean meta description: say "the blurb Google shows under your link".
+  - When you mean schema: say "the address-book info Google reads about your business".
+  - When you mean favicon: say "the little icon next to your tab name".
+  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean scripts: say "code files your page loads".
   - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
   - If a 9-year-old can't read it out loud and get it, rewrite it.
 - One punchy sentence beats three good ones. SHORT.
@@ -771,13 +778,13 @@ ${benchmarkLine}
 
 ${painBlock}
 
-Site signals:
-- Title: "${ctx.title}" (${ctx.title.length} chars)
-- Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-- H1: "${ctx.h1Text}"
-- Headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
-- Image count: ${ctx.imageCount} (${ctx.imagesWithAlt} with alt text)
-- Body (first 2K): """${ctx.bodyExcerpt}"""
+Site signals (these are LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
+- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
+- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Big headline at top of page: "${ctx.h1Text}"
+- All section headlines: ${JSON.stringify(ctx.headings.slice(0, 15))}
+- Image count on page: ${ctx.imageCount}
+- Body (first 2K of words on the page): """${ctx.bodyExcerpt}"""
 ${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
 
 Return STRICT JSON ONLY:
@@ -811,29 +818,38 @@ JSON only.`;
 
 function buildTechnicalPrompt(ctx: SiteContext, category: string): string {
   const techPainBlock = formatTechPainPointsBlock(category);
-  return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
+  return `Audit this site's Google-ranking + phone readiness. Return STRICT JSON.
 
 TONE — non-negotiable:
 - 3rd-grade reading level. Write like you're texting a friend.
   - SHORT words. SHORT sentences (under 12 words).
-  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology, UX, above-the-fold, social proof, positioning, V2, template, tag (say "page title" not "title tag").
+  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology, UX, above-the-fold, social proof, positioning, V2, template.
+  - BANNED tech jargon (CRITICAL — never in titles, never in your output): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, favicon, script, scripts, lazy-load, lazy-loading, DOM, CSS, SEO (say 'Google ranking').
+  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
+  - When you mean schema: say "the address-book info Google reads about your business".
+  - When you mean favicon: say "the little icon next to your tab name".
+  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean scripts: say "code files your page loads".
+  - When you mean alt text: say "label for your image so Google + screen readers know what's in it".
   - YES words: fix, swap, drop, slow, fast, big, small, lose, win, miss, beat.
   - If a 9-year-old can't read it, rewrite it.
 - Address them as "you". Lead with cost (customers lost, money wasted).
-- "Your site loads 14 scripts. On a phone that's 5+ seconds of blank screen. Most people leave." NOT "External script count is high."
-- Celebrate good things plainly: "All 22 of your images have alt text. Google loves that."
+- "Your site loads 14 code files. On a phone that's 5+ seconds of blank screen. Most people leave." NOT "External script count is high."
+- Celebrate good things plainly: "All 22 of your images have labels Google can read. Google loves that."
 
 URL: ${ctx.url}
 Category: ${category}
-Title: "${ctx.title}" (${ctx.title.length} chars)
-Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-H1: "${ctx.h1Text}"
-Headings: ${ctx.headings.length}
-Images: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with alt
-External scripts: ${ctx.externalScripts}
-Viewport: ${ctx.hasViewport}
-Favicon: ${ctx.hasFavicon}
-Body length: ${ctx.bodyExcerpt.length} chars
+
+Site signals (LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
+- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
+- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Big headline at top: "${ctx.h1Text}"
+- Section headline count: ${ctx.headings.length}
+- Images on page: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with image labels
+- Code files loaded: ${ctx.externalScripts}
+- Phone-friendly setup: ${ctx.hasViewport ? "yes" : "no"}
+- Tab icon present: ${ctx.hasFavicon ? "yes" : "no"}
+- Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
 
 ${techPainBlock}
@@ -1094,6 +1110,12 @@ function dedupeByTopic(
     { key: "h1_phone_number", rx: /phone.*\b(h1|headline|heading)\b/i },
     // H1 not descriptive (separate from phone-specific)
     { key: "h1_not_descriptive", rx: /h1.*not descriptive|h1.*lacks|h1.*generic/i },
+    // H1 / main heading missing entirely — caught by both hero ("No H1
+    // means Google ignores your page") and tech ("Missing H1 Heading")
+    // (Bug fix 2026-04-27: was producing 2 of the top 5 fixes for the
+    // same underlying issue.)
+    { key: "h1_missing", rx: /(no h1|missing h1|h1.*missing|zero h1|h1.*absent|main headline.*missing|big text at the top.*(missing|none|no))/i },
+    { key: "h1_missing", rx: /(missing|no).*main (heading|headline)/i },
     // Title length
     { key: "title_length", rx: /\btitle\b.*(short|length|character|under|truncat)/i },
     // Meta description (both as strength and as fix)
@@ -1123,6 +1145,12 @@ function dedupeByTopic(
     { key: "mobile_loading", rx: /mobile.*(load|slow|speed)|(slow|load).*mobile/i },
     // Email professionalism (gmail vs branded)
     { key: "email_branded", rx: /(gmail|personal email|branded email|email.*business)/i },
+    // Schema markup — hero + tech both flag it
+    { key: "schema_missing", rx: /(localbusiness|schema|structured data|json.?ld|address.book.info)/i },
+    // Phone not tap-to-call (mobile + hero both flag it)
+    { key: "phone_tap_to_call", rx: /(tap.to.call|click.to.call|tel:|phone.*clickable|phone.*not.*link)/i },
+    // Phone buried / not on hero
+    { key: "phone_buried", rx: /(phone.*buried|phone.*not.*on.*hero|phone.*footer|phone.*hidden|phone.*hard to find)/i },
   ];
 
   function topicOf(f: AuditFinding): string {

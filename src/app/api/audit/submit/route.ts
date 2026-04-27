@@ -170,6 +170,27 @@ export async function POST(request: NextRequest) {
     prospectId = newProspectId;
   }
 
+  // Derive a target-business-name from the URL hostname for the AUDIT COPY.
+  // (Bug fix 2026-04-27: when a submitter's email matches an existing
+  // prospect record, the existing prospect.business_name is used — but the
+  // audit is for a DIFFERENT site. Storing target_business_name on the
+  // audit row itself lets runAudit/synthesizeAudit prefer it over
+  // prospect.businessName for the audit's headline + AI prompt.)
+  const targetBusinessName = (() => {
+    try {
+      const hostStem = new URL(targetUrl)
+        .hostname.replace(/^www\./, "")
+        .split(".")[0];
+      // If user explicitly typed a businessName, prefer it
+      const explicit = (body.businessName || "").trim();
+      if (explicit) return explicit;
+      // Title-case the hostname stem ("sequimelectrician" → "Sequimelectrician")
+      return hostStem.charAt(0).toUpperCase() + hostStem.slice(1);
+    } catch {
+      return businessName;
+    }
+  })();
+
   // Insert audit row (idempotent on (prospect_id, target_url) — re-submitting
   // the same URL just bumps the existing row back to 'pending')
   const auditId = uuidv4();
@@ -180,7 +201,11 @@ export async function POST(request: NextRequest) {
       target_url: targetUrl,
       business_category: businessCategory,
       status: "pending",
-      metadata: { submittedFrom: "audit_form", ...(body.utm || {}) },
+      metadata: {
+        submittedFrom: "audit_form",
+        targetBusinessName,
+        ...(body.utm || {}),
+      },
     },
     { onConflict: "prospect_id,target_url", ignoreDuplicates: false },
   );

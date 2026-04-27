@@ -47,7 +47,7 @@ export async function POST(
   // Pull the audit + prospect
   const { data: audit, error: auditErr } = await supabase
     .from("site_audits")
-    .select("id, prospect_id, target_url, business_category, status")
+    .select("id, prospect_id, target_url, business_category, status, metadata")
     .eq("id", id)
     .maybeSingle();
 
@@ -72,11 +72,23 @@ export async function POST(
     return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
   }
 
+  // Bug fix 2026-04-27: prefer the target-derived business name from the
+  // audit row's metadata over the prospect's businessName. When a submitter
+  // re-uses an existing prospect record (matched by email), the prospect's
+  // businessName is the SUBMITTER's, not the audited site's. The audit copy
+  // must reference the audited site, not the person who clicked Submit.
+  const auditMeta =
+    (audit.metadata as Record<string, unknown> | null) || {};
+  const targetBusinessName =
+    (typeof auditMeta.targetBusinessName === "string" &&
+      auditMeta.targetBusinessName.trim()) ||
+    (prospect.business_name as string);
+
   const result = await runAudit({
     auditId: id,
     prospect: {
       id: prospect.id as string,
-      businessName: prospect.business_name as string,
+      businessName: targetBusinessName,
       email: (prospect.email as string | null) || null,
     },
     targetUrl: audit.target_url as string,

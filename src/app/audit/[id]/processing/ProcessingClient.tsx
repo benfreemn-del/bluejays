@@ -137,16 +137,18 @@ export default function ProcessingClient({
     };
   }, [auditId]);
 
-  // Cycle the "what's happening now" copy every 8 seconds
+  // Cycle the "what's happening now" copy every 8 seconds.
+  // Tone: 3rd-grade, no model names — visitors shouldn't see "Claude" or
+  // "GPT" in the loading copy (per Ben — keep the eval engine invisible).
   const stages = [
-    "Fetching your site",
-    "Capturing screenshot + extracting key elements",
-    "Running hero + positioning analysis (Claude)",
-    "Running technical + SEO analysis (GPT-4)",
-    "Comparing to your category's gold-standard template",
-    "Calculating your money-leak estimate",
-    "Synthesizing findings + prioritizing the top 5",
-    "Final pass — making sure everything's specific to you",
+    "Pulling up your site",
+    "Taking a screenshot of your homepage",
+    "Reading your headlines + buttons + words",
+    "Checking how your site looks on phones",
+    "Comparing your site to the best in your industry",
+    "Doing the money-leak math",
+    "Picking the top 5 fixes that move the needle",
+    "Last pass — making sure it's all about you",
   ];
   const stageIdx = Math.min(Math.floor(pollCount / 1.5), stages.length - 1);
 

@@ -74,7 +74,32 @@ function stripJargon(s: string | null | undefined): string {
     .replace(/\bV2\s+/g, "")
     .replace(/\babove[ -]the[ -]fold\b/gi, "top of the page")
     .replace(/\bsocial proof\b/gi, "trust signals")
-    .replace(/\btitle tag\b/gi, "page title");
+    .replace(/\btitle tag\b/gi, "page title")
+    // Tech jargon (defensive — should already be filtered at the prompt
+    // layer in src/lib/site-audit.ts, but legacy audits + AI slips get
+    // caught here on render).
+    .replace(/\b(missing|no|zero|absent)\s+H1(\s+heading)?\b/gi, "no main heading")
+    .replace(/\bH1\s+heading\b/gi, "main heading")
+    .replace(/\b(an?\s+)?H1\b/gi, "main heading")
+    .replace(/\bH2\b/gi, "section heading")
+    .replace(/\bH3\b/gi, "sub heading")
+    .replace(/\bLocalBusiness\s+schema\b/gi, "Google address-book info")
+    .replace(/\bElectricalContractor\s+(schema|code)\b/gi, "Google address-book info")
+    .replace(/\bschema\s+markup\b/gi, "Google address-book info")
+    .replace(/\bstructured\s+data\b/gi, "Google address-book info")
+    .replace(/\bJSON-?LD\b/gi, "Google address-book info")
+    .replace(/\bschema\b/gi, "Google address-book info")
+    .replace(/\bfavicon\b/gi, "tab icon")
+    .replace(/\bviewport\s+(meta\s+)?tag\b/gi, "phone-friendly setup")
+    .replace(/\bviewport\b/gi, "phone-friendly setup")
+    .replace(/\b(external\s+)?scripts?\b/gi, "code files")
+    .replace(/\balt\s+text\b/gi, "image label")
+    .replace(/\balt\s+attribute\b/gi, "image label")
+    .replace(/\bmeta\s+description\b/gi, "Google blurb")
+    .replace(/\bmeta\s+tag\b/gi, "page info")
+    // Section-title cleanup — common AI outputs
+    .replace(/\bMissing\s+main heading\s+Heading\b/gi, "Missing main heading")
+    .replace(/\bMain\s+heading\s+Heading\b/gi, "Main heading");
 }
 
 export default async function AuditPage({
