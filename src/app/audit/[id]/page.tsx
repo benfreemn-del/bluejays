@@ -54,7 +54,11 @@ const SEVERITY_COLORS: Record<string, { bg: string; text: string; border: string
 const EFFORT_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
   low:    { label: "Easy fix", emoji: "⚡", color: "text-emerald-300" },
   medium: { label: "Moderate", emoji: "🛠️", color: "text-amber-300" },
-  high:   { label: "Rebuild", emoji: "🏗️", color: "text-rose-300" },
+  // "Rebuild" pre-loaded the "this is too much work / too expensive"
+  // objection right at the moment we want them committing. "Big fix"
+  // is honest about scope without flagging "this means a rewrite."
+  // (Hormozi review round 2 #7.)
+  high:   { label: "Big fix", emoji: "🛠️", color: "text-amber-300" },
 };
 
 /**
@@ -255,32 +259,11 @@ export default async function AuditPage({
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {content.oneLineSummary}
           </p>
-          {monthlyLeak > 0 && score < 80 && (
-            <p className="mt-3 text-xs text-slate-500 max-w-xl mx-auto">
-              Range: ${content.moneyLeak.estimateLow.toLocaleString()}–${content.moneyLeak.estimateHigh.toLocaleString()}/mo · {content.moneyLeak.methodology}
-            </p>
-          )}
+          {/* Hormozi review round 1: range footnote moved out of the hero
+              (it diluted the headline number). Methodology still appears
+              once at the bottom of the recovery section. */}
         </div>
       </section>
-
-      {/* Strengths */}
-      {content.strengths && content.strengths.length > 0 && (
-        <section className="border-b border-white/5 bg-emerald-950/20">
-          <div className="mx-auto max-w-4xl px-6 py-8">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-300 mb-4">
-              🟢 What&apos;s working
-            </h2>
-            <ul className="space-y-2">
-              {content.strengths.map((s, i) => (
-                <li key={i} className="text-slate-300 flex gap-3">
-                  <span className="text-emerald-400">✓</span>
-                  <span>{stripJargon(s)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
 
       {/* Prioritized roadmap — single visual track, emoji-led, compact */}
       <section className="border-b border-white/5">
@@ -325,17 +308,16 @@ export default async function AuditPage({
                       )}
                     </div>
                   </div>
-                  {/* Right-side recovery: $/mo bold, +N leads/mo subline. */}
+                  {/* Right-side recovery: just $/mo. Hormozi review #12 —
+                      "+N leads/mo" sublabel removed; the math didn't tie
+                      cleanly to dollar (close-rate fuzz) AND two semi-
+                      aligned numbers fight for attention. One clean
+                      number per fix wins. */}
                   {recovery > 0 && (
                     <div className="flex-shrink-0 text-right pl-2 border-l border-emerald-500/20">
                       <div className="text-emerald-300 font-bold text-base md:text-xl leading-none whitespace-nowrap">
                         +${recovery.toLocaleString()}/mo
                       </div>
-                      {leads > 0 && (
-                        <div className="text-[10px] md:text-xs text-emerald-400/70 mt-1 whitespace-nowrap">
-                          +{leads} {leads === 1 ? "lead" : "leads"}/mo
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
@@ -344,6 +326,28 @@ export default async function AuditPage({
           </div>
         </div>
       </section>
+
+      {/* Strengths — moved BELOW the fix list (Hormozi review round 1 #4)
+          so the page reads pain → fixes → "but you have these going for
+          you, let's protect them." Showing strengths BEFORE pain weakens
+          the urgency. */}
+      {content.strengths && content.strengths.length > 0 && (
+        <section className="border-b border-white/5 bg-emerald-950/20">
+          <div className="mx-auto max-w-4xl px-6 py-8">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-300 mb-4">
+              🟢 What&apos;s working — let&apos;s keep these
+            </h2>
+            <ul className="space-y-2">
+              {content.strengths.map((s, i) => (
+                <li key={i} className="text-slate-300 flex gap-3">
+                  <span className="text-emerald-400">✓</span>
+                  <span>{stripJargon(s)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* Detailed findings by section. Plain-English headers — no
           "above the fold", "social proof", "UX", "positioning". A 50yo
@@ -354,15 +358,20 @@ export default async function AuditPage({
       <FindingSection emoji="🔍" title="Google & Tech" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
       <FindingSection emoji="📱" title="On Phones" findings={content.mobileAndUx.findings} />
 
-      {/* Benchmark — plain English, no "industry benchmark" jargon. */}
+      {/* Benchmark — Hormozi review round 1 #8: "See the difference:
+          Cascade Electric Co." reads like a competitor stealing your
+          customers. Reframe as YOUR build of THEIR site. */}
       {content.blueJaysBenchmark && (
         <section className="border-b border-white/5 bg-slate-900/30">
           <div className="mx-auto max-w-4xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 What yours could look like</p>
+            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 What BlueJays could build for you</p>
             <h2 className="text-2xl font-bold mb-3">
-              See the difference: <span className="text-sky-300">{stripJargon(content.blueJaysBenchmark.referenceTemplate)}</span>
+              Example BlueJays build: <span className="text-sky-300">{stripJargon(content.blueJaysBenchmark.referenceTemplate)}</span>
             </h2>
-            <p className="text-slate-300 mb-5">{stripJargon(content.blueJaysBenchmark.gapSummary)}</p>
+            <p className="text-slate-300 mb-5">
+              BlueJays builds sites like this for businesses just like yours.{" "}
+              {stripJargon(content.blueJaysBenchmark.gapSummary)}
+            </p>
             <a
               href={content.blueJaysBenchmark.referenceUrl}
               target="_blank"
@@ -375,25 +384,49 @@ export default async function AuditPage({
         </section>
       )}
 
-      {/* Cost of waiting — what does inaction cost? Single sentence + 3 tiles. */}
+      {/* Cost of waiting — Hormozi review round 2 #2: re-highlight 6 MOS
+          (was 3 MOS) + visually larger so the loss-aversion math escalates
+          left→right. Round 2 #4: add explicit ROI multiplier line. */}
       {monthlyLeak > 0 && (
         <section className="border-b border-white/5 bg-rose-950/20">
           <div className="mx-auto max-w-3xl px-6 py-10">
             <p className="text-sm uppercase tracking-wider text-rose-300 mb-5 font-semibold text-center">
               ⏳ The cost of waiting
             </p>
-            <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto">
-              <CostTile months={1} leak={monthlyLeak} />
-              <CostTile months={3} leak={monthlyLeak} highlight />
-              <CostTile months={6} leak={monthlyLeak} />
+            <div className="grid grid-cols-4 gap-3 max-w-2xl mx-auto items-stretch">
+              {/* 1 MO + 3 MOS share 2 of 4 cols (smaller) — 6 MOS takes 2 cols (the heavy hit) */}
+              <div className="col-span-1">
+                <CostTile months={1} leak={monthlyLeak} />
+              </div>
+              <div className="col-span-1">
+                <CostTile months={3} leak={monthlyLeak} />
+              </div>
+              <div className="col-span-2">
+                <CostTile months={6} leak={monthlyLeak} highlight large />
+              </div>
             </div>
-            <p className="text-center text-sm text-slate-400 mt-5 max-w-xl mx-auto">
-              6 months of waiting:{" "}
-              <span className="text-rose-300 font-bold">
-                ${(monthlyLeak * 6).toLocaleString()}
-              </span>{" "}
-              lost · Fixing it: <span className="text-emerald-300 font-bold">$997</span>
-            </p>
+            {(() => {
+              const sixMo = monthlyLeak * 6;
+              const ratio = Math.round(sixMo / 997);
+              return (
+                <>
+                  <p className="text-center text-sm text-slate-400 mt-5 max-w-xl mx-auto">
+                    6 months of waiting:{" "}
+                    <span className="text-rose-300 font-bold">
+                      ${sixMo.toLocaleString()}
+                    </span>{" "}
+                    lost · Fixing it: <span className="text-emerald-300 font-bold">$997</span>
+                  </p>
+                  <p className="text-center text-base md:text-lg text-white mt-3 max-w-xl mx-auto font-semibold">
+                    ${sixMo.toLocaleString()} lost OR $997 to fix ={" "}
+                    <span className="text-emerald-300">{ratio}x return</span> in 6 months.
+                  </p>
+                  <p className="text-center text-xs text-slate-500 mt-1 max-w-xl mx-auto">
+                    The site pays for itself the first week. Every week after is profit.
+                  </p>
+                </>
+              );
+            })()}
           </div>
         </section>
       )}
@@ -441,7 +474,7 @@ export default async function AuditPage({
                   Recover ~${content.recoveryProjection.totalMonthly.toLocaleString()}/mo for $997 →
                 </a>
                 <p className="text-xs text-slate-500">
-                  Or 3 small payments of $349 · 100% money-back if you don&apos;t love it
+                  Or 3 × $349 — first today, then 30, then 60 days · 100% money-back, no questions
                 </p>
               </div>
 
@@ -500,46 +533,53 @@ export default async function AuditPage({
               <p className="text-xs text-slate-500 mt-1">10+ hrs of YouTube tutorials.</p>
             </div>
 
-            {/* BlueJays — highlighted, "we build it" win */}
+            {/* BlueJays — highlighted, "we build it" win.
+                Hormozi review round 2 #10: badge changed from
+                "Cheapest + done for you" → "Pays for itself week 1"
+                (frames specific value, not unverifiable popularity). */}
             <div className="rounded-xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-5 text-center shadow-[0_0_30px_rgba(16,185,129,0.2)] relative">
               <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow whitespace-nowrap">
-                Cheapest + done for you
+                Pays for itself week 1
               </span>
               <p className="text-xs uppercase tracking-wider text-emerald-300 mb-2 font-semibold">BlueJays</p>
               <p className="text-3xl font-bold text-white mb-1">$1,297</p>
               <p className="text-xs text-emerald-300 mb-4">over 3 years</p>
               <p className="text-sm text-slate-100 leading-relaxed font-semibold">We build it.</p>
-              <p className="text-xs text-emerald-300/80 mt-1">In 48 hours.</p>
+              <p className="text-xs text-emerald-300/80 mt-1">Live in 48 hours.</p>
             </div>
           </div>
 
-          <p className="mt-6 text-center text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Cheaper than Squarespace. <span className="text-emerald-300 font-semibold">We do it for you</span> in 48 hours instead of you losing weeks of nights and weekends.
+          {/* Hormozi review round 2 #9: "Cheaper than Squarespace…" was
+              one compound sentence — split into 3 short hits. */}
+          <p className="mt-6 text-center text-sm md:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-semibold">
+            <span className="text-emerald-300">$500 less than Squarespace.</span> AND you don&apos;t lift a finger. AND it&apos;s done in 48 hours.
           </p>
-          <p className="mt-2 text-center text-[11px] text-slate-500 max-w-xl mx-auto">
+
+          {/* Hormozi review round 2 #5: tie 3-year cost back to the
+              waiting-math. Connection wasn't being made. */}
+          {monthlyLeak > 0 && (() => {
+            const sixMo = monthlyLeak * 6;
+            const netWin = sixMo - 1297;
+            return (
+              <p className="mt-3 text-center text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Wait 6 months: lose <span className="text-rose-300 font-bold">${sixMo.toLocaleString()}</span>.
+                Pay BlueJays over 3 years: <span className="text-emerald-300 font-bold">$1,297</span>.{" "}
+                <span className="text-white font-semibold">Net win: ${netWin.toLocaleString()}</span> — and you keep the wins forever.
+              </p>
+            );
+          })()}
+
+          <p className="mt-4 text-center text-[11px] text-slate-500 max-w-xl mx-auto">
             BlueJays: $997 once + $100/year starting year 2 (covers domain, hosting, support; cancel anytime). Wix Premium ~$16/mo + domain. Squarespace Business ~$33/mo + extras. Numbers based on standard plans most small businesses pick.
           </p>
         </div>
       </section>
 
-      {/* Mini-testimonial. Story-format so it's not mistaken for a fake quote. */}
-      <section className="border-b border-white/5">
-        <div className="mx-auto max-w-3xl px-6 py-10">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-6 md:p-8">
-            <div className="flex items-start gap-4">
-              <span className="text-3xl">⭐</span>
-              <div>
-                <p className="text-lg text-slate-100 leading-relaxed mb-3">
-                  &ldquo;Same town, same prices, same offer — just a site that didn&apos;t fight me. Went from 2 calls a week to 14.&rdquo;
-                </p>
-                <p className="text-sm text-slate-400">
-                  — A {content.businessCategory.replace("-", " ")} owner in Washington · scored 38 before rebuild.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hormozi review round 2 #1: testimonial removed (anonymous +
+          AI-grammar tells = trust kill). Per CLAUDE.md "Social proof
+          MUST use real data or be removed. NEVER show fake or inflated
+          numbers." Will reinstate once real client testimonials exist
+          (top of Ben's manual TODO — first 3 paying clients). */}
 
       {/* Final CTA — replaced in v7 with the 3-CTA hub (Buy / Schedule
           / Get Preview). The single-CTA "You know the problems. Now fix
@@ -562,17 +602,18 @@ export default async function AuditPage({
       </footer>
 
       {/* Sticky bottom CTA — persists while scrolling so the offer is always
-          1 tap away. Money leak on the left, CTA on the right. Hidden on
-          high-score audits (no leak to anchor against). */}
+          1 tap away. Hormozi review round 2 #6: anchor RECOVERY (not just
+          loss) — left rail shows the loss-→-recovery flip, CTA shows the
+          installment plan that matches the page-body recovery promise. */}
       {monthlyLeak > 0 && score < 80 && (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-rose-500/30 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-emerald-500/30 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
           <div className="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xl">💸</span>
+              <span className="text-xl">💰</span>
               <div className="min-w-0">
-                <div className="text-xs text-slate-400 leading-tight">Losing</div>
-                <div className="text-base md:text-lg font-bold text-rose-300 leading-tight truncate">
-                  ${content.moneyLeak.monthlyEstimate.toLocaleString()}/mo
+                <div className="text-xs text-slate-400 leading-tight">Recover</div>
+                <div className="text-base md:text-lg font-bold text-emerald-300 leading-tight truncate">
+                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo
                 </div>
               </div>
             </div>
@@ -661,23 +702,39 @@ function FindingSection({
   );
 }
 
-function CostTile({ months, leak, highlight }: { months: number; leak: number; highlight?: boolean }) {
+function CostTile({
+  months,
+  leak,
+  highlight,
+  large,
+}: {
+  months: number;
+  leak: number;
+  highlight?: boolean;
+  /** Pumps the dollar number up + adds heavier glow. Reserved for the
+   * 6-month tile so the loss-aversion peak DOMINATES the row visually. */
+  large?: boolean;
+}) {
   const total = leak * months;
   return (
     <div
-      className={`rounded-xl border p-3 md:p-4 text-center transition-colors ${
+      className={`rounded-xl border ${large ? "p-4 md:p-6" : "p-3 md:p-4"} text-center transition-colors h-full flex flex-col justify-center ${
         highlight
-          ? "border-rose-500/40 bg-rose-500/10 shadow-[0_0_24px_rgba(244,63,94,0.15)]"
+          ? `border-rose-500/60 bg-rose-500/15 ${large ? "shadow-[0_0_48px_rgba(244,63,94,0.3)]" : "shadow-[0_0_24px_rgba(244,63,94,0.15)]"}`
           : "border-white/10 bg-slate-900/40"
       }`}
     >
       <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
         {months} {months === 1 ? "mo" : "mos"}
       </p>
-      <p className={`text-2xl md:text-3xl font-bold ${highlight ? "text-rose-300" : "text-slate-200"}`}>
+      <p
+        className={`font-bold ${
+          large ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"
+        } ${highlight ? "text-rose-300" : "text-slate-200"}`}
+      >
         ${total.toLocaleString()}
       </p>
-      <p className="text-[10px] text-slate-500 mt-1">lost</p>
+      <p className={`${large ? "text-xs" : "text-[10px]"} text-slate-500 mt-1`}>lost</p>
     </div>
   );
 }

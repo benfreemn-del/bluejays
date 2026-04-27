@@ -140,14 +140,16 @@ export default function AuditCTAHub({
             onClick={() => logForkClick(auditId, "buy")}
             className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-6 hover:border-emerald-400 hover:bg-emerald-500/15 transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(16,185,129,0.15)]"
           >
+            {/* Hormozi review round 2 #10: "Most Popular" → cite specific
+                value instead of unverifiable popularity. */}
             <span className="absolute -top-2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow">
-              Most Popular
+              Pays for itself week 1
             </span>
             <div className="text-4xl mb-3">🛠️</div>
             <h3 className="text-lg font-bold text-white mb-2">Fix it now</h3>
             <p className="text-2xl font-bold text-emerald-300 mb-1">3 × $349</p>
             <p className="text-xs text-slate-400 mb-4">Or $997 once</p>
-            <p className="text-xs text-slate-500 mt-auto">100% money-back · 48-hr build</p>
+            <p className="text-xs text-slate-500 mt-auto">100% money-back · Live in 2 days flat</p>
             <span className="mt-4 inline-flex items-center justify-center w-full rounded-md bg-gradient-to-r from-emerald-500 to-sky-500 px-4 py-2.5 text-sm font-semibold text-white group-hover:opacity-90">
               Start now →
             </span>
@@ -169,17 +171,21 @@ export default function AuditCTAHub({
             </span>
           </a>
 
-          {/* 3. GET MY PREVIEW — slow-yes / lead capture */}
+          {/* 3. BUILD ME MY SITE — slow-yes / lead capture.
+              Hormozi review round 1: was "Get my preview" — confusing
+              because the audit IS already a preview-like deliverable.
+              Reframed so it's clearly a DIFFERENT artifact (the actual
+              full site mocked up for them, not the diagnosis report). */}
           <button
             onClick={handleRequestPreview}
             disabled={request.status === "loading" || request.status === "success"}
             className="group flex flex-col items-center text-center rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 hover:border-amber-400 hover:bg-amber-500/10 transition-all hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-default text-left"
           >
             <div className="text-4xl mb-3">🎨</div>
-            <h3 className="text-lg font-bold text-white mb-2">Get my preview</h3>
-            <p className="text-2xl font-bold text-amber-300 mb-1">Free</p>
-            <p className="text-xs text-slate-400 mb-4">We&apos;ll build it in 48 hours</p>
-            <p className="text-xs text-slate-500 mt-auto">No purchase · See your real site live</p>
+            <h3 className="text-lg font-bold text-white mb-2">Build me my full site</h3>
+            <p className="text-2xl font-bold text-amber-300 mb-1">Free preview</p>
+            <p className="text-xs text-slate-400 mb-4">Your actual site, live in 48 hours</p>
+            <p className="text-xs text-slate-500 mt-auto">No purchase · Your real content + photos</p>
             <span
               className={`mt-4 inline-flex items-center justify-center w-full rounded-md border px-4 py-2.5 text-sm font-semibold transition-colors ${
                 request.status === "success"
@@ -211,13 +217,17 @@ export default function AuditCTAHub({
           </p>
         )}
 
-        {/* Trust strip — always visible regardless of which fork they pick */}
+        {/* Trust strip — Hormozi review round 2 #8: money-back made more
+            emphatic. "If you hate it, reply 'refund' to any email — every
+            dollar back same day, no scripts." Plus varied "48 hours"
+            phrasing across the page (round 2 #13) — this strip says
+            "Live in 2 days flat" instead of repeating "48-hour". */}
         <div className="mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-slate-400">
           <span className="flex items-center gap-1.5">
-            <span className="text-emerald-400">✓</span> 100% money-back guarantee
+            <span className="text-emerald-400">✓</span> 100% money-back · reply &quot;refund&quot; to any email
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-emerald-400">✓</span> 48-hour delivery
+            <span className="text-emerald-400">✓</span> Live in 2 days flat
           </span>
           <span className="flex items-center gap-1.5">
             <span className="text-emerald-400">✓</span> No retainers, no monthly fees

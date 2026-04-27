@@ -974,7 +974,7 @@ function synthesizeAudit(args: {
     totalCustomers: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryCustomers, 0),
     avgCustomerValue,
     capPercent: RECOVERY_CAP_PERCENT,
-    methodology: `Safe math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()} (each new lead is worth about ${"$"}${avgLeadValue.toLocaleString()} — leads close at ~${Math.round(DEFAULT_CLOSE_RATE * 100)}%). Fixing the ${prioritizedRoadmap.length} issues above plugs about ${Math.round(RECOVERY_CAP_PERCENT * 100)}% of the leak. Real lift could be higher.`,
+    methodology: `Conservative math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()}. We rounded down on close rate AND on lift. The real recovery is probably 2x what we show.`,
   };
 
   // Strengths — celebratory copy from low-severity findings ONLY.
