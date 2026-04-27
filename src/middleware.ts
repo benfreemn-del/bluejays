@@ -139,6 +139,7 @@ const PUBLIC_API_PATHS = [
   "/api/audit/",                       // Audit status polling endpoints (URL-as-secret)
   "/api/domain-suggestions/",          // Public auto-domain-suggest for the onboarding Step 1 (URL-as-secret pattern — prospect UUID in path)
   "/api/hyperloop/",                   // Vercel cron (weekly) — gated by CRON_SECRET in the handler. Karpathy auto-research loop, dormant until 100 audits + 5 sales
+  "/api/watchdog/",                    // Vercel cron (daily 13:00 UTC) — gated by CRON_SECRET. Rule 66 heartbeat checker for all monitored crons + stuck-audit detector
   "/audit",                            // Audit landing page (public)
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
 ];

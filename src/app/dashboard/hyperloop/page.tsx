@@ -174,6 +174,20 @@ export default function HyperloopDashboard() {
     setVariants((prev) => prev.map((v) => (v.id === id ? { ...v, status } : v)));
   }
 
+  /** Save dormancy threshold edits to hyperloop_config. */
+  async function saveDormancyThresholds(args: {
+    min_audits_to_wake?: number;
+    min_paid_to_wake?: number;
+  }) {
+    if (!config) return;
+    await fetch("/api/hyperloop/config", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(args),
+    });
+    setConfig({ ...config, ...args });
+  }
+
   /** Inline edit save — patches platform_ad_id back to the API. */
   async function saveAdMapping(variantId: string) {
     const newValue = editingMapValue.trim();
@@ -379,14 +393,39 @@ export default function HyperloopDashboard() {
               <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">
                 Dormancy thresholds
               </p>
-              <p className="text-sm text-slate-200">
-                {config.min_audits_to_wake} ready audits +{" "}
-                {config.min_paid_to_wake} paid customers
-              </p>
+              <div className="flex items-center gap-2 text-sm text-slate-200">
+                <input
+                  type="number"
+                  min={0}
+                  defaultValue={config.min_audits_to_wake}
+                  onBlur={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    if (Number.isFinite(v) && v !== config.min_audits_to_wake) {
+                      saveDormancyThresholds({ min_audits_to_wake: v });
+                    }
+                  }}
+                  className="w-16 px-2 py-0.5 rounded bg-slate-800 border border-white/10 text-slate-100 text-sm focus:border-blue-electric/60 focus:outline-none"
+                  aria-label="Minimum ready audits to wake"
+                />
+                <span className="text-slate-400">ready audits +</span>
+                <input
+                  type="number"
+                  min={0}
+                  defaultValue={config.min_paid_to_wake}
+                  onBlur={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    if (Number.isFinite(v) && v !== config.min_paid_to_wake) {
+                      saveDormancyThresholds({ min_paid_to_wake: v });
+                    }
+                  }}
+                  className="w-16 px-2 py-0.5 rounded bg-slate-800 border border-white/10 text-slate-100 text-sm focus:border-blue-electric/60 focus:outline-none"
+                  aria-label="Minimum paid customers to wake"
+                />
+                <span className="text-slate-400">paid customers</span>
+              </div>
               <p className="mt-2 text-[11px] text-slate-500 leading-relaxed">
                 Below either threshold, the cron logs a heartbeat but skips
-                analysis + generation. Edit via SQL on the hyperloop_config
-                table to tune.
+                analysis + generation. Edit inline — saves on blur.
               </p>
             </div>
           </div>
