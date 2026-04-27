@@ -2,6 +2,9 @@
 
 # BlueJays Project — The Money Printer
 
+## Output Formatting Rules (NON-NEGOTIABLE)
+- **Never wrap URLs in bold (`**`).** Write links as plain text or plain markdown `[text](url)`. Bold markers around a URL break it when copied — the `**` gets included in the copied string. This applies everywhere: chat responses, code comments, commit messages, HTML, anywhere a URL appears.
+
 ## Core Philosophy
 This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
 
