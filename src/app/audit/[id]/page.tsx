@@ -549,7 +549,7 @@ export default async function AuditPage({
                 return (
                   <p className="text-sm text-slate-400 mb-6 max-w-md mx-auto leading-relaxed">
                     Right now your site catches about{" "}
-                    <span className="text-rose-300 font-semibold">{score} out of 100</span> people who could become customers.
+                    <span className="text-rose-300 font-semibold">{score} out of 100</span>{" "}people who could become customers.
                     Fix these and you&apos;re closer to{" "}
                     <span className="text-emerald-300 font-semibold">{projectedScore} out of 100</span>.
                   </p>
