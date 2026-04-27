@@ -173,6 +173,15 @@ export default async function AuditPage({
         : score >= 60
           ? "Has bones"
           : "Costing customers";
+  // Capability framing: what % of potential customers is the site actually catching?
+  // Score maps directly — a 47 means running at ~47% of what a great site would do.
+  const missedPct = 100 - score;
+  const capabilityLine =
+    score >= 80
+      ? `Your site is firing on all cylinders — catching most of the people who land on it.`
+      : score >= 60
+        ? `Your site is catching about ${score} out of every 100 people who could become a customer. The other ${missedPct} slip away.`
+        : `Your site is catching roughly ${score} out of every 100 people who could call. That means about ${missedPct} people leave without ever reaching you.`;
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -188,7 +197,14 @@ export default async function AuditPage({
           <Link href="https://bluejayportfolio.com" className="text-sm text-slate-400 hover:text-white transition-colors">
             ← BlueJays
           </Link>
-          <span className="text-xs text-slate-500 font-mono">Audit · {id.slice(0, 8)}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-500">
+              Reviewed by{" "}
+              <span className="text-slate-300 font-medium">Ben</span>
+              {" "}· BlueJays
+            </span>
+            <span className="text-xs text-slate-600 font-mono hidden sm:inline">{id.slice(0, 8)}</span>
+          </div>
         </div>
       </header>
 
@@ -234,8 +250,11 @@ export default async function AuditPage({
                 </span>
                 <span className="relative text-3xl md:text-4xl text-slate-400 font-bold">/mo</span>
               </div>
-              <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto mb-6">
+              <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto mb-3">
                 in customers your site is missing. Every month.
+              </p>
+              <p className="text-sm text-slate-400 max-w-xl mx-auto mb-6 leading-relaxed">
+                {capabilityLine}
               </p>
 
               {/* Score moves to a small chip below the money number */}
@@ -244,6 +263,8 @@ export default async function AuditPage({
                 <span className={`text-base font-bold ${scoreColor}`}>{score}/100</span>
                 <span className="text-slate-600">·</span>
                 <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
+                <span className="text-slate-600">·</span>
+                <span className="text-xs text-slate-400">~{score}% there</span>
               </div>
             </>
           ) : (
@@ -254,6 +275,9 @@ export default async function AuditPage({
                 <span className="text-3xl text-slate-600">/100</span>
               </div>
               <p className={`mt-4 text-2xl font-bold ${scoreColor}`}>{scoreLabel} 🟢</p>
+              <p className="mt-3 text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
+                {capabilityLine}
+              </p>
             </div>
           )}
 
@@ -309,16 +333,17 @@ export default async function AuditPage({
                       )}
                     </div>
                   </div>
-                  {/* Right-side recovery: just $/mo. Hormozi review #12 —
-                      "+N leads/mo" sublabel removed; the math didn't tie
-                      cleanly to dollar (close-rate fuzz) AND two semi-
-                      aligned numbers fight for attention. One clean
-                      number per fix wins. */}
+                  {/* Right-side recovery: $/mo + % of total leak recovered */}
                   {recovery > 0 && (
                     <div className="flex-shrink-0 text-right pl-2 border-l border-emerald-500/20">
                       <div className="text-emerald-300 font-bold text-base md:text-xl leading-none whitespace-nowrap">
                         +${recovery.toLocaleString()}/mo
                       </div>
+                      {monthlyLeak > 0 && (
+                        <div className="text-emerald-400/60 text-[11px] mt-0.5 whitespace-nowrap">
+                          ~{Math.max(1, Math.round((recovery / monthlyLeak) * 100))}% back
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -393,8 +418,11 @@ export default async function AuditPage({
       {monthlyLeak > 0 && (
         <section className="border-b border-white/5 bg-rose-950/20">
           <div className="mx-auto max-w-3xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-rose-300 mb-5 font-semibold text-center">
+            <p className="text-sm uppercase tracking-wider text-rose-300 mb-2 font-semibold text-center">
               ⏳ The cost of waiting
+            </p>
+            <p className="text-center text-sm text-slate-400 mb-5">
+              Every month your site runs at ~{score}% costs you more. Here&apos;s what that adds up to.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto items-stretch">
               {/* Mobile: 2-col grid — 1mo + 3mo on top row, 6mo full-width below */}
@@ -451,7 +479,7 @@ export default async function AuditPage({
                 back in your pocket
               </h2>
               {content.recoveryProjection.totalCustomers > 0 && (
-                <p className="text-base md:text-lg text-slate-200 mb-6">
+                <p className="text-base md:text-lg text-slate-200 mb-3">
                   That&apos;s about{" "}
                   <span className="text-emerald-300 font-bold">
                     +{content.recoveryProjection.totalLeads ??
@@ -468,6 +496,18 @@ export default async function AuditPage({
                   .
                 </p>
               )}
+              {monthlyLeak > 0 && (() => {
+                const recovPct = Math.round((content.recoveryProjection.totalMonthly / monthlyLeak) * 100);
+                const projectedScore = Math.min(98, score + Math.round(recovPct * 0.6));
+                return (
+                  <p className="text-sm text-slate-400 mb-6 max-w-md mx-auto leading-relaxed">
+                    Right now your site catches about{" "}
+                    <span className="text-rose-300 font-semibold">{score} out of 100</span> people who could become customers.
+                    Fix these and you&apos;re closer to{" "}
+                    <span className="text-emerald-300 font-semibold">{projectedScore} out of 100</span>.
+                  </p>
+                );
+              })()}
 
               {/* Primary CTA inside the box (Q10A) */}
               <div className="mt-6 flex flex-col items-center gap-2">
@@ -602,7 +642,10 @@ export default async function AuditPage({
       />
 
       <footer className="border-t border-white/5 pb-24 md:pb-20">
-        <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500">
+        <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">
+          <p className="text-slate-400 text-sm">
+            — Ben, BlueJays · <a href="mailto:bluejaycontactme@gmail.com" className="text-sky-400 hover:underline">bluejaycontactme@gmail.com</a>
+          </p>
           <p>
             Audit generated {new Date(content.generatedAt).toLocaleDateString()} ·
             <Link href="/audit" className="text-sky-400 hover:underline ml-2">Audit a different site →</Link>
@@ -620,9 +663,11 @@ export default async function AuditPage({
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-xl">💰</span>
               <div className="min-w-0">
-                <div className="text-xs text-slate-400 leading-tight">Recover</div>
+                <div className="text-xs text-slate-400 leading-tight">
+                  Site running at ~{score}% — fix it, get
+                </div>
                 <div className="text-base md:text-lg font-bold text-emerald-300 leading-tight truncate">
-                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo
+                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo back
                 </div>
               </div>
             </div>
