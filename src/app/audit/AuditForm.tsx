@@ -166,7 +166,7 @@ export default function AuditForm() {
 
       <div className="text-left">
         <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-          Your phone <span className="normal-case text-slate-500 font-normal">(optional — so we can call if you want faster help)</span>
+          Your phone <span className="normal-case text-slate-500 font-normal">(optional — priority SMS from Ben within 1 hour of your audit)</span>
         </label>
         <input
           id="phone"
@@ -197,6 +197,10 @@ export default function AuditForm() {
         </div>
       )}
 
+      <p className="text-xs text-slate-500 text-center">
+        You&apos;ll get your audit + 5 follow-up emails over 2 weeks. Unsubscribe anytime.
+      </p>
+
       <button
         type="submit"
         disabled={state === "submitting" || !url.trim() || !email.trim()}
@@ -204,10 +208,6 @@ export default function AuditForm() {
       >
         {state === "submitting" ? "Starting your audit…" : "Run my free audit →"}
       </button>
-
-      <p className="text-xs text-slate-500 text-center pt-1">
-        By submitting, you agree to receive your audit + a few follow-up emails. Reply STOP anytime.
-      </p>
     </form>
   );
 }

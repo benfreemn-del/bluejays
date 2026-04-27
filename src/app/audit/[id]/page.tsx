@@ -185,7 +185,7 @@ export default async function AuditPage({
   const missedPct = 100 - score;
   const capabilityLine =
     score >= 80
-      ? `Your site is firing on all cylinders — catching most of the people who land on it.`
+      ? `Your site is doing real work — most people who land on it are reaching you. A few small tweaks could add 5–10 more leads a month without touching anything else.`
       : score >= 60
         ? `Your site is catching about ${score} out of every 100 people who could become a customer. The other ${missedPct} slip away.`
         : `Your site is catching roughly ${score} out of every 100 people who could call. That means about ${missedPct} people leave without ever reaching you.`;
@@ -696,12 +696,52 @@ export default async function AuditPage({
           / Get Preview). The single-CTA "You know the problems. Now fix
           them." block forced one yes; the hub asks for THREE different
           yeses ascending in commitment so we capture every intent level. */}
+      <div id="cta-hub">
       <AuditCTAHub
         auditId={a.id}
         prospectId={a.prospect_id}
         primaryButtonUrl={checkoutUrlInstallment}
         secondaryButtonUrl={checkoutUrlFull}
       />
+      </div>
+
+      {/* "What Happens Next?" bridge — closes the post-CTA vacuum.
+          Three columns map to the three forks in AuditCTAHub so
+          prospects know exactly what each commitment level leads to. */}
+      <section className="border-b border-white/5 bg-slate-900/30">
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <h2 className="text-xl font-bold text-center mb-8 text-slate-300">What happens next</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/15 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-3">If you fix it now</p>
+              <ol className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">1.</span>Quick 15-min onboarding form</li>
+                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">2.</span>Live preview lands in 48 hours</li>
+                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">3.</span>You review, we tweak, we ship</li>
+              </ol>
+              <p className="text-xs text-emerald-400/70 mt-4">100% money-back if you don&apos;t love it.</p>
+            </div>
+            <div className="rounded-xl border border-sky-500/20 bg-sky-950/15 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-sky-400 mb-3">If you book a call</p>
+              <ol className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">1.</span>Pick a 15-min slot that works</li>
+                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">2.</span>Ben walks you through the audit live</li>
+                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">3.</span>You decide — zero pressure</li>
+              </ol>
+              <p className="text-xs text-sky-400/70 mt-4">No pitch deck. No agenda. You leave knowing the next move.</p>
+            </div>
+            <div className="rounded-xl border border-amber-500/20 bg-amber-950/15 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">If you want a free preview</p>
+              <ol className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">1.</span>Ben builds a real mockup — free</li>
+                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">2.</span>Ready within 48 hours</li>
+                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">3.</span>You see it before spending a dollar</li>
+              </ol>
+              <p className="text-xs text-amber-400/70 mt-4">Ben does these by hand. Limited spots each week.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <footer className="border-t border-white/5 pb-24 md:pb-20">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">
@@ -719,27 +759,38 @@ export default async function AuditPage({
           1 tap away. Hormozi review round 2 #6: anchor RECOVERY (not just
           loss) — left rail shows the loss-→-recovery flip, CTA shows the
           installment plan that matches the page-body recovery promise. */}
-      {monthlyLeak > 0 && score < 80 && (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-emerald-500/30 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
-          <div className="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xl">💰</span>
-              <div className="min-w-0">
-                <div className="text-xs text-slate-400 leading-tight">
-                  <span className="hidden sm:inline">Site running at ~{score}% — fix it, get</span>
-                  <span className="sm:hidden">~{score}% · get back</span>
-                </div>
-                <div className="text-base md:text-lg font-bold text-emerald-300 leading-tight truncate">
-                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo back
-                </div>
+      {score < 80 && (
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
+          <div className="mx-auto max-w-4xl px-4 py-3">
+            {monthlyLeak > 0 && (
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-base">💰</span>
+                <span className="text-xs text-slate-400">~{score}% · recover</span>
+                <span className="text-sm font-bold text-emerald-300">
+                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo
+                </span>
               </div>
+            )}
+            <div className="flex items-center gap-2">
+              <a
+                href={checkoutUrlInstallment}
+                className="flex-1 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-3 py-2 text-xs font-bold text-white shadow hover:opacity-90 transition-opacity text-center"
+              >
+                Fix it · 3×$349
+              </a>
+              <a
+                href={`/schedule/${a.prospect_id}?source=audit-sticky`}
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-sky-500/50 bg-sky-500/10 px-3 py-2 text-xs font-semibold text-sky-300 hover:bg-sky-500/20 transition-colors text-center"
+              >
+                Book a call
+              </a>
+              <a
+                href="#cta-hub"
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors text-center"
+              >
+                Free preview
+              </a>
             </div>
-            <a
-              href={checkoutUrlInstallment}
-              className="flex-shrink-0 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-4 md:px-6 py-2.5 text-sm font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
-            >
-              Fix it · 3×$349 →
-            </a>
           </div>
         </div>
       )}

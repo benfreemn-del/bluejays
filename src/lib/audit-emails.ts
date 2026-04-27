@@ -219,8 +219,8 @@ Sure — and it scored what it scored on your audit (${auditUrl}). The question 
 2. "$997 sounds too cheap to be good."
 Fair. Here's how we do it: we've built 30+ industry-specific templates over the last year. We take ${businessName}'s real content — services, photos, copy — and build a site around it. Same quality bar as a $5K agency build, way faster delivery: 48 hours, not 8 weeks.
 
-3. "How long does this take? I'm busy."
-Onboarding form takes 15 minutes. After that, you're done. We deliver a live preview in 48 hours. You review, we tweak, we ship.
+3. "What if I don't like it?"
+Reply with the word "refund" to any email and every dollar comes back the same day. No forms, no back-and-forth, no questions asked. We'd rather give you $997 back than keep money we didn't earn.
 
 If even one of those sounds right, book a 15-min call. I'll tell you in the first 5 minutes whether we can help. If we can't, I'll point you somewhere that can.
 
@@ -244,11 +244,13 @@ export function getAuditEmail5(args: {
 
   const body = `This is the last email I'll send about ${businessName}'s audit.
 
+Your audit found real money sitting on the table — and the math doesn't change. Every month the issues stay unfixed, that number compounds. A new site pays for itself in the first couple of months if even one or two extra customers come in because of it.
+
 I'm closing the file at the end of this week. If you're not interested, no worries — just unsubscribe and we're good.
 
 If you ARE: I'm taking 4 new builds this month at $997. After that batch closes, the next batch is at $1,297.
 
-Your audit is still here if you need it (${auditUrl}).
+Your audit is still here (${auditUrl}).
 
 Book a 15-min call and let's talk:
 
