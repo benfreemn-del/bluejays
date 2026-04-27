@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingAuditCTA from "@/components/FloatingAuditCTA";
+import ScrollProgressBar from "@/components/ScrollProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,6 +105,7 @@ export default function RootLayout({
         {/* Floating audit-CTA pill — appears top-right on homepage + V2
             showcases + /templates. Self-gates via usePathname(). Lead-
             magnet entry point for warm-but-not-ready portfolio visitors. */}
+        <ScrollProgressBar />
         <FloatingAuditCTA />
         {children}
       </body>
