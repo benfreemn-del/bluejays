@@ -25,12 +25,30 @@ interface Variant {
   conversions: number;
   cost_usd: number | string;
   parent_variant_id: string | null;
+  platform_ad_id: string | null;
   bayesian_p_better: number | null;
   retired_at: string | null;
   retired_reason: string | null;
+  last_metrics_synced_at: string | null;
   metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
+}
+
+interface SyncResponse {
+  ok?: boolean;
+  durationMs?: number;
+  attempted?: number;
+  synced?: number;
+  failed?: number;
+  skipped?: number;
+  dailyRowsWritten?: number;
+  byPlatform?: {
+    meta: { synced: number; failed: number; configured: boolean };
+    google: { synced: number; failed: number; configured: boolean };
+  };
+  errors?: Array<{ variantId: string; platform: string; message: string }>;
+  error?: string;
 }
 
 interface Run {
@@ -77,12 +95,28 @@ const STATUS_BADGE: Record<Variant["status"], string> = {
   archived: "bg-slate-500/15 text-slate-300 border-slate-500/40",
 };
 
+/** "2m ago" / "3h ago" / "Apr 27" — short relative timestamp for Last
+ *  Synced column. Anything > 24h old falls back to a date string. */
+function formatRelative(iso: string): string {
+  const ts = new Date(iso).getTime();
+  if (!Number.isFinite(ts)) return "—";
+  const diffMs = Date.now() - ts;
+  const m = Math.floor(diffMs / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 export default function HyperloopDashboard() {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [runs, setRuns] = useState<Run[]>([]);
   const [config, setConfig] = useState<Config | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<SyncResponse | null>(null);
 
   async function loadAll() {
     setLoading(true);
@@ -130,6 +164,23 @@ export default function HyperloopDashboard() {
     setVariants((prev) => prev.map((v) => (v.id === id ? { ...v, status } : v)));
   }
 
+  async function runSyncNow() {
+    if (syncing) return;
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch("/api/hyperloop/sync", { method: "POST" });
+      const json: SyncResponse = await res.json();
+      setSyncResult(json);
+      // Refresh variants so the new metrics + last_metrics_synced_at show up
+      await loadAll();
+    } catch (err) {
+      setSyncResult({ error: err instanceof Error ? err.message : String(err) });
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   // Group variants by kind for display
   const kinds = Array.from(new Set(variants.map((v) => v.kind))).sort();
   const variantsByKind = new Map<string, Variant[]>();
@@ -158,17 +209,69 @@ export default function HyperloopDashboard() {
               Stage 1 active — platform APIs (Meta/Google) come in Stage 2.
             </p>
           </div>
-          <button
-            onClick={loadAll}
-            className="text-xs text-slate-400 hover:text-white transition-colors"
-          >
-            ↻ Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={runSyncNow}
+              disabled={syncing}
+              className="rounded-md bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-default px-3 py-1.5 text-xs font-semibold text-sky-950 transition-colors"
+            >
+              {syncing ? "Syncing…" : "↻ Sync now"}
+            </button>
+            <button
+              onClick={loadAll}
+              className="text-xs text-slate-400 hover:text-white transition-colors"
+            >
+              ↻ Refresh
+            </button>
+          </div>
         </header>
 
         {error && (
           <div className="mb-6 rounded-md border border-rose-500/40 bg-rose-500/10 p-4 text-sm text-rose-200">
             {error}
+          </div>
+        )}
+
+        {syncResult && (
+          <div
+            className={`mb-6 rounded-md border p-4 text-sm ${
+              syncResult.error || (syncResult.failed && syncResult.failed > 0)
+                ? "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                : "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+            }`}
+          >
+            {syncResult.error ? (
+              <span>Sync failed: {syncResult.error}</span>
+            ) : (
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                <span>
+                  ✓ Synced <strong>{syncResult.synced ?? 0}</strong> of{" "}
+                  {syncResult.attempted ?? 0} variants
+                </span>
+                {syncResult.failed && syncResult.failed > 0 && (
+                  <span className="text-amber-300">{syncResult.failed} failed</span>
+                )}
+                {syncResult.skipped && syncResult.skipped > 0 && (
+                  <span className="text-slate-400">
+                    {syncResult.skipped} skipped (no platform_ad_id)
+                  </span>
+                )}
+                <span className="text-slate-400">
+                  {syncResult.dailyRowsWritten ?? 0} daily rows written
+                </span>
+                {syncResult.byPlatform && (
+                  <span className="text-slate-400 text-xs">
+                    Meta {syncResult.byPlatform.meta.configured ? "🟢" : "⚫ mock"} ·{" "}
+                    Google {syncResult.byPlatform.google.configured ? "🟢" : "⚫ mock"}
+                  </span>
+                )}
+                {syncResult.durationMs && (
+                  <span className="text-slate-500 text-xs">
+                    {(syncResult.durationMs / 1000).toFixed(1)}s
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -286,6 +389,7 @@ export default function HyperloopDashboard() {
                         <th className="pb-2 pr-4">Conv.</th>
                         <th className="pb-2 pr-4">CR</th>
                         <th className="pb-2 pr-4">Cost</th>
+                        <th className="pb-2 pr-4">Last Synced</th>
                         <th className="pb-2"></th>
                       </tr>
                     </thead>
@@ -294,7 +398,14 @@ export default function HyperloopDashboard() {
                         const cr = v.impressions > 0 ? (v.conversions / v.impressions) * 100 : 0;
                         return (
                           <tr key={v.id} className="border-t border-white/5">
-                            <td className="py-2 pr-4 font-mono text-xs">{v.variant_name}</td>
+                            <td className="py-2 pr-4 font-mono text-xs">
+                              {v.variant_name}
+                              {v.platform_ad_id && (
+                                <div className="text-[10px] text-slate-500 mt-0.5">
+                                  ad: {v.platform_ad_id}
+                                </div>
+                              )}
+                            </td>
                             <td className="py-2 pr-4">
                               <span
                                 className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
@@ -309,6 +420,13 @@ export default function HyperloopDashboard() {
                             <td className="py-2 pr-4 text-slate-300">{cr.toFixed(2)}%</td>
                             <td className="py-2 pr-4 text-slate-300">
                               ${parseFloat(String(v.cost_usd ?? 0)).toFixed(2)}
+                            </td>
+                            <td className="py-2 pr-4 text-[11px] text-slate-500">
+                              {v.last_metrics_synced_at
+                                ? formatRelative(v.last_metrics_synced_at)
+                                : v.platform_ad_id
+                                  ? "never"
+                                  : <span className="text-slate-600">no ad mapped</span>}
                             </td>
                             <td className="py-2 text-right">
                               {v.status === "active" || v.status === "winner" ? (

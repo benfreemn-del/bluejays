@@ -6,6 +6,7 @@ import {
   type ExistingVariant,
   type VariantKind,
 } from "@/lib/hyperloop-variant-gen";
+import { syncAllVariants } from "@/lib/hyperloop-sync";
 
 /**
  * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
@@ -140,6 +141,14 @@ async function runHyperloop(req?: NextRequest) {
       customersPaid,
     });
   }
+
+  // ─── Sync platform metrics first (Q5A: single cron, two-step) ────
+  // Pulls last 7 days of impressions / clicks / conversions / spend
+  // from Meta + Google for every variant with a platform_ad_id, then
+  // refreshes the variant aggregates so analysis runs on fresh data.
+  // Partial failures are OK (Q9A) — synced variants get fresh metrics,
+  // failed ones keep their last-known state.
+  const syncResult = await syncAllVariants();
 
   // ─── Active path: load variants + analyze ─────────────────────────
   const { data: variantRows, error: variantErr } = await supabase
@@ -363,16 +372,18 @@ async function runHyperloop(req?: NextRequest) {
     week_to_date_cost_usd: weekToDateCost + totalGenCost,
     cost_cap_hit: false,
     status: "completed",
-    notes: `Stage 1 active path. Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}.`,
+    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants from platforms (${syncResult.failed} failed, ${syncResult.skipped} skipped). Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}.`,
     metadata: {
       auditsReady,
       customersPaid,
       perKind: generationResults,
+      sync: syncResult,
     },
   });
 
   return NextResponse.json({
     active: true,
+    sync: syncResult,
     variantsAnalyzed: variants.length,
     losersFound,
     winnersFound,
