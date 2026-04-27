@@ -138,6 +138,7 @@ const PUBLIC_API_PATHS = [
   "/api/audit/submit",                 // Public audit-form submission (Hormozi salty-pretzel lead-magnet)
   "/api/audit/",                       // Audit status polling endpoints (URL-as-secret)
   "/api/domain-suggestions/",          // Public auto-domain-suggest for the onboarding Step 1 (URL-as-secret pattern — prospect UUID in path)
+  "/api/hyperloop/",                   // Vercel cron (weekly) — gated by CRON_SECRET in the handler. Karpathy auto-research loop, dormant until 100 audits + 5 sales
   "/audit",                            // Audit landing page (public)
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
 ];
