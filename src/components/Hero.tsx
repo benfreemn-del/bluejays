@@ -85,10 +85,7 @@ export default function Hero() {
       </div>
 
       {/* ── Nav ── */}
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+      <nav
         className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 md:px-8 py-4 md:py-5"
       >
         <div className="flex items-center gap-2 md:gap-3">
@@ -120,7 +117,7 @@ export default function Hero() {
             </div>
           </details>
         </div>
-      </motion.nav>
+      </nav>
 
       {/* ── Animated bubble with bird on branch ── */}
       <AnimatePresence>
@@ -289,12 +286,11 @@ export default function Hero() {
           {cards.map((site) => {
             const isExternal = site.href.startsWith("http");
             return (
-            <motion.a
+            <a
               key={site.name}
               href={site.href}
               target={isExternal ? "_blank" : undefined}
               rel={isExternal ? "noopener noreferrer" : undefined}
-              whileHover={{ scale: 1.04, y: -8 }}
               className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
             >
               {/* Thumbnail area */}
@@ -342,17 +338,14 @@ export default function Hero() {
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               {/* Hover glow bg */}
               <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
-            </motion.a>
+            </a>
             );
           })}
         </div>
       </div>
 
       {/* ── CTA Banner: Request a Free Website ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 3, duration: 0.8 }}
+      <div
         className="relative z-20 w-full max-w-3xl px-6 mt-16"
       >
         <div className="relative overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-r from-sky-500/10 via-blue-600/10 to-sky-500/10 p-8 md:p-10 text-center">
@@ -375,23 +368,7 @@ export default function Hero() {
             </a>
           </div>
         </div>
-      </motion.div>
-
-      {/* ── Scroll indicator ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 6.5 }}
-        className="relative z-20 mt-16 mb-8"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center pt-2"
-        >
-          <div className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-        </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }

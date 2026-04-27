@@ -3,9 +3,8 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-// Same rainbow palette as the LC Autism / Church preview bar
 const GRADIENT =
-  "linear-gradient(to right, #ef4444, #f59e0b, #10b981, #06b6d4, #8b5cf6, #ec4899)";
+  "linear-gradient(to right, #3b82f6, #8b5cf6, #10b981, #eab308)";
 
 // Hide on operator/dashboard routes — no need there
 const HIDE_PATTERNS = [

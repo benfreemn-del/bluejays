@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import BluejayLogo from "./BluejayLogo";
 
 /* ───────────────────────── SVG Icons ───────────────────────── */
@@ -122,52 +121,33 @@ export default function Services() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <span
             className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
           >
             What You Get
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+          </span>
+          <h2
             className="text-3xl md:text-5xl font-extrabold tracking-tight"
           >
             Simple pricing.{" "}
             <span className="text-sky-400">Premium</span> results.
-          </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+          </h2>
+          <div
             className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto"
           />
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+          <p
             className="text-white/50 mt-4 max-w-2xl text-lg leading-relaxed mx-auto"
           >
             No hidden fees. No monthly subscriptions you don&apos;t need. Just a
             stunning website for $997 one-time, then $100/year starting year 2 for domain, hosting, and support. Cancel anytime.
-          </motion.p>
+          </p>
         </div>
 
         {/* Pricing cards */}
         <div className="grid md:grid-cols-3 gap-6">
           {services.map((service, i) => (
-            <motion.div
+            <div
               key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
               className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                 service.popular
                   ? "border-sky-500/30 bg-white/[0.04]"
@@ -226,7 +206,7 @@ export default function Services() {
                   ))}
                 </ul>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
