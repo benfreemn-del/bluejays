@@ -222,3 +222,91 @@ export async function rolloutBatch(
   }
   return results;
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Auto-pause (Stage 2 Commit D, per Q4A)
+// When the Bayesian analyzer flips a variant to status='loser', we
+// also pause the underlying ad on Meta/Google so it stops spending
+// budget. Meta + Google's adset/campaign optimizers auto-rebalance
+// the remaining spend across active ads — that's the implicit budget
+// rebalancing per Q9A.
+// ─────────────────────────────────────────────────────────────────
+
+export interface PauseResult {
+  variantId: string;
+  kind: string;
+  platformAdId: string;
+  success: boolean;
+  skipped?: "unsupported_kind" | "no_platform_ad_id";
+  error?: string;
+}
+
+/** Pause a single variant on its platform. Routes by kind. */
+export async function pauseVariantOnPlatform(args: {
+  variantId: string;
+  kind: string;
+  platformAdId: string | null;
+}): Promise<PauseResult> {
+  const { variantId, kind, platformAdId } = args;
+
+  if (!platformAdId) {
+    return {
+      variantId,
+      kind,
+      platformAdId: "",
+      success: false,
+      skipped: "no_platform_ad_id",
+    };
+  }
+
+  if (kind === "ad_copy_meta") {
+    try {
+      await getMetaAdsClient().setAdStatus(platformAdId, "PAUSED");
+      return { variantId, kind, platformAdId, success: true };
+    } catch (err) {
+      return {
+        variantId,
+        kind,
+        platformAdId,
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  }
+
+  if (kind === "ad_copy_google") {
+    try {
+      await getGoogleAdsClient().setAdStatus(platformAdId, "PAUSED");
+      return { variantId, kind, platformAdId, success: true };
+    } catch (err) {
+      return {
+        variantId,
+        kind,
+        platformAdId,
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  }
+
+  // Internal kinds (audit_prompt, email_*, etc.) don't have platform
+  // ads. The DB status flip is the only "pause" they need.
+  return {
+    variantId,
+    kind,
+    platformAdId,
+    success: false,
+    skipped: "unsupported_kind",
+  };
+}
+
+/** Batch pause — caller decides which variants to pause. */
+export async function pauseBatch(
+  variants: Array<{ variantId: string; kind: string; platformAdId: string | null }>,
+): Promise<PauseResult[]> {
+  const results: PauseResult[] = [];
+  for (const v of variants) {
+    results.push(await pauseVariantOnPlatform(v));
+  }
+  return results;
+}

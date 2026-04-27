@@ -7,7 +7,12 @@ import {
   type VariantKind,
 } from "@/lib/hyperloop-variant-gen";
 import { syncAllVariants } from "@/lib/hyperloop-sync";
-import { rolloutBatch, type RolloutResult } from "@/lib/hyperloop-rollout";
+import {
+  rolloutBatch,
+  pauseVariantOnPlatform,
+  type RolloutResult,
+  type PauseResult,
+} from "@/lib/hyperloop-rollout";
 
 /**
  * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
@@ -155,7 +160,7 @@ async function runHyperloop(req?: NextRequest) {
   const { data: variantRows, error: variantErr } = await supabase
     .from("hyperloop_variants")
     .select(
-      "id, kind, variant_name, content, status, impressions, clicks, conversions, cost_usd",
+      "id, kind, variant_name, content, status, impressions, clicks, conversions, cost_usd, platform_ad_id",
     )
     .in("status", ["active", "winner"]); // include current winners as seed candidates
 
@@ -182,10 +187,17 @@ async function runHyperloop(req?: NextRequest) {
   // Side map for content — analysis lib stays focused on metrics, but
   // the AI generator needs to see the actual copy/payload.
   const variantContents = new Map<string, Record<string, unknown>>();
+  // Side map for platform_ad_id — needed by Commit D auto-pause to know
+  // which platform ad to pause when a variant is flipped to 'loser'.
+  const variantPlatformAdIds = new Map<string, string | null>();
   for (const r of variantRows ?? []) {
     variantContents.set(
       r.id as string,
       (r.content ?? {}) as Record<string, unknown>,
+    );
+    variantPlatformAdIds.set(
+      r.id as string,
+      (r.platform_ad_id as string | null) ?? null,
     );
   }
 
@@ -194,6 +206,9 @@ async function runHyperloop(req?: NextRequest) {
   // ─── Apply verdicts: auto-pause losers, promote winners ───────────
   let losersFound = 0;
   let winnersFound = 0;
+  let losersPausedOnPlatform = 0;
+  let losersPauseFailed = 0;
+  const pauseResults: PauseResult[] = [];
 
   for (const v of variants) {
     const a = analyses.get(v.id);
@@ -219,6 +234,28 @@ async function runHyperloop(req?: NextRequest) {
       winnersFound++;
     }
     await supabase.from("hyperloop_variants").update(update).eq("id", v.id);
+
+    // ── Stage 2 Commit D: auto-pause losers on the platform ──
+    // When the DB flips to 'loser', stop the corresponding ad from
+    // spending budget. Meta + Google's adset/campaign optimizers
+    // automatically reallocate the saved spend across the remaining
+    // active ads — that's the implicit budget rebalancing per Q9A.
+    if (newStatus === "loser") {
+      const platformAdId = variantPlatformAdIds.get(v.id);
+      if (platformAdId) {
+        const pauseResult = await pauseVariantOnPlatform({
+          variantId: v.id,
+          kind: v.kind,
+          platformAdId,
+        });
+        pauseResults.push(pauseResult);
+        if (pauseResult.success) {
+          losersPausedOnPlatform++;
+        } else if (pauseResult.error) {
+          losersPauseFailed++;
+        }
+      }
+    }
   }
 
   // ─── Cost cap check (6B: $50/wk Anthropic credit cap) ─────────────
@@ -411,7 +448,7 @@ async function runHyperloop(req?: NextRequest) {
     week_to_date_cost_usd: weekToDateCost + totalGenCost,
     cost_cap_hit: false,
     status: "completed",
-    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants from platforms (${syncResult.failed} failed, ${syncResult.skipped} skipped). Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}, rolled out ${totalRolledOut} to platforms (${totalRolloutFailed} failed).`,
+    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants. Analyzed ${variants.length}, promoted ${winnersFound} winners, marked ${losersFound} losers (${losersPausedOnPlatform} paused on platform, ${losersPauseFailed} pause-failed). Generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}, rolled out ${totalRolledOut} to platforms (${totalRolloutFailed} failed).`,
     metadata: {
       auditsReady,
       customersPaid,
@@ -422,6 +459,11 @@ async function runHyperloop(req?: NextRequest) {
         rolledOut: totalRolledOut,
         failed: totalRolloutFailed,
       },
+      pauses: pauseResults,
+      pauseSummary: {
+        paused: losersPausedOnPlatform,
+        failed: losersPauseFailed,
+      },
     },
   });
 
@@ -431,6 +473,8 @@ async function runHyperloop(req?: NextRequest) {
     variantsAnalyzed: variants.length,
     losersFound,
     winnersFound,
+    losersPausedOnPlatform,
+    losersPauseFailed,
     newVariantsCreated: totalNewVariants,
     rolledOut: totalRolledOut,
     rolloutFailed: totalRolloutFailed,
@@ -438,6 +482,7 @@ async function runHyperloop(req?: NextRequest) {
     weekToDateCostUsd: weekToDateCost + totalGenCost,
     perKind: generationResults,
     rollouts: rolloutResults,
+    pauses: pauseResults,
   });
 }
 

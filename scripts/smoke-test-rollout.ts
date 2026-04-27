@@ -104,7 +104,58 @@ async function main() {
     })),
   );
 
-  console.log("\n=== All rollout cases handled correctly ===");
+  console.log("\n=== Auto-pause cases (Stage 2 Commit D) ===\n");
+
+  const { pauseVariantOnPlatform, pauseBatch } = await import("../src/lib/hyperloop-rollout");
+
+  console.log("7. Pause Meta variant with platform_ad_id:");
+  const p1 = await pauseVariantOnPlatform({
+    variantId: "v_meta_1",
+    kind: "ad_copy_meta",
+    platformAdId: "mock_meta_ad_xxx",
+  });
+  console.log("   →", p1);
+
+  console.log("\n8. Pause Google variant with platform_ad_id:");
+  const p2 = await pauseVariantOnPlatform({
+    variantId: "v_google_1",
+    kind: "ad_copy_google",
+    platformAdId: "mock_google_ad_xxx",
+  });
+  console.log("   →", p2);
+
+  console.log("\n9. Pause variant with no platform_ad_id — should skip:");
+  const p3 = await pauseVariantOnPlatform({
+    variantId: "v_unmapped",
+    kind: "ad_copy_meta",
+    platformAdId: null,
+  });
+  console.log("   →", p3);
+
+  console.log("\n10. Pause unsupported kind — should skip:");
+  const p4 = await pauseVariantOnPlatform({
+    variantId: "v_internal",
+    kind: "audit_prompt",
+    platformAdId: "anything",
+  });
+  console.log("   →", p4);
+
+  console.log("\n11. Batch pause:");
+  const pBatch = await pauseBatch([
+    { variantId: "vp1", kind: "ad_copy_meta", platformAdId: "ad_meta_1" },
+    { variantId: "vp2", kind: "ad_copy_google", platformAdId: "ad_g_1" },
+    { variantId: "vp3", kind: "audit_prompt", platformAdId: null },
+  ]);
+  console.log(
+    "   batch results:",
+    pBatch.map((r) => ({
+      variantId: r.variantId,
+      success: r.success,
+      skipped: r.skipped,
+    })),
+  );
+
+  console.log("\n=== All rollout + pause cases handled correctly ===");
 }
 
 main().catch((err) => {
