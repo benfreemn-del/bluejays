@@ -36,8 +36,53 @@ import { useEffect, useState } from "react";
 
 // Read env vars at module load time. NEXT_PUBLIC_* are inlined at build
 // so these values are safe in client code.
-const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+const RAW_META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+const RAW_GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+
+/**
+ * Defensive validators — refuse to mount the pixel scripts when env
+ * vars contain placeholder text (e.g. literal "1234567890123456" or
+ * "AW-XXXXXXXXXX"). Without this, a copy-pasted-from-docs value would
+ * load junk scripts that 404 at Meta/Google and pollute the console.
+ *
+ * Real Meta Pixel IDs: 15- or 16-digit numbers (no letters, no
+ * placeholder X's). Real Google Ads IDs: "AW-" + 9–10 digit account
+ * number (no X's).
+ */
+function isValidMetaPixelId(v: string | undefined): v is string {
+  if (!v) return false;
+  const trimmed = v.trim();
+  if (!/^\d{15,16}$/.test(trimmed)) return false;
+  // Detect obvious placeholder patterns (sequential digits, all same).
+  if (trimmed === "1234567890123456" || trimmed === "0000000000000000") return false;
+  return true;
+}
+
+function isValidGoogleAdsId(v: string | undefined): v is string {
+  if (!v) return false;
+  const trimmed = v.trim();
+  if (!/^AW-\d{9,11}$/.test(trimmed)) return false;
+  return true;
+}
+
+const META_PIXEL_ID = isValidMetaPixelId(RAW_META_PIXEL_ID) ? RAW_META_PIXEL_ID : undefined;
+const GOOGLE_ADS_ID = isValidGoogleAdsId(RAW_GOOGLE_ADS_ID) ? RAW_GOOGLE_ADS_ID : undefined;
+
+// One-time dev-mode warning so misconfigured env vars are loud, not silent.
+if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+  if (RAW_META_PIXEL_ID && !META_PIXEL_ID) {
+    console.warn(
+      `[RetargetingPixels] NEXT_PUBLIC_META_PIXEL_ID="${RAW_META_PIXEL_ID}" looks like a placeholder. ` +
+        `Real pixel IDs are 15-16 digits with no letters/X's. Skipping Meta Pixel mount.`,
+    );
+  }
+  if (RAW_GOOGLE_ADS_ID && !GOOGLE_ADS_ID) {
+    console.warn(
+      `[RetargetingPixels] NEXT_PUBLIC_GOOGLE_ADS_ID="${RAW_GOOGLE_ADS_ID}" looks like a placeholder. ` +
+        `Real Google Ads IDs are "AW-" + 9-11 digits with no X's. Skipping Google Ads tag mount.`,
+    );
+  }
+}
 
 export default function RetargetingPixels() {
   // Embed-mode check happens on the client since we read window.location.
