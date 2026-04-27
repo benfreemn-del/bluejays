@@ -443,7 +443,6 @@ export default async function AuditPage({
                       transformOrigin: "top left",
                       pointerEvents: "none",
                       border: "none",
-                      filter: "blur(2px)",
                     }}
                     loading="lazy"
                   />
