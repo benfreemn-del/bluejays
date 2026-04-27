@@ -450,7 +450,7 @@ export function getOnboardingReminderEmail(prospect: Prospect): EmailTemplate {
 
 Saw you grabbed ${prospect.businessName}'s website earlier today — thanks again!
 
-I'm ready to start customizing, but I need your onboarding form first so I can plug in your real logo, colors, services, and photos. Takes about 10 minutes:
+I'm ready to start customizing, but I need your onboarding form first so I can plug in your real logo, colors, services, and photos. Step 1 takes 3-5 minutes — that alone unblocks me:
 
 ${onboardingUrl}
 
@@ -525,7 +525,7 @@ export function getOnboardingReminderDay5(prospect: Prospect): EmailTemplate {
 
 ${prospect.businessName}'s site has been ready to customize for almost a week. Want me to just grab the details over a quick call or by email instead?
 
-If the form's the blocker, reply with your logo + brand colors + services and I'll plug it in for you. Otherwise the 3-step form takes about 10 min:
+If the form's the blocker, reply with your logo + brand colors + services and I'll plug it in for you. Otherwise the 3-step form's first step takes 3-5 min:
 
 ${onboardingUrl}
 

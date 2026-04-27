@@ -1306,9 +1306,9 @@ Each template uses a DIFFERENT color variable name. Using the wrong one crashes 
 
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
-- **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
+- **Current active categories** — every category in `src/lib/scout.ts::ACTIVE_CATEGORIES` has a V2 preview template AND a V2 showcase page (verified 2026-04-26: 46 templates + 46 showcases on disk). The full list is whatever `ACTIVE_CATEGORIES` exports — that's the source of truth, not this comment.
 - **Add new categories only after building their premium template first** — template first, then scout.
-- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: ALL 41 categories have V2 — electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa, general-contractor, catering, pet-services, physical-therapy, tutoring, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
+- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: 46 categories total — electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa, general-contractor, catering, pet-services, physical-therapy, tutoring, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction (plus 5 more — `ls src/components/templates/V2*Preview.tsx | wc -l` is the canonical count).
 
 ## Version Toggle Rules (NON-NEGOTIABLE)
 - **Every preview must have a V1/V2 toggle** — the preview-device page must allow Ben to flip between V1 (generic PreviewRenderer) and V2 (dynamic V2 renderer) for any prospect. This lets Ben compare quality levels.
@@ -1343,8 +1343,11 @@ Each template uses a DIFFERENT color variable name. Using the wrong one crashes 
 - **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($997).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront to cover basic domain registration and hosting setup costs instead of the standard $997 one-time fee, which includes custom website design, domain registration, and hosting setup. Both tiers still create the same deferred $100/year maintenance subscription after 1 year, which covers domain renewal, hosting, ongoing maintenance, and support. Never auto-assign free tier — it requires manual tagging by Ben.
 - **Two pricing tiers exist**: Standard ($997 one-time for custom website design, domain registration, and hosting setup → $100/yr after 1 year for domain renewal, hosting, ongoing maintenance, and support) and Free ($30 upfront for basic domain registration and hosting setup costs → $100/yr after 1 year for domain renewal, hosting, ongoing maintenance, and support). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
 
-## Active Template Categories (41 total)
-real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
+## Active Template Categories (46 total — verified 2026-04-26 via `ls src/components/templates/V2*Preview.tsx`)
+The canonical list lives in `src/lib/scout.ts::ACTIVE_CATEGORIES` — that's source of truth. The hand-maintained list below drifted historically (was "41 total"); on disk we have 46 V2 preview templates + 46 V2 showcase pages. When in doubt, `ls src/components/templates/V2*Preview.tsx | wc -l`.
+
+Known categories (partial — see `scout.ts` for the complete + currently-active set):
+real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction (plus 5 additional categories — check `ls` for the current set).
 
 ## Gallery-Heavy Categories
 These categories MUST have prominent visual galleries/portfolios as a primary feature:
@@ -1882,17 +1885,20 @@ Hey {name}, just left you a voicemail about the site I built for
 ### Relationship to email + voicemail templates
 
 The funnel schedule (from `FUNNEL_STEPS` in `src/lib/funnel-manager.ts`)
-interlocks SMS, email, and ringless voicemail across 30 days:
+interlocks SMS, email, and ringless voicemail across 60 days. Verified
+against code 2026-04-26.
 
 | Day | Channels | Label |
 |-----|----------|-------|
 | 0 | email + SMS | Initial Pitch |
 | 2 | voicemail | Voicemail Drop |
-| 5 | email | Gentle Follow-Up |
+| 5 | email + SMS | Gentle Follow-Up |
 | 12 | email + SMS | Value Reframe |
 | 18 | voicemail | Follow-Up VM |
-| 21 | email | Social Proof |
+| 21 | email + SMS | Social Proof |
 | 30 | email | Final Check-In |
+| 45 | email | graceful_goodbye |
+| 60 | email | final_seasonal_hook |
 
 Notes:
 - **Voicemails on Day 2 + Day 18 only** — two ringless drops per funnel.
@@ -1902,12 +1908,13 @@ Notes:
   tries SMS as a fallback — which is also blocked by `SMS_FUNNEL_DISABLED`
   today. So Day 2 + Day 18 simply skip during warmup and the prospect
   advances to the next email step.
-- **SMS fires on Day 0 + Day 12 only** — aligned with the email pitch +
-  Value Reframe so recipients who get both channels hear a consistent
-  voice within a few minutes of each other.
-- **Email fires on 5 days** — Day 0, 5, 12, 21, 30. Day 30 is email
-  only (the graceful-out final check-in), NOT email + SMS. Don't
-  double-send on the final day.
+- **SMS-eligible days are Day 0, 5, 12, 21** — but SMS only actually
+  fires for `source === "inbound"` prospects (Rule 35 + the A2P 10DLC
+  gate). For cold-scouted prospects, SMS is gated off and only email
+  goes out on those days.
+- **Email fires on 7 days** — Day 0, 5, 12, 21, 30, 45, 60. Day 30 is
+  the final-check-in, Day 45/60 are reactivation hooks for prospects
+  who never replied.
 - **The tone matches across channels** so a prospect who receives both
   email + SMS + voicemail feels like they're hearing from the same
   person, not a marketing machine. Every surface uses the effort hook,
@@ -2160,7 +2167,7 @@ Scouting (auto-scout) → Scraping → Site Generation → QC (Claude + automate
 
 Key infrastructure:
 - Supabase: prospects, scraped_data, funnel_enrollments, domain_warming, emails, email_events, generated_sites (with video_* columns), funnel_retry_queue, auto_scout_progress
-- Vercel cron: `/api/funnel/run` daily at 08:00 UTC + `/api/replies/process` every minute
+- Vercel cron: `/api/funnel/run` daily at 16:00 UTC (8am PT — Rule 30) + `/api/replies/process` every minute
 - SendGrid: both `bluejayportfolio.com` and `bluejaywebs.com` domain-authenticated; per-domain SENDERS lookup in email-sender.ts
 - Twilio: A2P 10DLC pending carrier approval (required for US SMS at scale)
 - Stripe: Sandbox mode for testing; Live mode keys + Live mode webhook required before May 1
@@ -5779,10 +5786,16 @@ of pipeline time.
    the watchdog itself a tick-counted cron that logs to a
    `watchdog_runs` table the same way.
 
-**Reference (in progress):** the watchdog pattern hasn't been built
-yet. Hyperloop logs heartbeats correctly into `hyperloop_runs` but
-no daily checker monitors that table. Adding the watchdog itself is
-a follow-up task — track in the operator todo list.
+**Reference (built 2026-04-26):** `/api/watchdog/run` (daily 13:00 UTC,
+self-logs to `watchdog_runs`) scans 18 entries in `WATCHED_CRONS`. As
+of commit 57771f1, every cron in `vercel.json` writes a `cron_heartbeats`
+row at end-of-success via `logHeartbeat(cron_name, metadata)`, and the
+watchdog scans by `cron_name` filter. Stale heartbeats SMS Ben.
+
+**Still open (canary-of-canary):** the watchdog itself logs to
+`watchdog_runs` every tick, but nothing reads that table for staleness.
+A second-level "watchdog-watcher" or external uptime monitor would
+catch the case where the watchdog cron itself silently fails.
 
 **Apply to:** every existing + future cron. Audit `vercel.json`
 crons periodically — any cron without a corresponding heartbeat-table
