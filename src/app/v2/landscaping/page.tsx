@@ -738,7 +738,7 @@ export default function V2LandscapingPage() {
           <div className="text-center mb-14">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Transparent Pricing</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Investment Guide" />
+              <WordReveal text="What Projects Cost" />
             </h2>
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>

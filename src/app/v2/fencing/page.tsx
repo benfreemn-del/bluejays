@@ -543,7 +543,7 @@ export default function V2FencingPage() {
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Client Reviews</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="What Our Clients Say" />
+              <WordReveal text="Neighbors Trust Us" />
             </h2>
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>

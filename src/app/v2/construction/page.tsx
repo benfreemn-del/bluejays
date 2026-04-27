@@ -176,7 +176,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── DATA ───────────────────────── */
 const services = [
   { title: "Residential Construction", description: "Custom home builds, additions, and major renovations from foundation to finish. We manage every trade, permit, and inspection so you get a turnkey result.", icon: House },
-  { title: "Commercial Construction", description: "Office buildings, retail spaces, warehouses, and tenant improvements. We deliver on time and on budget with dedicated project managers for every job.", icon: Buildings },
+  { title: "Commercial Construction", description: "Office buildings, retail spaces, warehouses, and tenant improvements. Fixed-price contracts, dedicated project managers, and weekly owner updates on every job.", icon: Buildings },
   { title: "Remodeling & Renovation", description: "Kitchen and bath remodels, basement finishing, whole-home renovations, and structural modifications. We transform existing spaces into something extraordinary.", icon: Hammer },
   { title: "Concrete & Foundation", description: "Foundations, slabs, driveways, retaining walls, and decorative concrete. Our crews handle everything from formwork to finishing with precision.", icon: Wall },
   { title: "Steel & Structural", description: "Structural steel erection, welding, metal buildings, and reinforcement. We work with architects and engineers to bring complex designs to life safely.", icon: Wrench },
@@ -184,9 +184,9 @@ const services = [
 ];
 
 const testimonials = [
-  { name: "Richard & Sara K.", text: "They built our dream home from the ground up. Every detail was handled with care and the communication throughout the 10-month build was exceptional. Could not be happier.", rating: 5 },
-  { name: "Thompson Corp.", text: "Apex completed our 20,000 sqft office build two weeks ahead of schedule and under budget. Their project management is top-notch and their crews are professional.", rating: 5 },
-  { name: "Lisa M.", text: "Our kitchen and bathroom remodel exceeded all expectations. The quality of craftsmanship is evident in every corner. They treated our home like it was their own.", rating: 5 },
+  { name: "Richard & Sara K.", text: "Our custom home sat on a tricky slope with serious site engineering. Apex solved every problem before it became our problem. Best decision we made was hiring them first.", rating: 5 },
+  { name: "Thompson Corp.", text: "Apex turned our empty lot into a 20,000 sqft office campus in 11 months. They managed 14 subcontractors without a single delay passing to us. The final walkthrough had zero punch list items.", rating: 5 },
+  { name: "Lisa M.", text: "We gutted a 1970s split-level and opened it into a modern open floor plan. Structural work, new windows, the whole thing. Apex kept the dust contained and delivered exactly what the architect drew.", rating: 5 },
 ];
 
 const certifications = [
@@ -278,7 +278,7 @@ export default function V2ConstructionPage() {
               </h1>
             </div>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-300 max-w-md leading-relaxed">
-              From custom homes to commercial projects, Apex Construction delivers exceptional craftsmanship, transparent pricing, and reliable timelines. Your project is in expert hands.
+              From custom homes to commercial projects, Apex Construction delivers exceptional craftsmanship, transparent pricing, and reliable timelines. 25 years. 340+ builds. Zero shortcuts.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
@@ -877,10 +877,10 @@ export default function V2ConstructionPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Let Us Build Something Great" />
+                <WordReveal text="Get In Touch" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md mb-8">
-                From initial concept to final walkthrough, Apex Construction is your partner in building. Contact us to discuss your next project.
+                Call, email, or fill out the form and we will get back to you same day. We work in the metro area and surrounding counties.
               </p>
             </div>
             <GlassCard className="p-8">
@@ -913,8 +913,8 @@ export default function V2ConstructionPage() {
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <GlassCard className="p-8 md:p-12 text-center">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Start With An Estimate</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Let's Build Something Great</h2>
-            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Free on-site consultation, line-item quote, and no obligation to hire. We handle everything from permits to punch list — you enjoy the result.</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Free Estimate — No Obligation</h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">We come to the site, review the scope, and give you a line-item quote in writing. No pressure, no guesswork — just a straight number you can plan around.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 <CalendarCheck size={20} weight="duotone" /> Schedule Estimate
