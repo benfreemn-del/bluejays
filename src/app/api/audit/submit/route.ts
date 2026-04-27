@@ -21,6 +21,11 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  *     the status endpoint
  */
 
+// Category whitelist — must match the V2 template + showcase list
+// (`ls src/components/templates/V2*Preview.tsx`). Verified 2026-04-27.
+// Plus "general" catch-all + "restaurant" + "medical" + "painting" +
+// "fencing" — these have V2 templates but were missing from the audit
+// allowlist. Synced per Q11B locked design.
 const ALLOWED_CATEGORIES = new Set([
   "dental", "electrician", "plumber", "hvac", "roofing", "auto-repair",
   "law-firm", "salon", "fitness", "real-estate", "veterinary", "photography",
@@ -30,7 +35,9 @@ const ALLOWED_CATEGORIES = new Set([
   "general-contractor", "catering", "pet-services", "church",
   "med-spa", "carpet-cleaning", "junk-removal", "tree-service",
   "pressure-washing", "garage-door", "locksmith", "towing",
-  "construction", "appliance-repair", "event-planning", "general",
+  "construction", "appliance-repair", "event-planning",
+  "restaurant", "medical", "painting", "fencing",
+  "general",
 ]);
 
 function isValidEmail(email: string): boolean {

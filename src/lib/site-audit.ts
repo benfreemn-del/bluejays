@@ -17,6 +17,10 @@
 
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
+import {
+  formatHeroPainPointsBlock,
+  formatTechPainPointsBlock,
+} from "./audit-category-pain-points";
 
 const CLAUDE_MODEL = "claude-sonnet-4-6";
 const OPENAI_MODEL = "gpt-4.1-mini";
@@ -391,7 +395,7 @@ export async function runAudit(args: {
           error: err instanceof Error ? err.message : String(err),
         }),
       ),
-      runTechnicalAnalysis(ctx).catch((err) => ({
+      runTechnicalAnalysis(ctx, businessCategory).catch((err) => ({
         seoFindings: [],
         technicalFindings: [],
         mobileFindings: [],
@@ -666,12 +670,15 @@ interface TechnicalAnalysisResult {
   error?: string;
 }
 
-async function runTechnicalAnalysis(ctx: SiteContext): Promise<TechnicalAnalysisResult> {
+async function runTechnicalAnalysis(
+  ctx: SiteContext,
+  category: string,
+): Promise<TechnicalAnalysisResult> {
   if (!process.env.OPENAI_API_KEY) {
     return mockTechnicalAnalysis(ctx);
   }
 
-  const prompt = buildTechnicalPrompt(ctx);
+  const prompt = buildTechnicalPrompt(ctx, category);
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -737,6 +744,7 @@ function buildHeroPrompt(
   const benchmarkLine = benchmark
     ? `Quality bar to compare against: BlueJays' ${benchmark.template} site at ${benchmark.url}`
     : "No specific BlueJays example site for this category yet.";
+  const painBlock = formatHeroPainPointsBlock(category);
 
   return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
 
@@ -751,16 +759,24 @@ TONE — non-negotiable:
 - Lead with cost (lost customers, missed jobs, wasted money) — never the technical issue.
 - Quote their actual copy. Reference real numbers.
 
+UNIVERSAL RULES — apply to every category:
+1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
+2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
+3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
+
 Business: ${businessName}
 Category: ${category}
 URL: ${ctx.url}
 ${benchmarkLine}
+
+${painBlock}
 
 Site signals:
 - Title: "${ctx.title}" (${ctx.title.length} chars)
 - Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
 - H1: "${ctx.h1Text}"
 - Headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
+- Image count: ${ctx.imageCount} (${ctx.imagesWithAlt} with alt text)
 - Body (first 2K): """${ctx.bodyExcerpt}"""
 ${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
 
@@ -793,7 +809,8 @@ Generate 4-6 findings total. RULES:
 JSON only.`;
 }
 
-function buildTechnicalPrompt(ctx: SiteContext): string {
+function buildTechnicalPrompt(ctx: SiteContext, category: string): string {
+  const techPainBlock = formatTechPainPointsBlock(category);
   return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
 
 TONE — non-negotiable:
@@ -807,6 +824,7 @@ TONE — non-negotiable:
 - Celebrate good things plainly: "All 22 of your images have alt text. Google loves that."
 
 URL: ${ctx.url}
+Category: ${category}
 Title: "${ctx.title}" (${ctx.title.length} chars)
 Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
 H1: "${ctx.h1Text}"
@@ -817,6 +835,8 @@ Viewport: ${ctx.hasViewport}
 Favicon: ${ctx.hasFavicon}
 Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
+
+${techPainBlock}
 
 Return JSON:
 {
