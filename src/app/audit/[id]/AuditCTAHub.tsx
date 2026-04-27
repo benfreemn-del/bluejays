@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackMetaEvent } from "@/components/RetargetingPixels";
 
 /**
  * 3-CTA hub at the bottom of the audit page. Replaces the v6
@@ -61,6 +62,26 @@ export default function AuditCTAHub({
         message: data.message || "Got it. Ben will build your preview within 48 hours.",
         already: !!data.already,
       });
+
+      // Retargeting: fire `Lead` only on the FIRST request (data.already
+      // means we already fired it on the first click — don't double-count).
+      if (!data.already) {
+        trackMetaEvent("Lead", {
+          content_name: "audit_preview_request",
+          content_category: "deeper_intent",
+        });
+        const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+        if (typeof w.gtag === "function") {
+          try {
+            w.gtag("event", "audit_preview_lead", {
+              event_category: "lead_magnet",
+              event_label: "preview_requested",
+            });
+          } catch {
+            // Never let analytics break user flow
+          }
+        }
+      }
     } catch {
       setRequest({
         status: "error",

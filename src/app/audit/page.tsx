@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AuditForm from "./AuditForm";
+import RetargetingPixels from "@/components/RetargetingPixels";
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -38,6 +39,11 @@ export const dynamic = "force-dynamic";
 export default function AuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Retargeting pixels — every audit landing-page visitor enters the
+          30-day Meta + Google retargeting window. Lead-magnet entrypoint
+          for paid ads (Tier 3). Self-gates on env vars. */}
+      <RetargetingPixels />
+
       {/* Hero */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20">
         <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">

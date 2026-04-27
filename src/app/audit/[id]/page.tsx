@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import AuditCTAHub from "./AuditCTAHub";
+import RetargetingPixels from "@/components/RetargetingPixels";
 
 /**
  * /audit/[id] — Hormozi salty-pretzel report display.
@@ -145,6 +146,12 @@ export default async function AuditPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Retargeting pixels — every audit-report visitor enters the
+          30-day Meta + Google retargeting window. High-intent audience
+          (they ran an audit AND opened the result), so the retargeting
+          is well worth the cost-per-impression. */}
+      <RetargetingPixels />
+
       {/* Header */}
       <header className="border-b border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-6 flex items-center justify-between">

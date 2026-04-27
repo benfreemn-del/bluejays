@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackMetaEvent } from "@/components/RetargetingPixels";
 
 const CATEGORIES = [
   ["dental", "Dental"],
@@ -73,6 +74,30 @@ export default function AuditForm() {
         return;
       }
       setState("success");
+
+      // Fire retargeting events BEFORE redirect (the redirect kills the
+      // current page; if the events fired async after, they'd race
+      // against navigation and may not reach Meta/Google).
+      // Meta `Lead` is the standard pixel event for mid-funnel sign-ups.
+      trackMetaEvent("Lead", {
+        content_name: "site_audit",
+        content_category: businessCategory,
+      });
+      // Google Ads custom event — Ben can wire a conversion label later
+      // by configuring the Conversion in the Google Ads dashboard and
+      // firing trackGoogleAdsConversion("AW-XXX/labelXXX", ...) here.
+      const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+      if (typeof w.gtag === "function") {
+        try {
+          w.gtag("event", "audit_lead", {
+            event_category: "lead_magnet",
+            event_label: businessCategory,
+          });
+        } catch {
+          // Never let analytics break user flow
+        }
+      }
+
       // Redirect to processing page
       window.location.href = data.redirectUrl || `/audit/${data.auditId}/processing`;
     } catch (err) {
