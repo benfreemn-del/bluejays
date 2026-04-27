@@ -6,6 +6,7 @@ import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import RetargetingPixels from "@/components/RetargetingPixels";
+import AuditTestimonials from "@/app/audit/AuditTestimonials";
 
 const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -40,6 +41,7 @@ export default function Home() {
           retargeting window. Self-gates on env vars + ?embed=1. */}
       <RetargetingPixels />
       <Hero />
+      <AuditTestimonials />
       <Stats />
       <About />
       <Services />
