@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 interface WelcomeData {
   businessName: string;
   previewUrl: string;
-  editUrl: string;
   onboardingUrl: string;
 }
 
@@ -16,14 +15,20 @@ export default function WelcomePage() {
   const [data, setData] = useState<WelcomeData | null>(null);
 
   useEffect(() => {
-    fetch(`/api/prospects/${prospectId}`)
+    // Public endpoint — paying customers land here from the Stripe success URL
+    // without an auth cookie. /api/prospects/[id] is admin-protected and would
+    // 401 silently. Per CLAUDE.md "Public-Facing Surface Rules" use the
+    // whitelisted claim endpoint instead.
+    fetch(`/api/claim/${prospectId}`)
       .then((r) => r.json())
       .then((prospect) => {
         if (!prospect.error) {
           setData({
             businessName: prospect.businessName,
-            previewUrl: prospect.generatedSiteUrl || `/preview/${prospectId}`,
-            editUrl: `/edit/${prospectId}`,
+            // Trust generatedSiteUrl from the claim API. If absent we show
+            // "Site loading…" instead of a broken /preview/[uuid] long URL
+            // that would 401 for unauthenticated customers anyway (Rule 1).
+            previewUrl: prospect.generatedSiteUrl || "",
             onboardingUrl: `/onboarding/${prospectId}`,
           });
         }
@@ -99,13 +104,13 @@ export default function WelcomePage() {
         <Step
           number={4}
           title="Final Review"
-          description="We'll send you a preview of the customized site. You can request unlimited tweaks until you're 100% happy."
+          description="We'll send you a preview of the customized site. You can request unlimited tweaks until you're 100% happy. Just reply to your welcome email or text Ben directly."
           action={
             <a
-              href={data.editUrl}
+              href="mailto:bluejaycontactme@gmail.com?subject=Request%20changes%20to%20my%20site"
               className="inline-flex h-11 px-6 rounded-xl bg-surface border border-border text-foreground text-sm font-medium items-center hover:border-blue-electric/40 transition-colors"
             >
-              Request Changes (Phone-Friendly)
+              Email Changes to Ben
             </a>
           }
         />
@@ -129,20 +134,33 @@ export default function WelcomePage() {
             "Mobile-responsive layout",
             "SEO optimization",
             "Contact forms",
-            "Hosting & SSL certificate",
-            "Domain connection",
-            "1 year site management",
+            "Domain registration",
+            "Hosting setup & SSL",
             "Unlimited revisions",
             "Google Analytics setup",
             "Social media integration",
             "Speed optimization",
             "Security monitoring",
+            "Email + text support",
           ].map((item) => (
             <div key={item} className="flex items-center gap-2 text-sm">
               <span className="text-blue-electric">✓</span>
               <span className="text-muted">{item}</span>
             </div>
           ))}
+        </div>
+
+        {/* Year-2 billing transparency — CLAUDE.md "Pricing Wording
+            Consistency Rule" requires every paid-customer surface to
+            disclose the renewal cadence. */}
+        <div className="mt-8 p-6 rounded-2xl bg-surface border border-border">
+          <h3 className="text-sm font-bold mb-2">Your billing — clear and simple</h3>
+          <p className="text-muted text-xs leading-relaxed">
+            Today&apos;s payment covers your custom website design, domain
+            registration, and hosting setup. Starting year 2, $100/year covers
+            domain renewal, hosting, ongoing maintenance, and support. Cancel
+            anytime — you keep the site and the domain transfers to you.
+          </p>
         </div>
       </div>
 

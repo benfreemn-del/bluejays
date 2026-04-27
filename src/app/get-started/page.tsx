@@ -70,7 +70,7 @@ export default function GetStartedPage() {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-4 text-white">You&apos;re In!</h1>
           <p className="text-white/50 text-lg mb-6 leading-relaxed">
-            We&apos;re building your custom website right now. You&apos;ll receive a preview link within <span className="text-white font-semibold">48 hours</span> — completely free, no strings attached.
+            We&apos;re building your custom website right now. You&apos;ll receive a preview link within <span className="text-white font-semibold">48 hours</span> — yours to look at, free.
           </p>
           <p className="text-white/30 text-sm">
             We&apos;ll text you at <span className="text-white/50 font-medium">{form.phone}</span> when it&apos;s ready.

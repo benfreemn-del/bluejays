@@ -397,7 +397,7 @@ Thanks for trusting me with ${prospect.businessName}'s website — I'm genuinely
 
 Here's exactly what happens from here:
 
-1. You fill out a quick onboarding form (10 min)
+1. You fill out a quick onboarding form (3-5 min for the essentials)
    ${onboardingUrl}
 
    This is where you give me the real content — your logo, brand colors, services, hours, photos, testimonials, and any specific requests. Everything you share here makes your final site feel like YOUR site, not a template.
@@ -411,9 +411,12 @@ Here's exactly what happens from here:
 4. Site goes live
    I'll email you the login details and a short walkthrough video so you know exactly how everything works.
 
-The faster you fill out the onboarding form, the faster your site goes live. Most clients knock it out in under 15 minutes.
+The faster you fill out the onboarding form, the faster your site goes live. Most clients knock out the essentials in under 5 minutes.
 
 Start onboarding: ${onboardingUrl}
+
+About your billing — clear and simple:
+Today's $997 covers your custom website design, domain registration, and hosting setup. Starting year 2, $100/year covers domain renewal, hosting, ongoing maintenance, and support. Cancel anytime — you keep the site and the domain transfers to you. No surprises.
 
 If you have any questions along the way, just reply to this email — it comes straight to me.
 

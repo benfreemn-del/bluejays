@@ -242,7 +242,7 @@ function getFallbackSmsBody(prospect: Prospect, stepIndex: number, previewUrl: s
   if (stepIndex === 2) return getFollowUpSms1(prospect, previewUrl);
   if (stepIndex === 3) return getFollowUpSms2(prospect, previewUrl);
   if (stepIndex === 5) {
-    return `Hi ${firstName}, just checking whether you had a chance to look at the free website we built for ${prospect.businessName}: ${previewUrl} If you want any edits or want to claim it, just reply here. Reply STOP to opt out.`;
+    return `Hi ${firstName}, just checking on the site we built for ${prospect.businessName}: ${previewUrl} If you want edits or want to claim it, reply here. Reply STOP to opt out.`;
   }
   if (stepIndex === 6) {
     return `Final check-in from BlueJays, ${firstName}. Your ${prospect.businessName} preview is still live here: ${previewUrl} If you want it transferred to you, just reply. Reply STOP to opt out.`;
@@ -264,7 +264,7 @@ function getVoicemailFallbackEmail(prospect: Prospect, previewUrl: string, stepI
   const taggedUrl = addUtm(previewUrl, "voicemail_followup_email", "voicemail_followup_email", `voicemail_followup_step${stepIndex}`);
 
   const firstName = prospect.ownerName?.split(" ")[0] || "there";
-  const body = `Hi ${firstName},\n\nI just tried to reach you about the free website preview we built for ${prospect.businessName}. You can review it here: ${taggedUrl}\n\nIf you'd like any edits or want to claim it, just reply to this email and we'll take care of it.\n\nBest,\nBlueJays`;
+  const body = `Hi ${firstName},\n\nI just tried to reach you about the website we built for ${prospect.businessName}. You can see it here: ${taggedUrl}\n\nIf you'd like edits or want to claim it, reply here.\n\n— Ben`;
 
   return {
     to: prospect.email,

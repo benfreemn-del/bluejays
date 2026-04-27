@@ -267,7 +267,7 @@ function generateInitialScript(
     );
   } else {
     parts.push(
-      `So here's the thing — I actually went ahead and built a custom website for ${ctx.businessName}. Completely free, no strings attached. It's mobile-friendly, shows up in Google, and it's ready to go.`
+      `So here's the thing — I actually went ahead and built a custom website for ${ctx.businessName}. It's free for you to take a look at. Mobile-friendly, shows up in Google, ready to go.`
     );
   }
 
@@ -342,7 +342,7 @@ function generateReEngageScript(
       );
     } else {
       parts.push(
-        `I noticed ${ctx.businessName} has been getting some new reviews on Google lately. That's great — and the website I built for you is designed to leverage that social proof to bring in more customers.`
+        `I noticed ${ctx.businessName} has been getting some new reviews on Google lately. That's great — the website I built shows them off so visitors can see them right away.`
       );
     }
   } else if (ctx.services && ctx.services.length > 0) {

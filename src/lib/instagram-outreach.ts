@@ -113,7 +113,7 @@ function generateInitialOutreach(prospect: Prospect): InstagramDmTemplate {
   const previewUrl = getPreviewUrl(prospect);
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label.toLowerCase() || "business";
 
-  const message = `Hey ${name}! I came across ${prospect.businessName} and ${compliment}. I actually specialize in building websites for ${categoryLabel} businesses and went ahead and made one for you — completely free, no strings attached. Check it out here: ${previewUrl} Would love to hear what you think!`;
+  const message = `Hey ${name}! I came across ${prospect.businessName} and ${compliment}. I build websites for ${categoryLabel} businesses and went ahead and made one for you — free for you to look at. Here's the link: ${previewUrl} Curious what you'd change.`;
 
   return {
     stepType: "initial-outreach",

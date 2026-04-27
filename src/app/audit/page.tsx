@@ -123,7 +123,7 @@ export default function AuditLandingPage() {
           <h2 className="text-3xl font-bold text-center mb-12">How it works</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <Step n="1" title="Drop your URL" body="Paste your site link + your business category. That's it." />
-            <Step n="2" title="We analyze" body="Claude + GPT-4 look at your hero, copy, CTAs, social proof, mobile, SEO. Takes ~5 min." />
+            <Step n="2" title="We analyze" body="AI looks at your hero, copy, buttons, reviews, mobile, and Google ranking. Takes about 5 min." />
             <Step n="3" title="You get the audit" body="Comprehensive report emailed to you + a shareable URL. Read it, share it, act on it." />
           </div>
         </div>

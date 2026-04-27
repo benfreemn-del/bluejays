@@ -42,7 +42,7 @@ export function generateFollowUp1(prospect: Prospect): DmMessage {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
 
-  const message = `Hey ${name}, just following up — did you get a chance to check out that website I built for ${prospect.businessName}? Here's the link again: ${previewUrl} Would love to hear your thoughts! 🙌`;
+  const message = `Hey ${name}, did you get a chance to look at the site I built for ${prospect.businessName}? Here's the link again: ${previewUrl} Curious what you'd change.`;
 
   return { type: "follow-up-1", message, previewUrl };
 }
