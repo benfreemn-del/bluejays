@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
+import AuditCTAHub from "./AuditCTAHub";
 
 /**
  * /audit/[id] — Hormozi salty-pretzel report display.
@@ -440,49 +441,16 @@ export default async function AuditPage({
         </div>
       </section>
 
-      {/* Final CTA — the salty-pretzel bridge to the paid offer */}
-      <section className="bg-gradient-to-b from-slate-900 to-slate-950">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            {content.callToAction.headline}
-          </h2>
-          <p className="text-lg text-slate-300 mb-10 leading-relaxed">
-            {content.callToAction.body}
-          </p>
-
-          {/* Pricing display — lead with the lower number per Hormozi pattern */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              href={content.callToAction.primaryButtonUrl}
-              className="relative inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
-            >
-              <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow">
-                Most Popular
-              </span>
-              {content.callToAction.primaryButtonText} →
-            </a>
-            <a
-              href={content.callToAction.secondaryButtonUrl}
-              className="inline-flex items-center justify-center rounded-md border border-white/20 bg-white/5 px-8 py-4 text-sm font-semibold hover:bg-white/10 transition-colors"
-            >
-              {content.callToAction.secondaryButtonText}
-            </a>
-          </div>
-
-          {/* Risk reversal — every Hormozi CTA has one */}
-          <div className="mt-8 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400">✓</span> 100% money-back guarantee
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400">✓</span> 48-hour delivery
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400">✓</span> No retainers, no monthly fees
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* Final CTA — replaced in v7 with the 3-CTA hub (Buy / Schedule
+          / Get Preview). The single-CTA "You know the problems. Now fix
+          them." block forced one yes; the hub asks for THREE different
+          yeses ascending in commitment so we capture every intent level. */}
+      <AuditCTAHub
+        auditId={a.id}
+        prospectId={a.prospect_id}
+        primaryButtonUrl={content.callToAction.primaryButtonUrl}
+        secondaryButtonUrl={content.callToAction.secondaryButtonUrl}
+      />
 
       <footer className="border-t border-white/5 pb-24 md:pb-20">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500">
