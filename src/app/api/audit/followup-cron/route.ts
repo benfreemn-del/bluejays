@@ -100,14 +100,22 @@ export async function POST(request?: NextRequest) {
           .eq("id", audit.prospect_id)
           .maybeSingle();
 
+        const graduatableStatuses = ["audit_lead", "audit_preview_requested"];
         if (
           gradProspect &&
-          gradProspect.status === "audit_lead" &&
+          graduatableStatuses.includes(gradProspect.status as string) &&
           gradProspect.generated_site_url
         ) {
+          // audit_preview_requested prospects had manually_managed=true set when they
+          // clicked "Build me a preview". Clear it so auto-enroll can pick them up —
+          // they explicitly opted in and Ben has now built their preview.
+          const graduationUpdate: Record<string, unknown> = { status: "approved" };
+          if (gradProspect.status === "audit_preview_requested") {
+            graduationUpdate.manually_managed = false;
+          }
           await supabase
             .from("prospects")
-            .update({ status: "approved" })
+            .update(graduationUpdate)
             .eq("id", gradProspect.id);
           graduated++;
           log.push({ auditId: audit.id, step: 5, result: "graduated_to_approved" });

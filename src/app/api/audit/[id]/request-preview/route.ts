@@ -64,7 +64,7 @@ export async function POST(
   // for the alert message.
   const { data: prospect } = await supabase
     .from("prospects")
-    .select("id, business_name, email, phone, status, scraped_data")
+    .select("id, business_name, email, phone, status, scraped_data, generated_site_url")
     .eq("id", audit.prospect_id)
     .maybeSingle();
 
@@ -99,9 +99,16 @@ export async function POST(
     );
   }
 
-  // Idempotent — if they've already requested, return 200 without
-  // re-alerting Ben (avoids double-SMS spam if they double-click).
+  // Idempotent — if the preview is already built or requested, return 200
+  // without re-alerting Ben (avoids double-SMS spam if they double-click).
   const existingScrapedData = (prospect.scraped_data ?? {}) as Record<string, unknown>;
+  if ((prospect as Record<string, unknown>).generated_site_url) {
+    return NextResponse.json({
+      ok: true,
+      already: true,
+      message: "Your preview is already built. Ben will email you the link shortly.",
+    });
+  }
   if (existingScrapedData.auditPreviewRequested === true) {
     return NextResponse.json({
       ok: true,

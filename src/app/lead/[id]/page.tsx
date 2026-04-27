@@ -302,6 +302,21 @@ export default function LeadPage() {
                   Build Site →
                 </button>
               )}
+              {prospect.status === "audit_preview_requested" && prospect.generatedSiteUrl && (
+                <button
+                  onClick={async () => {
+                    await fetch(`/api/prospects/${id}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ status: "approved", manually_managed: false }),
+                    });
+                    loadData();
+                  }}
+                  className="h-9 px-5 rounded-lg bg-gradient-to-r from-fuchsia-500 to-violet-600 text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all"
+                >
+                  🚀 Launch to Cold Funnel →
+                </button>
+              )}
               {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed") && (prospect.generatedSiteUrl || (prospect.pricingTier === "custom" && prospect.customSiteUrl)) && (
                 <div className="flex gap-2">
                   <a href={prospect.pricingTier === "custom" && prospect.customSiteUrl ? prospect.customSiteUrl : prospect.generatedSiteUrl!} target="_blank" rel="noopener noreferrer"
