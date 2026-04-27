@@ -412,11 +412,12 @@ export default async function AuditPage({
                     style={{
                       position: "absolute",
                       top: 0,
-                      left: 0,
+                      left: "50%",
+                      marginLeft: "-700px",
                       width: "1400px",
                       height: "800px",
                       transform: "scale(0.28)",
-                      transformOrigin: "top left",
+                      transformOrigin: "top center",
                       pointerEvents: "none",
                       border: "none",
                     }}
@@ -427,7 +428,7 @@ export default async function AuditPage({
                   Your site now · scores {score}/100
                 </div>
               </div>
-              {/* BlueJays V2 preview — blurred iframe to tease the upgrade */}
+              {/* BlueJays V2 preview — centered so hero content is visible, not left-edge */}
               <div className="relative rounded-lg overflow-hidden border border-emerald-500/20 bg-slate-950">
                 <div className="relative h-56 overflow-hidden">
                   <iframe
@@ -436,11 +437,12 @@ export default async function AuditPage({
                     style={{
                       position: "absolute",
                       top: 0,
-                      left: 0,
+                      left: "50%",
+                      marginLeft: "-700px",
                       width: "1400px",
                       height: "800px",
                       transform: "scale(0.28)",
-                      transformOrigin: "top left",
+                      transformOrigin: "top center",
                       pointerEvents: "none",
                       border: "none",
                     }}
