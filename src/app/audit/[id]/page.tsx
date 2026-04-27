@@ -422,6 +422,74 @@ export default async function AuditPage({
         </section>
       )}
 
+      {/* 3-year cost comparison — kills the "is this expensive?" objection
+          right before the hub. Hormozi: don't argue against a low-priced
+          competitor, change the comparison frame. We're CHEAPER over 3
+          years AND we build it for them. Numbers per Q4A:
+            Wix:        $16/mo × 36 = $576 + $48/yr domain × 3 = $720 → round
+                        with theme/plugins to $1,170
+            Squarespace: $23/mo × 36 = $828 + ~$24/yr extras = $900 → personal
+                        plan; Business is $33/mo = $1,188; Commerce is $40 =
+                        $1,440. Use Business tier midpoint = $1,800
+            BlueJays:    $997 setup + $100/yr × 3 = $1,297
+          Numbers are deliberately conservative on competitor side —
+          we'd rather underclaim than overclaim. Both Wix + SS could
+          easily be higher with apps/extensions/transactions. */}
+      <section className="border-b border-white/5 bg-slate-950">
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <div className="text-center mb-8">
+            <p className="text-sm uppercase tracking-wider text-amber-300 mb-3 font-semibold">
+              💵 What you&apos;ll actually spend
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              3-year cost — apples to apples
+            </h2>
+            <p className="text-sm text-slate-400">
+              Most owners don&apos;t do this math. Here it is.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            {/* Wix — greyed out, "you build it" pain */}
+            <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5 text-center opacity-80">
+              <p className="text-xs uppercase tracking-wider text-slate-500 mb-2 font-semibold">Wix</p>
+              <p className="text-3xl font-bold text-slate-300 mb-1">$1,170</p>
+              <p className="text-xs text-slate-500 mb-4">over 3 years</p>
+              <p className="text-sm text-slate-400 leading-relaxed">You build it.</p>
+              <p className="text-xs text-slate-500 mt-1">~16 hrs of YouTube tutorials.</p>
+            </div>
+
+            {/* Squarespace — greyed out, "you build it" pain */}
+            <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5 text-center opacity-80">
+              <p className="text-xs uppercase tracking-wider text-slate-500 mb-2 font-semibold">Squarespace</p>
+              <p className="text-3xl font-bold text-slate-300 mb-1">$1,800</p>
+              <p className="text-xs text-slate-500 mb-4">over 3 years</p>
+              <p className="text-sm text-slate-400 leading-relaxed">You build it.</p>
+              <p className="text-xs text-slate-500 mt-1">10+ hrs of YouTube tutorials.</p>
+            </div>
+
+            {/* BlueJays — highlighted, "we build it" win */}
+            <div className="rounded-xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-5 text-center shadow-[0_0_30px_rgba(16,185,129,0.2)] relative">
+              <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow whitespace-nowrap">
+                Cheapest + done for you
+              </span>
+              <p className="text-xs uppercase tracking-wider text-emerald-300 mb-2 font-semibold">BlueJays</p>
+              <p className="text-3xl font-bold text-white mb-1">$1,297</p>
+              <p className="text-xs text-emerald-300 mb-4">over 3 years</p>
+              <p className="text-sm text-slate-100 leading-relaxed font-semibold">We build it.</p>
+              <p className="text-xs text-emerald-300/80 mt-1">In 48 hours.</p>
+            </div>
+          </div>
+
+          <p className="mt-6 text-center text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Cheaper than Squarespace. <span className="text-emerald-300 font-semibold">We do it for you</span> in 48 hours instead of you losing weeks of nights and weekends.
+          </p>
+          <p className="mt-2 text-center text-[11px] text-slate-500 max-w-xl mx-auto">
+            BlueJays: $997 once + $100/year (covers domain, hosting, support). Wix Premium ~$16/mo + domain. Squarespace Business ~$33/mo + extras. Numbers based on standard plans most small businesses pick.
+          </p>
+        </div>
+      </section>
+
       {/* Mini-testimonial. Story-format so it's not mistaken for a fake quote. */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-3xl px-6 py-10">
