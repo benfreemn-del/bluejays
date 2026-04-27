@@ -9,6 +9,7 @@ import {
   getLastRunResult,
   runAutoScout,
 } from "@/lib/auto-scout";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 export const maxDuration = 300; // 5 min for Vercel
 
@@ -33,6 +34,11 @@ export async function GET(request: NextRequest) {
     try {
       console.log("[auto-scout] Cron invocation — running runAutoScout()");
       const result = await runAutoScout();
+      await logHeartbeat("auto_scout", {
+        leadsFound: result.leadsFound,
+        stoppedReason: result.stoppedReason,
+        invocation: "cron",
+      });
       return NextResponse.json({
         message: `Auto-scout cron completed: ${result.leadsFound} leads found (stopped: ${result.stoppedReason})`,
         result,
@@ -88,6 +94,12 @@ export async function POST() {
     }
 
     const result = await runAutoScout();
+
+    await logHeartbeat("auto_scout", {
+      leadsFound: result.leadsFound,
+      stoppedReason: result.stoppedReason,
+      invocation: "manual",
+    });
 
     return NextResponse.json({
       message: `Auto-scout completed: ${result.leadsFound} leads found`,

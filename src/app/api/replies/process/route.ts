@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { processQueuedReplies } from "@/lib/delayed-replies";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * GET /api/replies/process
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const result = await processQueuedReplies();
+    await logHeartbeat("replies_process", { ...result });
     return NextResponse.json({
       success: true,
       ...result

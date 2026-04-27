@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { rateLimit } from "@/lib/rate-limit";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -197,8 +197,17 @@ export async function POST(request: NextRequest) {
 
   const finalAuditId = (auditRow?.id as string) || auditId;
 
-  // Fire-and-forget kick to the generate endpoint. We don't await — it
-  // takes 3-5 min. Client polls /api/audit/[id]/status meanwhile.
+  // Kick the generate endpoint AFTER the response is sent (so the user
+  // sees "submitted" immediately) but inside `after()` so the kick
+  // actually completes. Plain `void fetch(...)` after a NextResponse
+  // return is unreliable on Vercel — once the Lambda invocation returns
+  // its response, the runtime is free to freeze/tear-down before the
+  // unawaited fetch's TCP handshake completes. `after()` (Next 16) is
+  // the documented primitive for "schedule work to run after response
+  // is finished" — it uses Vercel's `waitUntil` under the hood to
+  // extend the invocation lifetime until the callback resolves. This
+  // is the root-cause fix for the audits-stranded-in-pending bug class
+  // (forensics: `OVERNIGHT_REVIEW_D.md`, audit `0f82f25c-fa9b…`).
   //
   // CRITICAL: hardcode the production URL per CLAUDE.md Rule 16. Using
   // process.env.VERCEL_URL points at the per-deployment preview URL
@@ -207,15 +216,75 @@ export async function POST(request: NextRequest) {
   // SSO login. The audit silently never kicks off and the customer
   // sees the wait-page forever. Same fix pattern as FROM_EMAIL and
   // stripe.ts baseUrl.
+  //
+  // We don't await the *full* generate call (it takes 3–5 min and the
+  // generate route has its own 300s maxDuration). We do `await` long
+  // enough that the request reaches Vercel's edge router and is routed
+  // to a fresh generate Lambda invocation. An 8-second AbortSignal
+  // bounds the wait so the submit Lambda doesn't pin itself alive any
+  // longer than necessary. After that, the generate Lambda runs
+  // independently on its own 300s budget. If the kick fails (network,
+  // 401, edge router blip, etc.) the audit row stays `pending` and
+  // the polling-page 90s auto-retry safety net (status route) fires
+  // a second kick on the next poll.
   const baseUrl = "https://bluejayportfolio.com";
-  void fetch(`${baseUrl}/api/audit/generate/${finalAuditId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.CRON_SECRET || "dev"}`,
-    },
-  }).catch((err) => {
-    console.error("[audit/submit] kick-off failed (will need manual retry):", err);
+  after(async () => {
+    try {
+      const kickRes = await fetch(`${baseUrl}/api/audit/generate/${finalAuditId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.CRON_SECRET || "dev"}`,
+        },
+        // Bound the wait — once the generate route ACKs (or 8s passes)
+        // we stop blocking the submit Lambda. Generate continues async.
+        signal: AbortSignal.timeout(8000),
+      });
+      // Don't read the body — generate takes minutes to respond. We
+      // only care that the request was DELIVERED and accepted by the
+      // edge router (which routes it to a separate Lambda invocation).
+      // A non-ok status here indicates the kick itself was rejected
+      // (auth, route missing). Stamp failed_reason so the operator
+      // dashboard surfaces it, instead of letting the row sit `pending`
+      // forever.
+      if (!kickRes.ok && kickRes.status !== 408) {
+        const detail = await kickRes.text().catch(() => "");
+        console.error(
+          `[audit/submit] kick HTTP ${kickRes.status} for audit ${finalAuditId}: ${detail.slice(0, 200)}`,
+        );
+        await supabase
+          .from("site_audits")
+          .update({
+            status: "failed",
+            failed_reason: `kick_failed_http_${kickRes.status}`,
+          })
+          .eq("id", finalAuditId)
+          .eq("status", "pending"); // only flip if still pending — don't clobber a generating/ready audit
+      }
+    } catch (err) {
+      // Timeout (8s AbortSignal) is the EXPECTED happy path here — it
+      // means the request reached the edge and the generate Lambda is
+      // taking its time to respond. Don't treat that as a failure.
+      const isTimeout = err instanceof Error && err.name === "TimeoutError";
+      if (!isTimeout) {
+        console.error(
+          `[audit/submit] kick threw for audit ${finalAuditId} (will need manual retry):`,
+          err,
+        );
+        try {
+          await supabase
+            .from("site_audits")
+            .update({
+              status: "failed",
+              failed_reason: `kick_threw:${err instanceof Error ? err.message : String(err)}`.slice(0, 240),
+            })
+            .eq("id", finalAuditId)
+            .eq("status", "pending");
+        } catch {
+          // best-effort — DB unreachable means we have bigger problems
+        }
+      }
+    }
   });
 
   return NextResponse.json({

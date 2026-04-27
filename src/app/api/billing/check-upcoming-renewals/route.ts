@@ -9,6 +9,7 @@ import {
   getRenewal7DayEmail,
 } from "@/lib/email-templates";
 import { queueEmailRetry } from "@/lib/email-retry-queue";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * Wave-2 LTV protection — pre-renewal email cadence.
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
     console.log(
       "[Billing] check-upcoming-renewals: STRIPE_SECRET_KEY not configured — no-op",
     );
+    await logHeartbeat("billing_check_renewals", { reason: "stripe_not_configured" }, "skipped");
     return NextResponse.json({ ok: true, mockMode: true, sent: 0 });
   }
 
@@ -65,6 +67,7 @@ export async function POST(request: NextRequest) {
     console.log(
       "[Billing] check-upcoming-renewals: Supabase not configured — no-op",
     );
+    await logHeartbeat("billing_check_renewals", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({ ok: true, mockMode: true, sent: 0 });
   }
 
@@ -111,6 +114,14 @@ export async function POST(request: NextRequest) {
       `[Billing] Renewal scan complete: scanned=${scanned} sent_30d=${sent30} ` +
         `sent_7d=${sent7} already_sent=${alreadySent} errors=${errors}`,
     );
+
+    await logHeartbeat("billing_check_renewals", {
+      scanned,
+      sent30,
+      sent7,
+      alreadySent,
+      errors,
+    });
 
     return NextResponse.json({
       ok: true,

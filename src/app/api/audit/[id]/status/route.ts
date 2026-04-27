@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
@@ -43,20 +43,39 @@ export async function GET(
     return NextResponse.json({ error: "Audit not found" }, { status: 404 });
   }
 
-  // Auto-retry if stuck in pending for >90s
+  // Auto-retry if stuck in pending for >90s.
+  //
+  // Wrapped in `after()` so the kick actually completes after the
+  // status response is sent. Plain `void fetch(...)` was unreliable on
+  // Vercel — once the status Lambda invocation returned its JSON
+  // response, the runtime was free to freeze before the unawaited
+  // fetch's TCP handshake completed. Same root cause as the submit-
+  // route fix; same forensic note (OVERNIGHT_REVIEW_D.md).
   const ageSeconds = data.created_at
     ? (Date.now() - new Date(data.created_at as string).getTime()) / 1000
     : 0;
   if (data.status === "pending" && ageSeconds > 90) {
     const baseUrl = "https://bluejayportfolio.com";
-    void fetch(`${baseUrl}/api/audit/generate/${data.id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CRON_SECRET || "dev"}`,
-      },
-    }).catch((err) => {
-      console.error(`[audit/status] Auto-retry kick failed for ${data.id}:`, err);
+    const auditId = data.id as string;
+    after(async () => {
+      try {
+        await fetch(`${baseUrl}/api/audit/generate/${auditId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.CRON_SECRET || "dev"}`,
+          },
+          signal: AbortSignal.timeout(8000),
+        });
+        // Generate route is idempotent — short-circuits on
+        // status='generating'/'ready', so a duplicate kick from the
+        // status poll + the submit-route after() is safe.
+      } catch (err) {
+        const isTimeout = err instanceof Error && err.name === "TimeoutError";
+        if (!isTimeout) {
+          console.error(`[audit/status] Auto-retry kick failed for ${auditId}:`, err);
+        }
+      }
     });
   }
 

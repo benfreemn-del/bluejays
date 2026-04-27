@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { drainDueRetries } from "@/lib/email-retry-queue";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * Wave-2 LTV protection — failed-email retry drain.
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
 
   if (!isSupabaseConfigured()) {
     console.log("[Billing] retry-failed-sends: Supabase not configured — no-op");
+    await logHeartbeat("billing_retry_sends", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({ ok: true, mockMode: true });
   }
 
@@ -47,6 +49,7 @@ export async function POST(request: NextRequest) {
         `succeeded=${summary.succeeded} failed=${summary.failed} ` +
         `exhausted=${summary.exhausted}`,
     );
+    await logHeartbeat("billing_retry_sends", { ...summary });
     return NextResponse.json({ ok: true, ...summary });
   } catch (err) {
     console.error("[Billing] retry-failed-sends drain crashed:", err);

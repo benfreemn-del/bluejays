@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendEmail } from "@/lib/email-sender";
 import { getAuditEmail2, getAuditEmail3, getAuditEmail4, getAuditEmail5 } from "@/lib/audit-emails";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * Daily cron — Hormozi 5-email audit follow-up sequence.
@@ -45,6 +46,7 @@ export async function POST(request?: NextRequest) {
   }
 
   if (!isSupabaseConfigured()) {
+    await logHeartbeat("audit_followup", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({ message: "Supabase not configured", sent: 0 });
   }
 
@@ -166,6 +168,12 @@ export async function POST(request?: NextRequest) {
       });
     }
   }
+
+  await logHeartbeat("audit_followup", {
+    sent,
+    failed,
+    inspected: audits.length,
+  });
 
   return NextResponse.json({
     message: `Audit follow-up cron: ${sent} sent, ${failed} failed`,

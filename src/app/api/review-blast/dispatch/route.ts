@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dispatchPendingSubmissions } from "@/lib/review-blast";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * Daily cron: dispatch eligible Review Blast submissions.
@@ -37,6 +38,13 @@ export async function POST(request?: NextRequest) {
   console.log(
     `[review-blast/dispatch] Done: ${result.processed} submissions, ${result.smsSent} SMS sent, ${result.smsFailed} SMS failed${result.skipped.length > 0 ? `, skipped: ${result.skipped.join(",")}` : ""}`,
   );
+
+  await logHeartbeat("review_blast_dispatch", {
+    processed: result.processed,
+    smsSent: result.smsSent,
+    smsFailed: result.smsFailed,
+    skipped: result.skipped.length,
+  });
 
   return NextResponse.json({
     message: `Review Blast dispatch: ${result.processed} submissions processed, ${result.smsSent} sent, ${result.smsFailed} failed${result.skipped.length > 0 ? `, skipped: ${result.skipped.join(",")}` : ""}`,

@@ -3,6 +3,7 @@ import { getAllProspects, updateProspect } from "@/lib/store";
 import { sendEmail } from "@/lib/email-sender";
 import { getReferralEmail } from "@/lib/email-templates";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * GET /api/referral/send
@@ -142,6 +143,15 @@ export async function GET(request: Request) {
 
     results.push({ id: prospect.id, business: prospect.businessName, code, sent });
   }
+
+  await logHeartbeat("referral_send", {
+    candidates: candidates.length,
+    eligible: eligible.length,
+    processed: results.length,
+    sent: results.filter((r) => r.sent).length,
+    skipped: skipped.length,
+    dryRun,
+  });
 
   return NextResponse.json({
     candidates: candidates.length,

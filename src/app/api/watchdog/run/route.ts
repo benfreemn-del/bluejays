@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { runAllHealthChecks } from "@/lib/health-checks";
@@ -53,12 +53,146 @@ interface WatchedCron {
  * Crons we monitor. Add to this list when shipping new scheduled
  * tasks. Each entry is a hardcoded mapping from cron-name → which
  * table/column gets a row when the cron successfully runs.
+ *
+ * Adversarial review A — Critical #1 fix (2026-04-26): Rule 66
+ * required EVERY cron to have a heartbeat alert. Pre-fix only 3 of 17
+ * crons were watched. Generic `cron_heartbeats` table is now written
+ * to from every scheduled task via `logHeartbeat()` after a successful
+ * run. Each `cron_heartbeats` entry below filters by `cron_name`.
+ *
+ * Threshold heuristic: 2× the cron's schedule period. Daily crons →
+ * 36 hours. Every-5-min cron (onboarding-reminders) → still ~36h
+ * because the cron writing zero heartbeats for 36 hours = a bug.
+ * Per-minute cron (replies/process) → 1 hour (60+ missed runs).
+ * Weekly (hyperloop) → 8 days. Monthly (reports) → 35 days.
  */
 const WATCHED_CRONS: WatchedCron[] = [
+  // ─── Heartbeat-table watchers (newer pattern, generic) ───────
   {
-    // Hyperloop weekly cron — should write a hyperloop_runs row every
-    // Monday 16:00 UTC. Threshold 8 days = 2× schedule period. Heartbeat
-    // table → ZERO rows is a bug.
+    name: "funnel_run",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "funnel_run" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "replies_process",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 1, // Per-minute cron — 1 hour silent = 60+ missed
+    where: { col: "cron_name", eq: "replies_process" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "onboarding_reminders",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 6, // Every-5-min cron, but reminder logic is data-dependent
+    where: { col: "cron_name", eq: "onboarding_reminders" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "digest",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "digest" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "referral_send",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "referral_send" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "reports_monthly",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 24 * 35, // Monthly cron — 35-day threshold
+    where: { col: "cron_name", eq: "reports_monthly" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "auto_scout",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "auto_scout" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "billing_check_renewals",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "billing_check_renewals" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "billing_retry_sends",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "billing_retry_sends" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "billing_check_domains",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "billing_check_domains" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "nps_send",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "nps_send" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "test_cohort_postcard",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "test_cohort_postcard" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "review_blast_dispatch",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "review_blast_dispatch" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "audit_followup",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "audit_followup" },
+    alertOnZeroRows: true,
+  },
+  {
+    name: "audit_postcard",
+    table: "cron_heartbeats",
+    column: "ran_at",
+    thresholdHours: 36,
+    where: { col: "cron_name", eq: "audit_postcard" },
+    alertOnZeroRows: true,
+  },
+
+  // ─── Pre-existing watchers (kept for back-compat) ────────────
+  {
+    // Hyperloop weekly cron — has its own dedicated runs table with
+    // dormancy tracking; keeping the dedicated watcher.
     name: "hyperloop",
     table: "hyperloop_runs",
     column: "ran_at",
@@ -66,9 +200,8 @@ const WATCHED_CRONS: WatchedCron[] = [
     alertOnZeroRows: true,
   },
   {
-    // Audit submissions — any week without a single new audit means
-    // either the form is broken OR all our acquisition channels died.
-    // Heartbeat-ish (activity expected) → ZERO rows is a bug.
+    // Audit submissions — week without one means the form is broken
+    // OR all acquisition channels died. Activity-driven, not a cron.
     name: "audit_submissions",
     table: "site_audits",
     column: "created_at",
@@ -76,10 +209,8 @@ const WATCHED_CRONS: WatchedCron[] = [
     alertOnZeroRows: true,
   },
   {
-    // Email retry queue — populated only when SendGrid sends fail. ZERO
-    // rows = "no email failures yet" = the GOOD state. Only alert if
-    // historical rows exist but the most-recent one is stale (means
-    // the retry cron stopped draining the queue).
+    // Email retry queue — populated only when sends fail. ZERO rows =
+    // good state. Only alert if rows exist historically but stale.
     name: "email_retry_queue",
     table: "email_retry_queue",
     column: "created_at",
@@ -204,6 +335,39 @@ async function runWatchdog(req?: NextRequest) {
   if (stuckCount > 0 && stuckAudits) {
     const ids = stuckAudits.map((a) => (a.id as string).slice(0, 8)).join(", ");
     alerts.push(`${stuckCount} audits stuck > 10min: ${ids}`);
+
+    // Self-healing: fire a fresh kick at every stuck audit (only those
+    // still in 'pending' — 'generating' rows might be mid-run on another
+    // Lambda). The generate route is idempotent on status='generating'/
+    // 'ready' so duplicate kicks are safe. Wrapped in `after()` so the
+    // kicks complete after the watchdog response is sent. This means a
+    // stuck audit that escaped the submit-route + status-route safety
+    // nets gets a third recovery attempt within ~24 hours instead of
+    // sitting forever as the original bug class did.
+    const baseUrl = "https://bluejayportfolio.com";
+    const cronSecret = process.env.CRON_SECRET || "dev";
+    const stuckPending = stuckAudits.filter((a) => a.status === "pending");
+    if (stuckPending.length > 0) {
+      after(async () => {
+        for (const a of stuckPending) {
+          try {
+            await fetch(`${baseUrl}/api/audit/generate/${a.id as string}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${cronSecret}`,
+              },
+              signal: AbortSignal.timeout(8000),
+            });
+          } catch (err) {
+            const isTimeout = err instanceof Error && err.name === "TimeoutError";
+            if (!isTimeout) {
+              console.error(`[watchdog] stuck-audit retry kick failed for ${a.id}:`, err);
+            }
+          }
+        }
+      });
+    }
   }
 
   // ─── Vendor health checks (Hormozi review #4) ─────────────────

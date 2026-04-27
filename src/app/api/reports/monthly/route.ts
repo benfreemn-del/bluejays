@@ -6,6 +6,7 @@ import {
   getCustomerMonthMetrics,
   getPreviousMonthWindow,
 } from "@/lib/customer-metrics";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * GET /api/reports/monthly
@@ -133,6 +134,13 @@ export async function GET(request: Request) {
       metrics,
     });
   }
+
+  await logHeartbeat("reports_monthly", {
+    month: monthName,
+    eligible: eligible.length,
+    sent: results.filter((r) => r.sent).length,
+    dryRun,
+  });
 
   return NextResponse.json({
     month: monthName,

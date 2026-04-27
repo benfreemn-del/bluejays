@@ -8,6 +8,7 @@ import {
   getOnboardingReminderDay5,
 } from "@/lib/email-templates";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 import type { Prospect } from "@/lib/types";
 
 /**
@@ -111,6 +112,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!isSupabaseConfigured()) {
+    await logHeartbeat("onboarding_reminders", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({
       success: true,
       message: "Supabase not configured — skipping onboarding reminder check",
@@ -303,6 +305,16 @@ export async function GET(request: NextRequest) {
 
       skipped++;
     }
+
+    await logHeartbeat("onboarding_reminders", {
+      stage1_30min: stage1,
+      stage2_day2: stage2,
+      stage3_day5: stage3,
+      stage4_day10_sms: stage4Smsed,
+      reminded: stage1 + stage2 + stage3 + stage4Smsed,
+      skipped,
+      errorCount: errors.length,
+    });
 
     return NextResponse.json({
       success: true,

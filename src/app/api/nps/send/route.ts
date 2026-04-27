@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllProspects, updateProspect } from "@/lib/store";
 import { sendEmail } from "@/lib/email-sender";
 import { getNpsSurveyEmail } from "@/lib/email-templates";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * GET /api/nps/send
@@ -126,6 +127,13 @@ export async function GET(request: NextRequest) {
       });
     }
   }
+
+  await logHeartbeat("nps_send", {
+    eligible: eligible.length,
+    sent: results.filter((r) => r.sent).length,
+    failed: results.filter((r) => r.error).length,
+    dryRun,
+  });
 
   return NextResponse.json({
     eligible: eligible.length,

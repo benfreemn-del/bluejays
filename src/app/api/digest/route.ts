@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAllProspects } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
  * GET /api/digest
@@ -107,10 +108,19 @@ export async function GET(request: Request) {
     ].join("\n");
 
     if (send) await sendOwnerAlert(quietLines).catch(() => {});
+    await logHeartbeat("digest", { quiet: true, sent: send, counts, pipeline });
     return NextResponse.json({ sent: send, digest: quietLines, counts, pipeline });
   }
 
   if (send) await sendOwnerAlert(lines).catch(() => {});
+
+  await logHeartbeat("digest", {
+    quiet: false,
+    sent: send,
+    counts,
+    pipeline,
+    spendYesterday: parseFloat(spendYesterday.toFixed(2)),
+  });
 
   return NextResponse.json({
     sent: send,

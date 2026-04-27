@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { getProspect } from "@/lib/store";
 import { sendPostcard } from "@/lib/postcard-sender";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 import type { Prospect } from "@/lib/types";
 
 /**
@@ -60,6 +61,7 @@ async function runCron(request?: NextRequest) {
   }
 
   if (!isSupabaseConfigured()) {
+    await logHeartbeat("audit_postcard", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({
       message: "Supabase not configured — cron is a no-op in dev",
       sent: 0,
@@ -197,6 +199,13 @@ async function runCron(request?: NextRequest) {
   console.log(
     `[audit/postcard-cron] done: sent=${sent} skipped=${skipped} failed=${failed}`,
   );
+
+  await logHeartbeat("audit_postcard", {
+    sent,
+    skipped,
+    failed,
+    eligible: candidates.length,
+  });
 
   return NextResponse.json({
     sent,

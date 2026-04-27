@@ -16,6 +16,7 @@ import {
 } from "@/lib/email-templates";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 import type { Prospect } from "@/lib/types";
 
 /**
@@ -98,6 +99,7 @@ export async function POST(request: NextRequest) {
     console.log(
       "[DomainRenewals] Supabase not configured — cannot read domains. No-op.",
     );
+    await logHeartbeat("billing_check_domains", { reason: "supabase_not_configured" }, "skipped");
     return NextResponse.json({
       ok: true,
       mockMode: true,
@@ -173,6 +175,15 @@ export async function POST(request: NextRequest) {
         `renewed=${summary.renewed} paused=${summary.paused} ` +
         `cancelled=${summary.cancelled} failed=${summary.failed}`,
     );
+
+    await logHeartbeat("billing_check_domains", {
+      checked: summary.checked,
+      renewed: summary.renewed,
+      paused: summary.paused,
+      cancelled: summary.cancelled,
+      failed: summary.failed,
+      mockMode: summary.mockMode,
+    });
 
     return NextResponse.json({ ok: true, ...summary });
   } catch (err) {

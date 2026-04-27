@@ -5,6 +5,7 @@ import { sendDailyDigest } from "@/lib/alerts";
 import { getWarmingStatus } from "@/lib/domain-warming";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { updateProspect } from "@/lib/store";
+import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 // POST: Run the funnel processor — handles due retries first, then next due steps
 // Also runs the follow-up scheduler auto-resume check
@@ -197,6 +198,16 @@ export async function POST(request?: NextRequest) {
   } catch (digestErr) {
     console.error("[Funnel] Daily digest failed:", digestErr);
   }
+
+  await logHeartbeat("funnel_run", {
+    delivered: result.sent.length,
+    queued: result.queued.length,
+    paused: result.paused.length,
+    autoResumed: autoResumeResult.resumed.length,
+    autoEnrolled: autoEnrollResult.enrolled,
+    autoEnrollSkipped: autoEnrollResult.skipped,
+    capacity: autoEnrollResult.capacity,
+  });
 
   return NextResponse.json({
     message: `Funnel run: ${result.sent.length} delivered, ${result.queued.length} queued, ${result.paused.length} paused. Auto-resumed: ${autoResumeResult.resumed.length}.`,
