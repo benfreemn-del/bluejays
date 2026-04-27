@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 const GRADIENT =
-  "linear-gradient(to right, #3b82f6, #8b5cf6, #10b981, #eab308)";
+  "linear-gradient(to right, #000000, #0f172a, #1e3a5f, #2563eb, #93c5fd, #f1f5f9)";
 
 // Hide on operator/dashboard routes — no need there
 const HIDE_PATTERNS = [
