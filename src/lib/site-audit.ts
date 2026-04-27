@@ -341,7 +341,7 @@ const CATEGORY_SIMILARITY: Record<string, string> = {
   "junk-hauling": "junk-removal", "debris-removal": "junk-removal",
   appliances: "appliance-repair",
   // Professional services variants
-  lawyer: "law-firm", attorney: "law-firm", legal: "law-film",
+  lawyer: "law-firm", attorney: "law-firm", legal: "law-firm",
   cpa: "accounting", bookkeeper: "accounting", taxes: "accounting",
   "insurance-agent": "insurance",
   realtor: "real-estate", "real-estate-agent": "real-estate", realty: "real-estate",
@@ -529,6 +529,7 @@ export async function runAudit(args: {
       url: targetUrl,
       businessCategory,
       businessName: prospect.businessName,
+      prospectId: prospect.id,
       ctx,
       heroResult,
       technicalResult,
@@ -1123,11 +1124,12 @@ function synthesizeAudit(args: {
   url: string;
   businessCategory: string;
   businessName: string;
+  prospectId: string;
   ctx: SiteContext;
   heroResult: HeroAnalysisResult;
   technicalResult: TechnicalAnalysisResult;
 }): AuditContent {
-  const { url, businessCategory, businessName, ctx, heroResult, technicalResult } = args;
+  const { url, businessCategory, businessName, prospectId, ctx, heroResult, technicalResult } = args;
   const benchmark = findBestBenchmark(businessCategory);
 
   const heroFindings = heroResult.findings.filter((f) =>
@@ -1284,9 +1286,9 @@ function synthesizeAudit(args: {
       headline: "You know the problems. Now fix them.",
       body: `You now have ${prioritizedRoadmap.length} fixes for ${businessName}. Most owners see this list and do nothing for 6 months. They lose tens of thousands. We'll rebuild your site in 48 hours to fix all of them. Most shops charge $5,000–$15,000. We charge $997 (or 3 small payments of $349). No monthly fees. 100% money-back if you don't love it.`,
       primaryButtonText: "Start with 3 × $349",
-      primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=installment",
+      primaryButtonUrl: `https://bluejayportfolio.com/claim/${prospectId}?plan=installment&source=audit`,
       secondaryButtonText: "Or $997 once",
-      secondaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=full",
+      secondaryButtonUrl: `https://bluejayportfolio.com/claim/${prospectId}?plan=full&source=audit`,
     },
     cost: {
       totalUsd: 0, // populated by caller

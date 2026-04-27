@@ -153,6 +153,11 @@ export default async function AuditPage({
     .maybeSingle();
   const businessName = (prospect as unknown as Prospect | null)?.business_name || "Your Business";
 
+  // Always compute checkout URLs from the prospect ID — the URLs stored in
+  // audit_content.callToAction were originally /contact which doesn't exist.
+  const checkoutUrlInstallment = `/claim/${a.prospect_id}?plan=installment&source=audit`;
+  const checkoutUrlFull = `/claim/${a.prospect_id}?plan=full&source=audit`;
+
   // Track view (best-effort, non-blocking)
   await supabase
     .from("site_audits")
@@ -569,7 +574,7 @@ export default async function AuditPage({
               {/* Primary CTA inside the box (Q10A) */}
               <div className="mt-6 flex flex-col items-center gap-2">
                 <a
-                  href={content.callToAction.primaryButtonUrl}
+                  href={checkoutUrlInstallment}
                   className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-emerald-500 to-sky-500 px-6 md:px-8 py-3 md:py-4 text-base font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
                 >
                   Recover ~${content.recoveryProjection.totalMonthly.toLocaleString()}/mo for $997 →
@@ -694,8 +699,8 @@ export default async function AuditPage({
       <AuditCTAHub
         auditId={a.id}
         prospectId={a.prospect_id}
-        primaryButtonUrl={content.callToAction.primaryButtonUrl}
-        secondaryButtonUrl={content.callToAction.secondaryButtonUrl}
+        primaryButtonUrl={checkoutUrlInstallment}
+        secondaryButtonUrl={checkoutUrlFull}
       />
 
       <footer className="border-t border-white/5 pb-24 md:pb-20">
@@ -730,7 +735,7 @@ export default async function AuditPage({
               </div>
             </div>
             <a
-              href={content.callToAction.primaryButtonUrl}
+              href={checkoutUrlInstallment}
               className="flex-shrink-0 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-4 md:px-6 py-2.5 text-sm font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               Fix it · 3×$349 →
