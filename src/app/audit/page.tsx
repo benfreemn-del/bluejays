@@ -77,36 +77,12 @@ export default function AuditLandingPage() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card
-              icon="0–100"
-              title="A real score"
-              body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance."
-            />
-            <Card
-              icon="$"
-              title="Money-leak estimate"
-              body="A conservative estimate of what your current site is costing you in missed leads every month."
-            />
-            <Card
-              icon="3-5"
-              title="Prioritized fixes"
-              body="Specific, plain-English issues with the dollar impact + how hard each one is to fix."
-            />
-            <Card
-              icon="✓"
-              title="Industry benchmark"
-              body="We compare your site to the gold-standard template for your category. See the gap."
-            />
-            <Card
-              icon="↻"
-              title="Honest verdict"
-              body="Which fixes you can DIY, and which ones need a rebuild. We tell you which is which — no upselling."
-            />
-            <Card
-              icon="→"
-              title="What's next"
-              body="A clear next-action. If we can help, we'll say so. If a freelancer would do better, we'll point you there."
-            />
+            <Card icon="0–100" title="A real score"         body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance." accent="emerald" />
+            <Card icon="$"    title="Money-leak estimate"   body="A conservative estimate of what your current site is costing you in missed leads every month." accent="rose" />
+            <Card icon="3-5"  title="Prioritized fixes"     body="Specific, plain-English issues with the dollar impact + how hard each one is to fix." accent="amber" />
+            <Card icon="✓"   title="Industry benchmark"    body="We compare your site to the gold-standard template for your category. See the gap." accent="sky" />
+            <Card icon="↻"   title="Honest verdict"        body="Which fixes you can DIY, and which ones need a rebuild. We tell you which is which — no upselling." accent="violet" />
+            <Card icon="→"   title="What's next"           body="A clear next-action. If we can help, we'll say so. If a freelancer would do better, we'll point you there." accent="teal" />
           </div>
         </div>
       </section>
@@ -148,13 +124,23 @@ export default function AuditLandingPage() {
   );
 }
 
-function Card({ icon, title, body }: { icon: string; title: string; body: string }) {
+const CARD_ACCENTS: Record<string, { icon: string; border: string; title: string; glow: string }> = {
+  emerald: { icon: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30", border: "border-emerald-500/20", title: "text-emerald-100", glow: "hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.08)]" },
+  rose:    { icon: "bg-rose-500/15 text-rose-300 border border-rose-500/30",           border: "border-rose-500/20",   title: "text-rose-100",    glow: "hover:border-rose-500/40 hover:shadow-[0_0_20px_rgba(244,63,94,0.08)]" },
+  amber:   { icon: "bg-amber-500/15 text-amber-300 border border-amber-500/30",        border: "border-amber-500/20",  title: "text-amber-100",   glow: "hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.08)]" },
+  sky:     { icon: "bg-sky-500/15 text-sky-300 border border-sky-500/30",              border: "border-sky-500/20",    title: "text-sky-100",     glow: "hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(14,165,233,0.08)]" },
+  violet:  { icon: "bg-violet-500/15 text-violet-300 border border-violet-500/30",     border: "border-violet-500/20", title: "text-violet-100",  glow: "hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.08)]" },
+  teal:    { icon: "bg-teal-500/15 text-teal-300 border border-teal-500/30",           border: "border-teal-500/20",   title: "text-teal-100",    glow: "hover:border-teal-500/40 hover:shadow-[0_0_20px_rgba(20,184,166,0.08)]" },
+};
+
+function Card({ icon, title, body, accent = "sky" }: { icon: string; title: string; body: string; accent?: string }) {
+  const a = CARD_ACCENTS[accent] || CARD_ACCENTS.sky;
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900/50 p-6">
-      <div className="mb-3 inline-flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-sky-500/20 to-emerald-500/20 text-sky-300 font-bold text-sm">
+    <div className={`rounded-xl border ${a.border} bg-slate-900/50 p-6 transition-all duration-200 ${a.glow}`}>
+      <div className={`mb-3 inline-flex items-center justify-center h-10 w-10 rounded-lg ${a.icon} font-bold text-sm`}>
         {icon}
       </div>
-      <h3 className="font-semibold mb-1">{title}</h3>
+      <h3 className={`font-semibold mb-1 ${a.title}`}>{title}</h3>
       <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
     </div>
   );
