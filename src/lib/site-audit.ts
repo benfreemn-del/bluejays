@@ -625,7 +625,7 @@ interface HeroAnalysisResult {
  * Lookup order:
  *   1. category-specific (variant.metadata.category === category)
  *   2. generic (variant.metadata.category IS NULL or absent)
- *   3. null (caller falls back to hardcoded buildHeroPrompt)
+ *   3. null (caller uses its own inline hero prompt)
  *
  * This is how Hyperloop evolves prompts over time — when the loop
  * generates new audit_prompt variants for a category, those variants
@@ -971,92 +971,6 @@ Site signals (these are LABELS for your reference — do NOT echo these label na
 - Image count on page: ${ctx.imageCount}
 - Body (first 2K of words on the page): """${ctx.bodyExcerpt}"""
 ${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}`;
-}
-
-function buildHeroPrompt(
-  ctx: SiteContext,
-  category: string,
-  businessName: string,
-): string {
-  const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[category];
-  const benchmarkLine = benchmark
-    ? `Quality bar to compare against: BlueJays' ${benchmark.template} site at ${benchmark.url}`
-    : "No specific BlueJays example site for this category yet.";
-  const painBlock = formatHeroPainPointsBlock(category);
-
-  return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
-
-TONE — non-negotiable:
-- Address the owner as "you". Never "the user" or "the website".
-- 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
-  - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
-  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template.
-  - BANNED tech jargon (CRITICAL — these never appear in your output, not in titles, not anywhere): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, ElectricalContractor schema, favicon, script, scripts, render, lazy-load, lazy-loading, viewport, DOM, CSS, SEO (say 'Google ranking' instead).
-  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
-  - When you mean meta description: say "the blurb Google shows under your link".
-  - When you mean schema: say "the address-book info Google reads about your business".
-  - When you mean favicon: say "the little icon next to your tab name".
-  - When you mean viewport tag: say "mobile scaling tag" (this is a tiny technical detail — NOT the same as the site actually looking good on phones).
-  - When you mean scripts: say "code files your page loads".
-  - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
-  - If a 9-year-old can't read it out loud and get it, rewrite it.
-- One punchy sentence beats three good ones. SHORT.
-- Lead with cost (lost customers, missed jobs, wasted money) — never the technical issue.
-- Quote their actual copy. Reference real numbers.
-
-UNIVERSAL RULES — apply to every category:
-0. HOMEPAGE-ONLY SCOPE — CRITICAL: You only see the homepage. You cannot see other pages (About, Schedule, Services, FAQ, etc). This changes how you word every finding:
-   - WRONG: "No class schedule" / "Schedule is missing" / "Doesn't have pricing"
-   - RIGHT: "Class schedule isn't on the homepage" / "Pricing isn't visible on page load"
-   - The severity of "not on homepage" is LOWER than "doesn't exist at all" — flag as 'medium', not 'critical', unless it's something that MUST be immediately visible (phone number, main CTA). Exception: phone numbers and CTAs must be on the homepage — those stay 'critical'.
-1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
-2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
-3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
-4. MOBILE RULE (CRITICAL): A mobile scaling tag being present does NOT mean the site looks good on phones. Most old sites have the tag and still look completely broken on mobile — text too small, buttons too close together, images overflowing, layout falling apart. If the site shows ANY signs of poor mobile quality (old platform like Flash/old Wix, lots of fixed-width content, no responsive images, heavy script load), flag mobile layout as a SEPARATE finding regardless of the tag. Never give a pass on mobile just because the tag exists.
-
-Business: ${businessName}
-Category: ${category}
-URL: ${ctx.url}
-${benchmarkLine}
-
-${painBlock}
-
-Site signals (these are LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
-- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
-- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-- Big headline at top of page: "${ctx.h1Text}"
-- All section headlines: ${JSON.stringify(ctx.headings.slice(0, 15))}
-- Image count on page: ${ctx.imageCount}
-- Body (first 2K of words on the page): """${ctx.bodyExcerpt}"""
-${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
-
-Return STRICT JSON ONLY:
-
-{
-  "headline": "<their actual H1>",
-  "cta": "<their primary CTA copy, or 'No clear CTA found'>",
-  "score": <0-100 — hero/positioning/copy/social-proof overall>,
-  "findings": [
-    {
-      "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
-      "severity": "critical" | "high" | "medium" | "low",
-      "title": "<5-8 words. 3rd-grade. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
-      "observation": "<ONE sentence, max 20 words. 3rd-grade. The problem + cost. Example: 'Your hero just says Welcome. A new visitor has 3 seconds to get it, and most bail.'>",
-      "recommendation": "<ONE sentence, max 20 words. 3rd-grade. The fix, plain. Example: 'Tell them what you do and who you help: Same-day plumbing for Tacoma homes, ${"$"}99 to come out.'>",
-      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How a BlueJays ${category} site fixes it. NEVER say 'V2', 'template', or 'tag' — owners don't know those words. Say 'BlueJays' site' or 'a BlueJays build'.>"
-    }
-  ]
-}
-
-Generate 4-6 findings total. RULES:
-- 1-2 severity="critical" or "high" if score below 70
-- 1-2 severity="low" = STRENGTHS (celebratory title, e.g. "Your meta description nails it")
-- ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "Working well", "All X have Y") → severity MUST be "low". No exceptions.
-- Observations and recommendations: ONE sentence each, max 25 words. NEVER more than 25 words. If you can't say it in 25 words, the finding isn't sharp enough.
-- Skip generic SEO advice. Focus on what's losing them CUSTOMERS.
-- Never say "improve", "optimize", "enhance".
-
-JSON only.`;
 }
 
 function buildTechnicalPrompt(ctx: SiteContext, category: string): string {
