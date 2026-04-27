@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import AuditCTAHub from "./AuditCTAHub";
+import AuditTestimonials from "../AuditTestimonials";
 import RetargetingPixels from "@/components/RetargetingPixels";
 
 /**
@@ -583,6 +584,11 @@ export default async function AuditPage({
           MUST use real data or be removed. NEVER show fake or inflated
           numbers." Will reinstate once real client testimonials exist
           (top of Ben's manual TODO — first 3 paying clients). */}
+
+      {/* Testimonials — prospect has just read their audit and is deciding
+          whether to act. Showing real clients at this moment answers "but
+          is this company actually real?" before the CTA hub. */}
+      <AuditTestimonials />
 
       {/* Final CTA — replaced in v7 with the 3-CTA hub (Buy / Schedule
           / Get Preview). The single-CTA "You know the problems. Now fix

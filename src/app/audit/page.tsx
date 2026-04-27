@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AuditForm from "./AuditForm";
+import AuditTestimonials from "./AuditTestimonials";
 import RetargetingPixels from "@/components/RetargetingPixels";
 
 /**
@@ -71,6 +72,9 @@ export default function AuditLandingPage() {
           </p>
         </div>
       </section>
+
+      {/* Testimonials — proof before they commit to filling out the form */}
+      <AuditTestimonials />
 
       {/* What you get */}
       <section className="border-b border-white/5 bg-slate-900/40">
