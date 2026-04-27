@@ -307,51 +307,54 @@
         </div>
     </section>
 
-    <!-- PRICING -->
+    <!-- PRICING CALCULATOR -->
     <section id="pricing" class="pricing">
         <div class="container">
-            <h2 class="section-title reveal">Transparent Pricing</h2>
-            <p class="section-sub reveal">No hidden fees. Every inspection includes a written report and thermal imaging where applicable.</p>
-            <div class="pricing-grid">
-                <div class="price-card reveal">
-                    <div class="price-name">Residential</div>
-                    <div class="price-amount">$150<span class="price-suffix">+</span></div>
-                    <p class="price-desc">For single-family homes, condos, and apartments of any size.</p>
-                    <ul class="price-includes">
-                        <li>Thermal imaging included</li>
-                        <li>Written inspection report</li>
-                        <li>Moisture readings throughout</li>
-                        <li>Recommendations for next steps</li>
-                        <li>Air sampling available (additional cost)</li>
-                    </ul>
-                    <a href="#contact" class="price-cta">Schedule Now</a>
+            <h2 class="section-title reveal">What Will It Cost?</h2>
+            <p class="section-sub reveal">Drag the slider to your home's square footage and get an instant estimate.</p>
+            <div class="calc-wrap reveal">
+                <div class="calc-card">
+                    <div class="calc-sqft-row">
+                        <label class="calc-label" for="sqft-slider">Home Size</label>
+                        <span class="calc-sqft-display" id="sqft-display">1,500 sq ft</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="sqft-slider"
+                        class="calc-slider"
+                        min="500"
+                        max="5000"
+                        step="100"
+                        value="1500"
+                        aria-label="Square footage"
+                    >
+                    <div class="calc-ticks">
+                        <span>500</span>
+                        <span>1,500</span>
+                        <span>2,500</span>
+                        <span>3,500</span>
+                        <span>5,000</span>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-price-label">Estimated Inspection Price</div>
+                        <div class="calc-price" id="calc-price">$150</div>
+                        <div class="calc-note">Includes thermal imaging &amp; written report. Air sampling is additional if needed.</div>
+                    </div>
+                    <a href="#contact" class="price-cta calc-cta">Schedule My Inspection</a>
                 </div>
-                <div class="price-card featured reveal">
-                    <div class="featured-badge">Most Requested</div>
-                    <div class="price-name">Commercial</div>
-                    <div class="price-amount">Custom</div>
-                    <p class="price-desc">Offices, retail, schools, healthcare, multi-unit buildings, and HOAs.</p>
-                    <ul class="price-includes">
-                        <li>Full thermal imaging survey</li>
-                        <li>Detailed written report</li>
-                        <li>Insurance-ready documentation</li>
-                        <li>Multi-unit pricing available</li>
-                        <li>Compliance documentation</li>
-                    </ul>
-                    <a href="#contact" class="price-cta">Get a Quote</a>
-                </div>
-                <div class="price-card reveal">
-                    <div class="price-name">RV &amp; Motorhome</div>
-                    <div class="price-amount">Call</div>
-                    <p class="price-desc">For RVs and motorhomes of any size. Same thorough approach as our residential inspection.</p>
-                    <ul class="price-includes">
-                        <li>Thermal imaging included</li>
-                        <li>Written inspection report</li>
-                        <li>Moisture readings throughout</li>
-                        <li>Recommendations for next steps</li>
-                        <li>Air sampling available (additional cost)</li>
-                    </ul>
-                    <a href="tel:3606703367" class="price-cta">Call to Schedule</a>
+                <div class="calc-sidebar">
+                    <div class="calc-side-card">
+                        <div class="calc-side-title">Commercial &amp; Multi-Unit</div>
+                        <div class="calc-side-price">Custom Quote</div>
+                        <p class="calc-side-desc">Offices, retail, schools, healthcare, and HOAs. Pricing based on scope.</p>
+                        <a href="#contact" class="price-cta">Get a Quote</a>
+                    </div>
+                    <div class="calc-side-card">
+                        <div class="calc-side-title">RV, Marine &amp; Auto</div>
+                        <div class="calc-side-price">Call Us</div>
+                        <p class="calc-side-desc">Same thorough approach as residential. Call for current availability and pricing.</p>
+                        <a href="tel:3606703367" class="price-cta">Call to Schedule</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -268,4 +268,24 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("scroll", updateActiveNavLink);
   updateActiveNavLink();
 
+  // Pricing calculator
+  function calcPrice(sqft) {
+    if (sqft <= 1500) return 150;
+    return 150 + Math.ceil((sqft - 1500) / 500) * 50;
+  }
+
+  var slider = document.getElementById("sqft-slider");
+  var priceEl = document.getElementById("calc-price");
+  var sqftDisplay = document.getElementById("sqft-display");
+
+  if (slider && priceEl && sqftDisplay) {
+    function updateCalc() {
+      var sqft = parseInt(slider.value, 10);
+      sqftDisplay.textContent = sqft.toLocaleString() + " sq ft";
+      priceEl.textContent = "$" + calcPrice(sqft);
+    }
+    slider.addEventListener("input", updateCalc);
+    updateCalc();
+  }
+
 });
