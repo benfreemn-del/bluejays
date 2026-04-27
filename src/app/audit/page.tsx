@@ -64,6 +64,28 @@ export default function AuditLandingPage() {
           <p className="mt-6 text-xs text-slate-500">
             Audit takes ~3-5 minutes to generate. We&apos;ll email it to you the moment it&apos;s ready.
           </p>
+
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-emerald-500 shrink-0" aria-hidden="true"><path fillRule="evenodd" d="M8 .5a7.5 7.5 0 100 15A7.5 7.5 0 008 .5zm3.53 5.97a.75.75 0 010 1.06l-4 4a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.47-3.47a.75.75 0 011.06 0z" clipRule="evenodd" /></svg>
+              No credit card required
+            </span>
+            <span className="text-slate-700 hidden sm:block">·</span>
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-sky-500 shrink-0" aria-hidden="true"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4a.75.75 0 011.5 0v3.25l1.75 1.75a.75.75 0 11-1.06 1.06l-2-2A.75.75 0 017.25 8.5V5z" /><path fillRule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z" clipRule="evenodd" /></svg>
+              Results in minutes
+            </span>
+            <span className="text-slate-700 hidden sm:block">·</span>
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-violet-400 shrink-0" aria-hidden="true"><path fillRule="evenodd" d="M8 .5C5.8.5 4 2.3 4 4.5v.67C2.8 5.7 2 6.8 2 8v5c0 1.4 1.1 2.5 2.5 2.5h7c1.4 0 2.5-1.1 2.5-2.5V8c0-1.2-.8-2.3-2-2.83V4.5C12 2.3 10.2.5 8 .5zm2.5 4.17V4.5a2.5 2.5 0 00-5 0v.17c.32-.1.65-.17 1-.17h3c.35 0 .68.07 1 .17zM8 9a1 1 0 01.5 1.87V12a.5.5 0 01-1 0v-1.13A1 1 0 018 9z" clipRule="evenodd" /></svg>
+              SSL encrypted
+            </span>
+            <span className="text-slate-700 hidden sm:block">·</span>
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-sky-400 shrink-0" aria-hidden="true"><path d="M8 .5a2 2 0 011.995 1.85L10 2.5h2.5A1.5 1.5 0 0114 4v9a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 012 13V4a1.5 1.5 0 011.5-1.5H6a2 2 0 012-2zm0 1.5a.5.5 0 100 1 .5.5 0 000-1zm0 4.25a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0V7a.75.75 0 01.75-.75z" /></svg>
+              Stripe-secured checkout
+            </span>
+          </div>
         </div>
       </section>
 
