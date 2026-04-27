@@ -46,13 +46,13 @@ const STAGE_MESSAGES: Record<string, string> = {
 // minimize Time Delay × Effort by anchoring the prospect's expectation
 // to a visible, monotonic progress bar.
 const TRACKER_STAGES = [
-  { key: "submitted", label: "Submitted", icon: "✓", percentTrigger: 0 },
-  { key: "fetch", label: "Fetching site", icon: "↓", percentTrigger: 5 },
-  { key: "hero", label: "Hero analysis", icon: "★", percentTrigger: 25 },
-  { key: "technical", label: "Technical / SEO", icon: "⚙", percentTrigger: 50 },
-  { key: "benchmark", label: "Benchmarking", icon: "⊕", percentTrigger: 70 },
-  { key: "synthesis", label: "Synthesizing", icon: "✎", percentTrigger: 88 },
-  { key: "ready", label: "Ready", icon: "🎉", percentTrigger: 100 },
+  { key: "submitted",  label: "Submitted",  shortLabel: "Done",    icon: "✓", percentTrigger: 0 },
+  { key: "fetch",      label: "Fetching",   shortLabel: "Fetch",   icon: "↓", percentTrigger: 5 },
+  { key: "hero",       label: "Hero",       shortLabel: "Hero",    icon: "★", percentTrigger: 25 },
+  { key: "technical",  label: "SEO",        shortLabel: "SEO",     icon: "⚙", percentTrigger: 50 },
+  { key: "benchmark",  label: "Comparing",  shortLabel: "Compare", icon: "⊕", percentTrigger: 70 },
+  { key: "synthesis",  label: "Writing",    shortLabel: "Write",   icon: "✎", percentTrigger: 88 },
+  { key: "ready",      label: "Ready",      shortLabel: "Ready",   icon: "🎉", percentTrigger: 100 },
 ];
 
 const ESTIMATED_TOTAL_SECONDS = 90; // ~60-90s — actual observed audit duration
@@ -281,9 +281,9 @@ export default function ProcessingClient({
 
             {/* The track */}
             <div className="relative">
-              {/* Connecting line — full width grayed bg */}
+              {/* Connecting line bg */}
               <div className="absolute top-4 left-3 right-3 h-1 bg-slate-800 rounded-full" />
-              {/* Connecting line — filled portion */}
+              {/* Connecting line filled */}
               <div
                 className="absolute top-4 left-3 h-1 bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-700 ease-out"
                 style={{
@@ -291,15 +291,15 @@ export default function ProcessingClient({
                   maxWidth: "calc(100% - 24px)",
                 }}
               />
-              {/* The dots */}
+              {/* Dots */}
               <div className="relative flex items-start justify-between">
                 {TRACKER_STAGES.map((stage, i) => {
                   const isActive = i === currentStageIdx && status !== "ready";
                   const isComplete = i < currentStageIdx || status === "ready";
                   return (
-                    <div key={stage.key} className="flex flex-col items-center w-12 sm:w-auto">
+                    <div key={stage.key} className="flex flex-col items-center">
                       <div
-                        className={`relative h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
+                        className={`relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
                           isComplete
                             ? "bg-gradient-to-br from-sky-500 to-emerald-400 text-white shadow-lg shadow-sky-500/30"
                             : isActive
@@ -310,15 +310,12 @@ export default function ProcessingClient({
                         {isActive && (
                           <span className="absolute inset-0 rounded-full bg-sky-500 animate-ping opacity-30" />
                         )}
-                        <span className="relative">{isComplete ? "✓" : stage.icon}</span>
+                        <span className="relative text-xs">{isComplete ? "✓" : stage.icon}</span>
                       </div>
+                      {/* Labels: hidden on mobile, shown on sm+ */}
                       <span
-                        className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight transition-colors duration-300 ${
-                          isActive
-                            ? "text-sky-300"
-                            : isComplete
-                              ? "text-emerald-300"
-                              : "text-slate-500"
+                        className={`hidden sm:block mt-2 text-xs font-medium text-center leading-tight transition-colors duration-300 ${
+                          isActive ? "text-sky-300" : isComplete ? "text-emerald-300" : "text-slate-500"
                         }`}
                       >
                         {stage.label}
@@ -326,6 +323,15 @@ export default function ProcessingClient({
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Mobile-only: single active step label centered below track */}
+              <div className="sm:hidden mt-3 text-center">
+                <span className="text-xs font-semibold text-sky-300">
+                  {status === "ready"
+                    ? "✓ Ready"
+                    : TRACKER_STAGES[currentStageIdx]?.label ?? ""}
+                </span>
               </div>
             </div>
           </div>
