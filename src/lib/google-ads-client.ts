@@ -115,6 +115,10 @@ export interface GoogleAdsClient {
   updateCampaignBudget(params: UpdateGoogleAdGroupBudgetParams): Promise<void>;
 
   ping(): Promise<{ customerId: string; descriptiveName: string; currencyCode: string }>;
+
+  /** Total customer-account spend in USD over the last N days. Account-wide,
+   * across all campaigns. Used by the Hyperloop weekly ad-spend cap. */
+  getAccountSpendUsd(daysBack: number): Promise<number>;
 }
 
 // ─── Real Google Ads client ───────────────────────────────────────
@@ -221,6 +225,53 @@ class RealGoogleAdsClient implements GoogleAdsClient {
       descriptiveName: String(row.descriptiveName ?? ""),
       currencyCode: String(row.currencyCode ?? "USD"),
     };
+  }
+
+  async getAccountSpendUsd(daysBack: number): Promise<number> {
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(start.getDate() - daysBack);
+    const dateStart = start.toISOString().slice(0, 10);
+    const dateEnd = today.toISOString().slice(0, 10);
+
+    // Customer-level cost over the window. `customer` table aggregates
+    // across all campaigns/ad_groups/ads in the account.
+    const query = `
+      SELECT metrics.cost_micros
+      FROM customer
+      WHERE segments.date BETWEEN '${dateStart}' AND '${dateEnd}'
+    `.trim();
+
+    const res = await this.authedFetch(
+      `/${GOOGLE_ADS_API_VERSION}/customers/${this.customerId}/googleAds:search`,
+      {
+        method: "POST",
+        body: JSON.stringify({ query }),
+      },
+    );
+    if (!res.ok) {
+      throw new GoogleAdsError(
+        `getAccountSpendUsd failed (HTTP ${res.status})`,
+        await safeText(res),
+      );
+    }
+    const json = await res.json();
+    const results: unknown[] = Array.isArray(json.results) ? json.results : [];
+
+    await logCost({
+      service: "google_ads",
+      action: "getAccountSpend",
+      costUsd: 0,
+      metadata: { daysBack, rows: results.length },
+    }).catch(() => {});
+
+    let totalMicros = 0;
+    for (const row of results) {
+      const r = row as Record<string, unknown>;
+      const metrics = (r.metrics ?? {}) as Record<string, unknown>;
+      totalMicros += parseFloatOr0(metrics.costMicros);
+    }
+    return Math.round((totalMicros / 1_000_000) * 100) / 100;
   }
 
   async getInsights(args: {
@@ -495,6 +546,11 @@ class MockGoogleAdsClient implements GoogleAdsClient {
       descriptiveName: "BlueJays Mock Account",
       currencyCode: "USD",
     };
+  }
+
+  async getAccountSpendUsd(_daysBack: number): Promise<number> {
+    // Mock-mode: $0 spend per Q6A locked design — cap never breaches in dev/CI.
+    return 0;
   }
 
   async getInsights(args: {

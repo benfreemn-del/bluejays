@@ -73,6 +73,18 @@ interface Run {
   notes: string | null;
 }
 
+interface SpendStatus {
+  totalSpendUsd: number;
+  metaSpendUsd: number;
+  googleSpendUsd: number;
+  capUsd: number;
+  breached: boolean;
+  bypassActive: boolean;
+  source: "live" | "mock" | "partial";
+  metaError?: string;
+  googleError?: string;
+}
+
 interface Config {
   paused: boolean;
   weekly_cost_cap_usd: number;
@@ -119,6 +131,7 @@ export default function HyperloopDashboard() {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [runs, setRuns] = useState<Run[]>([]);
   const [config, setConfig] = useState<Config | null>(null);
+  const [spend, setSpend] = useState<SpendStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -132,17 +145,20 @@ export default function HyperloopDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [vRes, rRes, cRes] = await Promise.all([
+      const [vRes, rRes, cRes, sRes] = await Promise.all([
         fetch("/api/hyperloop/variants"),
         fetch("/api/hyperloop/runs"),
         fetch("/api/hyperloop/config"),
+        fetch("/api/hyperloop/spend-status"),
       ]);
       const vJson = await vRes.json();
       const rJson = await rRes.json();
       const cJson = await cRes.json();
+      const sJson = sRes.ok ? await sRes.json() : null;
       setVariants(vJson.variants || []);
       setRuns(rJson.runs || []);
       setConfig(cJson);
+      setSpend(sJson);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -430,6 +446,90 @@ export default function HyperloopDashboard() {
             </div>
           </div>
         )}
+
+        {/* Weekly ad-spend cap tile (Rule 63 — locked 2026-04-27) */}
+        {spend && (() => {
+          const pct = spend.capUsd > 0 ? (spend.totalSpendUsd / spend.capUsd) * 100 : 0;
+          const tier =
+            spend.breached ? "red" : pct >= 90 ? "red" : pct >= 60 ? "amber" : "green";
+          const tierBorder = {
+            green: "border-emerald-500/40 bg-emerald-500/10",
+            amber: "border-amber-500/40 bg-amber-500/10",
+            red: "border-rose-500/40 bg-rose-500/10",
+          }[tier];
+          const barColor = {
+            green: "bg-emerald-500",
+            amber: "bg-amber-500",
+            red: "bg-rose-500",
+          }[tier];
+          const headlineColor = {
+            green: "text-emerald-300",
+            amber: "text-amber-300",
+            red: "text-rose-300",
+          }[tier];
+          return (
+            <div className={`mb-8 rounded-xl border p-5 ${tierBorder}`}>
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
+                    Weekly ad spend (rolling 7d) · Rule 63 cap
+                  </p>
+                  <p className={`text-2xl font-bold ${headlineColor}`}>
+                    ${spend.totalSpendUsd.toFixed(2)}
+                    <span className="text-sm font-normal text-slate-400">
+                      {" "}/ ${spend.capUsd.toFixed(2)} cap
+                    </span>
+                  </p>
+                </div>
+                <div className="text-right text-xs text-slate-400">
+                  <p>Meta ${spend.metaSpendUsd.toFixed(2)}</p>
+                  <p>Google ${spend.googleSpendUsd.toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div
+                  className={`h-full ${barColor} transition-all`}
+                  style={{ width: `${Math.min(100, pct)}%` }}
+                />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500">
+                <span>{pct.toFixed(0)}% of cap</span>
+                <span>·</span>
+                <span>
+                  Source:{" "}
+                  {spend.source === "live"
+                    ? "🟢 live (Meta + Google APIs)"
+                    : spend.source === "partial"
+                      ? "🟡 partial (one platform live)"
+                      : "⚫ mock (no API creds — always $0)"}
+                </span>
+                {spend.bypassActive && (
+                  <>
+                    <span>·</span>
+                    <span className="text-amber-300">⚠ bypass env var active</span>
+                  </>
+                )}
+                {spend.breached && (
+                  <>
+                    <span>·</span>
+                    <span className="text-rose-300 font-semibold">🚨 cap breached — Hyperloop paused this tick</span>
+                  </>
+                )}
+              </div>
+              {(spend.metaError || spend.googleError) && (
+                <div className="mt-2 text-[11px] text-amber-300/80">
+                  {spend.metaError && <p>Meta fetch error: {spend.metaError}</p>}
+                  {spend.googleError && <p>Google fetch error: {spend.googleError}</p>}
+                </div>
+              )}
+              <p className="mt-3 text-[11px] text-slate-500 leading-relaxed">
+                Cap default $200/wk — set via <code className="bg-slate-800 px-1 rounded">HYPERLOOP_WEEKLY_AD_SPEND_CAP_USD</code>.
+                Override for one tick: <code className="bg-slate-800 px-1 rounded">HYPERLOOP_BYPASS_SPEND_CAP=true</code>.
+                Auto-resumes when rolling 7-day spend dips below cap.
+              </p>
+            </div>
+          );
+        })()}
 
         {/* Variants by kind */}
         <section className="mb-10">

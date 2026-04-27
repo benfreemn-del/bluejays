@@ -17,6 +17,7 @@ import {
 import { isMetaAdsConfigured } from "@/lib/meta-ads-client";
 import { isGoogleAdsConfigured } from "@/lib/google-ads-client";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { getWeeklySpendStatus } from "@/lib/hyperloop-spend";
 
 /**
  * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
@@ -171,6 +172,59 @@ async function runHyperloop(req?: NextRequest) {
       gateReason,
       auditsReady,
       customersPaid,
+    });
+  }
+
+  // ─── Weekly ad-spend cap circuit breaker (Rule 63 — locked 2026-04-27) ─
+  // Reads last 7 days of platform spend across Meta + Google. If above
+  // HYPERLOOP_WEEKLY_AD_SPEND_CAP_USD (default $200/wk), pause Hyperloop
+  // for this tick + SMS Ben. Mock-mode (no API creds) returns $0 so the
+  // cap never breaches in dev/CI. Manual override via env var
+  // HYPERLOOP_BYPASS_SPEND_CAP=true.
+  const spend = await getWeeklySpendStatus();
+  if (spend.breached) {
+    const gateReason =
+      `Spend cap breached: $${spend.totalSpendUsd.toFixed(2)} over last 7 days ` +
+      `(Meta $${spend.metaSpendUsd.toFixed(2)} + Google $${spend.googleSpendUsd.toFixed(2)}) ` +
+      `vs $${spend.capUsd.toFixed(2)} weekly cap. Pausing Hyperloop work for this tick. ` +
+      `Will auto-resume when rolling 7-day window dips back under cap, OR set ` +
+      `HYPERLOOP_BYPASS_SPEND_CAP=true on Vercel for one-tick override.`;
+
+    await supabase.from("hyperloop_runs").insert({
+      active: false,
+      gate_reason: gateReason,
+      status: "dormant",
+      notes: `Heartbeat — spend-cap circuit breaker tripped.`,
+      metadata: {
+        spend: {
+          totalUsd: spend.totalSpendUsd,
+          metaUsd: spend.metaSpendUsd,
+          googleUsd: spend.googleSpendUsd,
+          capUsd: spend.capUsd,
+          source: spend.source,
+          metaError: spend.metaError,
+          googleError: spend.googleError,
+        },
+      },
+    });
+
+    void sendOwnerAlert(
+      `🚨 Hyperloop paused — spend cap breached.\n` +
+        `$${spend.totalSpendUsd.toFixed(2)} (Meta $${spend.metaSpendUsd.toFixed(2)} + Google $${spend.googleSpendUsd.toFixed(2)}) ` +
+        `vs $${spend.capUsd.toFixed(2)} cap. ` +
+        `Manually pause Meta + Google ad sets if needed. Hyperloop auto-resumes when spend dips below cap.`,
+    ).catch(() => {});
+
+    return NextResponse.json({
+      dormant: true,
+      gateReason,
+      spend: {
+        totalUsd: spend.totalSpendUsd,
+        metaUsd: spend.metaSpendUsd,
+        googleUsd: spend.googleSpendUsd,
+        capUsd: spend.capUsd,
+        source: spend.source,
+      },
     });
   }
 

@@ -116,6 +116,12 @@ export interface MetaAdsClient {
   /** Health check — used by /api/hyperloop/sync to verify creds before
    * a cron run. Returns ad-account name + currency on success. */
   ping(): Promise<{ accountId: string; accountName: string; currency: string }>;
+
+  /** Total ad-account spend in USD over the last N days. Account-wide,
+   * not per-ad — so it includes ALL active campaigns on this Meta ad
+   * account, not just Hyperloop-managed ones. Used by the Hyperloop
+   * weekly ad-spend cap circuit breaker. */
+  getAccountSpendUsd(daysBack: number): Promise<number>;
 }
 
 // ─── Real Meta Ads client ─────────────────────────────────────────
@@ -158,6 +164,36 @@ class RealMetaAdsClient implements MetaAdsClient {
       accountName: String(json.name ?? ""),
       currency: String(json.currency ?? "USD"),
     };
+  }
+
+  async getAccountSpendUsd(daysBack: number): Promise<number> {
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(start.getDate() - daysBack);
+    const dateStart = start.toISOString().slice(0, 10);
+    const dateEnd = today.toISOString().slice(0, 10);
+
+    const params: Record<string, string> = {
+      fields: "spend",
+      time_range: JSON.stringify({ since: dateStart, until: dateEnd }),
+      level: "account",
+    };
+
+    const url = this.url(`/${this.accountId}/insights`, params);
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new MetaAdsError(
+        `getAccountSpendUsd failed (HTTP ${res.status})`,
+        await safeText(res),
+      );
+    }
+    const json = await res.json();
+    await logCost({ service: "meta_ads", action: "getAccountSpend", costUsd: 0 }).catch(() => {});
+
+    // Account-level insights returns one aggregate row when no time_increment
+    // is set. Sum 'spend' across rows defensively in case Meta paginates.
+    const data = (json.data || []) as Array<{ spend?: string | number }>;
+    return data.reduce((sum, r) => sum + parseFloatOr0(r.spend), 0);
   }
 
   async getInsights(args: {
@@ -328,6 +364,11 @@ class MockMetaAdsClient implements MetaAdsClient {
       accountName: "BlueJays Mock Account",
       currency: "USD",
     };
+  }
+
+  async getAccountSpendUsd(_daysBack: number): Promise<number> {
+    // Mock-mode: $0 spend per Q6A locked design — cap never breaches in dev/CI.
+    return 0;
   }
 
   async getInsights(args: {

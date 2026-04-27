@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { runAllHealthChecks } from "@/lib/health-checks";
+import { getWeeklySpendStatus } from "@/lib/hyperloop-spend";
 
 /**
  * Daily watchdog cron — implements Rule 66.
@@ -370,6 +371,26 @@ async function runWatchdog(req?: NextRequest) {
     }
   }
 
+  // ─── Hyperloop weekly spend-cap double-check (Q11A safety net) ─
+  // Hyperloop's own check runs weekly Mondays. The daily watchdog
+  // adds a third safety net so a runaway-spend incident gets caught
+  // within 24 hours instead of 7+ days.
+  let spendStatus: Awaited<ReturnType<typeof getWeeklySpendStatus>> | null = null;
+  try {
+    spendStatus = await getWeeklySpendStatus();
+    if (spendStatus.breached) {
+      alerts.push(
+        `Hyperloop spend cap breached: $${spendStatus.totalSpendUsd.toFixed(2)} ` +
+          `(Meta $${spendStatus.metaSpendUsd.toFixed(2)} + Google $${spendStatus.googleSpendUsd.toFixed(2)}) ` +
+          `vs $${spendStatus.capUsd.toFixed(2)} weekly cap`,
+      );
+    }
+  } catch (err) {
+    alerts.push(
+      `hyperloop_spend_check crashed: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
   // ─── Vendor health checks (Hormozi review #4) ─────────────────
   // Pings every external dependency (Stripe, SendGrid, Anthropic, OpenAI,
   // Twilio, Lob, Namecheap, Meta Ads, Google Ads, Supabase) and adds
@@ -414,6 +435,16 @@ async function runWatchdog(req?: NextRequest) {
       vendorOkCount: vendorChecks?.okCount ?? 0,
       vendorFailCount: vendorChecks?.failCount ?? 0,
       vendorSkippedCount: vendorChecks?.skippedCount ?? 0,
+      hyperloopSpend: spendStatus
+        ? {
+            totalUsd: spendStatus.totalSpendUsd,
+            metaUsd: spendStatus.metaSpendUsd,
+            googleUsd: spendStatus.googleSpendUsd,
+            capUsd: spendStatus.capUsd,
+            breached: spendStatus.breached,
+            source: spendStatus.source,
+          }
+        : null,
     },
   });
 
