@@ -53,6 +53,10 @@ export async function PATCH(req: Request) {
     clicks?: number;
     conversions?: number;
     costUsd?: number;
+    /** Map this variant to an existing platform ad. Set to "" or null
+     *  to unmap. Stage 2 Commit E — lets Ben paste an ID for an ad he
+     *  already created manually (so it joins the auto-loop). */
+    platformAdId?: string | null;
   } = {};
   try {
     body = await req.json();
@@ -70,6 +74,11 @@ export async function PATCH(req: Request) {
   if (body.clicks !== undefined) update.clicks = body.clicks;
   if (body.conversions !== undefined) update.conversions = body.conversions;
   if (body.costUsd !== undefined) update.cost_usd = body.costUsd;
+  if (body.platformAdId !== undefined) {
+    // Trim + treat empty string as unmap (NULL)
+    const trimmed = body.platformAdId == null ? null : String(body.platformAdId).trim();
+    update.platform_ad_id = trimmed === "" ? null : trimmed;
+  }
   if (body.impressions !== undefined || body.conversions !== undefined) {
     update.last_metrics_synced_at = new Date().toISOString();
   }

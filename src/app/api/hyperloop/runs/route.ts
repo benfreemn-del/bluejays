@@ -16,7 +16,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("hyperloop_runs")
     .select(
-      "id, ran_at, active, gate_reason, variants_analyzed, winners_found, losers_found, new_variants_created, ai_cost_usd, week_to_date_cost_usd, cost_cap_hit, status, notes",
+      "id, ran_at, active, gate_reason, variants_analyzed, winners_found, losers_found, new_variants_created, rolled_out_count, rollout_failed_count, paused_on_platform_count, pause_failed_count, ai_cost_usd, week_to_date_cost_usd, cost_cap_hit, status, notes",
     )
     .order("ran_at", { ascending: false })
     .limit(30);

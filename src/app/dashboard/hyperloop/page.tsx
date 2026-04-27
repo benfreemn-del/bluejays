@@ -60,6 +60,12 @@ interface Run {
   winners_found: number;
   losers_found: number;
   new_variants_created: number;
+  /** Stage 2 Commit C — ads auto-created on Meta + Google */
+  rolled_out_count: number | null;
+  rollout_failed_count: number | null;
+  /** Stage 2 Commit D — losers auto-paused on Meta + Google */
+  paused_on_platform_count: number | null;
+  pause_failed_count: number | null;
   ai_cost_usd: number | string | null;
   week_to_date_cost_usd: number | string | null;
   cost_cap_hit: boolean;
@@ -117,6 +123,10 @@ export default function HyperloopDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<SyncResponse | null>(null);
+  /** Stage 2 Commit E inline ad-mapping editor — id of variant being
+   *  edited + the in-progress text. Only one cell editable at a time. */
+  const [editingMapId, setEditingMapId] = useState<string | null>(null);
+  const [editingMapValue, setEditingMapValue] = useState("");
 
   async function loadAll() {
     setLoading(true);
@@ -162,6 +172,31 @@ export default function HyperloopDashboard() {
       body: JSON.stringify({ id, status }),
     });
     setVariants((prev) => prev.map((v) => (v.id === id ? { ...v, status } : v)));
+  }
+
+  /** Inline edit save — patches platform_ad_id back to the API. */
+  async function saveAdMapping(variantId: string) {
+    const newValue = editingMapValue.trim();
+    setEditingMapId(null);
+    setEditingMapValue("");
+    await fetch("/api/hyperloop/variants", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: variantId,
+        platformAdId: newValue || null,
+      }),
+    });
+    setVariants((prev) =>
+      prev.map((v) =>
+        v.id === variantId ? { ...v, platform_ad_id: newValue || null } : v,
+      ),
+    );
+  }
+
+  function startEditingMap(variantId: string, currentValue: string | null) {
+    setEditingMapId(variantId);
+    setEditingMapValue(currentValue ?? "");
   }
 
   async function runSyncNow() {
@@ -400,11 +435,46 @@ export default function HyperloopDashboard() {
                           <tr key={v.id} className="border-t border-white/5">
                             <td className="py-2 pr-4 font-mono text-xs">
                               {v.variant_name}
-                              {v.platform_ad_id && (
-                                <div className="text-[10px] text-slate-500 mt-0.5">
-                                  ad: {v.platform_ad_id}
-                                </div>
-                              )}
+                              {/* Stage 2 Commit E — inline platform_ad_id editor.
+                                  Click to edit, Enter to save, Esc to cancel.
+                                  Empty value unmaps. */}
+                              <div className="text-[10px] mt-0.5">
+                                {editingMapId === v.id ? (
+                                  <input
+                                    type="text"
+                                    value={editingMapValue}
+                                    onChange={(e) => setEditingMapValue(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") saveAdMapping(v.id);
+                                      if (e.key === "Escape") {
+                                        setEditingMapId(null);
+                                        setEditingMapValue("");
+                                      }
+                                    }}
+                                    onBlur={() => saveAdMapping(v.id)}
+                                    autoFocus
+                                    placeholder="paste platform ad ID"
+                                    className="w-full px-1.5 py-0.5 rounded bg-slate-800 border border-blue-electric/60 text-slate-200 font-mono text-[10px]"
+                                  />
+                                ) : v.platform_ad_id ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => startEditingMap(v.id, v.platform_ad_id)}
+                                    className="text-slate-500 hover:text-slate-300 transition-colors text-left"
+                                    title="Click to edit ad mapping"
+                                  >
+                                    ad: {v.platform_ad_id}
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => startEditingMap(v.id, null)}
+                                    className="text-slate-600 hover:text-sky-400 transition-colors text-left italic"
+                                  >
+                                    + map an ad
+                                  </button>
+                                )}
+                              </div>
                             </td>
                             <td className="py-2 pr-4">
                               <span
@@ -472,45 +542,69 @@ export default function HyperloopDashboard() {
                   <tr className="text-left text-xs text-slate-500 uppercase tracking-wider bg-slate-900/60">
                     <th className="px-4 py-3">When</th>
                     <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Variants</th>
-                    <th className="px-4 py-3">Winners</th>
-                    <th className="px-4 py-3">Losers</th>
-                    <th className="px-4 py-3">New</th>
-                    <th className="px-4 py-3">AI Cost</th>
+                    <th className="px-4 py-3" title="Variants analyzed">Var.</th>
+                    <th className="px-4 py-3" title="Winners promoted">Win</th>
+                    <th className="px-4 py-3" title="Losers retired">Lose</th>
+                    <th className="px-4 py-3" title="New variants generated">New</th>
+                    <th className="px-4 py-3" title="Auto-rolled out to platform (Commit C)">⬆ Plat</th>
+                    <th className="px-4 py-3" title="Auto-paused on platform (Commit D)">⏸ Plat</th>
+                    <th className="px-4 py-3">AI $</th>
                     <th className="px-4 py-3">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {runs.map((r) => (
-                    <tr key={r.id} className="border-t border-white/5">
-                      <td className="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">
-                        {new Date(r.ran_at).toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`text-[11px] font-semibold uppercase tracking-wider ${
-                            r.cost_cap_hit
-                              ? "text-amber-300"
-                              : r.active
-                                ? "text-emerald-300"
-                                : "text-slate-400"
-                          }`}
-                        >
-                          {r.cost_cap_hit ? "Cost Cap" : r.active ? "Active" : "Dormant"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-slate-300">{r.variants_analyzed}</td>
-                      <td className="px-4 py-3 text-emerald-300">{r.winners_found}</td>
-                      <td className="px-4 py-3 text-rose-300">{r.losers_found}</td>
-                      <td className="px-4 py-3 text-sky-300">{r.new_variants_created}</td>
-                      <td className="px-4 py-3 text-slate-300">
-                        ${parseFloat(String(r.ai_cost_usd ?? 0)).toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-slate-500 max-w-md truncate">
-                        {r.notes || r.gate_reason || ""}
-                      </td>
-                    </tr>
-                  ))}
+                  {runs.map((r) => {
+                    const rolledOut = r.rolled_out_count ?? 0;
+                    const rolloutFailed = r.rollout_failed_count ?? 0;
+                    const paused = r.paused_on_platform_count ?? 0;
+                    const pauseFailed = r.pause_failed_count ?? 0;
+                    return (
+                      <tr key={r.id} className="border-t border-white/5">
+                        <td className="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">
+                          {new Date(r.ran_at).toLocaleString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`text-[11px] font-semibold uppercase tracking-wider ${
+                              r.cost_cap_hit
+                                ? "text-amber-300"
+                                : r.active
+                                  ? "text-emerald-300"
+                                  : "text-slate-400"
+                            }`}
+                          >
+                            {r.cost_cap_hit ? "Cost Cap" : r.active ? "Active" : "Dormant"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-slate-300">{r.variants_analyzed}</td>
+                        <td className="px-4 py-3 text-emerald-300">{r.winners_found}</td>
+                        <td className="px-4 py-3 text-rose-300">{r.losers_found}</td>
+                        <td className="px-4 py-3 text-sky-300">{r.new_variants_created}</td>
+                        <td className="px-4 py-3 text-sky-300 whitespace-nowrap">
+                          {rolledOut}
+                          {rolloutFailed > 0 && (
+                            <span className="text-amber-400 ml-1" title="Rollout failed">
+                              ⚠ {rolloutFailed}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-amber-300 whitespace-nowrap">
+                          {paused}
+                          {pauseFailed > 0 && (
+                            <span className="text-rose-400 ml-1" title="Pause failed">
+                              ⚠ {pauseFailed}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
+                          ${parseFloat(String(r.ai_cost_usd ?? 0)).toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-500 max-w-md truncate">
+                          {r.notes || r.gate_reason || ""}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
