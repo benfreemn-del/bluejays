@@ -23,12 +23,14 @@ pending audits by firing fresh kicks at them.
 
 Files: [audit/submit](bluejays/src/app/api/audit/submit/route.ts) · [audit/[id]/status](bluejays/src/app/api/audit/[id]/status/route.ts) · [watchdog/run](bluejays/src/app/api/watchdog/run/route.ts)
 
-## 📦 What shipped (4 commits, all pushed)
+## 📦 What shipped (6 commits, all pushed)
 
 1. **[57771f1](https://github.com/benfreemn-del/bluejays/commit/57771f1)** — Watchdog Rule 66 systemic gap fix + audit-kick reliability
 2. **[c76d35a](https://github.com/benfreemn-del/bluejays/commit/c76d35a)** — Security: health endpoint 60s cache + request-preview status guard
 3. **[1e289bc](https://github.com/benfreemn-del/bluejays/commit/1e289bc)** — Customer-facing copy cleanup (banned phrases, missed footer, year-2 disclosure)
 4. **[d916e1a](https://github.com/benfreemn-del/bluejays/commit/d916e1a)** — Overnight review reports A-D + Hyperloop initial variants seed
+5. **[950a972](https://github.com/benfreemn-del/bluejays/commit/950a972)** — Morning summary (this file)
+6. **[c7d80ce](https://github.com/benfreemn-del/bluejays/commit/c7d80ce)** — CLAUDE.md drift fixes (cron time, FUNNEL_STEPS table, category counts) + onboarding email Rule 41 alignment
 
 ## 🚨 You need to run these SQL migrations
 
@@ -77,6 +79,18 @@ The #10 commit missed the homepage footer. Now matches the 93 V2 templates + sho
 
 ### 8. Welcome email missing year-2 disclosure
 `getWelcomeEmail()` never spelled out "$100/yr starts year 2, cancel anytime." Now does. Also tightened the "10 min onboarding" claim to "3-5 min for the essentials" (Rule 41).
+
+## 🤔 Things I deliberately did NOT fix (with reasoning)
+
+So you can sanity-check my judgment:
+
+- **`Hero.tsx` "Request a Free Website" CTA (5 places)** — Agent B flagged this. I checked the rule: the "Free website" ban is specifically for SMS bodies (spam-filter trigger), not homepage marketing copy. The homepage CTA is fine. Skipped.
+- **`compare/[id]` + `client/[id]` long preview URL hrefs** — Agent B flagged these as Rule 1 violations. Read Rule 1 again: it's specifically about URLs **sent** to prospects (email/SMS/voicemail/IG DM), not internal navigation links. These are click-throughs within the customer's session. Skipped.
+- **AI responder "no monthly subscription" framing** — Agent B flagged this as defensive. Context: it's the AI's reply to a prospect specifically asking "what's included?" In that context, "no monthly subscription" is direct and useful, not defensive. Borderline; left as-is.
+- **AuditCTAHub trust strip "No retainers, no monthly fees"** — same reasoning. Trust strip after pricing decision is the right place to surface this.
+- **Mixed renewal phrasing across emails** ("after year one" vs "starting year 2") — both are accurate. Standardizing would be a stylistic find/replace across 8+ surfaces. Skipped to focus on real bug fixes.
+- **`cta_clicks` insert-time dedup** — Agent A flagged this. Funnel-stats endpoint already dedups by prospect_id for the conversion math (that's the only metric that matters). The raw "clicks" count is inflated but doesn't drive any decision. Logged but skipped.
+- **Hyperloop platform-side ad-spend cap** — Agent A's biggest 🟡. Real Rule 63 risk, but adding it means: (a) reading current weekly spend from Meta + Google APIs, (b) storing the cap in `hyperloop_config`, (c) circuit-breaker at cron entry. That's a 1-2 hour substantial new feature, not a fix. Per Rule 48 (10-question gate before big jobs) I should not just go build this without your input on the design. **Documented as the highest-priority remaining risk — see below.**
 
 ## 🟡 Real findings I logged but did NOT fix tonight
 
@@ -133,14 +147,45 @@ Same list as before bed, with 2 items added at the top:
 7. Meta + Google ad credentials (when ready).
 8. Loom videos for top-10 cohort prospects.
 
+## ⚠ Highest-priority risk left for your decision
+
+**Hyperloop has no platform-side ad-spend cap (Rule 63 systemic).**
+
+Today the $50/wk cap protects only Anthropic credits used for variant
+generation. But the EXPENSIVE thing — Meta + Google daily ad spend —
+is bounded only by the daily budgets you set manually in the platform
+dashboards. If Hyperloop generates 50 bad-tone variants and rolls them
+all out, the platforms will spend the daily budget across them. With
+$50 Meta + $50 Google = $100/day = $700/wk before anyone notices.
+
+This needs a circuit-breaker at the Hyperloop cron entry: read this
+week's combined platform spend, compare to a configurable cap, pause
+all Hyperloop activity + SMS you if exceeded.
+
+Why I didn't build it tonight: it's a substantive new feature (read
+spend from Meta + Google APIs, store cap in hyperloop_config, circuit
+breaker, dashboard surface). Per Rule 48 I should not just ship a
+1-2 hour new feature without your design input. Quick clarifying
+questions for the morning:
+
+1. Cap as a single weekly $ amount or split per-platform?
+2. When breached: pause Hyperloop only, OR pause Hyperloop + SMS me, OR
+   pause Hyperloop + auto-pause Meta/Google campaigns via API?
+3. What's the actual cap value? ($200/wk? $500? $1000?)
+4. Should the cap auto-rise as we get more paid customers (CAC tied to
+   spend), or stay fixed?
+
+When ready, I can build it in a single session.
+
 ## 📊 Stats
 
-- **4 commits, 32 files changed**
-- **3 critical bugs fixed** (audit-kick, health cost-leak, request-preview downgrade)
+- **6 commits, 35 files changed**
+- **4 critical bugs fixed** (audit-kick, health cost-leak, request-preview downgrade, missed homepage footer)
 - **15 crons newly monitored** (was 3 of 17, now 18 of 17)
-- **8 banned-phrase / jargon fixes** across outreach surfaces
+- **10 banned-phrase / jargon fixes** across outreach surfaces
+- **5 CLAUDE.md drift fixes** (cron time, FUNNEL_STEPS table, category counts, watchdog status, V2 stale lists)
 - **2 migrations** ready for you to run (cron_heartbeats + Hyperloop seed)
 - **0 new TS errors introduced**
-- **4 overnight review markdown files** in the repo root
+- **4 overnight review markdown files + this summary** in the repo root
 
 Sleep well. Coffee up. The big bug is dead. 🪦
