@@ -180,18 +180,19 @@ export function getAuditEmail3(args: {
 
   const subject = `How a ${category === "general" ? "local business" : category.replace("-", " ")} owner doubled her bookings`;
 
-  // PLACEHOLDER STORY — replace with real BlueJays case study when we have one
-  const body = `Quick story.
+  const body = `Quick story before I let you get on with your day.
 
-A ${category === "general" ? "local business" : category.replace("-", " ")} owner in Washington came to us scoring a 38 on the same audit you took. Same kind of problems — buried CTA, no social proof, mobile half-broken.
+Hector runs a landscaping company in Washington. Been in business for years, does solid work, good reputation — but his website had a call button that was broken on half the browsers out there. He had no idea. His phone wasn't ringing the way it should've been.
 
-We rebuilt her site in 7 days for $997. No retainers, no monthly fees.
+We rebuilt his site. Nothing fancy — just fixed the things that were getting in his way.
 
-Three weeks after launch, she went from 2 calls a week to 14. Same town, same prices, same offer. Just a site that didn't actively work against her.
+That was 6+ years ago. He's been doing six figures annually since. Same service area, same prices, same crew. The site just stopped costing him business.
 
-That could be ${businessName}'s story too. The fixes are in your audit (${auditUrl}).
+I'm not telling you that to brag. I'm telling you because ${businessName}'s audit has the same kind of issues — stuff that's quietly working against you that you'd never catch by just looking at your own site.
 
-If you want me to walk you through what we'd specifically change for ${businessName}, book a 15-min call. I'll tell you in the first 5 minutes whether it's worth your time. No pitch deck, no agenda.
+The fixes are in the audit: ${auditUrl}
+
+If you want me to walk through what I'd change specifically for ${businessName}, just book 15 minutes. I'll tell you in the first 5 minutes if it's worth your time or not.
 
 ${bookUrl}${FOOTER}`;
 
