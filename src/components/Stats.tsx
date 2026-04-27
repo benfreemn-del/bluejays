@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import BluejayLogo from "./BluejayLogo";
 
 /* ───────────────────────── SVG Icons ───────────────────────── */
@@ -48,39 +47,16 @@ const GridPattern = ({ opacity = 0.03 }: { opacity?: number }) => (
 
 /* ───────────────────────── Counter ───────────────────────── */
 
-interface CounterProps {
-  target: number;
-  suffix?: string;
+interface StatCardProps {
+  value: string;
   label: string;
   icon: React.ReactNode;
   delay?: number;
 }
 
-function Counter({ target, suffix = "", label, icon, delay = 0 }: CounterProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 2000;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [isInView, target]);
-
+function StatCard({ value, label, icon, delay = 0 }: StatCardProps) {
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -97,8 +73,7 @@ function Counter({ target, suffix = "", label, icon, delay = 0 }: CounterProps) 
           {icon}
         </div>
         <p className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-          {count.toLocaleString()}
-          {suffix}
+          {value}
         </p>
         <p className="text-white/40 mt-2 text-sm font-semibold uppercase tracking-wider">
           {label}
@@ -158,10 +133,10 @@ export default function Stats() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <Counter target={150} suffix="+" label="Websites Built" icon={<WebsiteIcon />} delay={0} />
-          <Counter target={30} label="Industries Served" icon={<IndustryIcon />} delay={0.1} />
-          <Counter target={2} suffix="M+" label="Impressions Generated" icon={<ImpressionsIcon />} delay={0.2} />
-          <Counter target={98} suffix="%" label="Client Satisfaction" icon={<SatisfactionIcon />} delay={0.3} />
+          <StatCard value="150+" label="Websites Built" icon={<WebsiteIcon />} delay={0} />
+          <StatCard value="30" label="Industries Served" icon={<IndustryIcon />} delay={0.1} />
+          <StatCard value="2M+" label="Impressions Generated" icon={<ImpressionsIcon />} delay={0.2} />
+          <StatCard value="98%" label="Client Satisfaction" icon={<SatisfactionIcon />} delay={0.3} />
         </div>
       </div>
     </section>
