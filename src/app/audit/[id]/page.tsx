@@ -492,7 +492,7 @@ export default async function AuditPage({
             Cheaper than Squarespace. <span className="text-emerald-300 font-semibold">We do it for you</span> in 48 hours instead of you losing weeks of nights and weekends.
           </p>
           <p className="mt-2 text-center text-[11px] text-slate-500 max-w-xl mx-auto">
-            BlueJays: $997 once + $100/year (covers domain, hosting, support). Wix Premium ~$16/mo + domain. Squarespace Business ~$33/mo + extras. Numbers based on standard plans most small businesses pick.
+            BlueJays: $997 once + $100/year starting year 2 (covers domain, hosting, support; cancel anytime). Wix Premium ~$16/mo + domain. Squarespace Business ~$33/mo + extras. Numbers based on standard plans most small businesses pick.
           </p>
         </div>
       </section>

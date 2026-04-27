@@ -888,7 +888,7 @@ Your website is live. Bookmark this email — it's your complete reference going
 Your site: ${liveUrl}
 
 
-What's covered at $100/year
+What's covered at $100/year (first charge year 2, cancel anytime)
 ---
   - Domain renewal
   - Hosting (your site stays up, always)

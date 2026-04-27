@@ -155,7 +155,7 @@ export default function Services() {
             className="text-white/50 mt-4 max-w-2xl text-lg leading-relaxed mx-auto"
           >
             No hidden fees. No monthly subscriptions you don&apos;t need. Just a
-            stunning website for $997 one-time, with optional ongoing maintenance at $100/year after year one.
+            stunning website for $997 one-time, then $100/year starting year 2 for domain, hosting, and support. Cancel anytime.
           </motion.p>
         </div>
 

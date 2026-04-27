@@ -193,7 +193,7 @@ export default function TermsPage() {
             </div>
             <div>
               <p className="text-white/45">Current standard pricing</p>
-              <p className="mt-1 font-medium text-white">$997 one-time + $100/year</p>
+              <p className="mt-1 font-medium text-white">$997 one-time + $100/year starting year 2 (cancel anytime)</p>
             </div>
           </div>
         </div>
