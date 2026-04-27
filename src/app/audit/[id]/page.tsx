@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -227,34 +226,31 @@ export default async function AuditPage({
 
           {monthlyLeak > 0 && score < 80 ? (
             <>
-              <p className="text-sm uppercase tracking-wider text-rose-300 mb-3 font-semibold">
-                💸 You&apos;re losing about
-              </p>
-              {content.moneyLeak?.avgCustomerValue ? (
-                <p className="text-xs text-slate-400 mb-3">
-                  Each new {content.businessCategory.replace("-", " ")} customer is worth about{" "}
-                  <span className="text-amber-300 font-semibold">
-                    ${content.moneyLeak.avgCustomerValue.toLocaleString()}
-                  </span>{" "}
-                  to a business like yours.
+              {/* Money leak hero — clean card treatment */}
+              <div className="relative mx-auto max-w-lg mb-8 rounded-2xl border border-rose-500/20 bg-rose-950/20 p-8 overflow-hidden">
+                {/* Subtle glow behind the number */}
+                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-600/15 blur-3xl" />
+                </div>
+                <p className="relative text-xs font-semibold uppercase tracking-widest text-rose-400 mb-4">
+                  Estimated monthly revenue slipping away
                 </p>
-              ) : null}
-              <div className="relative mb-3 mx-auto" style={{ minHeight: 180 }}>
-                {/* Blackhole — vortex behind the money number. The dollars
-                    spiral toward a central red void on a 3.6s loop. CSS-only
-                    so this whole hero stays a server component. */}
-                <MoneyBlackhole />
-                <span className="relative text-7xl md:text-9xl font-black text-rose-400 leading-none drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">
-                  ${content.moneyLeak.monthlyEstimate.toLocaleString()}
-                </span>
-                <span className="relative text-3xl md:text-4xl text-slate-400 font-bold">/mo</span>
+                <div className="relative flex items-end justify-center gap-2 mb-4">
+                  <span className="text-7xl md:text-8xl font-black text-rose-400 leading-none tabular-nums" style={{ textShadow: "0 0 40px rgba(244,63,94,0.35)" }}>
+                    ${content.moneyLeak.monthlyEstimate.toLocaleString()}
+                  </span>
+                  <span className="text-2xl text-slate-500 font-bold mb-2">/mo</span>
+                </div>
+                {content.moneyLeak?.avgCustomerValue ? (
+                  <p className="relative text-sm text-slate-400 leading-relaxed">
+                    Each new {content.businessCategory.replace("-", " ")} customer is worth about{" "}
+                    <span className="text-amber-300 font-semibold">${content.moneyLeak.avgCustomerValue.toLocaleString()}</span>.{" "}
+                    Your site is capturing roughly {score}% of visitors who could become one.
+                  </p>
+                ) : (
+                  <p className="relative text-sm text-slate-400 leading-relaxed">{capabilityLine}</p>
+                )}
               </div>
-              <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto mb-3">
-                in customers your site is missing. Every month.
-              </p>
-              <p className="text-sm text-slate-400 max-w-xl mx-auto mb-6 leading-relaxed">
-                {capabilityLine}
-              </p>
 
               {/* Capability chip — framed as % not "Score" */}
               <div className="inline-flex flex-wrap justify-center items-center gap-x-2 gap-y-1 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8 max-w-xs sm:max-w-none">
@@ -791,77 +787,6 @@ function CostTile({
   );
 }
 
-/**
- * Money-leak blackhole visual. 8 dollar signs orbit around a pulsing red
- * void; each one spirals inward and disappears, then respawns after the
- * 3.6s loop. Pure CSS animations (defined in globals.css). Sits absolutely
- * behind the $X/mo number on the audit hero. Pointer-events disabled so
- * the number stays selectable / clickable.
- */
-function MoneyBlackhole() {
-  // Each dollar starts at a position on the perimeter and animates toward
-  // (0,0). Stagger delays so the spawns feel continuous, not pulsed.
-  const dollars: Array<{ sx: string; sy: string; delay: string }> = [
-    { sx: "-170px", sy: "-110px", delay: "0s" },
-    { sx: "160px",  sy: "-120px", delay: "0.45s" },
-    { sx: "190px",  sy: "10px",   delay: "0.9s" },
-    { sx: "140px",  sy: "120px",  delay: "1.35s" },
-    { sx: "-150px", sy: "130px",  delay: "1.8s" },
-    { sx: "-190px", sy: "20px",   delay: "2.25s" },
-    { sx: "-100px", sy: "-160px", delay: "2.7s" },
-    { sx: "110px",  sy: "-160px", delay: "3.15s" },
-  ];
-
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible"
-    >
-      <div className="relative w-full max-w-[480px] h-full" style={{ minHeight: 180 }}>
-        {/* Faint accretion-disk ring — slow rotation gives the vortex a
-            sense of motion even when no dollars are crossing the disk. */}
-        <div
-          className="absolute top-1/2 left-1/2 w-72 h-72 md:w-80 md:h-80 rounded-full border border-rose-500/15"
-          style={{ animation: "blackhole-disk-spin 12s linear infinite", transform: "translate(-50%, -50%)" }}
-        />
-        {/* Outer dim ring */}
-        <div
-          className="absolute top-1/2 left-1/2 w-96 h-96 rounded-full border border-rose-500/8"
-          style={{ animation: "blackhole-disk-spin 18s linear infinite reverse", transform: "translate(-50%, -50%)" }}
-        />
-        {/* Central void — pulsing red gradient. The "hot edge" of the
-            event horizon. Sits BELOW the dollar signs so they appear to
-            sink into it. */}
-        <div
-          className="absolute top-1/2 left-1/2 w-32 h-32 md:w-40 md:h-40 rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, #000 0%, #1f0309 35%, #4c0519 60%, transparent 85%)",
-            animation: "blackhole-void-pulse 3s ease-in-out infinite",
-            transform: "translate(-50%, -50%)",
-          }}
-        />
-        {/* Dollar signs spiraling inward */}
-        {dollars.map((d, i) => (
-          <span
-            key={i}
-            className="blackhole-dollar"
-            style={
-              {
-                // Custom CSS properties consumed by the keyframe
-                ["--sx" as string]: d.sx,
-                ["--sy" as string]: d.sy,
-                animationDelay: d.delay,
-              } as CSSProperties
-            }
-          >
-            $
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 async function getViewCount(id: string): Promise<number> {
   if (!isSupabaseConfigured()) return 0;
