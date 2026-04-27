@@ -264,6 +264,31 @@ export default function Hero() {
       <div
         className="relative z-10 w-full max-w-6xl px-6 pt-24"
       >
+        {/* Value prop headline — visible from page load */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            $997 custom websites for{" "}
+            <span className="text-sky-400">local businesses.</span>
+          </h1>
+          <p className="text-white/55 text-lg md:text-xl mt-4 max-w-2xl mx-auto">
+            See your new site before you pay anything — no credit card, no obligation.
+          </p>
+          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-white/40">
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              Domain included
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              Hosting included
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              48-hr delivery
+            </span>
+          </div>
+        </div>
+
         {/* Section header */}
         <div className="text-center mb-12">
           <span

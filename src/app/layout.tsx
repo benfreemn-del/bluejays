@@ -86,6 +86,29 @@ const GOOGLE_FONTS_URL =
   ].join("&") +
   "&display=swap";
 
+const SCHEMA = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "BlueJays",
+  "url": BASE_URL,
+  "logo": OG_IMAGE,
+  "description": "Custom website design for local businesses. $997 one-time includes domain registration and hosting setup.",
+  "areaServed": "United States",
+  "priceRange": "$997",
+  "offers": {
+    "@type": "Offer",
+    "name": "Custom Website Design",
+    "price": "997",
+    "priceCurrency": "USD",
+    "description": "Custom website design, domain registration, and hosting setup. See your site before you pay.",
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "bluejaycontactme@gmail.com",
+    "contactType": "customer service",
+  },
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -100,6 +123,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: SCHEMA }}
+        />
       </head>
       <body>
         {/* Floating audit-CTA pill — appears top-right on homepage + V2
