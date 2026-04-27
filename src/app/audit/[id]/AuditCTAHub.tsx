@@ -182,7 +182,7 @@ export default function AuditCTAHub({
             className="group flex flex-col items-center text-center rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 hover:border-amber-400 hover:bg-amber-500/10 transition-all hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-default text-left"
           >
             <div className="text-4xl mb-3">🎨</div>
-            <h3 className="text-lg font-bold text-white mb-2">Build me my full site</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Build me a preview</h3>
             <p className="text-2xl font-bold text-amber-300 mb-1">Free preview</p>
             <p className="text-xs text-slate-400 mb-4">Your actual site, live in 48 hours</p>
             <p className="text-xs text-slate-500 mt-auto">No purchase · Your real content + photos</p>
