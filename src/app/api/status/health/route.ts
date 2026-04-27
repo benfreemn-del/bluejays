@@ -14,16 +14,40 @@ import { runAllHealthChecks } from "@/lib/health-checks";
  *   - Operator dashboard — quick at-a-glance "is anything broken?" view
  *   - Manual debugging — `curl /api/status/health` from anywhere
  *
- * Auth: Bearer CRON_SECRET when called from cron, OR same-origin
- * admin cookie when called from the dashboard. Public to GET because
- * status pages are conventionally public — but no PII or secrets in
- * the response (just vendor names + ok/fail/skipped + latency).
+ * Auth + cost-leak defense: response is cached in-memory for
+ * CACHE_TTL_MS (60 sec) so spam-hitting the public endpoint at 100K
+ * req/day doesn't trigger 100K Anthropic + Stripe + everything-else
+ * pings (each costs ~$0.00003 + rate-limit-quota). A bearer
+ * `CRON_SECRET` bypass lets the watchdog force-refresh on demand.
+ *
+ * Response body has no PII or secrets — just vendor names + ok/fail/
+ * skipped + latency.
  */
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // 10 vendors × 5s timeout = 50s worst case
 
-export async function GET(_req: NextRequest) {
+const CACHE_TTL_MS = 60 * 1000;
+
+let cachedAt = 0;
+let cachedResult: Awaited<ReturnType<typeof runAllHealthChecks>> | null = null;
+
+export async function GET(req: NextRequest) {
+  const auth = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  const forceFresh = cronSecret && auth === `Bearer ${cronSecret}`;
+
+  const now = Date.now();
+  if (!forceFresh && cachedResult && now - cachedAt < CACHE_TTL_MS) {
+    return NextResponse.json({
+      ...cachedResult,
+      cached: true,
+      cachedAgeMs: now - cachedAt,
+    });
+  }
+
   const result = await runAllHealthChecks();
-  return NextResponse.json(result);
+  cachedResult = result;
+  cachedAt = now;
+  return NextResponse.json({ ...result, cached: false });
 }

@@ -67,12 +67,16 @@ async function checkSupabase(): Promise<VendorCheck> {
   if (!isSupabaseConfigured()) {
     return { vendor: "supabase", status: "skipped", detail: "no_credentials" };
   }
-  const r = await timed(() =>
-    withTimeout(
-      supabase.from("prospects").select("id", { count: "exact", head: true }).limit(1).then(),
+  const r = await timed(async () => {
+    // Supabase query builder is PromiseLike, not Promise — wrap so withTimeout's
+    // Promise<T> signature is satisfied.
+    await withTimeout(
+      Promise.resolve(
+        supabase.from("prospects").select("id", { count: "exact", head: true }).limit(1),
+      ),
       TIMEOUT_MS,
-    ),
-  );
+    );
+  });
   return r.error
     ? { vendor: "supabase", status: "fail", detail: r.error, latencyMs: r.latencyMs }
     : { vendor: "supabase", status: "ok", latencyMs: r.latencyMs };

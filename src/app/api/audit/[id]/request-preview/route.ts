@@ -72,6 +72,33 @@ export async function POST(
     return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
   }
 
+  // Status-downgrade guard (adversarial review A — Critical #3).
+  // The audit UUID is URL-as-secret, so anyone with it can POST here.
+  // Refuse when the prospect is already past lead-state: paid customers,
+  // dismissed/unsub/bounced records, and active outreach prospects must
+  // NOT be flipped back to audit_preview_requested + manually_managed=true.
+  const TERMINAL_OR_ACTIVE = [
+    "paid",
+    "dismissed",
+    "unsubscribed",
+    "bounced",
+    "contacted",
+    "approved",
+    "responded",
+    "scheduled",
+  ];
+  if (prospect.status && TERMINAL_OR_ACTIVE.includes(prospect.status)) {
+    return NextResponse.json(
+      {
+        ok: true,
+        already: true,
+        message:
+          "We've got you in our records already. Ben will reach out shortly.",
+      },
+      { status: 200 },
+    );
+  }
+
   // Idempotent — if they've already requested, return 200 without
   // re-alerting Ben (avoids double-SMS spam if they double-click).
   const existingScrapedData = (prospect.scraped_data ?? {}) as Record<string, unknown>;
