@@ -198,10 +198,9 @@ export default async function AuditPage({
             ← BlueJays
           </Link>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500">
-              Reviewed by{" "}
-              <span className="text-slate-300 font-medium">Ben</span>
-              {" "}· BlueJays
+            <span className="text-xs text-slate-400">
+              By <span className="text-white font-medium">Ben</span>
+              <span className="hidden sm:inline text-slate-600"> · BlueJays</span>
             </span>
             <span className="text-xs text-slate-600 font-mono hidden sm:inline">{id.slice(0, 8)}</span>
           </div>
@@ -258,13 +257,13 @@ export default async function AuditPage({
               </p>
 
               {/* Score moves to a small chip below the money number */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8">
-                <span className="text-xs uppercase tracking-wider text-slate-400">Site score</span>
+              <div className="inline-flex flex-wrap justify-center items-center gap-x-2 gap-y-1 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8 max-w-xs sm:max-w-none">
+                <span className="text-xs uppercase tracking-wider text-slate-400">Score</span>
                 <span className={`text-base font-bold ${scoreColor}`}>{score}/100</span>
                 <span className="text-slate-600">·</span>
                 <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
-                <span className="text-slate-600">·</span>
-                <span className="text-xs text-slate-400">~{score}% there</span>
+                <span className="hidden sm:inline text-slate-600">·</span>
+                <span className="hidden sm:inline text-xs text-slate-400">~{score}% of potential</span>
               </div>
             </>
           ) : (
@@ -340,7 +339,7 @@ export default async function AuditPage({
                         +${recovery.toLocaleString()}/mo
                       </div>
                       {monthlyLeak > 0 && (
-                        <div className="text-emerald-400/60 text-[11px] mt-0.5 whitespace-nowrap">
+                        <div className="text-emerald-400/60 text-[11px] mt-1 whitespace-nowrap">
                           ~{Math.max(1, Math.round((recovery / monthlyLeak) * 100))}% back
                         </div>
                       )}
@@ -664,7 +663,8 @@ export default async function AuditPage({
               <span className="text-xl">💰</span>
               <div className="min-w-0">
                 <div className="text-xs text-slate-400 leading-tight">
-                  Site running at ~{score}% — fix it, get
+                  <span className="hidden sm:inline">Site running at ~{score}% — fix it, get</span>
+                  <span className="sm:hidden">~{score}% · get back</span>
                 </div>
                 <div className="text-base md:text-lg font-bold text-emerald-300 leading-tight truncate">
                   ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo back
