@@ -33,6 +33,7 @@ type Audit = {
   business_category: string;
   prospect_id: string;
   generated_at: string | null;
+  first_viewed_at: string | null;
 };
 
 type Prospect = {
@@ -118,7 +119,7 @@ export default async function AuditPage({
 
   const { data: audit } = await supabase
     .from("site_audits")
-    .select("id, status, audit_content, target_url, business_category, prospect_id, generated_at")
+    .select("id, status, audit_content, target_url, business_category, prospect_id, generated_at, first_viewed_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -156,7 +157,7 @@ export default async function AuditPage({
   await supabase
     .from("site_audits")
     .update({
-      first_viewed_at: a.generated_at ? undefined : new Date().toISOString(),
+      first_viewed_at: a.first_viewed_at ? undefined : new Date().toISOString(),
       view_count: (await getViewCount(id)) + 1,
     })
     .eq("id", id);
