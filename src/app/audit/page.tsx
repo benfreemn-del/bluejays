@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import AuditForm from "./AuditForm";
-import AuditTestimonials from "./AuditTestimonials";
-import RetargetingPixels from "@/components/RetargetingPixels";
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -40,11 +38,6 @@ export const dynamic = "force-dynamic";
 export default function AuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* Retargeting pixels — every audit landing-page visitor enters the
-          30-day Meta + Google retargeting window. Lead-magnet entrypoint
-          for paid ads (Tier 3). Self-gates on env vars. */}
-      <RetargetingPixels />
-
       {/* Hero */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20">
         <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
@@ -67,14 +60,11 @@ export default function AuditLandingPage() {
             <AuditForm />
           </div>
 
-          <p className="mt-4 text-xs text-slate-400">
-            Ben reviews every site by hand. Your report opens in this tab in about 60–90 seconds — we&apos;ll email you a copy too.
+          <p className="mt-6 text-xs text-slate-500">
+            Audit takes ~3-5 minutes to generate. We&apos;ll email it to you the moment it&apos;s ready.
           </p>
         </div>
       </section>
-
-      {/* Testimonials — proof before they commit to filling out the form */}
-      <AuditTestimonials />
 
       {/* What you get */}
       <section className="border-b border-white/5 bg-slate-900/40">
@@ -86,43 +76,13 @@ export default function AuditLandingPage() {
             Most audits give you 40 things to do. We give you the 3 that actually move the needle.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            <Card
-              icon="0–100"
-              title="A real score"
-              body="One number. Color-coded red/yellow/green so you know where you stand."
-              accent="emerald"
-            />
-            <Card
-              icon="$"
-              title="Money-leak estimate"
-              body="What your current site is costing you in missed leads every month."
-              accent="rose"
-            />
-            <Card
-              icon="3-5"
-              title="Prioritized fixes"
-              body="Plain-English issues with the dollar impact + how hard each is to fix."
-              accent="amber"
-            />
-            <Card
-              icon="✓"
-              title="Industry benchmark"
-              body="We compare your site to the gold-standard for your category."
-              accent="sky"
-            />
-            <Card
-              icon="↻"
-              title="Honest verdict"
-              body="Which fixes you can DIY vs. need a rebuild — no upselling."
-              accent="violet"
-            />
-            <Card
-              icon="→"
-              title="What's next"
-              body="A clear next-action. If a freelancer would do better, we'll say so."
-              accent="teal"
-            />
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card icon="%"    title="A real score"         body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance." accent="emerald" />
+            <Card icon="$"    title="Money-leak estimate"   body="A conservative estimate of what your current site is costing you in missed leads every month." accent="rose" />
+            <Card icon="#1"   title="Prioritized fixes"     body="Specific, plain-English issues with the dollar impact + how hard each one is to fix." accent="amber" />
+            <Card icon="✓"   title="Industry benchmark"    body="We compare your site to the gold-standard template for your category. See the gap." accent="sky" />
+            <Card icon="↻"   title="Honest verdict"        body="Which fixes you can DIY, and which ones need a rebuild. We tell you which is which — no upselling." accent="violet" />
+            <Card icon="→"   title="What's next"           body="A clear next-action. If we can help, we'll say so. If a freelancer would do better, we'll point you there." accent="teal" />
           </div>
         </div>
       </section>
@@ -133,7 +93,7 @@ export default function AuditLandingPage() {
           <h2 className="text-3xl font-bold text-center mb-12">How it works</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <Step n="1" title="Drop your URL" body="Paste your site link + your business category. That's it." />
-            <Step n="2" title="Ben reviews it" body="We look at your headline, buttons, reviews, phone experience, and Google ranking — then score every section. Takes about 60–90 seconds." />
+            <Step n="2" title="We analyze" body="Claude + GPT-4 look at your hero, copy, CTAs, social proof, mobile, SEO. Takes ~5 min." />
             <Step n="3" title="You get the audit" body="Comprehensive report emailed to you + a shareable URL. Read it, share it, act on it." />
           </div>
         </div>
@@ -166,22 +126,22 @@ export default function AuditLandingPage() {
 
 const CARD_ACCENTS: Record<string, { icon: string; border: string; title: string; glow: string }> = {
   emerald: { icon: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30", border: "border-emerald-500/20", title: "text-emerald-100", glow: "hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.08)]" },
-  rose:    { icon: "bg-rose-500/15 text-rose-300 border border-rose-500/30",           border: "border-rose-500/20",    title: "text-rose-100",    glow: "hover:border-rose-500/40 hover:shadow-[0_0_20px_rgba(244,63,94,0.08)]" },
-  amber:   { icon: "bg-amber-500/15 text-amber-300 border border-amber-500/30",        border: "border-amber-500/20",   title: "text-amber-100",   glow: "hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.08)]" },
-  sky:     { icon: "bg-sky-500/15 text-sky-300 border border-sky-500/30",              border: "border-sky-500/20",     title: "text-sky-100",     glow: "hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(14,165,233,0.08)]" },
-  violet:  { icon: "bg-violet-500/15 text-violet-300 border border-violet-500/30",     border: "border-violet-500/20",  title: "text-violet-100",  glow: "hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.08)]" },
-  teal:    { icon: "bg-teal-500/15 text-teal-300 border border-teal-500/30",           border: "border-teal-500/20",    title: "text-teal-100",    glow: "hover:border-teal-500/40 hover:shadow-[0_0_20px_rgba(20,184,166,0.08)]" },
+  rose:    { icon: "bg-rose-500/15 text-rose-300 border border-rose-500/30",           border: "border-rose-500/20",   title: "text-rose-100",    glow: "hover:border-rose-500/40 hover:shadow-[0_0_20px_rgba(244,63,94,0.08)]" },
+  amber:   { icon: "bg-amber-500/15 text-amber-300 border border-amber-500/30",        border: "border-amber-500/20",  title: "text-amber-100",   glow: "hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.08)]" },
+  sky:     { icon: "bg-sky-500/15 text-sky-300 border border-sky-500/30",              border: "border-sky-500/20",    title: "text-sky-100",     glow: "hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(14,165,233,0.08)]" },
+  violet:  { icon: "bg-violet-500/15 text-violet-300 border border-violet-500/30",     border: "border-violet-500/20", title: "text-violet-100",  glow: "hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.08)]" },
+  teal:    { icon: "bg-teal-500/15 text-teal-300 border border-teal-500/30",           border: "border-teal-500/20",   title: "text-teal-100",    glow: "hover:border-teal-500/40 hover:shadow-[0_0_20px_rgba(20,184,166,0.08)]" },
 };
 
 function Card({ icon, title, body, accent = "sky" }: { icon: string; title: string; body: string; accent?: string }) {
   const a = CARD_ACCENTS[accent] || CARD_ACCENTS.sky;
   return (
-    <div className={`rounded-xl border ${a.border} bg-slate-900/50 p-4 md:p-6 transition-all duration-200 ${a.glow}`}>
-      <div className={`mb-3 inline-flex items-center justify-center h-11 w-11 rounded-xl ${a.icon} font-bold text-sm`}>
+    <div className={`rounded-xl border ${a.border} bg-slate-900/50 p-6 transition-all duration-200 ${a.glow}`}>
+      <div className={`mb-3 inline-flex items-center justify-center h-10 w-10 rounded-lg ${a.icon} font-bold text-sm`}>
         {icon}
       </div>
-      <h3 className={`font-semibold mb-1 text-sm md:text-base ${a.title}`}>{title}</h3>
-      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">{body}</p>
+      <h3 className={`font-semibold mb-1 ${a.title}`}>{title}</h3>
+      <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
     </div>
   );
 }
