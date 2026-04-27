@@ -380,7 +380,7 @@ export async function runAudit(args: {
     // Run both AI calls in parallel
     const [heroResult, technicalResult] = await Promise.all([
       runHeroAnalysis(ctx, businessCategory, prospect.businessName).catch(
-        (err) => ({
+        (err): HeroAnalysisResult => ({
           findings: [],
           headline: "Analysis unavailable",
           cta: "Analysis unavailable",
@@ -426,7 +426,10 @@ export async function runAudit(args: {
       modelsUsed: [heroResult.model, technicalResult.model],
     };
 
-    // Save to DB
+    // Save to DB. Includes audit_prompt variant ID in metadata when
+    // a Hyperloop-evolved prompt was used, so conversion analytics
+    // can join site_audits.metadata.audit_prompt_variant_id back to
+    // hyperloop_variants for Bayesian prompt grading.
     await supabase
       .from("site_audits")
       .update({
@@ -435,6 +438,10 @@ export async function runAudit(args: {
         models_used: [heroResult.model, technicalResult.model],
         cost_usd: totalCost,
         generated_at: new Date().toISOString(),
+        metadata: {
+          audit_prompt_variant_id: heroResult.promptVariantId ?? null,
+          prompt_source: heroResult.promptVariantId ? "hyperloop" : "hardcoded",
+        },
       })
       .eq("id", auditId);
 
@@ -477,7 +484,73 @@ interface HeroAnalysisResult {
   tokensIn: number;
   tokensOut: number;
   model: string;
+  /** ID of the Hyperloop audit_prompt variant used (if any). Lets us
+   *  attribute audit-to-paid conversion back to the prompt that
+   *  produced this audit, so Bayesian can grade prompt variants. */
+  promptVariantId?: string;
   error?: string;
+}
+
+/**
+ * Fetch the currently-active audit_prompt override for this category.
+ *
+ * Lookup order:
+ *   1. category-specific (variant.metadata.category === category)
+ *   2. generic (variant.metadata.category IS NULL or absent)
+ *   3. null (caller falls back to hardcoded buildHeroPrompt)
+ *
+ * This is how Hyperloop evolves prompts over time — when the loop
+ * generates new audit_prompt variants for a category, those variants
+ * land here and start producing audits. Bayesian compares conversion
+ * rates across variants; winners stay active, losers get retired.
+ *
+ * Variants are evaluated in (kind=audit_prompt) namespace so
+ * cross-category comparisons don't fight (per-category prompts have
+ * their own analyzer cohort once category lookup hits N+ variants).
+ */
+async function loadAuditPromptOverride(
+  category: string,
+): Promise<{ id: string; systemPrompt: string } | null> {
+  try {
+    // Try category-specific first
+    const { data: catSpecific } = await supabase
+      .from("hyperloop_variants")
+      .select("id, content, metadata")
+      .eq("kind", "audit_prompt")
+      .eq("status", "active")
+      .filter("metadata->>category", "eq", category)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (catSpecific) {
+      const content = (catSpecific.content ?? {}) as Record<string, unknown>;
+      const sp = typeof content.systemPrompt === "string" ? content.systemPrompt : null;
+      if (sp) return { id: catSpecific.id as string, systemPrompt: sp };
+    }
+
+    // Fallback to generic (no category set)
+    const { data: generic } = await supabase
+      .from("hyperloop_variants")
+      .select("id, content, metadata")
+      .eq("kind", "audit_prompt")
+      .eq("status", "active")
+      .is("metadata->category", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (generic) {
+      const content = (generic.content ?? {}) as Record<string, unknown>;
+      const sp = typeof content.systemPrompt === "string" ? content.systemPrompt : null;
+      if (sp) return { id: generic.id as string, systemPrompt: sp };
+    }
+  } catch (err) {
+    // Don't fail the audit if Hyperloop tables are missing or RLS
+    // blocks. Default-prompt fallback always works.
+    console.warn("[site-audit] loadAuditPromptOverride failed (using hardcoded):", err);
+  }
+  return null;
 }
 
 async function runHeroAnalysis(
@@ -489,7 +562,14 @@ async function runHeroAnalysis(
     return mockHeroAnalysis(ctx, category);
   }
 
-  const prompt = buildHeroPrompt(ctx, category, businessName);
+  // Try Hyperloop-evolved override first; fall back to hardcoded.
+  // The override (if found) replaces the whole prompt — operator/AI
+  // generating the variant is responsible for keeping the JSON output
+  // schema intact + interpolating ctx fields if needed.
+  const override = await loadAuditPromptOverride(category);
+  const prompt = override?.systemPrompt
+    ? interpolatePromptTemplate(override.systemPrompt, { ctx, category, businessName })
+    : buildHeroPrompt(ctx, category, businessName);
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -534,7 +614,45 @@ async function runHeroAnalysis(
     tokensIn,
     tokensOut,
     model: CLAUDE_MODEL,
+    promptVariantId: override?.id, // tracked in audit metadata for attribution
   };
+}
+
+/**
+ * Replace {placeholders} in a Hyperloop-generated prompt template with
+ * the dynamic per-prospect context. Supported placeholders:
+ *
+ *   {businessName}    — prospect business name
+ *   {category}        — vertical (dental / electrician / ...)
+ *   {url}             — target site URL
+ *   {title}           — page <title>
+ *   {metaDescription} — meta description content
+ *   {h1}              — first h1 text
+ *   {headings}        — JSON array of h1-h3 strings (truncated)
+ *   {bodyExcerpt}     — first 2K chars of stripped body
+ *
+ * Templates that don't use placeholders work unchanged. Templates that
+ * reference unknown placeholders leave them in place — the AI sees the
+ * literal string, which is usually OK and easy to debug.
+ */
+function interpolatePromptTemplate(
+  template: string,
+  args: { ctx: SiteContext; category: string; businessName: string },
+): string {
+  const { ctx, category, businessName } = args;
+  const map: Record<string, string> = {
+    businessName,
+    category,
+    url: ctx.url,
+    title: ctx.title || "",
+    metaDescription: ctx.metaDescription || "",
+    h1: ctx.h1Text || "",
+    headings: JSON.stringify(ctx.headings.slice(0, 15)),
+    bodyExcerpt: ctx.bodyExcerpt || "",
+  };
+  return template.replace(/\{(\w+)\}/g, (full, key) => {
+    return key in map ? map[key] : full;
+  });
 }
 
 interface TechnicalAnalysisResult {
