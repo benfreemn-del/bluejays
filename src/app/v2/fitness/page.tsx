@@ -384,12 +384,12 @@ export default function IronAndOakFitness() {
             Start Your Free 7-Day Trial <ArrowRight size={20} weight="bold" />
           </motion.a>
 
-          {/* trust pills */}
+          {/* trust pills — hidden on mobile to reduce stacking */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
-            className="mt-8 flex flex-wrap justify-center gap-3"
+            className="mt-8 hidden sm:flex flex-wrap justify-center gap-3"
           >
             {["No Contracts", "Cancel Anytime", "First Class Free"].map((pill) => (
               <span key={pill} className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border" style={{ borderColor: "rgba(132,204,22,0.3)", color: LIME, background: "rgba(132,204,22,0.08)" }}>
@@ -399,11 +399,11 @@ export default function IronAndOakFitness() {
           </motion.div>
         </div>
 
-        {/* scroll indicator */}
+        {/* scroll indicator — hidden on mobile */}
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+          className="hidden sm:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         >
           <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center pt-2">
             <div className="w-1.5 h-2.5 rounded-full" style={{ background: LIME }} />

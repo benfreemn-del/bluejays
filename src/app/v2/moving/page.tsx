@@ -951,14 +951,14 @@ export default function V2MovingPage() {
               <WordReveal text="Cascade vs. Typical Movers" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-center" style={{ color: ORANGE }}>Cascade Movers</div>
               <div className="p-4 text-center text-slate-500">Typical Movers</div>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 text-sm ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="p-4 text-slate-300">{row.feature}</div>
                 <div className="p-4 text-center">
                   <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />

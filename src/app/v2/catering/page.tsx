@@ -403,7 +403,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 4. EVENT TYPE CARDS ══════ */}
-      <SectionReveal id="events" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="events" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <WoodGrainPattern />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -433,7 +433,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 5. SAMPLE MENU ══════ */}
-      <SectionReveal id="menu" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="menu" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -467,7 +467,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 6. CHEF ADRIANA SPOTLIGHT ══════ */}
-      <SectionReveal id="chef" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="chef" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -540,7 +540,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 8. CUISINE STYLES WE OFFER ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_LIGHT} 0%, ${BG} 50%, ${BG_LIGHT} 100%)` }} />
         <WoodGrainPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -569,7 +569,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 9. PACKAGE PRICING ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_LIGHT} 0%, ${BG} 50%, ${BG_LIGHT} 100%)` }} />
         <WoodGrainPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -629,7 +629,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 9. EVENT GALLERY ══════ */}
-      <SectionReveal id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="gallery" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -651,7 +651,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 10. GOOGLE REVIEWS HEADER + TESTIMONIALS ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_LIGHT} 0%, ${BG} 50%, ${BG_LIGHT} 100%)` }} />
         <WoodGrainPattern opacity={0.015} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -686,7 +686,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 11. PROCESS ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -709,7 +709,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 12. COMPETITOR COMPARISON ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_LIGHT} 0%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.02} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -717,14 +717,14 @@ export default function V2CateringShowcase() {
             <SectionBadge text="Why Choose Us" />
             <SectionHeading>Ember &amp; Oak vs. The Competition</SectionHeading>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center py-4 px-4 border-b" style={{ borderColor: `${COPPER}22` }}>
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-center py-4 px-4 border-b" style={{ borderColor: `${COPPER}22` }}>
               <span className="text-sm font-semibold" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>Feature</span>
               <span className="text-sm font-bold" style={{ color: COPPER }}>Ember &amp; Oak</span>
               <span className="text-sm font-semibold" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>Others</span>
             </div>
             {comparisonRows.map((row) => (
-              <div key={row.feature} className="grid grid-cols-3 text-center py-4 px-4 border-b last:border-b-0" style={{ borderColor: `${COPPER}11` }}>
+              <div key={row.feature} className="grid min-w-[440px] grid-cols-3 text-center py-4 px-4 border-b last:border-b-0" style={{ borderColor: `${COPPER}11` }}>
                 <span className="text-sm text-left" style={{ color: CREAM, fontFamily: "system-ui, sans-serif" }}>{row.feature}</span>
                 <span><CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" /></span>
                 <span className="text-sm" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>{row.them}</span>
@@ -735,7 +735,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 13. VIDEO TESTIMONIAL PLACEHOLDER ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
@@ -824,7 +824,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 16. "WHAT'S YOUR EVENT?" QUIZ ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_LIGHT} 0%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.015} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -862,7 +862,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ 15. WHAT SETS US APART ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -960,7 +960,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ SEASONAL HIGHLIGHTS ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.015} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -1019,7 +1019,7 @@ export default function V2CateringShowcase() {
       </SectionReveal>
 
       {/* ══════ FAQ ══════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -1066,7 +1066,7 @@ export default function V2CateringShowcase() {
       </section>
 
       {/* ══════ 18. CONTACT / BOOKING FORM ══════ */}
-      <SectionReveal id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="contact" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_LIGHT} 50%, ${BG} 100%)` }} />
         <WoodGrainPattern opacity={0.015} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">

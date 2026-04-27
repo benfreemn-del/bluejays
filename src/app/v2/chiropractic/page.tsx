@@ -954,8 +954,8 @@ export default function V2ChiropracticPage() {
               <WordReveal text="Chiropractic vs Pain Medication" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-sm">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-center text-sm">
               <div className="p-4 border-b border-white/15 text-slate-500 font-medium">Feature</div>
               <div className="p-4 border-b border-l border-white/15 font-semibold" style={{ color: TEAL_LIGHT, background: `${TEAL}11` }}>Chiropractic</div>
               <div className="p-4 border-b border-l border-white/15 text-slate-400 font-medium">Medication</div>

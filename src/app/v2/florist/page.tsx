@@ -344,7 +344,7 @@ export default function V2FloristPage() {
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 30%, ${ROSE_GLOW} 0%, transparent 70%)` }} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          <div className="space-y-8">
+          <div className="space-y-5 md:space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: ROSE }}>Artisan Floral Studio</motion.p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
@@ -968,7 +968,7 @@ export default function V2FloristPage() {
                 <Phone size={18} weight="duotone" /> (206) 876-5432
               </MagneticButton>
             </div>
-            <div className="mt-8 grid grid-cols-3 gap-6 max-w-xl mx-auto">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-xl mx-auto">
               {[
                 { label: "Same-Day By", value: "1:00 PM" },
                 { label: "Years In Business", value: "12+" },

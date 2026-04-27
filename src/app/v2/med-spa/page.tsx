@@ -418,7 +418,7 @@ export default function V2MedSpaPage() {
               <Sparkle size={14} weight="fill" /> Seattle&apos;s Premier Med Spa
             </span>
           </motion.div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[0.95] font-bold text-white mb-6" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-4xl md:text-7xl lg:text-8xl tracking-tighter leading-[0.95] font-bold text-white mb-6" style={{ fontFamily: "'Georgia', serif" }}>
             <WordReveal text="Your Best Skin Starts Here" />
           </h1>
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-8">
@@ -751,14 +751,14 @@ export default function V2MedSpaPage() {
               <WordReveal text="Radiance vs. The Rest" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 gap-0 text-center text-sm font-semibold p-4 border-b border-white/15">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 gap-0 text-center text-sm font-semibold p-4 border-b border-white/15">
               <span className="text-slate-400">Feature</span>
               <span style={{ color: BLUSH }}>Radiance</span>
               <span className="text-slate-400">Others</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className="grid grid-cols-3 gap-0 text-center text-sm p-4 border-b border-white/8 last:border-b-0">
+              <div key={i} className="grid min-w-[440px] grid-cols-3 gap-0 text-center text-sm p-4 border-b border-white/8 last:border-b-0">
                 <span className="text-slate-300 text-left">{row.feature}</span>
                 <span><CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} /></span>
                 <span className="text-slate-500">{row.them}</span>

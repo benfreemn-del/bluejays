@@ -273,7 +273,7 @@ export default function ChurchShowcase() {
               <Cross size={16} weight="fill" />
               Grace Community Church
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6" style={{ color: DARK }}>
+            <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6" style={{ color: DARK }}>
               A Place to{" "}
               <span style={{ color: AMBER }}>Belong</span>
             </h1>

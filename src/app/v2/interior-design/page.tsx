@@ -609,7 +609,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ SERVICES ═══════════════════ */}
-      <section id="services" className="py-24 px-6" style={{ background: BG }}>
+      <section id="services" className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-7xl mx-auto">
           <SectionHeading accent="What We Do" main="Design Services" sub="From a single room refresh to a whole-home transformation, every project receives the same meticulous attention to detail." />
 
@@ -639,7 +639,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ ABOUT ELENA ═══════════════════ */}
-      <section id="about" className="py-24 px-6" style={{ background: CREAM }}>
+      <section id="about" className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -706,7 +706,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ STYLE QUIZ ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: BG }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-3xl mx-auto">
           <SectionHeading
             accent="Interactive"
@@ -800,7 +800,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ BUDGET ESTIMATOR ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: CREAM }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-3xl mx-auto">
           <SectionHeading
             accent="Plan Your Investment"
@@ -854,7 +854,7 @@ export default function InteriorDesignShowcase() {
             {/* Finish Level */}
             <div className="mb-10">
               <label className="block text-sm font-medium mb-3" style={{ color: CHARCOAL }}>Finish Level</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {FINISH_LEVELS.map((level) => (
                   <button
                     key={level}
@@ -897,7 +897,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ COLOR PALETTE EXPLORER ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: BG }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto">
           <SectionHeading
             accent="Explore"
@@ -965,7 +965,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ DESIGN PROCESS ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: CREAM }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeading accent="How We Work" main="Our Design Process" sub="Five clear steps from first conversation to final reveal. No surprises, just beautiful results." />
 
@@ -1000,7 +1000,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ PORTFOLIO ═══════════════════ */}
-      <section id="portfolio" className="py-24 px-6" style={{ background: BG }}>
+      <section id="portfolio" className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-7xl mx-auto">
           <SectionHeading accent="Our Work" main="Portfolio Highlights" sub="A selection of recent projects across Seattle and the Eastside." />
 
@@ -1032,7 +1032,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ TESTIMONIALS — ROOM TRANSFORMATION CARDS ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: CREAM }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-6xl mx-auto">
           <SectionHeading accent="Client Stories" main="Room Transformations" sub="Real projects, real budgets, real results from Seattle homeowners." />
 
@@ -1102,7 +1102,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ COMPETITOR COMPARISON ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: BG }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-3xl mx-auto">
           <SectionHeading accent="Why Us" main="Cascadia Interiors vs. The Rest" sub="See how working with a dedicated design studio compares to going it alone." />
 
@@ -1132,7 +1132,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ PRICING PACKAGES ═══════════════════ */}
-      <section id="pricing" className="py-24 px-6" style={{ background: CREAM }}>
+      <section id="pricing" className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-6xl mx-auto">
           <SectionHeading accent="Investment" main="Design Packages" sub="Transparent pricing with no hidden markups. Your design fee covers everything." />
 
@@ -1215,7 +1215,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ FAQ ACCORDION ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: CREAM }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-3xl mx-auto">
           <SectionHeading accent="Questions" main="Frequently Asked" />
 
@@ -1253,7 +1253,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ VIDEO TESTIMONIAL PLACEHOLDER ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: BG }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto">
           <GlassCard className="relative overflow-hidden rounded-2xl">
             <img
@@ -1278,7 +1278,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ SERVICE AREA ═══════════════════ */}
-      <section className="py-24 px-6" style={{ background: CREAM }}>
+      <section className="py-12 md:py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeading accent="Where We Work" main="Service Area" sub="Proudly serving the greater Seattle metropolitan area and Eastside communities." />
 
@@ -1327,7 +1327,7 @@ export default function InteriorDesignShowcase() {
       </section>
 
       {/* ═══════════════════ CONTACT / CONSULTATION FORM ═══════════════════ */}
-      <section id="contact" className="py-24 px-6" style={{ background: BG }}>
+      <section id="contact" className="py-12 md:py-24 px-6" style={{ background: BG }}>
         <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-16">
           {/* Info side */}
           <div>

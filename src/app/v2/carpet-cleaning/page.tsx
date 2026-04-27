@@ -611,14 +611,14 @@ export default function V2CarpetCleaningPage() {
         <SectionReveal className="py-20">
           <h2 className="text-4xl font-bold text-center text-white mb-3">FreshStart vs. <span style={{ color: ACCENT }}>DIY / Rental</span></h2>
           <p className="text-lg text-center max-w-2xl mx-auto text-slate-300 mb-12">Professional cleaning delivers results rental machines simply cannot match.</p>
-          <GlassCard className="overflow-hidden max-w-3xl mx-auto">
-            <div className="grid grid-cols-3 text-center font-semibold text-sm border-b border-white/15">
+          <GlassCard className="overflow-hidden overflow-x-auto max-w-3xl mx-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-center font-semibold text-sm border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-white" style={{ background: ACCENT_GLOW }}>FreshStart</div>
               <div className="p-4 text-slate-400">DIY / Rental</div>
             </div>
             {diyComparison.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center text-sm ${i < diyComparison.length - 1 ? "border-b border-white/8" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 text-center text-sm ${i < diyComparison.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="p-4 text-slate-300 text-left pl-6">{row.feature}</div>
                 <div className="p-4" style={{ background: i % 2 === 0 ? ACCENT_GLOW : "transparent" }}>
                   <CheckCircle size={20} weight="fill" style={{ color: "#34d399" }} className="mx-auto" />

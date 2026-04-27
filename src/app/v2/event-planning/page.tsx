@@ -420,14 +420,14 @@ export default function V2EventPlanningPage() {
             </span>
           </motion.div>
           <h1 className="mb-4" style={{ fontFamily: "'Georgia', serif" }}>
-            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="block text-5xl md:text-8xl font-normal tracking-tight text-white leading-[0.95]">
+            <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="block text-3xl md:text-8xl font-normal tracking-tight text-white leading-[0.95]">
               Unforgettable Moments
             </motion.span>
             <motion.span initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="block text-2xl md:text-4xl font-light mt-3 tracking-wide" style={{ color: GOLD_LIGHT }}>
               Flawlessly Executed
             </motion.span>
           </h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-6 md:mb-10 leading-relaxed">
             For 15 years, Elevate Events has designed and produced Seattle&apos;s most celebrated weddings, galas, and private occasions with meticulous attention to every detail.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1.0 }} className="flex flex-wrap justify-center gap-4">
@@ -439,7 +439,7 @@ export default function V2EventPlanningPage() {
             </MagneticButton>
           </motion.div>
           {/* Gold sparkle accents flanking the CTA */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1.5 }} className="flex justify-center gap-16 mt-8">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1.5 }} className="hidden sm:flex justify-center gap-16 mt-8">
             {[0, 1, 2].map((i) => (
               <motion.div key={i} animate={{ opacity: [0.3, 0.8, 0.3], scale: [1, 1.3, 1] }} transition={{ duration: 2 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}>
                 <Sparkle size={16} weight="fill" style={{ color: GOLD_LIGHT }} />
@@ -782,14 +782,14 @@ export default function V2EventPlanningPage() {
               <WordReveal text="Elevate Events vs. DIY" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-sm font-semibold p-4 border-b border-white/8">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-center text-sm font-semibold p-4 border-b border-white/8">
               <span className="text-slate-400">Feature</span>
               <span style={{ color: GOLD }}>Elevate Events</span>
               <span className="text-slate-500">DIY Planning</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className="grid grid-cols-3 text-center text-sm p-4 border-b border-white/[0.03] last:border-0">
+              <div key={i} className="grid min-w-[440px] grid-cols-3 text-center text-sm p-4 border-b border-white/[0.03] last:border-0">
                 <span className="text-slate-300 text-left">{row.feature}</span>
                 <span><CheckCircle size={18} weight="fill" style={{ color: GOLD }} className="mx-auto" /></span>
                 <span className="text-slate-500">{row.them}</span>

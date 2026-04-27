@@ -562,7 +562,7 @@ export default function V2AutoRepairPage() {
             </motion.div>
 
             <motion.h1
-              className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6"
+              className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.35 }}
@@ -573,7 +573,7 @@ export default function V2AutoRepairPage() {
             </motion.h1>
 
             <motion.div
-              className="flex flex-wrap justify-center gap-6 md:gap-10 mb-8"
+              className="hidden sm:flex flex-wrap justify-center gap-6 md:gap-10 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.5 }}
@@ -659,7 +659,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 3. SERVICES — RACING FLAG CHECKER ────────────────────── */}
-      <SectionReveal id="services" className="relative py-24 md:py-32">
+      <SectionReveal id="services" className="relative py-12 md:py-24 md:py-32">
         <GearPatternBg />
         <div className="relative z-10 max-w-7xl mx-auto px-5">
           <div className="text-center mb-16">
@@ -701,7 +701,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 4. TRANSPARENT PRICING ────────────────────── */}
-      <SectionReveal id="pricing" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal id="pricing" className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-5xl mx-auto px-5">
           <div className="text-center mb-14">
@@ -744,7 +744,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 5. HONEST MECHANIC GUARANTEE ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at center, ${RED_GLOW}, transparent 70%)` }} />
         <GearPatternBg />
         <div className="relative z-10 max-w-5xl mx-auto px-5">
@@ -794,7 +794,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 6. MEET TONY ────────────────────── */}
-      <SectionReveal id="about" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal id="about" className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -861,7 +861,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 7. WHAT WE WORK ON ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32">
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="text-center mb-14">
@@ -899,7 +899,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 8. QUIZ — WHAT DOES YOUR CAR NEED? ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-4xl mx-auto px-5">
           <div className="text-center mb-14">
@@ -974,7 +974,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 9. COMPETITOR COMPARISON ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32">
         <GearPatternBg />
         <div className="relative z-10 max-w-4xl mx-auto px-5">
           <div className="text-center mb-14">
@@ -986,9 +986,9 @@ export default function V2AutoRepairPage() {
             </h2>
           </div>
 
-          <GlassCard className="overflow-hidden">
+          <GlassCard className="overflow-hidden overflow-x-auto">
             {/* Header row */}
-            <div className="grid grid-cols-3 p-5 border-b border-white/15 text-sm font-bold">
+            <div className="grid min-w-[440px] grid-cols-3 p-5 border-b border-white/15 text-sm font-bold">
               <div className="text-slate-400">Feature</div>
               <div className="text-center" style={{ color: RED }}>Pacific Auto Works</div>
               <div className="text-center text-slate-500">Dealership</div>
@@ -996,7 +996,7 @@ export default function V2AutoRepairPage() {
             {comparisonRows.map((r, i) => (
               <motion.div
                 key={r.label}
-                className="grid grid-cols-3 p-5 border-b border-white/8 items-center"
+                className="grid min-w-[440px] grid-cols-3 p-5 border-b border-white/8 items-center"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -1014,7 +1014,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 10. TESTIMONIALS — SPLIT-SCREEN ────────────────────── */}
-      <SectionReveal id="reviews" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal id="reviews" className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="text-center mb-6">
@@ -1117,7 +1117,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 12. VIDEO PLACEHOLDER ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <div className="max-w-5xl mx-auto px-5">
           <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img
@@ -1142,7 +1142,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 13. SERVICE AREAS ────────────────────── */}
-      <SectionReveal className="relative py-24 md:py-32">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32">
         <GearPatternBg />
         <div className="relative z-10 max-w-5xl mx-auto px-5">
           <div className="text-center mb-14">
@@ -1180,7 +1180,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 14. CONTACT ────────────────────── */}
-      <SectionReveal id="contact" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+      <SectionReveal id="contact" className="relative py-12 md:py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="text-center mb-14">

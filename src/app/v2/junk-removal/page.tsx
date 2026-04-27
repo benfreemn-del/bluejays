@@ -347,7 +347,7 @@ export default function V2JunkRemovalPage() {
 
         {/* Hero text content */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-2xl space-y-8">
+          <div className="max-w-2xl space-y-5 md:space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 2.2 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: AMBER }}>
                 Seattle&apos;s Eco-Friendly Junk Removal
@@ -688,14 +688,14 @@ export default function V2JunkRemovalPage() {
               <WordReveal text="CleanSlate vs. Dumpster Rental" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 gap-0 text-center p-4 border-b border-white/8">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 gap-0 text-center p-4 border-b border-white/8">
               <span className="text-sm font-semibold text-slate-400">Feature</span>
               <span className="text-sm font-bold" style={{ color: ACCENT }}>CleanSlate</span>
               <span className="text-sm font-semibold text-slate-400">Dumpster Rental</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 gap-0 text-center p-4 ${i % 2 === 0 ? "bg-white/[0.07]" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 gap-0 text-center p-4 ${i % 2 === 0 ? "bg-white/[0.07]" : ""}`}>
                 <span className="text-sm text-slate-300 text-left">{row.feature}</span>
                 <span className="text-sm" style={{ color: ACCENT }}>
                   {row.us ? <CheckCircle size={18} weight="fill" className="inline" style={{ color: ACCENT }} /> : <X size={18} weight="bold" className="inline text-red-400" />}
@@ -949,7 +949,7 @@ export default function V2JunkRemovalPage() {
                 </a>
               </div>
             </div>
-            <motion.div className="grid grid-cols-3 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
               {serviceAreas.map((area, i) => (
                 <motion.div key={i} variants={fadeUp}>
                   <GlassCard className="p-3 text-center hover:border-white/20 transition-colors">

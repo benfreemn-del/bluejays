@@ -511,7 +511,7 @@ function EnergyCalculator() {
       <div className="space-y-6">
         <div>
           <label className="block text-white/70 text-sm mb-2">System Type</label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {[
               { key: "central-ac" as const, label: "Central AC", icon: Snowflake },
               { key: "furnace" as const, label: "Furnace", icon: Fire },
@@ -551,7 +551,7 @@ function EnergyCalculator() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/15">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-white/15">
           <div className="text-center">
             <p className="text-2xl md:text-3xl font-bold" style={{ color: "#22c55e" }}>
               ${annualSavings}
@@ -925,7 +925,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── SERVICES ──────────────── */}
-      <section id="services" className="relative py-24">
+      <section id="services" className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-30" style={{ background: `radial-gradient(ellipse at 50% 20%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <SectionHeader label="What We Do" title="Our" accent="Services" />
@@ -956,7 +956,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── ABOUT ──────────────── */}
-      <section id="about" className="relative py-24">
+      <section id="about" className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 70% 50%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-6xl px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -1022,7 +1022,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── DIAGNOSTIC QUIZ ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 30% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <SectionHeader label="Self-Diagnosis" title="What&apos;s Wrong With" accent="Your System?" />
@@ -1034,7 +1034,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── ENERGY CALCULATOR ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 60% 50%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <SectionHeader label="Save Money" title="Energy Savings" accent="Calculator" />
@@ -1046,7 +1046,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── PROCESS TIMELINE ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 40% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-5xl px-4">
           <SectionHeader label="How It Works" title="Our" accent="Process" />
@@ -1086,7 +1086,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── SEASONAL MAINTENANCE CALENDAR ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 50% 30%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <SectionHeader label="Year-Round Care" title="Seasonal Maintenance" accent="Calendar" />
@@ -1123,7 +1123,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── TESTIMONIALS (SEASON-TAGGED) ──────────────── */}
-      <section id="reviews" className="relative py-24">
+      <section id="reviews" className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 50% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           {/* Google Reviews header */}
@@ -1190,7 +1190,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── MAINTENANCE PLAN PRICING ──────────────── */}
-      <section id="pricing" className="relative py-24">
+      <section id="pricing" className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-6xl px-4">
           <SectionHeader label="Maintenance Plans" title="Choose Your" accent="Comfort Plan" />
@@ -1265,19 +1265,19 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── COMPARISON TABLE ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 50% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-3xl px-4">
           <SectionHeader label="Why Choose Us" title={`${BUSINESS} vs.`} accent="The Competition" />
 
-          <GlassCard className="overflow-hidden" hover={false}>
-            <div className="grid grid-cols-3 text-center border-b border-white/15 p-4">
+          <GlassCard className="overflow-hidden overflow-x-auto" hover={false}>
+            <div className="grid min-w-[440px] grid-cols-3 text-center border-b border-white/15 p-4">
               <div />
               <p className="text-sm font-bold" style={{ color: BLUE_LIGHT }}>{BUSINESS}</p>
               <p className="text-sm font-bold text-white/40">Others</p>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center p-4 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 text-center p-4 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <p className="text-sm text-white/70 text-left">{row.feature}</p>
                 <div className="flex justify-center">
                   <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} />
@@ -1290,7 +1290,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── FAQ ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 40% 50%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <SectionHeader label="Common Questions" title="Frequently" accent="Asked" />
@@ -1299,7 +1299,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── SERVICE AREA ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 60% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-5xl px-4">
           <SectionHeader label="Coverage" title="Seattle Neighborhoods" accent="We Serve" />
@@ -1349,7 +1349,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── CONTACT FORM ──────────────── */}
-      <section id="contact" className="relative py-24">
+      <section id="contact" className="relative py-12 md:py-24">
         <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-3xl px-4">
           <SectionHeader label="Get In Touch" title="Request a Free" accent="Estimate" />
@@ -1445,7 +1445,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── FINAL CTA ──────────────── */}
-      <section className="relative py-24">
+      <section className="relative py-12 md:py-24">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}10, ${ORANGE}10)` }} />
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <motion.div

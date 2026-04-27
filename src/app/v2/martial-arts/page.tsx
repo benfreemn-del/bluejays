@@ -339,7 +339,7 @@ export default function V2MartialArtsPage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          <div className="space-y-8">
+          <div className="space-y-5 md:space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.25em] mb-4" style={{ color: GOLD }}>Discipline &bull; Strength &bull; Honor</motion.p>
               <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-black text-white" style={{ textShadow: "0 2px 20px rgba(153,27,27,0.4)" }}>

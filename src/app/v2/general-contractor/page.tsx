@@ -415,7 +415,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           4. SERVICES
           ══════════════════════════════════════════════════ */}
-      <SectionReveal id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="services" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <BlueprintGrid />
         <ConstructionBeams opacity={0.02} />
@@ -455,7 +455,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           5. PROJECT INVESTMENT GUIDE
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARKER} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.025} />
         <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -501,7 +501,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           6. 5-STEP BUILD PROCESS
           ══════════════════════════════════════════════════ */}
-      <SectionReveal id="process" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="process" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} />
         <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${STEEL}06` }} />
@@ -554,7 +554,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           7. WHY CHOOSE A LICENSED GC
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARKER} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -591,7 +591,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           8. PROJECT TYPES GRID
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} />
         <div className="absolute bottom-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -626,7 +626,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           9. PROJECT PORTFOLIO
           ══════════════════════════════════════════════════ */}
-      <SectionReveal id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="portfolio" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARKER} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -662,7 +662,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           10. OWNER SPOTLIGHT — CHRIS DALTON
           ══════════════════════════════════════════════════ */}
-      <SectionReveal id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="about" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} />
         <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -711,7 +711,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           11. COMPETITOR COMPARISON
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARKER} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -755,7 +755,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           12. "WHAT'S YOUR PROJECT?" QUIZ
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} />
         <div className="absolute bottom-[20%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -801,7 +801,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           13. VIDEO PLACEHOLDER
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARKER} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
 
@@ -830,7 +830,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           14. GOOGLE REVIEWS + TESTIMONIALS
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.015} />
         <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -930,7 +930,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           17. FAQ
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.015} />
         <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${AMBER}06` }} />
@@ -988,7 +988,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           19. CONTACT + FORM
           ══════════════════════════════════════════════════ */}
-      <SectionReveal id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="contact" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />

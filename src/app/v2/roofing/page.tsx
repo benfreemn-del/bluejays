@@ -718,7 +718,7 @@ export default function RoofingShowcase() {
         </div>
 
         {/* Left Half — Content */}
-        <div className="relative z-10 w-full lg:w-1/2 lg:order-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-24 lg:py-0">
+        <div className="relative z-10 w-full lg:w-1/2 lg:order-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-12 md:py-24 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}

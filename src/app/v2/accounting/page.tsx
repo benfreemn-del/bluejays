@@ -401,7 +401,7 @@ export default function V2AccountingPage() {
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 50% at 30% 40%, ${NAVY_GLOW} 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 70% 60%, ${GOLD_GLOW} 0%, transparent 60%)` }} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-5 md:space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>
                 Robert Chen, CPA, PFS &mdash; 20 Years Experience
@@ -681,14 +681,14 @@ export default function V2AccountingPage() {
               <WordReveal text="Evergreen vs. DIY Tax Software" />
             </h2>
           </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 p-4 border-b border-white/8 text-center">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 p-4 border-b border-white/8 text-center">
               <p className="text-sm font-semibold text-slate-400">Feature</p>
               <p className="text-sm font-semibold" style={{ color: EMERALD }}>Evergreen Tax</p>
               <p className="text-sm font-semibold text-slate-400">DIY Software</p>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 p-4 items-center text-center ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 p-4 items-center text-center ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
                 <p className="text-sm text-slate-300 text-left">{row.feature}</p>
                 <div className="flex justify-center">
                   <CheckCircle size={20} weight="fill" style={{ color: EMERALD }} />

@@ -312,7 +312,7 @@ export default function V2SalonPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.4 }}
-                className="text-5xl md:text-7xl lg:text-8xl leading-[0.95] font-light tracking-tight"
+                className="text-4xl md:text-7xl lg:text-8xl leading-[0.95] font-light tracking-tight"
                 style={{ fontFamily: "'Georgia', 'Times New Roman', serif", color: TEXT_DARK }}
               >
                 Where

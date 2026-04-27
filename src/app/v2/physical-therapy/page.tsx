@@ -303,7 +303,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ SERVICES ═══ */}
-      <SectionReveal id="services" className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal id="services" className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Treatment Approach</span>
@@ -334,7 +334,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ CONDITIONS TREATED ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Conditions Treated</span>
@@ -358,7 +358,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ WHY CHOOSE PHYSICAL THERAPY ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Why PT</span>
@@ -410,7 +410,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ ABOUT — PROVIDER SPOTLIGHT ═══ */}
-      <SectionReveal id="about" className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal id="about" className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
@@ -454,7 +454,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ YOUR FIRST VISIT ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>First Visit</span>
@@ -506,7 +506,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ RECOVERY TIMELINE ═══ */}
-      <SectionReveal id="recovery" className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal id="recovery" className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Your Journey</span>
@@ -538,7 +538,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ "WHAT HURTS?" BODY MAP QUIZ ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Interactive</span>
@@ -593,7 +593,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ GOOGLE REVIEWS HEADER + TESTIMONIALS ═══ */}
-      <SectionReveal id="testimonials" className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal id="testimonials" className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           {/* Google reviews header */}
           <div className="text-center mb-6">
@@ -638,7 +638,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ PRICING ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Investment</span>
@@ -668,7 +668,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ COMPETITOR COMPARISON ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Why Us</span>
@@ -701,7 +701,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ TECHNOLOGY & EQUIPMENT ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Our Tools</span>
@@ -731,7 +731,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ INSURANCE CHECKER ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Insurance</span>
@@ -757,7 +757,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ PATIENT COMFORT / ANXIETY ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Your Comfort</span>
@@ -787,7 +787,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ VIDEO TESTIMONIAL PLACEHOLDER ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
             <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1000&q=80" alt="Summit PT clinic interior" className="w-full h-[400px] object-cover" />
@@ -807,7 +807,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ FACILITY GALLERY ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Our Space</span>
@@ -834,7 +834,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ ENHANCED SERVICE AREA ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Location</span>
@@ -911,7 +911,7 @@ export default function V2PhysicalTherapyShowcase() {
       </SectionReveal>
 
       {/* ═══ FAQ ═══ */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 bg-white">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 bg-white">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>FAQ</span>
@@ -959,7 +959,7 @@ export default function V2PhysicalTherapyShowcase() {
       </section>
 
       {/* ═══ CONTACT ═══ */}
-      <SectionReveal id="contact" className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
+      <SectionReveal id="contact" className="relative z-10 py-12 md:py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>

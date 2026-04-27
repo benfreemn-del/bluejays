@@ -444,7 +444,7 @@ export default function V2ApplianceRepairPage() {
       </div>
 
       {/* ═══════════════════ 3. SERVICES ═══════════════════ */}
-      <SectionReveal id="services" className="relative z-10 py-24 px-4">
+      <SectionReveal id="services" className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-7xl">
           <SectionHeader label="Our Expertise" title="8 Appliances." accent="One Call." subtitle="From washers to garbage disposals, our factory-trained technicians diagnose and repair every major household appliance." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -466,7 +466,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 4. SAME-DAY GUARANTEE ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-5xl">
           <ShimmerBorder>
             <div className="p-10 md:p-16 text-center">
@@ -520,7 +520,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 5. UPFRONT PRICING ═══════════════════ */}
-      <SectionReveal id="pricing" className="relative z-10 py-24 px-4">
+      <SectionReveal id="pricing" className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-7xl">
           <SectionHeader label="Transparent Pricing" title="No Surprises." accent="Ever." subtitle="Our flat-rate pricing means you know the cost before we start. The $89 diagnostic is waived when you approve the repair." />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -540,7 +540,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 6. BRANDS WE SERVICE ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-6xl">
           <SectionHeader label="All Major Brands" title="Factory Trained on" accent="Your Brand." subtitle="Our technicians hold factory certifications and carry OEM parts for the most popular appliance manufacturers." />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
@@ -555,7 +555,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 7. REPAIR PROCESS ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">
           <SectionHeader label="How It Works" title="4 Steps to a" accent="Working Appliance" subtitle="No runaround. No hidden fees. Just a straightforward process from first call to finished repair." />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -588,7 +588,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 8. OWNER SPOTLIGHT ═══════════════════ */}
-      <SectionReveal id="about" className="relative z-10 py-24 px-4">
+      <SectionReveal id="about" className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -639,7 +639,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 8. "WHAT'S BROKEN?" QUIZ ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-4xl">
           <SectionHeader label="Quick Diagnosis" title="What's" accent="Broken?" subtitle="Select the symptom that best describes your appliance problem and we'll prioritize your call." />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -679,7 +679,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 9.5. HONEST REPAIR PROMISE ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-6xl">
           <SectionHeader label="Our Promise" title="The Honest" accent="Mechanic Guarantee" subtitle="We built ProFix on trust. Here's what that means in practice." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -705,17 +705,17 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 10. COMPETITOR COMPARISON ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-4xl">
           <SectionHeader label="Why ProFix" title="ProFix vs." accent="Big-Box Repair" subtitle="The chains send a stranger with a clipboard. We send Steve with a truck full of parts." />
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center py-4 px-6 border-b border-white/15">
+          <GlassCard className="overflow-hidden overflow-x-auto">
+            <div className="grid min-w-[440px] grid-cols-3 text-center py-4 px-6 border-b border-white/15">
               <div className="text-sm font-bold" style={{ color: STEEL_LIGHT }}>Feature</div>
               <div className="text-sm font-bold" style={{ color: ACCENT }}>ProFix</div>
               <div className="text-sm font-bold" style={{ color: STEEL }}>Big-Box</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center py-4 px-6 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
+              <div key={i} className={`grid min-w-[440px] grid-cols-3 text-center py-4 px-6 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="text-sm text-left font-medium text-white">{row.feature}</div>
                 <div>
                   <CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -728,7 +728,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 10. GOOGLE REVIEWS HEADER + TESTIMONIALS ═══════════════════ */}
-      <SectionReveal id="reviews" className="relative z-10 py-24 px-4">
+      <SectionReveal id="reviews" className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-7xl">
           {/* Google Reviews summary */}
           <div className="text-center mb-6">
@@ -767,7 +767,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 11. FINANCING ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-5xl">
           <SectionHeader label="Flexible Payment" title="Fix Now." accent="Pay Later." subtitle="We offer financing on repairs over $149 so a broken appliance doesn't break your budget." />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -790,7 +790,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 12. COMMON ISSUES / EDUCATION ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-6xl">
           <SectionHeader label="Know the Signs" title="When to Call a" accent="Professional" subtitle="Some problems get worse fast. Here are the warning signs that mean you should pick up the phone today." />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -824,7 +824,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 13. VIDEO PLACEHOLDER ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-4xl">
           <SectionHeader label="See Our Work" title="Watch ProFix" accent="In Action" />
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group" style={{ background: `linear-gradient(135deg, #1a1a1a, #222)` }}>
@@ -847,7 +847,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 14. NEIGHBORHOODS WE SERVE ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">
           <SectionHeader label="Local Experts" title="Your Neighborhood" accent="Repair Team" subtitle="Steve and the ProFix crew know Seattle inside and out. We've made house calls in every corner of the city." />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -884,7 +884,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 14. SERVICE AREA ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4">
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-5xl">
           <SectionHeader label="Coverage" title="Serving All of" accent="Greater Seattle" subtitle="From Greenwood to Ballard, Fremont to Shoreline, and everywhere in between." />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -911,7 +911,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 15. FAQ ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-3xl">
           <SectionHeader label="Common Questions" title="Got" accent="Questions?" />
           <div className="space-y-3">
@@ -944,7 +944,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 18.5. APPLIANCE LIFESPAN GUIDE ═══════════════════ */}
-      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-5xl">
           <SectionHeader label="Know Your Appliances" title="Repair or" accent="Replace?" subtitle="Average lifespans for major household appliances. When repair costs exceed 50% of replacement, we'll tell you honestly." />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -976,7 +976,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ 19. CONTACT / CTA ═══════════════════ */}
-      <SectionReveal id="contact" className="relative z-10 py-24 px-4">
+      <SectionReveal id="contact" className="relative z-10 py-12 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>

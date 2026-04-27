@@ -551,7 +551,7 @@ export default function V2LandscapingPage() {
           <div className="relative max-w-4xl mx-auto">
             {/* Vertical line connecting steps */}
             <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px hidden md:block" style={{ background: `linear-gradient(180deg, transparent, ${PRIMARY}60, ${EARTH}40, transparent)` }} />
-            <motion.div className="space-y-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            <motion.div className="space-y-5 md:space-y-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
               {processSteps.map((step, i) => (
                 <motion.div key={i} variants={fadeUp} className={`flex items-start gap-6 md:gap-12 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
                   <div className={`flex-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>

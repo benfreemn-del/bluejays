@@ -255,7 +255,7 @@ export default function V2TutoringShowcase() {
           </motion.p>
 
           <div className="mb-4">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none" style={{ color: DARK }}>
+            <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none" style={{ color: DARK }}>
               {typedText}
               <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "linear" }}
                 className="inline-block w-[3px] h-[0.85em] ml-1 align-baseline rounded-sm" style={{ background: PURPLE }} />
@@ -316,7 +316,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── SUBJECT GRID ──── */}
-      <SectionReveal id="subjects" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="subjects" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.025} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -349,7 +349,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── GRADE LEVEL SELECTOR ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <SectionBadge text="Grade Levels" color={YELLOW} />
@@ -384,7 +384,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── ABOUT DR. RACHEL TORRES ──── */}
-      <SectionReveal id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="about" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -433,7 +433,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── TUTOR PROFILES ──── */}
-      <SectionReveal id="tutors" className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, ${BG} 0%, #fffef5 50%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal id="tutors" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, ${BG} 0%, #fffef5 50%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <SectionBadge text="Our Tutors" color={YELLOW} />
@@ -462,7 +462,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── OUR APPROACH (4-STEP) ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -497,7 +497,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── WHY BRIGHT MINDS (DIFFERENTIATORS) ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <SectionBadge text="Why Us" color={YELLOW} />
@@ -554,7 +554,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── LEARNING ENVIRONMENT GALLERY ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -579,7 +579,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── SUBJECTS WE COVER (DETAILED) ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <SectionBadge text="Curriculum" />
@@ -650,7 +650,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── SUCCESS STORIES (SCORE IMPROVEMENTS) ──── */}
-      <SectionReveal id="results" className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal id="results" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <SectionBadge text="Results" color={YELLOW} />
@@ -681,7 +681,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── PRICING ──── */}
-      <SectionReveal id="pricing" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="pricing" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -720,21 +720,21 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── COMPETITOR COMPARISON ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <SectionBadge text="Compare" color={YELLOW} />
             <SectionHeading>Bright Minds vs. The Competition</SectionHeading>
             <AccentLine color={YELLOW} />
           </div>
-          <div className="rounded-2xl border overflow-hidden bg-white shadow-sm" style={{ borderColor: `${PURPLE}15` }}>
-            <div className="grid grid-cols-3 text-center text-sm font-bold py-4 border-b" style={{ background: `${PURPLE}06`, borderColor: `${PURPLE}10` }}>
+          <div className="rounded-2xl border overflow-hidden overflow-x-auto bg-white shadow-sm" style={{ borderColor: `${PURPLE}15` }}>
+            <div className="grid min-w-[440px] grid-cols-3 text-center text-sm font-bold py-4 border-b" style={{ background: `${PURPLE}06`, borderColor: `${PURPLE}10` }}>
               <span className="text-slate-500">Feature</span>
               <span style={{ color: PURPLE }}>Bright Minds</span>
               <span className="text-slate-400">Others</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={row.feature} className={`grid grid-cols-3 text-center text-sm py-4 px-4 ${i < comparisonRows.length - 1 ? "border-b" : ""}`} style={{ borderColor: `${PURPLE}08` }}>
+              <div key={row.feature} className={`grid min-w-[440px] grid-cols-3 text-center text-sm py-4 px-4 ${i < comparisonRows.length - 1 ? "border-b" : ""}`} style={{ borderColor: `${PURPLE}08` }}>
                 <span className="text-left text-slate-600 font-medium">{row.feature}</span>
                 <span><CheckCircle size={20} weight="fill" style={{ color: PURPLE }} className="mx-auto" /></span>
                 <span className="text-slate-400">{row.them}</span>
@@ -745,7 +745,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── GOOGLE REVIEWS HEADER + TESTIMONIALS ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-6">
@@ -781,7 +781,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── "WHAT DOES YOUR STUDENT NEED?" QUIZ ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <SectionBadge text="Quick Quiz" color={YELLOW} />
@@ -823,7 +823,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── SCHEDULE / AVAILABILITY ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
@@ -868,7 +868,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── FAQ ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <SectionBadge text="FAQ" color={YELLOW} />
@@ -899,7 +899,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── VIDEO TESTIMONIAL PLACEHOLDER ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #fffef5 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <SectionBadge text="Virtual Tour" />
           <SectionHeading>See Our Learning Center</SectionHeading>
@@ -917,7 +917,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── ENHANCED SERVICE AREA ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
@@ -978,7 +978,7 @@ export default function V2TutoringShowcase() {
       </SectionReveal>
 
       {/* ──── PARENT RESOURCES & TIPS ──── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden" style={{ background: `linear-gradient(180deg, #f8f6ff 0%, ${BG} 100%)` } as React.CSSProperties}>
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <SectionBadge text="For Parents" color={YELLOW} />
@@ -1046,7 +1046,7 @@ export default function V2TutoringShowcase() {
       </section>
 
       {/* ──── CONTACT + FORM ──── */}
-      <SectionReveal id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <SectionReveal id="contact" className="relative z-10 py-12 md:py-24 md:py-32 overflow-hidden">
         <GridPattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">

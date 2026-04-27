@@ -598,10 +598,10 @@ export default function PestControlShowcase() {
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(${ORANGE}30 1px, transparent 1px), linear-gradient(90deg, ${ORANGE}30 1px, transparent 1px)`, backgroundSize: "60px 60px" }} />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 flex flex-col lg:flex-row items-center gap-12">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left text */}
           <div className="flex-1 text-center lg:text-left">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6" style={{ borderColor: `${GREEN}40`, background: `${GREEN}10` }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-4 sm:mb-6" style={{ borderColor: `${GREEN}40`, background: `${GREEN}10` }}>
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: GREEN }} />
               <span className="text-xs font-bold tracking-wider uppercase" style={{ color: GREEN }}>Seattle&apos;s Trusted Pest Experts</span>
             </motion.div>
@@ -638,8 +638,8 @@ export default function PestControlShowcase() {
             </motion.div>
           </div>
 
-          {/* Right radar */}
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="flex-shrink-0">
+          {/* Right radar — hidden on mobile to keep hero clean */}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="hidden sm:block flex-shrink-0">
             <PestRadarHero />
           </motion.div>
         </div>
@@ -674,7 +674,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── SERVICES ──────────── */}
-      <SectionReveal id="services" className="py-24 relative">
+      <SectionReveal id="services" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 30% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Our Services" title="Complete Pest" accent="Protection" />
@@ -698,7 +698,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── ABOUT ──────────── */}
-      <SectionReveal id="about" className="py-24 relative">
+      <SectionReveal id="about" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -760,7 +760,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── PEST IDENTIFIER TOOL ──────────── */}
-      <SectionReveal id="pest-id" className="py-24 relative">
+      <SectionReveal id="pest-id" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 30%, ${ORANGE}06 0%, transparent 50%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Interactive Tool" title="What's Bugging" accent="You?" />
@@ -770,7 +770,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── TREATMENT ESTIMATOR ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Plan & Price" title="Treatment" accent="Estimator" />
@@ -780,7 +780,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── SEASONAL PEST CALENDAR ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 80%, ${GREEN}06 0%, transparent 50%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="PNW Knowledge" title="Seasonal Pest" accent="Calendar" />
@@ -790,7 +790,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── PROCESS ──────────── */}
-      <SectionReveal id="process" className="py-24 relative">
+      <SectionReveal id="process" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, transparent, ${ORANGE}04)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="How It Works" title="Our 5-Step" accent="Process" />
@@ -817,7 +817,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── TESTIMONIALS — Pest Type + Urgency Cards ──────────── */}
-      <SectionReveal id="reviews" className="py-24 relative">
+      <SectionReveal id="reviews" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 60% 30%, ${ORANGE}06 0%, transparent 50%)` }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Customer Stories" title="Real Results," accent="Real Reviews" />
@@ -878,7 +878,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── ECO-FRIENDLY METHODS ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 40% 50%, ${GREEN}06 0%, transparent 50%)` }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Our Approach" title="Eco-Friendly" accent="Methods" />
@@ -909,7 +909,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── COMPARISON ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Why Choose Us" title="Evergreen vs." accent="The Rest" />
@@ -947,7 +947,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── PRICING ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Pricing" title="Protection" accent="Plans" />
@@ -1002,7 +1002,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── FAQ ──────────── */}
-      <SectionReveal id="faq" className="py-24 relative">
+      <SectionReveal id="faq" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Questions" title="Frequently" accent="Asked" />
@@ -1029,7 +1029,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── SERVICE AREA ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Coverage" title="Service" accent="Area" />
@@ -1074,7 +1074,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── CTA ──────────── */}
-      <SectionReveal className="py-24 relative">
+      <SectionReveal className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}10 0%, transparent 50%)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <ShimmerBorder>
@@ -1098,7 +1098,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── CONTACT ──────────── */}
-      <SectionReveal id="contact" className="py-24 relative">
+      <SectionReveal id="contact" className="py-12 md:py-24 relative">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader label="Get in Touch" title="Contact" accent="Us" />

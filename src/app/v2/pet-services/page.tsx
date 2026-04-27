@@ -821,7 +821,7 @@ export default function V2PetServicesShowcase() {
           ════════════════════════════════════════════════════════ */}
       <SectionReveal
         id="services"
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-24 md:py-32 overflow-hidden"
       >
         <div
           className="absolute inset-0"
@@ -910,7 +910,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           5. PET TYPE SELECTOR
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1027,7 +1027,7 @@ export default function V2PetServicesShowcase() {
           ════════════════════════════════════════════════════════ */}
       <SectionReveal
         id="pricing"
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-24 md:py-32 overflow-hidden"
       >
         <div
           className="absolute inset-0"
@@ -1154,7 +1154,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           7. DAILY REPORT CARD
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1249,7 +1249,7 @@ export default function V2PetServicesShowcase() {
                       className="w-full h-48 object-cover"
                     />
                   </div>
-                  <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                     {[
                       { label: "Meals", val: "2/2 Eaten", icon: Bone },
                       { label: "Walks", val: "3 Walks", icon: PawPrint },
@@ -1292,7 +1292,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           8. SAFETY & TRUST BADGES
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1358,7 +1358,7 @@ export default function V2PetServicesShowcase() {
           ════════════════════════════════════════════════════════ */}
       <SectionReveal
         id="about"
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-24 md:py-32 overflow-hidden"
       >
         <div
           className="absolute inset-0"
@@ -1448,7 +1448,7 @@ export default function V2PetServicesShowcase() {
           ════════════════════════════════════════════════════════ */}
       <SectionReveal
         id="gallery"
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-24 md:py-32 overflow-hidden"
       >
         <div
           className="absolute inset-0"
@@ -1504,7 +1504,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           11. WHAT DOES YOUR PET NEED? QUIZ
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1599,7 +1599,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           12. GOOGLE REVIEWS + TESTIMONIALS
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1711,7 +1711,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           13. COMPETITOR COMPARISON TABLE
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1734,9 +1734,9 @@ export default function V2PetServicesShowcase() {
               }}
             />
           </div>
-          <GlassCard className="overflow-hidden">
+          <GlassCard className="overflow-hidden overflow-x-auto">
             <div
-              className="grid grid-cols-3 text-center text-sm font-bold p-4 border-b"
+              className="grid min-w-[440px] grid-cols-3 text-center text-sm font-bold p-4 border-b"
               style={{
                 borderColor: `${TEAL}10`,
                 background: `${TEAL}08`,
@@ -1749,7 +1749,7 @@ export default function V2PetServicesShowcase() {
             {comparisonRows.map((row, i) => (
               <div
                 key={row.feature}
-                className={`grid grid-cols-3 text-center text-sm p-4 items-center ${i < comparisonRows.length - 1 ? "border-b" : ""}`}
+                className={`grid min-w-[440px] grid-cols-3 text-center text-sm p-4 items-center ${i < comparisonRows.length - 1 ? "border-b" : ""}`}
                 style={{ borderColor: `${TEAL}08` }}
               >
                 <span className="text-stone-600 font-medium text-left">
@@ -1773,7 +1773,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           14. VIDEO TOUR PLACEHOLDER
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -1957,7 +1957,7 @@ export default function V2PetServicesShowcase() {
       {/* ════════════════════════════════════════════════════════
           18. FAQ
           ════════════════════════════════════════════════════════ */}
-      <SectionReveal className="relative py-24 md:py-32 overflow-hidden">
+      <SectionReveal className="relative py-12 md:py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -2034,7 +2034,7 @@ export default function V2PetServicesShowcase() {
           ════════════════════════════════════════════════════════ */}
       <SectionReveal
         id="contact"
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-24 md:py-32 overflow-hidden"
       >
         <div
           className="absolute inset-0"

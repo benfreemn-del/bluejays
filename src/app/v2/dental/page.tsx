@@ -397,8 +397,8 @@ export default function DentalShowcasePage() {
                   <Phone size={20} weight="bold" /> (206) 555-0238
                 </a>
               </motion.div>
-              {/* Trust pills */}
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+              {/* Trust pills — hidden on mobile to reduce stacking */}
+              <motion.div variants={fadeUp} className="hidden sm:flex flex-wrap gap-3">
                 {[
                   { icon: Star, text: "4.9 Stars on Google" },
                   { icon: Users, text: "Accepting New Patients" },
@@ -770,15 +770,15 @@ export default function DentalShowcasePage() {
       <SectionReveal className="py-20 md:py-28" style={{ background: CREAM }}>
         <div className="max-w-4xl mx-auto px-6">
           <SectionHeader label="Why Us" title="Emerald City Dental vs" accent="Chain Dentistry" />
-          <WarmCard className="overflow-hidden">
+          <WarmCard className="overflow-hidden overflow-x-auto">
             {/* Header row */}
-            <div className="grid grid-cols-3 border-b border-slate-200 font-bold text-sm">
+            <div className="grid min-w-[440px] grid-cols-3 border-b border-slate-200 font-bold text-sm">
               <div className="p-4 text-slate-900">Feature</div>
               <div className="p-4 text-center text-white" style={{ background: TEAL }}>Emerald City</div>
               <div className="p-4 text-center text-slate-500 bg-slate-50">Chain Office</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={row.label} className={`grid grid-cols-3 text-sm ${i < COMPARISON_ROWS.length - 1 ? "border-b border-slate-100" : ""}`}>
+              <div key={row.label} className={`grid min-w-[440px] grid-cols-3 text-sm ${i < COMPARISON_ROWS.length - 1 ? "border-b border-slate-100" : ""}`}>
                 <div className="p-4 text-slate-700 font-medium">{row.label}</div>
                 <div className="p-4 text-center">
                   <CheckCircle size={20} weight="fill" className="inline-block text-teal-500" />
