@@ -77,7 +77,7 @@ export default function AuditLandingPage() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card icon="★"    title="A real score"         body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance." accent="emerald" />
+            <Card icon="%"    title="A real score"         body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance." accent="emerald" />
             <Card icon="$"    title="Money-leak estimate"   body="A conservative estimate of what your current site is costing you in missed leads every month." accent="rose" />
             <Card icon="#1"   title="Prioritized fixes"     body="Specific, plain-English issues with the dollar impact + how hard each one is to fix." accent="amber" />
             <Card icon="✓"   title="Industry benchmark"    body="We compare your site to the gold-standard template for your category. See the gap." accent="sky" />
