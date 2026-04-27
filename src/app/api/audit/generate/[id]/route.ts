@@ -129,7 +129,7 @@ export async function POST(
       );
       await supabase
         .from("site_audits")
-        .update({ email_sent_at: new Date().toISOString() })
+        .update({ email_sent_at: new Date().toISOString(), audit_email_step: 1 })
         .eq("id", id);
     } catch (err) {
       console.error("[audit/generate] Email #1 send failed (non-fatal):", err);
