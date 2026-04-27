@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type React from "react";
 import AuditForm from "./AuditForm";
 
 /**
@@ -90,11 +91,45 @@ export default function AuditLandingPage() {
       {/* How it works */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">How it works</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <Step n="1" title="Drop your URL" body="Paste your site link + your business category. That's it." />
-            <Step n="2" title="We analyze" body="Claude + GPT-4 look at your hero, copy, CTAs, social proof, mobile, SEO. Takes ~5 min." />
-            <Step n="3" title="You get the audit" body="Comprehensive report emailed to you + a shareable URL. Read it, share it, act on it." />
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3">How it works</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Three steps. Five minutes. A report you can actually use.</p>
+          </div>
+          <div className="relative">
+            {/* Connector line on desktop */}
+            <div className="hidden md:block absolute top-10 left-[16.5%] right-[16.5%] h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
+            <div className="grid md:grid-cols-3 gap-6">
+              <Step
+                n="1"
+                icon={
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+                    <path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                }
+                title="Drop your URL"
+                body="Paste your site link and pick your business type. Takes 30 seconds."
+              />
+              <Step
+                n="2"
+                icon={
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+                    <path d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                }
+                title="We run it through the system"
+                body="We score your hero, copy, CTAs, trust signals, mobile layout, and local SEO against what's actually working in your industry right now."
+              />
+              <Step
+                n="3"
+                icon={
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+                    <path d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.981l7.5-4.039a2.25 2.25 0 012.134 0l7.5 4.039a2.25 2.25 0 011.183 1.98V19.5z" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                }
+                title="Hits your inbox"
+                body="Full report emailed + a shareable link. Score, money-leak estimate, the 3 fixes that matter most, and exactly what to do next."
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -146,11 +181,18 @@ function Card({ icon, title, body, accent = "sky" }: { icon: string; title: stri
   );
 }
 
-function Step({ n, title, body }: { n: string; title: string; body: string }) {
+function Step({ n, icon, title, body }: { n: string; icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900/30 p-6">
-      <div className="text-3xl font-bold text-sky-400 mb-2">{n}</div>
-      <h3 className="font-semibold mb-1">{title}</h3>
+    <div className="relative rounded-2xl border border-white/8 bg-slate-900/50 p-6 hover:border-sky-500/25 hover:bg-slate-900/70 transition-all duration-300">
+      {/* Step number badge */}
+      <div className="absolute -top-3 left-6 flex items-center justify-center w-6 h-6 rounded-full bg-sky-500 text-white text-[10px] font-bold">
+        {n}
+      </div>
+      {/* Icon */}
+      <div className="mb-4 mt-1 inline-flex items-center justify-center w-11 h-11 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
+        {icon}
+      </div>
+      <h3 className="font-semibold text-white mb-2">{title}</h3>
       <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
     </div>
   );
