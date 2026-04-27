@@ -30,7 +30,7 @@ function toEmbedUrl(raw: string | null): string | null {
 
 const STAGE_MESSAGES: Record<string, string> = {
   pending: "Audit is queued — kicking it off in a moment…",
-  generating: "Reading your site, scoring every section, and finding the conversion leaks. Usually done in 60–90 seconds.",
+  generating: "Reading your site, scoring every section, and finding the conversion leaks. Usually done in about 30 seconds.",
   ready: "Audit is ready. Redirecting you to your full report…",
   failed: "Something went wrong generating your audit. Email bluejaycontactme@gmail.com and we'll send a real human's review by tomorrow.",
   cancelled: "This audit was cancelled. Email us if this looks wrong.",
@@ -55,7 +55,7 @@ const TRACKER_STAGES = [
   { key: "ready",      label: "Ready",      shortLabel: "Ready",   icon: "🎉", percentTrigger: 100 },
 ];
 
-const ESTIMATED_TOTAL_SECONDS = 90; // ~60-90s — actual observed audit duration
+const ESTIMATED_TOTAL_SECONDS = 30; // ~30s — actual observed audit duration
 
 export default function ProcessingClient({
   auditId,
@@ -216,7 +216,7 @@ export default function ProcessingClient({
               </div>
 
               <p className="mt-6 text-xs text-slate-500">
-                Your full report opens here the moment it&apos;s done — usually 60–90 seconds. We&apos;ll also email you a copy.
+                Your full report opens here the moment it&apos;s done — usually around 30 seconds. We&apos;ll also email you a copy.
               </p>
             </>
           )}

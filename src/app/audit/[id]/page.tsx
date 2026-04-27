@@ -401,26 +401,45 @@ export default async function AuditPage({
 
             {/* Side-by-side: their current site vs a BlueJays V2 build */}
             <div className="grid sm:grid-cols-2 gap-4 mb-6 rounded-xl overflow-hidden">
-              {/* Their current site */}
-              <div className="relative rounded-lg overflow-hidden border border-rose-500/20">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://image.thum.io/get/width/600/crop/800/${a.target_url}`}
-                  alt="Your current site"
-                  className="w-full h-48 object-cover object-top"
-                />
+              {/* Their current site — live iframe mini-preview */}
+              <div className="relative rounded-lg overflow-hidden border border-rose-500/20 bg-white">
+                <div className="h-48 overflow-hidden">
+                  <iframe
+                    src={a.target_url}
+                    title="Your current site"
+                    style={{
+                      width: "1400px",
+                      height: "900px",
+                      transform: "scale(0.213)",
+                      transformOrigin: "top left",
+                      pointerEvents: "none",
+                      border: "none",
+                    }}
+                    loading="lazy"
+                  />
+                </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-rose-950/90 px-3 py-2 text-xs text-rose-200 font-medium">
                   Your site now · scores {score}/100
                 </div>
               </div>
-              {/* BlueJays V2 preview — blurred to tease the upgrade */}
-              <div className="relative rounded-lg overflow-hidden border border-emerald-500/20">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://image.thum.io/get/width/600/crop/800/https://bluejayportfolio.com/v2/${content.businessCategory}`}
-                  alt="BlueJays premium site preview"
-                  className="w-full h-48 object-cover object-top blur-sm scale-105"
-                />
+              {/* BlueJays V2 preview — blurred iframe to tease the upgrade */}
+              <div className="relative rounded-lg overflow-hidden border border-emerald-500/20 bg-slate-950">
+                <div className="h-48 overflow-hidden">
+                  <iframe
+                    src={`/v2/${content.businessCategory}`}
+                    title="BlueJays premium site preview"
+                    style={{
+                      width: "1400px",
+                      height: "900px",
+                      transform: "scale(0.213)",
+                      transformOrigin: "top left",
+                      pointerEvents: "none",
+                      border: "none",
+                      filter: "blur(2px)",
+                    }}
+                    loading="lazy"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col items-end justify-end pb-3 px-3 gap-0.5">
                   <span className="text-white text-xs font-bold drop-shadow-lg">What yours could look like</span>
                   <span className="text-emerald-300 text-[10px] drop-shadow">BlueJays builds score 85–95/100</span>

@@ -889,6 +889,10 @@ TONE — non-negotiable:
 - Quote their actual copy. Reference real numbers.
 
 UNIVERSAL RULES — apply to every category:
+0. HOMEPAGE-ONLY SCOPE — CRITICAL: You only see the homepage. You cannot see other pages (About, Schedule, Services, FAQ, etc). This changes how you word every finding:
+   - WRONG: "No class schedule" / "Schedule is missing" / "Doesn't have pricing"
+   - RIGHT: "Class schedule isn't on the homepage" / "Pricing isn't visible on page load"
+   - The severity of "not on homepage" is LOWER than "doesn't exist at all" — flag as 'medium', not 'critical', unless it's something that MUST be immediately visible (phone number, main CTA). Exception: phone numbers and CTAs must be on the homepage — those stay 'critical'.
 1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
 2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
 3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
@@ -987,6 +991,10 @@ TONE — non-negotiable:
 - Quote their actual copy. Reference real numbers.
 
 UNIVERSAL RULES — apply to every category:
+0. HOMEPAGE-ONLY SCOPE — CRITICAL: You only see the homepage. You cannot see other pages (About, Schedule, Services, FAQ, etc). This changes how you word every finding:
+   - WRONG: "No class schedule" / "Schedule is missing" / "Doesn't have pricing"
+   - RIGHT: "Class schedule isn't on the homepage" / "Pricing isn't visible on page load"
+   - The severity of "not on homepage" is LOWER than "doesn't exist at all" — flag as 'medium', not 'critical', unless it's something that MUST be immediately visible (phone number, main CTA). Exception: phone numbers and CTAs must be on the homepage — those stay 'critical'.
 1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
 2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
 3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
