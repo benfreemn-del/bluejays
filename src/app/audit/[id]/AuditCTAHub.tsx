@@ -91,7 +91,7 @@ export default function AuditCTAHub({
       }
       setRequest({
         status: "success",
-        message: data.message || "Got it. Ben will build your preview within 48 hours.",
+        message: data.message || "Got it — you're on the list. Ben builds these personally and will have yours ready within 48 hours. Watch your email.",
         already: !!data.already,
       });
 
@@ -123,7 +123,7 @@ export default function AuditCTAHub({
   }
 
   return (
-    <section className="bg-gradient-to-b from-slate-900 to-slate-950">
+    <section id="pick-your-move" className="bg-gradient-to-b from-slate-900 to-slate-950">
       <div className="mx-auto max-w-4xl px-6 py-16 md:py-20">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Pick your move.</h2>

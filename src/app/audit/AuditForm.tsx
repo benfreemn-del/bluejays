@@ -45,6 +45,7 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 export default function AuditForm() {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [businessCategory, setBusinessCategory] = useState("dental");
   const [businessName, setBusinessName] = useState("");
   const [state, setState] = useState<SubmitState>("idle");
@@ -62,6 +63,7 @@ export default function AuditForm() {
         body: JSON.stringify({
           url: url.trim(),
           email: email.trim(),
+          phone: phone.trim() || undefined,
           businessCategory,
           businessName: businessName.trim() || undefined,
           utm: parseUtmFromQuery(),
@@ -160,6 +162,21 @@ export default function AuditForm() {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="text-left">
+        <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+          Your phone <span className="normal-case text-slate-500 font-normal">(optional — so we can call if you want faster help)</span>
+        </label>
+        <input
+          id="phone"
+          type="tel"
+          placeholder="(555) 555-5555"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          disabled={state === "submitting"}
+          className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+        />
       </div>
 
       <details className="text-left text-xs text-slate-500">

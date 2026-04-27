@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { rateLimit } from "@/lib/rate-limit";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { sendOwnerAlert } from "@/lib/alerts";
 
 /**
  * POST /api/audit/submit
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
   let body: {
     url?: string;
     email?: string;
+    phone?: string;
     businessCategory?: string;
     businessName?: string;
     ownerName?: string;
@@ -117,6 +119,7 @@ export async function POST(request: NextRequest) {
   }
 
   const email = body.email!.toLowerCase().trim();
+  const phone = (body.phone || "").trim() || null;
   const businessName =
     (body.businessName || "").trim() ||
     (() => {
@@ -131,13 +134,17 @@ export async function POST(request: NextRequest) {
   // Look up existing prospect by email
   const { data: existingProspect } = await supabase
     .from("prospects")
-    .select("id, business_name, email, status, manually_managed")
+    .select("id, business_name, email, status, manually_managed, phone")
     .eq("email", email)
     .maybeSingle();
 
   let prospectId: string;
   if (existingProspect) {
     prospectId = existingProspect.id as string;
+    // Capture phone if newly provided and not already on record
+    if (phone && !existingProspect.phone) {
+      await supabase.from("prospects").update({ phone }).eq("id", prospectId);
+    }
   } else {
     // Create a new prospect — inbound source means SMS gating in CLAUDE.md
     // Rule from "SMS A2P 10DLC Compliance Rules" applies (source='inbound'
@@ -150,6 +157,7 @@ export async function POST(request: NextRequest) {
       business_name: businessName,
       owner_name: ownerName,
       email,
+      phone,
       address: "Unknown — submitted via /audit",
       city: "Unknown",
       state: "Unknown",
@@ -318,6 +326,14 @@ export async function POST(request: NextRequest) {
       }
     }
   });
+
+  // Hot-lead alert — fire immediately (not inside after()) so Ben gets
+  // the SMS before we even respond to the client.
+  if (phone) {
+    void sendOwnerAlert(
+      `📞 Hot lead: ${businessName} left their phone on the audit form.\nNumber: ${phone}\nCall now → https://bluejayportfolio.com/audit/${finalAuditId}`,
+    ).catch(() => {});
+  }
 
   return NextResponse.json({
     ok: true,

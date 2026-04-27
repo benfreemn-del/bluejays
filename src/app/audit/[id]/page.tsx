@@ -322,9 +322,12 @@ export default async function AuditPage({
                         <span className="font-medium">{eff?.label || item.effort}</span>
                       </span>
                       {item.blueJaysCanDo && (
-                        <span className="hidden sm:inline-flex items-center rounded-full bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-sky-300 font-medium">
-                          ✦ BlueJays
-                        </span>
+                        <a
+                          href="#pick-your-move"
+                          className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-sky-300 font-medium hover:bg-sky-500/20 transition-colors text-[11px]"
+                        >
+                          ✦ We fix this in every build →
+                        </a>
                       )}
                     </div>
                   </div>
@@ -395,13 +398,43 @@ export default async function AuditPage({
               {stripJargon(content.blueJaysBenchmark.gapSummary) ||
                 `This is the quality bar we'd ship for your business — a fully custom ${content.businessCategory.replace(/-/g, " ")} site with real photos, your branding, and conversion sections built in.`}
             </p>
+
+            {/* Side-by-side: their current site vs a BlueJays V2 build */}
+            <div className="grid sm:grid-cols-2 gap-4 mb-6 rounded-xl overflow-hidden">
+              {/* Their current site */}
+              <div className="relative rounded-lg overflow-hidden border border-rose-500/20">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://image.thum.io/get/width/600/crop/800/${encodeURIComponent(a.target_url)}`}
+                  alt="Your current site"
+                  className="w-full h-48 object-cover object-top"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-rose-950/90 px-3 py-2 text-xs text-rose-200 font-medium">
+                  Your site now · scores {score}/100
+                </div>
+              </div>
+              {/* BlueJays V2 preview — blurred to tease the upgrade */}
+              <div className="relative rounded-lg overflow-hidden border border-emerald-500/20">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://image.thum.io/get/width/600/crop/800/${encodeURIComponent(`https://bluejayportfolio.com/v2/${content.businessCategory}`)}`}
+                  alt="BlueJays premium site preview"
+                  className="w-full h-48 object-cover object-top blur-sm scale-105"
+                />
+                <div className="absolute inset-0 bg-emerald-950/60 flex flex-col items-center justify-center gap-2">
+                  <span className="text-emerald-200 text-sm font-bold drop-shadow">What yours could look like</span>
+                  <span className="text-emerald-300/80 text-xs">BlueJays builds score 85–95/100</span>
+                </div>
+              </div>
+            </div>
+
             <a
               href={content.blueJaysBenchmark.referenceUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-full sm:w-auto rounded-lg bg-sky-500 px-6 py-3 text-sm font-bold text-white hover:bg-sky-400 transition-colors"
             >
-              See the example site →
+              See the full example site →
             </a>
           </div>
         </section>

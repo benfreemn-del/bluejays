@@ -28,6 +28,7 @@ const OPENAI_MODEL = "gpt-4.1-mini";
 // Cost rates per million tokens (2026 pricing)
 const CLAUDE_INPUT_RATE = 3.0 / 1_000_000;
 const CLAUDE_OUTPUT_RATE = 15.0 / 1_000_000;
+const CLAUDE_CACHE_READ_RATE = 0.3 / 1_000_000; // 90% cheaper than uncached input
 const OPENAI_INPUT_RATE = 0.4 / 1_000_000;
 const OPENAI_OUTPUT_RATE = 1.6 / 1_000_000;
 
@@ -523,10 +524,11 @@ export async function runAudit(args: {
       technicalResult,
     });
 
-    // Compute cost
+    // Compute cost — cache reads billed at 90% discount vs uncached input
     const claudeCost =
       heroResult.tokensIn * CLAUDE_INPUT_RATE +
-      heroResult.tokensOut * CLAUDE_OUTPUT_RATE;
+      heroResult.tokensOut * CLAUDE_OUTPUT_RATE +
+      heroResult.cacheReadTokens * CLAUDE_CACHE_READ_RATE;
     const openaiCost =
       technicalResult.tokensIn * OPENAI_INPUT_RATE +
       technicalResult.tokensOut * OPENAI_OUTPUT_RATE;
@@ -594,6 +596,7 @@ interface HeroAnalysisResult {
   score: number;
   tokensIn: number;
   tokensOut: number;
+  cacheReadTokens: number;
   model: string;
   /** ID of the Hyperloop audit_prompt variant used (if any). Lets us
    *  attribute audit-to-paid conversion back to the prompt that
@@ -678,9 +681,25 @@ async function runHeroAnalysis(
   // generating the variant is responsible for keeping the JSON output
   // schema intact + interpolating ctx fields if needed.
   const override = await loadAuditPromptOverride(category);
-  const prompt = override?.systemPrompt
-    ? interpolatePromptTemplate(override.systemPrompt, { ctx, category, businessName })
-    : buildHeroPrompt(ctx, category, businessName);
+
+  // Build API payload — standard path uses prompt caching (~90% cost savings
+  // on the static rubric). Override path skips caching (dynamic content).
+  let apiBody: Record<string, unknown>;
+  if (override?.systemPrompt) {
+    const fullPrompt = interpolatePromptTemplate(override.systemPrompt, { ctx, category, businessName });
+    apiBody = {
+      model: CLAUDE_MODEL,
+      max_tokens: 2048,
+      messages: [{ role: "user", content: fullPrompt }],
+    };
+  } else {
+    apiBody = {
+      model: CLAUDE_MODEL,
+      max_tokens: 2048,
+      system: [{ type: "text", text: buildHeroStaticSystem(), cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: buildHeroDynamicUser(ctx, category, businessName) }],
+    };
+  }
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -688,12 +707,9 @@ async function runHeroAnalysis(
       "Content-Type": "application/json",
       "x-api-key": process.env.ANTHROPIC_API_KEY,
       "anthropic-version": "2023-06-01",
+      "anthropic-beta": "prompt-caching-2024-07-31",
     },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 2048,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify(apiBody),
   });
 
   if (!res.ok) {
@@ -702,7 +718,10 @@ async function runHeroAnalysis(
 
   const data = await res.json();
   const text: string = data.content?.[0]?.text || "";
-  const tokensIn = data.usage?.input_tokens || 0;
+  const cacheReadTokens = data.usage?.cache_read_input_tokens || 0;
+  const cacheWriteTokens = data.usage?.cache_creation_input_tokens || 0;
+  // uncached input + cache writes are both billed at standard input rate
+  const tokensIn = (data.usage?.input_tokens || 0) + cacheWriteTokens;
   const tokensOut = data.usage?.output_tokens || 0;
 
   const parsed = parseJsonResponse<{
@@ -724,6 +743,7 @@ async function runHeroAnalysis(
     score: parsed.score,
     tokensIn,
     tokensOut,
+    cacheReadTokens,
     model: CLAUDE_MODEL,
     promptVariantId: override?.id, // tracked in audit metadata for attribution
   };
@@ -841,6 +861,99 @@ async function runTechnicalAnalysis(
 }
 
 /* -------------------- Prompts -------------------- */
+
+/**
+ * Static rubric that never changes across audits — safe to cache via
+ * Anthropic prompt caching. Category/business/URL context goes in the
+ * dynamic user message instead (see buildHeroDynamicUser).
+ */
+function buildHeroStaticSystem(): string {
+  return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
+
+TONE — non-negotiable:
+- Address the owner as "you". Never "the user" or "the website".
+- 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
+  - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
+  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template.
+  - BANNED tech jargon (CRITICAL — these never appear in your output, not in titles, not anywhere): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, ElectricalContractor schema, favicon, script, scripts, render, lazy-load, lazy-loading, viewport, DOM, CSS, SEO (say 'Google ranking' instead).
+  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
+  - When you mean meta description: say "the blurb Google shows under your link".
+  - When you mean schema: say "the address-book info Google reads about your business".
+  - When you mean favicon: say "the little icon next to your tab name".
+  - When you mean viewport tag: say "mobile scaling tag" (this is a tiny technical detail — NOT the same as the site actually looking good on phones).
+  - When you mean scripts: say "code files your page loads".
+  - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
+  - If a 9-year-old can't read it out loud and get it, rewrite it.
+- One punchy sentence beats three good ones. SHORT.
+- Lead with cost (lost customers, missed jobs, wasted money) — never the technical issue.
+- Quote their actual copy. Reference real numbers.
+
+UNIVERSAL RULES — apply to every category:
+1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
+2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
+3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
+4. MOBILE RULE (CRITICAL): A mobile scaling tag being present does NOT mean the site looks good on phones. Most old sites have the tag and still look completely broken on mobile — text too small, buttons too close together, images overflowing, layout falling apart. If the site shows ANY signs of poor mobile quality (old platform like Flash/old Wix, lots of fixed-width content, no responsive images, heavy script load), flag mobile layout as a SEPARATE finding regardless of the tag. Never give a pass on mobile just because the tag exists.
+
+Return STRICT JSON ONLY:
+
+{
+  "headline": "<their actual big headline at top of page>",
+  "cta": "<their primary CTA copy, or 'No clear CTA found'>",
+  "score": <0-100 — hero/positioning/copy/social-proof overall>,
+  "findings": [
+    {
+      "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
+      "severity": "critical" | "high" | "medium" | "low",
+      "title": "<5-8 words. 3rd-grade. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
+      "observation": "<ONE sentence, max 20 words. 3rd-grade. The problem + cost. Example: 'Your hero just says Welcome. A new visitor has 3 seconds to get it, and most bail.'>",
+      "recommendation": "<ONE sentence, max 20 words. 3rd-grade. The fix, plain. Example: 'Tell them what you do and who you help: Same-day plumbing for Tacoma homes, ${"$"}99 to come out.'>",
+      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How a BlueJays build fixes it. NEVER say 'V2', 'template', or 'tag'. Say 'a BlueJays site' or 'a BlueJays build'.>"
+    }
+  ]
+}
+
+Generate 4-6 findings total. RULES:
+- 1-2 severity="critical" or "high" if score below 70
+- 1-2 severity="low" = STRENGTHS (celebratory title, e.g. "Your meta description nails it")
+- ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "Working well", "All X have Y") → severity MUST be "low". No exceptions.
+- Observations and recommendations: ONE sentence each, max 25 words. NEVER more than 25 words. If you can't say it in 25 words, the finding isn't sharp enough.
+- Skip generic SEO advice. Focus on what's losing them CUSTOMERS.
+- Never say "improve", "optimize", "enhance".
+
+JSON only.`;
+}
+
+/**
+ * Dynamic per-audit context: business identity + site signals.
+ * This is the user message that pairs with the cached system rubric.
+ */
+function buildHeroDynamicUser(
+  ctx: SiteContext,
+  category: string,
+  businessName: string,
+): string {
+  const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[category];
+  const benchmarkLine = benchmark
+    ? `Quality bar to compare against: BlueJays' ${benchmark.template} site at ${benchmark.url}`
+    : "No specific BlueJays example site for this category yet.";
+  const painBlock = formatHeroPainPointsBlock(category);
+
+  return `Business: ${businessName}
+Category: ${category}
+URL: ${ctx.url}
+${benchmarkLine}
+
+${painBlock}
+
+Site signals (these are LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
+- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
+- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Big headline at top of page: "${ctx.h1Text}"
+- All section headlines: ${JSON.stringify(ctx.headings.slice(0, 15))}
+- Image count on page: ${ctx.imageCount}
+- Body (first 2K of words on the page): """${ctx.bodyExcerpt}"""
+${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}`;
+}
 
 function buildHeroPrompt(
   ctx: SiteContext,
@@ -1363,6 +1476,7 @@ function mockHeroAnalysis(ctx: SiteContext, category: string): HeroAnalysisResul
     score: 55,
     tokensIn: 0,
     tokensOut: 0,
+    cacheReadTokens: 0,
     model: "mock_claude",
   };
 }
