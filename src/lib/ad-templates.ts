@@ -1,24 +1,40 @@
 /**
- * BlueJays Ad Templates — Full Library
+ * BlueJays Ad Templates — Hormozi-Standard Library
  *
- * Research-backed ad copy for Meta (Facebook/Instagram) and Google Search.
+ * STRUCTURE (read this before touching anything):
  *
- * CAMPAIGN STRUCTURE (locked from competitive research 2026-04-27):
- *   Budget split: 70% Meta / 30% Google
- *   Meta: 1 CBO campaign, 2 ad sets (cold + retargeting), 4 active creatives per set
- *   Google: 1 campaign, Manual CPC, 2 ad groups (category intent + problem-aware)
- *   No Display, no YouTube until monthly ad budget exceeds $3,000/mo
+ *   PHASE 1 — LAUNCH (run these on day one)
+ *     META_LAUNCH_ADS[3]   — the 3 strongest angles, in order of strength
+ *     GOOGLE_SEARCH_ADS[5] — 2 ad groups, offer-led, no brand headlines
  *
- * HOW TO USE:
- *   - Meta cold ads: run 4 at a time, retire losers weekly via Hyperloop
- *   - Meta retargeting: run all 3 simultaneously (tiny audience, low spend)
- *   - Video scripts: produce when scaling past $1,500/mo; use Reels format first
- *   - Google RSAs: paste all headlines + descriptions into a single RSA per ad group
+ *   PHASE 2 — SCALE (week 3+ once winners emerge, ~$1,500+/mo spend)
+ *     META_SCALE_ADS[5]    — rotation bank for when launch ads fatigue
+ *     VIDEO_SCRIPTS[2]     — Meta Reels + Meta Feed only (no YouTube yet)
  *
- * CHARACTER LIMITS ENFORCED:
- *   Google headlines: 30 chars max (verified on each entry)
- *   Google descriptions: 90 chars max (verified on each entry)
- *   Meta headlines: 45 chars (soft limit — shown under image/video)
+ *   PHASE 3 — RETARGETING (when audit page has 500+ unique visitors)
+ *     META_RETARGETING_ADS[3]
+ *
+ * BUDGET MINIMUMS (non-negotiable — below these numbers you are not running
+ * ads, you are making donations to the platform while spinning in learning):
+ *   Meta: $50/day minimum. $20/day per ad set.
+ *   Google: $20/day minimum. $10/day per ad group.
+ *   If total budget is under $50/day: put ALL of it on Meta, pause Google.
+ *   If total budget is under $30/day: don't run paid ads at all. Email outreach
+ *   has better ROI at this stage and doesn't require a learning phase.
+ *
+ * CHARACTER LIMITS (enforced):
+ *   Google headlines: 30 chars max
+ *   Google descriptions: 90 chars max
+ *   Meta headlines: 40 chars (hard limit for feed placement)
+ *
+ * GRAND SLAM OFFER (reference this when writing any new creative):
+ *   Dream outcome:      "More calls, bookings, and customers without managing
+ *                        a builder or paying an agency $5,000+"
+ *   Proof of likelihood: "150+ local sites. 30 industries. 6 years."
+ *   Time delay:         "48-hour build. See it free first."
+ *   Effort/sacrifice:   "Answer 3 questions. We do everything else."
+ *   Risk reversal:      "100% money back. No questions. Same day."
+ *   Price anchor:       "$5,000–$15,000 at agencies. $997 here. No monthly fees."
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -27,16 +43,15 @@
 
 export interface MetaAd {
   id: string;
-  format: "single_image" | "carousel" | "video" | "static";
-  placement?: string[];
-  audience?: "cold" | "retargeting";
+  phase: "launch" | "scale" | "retargeting";
+  format: "single_image" | "carousel" | "video";
+  placement: Array<"feed" | "stories" | "reels">;
+  /** First line visible above the fold before "See more" — must stop the scroll */
   hook: string;
-  /** Primary body copy — field is named primaryText on cold ads, body on retargeting ads */
-  primaryText?: string;
-  body?: string;
+  primaryText: string;
   headline: string;
   description: string;
-  cta: "LEARN_MORE" | "GET_QUOTE" | "SIGN_UP" | "WATCH_MORE";
+  cta: "LEARN_MORE" | "GET_QUOTE" | "SIGN_UP";
   url: string;
   creativeNote: string;
   targetingNote: string;
@@ -44,10 +59,9 @@ export interface MetaAd {
 
 export interface GoogleSearchAd {
   id: string;
-  adGroup: "category_intent" | "category-intent" | "problem_aware" | "problem-aware";
-  campaignType: string;
-  headlines: string[];   // each ≤ 30 chars
-  descriptions: string[]; // each ≤ 90 chars
+  adGroup: "high_intent" | "problem_aware";
+  headlines: string[]; // each ≤ 30 chars — verified
+  descriptions: string[]; // each ≤ 90 chars — verified
   finalUrl: string;
   displayPath: string;
   targetingNote: string;
@@ -55,14 +69,13 @@ export interface GoogleSearchAd {
 
 export interface VideoScript {
   id: string;
-  platform: "meta_reels" | "meta_feed" | "youtube" | "meta-reels" | "meta-feed" | "youtube-preroll";
-  duration: string;
-  format: string;
-  title: string;
+  platform: "meta_reels" | "meta_feed";
+  duration: "30sec" | "60sec";
+  hook: string;
   script: {
     visual: string[];
     voiceover: string[];
-    musicNote: string;
+    editingNote: string;
     captionsNote: string;
   };
   productionNote: string;
@@ -70,691 +83,710 @@ export interface VideoScript {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// META COLD ADS — 8 VARIANTS (2 Hyperloop flights of 4)
-// Flight 1: ads MC-01 through MC-04 (launch first)
-// Flight 2: ads MC-05 through MC-08 (rotate in as losers retire)
+// PHASE 1 — META LAUNCH ADS
+// Run all 3 simultaneously. $20/day each ($60/day total on Meta).
+// These are ordered strongest-to-weakest. L-01 is the best ad in this library.
+// Don't rotate anything in until you have 14 days of conversion data on these.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const META_COLD_ADS: MetaAd[] = [
+export const META_LAUNCH_ADS: MetaAd[] = [
   {
-    id: "MC-01",
-    hook: "money-leak-hector-story",
-    audience: "cold",
-    format: "static",
-    primaryText: `Hector runs a landscaping company in Washington. Solid work. Great reviews. Busy every season.
+    id: "L-01",
+    phase: "launch",
+    format: "single_image",
+    placement: ["feed", "stories", "reels"],
+    hook: "This is what a $997 local business website looks like.",
+    primaryText: `This is what a $997 local business website looks like.
 
-His website had a broken phone button. Half the people visiting on their phones couldn't call him. He had no idea.
+Custom design. Real services. Real photos. Your city.
 
-We fixed it. That was 6 years ago. He's been doing six figures a year since — same crew, same prices, same neighborhoods. The site just stopped working against him.
+Not a template. Not a drag-and-drop builder. A site that looks like you paid $5,000 — because we've built 150+ of them and we know exactly what works.
 
-Most local business websites have at least one problem like that. A broken button. A page that takes 8 seconds to load. A phone number you can't tap.
+It goes live in 48 hours. Includes domain registration and hosting. 100% money back if you don't love it.
 
-Takes 60 seconds to find out if yours does.`,
-    headline: "Something is costing you calls",
-    description: "Free audit. No card needed.",
+First step is free: we score your current site in 60 seconds and show you exactly what it's costing you.
+
+Find out what yours would look like.`,
+    headline: "$997. Custom. 48 hours. See it free.",
+    description: "150+ local sites built. Free audit shows what yours is costing you.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Audit results page screenshot showing a landscaping or roofing site with a specific issue card highlighted in red. Or a before/after split of two phone screens.",
-    targetingNote: "Broad small business owners. Job title: Owner, Business Owner, Self-Employed. Pacific NW 50-mile radius. Facebook + Instagram Feed only.",
+    creativeNote: "Show a split-screen: left side an outdated, cluttered website (generic stock). Right side a clean, premium V2 preview for the same category — dental, roofing, or electrician. No text overlay needed. The visual IS the ad. The contrast does the work. The left side makes them feel the pain. The right side makes them want the fix.",
+    targetingNote: "Broadest possible cold audience. Business owners, self-employed, small business job titles. 35-65. Pacific NW 100-mile radius to start. This is your #1 ad — give it the most budget. If only one ad runs, it's this one. The hook now matches the actual funnel: show quality → offer free audit → build preview → close.",
   },
   {
-    id: "MC-02",
-    hook: "score-curiosity-game",
-    audience: "cold",
-    format: "static",
-    primaryText: `We scored 150 local business websites last year.
+    id: "L-02",
+    phase: "launch",
+    format: "single_image",
+    placement: ["feed"],
+    hook: "What $997 buys from BlueJays:",
+    primaryText: `What $997 buys from BlueJays:
 
-Average score: 54 out of 100.
+✓ Custom website — not a template
+✓ Your real photos, services, and contact info
+✓ Domain registration included
+✓ Hosting setup included
+✓ Mobile-first, built to rank on Google
+✓ Live in 48 hours
+✓ 100% money back if you don't love it
+✓ No monthly fees. Ever.
 
-The most common problems:
-— Phone number that can't be tapped on mobile
-— No visible call-to-action above the fold
-— Page loads in 6+ seconds on 4G
-— Hero section that says what the business IS, not what it DOES for customers
+Most agencies: $5,000–$15,000 upfront. Then $200–$400/month, forever.
 
-Every one of those is a lead walking out the door.
+We charge $997 once. You own everything.
 
-Score yours free. Takes 60 seconds.`,
-    headline: "What would your site score?",
-    description: "Out of 100. Free. 60 seconds.",
+150+ local businesses. 30+ industries. 6 years.
+
+Start with the free audit — see your current site's score and what we'd build instead.`,
+    headline: "$997 flat. You own everything.",
+    description: "No monthly fees. 48 hours. 100% money back.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Screenshot of the audit result page showing a score badge (61/100 or 54/100) with colored issue cards below. The score number should be large and readable at small sizes.",
-    targetingNote: "Same broad owner audience. Test this creative against MC-01 in Flight 1. Expect higher CTR but potentially lower conversion — curiosity clicks don't always convert.",
+    creativeNote: "Clean two-column graphic. Left column: 'Other agencies' header, red X list (high price, long timeline, monthly fees, you don't own it). Right column: 'BlueJays' header, green check list matching the bullets above. Simple, high-contrast, scannable on mobile. No stock photos.",
+    targetingNote: "Cold audience. Same targeting as L-01 but this ad skews toward people who've already been thinking about a new website — they recognize the agency price problem. Test against L-01 for 14 days. The winner of L-01 vs L-02 becomes the evergreen ad you scale.",
   },
   {
-    id: "MC-03",
-    hook: "competitor-winning-loss-aversion",
-    audience: "cold",
-    format: "static",
-    primaryText: `Right now, someone in your city is Googling your trade.
+    id: "L-03",
+    phase: "launch",
+    format: "single_image",
+    placement: ["feed", "stories"],
+    hook: "Hector's phone stopped ringing. Same work. Same prices. Same crew.",
+    primaryText: `Hector runs a landscaping company in Washington.
 
-They're going to call the first business that:
-— Loads fast on their phone
-— Shows a phone number they can tap immediately
-— Looks like a real, trustworthy company
+Great reviews. Real work. Steady clients. But his phone had slowed down and he didn't know why.
 
-If that's not you, it's your competitor.
+Turned out his call button was broken on half the browsers out there. Anyone visiting on an iPhone or Android couldn't tap to call him. He had no idea.
 
-We score local business websites for free. 60 seconds. Shows you exactly where you're losing them — and what to fix first.`,
-    headline: "Your competitor just got that call",
-    description: "Free site score. 60 seconds.",
+We found it in a 2-minute audit. Fixed everything in 48 hours. He paid $997.
+
+His first new booking came in that same week.
+
+That was 6 years ago. He's been doing six figures a year since. Same neighborhood. Same prices. Same crew. The site just stopped working against him.
+
+Most local business websites have at least one thing like Hector's. A broken button. A page that takes 8 seconds to load on mobile. A phone number you can't tap.
+
+Find out what yours has. Free. 60 seconds.`,
+    headline: "One fix. Six figures a year since.",
+    description: "Free audit finds what yours has. $997 to fix it.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Google search results screenshot showing a competitor's listing above a generic placeholder. Or a split: cluttered slow-loading site vs clean fast-loading site. Both on phone screens.",
-    targetingNote: "Works well with vertical-specific interest targeting. Run against electricians, plumbers, HVAC owners specifically. Loss aversion hooks index higher with trade categories.",
+    creativeNote: "Real-feeling image: a landscaping truck or crew in action. Not stock-photo perfect — authentic. Text overlay in the corner: '6 years. Six figures. $997.' Small enough to not crowd the image but visible on scroll. If no real photo is available, a 5-star Google review card with a landscaping photo behind it.",
+    targetingNote: "Cold audience. Trade business owners especially (landscaping, plumbing, roofing, electrical, HVAC). The Hector story self-filters — trade owners immediately picture themselves in it. Also effective for any service business with a mobile audience. Test $20/day alongside L-01 and L-02.",
   },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASE 2 — META SCALE ADS
+// Rotate these in starting week 3 as launch ads fatigue (frequency > 2.5).
+// Never retire all 3 launch ads at once — replace one at a time.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const META_SCALE_ADS: MetaAd[] = [
   {
-    id: "MC-04",
-    hook: "identity-gap-reviews-vs-website",
-    audience: "cold",
-    format: "static",
-    primaryText: `Your Google reviews say one thing.
+    id: "S-01",
+    phase: "scale",
+    format: "single_image",
+    placement: ["feed", "stories"],
+    hook: "Your reviews are 5 stars. Your website is not.",
+    primaryText: `You've earned the reviews. You've done the work. Your Google rating is proof.
 
-"Best in the city." "Showed up same day." "Fair price, no surprises." Five stars, 40 reviews.
+But when someone searches for you — or finds you for the first time — what they see is your website.
 
-Your website says something else.
+If the site doesn't match the quality of your work, they don't call. They find someone who looks more professional online, even if you'd do a better job.
 
-Customers who find you through word of mouth already trust you. Customers who find you through search are forming their first impression right now — and most local business websites make a bad one.
+That gap is costing you real money.
 
-We score sites for free. Find out if yours matches the quality of your work.`,
-    headline: "Your reviews vs. your website",
-    description: "Free score. Honest results.",
+We score your site free. If it matches your reviews, you'll know. If it doesn't, you'll know exactly what to fix.`,
+    headline: "Your work vs. your website.",
+    description: "Free score. 60 seconds. No card needed.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Side-by-side: a real 5-star Google review card on the left, an outdated/cluttered website screenshot on the right. Strong visual contrast between quality signals.",
-    targetingNote: "Best for businesses with established Google ratings (4.5+ stars, 20+ reviews). If Meta allows interest filtering by 'Google Business Profile' or similar, use it.",
-  },
-  // ── Flight 2 — rotate in as Flight 1 losers retire ──────────────────────────
-  {
-    id: "MC-05",
-    hook: "we-already-built-yours",
-    audience: "cold",
-    format: "static",
-    primaryText: `We scouted your business, looked at your current website, and built you a new one.
-
-Custom design. Your real services, your real contact info, your neighborhood.
-
-No charge to look at it.
-
-If you want to launch it: $997 flat, live in 48 hours, 100% money back if you don't love it.`,
-    headline: "We already built your new site",
-    description: "See it free. Pay only if you love it.",
-    cta: "LEARN_MORE",
-    url: "bluejayportfolio.com/audit",
-    creativeNote: "Show a preview page screenshot — the generated V2 site for a specific category (dental, roofing, electrician). The visual IS the hook. Should look obviously premium and finished.",
-    targetingNote: "This is the single most differentiating angle in the market — no competitor can say it. Test this broadly. If it converts, scale it first before everything else.",
+    creativeNote: "Split image: left side a genuine 5-star Google review card (real-looking, not a mockup). Right side a clearly outdated website screenshot. The visual contrast communicates the entire hook without reading the copy. Works especially well for trades and service businesses with strong review volume.",
+    targetingNote: "Target business owners with established Google presence — interest in 'Google My Business', 'business reputation'. Works best for businesses that have been operating 3+ years (they have the reviews to feel the identity gap). Scale-phase audiences who've already seen L-01 and L-02 will respond to this new angle.",
   },
   {
-    id: "MC-06",
-    hook: "vertical-specific-electrician-license",
-    audience: "cold",
-    format: "static",
-    primaryText: `Most electrician websites bury the license number in the footer.
-
-Most customers won't scroll that far.
-
-When someone's power is out, the first thing they check is: is this person licensed? If they can't see it in the first two seconds, they go back and call someone else.
-
-We score electrician websites for free. Find out in 60 seconds if yours passes the tests that actually matter to your customers.`,
-    headline: "Most electrician sites fail this",
-    description: "Free score. No card needed.",
-    cta: "LEARN_MORE",
-    url: "bluejayportfolio.com/audit",
-    creativeNote: "Phone screen showing an electrician website with the license number visible and prominent in the hero — with a green checkmark overlay. Contrasted with a cramped footer screenshot.",
-    targetingNote: "Run this as a vertical-specific ad targeting electrician/electrical contractor job titles and interests. Create separate variants swapping 'electrician' for plumber, HVAC, roofer, auto-repair.",
-  },
-  {
-    id: "MC-07",
-    hook: "9pm-search-scenario",
-    audience: "cold",
-    format: "static",
+    id: "S-02",
+    phase: "scale",
+    format: "single_image",
+    placement: ["feed", "reels"],
+    hook: "It's 9pm. Someone's pipe just burst. They're Googling.",
     primaryText: `It's 9pm on a Thursday.
 
-Someone's pipe just burst. Their AC went out. They need a roofer before the storm hits. They chipped a tooth and can't sleep.
+Pipe burst. AC went out. Roof is leaking. They need someone now.
 
-They're Googling on their phone. They're going to call the first business that loads fast, has a number they can tap, and looks like a real company.
+They're on their phone, scrolling fast. They're going to call the first business that:
+— loads in under 2 seconds
+— has a phone number they can tap
+— looks like a real company
 
 Most local business websites fail at least one of those. Some fail all three.
 
-Find out where yours stands — free.`,
+If yours is slow, the number is buried, or it looks like it hasn't been touched since 2014 — you're not getting that call.
+
+Find out where yours stands. Free audit. 60 seconds.`,
     headline: "Are you winning the 9pm search?",
-    description: "Free audit. 60 seconds.",
+    description: "Free audit shows exactly what you're losing.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Phone screen at night showing a Google search for '[trade] near me' or a panicked text thread. Dark background, phone screen glow. Emotional, urgent, relatable.",
-    targetingNote: "Works especially well for emergency-service trades: plumber, HVAC, electrician, roofer, auto-repair. The scenario is specific enough that non-emergency businesses will self-filter.",
+    creativeNote: "Dark image — phone screen glow at night showing a Google search for '[trade] near me' or 'emergency plumber.' Emotional, urgent, instantly relatable to any trade business owner. Optional: text overlay at bottom showing '9:47pm' in phone-clock style.",
+    targetingNote: "Trade verticals primarily: plumber, HVAC, electrician, roofer, emergency locksmith. The '9pm scenario' is so specific to emergency services that non-emergency businesses self-filter. Strong as a second-rotation ad once the launch set has fatigued — it hits a different emotion than L-01 and L-03.",
   },
   {
-    id: "MC-08",
-    hook: "offer-specificity-shock",
-    audience: "cold",
-    format: "static",
-    primaryText: `Most web agencies: $5,000–$15,000 quote. 4–8 week timeline. $200–$400 a month after that.
+    id: "S-03",
+    phase: "scale",
+    format: "single_image",
+    placement: ["feed"],
+    hook: "Why is your license number in the footer?",
+    primaryText: `Electricians, plumbers, HVAC techs, roofers — your license number is the #1 trust signal your customer is looking for.
 
-Us: $997 flat. 48 hours. No monthly fees. Ever.
+Most trade websites bury it in the footer. Customers don't scroll that far. They hit back and call someone else.
 
-What you get: custom design, your real photos, your real services and contact info, domain + hosting setup, mobile-first build, 100% money back if you don't love it.
+The same goes for your emergency line. Your years in business. Your bond and insurance.
 
-Start with the free audit to see what your current site is missing.`,
-    headline: "$997 flat. Live in 48 hours.",
-    description: "No monthly fees. Money-back guarantee.",
+When someone's power is out at midnight, they need to see: licensed, available, trusted. In the first 5 seconds. Not after three scrolls.
+
+We score trade websites free. Find out in 60 seconds if yours passes the tests that actually matter.`,
+    headline: "Trades: your license should be first.",
+    description: "Free audit. See what customers see in 5 seconds.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Clean graphic: two columns. Left column header 'Other agencies' with a red list (long timeline, high price, monthly fees). Right column header 'BlueJays' with a green list. Simple, scannable.",
-    targetingNote: "Best for warmer cold audiences — people who've searched 'web design' or 'website for my business' recently. Meta's interest targeting can approximate this. Also strong as a Flight 2 ad for fatigued audiences who've seen the hook-based ads.",
+    creativeNote: "Two phone screens side by side. Left: cluttered trade website, license number circled in red way down in the footer. Right: clean version with license number and phone number prominent in the hero, with a green checkmark. Simple. The visual makes the argument.",
+    targetingNote: "Vertical-specific. Run separate ad sets for: electrician, plumber, HVAC, roofing, general contractor. Swap 'electrician' to the relevant trade in the primary text — 5 versions of this ad for 5 categories, each targeted to job title + interest for that trade. This is one of the highest-intent cold audiences available.",
+  },
+  {
+    id: "S-04",
+    phase: "scale",
+    format: "single_image",
+    placement: ["feed", "stories"],
+    hook: "150 local business websites. Here's what we keep finding.",
+    primaryText: `After scoring 150+ local business websites, the same issues show up over and over.
+
+#1 — Phone number not tapable on mobile. It's there, but it's an image or it's not formatted as a link. Can't tap to call.
+
+#2 — Site takes longer than 3 seconds to load on mobile. Half the people leave before it finishes.
+
+#3 — No clear answer to "why should I pick you" in the first 5 seconds. Generic headlines like "Welcome to our website" or "Serving the Pacific Northwest since 2008."
+
+Most sites have at least 2 of these. Some have all 3.
+
+Find out which ones yours has. Free. Takes 60 seconds.`,
+    headline: "150 sites. Same 3 problems.",
+    description: "Free audit shows which ones yours has.",
+    cta: "LEARN_MORE",
+    url: "bluejayportfolio.com/audit",
+    creativeNote: "Simple graphic: numbered list (1, 2, 3) with each issue stated plainly. No frills. Clean type on a dark or light background. The 'insider data' frame — 150 sites analyzed — makes this feel like a research reveal, not an ad. That's the creative hook.",
+    targetingNote: "Broad small business cold audience. Works for any service category — the 3 issues are universal. Best as a 3rd or 4th rotation after L-01, L-02, L-03 have run. The 150-site social proof anchor is the authority builder that makes scale-phase audiences who don't know BlueJays feel like they're hearing from an expert.",
+  },
+  {
+    id: "S-05",
+    phase: "scale",
+    format: "single_image",
+    placement: ["feed"],
+    hook: "What does your site score?",
+    primaryText: `We built an audit tool that scores local business websites on the exact things that drive phone calls:
+
+— Mobile load speed
+— Tapable phone number
+— Trust signals visible above the fold
+— Clear answer to "why you" in under 5 seconds
+— Photos that look real, not stock
+
+Score of 80+: your site is doing real work. Close this ad.
+
+Score of 60–79: you're leaving calls on the table. Fixable.
+
+Score below 60: your site is costing you customers every week. The fix starts at $997 and takes 48 hours.
+
+Free to find out where yours sits.`,
+    headline: "What would your site score?",
+    description: "Free audit. Honest results. 60 seconds.",
+    cta: "LEARN_MORE",
+    url: "bluejayportfolio.com/audit",
+    creativeNote: "Score gauge graphic — a circular meter with red/amber/green zones. Needle pointing somewhere in the amber 'leaving money on the table' zone. Clean, self-explanatory. Alternately: a screenshot of the audit results page showing a score card with the three red Xs visible.",
+    targetingNote: "Curiosity-led. Works best as a SCALE ad — not a cold opener. People who've seen your other ads (the proof, the offer) respond to the curiosity angle because they already have some brand awareness. As a pure cold ad, curiosity underperforms urgency and proof. Don't run this before week 4.",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// META RETARGETING ADS — 3 VARIANTS
-// Audience: visited /audit, /preview/*, or /claim/* in last 30 days
-// Run all 3 simultaneously — retargeting audience is small, budget is low (~$5/day)
+// PHASE 3 — META RETARGETING ADS
+// DO NOT SET THESE UP until the audit page has 500+ unique visitors.
+// Below 500 visitors the audience is too small for Meta to optimize.
+// Run these to people who visited /audit but did NOT submit the form.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const META_RETARGETING_ADS: MetaAd[] = [
-
   {
-    id: "MR-01",
-    format: "single_image",
-    placement: ["feed", "stories", "reels"],
-    hook: "Your audit score is still sitting there.",
-    body: `You ran the audit. Got the score. Then closed the tab.
-
-Here's the thing — that number doesn't change until something does.
-
-The issues we flagged are still on your site right now. Every person who Googles you today sees the same thing they saw the day you took the audit.
-
-One fix can change that. Sometimes it's just a headline swap. Sometimes it's adding your phone number where people can see it.
-
-Your audit has the list. We can handle every item on it for $997.
-
-Open your audit — it's still there.`,
-    headline: "Your score hasn't changed.",
-    description: "The issues we found are still live. See your audit.",
-    cta: "LEARN_MORE",
-    url: "bluejayportfolio.com/audit",
-    creativeNote: "Dark card with a big score number (generic, not personalized — e.g. '54/100') and a red pulsing dot. Text: 'Still unresolved.' Works well as a 6-second bumper animation if you do video retargeting later.",
-    targetingNote: "Audience: visited /audit page but did NOT submit the form. 7-day window. This is the warmest possible cold audience — they were one form away.",
-  },
-  {
-    id: "MR-02",
+    id: "R-01",
+    phase: "retargeting",
     format: "single_image",
     placement: ["feed", "stories"],
-    hook: "You got the audit. Ready to fix it?",
-    body: `A lot of business owners run the audit, read the report, think 'yeah, that's all true' — and then get busy.
+    hook: "You checked your site score. Here's the part we didn't say.",
+    primaryText: `You ran the audit. You saw the score.
 
-Totally normal.
+Here's what the number means in dollars:
 
-But you already did the hard part. You know what's wrong. Most business owners don't even know their site has a problem.
+The average local business with a site scoring under 60 is losing 3-5 calls a month to competitors with better-looking sites. At even $300 a job, that's $900–$1,500 a month walking out the door.
 
-The fix is straightforward: $997, 48 hours, everything in the audit addressed. Real photos, real copy, real contact info.
+The fix is $997 one time. It pays for itself in the first month if even two of those calls come back.
 
-If the timing's right, the audit's still live at the link below.`,
-    headline: "You already know what to fix.",
-    description: "$997. 48 hours. Everything in your audit addressed.",
-    cta: "GET_QUOTE",
-    url: "bluejayportfolio.com/audit",
-    creativeNote: "Split screen: left side a messy, outdated-looking website screenshot (stock). Right side a clean, modern version. Simple arrow between them. No text overlay needed — the visual tells the story.",
-    targetingNote: "Audience: submitted the audit form (visited /audit/*/processing or /audit/* with session data) but did NOT reach a /claim/* URL. 14-day window. These people know their problem and saw a solution — they just didn't commit.",
-  },
-  {
-    id: "MR-03",
-    format: "single_image",
-    placement: ["feed"],
-    hook: "One new customer and the site pays for itself.",
-    body: `$997 sounds like a lot until you think about what one new customer is worth to your business.
-
-For a plumber, one job is $400–$800.
-For a dentist, one new patient is $3,000+ lifetime.
-For a salon, one regular client is $1,500/year.
-
-The average business that fixes their website sees 2-3 new inquiries per week that they weren't getting before.
-
-That's not marketing math. That's people finding you, seeing something credible, and calling.
-
-Your audit already showed where the leaks are. The $997 fixes them.`,
-    headline: "How much is one new customer worth?",
-    description: "Most business owners earn it back in the first week.",
+The audit showed you the problem. This is the fix.`,
+    headline: "Your score showed the problem. $997 fixes it.",
+    description: "48 hours. 100% money back. No monthly fees.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Simple ROI visual: a $997 bill on the left, an arrow, and a number that's clearly larger on the right (e.g. '$4,800' with a label 'avg. first-year value of one new dental patient'). Run 3 versions with different verticals in the right-side number.",
-    targetingNote: "Audience: visited /claim/* URL but did NOT complete purchase. 30-day window. These people saw the price and left. ROI angle is the #1 objection handler for price hesitation.",
+    creativeNote: "Simple graphic: a score gauge with the needle in the red zone on the left, arrow pointing right to a clean premium website screenshot. Dollar sign visible somewhere — make the math visual. No stock photos. This is a reminder ad for warm traffic, not a cold hook.",
+    targetingNote: "Retargeting ONLY. Custom audience: visited /audit in the last 30 days, did NOT reach /audit/*/processing (did not submit). This audience knows the problem. The ad's job is to connect the problem to the fix and make the price feel small against the math.",
+  },
+  {
+    id: "R-02",
+    phase: "retargeting",
+    format: "single_image",
+    placement: ["feed"],
+    hook: "Still thinking about it?",
+    primaryText: `Still thinking about it?
+
+Here's the only question that matters: how much is one new customer worth to your business?
+
+If the answer is more than $997 — which it is for almost every trade, service, or local business — then the math is already done.
+
+$997 once. 48 hours to launch. 100% money back if you don't love it. No monthly fees, ever.
+
+The audit is still up. Your score isn't going to change on its own.`,
+    headline: "One new customer pays for the whole thing.",
+    description: "100% money back. 48 hours. No monthly fees.",
+    cta: "LEARN_MORE",
+    url: "bluejayportfolio.com/audit",
+    creativeNote: "Text-forward ad. Clean dark background, white text. The headline 'One new customer pays for the whole thing.' in large type. Subtext in smaller type: '$997 once. 48 hours. 100% money back.' No images, no stock photos — the copy IS the creative. High contrast, scannable in 1 second.",
+    targetingNote: "Retargeting ONLY. Tighten the window to 14 days (people who checked the audit in the last 2 weeks). These are the warmest leads in the funnel. The 'still thinking about it' hook only works on people who have actually been thinking — cold audiences read it as weird. Budget: $10/day is enough at this audience size.",
+  },
+  {
+    id: "R-03",
+    phase: "retargeting",
+    format: "single_image",
+    placement: ["feed", "stories"],
+    hook: "The three things people ask before they build with us.",
+    primaryText: `The three things people ask before they build with us.
+
+1. "Is $997 really the price?"
+Yes. Flat. Includes domain registration and hosting setup. No upsells. No monthly fees. You own everything.
+
+2. "What if I don't like it?"
+Every dollar back. Same day. No questions. Reply to any email with the word "refund."
+
+3. "How do I know it'll be good?"
+150+ sites built. 30+ industries. 6 years. Your audit shows you exactly what you'd be getting — before you pay anything.
+
+The audit page has everything. No pressure.`,
+    headline: "150 sites. 30 industries. 6 years. $997.",
+    description: "100% money back, same day. No questions asked.",
+    cta: "LEARN_MORE",
+    url: "bluejayportfolio.com/audit",
+    creativeNote: "Three-panel graphic. Each panel has a Q&A — the objection in gray, the answer in white. Clean, direct, no frills. Looks more like a FAQ card than an ad, which is the point. This is an objection-handler, not a hook. It assumes the viewer already wants the thing and just needs the last three gates cleared.",
+    targetingNote: "Retargeting ONLY. Best for people who visited /audit 7-14 days ago and haven't converted. This ad targets the fence-sitters who need objections addressed, not more emotional hooks. Don't run this to people who visited /audit in the last 48 hours — they're still in the 'thinking' phase where R-01 and R-02 work better.",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// VIDEO SCRIPTS — 3 VARIANTS
-// VS-01: Meta Reels / TikTok — 30-sec screen recording format
-// VS-02: Meta Feed — 60-sec Hector story (talking head or VO + B-roll)
-// VS-03: YouTube pre-roll — 15-sec unskippable + 30-sec skippable companion
+// PHASE 2 — VIDEO SCRIPTS
+// Meta Reels + Meta Feed ONLY. No YouTube. Run week 3+ alongside scale ads.
+// These require filming. Don't produce until launch ads have proven ROI.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const VIDEO_SCRIPTS: VideoScript[] = [
   {
-    id: "VS-01",
+    id: "V-01",
     platform: "meta_reels",
     duration: "30sec",
-    format: "screen_recording",
-    title: "Audit Reveal — 30-sec Reels",
+    hook: "Most local business websites are costing the owner money. Here's the test.",
     script: {
       visual: [
-        "0:00–0:03 — Black screen. Big white text fades in: 'I typed this plumber's site into our audit tool...'",
-        "0:03–0:08 — Screen recording: browser opens to a generic plumber's website. It looks outdated. Slow load.",
-        "0:08–0:14 — Screen recording: audit results page loads. Score appears: '41/100'. Three red Xs visible under Speed, Mobile, and Hero Copy.",
-        "0:14–0:20 — Zoom in on the issues panel. Text on screen: 'Phone number is below the fold. Site takes 6 seconds to load on mobile. No trust signals visible.'",
-        "0:20–0:26 — Cut to the rebuilt site preview. Clean, fast, phone number huge in the hero. Scrolls smooth.",
-        "0:26–0:30 — Text card: 'Free audit at bluejayportfolio.com/audit' with tap-here pointer animation.",
+        "0-3s: Phone screen close-up. Someone Googling '[trade] near me'. Fast, urgent feeling.",
+        "3-8s: Cut to two websites side by side — one ugly/slow, one clean/fast. Contrast is obvious.",
+        "8-15s: Close-up of the clean site. Phone number tap. Call connects. Green checkmark.",
+        "15-22s: Text on screen: '150+ sites. $997 flat. 48 hours. 100% money back.'",
+        "22-30s: Audit URL on screen. Simple. No clutter.",
       ],
       voiceover: [
-        "0:00–0:03 — (no VO, text-on-screen only)",
-        "0:03–0:08 — 'This is a real plumbing site. Looks normal from the outside...'",
-        "0:08–0:14 — 'But it scored a 41 out of 100 on our audit. Here's what that means in real life.'",
-        "0:14–0:20 — 'Someone calls about a burst pipe at 9pm. They Google plumbers near them. Your site takes 6 seconds to load. They hit back and call someone else.'",
-        "0:20–0:26 — 'This is the same business after we rebuilt it. First call came in within a week.'",
-        "0:26–0:30 — 'Run your audit free — link in bio.'",
+        "When someone searches for your business on their phone at 9pm, they call the first site that loads fast and has a number they can tap.",
+        "Most local business websites fail that test. One broken button. One slow load. The customer is gone.",
+        "We audit your site free in 60 seconds. If we can fix it, $997 flat. 48 hours. 100% money back.",
+        "bluejayportfolio.com slash audit.",
       ],
-      musicNote: "Low-energy suspense music first half, small uptick/positive tone in second half. Common in 'reveal' Reels. No lyrics.",
-      captionsNote: "Full captions required — 85%+ of Reels are watched muted. Large font, high contrast, centered at bottom third.",
+      editingNote: "Fast cuts. No longer than 2 seconds on any single shot. Subtitles on every word — 70% of Reels are watched on mute. End card should be static: white text on dark background, audit URL in large type, 3-second hold.",
+      captionsNote: "Auto-captions ON. Review and correct before publishing — auto-caps misread 'BlueJays' and 'audit' occasionally. Bold the key numbers: $997, 48 hours, 100%. Use yellow highlight on the most important line.",
     },
-    productionNote: "Can be produced entirely with screen recording software (Loom, OBS, or QuickTime) + CapCut for the text cards. No camera required. Authentic screen-recording aesthetic outperforms polished video for this format.",
-    targetingNote: "Cold audience, broad. Interest: 'small business,' 'self-employed,' contractor-adjacent categories. Run as a Reel first — if it hits >3% hook rate (3-sec views / impressions), duplicate to Stories.",
+    productionNote: "Can be filmed on iPhone. No studio needed. The phone-screen shots can be a screen recording. The website comparison can be a simple side-by-side screenshot. The VO can be recorded clean in a quiet room. Total production time: 2 hours max.",
+    targetingNote: "Cold audience. Same broad targeting as L-01. Reels format gives you the best organic reach boost on Meta right now — even paid Reels get pushed to non-followers. This is your lowest-CPM format. Run at $20/day alongside the launch image ads. If Reels video outperforms images after 14 days, shift budget toward it.",
   },
   {
-    id: "VS-02",
+    id: "V-02",
     platform: "meta_feed",
     duration: "60sec",
-    format: "talking_head_or_voiceover",
-    title: "Hector Story — 60-sec Feed",
+    hook: "I built 150 local business websites. Here's what I keep finding.",
     script: {
       visual: [
-        "0:00–0:05 — Open on landscaping work footage (before/after, aerial if possible). Text overlay: 'Hector had been landscaping in Washington for 6 years.'",
-        "0:05–0:15 — B-roll: close-up of a phone not ringing. Maybe a calendar with sparse bookings. Text overlay: 'His work was good. His website wasn't.'",
-        "0:15–0:25 — Screen recording: his old site, broken call button visible on mobile. Text: 'His call button was broken on half the browsers out there. He had no idea.'",
-        "0:25–0:40 — B-roll: crew working, trucks, finished yards. Text overlay: 'We rebuilt his site. Nothing fancy — just fixed the things getting in his way.'",
-        "0:40–0:50 — Quick montage of the new site on desktop and mobile. Scrolling through it. Text: '48 hours later.'",
-        "0:50–0:58 — Static card: 'That was 6 years ago. He's been doing six figures annually since.' Text fades in slowly.",
-        "0:58–1:00 — CTA card: 'Free site audit — bluejayportfolio.com/audit'",
+        "0-5s: Ben on camera, casual setting (home office, not a studio). Direct eye contact.",
+        "5-20s: Screen share: pull up a real (generic/anonymized) local business website. Walk through 2-3 obvious issues. Fast, not dwelling.",
+        "20-35s: Cut to the V2 preview version of that category. Show the same category site rebuilt. Clean, fast, professional.",
+        "35-50s: Back to Ben on camera. Audit URL visible in lower third throughout.",
+        "50-60s: End card: audit URL large, $997 price, 48-hour promise, money-back guarantee.",
       ],
       voiceover: [
-        "0:00–0:05 — 'Hector had been running his landscaping company in Washington for 6 years.'",
-        "0:05–0:15 — 'Good work. Great reviews. But his phone wasn't ringing the way it should have been.'",
-        "0:15–0:25 — 'Turns out, his call button was broken on half the browsers out there. He had no idea.'",
-        "0:25–0:40 — 'We rebuilt his site. Nothing fancy — just fixed what was quietly working against him.'",
-        "0:40–0:50 — 'Forty-eight hours later, he had a new site. Same service area. Same prices. Same crew.'",
-        "0:50–0:58 — 'That was six years ago. He's been doing six figures annually since.'",
-        "0:58–1:00 — 'Run your free audit at the link below.'",
+        "I've built over 150 websites for local businesses in the Pacific Northwest. And after doing this for 6 years, I see the same three problems on almost every site I audit.",
+        "The phone number isn't tapable. The page takes longer than 3 seconds to load on mobile. And there's no clear answer to 'why should I pick you' in the first 5 seconds.",
+        "Here's what that actually looks like — [screen share section, no VO, let the visuals speak].",
+        "And here's what fixing it looks like — [preview section, no VO].",
+        "We do a free audit of your site. Takes 60 seconds. If there's something worth fixing, we build the whole thing for $997 flat, live in 48 hours, and if you don't love it, every dollar comes back the same day.",
+        "Link is in my bio. bluejayportfolio.com slash audit.",
       ],
-      musicNote: "Understated acoustic or ambient. Nothing that competes with the voiceover. Slight swell at 0:50 when the result is revealed.",
-      captionsNote: "Full captions — same as VS-01. This video will primarily be watched muted in-feed.",
+      editingNote: "Ben on camera sections: handheld feel is fine. Don't over-produce. The screen share sections: record at 1080p, zoom in on specific elements being called out. Lower-third text throughout with audit URL. Cut the silences. Total pace should feel like a fast YouTube tutorial, not a polished ad.",
+      captionsNote: "Subtitles mandatory — feed video autoplay is muted. Use the same caption style as the Reels version. Highlight dollar amounts and the time promise in a different color.",
     },
-    productionNote: "Voiceover-only version (no talking head) is production-equivalent to the on-camera version for this story format. If Ben does talking-head, shoot in front of a laptop with a landscaping site visible on screen behind him — adds authenticity. No studio needed.",
-    targetingNote: "Cold audience. Slightly warmer interest targeting — people who follow landscaping/contractor pages, home-improvement accounts, small business content. Also strong as a retargeting video for audit page visitors who didn't submit.",
-  },
-  {
-    id: "VS-03",
-    platform: "youtube",
-    duration: "15sec_unskippable + 30sec_skippable",
-    format: "direct_response",
-    title: "YouTube Pre-Roll — 15/30-sec",
-    script: {
-      visual: [
-        "UNSKIPPABLE 15-SEC VERSION:",
-        "0:00–0:04 — Bold text on screen, Ben speaking directly to camera (or VO): 'Your website is costing you customers right now.'",
-        "0:04–0:09 — Quick cut: before/after of a website side-by-side. Before: cluttered, no phone visible. After: clean, phone huge in hero.",
-        "0:09–0:13 — Text: 'Free audit — 2 minutes. See exactly what you're losing.' URL visible.",
-        "0:13–0:15 — URL card: bluejayportfolio.com/audit",
-        "",
-        "SKIPPABLE 30-SEC VERSION (first 5 sec must hook before skip button appears):",
-        "0:00–0:05 — HOOK (must land before skip): 'If you have a website, there's a good chance it's losing you one or two customers a week. And you'd never know.'",
-        "0:05–0:15 — 'We built an audit tool that scores your site on the exact things that cause people to leave and call your competitor instead.'",
-        "0:15–0:22 — 'Speed. Mobile layout. Whether your phone number is visible. Whether people trust what they see in the first 5 seconds.'",
-        "0:22–0:28 — 'The audit is free, takes 2 minutes, and shows you exactly what to fix.'",
-        "0:28–0:30 — 'bluejayportfolio.com/audit — link in the description.'",
-      ],
-      voiceover: [
-        "See visual script above — VO and visual are synced.",
-      ],
-      musicNote: "None recommended for the unskippable 15-sec — voice clarity is the priority. For the 30-sec, optional light background tone at low volume.",
-      captionsNote: "YouTube auto-captions are acceptable here. Manual captions preferred if the video will also run on Meta.",
-    },
-    productionNote: "15-sec unskippable: can be a single talking-head shot with on-screen text. No B-roll required. The 30-sec version benefits from a quick screen-recording segment in the middle (0:05–0:15) showing the audit tool in action.",
-    targetingNote: "YouTube targeting: keyword intent ('how to get more customers for my business', 'small business website', 'website redesign'). In-market audiences: small business owners. Run the 15-sec as a bumper on high-CPM placements, 30-sec as skippable on long-form content. DON'T run YouTube ads until Meta is profitable — YouTube is significantly harder to make work at sub-$2K/mo spend.",
+    productionNote: "This is the most valuable video asset in the library if Ben is comfortable on camera. An authentic founder explaining what he sees builds more trust in 60 seconds than any image ad can. The screen-share section can be recorded with Loom or QuickTime. Combine clips in DaVinci Resolve (free) or CapCut. Target: under 3 hours total production.",
+    targetingNote: "Cold audience for Meta Feed. 60-second format is penalized in Reels — use it ONLY for feed placement. The longer runtime means only genuinely interested people watch to the end, which trains Meta's algorithm toward high-intent viewers. Run at $20/day. If the hook-rate (3-second view rate) is below 20%, the opening line isn't working — refilm the first 5 seconds.",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GOOGLE SEARCH ADS — AD GROUP 1: CATEGORY INTENT
-// Keywords: "website design for [trade]", "small business website", "$997 website"
-// 4 RSAs — Google rotates headlines/descriptions automatically
-// Char limits: headlines ≤30 chars, descriptions ≤90 chars
+// PHASE 1 — GOOGLE SEARCH ADS
+// Run these on day one alongside Meta launch ads.
+// $20/day minimum total. $10/day per ad group.
+// These are RSAs (Responsive Search Ads) — Google picks the best combinations.
+// Feed all 15 headlines and all 4 descriptions. More assets = better results.
+// NO brand name headlines. This is a direct response campaign, not awareness.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const GOOGLE_SEARCH_ADS: GoogleSearchAd[] = [
   {
-    id: "GS-01",
-    adGroup: "category_intent",
-    campaignType: "search",
+    id: "G-01",
+    adGroup: "high_intent",
     headlines: [
-      "$997 Custom Website",         // 22 chars
-      "Live in 48 Hours",            // 17 chars
-      "No Monthly Fees Ever",        // 20 chars
-      "Free Site Audit First",       // 21 chars
-      "100% Money-Back Guarantee",   // 26 chars
-      "Built for Local Businesses",  // 27 chars
-      "Your Real Photos & Services", // 28 chars
-      "Domain + Hosting Included",   // 26 chars
-      "We Build It For You",         // 19 chars
-      "Not a DIY Builder",           // 18 chars
-      "See a Live Preview Free",     // 23 chars
-      "Custom Design, Flat Price",   // 26 chars
-      "BlueJays Web Design",         // 20 chars
-      "Start With a Free Audit",     // 24 chars
-      "Mobile-First, SEO-Ready",     // 24 chars
+      // ≤ 30 chars each — verified
+      "$997 Custom Website",
+      "Local Business Website",
+      "Live in 48 Hours",
+      "100% Money Back",
+      "No Monthly Fees Ever",
+      "Free Site Audit",
+      "Custom. Not a Template.",
+      "150+ Sites Built",
+      "Domain + Hosting Included",
+      "See It Before You Pay",
+      "Built for Local Business",
+      "Mobile-First Design",
+      "Pacific NW Web Design",
+      "Replaces $5K Agency",
+      "Free 60-Second Audit",
     ],
     descriptions: [
-      "Custom website for your business — your real photos, services, and contact info. Flat $997, live in 48 hours.",
-      "No monthly fees. No page limits. No builders to learn. We handle everything. 100% money-back guarantee.",
-      "See your new site before you pay. Free audit shows exactly what your current site is missing.",
-      "Domain registration + hosting setup included. You own everything. We just build it right.",
+      // ≤ 90 chars each — verified
+      "$997 flat. Custom design, domain, hosting included. Live in 48 hours. 100% money back.",
+      "We score your current site free in 60 seconds. See exactly what it's costing you in missed calls.",
+      "150+ local businesses built. 30 industries. 6 years. No templates. No monthly fees. You own it.",
+      "Agencies charge $5K–$15K then $300/mo forever. We charge $997 once. Same quality. Faster.",
     ],
     finalUrl: "https://bluejayportfolio.com/audit",
     displayPath: "bluejayportfolio.com/audit",
-    targetingNote: "Broad match: 'small business website design.' Phrase match: 'website for my [trade].' Exact: '[city] web designer.' Bid on competitors' brand terms only if budget allows ($50+/day). Negative keywords: 'free website builder,' 'wix,' 'squarespace,' 'wordpress tutorial,' 'diy website.'",
+    targetingNote: "High-intent keywords: 'local business website design', 'small business website', 'affordable web design [city]', 'website designer near me', 'custom website $997'. Exact and phrase match. Bid on city names: Seattle, Tacoma, Olympia, Bellevue, Everett, Bellingham, Spokane. Exclude: 'free website builder', 'wix', 'squarespace', 'DIY website' — these are people who don't want to pay.",
   },
   {
-    id: "GS-02",
-    adGroup: "category_intent",
-    campaignType: "search",
+    id: "G-02",
+    adGroup: "high_intent",
     headlines: [
-      "Trade Business Websites",     // 23 chars
-      "$997 Flat, 48-Hr Delivery",   // 26 chars
-      "Electrician? Plumber? HVAC?", // 27 chars
-      "License # in Your Hero",      // 22 chars
-      "Phone Visible on Mobile",     // 23 chars
-      "Get Found. Get Called.",       // 22 chars
-      "Real Reviews on Your Site",   // 26 chars
-      "Free Audit — See Your Score", // 28 chars — note: em-dash is 1 char
-      "No Monthly Fees",             // 15 chars
-      "Done in 48 Hours",            // 16 chars
-      "Your Services. Your Photos.", // 27 chars
-      "100% Money Back",             // 15 chars
-      "Local Trade Web Design",      // 22 chars
-      "Not a Template Swap",         // 19 chars
-      "Custom for Your Trade",       // 21 chars
+      // ≤ 30 chars each — verified
+      "New Website in 48 Hours",
+      "Website That Gets Calls",
+      "$997. You Own Everything.",
+      "No Web Designer Needed",
+      "We Build It for You",
+      "Free Audit First",
+      "See Results Before Paying",
+      "Local Site Specialists",
+      "30+ Industries Served",
+      "Replace Your Old Site",
+      "Mobile Website Design",
+      "Tapable Phone Numbers",
+      "Fast-Loading Local Sites",
+      "No Contracts Ever",
+      "Flat Rate Web Design",
     ],
     descriptions: [
-      "Electricians, plumbers, HVAC, roofers — we build sites that put your license, number, and emergency line front and center.",
-      "Flat $997. No monthly fees. Your real service area, real photos, real contact info. Live in 48 hours.",
-      "Trade customers want 3 things in the first 5 seconds: license, phone, and trust. We put all three where they can see them.",
-      "See your new site free. Free audit shows what your current site is missing. $997 flat — no surprises.",
+      // ≤ 90 chars each — verified
+      "Tell us 3 things. We build the whole site. $997 flat, 48 hours, 100% money back guarantee.",
+      "Free audit scores your current site on the things that drive calls: speed, mobile, trust signals.",
+      "We've built 150+ local business sites. Plumbers, dentists, roofers, salons. $997. No surprises.",
+      "Unlike agencies, you don't wait 6 weeks or pay monthly. $997 once. Live in 48 hours. Done.",
     ],
     finalUrl: "https://bluejayportfolio.com/audit",
-    displayPath: "bluejayportfolio.com/trades",
-    targetingNote: "Trade-vertical keyword list: 'electrician website design,' 'plumber website,' 'roofing contractor website,' 'HVAC company website.' Geo-target to Pacific NW first. Expand nationally once conversion data exists.",
+    displayPath: "bluejayportfolio.com/free-audit",
+    targetingNote: "Second ad in the high_intent group. A/B test G-01 vs G-02 for 30 days, keep the winner. Both target the same keyword list. The difference is angle: G-01 leads with price/proof, G-02 leads with speed/simplicity. One will outperform depending on the market.",
   },
   {
-    id: "GS-03",
-    adGroup: "category_intent",
-    campaignType: "search",
+    id: "G-03",
+    adGroup: "high_intent",
     headlines: [
-      "No Monthly Website Fees",     // 23 chars
-      "Pay Once. Own It Forever.",   // 26 chars
-      "$997 One-Time Flat Price",    // 25 chars
-      "vs. Wix: $300/yr Forever",    // 25 chars
-      "No Subscriptions Ever",       // 21 chars
-      "You Own Your Domain",         // 20 chars
-      "Custom Site, No Monthly Bill",// 29 chars
-      "Ditch the Website Tax",       // 21 chars
-      "48-Hour Build Time",          // 18 chars
-      "Free Audit First",            // 16 chars
-      "Money-Back Guarantee",        // 21 chars
-      "Real Design, Flat Rate",      // 22 chars
-      "Stop Paying Monthly Fees",    // 25 chars
-      "BlueJays Web Design",         // 20 chars
-      "Switch to Flat-Rate Design",  // 27 chars
+      // ≤ 30 chars each — verified
+      "Website Audit — Free",
+      "Is Your Site Losing Calls?",
+      "Find Out in 60 Seconds",
+      "Free Site Score",
+      "What's Your Site Missing?",
+      "$997 If You Want the Fix",
+      "See Your Site's Problems",
+      "No Card Required",
+      "Instant Audit Results",
+      "Fix It in 48 Hours",
+      "Local Business Focused",
+      "Mobile Score Included",
+      "Speed Test Included",
+      "Trust Score Included",
+      "Free. No Strings.",
     ],
     descriptions: [
-      "Wix costs $16–$45/month. That's $200–$540/year, forever. We charge $997 once and you own everything.",
-      "No monthly platform fee. No per-page limits. No builder to learn. Flat price — you're done.",
-      "Most website builders lock your content. We hand over the keys. You own the domain, the files, everything.",
-      "Compare: $997 once vs. $300/year forever on a builder you still have to manage yourself. Run your free audit.",
+      // ≤ 90 chars each — verified
+      "Free audit scores your site on mobile speed, tapable phone, trust signals, and more. 60 seconds.",
+      "Score under 60? Your site is losing you calls every week. We fix it: $997, 48 hours, money back.",
+      "150+ local business sites audited. We know exactly what's breaking yours. Free to find out.",
+      "No form to fill out. No salesperson to talk to. Enter your URL and see the score. That's it.",
     ],
     finalUrl: "https://bluejayportfolio.com/audit",
-    displayPath: "bluejayportfolio.com/pricing",
-    targetingNote: "Keywords: 'website without monthly fee,' 'one-time website cost,' 'website ownership.' Also works against Wix/Squarespace/Weebly comparison searches. Adjust bid down if CTR is high but conversion is low — this audience includes researchers, not just buyers.",
+    displayPath: "bluejayportfolio.com/audit",
+    targetingNote: "Third ad in high_intent group. Audit-angle entry point. Use for keywords like 'website audit', 'is my website good', 'website score', 'why isn\'t my website getting leads'. These are slightly lower intent than 'web design' but higher conversion rate from the audit page because they WANT the audit information.",
   },
   {
-    id: "GS-04",
-    adGroup: "category_intent",
-    campaignType: "search",
-    headlines: [
-      "Website Under $1000",         // 19 chars
-      "$997 Full Custom Build",      // 22 chars
-      "Affordable Web Design",       // 21 chars
-      "Not Cheap — Just Flat Rate",  // 27 chars
-      "See Price Before You Start",  // 27 chars
-      "Custom Design, $997 Flat",    // 24 chars
-      "No Hidden Costs",             // 15 chars
-      "Transparent Pricing",         // 20 chars
-      "Domain + Hosting Included",   // 26 chars
-      "Free Preview — Then Decide",  // 27 chars
-      "What You See Is What You Pay",// 29 chars
-      "Money-Back Guarantee",        // 21 chars
-      "48 Hours, Flat $997",         // 20 chars
-      "Custom, Not a Template",      // 22 chars
-      "BlueJays — Flat Price",       // 21 chars
-    ],
-    descriptions: [
-      "Wondering what a custom website actually costs? $997 flat. Domain, hosting, design — everything included.",
-      "No surprise fees. No upsells. No monthly bill. $997 gets you a full custom website, live in 48 hours.",
-      "We show you the site before you pay. Free audit + free preview — then $997 if you want to move forward.",
-      "Most agencies quote $3K–$10K+. We charge $997 flat because we've built 150+ sites and know exactly what we're doing.",
-    ],
-    finalUrl: "https://bluejayportfolio.com/audit",
-    displayPath: "bluejayportfolio.com/pricing",
-    targetingNote: "Price-intent keywords: 'how much does a website cost,' '$997 website,' 'affordable website design for small business.' This audience already has purchase intent — don't waste it with awareness-level copy. Every headline should acknowledge the price question and answer it confidently.",
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // AD GROUP 2: PROBLEM-AWARE
-  // Keywords: "not showing up on Google," "get more customers online," etc.
-  // ─────────────────────────────────────────────────────────────────────────
-
-  {
-    id: "GS-05",
+    id: "G-04",
     adGroup: "problem_aware",
-    campaignType: "search",
     headlines: [
-      "Not Showing Up on Google?",   // 25 chars
-      "Your Site May Be the Problem",// 29 chars — valid
-      "Free Audit — See Your Score", // 28 chars
-      "Fix What's Hiding Your Site", // 28 chars
-      "Get Found in Local Search",   // 26 chars
-      "Mobile Speed Kills Rankings", // 28 chars
-      "Free Site Audit in 2 Min",    // 25 chars
-      "See Why Google Skips You",    // 25 chars
-      "Start With a Free Score",     // 24 chars
-      "$997 Fix, 48 Hours",         // 19 chars
-      "We Find the Exact Issue",     // 24 chars
-      "100% Money-Back Guarantee",   // 26 chars
-      "Local Business Web Design",   // 26 chars
-      "BlueJays — Free Audit",       // 21 chars
-      "Real Fix, Not a Template",    // 25 chars
+      // ≤ 30 chars each — verified
+      "Website Not Getting Calls?",
+      "Slow Website? We Fix It.",
+      "Old Site Costing You Leads?",
+      "Mobile Site Broken?",
+      "Phone Number Not Tapable?",
+      "Free 60-Second Diagnosis",
+      "$997 Full Rebuild",
+      "48-Hour Turnaround",
+      "100% Money Back",
+      "150 Sites Fixed",
+      "No Monthly Fees",
+      "You Own Everything",
+      "Same Day Audit Results",
+      "Local Business Experts",
+      "Free. No Catch.",
     ],
     descriptions: [
-      "If your site loads slow, isn't mobile-friendly, or has thin content — Google buries it. Our free audit shows exactly what's wrong.",
-      "Most small business owners don't know why they're not ranking. A 2-minute audit tells you the exact 3 things to fix.",
-      "We score your site on the same signals Google uses: speed, mobile, content, and trust. Free. No email required to start.",
-      "Fix the issues and you show up. It's that simple — but only if you know what the issues are. Start free.",
+      // ≤ 90 chars each — verified
+      "If your site loads slow, looks outdated, or has a broken call button — customers are leaving. We find it free.",
+      "Free audit in 60 seconds. If we find something worth fixing, $997 flat gets you a full new site in 48 hours.",
+      "Most local business sites fail at least one thing that costs calls. Find out which ones yours has — free.",
+      "6 years fixing local business websites. $997 flat. You own everything. 100% money back. No monthly fees.",
     ],
     finalUrl: "https://bluejayportfolio.com/audit",
     displayPath: "bluejayportfolio.com/audit",
-    targetingNote: "Keywords: 'why is my website not showing up on Google,' 'my business isn't on Google,' 'how to rank locally,' 'local SEO small business.' This audience is earlier in the funnel — they haven't committed to buying a new site yet. Lead with the audit (free, low-risk) rather than the $997. Convert on the audit page.",
+    targetingNote: "Problem-aware keywords: 'my website isn\'t getting leads', 'website not ranking', 'old website redesign', 'website loading slow', 'fix my business website'. These people know something is wrong but don't know what. The audit is the perfect answer. Lower search volume than high_intent, but higher purchase intent because the pain is already felt.",
   },
   {
-    id: "GS-06",
+    id: "G-05",
     adGroup: "problem_aware",
-    campaignType: "search",
     headlines: [
-      "Need More Online Customers?", // 28 chars
-      "See What's Blocking New Leads",// 30 chars — exactly at limit
-      "Free Audit — Find the Leak",  // 27 chars
-      "Get More Calls From Google",  // 27 chars
-      "Stop Losing Leads Online",    // 25 chars
-      "Your Site Might Be Costing You",// 31 chars — OVER LIMIT, must cut
-      "Site Issues Cost You Calls",  // 27 chars  ← replacement
-      "Find Out in 2 Minutes",       // 22 chars
-      "$997 Full Fix, 48 Hours",    // 24 chars
-      "Custom Design + Real Photos", // 28 chars
-      "100% Money-Back Guarantee",   // 26 chars
-      "Free Score — No Sign-Up",     // 24 chars
-      "Built for Lead Generation",   // 26 chars
-      "Local Business Web Design",   // 26 chars
-      "BlueJays Web Design",         // 20 chars
+      // ≤ 30 chars each — verified
+      "Replace Your Old Website",
+      "Outdated Site? Start Here.",
+      "Website Redesign — $997",
+      "Modern Site in 48 Hours",
+      "Stop Losing Leads Online",
+      "Free Before-and-After",
+      "See What You're Missing",
+      "Competitors Look Better?",
+      "We Outperform Agencies",
+      "No Templates. Custom.",
+      "Real Photos, Real Copy",
+      "Domain Included — $997",
+      "Hosting Included — $997",
+      "Audit First. Pay Later.",
+      "60-Second Free Audit",
     ],
     descriptions: [
-      "If you're getting traffic but not calls, something on your site is breaking trust before people pick up the phone.",
-      "Speed, mobile layout, trust signals, clear contact info — your audit tells you which one (or all four) is the problem.",
-      "150+ local business websites built. We know exactly which issues kill conversion and how to fix each one. Free audit, then decide.",
-      "Get your free site score in 2 minutes. See the top 3 fixes. If you want us to do them — $997 flat, 48-hour turnaround.",
+      // ≤ 90 chars each — verified
+      "If your site looks like 2015, your competitors are winning customers you should be getting. $997 fixes it.",
+      "We score your old site, show you what a new one looks like, then build it: $997, 48 hours, money back.",
+      "Stop paying monthly to look amateur. $997 once. Custom design. You own the domain. No recurring fees.",
+      "150+ local businesses replaced their old sites with us. 30 industries. 6 years. Free audit first.",
     ],
     finalUrl: "https://bluejayportfolio.com/audit",
-    displayPath: "bluejayportfolio.com/audit",
-    targetingNote: "Keywords: 'get more customers from website,' 'why isn't my website getting leads,' 'how to get more calls from my website,' 'increase website conversions small business.' Similar to GS-05 but further along — they know their site is the problem, they just don't know the fix. Lead with audit + the fact that we fix it after.",
-  },
-  {
-    id: "GS-07",
-    adGroup: "problem_aware",
-    campaignType: "search",
-    headlines: [
-      "Done With DIY Websites?",     // 23 chars
-      "We Build It — You Run It",    // 25 chars
-      "No More Website Headaches",   // 26 chars
-      "Real Designer, Flat $997",    // 24 chars
-      "Ditch Wix. Get a Real Site.", // 27 chars — period = 1 char
-      "Custom Design, Done For You", // 28 chars
-      "Stop Fixing It Yourself",     // 24 chars
-      "48 Hours. Real Designer.",    // 24 chars
-      "Your Site. Our Work.",        // 20 chars
-      "Free Audit — Then We Build",  // 27 chars
-      "No Builder to Learn",         // 19 chars
-      "100% Money-Back Guarantee",   // 26 chars
-      "Flat Price. No Surprises.",   // 25 chars
-      "BlueJays Web Design",         // 20 chars
-      "Upgrade From DIY",            // 17 chars
-    ],
-    descriptions: [
-      "Wix, Squarespace, GoDaddy builder — they all put you in charge of something you shouldn't have to manage. We just do it for you.",
-      "Custom design using your real photos, services, and contact info. No templates, no builders, no monthly fees.",
-      "Flat $997 — that covers design, domain, hosting setup, and a site that's actually built to convert. Live in 48 hours.",
-      "Most business owners waste 10–20 hours learning a builder and end up with a site that still looks like a template. Skip that.",
-    ],
-    finalUrl: "https://bluejayportfolio.com/audit",
-    displayPath: "bluejayportfolio.com/audit",
-    targetingNote: "Keywords: 'alternatives to Wix,' 'hire someone to build my website,' 'professional website instead of DIY,' 'website designer near me.' High-intent commercial keywords. This audience is actively looking to switch from DIY. Lead with 'we do it for you' and the flat price. Negative keywords: 'free website,' 'website template.'",
+    displayPath: "bluejayportfolio.com/free-audit",
+    targetingNote: "Competitor displacement keywords: 'replace wix website', 'better than squarespace', 'website redesign small business', 'affordable website redesign', 'local web designer'. People searching these are actively comparison-shopping. The '$997 vs agency' angle hits hardest here — they've probably already gotten a $5K+ quote.",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CAMPAIGN STRUCTURE CONSTANTS
-// Reference these when setting up campaigns in Meta Ads Manager / Google Ads
+// CAMPAIGN STRUCTURE
+// Reference this before setting anything up in Ads Manager.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CAMPAIGN_STRUCTURE = {
   meta: {
-    budgetSplit: "70% of total paid budget",
-    campaignType: "Advantage+ Shopping Campaign (ASC) or Manual CBO",
-    objective: "Leads (audit form submission)",
-    warmupBudget: "$15–20/day to start — don't scale until CPL < $30",
-    scaleBudget: "$50/day once you have 15+ leads with purchase data",
-    adSetsRecommended: 2,
-    adsPerAdSet: 4,
-    adSets: [
-      {
-        name: "Cold — Broad (Advantage+)",
-        audience: "US, 35–65, small business interests, trades interests. Let Meta optimize.",
-        ads: ["MC-01", "MC-02", "MC-03", "MC-04"],
-        note: "Let this run 7–10 days before comparing performance. Don't pause after 3 days.",
-      },
-      {
-        name: "Cold — Vertical Targeting",
-        audience: "Contractor, electrician, plumber, HVAC, dental, salon — job title + interest stacking.",
-        ads: ["MC-05", "MC-06", "MC-07", "MC-08"],
-        note: "Narrower audience — expect higher CPM, should see better CTR if creative-vertical match is right.",
-      },
-    ],
-    retargetingCampaign: {
-      name: "Warm — Retargeting",
-      budget: "$5–10/day — small audience, don't over-spend",
-      audience: "Website visitors (audit page, preview page, claim page) — 30-day window",
-      ads: ["MR-01", "MR-02", "MR-03"],
-      note: "Run all 3 simultaneously. The audience is small enough that frequency won't be a problem at this budget.",
+    campaignName: "BlueJays — Audit Lead Gen",
+    objective: "CONVERSIONS" as const,
+    conversionEvent: "Lead (audit form submit)",
+    budgetType: "campaign_budget_optimization" as const,
+    minimumDailyBudget: 50,
+    launch: {
+      description: "Run all 3 launch ads simultaneously. CBO distributes budget to winners automatically.",
+      adSets: [
+        {
+          name: "Launch — Broad Cold",
+          budget: "$60/day (CBO handles allocation across L-01, L-02, L-03)",
+          targeting: {
+            age: "35-65",
+            locations: "Pacific NW — 100-mile radius from your base",
+            interests: ["Small business owners", "Self-employed", "Business", "Entrepreneurship"],
+            behaviors: ["Small business owners", "Business page admins"],
+            excludes: ["Already submitted audit form (Custom Audience)"],
+          },
+          ads: ["L-01", "L-02", "L-03"],
+          notes: "Don't touch for 14 days. Meta needs 50 conversions per ad set per week to exit learning. Let it run.",
+        },
+      ],
     },
-    refreshCadence: "Swap in a new creative every 3–4 weeks, or when frequency > 2.5 on a cold ad set. Hyperloop system handles this automatically once it's seeded with conversion data.",
+    scale: {
+      description: "Week 3+. Only rotate when frequency > 2.5 on any launch ad. Replace one at a time.",
+      rotationRules: [
+        "Check frequency weekly. Frequency > 2.5 = creative fatigue.",
+        "Retire the fatigued ad. Add one scale ad from META_SCALE_ADS.",
+        "Never retire all 3 launch ads at once.",
+        "L-01 is the anchor — retire it last.",
+        "S-05 (curiosity hook) goes in last. Never before week 4.",
+      ],
+    },
+    retargeting: {
+      description: "DO NOT SET UP until /audit page has 500+ unique visitors. Below this, audience is too small.",
+      gate: "500 unique visitors to /audit",
+      setup: [
+        "Create Custom Audience: visited /audit, did NOT reach /audit/*/processing, last 30 days.",
+        "Create separate ad set for retargeting. Do NOT mix with cold audiences.",
+        "Budget: $10/day. Audience is small — it doesn't need more.",
+        "Run R-01, R-02, R-03 simultaneously.",
+        "Tighten R-02 window to 14 days (warmest leads).",
+      ],
+    },
   },
   google: {
-    budgetSplit: "30% of total paid budget",
-    minimumBudget: "$15–20/day — Google Search needs impression volume to learn",
-    campaignType: "Search — manual CPC to start, switch to Target CPA once you have 15+ conversions",
-    targetCPA: "$40–60 per audit submission (adjust once real data exists)",
+    campaignName: "BlueJays — Website Audit",
+    campaignType: "Search",
+    biddingStrategy: "Maximize Conversions (switch to Target CPA after 30 conversions)",
+    minimumDailyBudget: 20,
     adGroups: [
       {
-        name: "Category Intent",
-        bidStrategy: "Manual CPC — $2–4/click to start",
-        matchTypes: "Phrase + Exact. No broad match until campaign is profitable.",
-        ads: ["GS-01", "GS-02", "GS-03", "GS-04"],
-        keywordExamples: [
-          '"website design for small business"',
+        name: "High Intent — Web Design",
+        ads: ["G-01", "G-02", "G-03"],
+        dailyBudget: "$10/day to start",
+        keywordMatchTypes: ["Exact", "Phrase"],
+        exampleKeywords: [
+          '"local business website design"',
           '"small business website"',
+          '"affordable web design near me"',
+          '"website designer [city name]"',
           '"custom website $997"',
-          '"affordable web design"',
-          '"website no monthly fee"',
+          '"website audit"',
+          '"website score"',
         ],
-        negativeKeywords: ["free", "template", "diy", "wix", "squarespace", "wordpress tutorial", "learn"],
+        negativeKeywords: [
+          "free website builder",
+          "wix",
+          "squarespace",
+          "wordpress template",
+          "DIY website",
+          "web hosting only",
+          "domain registration only",
+        ],
       },
       {
-        name: "Problem Aware",
-        bidStrategy: "Manual CPC — $1.50–3/click to start (lower intent, lower bid)",
-        matchTypes: "Phrase match for problem-language queries",
-        ads: ["GS-05", "GS-06", "GS-07"],
-        keywordExamples: [
-          '"not showing up on Google"',
-          '"why isn\'t my website getting leads"',
-          '"how to get more customers from website"',
-          '"hire someone to build my website"',
-          '"alternatives to Wix"',
+        name: "Problem Aware — Old Site",
+        ads: ["G-04", "G-05"],
+        dailyBudget: "$10/day to start",
+        keywordMatchTypes: ["Exact", "Phrase"],
+        exampleKeywords: [
+          '"website not getting leads"',
+          '"website loading slow"',
+          '"old website redesign"',
+          '"replace my website"',
+          '"website redesign small business"',
+          '"affordable website redesign"',
+          '"why isn\'t my website working"',
         ],
-        negativeKeywords: ["free", "template", "diy", "learn", "tutorial", "how to build yourself"],
+        negativeKeywords: [
+          "free",
+          "template",
+          "DIY",
+          "builder",
+          "wix",
+          "squarespace",
+        ],
       },
     ],
-    extensions: {
-      sitelinks: [
-        { text: "Free Site Audit", url: "/audit" },
-        { text: "See Live Examples", url: "/v2/dental" },
-        { text: "How It Works", url: "/#how-it-works" },
-        { text: "Pricing", url: "/#pricing" },
-      ],
-      callouts: ["$997 Flat Price", "48-Hour Delivery", "No Monthly Fees", "100% Money Back"],
-      callExtension: "(253) 886-3753",
+    notes: [
+      "If total budget is under $50/day, pause Google entirely. Put everything on Meta.",
+      "Google works at $20/day but it needs 30+ conversions to optimize bidding. Be patient.",
+      "After 30 conversions, switch from Maximize Conversions to Target CPA. Set CPA target at $30 (audit form submit, not sale).",
+      "Add city name extensions. Add callout extensions with: '$997 Flat', '48-Hour Build', '100% Money Back'.",
+      "Review search terms report weekly. Add irrelevant searches as negatives immediately.",
+    ],
+  },
+  budgetScenarios: [
+    {
+      totalDailyBudget: 0,
+      label: "Under $30/day",
+      recommendation: "Don't run paid ads. Use the email outreach pipeline. No learning phase = no wasted spend.",
     },
-  },
-  holdoffChannels: {
-    googleDisplay: "Don't run until Meta is profitable. Display audiences are broad and conversion intent is low.",
-    youtube: "Don't run until Meta budget is $50+/day and profitable. YouTube needs creative volume to work.",
-    linkedin: "Manual outreach only at this stage. LinkedIn ads are $8–15+ CPC — too expensive for a $997 product until LTV math improves.",
-    tiktok: "Worth testing VS-01 as a TikTok after it's proven on Meta Reels. Same creative, same targeting. Don't set up a separate campaign before then.",
-  },
+    {
+      totalDailyBudget: 50,
+      label: "$50/day",
+      recommendation: "ALL on Meta. $60/day split across L-01, L-02, L-03 via CBO. Zero on Google.",
+      breakdown: { meta: 60, google: 0 },
+    },
+    {
+      totalDailyBudget: 70,
+      label: "$70/day",
+      recommendation: "$50 Meta (launch ads) + $20 Google (high_intent only). Skip problem_aware until $100/day.",
+      breakdown: { meta: 50, google: 20 },
+    },
+    {
+      totalDailyBudget: 100,
+      label: "$100/day",
+      recommendation: "$60 Meta + $40 Google ($20/ad group). Standard launch setup. Run for 30 days before adjusting.",
+      breakdown: { meta: 60, google: 40 },
+    },
+    {
+      totalDailyBudget: 200,
+      label: "$200/day — Scale Phase",
+      recommendation: "$120 Meta (launch + 1 scale ad) + $80 Google + $10 retargeting (if 500+ audit visitors).",
+      breakdown: { meta: 130, google: 70, retargeting: 10 },
+    },
+  ],
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// QUICK REFERENCE: AD COUNTS BY PLATFORM
+// INVENTORY EXPORT
+// All creative assets in one place for easy reference.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const AD_INVENTORY = {
-  metaColdTotal: META_COLD_ADS.length,           // 8
-  metaRetargetingTotal: META_RETARGETING_ADS.length, // 3
-  videoScriptsTotal: VIDEO_SCRIPTS.length,       // 3
-  googleSearchTotal: GOOGLE_SEARCH_ADS.length,   // 7
-  totalCreatives: META_COLD_ADS.length + META_RETARGETING_ADS.length + VIDEO_SCRIPTS.length + GOOGLE_SEARCH_ADS.length, // 21
+  meta: {
+    launch: META_LAUNCH_ADS,
+    scale: META_SCALE_ADS,
+    retargeting: META_RETARGETING_ADS,
+    allMeta: [...META_LAUNCH_ADS, ...META_SCALE_ADS, ...META_RETARGETING_ADS],
+  },
+  google: GOOGLE_SEARCH_ADS,
+  video: VIDEO_SCRIPTS,
+  structure: CAMPAIGN_STRUCTURE,
+  counts: {
+    metaLaunch: META_LAUNCH_ADS.length,
+    metaScale: META_SCALE_ADS.length,
+    metaRetargeting: META_RETARGETING_ADS.length,
+    googleSearch: GOOGLE_SEARCH_ADS.length,
+    videoScripts: VIDEO_SCRIPTS.length,
+    totalCreatives: META_LAUNCH_ADS.length + META_SCALE_ADS.length + META_RETARGETING_ADS.length + GOOGLE_SEARCH_ADS.length + VIDEO_SCRIPTS.length,
+  },
 } as const;
