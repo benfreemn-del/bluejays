@@ -4,6 +4,7 @@
 
 ## Output Formatting Rules (NON-NEGOTIABLE)
 - **Never wrap URLs in bold (`**`).** Write links as plain text or plain markdown `[text](url)`. Bold markers around a URL break it when copied — the `**` gets included in the copied string. This applies everywhere: chat responses, code comments, commit messages, HTML, anywhere a URL appears.
+- **Outreach emails MUST use three separate fenced code blocks** — one for TO, one for SUBJECT, one for BODY. Never combine them. Never put the signature in the body (Ben has an auto-signature). This format lets Ben copy each field independently and forward without editing. Every single email Claude writes, no exceptions.
 
 ## Core Philosophy
 This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
@@ -6322,6 +6323,28 @@ Miss minimum 2 months in a row → stop adding channels and fix the conversion b
 
 ---
 
+### Marketing Stats Tracking Rules (NON-NEGOTIABLE)
+
+Every session where Ben reports completing a habit or outreach action, Claude MUST update the Progress Log below immediately. The log is the single source of truth for whether Ben is on track against the Hormozi ramp targets.
+
+**What gets logged every session:**
+- LinkedIn posts published (running total toward 30/month)
+- Warm messages sent (running total toward 100/month)
+- Affiliate emails sent + delivered vs bounced
+- Affiliate replies received
+- Cold emails sent (from dashboard)
+- Pipeline actions (approvals, replies)
+- Paid clients signed + revenue
+
+**How to check progress vs targets:**
+At the start of every session, compare the progress log totals against the current month's targets table. If any metric is behind pace, call it out specifically: "You need X more LinkedIn posts this month to hit 30. You're on pace for Y at current rate."
+
+**Pace math (Month 1):**
+- LinkedIn: 1/day = 30 total. Behind if cumulative < (current day - 1)
+- Warm messages: ~3.3/day = 100 total. Behind if cumulative < (current day × 3.3)
+- Cold emails: auto-send, just verify it's running
+- Affiliate follow-ups: any reply gets a same-day response
+
 ### Progress Log (updated each session — Ben's running scoreboard)
 
 **Day 1 — 2026-04-28:**
@@ -6329,10 +6352,12 @@ Miss minimum 2 months in a row → stop adding channels and fix the conversion b
 - ✅ Instagram account created (business)
 - ✅ LinkedIn post published
 - ✅ 20 warm messages sent to friends/family
-- ✅ 19 affiliate partner emails sent (Fobian, Pratt, Hadlock, Castell, Haguewood + 14 Mason/Kitsap targets)
+- ✅ 19 affiliate partner emails attempted (Fobian, Pratt, Hadlock, Castell, Haguewood + 14 Mason/Kitsap targets)
+- ⚠️ 8 of 19 affiliate emails bounced (bad addresses — need to verify and resend)
+- ✅ 11 of 19 affiliate emails delivered
 - Cold emails: warming ramp starting
 - Paid clients: 0
-- Notes: Strongest Day 1 possible. Full affiliate outreach + warm outreach + both social platforms launched in one session.
+- Notes: Strongest Day 1 possible. Full affiliate outreach + warm outreach + both social platforms launched. Need to track down 8 correct email addresses and resend.
 
 ---
 
