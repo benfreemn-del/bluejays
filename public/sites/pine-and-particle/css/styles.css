@@ -527,7 +527,7 @@ a { text-decoration: none; color: inherit; }
 .about-sign { font-style: italic; color: var(--green-light) !important; font-size: 1.05rem !important; margin-top: 0.5rem; }
 .about-cert { margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid rgba(74,222,128,0.15); display: flex; align-items: center; gap: 1rem; }
 .about-cert::before { content: "Certified by"; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
-.iac2-logo { height: 44px; width: auto; background: #fff; border-radius: 6px; padding: 5px 10px; }
+.iac2-logo { height: 64px; width: auto; background: #fff; border-radius: 10px; padding: 10px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
 .credentials {
     background: linear-gradient(160deg, #1f3d2b 0%, var(--bg-card) 100%);
     border: 1px solid rgba(74,222,128,0.25);
