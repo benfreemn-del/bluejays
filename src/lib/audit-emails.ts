@@ -104,8 +104,9 @@ export function getAuditEmail1(args: {
   businessName: string;
   auditUrl: string;
   overallScore: number;
+  bookUrl: string;
 }): EmailTemplate {
-  const { businessName, auditUrl, overallScore } = args;
+  const { businessName, auditUrl, overallScore, bookUrl } = args;
   const subject = `Your audit is ready (score: ${overallScore}/100)`;
 
   const verdict =
@@ -117,6 +118,13 @@ export function getAuditEmail1(args: {
           ? `You scored ${overallScore}/100. The site is hurting your conversions more than helping. The good news: every issue we found is fixable.`
           : `You scored ${overallScore}/100. I'll be straight: your current site is actively costing you customers. We'd recommend a rebuild before another marketing dollar gets spent.`;
 
+  // For sub-60 scores, add a direct call CTA — these are high-urgency
+  // leads where a 15-min call closes faster than a 5-email sequence.
+  const callCta =
+    overallScore < 60
+      ? `\nIf you want to talk through what I'd fix first, book 15 minutes here. I'll tell you in the first 5 minutes if it's worth your time or not.\n\n${bookUrl}\n`
+      : "";
+
   const body = `Here's the audit you asked for.
 
 Quick heads-up before you read it. I scored ${businessName}'s site honestly — I'd rather lose a sale than send you a fluffed-up report.
@@ -126,7 +134,7 @@ ${verdict}
 The thing I'd fix first is on the audit page, ranked #1.
 
 ${auditUrl}
-
+${callCta}
 Reply with the word "rebuild" if you want a custom mockup of what your new site could look like. I'll send one over — free, no pressure.${FOOTER}`;
 
   return { subject, body, sequence: 400 };

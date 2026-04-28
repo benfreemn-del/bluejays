@@ -3,6 +3,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { runAudit } from "@/lib/site-audit";
 import { sendEmail } from "@/lib/email-sender";
 import { getAuditEmail1 } from "@/lib/audit-emails";
+import { sendOwnerAlert } from "@/lib/alerts";
 
 /**
  * POST/GET /api/audit/generate/[id]
@@ -113,10 +114,28 @@ export async function POST(
         .eq("id", id)
         .maybeSingle();
       const overallScore = (full?.audit_content as { overallScore?: number } | null)?.overallScore ?? 0;
+
+      // Sub-60 scores = site is actively hurting the business.
+      // Alert Ben immediately so he can call within 2 hours — that's
+      // the close mechanism for high-urgency leads.
+      if (overallScore < 60) {
+        void sendOwnerAlert(
+          `🔴 LOW SCORE — call within 2 hours\n` +
+          `${targetBusinessName} scored ${overallScore}/100\n` +
+          `Category: ${audit.business_category}\n` +
+          `Site: ${audit.target_url}\n` +
+          `Lead: https://bluejayportfolio.com/lead/${prospect.id}`,
+        ).catch((err) => {
+          console.error("[audit/generate] Low-score alert failed:", err);
+        });
+      }
+
+      const bookUrl = "https://bluejayportfolio.com/schedule";
       const template = getAuditEmail1({
         businessName: targetBusinessName,
         auditUrl: `https://bluejayportfolio.com/audit/${id}`,
         overallScore,
+        bookUrl,
       });
       await sendEmail(
         prospect.id as string,
