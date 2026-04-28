@@ -512,11 +512,22 @@ a { text-decoration: none; color: inherit; }
         linear-gradient(135deg, rgba(19,42,28,0.82) 0%, rgba(15,30,22,0.78) 100%),
         url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80&auto=format&fit=crop') center/cover no-repeat;
 }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-.about-text h2 { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.25rem; letter-spacing: -0.02em; }
-.about-text p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; font-size: 0.97rem; }
-.about-cert { margin-top: 1.75rem; }
-.iac2-logo { height: 48px; width: auto; opacity: 0.85; }
+.about-card { max-width: 780px; margin: 0 auto; }
+.about-card-inner {
+    background: rgba(15, 30, 20, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(74, 222, 128, 0.18);
+    border-radius: 16px;
+    padding: 2.75rem 3rem;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.about-card-inner h2 { font-family: var(--font-display); font-size: 2.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+.about-card-inner p { color: var(--text-secondary); line-height: 1.85; margin-bottom: 1.1rem; font-size: 0.975rem; }
+.about-sign { font-style: italic; color: var(--green-light) !important; font-size: 1.05rem !important; margin-top: 0.5rem; }
+.about-cert { margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid rgba(74,222,128,0.15); display: flex; align-items: center; gap: 1rem; }
+.about-cert::before { content: "Certified by"; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.iac2-logo { height: 44px; width: auto; background: #fff; border-radius: 6px; padding: 5px 10px; }
 .credentials {
     background: linear-gradient(160deg, #1f3d2b 0%, var(--bg-card) 100%);
     border: 1px solid rgba(74,222,128,0.25);
@@ -656,6 +667,8 @@ textarea { resize: vertical; min-height: 120px; }
     .calc-sidebar { flex-direction: column; }
     .calc-price { font-size: 2.75rem; }
     .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .about-card-inner { padding: 1.75rem 1.5rem; }
+    .about-card-inner h2 { font-size: 1.65rem; }
     .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     .footer-inner { flex-direction: column; text-align: center; align-items: center; }
     .tech-card { flex-direction: column; padding: 2rem; }
