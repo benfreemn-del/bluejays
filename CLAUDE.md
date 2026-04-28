@@ -5823,6 +5823,8 @@ INSERT is a silent-failure risk.
 ### PERMANENT DAILY HABITS (every day, no exceptions)
 - [ ] Warm Outreach / Referral follow-ups (20 min)
 - [ ] 1 LinkedIn post (30 min) — see content ideas by week below
+- [ ] 1 Instagram post (15 min) — repurpose the LinkedIn post, vertical format
+- [ ] Affiliate check (10 min) — reply to any affiliate replies, follow up open conversations
 - [ ] Pipeline review: approve previews, reply to engaged leads (20 min)
 ```
 
@@ -5830,12 +5832,14 @@ Always show the GROWTH RAMP category first, then PERMANENT DAILY HABITS. Never m
 
 ---
 
-### Permanent Daily Habits (70 min/day — run forever past Day 30)
+### Permanent Daily Habits (115 min/day — run forever past Day 30)
 
 | Habit | Time | Target |
 |---|---|---|
 | Warm outreach / referral follow-ups | 20 min | Days 1-14: 10 new personal contacts/day. Days 15-21: follow up open conversations only. Day 22+: pure relationship mode — respond and nurture. |
 | LinkedIn post | 30 min | One post per day. Use content ideas by week below. Never skip. |
+| Instagram post | 15 min | Repurpose the LinkedIn post — same message, vertical format. Reels perform best. Never skip. |
+| Affiliate check | 10 min | Reply to any affiliate replies that came in. Follow up open affiliate conversations. Days 1-30: also track who hasn't replied yet and re-approach. |
 | Pipeline review | 20 min | Approve pending-review previews, review AI reply drafts, personally reply to any engaged lead (clicked preview or submitted /audit). |
 
 **Email volume targets (auto-send — just verify it's running):**
@@ -6065,7 +6069,7 @@ After Day 30, every channel feeds every other channel. The goal of Month 1 is to
 
 ## 6-Month Marketing Ramp Plan (started 2026-04-28)
 
-This extends the 30-day ramp into a full 6-month machine. Each month builds on the last. The three permanent daily habits (LinkedIn post, warm outreach/referrals, pipeline review) NEVER stop — they are the spine of everything.
+This extends the 30-day ramp into a full 6-month machine. Each month builds on the last. The five permanent daily habits (LinkedIn post, Instagram post, warm outreach/referrals, affiliate check, pipeline review) NEVER stop — they are the spine of everything.
 
 At the start of each session, calculate what month Ben is in:
 - Month 1: Days 1–30 (2026-04-28 to 2026-05-27)
@@ -6083,9 +6087,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 
 **Theme:** Build the machine. Send the emails. Post every day. Show up before results exist.
 
-**Daily habits (70 min/day):**
+**Daily habits (115 min/day):**
 - LinkedIn post (30 min)
+- Instagram post (15 min)
 - Warm outreach / referral messages (20 min)
+- Affiliate check (10 min)
 - Pipeline review (20 min)
 
 **Email volume:**
@@ -6098,7 +6104,7 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - [ ] 30 LinkedIn posts published
 - [ ] 30 Instagram posts published
 - [ ] 19 affiliate partners contacted (DONE Day 1)
-- [ ] 2+ affiliates replied and engaged
+- [ ] 2+ affiliates replied and engaged — follow up every session
 - [ ] LinkedIn + Instagram accounts live (DONE Day 1)
 - [ ] 3,000+ cold emails sent
 - [ ] 1 paid client minimum ($997)
@@ -6138,9 +6144,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - Follow up all 19 affiliate emails with a second personal touch (phone or email)
 - Add Google Business Profile for BlueJays (30 min, compounds forever)
 
-**Daily habits (same 70 min/day — never changes):**
+**Daily habits (same 115 min/day — never changes):**
 - LinkedIn post
+- Instagram post
 - Warm outreach / referral follow-ups
+- Affiliate check
 - Pipeline review
 
 **Email volume:** 200/day stable (100/domain)
@@ -6177,9 +6185,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - Start 1 new outreach channel: either LinkedIn DMs OR outbound voice calls (pick one, commit for the full month)
 - Expand affiliate outreach — add 10 more contacts from new counties
 
-**Daily habits (70 min/day):**
+**Daily habits (115 min/day):**
 - LinkedIn post
+- Instagram post
 - Warm outreach / referral follow-ups
+- Affiliate check
 - Pipeline review
 
 **Month 3 content themes:**
@@ -6213,9 +6223,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - Start A/B testing email subject lines systematically — one variable at a time
 - Expand to 3rd email warming domain if volume needs to exceed 200/day
 
-**Daily habits (70 min/day — same forever):**
+**Daily habits (115 min/day — same forever):**
 - LinkedIn post
+- Instagram post
 - Warm outreach / referral follow-ups
+- Affiliate check
 - Pipeline review
 
 **Month 4 content themes:**
@@ -6249,9 +6261,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - Record 5 Loom walkthroughs for top prospects (high-signal, clicked-but-didn't-claim)
 - Add 4th email warming domain if needed for 400+/day volume
 
-**Daily habits (70 min/day):**
+**Daily habits (115 min/day):**
 - LinkedIn post
+- Instagram post
 - Warm outreach / referral follow-ups
+- Affiliate check
 - Pipeline review
 
 **Month 5 content themes:**
@@ -6284,9 +6298,11 @@ Show Ben which month he's in and what the focus is. Ask about the three daily ha
 - Evaluate Vercel Enterprise if domain count is approaching 50 on Pro plan
 - Set up proper bookkeeping: revenue, costs, margins, CAC, LTV — know your numbers cold
 
-**Daily habits (70 min/day — still, always):**
+**Daily habits (115 min/day — still, always):**
 - LinkedIn post
+- Instagram post
 - Warm outreach / referral follow-ups
+- Affiliate check
 - Pipeline review
 
 **Month 6 content themes:**
@@ -6329,9 +6345,10 @@ Every session where Ben reports completing a habit or outreach action, Claude MU
 
 **What gets logged every session:**
 - LinkedIn posts published (running total toward 30/month)
+- Instagram posts published (running total toward 30/month)
 - Warm messages sent (running total toward 100/month)
 - Affiliate emails sent + delivered vs bounced
-- Affiliate replies received
+- Affiliate replies received + follow-ups done
 - Cold emails sent (from dashboard)
 - Pipeline actions (approvals, replies)
 - Paid clients signed + revenue
@@ -6370,7 +6387,7 @@ At the start of every session, compare the progress log totals against the curre
 
 At the START of every session, before doing any technical work, ask Ben:
 
-> "Day [N] — Month [M] ([theme: PLANT/WATER/SPROUT/GROW/SCALE/MACHINE]). Did you post on LinkedIn today? Did you send your warm outreach or follow up referrals? Did you review the pipeline? Yes or no on each."
+> "Day [N] — Month [M] ([theme: PLANT/WATER/SPROUT/GROW/SCALE/MACHINE]). Did you post on LinkedIn today? Did you post on Instagram? Did you send your warm outreach or follow up referrals? Did you check your affiliate replies? Did you review the pipeline? Yes or no on each."
 
 If Ben has NOT been in the project today yet, also ask midway through any session that runs longer than 30 minutes:
 
