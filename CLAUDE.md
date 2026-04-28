@@ -6060,6 +6060,279 @@ Content ──────► Inbound DMs ───► Warm leads ────�
 
 After Day 30, every channel feeds every other channel. The goal of Month 1 is to start all three flywheels spinning. Month 2 is where they start pulling each other.
 
+---
+
+## 6-Month Marketing Ramp Plan (started 2026-04-28)
+
+This extends the 30-day ramp into a full 6-month machine. Each month builds on the last. The three permanent daily habits (LinkedIn post, warm outreach/referrals, pipeline review) NEVER stop — they are the spine of everything.
+
+At the start of each session, calculate what month Ben is in:
+- Month 1: Days 1–30 (2026-04-28 to 2026-05-27)
+- Month 2: Days 31–60 (2026-05-28 to 2026-06-26)
+- Month 3: Days 61–90 (2026-06-27 to 2026-07-26)
+- Month 4: Days 91–120 (2026-07-27 to 2026-08-25)
+- Month 5: Days 121–150 (2026-08-26 to 2026-09-24)
+- Month 6: Days 151–180 (2026-09-25 to 2026-10-24)
+
+Show Ben which month he's in and what the focus is. Ask about the three daily habits every single session.
+
+---
+
+### Month 1 — PLANT (Days 1–30, 2026-04-28 to 2026-05-27)
+
+**Theme:** Build the machine. Send the emails. Post every day. Show up before results exist.
+
+**Daily habits (70 min/day):**
+- LinkedIn post (30 min)
+- Warm outreach / referral messages (20 min)
+- Pipeline review (20 min)
+
+**Email volume:**
+- Days 1–7: 20/day (10/domain)
+- Days 8–14: 100/day (50/domain)
+- Days 15+: 200/day (100/domain)
+
+**Month 1 milestones:**
+- [ ] 100 warm messages sent
+- [ ] 30 LinkedIn posts published
+- [ ] 30 Instagram posts published
+- [ ] 19 affiliate partners contacted (DONE Day 1)
+- [ ] 2+ affiliates replied and engaged
+- [ ] LinkedIn + Instagram accounts live (DONE Day 1)
+- [ ] 3,000+ cold emails sent
+- [ ] 1 paid client minimum ($997)
+
+**Month 1 content themes:**
+- Week 1: origin story, the local biz website gap, pipeline stats
+- Week 2: what makes the $997 worth it, objection reframes, process transparency
+- Week 3: V2 showcase features, real email data, educational value
+- Week 4: affiliate program, 30-day full numbers post
+
+**Month 1 end targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Cold emails sent | 3,000 | 4,500+ |
+| Warm messages sent | 100 | 150+ |
+| LinkedIn posts | 30 | 30 |
+| LinkedIn impressions | 5,000 | 15,000+ |
+| Instagram posts | 30 | 30 |
+| Affiliate partners active | 2 | 5+ |
+| Paid clients | 1 | 3–5 |
+| Revenue | $997 | $3,000+ |
+
+---
+
+### Month 2 — WATER (Days 31–60, 2026-05-28 to 2026-06-26)
+
+**Theme:** Double down on what got replies. Let the flywheel start turning. Your first clients become your first testimonials.
+
+**New actions this month:**
+- Follow up EVERY affiliate contact from Month 1 — anyone who opened but didn't reply gets a second touch
+- Collect first testimonials from any paid clients (video preferred, written fine)
+- Post testimonials/results on LinkedIn and Instagram — real proof performs better than any other content
+- Add Instagram Reels: repurpose your best LinkedIn posts as 30-second vertical videos
+- Flip `ENABLE_HTML_PITCH_EMAIL=true` on Vercel (domains are warmed — HTML email with preview screenshot unlocks)
+- If open rate is below 25%, test 3 new subject lines this month — run each for 5 days before calling it
+- Follow up all 19 affiliate emails with a second personal touch (phone or email)
+- Add Google Business Profile for BlueJays (30 min, compounds forever)
+
+**Daily habits (same 70 min/day — never changes):**
+- LinkedIn post
+- Warm outreach / referral follow-ups
+- Pipeline review
+
+**Email volume:** 200/day stable (100/domain)
+
+**Month 2 content themes:**
+- Week 1: first client result (anonymized if needed), affiliate program, email stats update
+- Week 2: "Here's what 60 days of cold email taught me", showcase deep-dives
+- Week 3: repurpose best Month 1 posts with updated data, objection handling posts
+- Week 4: 60-day numbers, what's working, what's not
+
+**Month 2 targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Cold emails sent | 6,000 | 9,000+ |
+| Affiliate referrals received | 1 | 3+ |
+| LinkedIn followers gained | 100 | 300+ |
+| Instagram followers gained | 50 | 200+ |
+| Testimonials collected | 1 | 3 |
+| Paid clients this month | 2 | 5 |
+| Cumulative revenue | $2,000+ | $6,000+ |
+
+---
+
+### Month 3 — SPROUT (Days 61–90, 2026-06-27 to 2026-07-26)
+
+**Theme:** The machine should be running. Your job this month is to find the bottleneck and eliminate it. One fix to the weakest stage compounds across everything else.
+
+**New actions this month:**
+- Run a full funnel audit: open rate → click rate → claim page → checkout. Find the single weakest link and fix only that
+- Add LinkedIn Sales Navigator ($79/mo) — reach decision-makers directly, not just cold email
+- Add Apollo.io ($30/mo) — enrich prospect data, find LinkedIn profiles of business owners
+- Enable Lob postcards for Day 7 cohort (high-intent prospects only — 4.5★+ rating)
+- Start 1 new outreach channel: either LinkedIn DMs OR outbound voice calls (pick one, commit for the full month)
+- Expand affiliate outreach — add 10 more contacts from new counties
+
+**Daily habits (70 min/day):**
+- LinkedIn post
+- Warm outreach / referral follow-ups
+- Pipeline review
+
+**Month 3 content themes:**
+- Week 1: "The funnel audit — here's what I found", results from Month 2
+- Week 2: deep-dive on the new channel you added
+- Week 3: before/after showcase for a real paid client (with permission)
+- Week 4: 90-day numbers — raw, honest, specific
+
+**Month 3 targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Cold emails sent | 6,000 | 9,000+ |
+| LinkedIn DMs or calls | 200 | 500+ |
+| Affiliate referrals received | 2 | 6+ |
+| LinkedIn followers total | 300 | 800+ |
+| Paid clients this month | 3 | 8 |
+| Cumulative revenue | $5,000+ | $15,000+ |
+
+---
+
+### Month 4 — GROW (Days 91–120, 2026-07-27 to 2026-08-25)
+
+**Theme:** You have proof now. Use it. Social proof is the highest-leverage asset you own — a real testimonial does more work per post than any cold pitch ever will.
+
+**New actions this month:**
+- Hire part-time VA ($5–8/hr, 10 hrs/wk) for inbox triage and outreach support — frees 2 hrs/day of Ben's time
+- Add retargeting pixels to /preview and /claim pages (Meta Pixel + Google Ads tag) — start $50/mo in retargeting ads
+- Publish a case study post: one client, real numbers, real result — this single post will outperform everything else you wrote in Month 1
+- Add a "Results" page or highlight reel to bluejayportfolio.com — let the work sell itself
+- Start A/B testing email subject lines systematically — one variable at a time
+- Expand to 3rd email warming domain if volume needs to exceed 200/day
+
+**Daily habits (70 min/day — same forever):**
+- LinkedIn post
+- Warm outreach / referral follow-ups
+- Pipeline review
+
+**Month 4 content themes:**
+- Week 1: case study deep-dive (the client, the site, the result)
+- Week 2: "What I learned building 10 websites" — patterns, surprises, mistakes
+- Week 3: retargeting and paid ads explainer (builds personal brand as a smart operator)
+- Week 4: 120-day numbers
+
+**Month 4 targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Paid clients this month | 5 | 12 |
+| Cumulative revenue | $10,000+ | $25,000+ |
+| LinkedIn followers total | 600 | 1,500+ |
+| Active affiliates | 3 | 8+ |
+| Retargeting ads live | Yes | Yes |
+| VA hired | Yes | Yes |
+
+---
+
+### Month 5 — SCALE (Days 121–150, 2026-08-26 to 2026-09-24)
+
+**Theme:** The system works. Now make it bigger. Everything you do this month is about increasing capacity without proportionally increasing your own time.
+
+**New actions this month:**
+- Hire part-time junior designer ($15–25/hr, 20 hrs/wk) — offload template customizations
+- Systemize the handoff: create a documented process so the VA can run intake without you
+- Run NPS on every paid client from Months 1–4 — collect promoters and activate them
+- Launch a referral blast to all NPS promoters — personal message from Ben, not automated
+- Record 5 Loom walkthroughs for top prospects (high-signal, clicked-but-didn't-claim)
+- Add 4th email warming domain if needed for 400+/day volume
+
+**Daily habits (70 min/day):**
+- LinkedIn post
+- Warm outreach / referral follow-ups
+- Pipeline review
+
+**Month 5 content themes:**
+- Week 1: "I hired my first person — here's what changed"
+- Week 2: NPS results, what clients actually said
+- Week 3: "The referral machine — how I'm getting clients from clients"
+- Week 4: 150-day update — cumulative everything
+
+**Month 5 targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Paid clients this month | 8 | 20 |
+| Cumulative revenue | $20,000+ | $45,000+ |
+| LinkedIn followers total | 1,000 | 2,500+ |
+| Referrals from NPS promoters | 2 | 8+ |
+| Team (VA + designer) | 2 | 3 |
+
+---
+
+### Month 6 — MACHINE (Days 151–180, 2026-09-25 to 2026-10-24)
+
+**Theme:** This is the proof-of-concept month. If the system works, it runs mostly without you. Your job is closing deals, managing the team, and planning Month 7+.
+
+**New actions this month:**
+- Closer/sales rep hire if volume warrants it ($50K base + 10% commission)
+- Full funnel review: which channel produced the most paid clients? Double it in Month 7
+- Publish "6 months of BlueJays" post — this will be the most viral content you've ever written
+- Plan Month 7+ based on real data: which channel, which category, which county is the winner
+- Evaluate Vercel Enterprise if domain count is approaching 50 on Pro plan
+- Set up proper bookkeeping: revenue, costs, margins, CAC, LTV — know your numbers cold
+
+**Daily habits (70 min/day — still, always):**
+- LinkedIn post
+- Warm outreach / referral follow-ups
+- Pipeline review
+
+**Month 6 content themes:**
+- Week 1: "6-month milestone" post — real numbers only
+- Week 2: "Here's the exact system" — full transparency, builds massive credibility
+- Week 3: team spotlight, process post
+- Week 4: "What Month 7 looks like" — forward-looking, creates anticipation
+
+**Month 6 targets:**
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Paid clients this month | 12 | 25+ |
+| Cumulative 6-month revenue | $30,000+ | $75,000+ |
+| Total paying sites | 30 | 75+ |
+| LinkedIn followers total | 1,500 | 5,000+ |
+| Active affiliates | 5 | 15+ |
+| Monthly recurring (renewals) | $3,000/yr | $7,500+/yr |
+
+---
+
+### 6-Month Summary Scorecard
+
+| Month | Theme | Paid Clients (min) | Cumulative Revenue (min) |
+|---|---|---|---|
+| Month 1 | PLANT | 1 | $997 |
+| Month 2 | WATER | 3 | $4,000 |
+| Month 3 | SPROUT | 6 | $10,000 |
+| Month 4 | GROW | 11 | $21,000 |
+| Month 5 | SCALE | 19 | $40,000 |
+| Month 6 | MACHINE | 31 | $71,000 |
+
+Miss minimum 2 months in a row → stop adding channels and fix the conversion bottleneck first. The problem is never volume. It's always the weakest stage in the funnel.
+
+---
+
+### Progress Log (updated each session — Ben's running scoreboard)
+
+**Day 1 — 2026-04-28:**
+- ✅ LinkedIn account created (business)
+- ✅ Instagram account created (business)
+- ✅ LinkedIn post published
+- ✅ 20 warm messages sent to friends/family
+- ✅ 19 affiliate partner emails sent (Fobian, Pratt, Hadlock, Castell, Haguewood + 14 Mason/Kitsap targets)
+- Cold emails: warming ramp starting
+- Paid clients: 0
+- Notes: Strongest Day 1 possible. Full affiliate outreach + warm outreach + both social platforms launched in one session.
 
 ---
 
@@ -6071,7 +6344,7 @@ After Day 30, every channel feeds every other channel. The goal of Month 1 is to
 
 At the START of every session, before doing any technical work, ask Ben:
 
-> "Day [N] of 30. Did you post on LinkedIn today? Did you send your warm outreach messages? Did you review the pipeline? Give me a yes or no on each."
+> "Day [N] — Month [M] ([theme: PLANT/WATER/SPROUT/GROW/SCALE/MACHINE]). Did you post on LinkedIn today? Did you send your warm outreach or follow up referrals? Did you review the pipeline? Yes or no on each."
 
 If Ben has NOT been in the project today yet, also ask midway through any session that runs longer than 30 minutes:
 
