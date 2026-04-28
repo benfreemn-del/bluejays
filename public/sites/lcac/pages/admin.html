@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — LCAC Event Manager</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #2563eb; --blue-dark: #1d4ed8; --blue-light: #eff6ff;
+      --green: #16a34a; --green-light: #dcfce7;
+      --red: #dc2626; --red-light: #fee2e2;
+      --amber: #d97706; --amber-light: #fef3c7;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-600: #4b5563;
+      --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
+      --radius: 8px; --radius-lg: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+    /* Login Screen */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 1.5rem;
+    }
+    .login-card {
+      background: #fff; border-radius: var(--radius-lg); padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08); width: 100%; max-width: 380px; text-align: center;
+    }
+    .login-card h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .25rem; }
+    .login-card p { color: var(--gray-600); font-size: .9rem; margin-bottom: 1.5rem; }
+    .login-card input {
+      width: 100%; padding: .65rem 1rem; border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius); font-size: 1rem; font-family: inherit;
+      margin-bottom: 1rem; transition: border-color .2s;
+    }
+    .login-card input:focus { outline: none; border-color: var(--blue); }
+    .login-card button {
+      width: 100%; padding: .7rem; background: var(--blue); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 1rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .login-card button:hover { background: var(--blue-dark); }
+    .login-error { color: var(--red); font-size: .85rem; margin-top: .75rem; min-height: 1.2em; }
+
+    /* App Shell */
+    #app { display: none; }
+    header.app-header {
+      background: #fff; border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .app-header__logo { font-weight: 800; font-size: 1.1rem; color: var(--blue); }
+    .app-header__sub { font-size: .8rem; color: var(--gray-400); margin-left: auto; }
+    .app-header__logout { font-size: .85rem; color: var(--gray-600); background: none; border: 1.5px solid var(--gray-300); border-radius: var(--radius); padding: .35rem .85rem; cursor: pointer; font-family: inherit; }
+    .app-header__logout:hover { border-color: var(--red); color: var(--red); }
+
+    main.app-main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    .section-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem;
+    }
+    .section-heading h2 { font-size: 1.15rem; font-weight: 700; }
+
+    /* GitHub setup banner */
+    .setup-banner {
+      background: var(--amber-light); border: 1px solid var(--amber);
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem; font-size: .9rem;
+    }
+    .setup-banner strong { color: var(--amber); }
+    .setup-banner a { color: var(--blue); }
+
+    /* Events list */
+    .event-item {
+      background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem; margin-bottom: .75rem;
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .event-item__drag { cursor: grab; color: var(--gray-400); padding-top: 2px; flex-shrink: 0; }
+    .event-item__info { flex: 1; min-width: 0; }
+    .event-item__title { font-weight: 600; font-size: .95rem; }
+    .event-item__meta { font-size: .8rem; color: var(--gray-600); margin-top: 2px; }
+    .event-item__actions { display: flex; gap: .5rem; flex-shrink: 0; }
+    .btn-icon {
+      background: none; border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+      padding: .3rem .65rem; cursor: pointer; font-family: inherit;
+      font-size: .8rem; font-weight: 600; transition: border-color .15s, color .15s;
+    }
+    .btn-icon.edit { color: var(--blue); }
+    .btn-icon.edit:hover { border-color: var(--blue); background: var(--blue-light); }
+    .btn-icon.del { color: var(--red); }
+    .btn-icon.del:hover { border-color: var(--red); background: var(--red-light); }
+    .status-pill {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+      padding: 2px 8px; border-radius: 999px; display: inline-block; margin-left: .5rem;
+    }
+    .status-pill.active   { background: var(--green-light); color: var(--green); }
+    .status-pill.inactive { background: var(--gray-100); color: var(--gray-400); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem 1.1rem; border-radius: var(--radius); font-family: inherit;
+      font-size: .9rem; font-weight: 600; cursor: pointer; border: none;
+      transition: background .15s, transform .1s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn--primary { background: var(--blue); color: #fff; }
+    .btn--primary:hover { background: var(--blue-dark); }
+    .btn--success { background: var(--green); color: #fff; }
+    .btn--success:hover { background: #15803d; }
+    .btn--outline { background: #fff; color: var(--gray-700); border: 1.5px solid var(--gray-300); }
+    .btn--outline:hover { border-color: var(--blue); color: var(--blue); }
+    .btn:disabled { opacity: .55; cursor: default; transform: none; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 100; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: var(--radius-lg); padding: 2rem;
+      width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .35rem; color: var(--gray-700); }
+    .form-label .hint { font-weight: 400; color: var(--gray-400); font-size: .78rem; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: .6rem .85rem; border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius); font-size: .9rem; font-family: inherit;
+      background: #fff; color: var(--gray-800); transition: border-color .2s; box-sizing: border-box;
+    }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--blue); }
+    .toggle-wrap { display: flex; align-items: center; gap: .65rem; margin-top: .25rem; }
+    .toggle { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: var(--gray-300); border-radius: 22px; transition: .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; height: 16px; width: 16px;
+      left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--blue); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; flex-wrap: wrap; }
+
+    /* Save to GitHub */
+    .save-section {
+      background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg);
+      padding: 1.5rem; margin-top: 2rem;
+    }
+    .save-section h3 { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .save-section p { font-size: .85rem; color: var(--gray-600); margin-bottom: 1rem; }
+    .github-token-row { display: flex; gap: .75rem; align-items: flex-end; flex-wrap: wrap; }
+    .github-token-row .form-group { flex: 1; min-width: 200px; margin-bottom: 0; }
+    .save-status {
+      margin-top: 1rem; padding: .75rem 1rem; border-radius: var(--radius);
+      font-size: .88rem; display: none;
+    }
+    .save-status.success { background: var(--green-light); color: var(--green); display: block; }
+    .save-status.error   { background: var(--red-light); color: var(--red); display: block; }
+    .save-status.loading { background: var(--blue-light); color: var(--blue); display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="font-size:2rem;margin-bottom:.5rem;">🦋</div>
+    <h1>LCAC Event Manager</h1>
+    <p>Enter your admin password to manage events on the website.</p>
+    <input type="password" id="login-password" placeholder="Admin password" autocomplete="current-password">
+    <button onclick="attemptLogin()">Sign In</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div id="app">
+  <header class="app-header">
+    <span class="app-header__logo">🦋 LCAC Events</span>
+    <span class="app-header__sub">Event Manager — changes publish to the live site</span>
+    <button class="app-header__logout" onclick="logout()">Sign out</button>
+  </header>
+
+  <main class="app-main">
+    <div class="setup-banner" id="setup-banner" style="display:none;">
+      <strong>⚙️ One-time setup needed:</strong> To publish changes automatically, enter your GitHub token below. 
+      If you don't have one, <a href="https://github.com/settings/tokens/new?scopes=contents&description=LCAC+Admin" target="_blank" rel="noopener">create one here</a> (enable the <em>Contents</em> scope on the <em>lcautism-coalition</em> repo). 
+      Your token is saved only in your browser and never sent anywhere except GitHub.
+    </div>
+
+    <div class="section-heading">
+      <h2>Events <span id="event-count" style="font-weight:400;color:#9ca3af;font-size:.9rem;"></span></h2>
+      <button class="btn btn--primary" onclick="openAddModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Event
+      </button>
+    </div>
+
+    <div id="events-list"><!-- populated by JS --></div>
+
+    <!-- Save to GitHub section -->
+    <div class="save-section">
+      <h3>Publish Changes</h3>
+      <p>Click <strong>Publish to Website</strong> to save your changes. The site will update within about 60 seconds after publishing.</p>
+      <div class="github-token-row">
+        <div class="form-group">
+          <label class="form-label" for="github-token">GitHub Token <span class="hint">(saved in browser only)</span></label>
+          <input type="password" id="github-token" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+        </div>
+        <button class="btn btn--success" onclick="publishToGitHub()" id="publish-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Publish to Website
+        </button>
+      </div>
+      <p style="font-size:.78rem;color:#9ca3af;margin-top:.5rem;">
+        Don't have a GitHub token? Contact Ben — he can set this up for you in 5 minutes.
+        Or use the <strong>Download File</strong> option and email it to Ben.
+      </p>
+      <button class="btn btn--outline" onclick="downloadFile()" style="margin-top:.5rem;font-size:.82rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download events-data.js (email to Ben)
+      </button>
+      <div class="save-status" id="save-status"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ========== ADD / EDIT MODAL ========== -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h3 id="modal-title">Add Event</h3>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-title">Event Title *</label>
+        <input type="text" id="f-title" class="form-input" placeholder="e.g. Coalition Meeting" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-category">Category</label>
+        <select id="f-category" class="form-select">
+          <option value="meeting">Meeting</option>
+          <option value="group">Group</option>
+          <option value="program">Program</option>
+          <option value="fundraiser">Fundraiser</option>
+          <option value="workshop">Workshop</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-date">Start Date *</label>
+        <input type="date" id="f-date" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-end-date">End Date <span class="hint">(multi-day only)</span></label>
+        <input type="date" id="f-end-date" class="form-input">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-time">Time</label>
+      <input type="text" id="f-time" class="form-input" placeholder="e.g. 5:30 PM – 7:00 PM">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-location">Location</label>
+      <input type="text" id="f-location" class="form-input" placeholder="Venue name and/or address">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="f-description">Description *</label>
+      <textarea id="f-description" class="form-textarea" rows="3" placeholder="1-3 sentences describing the event..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-video">Video URL <span class="hint">(YouTube or Facebook)</span></label>
+        <input type="url" id="f-video" class="form-input" placeholder="https://youtube.com/watch?v=...">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-pdf">PDF Flyer Filename <span class="hint">(in assets/flyers/)</span></label>
+        <input type="text" id="f-pdf" class="form-input" placeholder="event-flyer.pdf">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">RSVP Form</label>
+        <div class="toggle-wrap">
+          <label class="toggle"><input type="checkbox" id="f-rsvp"><span class="toggle-slider"></span></label>
+          <span style="font-size:.88rem;color:#4b5563;">Show RSVP form on event card</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Event Active</label>
+        <div class="toggle-wrap">
+          <label class="toggle"><input type="checkbox" id="f-active" checked><span class="toggle-slider"></span></label>
+          <span style="font-size:.88rem;color:#4b5563;">Show on website</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn--outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" id="modal-save-btn" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/events-data.js"></script>
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const ADMIN_PASSWORD_HASH = "b1f4b1c7e8d9a3f2c5e7d4b8a2f9c6e1d3b7a4f2e8c5d9b6a3f1c4e7d2b9a5f8";
+// ^^^ SHA-256 of "lcac2026" — replace with hash of your chosen password
+// To generate: open browser console → crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+//              then convert to hex string
+
+const GITHUB_OWNER = "benfreemn-del";
+const GITHUB_REPO  = "lcautism-coalition";    // update to actual LCAC repo name
+const GITHUB_FILE  = "js/events-data.js";     // path in repo
+
+// Working copy of events (in-memory, reset on page load)
+let events = JSON.parse(JSON.stringify(LCAC_EVENTS));
+let editingId = null;
+
+// ── Auth ────────────────────────────────────────────────────────────────────
+async function attemptLogin() {
+  const pw = document.getElementById('password-input').value;
+  if (!pw) return;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  try {
+    const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+    const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    if (hash === ADMIN_PASSWORD_HASH) {
+      sessionStorage.setItem('lcac_admin', '1');
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderEventsList();
+    } else {
+      errEl.textContent = 'Incorrect password. Please try again.';
+      document.getElementById('password-input').value = '';
+    }
+  } catch(e) {
+    errEl.textContent = 'Browser error — please use a modern browser.';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('lcac_admin');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('password-input').value = '';
+}
+
+// Auto-login if session still active
+if (sessionStorage.getItem('lcac_admin')) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// Allow Enter key on password field
+document.getElementById('password-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') attemptLogin();
+});
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function isPast(iso) {
+  const d = new Date(iso + 'T23:59:59');
+  return d < new Date();
+}
+
+function formatDateShort(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m,10)-1] + ' ' + parseInt(d,10) + ', ' + y;
+}
+
+function statusPill(ev) {
+  if (!ev.active) return '<span class="status-pill status-pill--inactive">Hidden</span>';
+  if (isPast(ev.date)) return '<span class="status-pill status-pill--past">Past</span>';
+  return '<span class="status-pill status-pill--active">Active</span>';
+}
+
+// ── List Render ──────────────────────────────────────────────────────────────
+function renderEventsList() {
+  const sorted = [...events].sort((a, b) => a.date < b.date ? -1 : 1);
+  const el = document.getElementById('events-list');
+  if (sorted.length === 0) {
+    el.innerHTML = '<p style="color:#6b7280;text-align:center;padding:2rem;">No events yet. Click + Add Event to create one.</p>';
+    return;
+  }
+  el.innerHTML = sorted.map(ev => `
+    <div class="event-item">
+      <div class="event-item__meta">
+        <div class="event-item__title">${escHtml(ev.title)}</div>
+        <div class="event-item__date">${formatDateShort(ev.date)}${ev.endDate ? ' – ' + formatDateShort(ev.endDate) : ''} &nbsp;·&nbsp; ${escHtml(ev.time)}</div>
+        <div class="event-item__date">${escHtml(ev.location)}</div>
+      </div>
+      <div class="event-item__badges">
+        ${statusPill(ev)}
+        <span class="status-pill status-pill--inactive" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;">${ev.category}</span>
+        ${ev.rsvpRequired ? '<span class="status-pill status-pill--active" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0;">RSVP</span>' : ''}
+      </div>
+      <div class="event-item__actions">
+        <button class="btn btn--outline btn--sm" onclick="openEditModal('${ev.id}')">Edit</button>
+        <button class="btn btn--sm" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;" onclick="deleteEvent('${ev.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── CRUD ─────────────────────────────────────────────────────────────────────
+function generateId(title) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now().toString(36);
+}
+
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add Event';
+  document.getElementById('modal-save-btn').textContent = 'Add Event';
+  clearModalForm();
+  document.getElementById('f-active').checked = true;
+  document.getElementById('f-rsvp').checked = false;
+  document.getElementById('event-modal').style.display = 'flex';
+}
+
+function openEditModal(id) {
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit Event';
+  document.getElementById('modal-save-btn').textContent = 'Save Changes';
+  document.getElementById('f-title').value      = ev.title || '';
+  document.getElementById('f-category').value   = ev.category || 'meeting';
+  document.getElementById('f-date').value        = ev.date || '';
+  document.getElementById('f-enddate').value     = ev.endDate || '';
+  document.getElementById('f-time').value        = ev.time || '';
+  document.getElementById('f-location').value    = ev.location || '';
+  document.getElementById('f-desc').value        = ev.description || '';
+  document.getElementById('f-video').value       = ev.videoUrl || '';
+  document.getElementById('f-pdf').value         = ev.pdfUrl || '';
+  document.getElementById('f-rsvp').checked      = !!ev.rsvpRequired;
+  document.getElementById('f-active').checked    = ev.active !== false;
+  document.getElementById('event-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('event-modal').style.display = 'none';
+  editingId = null;
+}
+
+// Close modal on overlay click
+document.getElementById('event-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function clearModalForm() {
+  ['f-title','f-date','f-enddate','f-time','f-location','f-desc','f-video','f-pdf'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-category').value = 'meeting';
+}
+
+function saveEvent() {
+  const title = document.getElementById('f-title').value.trim();
+  const date  = document.getElementById('f-date').value.trim();
+  if (!title) { alert('Event title is required.'); return; }
+  if (!date)  { alert('Start date is required.'); return; }
+
+  const evData = {
+    id:          editingId || generateId(title),
+    title,
+    date,
+    endDate:     document.getElementById('f-enddate').value.trim(),
+    time:        document.getElementById('f-time').value.trim(),
+    location:    document.getElementById('f-location').value.trim(),
+    description: document.getElementById('f-desc').value.trim(),
+    category:    document.getElementById('f-category').value,
+    rsvpRequired:document.getElementById('f-rsvp').checked,
+    videoUrl:    document.getElementById('f-video').value.trim(),
+    pdfUrl:      document.getElementById('f-pdf').value.trim(),
+    active:      document.getElementById('f-active').checked
+  };
+
+  if (editingId) {
+    const idx = events.findIndex(e => e.id === editingId);
+    if (idx !== -1) events[idx] = evData;
+  } else {
+    events.push(evData);
+  }
+
+  closeModal();
+  renderEventsList();
+  showSaveStatus('Event saved locally. Click "Publish to Website" to make it live.', 'info');
+}
+
+function deleteEvent(id) {
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
+  if (!confirm('Delete "' + ev.title + '"? This cannot be undone.')) return;
+  events = events.filter(e => e.id !== id);
+  renderEventsList();
+  showSaveStatus('Event deleted. Click "Publish to Website" to apply changes.', 'info');
+}
+
+// ── File Generation ───────────────────────────────────────────────────────────
+function generateEventsFileContent() {
+  const lines = events.map(ev => {
+    return [
+      '  {',
+      '    id: ' + JSON.stringify(ev.id) + ',',
+      '    title: ' + JSON.stringify(ev.title) + ',',
+      '    date: ' + JSON.stringify(ev.date) + ',',
+      '    endDate: ' + JSON.stringify(ev.endDate || '') + ',',
+      '    time: ' + JSON.stringify(ev.time || '') + ',',
+      '    location: ' + JSON.stringify(ev.location || '') + ',',
+      '    description: ' + JSON.stringify(ev.description || '') + ',',
+      '    category: ' + JSON.stringify(ev.category || 'meeting') + ',',
+      '    rsvpRequired: ' + (ev.rsvpRequired ? 'true' : 'false') + ',',
+      '    videoUrl: ' + JSON.stringify(ev.videoUrl || '') + ',',
+      '    pdfUrl: ' + JSON.stringify(ev.pdfUrl || '') + ',',
+      '    active: ' + (ev.active !== false ? 'true' : 'false'),
+      '  }'
+    ].join('\n');
+  });
+  return [
+    '/**',
+    ' * LCAC Events Data',
+    ' * Edit via the admin panel at /pages/admin.html',
+    ' * or update this file directly and redeploy.',
+    ' *',
+    ' * Field reference:',
+    ' *   id          - unique slug (no spaces)',
+    ' *   title       - event name',
+    ' *   date        - ISO date string "YYYY-MM-DD" (used for past/upcoming logic)',
+    ' *   endDate     - optional ISO date for multi-day events "YYYY-MM-DD"',
+    ' *   time        - display string e.g. "5:30 PM – 8:00 PM"',
+    ' *   location    - venue name and/or address',
+    ' *   description - 1-3 sentence summary shown on card',
+    ' *   category    - "meeting" | "group" | "fundraiser" | "program" | "workshop"',
+    ' *   rsvpRequired  - true/false — shows RSVP form on card',
+    ' *   videoUrl    - YouTube or Facebook video URL (empty string = no embed)',
+    ' *   pdfUrl      - path to PDF flyer under assets/flyers/ (empty = no download link)',
+    ' *   active      - false hides the event entirely (without deleting it)',
+    ' */',
+    'var LCAC_EVENTS = [',
+    lines.join(',\n'),
+    '];',
+    '',
+    '// Make available as module export for admin page',
+    'if (typeof module !== 'undefined') { module.exports = LCAC_EVENTS; }'
+  ].join('\n');
+}
+
+// ── Download Fallback ─────────────────────────────────────────────────────────
+function downloadFile() {
+  const content = generateEventsFileContent();
+  const blob = new Blob([content], { type: 'text/javascript' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'events-data.js';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showSaveStatus('File downloaded. Email to your website manager to deploy.', 'success');
+}
+
+// ── GitHub Publish ────────────────────────────────────────────────────────────
+async function publishToGitHub() {
+  const token = document.getElementById('github-token').value.trim();
+  if (!token) {
+    alert('Please enter your GitHub token to publish.');
+    return;
+  }
+
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+  showSaveStatus('Connecting to GitHub…', 'info');
+
+  try {
+    const apiBase = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE;
+    const headers = {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+
+    // Step 1: Get current file SHA (required for update)
+    showSaveStatus('Getting current file info…', 'info');
+    const getRes = await fetch(apiBase, { headers });
+    let sha = null;
+    if (getRes.ok) {
+      const data = await getRes.json();
+      sha = data.sha;
+    } else if (getRes.status !== 404) {
+      throw new Error('GitHub API error: ' + getRes.status + ' ' + getRes.statusText);
+    }
+
+    // Step 2: Push updated file
+    showSaveStatus('Uploading events data…', 'info');
+    const content = generateEventsFileContent();
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+
+    const body = {
+      message: 'Update events data via admin panel',
+      content: encoded,
+      ...(sha ? { sha } : {})
+    };
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body)
+    });
+
+    if (!putRes.ok) {
+      const err = await putRes.json().catch(() => ({}));
+      throw new Error(err.message || ('GitHub API error: ' + putRes.status));
+    }
+
+    showSaveStatus('✓ Published! Your site is updating now (takes ~60 seconds to go live).', 'success');
+    sessionStorage.setItem('lcac_github_token', token);
+
+  } catch(e) {
+    console.error('GitHub publish error:', e);
+    showSaveStatus('Error: ' + e.message + '. Use the download button as a fallback.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Publish to Website';
+  }
+}
+
+// ── Status Display ────────────────────────────────────────────────────────────
+function showSaveStatus(msg, type) {
+  const el = document.getElementById('save-status');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.color = type === 'error' ? '#991b1b' : type === 'success' ? '#166534' : '#1e40af';
+  el.style.background = type === 'error' ? '#fee2e2' : type === 'success' ? '#f0fdf4' : '#eff6ff';
+  el.style.borderColor = type === 'error' ? '#fca5a5' : type === 'success' ? '#bbf7d0' : '#bfdbfe';
+}
+
+// Restore saved token if available
+(function() {
+  const saved = sessionStorage.getItem('lcac_github_token');
+  if (saved) document.getElementById('github-token').value = saved;
+})();
+
+// Initial render if already logged in
+if (sessionStorage.getItem('lcac_admin')) {
+  renderEventsList();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events | Lewis County Autism Coalition</title>
+  <meta name="description" content="Upcoming events from the Lewis County Autism Coalition — groups, programs, meetings, and fundraisers in Lewis County, WA.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/images/logo.png" type="image/png">
+  <style>
+    /* ===== Events Page Styles ===== */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-2xl);
+    }
+    .event-card {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .event-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .event-card__header {
+      padding: var(--space-lg) var(--space-lg) var(--space-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+    .event-card__meta { flex: 1; }
+    .event-card__badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .badge--meeting  { background: #dbeafe; color: #1e40af; }
+    .badge--group    { background: #d1fae5; color: #065f46; }
+    .badge--fundraiser { background: #fef3c7; color: #92400e; }
+    .badge--program  { background: #ede9fe; color: #5b21b6; }
+    .badge--workshop { background: #fce7f3; color: #9d174d; }
+    .event-card__date {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-top: var(--space-xs);
+    }
+    .event-card__time {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-top: 2px;
+    }
+    .event-card__body { padding: 0 var(--space-lg) var(--space-lg); flex: 1; display: flex; flex-direction: column; gap: var(--space-sm); }
+    .event-card__title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--color-text); line-height: 1.3; }
+    .event-card__location {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-xs);
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+    }
+    .event-card__location svg { flex-shrink: 0; margin-top: 1px; }
+    .event-card__desc { font-size: 0.9rem; color: var(--color-text-secondary); line-height: 1.65; }
+    .event-card__actions { margin-top: auto; padding-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap; align-items: center; }
+
+    /* Video embed */
+    .event-video { margin: 0 var(--space-lg) var(--space-md); }
+    .event-video iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius-lg);
+      border: none;
+      display: block;
+    }
+    .event-video__label { font-size: 0.75rem; color: var(--color-text-light); margin-top: var(--space-xs); text-align: center; }
+
+    /* PDF download link */
+    .event-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-decoration: none;
+      background: var(--color-bg-blue, #eff6ff);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--color-primary-light, #bfdbfe);
+      transition: background 0.2s;
+    }
+    .event-pdf:hover { background: var(--color-primary-light, #bfdbfe); }
+
+    /* RSVP Form */
+    .rsvp-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .rsvp-toggle:hover { background: var(--color-primary-dark, #1d4ed8); transform: translateY(-1px); }
+    .rsvp-form-wrap {
+      display: none;
+      background: var(--color-bg-warm, #fef9f0);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-lg);
+    }
+    .rsvp-form-wrap.open { display: block; }
+    .rsvp-form-wrap h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text); }
+    .rsvp-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+    @media (max-width: 480px) { .rsvp-row { grid-template-columns: 1fr; } }
+    .rsvp-form-wrap .form-group { margin-bottom: var(--space-sm); }
+    .rsvp-form-wrap .form-label { font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; display: block; color: var(--color-text); }
+    .rsvp-form-wrap .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      background: #fff;
+      color: var(--color-text);
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .rsvp-form-wrap .form-input:focus { outline: none; border-color: var(--color-primary); }
+    .rsvp-submit {
+      background: var(--color-accent, #f59e0b);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 9px 22px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      margin-top: var(--space-sm);
+      transition: background 0.2s;
+    }
+    .rsvp-submit:hover { background: #d97706; }
+    .rsvp-status { font-size: 0.82rem; margin-top: var(--space-xs); min-height: 1.2em; }
+    .rsvp-status.success { color: #065f46; }
+    .rsvp-status.error   { color: #dc2626; }
+
+    /* Past events */
+    .past-events-section { margin-top: var(--space-3xl); }
+    .past-toggle-btn {
+      background: none;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 10px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--color-text-light);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .past-toggle-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .past-events-grid { display: none; }
+    .past-events-grid.open { display: grid; }
+    .past-card { opacity: 0.7; }
+    .past-card .event-card__title { text-decoration: line-through; text-decoration-color: var(--color-border); }
+
+    /* Empty state */
+    .events-empty {
+      text-align: center;
+      padding: var(--space-3xl) var(--space-lg);
+      color: var(--color-text-light);
+    }
+    .events-empty svg { opacity: 0.3; margin-bottom: var(--space-md); }
+  </style>
+  <!-- Google Analytics 4 -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("consent", "default", { "ad_storage": "denied", "analytics_storage": "denied", "wait_for_update": 500 });
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.__lcacAnalyticsConsent) { gtag("consent", "update", { "analytics_storage": "granted" }); }
+    });
+    gtag("js", new Date());
+    gtag("config", "[[GA4_MEASUREMENT_ID]]", { "anonymize_ip": true });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=[[GA4_MEASUREMENT_ID]]"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar__inner">
+      <a href="../index.html" class="navbar__brand">
+        <img src="../assets/images/logo.png" alt="Lewis County Autism Coalition logo" class="navbar__logo">
+        <div class="navbar__name">Lewis County<br>Autism Coalition<span>Napavine, WA</span></div>
+      </a>
+      <div class="navbar__links">
+        <a href="../index.html" class="navbar__link">Home</a>
+        <a href="sdcc.html" class="navbar__link">S&D Center</a>
+        <a href="services.html" class="navbar__link">Services</a>
+        <a href="smart.html" class="navbar__link">SMART</a>
+        <a href="events.html" class="navbar__link active">Events</a>
+        <a href="about.html" class="navbar__link">Our Story</a>
+        <a href="volunteer.html" class="navbar__link">Volunteer</a>
+        <a href="contact.html" class="navbar__link">Contact</a>
+      </div>
+      <a href="donate.html" class="btn btn--accent btn--sm navbar__cta">Donate</a>
+      <button class="navbar__toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Language Toggle -->
+  <div class="lang-toggle">
+    <a href="#" class="active">EN</a>
+    <a href="espanol.html">ES</a>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" role="dialog" aria-label="Mobile navigation">
+    <a href="../index.html" class="mobile-menu__link">Home</a>
+    <a href="sdcc.html" class="mobile-menu__link">Spectrum & Development Center</a>
+    <a href="services.html" class="mobile-menu__link">Groups & Services</a>
+    <a href="smart.html" class="mobile-menu__link">SMART Program</a>
+    <a href="events.html" class="mobile-menu__link">Events</a>
+    <a href="about.html" class="mobile-menu__link">Our Story</a>
+    <a href="volunteer.html" class="mobile-menu__link">Volunteer</a>
+    <a href="statewide.html" class="mobile-menu__link">Statewide Collaboration</a>
+    <a href="partners.html" class="mobile-menu__link">Community Partners</a>
+    <a href="contact.html" class="mobile-menu__link">Contact Us</a>
+    <div class="mobile-menu__cta">
+      <a href="donate.html" class="btn btn--accent btn--lg">Donate Today</a>
+      <a href="sponsor.html" class="btn btn--outline btn--lg">Become a Sponsor</a>
+    </div>
+  </div>
+
+  <!-- ========== PAGE HEADER ========== -->
+  <section class="hero hero--sm" id="main">
+    <div class="hero__bg-shape hero__bg-shape--1"></div>
+    <div class="hero__bg-shape hero__bg-shape--2"></div>
+    <div class="hero__content">
+      <div class="hero__text">
+        <div class="hero__badge">Community Calendar</div>
+        <h1 class="hero__title">Upcoming Events</h1>
+        <p class="hero__description">
+          Join us for groups, programs, meetings, and fundraisers that bring our community together. All are welcome!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== UPCOMING EVENTS ========== -->
+  <section class="section" id="events">
+    <div class="container">
+      <div id="upcoming-events-wrap">
+        <!-- Populated by JS -->
+        <div class="events-empty" id="events-empty-state" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <h3 style="margin-top:0.5rem;">No upcoming events at this time</h3>
+          <p>Check back soon — new events are added regularly.<br>
+            Questions? <a href="contact.html">Contact us</a> or follow us on <a href="https://www.facebook.com/lewiscountyautismcoalition" target="_blank" rel="noopener">Facebook</a>.</p>
+        </div>
+        <div class="events-grid" id="upcoming-events-grid"></div>
+      </div>
+
+      <!-- ===== PAST EVENTS ARCHIVE ===== -->
+      <div class="past-events-section" id="past-events-section" style="display:none;">
+        <div style="display:flex; align-items:center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+          <h2 style="margin:0; font-size:1.3rem;">Past Events</h2>
+          <button class="past-toggle-btn" id="past-toggle-btn" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            Show past events
+          </button>
+        </div>
+        <div class="events-grid past-events-grid" id="past-events-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="section section--blue" id="cta">
+    <div class="container">
+      <div class="cta-banner fade-in">
+        <h2>Stay in the Loop</h2>
+        <p>Follow us on Facebook for real-time event updates, last-minute changes, and community news. We post there first!</p>
+        <div style="display:flex; gap:var(--space-md); justify-content:center; flex-wrap:wrap;">
+          <a href="https://www.facebook.com/lewiscountyautismcoalition" target="_blank" rel="noopener" class="btn btn--white btn--lg">Follow on Facebook</a>
+          <a href="contact.html" class="btn btn--outline btn--lg" style="border-color:#fff;color:#fff;">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__about">
+          <div class="footer__brand">
+            <img src="../assets/images/logo.png" alt="LCAC Logo">
+            <span class="footer__brand-name">Lewis County<br>Autism Coalition</span>
+          </div>
+          <p>Promoting lifelong belonging and independence for autistic, neurodiverse, and developmentally disabled individuals and their families.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/lewiscountyautismcoalition" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://www.youtube.com" aria-label="YouTube" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Programs</h4>
+          <div class="footer__links">
+            <a href="smart.html">SMART Program</a>
+            <a href="sdcc.html">S&D Center</a>
+            <a href="services.html">Groups & Services</a>
+            <a href="events.html">Events</a>
+            <a href="statewide.html">WA INCLUDE</a>
+          </div>
+        </div>
+        <div>
+          <h4>Get Involved</h4>
+          <div class="footer__links">
+            <a href="volunteer.html">Volunteer</a>
+            <a href="donate.html">Donate</a>
+            <a href="sponsor.html">Sponsorship</a>
+            <a href="partners.html">Partners</a>
+            <a href="about.html">Our Story</a>
+          </div>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <div class="footer__contact-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>375 Linhart Ave NE, Suite B<br>Napavine, WA 98565</span>
+          </div>
+          <div class="footer__contact-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>(360) 644-5222</span>
+          </div>
+          <div class="footer__contact-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>info@lcautism.org</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2026 Lewis County Autism Coalition. All rights reserved. 501(c)(3) Nonprofit.</p>
+        <div><a href="privacy.html">Privacy Policy</a> &middot; <a href="espanol.html">Espanol</a></div>
+      </div>
+      <div class="footer__credit">
+        <svg width="16" height="16" viewBox="0 0 100 100" fill="currentColor"><path d="M52 18 C56 12, 62 8, 60 4 C58 2, 54 6, 52 10 C50 6, 46 2, 44 4 C42 8, 48 12, 52 18Z"/><ellipse cx="50" cy="24" rx="12" ry="11"/><ellipse cx="54" cy="22" rx="2.5" ry="2.5" fill="#0a0a0a"/><ellipse cx="54.5" cy="21.5" rx="1" ry="1" fill="white"/><path d="M62 25 L74 23 L62 27Z"/><ellipse cx="46" cy="50" rx="18" ry="20"/><path d="M36 66 C28 72, 20 80, 12 90 L18 90 C24 82, 30 74, 38 68Z"/></svg>
+        Created by&nbsp;<a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">bluejayportfolio.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top" aria-label="Back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </a>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/events-data.js"></script>
+  <script>
+  // ============================================================
+  // LCAC Events Renderer
+  // ============================================================
+  (function() {
+    var W3F_KEY = '[[WEB3FORMS_ACCESS_KEY]]'; // Replace with real key from web3forms.com
+    var NOTIFY_EMAIL = 'info@lcautism.org';
+
+    // ---- Helpers ----
+    function formatDate(iso, endIso) {
+      var opts = { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Los_Angeles' };
+      var d = new Date(iso + 'T12:00:00');
+      var str = d.toLocaleDateString('en-US', opts);
+      if (endIso && endIso !== iso) {
+        var d2 = new Date(endIso + 'T12:00:00');
+        str += ' – ' + d2.toLocaleDateString('en-US', opts);
+      }
+      return str;
+    }
+
+    function isPast(iso) {
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      var d = new Date(iso + 'T23:59:59');
+      return d < today;
+    }
+
+    function videoEmbedUrl(url) {
+      if (!url) return '';
+      // YouTube
+      var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+      if (ytMatch) return 'https://www.youtube.com/embed/' + ytMatch[1];
+      // YouTube embed URL already
+      if (url.includes('youtube.com/embed/')) return url;
+      // Facebook video
+      if (url.includes('facebook.com')) {
+        return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=0';
+      }
+      return '';
+    }
+
+    function badgeClass(cat) {
+      var map = { meeting:'meeting', group:'group', fundraiser:'fundraiser', program:'program', workshop:'workshop' };
+      return 'badge--' + (map[cat] || 'program');
+    }
+
+    function badgeLabel(cat) {
+      var map = { meeting:'Meeting', group:'Group', fundraiser:'Fundraiser', program:'Program', workshop:'Workshop' };
+      return map[cat] || cat;
+    }
+
+    // ---- Build event card HTML ----
+    function buildCard(ev, past) {
+      var dateStr = formatDate(ev.date, ev.endDate);
+      var embedUrl = videoEmbedUrl(ev.videoUrl || '');
+
+      var videoHtml = embedUrl ? '<div class="event-video"><iframe src="' + embedUrl + '" allowfullscreen loading="lazy" title="' + ev.title.replace(/"/g,'') + ' video"></iframe><p class="event-video__label">Event video</p></div>' : '';
+
+      var pdfHtml = ev.pdfUrl ? '<a href="../assets/flyers/' + ev.pdfUrl + '" download class="event-pdf"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Download Flyer (PDF)</a>' : '';
+
+      var rsvpBtn = (!past && ev.rsvpRequired) ? '<button class="rsvp-toggle" data-event-id="' + ev.id + '" aria-expanded="false" aria-controls="rsvp-' + ev.id + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>RSVP</button>' : '';
+
+      var rsvpForm = (!past && ev.rsvpRequired) ? '<div class="rsvp-form-wrap" id="rsvp-' + ev.id + '" role="region" aria-label="RSVP form">' +
+        '<h4>RSVP for ' + ev.title + '</h4>' +
+        '<form data-event-id="' + ev.id + '" data-event-title="' + ev.title.replace(/"/g,'&quot;') + '" data-event-date="' + dateStr.replace(/"/g,'') + '">' +
+        '<input type="hidden" name="access_key" value="' + W3F_KEY + '">' +
+        '<input type="hidden" name="subject" value="RSVP: ' + ev.title.replace(/"/g,'') + '">' +
+        '<input type="hidden" name="from_name" value="LCAC Event RSVP">' +
+        '<input type="hidden" name="redirect" value="false">' +
+        '<input type="hidden" name="event_title" value="' + ev.title.replace(/"/g,'') + '">' +
+        '<input type="hidden" name="event_date" value="' + dateStr + '">' +
+        '<input type="checkbox" name="botcheck" style="display:none" tabindex="-1" aria-hidden="true">' +
+        '<div class="rsvp-row">' +
+          '<div class="form-group"><label class="form-label" for="rsvp-name-' + ev.id + '">Your Name *</label><input type="text" id="rsvp-name-' + ev.id + '" name="name" class="form-input" required placeholder="First and last name"></div>' +
+          '<div class="form-group"><label class="form-label" for="rsvp-email-' + ev.id + '">Email *</label><input type="email" id="rsvp-email-' + ev.id + '" name="email" class="form-input" required placeholder="your@email.com"></div>' +
+        '</div>' +
+        '<div class="form-group"><label class="form-label" for="rsvp-attending-' + ev.id + '">Number Attending *</label><input type="number" id="rsvp-attending-' + ev.id + '" name="number_attending" class="form-input" required min="1" max="20" placeholder="1"></div>' +
+        '<button type="submit" class="rsvp-submit">Confirm RSVP</button>' +
+        '<div class="rsvp-status" role="status" aria-live="polite"></div>' +
+        '</form></div>' : '';
+
+      return '<div class="event-card' + (past ? ' past-card' : '') + '" id="event-' + ev.id + '">' +
+        '<div class="event-card__header">' +
+          '<div class="event-card__meta">' +
+            '<span class="event-card__badge ' + badgeClass(ev.category) + '">' + badgeLabel(ev.category) + '</span>' +
+            '<div class="event-card__date">' + dateStr + '</div>' +
+            '<div class="event-card__time">' + ev.time + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="event-card__body">' +
+          '<h3 class="event-card__title">' + ev.title + '</h3>' +
+          '<div class="event-card__location">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+            '<span>' + ev.location + '</span>' +
+          '</div>' +
+          '<p class="event-card__desc">' + ev.description + '</p>' +
+          '<div class="event-card__actions">' + rsvpBtn + pdfHtml + '</div>' +
+        '</div>' +
+        videoHtml +
+        rsvpForm +
+        '</div>';
+    }
+
+    // ---- Render ----
+    function render() {
+      var upcoming = [], past = [];
+      (LCAC_EVENTS || []).forEach(function(ev) {
+        if (!ev.active) return;
+        (isPast(ev.endDate || ev.date) ? past : upcoming).push(ev);
+      });
+
+      // Sort upcoming ascending, past descending
+      upcoming.sort(function(a,b){ return a.date > b.date ? 1 : -1; });
+      past.sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+
+      var upGrid = document.getElementById('upcoming-events-grid');
+      var emptyState = document.getElementById('events-empty-state');
+      if (upcoming.length) {
+        upGrid.innerHTML = upcoming.map(function(ev){ return buildCard(ev, false); }).join('');
+        emptyState.style.display = 'none';
+        upGrid.style.display = '';
+      } else {
+        upGrid.style.display = 'none';
+        emptyState.style.display = '';
+      }
+
+      var pastSection = document.getElementById('past-events-section');
+      var pastGrid = document.getElementById('past-events-grid');
+      if (past.length) {
+        pastGrid.innerHTML = past.map(function(ev){ return buildCard(ev, true); }).join('');
+        pastSection.style.display = '';
+      } else {
+        pastSection.style.display = 'none';
+      }
+
+      // Bind RSVP toggles
+      document.querySelectorAll('.rsvp-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.dataset.eventId;
+          var wrap = document.getElementById('rsvp-' + id);
+          var open = wrap.classList.toggle('open');
+          this.setAttribute('aria-expanded', open);
+        });
+      });
+
+      // Bind RSVP form submissions
+      document.querySelectorAll('.rsvp-form-wrap form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var btn = form.querySelector('.rsvp-submit');
+          var status = form.querySelector('.rsvp-status');
+          btn.disabled = true;
+          btn.textContent = 'Submitting...';
+          status.textContent = '';
+          status.className = 'rsvp-status';
+
+          var data = new FormData(form);
+          fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+            .then(function(r){ return r.json(); })
+            .then(function(json) {
+              if (json.success) {
+                status.textContent = '\u2713 You\u2019re signed up! We\u2019ll see you there.';
+                status.className = 'rsvp-status success';
+                form.reset();
+                // Keep form open to show success
+              } else {
+                throw new Error(json.message || 'Submission failed');
+              }
+            })
+            .catch(function(err) {
+              status.textContent = 'Something went wrong. Please email info@lcautism.org to RSVP.';
+              status.className = 'rsvp-status error';
+            })
+            .finally(function() {
+              btn.disabled = false;
+              btn.textContent = 'Confirm RSVP';
+            });
+        });
+      });
+    }
+
+    // Past events toggle
+    document.getElementById('past-toggle-btn').addEventListener('click', function() {
+      var grid = document.getElementById('past-events-grid');
+      var open = grid.classList.toggle('open');
+      this.setAttribute('aria-expanded', open);
+      var icon = this.querySelector('svg');
+      icon.style.transform = open ? 'rotate(180deg)' : '';
+      this.querySelector('svg').nextSibling
+        ? (this.innerHTML = this.innerHTML.replace(open ? 'Show past events' : 'Hide past events', open ? 'Hide past events' : 'Show past events'))
+        : null;
+      this.lastChild.textContent = open ? 'Hide past events' : 'Show past events';
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>
