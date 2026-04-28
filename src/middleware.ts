@@ -137,6 +137,7 @@ const PUBLIC_API_PATHS = [
   "/api/checkout/free-tier/",          // Free-tier checkout entry point — Ben sends this URL to vetted free-tier prospects (URL-as-secret)
   "/api/audit/submit",                 // Public audit-form submission (Hormozi salty-pretzel lead-magnet)
   "/api/audit/",                       // Audit status polling endpoints (URL-as-secret)
+  "/api/schedule/audit-call",          // Public "book a call with Ben" form from /schedule (audit lead CTA)
   "/api/domain-suggestions/",          // Public auto-domain-suggest for the onboarding Step 1 (URL-as-secret pattern — prospect UUID in path)
   "/api/hyperloop/",                   // Vercel cron (weekly) — gated by CRON_SECRET in the handler. Karpathy auto-research loop, dormant until 100 audits + 5 sales
   "/api/watchdog/",                    // Vercel cron (daily 13:00 UTC) — gated by CRON_SECRET. Rule 66 heartbeat checker for all monitored crons + stuck-audit detector
