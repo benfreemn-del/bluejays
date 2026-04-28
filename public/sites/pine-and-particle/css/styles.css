@@ -515,6 +515,8 @@ a { text-decoration: none; color: inherit; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
 .about-text h2 { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.25rem; letter-spacing: -0.02em; }
 .about-text p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; font-size: 0.97rem; }
+.about-cert { margin-top: 1.75rem; }
+.iac2-logo { height: 48px; width: auto; opacity: 0.85; }
 .credentials {
     background: linear-gradient(160deg, #1f3d2b 0%, var(--bg-card) 100%);
     border: 1px solid rgba(74,222,128,0.25);
