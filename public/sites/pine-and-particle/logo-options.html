@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pine &amp; Particle Co. — Logo Concepts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --pine: #1b5e35;
+            --pine-mid: #2d7a4e;
+            --pine-light: #4a9e6e;
+            --particle: #0b7065;
+            --bark: #4a3223;
+            --mist: #e8f0eb;
+            --cream: #f7faf8;
+            --ink: #1a2520;
+            --ink-mid: #3a4d42;
+            --ink-soft: #6b8070;
+        }
+
+        body {
+            background: #f2f5f3;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* ── Cover ── */
+        .cover {
+            background: var(--ink);
+            padding: 80px 40px 72px;
+            text-align: center;
+            border-bottom: 3px solid var(--pine-mid);
+        }
+        .cover-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--pine-light);
+            display: block;
+            margin-bottom: 20px;
+        }
+        .cover h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            color: #f0f8f4;
+            line-height: 1.12;
+            margin-bottom: 16px;
+        }
+        .cover-sub {
+            font-size: 1rem;
+            color: #7aab8a;
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.65;
+        }
+        .cover-bar {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        .cover-chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            color: #4a7a5a;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border: 1px solid #2a4535;
+            border-radius: 100px;
+        }
+
+        /* ── Page layout ── */
+        .concepts { padding: 80px 24px 120px; max-width: 1100px; margin: 0 auto; }
+
+        /* ── Concept block ── */
+        .concept {
+            margin-bottom: 96px;
+        }
+        .concept-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 36px;
+            border-bottom: 1px solid #d0dbd4;
+            padding-bottom: 18px;
+        }
+        .concept-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--pine-light);
+            letter-spacing: 0.08em;
+        }
+        .concept-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--ink);
+        }
+        .concept-rationale {
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+            line-height: 1.7;
+            margin-left: auto;
+            max-width: 280px;
+            font-style: italic;
+        }
+
+        /* ── Logo showcase grid ── */
+        .showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.10);
+        }
+        @media (max-width: 680px) {
+            .showcase { grid-template-columns: 1fr; }
+            .concept-rationale { max-width: 100%; margin-left: 0; margin-top: 8px; }
+            .concept-header { flex-wrap: wrap; }
+        }
+
+        .panel {
+            padding: 48px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+        }
+        .panel-dark  { background: var(--ink); }
+        .panel-mid   { background: var(--pine); }
+        .panel-light { background: #ffffff; }
+        .panel-cream { background: var(--cream); }
+        .panel-mist  { background: var(--mist); }
+
+        .panel-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .panel-dark .panel-label  { color: #3a5a45; }
+        .panel-mid .panel-label   { color: rgba(255,255,255,0.4); }
+        .panel-light .panel-label { color: #aabfb2; }
+        .panel-cream .panel-label { color: #8aaB96; }
+        .panel-mist .panel-label  { color: #7a9a88; }
+
+        /* ── Wordmark helper ── */
+        .wm-name-dark  { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: #f0f8f4; letter-spacing: 0.01em; }
+        .wm-name-light { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--ink); letter-spacing: 0.01em; }
+        .wm-name-pine  { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: #ffffff; letter-spacing: 0.01em; }
+        .wm-tag-dark   { font-family: 'DM Sans', sans-serif; font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--pine-light); margin-top: 3px; }
+        .wm-tag-light  { font-family: 'DM Sans', sans-serif; font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--pine-mid); margin-top: 3px; }
+        .wm-tag-pine   { font-family: 'DM Sans', sans-serif; font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-top: 3px; }
+        .wm-text { text-align: left; }
+        .lockup-row { display: flex; align-items: center; gap: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="cover">
+    <span class="cover-eyebrow">Brand Identity Concepts — 2026</span>
+    <h1>Pine &amp; Particle Co.</h1>
+    <p class="cover-sub">Five logo directions. Olympic Peninsula air &amp; mold inspection. Each concept explores the duality of nature and science.</p>
+    <div class="cover-bar">
+        <span class="cover-chip">5 Concepts</span>
+        <span class="cover-chip">Dark &amp; Light</span>
+        <span class="cover-chip">Wordmark + Mark</span>
+    </div>
+</div>
+
+<div class="concepts">
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 1 — PARTICLE PINE
+     Pine tree where the crown dissolves into floating dots.
+     The transformation from solid to scatter = nature meeting science.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+    <div class="concept-header">
+        <span class="concept-number">01 /</span>
+        <span class="concept-name">Particle Pine</span>
+        <span class="concept-rationale">The tree dissolves upward into its own particles — the exact moment nature becomes science. Every mold spore starts as part of something living.</span>
+    </div>
+    <div class="showcase">
+
+        <!-- Panel A: Dark background, mark only -->
+        <div class="panel panel-dark">
+            <span class="panel-label">Dark · Mark</span>
+            <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Solid trunk -->
+                <rect x="33" y="62" width="6" height="14" rx="2" fill="#3a5a42"/>
+                <!-- Lower canopy — solid -->
+                <polygon points="36,10 14,46 58,46" fill="#2d7a4e"/>
+                <!-- Mid canopy — solid, overlapping -->
+                <polygon points="36,22 18,50 54,50" fill="#2d7a4e"/>
+                <!-- Particle crown — dots that float upward -->
+                <!-- Row 1 — tightest -->
+                <circle cx="30" cy="8" r="2.5" fill="#4ade80" opacity="0.95"/>
+                <circle cx="36" cy="4" r="3"   fill="#4ade80" opacity="0.9"/>
+                <circle cx="42" cy="8" r="2.5" fill="#4ade80" opacity="0.9"/>
+                <!-- Row 2 — spreading -->
+                <circle cx="24" cy="16" r="2"  fill="#4ade80" opacity="0.7"/>
+                <circle cx="31" cy="12" r="2.8" fill="#4ade80" opacity="0.85"/>
+                <circle cx="41" cy="12" r="2.8" fill="#4ade80" opacity="0.85"/>
+                <circle cx="48" cy="16" r="2"  fill="#4ade80" opacity="0.65"/>
+                <!-- Row 3 — fading out -->
+                <circle cx="20" cy="22" r="1.5" fill="#4ade80" opacity="0.45"/>
+                <circle cx="27" cy="20" r="1.8" fill="#4ade80" opacity="0.55"/>
+                <circle cx="45" cy="20" r="1.8" fill="#4ade80" opacity="0.55"/>
+                <circle cx="52" cy="22" r="1.5" fill="#4ade80" opacity="0.4"/>
+                <!-- Stray dots — very faint -->
+                <circle cx="16" cy="28" r="1.2" fill="#4ade80" opacity="0.25"/>
+                <circle cx="56" cy="27" r="1.2" fill="#4ade80" opacity="0.22"/>
+                <circle cx="23" cy="30" r="0.9" fill="#4ade80" opacity="0.18"/>
+                <circle cx="50" cy="31" r="0.9" fill="#4ade80" opacity="0.18"/>
+            </svg>
+        </div>
+
+        <!-- Panel B: Pine green, lockup -->
+        <div class="panel panel-mid">
+            <span class="panel-label">Forest · Lockup</span>
+            <div class="lockup-row">
+                <svg width="38" height="44" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="33" y="62" width="6" height="14" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <polygon points="36,10 14,46 58,46" fill="rgba(255,255,255,0.85)"/>
+                    <polygon points="36,22 18,50 54,50" fill="rgba(255,255,255,0.85)"/>
+                    <circle cx="30" cy="8"  r="2.5" fill="white" opacity="0.95"/>
+                    <circle cx="36" cy="4"  r="3"   fill="white" opacity="0.9"/>
+                    <circle cx="42" cy="8"  r="2.5" fill="white" opacity="0.9"/>
+                    <circle cx="24" cy="16" r="2"   fill="white" opacity="0.7"/>
+                    <circle cx="31" cy="12" r="2.8" fill="white" opacity="0.8"/>
+                    <circle cx="41" cy="12" r="2.8" fill="white" opacity="0.8"/>
+                    <circle cx="48" cy="16" r="2"   fill="white" opacity="0.65"/>
+                    <circle cx="20" cy="22" r="1.5" fill="white" opacity="0.4"/>
+                    <circle cx="52" cy="22" r="1.5" fill="white" opacity="0.35"/>
+                </svg>
+                <div class="wm-text">
+                    <div class="wm-name-pine">Pine &amp; Particle Co.</div>
+                    <div class="wm-tag-pine">Air Quality · Mold Inspection</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel C: White background, mark only -->
+        <div class="panel panel-light">
+            <span class="panel-label">Light · Mark</span>
+            <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="33" y="62" width="6" height="14" rx="2" fill="#a8c4b0"/>
+                <polygon points="36,10 14,46 58,46" fill="#1b5e35"/>
+                <polygon points="36,22 18,50 54,50" fill="#1b5e35"/>
+                <circle cx="30" cy="8"  r="2.5" fill="#0b7065" opacity="0.95"/>
+                <circle cx="36" cy="4"  r="3"   fill="#0b7065" opacity="0.9"/>
+                <circle cx="42" cy="8"  r="2.5" fill="#0b7065" opacity="0.9"/>
+                <circle cx="24" cy="16" r="2"   fill="#0b7065" opacity="0.65"/>
+                <circle cx="31" cy="12" r="2.8" fill="#0b7065" opacity="0.8"/>
+                <circle cx="41" cy="12" r="2.8" fill="#0b7065" opacity="0.8"/>
+                <circle cx="48" cy="16" r="2"   fill="#0b7065" opacity="0.6"/>
+                <circle cx="20" cy="22" r="1.5" fill="#0b7065" opacity="0.38"/>
+                <circle cx="52" cy="22" r="1.5" fill="#0b7065" opacity="0.32"/>
+                <circle cx="16" cy="28" r="1.2" fill="#0b7065" opacity="0.18"/>
+                <circle cx="56" cy="27" r="1.2" fill="#0b7065" opacity="0.15"/>
+            </svg>
+        </div>
+
+    </div><!-- /showcase -->
+</div><!-- /concept 1 -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 2 — THE NEEDLE
+     A single pine needle, elegantly geometric. The tip is a
+     particle dot. Minimal. Works at any size. Pure essence.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+    <div class="concept-header">
+        <span class="concept-number">02 /</span>
+        <span class="concept-name">The Needle</span>
+        <span class="concept-rationale">One pine needle. One particle. The most reduced version of the brand idea — a world-class mark lives in subtraction, not addition.</span>
+    </div>
+    <div class="showcase">
+
+        <!-- Panel A: Dark -->
+        <div class="panel panel-dark">
+            <span class="panel-label">Dark · Mark</span>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Two diagonal pine needles crossing at center, sprouting from a node -->
+                <!-- Left needle -->
+                <line x1="40" y1="40" x2="12" y2="14" stroke="#3a7a5a" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Right needle -->
+                <line x1="40" y1="40" x2="68" y2="14" stroke="#3a7a5a" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Stem downward -->
+                <line x1="40" y1="40" x2="40" y2="68" stroke="#2d5a42" stroke-width="2" stroke-linecap="round"/>
+                <!-- Node center -->
+                <circle cx="40" cy="40" r="4" fill="#2d7a4e"/>
+                <!-- Particle tip left -->
+                <circle cx="12" cy="14" r="5" fill="#4ade80"/>
+                <!-- Particle tip right -->
+                <circle cx="68" cy="14" r="5" fill="#4ade80"/>
+                <!-- Mini particle scatter near tips -->
+                <circle cx="6"  cy="10" r="2" fill="#4ade80" opacity="0.5"/>
+                <circle cx="16" cy="8"  r="1.5" fill="#4ade80" opacity="0.38"/>
+                <circle cx="74" cy="10" r="2" fill="#4ade80" opacity="0.5"/>
+                <circle cx="64" cy="8"  r="1.5" fill="#4ade80" opacity="0.38"/>
+            </svg>
+        </div>
+
+        <!-- Panel B: Pine green lockup -->
+        <div class="panel panel-mid">
+            <span class="panel-label">Forest · Lockup</span>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+                <svg width="52" height="52" viewBox="0 0 80 80" fill="none">
+                    <line x1="40" y1="40" x2="12" y2="14" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="40" y1="40" x2="68" y2="14" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="40" y1="40" x2="40" y2="68" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="40" cy="40" r="4" fill="rgba(255,255,255,0.7)"/>
+                    <circle cx="12" cy="14" r="5" fill="white"/>
+                    <circle cx="68" cy="14" r="5" fill="white"/>
+                    <circle cx="6"  cy="10" r="2" fill="white" opacity="0.55"/>
+                    <circle cx="74" cy="10" r="2" fill="white" opacity="0.55"/>
+                </svg>
+                <div style="text-align:center;">
+                    <div class="wm-name-pine" style="font-size:1.1rem;">Pine &amp; Particle Co.</div>
+                    <div class="wm-tag-pine" style="text-align:center;margin-top:4px;">Olympic Peninsula</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel C: Light -->
+        <div class="panel panel-cream">
+            <span class="panel-label">Cream · Mark</span>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                <line x1="40" y1="40" x2="12" y2="14" stroke="#7aab8a" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="40" y1="40" x2="68" y2="14" stroke="#7aab8a" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="40" y1="40" x2="40" y2="68" stroke="#a8c4b0" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="40" cy="40" r="4" fill="#2d7a4e"/>
+                <circle cx="12" cy="14" r="5" fill="#0b7065"/>
+                <circle cx="68" cy="14" r="5" fill="#0b7065"/>
+                <circle cx="6"  cy="10" r="2" fill="#0b7065" opacity="0.5"/>
+                <circle cx="16" cy="8"  r="1.5" fill="#0b7065" opacity="0.35"/>
+                <circle cx="74" cy="10" r="2" fill="#0b7065" opacity="0.5"/>
+                <circle cx="64" cy="8"  r="1.5" fill="#0b7065" opacity="0.35"/>
+            </svg>
+        </div>
+
+    </div>
+</div><!-- /concept 2 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 3 — SPORE LENS
+     A magnifying circle (the inspector's tool) with a stylized
+     pine inside. The lens frame = science. The pine = nature.
+     The crosshair = precision.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+    <div class="concept-header">
+        <span class="concept-number">03 /</span>
+        <span class="concept-name">Spore Lens</span>
+        <span class="concept-rationale">The inspector's magnifying lens becomes the brand mark — looking closely at the natural world. Inside: a pine that's also a compass rose. Outside: a ring of eight particle dots.</span>
+    </div>
+    <div class="showcase">
+
+        <!-- Panel A: Dark -->
+        <div class="panel panel-dark">
+            <span class="panel-label">Dark · Mark</span>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer ring -->
+                <circle cx="40" cy="40" r="32" stroke="#2d7a4e" stroke-width="2.2" fill="none"/>
+                <!-- 8 spore dots around ring -->
+                <circle cx="40"    cy="8"    r="3.5" fill="#4ade80"/>
+                <circle cx="62.6"  cy="17.4" r="3.5" fill="#4ade80" opacity="0.85"/>
+                <circle cx="72"    cy="40"   r="3.5" fill="#4ade80" opacity="0.75"/>
+                <circle cx="62.6"  cy="62.6" r="3.5" fill="#4ade80" opacity="0.65"/>
+                <circle cx="40"    cy="72"   r="3.5" fill="#4ade80" opacity="0.55"/>
+                <circle cx="17.4"  cy="62.6" r="3.5" fill="#4ade80" opacity="0.65"/>
+                <circle cx="8"     cy="40"   r="3.5" fill="#4ade80" opacity="0.75"/>
+                <circle cx="17.4"  cy="17.4" r="3.5" fill="#4ade80" opacity="0.85"/>
+                <!-- Pine silhouette inside ring -->
+                <polygon points="40,18 26,42 54,42" fill="#3a8a58" opacity="0.9"/>
+                <polygon points="40,26 28,46 52,46" fill="#2d7a4e"/>
+                <rect x="38" y="46" width="4" height="10" rx="1.5" fill="#2a5a3c"/>
+            </svg>
+        </div>
+
+        <!-- Panel B: Pine lockup -->
+        <div class="panel panel-mid">
+            <span class="panel-label">Forest · Lockup</span>
+            <div class="lockup-row">
+                <svg width="44" height="44" viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="32" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" fill="none"/>
+                    <circle cx="40"   cy="8"    r="3.5" fill="white"/>
+                    <circle cx="62.6" cy="17.4" r="3.5" fill="white" opacity="0.8"/>
+                    <circle cx="72"   cy="40"   r="3.5" fill="white" opacity="0.7"/>
+                    <circle cx="62.6" cy="62.6" r="3.5" fill="white" opacity="0.6"/>
+                    <circle cx="40"   cy="72"   r="3.5" fill="white" opacity="0.5"/>
+                    <circle cx="17.4" cy="62.6" r="3.5" fill="white" opacity="0.6"/>
+                    <circle cx="8"    cy="40"   r="3.5" fill="white" opacity="0.7"/>
+                    <circle cx="17.4" cy="17.4" r="3.5" fill="white" opacity="0.8"/>
+                    <polygon points="40,18 26,42 54,42" fill="rgba(255,255,255,0.8)"/>
+                    <polygon points="40,26 28,46 52,46" fill="rgba(255,255,255,0.9)"/>
+                    <rect x="38" y="46" width="4" height="10" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+                </svg>
+                <div class="wm-text">
+                    <div class="wm-name-pine">Pine &amp; Particle Co.</div>
+                    <div class="wm-tag-pine">Air &amp; Mold Inspection</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel C: Light -->
+        <div class="panel panel-light">
+            <span class="panel-label">White · Mark</span>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                <circle cx="40" cy="40" r="32" stroke="#2d7a4e" stroke-width="2.2" fill="none"/>
+                <circle cx="40"    cy="8"    r="3.5" fill="#1b5e35"/>
+                <circle cx="62.6"  cy="17.4" r="3.5" fill="#1b5e35" opacity="0.85"/>
+                <circle cx="72"    cy="40"   r="3.5" fill="#1b5e35" opacity="0.7"/>
+                <circle cx="62.6"  cy="62.6" r="3.5" fill="#1b5e35" opacity="0.6"/>
+                <circle cx="40"    cy="72"   r="3.5" fill="#1b5e35" opacity="0.5"/>
+                <circle cx="17.4"  cy="62.6" r="3.5" fill="#1b5e35" opacity="0.6"/>
+                <circle cx="8"     cy="40"   r="3.5" fill="#1b5e35" opacity="0.7"/>
+                <circle cx="17.4"  cy="17.4" r="3.5" fill="#1b5e35" opacity="0.85"/>
+                <polygon points="40,18 26,42 54,42" fill="#2d7a4e" opacity="0.85"/>
+                <polygon points="40,26 28,46 52,46" fill="#1b5e35"/>
+                <rect x="38" y="46" width="4" height="10" rx="1.5" fill="#3a5a42"/>
+            </svg>
+        </div>
+
+    </div>
+</div><!-- /concept 3 -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 4 — BREATHE MARK
+     Pine tree silhouette with three curved "air waves" rising
+     from the canopy. Instantly reads: clean air. Fresh breath.
+     The Olympic Peninsula wind off the Strait of Juan de Fuca.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+    <div class="concept-header">
+        <span class="concept-number">04 /</span>
+        <span class="concept-name">Breathe Mark</span>
+        <span class="concept-rationale">Clean air starts in nature. The three arcing lines above the pine read as breath, wind, signal, and presence — all at once. Simple enough to be a stamp, expressive enough to tell a story.</span>
+    </div>
+    <div class="showcase">
+
+        <!-- Panel A: Dark -->
+        <div class="panel panel-dark">
+            <span class="panel-label">Dark · Mark</span>
+            <svg width="80" height="88" viewBox="0 0 80 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Trunk -->
+                <rect x="37" y="68" width="6" height="16" rx="2" fill="#2a5a3c"/>
+                <!-- Pine body — two layers -->
+                <polygon points="40,28 18,60 62,60" fill="#2d7a4e"/>
+                <polygon points="40,16 22,52 58,52" fill="#3a8a58"/>
+                <!-- Wave 1 — tight -->
+                <path d="M28,18 Q40,10 52,18" stroke="#4ade80" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                <!-- Wave 2 — medium -->
+                <path d="M22,12 Q40,2  58,12" stroke="#4ade80" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
+                <!-- Wave 3 — wide, faint -->
+                <path d="M16,6  Q40,-6 64,6"  stroke="#4ade80" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+        </div>
+
+        <!-- Panel B: Pine lockup -->
+        <div class="panel panel-mid">
+            <span class="panel-label">Forest · Lockup</span>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+                <svg width="48" height="52" viewBox="0 0 80 88" fill="none">
+                    <rect x="37" y="68" width="6" height="16" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <polygon points="40,28 18,60 62,60" fill="rgba(255,255,255,0.7)"/>
+                    <polygon points="40,16 22,52 58,52" fill="rgba(255,255,255,0.9)"/>
+                    <path d="M28,18 Q40,10 52,18" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M22,12 Q40,2  58,12" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.65"/>
+                    <path d="M16,6  Q40,-6 64,6"  stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.38"/>
+                </svg>
+                <div style="text-align:center;">
+                    <div class="wm-name-pine" style="font-size:1.1rem;letter-spacing:-0.01em;">Pine &amp; Particle Co.</div>
+                    <div class="wm-tag-pine" style="text-align:center;margin-top:5px;">Breathe Easier</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel C: White -->
+        <div class="panel panel-light">
+            <span class="panel-label">White · Mark</span>
+            <svg width="80" height="88" viewBox="0 0 80 88" fill="none">
+                <rect x="37" y="68" width="6" height="16" rx="2" fill="#a8c4b0"/>
+                <polygon points="40,28 18,60 62,60" fill="#1b5e35"/>
+                <polygon points="40,16 22,52 58,52" fill="#2d7a4e"/>
+                <path d="M28,18 Q40,10 52,18" stroke="#0b7065" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                <path d="M22,12 Q40,2  58,12" stroke="#0b7065" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.65"/>
+                <path d="M16,6  Q40,-6 64,6"  stroke="#0b7065" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.38"/>
+            </svg>
+        </div>
+
+    </div>
+</div><!-- /concept 4 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 5 — P&P MONOGRAM
+     A pure typographic mark. The two Ps share a central spine.
+     The counters of the letters hold a particle cluster.
+     Wordmark-forward for professional documents and signage.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="concept">
+    <div class="concept-header">
+        <span class="concept-number">05 /</span>
+        <span class="concept-name">P&amp;P Monogram</span>
+        <span class="concept-rationale">Some of the world's strongest brands are pure letterforms. Two Ps, mirrored, sharing a spine. The ampersand becomes the bridge between nature and science. Clean, versatile, unmistakable at 16px.</span>
+    </div>
+    <div class="showcase">
+
+        <!-- Panel A: Dark -->
+        <div class="panel panel-dark">
+            <span class="panel-label">Dark · Mark</span>
+            <svg width="88" height="72" viewBox="0 0 88 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left P -->
+                <rect x="10" y="12" width="5" height="48" rx="2.5" fill="#3a8a58"/>
+                <path d="M15,12 Q34,12 34,25 Q34,38 15,38" stroke="#3a8a58" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Particle dots in left P counter -->
+                <circle cx="22" cy="22" r="2.2" fill="#4ade80" opacity="0.8"/>
+                <circle cx="27" cy="27" r="1.8" fill="#4ade80" opacity="0.6"/>
+                <circle cx="22" cy="32" r="1.5" fill="#4ade80" opacity="0.45"/>
+
+                <!-- Ampersand center — small, elegant -->
+                <text x="40" y="44" font-family="DM Serif Display, Georgia, serif" font-size="22" fill="#2d7a4e" text-anchor="middle">&amp;</text>
+
+                <!-- Right P — mirrored -->
+                <rect x="73" y="12" width="5" height="48" rx="2.5" fill="#3a8a58"/>
+                <path d="M73,12 Q54,12 54,25 Q54,38 73,38" stroke="#3a8a58" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Particle dots in right P counter -->
+                <circle cx="66" cy="22" r="2.2" fill="#4ade80" opacity="0.8"/>
+                <circle cx="61" cy="27" r="1.8" fill="#4ade80" opacity="0.6"/>
+                <circle cx="66" cy="32" r="1.5" fill="#4ade80" opacity="0.45"/>
+            </svg>
+        </div>
+
+        <!-- Panel B: Pine lockup -->
+        <div class="panel panel-mid">
+            <span class="panel-label">Forest · Lockup</span>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+                <svg width="66" height="54" viewBox="0 0 88 72" fill="none">
+                    <rect x="10" y="12" width="5" height="48" rx="2.5" fill="rgba(255,255,255,0.75)"/>
+                    <path d="M15,12 Q34,12 34,25 Q34,38 15,38" stroke="rgba(255,255,255,0.75)" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <circle cx="22" cy="22" r="2.2" fill="white" opacity="0.9"/>
+                    <circle cx="27" cy="27" r="1.8" fill="white" opacity="0.65"/>
+                    <circle cx="22" cy="32" r="1.5" fill="white" opacity="0.5"/>
+                    <text x="40" y="44" font-family="DM Serif Display, Georgia, serif" font-size="22" fill="rgba(255,255,255,0.55)" text-anchor="middle">&amp;</text>
+                    <rect x="73" y="12" width="5" height="48" rx="2.5" fill="rgba(255,255,255,0.75)"/>
+                    <path d="M73,12 Q54,12 54,25 Q54,38 73,38" stroke="rgba(255,255,255,0.75)" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <circle cx="66" cy="22" r="2.2" fill="white" opacity="0.9"/>
+                    <circle cx="61" cy="27" r="1.8" fill="white" opacity="0.65"/>
+                    <circle cx="66" cy="32" r="1.5" fill="white" opacity="0.5"/>
+                </svg>
+                <div class="wm-name-pine" style="font-size:1.02rem;text-align:center;">Pine &amp; Particle Co.</div>
+            </div>
+        </div>
+
+        <!-- Panel C: Light -->
+        <div class="panel panel-mist">
+            <span class="panel-label">Mist · Mark</span>
+            <svg width="88" height="72" viewBox="0 0 88 72" fill="none">
+                <rect x="10" y="12" width="5" height="48" rx="2.5" fill="#1b5e35"/>
+                <path d="M15,12 Q34,12 34,25 Q34,38 15,38" stroke="#1b5e35" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <circle cx="22" cy="22" r="2.2" fill="#0b7065" opacity="0.85"/>
+                <circle cx="27" cy="27" r="1.8" fill="#0b7065" opacity="0.62"/>
+                <circle cx="22" cy="32" r="1.5" fill="#0b7065" opacity="0.45"/>
+                <text x="40" y="44" font-family="DM Serif Display, Georgia, serif" font-size="22" fill="#2d7a4e" text-anchor="middle">&amp;</text>
+                <rect x="73" y="12" width="5" height="48" rx="2.5" fill="#1b5e35"/>
+                <path d="M73,12 Q54,12 54,25 Q54,38 73,38" stroke="#1b5e35" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <circle cx="66" cy="22" r="2.2" fill="#0b7065" opacity="0.85"/>
+                <circle cx="61" cy="27" r="1.8" fill="#0b7065" opacity="0.62"/>
+                <circle cx="66" cy="32" r="1.5" fill="#0b7065" opacity="0.45"/>
+            </svg>
+        </div>
+
+    </div>
+</div><!-- /concept 5 -->
+
+
+<!-- ── Color Palette ── -->
+<div style="margin-top:80px; padding-top:56px; border-top:1px solid #d0dbd4;">
+    <div style="text-align:center; margin-bottom:48px;">
+        <span style="font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#6b8070;">Brand Palette</span>
+        <h2 style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#1a2520;margin-top:10px;">Suggested Colors</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:680px;margin:0 auto;">
+        <div style="text-align:center;">
+            <div style="height:80px;border-radius:12px;background:#1b5e35;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,0.12);"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b8070;letter-spacing:0.1em;">#1b5e35</div>
+            <div style="font-size:0.72rem;color:#3a4d42;margin-top:2px;font-weight:500;">Pine</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="height:80px;border-radius:12px;background:#2d7a4e;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,0.1);"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b8070;letter-spacing:0.1em;">#2d7a4e</div>
+            <div style="font-size:0.72rem;color:#3a4d42;margin-top:2px;font-weight:500;">Canopy</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="height:80px;border-radius:12px;background:#0b7065;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,0.1);"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b8070;letter-spacing:0.1em;">#0b7065</div>
+            <div style="font-size:0.72rem;color:#3a4d42;margin-top:2px;font-weight:500;">Particle</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="height:80px;border-radius:12px;background:#1a2520;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,0.1);"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b8070;letter-spacing:0.1em;">#1a2520</div>
+            <div style="font-size:0.72rem;color:#3a4d42;margin-top:2px;font-weight:500;">Bark</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="height:80px;border-radius:12px;background:#f7faf8;border:1px solid #d0dbd4;margin-bottom:10px;"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b8070;letter-spacing:0.1em;">#f7faf8</div>
+            <div style="font-size:0.72rem;color:#3a4d42;margin-top:2px;font-weight:500;">Mist</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Typography note ── -->
+<div style="margin-top:64px; padding-top:56px; border-top:1px solid #d0dbd4; text-align:center; padding-bottom:96px;">
+    <span style="font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#6b8070;">Typography</span>
+    <div style="margin-top:24px;display:flex;gap:48px;justify-content:center;flex-wrap:wrap;">
+        <div>
+            <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:#1a2520;line-height:1;">DM Serif Display</div>
+            <div style="font-size:0.75rem;color:#6b8070;margin-top:6px;letter-spacing:0.1em;font-family:'Space Mono',monospace;">HEADINGS · LOGO NAME</div>
+        </div>
+        <div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:1.5rem;color:#3a4d42;font-weight:400;line-height:1.2;">DM Sans Regular</div>
+            <div style="font-size:0.75rem;color:#6b8070;margin-top:6px;letter-spacing:0.1em;font-family:'Space Mono',monospace;">BODY · CAPTIONS</div>
+        </div>
+        <div>
+            <div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:#2d7a4e;letter-spacing:0.1em;line-height:1.4;">SPACE MONO</div>
+            <div style="font-size:0.75rem;color:#6b8070;margin-top:6px;letter-spacing:0.1em;font-family:'Space Mono',monospace;">LABELS · TAGS · CODES</div>
+        </div>
+    </div>
+</div>
+
+</div><!-- /concepts -->
+</body>
+</html>
