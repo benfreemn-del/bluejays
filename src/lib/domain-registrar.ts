@@ -29,7 +29,7 @@
  */
 
 import { logCost } from "./cost-logger";
-
+import { ProxyAgent } from "undici";
 export type RegistrarName = "namecheap" | "porkbun" | "mock";
 
 export interface AvailabilityResult {
@@ -267,7 +267,9 @@ function extractStatus(xml: string): { ok: boolean; errorMessage?: string } {
 
 async function namecheapFetch(env: NamecheapEnv, command: string, params: Record<string, string>): Promise<string> {
   const url = buildNamecheapUrl(env, command, params);
-  const res = await fetch(url, { method: "GET" });
+  const fixieUrl = process.env.FIXIE_URL;
+  const dispatcher = fixieUrl ? new ProxyAgent(fixieUrl) : undefined;
+  const res = await fetch(url, { method: "GET", dispatcher } as RequestInit & { dispatcher?: ProxyAgent });
   if (!res.ok) {
     throw new RegistrarError(
       "namecheap_http_error",
