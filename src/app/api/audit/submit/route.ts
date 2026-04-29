@@ -84,6 +84,8 @@ export async function POST(request: NextRequest) {
     businessCategory?: string;
     businessName?: string;
     ownerName?: string;
+    biggestFrustration?: string;
+    timeline?: string;
     utm?: Record<string, string>;
   } = {};
   try {
@@ -212,6 +214,8 @@ export async function POST(request: NextRequest) {
       metadata: {
         submittedFrom: "audit_form",
         targetBusinessName,
+        ...(body.biggestFrustration ? { biggestFrustration: body.biggestFrustration.trim().slice(0, 500) } : {}),
+        ...(body.timeline ? { timeline: body.timeline } : {}),
         ...(body.utm || {}),
       },
     },

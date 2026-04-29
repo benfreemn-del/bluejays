@@ -48,6 +48,8 @@ export default function AuditForm() {
   const [phone, setPhone] = useState("");
   const [businessCategory, setBusinessCategory] = useState("dental");
   const [businessName, setBusinessName] = useState("");
+  const [biggestFrustration, setBiggestFrustration] = useState("");
+  const [timeline, setTimeline] = useState("");
   const [state, setState] = useState<SubmitState>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -66,6 +68,8 @@ export default function AuditForm() {
           phone: phone.trim() || undefined,
           businessCategory,
           businessName: businessName.trim() || undefined,
+          biggestFrustration: biggestFrustration.trim() || undefined,
+          timeline: timeline || undefined,
           utm: parseUtmFromQuery(),
         }),
       });
@@ -187,15 +191,55 @@ export default function AuditForm() {
       </div>
 
       <details className="text-left text-xs text-slate-500">
-        <summary className="cursor-pointer hover:text-slate-300 transition-colors">Optional: business name (helps us personalize)</summary>
-        <input
-          type="text"
-          placeholder="Acme Dental"
-          value={businessName}
-          onChange={(e) => setBusinessName(e.target.value)}
-          disabled={state === "submitting"}
-          className="mt-2 w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-        />
+        <summary className="cursor-pointer hover:text-slate-300 transition-colors">Optional: tell us more (helps us tailor your audit)</summary>
+        <div className="mt-3 space-y-3">
+          <div>
+            <label htmlFor="businessName" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              Business name
+            </label>
+            <input
+              id="businessName"
+              type="text"
+              placeholder="Acme Dental"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              disabled={state === "submitting"}
+              className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="frustration" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              Biggest frustration with your current site
+            </label>
+            <textarea
+              id="frustration"
+              rows={3}
+              placeholder="e.g. 'phone never rings', 'looks dated', 'doesn't show on Google'"
+              value={biggestFrustration}
+              onChange={(e) => setBiggestFrustration(e.target.value)}
+              disabled={state === "submitting"}
+              className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 resize-none"
+            />
+          </div>
+          <div>
+            <label htmlFor="timeline" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              When do you need this fixed?
+            </label>
+            <select
+              id="timeline"
+              value={timeline}
+              onChange={(e) => setTimeline(e.target.value)}
+              disabled={state === "submitting"}
+              className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            >
+              <option value="">Select a timeline...</option>
+              <option value="asap">ASAP — bleeding leads now</option>
+              <option value="30days">Within 30 days</option>
+              <option value="60days">Within 60 days</option>
+              <option value="exploring">Just exploring for now</option>
+            </select>
+          </div>
+        </div>
       </details>
 
       {state === "error" && errorMsg && (

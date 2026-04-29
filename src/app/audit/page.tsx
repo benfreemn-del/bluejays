@@ -84,6 +84,86 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
+      {/* Real client testimonials — drop video files in /public/testimonials/
+          and uncomment the <video> tag in each card. Until then, name + company
+          + quote-style text card serves as proof. */}
+      <section className="border-b border-white/5 bg-slate-900/40">
+        <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="text-center mb-10">
+            <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">Real clients · Real results</p>
+            <h2 className="text-2xl md:text-3xl font-bold">What local owners are saying</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Hector */}
+            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
+              <div className="aspect-video bg-gradient-to-br from-emerald-500/20 to-sky-500/20 flex items-center justify-center relative group">
+                {/* TODO: replace with <video controls poster="/testimonials/hector-poster.jpg" src="/testimonials/hector.mp4" className="w-full h-full object-cover" /> */}
+                <div className="text-center px-6">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
+                  </div>
+                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
+                </div>
+              </div>
+              <div className="p-5">
+                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Ben built my site faster than I thought possible. Looks better than my competitors who paid 5x more.&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm">H</div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Hector</p>
+                    <p className="text-xs text-slate-400">Hector Landscaping</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Luke */}
+            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
+              <div className="aspect-video bg-gradient-to-br from-amber-500/20 to-rose-500/20 flex items-center justify-center relative group">
+                {/* TODO: replace with <video controls poster="/testimonials/luke-poster.jpg" src="/testimonials/luke.mp4" className="w-full h-full object-cover" /> */}
+                <div className="text-center px-6">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
+                  </div>
+                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
+                </div>
+              </div>
+              <div className="p-5">
+                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Way better than the freelancer who ghosted me last year. Ben actually picks up the phone.&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold text-sm">L</div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Luke</p>
+                    <p className="text-xs text-slate-400">Pine &amp; Particle</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Michelle / LCAC */}
+            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
+              <div className="aspect-video bg-gradient-to-br from-sky-500/20 to-violet-500/20 flex items-center justify-center relative group">
+                {/* TODO: replace with <video controls poster="/testimonials/lcac-poster.jpg" src="/testimonials/lcac.mp4" className="w-full h-full object-cover" /> */}
+                <div className="text-center px-6">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
+                  </div>
+                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
+                </div>
+              </div>
+              <div className="p-5">
+                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Ben took our outdated nonprofit site and made it look like a real organization. Donations went up the first month.&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 font-bold text-sm">M</div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Michelle</p>
+                    <p className="text-xs text-slate-400">Lewis County Autism Coalition</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Built by Ben — trust strip with founder credibility + client mentions */}
       <section className="border-b border-white/5 bg-slate-950/60">
         <div className="mx-auto max-w-4xl px-6 py-10">
