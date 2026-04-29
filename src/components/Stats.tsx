@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import BluejayLogo from "./BluejayLogo";
 
 /* ───────────────────────── SVG Icons ───────────────────────── */
@@ -45,24 +44,17 @@ const GridPattern = ({ opacity = 0.03 }: { opacity?: number }) => (
   </svg>
 );
 
-/* ───────────────────────── Counter ───────────────────────── */
+/* ───────────────────────── Stat Card (static) ───────────────────────── */
 
 interface StatCardProps {
   value: string;
   label: string;
   icon: React.ReactNode;
-  delay?: number;
 }
 
-function StatCard({ value, label, icon, delay = 0 }: StatCardProps) {
+function StatCard({ value, label, icon }: StatCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className="group relative text-center p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-sky-500/30 transition-all duration-500"
-    >
+    <div className="group relative text-center p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-sky-500/30 transition-all duration-500">
       {/* Hover glow */}
       <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
       {/* Top accent line */}
@@ -79,7 +71,7 @@ function StatCard({ value, label, icon, delay = 0 }: StatCardProps) {
           {label}
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -105,38 +97,21 @@ export default function Stats() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
-          >
+          <span className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5">
             By The Numbers
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-extrabold tracking-tight"
-          >
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             Results that{" "}
             <span className="text-sky-400">speak for themselves</span>
-          </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto"
-          />
+          </h2>
+          <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto" />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <StatCard value="150+" label="Websites Built" icon={<WebsiteIcon />} delay={0} />
-          <StatCard value="30" label="Industries Served" icon={<IndustryIcon />} delay={0.1} />
-          <StatCard value="2M+" label="Impressions Generated" icon={<ImpressionsIcon />} delay={0.2} />
-          <StatCard value="98%" label="Client Satisfaction" icon={<SatisfactionIcon />} delay={0.3} />
+          <StatCard value="150+" label="Websites Built" icon={<WebsiteIcon />} />
+          <StatCard value="30" label="Industries Served" icon={<IndustryIcon />} />
+          <StatCard value="2M+" label="Impressions Generated" icon={<ImpressionsIcon />} />
+          <StatCard value="98%" label="Client Satisfaction" icon={<SatisfactionIcon />} />
         </div>
       </div>
     </section>

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import BluejayLogo from "./BluejayLogo";
 
 /* ───────────────────────── SVG Icons ───────────────────────── */
@@ -76,49 +75,21 @@ export default function Contact() {
 
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
         {/* Section header */}
-        <motion.span
-          initial={{ opacity: 0, y: -10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
-        >
+        <span className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5">
           Get Started
-        </motion.span>
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4"
-        >
+        </span>
+        <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
           Ready to see your{" "}
           <span className="text-sky-400">new website</span>?
-        </motion.h2>
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto mb-6"
-        />
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="text-white/50 text-lg mb-10 max-w-xl mx-auto leading-relaxed"
-        >
+        </h2>
+        <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto mb-6" />
+        <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
           We&apos;ll build it first and show you a live preview — completely
           free. No commitment, no credit card required.
-        </motion.p>
+        </p>
 
         {/* CTA button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-        >
+        <div>
           <a
             href="/get-started"
             className="group relative inline-flex items-center justify-center h-16 px-10 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-lg hover:shadow-[0_0_60px_rgba(14,165,233,0.5)] transition-all duration-500"
@@ -132,16 +103,10 @@ export default function Contact() {
               </span>
             </span>
           </a>
-        </motion.div>
+        </div>
 
         {/* Trust indicators */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-6 mt-10"
-        >
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-10">
           <div className="flex items-center gap-2 text-white/40 text-sm">
             <span className="text-sky-400"><ClockIcon /></span>
             Typically delivered within 48 hours
@@ -154,7 +119,7 @@ export default function Contact() {
             <span className="text-sky-400"><SparklesIcon /></span>
             100% satisfaction guaranteed
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import BluejayLogo from "./BluejayLogo";
 
 /* ───────────────────────── SVG Icons ───────────────────────── */
@@ -94,65 +93,32 @@ export default function About() {
           {/* Left — text content */}
           <div>
             {/* Section header */}
-            <motion.span
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
-            >
+            <span className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5">
               Who We Are
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4"
-            >
+            </span>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
               Your business deserves a website that{" "}
               <span className="text-sky-400">works</span> as hard as you do
-            </motion.h2>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mb-6"
-            />
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="text-white/50 text-lg leading-relaxed mb-4"
-            >
+            </h2>
+            <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mb-6" />
+            <p className="text-white/50 text-lg leading-relaxed mb-4">
               Most local businesses either have an outdated website or no site at
               all. We change that. BlueJays builds premium, modern websites
               tailored to your industry — and we show you the finished product
               before you pay a dime.
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="text-white/50 text-lg leading-relaxed"
-            >
+            </p>
+            <p className="text-white/50 text-lg leading-relaxed">
               No templates that look like everyone else. No hidden fees. No
               waiting months. Just a stunning website that brings in customers,
               delivered fast.
-            </motion.p>
+            </p>
           </div>
 
           {/* Right — feature cards */}
           <div className="space-y-5">
             {features.map((feature, i) => (
-              <motion.div
+              <div
                 key={feature.title}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
                 className="group relative flex gap-5 p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-sky-500/30 transition-all duration-500 overflow-hidden"
               >
                 {/* Hover glow */}
@@ -179,7 +145,7 @@ export default function About() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

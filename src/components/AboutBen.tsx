@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 /* ───────────────────────── Icons ───────────────────────── */
 
@@ -39,13 +38,7 @@ export default function AboutBen() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-[5fr_6fr] gap-12 md:gap-16 items-center">
           {/* Left — photo */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="relative"
-          >
+          <div className="relative">
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-sky-500/10">
               <Image
                 src="/ben-and-wife.jpg"
@@ -58,52 +51,23 @@ export default function AboutBen() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             </div>
             {/* Floating badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="absolute -bottom-5 left-6 bg-gradient-to-br from-sky-500 to-blue-600 text-white px-5 py-3 rounded-xl shadow-xl shadow-sky-500/30 backdrop-blur-sm"
-            >
+            <div className="absolute -bottom-5 left-6 bg-gradient-to-br from-sky-500 to-blue-600 text-white px-5 py-3 rounded-xl shadow-xl shadow-sky-500/30 backdrop-blur-sm">
               <div className="text-[10px] uppercase tracking-[0.2em] opacity-80">Founder</div>
               <div className="text-base font-bold">Ben Freeman</div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Right — story */}
           <div>
-            <motion.span
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
-            >
+            <span className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5">
               Meet Ben
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight"
-            >
+            </span>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
               When you hire BlueJays, <span className="text-sky-400">you hire me.</span>
-            </motion.h2>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mb-7 origin-left"
-            />
+            </h2>
+            <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mb-7" />
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="space-y-4 text-white/70 text-base md:text-lg leading-relaxed"
-            >
+            <div className="space-y-4 text-white/70 text-base md:text-lg leading-relaxed">
               <p>
                 Hi, I&apos;m Ben. I live in Quilcene, Washington with my wife &mdash; that&apos;s us in the photo.
               </p>
@@ -119,16 +83,10 @@ export default function AboutBen() {
               <p className="text-white/85 font-medium">
                 When you work with BlueJays, you&apos;re working with me. Not a project manager. Not a chatbot. Not someone overseas who&apos;ll never meet you. That&apos;s the deal.
               </p>
-            </motion.div>
+            </div>
 
             {/* Trust pillars */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-white/10"
-            >
+            <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-white/10">
               <div className="flex flex-col items-start">
                 <div className="text-sky-400 mb-2"><PinIcon /></div>
                 <div className="text-white font-semibold text-sm">Local</div>
@@ -144,7 +102,7 @@ export default function AboutBen() {
                 <div className="text-white font-semibold text-sm">Personal</div>
                 <div className="text-white/50 text-xs mt-1">Direct line, real human</div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
