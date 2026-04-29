@@ -13,6 +13,7 @@ import {
   HORMOZI_VOICEMAIL_UNKNOWN_OWNER,
 } from "@/lib/partners-script";
 import type { ScriptVars } from "@/lib/partners-script";
+import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
 import CallWorkspace from "./CallWorkspace";
 
 export const dynamic = "force-dynamic";
@@ -128,28 +129,42 @@ export default async function PartnerWorkPage() {
       }}
       prospect={
         prospect
-          ? {
-              id: prospect.id,
-              businessName: prospect.business_name,
-              ownerName: prospect.owner_name,
-              ownerKnown,
-              phone: prospect.phone,
-              email: prospect.email,
-              city: prospect.city,
-              state: prospect.state,
-              category: prospect.category,
-              status: prospect.status,
-              hasCompletedAudit: prospect.hasCompletedAudit,
-              websiteUrl:
-                (prospect.scraped_data?.submittedUrl as string | undefined) ||
-                (prospect.scraped_data?.website as string | undefined) ||
-                null,
-              // Fallback Google search link when scraped_data has no
-              // website URL — caller can still sanity-check the biz.
-              googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(
-                `${prospect.business_name} ${prospect.city || ""} ${(prospect.category || "").replace(/-/g, " ")}`.trim(),
-              )}`,
-            }
+          ? (() => {
+              // Local-time + open/closed for the prospect's state. Always
+              // computed; falls back to heuristic when scraped_data.hours
+              // isn't parseable.
+              const clock = getProspectClock(prospect.state);
+              const rawHours =
+                (prospect.scraped_data?.hours as string | undefined) ?? null;
+              const openStatus = getOpenStatus(clock, rawHours);
+              return {
+                id: prospect.id,
+                businessName: prospect.business_name,
+                ownerName: prospect.owner_name,
+                ownerKnown,
+                phone: prospect.phone,
+                email: prospect.email,
+                city: prospect.city,
+                state: prospect.state,
+                category: prospect.category,
+                status: prospect.status,
+                hasCompletedAudit: prospect.hasCompletedAudit,
+                websiteUrl:
+                  (prospect.scraped_data?.submittedUrl as string | undefined) ||
+                  (prospect.scraped_data?.website as string | undefined) ||
+                  null,
+                googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(
+                  `${prospect.business_name} ${prospect.city || ""} ${(prospect.category || "").replace(/-/g, " ")}`.trim(),
+                )}`,
+                rawHours,
+                clockDisplay: clock.display,
+                clockIsFallbackTz: clock.isFallbackTz,
+                openState: openStatus.state,
+                openLabel: openStatus.label,
+                openPrecise: openStatus.precise,
+                openHint: openStatus.hint ?? null,
+              };
+            })()
           : null
       }
       counters={{

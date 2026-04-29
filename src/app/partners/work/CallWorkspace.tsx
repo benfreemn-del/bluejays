@@ -47,6 +47,15 @@ type Props = {
     hasCompletedAudit: boolean;
     websiteUrl: string | null;
     googleSearchUrl: string;
+    // Hours / open-status (always computed; "precise" flag tells us
+    // whether real hours were parsed or we're heuristic-guessing).
+    rawHours: string | null;
+    clockDisplay: string;
+    clockIsFallbackTz: boolean;
+    openState: "open" | "closed";
+    openLabel: string;
+    openPrecise: boolean;
+    openHint: string | null;
   } | null;
   counters: {
     callsThisSession: number;
@@ -444,6 +453,14 @@ function ProspectCard({
 }: {
   prospect: NonNullable<Props["prospect"]>;
 }) {
+  const openIsGreen = prospect.openState === "open";
+  const dotCls = openIsGreen
+    ? "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+    : "bg-rose-400 shadow-[0_0_10px_rgba(251,113,133,0.6)]";
+  const badgeCls = openIsGreen
+    ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-200"
+    : "bg-rose-500/10 border-rose-500/40 text-rose-200";
+
   return (
     <div className="rounded-2xl border-2 border-sky-500/30 bg-gradient-to-br from-sky-950/30 via-slate-900/80 to-slate-950 p-5 mb-5 shadow-lg shadow-sky-500/5">
       <div className="flex items-start justify-between gap-4 mb-4">
@@ -477,6 +494,42 @@ function ProspectCard({
             ✓ Audit ready
           </span>
         )}
+      </div>
+
+      {/* Open/closed indicator + local time. Always shown. The dot is
+          green when "open" / red when "closed" — the LABEL clarifies
+          whether it's a confident verdict (parsed hours) or a likely-
+          guess (heuristic). */}
+      <div className={`rounded-lg border ${badgeCls} px-3 py-2 mb-3 flex items-start gap-3`}>
+        <span className={`mt-1 inline-block h-3 w-3 rounded-full shrink-0 ${dotCls} ${openIsGreen ? "animate-pulse" : ""}`} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-bold text-sm">{prospect.openLabel}</span>
+            <span className="text-xs opacity-70">
+              · 🕐 {prospect.clockDisplay}
+            </span>
+            {!prospect.openPrecise && (
+              <span className="text-[10px] uppercase tracking-wider opacity-60">
+                heuristic
+              </span>
+            )}
+            {prospect.clockIsFallbackTz && (
+              <span className="text-[10px] uppercase tracking-wider opacity-60">
+                tz unknown · using ET
+              </span>
+            )}
+          </div>
+          {prospect.openHint && (
+            <p className="text-xs opacity-80 mt-0.5 leading-snug">
+              {prospect.openHint}
+            </p>
+          )}
+          {prospect.rawHours && prospect.openPrecise && (
+            <p className="text-[10px] opacity-50 mt-1 truncate">
+              Listed: {prospect.rawHours.split(/\n/)[0].slice(0, 80)}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Phone — prominent on the card itself, not just on the rail.
