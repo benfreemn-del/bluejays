@@ -37,6 +37,7 @@ type Props = {
     id: string;
     businessName: string;
     ownerName: string | null;
+    ownerKnown: boolean;
     phone: string;
     email: string | null;
     city: string | null;
@@ -45,6 +46,7 @@ type Props = {
     status: string | null;
     hasCompletedAudit: boolean;
     websiteUrl: string | null;
+    googleSearchUrl: string;
   } | null;
   counters: {
     callsThisSession: number;
@@ -381,7 +383,7 @@ export default function CallWorkspace(props: Props) {
           </details>
 
           {/* Outcomes */}
-          <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5">
+          <div id="outcome" className="rounded-2xl border border-white/10 bg-slate-900/40 p-5 scroll-mt-24">
             <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3">
               How did the call go?
             </p>
@@ -422,6 +424,17 @@ export default function CallWorkspace(props: Props) {
           </Link>
         </aside>
       </div>
+
+      {/* Floating "jump to outcome" — appears on long script pages so
+          the caller can mark outcome fast after hanging up without
+          scrolling. Hidden on lg+ where the outcomes panel is visible
+          in the right rail anyway. */}
+      <a
+        href="#outcome"
+        className="fixed bottom-4 right-4 lg:hidden z-50 rounded-full bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-5 py-3 text-sm font-bold shadow-2xl shadow-emerald-500/30 transition-colors"
+      >
+        ✓ Mark call outcome
+      </a>
     </main>
   );
 }
@@ -432,23 +445,31 @@ function ProspectCard({
   prospect: NonNullable<Props["prospect"]>;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950 p-5 mb-5">
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <div className="min-w-0">
-          <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
-            Calling {prospect.category?.replace(/-/g, " ") || "business"}
+    <div className="rounded-2xl border-2 border-sky-500/30 bg-gradient-to-br from-sky-950/30 via-slate-900/80 to-slate-950 p-5 mb-5 shadow-lg shadow-sky-500/5">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-1">
+            📞 Calling {prospect.category?.replace(/-/g, " ") || "business"}
             {prospect.city ? ` in ${prospect.city}` : ""}
           </p>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-1 truncate">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2 truncate">
             {prospect.businessName}
           </h2>
-          {prospect.ownerName && (
+
+          {/* Owner row — known name OR explicit "unknown" guidance */}
+          {prospect.ownerKnown && prospect.ownerName ? (
             <p className="text-sm text-slate-300">
               Owner:{" "}
               <span className="font-semibold text-white">
                 {prospect.ownerName}
               </span>
             </p>
+          ) : (
+            <div className="rounded-md bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-amber-200">
+              ⚠️ <span className="font-semibold">Owner name not on file</span>
+              {" — "}ask: <em className="text-amber-100">&quot;Who handles
+              the website over there?&quot;</em>
+            </div>
           )}
         </div>
         {prospect.hasCompletedAudit && (
@@ -457,25 +478,47 @@ function ProspectCard({
           </span>
         )}
       </div>
-      {prospect.websiteUrl && (
-        <a
-          href={
-            prospect.websiteUrl.startsWith("http")
-              ? prospect.websiteUrl
-              : `https://${prospect.websiteUrl}`
-          }
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-sky-400 hover:underline inline-block break-all"
-        >
-          🔗 {prospect.websiteUrl}
-        </a>
-      )}
-      {prospect.email && (
-        <p className="text-xs text-slate-500 mt-1 break-all">
-          ✉ {prospect.email}
-        </p>
-      )}
+
+      {/* Phone — prominent on the card itself, not just on the rail.
+          Caller's eyes never leave the prospect block. */}
+      <a
+        href={`tel:${prospect.phone.replace(/[^0-9+]/g, "")}`}
+        className="block w-full rounded-lg border-2 border-sky-500/50 bg-sky-500/10 hover:bg-sky-500/20 px-4 py-3 text-center font-mono text-lg sm:text-xl font-bold text-sky-200 hover:text-white transition-colors mb-3 tabular-nums"
+      >
+        📲 {formatPhone(prospect.phone)}
+      </a>
+
+      {/* Quick links — website (if known) + Google search fallback + email */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+        {prospect.websiteUrl ? (
+          <a
+            href={
+              prospect.websiteUrl.startsWith("http")
+                ? prospect.websiteUrl
+                : `https://${prospect.websiteUrl}`
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-400 hover:underline break-all"
+          >
+            🔗 {prospect.websiteUrl}
+          </a>
+        ) : (
+          <a
+            href={prospect.googleSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-400 hover:underline"
+          >
+            🔍 Look up on Google
+          </a>
+        )}
+        {prospect.email && (
+          <span className="text-slate-500 break-all">
+            ✉ {prospect.email}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -497,36 +540,95 @@ function SectionTabs({
   section: SectionId;
   setSection: (s: SectionId) => void;
 }) {
-  const tabs: Array<{ id: SectionId; label: string }> = [
+  // Numbered flow tabs = the goal path (Open → Qualify → Pitch → Book).
+  // Visually loud, full color when active, numbered.
+  const flowTabs: Array<{ id: SectionId; label: string }> = [
     { id: "intro", label: "1 · Open" },
     { id: "qualify", label: "2 · Qualify" },
     { id: "pitch", label: "3 · Pitch" },
     { id: "bookTheCall", label: "4 · Book ★" },
+  ];
+  // Escape-hatch tabs = used only when the goal path fails. Muted,
+  // smaller, set off visually so the caller's eye lands on the flow.
+  const fallbackTabs: Array<{ id: SectionId; label: string }> = [
     { id: "textTheLink", label: "Audit fallback" },
     { id: "callbackClose", label: "Callback" },
     { id: "voicemail", label: "Voicemail" },
     { id: "objections", label: "Objections" },
   ];
   return (
-    <div className="flex flex-wrap gap-2 mb-1">
-      {tabs.map((t) => (
-        <button
-          key={t.id}
-          onClick={() => setSection(t.id)}
-          className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
-            section === t.id
-              ? t.id === "bookTheCall"
-                ? "bg-emerald-500 text-emerald-950"
-                : "bg-amber-500/20 border border-amber-500/40 text-amber-200"
-              : "bg-slate-900/40 border border-white/5 text-slate-400 hover:text-white"
-          }`}
-        >
-          {t.label}
-        </button>
-      ))}
+    <div className="space-y-2 mb-1">
+      {/* Flow row — bold, full-width segmented look */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {flowTabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setSection(t.id)}
+            className={`flex-1 sm:flex-initial rounded-md px-3 py-2 text-xs sm:text-sm font-bold transition-all ${
+              section === t.id
+                ? t.id === "bookTheCall"
+                  ? "bg-emerald-500 text-emerald-950 shadow-md shadow-emerald-500/30"
+                  : "bg-amber-500 text-amber-950 shadow-md shadow-amber-500/20"
+                : "bg-slate-900/60 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {/* Escape-hatch row — smaller, tinted, "use only if needed" */}
+      <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-white/5">
+        <span className="text-[10px] uppercase tracking-wider text-slate-600 font-semibold pr-2">
+          if needed →
+        </span>
+        {fallbackTabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setSection(t.id)}
+            className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
+              section === t.id
+                ? "bg-slate-700/70 border border-white/20 text-white"
+                : "bg-transparent border border-white/5 text-slate-500 hover:text-slate-300 hover:border-white/15"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
+
+// Color-cycle for script lines so each line is visually distinct.
+// Caller's eye can re-orient mid-sentence ("which line was I on?").
+// Tailwind classes literal (not template) so JIT picks them up.
+const LINE_COLORS = [
+  {
+    border: "border-amber-400",
+    bg: "bg-amber-500/[0.06]",
+    badge: "bg-amber-500/20 text-amber-200 border-amber-500/30",
+  },
+  {
+    border: "border-sky-400",
+    bg: "bg-sky-500/[0.06]",
+    badge: "bg-sky-500/20 text-sky-200 border-sky-500/30",
+  },
+  {
+    border: "border-emerald-400",
+    bg: "bg-emerald-500/[0.06]",
+    badge: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
+  },
+  {
+    border: "border-fuchsia-400",
+    bg: "bg-fuchsia-500/[0.06]",
+    badge: "bg-fuchsia-500/20 text-fuchsia-200 border-fuchsia-500/30",
+  },
+  {
+    border: "border-rose-400",
+    bg: "bg-rose-500/[0.06]",
+    badge: "bg-rose-500/20 text-rose-200 border-rose-500/30",
+  },
+];
 
 function ScriptCard({
   section,
@@ -558,25 +660,38 @@ function ScriptCard({
       {section.goal && (
         <p className="text-xs text-slate-400 italic mb-4">→ {section.goal}</p>
       )}
-      <ul className="space-y-3">
-        {section.lines.map((line, i) => (
-          <li
-            key={i}
-            className="text-base text-white leading-relaxed pl-4 border-l-2 border-amber-500/40"
-          >
-            {line}
-          </li>
-        ))}
+      <ul className="space-y-2.5">
+        {section.lines.map((line, i) => {
+          const c = LINE_COLORS[i % LINE_COLORS.length];
+          return (
+            <li
+              key={i}
+              className={`flex gap-3 rounded-lg ${c.bg} border-l-4 ${c.border} pl-3 pr-4 py-3`}
+            >
+              <span
+                className={`shrink-0 rounded-full border ${c.badge} h-6 w-6 inline-flex items-center justify-center text-[11px] font-bold tabular-nums`}
+              >
+                {i + 1}
+              </span>
+              <p className="text-base text-white leading-relaxed flex-1">
+                {line}
+              </p>
+            </li>
+          );
+        })}
       </ul>
       {section.callerNotes && section.callerNotes.length > 0 && (
         <div className="mt-5 pt-4 border-t border-white/5">
           <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">
-            Caller notes
+            Caller notes (don&apos;t read aloud)
           </p>
           <ul className="space-y-1.5">
             {section.callerNotes.map((note, i) => (
-              <li key={i} className="text-xs text-slate-400 leading-relaxed">
-                • {note}
+              <li
+                key={i}
+                className="text-xs text-slate-400 leading-relaxed pl-3 border-l border-slate-700"
+              >
+                {note}
               </li>
             ))}
           </ul>
@@ -604,14 +719,24 @@ function ObjectionList({ objections }: { objections: FilledObjection[] }) {
             </summary>
             <div className="px-4 pb-4 pt-1">
               <ul className="space-y-2 mb-3">
-                {o.response.map((line, i) => (
-                  <li
-                    key={i}
-                    className="text-sm text-white leading-relaxed pl-3 border-l-2 border-amber-500/40"
-                  >
-                    {line}
-                  </li>
-                ))}
+                {o.response.map((line, i) => {
+                  const c = LINE_COLORS[i % LINE_COLORS.length];
+                  return (
+                    <li
+                      key={i}
+                      className={`flex gap-2.5 rounded-md ${c.bg} border-l-4 ${c.border} pl-3 pr-3 py-2`}
+                    >
+                      <span
+                        className={`shrink-0 rounded-full border ${c.badge} h-5 w-5 inline-flex items-center justify-center text-[10px] font-bold tabular-nums`}
+                      >
+                        {i + 1}
+                      </span>
+                      <p className="text-sm text-white leading-relaxed flex-1">
+                        {line}
+                      </p>
+                    </li>
+                  );
+                })}
               </ul>
               {o.callerNotes && (
                 <p className="text-xs text-slate-400 italic mt-3 pt-3 border-t border-white/5">

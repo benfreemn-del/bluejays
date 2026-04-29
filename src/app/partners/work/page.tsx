@@ -9,6 +9,8 @@ import {
   HORMOZI_CALL_SCRIPT,
   HORMOZI_CALL_TIPS,
   HORMOZI_MANTRA,
+  HORMOZI_INTRO_UNKNOWN_OWNER,
+  HORMOZI_VOICEMAIL_UNKNOWN_OWNER,
 } from "@/lib/partners-script";
 import type { ScriptVars } from "@/lib/partners-script";
 import CallWorkspace from "./CallWorkspace";
@@ -56,10 +58,15 @@ export default async function PartnerWorkPage() {
   const partnerFirstName =
     (partner.name || "").trim().split(/\s+/)[0] || "the team";
 
-  // Try to derive prospect's first name from owner_name; fall back to "there"
-  const ownerFirstName = prospect?.owner_name
+  // Try to derive prospect's first name from owner_name. When we can't,
+  // we DON'T fall back to "Hi there" — that sounds like spam. Instead
+  // we swap the intro + voicemail script to the gatekeeper variant
+  // (asks for whoever handles the website by role).
+  const ownerFirstNameRaw = prospect?.owner_name
     ? prospect.owner_name.trim().split(/\s+/)[0]
-    : "there";
+    : "";
+  const ownerKnown = !!ownerFirstNameRaw;
+  const ownerFirstName = ownerFirstNameRaw || "the owner";
 
   const auditUrl = prospect?.latestAuditId
     ? `${SITE_ORIGIN}/audit/${prospect.latestAuditId}?ref=${partner.code}`
@@ -69,7 +76,7 @@ export default async function PartnerWorkPage() {
     ? `${SITE_ORIGIN}/schedule/${prospect.id}?ref=${partner.code}&source=partner-call`
     : `${SITE_ORIGIN}/schedule?ref=${partner.code}`;
 
-  const vars: ScriptVars = {
+  const vars: ScriptVars & { ownerOrThem: string } = {
     bizName: prospect?.business_name || "your business",
     firstName: ownerFirstName,
     category: (prospect?.category || "service").replace(/-/g, " "),
@@ -81,18 +88,29 @@ export default async function PartnerWorkPage() {
     partnerFirstName,
     auditUrl,
     scheduleUrl,
+    // Used in the unknown-owner intro: "is {ownerOrThem} around?" —
+    // becomes "they" or the actual name once gatekeeper says it.
+    ownerOrThem: ownerKnown ? ownerFirstName : "they",
   };
 
   // Pre-fill script lines + objections so the client doesn't need to
-  // do regex work per render.
+  // do regex work per render. When ownerKnown=false, swap intro +
+  // voicemail to the gatekeeper-style variants.
+  const introSection = ownerKnown
+    ? HORMOZI_CALL_SCRIPT.intro
+    : HORMOZI_INTRO_UNKNOWN_OWNER;
+  const voicemailSection = ownerKnown
+    ? HORMOZI_CALL_SCRIPT.voicemail
+    : HORMOZI_VOICEMAIL_UNKNOWN_OWNER;
+
   const filledScript = {
-    intro: filledSection(HORMOZI_CALL_SCRIPT.intro, vars),
+    intro: filledSection(introSection, vars),
     qualify: filledSection(HORMOZI_CALL_SCRIPT.qualify, vars),
     pitch: filledSection(HORMOZI_CALL_SCRIPT.pitch, vars),
     bookTheCall: filledSection(HORMOZI_CALL_SCRIPT.bookTheCall, vars),
     textTheLink: filledSection(HORMOZI_CALL_SCRIPT.textTheLink, vars),
     callbackClose: filledSection(HORMOZI_CALL_SCRIPT.callbackClose, vars),
-    voicemail: filledSection(HORMOZI_CALL_SCRIPT.voicemail, vars),
+    voicemail: filledSection(voicemailSection, vars),
     objections: HORMOZI_CALL_SCRIPT.objections.map((o) => ({
       ...o,
       response: o.response.map((line) => fillVars(line, vars)),
@@ -114,6 +132,7 @@ export default async function PartnerWorkPage() {
               id: prospect.id,
               businessName: prospect.business_name,
               ownerName: prospect.owner_name,
+              ownerKnown,
               phone: prospect.phone,
               email: prospect.email,
               city: prospect.city,
@@ -125,6 +144,11 @@ export default async function PartnerWorkPage() {
                 (prospect.scraped_data?.submittedUrl as string | undefined) ||
                 (prospect.scraped_data?.website as string | undefined) ||
                 null,
+              // Fallback Google search link when scraped_data has no
+              // website URL — caller can still sanity-check the biz.
+              googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(
+                `${prospect.business_name} ${prospect.city || ""} ${(prospect.category || "").replace(/-/g, " ")}`.trim(),
+              )}`,
             }
           : null
       }

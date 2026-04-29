@@ -152,6 +152,51 @@ export const HORMOZI_CALL_TIPS: CallTip[] = [
 export const HORMOZI_MANTRA =
   "Every no leads you closer to a yes.";
 
+/**
+ * Gatekeeper / unknown-owner intro + voicemail variants.
+ *
+ * Used when the prospect record doesn't have an owner_name. Falling
+ * back to "Hi there" sounds like spam. Hormozi-aligned move: ask for
+ * the decision-maker by ROLE ("who handles the website?") which both
+ * qualifies and gets the caller to the right person fast.
+ *
+ * Page logic swaps these in for `intro` / `voicemail` when
+ * ownerFirstName is unknown — the rest of the script stays the same.
+ */
+export const HORMOZI_INTRO_UNKNOWN_OWNER: ScriptSection = {
+  id: "intro",
+  title: "Open the call (gatekeeper)",
+  goal: "Owner name unknown — ask for who handles the website. Get to the decision-maker fast.",
+  lines: [
+    "Hey — quick question, who handles the website over at {bizName}?",
+    "Awesome, is {ownerOrThem} around? I'll keep it short — got one quick thing about your site that's probably costing you some calls.",
+    "[When transferred] — Hey, this is {partnerFirstName} with BlueJays. I'm not your typical sales call. One question, takes 10 seconds, then I'll let you go either way. Cool?",
+    "Real quick — when somebody Googles \"{category} {city}\" and lands on your site, are you getting the kind of phone calls you'd want from it?",
+  ],
+  callerNotes: [
+    "★ OWNER NAME UNKNOWN — DO NOT guess a name. Ask for the role.",
+    "If gatekeeper says 'WHAT'S THIS REGARDING?' → 'I noticed something on the website that's probably costing them some customers — I just need 2 minutes with whoever handles it.' Specific = trust.",
+    "If gatekeeper says 'I HANDLE IT' → great, run the same intro on them.",
+    "Once on with the decision-maker, write their name in the notes box so the next caller has it.",
+  ],
+};
+
+export const HORMOZI_VOICEMAIL_UNKNOWN_OWNER: ScriptSection = {
+  id: "voicemail",
+  title: "Leave a voicemail (no name)",
+  goal: "Curiosity hook, no awkward 'Hey there.' Ask the next person to call back.",
+  lines: [
+    "Hey — this is {partnerFirstName} with BlueJays, calling for whoever handles {bizName}'s website.",
+    "I was looking at the site and I found a couple things that are probably costing you about $2,000 a month in lost customers. Texting the breakdown right now so you can see what I mean.",
+    "If it makes sense, just text back and we'll get whoever handles the site on a 15-minute call with Ben — he's the owner, he'd walk you through it. Either way, the breakdown's yours.",
+  ],
+  callerNotes: [
+    "★ Hang up → SEND BOOKING LINK first → SEND AUDIT LINK second. Then mark VOICEMAIL.",
+    "★ No name — keep it role-based. Don't fake-friendly with 'Hey there!' — sounds like spam.",
+    "About 1 in 4 voicemail-then-text combos get a reply.",
+  ],
+};
+
 /** Replace {merge} tags in a string with values from vars. Missing keys
  *  fall back to a generic stand-in so the line never reads as broken. */
 export function fillVars(template: string, vars: ScriptVars): string {
@@ -164,6 +209,7 @@ export function fillVars(template: string, vars: ScriptVars): string {
     partnerFirstName: "the team",
     auditUrl: "https://bluejayportfolio.com/audit",
     scheduleUrl: "https://bluejayportfolio.com/schedule",
+    ownerOrThem: "they",
   };
   return template.replace(/\{(\w+)\}/g, (_, key) => {
     const v = (vars as unknown as Record<string, string>)[key];
