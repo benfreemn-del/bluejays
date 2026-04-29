@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingAuditCTA from "@/components/FloatingAuditCTA";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import RetargetingPixels from "@/components/RetargetingPixels";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -129,6 +130,10 @@ export default function RootLayout({
         />
       </head>
       <body>
+        {/* Mounts gtag + Meta Pixel on every route so conversions fire from
+            any page (audit form, claim flow, get-started, etc.) — not just
+            the homepage. Self-gates on env vars + ?embed=1. */}
+        <RetargetingPixels />
         {/* Floating audit-CTA pill — appears top-right on homepage + V2
             showcases + /templates. Self-gates via usePathname(). Lead-
             magnet entry point for warm-but-not-ready portfolio visitors. */}

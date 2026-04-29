@@ -6,7 +6,6 @@ import AboutBen from "@/components/AboutBen";
 import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import RetargetingPixels from "@/components/RetargetingPixels";
 import AuditTestimonials from "@/app/audit/AuditTestimonials";
 
 const BASE_URL = "https://bluejayportfolio.com";
@@ -38,9 +37,9 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      {/* Retargeting pixels — organic homepage visitors enter a 30-day
-          retargeting window. Self-gates on env vars + ?embed=1. */}
-      <RetargetingPixels />
+      {/* RetargetingPixels now mounted globally in src/app/layout.tsx so the
+          gtag library + Meta Pixel load on every route (including /audit form
+          submits, claim flow, etc.). */}
       <Hero />
       <AuditTestimonials />
       <Stats />
