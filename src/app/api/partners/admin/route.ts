@@ -25,6 +25,10 @@ import type { Partner } from "@/lib/partners";
  *                       agreement accepted, mints session cookie, returns
  *                       redirect URL to /partners/work. One-click admin
  *                       bypass so Ben can use the workspace himself.
+ *   - remove          — hard-DELETE the partner if they have no calls /
+ *                       referrals on file (clean removal of test rows).
+ *                       Otherwise soft-delete via status='declined' so
+ *                       referral history + payouts remain intact.
  *
  * No auth gate yet — relies on /dashboard URL-as-secret. Add real auth
  * before exposing this beyond Ben.
@@ -156,6 +160,43 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: insertErr.message }, { status: 500 });
       }
       return NextResponse.json({ ok: true, code });
+    }
+
+    case "remove": {
+      if (!partnerId) return NextResponse.json({ error: "Missing partnerId" }, { status: 400 });
+
+      // Check if the partner has any historical activity worth preserving
+      const [{ count: refCount }, { count: callCount }] = await Promise.all([
+        supabase
+          .from("partner_referrals")
+          .select("*", { count: "exact", head: true })
+          .eq("partner_id", partnerId),
+        supabase
+          .from("partner_calls")
+          .select("*", { count: "exact", head: true })
+          .eq("partner_id", partnerId),
+      ]);
+      const hasHistory = (refCount || 0) > 0 || (callCount || 0) > 0;
+
+      if (hasHistory) {
+        // Soft-delete: preserve referrals + call log for accounting
+        const { error } = await supabase
+          .from("partners")
+          .update({ status: "declined" })
+          .eq("id", partnerId);
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({
+          ok: true,
+          mode: "soft",
+          referralCount: refCount,
+          callCount,
+        });
+      }
+
+      // Clean DELETE — no history, safe to remove the row
+      const { error } = await supabase.from("partners").delete().eq("id", partnerId);
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ ok: true, mode: "hard" });
     }
 
     case "enter_as_ben": {

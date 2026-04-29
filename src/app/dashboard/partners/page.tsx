@@ -225,6 +225,9 @@ export default async function PartnersAdminPage() {
                         <PartnerAdminActions
                           partnerId={p.id}
                           status={p.status}
+                          partnerEmail={p.email}
+                          partnerCode={p.code}
+                          partnerName={p.name}
                         />
                       </td>
                     </tr>
