@@ -193,6 +193,49 @@ export async function POST(request: NextRequest) {
             }
           }
 
+          // ─── Partner / affiliate referral credit ───
+          // Stamped onto prospect.scraped_data.partnerCode at audit
+          // submit time (90-day cookie). Flat $200 payout per close,
+          // recorded as 'owed' until Ben marks paid in
+          // /dashboard/partners. Idempotent via unique
+          // (partner_id, prospect_id) index — safe on Stripe replays.
+          {
+            const partnerCode = (
+              (prospect.scrapedData as Record<string, unknown> | undefined)?.partnerCode as
+                | string
+                | undefined
+            )?.toLowerCase().trim();
+            if (partnerCode) {
+              try {
+                const { recordPartnerReferral } = await import("@/lib/partners");
+                const result = await recordPartnerReferral({
+                  partnerCode,
+                  prospectId: prospect.id,
+                  businessName,
+                });
+                if (result.ok && !result.alreadyExists) {
+                  await sendOwnerAlert(
+                    `💸 Partner credit! Code "${partnerCode}" earned $200 on ${businessName}'s close. Mark paid in /dashboard/partners.`,
+                  ).catch(() => {});
+                  console.log(
+                    `[Stripe Webhook] Partner referral recorded for code=${partnerCode}, prospect=${prospect.id}`,
+                  );
+                } else if (result.alreadyExists) {
+                  console.log(
+                    `[Stripe Webhook] Partner referral already on file for prospect=${prospect.id} (idempotent replay).`,
+                  );
+                } else {
+                  console.warn(
+                    `[Stripe Webhook] Partner referral skipped for code=${partnerCode}:`,
+                    result.error,
+                  );
+                }
+              } catch (partnerErr) {
+                console.error("[Stripe Webhook] Partner referral failed:", partnerErr);
+              }
+            }
+          }
+
           // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first

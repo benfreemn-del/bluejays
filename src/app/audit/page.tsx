@@ -4,6 +4,7 @@ import Image from "next/image";
 import AuditForm from "./AuditForm";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
+import PartnerRefCapture from "@/components/PartnerRefCapture";
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -44,6 +45,10 @@ export default function AuditLandingPage() {
     <main className="min-h-screen bg-slate-950 text-white">
       {/* Exit-intent popup — silently mounts, triggers on mouseleave/idle */}
       <ExitIntentPopup />
+      {/* Drops `bj_partner_ref` cookie when ?ref=<code> is in the URL.
+          AuditForm reads it and forwards in the submit body so the
+          Stripe webhook can credit the partner $200 on close. */}
+      <PartnerRefCapture />
 
       {/* Hero */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20">

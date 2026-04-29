@@ -87,6 +87,10 @@ export async function POST(request: NextRequest) {
     biggestFrustration?: string;
     timeline?: string;
     utm?: Record<string, string>;
+    /** Partner referral code from bj_partner_ref cookie (forwarded by
+     *  AuditForm) — attributed at audit-submit time so the Stripe
+     *  webhook can credit the partner when the prospect later pays. */
+    partnerRef?: string;
   } = {};
   try {
     body = await request.json();
@@ -168,7 +172,20 @@ export async function POST(request: NextRequest) {
       source: "inbound",
       pricing_tier: "standard",
       manually_managed: false,
-      scraped_data: { source: "audit_form", submittedUrl: targetUrl, ...(body.utm || {}) },
+      scraped_data: {
+        source: "audit_form",
+        submittedUrl: targetUrl,
+        ...(body.utm || {}),
+        // Partner attribution — only stamp if the value looks like a
+        // valid code (alphanumeric+dash, 2-40 chars). Webhook will
+        // verify the partner is still 'approved' before crediting.
+        ...(body.partnerRef && /^[a-z0-9-]{2,40}$/.test(body.partnerRef.toLowerCase())
+          ? {
+              partnerCode: body.partnerRef.toLowerCase(),
+              partnerAttributedAt: new Date().toISOString(),
+            }
+          : {}),
+      },
     });
     if (createErr) {
       console.error("[audit/submit] Prospect insert failed:", createErr);

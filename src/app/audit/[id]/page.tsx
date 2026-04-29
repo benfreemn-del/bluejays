@@ -6,6 +6,7 @@ import AuditCTAHub from "./AuditCTAHub";
 import AuditTestimonials from "../AuditTestimonials";
 import RetargetingPixels from "@/components/RetargetingPixels";
 import ShareAuditButton from "./ShareAuditButton";
+import PartnerRefCapture from "@/components/PartnerRefCapture";
 
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
@@ -201,6 +202,9 @@ export default async function AuditPage({
           (they ran an audit AND opened the result), so the retargeting
           is well worth the cost-per-impression. */}
       <RetargetingPixels />
+      {/* Capture ?ref=<code> on the audit-share landing too — partners
+          can share /audit/[id] preview links of their referrals. */}
+      <PartnerRefCapture />
 
       {/* Header */}
       <header className="border-b border-white/5">

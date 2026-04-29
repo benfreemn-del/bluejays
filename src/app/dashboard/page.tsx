@@ -189,6 +189,13 @@ export default function DashboardPage() {
             <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Images
             </Link>
+            <Link
+              href="/dashboard/partners"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-amber-300 transition-colors hover:bg-background hover:text-amber-200"
+              title="Approve partners + mark $200 affiliate payouts"
+            >
+              Partners
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">

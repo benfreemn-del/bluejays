@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/RetargetingPixels";
+import { readPartnerRefCookie } from "@/components/PartnerRefCapture";
 
 const CATEGORIES = [
   ["dental", "Dental"],
@@ -71,6 +72,10 @@ export default function AuditForm() {
           biggestFrustration: biggestFrustration.trim() || undefined,
           timeline: timeline || undefined,
           utm: parseUtmFromQuery(),
+          // Forward partner-referral cookie value so the server can
+          // attribute this prospect to a partner (90-day window). Read
+          // from `bj_partner_ref` cookie set by PartnerRefCapture.
+          partnerRef: readPartnerRefCookie() || undefined,
         }),
       });
       const data = await res.json();
