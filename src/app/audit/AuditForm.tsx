@@ -86,12 +86,14 @@ export default function AuditForm() {
         content_category: businessCategory,
       });
       // Google Ads "Audit Lead" conversion — fires the conversion action
-      // configured in the Google Ads dashboard. send_to value is set via
-      // NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT (format: "AW-XXXX/LABEL").
-      const auditConversionSendTo = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT;
-      if (auditConversionSendTo) {
-        trackGoogleAdsConversion(auditConversionSendTo, 50);
-      }
+      // configured in the Google Ads dashboard.
+      // send_to is hardcoded because env var inlining was unreliable; conversion
+      // IDs are public values (visible in HTML anyway), no secret to protect.
+      // Also tries env var first in case it's been re-added later.
+      const auditConversionSendTo =
+        process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT ||
+        "AW-18122049249/NmpCCILRv6QcEOGNosFD";
+      trackGoogleAdsConversion(auditConversionSendTo, 50);
       // Also fire a custom GA4 event for funnel analysis in Google Analytics.
       const w = window as unknown as { gtag?: (...args: unknown[]) => void };
       if (typeof w.gtag === "function") {
