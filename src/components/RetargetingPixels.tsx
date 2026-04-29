@@ -198,6 +198,10 @@ export function trackMetaEvent(
  * Fire a Google Ads conversion event. Pair with a specific conversion label
  * from Google Ads dashboard:
  *   trackGoogleAdsConversion("AW-XXXX/abcDEF123", 997);
+ *
+ * Uses transport_type: 'beacon' so the request survives the page navigation
+ * that typically follows a form submit. Without this, the redirect cancels
+ * the in-flight conversion request and Google never records the conversion.
  */
 export function trackGoogleAdsConversion(
   sendTo: string,
@@ -212,6 +216,7 @@ export function trackGoogleAdsConversion(
       send_to: sendTo,
       value,
       currency,
+      transport_type: "beacon",
     });
   } catch {
     // Never let analytics throw into user code
