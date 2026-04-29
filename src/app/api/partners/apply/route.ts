@@ -18,7 +18,9 @@ import { slugifyPartnerName, randomSuffix } from "@/lib/partners";
  */
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  const { allowed } = rateLimit(`partners-apply:${ip}`, 3, 24 * 60 * 60 * 1000);
+  // TEMP: bumped from 3/day → 50/day during initial smoke-testing.
+  // Revert to 3/day before public launch.
+  const { allowed } = rateLimit(`partners-apply:${ip}`, 50, 24 * 60 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
       { error: "Too many applications. Try again tomorrow or email ben@bluejayportfolio.com." },
