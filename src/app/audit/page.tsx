@@ -84,6 +84,42 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
+      {/* Built by Ben — trust strip with founder credibility + client mentions */}
+      <section className="border-b border-white/5 bg-slate-950/60">
+        <div className="mx-auto max-w-4xl px-6 py-10">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-center md:text-left">
+            {/* Left — founder credibility */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500/20 to-emerald-500/20 border border-sky-500/30">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-sky-400">
+                  <path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white leading-tight">Built by a Washington State Trooper.</p>
+                <p className="text-xs text-slate-400 mt-0.5">Real human. Real accountability. Real local.</p>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block w-px h-12 bg-white/10" />
+
+            {/* Right — client logos / names */}
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Trusted by local owners like:</p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-5 gap-y-2 text-sm font-semibold text-slate-300">
+                <span>Hector Landscaping</span>
+                <span className="text-slate-700">·</span>
+                <span>Pine &amp; Particle</span>
+                <span className="text-slate-700">·</span>
+                <span>Lewis County Autism Coalition</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* What you get */}
       <section className="border-b border-white/5 bg-slate-900/40">
         <div className="mx-auto max-w-4xl px-6 py-16">
