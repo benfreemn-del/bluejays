@@ -18,9 +18,7 @@ import { slugifyPartnerName, randomSuffix } from "@/lib/partners";
  */
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  // TEMP: bumped from 3/day → 50/day during initial smoke-testing.
-  // Revert to 3/day before public launch.
-  const { allowed } = rateLimit(`partners-apply:${ip}`, 50, 24 * 60 * 60 * 1000);
+  const { allowed } = rateLimit(`partners-apply:${ip}`, 3, 24 * 60 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
       { error: "Too many applications. Try again tomorrow or email ben@bluejayportfolio.com." },
@@ -108,19 +106,8 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("[partners/apply] insert failed:", error);
-    // Temporary diagnostic — bubble the Supabase error so we can see
-    // which column/RLS/constraint is rejecting. Revert to generic
-    // message once partners table is verified working.
     return NextResponse.json(
-      {
-        error: "Couldn't save your application. Email ben@bluejayportfolio.com.",
-        debug: {
-          code: error.code,
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-        },
-      },
+      { error: "Couldn't save your application. Email ben@bluejayportfolio.com." },
       { status: 500 },
     );
   }
