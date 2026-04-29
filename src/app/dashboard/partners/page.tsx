@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Partner, PartnerReferral } from "@/lib/partners";
 import PartnerAdminActions from "./PartnerAdminActions";
+import PartnerAdminTopPanel from "./PartnerAdminTopPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,9 @@ export default async function PartnersAdminPage() {
           <h1 className="text-lg font-bold">Partners</h1>
         </div>
       </header>
+
+      {/* Admin tools — Enter as Ben + Add a partner */}
+      <PartnerAdminTopPanel />
 
       {/* Top-line stats */}
       <section className="border-b border-white/5">
