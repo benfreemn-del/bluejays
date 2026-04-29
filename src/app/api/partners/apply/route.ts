@@ -106,8 +106,19 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("[partners/apply] insert failed:", error);
+    // Temporary diagnostic — bubble the Supabase error so we can see
+    // which column/RLS/constraint is rejecting. Revert to generic
+    // message once partners table is verified working.
     return NextResponse.json(
-      { error: "Couldn't save your application. Email ben@bluejayportfolio.com." },
+      {
+        error: "Couldn't save your application. Email ben@bluejayportfolio.com.",
+        debug: {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        },
+      },
       { status: 500 },
     );
   }
