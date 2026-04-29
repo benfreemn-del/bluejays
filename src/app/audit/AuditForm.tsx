@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { trackMetaEvent } from "@/components/RetargetingPixels";
+import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/RetargetingPixels";
 
 const CATEGORIES = [
   ["dental", "Dental"],
@@ -85,9 +85,14 @@ export default function AuditForm() {
         content_name: "site_audit",
         content_category: businessCategory,
       });
-      // Google Ads custom event — Ben can wire a conversion label later
-      // by configuring the Conversion in the Google Ads dashboard and
-      // firing trackGoogleAdsConversion("AW-XXX/labelXXX", ...) here.
+      // Google Ads "Audit Lead" conversion — fires the conversion action
+      // configured in the Google Ads dashboard. send_to value is set via
+      // NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT (format: "AW-XXXX/LABEL").
+      const auditConversionSendTo = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT;
+      if (auditConversionSendTo) {
+        trackGoogleAdsConversion(auditConversionSendTo, 50);
+      }
+      // Also fire a custom GA4 event for funnel analysis in Google Analytics.
       const w = window as unknown as { gtag?: (...args: unknown[]) => void };
       if (typeof w.gtag === "function") {
         try {
