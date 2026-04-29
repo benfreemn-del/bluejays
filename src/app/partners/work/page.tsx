@@ -149,6 +149,12 @@ export default async function PartnerWorkPage() {
                 category: prospect.category,
                 status: prospect.status,
                 hasCompletedAudit: prospect.hasCompletedAudit,
+                latestAuditId: prospect.latestAuditId,
+                previewUrl: `${SITE_ORIGIN}/preview/${prospect.id}?ref=${partner.code}`,
+                auditViewUrl: prospect.latestAuditId
+                  ? `${SITE_ORIGIN}/audit/${prospect.latestAuditId}?ref=${partner.code}`
+                  : null,
+                categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,
                 websiteUrl:
                   (prospect.scraped_data?.submittedUrl as string | undefined) ||
                   (prospect.scraped_data?.website as string | undefined) ||

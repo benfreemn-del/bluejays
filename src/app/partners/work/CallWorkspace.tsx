@@ -45,6 +45,7 @@ type Props = {
     category: string | null;
     status: string | null;
     hasCompletedAudit: boolean;
+    latestAuditId: string | null;
     websiteUrl: string | null;
     googleSearchUrl: string;
     // Hours / open-status (always computed; "precise" flag tells us
@@ -56,6 +57,11 @@ type Props = {
     openLabel: string;
     openPrecise: boolean;
     openHint: string | null;
+    // Research links — opened in new tabs so caller can scan before
+    // dialing without losing the workspace state.
+    previewUrl: string;          // /preview/[id]
+    auditViewUrl: string | null; // /audit/[audit-id] if hasCompletedAudit
+    categoryTemplateUrl: string; // /v2/[category]
   } | null;
   counters: {
     callsThisSession: number;
@@ -532,6 +538,72 @@ function ProspectCard({
         </div>
       </div>
 
+      {/* Pre-call research toolkit — opens in new tabs so the caller
+          can skim before dialing without losing workspace state.
+          Most useful is the personalized preview ("the site WE'd build
+          for them") — that's the heart of the pitch. */}
+      <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 mb-3">
+        <p className="text-[10px] uppercase tracking-wider text-amber-300 font-semibold mb-2">
+          🔬 Research before you dial
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={prospect.previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md bg-amber-500 hover:bg-amber-400 text-amber-950 px-3 py-1.5 text-xs font-bold transition-colors"
+            title="Open the site BlueJays has built for this prospect (or would build)"
+          >
+            🔍 Preview their site
+          </a>
+          {prospect.auditViewUrl && (
+            <a
+              href={prospect.auditViewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-200 px-3 py-1.5 text-xs font-semibold transition-colors"
+              title="View the completed audit so you know what the prospect will see when you text the link"
+            >
+              📋 View audit
+            </a>
+          )}
+          {prospect.websiteUrl ? (
+            <a
+              href={
+                prospect.websiteUrl.startsWith("http")
+                  ? prospect.websiteUrl
+                  : `https://${prospect.websiteUrl}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/10 hover:border-sky-500/40 bg-slate-900/60 hover:bg-sky-500/10 text-slate-300 hover:text-sky-200 px-3 py-1.5 text-xs transition-colors"
+              title="Their actual current website"
+            >
+              🌐 Their site
+            </a>
+          ) : (
+            <a
+              href={prospect.googleSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/10 hover:border-sky-500/40 bg-slate-900/60 hover:bg-sky-500/10 text-slate-300 hover:text-sky-200 px-3 py-1.5 text-xs transition-colors"
+              title="Google them to verify they're real + find the website"
+            >
+              🔎 Google them
+            </a>
+          )}
+          <a
+            href={prospect.categoryTemplateUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 underline decoration-dotted underline-offset-4 px-1"
+            title="Generic BlueJays template for this category — useful when no personalized preview exists yet"
+          >
+            template
+          </a>
+        </div>
+      </div>
+
       {/* Phone — prominent on the card itself, not just on the rail.
           Caller's eyes never leave the prospect block. */}
       <a
@@ -541,37 +613,12 @@ function ProspectCard({
         📲 {formatPhone(prospect.phone)}
       </a>
 
-      {/* Quick links — website (if known) + Google search fallback + email */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
-        {prospect.websiteUrl ? (
-          <a
-            href={
-              prospect.websiteUrl.startsWith("http")
-                ? prospect.websiteUrl
-                : `https://${prospect.websiteUrl}`
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sky-400 hover:underline break-all"
-          >
-            🔗 {prospect.websiteUrl}
-          </a>
-        ) : (
-          <a
-            href={prospect.googleSearchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sky-400 hover:underline"
-          >
-            🔍 Look up on Google
-          </a>
-        )}
-        {prospect.email && (
-          <span className="text-slate-500 break-all">
-            ✉ {prospect.email}
-          </span>
-        )}
-      </div>
+      {/* Email below phone — small, slate, just for reference */}
+      {prospect.email && (
+        <p className="text-xs text-slate-500 break-all">
+          ✉ {prospect.email}
+        </p>
+      )}
     </div>
   );
 }
