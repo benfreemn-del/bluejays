@@ -174,16 +174,26 @@ export async function getNextProspectForPartner(): Promise<{
   };
 }
 
-/** How many calls has this partner logged today (since 00:00 local).
- *  Used by the workspace counter. */
-export async function countCallsTodayForPartner(partnerId: string): Promise<number> {
+/** How many calls has this partner logged in the current session
+ *  (since their most recent login). Used by the workspace /100 counter.
+ *
+ *  Falls back to "today" if last_login_at is missing for any reason
+ *  (legacy partners predating the migration). */
+export async function countCallsThisSessionForPartner(
+  partnerId: string,
+  sessionStartIso: string | null,
+): Promise<number> {
   if (!isSupabaseConfigured()) return 0;
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
+  let cutoff = sessionStartIso;
+  if (!cutoff) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    cutoff = startOfDay.toISOString();
+  }
   const { count } = await supabase
     .from("partner_calls")
     .select("*", { count: "exact", head: true })
     .eq("partner_id", partnerId)
-    .gte("called_at", startOfDay.toISOString());
+    .gte("called_at", cutoff);
   return count || 0;
 }

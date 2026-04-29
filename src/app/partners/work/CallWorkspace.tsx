@@ -19,6 +19,13 @@ type FilledObjection = {
   callerNotes?: string;
 };
 
+type CallTip = {
+  id: string;
+  emoji: string;
+  title: string;
+  body: string;
+};
+
 type Props = {
   partner: {
     id: string;
@@ -40,7 +47,7 @@ type Props = {
     websiteUrl: string | null;
   } | null;
   counters: {
-    callsToday: number;
+    callsThisSession: number;
     goal: number;
     remainingPool: number;
   };
@@ -58,6 +65,8 @@ type Props = {
     voicemail: FilledSection;
     objections: FilledObjection[];
   };
+  tips: CallTip[];
+  mantra: string;
 };
 
 type Outcome =
@@ -101,7 +110,7 @@ const OUTCOME_META: Record<
 };
 
 export default function CallWorkspace(props: Props) {
-  const { partner, prospect, counters, links, script } = props;
+  const { partner, prospect, counters, links, script, tips, mantra } = props;
   const router = useRouter();
 
   const [busy, setBusy] = useState(false);
@@ -184,9 +193,9 @@ export default function CallWorkspace(props: Props) {
     return <EmptyPool partnerName={partner.name} onLogout={logout} />;
   }
 
-  const callsTodayPct = Math.min(
+  const sessionPct = Math.min(
     100,
-    Math.round((counters.callsToday / Math.max(1, counters.goal)) * 100),
+    Math.round((counters.callsThisSession / Math.max(1, counters.goal)) * 100),
   );
 
   return (
@@ -203,22 +212,22 @@ export default function CallWorkspace(props: Props) {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden md:block min-w-[140px]">
+            <div className="hidden md:block min-w-[160px]">
               <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
-                <span>Today</span>
-                <span className="font-mono">
-                  {counters.callsToday}/{counters.goal}
+                <span>This session</span>
+                <span className="font-mono font-bold text-white">
+                  {counters.callsThisSession}<span className="text-slate-500">/{counters.goal}</span>
                 </span>
               </div>
               <div className="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500"
-                  style={{ width: `${callsTodayPct}%` }}
+                  style={{ width: `${sessionPct}%` }}
                 />
               </div>
             </div>
             <span className="md:hidden text-sm font-bold text-amber-300 tabular-nums">
-              {counters.callsToday}/{counters.goal}
+              {counters.callsThisSession}/{counters.goal}
             </span>
             <button
               onClick={logout}
@@ -226,6 +235,14 @@ export default function CallWorkspace(props: Props) {
             >
               Log out
             </button>
+          </div>
+        </div>
+        {/* Mantra banner — anchors after every no */}
+        <div className="border-t border-amber-500/20 bg-amber-500/5">
+          <div className="mx-auto max-w-7xl px-4 py-1.5 text-center">
+            <p className="text-xs font-semibold text-amber-300 tracking-wide">
+              🔥 {mantra}
+            </p>
           </div>
         </div>
       </header>
@@ -319,9 +336,9 @@ export default function CallWorkspace(props: Props) {
 
             <a
               href={`tel:${prospect.phone.replace(/[^0-9+]/g, "")}`}
-              className="block w-full rounded-md border border-white/10 bg-slate-950 hover:border-sky-500/40 px-4 py-3 text-sm font-mono text-center text-sky-300 hover:text-sky-200 transition-colors tabular-nums"
+              className="block w-full rounded-md border border-sky-500/40 bg-sky-500/5 hover:bg-sky-500/15 px-4 py-3 text-base font-mono text-center text-sky-200 hover:text-white transition-colors tabular-nums font-semibold"
             >
-              📲 {formatPhone(prospect.phone)}
+              📲 Tap to dial · {formatPhone(prospect.phone)}
             </a>
 
             <p className="text-[10px] text-slate-500 leading-relaxed">
@@ -329,6 +346,39 @@ export default function CallWorkspace(props: Props) {
               Send from your phone, then mark the outcome below.
             </p>
           </div>
+
+          {/* Hormozi cheat sheet — pinned ALWAYS visible during call.
+              The reps that close are the ones reading these between
+              every dial, not just on day one. */}
+          <details
+            open
+            className="rounded-2xl border border-amber-500/30 bg-amber-500/5 overflow-hidden"
+          >
+            <summary className="cursor-pointer px-4 py-3 text-xs uppercase tracking-wider text-amber-300 font-semibold hover:bg-amber-500/10 transition-colors flex items-center justify-between">
+              <span>⭐ Before you dial — Hormozi tips</span>
+              <span className="text-slate-500 text-[10px] font-normal">tap to collapse</span>
+            </summary>
+            <div className="px-4 pb-4 space-y-3">
+              {tips.map((tip) => (
+                <div
+                  key={tip.id}
+                  className="flex gap-3 pt-3 first:pt-1 border-t border-amber-500/10 first:border-t-0"
+                >
+                  <span className="text-lg flex-shrink-0 leading-none mt-0.5">
+                    {tip.emoji}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-amber-200 leading-tight mb-0.5">
+                      {tip.title}
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {tip.body}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </details>
 
           {/* Outcomes */}
           <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5">

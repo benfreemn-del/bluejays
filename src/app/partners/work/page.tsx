@@ -2,9 +2,14 @@ import { redirect } from "next/navigation";
 import { getCurrentPartner } from "@/lib/partner-auth";
 import {
   getNextProspectForPartner,
-  countCallsTodayForPartner,
+  countCallsThisSessionForPartner,
 } from "@/lib/partner-leadpool";
-import { fillVars, HORMOZI_CALL_SCRIPT } from "@/lib/partners-script";
+import {
+  fillVars,
+  HORMOZI_CALL_SCRIPT,
+  HORMOZI_CALL_TIPS,
+  HORMOZI_MANTRA,
+} from "@/lib/partners-script";
 import type { ScriptVars } from "@/lib/partners-script";
 import CallWorkspace from "./CallWorkspace";
 
@@ -35,8 +40,14 @@ export default async function PartnerWorkPage() {
   const partner = await getCurrentPartner();
   if (!partner) redirect("/partners/login");
 
-  const callsToday = await countCallsTodayForPartner(partner.id);
-  const goal = partner.daily_call_goal || 10;
+  // Session counter resets on each login. Goal is /100 per session
+  // (per Ben spec) — long enough for real flow state, achievable in
+  // a focused 2-3 hour block.
+  const callsThisSession = await countCallsThisSessionForPartner(
+    partner.id,
+    partner.last_login_at ?? null,
+  );
+  const goal = 100;
 
   const { prospect, remainingCount } = await getNextProspectForPartner();
 
@@ -118,7 +129,7 @@ export default async function PartnerWorkPage() {
           : null
       }
       counters={{
-        callsToday,
+        callsThisSession,
         goal,
         remainingPool: remainingCount,
       }}
@@ -127,6 +138,8 @@ export default async function PartnerWorkPage() {
         scheduleUrl,
       }}
       script={filledScript}
+      tips={HORMOZI_CALL_TIPS}
+      mantra={HORMOZI_MANTRA}
     />
   );
 }

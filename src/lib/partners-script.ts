@@ -57,6 +57,13 @@ export type ObjectionBranch = {
   callerNotes?: string;    // tactical note for the caller
 };
 
+export type CallTip = {
+  id: string;
+  emoji: string;
+  title: string;
+  body: string;
+};
+
 export type CallScript = {
   intro: ScriptSection;
   qualify: ScriptSection;
@@ -67,6 +74,83 @@ export type CallScript = {
   voicemail: ScriptSection;
   objections: ObjectionBranch[];
 };
+
+/** Hormozi-tier coaching the caller sees BEFORE every dial.
+ *  These don't change per-call — they're the muscle memory we want
+ *  the caller building over the first 100 calls. */
+export const HORMOZI_CALL_TIPS: CallTip[] = [
+  {
+    id: "smile",
+    emoji: "😊",
+    title: "Smile before you dial",
+    body: "Your tone changes the second you smile. They can't see you but they can feel it. The first 5 words decide if they hang up.",
+  },
+  {
+    id: "slow",
+    emoji: "🐢",
+    title: "Slow down",
+    body: "Talk like you're explaining to a friend, not selling. Cold callers rush. Friends don't. Be the friend.",
+  },
+  {
+    id: "firstName",
+    emoji: "👋",
+    title: "Use their first name early + often",
+    body: "Hearing their own name in the first sentence kills 'is this spam.' Use it again every 30 seconds — never more than once a sentence.",
+  },
+  {
+    id: "permission",
+    emoji: "🤝",
+    title: "Permission first",
+    body: "\"Cool?\" / \"Fair?\" / \"Sound useful?\" earns the green light. People hang up on monologues, not conversations.",
+  },
+  {
+    id: "worstThing",
+    emoji: "⭐",
+    title: "The Hormozi magic line",
+    body: "\"Would it be the worst thing in the world if you took 15 minutes, learned what's broken, and decided not to use us?\" → They say no → Objections evaporate.",
+  },
+  {
+    id: "twoOptions",
+    emoji: "🎯",
+    title: "Two options, never one",
+    body: "\"Tuesday at 3 or Thursday at 10?\" beats \"do you want to book?\" every time. Yes/no questions get nos. Choices get choices.",
+  },
+  {
+    id: "endOnQ",
+    emoji: "❓",
+    title: "End every line on a question",
+    body: "If you stop talking with a period, they fill the silence with \"no thanks.\" If you stop with a question, they have to answer.",
+  },
+  {
+    id: "numbers",
+    emoji: "🔢",
+    title: "Anchor a number THEY say",
+    body: "\"How many calls a week?\" → they give a number. That number becomes the wedge: \"top sites in your space pull 3-4× that.\" Their number, not yours.",
+  },
+  {
+    id: "noTrash",
+    emoji: "🛡️",
+    title: "Never trash their current guy",
+    body: "\"When's the last time he RAISED your leads?\" plants doubt without insulting them. They have to defend the choice — they can't.",
+  },
+  {
+    id: "exit",
+    emoji: "🚪",
+    title: "Always offer the exit",
+    body: "\"If you say no I'll never call again.\" They relax. Pressure kills. Most yeses come 30 seconds AFTER you give them permission to say no.",
+  },
+  {
+    id: "everyNo",
+    emoji: "🔥",
+    title: "Every no gets you closer to a yes",
+    body: "Cold-call math: ~1 in 20 books. That means every no isn't a failure — it's progress. Stack the nos fast. The yes is on the other side of them.",
+  },
+];
+
+/** Big anchor mantra shown as a top banner on the workspace —
+ *  the one line that resets the brain after every no. */
+export const HORMOZI_MANTRA =
+  "Every no leads you closer to a yes.";
 
 /** Replace {merge} tags in a string with values from vars. Missing keys
  *  fall back to a generic stand-in so the line never reads as broken. */
@@ -91,48 +175,54 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
   intro: {
     id: "intro",
     title: "Open the call",
-    goal: "Get past the first 5 seconds. Friendly + specific = they don't hang up.",
+    goal: "Earn the next 30 seconds. Permission + intrigue = they don't hang up.",
     lines: [
       "Hey, is this {firstName}?",
-      "Hi {firstName} — this is {partnerFirstName} with BlueJays. Quick reason for the call: I was looking at {bizName}'s site and I noticed a couple things that are probably costing you customers.",
-      "Is now a bad time, or do you have 30 seconds?",
+      "Hi {firstName} — this is {partnerFirstName} with BlueJays. I'm not your typical sales call. I've got one question, takes about 10 seconds, then I'll let you go either way. Cool?",
+      "Awesome. So I was looking at {bizName}'s website and I noticed a couple things that are probably costing you some calls. Real quick — when somebody Googles \"{category} {city}\" and lands on your site, are you getting the kind of phone calls you'd want from it?",
     ],
     callerNotes: [
+      "PERMISSION FIRST. \"Cool?\" earns the green light. People hang up on monologues, not on conversations.",
       "If they say BAD TIME → jump to objection: 'busy'.",
-      "If they say WHO ARE YOU → 'BlueJays builds websites for local {category} businesses — I'm calling because I genuinely think we can help.' Then continue.",
-      "If they say YEAH GO AHEAD → continue to Qualify.",
+      "If they say WHO ARE YOU → 'BlueJays builds websites for local {category} businesses. I'm calling because I genuinely think we can help.' Then continue.",
+      "Use {firstName} early and often. Hearing your own name kills 'is this spam' instantly.",
     ],
   },
 
   qualify: {
     id: "qualify",
-    title: "Qualify in 20 seconds",
-    goal: "Get them to admit the site isn't pulling its weight. Their words, not yours.",
+    title: "Qualify with NUMBERS",
+    goal: "Anchor a specific number THEY say. That number becomes the wedge.",
     lines: [
-      "Quick question — when somebody Googles \"{category} {city}\" and lands on your site, are you happy with how many of them actually call you?",
-      "Got it. And on a scale of 1 to 10, how would you rate your current site?",
-      "Yeah, that's pretty common for {category} sites. The good news is fixing it isn't hard — most of what's broken is fixable in a couple of days.",
+      "Roughly how many new customer calls do you get a week — like a real ballpark?",
+      "Got it. And of those, how many came from the website vs. word of mouth or your Google reviews?",
+      "Yeah — that's actually right where most {category} sites land. The top sites in your space pull 3-4 times that. Not because they're prettier — because they have 3 specific things yours probably doesn't.",
+      "So here's why I'm calling.",
     ],
     callerNotes: [
-      "If they say IT'S FINE / 9 OR 10 → 'Cool — let me ask differently. If I told you most {category} sites are missing 3 specific things that double their leads, would you at least want to see what those are? Free, no pitch.' Then go to Pitch.",
-      "If they say IT'S BAD / I KNOW → perfect, go straight to Pitch with energy.",
-      "If they DEFLECT → 'Fair enough. Can I send you a free audit anyway? You can read it tonight, ignore it if it's not useful.' Then go to TextTheLink.",
+      "Get a NUMBER. Even a guess. Numbers anchor — \"happy\" / \"fine\" don't.",
+      "If website calls = 0-2/wk → 'Yeah, a {category} site should be doing 5-15. We can fix that.' Go to Pitch.",
+      "If they say WEBSITE DOESN'T MATTER / WORD OF MOUTH ONLY → 'Cool — but when somebody hears about you and Googles you to check you're real, what does the site tell them? That's the issue.' Go to Pitch.",
+      "If they DEFLECT → 'Fair. Mind if I send the audit anyway? Read it tonight, ignore it if it's not useful.' → TextTheLink.",
     ],
   },
 
   pitch: {
     id: "pitch",
-    title: "Compress the offer",
-    goal: "Set up the next step (Ben's call). Audit is the bridge, not the goal.",
+    title: "Tease ONE thing — then ask",
+    goal: "Sell the CALL only. One sentence per breath. End every line on a question.",
     lines: [
-      "Here's what I'd love to do. We have a system that scores your site 0-100 and finds the top 3 things costing you customers — takes about 60 seconds. Then Ben — that's the owner, he's a Washington State Trooper, he builds these himself — he hops on a 15-minute call with you and walks you through what's wrong and how to fix it. No pitch, no slides, just him explaining what he'd do.",
-      "The audit is free. The 15-minute call is free. If after the call you want him to rebuild your site, $997 one-time, $100 a year for hosting. If not, no follow-up — you keep the audit either way.",
-      "Want me to get you on Ben's calendar for the walkthrough? He's got a couple slots this week.",
+      "I'd love to set you up with a 15-minute call with Ben — he's the owner, Washington State Trooper, builds these himself. He'd walk you through exactly what's costing you calls and how he'd fix it. No slides, no pitch. Sound useful?",
+      "Cool. The call is free. The audit he'll walk you through is free. Even if you never use us, you walk away knowing exactly what to fix on the site you have. Fair?",
+      "Real quick before we book it — would it be the worst thing in the world if you took the 15 minutes, learned what's broken, and decided not to use us?",
+      "Right? Worst case you waste 15 minutes. Best case you double the calls coming off your site. He's free Tuesday at 3 or Thursday at 10 — which works better?",
     ],
     callerNotes: [
-      "PRIMARY GOAL = book the 15-min walkthrough. Don't sell — sell the call.",
-      "If they ask HOW MUCH → '$997 one-time, $100/yr hosting. But the call is free — you should hear what Ben'd actually do before deciding anything.'",
-      "If they ask WHO BUILDS IT → 'Ben Freeman runs BlueJays. He's a Washington State Trooper, builds them himself. You'd talk to him directly on the call.'",
+      "★ HORMOZI MAGIC LINE: 'Would it be the worst thing in the world if you took the 15 minutes...' Pre-handles the no. Always says no, which means no objections left.",
+      "★ TWO-OPTION CLOSE: 'Tuesday or Thursday' beats 'do you want to book?' every time. Yes/no questions get nos. Choices get choices.",
+      "If they ask HOW MUCH → '$997 one-time, $100/yr hosting. But all that's later — the call's free, you should hear Ben out first. Tuesday or Thursday?'",
+      "If they ask WHO ARE YOU → 'Ben Freeman runs BlueJays. State Trooper, builds them himself. You'd talk to him directly on the call.'",
+      "If they ask WHAT'S WRONG WITH MY SITE on the phone → 'I'm not the one to tell you — that's literally Ben's job on the call. Tuesday or Thursday?'",
     ],
   },
 
@@ -186,16 +276,17 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
 
   voicemail: {
     id: "voicemail",
-    title: "Leave a voicemail",
-    goal: "Short. Specific. Tease the audit + the call. Text follows immediately.",
+    title: "Leave a voicemail (with a HOOK)",
+    goal: "Curiosity gap → specific dollar number → text follows in 5 sec.",
     lines: [
-      "Hey {firstName}, this is {partnerFirstName} with BlueJays — I was looking at {bizName}'s site and noticed a couple things probably costing you customers.",
-      "I'm going to text you a free 60-second audit and a link to book a 15-minute walkthrough with Ben — he owns the company, he'd walk you through what to fix. No charge for any of that.",
-      "Take a look when you can. If it's useful, just text back. Thanks {firstName}.",
+      "Hey {firstName}, {partnerFirstName} with BlueJays — I'm going to keep this short.",
+      "I was looking at {bizName}'s website and I found a couple things that are probably costing you about $2,000 a month in lost customers. I'm going to text you the breakdown right now so you can see what I mean.",
+      "If it makes sense, just text back and we'll get you on a 15-minute call with Ben — he's the owner, he'd walk you through it. Either way, the breakdown's yours. Thanks {firstName}.",
     ],
     callerNotes: [
-      "Hang up. Hit SEND AUDIT LINK + SEND BOOKING LINK in that order. Mark outcome VOICEMAIL.",
-      "About 1 in 4 voicemail-then-text combos get a reply. Leave the voicemail every time.",
+      "★ The DOLLAR NUMBER is the hook. \"Probably costing you customers\" is forgettable. \"$2,000 a month\" gets a callback.",
+      "★ Hang up → SEND BOOKING LINK first → SEND AUDIT LINK second. Then mark VOICEMAIL.",
+      "About 1 in 4 voicemail-then-text combos get a reply. Always text after.",
     ],
   },
 
@@ -215,11 +306,11 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       trigger: "I already have a guy / web designer / nephew does it",
       response: [
         "Cool — who's been doing it for you?",
-        "How's the site working for you in terms of leads — getting 5 or more new customers a month from it?",
-        "Mind if I send you a quick free audit anyway? You'll be able to compare it to what you have. If yours is better, ignore us.",
+        "Last question and I'll let you go: when's the last time he actually RAISED the calls coming off your site? Like a real change, not just 'updated something.'",
+        "Yeah — that's actually what we do. Want me to send you a free audit anyway? You can show it to your guy. Either he uses it or he can't, but you'll know exactly what's missing.",
       ],
       callerNotes:
-        "Don't trash their current guy. Plant doubt with the leads question, then offer the free audit as a comparison tool. Most 'guys' built a Squarespace site and disappeared.",
+        "★ Never trash the current guy. Plant doubt with the LEVERAGE question — \"when did he RAISE your leads.\" Most never have, because most 'guys' built a Squarespace + disappeared. The audit becomes a tool the prospect can wield. They get to feel smart, not bullied.",
     },
     {
       id: "howMuch",
@@ -245,10 +336,11 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       id: "thinkAboutIt",
       trigger: "I'll think about it",
       response: [
-        "100%. The audit's free though — let me at least text it so you have the data when you're thinking about it. What's the best number?",
+        "Totally fair. Quick question — would it be the worst thing in the world if you took 15 minutes with Ben on Tuesday or Thursday, learned what's broken, and decided not to use us?",
+        "Right? Worst case you waste 15 minutes. Best case the call doubles your phone calls. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
-        "Don't push for a yes on the call. Push for the audit-link send. The audit closes them, not you.",
+        "★ HORMOZI MAGIC LINE again. \"I'll think about it\" is almost always \"I don't want to say no on the phone.\" The worst-thing question gives them permission to say yes without committing to anything.",
     },
     {
       id: "emailMe",
