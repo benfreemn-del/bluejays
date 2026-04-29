@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type React from "react";
+import Image from "next/image";
 import AuditForm from "./AuditForm";
 
 /**
@@ -164,36 +165,73 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
-      {/* Built by Ben — trust strip with founder credibility + client mentions */}
-      <section className="border-b border-white/5 bg-slate-950/60">
-        <div className="mx-auto max-w-4xl px-6 py-10">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-center md:text-left">
-            {/* Left — founder credibility */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500/20 to-emerald-500/20 border border-sky-500/30">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-sky-400">
-                  <path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+      {/* Meet Ben — compact half-size founder section.
+          Full version lives on bluejayportfolio.com homepage; this is a
+          shrunk variant to anchor trust on the audit lead-magnet page. */}
+      <section className="border-b border-white/5 bg-slate-950/60 relative overflow-hidden">
+        {/* Subtle ambient glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-[10%] -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-sky-500/[0.04] blur-[120px]" />
+          <div className="absolute top-1/2 right-[15%] -translate-y-1/2 w-[260px] h-[260px] rounded-full bg-emerald-500/[0.04] blur-[100px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-4xl px-6 py-12">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-10">
+            {/* Left — photo (smaller than homepage version) */}
+            <div className="relative shrink-0">
+              <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-sky-500/10">
+                <Image
+                  src="/ben-and-wife.jpg"
+                  alt="Ben Freeman with his wife"
+                  fill
+                  sizes="(max-width: 768px) 176px, 208px"
+                  className="object-cover"
+                  priority={false}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-white leading-tight">Built by a Washington State Trooper.</p>
-                <p className="text-xs text-slate-400 mt-0.5">Real human. Real accountability. Real local.</p>
+              {/* Compact founder badge */}
+              <div className="absolute -bottom-3 left-3 bg-gradient-to-br from-sky-500 to-blue-600 text-white px-3 py-1.5 rounded-lg shadow-lg shadow-sky-500/30">
+                <div className="text-[8px] uppercase tracking-[0.15em] opacity-80 leading-none">Founder</div>
+                <div className="text-xs font-bold leading-tight mt-0.5">Ben Freeman</div>
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="hidden md:block w-px h-12 bg-white/10" />
+            {/* Right — story + trust pillars */}
+            <div className="flex-1 text-center md:text-left">
+              <span className="inline-block text-sky-400 text-[10px] font-bold uppercase tracking-[0.25em] mb-2 px-3 py-1 rounded-full border border-sky-500/20 bg-sky-500/5">
+                Meet Ben
+              </span>
+              <h3 className="text-xl md:text-2xl font-extrabold tracking-tight mb-3 leading-tight">
+                When you hire BlueJays,{" "}
+                <span className="text-sky-400">you hire me.</span>
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed mb-4 max-w-xl">
+                I&apos;m a Washington State Trooper based in Quilcene. I started BlueJays because too many local owners get burned by web designers who ghost after the invoice. <span className="text-white font-semibold">I answer my phone. I don&apos;t disappear.</span>
+              </p>
 
-            {/* Right — client logos / names */}
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Trusted by local owners like:</p>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-5 gap-y-2 text-sm font-semibold text-slate-300">
-                <span>Hector Landscaping</span>
-                <span className="text-slate-700">·</span>
-                <span>Pine &amp; Particle</span>
-                <span className="text-slate-700">·</span>
-                <span>Lewis County Autism Coalition</span>
+              {/* Trust pillars — inline strip */}
+              <div className="flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-2 text-xs text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 text-sky-400">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="9" r="2.5" />
+                  </svg>
+                  <span><span className="text-white font-semibold">Local</span> · Quilcene WA</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 text-sky-400">
+                    <path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span><span className="text-white font-semibold">Accountable</span> · One person, one promise</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 text-sky-400">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.91.71 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.58 2.81.71A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span><span className="text-white font-semibold">Personal</span> · Direct line, real human</span>
+                </span>
               </div>
             </div>
           </div>
