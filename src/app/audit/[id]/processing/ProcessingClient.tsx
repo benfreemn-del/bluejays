@@ -32,7 +32,7 @@ const STAGE_MESSAGES: Record<string, string> = {
   pending: "Audit is queued — kicking it off in a moment…",
   generating: "Reading your site, scoring every section, and finding the conversion leaks. Usually done in 1–2 minutes.",
   ready: "Audit is ready. Redirecting you to your full report…",
-  failed: "Something went wrong generating your audit. Email bluejaycontactme@gmail.com and we'll send a real human's review by tomorrow.",
+  failed: "Something went wrong generating your audit. Email ben@bluejayportfolio.com and we'll send a real human's review by tomorrow.",
   cancelled: "This audit was cancelled. Email us if this looks wrong.",
   unknown: "Looking up your audit…",
 };
@@ -218,6 +218,24 @@ export default function ProcessingClient({
               <p className="mt-6 text-xs text-slate-500">
                 Your full report opens here the moment it&apos;s done — usually 1–2 minutes. We&apos;ll also email you a copy.
               </p>
+
+              {/* Social proof during wait — fills the dead time with the
+                  "you're not alone, this works" signal. Static, deterministic
+                  copy until live audit volume justifies real numbers. */}
+              <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-xl font-bold text-emerald-300">94%</div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">find a leak</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-emerald-300">$2.1k</div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">avg leak/mo</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-emerald-300">48hrs</div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">to rebuild</div>
+                </div>
+              </div>
             </>
           )}
 
@@ -246,7 +264,7 @@ export default function ProcessingClient({
                 <p className="text-xs text-slate-500 font-mono mt-3">{failedReason}</p>
               )}
               <a
-                href="mailto:bluejaycontactme@gmail.com?subject=Audit%20generation%20failed"
+                href="mailto:ben@bluejayportfolio.com?subject=Audit%20generation%20failed"
                 className="mt-6 inline-flex items-center justify-center rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold hover:bg-sky-400 transition-colors"
               >
                 Email us

@@ -85,7 +85,7 @@ export default function AuditCTAHub({
       if (!res.ok || !data.ok) {
         setRequest({
           status: "error",
-          message: data.error || "Something went wrong. Email bluejaycontactme@gmail.com.",
+          message: data.error || "Something went wrong. Email ben@bluejayportfolio.com.",
         });
         return;
       }

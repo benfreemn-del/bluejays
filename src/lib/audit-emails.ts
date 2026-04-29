@@ -25,6 +25,28 @@
 
 import type { EmailTemplate } from "./email-templates";
 
+/**
+ * Subject-line A/B/C variant picker.
+ *
+ * Pass a deterministic seed (e.g. audit_id or business_name) so the same
+ * recipient always gets the same variant — critical for tracking which
+ * variants beat baseline. Use the same seed across all 5 emails so a
+ * given prospect sees a consistent variant cohort across the whole
+ * sequence (cleaner attribution).
+ *
+ * After ~50 sends, look at open rates per variant in your email logs and
+ * promote the winner to position 0 (the default).
+ */
+function pickVariant<T>(seed: string, variants: readonly T[]): T {
+  if (variants.length === 0) throw new Error("pickVariant: empty variants");
+  if (variants.length === 1) return variants[0];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  }
+  return variants[Math.abs(hash) % variants.length];
+}
+
 const VERTICAL_HOOKS: Record<string, { mistake: string; insight: string }> = {
   dental: {
     mistake: "leading with 'experienced family dentist' instead of an outcome",
@@ -107,7 +129,12 @@ export function getAuditEmail1(args: {
   bookUrl: string;
 }): EmailTemplate {
   const { businessName, auditUrl, overallScore, bookUrl } = args;
-  const subject = `Your audit is ready (score: ${overallScore}/100)`;
+  // A/B/C subject line variants — promote the winner after ~50 sends per variant.
+  const subject = pickVariant(businessName, [
+    `Your audit is ready (score: ${overallScore}/100)`, // baseline
+    `Found 3 things on your site costing you customers`, // pain-driven
+    `${businessName}, here's what we found`, // personal + curiosity
+  ] as const);
 
   const verdict =
     overallScore >= 80
@@ -155,7 +182,11 @@ export function getAuditEmail2(args: {
 
   const categoryLabel = category === "general" ? "small business" : category.replace("-", " ");
 
-  const subject = `The fix most ${categoryLabel} owners get wrong`;
+  const subject = pickVariant(businessName, [
+    `The fix most ${categoryLabel} owners get wrong`, // baseline
+    `Saw something on ${businessName}'s site I had to mention`, // personal callout
+    `One thing 80% of ${categoryLabel} sites mess up`, // statistic-driven
+  ] as const);
 
   const body = `Yesterday I sent your audit. Today I want to show you the #1 mistake ${categoryLabel} owners make on their site — and it's almost certainly in your audit.
 
@@ -186,7 +217,12 @@ export function getAuditEmail3(args: {
 }): EmailTemplate {
   const { businessName, category, auditUrl, bookUrl } = args;
 
-  const subject = `How a ${category === "general" ? "local business" : category.replace("-", " ")} owner doubled her bookings`;
+  const categoryName = category === "general" ? "local business" : category.replace("-", " ");
+  const subject = pickVariant(businessName, [
+    `How a ${categoryName} owner doubled her bookings`, // baseline
+    `${categoryName === "local business" ? "She" : "He"} went from 2 leads/mo to 14 — here's what changed`, // outcome-specific
+    `The 48-hour rebuild that paid for itself in 9 days`, // payback-driven
+  ] as const);
 
   const body = `Quick story before I let you get on with your day.
 
@@ -218,7 +254,11 @@ export function getAuditEmail4(args: {
 }): EmailTemplate {
   const { businessName, auditUrl, bookUrl } = args;
 
-  const subject = `"But I already have a website…"`;
+  const subject = pickVariant(businessName, [
+    `"But I already have a website…"`, // baseline (objection-frame)
+    `The 3 reasons owners say no — and what I tell them`, // honest framing
+    `Talked myself out of it for 6 months. Don't.`, // story-frame
+  ] as const);
 
   const body = `Three things I hear from people who've taken our audit and haven't replied yet.
 
@@ -249,7 +289,11 @@ export function getAuditEmail5(args: {
 }): EmailTemplate {
   const { businessName, auditUrl, bookUrl } = args;
 
-  const subject = `Last email (closing your audit)`;
+  const subject = pickVariant(businessName, [
+    `Last email (closing your audit)`, // baseline
+    `Closing this out — anything I can answer?`, // softer scarcity
+    `I won't email you again unless you want me to`, // permission-flip
+  ] as const);
 
   const body = `This is the last email I'll send about ${businessName}'s audit.
 

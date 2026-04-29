@@ -23,6 +23,13 @@ export default async function AuditProcessingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const videoUrl = process.env.NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_URL || null;
+  // Prefer env URL (Loom / YouTube hosted). Falls back to a self-hosted
+  // mp4 in /public when NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_FALLBACK=1 is
+  // set on Vercel — flip ONLY after Ben drops /public/processing-intro.mp4
+  // (otherwise prospects see a broken video frame).
+  const fallbackEnabled = process.env.NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_FALLBACK === "1";
+  const videoUrl =
+    process.env.NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_URL ||
+    (fallbackEnabled ? "/processing-intro.mp4" : null);
   return <ProcessingClient auditId={id} videoUrl={videoUrl} />;
 }

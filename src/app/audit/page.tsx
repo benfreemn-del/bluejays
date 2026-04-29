@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import type React from "react";
 import Image from "next/image";
 import AuditForm from "./AuditForm";
+import SocialProofCounter from "./SocialProofCounter";
+import ExitIntentPopup from "./ExitIntentPopup";
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -40,6 +42,9 @@ export const dynamic = "force-dynamic";
 export default function AuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Exit-intent popup — silently mounts, triggers on mouseleave/idle */}
+      <ExitIntentPopup />
+
       {/* Hero */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20">
         <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
@@ -47,6 +52,9 @@ export default function AuditLandingPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
             Free — no credit card, no signup
           </p>
+          <div className="mb-4">
+            <SocialProofCounter />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Why isn&apos;t your site
             <br />

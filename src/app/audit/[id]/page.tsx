@@ -5,6 +5,10 @@ import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import AuditCTAHub from "./AuditCTAHub";
 import AuditTestimonials from "../AuditTestimonials";
 import RetargetingPixels from "@/components/RetargetingPixels";
+import ShareAuditButton from "./ShareAuditButton";
+
+const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
 
 /**
  * /audit/[id] — Hormozi salty-pretzel report display.
@@ -285,6 +289,15 @@ export default async function AuditPage({
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {content.oneLineSummary}
           </p>
+
+          {/* Share button — many owners need to forward this to a partner /
+              spouse / office manager who handles "the website stuff". */}
+          <div className="mt-6">
+            <ShareAuditButton
+              auditUrl={`${SITE_ORIGIN}/audit/${a.id}`}
+              businessName={businessName}
+            />
+          </div>
           {/* Hormozi review round 1: range footnote moved out of the hero
               (it diluted the headline number). Methodology still appears
               once at the bottom of the recovery section. */}
@@ -746,7 +759,7 @@ export default async function AuditPage({
       <footer className="border-t border-white/5 pb-24 md:pb-20">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">
           <p className="text-slate-400 text-sm">
-            — Ben, BlueJays · <a href="mailto:bluejaycontactme@gmail.com" className="text-sky-400 hover:underline">bluejaycontactme@gmail.com</a>
+            — Ben, BlueJays · <a href="mailto:ben@bluejayportfolio.com" className="text-sky-400 hover:underline">ben@bluejayportfolio.com</a>
           </p>
           <p>
             Audit generated {new Date(content.generatedAt).toLocaleDateString()} ·

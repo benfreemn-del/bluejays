@@ -177,7 +177,7 @@ export default function AuditForm() {
 
       <div className="text-left">
         <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-          Your phone <span className="normal-case text-slate-500 font-normal">(optional — priority SMS from Ben within 1 hour of your audit)</span>
+          Your phone <span className="normal-case text-emerald-400 font-medium">(optional — get a personal text from Ben with your top 3 fixes within 1 hour)</span>
         </label>
         <input
           id="phone"
