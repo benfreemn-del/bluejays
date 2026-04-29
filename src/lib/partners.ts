@@ -25,6 +25,10 @@ export type Partner = {
   notes: string | null;
   approved_at: string | null;
   created_at: string;
+  // Added by 20260429_partner_workspace.sql — workspace fields
+  agreement_accepted_at?: string | null;
+  last_login_at?: string | null;
+  daily_call_goal?: number | null;
 };
 
 export type PartnerReferral = {

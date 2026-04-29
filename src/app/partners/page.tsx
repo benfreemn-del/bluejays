@@ -29,12 +29,20 @@ export default function PartnersPage() {
           >
             ← BlueJays
           </Link>
-          <Link
-            href="/partners/apply"
-            className="text-sm font-semibold rounded-md bg-amber-500 hover:bg-amber-400 text-amber-950 px-3 py-1.5 transition-colors"
-          >
-            Apply →
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/partners/login"
+              className="text-sm text-slate-400 hover:text-white transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/partners/apply"
+              className="text-sm font-semibold rounded-md bg-amber-500 hover:bg-amber-400 text-amber-950 px-3 py-1.5 transition-colors"
+            >
+              Apply →
+            </Link>
+          </div>
         </div>
       </header>
 
