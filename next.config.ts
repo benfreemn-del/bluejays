@@ -1,6 +1,32 @@
 import type { NextConfig } from "next";
 
+// 31 industries that exist in /templates/* AND have a /v2/* equivalent.
+// All 31 are 1:1 redirects — confirmed by repo audit 2026-04-29.
+//
+// /v2/* pages are the canonical industry landing pages (newer, more polished).
+// /templates/* was the original location and is being deprecated to consolidate
+// link equity and prevent duplicate-content issues in Google's index.
+//
+// Once these redirects ship, the corresponding directories under
+// src/app/templates/[industry]/ are removed in the same commit so Next.js
+// doesn't generate the now-redirected paths.
+const TEMPLATE_TO_V2_INDUSTRIES = [
+  "accounting", "auto-repair", "catering", "chiropractic", "church",
+  "cleaning", "daycare", "dental", "electrician", "fitness",
+  "florist", "general-contractor", "hvac", "insurance", "interior-design",
+  "landscaping", "law-firm", "martial-arts", "moving", "pest-control",
+  "pet-services", "photography", "physical-therapy", "plumber", "pool-spa",
+  "real-estate", "roofing", "salon", "tattoo", "tutoring", "veterinary",
+];
+
 const nextConfig: NextConfig = {
+  async redirects() {
+    return TEMPLATE_TO_V2_INDUSTRIES.map((slug) => ({
+      source: `/templates/${slug}`,
+      destination: `/v2/${slug}`,
+      permanent: true, // 301 — passes link equity, tells Google to update its index
+    }));
+  },
   async rewrites() {
     return {
       // Client sites on custom domains — route root to their static index.html.
