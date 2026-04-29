@@ -7,6 +7,7 @@ import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AuditTestimonials from "@/app/audit/AuditTestimonials";
+import { jsonLdString, organizationLd } from "@/lib/json-ld";
 
 const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -37,6 +38,12 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
+      {/* Organization JSON-LD — helps Google build the BlueJays
+          knowledge-panel card in search. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdString(organizationLd()) }}
+      />
       {/* RetargetingPixels now mounted globally in src/app/layout.tsx so the
           gtag library + Meta Pixel load on every route (including /audit form
           submits, claim flow, etc.). */}

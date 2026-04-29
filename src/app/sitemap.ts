@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getAllProspects } from "@/lib/store";
+import { listPublishedCaseStudies } from "@/lib/case-studies";
 
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
@@ -25,6 +26,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/audit`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+    {
+      url: `${BASE_URL}/case-studies`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/partners`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
       url: `${BASE_URL}/privacy`,
@@ -65,5 +84,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Non-fatal — previews are optional in sitemap
   }
 
-  return [...staticRoutes, ...portfolioRoutes, ...previewRoutes];
+  // Published case studies — every audit Ben publishes shows up here.
+  // Highest SEO priority because they're the compounding asset:
+  // unique long-tail keywords (business name + category) per page.
+  let caseStudyRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const studies = await listPublishedCaseStudies(500);
+    caseStudyRoutes = studies.map((s) => ({
+      url: `${BASE_URL}/case-studies/${s.case_study_slug}`,
+      lastModified: new Date(s.published_at),
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    }));
+  } catch {
+    // Non-fatal — case studies are optional in sitemap
+  }
+
+  return [
+    ...staticRoutes,
+    ...portfolioRoutes,
+    ...caseStudyRoutes,
+    ...previewRoutes,
+  ];
 }

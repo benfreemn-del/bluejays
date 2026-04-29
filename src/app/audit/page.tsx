@@ -5,6 +5,7 @@ import AuditForm from "./AuditForm";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
+import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -43,6 +44,23 @@ export const dynamic = "force-dynamic";
 export default function AuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Structured data — helps Google show /audit as a free-tool
+          rich result + breadcrumb in search. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdString(auditToolLd()) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdString(
+            breadcrumbLd([
+              { name: "BlueJays", url: "https://bluejayportfolio.com" },
+              { name: "Free Audit", url: "https://bluejayportfolio.com/audit" },
+            ]),
+          ),
+        }}
+      />
       {/* Exit-intent popup — silently mounts, triggers on mouseleave/idle */}
       <ExitIntentPopup />
       {/* Drops `bj_partner_ref` cookie when ?ref=<code> is in the URL.

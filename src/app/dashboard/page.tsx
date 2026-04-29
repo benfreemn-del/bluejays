@@ -196,6 +196,13 @@ export default function DashboardPage() {
             >
               Partners
             </Link>
+            <Link
+              href="/dashboard/case-studies"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-300 transition-colors hover:bg-background hover:text-emerald-200"
+              title="Publish audits as public SEO case studies"
+            >
+              Case Studies
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">
