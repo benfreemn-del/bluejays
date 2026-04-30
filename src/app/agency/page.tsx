@@ -58,8 +58,8 @@ const FAQS = [
     a: "The ad campaigns feed performance data back into the system automatically. Headlines that convert get used more. Audiences that don't convert get cut. Over time, the system gets smarter about your specific buyers without you touching anything.",
   },
   {
-    q: "What's the $10,000 broken into?",
-    a: "You can pay all $10,000 at once, or split it into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days. Nothing extra is due until you've seen real progress. Choose what works for your cash flow.",
+    q: "What's the pricing breakdown?",
+    a: "Pay $9,700 in full (save $300), or split it into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days ($10,500 total). Nothing extra is due until you've seen real progress. Choose what works for your cash flow.",
   },
   {
     q: "Can I keep my existing website?",
