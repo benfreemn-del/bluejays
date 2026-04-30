@@ -130,13 +130,13 @@ export default function AgencyPage() {
             Get my free site audit →
           </Link>
           <Link
-            href="/schedule/fullsystem"
+            href="/agency/apply"
             className="border border-violet-500/50 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
           >
-            Book a discovery call
+            Apply for the system
           </Link>
         </div>
-        <p className="text-xs text-slate-500 mt-4">Free call · No obligation · Ben answers personally</p>
+        <p className="text-xs text-slate-500 mt-4">Free audit · 8-question fit check · Ben answers personally</p>
       </section>
 
       {/* ── THE MATH ─────────────────────────────────────────────────────────── */}
@@ -289,14 +289,14 @@ export default function AgencyPage() {
               Get my free audit →
             </Link>
             <Link
-              href="/schedule/fullsystem"
+              href="/agency/apply"
               className="border border-violet-500/50 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
             >
-              Book a discovery call
+              Apply for the system
             </Link>
           </div>
           <p className="text-xs text-slate-500 mt-4">
-            Free call · Takes 30 minutes · Ben handles this personally — no sales team
+            Quick form · 24-hour reply · If you qualify we send you Ben&apos;s calendar — no sales team
           </p>
         </div>
       </section>
