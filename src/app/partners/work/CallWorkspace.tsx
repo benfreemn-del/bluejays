@@ -136,6 +136,7 @@ export default function CallWorkspace(props: Props) {
   const [previewLinkSent, setPreviewLinkSent] = useState(false);
   const [auditLinkSent, setAuditLinkSent] = useState(false);
   const [bookingLinkSent, setBookingLinkSent] = useState(false);
+  const [sentText, setSentText] = useState(false);
   const [showAgreement, setShowAgreement] = useState(!partner.agreementAccepted);
   const [section, setSection] = useState<SectionId>("intro");
 
@@ -152,6 +153,7 @@ export default function CallWorkspace(props: Props) {
           notes: notes.trim() || undefined,
           auditLinkSent,
           bookingLinkSent,
+          textSent: sentText,
         }),
       });
       if (!res.ok) {
@@ -165,6 +167,7 @@ export default function CallWorkspace(props: Props) {
       setPreviewLinkSent(false);
       setAuditLinkSent(false);
       setBookingLinkSent(false);
+      setSentText(false);
       setSection("intro");
       router.refresh();
     } catch {
@@ -334,7 +337,7 @@ export default function CallWorkspace(props: Props) {
 
             <a
               href={smsHref("preview")}
-              onClick={() => setPreviewLinkSent(true)}
+              onClick={() => { setPreviewLinkSent(true); setSentText(true); }}
               className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
                 previewLinkSent
                   ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
@@ -346,7 +349,7 @@ export default function CallWorkspace(props: Props) {
 
             <a
               href={smsHref("booking")}
-              onClick={() => setBookingLinkSent(true)}
+              onClick={() => { setBookingLinkSent(true); setSentText(true); }}
               className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
                 bookingLinkSent
                   ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-200"
@@ -360,7 +363,7 @@ export default function CallWorkspace(props: Props) {
 
             <a
               href={smsHref("audit")}
-              onClick={() => setAuditLinkSent(true)}
+              onClick={() => { setAuditLinkSent(true); setSentText(true); }}
               className={`block w-full rounded-md px-4 py-3 text-sm font-semibold text-center transition-colors ${
                 auditLinkSent
                   ? "bg-amber-500/20 border border-amber-500/50 text-amber-200"
@@ -435,6 +438,17 @@ export default function CallWorkspace(props: Props) {
                 busy={busy}
               />
               <div className="border-t border-white/5 pt-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setSentText((v) => !v)}
+                  className={`w-full rounded-md px-3 py-2.5 text-sm font-semibold text-left transition-colors mb-2 ${
+                    sentText
+                      ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
+                      : "border border-white/10 bg-white/[0.03] text-slate-400 hover:text-slate-200 hover:border-white/20"
+                  }`}
+                >
+                  {sentText ? "✓ Also sent a text" : "📱 Also sent a text"}
+                </button>
                 <OutcomeButton outcome="voicemail" onClick={logCall} busy={busy} />
                 <OutcomeButton outcome="no_answer" onClick={logCall} busy={busy} />
                 <OutcomeButton outcome="wrong_number" onClick={logCall} busy={busy} />

@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     notes?: string;
     auditLinkSent?: boolean;
     bookingLinkSent?: boolean;
+    textSent?: boolean;
   } = {};
   try {
     body = await request.json();
@@ -60,11 +61,17 @@ export async function POST(request: NextRequest) {
   const auditOrBookingSent = body.auditLinkSent || body.bookingLinkSent;
   const sentAt = auditOrBookingSent ? new Date().toISOString() : null;
 
+  const baseNotes = (body.notes || "").trim();
+  const notesWithFlags = [
+    baseNotes,
+    body.textSent ? "[text sent]" : "",
+  ].filter(Boolean).join(" ").slice(0, 1000) || null;
+
   const { error } = await supabase.from("partner_calls").insert({
     partner_id: partner.id,
     prospect_id: prospectId,
     outcome,
-    notes: (body.notes || "").trim().slice(0, 1000) || null,
+    notes: notesWithFlags,
     audit_link_sent_at: sentAt,
   });
   if (error) {
