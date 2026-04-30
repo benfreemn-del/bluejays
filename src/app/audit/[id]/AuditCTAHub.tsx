@@ -177,7 +177,7 @@ export default function AuditCTAHub({
           {/* right: price + CTA */}
           <div className="flex-shrink-0 text-center md:text-right">
             <p className="text-2xl font-bold text-white">$10,000</p>
-            <p className="text-xs text-slate-400 mb-1">setup · split into 3 payments</p>
+            <p className="text-xs text-slate-400 mb-0.5">setup · pay once or split 3 × $3,500</p>
             <p className="text-xs text-violet-300 mb-4">+ $500–1,000/mo ongoing</p>
             {/* agency comparison — Hormozi: cut the middleman, show the savings */}
             <p className="text-[10px] text-slate-500 mb-3 leading-relaxed">
