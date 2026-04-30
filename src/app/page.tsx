@@ -4,6 +4,7 @@ import Stats from "@/components/Stats";
 import About from "@/components/About";
 import AboutBen from "@/components/AboutBen";
 import Services from "@/components/Services";
+import FAQ from "@/components/FAQ";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AuditTestimonials from "@/app/audit/AuditTestimonials";
@@ -53,6 +54,7 @@ export default function Home() {
       <About />
       <AboutBen />
       <Services />
+      <FAQ />
       <Contact />
       <Footer />
     </main>
