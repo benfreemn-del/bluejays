@@ -845,11 +845,24 @@ export default function SpendingPage() {
 
           {deliverability?.health.alerts && deliverability.health.alerts.length > 0 && (
             <div className="mt-4 space-y-1">
-              {deliverability.health.alerts.map((alert, i) => (
-                <p key={i} className="text-xs text-yellow-400 flex gap-1.5">
-                  <span>⚠</span><span>{alert}</span>
-                </p>
-              ))}
+              {deliverability.health.alerts.map((alert, i) => {
+                // Bug fix (2026-04-29): alerts can be either strings (legacy
+                // shape declared in TS) or objects with {level, message,
+                // metric, value, threshold, timestamp} (actual API shape).
+                // Rendering the object directly throws React error #31.
+                // Defensively pull .message off objects, fallback to string.
+                const text =
+                  typeof alert === "string"
+                    ? alert
+                    : (alert as { message?: string })?.message || "";
+                if (!text) return null;
+                return (
+                  <p key={i} className="text-xs text-yellow-400 flex gap-1.5">
+                    <span>⚠</span>
+                    <span>{text}</span>
+                  </p>
+                );
+              })}
             </div>
           )}
         </div>
