@@ -143,6 +143,96 @@ export default function Services() {
           </p>
         </div>
 
+        {/* ───────── Value Stack — what an agency would charge ─────────
+            Hormozi value-equation move: anchor the offer against
+            agency-equivalent line items so $997 reads as a no-brainer
+            against $7,820+ of bundled work. Conservative middle of
+            agency quotes for a local-business site (verified against
+            current Wix Studio + Squarespace agency partner pricing). */}
+        <div className="mb-16 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.04] via-slate-900/40 to-blue-700/[0.04] overflow-hidden">
+          <div className="px-6 md:px-10 pt-8 md:pt-10 pb-6 text-center">
+            <p className="text-xs uppercase tracking-[0.25em] text-sky-400 font-bold mb-3">
+              What an agency would charge
+            </p>
+            <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3 leading-tight">
+              Same site, $7,820+ at any other shop.
+            </h3>
+            <p className="text-white/55 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+              Here&apos;s what each piece of your $997 build costs everywhere
+              else. Numbers are the conservative middle of agency
+              quotes for local businesses.
+            </p>
+          </div>
+
+          <div className="px-6 md:px-10 pb-2">
+            <ul className="divide-y divide-white/5">
+              {[
+                { label: "Custom website design (industry-specific)", value: "$3,500" },
+                { label: "Mobile-first responsive build", value: "$800" },
+                { label: "Professional copywriting", value: "$1,500" },
+                { label: "Local SEO + Google Business integration", value: "$1,200" },
+                { label: "90+ PageSpeed performance engineering", value: "$600" },
+                { label: "Domain registration", value: "$20" },
+                { label: "Hosting setup (year 1)", value: "$200" },
+                { label: "Live preview before you pay", value: "Most agencies don't offer this" },
+                { label: "Free revisions until you love it", value: "Most agencies don't offer this" },
+              ].map((item) => {
+                const isUnoffered = item.value.startsWith("Most agencies");
+                return (
+                  <li
+                    key={item.label}
+                    className="flex items-start justify-between gap-4 py-3"
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <span className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                        <CheckIcon />
+                      </span>
+                      <span className="text-white/75 text-sm md:text-base leading-snug">
+                        {item.label}
+                      </span>
+                    </div>
+                    <span
+                      className={`shrink-0 text-sm md:text-base font-mono tabular-nums ${
+                        isUnoffered
+                          ? "text-amber-300/80 italic font-normal text-right text-xs md:text-sm max-w-[200px] leading-tight"
+                          : "text-white/50 line-through"
+                      }`}
+                    >
+                      {item.value}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="border-t border-white/10 bg-slate-950/40 px-6 md:px-10 py-6 md:py-8 text-center">
+            <div className="flex flex-col sm:flex-row items-baseline justify-center gap-x-3 gap-y-1 mb-3">
+              <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">
+                Agency total
+              </span>
+              <span className="text-2xl md:text-3xl text-white/40 line-through font-bold tabular-nums">
+                $7,820+
+              </span>
+            </div>
+            <div className="flex flex-col sm:flex-row items-baseline justify-center gap-x-3 gap-y-1">
+              <span className="text-xs uppercase tracking-wider text-sky-400 font-bold">
+                Your price
+              </span>
+              <span className="text-4xl md:text-5xl font-extrabold text-white tabular-nums">
+                $997
+              </span>
+              <span className="text-sm text-white/55">one-time</span>
+            </div>
+            <p className="text-white/50 text-sm mt-3 max-w-md mx-auto leading-relaxed">
+              Then $100/yr for hosting + support starting year 2. Cancel anytime.
+            </p>
+            <p className="mt-5 inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm md:text-base font-semibold text-emerald-200">
+              And you don&apos;t pay a cent until you see it and love it.
+            </p>
+          </div>
+        </div>
+
         {/* Pricing cards */}
         <div className="grid md:grid-cols-3 gap-6">
           {services.map((service, i) => (

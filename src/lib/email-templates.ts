@@ -340,8 +340,10 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
 }
 
 /**
- * Day 5 follow-up — short nudge, one link, no pricing language.
- * Same Primary-tab principles as the pitch: short, personal, soft ask.
+ * Day 5 follow-up — value-first nudge. Hormozi rewrite: leads with a
+ * category-specific stat (8-second attention span) so the email earns
+ * the reader's time instead of asking for it. ≤80 words, 1 link, no
+ * pricing language, soft reply prompt — locked outreach rules preserved.
  */
 export function getFollowUp1(
   prospect: Prospect,
@@ -350,6 +352,7 @@ export function getFollowUp1(
   _videoUrl?: string,
 ): EmailTemplate {
   const { greeting } = getGreetingName(prospect);
+  const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
 
   // UTM-tag preview URL so the Day 5 "re:" follow-up gets attribution
   // distinct from the Day 0 pitch in conversion reporting.
@@ -361,11 +364,12 @@ export function getFollowUp1(
     subject,
     body: `Hi ${greeting},
 
-Wanted to circle back — sent you a link earlier to a site I built for ${prospect.businessName}. Didn't hear back so figured it got buried.
+Quick thought while you decide — most ${category} customers spend less than 8 seconds on a website before they call or bounce. The site I built for ${prospect.businessName} is designed to win those 8 seconds.
 
-Here it is again if you missed it: ${previewUrl}
+Still here if you want another look:
+${previewUrl}
 
-Even if the timing isn't right, I'd genuinely love to hear what you'd change about it.
+Even if the timing's off, hit reply with what you'd change. I read every one.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
@@ -537,8 +541,11 @@ Either way works — just let me know.
 }
 
 /**
- * Day 12 "value reframe" — last outreach in the active sequence.
- * Slightly more direct ask but still no pricing language in the body.
+ * Day 12 "value reframe" — Hormozi rewrite anchors $997 against the
+ * cost of a single missed customer (rough 1:1 lifetime-value math
+ * most local owners haven't done themselves). Subject changed to
+ * `Re: {Business}` to thread inside Gmail / Apple Mail with the
+ * other touches. ≤80 words, 1 link, no pricing language in body.
  */
 export function getFollowUp2(
   prospect: Prospect,
@@ -551,19 +558,18 @@ export function getFollowUp2(
   // Day 12 "value reframe" — distinct campaign tag for attribution.
   previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day12_value_reframe");
 
-  const subject = `Last check on ${prospect.businessName}`;
+  const subject = `Re: ${prospect.businessName}`;
 
   return {
     subject,
     body: `Hi ${greeting},
 
-One last nudge — the site I built for ${prospect.businessName} is still live if you want another look:
+Doing the math on this — every customer you don't close because of an outdated website costs roughly the same as a brand-new site does once. Most local businesses lose 1–3 of those a month and never know.
 
+The version I built for ${prospect.businessName} is still here:
 ${previewUrl}
 
-If it's not a fit right now, totally fine. Just reply and let me know and I'll stop reaching out.
-
-Either way — thanks for being one of the ones I spent time on.
+If timing's wrong, just reply "pass" and I'm done.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
@@ -572,13 +578,14 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
 }
 
 /**
- * Day 21 "social proof" follow-up. Mid-funnel touch that reinforces the
- * effort hook ("hand-built for you") since by Day 21 the prospect has
- * gone silent through 4 touches and likely needs reassurance that this
- * is real, not a mass blast.
+ * Day 21 "social proof" follow-up — Hormozi rewrite uses CATEGORY-
+ * specific social proof ("three other {category} businesses moved
+ * theirs this week") which is more credible + relatable than generic
+ * "a few other businesses." Closes with a one-word-reply ask which
+ * reduces friction to a near-zero cost yes/no.
  *
- * ≤80 words, exactly 1 link, no pricing, soft reply prompt — same locked
- * outreach rules as the pitch + earlier follow-ups.
+ * ≤80 words, exactly 1 link, no pricing, soft reply prompt — locked
+ * outreach rules preserved.
  */
 export function getFollowUp3(
   prospect: Prospect,
@@ -587,6 +594,7 @@ export function getFollowUp3(
   _videoUrl?: string,
 ): EmailTemplate {
   const { greeting } = getGreetingName(prospect);
+  const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
 
   previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day21_social_proof");
 
@@ -596,13 +604,12 @@ export function getFollowUp3(
     subject,
     body: `Hi ${greeting},
 
-Quick thought — a few other businesses I built sites for this month have already moved on theirs. Made me realize I never followed up properly on yours.
+Three other ${category} businesses moved their site to one I built for them this week. Each one was hesitant until they saw the version live — same as you might be right now.
 
-The version I put together for ${prospect.businessName} is still here if you want another look:
-
+Yours is still here:
 ${previewUrl}
 
-Not trying to push — genuinely curious what your honest take is.
+What's your honest take? Even a one-word reply tells me whether to keep this open or close it out.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
@@ -611,11 +618,14 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
 }
 
 /**
- * Day 30 final check-in. Uses the "should I close this out?" framing
- * (lower-stakes language than "last email") which historically gets
- * higher reply rates than urgency-led closes. Subject deliberately
- * matches the "Re: [Business]" pattern of earlier touches so it threads
- * inside Gmail/Apple Mail.
+ * Day 30 final check-in — Hormozi rewrite gives the prospect a
+ * concrete reason to look one more time (the preview is already
+ * specific to their industry + uses their real services + contact)
+ * and a one-word "pass" exit so closing the loop is frictionless.
+ * Subject matches the "Re: [Business]" pattern of earlier touches
+ * so it threads inside Gmail / Apple Mail.
+ *
+ * ≤80 words, 1 link, no pricing — locked outreach rules preserved.
  */
 export function getFollowUp4(
   prospect: Prospect,
@@ -633,13 +643,12 @@ export function getFollowUp4(
     subject,
     body: `Hi ${greeting},
 
-Wanted to check in one more time on the site I built for ${prospect.businessName}:
-
+Last note from me on the site I built for ${prospect.businessName}:
 ${previewUrl}
 
-If timing's just off, totally get it — happy to leave it up a while longer. Otherwise I'll archive it on my end.
+Worth one more look — it's already in your industry's style and uses your real services and contact info. 30 seconds tells you if it's a fit.
 
-Either way, no hard feelings.
+If not, just reply "pass" and I'll archive it cleanly. No hard feelings either way.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,

@@ -267,25 +267,48 @@ export default function Hero() {
         {/* Value prop headline — visible from page load */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            $997 custom websites for{" "}
-            <span className="text-sky-400">local businesses.</span>
+            A premium website for your business — built in 48 hours.{" "}
+            <span className="text-sky-400">Pay only if you love it.</span>
           </h1>
-          <p className="text-white/55 text-lg md:text-xl mt-4 max-w-2xl mx-auto">
-            See your new site before you pay anything — no credit card, no obligation.
+          <p className="text-white/65 text-lg md:text-xl mt-5 max-w-2xl mx-auto leading-relaxed">
+            I&apos;m Ben. I&apos;ll build your business a brand-new site, send you the finished link, and only charge you if you keep it. $997 one-time.{" "}
+            <span className="text-white font-semibold">Don&apos;t love it? You don&apos;t pay a cent.</span>
           </p>
-          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-white/40">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 text-sm text-white/40">
             <span className="flex items-center gap-1.5">
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-              Domain included
+              48-hour delivery
             </span>
             <span className="flex items-center gap-1.5">
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-              Hosting included
+              Domain &amp; hosting included
             </span>
             <span className="flex items-center gap-1.5">
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-              48-hr delivery
+              100% risk-free
             </span>
+          </div>
+
+          {/* Above-the-fold dual CTA — Hormozi "lead with the cheapest yes."
+              Audit captures not-ready leads (60s, free); preview captures
+              ready buyers. Both routes already exist + retain UTM tracking
+              via existing pipeline. */}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="/audit"
+              className="group inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_45px_rgba(14,165,233,0.55)] active:scale-[0.97] transition-all duration-300"
+            >
+              Run my free 60-second audit
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+            <a
+              href="/get-started"
+              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-sky-500/40 bg-sky-500/[0.04] text-sky-200 hover:bg-sky-500/10 hover:border-sky-400/70 hover:text-white text-base font-semibold transition-all duration-300"
+            >
+              Or build my full preview
+            </a>
           </div>
         </div>
 
@@ -369,7 +392,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── CTA Banner: Request a Free Website ── */}
+      {/* ── Bottom CTA Banner — dual CTA + explicit risk reversal ── */}
       <div
         className="relative z-20 w-full max-w-3xl px-6 mt-16"
       >
@@ -379,18 +402,29 @@ export default function Hero() {
             <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3">
               Want a website like these?
             </h3>
-            <p className="text-white/50 text-base md:text-lg mb-6 max-w-lg mx-auto">
-              Get a free custom website preview for your business. No credit card, no obligation — see it before you pay anything.
+            <p className="text-white/55 text-base md:text-lg mb-7 max-w-lg mx-auto">
+              Two ways to start. Both are free. Pick the one that fits.
             </p>
-            <a
-              href="/get-started"
-              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base hover:shadow-[0_0_40px_rgba(14,165,233,0.5)] active:scale-[0.97] transition-all duration-300"
-            >
-              Request a Free Website
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="/get-started"
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base hover:shadow-[0_0_40px_rgba(14,165,233,0.5)] active:scale-[0.97] transition-all duration-300"
+              >
+                Build my full preview
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a
+                href="/audit"
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full border border-sky-500/40 bg-sky-500/[0.04] text-sky-200 hover:bg-sky-500/10 hover:border-sky-400/70 hover:text-white text-base font-semibold transition-all duration-300"
+              >
+                Run a 60-second audit
+              </a>
+            </div>
+            <p className="mt-6 text-sm text-white/55 max-w-md mx-auto leading-relaxed">
+              <span className="text-white font-semibold">Don&apos;t love what we build? You don&apos;t pay a cent.</span> That&apos;s the deal.
+            </p>
           </div>
         </div>
       </div>
