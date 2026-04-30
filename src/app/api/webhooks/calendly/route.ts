@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { sendOwnerAlert } from "@/lib/alerts";
+import { sendOwnerAlert, sendOwnerEmail } from "@/lib/alerts";
 
 /**
  * POST /api/webhooks/calendly
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Build the alert message
+  // Build the alert message — used for both SMS + email
   const lines = [
     "🎯 New booking on your calendar!",
     "",
@@ -261,13 +261,28 @@ export async function POST(request: NextRequest) {
         ? `(Partner attribution: code "${partnerCode}" not found in DB)`
         : "(No partner attribution — direct/organic booking)",
   ].filter(Boolean);
+  const fullMessage = lines.join("\n");
 
-  try {
-    await sendOwnerAlert(lines.join("\n"));
-  } catch (err) {
-    // Non-fatal — Calendly's own email already lands. Just log.
-    console.error("[calendly-webhook] sendOwnerAlert failed:", err);
-  }
+  // Subject for the email — preview line shows the most useful info
+  // (business name + partner) so Ben can triage from his inbox
+  // notification badge without opening.
+  const emailSubject = partnerName
+    ? `🎯 ${prospectBusinessName || inviteeName} booked Ben — via ${partnerName}`
+    : prospectBusinessName
+      ? `🎯 ${prospectBusinessName} booked a 15-min walkthrough`
+      : `🎯 New booking — ${inviteeName}`;
+
+  // Fire SMS + Email in parallel. Either path independently delivers
+  // the attribution context to Ben — if one is misconfigured (Twilio
+  // not wired or SendGrid not wired) the other still lands.
+  await Promise.allSettled([
+    sendOwnerAlert(fullMessage).catch((err) =>
+      console.error("[calendly-webhook] sendOwnerAlert failed:", err),
+    ),
+    sendOwnerEmail({ subject: emailSubject, body: fullMessage }).catch((err) =>
+      console.error("[calendly-webhook] sendOwnerEmail failed:", err),
+    ),
+  ]);
 
   return NextResponse.json({
     ok: true,

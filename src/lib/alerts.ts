@@ -85,6 +85,74 @@ export async function sendOwnerAlert(message: string): Promise<void> {
   await sendOwnerSms(message);
 }
 
+/**
+ * Send an admin-notification email to Ben (separate from cold-outreach
+ * sends — bypasses the warming queue + sender rotation in
+ * email-sender.ts since these are personal admin pings, not marketing).
+ *
+ * Uses SendGrid directly via fetch. Falls back to console.log if
+ * SENDGRID_API_KEY isn't set so dev/CI doesn't break.
+ *
+ * Body can be plain text — newlines are converted to <br/> for HTML.
+ * Subject is the email subject + Ben's inbox preview line.
+ */
+export async function sendOwnerEmail(args: {
+  subject: string;
+  body: string;
+}): Promise<boolean> {
+  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+  const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+  const OWNER_EMAIL = process.env.OWNER_EMAIL || "ben@bluejayportfolio.com";
+
+  if (!SENDGRID_API_KEY) {
+    console.log(
+      `  🔔 [ALERT - would email owner]: ${args.subject}\n${args.body}`,
+    );
+    return false;
+  }
+
+  // Convert plain-text body to a minimal HTML version (newlines → <br/>).
+  // Keeps email looking native-mobile-readable without heavy HTML.
+  const htmlBody = args.body
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br/>");
+
+  try {
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: OWNER_EMAIL }] }],
+        from: { email: FROM_EMAIL, name: "BlueJays Alerts" },
+        subject: args.subject,
+        content: [
+          { type: "text/plain", value: args.body },
+          {
+            type: "text/html",
+            value: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55;color:#1f2937">${htmlBody}</div>`,
+          },
+        ],
+      }),
+    });
+    if (!response.ok) {
+      console.error(
+        "[sendOwnerEmail] SendGrid returned",
+        response.status,
+        await response.text(),
+      );
+    }
+    return response.ok;
+  } catch (err) {
+    console.error("[sendOwnerEmail] failed:", err);
+    return false;
+  }
+}
+
 export async function alertHighValueLead(prospect: Prospect) {
   // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
   const BASE_URL = "https://bluejayportfolio.com";
