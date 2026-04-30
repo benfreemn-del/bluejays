@@ -268,7 +268,7 @@ export default function Hero() {
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
             A premium website for your business — built in 48 hours.{" "}
-            <span className="text-sky-400">Pay only if you love it.</span>
+            <span className="text-sky-400 md:block">Pay only if you love it.</span>
           </h1>
           <p className="text-white/65 text-lg md:text-xl mt-5 max-w-2xl mx-auto leading-relaxed">
             I&apos;m Ben. I&apos;ll build your business a brand-new site, send you the finished link, and only charge you if you keep it. $997 one-time.{" "}
