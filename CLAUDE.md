@@ -2447,6 +2447,131 @@ These are the things the code can't do for you. Without these, scaling outreach 
 
 - [ ] **Google Calendar integration** — let clients OAuth-connect their Google Calendar so bookings appear automatically. Right now it uses our custom slot system.
 
+---
+
+### BLOCK 5 — FULL SYSTEM ($10K) — MANUAL TASKS (updated 2026-04-30)
+
+The Full System offer is built into the codebase (audit CTA hub, schedule page, agency landing page, email P.S. line, types). What's left is all manual work Ben does.
+
+**STRIPE — Payment split setup (do before first Full System sale):**
+- [ ] Create a Stripe Payment Link for the $10K deposit payment ($3,500): Product name "Full System — Deposit"
+- [ ] Create a second Stripe Payment Link for $3,500 at 30 days: Product name "Full System — Milestone 2"
+- [ ] Create a third Stripe Payment Link for $3,000 at 60 days: Product name "Full System — Final Payment"
+- [ ] Set env var `STRIPE_PRICE_FULLSYSTEM_DEPOSIT` and `STRIPE_PRICE_FULLSYSTEM_M2` and `STRIPE_PRICE_FULLSYSTEM_M3` on Vercel once price IDs are created
+- Note: these are manual Payment Links for now — email them to the client at each milestone, not self-serve checkout
+
+**CALENDAR — Discovery call availability:**
+- [ ] In your scheduling system, create a separate 30-minute block type for Full System discovery calls (vs. the 15-min website calls)
+- [ ] Block at least 2 slots/week for discovery calls while volume is low
+- [ ] When a prospect books via `/schedule/[id]?type=fullsystem`, the notes field pre-fills "Interested in The Full System" — look for that in your booking notifications
+
+**DISCOVERY CALL AGENDA (use this every time):**
+1. "Tell me what you're running now — ads, email, anything." (2 min — let them talk)
+2. "What does a new customer look like for you and what's their average value?" (get the ROI math)
+3. "Here's what the system looks like and why it's different from an agency…" (show the 10 components)
+4. "The AI self-learning piece is what makes this different — it gets smarter every month without you doing anything"
+5. "Here's the math on what you'd save vs. an agency…" (use the table on /agency)
+6. "The way it works: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days. Nothing's due until you've seen real progress."
+7. Close: "Does this make sense for where you're at right now?"
+- Key: Never pitch features. Pitch the outcome they told you they want in step 1 and 2.
+
+**LEAD MAGNET — per business (Ben creates manually):**
+- [ ] For each Full System client, identify what their best lead magnet is (quiz, checklist, guide, calculator, free estimate tool) based on their industry
+- [ ] Build/write the lead magnet as part of onboarding (week 2 of delivery)
+- [ ] Examples by category: dental → "5 Signs You Need to See a Dentist Before It Gets Expensive" PDF; electrician → "Is Your Panel Safe?" checklist; roofing → "Roof Age Calculator + Free Inspection"
+
+**LOGO REVISION (Ben does manually):**
+- [ ] When a Full System client has a weak logo, redesign in Canva or Adobe as part of onboarding week 1
+- [ ] Deliver before site launch so everything is consistent
+- [ ] Track in dashboard notes: "Logo revised: [date]"
+
+**AD ACCOUNT SETUP — per Full System client (Ben does manually):**
+- [ ] Create a NEW Google Ads account for the client (don't share accounts)
+- [ ] Set up Google Ads conversion tracking tied to their website (form submit + call click)
+- [ ] Create a NEW Meta Ads account or Business Manager sub-account for the client
+- [ ] Set up Meta Pixel on their site (add prospectId to pixel events for tracking)
+- [ ] Initial campaigns: 1 Google Search campaign (branded + category keywords) + 1 Meta awareness campaign
+- [ ] Set AI/automated bidding from day 1 — the system learns faster with smart bidding enabled
+
+**DASHBOARD TRACKING:**
+- [ ] When a Full System prospect books a discovery call, manually flip their status to `fullsystem_inquiry` in the dashboard so they're tracked separately from $997 website prospects
+- [ ] After close, create them as a new prospect with `pricingTier: "fullsystem"` so reporting is accurate
+
+---
+
+### BLOCK 6 — AGENCY-TARGETING AD CAMPAIGN (separate from main BlueJays campaign)
+
+Landing page is live at `/agency`. This block covers the paid ad campaigns that target business owners currently paying agencies.
+
+**The audience:** Business owners who are already sold on marketing (they're paying for it) but frustrated with their agency's results. These are the highest-intent prospects for the Full System — they don't need to be convinced marketing matters, just that there's a better way.
+
+**GOOGLE ADS — Agency Replacement Campaign:**
+- [ ] Create a new campaign: "Agency Replacement — Search"
+- [ ] Destination URL: `https://bluejayportfolio.com/agency`
+- [ ] Match type: Phrase and exact for high-intent, broad modified for discovery
+
+**Google Ads keyword list (copy-paste into Google Ads):**
+```
+"fire my marketing agency"
+"cancel marketing agency"
+"marketing agency alternative"
+"replace marketing agency"
+"is my marketing agency worth it"
+"marketing agency too expensive"
+"marketing agency not working"
+"ai marketing system small business"
+"diy marketing system"
+"stop paying marketing agency"
+"marketing agency results"
+"marketing agency cancel contract"
+"better than marketing agency"
+"affordable marketing agency alternative"
+"cut marketing agency"
+```
+
+**Google Ads copy (3 headlines, 2 descriptions — mix and match):**
+- Headline 1: Paying $4K/Month to an Agency?
+- Headline 2: Replace Them for $10K — Once
+- Headline 3: Custom AI Marketing System
+- Headline 4: You Own It. Cancel Anytime.
+- Headline 5: Google + Meta Ads + Email + SEO
+- Headline 6: Built Custom. Not a Template.
+- Description 1: Agencies charge $3–8K/month forever using cookie-cutter playbooks. BlueJays builds a custom AI system for your business. One setup. Yours to keep.
+- Description 2: Stop renting. Start owning. Custom Google Ads, Meta Ads, email, text, SEO — connected and self-learning. Fraction of what you pay an agency.
+
+**META ADS — Agency Replacement Campaign:**
+- [ ] Create campaign: "Agency Replacement — Awareness"
+- [ ] Destination: `https://bluejayportfolio.com/agency`
+- [ ] Objective: Lead generation (drive to /audit or discovery call booking)
+
+**Meta Ads targeting (set these in Ads Manager):**
+- Age: 30–60
+- Job titles: Owner, CEO, President, Founder, Principal, Director of Marketing
+- Interests: HubSpot, SEMrush, Google Ads, Facebook Ads, Hootsuite, Mailchimp, marketing agencies, digital marketing
+- Behaviors: Small business owners
+- Location: Start with Washington, Oregon, Idaho (expand to all US once profitable)
+- Lookalike: Upload your existing paid client emails as a custom audience → create 1% lookalike
+
+**Meta Ads creative brief (give to a designer or build in Canva):**
+- Format: Static image + short-form video (Reel)
+- Hook text on image: "If you're paying an agency right now, read this."
+- Visual: Split screen — agency invoice ($4,800) on left, BlueJays summary ($750/mo) on right
+- Body copy: "Agencies charge $3,000–$8,000/month. Same playbook for every client. You own nothing. BlueJays builds you a custom AI system — Google Ads, Meta Ads, email, text, voicemail, SEO. One setup fee. You own it forever. Cancel the monthly support anytime."
+- CTA: "See how much you'd save" → /agency
+
+**Video script (30-second Reel — record on phone, no production needed):**
+"If you're paying a marketing agency right now, I want to show you something. [Show the math: $4,000 × 12 = $48,000/year] For $48,000 a year, they're running the same campaigns they run for every other client. Same templates. Same targeting. Junior reps who rotate every 6 months. Here's what I do instead: I build you a custom AI marketing system — Google Ads, Meta Ads, email, texts, voicemails, SEO — all connected, all learning from your real customers. One setup fee. You own it. Get your free audit at bluejayportfolio.com/agency."
+
+**Retargeting:**
+- [ ] Once `/agency` has traffic, create a retargeting audience of everyone who visited `/agency` but didn't book a call
+- [ ] Run a retargeting ad with social proof angle: "Other business owners who left their agency are seeing [X] results"
+- [ ] Budget: $15–25/day on retargeting once main campaign is running
+
+**Budget recommendation:**
+- Test phase (first 30 days): $20/day Google + $20/day Meta = $1,200/month
+- If one Full System client closes in month 1 ($3,500 deposit), ad spend is already 3× ROI
+- Scale to $50/day per platform once you have 1 closed client
+
 =======
 
 ## SMS A2P 10DLC Compliance Rules (NON-NEGOTIABLE — locked in 2026-04-20)
