@@ -51,8 +51,12 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Erik Hernandez",
     title: "Owner",
     business: "Hector Landscaping & Design",
+    // Quote matches Erik's actual spoken words in the video — viewer
+    // reads it, presses play, hears the same thing. Trust compounds.
+    // Cleaned up for written form (capitalization, punctuation) but
+    // preserved his cadence + sentence structure verbatim.
     quote:
-      "I honestly thought my old site was fine. The audit showed it wasn't even loading right on phones and my call button was broken on half the browsers. Things I never would've caught. New site's been up a few months and this has been my best spring.",
+      "Before, I had zero online visibility and was losing a lot of potential customers. Now I've been getting a lot of work. I'm extremely satisfied with the website he made me.",
     videoUrl: "/testimonials/hector.mp4",
     posterUrl: "/testimonials/hector-poster.jpg",
     siteUrl: null,  // TODO: add once site is live

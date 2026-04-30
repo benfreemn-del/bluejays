@@ -142,11 +142,11 @@ export default function AuditLandingPage() {
                 className="w-full aspect-video bg-black object-cover"
               />
               <div className="p-5">
-                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Ben built my site faster than I thought possible. Looks better than my competitors who paid 5x more.&rdquo;</p>
+                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Before, I had zero online visibility and was losing a lot of potential customers. Now I&apos;ve been getting a lot of work.&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm">H</div>
+                  <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm">E</div>
                   <div>
-                    <p className="text-sm font-semibold text-white">Hector</p>
+                    <p className="text-sm font-semibold text-white">Erik Hernandez</p>
                     <p className="text-xs text-slate-400">Hector Landscaping</p>
                   </div>
                 </div>
