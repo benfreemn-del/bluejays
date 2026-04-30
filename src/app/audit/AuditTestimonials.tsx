@@ -123,8 +123,11 @@ export default function AuditTestimonials() {
                     allowFullScreen
                   />
                 ) : (
-                  /* Placeholder — swaps out the moment videoUrl is filled in */
-                  <div className="w-full aspect-video bg-slate-950 border-b border-white/5 flex flex-col items-center justify-center gap-3 relative overflow-hidden">
+                  /* Quote-only card header — no video, no "coming soon"
+                     copy that signals incomplete brand. Big quote-mark
+                     glyph + Verified client badge. Swaps to a video
+                     card the moment videoUrl is set. */
+                  <div className="w-full aspect-video bg-gradient-to-br from-sky-950/30 via-slate-900 to-slate-950 border-b border-white/5 flex flex-col items-center justify-center gap-4 relative overflow-hidden p-6">
                     {/* Subtle grid pattern */}
                     <div
                       className="absolute inset-0 opacity-[0.04]"
@@ -134,13 +137,29 @@ export default function AuditTestimonials() {
                         backgroundSize: "40px 40px",
                       }}
                     />
-                    {/* Play button */}
-                    <div className="relative w-14 h-14 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-sky-400 ml-0.5">
-                        <path d="M8 5v14l11-7z" />
+                    {/* Big quotation mark glyph — owns the empty space
+                        without promising video that isn't there yet */}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      className="relative w-14 h-14 text-sky-500/30"
+                    >
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                    </svg>
+                    {/* Trust badge — emerald = "real, audited" */}
+                    <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        className="w-3 h-3"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
                       </svg>
+                      Verified client
                     </div>
-                    <p className="relative text-xs text-slate-500 font-medium">Video coming soon</p>
                   </div>
                 )}
 
