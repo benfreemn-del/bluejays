@@ -368,7 +368,6 @@ export default function CallWorkspace(props: Props) {
               The reps that close are the ones reading these between
               every dial, not just on day one. */}
           <details
-            open
             className="rounded-2xl border border-amber-500/30 bg-amber-500/5 overflow-hidden"
           >
             <summary className="cursor-pointer px-4 py-3 text-xs uppercase tracking-wider text-amber-300 font-semibold hover:bg-amber-500/10 transition-colors flex items-center justify-between">
@@ -878,7 +877,7 @@ function OutcomeButton({
     <button
       onClick={() => onClick(outcome)}
       disabled={busy}
-      className={`w-full rounded-md px-3 py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left ${cls}`}
+      className={`w-full rounded-md px-3 py-3 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left ${cls}`}
     >
       {meta.label}
     </button>
