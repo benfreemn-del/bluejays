@@ -54,6 +54,8 @@ interface FormData extends OnboardingPrefillData {
   languagesOther: string;
   specialRequests: string;
   anythingElse: string;
+  // Service agreement acceptance — required to submit Step 3
+  serviceAgreementAccepted: boolean;
 }
 
 const EMPTY_TESTIMONIAL: TestimonialPrefill = { name: "", quote: "", city: "" };
@@ -81,6 +83,7 @@ const initialFormData: FormData = {
   languagesOther: "",
   specialRequests: "",
   anythingElse: "",
+  serviceAgreementAccepted: false,
 };
 
 export default function OnboardingPage() {
@@ -366,6 +369,11 @@ export default function OnboardingPage() {
       // server side (the API merges with existing form_data, but if any
       // of these fields haven't been seen yet they need to land here).
       socialLinks: data.socialLinks,
+      // Click-wrap acceptance of the BlueJays Service Agreement.
+      // API persists this with timestamp + version into
+      // prospect.scraped_data.serviceAgreement so we have a permanent
+      // audit trail of which version each client agreed to.
+      serviceAgreementAccepted: data.serviceAgreementAccepted,
     };
   };
 
@@ -1120,6 +1128,52 @@ function Step3({
         rows={3}
       />
 
+      {/* ──────────────────────────────────────────────────────────
+          Service Agreement — click-wrap acceptance.
+          Required: the Submit button is disabled until checked.
+          Stores acceptance with version + timestamp on submit so
+          we have a permanent record. Plain-English link to the
+          full agreement opens in a new tab so the form doesn't
+          lose state. ────────────────────────────────────────── */}
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.04] p-4 space-y-3">
+        <p className="text-xs uppercase tracking-wider text-amber-300 font-semibold">
+          Service Agreement
+        </p>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          Before I start building, I need you to read + accept the
+          BlueJays Service Agreement. Plain English — covers what you
+          get, what I&apos;m responsible for, the 100% money-back
+          guarantee, and the $100/year maintenance terms.
+        </p>
+        <a
+          href="/legal/service-agreement"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-300 hover:text-amber-200 underline underline-offset-4 decoration-amber-500/40"
+        >
+          📄 Read the BlueJays Service Agreement →
+        </a>
+        <label className="flex items-start gap-3 cursor-pointer pt-1">
+          <input
+            type="checkbox"
+            checked={data.serviceAgreementAccepted}
+            onChange={(e) =>
+              updateField("serviceAgreementAccepted", e.target.checked)
+            }
+            className="mt-1 w-5 h-5 rounded accent-amber-500 cursor-pointer shrink-0"
+          />
+          <span className="text-sm text-slate-200 leading-relaxed">
+            <span className="font-semibold text-white">
+              I have read and agree to the BlueJays Service Agreement.
+            </span>
+            <span className="block text-xs text-slate-500 mt-0.5">
+              Your acceptance is recorded with timestamp + version
+              (1.0.0) on your account.
+            </span>
+          </span>
+        </label>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           type="button"
@@ -1130,17 +1184,28 @@ function Step3({
         </button>
         <button
           type="button"
-          disabled={saving}
+          disabled={saving || !data.serviceAgreementAccepted}
           onClick={onSubmit}
-          className="flex-1 h-14 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold text-lg disabled:opacity-50 hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] transition-shadow"
+          title={
+            !data.serviceAgreementAccepted
+              ? "Please read + accept the Service Agreement above"
+              : ""
+          }
+          className="flex-1 h-14 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold text-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] transition-shadow"
         >
           {saving ? "Submitting..." : "Submit & Get Started"}
         </button>
       </div>
+      {!data.serviceAgreementAccepted && (
+        <p className="text-xs text-amber-300/80 text-center -mt-1">
+          ↑ Check the box above to enable the Submit button
+        </p>
+      )}
       <button
         type="button"
         onClick={onSkip}
-        className="w-full text-sm text-muted hover:text-foreground transition"
+        disabled={!data.serviceAgreementAccepted}
+        className="w-full text-sm text-muted hover:text-foreground transition disabled:opacity-30 disabled:cursor-not-allowed"
       >
         Skip — I&apos;ll email you later
       </button>

@@ -4,6 +4,10 @@ import path from "path";
 import { getProspect, updateProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { alertOwner, sendOwnerAlert } from "@/lib/alerts";
+import {
+  newAcceptedAgreement,
+  type ServiceAgreementPlan,
+} from "@/lib/service-agreement";
 
 const ONBOARDING_DIR = path.join(process.cwd(), "data", "onboarding");
 
@@ -222,6 +226,50 @@ export async function POST(
         adminNotes: existing + block,
         adminNotesUpdatedAt: new Date().toISOString(),
       });
+    }
+
+    // ── Service Agreement acceptance — persist with audit trail ─────────
+    // Click-wrap requirements: timestamp, version, IP, user agent. Stored
+    // on prospect.scrapedData.serviceAgreement so the record lives with
+    // the rest of their onboarding context. Only writes if (a) client
+    // checked the box AND (b) we don't already have an acceptance on
+    // file (re-submitting the form shouldn't overwrite the original
+    // acceptance timestamp — that's the legally binding moment).
+    const accepted = (mergedFormData.serviceAgreementAccepted as boolean | undefined) === true;
+    const existingAgreement = (prospect.scrapedData as Record<string, unknown> | undefined)
+      ?.serviceAgreement as { acceptedAt?: string } | undefined;
+    if (accepted && !existingAgreement?.acceptedAt) {
+      // Detect plan from prospect's pricing data. The Prospect type
+      // only exposes pricingTier publicly; payment plan is stored on
+      // the Stripe subscription metadata, so fall back to checking
+      // scraped_data for any breadcrumb left by the checkout flow.
+      const checkoutPlan = (prospect.scrapedData as Record<string, unknown> | undefined)
+        ?.paymentPlan as string | undefined;
+      const plan: ServiceAgreementPlan =
+        prospect.pricingTier === "custom"
+          ? "custom"
+          : checkoutPlan === "installment"
+            ? "installment"
+            : "standard";
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+      const ua = request.headers.get("user-agent") || null;
+      const agreement = newAcceptedAgreement({ plan, ip, userAgent: ua });
+      try {
+        const mergedScrapedData = {
+          ...((prospect.scrapedData as Record<string, unknown>) || {}),
+          serviceAgreement: agreement,
+        };
+        await updateProspect(id, {
+          scrapedData: mergedScrapedData as unknown as typeof prospect.scrapedData,
+        });
+        console.log(
+          `[Onboarding] Service Agreement accepted: prospect=${id}, version=${agreement.version}, plan=${agreement.plan}`,
+        );
+      } catch (err) {
+        // Non-fatal — the form_data still has the boolean, so we have
+        // *some* record. Just log + continue.
+        console.error("[Onboarding] Failed to write agreement to prospect:", err);
+      }
     }
 
     // Alert Ben via SMS
