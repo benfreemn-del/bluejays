@@ -116,9 +116,12 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
-      {/* Real client testimonials — drop video files in /public/testimonials/
-          and uncomment the <video> tag in each card. Until then, name + company
-          + quote-style text card serves as proof. */}
+      {/* Real client testimonials — Hector has a self-hosted video at
+          /public/testimonials/hector.mp4. Luke + Michelle render as
+          quote-only cards (Verified client badge + quotation glyph)
+          until their videos arrive. When more videos land, drop them
+          in /public/testimonials/{slug}.{mp4,jpg} and swap the card's
+          header block for the same <video> tag pattern Hector uses. */}
       <section className="border-b border-white/5 bg-slate-900/40">
         <div className="mx-auto max-w-5xl px-6 py-16">
           <div className="text-center mb-10">
@@ -126,17 +129,18 @@ export default function AuditLandingPage() {
             <h2 className="text-2xl md:text-3xl font-bold">What local owners are saying</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Hector */}
+            {/* Hector — has video. Quote intentionally general so it
+                doesn't clash with whatever specific words he says on
+                camera (different content reinforces, doesn't repeat). */}
             <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <div className="aspect-video bg-gradient-to-br from-emerald-500/20 to-sky-500/20 flex items-center justify-center relative group">
-                {/* TODO: replace with <video controls poster="/testimonials/hector-poster.jpg" src="/testimonials/hector.mp4" className="w-full h-full object-cover" /> */}
-                <div className="text-center px-6">
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
-                  </div>
-                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
-                </div>
-              </div>
+              <video
+                src="/testimonials/hector.mp4"
+                poster="/testimonials/hector-poster.jpg"
+                controls
+                preload="metadata"
+                playsInline
+                className="w-full aspect-video bg-black object-cover"
+              />
               <div className="p-5">
                 <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Ben built my site faster than I thought possible. Looks better than my competitors who paid 5x more.&rdquo;</p>
                 <div className="flex items-center gap-3">
@@ -148,15 +152,16 @@ export default function AuditLandingPage() {
                 </div>
               </div>
             </div>
-            {/* Luke */}
+            {/* Luke — quote-only card (no video yet) */}
             <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <div className="aspect-video bg-gradient-to-br from-amber-500/20 to-rose-500/20 flex items-center justify-center relative group">
-                {/* TODO: replace with <video controls poster="/testimonials/luke-poster.jpg" src="/testimonials/luke.mp4" className="w-full h-full object-cover" /> */}
-                <div className="text-center px-6">
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
-                  </div>
-                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
+              <div className="aspect-video bg-gradient-to-br from-amber-500/20 via-slate-900 to-rose-500/15 border-b border-white/5 flex flex-col items-center justify-center gap-4 relative overflow-hidden p-6">
+                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="relative w-12 h-12 text-amber-500/40">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><polyline points="20 6 9 17 4 12" /></svg>
+                  Verified client
                 </div>
               </div>
               <div className="p-5">
@@ -170,15 +175,16 @@ export default function AuditLandingPage() {
                 </div>
               </div>
             </div>
-            {/* Michelle / LCAC */}
+            {/* Michelle / LCAC — quote-only card (no video yet) */}
             <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <div className="aspect-video bg-gradient-to-br from-sky-500/20 to-violet-500/20 flex items-center justify-center relative group">
-                {/* TODO: replace with <video controls poster="/testimonials/lcac-poster.jpg" src="/testimonials/lcac.mp4" className="w-full h-full object-cover" /> */}
-                <div className="text-center px-6">
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white"><path d="M8 5v14l11-7z" /></svg>
-                  </div>
-                  <p className="text-xs text-slate-300 font-semibold">Video coming soon</p>
+              <div className="aspect-video bg-gradient-to-br from-sky-500/20 via-slate-900 to-violet-500/15 border-b border-white/5 flex flex-col items-center justify-center gap-4 relative overflow-hidden p-6">
+                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="relative w-12 h-12 text-sky-500/40">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><polyline points="20 6 9 17 4 12" /></svg>
+                  Verified client
                 </div>
               </div>
               <div className="p-5">
