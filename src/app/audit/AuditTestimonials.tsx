@@ -18,8 +18,14 @@ type Testimonial = {
   title: string;
   business: string;
   quote: string;
-  videoUrl: string | null; // Loom share URL or YouTube — null shows placeholder
-  siteUrl: string | null;  // link to their live site once it's ready
+  // videoUrl can be:
+  //   - null                            → shows placeholder
+  //   - "https://loom.com/share/..."    → Loom embed
+  //   - "https://youtube.com/watch?v=…" → YouTube embed
+  //   - "/testimonials/foo.mp4"         → self-hosted <video> with poster
+  videoUrl: string | null;
+  posterUrl?: string | null; // poster image for self-hosted videos
+  siteUrl: string | null;
 };
 
 const TESTIMONIALS: Testimonial[] = [
@@ -47,7 +53,8 @@ const TESTIMONIALS: Testimonial[] = [
     business: "Hector Landscaping & Design",
     quote:
       "I honestly thought my old site was fine. The audit showed it wasn't even loading right on phones and my call button was broken on half the browsers. Things I never would've caught. New site's been up a few months and this has been my best spring.",
-    videoUrl: null, // TODO: get 20s iPhone video from Erik
+    videoUrl: "/testimonials/hector.mp4",
+    posterUrl: "/testimonials/hector-poster.jpg",
     siteUrl: null,  // TODO: add once site is live
   },
   {
@@ -86,14 +93,27 @@ export default function AuditTestimonials() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {TESTIMONIALS.map((t) => {
-            const embedUrl = t.videoUrl ? toEmbedUrl(t.videoUrl) : null;
+            // Self-hosted MP4 lives at "/testimonials/foo.mp4". Loom /
+            // YouTube share URLs go through toEmbedUrl. Anything else
+            // falls back to the "video coming soon" placeholder.
+            const isSelfHosted = !!t.videoUrl && /\.(mp4|webm|mov)(\?|$)/i.test(t.videoUrl);
+            const embedUrl = !isSelfHosted && t.videoUrl ? toEmbedUrl(t.videoUrl) : null;
             return (
               <div
                 key={t.name}
                 className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden flex flex-col"
               >
                 {/* Video slot */}
-                {embedUrl ? (
+                {isSelfHosted && t.videoUrl ? (
+                  <video
+                    src={t.videoUrl}
+                    poster={t.posterUrl || undefined}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="w-full aspect-video bg-black"
+                  />
+                ) : embedUrl ? (
                   <iframe
                     src={embedUrl}
                     title={`${t.name} testimonial`}
