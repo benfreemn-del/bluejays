@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { getAllProspects } from "@/lib/store";
 
 /**
  * GET /api/costs/analytics
@@ -14,9 +13,20 @@ import { getAllProspects } from "@/lib/store";
  */
 export async function GET() {
   try {
-    const prospects = await getAllProspects();
-    const paidCount = prospects.filter((p) => p.status === "paid").length;
-    const totalLeads = prospects.length;
+    // PERF (2026-04-29): replaced getAllProspects() with two count
+    // queries. We only needed the totals, not the rows themselves.
+    // Loading all prospects (including bulky scraped_data JSONB)
+    // was costing 5-10 seconds at this scale.
+    let paidCount = 0;
+    let totalLeads = 0;
+    if (isSupabaseConfigured()) {
+      const [totalRes, paidRes] = await Promise.all([
+        supabase.from("prospects").select("*", { count: "exact", head: true }),
+        supabase.from("prospects").select("*", { count: "exact", head: true }).eq("status", "paid"),
+      ]);
+      totalLeads = totalRes.count ?? 0;
+      paidCount = paidRes.count ?? 0;
+    }
     const conversionRate = totalLeads > 0 ? (paidCount / totalLeads) * 100 : 0;
 
     // Default response for when Supabase is not configured
