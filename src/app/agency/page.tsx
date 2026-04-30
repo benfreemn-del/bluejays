@@ -59,7 +59,7 @@ const FAQS = [
   },
   {
     q: "What's the $10,000 broken into?",
-    a: "$3,500 to start, $3,500 at 30 days, $3,000 at 60 days. Nothing is due until you've seen real progress.",
+    a: "You can pay all $10,000 at once, or split it into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days. Nothing extra is due until you've seen real progress. Choose what works for your cash flow.",
   },
   {
     q: "Can I keep my existing website?",

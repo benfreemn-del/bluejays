@@ -2453,12 +2453,13 @@ These are the things the code can't do for you. Without these, scaling outreach 
 
 The Full System offer is built into the codebase (audit CTA hub, schedule page, agency landing page, email P.S. line, types). What's left is all manual work Ben does.
 
-**STRIPE — Payment split setup (do before first Full System sale):**
-- [ ] Create a Stripe Payment Link for the $10K deposit payment ($3,500): Product name "Full System — Deposit"
-- [ ] Create a second Stripe Payment Link for $3,500 at 30 days: Product name "Full System — Milestone 2"
-- [ ] Create a third Stripe Payment Link for $3,000 at 60 days: Product name "Full System — Final Payment"
-- [ ] Set env var `STRIPE_PRICE_FULLSYSTEM_DEPOSIT` and `STRIPE_PRICE_FULLSYSTEM_M2` and `STRIPE_PRICE_FULLSYSTEM_M3` on Vercel once price IDs are created
-- Note: these are manual Payment Links for now — email them to the client at each milestone, not self-serve checkout
+**STRIPE — Payment setup (do before first Full System sale):**
+- [ ] Create a Stripe Payment Link for $10,000 paid in full: Product name "Full System — Full Payment"
+- [ ] Create a Stripe Payment Link for the $10K split deposit ($3,500): Product name "Full System — Deposit"
+- [ ] Create a second split Payment Link for $3,500 at 30 days: Product name "Full System — Milestone 2"
+- [ ] Create a third split Payment Link for $3,000 at 60 days: Product name "Full System — Final Payment"
+- [ ] Set env vars `STRIPE_PRICE_FULLSYSTEM_FULL`, `STRIPE_PRICE_FULLSYSTEM_DEPOSIT`, `STRIPE_PRICE_FULLSYSTEM_M2`, and `STRIPE_PRICE_FULLSYSTEM_M3` on Vercel once price IDs are created
+- Note: clients choose at the discovery call — pay $10K now or split into 3 milestones. Email the chosen Payment Link manually; not self-serve checkout yet
 
 **CALENDAR — Discovery call availability:**
 - [ ] In your scheduling system, create a separate 30-minute block type for Full System discovery calls (vs. the 15-min website calls)
