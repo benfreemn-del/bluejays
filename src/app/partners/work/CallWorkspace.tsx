@@ -69,6 +69,7 @@ type Props = {
     remainingPool: number;
   };
   links: {
+    previewUrl: string;
     auditUrl: string;
     scheduleUrl: string;
   };
@@ -132,6 +133,7 @@ export default function CallWorkspace(props: Props) {
 
   const [busy, setBusy] = useState(false);
   const [notes, setNotes] = useState("");
+  const [previewLinkSent, setPreviewLinkSent] = useState(false);
   const [auditLinkSent, setAuditLinkSent] = useState(false);
   const [bookingLinkSent, setBookingLinkSent] = useState(false);
   const [showAgreement, setShowAgreement] = useState(!partner.agreementAccepted);
@@ -160,6 +162,7 @@ export default function CallWorkspace(props: Props) {
       }
       // Reset card state and pull next prospect
       setNotes("");
+      setPreviewLinkSent(false);
       setAuditLinkSent(false);
       setBookingLinkSent(false);
       setSection("intro");
@@ -186,15 +189,19 @@ export default function CallWorkspace(props: Props) {
     window.location.href = "/partners/login";
   }
 
-  function smsBody(kind: "audit" | "booking") {
+  function smsBody(kind: "preview" | "audit" | "booking") {
     const firstName = prospect?.ownerName?.trim().split(/\s+/)[0] || "there";
-    if (kind === "booking") {
-      return `Hey ${firstName}, this is ${partner.name.split(/\s+/)[0]} with BlueJays — pick a 15-min slot for the walkthrough with Ben here: ${links.scheduleUrl}`;
+    const callerFirst = partner.name.split(/\s+/)[0];
+    if (kind === "preview") {
+      return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that website we built for ${prospect?.businessName || "your business"}: ${links.previewUrl}`;
     }
-    return `Hey ${firstName}, this is ${partner.name.split(/\s+/)[0]} with BlueJays — here's that free 60-second audit of your site: ${links.auditUrl}`;
+    if (kind === "booking") {
+      return `Hey ${firstName}, ${callerFirst} with BlueJays — pick a 15-min slot for the walkthrough with Ben here: ${links.scheduleUrl}`;
+    }
+    return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that free 60-second audit of your site: ${links.auditUrl}`;
   }
 
-  function smsHref(kind: "audit" | "booking"): string {
+  function smsHref(kind: "preview" | "audit" | "booking"): string {
     if (!prospect) return "#";
     const body = encodeURIComponent(smsBody(kind));
     // sms: deep-link with body. Phone number first so messages app
@@ -326,6 +333,18 @@ export default function CallWorkspace(props: Props) {
             </p>
 
             <a
+              href={smsHref("preview")}
+              onClick={() => setPreviewLinkSent(true)}
+              className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
+                previewLinkSent
+                  ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
+                  : "bg-sky-500 hover:bg-sky-400 text-sky-950 shadow-lg shadow-sky-500/25"
+              }`}
+            >
+              {previewLinkSent ? "✓ Preview sent" : "👁️ Send preview link (START HERE)"}
+            </a>
+
+            <a
               href={smsHref("booking")}
               onClick={() => setBookingLinkSent(true)}
               className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
@@ -336,7 +355,7 @@ export default function CallWorkspace(props: Props) {
             >
               {bookingLinkSent
                 ? "✓ Booking link sent"
-                : "📞 Send booking link (PRIMARY)"}
+                : "📞 Send booking link (after they see it)"}
             </a>
 
             <a
@@ -359,8 +378,8 @@ export default function CallWorkspace(props: Props) {
             </a>
 
             <p className="text-[10px] text-slate-500 leading-relaxed">
-              Tap booking/audit to open your messages app pre-filled.
-              Send from your phone, then mark the outcome below.
+              Tap a button to open your messages app pre-filled.
+              Lead with the preview, follow up with booking.
             </p>
           </div>
 

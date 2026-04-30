@@ -85,6 +85,12 @@ export default async function PartnerWorkPage() {
     partnerCode: partner.code,
   });
 
+  // Short preview URL — the finished site they can see before paying.
+  // /p/[code] resolves via the short_code column; fall back to full UUID path.
+  const previewUrl = prospect
+    ? `${SITE_ORIGIN}/preview/${prospect.id}`
+    : SITE_ORIGIN;
+
   const vars: ScriptVars & { ownerOrThem: string } = {
     bizName: prospect?.business_name || "your business",
     firstName: ownerFirstName,
@@ -95,6 +101,7 @@ export default async function PartnerWorkPage() {
       (prospect?.scraped_data?.website as string | undefined) ||
       `${prospect?.business_name || "the site"}'s website`,
     partnerFirstName,
+    previewUrl,
     auditUrl,
     scheduleUrl,
     // Used in the unknown-owner intro: "is {ownerOrThem} around?" —
@@ -187,6 +194,7 @@ export default async function PartnerWorkPage() {
         remainingPool: remainingCount,
       }}
       links={{
+        previewUrl,
         auditUrl,
         scheduleUrl,
       }}
