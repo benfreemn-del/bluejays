@@ -98,19 +98,33 @@ export default function Footer() {
           <p className="text-white/30 text-sm">
             &copy; {new Date().getFullYear()} BlueJays. All rights reserved.
           </p>
-          <p className="flex items-center gap-2 text-white/30 text-sm">
-            <BluejayLogo size={16} className="text-sky-500" />
-            Built by{" "}
+          <div className="flex items-center gap-4">
             <a
-              href="https://bluejayportfolio.com/audit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-sky-400 transition-colors underline underline-offset-2"
+              href="/partners/apply"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/25 bg-amber-500/8 text-amber-400/70 hover:text-amber-300 hover:border-amber-500/50 hover:bg-amber-500/15 text-xs font-medium transition-all duration-200"
             >
-              BlueJays
-            </a>{" "}
-            — get your free site audit
-          </p>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3 h-3 flex-shrink-0">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              Work with us
+            </a>
+            <p className="flex items-center gap-2 text-white/30 text-sm">
+              <BluejayLogo size={16} className="text-sky-500" />
+              Built by{" "}
+              <a
+                href="https://bluejayportfolio.com/audit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-sky-400 transition-colors underline underline-offset-2"
+              >
+                BlueJays
+              </a>{" "}
+              — get your free site audit
+            </p>
+          </div>
         </div>
       </div>
     </footer>
