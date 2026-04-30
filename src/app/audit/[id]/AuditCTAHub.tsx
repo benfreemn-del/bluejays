@@ -38,7 +38,7 @@ type RequestState =
  * caller is about to navigate away (Buy → Stripe, Schedule → /schedule).
  * Falls back to a fire-and-forget fetch when sendBeacon isn't available.
  */
-function logForkClick(auditId: string, fork: "buy" | "schedule" | "preview") {
+function logForkClick(auditId: string, fork: "buy" | "schedule" | "preview" | "fullsystem") {
   if (typeof window === "undefined") return;
   const url = `/api/audit/${auditId}/cta-click`;
   const payload = JSON.stringify({ fork });
@@ -133,6 +133,72 @@ export default function AuditCTAHub({
           </p>
         </div>
 
+        {/* ── FULL SYSTEM — featured anchor card (sets the $10K price in their
+            head BEFORE they see the $997, making the website look like a
+            bargain). Hormozi: "make the thing you want to sell look cheap
+            by anchoring it next to something genuinely more valuable." ── */}
+        <a
+          href={`/schedule/${prospectId}?type=fullsystem&source=audit`}
+          onClick={() => logForkClick(auditId, "fullsystem")}
+          className="group relative flex flex-col md:flex-row md:items-center gap-5 rounded-2xl border-2 border-violet-500/50 bg-gradient-to-br from-violet-950/60 via-slate-900 to-indigo-950/60 p-6 md:p-7 mb-5 hover:border-violet-400 transition-all hover:scale-[1.01] shadow-[0_0_40px_rgba(139,92,246,0.2)] overflow-hidden"
+        >
+          {/* background glow */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.12),transparent_70%)]" />
+
+          <span className="absolute top-3 right-4 px-2 py-0.5 rounded-full bg-violet-500 text-white text-[10px] font-bold uppercase tracking-wider shadow">
+            Highest ROI
+          </span>
+
+          {/* left: icon + headline */}
+          <div className="flex-shrink-0 text-center md:text-left">
+            <div className="text-5xl mb-2">🚀</div>
+            <h3 className="text-xl font-bold text-white">The Full System</h3>
+            <p className="text-violet-300 font-semibold text-sm mt-0.5">Custom AI Marketing Funnel</p>
+          </div>
+
+          {/* center: what&apos;s included */}
+          <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-slate-300">
+            {[
+              "Custom website (included)",
+              "Google Ads — self-learning",
+              "Meta Ads — self-learning",
+              "Email + text + voicemail",
+              "Long-term SEO growth",
+              "Lead magnet (custom per biz)",
+              "Logo revision if needed",
+              "Monthly performance reports",
+            ].map((item) => (
+              <span key={item} className="flex items-center gap-1.5">
+                <span className="text-violet-400 flex-shrink-0">✓</span> {item}
+              </span>
+            ))}
+          </div>
+
+          {/* right: price + CTA */}
+          <div className="flex-shrink-0 text-center md:text-right">
+            <p className="text-2xl font-bold text-white">$10,000</p>
+            <p className="text-xs text-slate-400 mb-1">setup · split into 3 payments</p>
+            <p className="text-xs text-violet-300 mb-4">+ $500–1,000/mo ongoing</p>
+            {/* agency comparison — Hormozi: cut the middleman, show the savings */}
+            <p className="text-[10px] text-slate-500 mb-3 leading-relaxed">
+              Agencies charge $3–8K/mo for this.<br/>
+              You pay once + a fraction monthly.<br/>
+              Saves you $25,000+ in year one alone.
+            </p>
+            <span className="inline-flex items-center justify-center w-full rounded-md bg-violet-600 hover:bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white group-hover:opacity-90 transition-colors">
+              Book a discovery call →
+            </span>
+            <p className="text-[10px] text-slate-500 mt-2">Free call · Ben handles this personally</p>
+          </div>
+        </a>
+
+        {/* divider */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 border-t border-white/5" />
+          <p className="text-xs text-slate-500 flex-shrink-0">Or just start with the website</p>
+          <div className="flex-1 border-t border-white/5" />
+        </div>
+
         <div className="grid sm:grid-cols-3 gap-4 md:gap-5">
           {/* 1. BUY — primary commitment */}
           <a
@@ -140,8 +206,6 @@ export default function AuditCTAHub({
             onClick={() => logForkClick(auditId, "buy")}
             className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-6 hover:border-emerald-400 hover:bg-emerald-500/15 transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(16,185,129,0.15)]"
           >
-            {/* Hormozi review round 2 #10: "Most Popular" → cite specific
-                value instead of unverifiable popularity. */}
             <span className="absolute -top-2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow">
               Pays for itself week 1
             </span>
@@ -171,11 +235,7 @@ export default function AuditCTAHub({
             </span>
           </a>
 
-          {/* 3. BUILD ME MY SITE — slow-yes / lead capture.
-              Hormozi review round 1: was "Get my preview" — confusing
-              because the audit IS already a preview-like deliverable.
-              Reframed so it's clearly a DIFFERENT artifact (the actual
-              full site mocked up for them, not the diagnosis report). */}
+          {/* 3. BUILD ME MY SITE — slow-yes / lead capture */}
           <button
             onClick={handleRequestPreview}
             disabled={request.status === "loading" || request.status === "success"}
@@ -217,11 +277,6 @@ export default function AuditCTAHub({
           </p>
         )}
 
-        {/* Trust strip — Hormozi review round 2 #8: money-back made more
-            emphatic. "If you hate it, reply 'refund' to any email — every
-            dollar back same day, no scripts." Plus varied "48 hours"
-            phrasing across the page (round 2 #13) — this strip says
-            "Live in 2 days flat" instead of repeating "48-hour". */}
         <div className="mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-slate-400">
           <span className="flex items-center gap-1.5">
             <span className="text-emerald-400">✓</span> 100% money-back · reply &quot;refund&quot; to any email
@@ -234,8 +289,6 @@ export default function AuditCTAHub({
           </span>
         </div>
 
-        {/* Secondary buy link — keeps the $997-once option discoverable
-            without crowding the primary 3-card hub. */}
         <div className="mt-8 text-center">
           <a
             href={secondaryButtonUrl}

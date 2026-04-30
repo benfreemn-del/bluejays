@@ -12,6 +12,8 @@ interface Props {
   prefillPhone?: string;
   prefillEmail?: string;
   isEmbed?: boolean;
+  bookingType?: string;
+  source?: string;
 }
 
 interface TimeSlot {
@@ -50,7 +52,9 @@ export default function ScheduleClient({
   prefillPhone = "",
   prefillEmail = "",
   isEmbed = false,
+  bookingType = "",
 }: Props) {
+  const isFullSystem = bookingType === "fullsystem";
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth() + 1); // 1-based
@@ -67,7 +71,7 @@ export default function ScheduleClient({
     name: prefillName,
     phone: prefillPhone,
     email: prefillEmail,
-    notes: "",
+    notes: isFullSystem ? "Interested in The Full System — custom AI marketing funnel ($10K setup)" : "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -197,10 +201,24 @@ export default function ScheduleClient({
 
         {/* Header */}
         <div className="px-6 pt-5 pb-3 flex-shrink-0">
-          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400">
-            Schedule an Appointment
-          </p>
-          <h1 className="text-lg font-bold text-gray-900 mt-0.5">{businessName}</h1>
+          {isFullSystem ? (
+            <>
+              <p className="text-xs font-semibold tracking-widest uppercase text-violet-500">
+                Full System Discovery Call
+              </p>
+              <h1 className="text-lg font-bold text-gray-900 mt-0.5">{businessName}</h1>
+              <p className="text-xs text-gray-500 mt-1">
+                Free 30-min call · Ben handles this personally · No pressure
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-semibold tracking-widest uppercase text-gray-400">
+                Schedule an Appointment
+              </p>
+              <h1 className="text-lg font-bold text-gray-900 mt-0.5">{businessName}</h1>
+            </>
+          )}
         </div>
 
         {/* ── STAGE: Calendar ───────────────────────────────────────────── */}

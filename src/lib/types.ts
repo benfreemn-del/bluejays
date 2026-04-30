@@ -76,6 +76,7 @@ export type ProspectStatus =
   | "bounced"          // hard-bounce or 3-soft-in-7-days escalation — see Rule 42
   | "audit_lead"              // submitted via /audit lead-magnet; receiving Hormozi 5-email sequence
   | "audit_preview_requested" // clicked "Build me a preview" on the audit page; Ben handles manually
+  | "fullsystem_inquiry"      // clicked "The Full System" — discovery call booked; Ben handles manually
   | "pro-bono";
 
 export interface Prospect {
@@ -123,7 +124,7 @@ export interface Prospect {
    *                the custom sub IS the mgmt sub — no separate setup fee, no trial).
    *                See src/app/p/[code]/page.tsx for the short-URL redirect behaviour
    *                and CLAUDE.md "Custom Pricing Tier Rules" for the full spec. */
-  pricingTier?: "standard" | "free" | "custom";
+  pricingTier?: "standard" | "free" | "custom" | "fullsystem";
   /** For pricing_tier=custom prospects only: absolute URL of the real live site
    *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
    *  rendering the template preview. Ignored for non-custom tiers. */

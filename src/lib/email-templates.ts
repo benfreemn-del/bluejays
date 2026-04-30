@@ -294,6 +294,8 @@ No idea if it's what you had in mind, but figured you'd want to see it. Curious 
 
 — Ben
 bluejaycontactme@gmail.com
+
+P.S. If you want the full system — Google ads, Meta ads, SEO, email, and text — reply "system" and I'll tell you what that looks like.
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
 
   // HTML version — identical copy but with the prospect's live preview
@@ -329,6 +331,7 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
     <p style="margin:0 0 16px;">No idea if it's what you had in mind, but figured you'd want to see it. Curious what you'd change.</p>
     <p style="margin:0 0 4px;">— Ben</p>
     <p style="margin:0 0 16px;"><a href="mailto:bluejaycontactme@gmail.com" style="color:#6b7280;">bluejaycontactme@gmail.com</a></p>
+    <p style="margin:0 0 16px;color:#9ca3af;font-size:12px;">P.S. If you want the full system — Google ads, Meta ads, SEO, email, and text — reply &quot;system&quot; and I&apos;ll tell you what that looks like.</p>
     <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
       Quilcene, WA · <a href="${esc(getShortUnsubUrl(prospect))}" style="color:#9ca3af;">Opt out</a>
     </p>

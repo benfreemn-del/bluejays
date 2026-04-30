@@ -7,10 +7,10 @@ export default async function SchedulePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ name?: string; phone?: string; email?: string; embed?: string }>;
+  searchParams: Promise<{ name?: string; phone?: string; email?: string; embed?: string; type?: string; source?: string }>;
 }) {
   const { id } = await params;
-  const { name, phone, email, embed } = await searchParams;
+  const { name, phone, email, embed, type, source } = await searchParams;
 
   const prospect = await getProspect(id);
   if (!prospect) notFound();
@@ -28,6 +28,8 @@ export default async function SchedulePage({
       prefillPhone={phone || ""}
       prefillEmail={email || ""}
       isEmbed={embed === "true"}
+      bookingType={type || ""}
+      source={source || ""}
     />
   );
 }
