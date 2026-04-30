@@ -50,12 +50,12 @@ export default function Home() {
           gtag library + Meta Pixel load on every route (including /audit form
           submits, claim flow, etc.). */}
       <Hero />
+      <AgencySection />
       <AuditTestimonials />
       <Stats />
       <About />
       <AboutBen />
       <Services />
-      <AgencySection />
       <FAQ />
       <Contact />
       <Footer />
