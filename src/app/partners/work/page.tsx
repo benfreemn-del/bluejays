@@ -14,6 +14,7 @@ import {
 } from "@/lib/partners-script";
 import type { ScriptVars } from "@/lib/partners-script";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
+import { buildBookingUrlForCall } from "@/lib/booking";
 import CallWorkspace from "./CallWorkspace";
 
 export const dynamic = "force-dynamic";
@@ -73,9 +74,16 @@ export default async function PartnerWorkPage() {
     ? `${SITE_ORIGIN}/audit/${prospect.latestAuditId}?ref=${partner.code}`
     : `${SITE_ORIGIN}/audit?ref=${partner.code}`;
 
-  const scheduleUrl = prospect
-    ? `${SITE_ORIGIN}/schedule/${prospect.id}?ref=${partner.code}&source=partner-call`
-    : `${SITE_ORIGIN}/schedule?ref=${partner.code}`;
+  // Booking URL points to BEN's Calendly (env var BEN_BOOKING_URL),
+  // which syncs natively to his Google Calendar. Calendly preserves the
+  // utm_source / utm_campaign / utm_medium params on the booking link
+  // so /api/webhooks/calendly can match the booking back to the
+  // partner + prospect that brought it (and auto-mark the partner_call
+  // outcome as 'answered_call_scheduled' on Ben's behalf).
+  const scheduleUrl = buildBookingUrlForCall({
+    prospectId: prospect?.id,
+    partnerCode: partner.code,
+  });
 
   const vars: ScriptVars & { ownerOrThem: string } = {
     bizName: prospect?.business_name || "your business",
