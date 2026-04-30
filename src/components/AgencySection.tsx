@@ -15,12 +15,12 @@ const ArrowIcon = () => (
 );
 
 const INCLUDED = [
-  { label: "AI-Powered Website", desc: "Full custom site, built and deployed" },
-  { label: "Email Automation", desc: "Sequences that nurture leads while you sleep" },
-  { label: "SMS Follow-Up", desc: "Instant texts to every new inquiry" },
-  { label: "AI Chat Widget", desc: "Answers questions, captures leads 24/7" },
-  { label: "Lead Capture Funnels", desc: "Forms, landing pages, and booking flows" },
-  { label: "Local SEO Setup", desc: "Google Business, schema, and on-page SEO" },
+  { label: "Self-Learning Ad Engine", desc: "Winners auto-scale. Losers auto-cut. No one touches it." },
+  { label: "Connected Funnel Loop", desc: "Ads → site → email → SMS → voicemail — all sharing data" },
+  { label: "AI-Powered Website", desc: "Tracks what converts, feeds results back to ads" },
+  { label: "Email + SMS Automation", desc: "Sequences that tighten based on what actually works" },
+  { label: "Lead Capture Funnels", desc: "Every form, click, and drop-off improves the next one" },
+  { label: "Monthly Reporting", desc: "Real numbers showing the loop getting smarter" },
 ];
 
 export default function AgencySection() {
@@ -56,21 +56,21 @@ export default function AgencySection() {
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
-              Full AI Marketing System
+              Self-Learning AI Marketing System
             </span>
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-5">
-              Replace your agency.{" "}
+              The system manages itself.{" "}
               <span
                 className="bg-clip-text text-transparent"
                 style={{ backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #c4b5fd 100%)" }}
               >
-                Keep the results.
+                Your funnel gets smarter every week.
               </span>
             </h2>
 
             <p className="text-white/50 text-lg leading-relaxed mb-8 max-w-lg">
-              Most marketing agencies charge $3,000–$8,000 per month and own everything. We build the complete AI marketing engine — website, email, SMS, chat, funnels — hand it over, and you own it forever.
+              Agencies run campaigns manually — same playbook, every client, forever. BlueJays builds a self-learning AI loop: every ad click, email open, and form fill feeds data back in, tightening the funnel automatically. No account manager needed. No weekly check-ins. The machine does it.
             </p>
 
             {/* Price callout */}
@@ -85,7 +85,7 @@ export default function AgencySection() {
                 className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.45)] active:scale-[0.97]"
                 style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)" }}
               >
-                See what&apos;s included
+                See how the loop works
                 <ArrowIcon />
               </a>
               <a
@@ -111,9 +111,9 @@ export default function AgencySection() {
             <div className="relative rounded-3xl border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm overflow-hidden">
               {/* Top bar */}
               <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
-                <span className="text-white/60 text-sm font-semibold">Everything included</span>
+                <span className="text-white/60 text-sm font-semibold">The self-learning loop</span>
                 <span className="text-xs text-violet-400 font-bold px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20">
-                  Yours forever
+                  Gets smarter weekly
                 </span>
               </div>
 
@@ -135,8 +135,8 @@ export default function AgencySection() {
               {/* Bottom comparison bar */}
               <div className="px-6 py-4 border-t border-white/[0.06] bg-white/[0.02]">
                 <p className="text-white/35 text-xs text-center leading-relaxed">
-                  A typical agency charges $3K–$8K/mo and owns all of it.{" "}
-                  <span className="text-violet-400 font-semibold">You keep everything we build.</span>
+                  Agencies run it manually. This runs itself.{" "}
+                  <span className="text-violet-400 font-semibold">Every week it learns. Every month it compounds.</span>
                 </p>
               </div>
             </div>

@@ -5,16 +5,16 @@ import Footer from "@/components/Footer";
 const BASE_URL = "https://bluejayportfolio.com";
 
 export const metadata: Metadata = {
-  title: "Replace Your Marketing Agency | BlueJays Full System",
+  title: "Self-Learning AI Marketing System | BlueJays Full System",
   description:
-    "Paying $3,000–$8,000/month to a marketing agency? Get a custom AI marketing system built once, own it forever, pay a fraction monthly. Cut the agency.",
+    "Not a campaign. A self-improving loop. Every ad click, email open, and form fill feeds data back in and tightens your funnel automatically. Built once. Runs forever.",
   alternates: { canonical: `${BASE_URL}/agency` },
   openGraph: {
     type: "website",
     siteName: "BlueJays",
-    title: "Still Paying an Agency? Read This First.",
+    title: "Your funnel gets smarter every week. Automatically.",
     description:
-      "Agencies charge $3–8K/month forever using cookie-cutter playbooks. BlueJays builds a custom AI system tailored to YOUR business. One setup. You own it.",
+      "BlueJays builds a self-learning AI marketing system custom for your business. Winners auto-scale. Losers auto-cut. No account manager. No check-ins. The machine does it.",
     url: `${BASE_URL}/agency`,
     images: [{ url: `${BASE_URL}/og-image.png`, width: 1200, height: 630 }],
   },
@@ -32,16 +32,16 @@ const AGENCY_ITEMS = [
 ];
 
 const INCLUDED = [
-  { icon: "🌐", title: "Custom Website", detail: "Built for your brand, not a template" },
-  { icon: "📈", title: "Google Ads — Self-Learning", detail: "AI optimizes bids and copy automatically" },
-  { icon: "🎯", title: "Meta Ads — Self-Learning", detail: "Facebook + Instagram, targeted to your buyers" },
-  { icon: "✉️", title: "Email Sequences", detail: "Automated nurture from first click to close" },
-  { icon: "📱", title: "Text Campaigns", detail: "SMS follow-ups that feel personal, not spammy" },
-  { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to warm leads automatically" },
-  { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds over years" },
-  { icon: "🎁", title: "Custom Lead Magnet", detail: "Something valuable specific to your industry" },
-  { icon: "🖼️", title: "Logo Revision", detail: "Polish your brand if it needs it" },
-  { icon: "📊", title: "Monthly Reports", detail: "Real numbers, plain English, every month" },
+  { icon: "🌐", title: "Custom Website", detail: "Conversion-tracked — every click feeds the loop" },
+  { icon: "📈", title: "Google Ads — Self-Learning", detail: "Headlines that win get more budget automatically" },
+  { icon: "🎯", title: "Meta Ads — Self-Learning", detail: "Audiences that don't convert get cut without touching it" },
+  { icon: "✉️", title: "Email Sequences", detail: "Subject lines tested, winners kept, losers replaced" },
+  { icon: "📱", title: "SMS Follow-Ups", detail: "Automated texts that improve based on reply data" },
+  { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to every warm lead — hands-free" },
+  { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds while the ads learn" },
+  { icon: "🎁", title: "Custom Lead Magnet", detail: "Industry-specific hook that feeds the top of the funnel" },
+  { icon: "🖼️", title: "Logo Revision", detail: "Brand polish so your system looks as good as it runs" },
+  { icon: "📊", title: "Monthly Reports", detail: "Real numbers showing exactly how the loop is tightening" },
 ];
 
 const FAQS = [
@@ -108,19 +108,19 @@ export default function AgencyPage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-20 pb-16 text-center max-w-4xl mx-auto">
-        <div className="inline-block bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-          For business owners paying agencies
+        <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
+          The self-learning AI marketing system
         </div>
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-          Still paying{" "}
-          <span className="text-rose-400">$4,000/month</span>
-          <br className="hidden md:block" /> to a marketing agency?
+          Your funnel gets smarter{" "}
+          <span className="text-violet-400">every single week.</span>
+          <br className="hidden md:block" /> Automatically.
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4 leading-relaxed">
-          That&apos;s $48,000 a year. For campaigns built from the same template they use for every other client on their roster.
+          Not a campaign. Not a template. A self-improving loop — every ad click, email open, and form fill feeds data back in and tightens the funnel without anyone touching it.
         </p>
         <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">
-          BlueJays builds you a <strong className="text-white">custom AI marketing system</strong> — Google Ads, Meta Ads, email, text, voicemail, SEO — connected to a website built for your business specifically. One setup fee. You own it. Ben manages it monthly for a fraction of what you&apos;re paying now.
+          BlueJays builds the system, connects all the pieces, and hands it to you. Google Ads, Meta Ads, email, SMS, voicemail, SEO — all sharing data, all learning from your real customers. <strong className="text-white">One setup. You own it. The AI manages the rest.</strong>
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
@@ -209,7 +209,7 @@ export default function AgencyPage() {
           Everything in the Full System
         </h2>
         <p className="text-slate-400 text-center text-lg mb-10">
-          One connected machine — not 6 disconnected tools from 6 different vendors.
+          One connected loop — every piece feeds data back to every other piece.
         </p>
         <div className="grid sm:grid-cols-2 gap-4">
           {INCLUDED.map((item) => (
@@ -231,17 +231,17 @@ export default function AgencyPage() {
       <section className="px-6 py-16 bg-gradient-to-b from-slate-900/50 to-transparent">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-            Cutting-edge AI — built custom for your business
+            The competitive advantage agencies can&apos;t match
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            This isn&apos;t a template.<br />
-            <span className="text-violet-300">It&apos;s a system that learns.</span>
+            Agencies manage campaigns.<br />
+            <span className="text-violet-300">This system manages itself.</span>
           </h2>
           <p className="text-slate-300 text-lg leading-relaxed mb-6">
-            The Hyperloop — BlueJays&apos; self-improving AI funnel — connects your ads to your website to your email to your texts to your voicemails. Every channel feeds data back into the system. Winners get amplified automatically. Losers get cut. No account manager needed.
+            Every component — ads, website, email, SMS, voicemail — feeds performance data back into a single loop. Headlines that convert get amplified. Audiences that don&apos;t convert get cut. Email subject lines that underperform get replaced. No human makes these calls. The AI does, continuously, in the background.
           </p>
           <p className="text-slate-400 leading-relaxed mb-10">
-            Agencies build a campaign and pray. BlueJays builds a machine that gets smarter every month. When a Google Ad headline starts converting at 8% instead of 3%, the system detects it and shifts budget there automatically. When an email subject line underperforms, it gets replaced. The system is always testing, always optimizing — without you touching anything.
+            An agency team runs campaigns for 30+ clients simultaneously. They rotate junior reps every six months. They use the same playbook for your roofing company as they do for the dentist down the street. BlueJays builds one system, custom for your business, and the AI tightens it week after week. Month 3 is smarter than Month 1. Month 12 is smarter than Month 3. It compounds — the way real competitive advantages do.
           </p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
@@ -276,10 +276,10 @@ export default function AgencyPage() {
       <section className="px-6 py-20 text-center border-t border-white/5">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Stop renting. Start owning.
+            Build the loop once. Let it run.
           </h2>
           <p className="text-slate-400 text-lg mb-8">
-            Get a free audit of your current website and marketing. No pitch, no obligation. Ben tells you exactly what&apos;s costing you customers and what the full system would look like for your specific business.
+            Get a free audit of your current website and marketing. No pitch, no obligation. Ben shows you exactly what the self-learning system would look like for your specific business — and what it would cost you to keep doing things the old way.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
