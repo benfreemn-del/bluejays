@@ -44,3 +44,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Loose test images dropped at repo root by ad-hoc tools — never commit these
+/*.jpg
+/*.jpeg
+/*.png
