@@ -174,6 +174,71 @@ export async function getNextProspectForPartner(): Promise<{
   };
 }
 
+export type CallHistoryEntry = {
+  id: string;
+  calledAt: string;
+  outcome: string;
+  notes: string | null;
+  auditLinkSent: boolean;
+  partnerName: string;
+  partnerCode: string;
+};
+
+/**
+ * Fetch the most recent call history for a specific prospect so callers
+ * know what contact has already been made. Returns up to 15 entries,
+ * newest first, joined with the partner's name and code.
+ */
+export async function getCallHistoryForProspect(
+  prospectId: string,
+): Promise<CallHistoryEntry[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await supabase
+      .from("partner_calls")
+      .select("id, called_at, outcome, notes, audit_link_sent_at, partner_id")
+      .eq("prospect_id", prospectId)
+      .order("called_at", { ascending: false })
+      .limit(15);
+    if (error || !data) return [];
+
+    // Batch-fetch the partner names for the returned partner_ids
+    const partnerIds = [...new Set((data as { partner_id: string }[]).map((r) => r.partner_id))];
+    const { data: partners } = await supabase
+      .from("partners")
+      .select("id, name, code")
+      .in("id", partnerIds);
+    const partnerMap = new Map(
+      (partners || []).map((p) => [
+        (p as { id: string; name: string; code: string }).id,
+        p as { id: string; name: string; code: string },
+      ]),
+    );
+
+    return (data as {
+      id: string;
+      called_at: string;
+      outcome: string;
+      notes: string | null;
+      audit_link_sent_at: string | null;
+      partner_id: string;
+    }[]).map((row) => {
+      const p = partnerMap.get(row.partner_id);
+      return {
+        id: row.id,
+        calledAt: row.called_at,
+        outcome: row.outcome,
+        notes: row.notes ?? null,
+        auditLinkSent: !!row.audit_link_sent_at,
+        partnerName: p?.name ?? "Unknown",
+        partnerCode: p?.code ?? "?",
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 /** How many calls has this partner logged in the current session
  *  (since their most recent login). Used by the workspace /100 counter.
  *

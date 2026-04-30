@@ -26,6 +26,16 @@ type CallTip = {
   body: string;
 };
 
+type CallHistoryEntry = {
+  id: string;
+  calledAt: string;
+  outcome: string;
+  notes: string | null;
+  auditLinkSent: boolean;
+  partnerName: string;
+  partnerCode: string;
+};
+
 type Props = {
   partner: {
     id: string;
@@ -85,6 +95,7 @@ type Props = {
   };
   tips: CallTip[];
   mantra: string;
+  callHistory: CallHistoryEntry[];
 };
 
 type Outcome =
@@ -128,7 +139,7 @@ const OUTCOME_META: Record<
 };
 
 export default function CallWorkspace(props: Props) {
-  const { partner, prospect, counters, links, script, tips, mantra } = props;
+  const { partner, prospect, counters, links, script, tips, mantra, callHistory } = props;
   const router = useRouter();
 
   const [busy, setBusy] = useState(false);
@@ -278,6 +289,10 @@ export default function CallWorkspace(props: Props) {
         {/* LEFT: Prospect card + script */}
         <div>
           <ProspectCard prospect={prospect} />
+
+          {callHistory.length > 0 && (
+            <CallHistoryPanel entries={callHistory} />
+          )}
 
           <SectionTabs section={section} setSection={setSection} />
 
@@ -1020,6 +1035,95 @@ function EmptyPool({
         </button>
       </div>
     </main>
+  );
+}
+
+const OUTCOME_LABEL: Record<string, string> = {
+  no_answer: "No answer",
+  voicemail: "Left voicemail",
+  wrong_number: "Wrong number",
+  answered_not_interested: "Not interested",
+  answered_call_scheduled: "Booked Ben's call",
+  answered_audit_sent: "Sent audit link",
+  answered_callback: "Call back requested",
+  do_not_call: "DNC — removed from list",
+};
+
+const OUTCOME_COLOR: Record<string, string> = {
+  no_answer: "text-slate-400",
+  voicemail: "text-slate-400",
+  wrong_number: "text-slate-500",
+  answered_not_interested: "text-slate-400",
+  answered_call_scheduled: "text-emerald-400",
+  answered_audit_sent: "text-amber-400",
+  answered_callback: "text-sky-400",
+  do_not_call: "text-rose-400",
+};
+
+function CallHistoryPanel({ entries }: { entries: CallHistoryEntry[] }) {
+  const [open, setOpen] = useState(false);
+  const preview = entries[0];
+
+  function relativeTime(iso: string) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+  }
+
+  return (
+    <div className="mt-3 rounded-xl border border-slate-700/50 bg-slate-900/60 overflow-hidden">
+      {/* Collapsed header — always shows the most recent call */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-800/40 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex-shrink-0">
+            Contact history
+          </span>
+          <span className="text-xs text-slate-600">·</span>
+          <span className={`text-xs font-medium truncate ${OUTCOME_COLOR[preview.outcome] ?? "text-slate-400"}`}>
+            {OUTCOME_LABEL[preview.outcome] ?? preview.outcome}
+          </span>
+          <span className="text-xs text-slate-600 flex-shrink-0">
+            {relativeTime(preview.calledAt)} by {preview.partnerName.split(/\s+/)[0]}
+          </span>
+        </div>
+        <span className="text-slate-500 flex-shrink-0 ml-2">
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {open && (
+        <ul className="divide-y divide-slate-800/60 border-t border-slate-800/60">
+          {entries.map((e) => (
+            <li key={e.id} className="px-4 py-2.5 text-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <span className={`font-semibold ${OUTCOME_COLOR[e.outcome] ?? "text-slate-300"}`}>
+                    {OUTCOME_LABEL[e.outcome] ?? e.outcome}
+                  </span>
+                  {e.auditLinkSent && (
+                    <span className="ml-2 text-amber-400/80">[audit sent]</span>
+                  )}
+                  {e.notes && (
+                    <p className="text-slate-400 mt-0.5 leading-snug whitespace-pre-wrap">{e.notes}</p>
+                  )}
+                </div>
+                <div className="text-slate-500 flex-shrink-0 text-right">
+                  <div>{relativeTime(e.calledAt)}</div>
+                  <div className="text-slate-600">{e.partnerName.split(/\s+/)[0]}</div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
