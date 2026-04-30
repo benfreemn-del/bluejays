@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { getAllProspects } from "@/lib/store";
 import { listPublishedCaseStudies } from "@/lib/case-studies";
+import { CITIES } from "@/lib/cities";
+import { GUIDES } from "@/lib/guides";
 
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
@@ -38,6 +40,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/guides`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/web-design`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/partners`,
@@ -100,9 +114,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Non-fatal — case studies are optional in sitemap
   }
 
+  // City landing pages — Tier 3 SEO compounding asset (each ranks for
+  // "web design [city]" + sister-city internal links).
+  const cityRoutes: MetadataRoute.Sitemap = CITIES.map((c) => ({
+    url: `${BASE_URL}/web-design/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
+  // Anchor-article guides — Tier 2 SEO compounding asset (long-form,
+  // owns specific high-intent queries).
+  const guideRoutes: MetadataRoute.Sitemap = GUIDES.map((g) => ({
+    url: `${BASE_URL}/guides/${g.slug}`,
+    lastModified: new Date(g.modifiedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
+
   return [
     ...staticRoutes,
     ...portfolioRoutes,
+    ...cityRoutes,
+    ...guideRoutes,
     ...caseStudyRoutes,
     ...previewRoutes,
   ];
