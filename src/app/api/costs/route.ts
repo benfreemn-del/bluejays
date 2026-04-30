@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAllProspects } from "@/lib/store";
 import { getSystemCostEstimate } from "@/lib/cost-tracker";
-import { getEmailHistory } from "@/lib/email-sender";
-import { getSmsHistory } from "@/lib/sms";
 import { getCostData } from "@/lib/cost-logger";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * GET /api/costs
@@ -11,6 +10,14 @@ import { getCostData } from "@/lib/cost-logger";
  * Returns cost data for the spending dashboard. Attempts to pull real cost
  * data from the system_costs table first. Falls back to the legacy
  * estimate-based system if real data is unavailable or empty.
+ *
+ * PERF NOTE (2026-04-29 fix):
+ * The original implementation iterated `for (const p of prospects)` and
+ * called `getEmailHistory(p.id)` + `getSmsHistory(p.id)` in series — that
+ * was 2 round-trips per prospect, scaling to 30+ second response times
+ * once the CRM grew past ~500 prospects. Replaced with a single COUNT
+ * query per table. Total queries: 4 (prospects + email count + sms count
+ * + system_costs aggregation), all O(1) regardless of prospect volume.
  */
 export async function GET() {
   const prospects = await getAllProspects();
@@ -19,15 +26,27 @@ export async function GET() {
   const realCosts = await getCostData();
   const hasRealData = realCosts.thisMonth.total > 0;
 
-  // Always compute legacy estimates as fallback / comparison
+  // Fast path: COUNT instead of fetching every prospect's full
+  // email/sms history. With 1000 prospects + 30 emails each, the
+  // previous loop fired 2000 round-trips. This fires 2.
   let totalEmails = 0;
   let totalSms = 0;
-
-  for (const p of prospects) {
-    const emails = await getEmailHistory(p.id);
-    const sms = await getSmsHistory(p.id);
-    totalEmails += emails.length;
-    totalSms += sms.length;
+  if (isSupabaseConfigured()) {
+    try {
+      const [emailRes, smsRes] = await Promise.all([
+        supabase
+          .from("emails")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("sms_messages")
+          .select("*", { count: "exact", head: true }),
+      ]);
+      totalEmails = emailRes.count ?? 0;
+      totalSms = smsRes.count ?? 0;
+    } catch (err) {
+      // Non-fatal — leave at 0 and let estimate fall back gracefully.
+      console.error("[/api/costs] count query failed:", err);
+    }
   }
 
   const systemCost = getSystemCostEstimate(prospects.length, totalEmails, totalSms);

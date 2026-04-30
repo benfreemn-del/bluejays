@@ -56,12 +56,20 @@ export async function GET() {
       return NextResponse.json({ ...defaultResponse, dailyCosts });
     }
 
-    // Fetch all cost records
+    // PERF (2026-04-29): scoped from "all rows ever" to "last 90 days"
+    // and capped row count. The dashboard only shows 30-day chart +
+    // monthly aggregates — pulling every cost row ever logged was
+    // making this endpoint take 30+ seconds once system_costs hit
+    // ~10k rows. 90 days covers daily chart + month-over-month math.
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
     const { data: allCosts, error } = await supabase
       .from("system_costs")
       .select("service, action, cost_usd, created_at, prospect_id, status")
       .eq("status", "success")
-      .order("created_at", { ascending: true });
+      .gte("created_at", ninetyDaysAgo.toISOString())
+      .order("created_at", { ascending: true })
+      .limit(50000); // hard cap — anything beyond this is noise for the dashboard
 
     if (error || !allCosts || allCosts.length === 0) {
       const dailyCosts = generateEmptyDailyData();
