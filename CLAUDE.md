@@ -2459,7 +2459,7 @@ The Full System offer is built into the codebase (audit CTA hub, schedule page, 
 - [ ] Create a second split Payment Link for $3,500 at 30 days: Product name "Full System — Milestone 2"
 - [ ] Create a third split Payment Link for $3,000 at 60 days: Product name "Full System — Final Payment"
 - [ ] Set env vars `STRIPE_PRICE_FULLSYSTEM_FULL`, `STRIPE_PRICE_FULLSYSTEM_DEPOSIT`, `STRIPE_PRICE_FULLSYSTEM_M2`, and `STRIPE_PRICE_FULLSYSTEM_M3` on Vercel once price IDs are created
-- Note: full payment = $9,700 (save $300); split = 3 × $3,500 = $10,500. Client chooses at discovery call. Email the chosen Payment Link manually; not self-serve checkout yet
+- Note: full payment = $9,700 (save $300); split = $3,500 + $3,500 + $3,000 = $10,000. Client chooses at discovery call. Email the chosen Payment Link manually; not self-serve checkout yet
 
 **CALENDAR — Discovery call availability:**
 - [ ] In your scheduling system, create a separate 30-minute block type for Full System discovery calls (vs. the 15-min website calls)

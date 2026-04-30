@@ -59,7 +59,7 @@ const FAQS = [
   },
   {
     q: "What's the pricing breakdown?",
-    a: "Pay $9,700 in full (save $300), or split it into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days ($10,500 total). Nothing extra is due until you've seen real progress. Choose what works for your cash flow.",
+    a: "Pay $9,700 in full (save $300), or split into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days ($10,000 total either way). Nothing is due until you've seen real progress.",
   },
   {
     q: "Can I keep my existing website?",
