@@ -764,6 +764,26 @@ export default function ProspectTable({
                   <td className="p-3"><StatusBadge status={prospect.status} /></td>
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1.5" onClick={(e) => e.stopPropagation()}>
+                      {/* One-click open to the prospect's existing website.
+                          Sits leftmost in the Actions cell so it's a fixed
+                          target — Ben can click any row's "↗ Site" without
+                          eyeing-up the row. Hidden when there's nothing
+                          to open. */}
+                      {prospect.currentWebsite && (
+                        <a
+                          href={
+                            prospect.currentWebsite.startsWith("http")
+                              ? prospect.currentWebsite
+                              : `https://${prospect.currentWebsite}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors"
+                          title={`Open ${prospect.currentWebsite} in a new tab`}
+                        >
+                          ↗ Site
+                        </a>
+                      )}
                       {hasPreviewAvailable(prospect) ? (
                         <>
                           <a
