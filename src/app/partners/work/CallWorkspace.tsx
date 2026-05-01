@@ -243,7 +243,7 @@ export default function CallWorkspace(props: Props) {
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="font-bold text-amber-300 truncate">
-              {partner.name.split(/\s+/)[0]}&apos;s workspace
+              Partners · {partner.name.split(/\s+/)[0]}&apos;s workspace
             </div>
             <span className="hidden sm:inline text-xs text-slate-500">
               · pool: {counters.remainingPool}
