@@ -203,6 +203,13 @@ export default function DashboardPage() {
             >
               Case Studies
             </Link>
+            <Link
+              href="/dashboard/agency"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-violet-300 transition-colors hover:bg-background hover:text-violet-200"
+              title="Review $9,700 AI Marketing System applications"
+            >
+              Agency
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">

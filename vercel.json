@@ -67,6 +67,14 @@
     {
       "path": "/api/watchdog/run",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/agency-backlog",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/agency-nurture",
+      "schedule": "0 16 * * *"
     }
   ],
   "functions": {

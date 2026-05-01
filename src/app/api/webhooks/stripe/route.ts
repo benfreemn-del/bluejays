@@ -159,6 +159,38 @@ export async function POST(request: NextRequest) {
           // Send payment confirmation email to Ben
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
 
+          // ─── Server-side Meta CAPI Purchase event ───
+          // Fires from server to bypass ad blockers / iOS privacy /
+          // Safari ITP that eat 20–40% of client-side pixel signal.
+          // Combined with the client-side event the audit/checkout
+          // pages may already fire, Meta dedupes via event_id.
+          // Fire-and-forget — never block webhook ack on conversion API.
+          try {
+            const { fireMetaCapi } = await import("@/lib/server-conversions");
+            const valueUsd =
+              session.amount_total !== undefined && session.amount_total !== null
+                ? session.amount_total / 100
+                : undefined;
+            void fireMetaCapi({
+              eventName: "Purchase",
+              eventId: `stripe-${session.id}`,
+              eventSourceUrl: `https://bluejayportfolio.com/preview/${prospect.id}`,
+              value: valueUsd,
+              currency: "USD",
+              userData: {
+                email: session.customer_email || prospect.email || undefined,
+                phone: prospect.phone || undefined,
+              },
+              customData: {
+                content_name: "website_purchase",
+                content_category: prospect.category || "uncategorized",
+                pricing_tier: session.metadata?.pricingTier || "unknown",
+              },
+            }).catch((err) => console.error("[stripe-webhook] CAPI Purchase failed:", err));
+          } catch (err) {
+            console.error("[stripe-webhook] CAPI import failed:", err);
+          }
+
           // Send welcome email to the customer with the onboarding form link.
           // Idempotent via prospect.welcomeEmailSentAt so Stripe retries don't
           // double-send. Customer email can come from Stripe session or the

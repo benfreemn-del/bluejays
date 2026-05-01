@@ -284,6 +284,40 @@ export async function POST(request: NextRequest) {
     ),
   ]);
 
+  // ─── Server-side Meta CAPI Schedule event ───
+  // Calendar bookings are a high-intent conversion that NEVER fires
+  // a client-side pixel (the booking happens on calendly.com, not
+  // our domain). Server-side is the only way to feed this signal to
+  // Meta — and it's the strongest mid-funnel signal we have for
+  // either product (audit booking → /audit, agency call → /agency/apply).
+  try {
+    const { fireMetaCapi } = await import("@/lib/server-conversions");
+    // Value heuristic: if a partner booked it (partner-attributed),
+    // treat it as the agency-tier event. Otherwise treat as a $997
+    // website lead. Tunable later if Ben wants different bidding.
+    const isAgencyTier = medium === "partner-call" || partnerCode.length > 0;
+    const value = isAgencyTier ? 9700 : 997;
+    void fireMetaCapi({
+      eventName: "Schedule",
+      eventId: scheduledEvent?.uri || `calendly-${Date.now()}-${inviteeEmail}`,
+      eventSourceUrl: "https://bluejayportfolio.com/agency",
+      value,
+      currency: "USD",
+      userData: {
+        email: inviteeEmail || undefined,
+        phone: inviteePhone || undefined,
+        firstName: inviteeName?.split(" ")[0] || undefined,
+        lastName: inviteeName?.split(" ").slice(1).join(" ") || undefined,
+      },
+      customData: {
+        content_name: isAgencyTier ? "agency_strategy_call" : "website_walkthrough",
+        partner_attributed: !!partnerName,
+      },
+    }).catch((err) => console.error("[calendly-webhook] CAPI Schedule failed:", err));
+  } catch (err) {
+    console.error("[calendly-webhook] CAPI import failed:", err);
+  }
+
   return NextResponse.json({
     ok: true,
     eventType,

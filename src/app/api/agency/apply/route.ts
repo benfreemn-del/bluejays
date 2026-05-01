@@ -48,6 +48,13 @@ type ApplyBody = {
   utm_medium?: string;
   utm_campaign?: string;
   utm_referrer?: string;
+  /**
+   * Wizard sends this true after Step 1 so the server records a draft
+   * row (status='draft') we can email-recover from. Drafts skip
+   * qualifying logic + skip alerting Ben (otherwise he'd get pinged
+   * for every visitor who started a form).
+   */
+  _draft?: boolean;
 };
 
 // Convert a dollar-string from the form into integer cents for storage.
@@ -158,6 +165,79 @@ export async function POST(request: NextRequest) {
   const monthly_revenue_cents = dollarsToCents(body.monthly_revenue_cents);
   const current_close_rate_per_month = toInt(body.current_close_rate_per_month);
 
+  // ─── Draft path ─────────────────────────────────────────────────
+  // Wizard fires _draft=true after Step 1 so we can email-recover
+  // applicants who abandon Step 2/3. Drafts skip qualifying + alerts.
+  // If a draft row already exists (matched by email+business_name),
+  // upsert in place so refreshing/restarting doesn't multiply rows.
+  if (body._draft) {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ ok: true, draft: true, applicationId: null });
+    }
+    try {
+      const ipFromHeader =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        "";
+      const userAgent = request.headers.get("user-agent") || "";
+
+      // Look for an existing draft for this email/business so we don't
+      // create duplicates on each Step 1→2 transition.
+      const { data: existing } = await supabase
+        .from("agency_applications")
+        .select("id")
+        .eq("email", email)
+        .eq("business_name", businessName)
+        .eq("status", "draft")
+        .order("applied_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const draftPayload = {
+        business_name: businessName,
+        contact_name: contactName,
+        email,
+        phone: (body.phone || "").trim() || null,
+        website: (body.website || "").trim() || null,
+        industry: (body.industry || "").trim() || null,
+        what_they_sell: (body.what_they_sell || "").trim() || null,
+        avg_customer_value_cents,
+        monthly_revenue_cents,
+        current_close_rate_per_month,
+        ideal_customer: (body.ideal_customer || "").trim() || null,
+        current_marketing: (body.current_marketing || "").trim() || null,
+        budget_confirmed: !!body.budget_confirmed,
+        success_criteria: (body.success_criteria || "").trim() || null,
+        status: "draft",
+        utm_source: (body.utm_source || "").trim() || null,
+        utm_medium: (body.utm_medium || "").trim() || null,
+        utm_campaign: (body.utm_campaign || "").trim() || null,
+        utm_referrer: (body.utm_referrer || "").trim() || null,
+        user_agent: userAgent || null,
+        ip: ipFromHeader || null,
+      };
+
+      if (existing) {
+        await supabase.from("agency_applications").update(draftPayload).eq("id", (existing as { id: string }).id);
+        return NextResponse.json({ ok: true, draft: true, applicationId: (existing as { id: string }).id });
+      } else {
+        const { data: inserted } = await supabase
+          .from("agency_applications")
+          .insert(draftPayload)
+          .select("id")
+          .single();
+        return NextResponse.json({
+          ok: true,
+          draft: true,
+          applicationId: inserted ? (inserted as { id: string }).id : null,
+        });
+      }
+    } catch (err) {
+      console.error("[agency-apply] draft persist failed:", err);
+      return NextResponse.json({ ok: true, draft: true, applicationId: null });
+    }
+  }
+
   // ─── Qualify ────────────────────────────────────────────────────
   const decision = qualify({
     budget_confirmed: !!body.budget_confirmed,
@@ -181,9 +261,21 @@ export async function POST(request: NextRequest) {
         "";
       const userAgent = request.headers.get("user-agent") || "";
 
-      const { data, error } = await supabase
+      // If a draft row already exists for this email+business, promote
+      // it to the real status instead of inserting a new row. Without
+      // this, every wizard completion would create two rows (one draft
+      // from Step 1, one real from Step 3 submit).
+      const { data: existingDraft } = await supabase
         .from("agency_applications")
-        .insert({
+        .select("id")
+        .eq("email", email)
+        .eq("business_name", businessName)
+        .eq("status", "draft")
+        .order("applied_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const payload = {
           business_name: businessName,
           contact_name: contactName,
           email,
@@ -199,18 +291,40 @@ export async function POST(request: NextRequest) {
           budget_confirmed: !!body.budget_confirmed,
           success_criteria: (body.success_criteria || "").trim() || null,
           status,
+          // Schedule the first nurture email for declined applicants —
+          // 24 hours out so they have a beat before the audit pitch
+          // arrives. Migration 20260430_agency_nurture adds these
+          // columns. If the column doesn't exist yet, Supabase ignores
+          // unknown fields silently (verify by checking inserted row).
+          ...(decision.kind === "declined"
+            ? {
+                nurture_step: 0,
+                nurture_next_send_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+              }
+            : {}),
           utm_source: (body.utm_source || "").trim() || null,
           utm_medium: (body.utm_medium || "").trim() || null,
           utm_campaign: (body.utm_campaign || "").trim() || null,
           utm_referrer: (body.utm_referrer || "").trim() || null,
           user_agent: userAgent || null,
           ip: ipFromHeader || null,
-        })
-        .select("id")
-        .single();
+        };
+
+      const { data, error } = existingDraft
+        ? await supabase
+            .from("agency_applications")
+            .update(payload)
+            .eq("id", (existingDraft as { id: string }).id)
+            .select("id")
+            .single()
+        : await supabase
+            .from("agency_applications")
+            .insert(payload)
+            .select("id")
+            .single();
 
       if (error) {
-        console.error("[agency-apply] insert failed:", error);
+        console.error("[agency-apply] insert/update failed:", error);
       } else if (data) {
         applicationId = (data as { id: string }).id;
       }

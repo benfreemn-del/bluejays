@@ -19,12 +19,13 @@ export const metadata: Metadata = {
   },
 };
 
-const VALID_PLANS: ServiceAgreementPlan[] = ["standard", "installment", "custom"];
+const VALID_PLANS: ServiceAgreementPlan[] = ["standard", "installment", "custom", "agency"];
 
 const PLAN_LABEL: Record<ServiceAgreementPlan, string> = {
   standard: "Standard ($997 one-time)",
   installment: "Installment ($349 × 3)",
   custom: "Custom (per quote)",
+  agency: "AI Marketing System ($9,700)",
 };
 
 export default async function ServiceAgreementPage({
