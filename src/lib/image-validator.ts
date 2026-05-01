@@ -317,6 +317,15 @@ const CATEGORY_FALLBACK_IDS: Record<Category, Record<FallbackImageVariant, strin
     about: "1518770660439-4636190af475",    // circuit board / tech detail
     gallery: "1532187863486-abf9dbad1b69",  // engineer team at whiteboard
   },
+  // Reiki / energy healing — verified-safe defaults. The Pratima
+  // showcase site uses gradient cards instead of stock photos because
+  // generic "Reiki" Unsplash queries kept resolving to massage / yoga
+  // class. Keeping these IDs minimal until verified per-asset.
+  reiki: {
+    hero: "1545389336-cf090694435e",        // candles / meditative warmth (verified working)
+    about: "1517245386807-bb43f82c33c4",    // peaceful warm interior
+    gallery: "1551601651-2a8555f1a136",     // calming office space
+  },
 };
 
 const VARIANT_DIMENSIONS: Record<FallbackImageVariant, { width: number; height: number }> = {

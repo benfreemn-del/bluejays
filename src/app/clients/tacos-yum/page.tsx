@@ -24,6 +24,7 @@
  */
 
 import { useState, useRef, useCallback } from "react";
+import InquiryForm from "@/components/clients/InquiryForm";
 import {
   motion,
   useMotionValue,
@@ -836,21 +837,44 @@ export default function TacosYumPage() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeUp} id="order" className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-            <MagneticButton
-              href="mailto:bobstaco@tacosyum.com"
-              className="inline-flex items-center justify-center gap-2 px-8 rounded-full font-bold transition-shadow hover:shadow-[0_8px_30px_rgba(200,54,45,0.35)]"
-              style={{ background: RED, color: "white", height: "52px" }}
-            >
-              <Envelope size={16} weight="bold" /> bobstaco@tacosyum.com
-            </MagneticButton>
-            <a
-              href="#menu"
-              className="inline-flex items-center justify-center gap-2 px-8 rounded-full border font-semibold transition-colors"
-              style={{ borderColor: RED, color: RED, height: "52px", background: "transparent" }}
-            >
-              <ShoppingBag size={16} weight="bold" /> See the menu first
-            </a>
+          <motion.div variants={fadeUp} id="order" className="mb-8">
+            <InquiryForm
+              slug="tacos-yum"
+              accent={RED}
+              accentDeep={RED_DEEP}
+              ink={INK}
+              inkSoft={INK_SOFT}
+              serif="Georgia, serif"
+              submitLabel="Send my inquiry"
+              successHeading="Pedido recibido."
+              successBody="Bob will get back to you within one business day. For same-day catering or larger group inquiries, you can also call ahead — number on the way."
+              fields={[
+                {
+                  type: "radio",
+                  name: "inquiry_type",
+                  label: "What are you reaching out about?",
+                  required: true,
+                  options: [
+                    { value: "catering", label: "Catering / event", description: "Trompo on-site, taco bars, 20+ people" },
+                    { value: "large-order", label: "Large pickup order", description: "10+ tacos / family-style for a single party" },
+                    { value: "general", label: "General question", description: "Hours, menu, allergies, anything else" },
+                    { value: "press-collab", label: "Press or collab", description: "Media, partnerships, food bloggers" },
+                  ],
+                },
+                { type: "text", name: "name", label: "Your name *", placeholder: "First and last name", required: true },
+                { type: "email", name: "email", label: "Email *", placeholder: "you@example.com", required: true },
+                { type: "tel", name: "phone", label: "Phone (preferred for catering)", placeholder: "(555) 555-1234" },
+                { type: "text", name: "event_date", label: "Event date (catering only)", placeholder: "e.g. Saturday June 14" },
+                { type: "text", name: "headcount", label: "Headcount (catering only)", placeholder: "e.g. 50 guests" },
+                {
+                  type: "textarea",
+                  name: "details",
+                  label: "Details",
+                  placeholder: "Office launch, wedding rehearsal, dietary needs (vegetarian, gluten-free, etc.), special requests…",
+                  rows: 3,
+                },
+              ]}
+            />
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-4">

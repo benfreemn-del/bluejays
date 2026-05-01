@@ -18,6 +18,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import InquiryForm from "@/components/clients/InquiryForm";
 import {
   motion,
   useMotionValue,
@@ -745,13 +746,62 @@ export default function V2ConsultingPage() {
             <p className="text-white/70 text-lg mb-9 max-w-xl mx-auto leading-relaxed">
               45-minute scoping call. No NDA needed for the first one. We'll tell you on the call whether we're the right fit — and if we're not, we'll tell you who is.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-              <MagneticButton href="mailto:reece@danielconsultinggroup.com" className="inline-flex items-center justify-center gap-2 h-13 px-8 rounded-full font-bold transition-shadow hover:shadow-[0_0_50px_rgba(30,64,175,0.5)]" style={{ background: BLUE, color: "white", height: "52px" }}>
-                Book the scoping call <ArrowRight size={16} weight="bold" />
-              </MagneticButton>
-              <a href="tel:6179973235" className="inline-flex items-center justify-center gap-2 h-13 px-8 rounded-full border border-white/15 font-semibold text-white/85 hover:text-white hover:border-white/30 transition-colors" style={{ height: "52px" }}>
-                <Phone size={16} weight="bold" /> (617) 997-3235
-              </a>
+            <div className="mb-12">
+              <InquiryForm
+                slug="consulting"
+                accent={BLUE_LIGHT}
+                accentDeep="#3b82f6"
+                ink="#0f172a"
+                inkSoft="#475569"
+                panelBg="rgba(255, 255, 255, 0.95)"
+                submitLabel="Book the scoping call"
+                successHeading="Got it — we'll be in touch within 1 business day."
+                successBody="If your project has a hard timeline (investor diligence deadline, manufacturing milestone, conference demo), reply to the confirmation email with the date and we'll fast-track the scoping call."
+                fields={[
+                  { type: "text", name: "name", label: "Your name *", placeholder: "First and last", required: true },
+                  { type: "email", name: "email", label: "Work email *", placeholder: "you@company.com", required: true },
+                  { type: "text", name: "company", label: "Company / lab", placeholder: "Acme Battery, MIT, etc." },
+                  { type: "tel", name: "phone", label: "Phone (optional)", placeholder: "(555) 555-5555" },
+                  {
+                    type: "select",
+                    name: "role",
+                    label: "Your role",
+                    options: [
+                      { value: "founder-ceo", label: "Founder / CEO" },
+                      { value: "engineering", label: "Engineering / R&D lead" },
+                      { value: "product", label: "Product / business" },
+                      { value: "investor", label: "Investor (due diligence)" },
+                      { value: "academic", label: "Academic / lab director" },
+                      { value: "other", label: "Other" },
+                    ],
+                  },
+                  {
+                    type: "select",
+                    name: "engagement_type",
+                    label: "What are you looking for?",
+                    options: [
+                      { value: "contract-testing", label: "Contract battery testing" },
+                      { value: "equipment-sourcing", label: "Equipment sourcing / Neware purchase" },
+                      { value: "lab-setup", label: "R&D lab setup" },
+                      { value: "custom-hardware", label: "Custom test hardware design" },
+                      { value: "diligence", label: "Investor due diligence" },
+                      { value: "failure-analysis", label: "Failure analysis" },
+                      { value: "advisory", label: "Strategic / fractional CTO advisory" },
+                      { value: "not-sure", label: "Not sure yet — help me scope" },
+                    ],
+                  },
+                  {
+                    type: "textarea",
+                    name: "project_description",
+                    label: "Brief project context",
+                    placeholder: "What chemistry, what stage, what timeline. No NDA needed for first conversation — keep it general if you prefer.",
+                    rows: 4,
+                  },
+                ]}
+              />
+              <p className="text-center text-xs text-white/50 mt-4">
+                Or call <a href="tel:6179973235" className="underline hover:text-white">(617) 997-3235</a> directly.
+              </p>
             </div>
             <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
               <GlassCard className="p-5 text-left">

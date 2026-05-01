@@ -30,6 +30,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import InquiryForm from "@/components/clients/InquiryForm";
 import {
   motion,
   useMotionValue,
@@ -1065,21 +1066,63 @@ export default function HealeCounselingPage() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-            <MagneticButton
-              href="tel:2095672599"
-              className="inline-flex items-center justify-center gap-2 h-13 px-8 rounded-full font-bold transition-shadow hover:shadow-[0_8px_30px_rgba(13,148,136,0.3)]"
-              style={{ background: TEAL, color: "white", height: "52px" }}
-            >
-              <Phone size={16} weight="bold" /> 209.567.2599
-            </MagneticButton>
-            <a
-              href="mailto:Connect@heale.me"
-              className="inline-flex items-center justify-center gap-2 h-13 px-8 rounded-full border font-semibold transition-colors"
-              style={{ borderColor: TEAL_DEEP, color: TEAL_DEEP, height: "52px", background: "transparent" }}
-            >
-              <Envelope size={16} weight="bold" /> Connect@heale.me
-            </a>
+          <motion.div variants={fadeUp} className="mb-8">
+            <InquiryForm
+              slug="heale-counseling"
+              accent={TEAL}
+              accentDeep={TEAL_DEEP}
+              ink={INK}
+              inkSoft={INK_SOFT}
+              submitLabel="Send my inquiry"
+              successHeading="Got it. We'll be in touch."
+              successBody="Kasmira or Charli will reach out within one business day to confirm intake details. For court-deadline-sensitive matters, call (209) 567-2599 directly."
+              fields={[
+                {
+                  type: "radio",
+                  name: "inquirer_type",
+                  label: "Who's reaching out?",
+                  required: true,
+                  options: [
+                    { value: "individual", label: "Individual / family", description: "Looking for therapy or court-ordered services" },
+                    { value: "attorney", label: "Attorney", description: "Referring a client or requesting forensic services" },
+                    { value: "agency", label: "Agency / referrer", description: "Probation, social services, or other professional referral" },
+                  ],
+                },
+                { type: "text", name: "name", label: "Your name *", placeholder: "First and last name", required: true },
+                { type: "email", name: "email", label: "Email *", placeholder: "you@example.com", required: true },
+                { type: "tel", name: "phone", label: "Phone", placeholder: "(209) 555-0123" },
+                { type: "text", name: "firm_or_county", label: "Law firm / county / agency (if applicable)", placeholder: "e.g. Smith & Associates, Stanislaus County" },
+                {
+                  type: "select",
+                  name: "service_needed",
+                  label: "Service needed",
+                  options: [
+                    { value: "therapy-individual", label: "Individual or family therapy" },
+                    { value: "730-eval", label: "California Code 730 evaluation" },
+                    { value: "3111-assessment", label: "Family Code 3111 parenting plan assessment" },
+                    { value: "supervised-vis", label: "Supervised visitation" },
+                    { value: "program", label: "Curriculum-based program (anger mgmt, parenting, etc.)" },
+                    { value: "consultation", label: "Forensic clinical consultation (attorney)" },
+                    { value: "other", label: "Other / not sure yet" },
+                  ],
+                },
+                {
+                  type: "textarea",
+                  name: "message",
+                  label: "Brief description (optional)",
+                  placeholder: "Court timeline, case context, or what you're hoping to address. Stay general — we'll cover specifics on the intake call.",
+                  rows: 3,
+                },
+              ]}
+            />
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="text-center text-sm mb-8" style={{ color: INK_SOFT }}>
+            For time-sensitive court matters,{" "}
+            <a href="tel:2095672599" className="font-semibold underline" style={{ color: TEAL_DEEP }}>
+              call (209) 567-2599
+            </a>{" "}
+            directly.
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-4">

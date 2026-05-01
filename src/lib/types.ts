@@ -46,7 +46,8 @@ export type Category =
   | "carpet-cleaning"
   | "event-planning"
   | "non-profit"
-  | "consulting";
+  | "consulting"
+  | "reiki";
 
 export type SmsMethod = "twilio" | "vonage" | "mock";
 
@@ -339,4 +340,5 @@ export const CATEGORY_CONFIG: Record<
   "event-planning": { label: "Event Planning", accentColor: "#f59e0b", heroGradient: "linear-gradient(135deg, #1a1520 0%, #120e18 100%)" },
   "non-profit": { label: "Non-Profit", accentColor: "#3AAFDB", heroGradient: "linear-gradient(135deg, #14283a 0%, #0e1c2a 100%)" },
   consulting: { label: "Consulting", accentColor: "#1e40af", heroGradient: "linear-gradient(135deg, #0a1428 0%, #050a18 100%)" },
+  reiki: { label: "Reiki / Energy Healing", accentColor: "#c8867e", heroGradient: "linear-gradient(135deg, #fdfaf6 0%, #f3ede1 100%)" },
 };

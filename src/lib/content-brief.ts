@@ -422,6 +422,10 @@ const CATEGORY_VOICE: Record<Category, CategoryVoice> = {
     tagline: (b) => `${b} — the trusted technical advisor serious teams call when the stakes are real.`,
     aboutFill: (a) => `We deliver expert consulting across ${a} — fixed-scope engagements, deep technical depth, and reports your investors and customers actually trust.`,
   },
+  reiki: {
+    tagline: (b) => `${b} — energy healing for mind, body & soul.`,
+    aboutFill: (a) => `We guide ${a} clients back to their true being through Usui Reiki, sound therapy, and crystal healing — gentle, grounded, deeply personal sessions.`,
+  },
 };
 
 function getCategoryVoice(category: Category): CategoryVoice {

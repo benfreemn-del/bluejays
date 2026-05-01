@@ -24,6 +24,7 @@
  */
 
 import { useState, useRef, useCallback } from "react";
+import InquiryForm from "@/components/clients/InquiryForm";
 import {
   motion,
   useMotionValue,
@@ -1030,26 +1031,55 @@ export default function PsReikiPage() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-            <MagneticButton
-              href="tel:7039578371"
-              className="inline-flex items-center justify-center gap-2 px-8 rounded-full font-bold transition-shadow hover:shadow-[0_8px_30px_rgba(200,134,126,0.35)]"
-              style={{ background: ROSE, color: "white", height: "52px" }}
-            >
-              <Phone size={16} weight="bold" /> 703.957.8371
-            </MagneticButton>
-            <a
-              href="mailto:pratima.reiki@gmail.com"
-              className="inline-flex items-center justify-center gap-2 px-8 rounded-full border font-semibold transition-colors"
-              style={{
-                borderColor: ROSE_DEEP,
-                color: ROSE_DEEP,
-                height: "52px",
-                background: "transparent",
-              }}
-            >
-              <Envelope size={16} weight="bold" /> pratima.reiki@gmail.com
+          <motion.div variants={fadeUp} className="mb-8">
+            <InquiryForm
+              slug="ps-reiki"
+              accent={ROSE}
+              accentDeep={ROSE_DEEP}
+              ink={INK}
+              inkSoft={INK_SOFT}
+              serif="Georgia, serif"
+              submitLabel="Request my session"
+              successHeading="You're on the list."
+              successBody="Pratima will personally reach out within one business day to confirm your time and answer any questions before your first session."
+              fields={[
+                { type: "text", name: "name", label: "Your name *", placeholder: "First and last name", required: true },
+                { type: "email", name: "email", label: "Email *", placeholder: "you@example.com", required: true },
+                { type: "tel", name: "phone", label: "Phone (optional)", placeholder: "(703) 555-0123" },
+                {
+                  type: "select",
+                  name: "session_type",
+                  label: "Which session interests you?",
+                  options: [
+                    { value: "initial-90", label: "Initial Chakra Energy Balancing & Consultation (90 min)" },
+                    { value: "standard-60", label: "Reiki Healing Session (60 min)" },
+                    { value: "children-45", label: "Reiki for Children (45 min)" },
+                    { value: "distance-60", label: "Distance Healing Session (60 min)" },
+                    { value: "not-sure", label: "Not sure yet — help me pick" },
+                  ],
+                },
+                { type: "text", name: "preferred_dates", label: "Preferred date(s) or days of week", placeholder: "e.g. Saturdays, or week of June 10" },
+                {
+                  type: "textarea",
+                  name: "what_brings_you",
+                  label: "What brings you in? (optional)",
+                  placeholder: "Anxiety, chronic pain, curiosity, supporting a recovery — whatever you're comfortable sharing.",
+                  rows: 3,
+                },
+              ]}
+            />
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="text-center text-sm mb-8" style={{ color: INK_SOFT }}>
+            Prefer to skip the form?{" "}
+            <a href="tel:7039578371" className="font-semibold underline" style={{ color: ROSE_DEEP }}>
+              Call (703) 957-8371
+            </a>{" "}
+            or{" "}
+            <a href="mailto:pratima.reiki@gmail.com" className="font-semibold underline" style={{ color: ROSE_DEEP }}>
+              email Pratima directly
             </a>
+            .
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-4">
