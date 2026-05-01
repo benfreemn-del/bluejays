@@ -65,7 +65,11 @@ import InquiryForm from "@/components/clients/InquiryForm";
 // Pulled directly from wayscs.com WordPress uploads.
 const WAYS_LOGO = "https://wayscs.com/wp-content/uploads/2025/01/Ways-Logo.png";
 const HERO_LIMO = "https://wayscs.com/wp-content/uploads/2026/03/Washington-DC-Limo-Service.png";
-const BANNER_PHOTO = "https://wayscs.com/wp-content/uploads/2024/12/Banner020.jpg";
+// 2026-05-01: original Ways banner (Banner020.jpg from their WP) was
+// low-resolution and pixelated at 21:9 widescreen. Swapped for a
+// hi-res Unsplash chauffeur-fleet photo (verified 200 + matches the
+// "meticulously maintained / personally vetted" caption).
+const BANNER_PHOTO = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=2400&q=90";
 const DMV_LIMO = "https://wayscs.com/wp-content/uploads/2025/09/dmv-limo-service.png";
 const CHAUFFEUR = "https://wayscs.com/wp-content/uploads/2025/09/washington-dc-chauffeur-service-1.png";
 
