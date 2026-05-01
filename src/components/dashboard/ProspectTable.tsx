@@ -6,6 +6,7 @@ import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import { hasPendingAdminUpdates } from "@/lib/admin-notes";
 import { getShortPreviewUrl } from "@/lib/short-urls";
+import { getProspectClock } from "@/lib/business-hours";
 import StatusBadge from "./StatusBadge";
 import ProspectNotesDrawer, { ProspectNotesButton } from "./ProspectNotesDrawer";
 
@@ -69,6 +70,62 @@ function getThemedPreviewHref(prospect: Prospect) {
 function hasPreviewAvailable(prospect: Prospect): boolean {
   if (prospect.pricingTier === "custom") return !!prospect.customSiteUrl;
   return !!prospect.generatedSiteUrl;
+}
+
+/**
+ * Best-time-to-call signal for inbound leads. Inbound leads raised
+ * their hand (audit form / partner referral / Calendly) — we want to
+ * call them while they're still warm, but not at 11pm their time.
+ *
+ * Heuristic — based on B2B/local-services dial-success windows:
+ *   ✅ "Now"     — Mon-Fri, 10am-noon OR 2pm-5pm local
+ *                  (peak pickup, post-coffee, post-lunch)
+ *   🟡 "OK"      — Mon-Fri, 8am-10am OR noon-2pm OR 5pm-7pm local
+ *   🟠 "Soon"    — Mon-Fri, 7am-8am OR Sat 9am-3pm
+ *                  (early/weekend — prospect MIGHT be at work)
+ *   ❌ "Wait"    — outside the above (early morning, late night, Sun)
+ *
+ * Returned label includes the prospect's local clock so Ben knows
+ * exactly where they are temporally without doing the math.
+ */
+type CallTimeBadge = {
+  label: string;
+  hint: string;
+  tone: "best" | "ok" | "soon" | "wait";
+};
+
+function getCallTimeBadge(state: string | null | undefined): CallTimeBadge | null {
+  if (!state) return null;
+  const clock = getProspectClock(state);
+  const { hour24, weekdayIdx, display } = clock;
+
+  // Sunday — almost everyone closed
+  if (weekdayIdx === 0) {
+    return { label: `🌙 Wait · ${display}`, hint: "Sunday at the prospect — try Monday morning.", tone: "wait" };
+  }
+
+  // Saturday
+  if (weekdayIdx === 6) {
+    if (hour24 >= 9 && hour24 < 15) {
+      return { label: `🟠 Maybe · ${display}`, hint: "Saturday open hours — call attempt OK but lower pickup.", tone: "soon" };
+    }
+    return { label: `🌙 Wait · ${display}`, hint: "Outside Saturday business hours.", tone: "wait" };
+  }
+
+  // Mon-Fri windows
+  if (hour24 < 7) {
+    return { label: `🌙 Wait · ${display}`, hint: "Too early — wait until 8am their time.", tone: "wait" };
+  }
+  if (hour24 >= 19) {
+    return { label: `🌙 Wait · ${display}`, hint: "After hours — leave voicemail or text instead.", tone: "wait" };
+  }
+  if ((hour24 >= 10 && hour24 < 12) || (hour24 >= 14 && hour24 < 17)) {
+    return { label: `✅ Best · ${display}`, hint: "Peak pickup window — call now.", tone: "best" };
+  }
+  if ((hour24 >= 8 && hour24 < 10) || (hour24 >= 12 && hour24 < 14) || (hour24 >= 17 && hour24 < 19)) {
+    return { label: `🟡 OK · ${display}`, hint: "Decent window — pickup rate is moderate.", tone: "ok" };
+  }
+  return { label: `🟠 Soon · ${display}`, hint: "Early — prospect may still be commuting.", tone: "soon" };
 }
 
 export default function ProspectTable({
@@ -790,7 +847,33 @@ export default function ProspectTable({
                       {CATEGORY_CONFIG[prospect.category]?.label}
                     </span>
                   </td>
-                  <td className="p-3 text-muted">{prospect.city}</td>
+                  <td className="p-3 text-muted">
+                    <div>{prospect.city}</div>
+                    {/* Best-time-to-call signal — only for inbound leads
+                        since they're the ones we should call quickly. For
+                        outbound/scouted prospects, the cold-funnel cron
+                        decides the timing, not Ben. */}
+                    {prospect.source === "inbound" && (() => {
+                      const badge = getCallTimeBadge(prospect.state);
+                      if (!badge) return null;
+                      const palette =
+                        badge.tone === "best"
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                          : badge.tone === "ok"
+                            ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                            : badge.tone === "soon"
+                              ? "bg-orange-500/15 text-orange-300 border-orange-500/30"
+                              : "bg-slate-500/15 text-slate-400 border-slate-500/30";
+                      return (
+                        <span
+                          className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${palette}`}
+                          title={badge.hint}
+                        >
+                          {badge.label}
+                        </span>
+                      );
+                    })()}
+                  </td>
                   <td className="p-3">
                     {prospect.googleRating && (
                       <span className="text-yellow-400">
