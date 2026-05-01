@@ -84,6 +84,11 @@ export async function POST(request?: NextRequest) {
           .select("id, business_name, email, updated_at")
           .eq("status", "approved")
           .eq("manually_managed", false)
+          // Inbound leads (audit-form submitters) are not cold-funnel
+          // material — they get audit-followup sequence + Ben handles
+          // them personally. Excluding them from auto-enroll prevents
+          // leakage into the templated cold pitch.
+          .or(`source.is.null,source.neq.inbound`)
           .not("email", "is", null)
           .order("updated_at", { ascending: true })
           .limit(500);

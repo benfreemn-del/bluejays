@@ -98,11 +98,15 @@ export async function getNextProspectForPartner(): Promise<{
   const { data: candidates, error } = await supabase
     .from("prospects")
     .select(
-      "id, business_name, owner_name, email, phone, category, city, state, status, scraped_data, manually_managed",
+      "id, business_name, owner_name, email, phone, category, city, state, status, scraped_data, manually_managed, source",
     )
     .not("phone", "is", null)
     .neq("phone", "")
     .or(`manually_managed.is.null,manually_managed.eq.false`)
+    // Inbound leads are people who voluntarily filled out the audit
+    // form — they get the audit-followup sequence + Ben's hand-handling,
+    // never cold-pitched by a partner. Exclude them from the call pool.
+    .or(`source.is.null,source.neq.inbound`)
     .limit(200);
   if (error) {
     console.error("[partner-leadpool] fetch failed:", error);
