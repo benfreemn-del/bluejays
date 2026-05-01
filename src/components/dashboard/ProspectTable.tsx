@@ -691,6 +691,18 @@ export default function ProspectTable({
                       )}
                     </div>
                     {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
+                    {prospect.currentWebsite && (
+                      <a
+                        href={prospect.currentWebsite.startsWith("http") ? prospect.currentWebsite : `https://${prospect.currentWebsite}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-amber-400 hover:text-amber-300 text-xs truncate inline-block max-w-[220px]"
+                        title={prospect.currentWebsite}
+                      >
+                        🔗 {prospect.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                      </a>
+                    )}
                   </td>
                   <td className="p-3">
                     <span
