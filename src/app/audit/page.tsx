@@ -70,7 +70,7 @@ export default function AuditLandingPage() {
 
       {/* Hero */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20">
-        <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
+        <div className="mx-auto max-w-4xl px-6 pt-12 pb-8 md:pt-20 md:pb-12 text-center">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sky-300">
             <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
             Free — no credit card, no signup

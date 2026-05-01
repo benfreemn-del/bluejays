@@ -25,7 +25,7 @@ const INCLUDED = [
 
 export default function AgencySection() {
   return (
-    <section className="relative overflow-hidden bg-[#050a14] py-24 px-6">
+    <section className="relative overflow-hidden bg-[#050a14] py-14 md:py-24 px-6">
       {/* Background atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-violet-600/[0.06] blur-[140px]" />
@@ -74,9 +74,9 @@ export default function AgencySection() {
             </p>
 
             {/* Price callout */}
-            <div className="inline-flex items-baseline gap-3 mb-8 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06]">
+            <div className="flex flex-wrap items-baseline gap-2 mb-8 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06]">
               <span className="text-white/40 text-sm line-through">$36,000+/year agency fees</span>
-              <span className="text-white font-extrabold text-2xl">One-time from $9,700</span>
+              <span className="text-white font-extrabold text-xl md:text-2xl">One-time from $9,700</span>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">

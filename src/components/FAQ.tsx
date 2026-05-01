@@ -86,7 +86,7 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative py-14 md:py-32 overflow-hidden"
       style={{
         background:
           "linear-gradient(180deg, #0a1628 0%, #0c1a30 50%, #0a1628 100%)",

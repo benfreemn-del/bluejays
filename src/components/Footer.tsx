@@ -10,7 +10,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-12 relative z-10">
-        <div className="grid md:grid-cols-4 gap-10 mb-10">
+        <div className="grid md:grid-cols-4 gap-6 md:gap-10 mb-10">
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">

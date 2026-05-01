@@ -28,7 +28,7 @@ const PhoneIcon = () => (
 
 export default function AboutBen() {
   return (
-    <section className="py-28 relative overflow-hidden bg-[#030712]">
+    <section className="py-16 md:py-28 relative overflow-hidden bg-[#030712]">
       {/* Ambient glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[20%] left-[10%] w-[420px] h-[420px] rounded-full bg-sky-500/[0.05] blur-[140px]" />

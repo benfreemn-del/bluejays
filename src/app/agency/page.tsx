@@ -107,7 +107,7 @@ export default function AgencyPage() {
       </nav>
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="px-6 pt-20 pb-16 text-center max-w-4xl mx-auto">
+      <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-16 text-center max-w-4xl mx-auto">
         <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
           The self-learning AI marketing system
         </div>
@@ -147,8 +147,8 @@ export default function AgencyPage() {
           </h2>
           <p className="text-slate-400 text-lg">What you&apos;re spending vs. what you could be spending.</p>
         </div>
-        <div className="rounded-2xl border border-white/10 overflow-hidden">
-          <table className="w-full">
+        <div className="rounded-2xl border border-white/10 overflow-hidden overflow-x-auto">
+          <table className="w-full min-w-[480px]">
             <thead>
               <tr className="bg-white/5 text-xs font-bold uppercase tracking-wider text-slate-400">
                 <th className="py-3 px-4 text-left">Agency tier</th>
@@ -175,8 +175,8 @@ export default function AgencyPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
             Agency vs. BlueJays Full System
           </h2>
-          <div className="rounded-2xl border border-white/10 overflow-hidden">
-            <div className="grid grid-cols-3 bg-white/5 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
+          <div className="rounded-2xl border border-white/10 overflow-hidden overflow-x-auto">
+            <div className="grid grid-cols-3 min-w-[480px] bg-white/5 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
               <div className="py-3 px-4">What you get</div>
               <div className="py-3 px-4 text-rose-400">Typical agency</div>
               <div className="py-3 px-4 text-emerald-400">BlueJays</div>
@@ -184,7 +184,7 @@ export default function AgencyPage() {
             {AGENCY_ITEMS.map((row, i) => (
               <div
                 key={i}
-                className="grid grid-cols-3 border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors"
+                className="grid grid-cols-3 min-w-[480px] border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors"
               >
                 <div className="py-3.5 px-4 text-slate-400 text-sm flex items-start gap-2">
                   <span className="text-rose-500 mt-0.5 flex-shrink-0">✗</span>

@@ -79,7 +79,7 @@ const features = [
 
 export default function About() {
   return (
-    <section className="py-28 relative overflow-hidden bg-[#050a14]">
+    <section className="py-16 md:py-28 relative overflow-hidden bg-[#050a14]">
       {/* Background */}
       <GridPattern opacity={0.025} />
       <div className="absolute inset-0 pointer-events-none">
@@ -89,7 +89,7 @@ export default function About() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-2 gap-20 items-center">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-center">
           {/* Left — text content */}
           <div>
             {/* Section header */}

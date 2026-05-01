@@ -80,7 +80,7 @@ function StatCard({ value, label, icon }: StatCardProps) {
 export default function Stats() {
   return (
     <section
-      className="py-28 relative overflow-hidden"
+      className="py-16 md:py-28 relative overflow-hidden"
       style={{
         background: "linear-gradient(180deg, #081424 0%, #0c2040 50%, #081424 100%)",
       }}
@@ -96,7 +96,7 @@ export default function Stats() {
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5">
             By The Numbers
           </span>
@@ -107,7 +107,7 @@ export default function Stats() {
           <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto" />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <StatCard value="150+" label="Websites Built" icon={<WebsiteIcon />} />
           <StatCard value="30" label="Industries Served" icon={<IndustryIcon />} />
           <StatCard value="2M+" label="Impressions Generated" icon={<ImpressionsIcon />} />
