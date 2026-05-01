@@ -75,9 +75,13 @@ const PRATIMA_HEADSHOT =
 // Carefully picked from Unsplash. Captioned neutrally on the page —
 // never claimed as Pratima's treatment room. Replace with real photos
 // once she sends them.
-const STOCK_HEALING_HANDS = "https://images.unsplash.com/photo-1591343395082-e120087004b4?w=1600&q=80"; // hands above stones, peaceful
-const STOCK_CRYSTAL_BOWLS = "https://images.unsplash.com/photo-1606318313846-9d8639dd2f0a?w=1200&q=80"; // singing bowls / crystals
-const STOCK_QUIET_SPACE = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&q=80";    // serene space
+//
+// 2026-05-01 fix: original picks (1606318313846, 1518611012118) were
+// broken / pulled a fitness-yoga class. Swapped to verified wellness
+// IDs that match the Reiki meditative aesthetic.
+const STOCK_HEALING_HANDS = "https://images.unsplash.com/photo-1545389336-cf090694435e?w=1600&q=80"; // candles / meditative warmth
+const STOCK_CRYSTAL_BOWLS = "https://images.unsplash.com/photo-1611072172377-0cabc3addb30?w=1200&q=80"; // singing bowl close-up
+const STOCK_QUIET_SPACE = "https://images.unsplash.com/photo-1531937946175-cfaf5e2af0b3?w=1600&q=80";    // serene zen interior
 
 // ─── Soft healing palette ──────────────────────────────────────────
 const BG = "#fdfaf6";              // warm cream
