@@ -446,8 +446,10 @@ export default function LeadPage() {
                 { key: "contacted", label: "Contacted", icon: "📧", desc: "Outreach sent" },
                 { key: "responded", label: "Responded", icon: "💬", desc: "They replied!" },
                 { key: "paid", label: "Paid", icon: "💰", desc: "$997 received" },
+                { key: "dns_transfer", label: "DNS Transfer", icon: "🔄", desc: "Domain moving" },
+                { key: "live", label: "Live", icon: "🟢", desc: "Site is up" },
               ].map((stage, i, arr) => {
-                const statusOrder = ["scouted", "scraped", "generated", "pending-review", "ready_to_review", "approved", "contacted", "responded", "paid"];
+                const statusOrder = ["scouted", "scraped", "generated", "pending-review", "ready_to_review", "approved", "contacted", "responded", "paid", "dns_transfer", "live"];
                 const currentIdx = statusOrder.indexOf(prospect.status);
                 const stageIdx = statusOrder.indexOf(stage.key);
                 const isComplete = stageIdx < currentIdx;
@@ -718,6 +720,8 @@ export default function LeadPage() {
               <option value="contacted">Contacted</option>
               <option value="responded">Responded</option>
               <option value="paid">Paid</option>
+              <option value="dns_transfer">DNS Transfer (in progress)</option>
+              <option value="live">Live ✦</option>
               <option value="dismissed">Dismissed</option>
             </select>
           </div>

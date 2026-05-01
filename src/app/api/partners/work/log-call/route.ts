@@ -18,6 +18,7 @@ const ALLOWED_OUTCOMES = new Set([
   "wrong_number",
   "answered_not_interested",
   "answered_call_scheduled",
+  "answered_preview_sent",
   "answered_audit_sent",
   "answered_callback",
   "do_not_call",

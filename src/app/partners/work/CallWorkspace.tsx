@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BookingTimeModal from "@/components/clients/BookingTimeModal";
 
 type FilledSection = {
   id: string;
@@ -123,6 +124,7 @@ type Outcome =
   | "wrong_number"
   | "answered_not_interested"
   | "answered_call_scheduled"
+  | "answered_preview_sent"
   | "answered_audit_sent"
   | "answered_callback"
   | "do_not_call";
@@ -138,6 +140,11 @@ const OUTCOME_META: Record<
     label: "✓ Booked Ben's call",
     group: "answered",
     tone: "emerald",
+  },
+  answered_preview_sent: {
+    label: "Sent preview link (didn't book)",
+    group: "answered",
+    tone: "sky",
   },
   answered_audit_sent: {
     label: "Sent audit (didn't book)",
@@ -169,6 +176,14 @@ export default function CallWorkspace(props: Props) {
   const [previewLinkSent, setPreviewLinkSent] = useState(false);
   const [auditLinkSent, setAuditLinkSent] = useState(false);
   const [bookingLinkSent, setBookingLinkSent] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingSpoken, setBookingSpoken] = useState<string | null>(null);
+  // Email-preview-link button state — fires the SendGrid pipeline so
+  // the prospect gets the same preview link from ben@bluejayportfolio.com
+  // that's already wired up for cold outreach + transactional sends.
+  const [emailPreviewSending, setEmailPreviewSending] = useState(false);
+  const [emailPreviewSent, setEmailPreviewSent] = useState(false);
+  const [emailPreviewError, setEmailPreviewError] = useState<string | null>(null);
   const [sentText, setSentText] = useState(false);
   // Admin (Ben) bypasses the partner-agreement gate entirely — he doesn't
   // need to accept his own contractor terms.
@@ -176,6 +191,11 @@ export default function CallWorkspace(props: Props) {
     isAdmin ? false : !partner.agreementAccepted,
   );
   const [section, setSection] = useState<SectionId>("intro");
+  // Tracks the outcome the rep just marked. Saved silently, lets them
+  // keep reading the script (e.g. flip to the Voicemail tab AFTER
+  // marking 'Left voicemail' and read the actual VM script). Click
+  // "Next prospect →" when truly done with this lead.
+  const [savedOutcome, setSavedOutcome] = useState<Outcome | null>(null);
 
   async function logCall(outcome: Outcome) {
     if (!prospect || busy) return;
@@ -184,35 +204,25 @@ export default function CallWorkspace(props: Props) {
       // Admin mode: skip /api/partners/work/log-call (writes to
       // partner_calls with the partner_id, not relevant for Ben).
       // Instead, post a note to the prospect via the existing notes
-      // system + advance the queue. Ben can review outcomes via the
-      // /lead/[id] timeline.
+      // system. Ben reviews outcomes via the /lead/[id] timeline.
+      //
+      // IMPORTANT: don't auto-advance. Rep needs to stay on this page
+      // to read the voicemail / objection script after marking the
+      // outcome. They click "Next prospect →" when ready.
       if (isAdmin) {
-        if (notes.trim()) {
-          try {
-            await fetch(`/api/notes/${prospect.id}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                body: `Call outcome: ${outcome.replace(/_/g, " ")}${notes.trim() ? `\n\n${notes.trim()}` : ""}`,
-              }),
-            });
-          } catch {
-            // Note save failed — non-blocking, advance anyway
-          }
+        try {
+          await fetch(`/api/notes/${prospect.id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              body: `Call outcome: ${outcome.replace(/_/g, " ")}${notes.trim() ? `\n\n${notes.trim()}` : ""}`,
+            }),
+          });
+        } catch {
+          // Note save failed — non-blocking. Outcome still tracked
+          // locally so the rep sees their selection persist.
         }
-        // Reset card state, advance queue (or done)
-        setNotes("");
-        setPreviewLinkSent(false);
-        setAuditLinkSent(false);
-        setBookingLinkSent(false);
-        setSentText(false);
-        setSection("intro");
-        const next = adminQueueNav?.nextHref;
-        if (next) {
-          router.push(next);
-        } else {
-          router.push(adminQueueNav?.doneHref || "/dashboard");
-        }
+        setSavedOutcome(outcome);
         setBusy(false);
         return;
       }
@@ -235,18 +245,41 @@ export default function CallWorkspace(props: Props) {
         setBusy(false);
         return;
       }
-      // Reset card state and pull next prospect
-      setNotes("");
-      setPreviewLinkSent(false);
-      setAuditLinkSent(false);
-      setBookingLinkSent(false);
-      setSentText(false);
-      setSection("intro");
-      router.refresh();
+      // Mark outcome saved — rep stays on the page to finish reading
+      // the script (e.g. voicemail message). They click "Next →" when
+      // truly ready to move on.
+      setSavedOutcome(outcome);
     } catch {
       alert("Network error.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  /**
+   * Explicit advance — fires when rep clicks "Next prospect →" /
+   * "Done with queue" after marking the outcome and finishing the
+   * voicemail / wrap-up. Resets card state and either pushes to the
+   * next queue entry (admin) or refreshes to pull next from the pool
+   * (partner).
+   */
+  function advanceQueue() {
+    setNotes("");
+    setPreviewLinkSent(false);
+    setAuditLinkSent(false);
+    setBookingLinkSent(false);
+    setBookingSpoken(null);
+    setSentText(false);
+    setEmailPreviewSent(false);
+    setEmailPreviewError(null);
+    setSection("intro");
+    setSavedOutcome(null);
+
+    if (isAdmin) {
+      const next = adminQueueNav?.nextHref;
+      router.push(next || adminQueueNav?.doneHref || "/dashboard");
+    } else {
+      router.refresh();
     }
   }
 
@@ -283,6 +316,36 @@ export default function CallWorkspace(props: Props) {
     // sms: deep-link with body. Phone number first so messages app
     // pre-selects the recipient. Format works on iOS/Android.
     return `sms:${prospect.phone.replace(/[^0-9+]/g, "")}?&body=${body}`;
+  }
+
+  async function emailPreviewLink() {
+    if (!prospect || emailPreviewSending) return;
+    setEmailPreviewSending(true);
+    setEmailPreviewError(null);
+    try {
+      const res = await fetch(
+        `/api/partners/work/send-preview-email/${prospect.id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            previewUrl: links.previewUrl,
+            callerFirstName: partner.name.split(/\s+/)[0],
+          }),
+        },
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setEmailPreviewError(data.error || "Email send failed");
+        return;
+      }
+      setEmailPreviewSent(true);
+      setSentText(true); // counts as a "link sent" for outcome panel context
+    } catch {
+      setEmailPreviewError("Network error");
+    } finally {
+      setEmailPreviewSending(false);
+    }
   }
 
   if (showAgreement) {
@@ -402,10 +465,6 @@ export default function CallWorkspace(props: Props) {
         <div>
           <ProspectCard prospect={prospect} />
 
-          {callHistory.length > 0 && (
-            <CallHistoryPanel entries={callHistory} />
-          )}
-
           <SectionTabs section={section} setSection={setSection} />
 
           <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5 mt-4">
@@ -471,12 +530,43 @@ export default function CallWorkspace(props: Props) {
                   : "bg-sky-500 hover:bg-sky-400 text-sky-950 shadow-lg shadow-sky-500/25"
               }`}
             >
-              {previewLinkSent ? "✓ Preview sent" : "👁️ Send preview link (START HERE)"}
+              {previewLinkSent ? "✓ Preview text sent" : "📱 Text preview link (START HERE)"}
             </a>
 
-            <a
-              href={smsHref("booking")}
-              onClick={() => { setBookingLinkSent(true); setSentText(true); }}
+            {/* Email preview link — fires the same preview URL via
+                SendGrid from ben@bluejayportfolio.com. Useful when the
+                prospect prefers email, or when you want them to have
+                BOTH (text for the now-moment, email for tonight when
+                they're actually at a desk). */}
+            {prospect.email && (
+              <button
+                type="button"
+                onClick={emailPreviewLink}
+                disabled={emailPreviewSending || emailPreviewSent}
+                className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors disabled:cursor-not-allowed ${
+                  emailPreviewSent
+                    ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
+                    : emailPreviewSending
+                      ? "bg-sky-500/40 text-sky-100"
+                      : "bg-sky-500/15 border border-sky-500/40 text-sky-200 hover:bg-sky-500/25"
+                }`}
+              >
+                {emailPreviewSent
+                  ? `✓ Preview emailed to ${prospect.email}`
+                  : emailPreviewSending
+                    ? "Sending email..."
+                    : `📧 Email preview link (${prospect.email})`}
+              </button>
+            )}
+            {emailPreviewError && (
+              <p className="text-[11px] text-rose-300 leading-relaxed">
+                ⚠ {emailPreviewError}
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setBookingModalOpen(true)}
               className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
                 bookingLinkSent
                   ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-200"
@@ -484,9 +574,9 @@ export default function CallWorkspace(props: Props) {
               }`}
             >
               {bookingLinkSent
-                ? "✓ Booking link sent"
-                : "📞 Send booking link (after they see it)"}
-            </a>
+                ? `✓ Booking link sent${bookingSpoken ? ` (${bookingSpoken})` : ""}`
+                : "📞 Send booking link (pick a time)"}
+            </button>
 
             <a
               href={smsHref("audit")}
@@ -556,13 +646,16 @@ export default function CallWorkspace(props: Props) {
                 onClick={logCall}
                 busy={busy}
                 primary
+                saved={savedOutcome === "answered_call_scheduled"}
               />
-              <OutcomeButton outcome="answered_audit_sent" onClick={logCall} busy={busy} />
-              <OutcomeButton outcome="answered_callback" onClick={logCall} busy={busy} />
+              <OutcomeButton outcome="answered_preview_sent" onClick={logCall} busy={busy} saved={savedOutcome === "answered_preview_sent"} />
+              <OutcomeButton outcome="answered_audit_sent" onClick={logCall} busy={busy} saved={savedOutcome === "answered_audit_sent"} />
+              <OutcomeButton outcome="answered_callback" onClick={logCall} busy={busy} saved={savedOutcome === "answered_callback"} />
               <OutcomeButton
                 outcome="answered_not_interested"
                 onClick={logCall}
                 busy={busy}
+                saved={savedOutcome === "answered_not_interested"}
               />
               <div className="border-t border-white/5 pt-2 mt-2">
                 <button
@@ -576,12 +669,12 @@ export default function CallWorkspace(props: Props) {
                 >
                   {sentText ? "✓ Also sent a text" : "📱 Also sent a text"}
                 </button>
-                <OutcomeButton outcome="voicemail" onClick={logCall} busy={busy} />
-                <OutcomeButton outcome="no_answer" onClick={logCall} busy={busy} />
-                <OutcomeButton outcome="wrong_number" onClick={logCall} busy={busy} />
+                <OutcomeButton outcome="voicemail" onClick={logCall} busy={busy} saved={savedOutcome === "voicemail"} />
+                <OutcomeButton outcome="no_answer" onClick={logCall} busy={busy} saved={savedOutcome === "no_answer"} />
+                <OutcomeButton outcome="wrong_number" onClick={logCall} busy={busy} saved={savedOutcome === "wrong_number"} />
               </div>
               <div className="border-t border-rose-500/20 pt-2 mt-2">
-                <OutcomeButton outcome="do_not_call" onClick={logCall} busy={busy} />
+                <OutcomeButton outcome="do_not_call" onClick={logCall} busy={busy} saved={savedOutcome === "do_not_call"} />
                 <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
                   Use only if they ask to be removed. Flags them DNC permanently.
                 </p>
@@ -589,19 +682,49 @@ export default function CallWorkspace(props: Props) {
             </div>
           </div>
 
-          <Link
-            href={
-              isAdmin
-                ? (adminQueueNav?.nextHref || adminQueueNav?.doneHref || "/dashboard")
-                : "/partners/work"
-            }
-            prefetch={false}
-            className="block w-full rounded-md border border-white/10 bg-slate-950 hover:border-white/20 px-4 py-2.5 text-xs text-center text-slate-400 hover:text-white transition-colors"
+          {/* Saved-outcome banner — appears after marking outcome.
+              Reassures the rep their selection was saved AND tells them
+              they're free to keep reading the script (e.g. flip to the
+              Voicemail tab and read the actual VM message) before
+              moving on. Clicking an outcome again replaces the saved
+              one. */}
+          {savedOutcome && (
+            <div className="rounded-2xl border-2 border-emerald-400/50 bg-emerald-500/10 p-4 space-y-2">
+              <p className="text-sm font-bold text-emerald-200">
+                ✓ Saved: {OUTCOME_META[savedOutcome].label}
+              </p>
+              <p className="text-[11px] text-emerald-100/80 leading-relaxed">
+                {savedOutcome === "voicemail"
+                  ? "Now flip to the Voicemail tab and read the message. Click Next when you've hung up."
+                  : "Outcome logged. Take your time wrapping up — click an outcome again to change it, or Next when you're ready."}
+              </p>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={advanceQueue}
+            className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
+              savedOutcome
+                ? "bg-emerald-500 hover:bg-emerald-400 text-emerald-950 shadow-lg shadow-emerald-500/25"
+                : "border border-white/10 bg-slate-950 text-slate-400 hover:text-white hover:border-white/20"
+            }`}
           >
-            {isAdmin
-              ? (adminQueueNav?.nextHref ? "⤼ Skip — next in queue" : "⤼ Done with queue")
-              : "⤼ Skip this prospect"}
-          </Link>
+            {savedOutcome
+              ? (isAdmin
+                  ? (adminQueueNav?.nextHref ? "Next prospect →" : "Done with queue ✓")
+                  : "Next prospect →")
+              : (isAdmin
+                  ? (adminQueueNav?.nextHref ? "⤼ Skip — next in queue" : "⤼ Done with queue")
+                  : "⤼ Skip this prospect")}
+          </button>
+
+          {/* Past calls with this prospect — shown right under the
+              advance button so the rep can scan history before moving
+              on (or reference it mid-call). */}
+          {callHistory.length > 0 && (
+            <CallHistoryPanel entries={callHistory} />
+          )}
         </aside>
       </div>
 
@@ -615,6 +738,25 @@ export default function CallWorkspace(props: Props) {
       >
         ✓ Mark call outcome
       </a>
+
+      <BookingTimeModal
+        open={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        onConfirm={(slot, smsHref) => {
+          setBookingLinkSent(true);
+          setSentText(true);
+          setBookingSpoken(slot.spoken);
+          setBookingModalOpen(false);
+          // Open the partner's messages app pre-filled with the
+          // slot-specific SMS body. window.location works for sms:
+          // links across iOS/Android/desktop.
+          window.location.href = smsHref;
+        }}
+        prospectFirstName={prospect.ownerName?.trim().split(/\s+/)[0] || "there"}
+        prospectPhone={prospect.phone || ""}
+        callerFirstName={partner.name.split(/\s+/)[0]}
+        bookingUrl={links.scheduleUrl}
+      />
     </main>
   );
 }
@@ -1021,15 +1163,18 @@ function OutcomeButton({
   onClick,
   busy,
   primary,
+  saved,
 }: {
   outcome: Outcome;
   onClick: (o: Outcome) => void;
   busy: boolean;
   primary?: boolean;
+  /** True if this outcome is the currently-saved one for this call. */
+  saved?: boolean;
 }) {
   const meta = OUTCOME_META[outcome];
   const tone = primary ? "emerald" : meta.tone;
-  const cls =
+  const baseCls =
     tone === "emerald"
       ? "bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold shadow-lg shadow-emerald-500/20"
       : tone === "amber"
@@ -1039,13 +1184,17 @@ function OutcomeButton({
           : tone === "rose"
             ? "bg-rose-500/15 border border-rose-500/40 text-rose-200 hover:bg-rose-500/25"
             : "bg-slate-800/50 border border-white/5 text-slate-300 hover:bg-slate-800 hover:text-white";
+  // Saved state — solid ring + check, regardless of tone, so the rep
+  // sees at a glance which outcome is logged for this call.
+  const savedCls =
+    "bg-emerald-500/20 border-2 border-emerald-400 text-emerald-100 font-semibold ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/20";
   return (
     <button
       onClick={() => onClick(outcome)}
       disabled={busy}
-      className={`w-full rounded-md px-3 py-3 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left ${cls}`}
+      className={`w-full rounded-md px-3 py-3 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left ${saved ? savedCls : baseCls}`}
     >
-      {meta.label}
+      {saved ? `✓ ${meta.label} — saved` : meta.label}
     </button>
   );
 }
@@ -1162,6 +1311,7 @@ const OUTCOME_LABEL: Record<string, string> = {
   wrong_number: "Wrong number",
   answered_not_interested: "Not interested",
   answered_call_scheduled: "Booked Ben's call",
+  answered_preview_sent: "Sent preview link",
   answered_audit_sent: "Sent audit link",
   answered_callback: "Call back requested",
   do_not_call: "DNC — removed from list",
@@ -1173,6 +1323,7 @@ const OUTCOME_COLOR: Record<string, string> = {
   wrong_number: "text-slate-500",
   answered_not_interested: "text-slate-400",
   answered_call_scheduled: "text-emerald-400",
+  answered_preview_sent: "text-sky-400",
   answered_audit_sent: "text-amber-400",
   answered_callback: "text-sky-400",
   do_not_call: "text-rose-400",

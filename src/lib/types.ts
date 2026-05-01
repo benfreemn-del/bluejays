@@ -73,6 +73,8 @@ export type ProspectStatus =
   | "interested"
   | "claimed"
   | "paid"
+  | "dns_transfer"     // domain transfer in progress (between paid + live) — site built, waiting on registrar/DNS cutover
+  | "live"             // site is publicly serving on the prospect's domain
   | "dismissed"
   | "unsubscribed"
   | "bounced"          // hard-bounce or 3-soft-in-7-days escalation — see Rule 42

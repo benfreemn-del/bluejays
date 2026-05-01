@@ -87,6 +87,16 @@ const statusConfig: Record<
     text: "text-violet-300",
   },
   paid: { label: "Paid", bg: "bg-amber-900/50", text: "text-amber-300" },
+  dns_transfer: {
+    label: "DNS Transfer",
+    bg: "bg-orange-900/60",
+    text: "text-orange-300",
+  },
+  live: {
+    label: "Live ✦",
+    bg: "bg-emerald-900/60",
+    text: "text-emerald-300",
+  },
   dismissed: { label: "Dismissed", bg: "bg-zinc-800/50", text: "text-zinc-500" },
   unsubscribed: {
     label: "Unsubscribed",
@@ -107,6 +117,11 @@ const statusConfig: Record<
     label: "Preview Requested",
     bg: "bg-fuchsia-900/60",
     text: "text-fuchsia-300",
+  },
+  fullsystem_inquiry: {
+    label: "Full System Inquiry",
+    bg: "bg-purple-900/60",
+    text: "text-purple-300",
   },
   "pro-bono": { label: "Pro Bono", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
