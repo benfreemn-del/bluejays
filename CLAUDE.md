@@ -2308,8 +2308,40 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
 ---
 
 ## ════════════════════════════════════════════
-## BEN'S HOME TODO LIST (updated 2026-04-22)
+## BEN'S HOME TODO LIST (updated 2026-05-01)
 ## ════════════════════════════════════════════
+
+---
+
+### BLOCK 0 — RUN THESE SQL MIGRATIONS (partner workspace is broken until this is done)
+
+- [ ] **Apply partner workspace migration in Supabase SQL editor** — fixes the "error" when clicking call outcome buttons in `/partners/work`:
+
+```sql
+alter table partners
+  add column if not exists agreement_accepted_at timestamptz,
+  add column if not exists last_login_at timestamptz,
+  add column if not exists daily_call_goal int default 10;
+
+create table if not exists partner_calls (
+  id uuid primary key default gen_random_uuid(),
+  partner_id uuid not null references partners(id) on delete cascade,
+  prospect_id uuid not null,
+  outcome text not null,
+  notes text,
+  audit_link_sent_at timestamptz,
+  called_at timestamptz not null default now()
+);
+
+create index if not exists partner_calls_partner_idx
+  on partner_calls(partner_id, called_at desc);
+create index if not exists partner_calls_prospect_idx
+  on partner_calls(prospect_id, called_at desc);
+create index if not exists partner_calls_outcome_idx
+  on partner_calls(outcome, called_at desc);
+```
+
+  Safe to re-run — all statements use `IF NOT EXISTS`.
 
 ---
 
