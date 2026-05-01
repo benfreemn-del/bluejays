@@ -238,18 +238,30 @@ export default function LeadPage() {
             {/* Current website — surface in the sticky header so it's
                 one click from the top of every lead view. Pairs with
                 the "Preview Site" button below for easy old-vs-new
-                comparison while Ben is on a call or reviewing the audit. */}
-            {prospect.currentWebsite && (
-              <a
-                href={prospect.currentWebsite.startsWith("http") ? prospect.currentWebsite : `https://${prospect.currentWebsite}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors"
-                title={prospect.currentWebsite}
-              >
-                Current Site ↗
-              </a>
-            )}
+                comparison while Ben is on a call or reviewing the audit.
+                Falls back through scraped_data.submittedUrl (audit-form
+                inbounds) and scraped_data.website (older shape) since
+                inbounds rarely populate currentWebsite directly. */}
+            {(() => {
+              const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
+              const raw =
+                prospect.currentWebsite ||
+                (typeof sd.submittedUrl === "string" ? sd.submittedUrl : "") ||
+                (typeof sd.website === "string" ? sd.website : "");
+              if (!raw) return null;
+              const href = raw.startsWith("http") ? raw : `https://${raw}`;
+              return (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors"
+                  title={raw}
+                >
+                  Current Site ↗
+                </a>
+              );
+            })()}
             {(() => {
               // Custom-tier prospects have their real site at customSiteUrl
               // (e.g. https://lcautism-coalition.vercel.app). Standard/free

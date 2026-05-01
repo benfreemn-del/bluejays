@@ -729,18 +729,31 @@ export default function ProspectTable({
                       )}
                     </div>
                     {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
-                    {prospect.currentWebsite && (
-                      <a
-                        href={prospect.currentWebsite.startsWith("http") ? prospect.currentWebsite : `https://${prospect.currentWebsite}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-amber-400 hover:text-amber-300 text-xs truncate inline-block max-w-[220px]"
-                        title={prospect.currentWebsite}
-                      >
-                        🔗 {prospect.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                      </a>
-                    )}
+                    {(() => {
+                      // Same fallback chain as the Actions-cell ↗ Site
+                      // button. Inbound leads from /audit submit their URL
+                      // into scraped_data.submittedUrl, never directly into
+                      // currentWebsite — fall through to that path.
+                      const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
+                      const raw =
+                        prospect.currentWebsite ||
+                        (typeof sd.submittedUrl === "string" ? sd.submittedUrl : "") ||
+                        (typeof sd.website === "string" ? sd.website : "");
+                      if (!raw) return null;
+                      const href = raw.startsWith("http") ? raw : `https://${raw}`;
+                      return (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-amber-400 hover:text-amber-300 text-xs truncate inline-block max-w-[220px]"
+                          title={raw}
+                        >
+                          🔗 {raw.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                        </a>
+                      );
+                    })()}
                   </td>
                   <td className="p-3">
                     <span
@@ -767,23 +780,31 @@ export default function ProspectTable({
                       {/* One-click open to the prospect's existing website.
                           Sits leftmost in the Actions cell so it's a fixed
                           target — Ben can click any row's "↗ Site" without
-                          eyeing-up the row. Hidden when there's nothing
-                          to open. */}
-                      {prospect.currentWebsite && (
-                        <a
-                          href={
-                            prospect.currentWebsite.startsWith("http")
-                              ? prospect.currentWebsite
-                              : `https://${prospect.currentWebsite}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors"
-                          title={`Open ${prospect.currentWebsite} in a new tab`}
-                        >
-                          ↗ Site
-                        </a>
-                      )}
+                          eyeing-up the row. Falls back through all the places
+                          the URL might live: currentWebsite (scouted leads)
+                          → scrapedData.submittedUrl (audit-form inbounds)
+                          → scrapedData.website (older inbound shape).
+                          Hidden only when nothing is found at all. */}
+                      {(() => {
+                        const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
+                        const raw =
+                          prospect.currentWebsite ||
+                          (typeof sd.submittedUrl === "string" ? sd.submittedUrl : "") ||
+                          (typeof sd.website === "string" ? sd.website : "");
+                        if (!raw) return null;
+                        const href = raw.startsWith("http") ? raw : `https://${raw}`;
+                        return (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors"
+                            title={`Open ${raw} in a new tab`}
+                          >
+                            ↗ Site
+                          </a>
+                        );
+                      })()}
                       {hasPreviewAvailable(prospect) ? (
                         <>
                           <a
