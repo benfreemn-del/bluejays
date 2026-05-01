@@ -37,6 +37,25 @@ type CallHistoryEntry = {
 };
 
 type Props = {
+  /**
+   * "partner" (default) — used by /partners/work. Partner cookie auth,
+   *   pulls next prospect from approved pool, logs to partner_calls,
+   *   shows agreement gate + logout.
+   * "admin" — used by /dashboard/script. Admin middleware auth, queue-
+   *   driven (Prev/Next from URL params), no agreement gate, no
+   *   partner_calls write, "Ben's workspace" branding. Pass
+   *   adminQueueNav for the queue navigation.
+   */
+  mode?: "partner" | "admin";
+  /** Required when mode='admin' — drives Prev/Next + queue position. */
+  adminQueueNav?: {
+    prevHref: string | null;
+    nextHref: string | null;
+    index: number; // 0-based
+    total: number;
+    /** Where to send Ben when he's done (defaults to /dashboard) */
+    doneHref?: string;
+  };
   partner: {
     id: string;
     name: string;
@@ -140,6 +159,9 @@ const OUTCOME_META: Record<
 
 export default function CallWorkspace(props: Props) {
   const { partner, prospect, counters, links, script, tips, mantra, callHistory } = props;
+  const mode = props.mode ?? "partner";
+  const isAdmin = mode === "admin";
+  const adminQueueNav = props.adminQueueNav;
   const router = useRouter();
 
   const [busy, setBusy] = useState(false);
@@ -148,13 +170,53 @@ export default function CallWorkspace(props: Props) {
   const [auditLinkSent, setAuditLinkSent] = useState(false);
   const [bookingLinkSent, setBookingLinkSent] = useState(false);
   const [sentText, setSentText] = useState(false);
-  const [showAgreement, setShowAgreement] = useState(!partner.agreementAccepted);
+  // Admin (Ben) bypasses the partner-agreement gate entirely — he doesn't
+  // need to accept his own contractor terms.
+  const [showAgreement, setShowAgreement] = useState(
+    isAdmin ? false : !partner.agreementAccepted,
+  );
   const [section, setSection] = useState<SectionId>("intro");
 
   async function logCall(outcome: Outcome) {
     if (!prospect || busy) return;
     setBusy(true);
     try {
+      // Admin mode: skip /api/partners/work/log-call (writes to
+      // partner_calls with the partner_id, not relevant for Ben).
+      // Instead, post a note to the prospect via the existing notes
+      // system + advance the queue. Ben can review outcomes via the
+      // /lead/[id] timeline.
+      if (isAdmin) {
+        if (notes.trim()) {
+          try {
+            await fetch(`/api/notes/${prospect.id}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                body: `Call outcome: ${outcome.replace(/_/g, " ")}${notes.trim() ? `\n\n${notes.trim()}` : ""}`,
+              }),
+            });
+          } catch {
+            // Note save failed — non-blocking, advance anyway
+          }
+        }
+        // Reset card state, advance queue (or done)
+        setNotes("");
+        setPreviewLinkSent(false);
+        setAuditLinkSent(false);
+        setBookingLinkSent(false);
+        setSentText(false);
+        setSection("intro");
+        const next = adminQueueNav?.nextHref;
+        if (next) {
+          router.push(next);
+        } else {
+          router.push(adminQueueNav?.doneHref || "/dashboard");
+        }
+        setBusy(false);
+        return;
+      }
+
       const res = await fetch("/api/partners/work/log-call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -228,6 +290,24 @@ export default function CallWorkspace(props: Props) {
   }
 
   if (!prospect) {
+    if (isAdmin) {
+      return (
+        <main className="min-h-screen bg-slate-950 text-white grid place-items-center px-6">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold mb-3">Queue empty</h1>
+            <p className="text-slate-400 mb-6">
+              That lead isn&apos;t accessible — it may have been dismissed or merged. Head back and pick another.
+            </p>
+            <Link
+              href={adminQueueNav?.doneHref || "/dashboard"}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-blue-electric text-white font-semibold hover:bg-blue-electric/90"
+            >
+              ← Back to dashboard
+            </Link>
+          </div>
+        </main>
+      );
+    }
     return <EmptyPool partnerName={partner.name} onLogout={logout} />;
   }
 
@@ -238,41 +318,73 @@ export default function CallWorkspace(props: Props) {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* Top bar — counter + logout */}
+      {/* Top bar — counter + logout (or back-to-dashboard for admin) */}
       <header className="border-b border-white/5 bg-slate-950/95 backdrop-blur sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="font-bold text-amber-300 truncate">
-              {partner.name.split(/\s+/)[0]}&apos;s workspace
+              {isAdmin ? "Ben's workspace" : `${partner.name.split(/\s+/)[0]}'s workspace`}
             </div>
             <span className="hidden sm:inline text-xs text-slate-500">
-              · pool: {counters.remainingPool}
+              {isAdmin && adminQueueNav
+                ? `· lead ${adminQueueNav.index + 1} of ${adminQueueNav.total}`
+                : `· pool: ${counters.remainingPool}`}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden md:block min-w-[160px]">
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
-                <span>This session</span>
-                <span className="font-mono font-bold text-white">
-                  {counters.callsThisSession}<span className="text-slate-500">/{counters.goal}</span>
+            {isAdmin && adminQueueNav ? (
+              <>
+                <div className="hidden md:block min-w-[160px]">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <span>Queue progress</span>
+                    <span className="font-mono font-bold text-white">
+                      {adminQueueNav.index + 1}<span className="text-slate-500">/{adminQueueNav.total}</span>
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-blue-electric to-emerald-400 transition-all duration-500"
+                      style={{ width: `${Math.round(((adminQueueNav.index + 1) / Math.max(1, adminQueueNav.total)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="md:hidden text-sm font-bold text-blue-electric tabular-nums">
+                  {adminQueueNav.index + 1}/{adminQueueNav.total}
                 </span>
-              </div>
-              <div className="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500"
-                  style={{ width: `${sessionPct}%` }}
-                />
-              </div>
-            </div>
-            <span className="md:hidden text-sm font-bold text-amber-300 tabular-nums">
-              {counters.callsThisSession}/{counters.goal}
-            </span>
-            <button
-              onClick={logout}
-              className="text-xs text-slate-500 hover:text-white"
-            >
-              Log out
-            </button>
+                <Link
+                  href={adminQueueNav.doneHref || "/dashboard"}
+                  className="text-xs text-slate-500 hover:text-white"
+                >
+                  ← Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="hidden md:block min-w-[160px]">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <span>This session</span>
+                    <span className="font-mono font-bold text-white">
+                      {counters.callsThisSession}<span className="text-slate-500">/{counters.goal}</span>
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500"
+                      style={{ width: `${sessionPct}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="md:hidden text-sm font-bold text-amber-300 tabular-nums">
+                  {counters.callsThisSession}/{counters.goal}
+                </span>
+                <button
+                  onClick={logout}
+                  className="text-xs text-slate-500 hover:text-white"
+                >
+                  Log out
+                </button>
+              </>
+            )}
           </div>
         </div>
         {/* Mantra banner — anchors after every no */}
@@ -478,11 +590,17 @@ export default function CallWorkspace(props: Props) {
           </div>
 
           <Link
-            href="/partners/work"
+            href={
+              isAdmin
+                ? (adminQueueNav?.nextHref || adminQueueNav?.doneHref || "/dashboard")
+                : "/partners/work"
+            }
             prefetch={false}
             className="block w-full rounded-md border border-white/10 bg-slate-950 hover:border-white/20 px-4 py-2.5 text-xs text-center text-slate-400 hover:text-white transition-colors"
           >
-            ⤼ Skip this prospect
+            {isAdmin
+              ? (adminQueueNav?.nextHref ? "⤼ Skip — next in queue" : "⤼ Done with queue")
+              : "⤼ Skip this prospect"}
           </Link>
         </aside>
       </div>
