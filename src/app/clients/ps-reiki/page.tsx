@@ -62,6 +62,23 @@ import {
   Sparkle,
 } from "@phosphor-icons/react";
 
+// ─── Real PS Reiki brand assets ────────────────────────────────────
+// Pratima's actual headshot, pulled from psreiki.com/about. The
+// Squarespace CDN ID (598c783837c581174290cf83) is her account.
+// This is the only real photo confirmed on her public site —
+// everything else is text content. When she sends additional
+// session/treatment-room photos, swap in below.
+const PRATIMA_HEADSHOT =
+  "https://images.squarespace-cdn.com/content/v1/598c783837c581174290cf83/1619917750782-X8F2G8QEJJW6IQQ6OOTN/3E1FECCF-1ADF-498A-96E7-E3275EC3F803.JPG";
+
+// ─── Stock imagery — Reiki / energy healing aesthetic ──────────────
+// Carefully picked from Unsplash. Captioned neutrally on the page —
+// never claimed as Pratima's treatment room. Replace with real photos
+// once she sends them.
+const STOCK_HEALING_HANDS = "https://images.unsplash.com/photo-1591343395082-e120087004b4?w=1600&q=80"; // hands above stones, peaceful
+const STOCK_CRYSTAL_BOWLS = "https://images.unsplash.com/photo-1606318313846-9d8639dd2f0a?w=1200&q=80"; // singing bowls / crystals
+const STOCK_QUIET_SPACE = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&q=80";    // serene space
+
 // ─── Soft healing palette ──────────────────────────────────────────
 const BG = "#fdfaf6";              // warm cream
 const BG_DEEP = "#f7f0e6";         // deeper cream
@@ -548,21 +565,75 @@ export default function PsReikiPage() {
         </div>
       </section>
 
+      {/* ── HERO IMAGE BAND ──────────────────────────────────────── */}
+      {/* Calm energy-healing aesthetic to anchor the brand visually
+          after the all-text hero. Captioned to describe what the
+          practice feels like ("the kind of stillness that arrives") —
+          honest framing while adding visual warmth. Replace with a
+          real treatment-room or session photo from Pratima. */}
+      <section className="relative px-6 -mt-6 md:-mt-10">
+        <div className="max-w-6xl mx-auto">
+          <div
+            className="relative rounded-3xl overflow-hidden"
+            style={{ aspectRatio: "21 / 9", boxShadow: "0 12px 40px rgba(200, 134, 126, 0.18)" }}
+          >
+            <img
+              src={STOCK_HEALING_HANDS}
+              alt="The kind of stillness that arrives during a Reiki session"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(180deg, transparent 40%, rgba(42, 31, 46, 0.55) 100%)`,
+              }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+              <p
+                className="text-xs uppercase tracking-[0.25em] font-bold mb-2"
+                style={{ color: "#f4d4ce" }}
+              >
+                Northern Virginia · By appointment
+              </p>
+              <p className="text-white text-lg md:text-xl font-semibold max-w-md" style={{ fontFamily: "Georgia, serif" }}>
+                Hands-on, fully clothed, with sound bowls in the background.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── ABOUT PRATIMA ────────────────────────────────────────── */}
       <SectionReveal id="about" className="relative px-6 py-20 md:py-28" style={{ background: BG_DEEP }}>
         <div className="max-w-4xl mx-auto">
           <motion.div variants={fadeUp} className="grid md:grid-cols-[200px_1fr] gap-8 items-start">
-            {/* Practitioner avatar */}
-            <div
-              className="w-36 h-36 md:w-48 md:h-48 rounded-full mx-auto md:mx-0 flex items-center justify-center text-6xl md:text-7xl"
-              style={{
-                background: `linear-gradient(135deg, ${ROSE} 0%, ${LAVENDER} 100%)`,
-                color: "white",
-                fontFamily: "Georgia, serif",
-                boxShadow: "0 12px 40px rgba(200, 134, 126, 0.25)",
-              }}
-            >
-              P
+            {/* Practitioner portrait — real headshot from psreiki.com.
+                Wrapped in a soft rose/lavender gradient ring so the
+                photo gets a subtle brand-color halo without losing
+                Pratima's face to a hard border. */}
+            <div className="mx-auto md:mx-0 relative">
+              <div
+                className="absolute -inset-2 rounded-full"
+                style={{
+                  background: `linear-gradient(135deg, ${ROSE} 0%, ${LAVENDER} 100%)`,
+                  opacity: 0.25,
+                  filter: "blur(12px)",
+                }}
+              />
+              <div
+                className="relative w-36 h-36 md:w-48 md:h-48 rounded-full overflow-hidden"
+                style={{
+                  border: `3px solid ${ROSE}`,
+                  boxShadow: "0 12px 40px rgba(200, 134, 126, 0.25)",
+                  background: PANEL,
+                }}
+              >
+                <img
+                  src={PRATIMA_HEADSHOT}
+                  alt="Pratima — Usui Reiki Master & Teacher"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
             <div>
               <p
@@ -720,6 +791,74 @@ export default function PsReikiPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </SectionReveal>
+
+      {/* ── IMAGE BAND — tools of the practice ──────────────────── */}
+      {/* Two-up image band between "What to expect" and "Stories from
+          the table." Captioned to describe what each tool actually does
+          in a Reiki session (sound bowls + crystals). Replace with
+          real photos from Pratima's space when she sends them. */}
+      <SectionReveal className="relative px-6 py-20 md:py-24">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5">
+          <motion.div variants={fadeUp}>
+            <div
+              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px]"
+              style={{ boxShadow: "0 8px 24px rgba(200, 134, 126, 0.15)" }}
+            >
+              <img
+                src={STOCK_CRYSTAL_BOWLS}
+                alt="Singing bowls and crystals — tools used during sessions"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(180deg, transparent 50%, rgba(42, 31, 46, 0.65) 100%)`,
+                }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <p
+                  className="text-xs uppercase tracking-[0.25em] font-bold mb-1.5"
+                  style={{ color: "#f4d4ce" }}
+                >
+                  Sound + crystal therapy
+                </p>
+                <p className="text-white text-lg font-semibold" style={{ fontFamily: "Georgia, serif" }}>
+                  The bowls do half the work — they bypass thinking entirely.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <div
+              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px]"
+              style={{ boxShadow: "0 8px 24px rgba(200, 134, 126, 0.15)" }}
+            >
+              <img
+                src={STOCK_QUIET_SPACE}
+                alt="A serene space — what most clients describe afterwards"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(180deg, transparent 50%, rgba(42, 31, 46, 0.65) 100%)`,
+                }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <p
+                  className="text-xs uppercase tracking-[0.25em] font-bold mb-1.5"
+                  style={{ color: "#f4d4ce" }}
+                >
+                  After the session
+                </p>
+                <p className="text-white text-lg font-semibold" style={{ fontFamily: "Georgia, serif" }}>
+                  Most people walk out lighter than they&apos;ve been in months.
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </SectionReveal>
 
