@@ -38,6 +38,7 @@ export default function LeadPage() {
   const [simReport, setSimReport] = useState<any>(null);
   const [simLoading, setSimLoading] = useState(false);
   const [simOpen, setSimOpen] = useState(false);
+  const [latestAudit, setLatestAudit] = useState<{ id: string; score: number | null; url: string } | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -117,6 +118,12 @@ export default function LeadPage() {
         .then((r) => r.json())
         .then((data) => setVslScript(data.vslScript || null))
         .catch(() => setVslScript(null));
+
+      // Load latest audit (for the Audit pill in the header)
+      fetch(`/api/prospects/${id}/latest-audit`)
+        .then((r) => r.json())
+        .then((data) => setLatestAudit(data?.audit || null))
+        .catch(() => setLatestAudit(null));
 
       // Sort by timestamp
       events.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -235,6 +242,29 @@ export default function LeadPage() {
             >
               📞 Call Script
             </a>
+            {/* Latest completed audit — pulled from /api/prospects/:id/latest-audit.
+                Shows score color-coded (red < 50, amber 50-79, green 80+)
+                so Ben can triage at a glance and click into the full audit
+                while on a sales call. */}
+            {latestAudit && (
+              <a
+                href={latestAudit.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                  latestAudit.score === null
+                    ? "bg-slate-500/10 text-slate-300 border-slate-500/30 hover:bg-slate-500/20"
+                    : latestAudit.score >= 80
+                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
+                      : latestAudit.score >= 50
+                        ? "bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20"
+                        : "bg-rose-500/10 text-rose-300 border-rose-500/30 hover:bg-rose-500/20"
+                }`}
+                title={`Latest audit — open in new tab`}
+              >
+                📋 Audit{latestAudit.score !== null ? ` ${latestAudit.score}/100` : ""} ↗
+              </a>
+            )}
             {/* Current website — surface in the sticky header so it's
                 one click from the top of every lead view. Pairs with
                 the "Preview Site" button below for easy old-vs-new

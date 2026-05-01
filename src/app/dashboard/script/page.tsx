@@ -13,6 +13,7 @@ import {
 } from "@/lib/partners-script";
 import { buildBookingUrlForCall } from "@/lib/booking";
 import type { Prospect } from "@/lib/types";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import ScriptQueueClient from "./ScriptQueueClient";
 
 /**
@@ -78,6 +79,31 @@ export default async function DashboardScriptPage({
 
   const filled = buildFilledScript(prospect);
 
+  // Pull the latest completed audit so the call workspace shows the
+  // score + a one-click link into the audit page. Same query the
+  // /api/prospects/:id/latest-audit endpoint uses, but server-side
+  // here so the client doesn't fan out an extra request.
+  let latestAudit: { id: string; score: number | null; url: string } | null = null;
+  if (isSupabaseConfigured()) {
+    try {
+      const { data: auditRow } = await supabase
+        .from("site_audits")
+        .select("id, audit_content")
+        .eq("prospect_id", currentId)
+        .eq("status", "ready")
+        .order("generated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (auditRow) {
+        const r = auditRow as { id: string; audit_content: { overallScore?: number } | null };
+        const score = r.audit_content?.overallScore ?? null;
+        latestAudit = { id: r.id, score, url: `${SITE_ORIGIN}/audit/${r.id}` };
+      }
+    } catch (err) {
+      console.error("[/dashboard/script] audit lookup failed:", err);
+    }
+  }
+
   return (
     <ScriptQueueClient
       ids={ids}
@@ -94,6 +120,7 @@ export default async function DashboardScriptPage({
         currentWebsite: prospect.currentWebsite || null,
         previewUrl: `${SITE_ORIGIN}/preview/${prospect.id}`,
         leadDetailUrl: `/lead/${prospect.id}`,
+        latestAudit,
       }}
       script={filled.script}
       tips={HORMOZI_CALL_TIPS}

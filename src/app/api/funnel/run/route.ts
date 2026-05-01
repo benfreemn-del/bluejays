@@ -56,16 +56,38 @@ export async function POST(request?: NextRequest) {
             : 0
       );
 
-      // Existing active (not-paused, not-completed) enrollments — these will
-      // consume capacity today via the regular funnel processor.
+      // Existing enrollments — used both to skip-already-enrolled
+      // when picking new candidates AND to compute headroom for today.
+      //
+      // Headroom math (BUG FIX 2026-04-30): the old code counted
+      // ALL non-paused/non-completed rows as "active," but stale
+      // enrollments from weeks ago that never got their first send
+      // (zombie rows from failed sendFunnelStep calls) blocked
+      // headroom forever. Symptom: 361 "active" but only ~30
+      // sending/day, capacity 200 sitting idle.
+      //
+      // New definition of "active for capacity-planning purposes":
+      //   - last_sent_at within last 7 days (still in sequence) OR
+      //   - enrolled_at within last 24 hours (newly enrolled, will
+      //     send in next 1-2 cron cycles)
+      // Anything else is a zombie that won't consume today's capacity
+      // and shouldn't block new enrollments.
       const { data: enrollRows } = await supabase
         .from("funnel_enrollments")
-        .select("prospect_id,paused,completed_at")
+        .select("prospect_id,paused,completed_at,enrolled_at,last_sent_at")
         .limit(10000);
       const enrolledIds = new Set((enrollRows || []).map((r) => r.prospect_id as string));
-      const activeEnrollments = (enrollRows || []).filter(
-        (r) => !r.paused && !r.completed_at
-      ).length;
+      const now = Date.now();
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+      const activeEnrollments = (enrollRows || []).filter((r) => {
+        if (r.paused || r.completed_at) return false;
+        const lastSent = r.last_sent_at ? new Date(r.last_sent_at as string).getTime() : 0;
+        const enrolledAt = r.enrolled_at ? new Date(r.enrolled_at as string).getTime() : 0;
+        const recentlySent = lastSent > 0 && now - lastSent < SEVEN_DAYS_MS;
+        const recentlyEnrolled = enrolledAt > 0 && now - enrolledAt < ONE_DAY_MS;
+        return recentlySent || recentlyEnrolled;
+      }).length;
 
       // Headroom = capacity - active enrollments. If active >= capacity, do nothing.
       const headroom = Math.max(0, totalCapacity - activeEnrollments);

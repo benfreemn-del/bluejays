@@ -33,6 +33,13 @@ type Prospect = {
   currentWebsite: string | null;
   previewUrl: string;
   leadDetailUrl: string;
+  /**
+   * Latest completed audit for this prospect. null when there is no
+   * audit yet — the call workspace hides the audit pill in that case.
+   * The score is the overallScore from audit_content; null if the
+   * audit was generated before scoring was added.
+   */
+  latestAudit: { id: string; score: number | null; url: string } | null;
 };
 
 type Links = {
@@ -234,6 +241,33 @@ export default function ScriptQueueClient({
               >
                 Full lead ↗
               </Link>
+              {/* Audit pill — server-side fetched. Color-coded so Ben
+                  can read the prospect's score at a glance during a
+                  call ("you scored a 47, we'd fix that...") and click
+                  through to the full audit if they want details. */}
+              {prospect.latestAudit && (
+                <a
+                  href={prospect.latestAudit.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-xs px-2.5 py-1 rounded-lg border ${
+                    prospect.latestAudit.score === null
+                      ? "bg-slate-500/10 text-slate-300 border-slate-500/30 hover:bg-slate-500/20"
+                      : prospect.latestAudit.score >= 80
+                        ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
+                        : prospect.latestAudit.score >= 50
+                          ? "bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20"
+                          : "bg-rose-500/10 text-rose-300 border-rose-500/30 hover:bg-rose-500/20"
+                  }`}
+                  title="Latest completed site audit"
+                >
+                  📋 Audit
+                  {prospect.latestAudit.score !== null
+                    ? ` ${prospect.latestAudit.score}/100`
+                    : ""}{" "}
+                  ↗
+                </a>
+              )}
             </div>
           </div>
 
