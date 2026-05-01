@@ -225,6 +225,16 @@ export default function LeadPage() {
             })()}
           </div>
           <div className="flex gap-2">
+            {/* Open the Hormozi call script pre-filled with this
+                lead's info. Single-lead version of the bulk "Call
+                Script (N)" button on the dashboard. */}
+            <a
+              href={`/dashboard/script?ids=${encodeURIComponent(prospect.id)}`}
+              className="text-xs px-3 py-1.5 rounded-lg bg-violet-500/15 text-violet-300 hover:bg-violet-500/25 border border-violet-500/30 transition-colors"
+              title="Open the call script with this lead's info"
+            >
+              📞 Call Script
+            </a>
             {/* Current website — surface in the sticky header so it's
                 one click from the top of every lead view. Pairs with
                 the "Preview Site" button below for easy old-vs-new

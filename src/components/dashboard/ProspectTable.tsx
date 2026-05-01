@@ -577,6 +577,21 @@ export default function ProspectTable({
             >
               Build Sites
             </button>
+            {/* Queue selected leads into the Hormozi call script — opens
+                /dashboard/script with ?ids= query so Ben can step
+                through them in order using ← / → keys. Doesn't mutate
+                anything; just navigates. */}
+            <button
+              onClick={() => {
+                const qs = `ids=${encodeURIComponent(selectedIds.join(","))}`;
+                router.push(`/dashboard/script?${qs}`);
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-violet-500/20 text-violet-300 text-sm font-bold hover:bg-violet-500/30 transition-colors disabled:opacity-50 border border-violet-500/30"
+              title="Open the Hormozi call script with these leads queued in order"
+            >
+              📞 Call Script ({selectedIds.length})
+            </button>
             <button
               onClick={() => setSelectedIds([])}
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm hover:text-foreground transition-colors"
