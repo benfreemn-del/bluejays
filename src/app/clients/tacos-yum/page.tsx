@@ -66,10 +66,10 @@ const HERO_TACOS_TOP = "https://images.unsplash.com/photo-1565299585323-38d6b086
 const TACOS_PLATTER = "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=1200&q=85";   // street tacos plate
 const CARNE_ASADA = "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=1200&q=85";        // carne asada close-up
 const SINGLE_TACO = "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=1200&q=85";    // single taco macro
-const SALSA_TRIO = "https://images.unsplash.com/photo-1576367035905-c0024e1add14?w=1200&q=85";     // salsas / sides
+const SALSA_TRIO = "https://images.unsplash.com/photo-1542528180-a1208c5169a5?w=1200&q=85";     // salsas / sides (replaced 2026-05-01: original 1576367035905 was 404)
 const RESTAURANT_INT = "https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=1600&q=85"; // restaurant interior
 const HANDS_TORTILLAS = "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=1200&q=85"; // making tortillas
-const BURRITO = "https://images.unsplash.com/photo-1583224994076-ae7d7e4f5e4f?w=1200&q=85";          // burrito
+// (BURRITO const removed 2026-05-01: was 404 + unused in render anyway)
 
 // ─── Warm Mexican-inspired palette ─────────────────────────────────
 const BG = "#fef9f3";              // warm cream
