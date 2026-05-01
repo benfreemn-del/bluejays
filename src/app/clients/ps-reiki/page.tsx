@@ -569,56 +569,36 @@ export default function PsReikiPage() {
         </div>
       </section>
 
-      {/* ── HERO BAND — gradient with breathing lotus ───────────── */}
-      {/* Replaced stock-photo hero band (2026-05-01) with a decorative
-          gradient + animated breathing lotus pattern. Same reason as
-          the two-up cards below: Unsplash IDs kept resolving to wrong
-          content. Pure gradient is on-brand for the ethereal aesthetic
-          and impossible to break. */}
+      {/* ── HERO IMAGE BAND ──────────────────────────────────────── */}
+      {/* Calm energy-healing aesthetic to anchor the brand visually
+          after the all-text hero. Reverted (2026-05-01) to the original
+          stock photo per Ben — user liked the photo version of the
+          hero, only the bottom two-up cards needed gradient swap. */}
       <section className="relative px-6 -mt-6 md:-mt-10">
         <div className="max-w-6xl mx-auto">
           <div
-            className="relative rounded-3xl overflow-hidden flex items-end p-8 md:p-12"
-            style={{
-              aspectRatio: "21 / 9",
-              background: `linear-gradient(135deg, ${ROSE} 0%, ${LAVENDER} 50%, ${GOLD} 100%)`,
-              boxShadow: "0 12px 40px rgba(200, 134, 126, 0.25)",
-            }}
+            className="relative rounded-3xl overflow-hidden"
+            style={{ aspectRatio: "21 / 9", boxShadow: "0 12px 40px rgba(200, 134, 126, 0.18)" }}
           >
-            {/* Decorative breathing lotus + concentric energy rings */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-full border border-white"
-                  style={{
-                    width: 150 + i * 80,
-                    height: 150 + i * 80,
-                    opacity: 0.20 - i * 0.025,
-                  }}
-                  animate={{ scale: [1, 1.08, 1] }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    delay: i * 0.4,
-                    ease: "easeInOut",
-                  }}
-                />
-              ))}
-              <FlowerLotus size={84} weight="duotone" className="text-white relative z-10" style={{ opacity: 0.92 }} />
-            </div>
-            {/* Caption — bottom-left */}
-            <div className="relative z-10 max-w-md">
+            <img
+              src={STOCK_HEALING_HANDS}
+              alt="The kind of stillness that arrives during a Reiki session"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(180deg, transparent 40%, rgba(42, 31, 46, 0.55) 100%)`,
+              }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
               <p
                 className="text-xs uppercase tracking-[0.25em] font-bold mb-2"
-                style={{ color: "rgba(255, 255, 255, 0.85)" }}
+                style={{ color: "#f4d4ce" }}
               >
                 Northern Virginia · By appointment
               </p>
-              <p
-                className="text-white text-xl md:text-2xl font-semibold"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
+              <p className="text-white text-lg md:text-xl font-semibold max-w-md" style={{ fontFamily: "Georgia, serif" }}>
                 Hands-on, fully clothed, with sound bowls in the background.
               </p>
             </div>
