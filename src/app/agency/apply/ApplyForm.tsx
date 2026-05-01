@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/RetargetingPixels";
 
 // 8-question qualifying form mapped to the agency_applications
 // table. Field names match the SQL column names so the API can pass
@@ -104,6 +105,68 @@ export default function ApplyForm() {
           message: json.error || `Submission failed (${res.status}). Try again or email ben@bluejayportfolio.com.`,
         });
         return;
+      }
+
+      // ─── Conversion tracking ──────────────────────────────────────
+      // Fire BEFORE setting state so events flush before any potential
+      // redirect/refresh. Decision-aware values let Meta + Google Ads
+      // optimize toward QUALIFIED (highest LTV) instead of all leads.
+      //
+      // Conversion send_to IDs: hardcoded fallbacks because env var
+      // inlining at build-time was historically unreliable. IDs are
+      // public values (visible in HTML), no secret to protect.
+      const agencyQualifiedSendTo =
+        process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AGENCY_QUALIFIED ||
+        process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_AUDIT ||
+        "AW-18122049249/NmpCCILRv6QcEOGNosFD";
+
+      try {
+        if (json.decision === "qualified") {
+          // Highest-value event: $9,700 product + budget-confirmed buyer.
+          // Use 9700 so Meta/Google bid optimization weights this 194x
+          // an audit lead ($50). This is what makes paid traffic to
+          // /agency actually pay back.
+          trackMetaEvent("Lead", {
+            content_name: "agency_qualified",
+            content_category: form.industry || "uncategorized",
+            value: 9700,
+            currency: "USD",
+          });
+          trackGoogleAdsConversion(agencyQualifiedSendTo, 9700);
+        } else if (json.decision === "review") {
+          // Manual-review apps are still real leads — Ben converts a
+          // chunk of these. Mid-tier value so the platforms know to
+          // surface more of them, just not as aggressively as qualified.
+          trackMetaEvent("Lead", {
+            content_name: "agency_review",
+            content_category: form.industry || "uncategorized",
+            value: 4850,
+            currency: "USD",
+          });
+          trackGoogleAdsConversion(agencyQualifiedSendTo, 4850);
+        } else if (json.decision === "declined") {
+          // No-budget / wrong-fit — still send a CompleteRegistration so
+          // the platforms learn what NOT to optimize toward, but with
+          // zero value so they de-weight similar audiences.
+          trackMetaEvent("CompleteRegistration", {
+            content_name: "agency_declined",
+            content_category: form.industry || "uncategorized",
+          });
+        }
+        // GA4 custom event for internal funnel analysis
+        const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+        if (typeof w.gtag === "function") {
+          try {
+            w.gtag("event", "agency_apply", {
+              event_category: "agency_funnel",
+              event_label: json.decision || "unknown",
+            });
+          } catch {
+            // Never let analytics break user flow
+          }
+        }
+      } catch {
+        // Tracking failure must not block UX
       }
 
       if (json.decision === "qualified" && json.calendlyUrl) {

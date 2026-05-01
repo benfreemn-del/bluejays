@@ -112,31 +112,35 @@ export default function AgencyPage() {
           The self-learning AI marketing system
         </div>
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-          Your funnel gets smarter{" "}
-          <span className="text-violet-400">every single week.</span>
-          <br className="hidden md:block" /> Automatically.
+          100 qualified leads in 90 days.{" "}
+          <span className="text-violet-400">Or we work free until you hit it.</span>
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4 leading-relaxed">
-          Not a campaign. Not a template. A self-improving loop — every ad click, email open, and form fill feeds data back in and tightens the funnel without anyone touching it.
+          One self-improving funnel — Google Ads, Meta Ads, email, SMS, voicemail,
+          SEO — all sharing data, all learning from your customers, all
+          tightening every week without anyone touching it.
         </p>
         <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">
-          BlueJays builds the system, connects all the pieces, and hands it to you. Google Ads, Meta Ads, email, SMS, voicemail, SEO — all sharing data, all learning from your real customers. <strong className="text-white">One setup. You own it. The AI manages the rest.</strong>
+          We build it custom for your business in 30 days. You own every piece.
+          <strong className="text-white"> If we don&apos;t deliver 100 qualified leads in 90 days, we keep working — at no extra cost — until you hit the number.</strong>
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/audit"
-            className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(14,165,233,0.3)]"
+            href="/agency/apply"
+            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(139,92,246,0.4)]"
           >
-            Get my free site audit →
+            Apply for the system →
           </Link>
           <Link
-            href="/agency/apply"
-            className="border border-violet-500/50 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
+            href="/audit"
+            className="border border-white/15 bg-white/5 hover:bg-white/10 text-slate-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
           >
-            Apply for the system
+            Get a free audit first
           </Link>
         </div>
-        <p className="text-xs text-slate-500 mt-4">Free audit · 8-question fit check · Ben answers personally</p>
+        <p className="text-xs text-slate-500 mt-4">
+          8-question fit check · Ben answers personally · Most apps reviewed within 24h
+        </p>
       </section>
 
       {/* ── THE MATH ─────────────────────────────────────────────────────────── */}
@@ -259,6 +263,131 @@ export default function AgencyPage() {
         </div>
       </section>
 
+      {/* ── VALUE STACK ──────────────────────────────────────────────────────── */}
+      {/* Hormozi rule: anchor the buyer at perceived value > 2x the price BEFORE
+          they see the price. Each line is what an agency or freelancer would
+          quote for that single deliverable in isolation. The total is what
+          you'd actually pay if you hired this stack à la carte. The price you
+          actually pay reframes the same buyer from "is $9,700 a lot?" to
+          "I'm getting $24K of value for $9,700." */}
+      <section className="px-6 py-16 max-w-3xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
+            What you actually get
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+            Priced à la carte, this stack is{" "}
+            <span className="text-violet-300">$24,000.</span>
+          </h2>
+          <p className="text-slate-400 text-lg">
+            You pay $9,700 because we build them all in one connected loop —
+            not as separate engagements that don&apos;t talk to each other.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          {[
+            { item: "Custom website (designed for your industry, mobile-first, conversion-built)", value: 4000 },
+            { item: "Google Ads — full setup + first 90 days managed", value: 3500 },
+            { item: "Meta Ads (Facebook + Instagram) — full setup + first 90 days managed", value: 3500 },
+            { item: "Email automation — sequences, re-engagement, weekly newsletter setup", value: 2500 },
+            { item: "SMS automation — replies, reminders, drip flows via Twilio", value: 1500 },
+            { item: "Voicemail drops — broadcast voicemails to your prospect list", value: 1000 },
+            { item: "SEO foundation — schema, sitemap, on-page, GBP optimization", value: 3000 },
+            { item: "AI lead magnet — custom audit / quiz / calculator for your niche", value: 2000 },
+            { item: "Logo + brand polish (if you need it)", value: 500 },
+            { item: "AI auto-responder — handles inbound replies on email + SMS 24/7", value: 2500 },
+          ].map((row, i) => (
+            <div
+              key={i}
+              className="flex items-start justify-between gap-4 px-5 py-3.5 border-b border-white/5 last:border-0"
+            >
+              <div className="flex items-start gap-3 min-w-0">
+                <span className="text-emerald-400 mt-0.5 flex-shrink-0">✓</span>
+                <span className="text-slate-300 text-sm leading-relaxed">{row.item}</span>
+              </div>
+              <span className="text-slate-400 text-sm font-mono tabular-nums whitespace-nowrap">
+                ${row.value.toLocaleString()}
+              </span>
+            </div>
+          ))}
+          <div className="flex items-center justify-between px-5 py-4 bg-white/[0.04] border-t border-white/10">
+            <span className="text-sm uppercase tracking-wider text-slate-400 font-bold">
+              À la carte total
+            </span>
+            <span className="text-2xl font-bold text-white tabular-nums line-through opacity-70">
+              $24,000
+            </span>
+          </div>
+          <div className="flex items-center justify-between px-5 py-5 bg-violet-500/10 border-t border-violet-500/30">
+            <span className="text-sm uppercase tracking-wider text-violet-300 font-bold">
+              You pay
+            </span>
+            <div className="text-right">
+              <div className="text-3xl md:text-4xl font-black text-white tabular-nums">
+                $9,700
+              </div>
+              <div className="text-xs text-slate-400 mt-0.5">
+                or 3 × $3,500 split over 90 days
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="text-center text-xs text-slate-500 mt-4">
+          You own every piece forever. Year 2+ ongoing optimization is $497/mo, cancel anytime.
+        </p>
+      </section>
+
+      {/* ── GUARANTEE ────────────────────────────────────────────────────────── */}
+      {/* Hormozi rule: stronger risk reversal beats more features. The
+          "100 leads or we work free" guarantee is the single biggest perceived-
+          value lever on the page. Place it AFTER the value stack (so the buyer
+          already feels the value > price), then the guarantee makes saying yes
+          feel almost irrational to skip. */}
+      <section className="px-6 py-16">
+        <div className="max-w-3xl mx-auto">
+          <div className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-8 md:p-12 text-center relative overflow-hidden">
+            {/* Soft glow */}
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-emerald-500/10 blur-[100px] pointer-events-none" />
+            <div className="relative">
+              <div className="inline-block bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
+                The 100-lead guarantee
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black leading-tight mb-6">
+                100 qualified leads in 90 days.<br />
+                <span className="text-emerald-300">Or we work free until you hit it.</span>
+              </h2>
+              <p className="text-slate-300 text-lg leading-relaxed mb-6 max-w-2xl mx-auto">
+                If by Day 90 the system hasn&apos;t generated <strong className="text-white">100 qualified leads</strong> for your business, we don&apos;t walk away — we keep running ads, keep optimizing, keep emailing, keep texting, keep iterating. <strong className="text-white">At zero additional cost.</strong> Until you hit the number.
+              </p>
+              <p className="text-slate-400 text-base leading-relaxed max-w-2xl mx-auto mb-8">
+                We can promise this because the system pays us back through the customer LTV you make from the leads. Hitting the number is in our interest, not just yours. Most agencies refuse to attach a number to their work. We bet $9,700 on ours.
+              </p>
+              <div className="grid sm:grid-cols-3 gap-4 mt-8 text-left">
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">What counts as qualified</div>
+                  <p className="text-sm text-slate-300">A real human who fits your ICP and has either booked a call, replied, or converted on a form.</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">No fine print</div>
+                  <p className="text-sm text-slate-300">Threshold + definition written into the service agreement before you pay a cent.</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">Why we can offer it</div>
+                  <p className="text-sm text-slate-300">When the system works, you become a long-term retainer customer. We&apos;re aligned.</p>
+                </div>
+              </div>
+              <Link
+                href="/agency/apply"
+                className="inline-flex items-center justify-center gap-2 mt-10 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+              >
+                Apply for the system →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ ───────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 max-w-3xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-10">Common questions</h2>
@@ -279,20 +408,22 @@ export default function AgencyPage() {
             Build the loop once. Let it run.
           </h2>
           <p className="text-slate-400 text-lg mb-8">
-            Get a free audit of your current website and marketing. No pitch, no obligation. Ben shows you exactly what the self-learning system would look like for your specific business — and what it would cost you to keep doing things the old way.
+            $9,700 one-time. 100 qualified leads in 90 days, guaranteed — or we
+            work free until you hit it. 8-question fit check first; if
+            we&apos;re not right for you, Ben will tell you on the spot.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/audit"
-              className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(14,165,233,0.3)]"
+              href="/agency/apply"
+              className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(139,92,246,0.4)]"
             >
-              Get my free audit →
+              Apply for the system →
             </Link>
             <Link
-              href="/agency/apply"
-              className="border border-violet-500/50 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
+              href="/audit"
+              className="border border-white/15 bg-white/5 hover:bg-white/10 text-slate-200 font-semibold px-8 py-4 rounded-xl text-lg transition-all"
             >
-              Apply for the system
+              Or get a free audit first
             </Link>
           </div>
           <p className="text-xs text-slate-500 mt-4">

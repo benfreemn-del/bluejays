@@ -60,23 +60,29 @@ export default function AgencySection() {
             </span>
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-5">
-              The system manages itself.{" "}
+              100 qualified leads in 90 days.{" "}
               <span
                 className="bg-clip-text text-transparent"
                 style={{ backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #c4b5fd 100%)" }}
               >
-                Your funnel gets smarter every week.
+                Or we work free until you hit it.
               </span>
             </h2>
 
             <p className="text-white/50 text-lg leading-relaxed mb-8 max-w-lg">
-              Agencies run campaigns manually — same playbook, every client, forever. BlueJays builds a self-learning AI loop: every ad click, email open, and form fill feeds data back in, tightening the funnel automatically. No account manager needed. No weekly check-ins. The machine does it.
+              A self-learning AI marketing system — ads, site, email, SMS, voicemail — built custom for your business and tightening every week without anyone touching it. We bet the engagement on a number. Most agencies refuse to.
             </p>
 
-            {/* Price callout */}
-            <div className="flex flex-wrap items-baseline gap-2 mb-8 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06]">
-              <span className="text-white/40 text-sm line-through">$36,000+/year agency fees</span>
-              <span className="text-white font-extrabold text-xl md:text-2xl">One-time from $9,700</span>
+            {/* Price + guarantee callout */}
+            <div className="flex flex-col gap-2 mb-8">
+              <div className="flex flex-wrap items-baseline gap-2 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] w-fit">
+                <span className="text-white/40 text-sm line-through">$36,000+/yr agency fees</span>
+                <span className="text-white font-extrabold text-xl md:text-2xl">$9,700 one-time</span>
+              </div>
+              <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.08] w-fit max-w-full">
+                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Guaranteed</span>
+                <span className="text-white/70 text-sm">100 qualified leads in 90 days — or we work free</span>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
