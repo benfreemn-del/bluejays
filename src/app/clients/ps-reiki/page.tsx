@@ -569,37 +569,56 @@ export default function PsReikiPage() {
         </div>
       </section>
 
-      {/* ── HERO IMAGE BAND ──────────────────────────────────────── */}
-      {/* Calm energy-healing aesthetic to anchor the brand visually
-          after the all-text hero. Captioned to describe what the
-          practice feels like ("the kind of stillness that arrives") —
-          honest framing while adding visual warmth. Replace with a
-          real treatment-room or session photo from Pratima. */}
+      {/* ── HERO BAND — gradient with breathing lotus ───────────── */}
+      {/* Replaced stock-photo hero band (2026-05-01) with a decorative
+          gradient + animated breathing lotus pattern. Same reason as
+          the two-up cards below: Unsplash IDs kept resolving to wrong
+          content. Pure gradient is on-brand for the ethereal aesthetic
+          and impossible to break. */}
       <section className="relative px-6 -mt-6 md:-mt-10">
         <div className="max-w-6xl mx-auto">
           <div
-            className="relative rounded-3xl overflow-hidden"
-            style={{ aspectRatio: "21 / 9", boxShadow: "0 12px 40px rgba(200, 134, 126, 0.18)" }}
+            className="relative rounded-3xl overflow-hidden flex items-end p-8 md:p-12"
+            style={{
+              aspectRatio: "21 / 9",
+              background: `linear-gradient(135deg, ${ROSE} 0%, ${LAVENDER} 50%, ${GOLD} 100%)`,
+              boxShadow: "0 12px 40px rgba(200, 134, 126, 0.25)",
+            }}
           >
-            <img
-              src={STOCK_HEALING_HANDS}
-              alt="The kind of stillness that arrives during a Reiki session"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `linear-gradient(180deg, transparent 40%, rgba(42, 31, 46, 0.55) 100%)`,
-              }}
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            {/* Decorative breathing lotus + concentric energy rings */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  className="absolute rounded-full border border-white"
+                  style={{
+                    width: 150 + i * 80,
+                    height: 150 + i * 80,
+                    opacity: 0.20 - i * 0.025,
+                  }}
+                  animate={{ scale: [1, 1.08, 1] }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    delay: i * 0.4,
+                    ease: "easeInOut",
+                  }}
+                />
+              ))}
+              <FlowerLotus size={84} weight="duotone" className="text-white relative z-10" style={{ opacity: 0.92 }} />
+            </div>
+            {/* Caption — bottom-left */}
+            <div className="relative z-10 max-w-md">
               <p
                 className="text-xs uppercase tracking-[0.25em] font-bold mb-2"
-                style={{ color: "#f4d4ce" }}
+                style={{ color: "rgba(255, 255, 255, 0.85)" }}
               >
                 Northern Virginia · By appointment
               </p>
-              <p className="text-white text-lg md:text-xl font-semibold max-w-md" style={{ fontFamily: "Georgia, serif" }}>
+              <p
+                className="text-white text-xl md:text-2xl font-semibold"
+                style={{ fontFamily: "Georgia, serif" }}
+              >
                 Hands-on, fully clothed, with sound bowls in the background.
               </p>
             </div>
@@ -798,66 +817,105 @@ export default function PsReikiPage() {
         </div>
       </SectionReveal>
 
-      {/* ── IMAGE BAND — tools of the practice ──────────────────── */}
-      {/* Two-up image band between "What to expect" and "Stories from
-          the table." Captioned to describe what each tool actually does
-          in a Reiki session (sound bowls + crystals). Replace with
+      {/* ── DECORATIVE BAND — gradient cards, no photos ─────────── */}
+      {/* Replaced two-up stock-photo band with icon-based gradient cards
+          (2026-05-01) after Unsplash IDs kept resolving to wrong content
+          (foot reflexology instead of singing bowls, fitness yoga
+          instead of serene space, broken 404 URLs). Icons + soft
+          gradients are zero-risk visually + match the ethereal brand
+          aesthetic better than literal stock photos anyway. Swap to
           real photos from Pratima's space when she sends them. */}
       <SectionReveal className="relative px-6 py-20 md:py-24">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5">
+          {/* Sound + crystal therapy card */}
           <motion.div variants={fadeUp}>
             <div
-              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px]"
-              style={{ boxShadow: "0 8px 24px rgba(200, 134, 126, 0.15)" }}
+              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px] flex flex-col justify-end p-8 md:p-10"
+              style={{
+                background: `linear-gradient(135deg, ${ROSE} 0%, ${LAVENDER} 60%, ${GOLD} 100%)`,
+                boxShadow: "0 8px 24px rgba(200, 134, 126, 0.20)",
+              }}
             >
-              <img
-                src={STOCK_CRYSTAL_BOWLS}
-                alt="Singing bowls and crystals — tools used during sessions"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(180deg, transparent 50%, rgba(42, 31, 46, 0.65) 100%)`,
-                }}
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
+              {/* Decorative concentric rings — sound waves */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
+                {[0, 1, 2, 3].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute rounded-full border-2 border-white"
+                    style={{
+                      width: 120 + i * 60,
+                      height: 120 + i * 60,
+                    }}
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.15, 0.4] }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      delay: i * 0.5,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
+              </div>
+              {/* Center icon */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+                <WaveSine size={56} weight="duotone" className="text-white" style={{ opacity: 0.95 }} />
+              </div>
+              {/* Caption */}
+              <div className="relative z-10">
                 <p
-                  className="text-xs uppercase tracking-[0.25em] font-bold mb-1.5"
-                  style={{ color: "#f4d4ce" }}
+                  className="text-xs uppercase tracking-[0.25em] font-bold mb-2"
+                  style={{ color: "rgba(255, 255, 255, 0.85)" }}
                 >
                   Sound + crystal therapy
                 </p>
-                <p className="text-white text-lg font-semibold" style={{ fontFamily: "Georgia, serif" }}>
+                <p
+                  className="text-white text-xl md:text-2xl font-semibold leading-snug"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
                   The bowls do half the work — they bypass thinking entirely.
                 </p>
               </div>
             </div>
           </motion.div>
+
+          {/* After the session card */}
           <motion.div variants={fadeUp}>
             <div
-              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px]"
-              style={{ boxShadow: "0 8px 24px rgba(200, 134, 126, 0.15)" }}
+              className="relative rounded-3xl overflow-hidden h-72 md:h-[420px] flex flex-col justify-end p-8 md:p-10"
+              style={{
+                background: `linear-gradient(135deg, ${LAVENDER} 0%, ${SAGE} 60%, ${ROSE} 100%)`,
+                boxShadow: "0 8px 24px rgba(155, 139, 181, 0.20)",
+              }}
             >
-              <img
-                src={STOCK_QUIET_SPACE}
-                alt="A serene space — what most clients describe afterwards"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(180deg, transparent 50%, rgba(42, 31, 46, 0.65) 100%)`,
-                }}
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
+              {/* Decorative breathing circle */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <motion.div
+                  className="rounded-full"
+                  style={{
+                    width: 240,
+                    height: 240,
+                    background: "radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%)",
+                  }}
+                  animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0.3, 0.6] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </div>
+              {/* Center icon */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+                <FlowerLotus size={56} weight="duotone" className="text-white" style={{ opacity: 0.95 }} />
+              </div>
+              {/* Caption */}
+              <div className="relative z-10">
                 <p
-                  className="text-xs uppercase tracking-[0.25em] font-bold mb-1.5"
-                  style={{ color: "#f4d4ce" }}
+                  className="text-xs uppercase tracking-[0.25em] font-bold mb-2"
+                  style={{ color: "rgba(255, 255, 255, 0.85)" }}
                 >
                   After the session
                 </p>
-                <p className="text-white text-lg font-semibold" style={{ fontFamily: "Georgia, serif" }}>
+                <p
+                  className="text-white text-xl md:text-2xl font-semibold leading-snug"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
                   Most people walk out lighter than they&apos;ve been in months.
                 </p>
               </div>
