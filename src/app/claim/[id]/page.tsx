@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import SmartSocialProof from "@/components/SmartSocialProof";
 import ExitIntentModal from "@/components/claim/ExitIntentModal";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 /**
  * CLAIM PAGE — Conversion-Optimized Layout
@@ -239,22 +240,14 @@ export default function ClaimPage() {
       const urlPlan = new URLSearchParams(window.location.search).get("plan");
       const plan = planOverride || urlPlan || "full";
 
-      // Capture UTM params from the URL the prospect arrived on (set by
-      // every outreach email/SMS/postcard via addUtm in src/lib/utm.ts)
-      // and forward to the checkout API. The API persists them on the
-      // prospect (`last_utm_*` columns) AND attaches them to the Stripe
+      // Capture attribution — utm_*, gclid, fbclid, msclkid, ttclid +
+      // referrer. Stored on first page load, survives internal nav +
+      // 30-day return visits. Set by every outreach email/SMS/postcard
+      // via addUtm in src/lib/utm.ts. Forwarded to the checkout API,
+      // which persists `last_utm_*` columns AND attaches to the Stripe
       // Checkout Session metadata so the `paid` webhook event can tie
       // the conversion back to the touch that drove it.
-      const sp = new URLSearchParams(window.location.search);
-      const utm: Record<string, string> = {};
-      const utmSource = sp.get("utm_source");
-      const utmMedium = sp.get("utm_medium");
-      const utmCampaign = sp.get("utm_campaign");
-      const utmContent = sp.get("utm_content");
-      if (utmSource) utm.utm_source = utmSource;
-      if (utmMedium) utm.utm_medium = utmMedium;
-      if (utmCampaign) utm.utm_campaign = utmCampaign;
-      if (utmContent) utm.utm_content = utmContent;
+      const utm = getAttributionForSubmit();
 
       const res = await fetch("/api/checkout/create", {
         method: "POST",

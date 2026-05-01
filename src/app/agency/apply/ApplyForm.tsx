@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/RetargetingPixels";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 // 3-step wizard for the agency_applications qualifying form.
 //
@@ -186,18 +187,21 @@ export default function ApplyForm() {
     setStatus({ kind: "submitting" });
 
     try {
-      const search = new URLSearchParams(window.location.search);
-      const utm = {
-        utm_source: search.get("utm_source") || "",
-        utm_medium: search.get("utm_medium") || "",
-        utm_campaign: search.get("utm_campaign") || "",
-        utm_referrer: document.referrer || "",
+      // Stored attribution survives internal navigation + 30-day return
+      // visits, captures gclid/fbclid/msclkid in addition to utm_*.
+      const utm = getAttributionForSubmit();
+      // Legacy fields kept for backwards compatibility with the API:
+      const legacyUtm = {
+        utm_source: utm.utm_source || "",
+        utm_medium: utm.utm_medium || "",
+        utm_campaign: utm.utm_campaign || "",
+        utm_referrer: utm.referrer || "",
       };
 
       const res = await fetch("/api/agency/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, ...utm }),
+        body: JSON.stringify({ ...form, ...legacyUtm, attribution: utm }),
       });
 
       const json = (await res.json().catch(() => ({}))) as {

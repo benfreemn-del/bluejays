@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import FloatingAuditCTA from "@/components/FloatingAuditCTA";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import RetargetingPixels from "@/components/RetargetingPixels";
+import AttributionCapture from "@/components/AttributionCapture";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -135,6 +137,13 @@ export default function RootLayout({
             any page (audit form, claim flow, get-started, etc.) — not just
             the homepage. Self-gates on env vars + ?embed=1. */}
         <RetargetingPixels />
+        {/* Captures utm_*, gclid, fbclid, msclkid, ttclid + referrer to
+            localStorage on every route so lead forms can read attribution
+            even after internal navigation. First-touch wins, 30-day TTL.
+            Suspense wrapper required because useSearchParams is async. */}
+        <Suspense fallback={null}>
+          <AttributionCapture />
+        </Suspense>
         {/* Floating audit-CTA pill — appears top-right on homepage + V2
             showcases + /templates. Self-gates via usePathname(). Lead-
             magnet entry point for warm-but-not-ready portfolio visitors. */}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/RetargetingPixels";
 import { readPartnerRefCookie } from "@/components/PartnerRefCapture";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 const CATEGORIES = [
   ["dental", "Dental"],
@@ -71,7 +72,11 @@ export default function AuditForm() {
           businessName: businessName.trim() || undefined,
           biggestFrustration: biggestFrustration.trim() || undefined,
           timeline: timeline || undefined,
-          utm: parseUtmFromQuery(),
+          // Attribution captured on FIRST page load (utm_*, gclid, fbclid,
+          // msclkid, ttclid, referrer). Survives internal navigation +
+          // 30-day return visits. parseUtmFromQuery is the legacy live-URL
+          // fallback in case localStorage is disabled.
+          utm: { ...parseUtmFromQuery(), ...getAttributionForSubmit() },
           // Forward partner-referral cookie value so the server can
           // attribute this prospect to a partner (90-day window). Read
           // from `bj_partner_ref` cookie set by PartnerRefCapture.

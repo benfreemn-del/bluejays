@@ -15,6 +15,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { getAttributionForSubmit } from "@/lib/attribution";
 
 const STORAGE_KEY = "bj_exit_intent_dismissed_v1";
 const SESSION_KEY = "bj_exit_intent_shown_session";
@@ -111,7 +112,11 @@ export default function ExitIntentPopup() {
       const res = await fetch("/api/audit/exit-intent-capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), source: "exit_intent" }),
+        body: JSON.stringify({
+          email: email.trim(),
+          source: "exit_intent",
+          utm: getAttributionForSubmit(),
+        }),
       });
       // Even if the endpoint doesn't exist yet, treat any 200/2xx as success
       // and any non-2xx as silent capture (we'll log in console for debug).
