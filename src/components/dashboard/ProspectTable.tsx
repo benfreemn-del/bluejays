@@ -683,9 +683,32 @@ export default function ProspectTable({
                           $$$
                         </span>
                       )}
-                      {prospect.source === "inbound" && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30">Inbound</span>
-                      )}
+                      {prospect.source === "inbound" && (() => {
+                        // Show the date + hour the inbound lead landed.
+                        // Pacific time because Ben + Sarah work from there
+                        // and the audit-form scrub happens against PT
+                        // business hours elsewhere in the codebase.
+                        // Format: "Apr 30 · 2pm" — short, scannable, fits
+                        // in the same row height as the existing pill.
+                        const d = new Date(prospect.createdAt);
+                        const stamp = isNaN(d.getTime())
+                          ? ""
+                          : d.toLocaleString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              hour12: true,
+                              timeZone: "America/Los_Angeles",
+                            });
+                        return (
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30"
+                            title={`Inbound lead — arrived ${d.toLocaleString(undefined, { timeZone: "America/Los_Angeles" })} PT`}
+                          >
+                            Inbound{stamp ? ` · ${stamp}` : ""}
+                          </span>
+                        );
+                      })()}
                       {prospect.createdAt !== prospect.updatedAt && prospect.status === "scouted" && prospect.source !== "inbound" && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-medium">Re-scouted</span>
                       )}

@@ -200,6 +200,29 @@ export default function LeadPage() {
             <span className="text-border">/</span>
             <h1 className="font-bold">{prospect.businessName}</h1>
             <StatusBadge status={prospect.status} />
+            {prospect.source === "inbound" && (() => {
+              // Match the leads-table inbound stamp — date + hour Pacific.
+              // Helps Ben triage hot/cold inbounds at a glance and is
+              // critical for the 1-business-day SLA on the agency funnel.
+              const d = new Date(prospect.createdAt);
+              const stamp = isNaN(d.getTime())
+                ? ""
+                : d.toLocaleString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    hour12: true,
+                    timeZone: "America/Los_Angeles",
+                  });
+              return (
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30"
+                  title={`Inbound lead — arrived ${d.toLocaleString(undefined, { timeZone: "America/Los_Angeles" })} PT`}
+                >
+                  Inbound{stamp ? ` · ${stamp}` : ""}
+                </span>
+              );
+            })()}
           </div>
           <div className="flex gap-2">
             {/* Current website — surface in the sticky header so it's
