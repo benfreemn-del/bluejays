@@ -708,7 +708,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
                 <GlassCard key={i} className="p-6 text-center group hover:border-opacity-40 transition-all duration-300">
                   {/* Portrait â€” object-top keeps faces from being cropped at the forehead */}
                   <div
-                    className="w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden border-2 relative"
+                    className="w-32 h-32 mx-auto mb-5 rounded-2xl overflow-hidden border-2 relative"
                     style={{ borderColor: `${ACCENT}66` }}
                   >
                     {member.photo ? (
