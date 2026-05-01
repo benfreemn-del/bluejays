@@ -97,12 +97,19 @@ export default function ProspectTable({
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 100;
   const [liveOnly, setLiveOnly] = useState(false);
+  // Inbound = prospect.source === "inbound" (audit-form submitters,
+  // Calendly bookings, partner referrals — anyone who came TO us
+  // rather than us scouting them). Tracked separately from status
+  // because the audit-lead → ready-to-review → claimed pipeline is
+  // already its own status flow; "inbound" is about origin, not stage.
+  const [inboundOnly, setInboundOnly] = useState(false);
 
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     if (!statusFilter && p.status === "dismissed") return false;
     if (liveOnly && !p.siteLiveAt) return false;
+    if (inboundOnly && p.source !== "inbound") return false;
     return true;
   });
 
@@ -110,7 +117,7 @@ export default function ProspectTable({
   const paginatedFiltered = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   // Reset to page 1 when filters change
-  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, liveOnly]);
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, liveOnly, inboundOnly]);
 
   const isSelected = (id: string) => selectedIds.includes(id);
 
@@ -448,6 +455,23 @@ export default function ProspectTable({
         >
           ✓ Live Sites
           {liveOnly && (
+            <span className="text-xs opacity-70">(on)</span>
+          )}
+        </button>
+        {/* Inbound filter — surfaces leads who came TO us (audit form,
+            Calendly, partner referral) rather than ones we scouted.
+            Amber to match the inbound row badges. */}
+        <button
+          onClick={() => setInboundOnly((v) => !v)}
+          className={
+            inboundOnly
+              ? "h-10 px-3 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-300 text-sm font-medium flex items-center gap-1.5 cursor-pointer shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+              : "h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-sm text-muted hover:text-foreground hover:border-white/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+          }
+          title="Show only inbound leads (audit-form submitters, Calendly bookings, partner referrals)"
+        >
+          📥 Inbound
+          {inboundOnly && (
             <span className="text-xs opacity-70">(on)</span>
           )}
         </button>
