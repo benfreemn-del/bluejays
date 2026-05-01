@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Self-Learning Funnel Infographic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .card {
+    width: 1080px;
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-radius: 24px;
+    overflow: hidden;
+    font-family: 'Barlow', sans-serif;
+    position: relative;
+  }
+
+  /* ── noise texture overlay ── */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #111 0%, #1a1200 100%);
+    border-bottom: 1px solid #2a1f00;
+    padding: 52px 64px 44px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f59e0b18;
+    border: 1px solid #f59e0b44;
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .eyebrow-dot {
+    width: 7px; height: 7px;
+    background: #f59e0b;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 72px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .headline span {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subhead {
+    color: #6b7280;
+    font-size: 18px;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  /* ── COMPARISON ── */
+  .compare-section {
+    padding: 48px 64px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: center;
+  }
+
+  .compare-col {
+    border-radius: 16px;
+    padding: 32px 28px;
+  }
+
+  .compare-col.agency {
+    background: #0f0f0f;
+    border: 1px solid #1f1f1f;
+  }
+
+  .compare-col.ai {
+    background: #0d1500;
+    border: 1px solid #1a3300;
+  }
+
+  .compare-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap-6px: 0;
+    gap: 8px;
+  }
+
+  .compare-label.agency { color: #6b7280; }
+  .compare-label.ai { color: #84cc16; }
+
+  .compare-label-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .compare-label.agency .compare-label-badge {
+    background: #1f1f1f;
+    color: #9ca3af;
+  }
+
+  .compare-label.ai .compare-label-badge {
+    background: #1a3300;
+    color: #84cc16;
+  }
+
+  .compare-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  .compare-col.agency .compare-title { color: #9ca3af; }
+  .compare-col.ai .compare-title { color: #fff; }
+
+  .compare-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .compare-item .icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 14px;
+  }
+
+  .compare-col.agency .compare-item { color: #6b7280; }
+  .compare-col.ai .compare-item { color: #d1fae5; }
+
+  .compare-price {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .compare-col.agency .compare-price {
+    background: #1f1f1f;
+    color: #ef4444;
+  }
+
+  .compare-col.ai .compare-price {
+    background: #1a3300;
+    color: #84cc16;
+  }
+
+  .vs-badge {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: #000;
+    margin: 0 16px;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #2a2a2a 20%, #2a2a2a 80%, transparent);
+    margin: 0 64px;
+  }
+
+  /* ── FUNNEL STEPS ── */
+  .funnel-section {
+    padding: 48px 64px 44px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .section-sub {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 0;
+  }
+
+  .step {
+    background: #111;
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .step-1::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .step-2::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .step-3::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .step-4::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .step-5::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+  .step-6::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+
+  .step-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #374151;
+    margin-bottom: 10px;
+  }
+
+  .step-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .step-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.45;
+  }
+
+  .step-learns {
+    margin-top: 12px;
+    padding: 8px 10px;
+    background: #0d1500;
+    border: 1px solid #1a2a00;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #84cc16;
+    font-weight: 500;
+  }
+
+  /* ── LEARN LOOP ── */
+  .learn-section {
+    padding: 0 64px 48px;
+  }
+
+  .learn-box {
+    background: linear-gradient(135deg, #0d1a00, #001a0d);
+    border: 1px solid #1a3300;
+    border-radius: 16px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .learn-icon {
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .learn-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .learn-title span { color: #84cc16; }
+
+  .learn-desc {
+    color: #9ca3af;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .learn-stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  .learn-stat {
+    text-align: center;
+  }
+
+  .learn-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: #84cc16;
+    line-height: 1;
+  }
+
+  .learn-stat-label {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #050505;
+    border-top: 1px solid #1a1a1a;
+    padding: 24px 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #f59e0b;
+    letter-spacing: -0.01em;
+  }
+
+  .footer-brand span { color: #fff; }
+
+  .footer-cta {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .footer-handle {
+    color: #374151;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+<div class="content">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      The Future of Lead Generation
+    </div>
+    <div class="headline">
+      Your Agency<br>Is <span>Robbing You</span>
+    </div>
+    <p class="subhead">
+      You're paying $5,000/month for the same strategy they give every client.
+      What if your marketing got smarter on its own — every single month?
+    </p>
+  </div>
+
+  <!-- COMPARISON -->
+  <div class="compare-section">
+
+    <div class="compare-col agency">
+      <div class="compare-label agency">
+        <span>The Old Way</span>
+        <span class="compare-label-badge">AGENCY</span>
+      </div>
+      <div class="compare-title">Cookie-Cutter Strategy</div>
+      <div class="compare-item">
+        <span class="icon">✗</span>
+        <span>$3,000–$8,000/month forever — even when results plateau</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✗</span>
+        <span>Same playbook copy-pasted across 50+ clients</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✗</span>
+        <span>Junior reps who rotate every 6 months</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✗</span>
+        <span>You own nothing — cancel and start from zero</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✗</span>
+        <span>Strategy gets stale, never adapts to your real data</span>
+      </div>
+      <div class="compare-price">$48,000+ per year. Forever.</div>
+    </div>
+
+    <div class="vs-badge">VS</div>
+
+    <div class="compare-col ai">
+      <div class="compare-label ai">
+        <span>The New Way</span>
+        <span class="compare-label-badge">AI FUNNEL</span>
+      </div>
+      <div class="compare-title">Self-Learning System</div>
+      <div class="compare-item">
+        <span class="icon">✓</span>
+        <span>One setup fee — built custom for your business</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✓</span>
+        <span>Learns from YOUR customers, not a generic template</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✓</span>
+        <span>Gets smarter every month — compounds over time</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✓</span>
+        <span>You own it. Cancel the $100/month support anytime.</span>
+      </div>
+      <div class="compare-item">
+        <span class="icon">✓</span>
+        <span>AI tests, adapts, and improves — 24 hours a day</span>
+      </div>
+      <div class="compare-price">One setup. Yours to keep. Forever.</div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FUNNEL STEPS -->
+  <div class="funnel-section">
+    <div class="section-label">How It Works</div>
+    <div class="section-title">The 6-Channel Self-Learning Loop</div>
+    <p class="section-sub">Every channel feeds data back into the system. The more it runs, the better it gets. No agency required.</p>
+
+    <div class="steps">
+
+      <div class="step step-1">
+        <div class="step-num">STEP 01</div>
+        <span class="step-icon">🎯</span>
+        <div class="step-name">Targeted Outreach</div>
+        <div class="step-desc">AI scouts your ideal customer profile using Google Places + public data. No cold list buying.</div>
+        <div class="step-learns">Learns: who responds, who ignores</div>
+      </div>
+
+      <div class="step step-2">
+        <div class="step-num">STEP 02</div>
+        <span class="step-icon">📧</span>
+        <div class="step-name">Email + SMS Funnel</div>
+        <div class="step-desc">7-touch personalized sequence. AI writes and A/B tests subject lines automatically each cycle.</div>
+        <div class="step-learns">Learns: best send times, top openers</div>
+      </div>
+
+      <div class="step step-3">
+        <div class="step-num">STEP 03</div>
+        <span class="step-icon">📞</span>
+        <div class="step-name">Voicemail Drops</div>
+        <div class="step-desc">Ringless voicemail on Day 2 and Day 18. Personal tone, no robocall feel. Compliant by default.</div>
+        <div class="step-learns">Learns: which scripts get callbacks</div>
+      </div>
+
+      <div class="step step-4">
+        <div class="step-num">STEP 04</div>
+        <span class="step-icon">🌐</span>
+        <div class="step-name">Premium Website</div>
+        <div class="step-desc">Custom-built site with trust badges, live comparison tables, and a built-in lead capture quiz.</div>
+        <div class="step-learns">Learns: which pages convert best</div>
+      </div>
+
+      <div class="step step-5">
+        <div class="step-num">STEP 05</div>
+        <span class="step-icon">⭐</span>
+        <div class="step-name">Review Engine</div>
+        <div class="step-desc">5-star filter funnels happy customers to Google. Negative reviews go to your inbox privately.</div>
+        <div class="step-learns">Learns: who your promoters are</div>
+      </div>
+
+      <div class="step step-6">
+        <div class="step-num">STEP 06</div>
+        <span class="step-icon">🔁</span>
+        <div class="step-name">Retargeting Loop</div>
+        <div class="step-desc">Meta + Google pixels track every visitor. Warm leads see your brand again across every platform.</div>
+        <div class="step-learns">Learns: highest-intent audience segments</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SELF-LEARNING BOX -->
+  <div class="learn-section">
+    <div class="learn-box">
+      <div class="learn-icon">🧠</div>
+      <div style="flex:1">
+        <div class="learn-title">The <span>Compounding Advantage</span></div>
+        <div class="learn-desc">
+          Every email opened, every reply received, every lead converted — it all feeds back in. Month 3 outperforms Month 1 automatically.
+          An agency's strategy gets stale. This one gets sharper.
+        </div>
+      </div>
+      <div class="learn-stats">
+        <div class="learn-stat">
+          <div class="learn-stat-num">3×</div>
+          <div class="learn-stat-label">Better results<br>by Month 3</div>
+        </div>
+        <div class="learn-stat">
+          <div class="learn-stat-num">24/7</div>
+          <div class="learn-stat-label">Always<br>Running</div>
+        </div>
+        <div class="learn-stat">
+          <div class="learn-stat-num">0</div>
+          <div class="learn-stat-label">Agencies<br>Needed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand">Blue<span>Jays</span> · AI Marketing Systems</div>
+    <div class="footer-cta">Get Your Free Audit → bluejayportfolio.com/audit</div>
+    <div class="footer-handle">@bluejays.ai</div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>
