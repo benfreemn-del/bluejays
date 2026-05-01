@@ -10,9 +10,9 @@ const BASE_URL = "https://bluejayportfolio.com";
 const V2_CATEGORIES = [
   "accounting", "appliance-repair", "auto-repair", "carpet-cleaning",
   "catering", "chiropractic", "church", "cleaning", "construction",
-  "daycare", "dental", "electrician", "event-planning", "fencing",
-  "fitness", "florist", "garage-door", "general-contractor", "hvac",
-  "insurance", "interior-design", "junk-removal", "landscaping",
+  "consulting", "daycare", "dental", "electrician", "event-planning",
+  "fencing", "fitness", "florist", "garage-door", "general-contractor",
+  "hvac", "insurance", "interior-design", "junk-removal", "landscaping",
   "law-firm", "locksmith", "martial-arts", "med-spa", "medical",
   "moving", "painting", "pest-control", "pet-services", "photography",
   "physical-therapy", "plumber", "pool-spa", "pressure-washing",

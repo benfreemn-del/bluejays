@@ -309,6 +309,14 @@ const CATEGORY_FALLBACK_IDS: Record<Category, Record<FallbackImageVariant, strin
     about: "1469571486292-0ba58a3f068b",
     gallery: "1517486808906-6ca8b3f04846",
   },
+  // Consulting (B2B technical advisory — battery, ML, security, ops).
+  // Lab/research/engineering imagery reads as "expertise" without
+  // committing to a single industry.
+  consulting: {
+    hero: "1581094288338-2314dddb7ece",     // lab equipment
+    about: "1518770660439-4636190af475",    // circuit board / tech detail
+    gallery: "1532187863486-abf9dbad1b69",  // engineer team at whiteboard
+  },
 };
 
 const VARIANT_DIMENSIONS: Record<FallbackImageVariant, { width: number; height: number }> = {

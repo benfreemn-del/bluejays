@@ -418,6 +418,10 @@ const CATEGORY_VOICE: Record<Category, CategoryVoice> = {
     tagline: (b, a) => `${b} is building a stronger ${a} community.`,
     aboutFill: (a) => `We serve ${a} families through advocacy, resources, and community programs.`,
   },
+  consulting: {
+    tagline: (b) => `${b} — the trusted technical advisor serious teams call when the stakes are real.`,
+    aboutFill: (a) => `We deliver expert consulting across ${a} — fixed-scope engagements, deep technical depth, and reports your investors and customers actually trust.`,
+  },
 };
 
 function getCategoryVoice(category: Category): CategoryVoice {

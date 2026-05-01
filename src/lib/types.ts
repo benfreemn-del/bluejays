@@ -45,7 +45,8 @@ export type Category =
   | "junk-removal"
   | "carpet-cleaning"
   | "event-planning"
-  | "non-profit";
+  | "non-profit"
+  | "consulting";
 
 export type SmsMethod = "twilio" | "vonage" | "mock";
 
@@ -337,4 +338,5 @@ export const CATEGORY_CONFIG: Record<
   "carpet-cleaning": { label: "Carpet Cleaning", accentColor: "#06b6d4", heroGradient: "linear-gradient(135deg, #0f1520 0%, #0a1018 100%)" },
   "event-planning": { label: "Event Planning", accentColor: "#f59e0b", heroGradient: "linear-gradient(135deg, #1a1520 0%, #120e18 100%)" },
   "non-profit": { label: "Non-Profit", accentColor: "#3AAFDB", heroGradient: "linear-gradient(135deg, #14283a 0%, #0e1c2a 100%)" },
+  consulting: { label: "Consulting", accentColor: "#1e40af", heroGradient: "linear-gradient(135deg, #0a1428 0%, #050a18 100%)" },
 };
