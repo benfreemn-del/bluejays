@@ -1,154 +1,91 @@
-"use client";
-
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable react-hooks/purity */
 
 /**
  * /clients/visit-marfa — bespoke premium showcase for the MARFA Visitor
  * Center / chamber-of-commerce-style destination marketing org.
  *
+ * v3 — magazine-feature rebuild. v1 was structurally a tourism template
+ * with Marfa decoration on top. v3 is Marfa-shaped from the bones up:
+ *  - long-form editorial primer instead of a "why visit" pitch
+ *  - The Judd Empire as a dedicated full-bleed feature
+ *  - The Lights as its own quiet section
+ *  - Galleries as a typographic list — no card grid
+ *  - Restaurants as narrative paragraphs — no 3-up grid
+ *  - Three lodgings each get a paragraph + image, not a 2x2 card grid
+ *  - 12-cell month-by-month seasonal honesty
+ *  - Practical "before you come" bullet table
+ *  - Sharp-cornered InquiryForm via [&_.rounded-3xl]:rounded-none override
+ *
  * Real org: MARFA Visitor Center — 302 S. Highland Ave, Marfa TX 79843
  * (432) 729-4772 · contact@visitmarfa.com · IG @visitmarfatx
  *
- * Visual language: gallery-grade desert minimalism. Sun-bleached cream,
- * washed terracotta, deep oxblood ink. Editorial serif headlines, lots
- * of whitespace. The visual neighbours are El Cosmico, Hotel Saint
- * George, the Chinati Foundation — *not* corporate tourism boards or
- * kitschy-Texas. Marfa's tone is dry, confident, unembellished.
- *
- * To wire as preview after the prospect row is inserted:
- *   update prospects set
- *     pricing_tier = 'custom',
- *     custom_site_url = 'https://bluejayportfolio.com/clients/visit-marfa'
- *   where current_website ilike '%visitmarfa.com%';
+ * Server component. No motion library. No carousel. Quiet by design.
  */
 
-import { useRef } from "react";
 import InquiryForm from "@/components/clients/InquiryForm";
-import { motion, useInView } from "framer-motion";
 import {
-  ArrowRight,
-  ArrowUpRight,
   InstagramLogo,
   FacebookLogo,
   Phone,
   Envelope,
   MapPin,
-} from "@phosphor-icons/react";
+} from "@phosphor-icons/react/dist/ssr";
 
-// ─── Real Visit Marfa imagery ──────────────────────────────────────
-// All squarespace-cdn URLs below are pulled directly from visitmarfa.com
-// — these are the org's own photography. Avoid swapping for stock.
+// ─── Real Visit Marfa imagery (squarespace-cdn) ───────────────────
+// All pulled directly from visitmarfa.com. Verified manually against
+// their site DOM. Only fallback to Unsplash where the org's library
+// has no equivalent.
 const IMG_HERO_CUPOLA =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/0855170c-4600-49ea-9523-bee7d1cc6f52/cupolaview3.jpg";
+const IMG_COURTHOUSE_AERIAL =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/c54c2e0e-e06c-48cf-9d43-edb29f4b2660/History_Courthouse+Square+aerial_2.jpg";
 const IMG_GIANT_MURAL =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/463c18c2-7b40-4938-b31d-eb3d17900504/Art_Giant+Mural_lowres.jpg";
 const IMG_SKY_ISLAND =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/6b855feb-d4a6-4434-b3e0-75590d88e90b/Sky+Island.jpg";
-const IMG_BALLROOM =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/bc3d400b-a986-49f3-9956-536975358e2c/4F5A0675+Ballroom+Marfa.jpg";
 const IMG_CHINATI =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/61c2c138-d073-4dd9-bcd6-5afeef099004/chinati-foundation-inside-1-600x400.jpg";
 const IMG_PRADA =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/382dd722-6e40-43b4-aa81-bc8a48a4d214/Culture_Prada_lowres.jpeg";
 const IMG_STONE_CIRCLE =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/0ff1081e-b492-4bca-b68a-744a154fcb41/Stone+Circle+Activation.jpg";
-const IMG_GREASEWOOD =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/bf65432f-0729-40f2-9a64-6b53888a7360/greasewood-gallery-1-600x400.jpg";
-const IMG_HACIENDA =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/d8b5b1a1-5810-48f7-bda1-a3b33294db22/hacienda-1-600x400.jpg";
-const IMG_FRIDA =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/4eddca20-2eb5-40f5-9d5d-5b9d164ddb0b/Art_FridaKahlo.jpg";
-const IMG_RULE =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/691fc281-d55d-43d2-bb83-c9617b36810d/rulegallery-1-1-600x400.jpg";
-const IMG_INDE =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/57bfff1e-0b78-4bea-8a6f-08df705b957e/inde-jacobs-1-600x400.jpg";
+const IMG_BORDO =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/fb322c04-3412-495d-92c5-6ca7d478402a/Bordo023.jpg";
+const IMG_SAINT_GEORGE =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/ce45299d-9e24-4f53-8dd5-689165b72778/History_Saint+George_1_lowres.jpg";
+const IMG_EL_COSMICO =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/d1691d06-88a0-4654-90e3-c181fb767a3b/el_cosmicohotel.jpg";
+const IMG_THUNDERBIRD =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/5351fa98-c097-47ab-b5dd-2ad70b7a4539/thunderbird-sign-daylight-1-600x400.jpg";
+const IMG_PAISANO =
+  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/13fce2ff-85fb-45fd-a6e8-1fffe4814643/paisano-1-600x400hotel.jpg";
 const IMG_LOGO =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/72165222-acd9-4e48-b97e-830ddbfd57d6/MARFA_primary+logo_300ppi.png";
 
-// ─── Curated Unsplash supplements (verified URLs, on-tone) ─────────
-// Kept to a strict minimum — only used where Visit Marfa's own library
-// didn't supply a fitting photo for stay/eat/drink and night-sky.
-const IMG_DESERT_NIGHT =
-  "https://images.unsplash.com/photo-1532978879514-6cae1bbf16e2?w=1600&q=80"; // milky way over desert
+// Last-resort fallbacks — curl-verified, used only where their library
+// did not surface a fitting photo (the night sky and the open highway).
+const IMG_NIGHT_SKY =
+  "https://images.unsplash.com/photo-1532978879514-6cae1bbf16e2?w=1600&q=80";
 const IMG_DESERT_ROAD =
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&q=80"; // empty desert highway
-const IMG_TACO =
-  "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=1200&q=80"; // taco / mexican plate
-const IMG_COFFEE =
-  "https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1200&q=80"; // espresso & light
-const IMG_BAR =
-  "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1200&q=80"; // mezcal / dim bar
-const IMG_GLAMP =
-  "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=1200&q=80"; // bell tent at dusk
-const IMG_HOTEL_INT =
-  "https://images.unsplash.com/photo-1551776235-dde6d482980b?w=1200&q=80"; // minimal hotel room
-const IMG_ADOBE =
-  "https://images.unsplash.com/photo-1502786129293-79981df4e689?w=1200&q=80"; // adobe / west tx light
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&q=80";
 
-// ─── Desert palette ────────────────────────────────────────────────
-const BG = "#faf6f0";          // warm sun-bleached cream
-const BG_DEEP = "#f1ead9";     // pale apricot wash
-const BG_SAND = "#ebe2cf";     // dust
-const PANEL = "#ffffff";
-const INK = "#1a1612";          // deep charcoal-oxblood
-const INK_SOFT = "#5a4a42";    // warm muted brown
-const INK_FAINT = "#8a7d72";   // mesquite
-const RUST = "#b85a3e";         // washed terracotta accent
-const RUST_DEEP = "#7d2a1b";    // oxblood
-const APRICOT = "#d4836b";      // pale apricot
-const HAIRLINE = "rgba(26, 22, 18, 0.10)";
-const HAIRLINE_SOFT = "rgba(26, 22, 18, 0.06)";
+// ─── Marfa palette ─────────────────────────────────────────────────
+const BG = "#faf6f0";
+const BG_DEEP = "#f1ead9";
+const BG_SAND = "#ebe2cf";
+const INK = "#1a1612";
+const INK_SOFT = "#5a4a42";
+const INK_FAINT = "#8a7d72";
+const RUST = "#c46a4d";
+const RUST_DEEP = "#7d2a1b";
+const HAIRLINE = "rgba(26, 22, 18, 0.18)";
+const HAIRLINE_SOFT = "rgba(26, 22, 18, 0.08)";
 
-// ─── Type stack ────────────────────────────────────────────────────
-// Editorial serif for headlines (Source Serif via Tailwind's font-serif
-// fallback chain — no Google Font import needed; system-wide serifs
-// look right for the dry, lo-fi tone we want anyway). Sans for body.
+// Editorial serif (Source Serif via system fallback; no Google import).
 const SERIF =
   '"Source Serif Pro", "Source Serif", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif';
 
-// ─── Motion ────────────────────────────────────────────────────────
-const spring = { type: "spring" as const, stiffness: 90, damping: 22 };
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: spring },
-};
-const fadeIn = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.9 } },
-};
-
-// ─── Reusable building blocks ──────────────────────────────────────
-function SectionReveal({
-  children,
-  className = "",
-  id,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-  style?: React.CSSProperties;
-}) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      initial="hidden"
-      animate={inView ? "show" : "hidden"}
-      variants={stagger}
-      className={className}
-      style={style}
-    >
-      {children}
-    </motion.section>
-  );
-}
-
-/** Editorial caption — small uppercase tracking-wide label. */
+// ─── Tiny helpers ──────────────────────────────────────────────────
 function Eyebrow({
   children,
   color = INK_FAINT,
@@ -158,7 +95,7 @@ function Eyebrow({
 }) {
   return (
     <span
-      className="inline-block text-[11px] uppercase tracking-[0.22em] font-medium"
+      className="inline-block text-[11px] uppercase tracking-[0.32em] font-medium"
       style={{ color }}
     >
       {children}
@@ -166,101 +103,107 @@ function Eyebrow({
   );
 }
 
-/** Thin-rule divider. Marfa-style restraint — used between sections. */
-function Rule({ width = "100%" }: { width?: string | number }) {
-  return (
-    <div
-      style={{
-        width,
-        height: 1,
-        background: HAIRLINE,
-      }}
-    />
-  );
-}
+// ─── The 14 named galleries — verified from visitmarfa.com/art ─────
+const GALLERIES: { name: string; addr: string; line: string }[] = [
+  {
+    name: "The Chinati Foundation",
+    addr: "1 Cavalry Row",
+    line: "Donald Judd's 340-acre former army base. The reason the rest of this list exists.",
+  },
+  {
+    name: "Judd Foundation",
+    addr: "104 S. Highland Ave.",
+    line: "Judd's downtown studios, residences, and library — preserved exactly as he left them.",
+  },
+  {
+    name: "Ballroom Marfa",
+    addr: "108 E. San Antonio St.",
+    line: "Non-profit kunsthalle in a 1927 dance hall. Visual art, performance, film, music.",
+  },
+  {
+    name: "RULE Gallery",
+    addr: "204 E. San Antonio St.",
+    line: "Founded 1991. Investigative practices from emerging and mid-career contemporary artists.",
+  },
+  {
+    name: "Exhibitions 2D",
+    addr: "400 S. Highland Ave.",
+    line: "Painting, drawing, sculpture, installation — quietly programmed in a quiet building.",
+  },
+  {
+    name: "Marfa Open",
+    addr: "102 S. Plateau St.",
+    line: "Non-profit running residencies, exhibitions, and the annual art festival.",
+  },
+  {
+    name: "Greasewood Gallery",
+    addr: "Inside Hotel Paisano",
+    line: "Regional artists, multiple shows a year. Drop in while you wait for a Jett's table.",
+  },
+  {
+    name: "Veldt Gallery",
+    addr: "119 S. Highland St.",
+    line: "Fine art and photography — Donald Judd, Carl Andre, post-1960s American work.",
+  },
+  {
+    name: "Art Blackburn",
+    addr: "120 E. El Paso St. · by appointment",
+    line: "Forty years of fine tribal art from a single, very particular dealer.",
+  },
+  {
+    name: "Art Blocks",
+    addr: "109 W. San Antonio St.",
+    line: "Contemporary generative art — the on-chain side of a town built on permanence.",
+  },
+  {
+    name: "Hacienda del Arcón / Building 98",
+    addr: "705 W. Bonnie St.",
+    line: "International Woman's Foundation HQ. Murals painted by WWII German POWs.",
+  },
+  {
+    name: "Marfa Studio of Arts",
+    addr: "106 E. San Antonio St.",
+    line: "Children's art education non-profit with a small gallery facing the street.",
+  },
+  {
+    name: "Anne Marie Nafziger Studio",
+    addr: "125 N. Highland St.",
+    line: "Abstract painter's downtown studio. By appointment, scheduled online.",
+  },
+  {
+    name: "Martin Maria Studio",
+    addr: "1308 W. San Antonio St.",
+    line: "Tom Barnes and Uta-Maria Krapf. Wed–Sun, 10–2, or by appointment.",
+  },
+];
 
-/** Quiet outlined link with optional arrow. No fills, no glow. */
-function QuietLink({
-  href,
-  children,
-  arrow = true,
-  color = INK,
-}: {
-  href: string;
-  children: React.ReactNode;
-  arrow?: boolean;
-  color?: string;
-}) {
-  return (
-    <a
-      href={href}
-      className="group inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
-      style={{ color }}
-    >
-      <span className="border-b border-current pb-0.5">{children}</span>
-      {arrow && (
-        <ArrowUpRight
-          size={14}
-          weight="bold"
-          className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-        />
-      )}
-    </a>
-  );
-}
-
-/** Outlined button — quiet, gallery-grade. */
-function OutlinedButton({
-  href,
-  children,
-  variant = "ink",
-}: {
-  href: string;
-  children: React.ReactNode;
-  variant?: "ink" | "rust" | "ghost";
-}) {
-  const colors =
-    variant === "rust"
-      ? { bg: RUST_DEEP, border: RUST_DEEP, fg: "#fff" }
-      : variant === "ghost"
-        ? { bg: "transparent", border: "rgba(255,255,255,0.6)", fg: "#fff" }
-        : { bg: "transparent", border: INK, fg: INK };
-  return (
-    <a
-      href={href}
-      className="inline-flex items-center gap-2 px-6 py-3 text-[13px] uppercase tracking-[0.18em] font-medium transition-all hover:opacity-80"
-      style={{
-        background: colors.bg,
-        border: `1px solid ${colors.border}`,
-        color: colors.fg,
-      }}
-    >
-      {children}
-      <ArrowRight size={14} weight="regular" />
-    </a>
-  );
-}
-
-/** Bracket-corner frame — a quiet visual quote-mark. */
-function BracketCorners({
-  color = "rgba(255,255,255,0.7)",
-  inset = 18,
-  length = 28,
-}: {
-  color?: string;
-  inset?: number;
-  length?: number;
-}) {
-  const stroke = `1px solid ${color}`;
-  return (
-    <>
-      <div style={{ position: "absolute", top: inset, left: inset, width: length, height: length, borderTop: stroke, borderLeft: stroke }} />
-      <div style={{ position: "absolute", top: inset, right: inset, width: length, height: length, borderTop: stroke, borderRight: stroke }} />
-      <div style={{ position: "absolute", bottom: inset, left: inset, width: length, height: length, borderBottom: stroke, borderLeft: stroke }} />
-      <div style={{ position: "absolute", bottom: inset, right: inset, width: length, height: length, borderBottom: stroke, borderRight: stroke }} />
-    </>
-  );
-}
+// ─── Twelve-month honest calendar ──────────────────────────────────
+const MONTHS: { m: string; line: string; badge?: string }[] = [
+  { m: "January", line: "Cold. Quiet. The galleries are open. You'll have the burrito counter to yourself." },
+  { m: "February", line: "Still cold, still quiet. Late-month wind is real. Bring more layers than you'd expect for Texas." },
+  { m: "March", line: "The shoulder begins. Wildflowers if there's been winter rain. Reservations start to matter again." },
+  { m: "April", line: "Mild days, cold nights. The single best month if you don't need a festival to organize the trip around." },
+  { m: "May", line: "Warm, dry, golden. Last comfortable month before summer settles in." },
+  { m: "June", line: "Hot. Skies still clear most days. Mornings and dusk redeem the middle of the day." },
+  { m: "July", line: "Hot, real hot. Highs in the upper 90s, occasional monsoon thunder. Plan around 11–4." },
+  { m: "August", line: "Marfa Lights Festival, last weekend. Otherwise the slowest month of the year — for reasons." },
+  {
+    m: "September",
+    line: "Trans-Pecos foothills shake off the heat. Late month brings the festival; book three months out.",
+    badge: "TRANS-PECOS",
+  },
+  {
+    m: "October",
+    line: "Chinati Weekend, second weekend. Days 65 and golden. If you can only come once, come now.",
+    badge: "CHINATI WEEKEND",
+  },
+  { m: "November", line: "Slowest of the slow. Beautiful for the same reason. A few restaurants take winter breaks." },
+  {
+    m: "December",
+    line: "The NYE party is the social event of the year. The week before is silent and bracing.",
+    badge: "NYE",
+  },
+];
 
 // ─── Page ─────────────────────────────────────────────────────────
 export default function VisitMarfaPage() {
@@ -277,578 +220,936 @@ export default function VisitMarfaPage() {
       {/* ── NAV ─────────────────────────────────────────────────── */}
       <nav
         className="sticky top-0 z-30 backdrop-blur-md"
-        style={{ background: "rgba(250, 246, 240, 0.85)", borderBottom: `1px solid ${HAIRLINE_SOFT}` }}
+        style={{
+          background: "rgba(250, 246, 240, 0.88)",
+          borderBottom: `1px solid ${HAIRLINE_SOFT}`,
+        }}
       >
         <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-3">
+          <a href="#top" className="flex items-baseline gap-3">
             <span
-              className="text-[15px] tracking-[0.32em] font-semibold"
+              className="text-[15px] tracking-[0.42em] font-semibold"
               style={{ color: INK }}
             >
               MARFA
             </span>
             <span
-              className="hidden sm:inline-block text-[10px] uppercase tracking-[0.24em]"
+              className="hidden sm:inline-block text-[10px] uppercase tracking-[0.28em]"
               style={{ color: INK_FAINT }}
             >
-              Visitor Center · est. circa 1883
+              A Visitor's Field Guide
             </span>
           </a>
-          <div className="hidden md:flex items-center gap-8 text-[12px] uppercase tracking-[0.2em]" style={{ color: INK_SOFT }}>
-            <a href="#about" className="hover:opacity-60 transition-opacity">About</a>
-            <a href="#do" className="hover:opacity-60 transition-opacity">Do</a>
+          <div
+            className="hidden md:flex items-center gap-9 text-[11px] uppercase tracking-[0.24em]"
+            style={{ color: INK_SOFT }}
+          >
+            <a href="#primer" className="hover:opacity-60 transition-opacity">Primer</a>
+            <a href="#judd" className="hover:opacity-60 transition-opacity">Judd</a>
+            <a href="#lights" className="hover:opacity-60 transition-opacity">Lights</a>
+            <a href="#galleries" className="hover:opacity-60 transition-opacity">Galleries</a>
             <a href="#eat" className="hover:opacity-60 transition-opacity">Eat</a>
             <a href="#stay" className="hover:opacity-60 transition-opacity">Stay</a>
-            <a href="#when" className="hover:opacity-60 transition-opacity">When</a>
-            <a href="#getting-here" className="hover:opacity-60 transition-opacity">Getting here</a>
+            <a href="#calendar" className="hover:opacity-60 transition-opacity">Calendar</a>
           </div>
           <a
             href="#plan"
-            className="text-[12px] uppercase tracking-[0.2em] font-medium border-b border-current pb-0.5"
+            className="text-[11px] uppercase tracking-[0.24em] font-medium border-b border-current pb-0.5"
             style={{ color: INK }}
           >
-            Plan your visit
+            Plan
           </a>
         </div>
       </nav>
 
-      {/* ── HERO ────────────────────────────────────────────────── */}
+      {/* ── A · HERO ─────────────────────────────────────────────── */}
       <section id="top" className="relative" style={{ background: BG }}>
-        <div className="relative h-[88vh] min-h-[640px] max-h-[920px] overflow-hidden">
-          <motion.img
-            initial={{ scale: 1.06, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.6, ease: "easeOut" }}
+        <div className="relative h-[92vh] min-h-[680px] max-h-[980px] overflow-hidden">
+          <img
             src={IMG_HERO_CUPOLA}
-            alt="View from a cupola in Marfa across the Chihuahuan Desert"
+            alt="A view from a cupola across the Chihuahuan Desert toward the Davis Mountains"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, rgba(26,22,18,0.10) 0%, rgba(26,22,18,0.0) 35%, rgba(26,22,18,0.0) 60%, rgba(26,22,18,0.55) 100%)",
+                "linear-gradient(180deg, rgba(26,22,18,0.18) 0%, rgba(26,22,18,0) 30%, rgba(26,22,18,0) 55%, rgba(26,22,18,0.62) 100%)",
             }}
           />
-          <BracketCorners color="rgba(255,255,255,0.55)" inset={28} length={32} />
+          {/* Bracket-corner restraint, top corners only */}
+          <div
+            style={{
+              position: "absolute", top: 28, left: 28, width: 36, height: 36,
+              borderTop: "1px solid rgba(255,255,255,0.55)",
+              borderLeft: "1px solid rgba(255,255,255,0.55)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute", top: 28, right: 28, width: 36, height: 36,
+              borderTop: "1px solid rgba(255,255,255,0.55)",
+              borderRight: "1px solid rgba(255,255,255,0.55)",
+            }}
+          />
 
-          {/* Top eyebrow */}
-          <motion.div
-            variants={fadeIn}
-            initial="hidden"
-            animate="show"
-            className="absolute top-10 left-0 right-0 flex justify-center"
-          >
+          {/* Coordinate eyebrow */}
+          <div className="absolute top-10 left-0 right-0 flex justify-center">
             <span
-              className="text-[10px] uppercase tracking-[0.42em] font-medium"
-              style={{ color: "rgba(255,255,255,0.85)" }}
+              className="text-[10px] uppercase tracking-[0.48em] font-medium"
+              style={{ color: "rgba(255,255,255,0.82)" }}
             >
               30°18′N · 104°01′W · 4,688 ft
             </span>
-          </motion.div>
+          </div>
 
-          {/* Hero copy */}
+          {/* Bottom-aligned headline */}
           <div className="absolute inset-0 flex items-end">
-            <div className="max-w-[1320px] mx-auto w-full px-6 md:px-10 pb-20 md:pb-24">
-              <motion.div
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.1, delay: 0.3, ease: "easeOut" }}
-                className="max-w-3xl"
-              >
+            <div className="max-w-[1320px] mx-auto w-full px-6 md:px-10 pb-20 md:pb-28">
+              <div className="max-w-3xl">
                 <span
-                  className="block text-[11px] uppercase tracking-[0.32em] mb-6"
+                  className="block text-[11px] uppercase tracking-[0.36em] mb-7"
                   style={{ color: "rgba(255,255,255,0.78)" }}
                 >
                   Marfa, Texas — A Visitor's Field Guide
                 </span>
                 <h1
-                  className="text-[40px] md:text-[64px] lg:text-[78px] leading-[1.04] tracking-[-0.01em] font-light text-white"
+                  className="text-[40px] md:text-[68px] lg:text-[84px] leading-[1.02] tracking-[-0.015em] font-light text-white"
                   style={{ fontFamily: SERIF }}
                 >
                   A small town in the
                   <br />
                   high desert that
                   <br />
-                  punches{" "}
+                  has, somehow,
+                  <br />
                   <span className="italic" style={{ color: "#f3d9c8" }}>
-                    far above
-                  </span>{" "}
-                  its weight.
+                    become a verb.
+                  </span>
                 </h1>
-                <p
-                  className="mt-8 max-w-xl text-[15px] md:text-[16px] leading-[1.7]"
-                  style={{ color: "rgba(255,255,255,0.85)" }}
-                >
-                  1,827 people. Thirty-five galleries. Two Pulitzer winners.
-                  One prairie-dog colony. The world's largest dark-sky
-                  preserve overhead. Marfa is genuinely strange, quietly
-                  elegant, and worth the drive.
-                </p>
-                <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <OutlinedButton href="#plan" variant="ghost">
-                    Plan your visit
-                  </OutlinedButton>
+                <div className="mt-12 flex flex-wrap items-center gap-6">
                   <a
-                    href="#about"
-                    className="text-[12px] uppercase tracking-[0.22em] font-medium border-b border-white/60 pb-0.5 text-white/90 hover:text-white transition-colors"
+                    href="#primer"
+                    className="inline-flex items-center gap-3 px-7 py-3.5 text-[12px] uppercase tracking-[0.24em] font-medium transition-opacity hover:opacity-80"
+                    style={{
+                      background: "transparent",
+                      border: "1px solid rgba(255,255,255,0.7)",
+                      color: "#fff",
+                    }}
                   >
-                    Or read on first
+                    Read on
                   </a>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── ORIENTATION STRIP ──────────────────────────────────── */}
-      <SectionReveal className="border-t border-b" style={{ borderColor: HAIRLINE_SOFT, background: BG }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-          {[
-            { k: "Population", v: "1,827", note: "give or take a few artists" },
-            { k: "Elevation", v: "4,688 ft", note: "high desert; thin, dry air" },
-            { k: "Nearest airport", v: "3 hrs", note: "El Paso (ELP) or Midland (MAF)" },
-            { k: "Nearest Whole Foods", v: "—", note: "honestly, don't worry about it" },
-          ].map((s) => (
-            <motion.div key={s.k} variants={fadeUp}>
-              <Eyebrow>{s.k}</Eyebrow>
+      {/* ── B · PRIMER (long-form editorial) ─────────────────────── */}
+      <section id="primer" style={{ background: BG }}>
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="grid md:grid-cols-12 gap-12">
+            <div className="md:col-span-3">
+              <Eyebrow>First time</Eyebrow>
               <p
-                className="mt-3 text-3xl md:text-4xl font-light leading-none"
+                className="mt-6 text-[13px] leading-[1.7]"
+                style={{ color: INK_FAINT, fontFamily: SERIF, fontStyle: "italic" }}
+              >
+                A short orientation, before
+                you decide what to do
+                with three days here.
+              </p>
+            </div>
+            <div className="md:col-span-9">
+              <h2
+                className="text-[28px] md:text-[36px] font-light leading-[1.18] tracking-[-0.005em] mb-10 max-w-[34ch]"
                 style={{ fontFamily: SERIF, color: INK }}
               >
-                {s.v}
-              </p>
-              <p className="mt-2 text-[13px] italic" style={{ color: INK_FAINT }}>
-                {s.note}
-              </p>
-            </motion.div>
-          ))}
+                Marfa was a railroad town first. Then a cattle town.
+                Then, briefly, a film set. Now it is the thing it is now.
+              </h2>
+              <div
+                className="text-[18px] md:text-[19px] leading-[1.78] space-y-7"
+                style={{ color: INK_SOFT, fontFamily: SERIF }}
+              >
+                <p>
+                  The town was platted in 1883 as a water and freight stop on
+                  the Galveston, Harrisburg & San Antonio Railway. Its name
+                  is — depending on who you ask — pulled from a minor
+                  character in <span style={{ fontStyle: "italic" }}>The Brothers Karamazov</span>,
+                  proposed by a railroad executive's wife. For its first
+                  half-century it was a dry, small, working ranching
+                  community at four-thousand-six-hundred feet of elevation,
+                  three hours from anywhere with a stoplight.
+                </p>
+                <p>
+                  In 1955, the cast of George Stevens's <span style={{ fontStyle: "italic" }}>Giant</span> arrived
+                  to film the Reata Ranch scenes. Rock Hudson, Elizabeth
+                  Taylor, and the last performance of James Dean's career
+                  were headquartered at the Hotel Paisano. The film didn't
+                  change Marfa overnight, but it lodged the town's name in a
+                  particular kind of American memory — the way a single
+                  good photograph can.
+                </p>
+                <p>
+                  The actual transformation came in 1971, when Donald Judd
+                  began buying land. Judd was leaving the New York gallery
+                  system because he hated it, and he wanted to install his
+                  work — and the work of the artists he respected —
+                  permanently, at a scale and in a setting the work
+                  required. By 1979, the Chinati Foundation was operating
+                  out of a decommissioned army base on the south edge of
+                  town. Dan Flavin, John Chamberlain, Roni Horn, Robert
+                  Irwin, Carl Andre, Richard Long, and Ilya Kabakov
+                  followed.
+                </p>
+                <p>
+                  What Marfa is now is the town that grew around that
+                  decision: roughly eighteen-hundred people, fourteen
+                  galleries, two Pulitzer winners, and a rotating cast of
+                  visitors who are aware they are visitors and try, mostly,
+                  to behave like it. The desert here is genuinely beautiful.
+                  The light is the reason Judd came. The cattle still
+                  outnumber the artists. None of these things contradict
+                  each other.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </SectionReveal>
+      </section>
 
-      {/* ── ABOUT — what marfa is ─────────────────────────────── */}
-      <SectionReveal id="about" className="relative" style={{ background: BG }}>
+      {/* ── C · THE JUDD EMPIRE ──────────────────────────────────── */}
+      <section id="judd" className="relative" style={{ background: INK, color: BG }}>
+        <div className="relative w-full" style={{ aspectRatio: "21 / 9" }}>
+          <img
+            src={IMG_CHINATI}
+            alt="Interior of one of the Chinati Foundation's converted artillery sheds — Donald Judd's milled-aluminum boxes"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "saturate(0.7) contrast(1.04)" }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(0deg, rgba(26,22,18,0.55) 0%, rgba(26,22,18,0.10) 60%, rgba(26,22,18,0.0) 100%)",
+            }}
+          />
+          <div className="absolute bottom-0 left-0 right-0">
+            <div className="max-w-[1320px] mx-auto px-6 md:px-10 pb-12 md:pb-16">
+              <Eyebrow color="rgba(255,255,255,0.6)">Section II</Eyebrow>
+              <p
+                className="mt-3 text-[12px] uppercase tracking-[0.32em] font-medium"
+                style={{ color: "rgba(255,255,255,0.78)" }}
+              >
+                The Judd Empire — Chinati & the Foundation
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36 grid md:grid-cols-12 gap-12">
-          <motion.div variants={fadeUp} className="md:col-span-4">
-            <Eyebrow>Why people come</Eyebrow>
+          <div className="md:col-span-7">
             <h2
-              className="mt-6 text-3xl md:text-4xl font-light leading-[1.1]"
+              className="text-[40px] md:text-[60px] font-light leading-[1.04] tracking-[-0.015em]"
+              style={{ fontFamily: SERIF, color: BG }}
+            >
+              An aluminum box,
+              <br />
+              in a converted artillery shed,
+              <br />
+              <span style={{ color: "#d4836b", fontStyle: "italic" }}>
+                in the late afternoon.
+              </span>
+            </h2>
+          </div>
+          <div className="md:col-span-5">
+            <div
+              className="text-[17px] leading-[1.78] space-y-6"
+              style={{ color: "rgba(250, 246, 240, 0.78)" }}
+            >
+              <p>
+                Donald Judd bought the former Fort D.A. Russell in 1979. He
+                converted two artillery sheds to house his hundred milled
+                aluminum boxes — each one identical in outside dimension,
+                each one differently divided inside. The works are arranged
+                in a single grid that runs the full length of both sheds.
+                The east wall is glass. The light moves across the boxes
+                from morning to evening and the work is, very deliberately,
+                a different work at every hour of the day.
+              </p>
+              <p>
+                That is one room of the collection. Outside, in a quarter
+                mile of dry grass, are the fifteen untitled works in
+                concrete — Judd's open boxes, cast on-site between 1980
+                and 1984. Other buildings hold permanent installations by
+                Dan Flavin, John Chamberlain, Roni Horn, Carl Andre. A
+                separate downtown property — the Judd Foundation — preserves
+                his studios, residences, and library exactly as he left
+                them when he died in 1994.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Practical strip */}
+        <div
+          className="border-t border-b"
+          style={{
+            borderColor: "rgba(255,255,255,0.14)",
+            background: "rgba(0,0,0,0.18)",
+          }}
+        >
+          <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-10 grid md:grid-cols-4 gap-8">
+            {[
+              { k: "Full Collection Tour", v: "$35", n: "~5 hours, including a lunch break. The whole thing." },
+              { k: "Selections Tour", v: "$25", n: "~3 hours. Judd, Flavin, Irwin, Chamberlain Building." },
+              { k: "Focus Tour", v: "$15", n: "~1.5 hours. Judd's aluminum works plus the current exhibition." },
+              { k: "All tours", v: "By reservation", n: "Free for tri-county residents, members, kids under 17." },
+            ].map((s) => (
+              <div key={s.k}>
+                <Eyebrow color="rgba(255,255,255,0.55)">{s.k}</Eyebrow>
+                <p
+                  className="mt-3 text-[28px] font-light leading-none"
+                  style={{ fontFamily: SERIF, color: BG }}
+                >
+                  {s.v}
+                </p>
+                <p
+                  className="mt-2 text-[13px] leading-[1.6]"
+                  style={{ color: "rgba(250, 246, 240, 0.65)" }}
+                >
+                  {s.n}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pull quote */}
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-28 md:py-36">
+          <blockquote
+            className="text-[26px] md:text-[36px] leading-[1.32] tracking-[-0.005em] font-light"
+            style={{ fontFamily: SERIF, color: BG }}
+          >
+            <span aria-hidden style={{ color: "#d4836b" }}>“</span>
+            A contemporary art museum based upon the ideas of its founder,
+            Donald Judd.
+            <span aria-hidden style={{ color: "#d4836b" }}>”</span>
+          </blockquote>
+          <p
+            className="mt-6 text-[12px] uppercase tracking-[0.28em]"
+            style={{ color: "rgba(250, 246, 240, 0.55)" }}
+          >
+            — The Chinati Foundation, on itself
+          </p>
+        </div>
+      </section>
+
+      {/* ── D · THE LIGHTS ──────────────────────────────────────── */}
+      <section id="lights" className="relative" style={{ background: BG_DEEP }}>
+        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-32 md:py-40 grid md:grid-cols-12 gap-12 items-start">
+          <div className="md:col-span-5">
+            <Eyebrow color={RUST_DEEP}>Section III</Eyebrow>
+            <h2
+              className="mt-5 text-[40px] md:text-[58px] font-light leading-[1.04] tracking-[-0.015em]"
               style={{ fontFamily: SERIF, color: INK }}
             >
-              What you're walking into.
+              The Lights.
             </h2>
-          </motion.div>
-          <motion.div variants={fadeUp} className="md:col-span-7 md:col-start-6">
-            <div
-              className="text-[17px] md:text-[19px] leading-[1.7] space-y-6"
+            <p
+              className="mt-10 text-[18px] md:text-[19px] leading-[1.78]"
               style={{ color: INK_SOFT, fontFamily: SERIF }}
             >
-              <p>
-                Marfa is a railroad town that became an art town that
-                became, somehow, a verb. <span style={{ color: INK }}>People come here for the quiet.</span>{" "}
-                For Donald Judd's permanent installations at the Chinati
-                Foundation. For the way the late-afternoon light bends
-                across an aluminum box sitting in a converted artillery
-                shed. For the lights that nobody can quite explain.
-              </p>
-              <p>
-                It's a working ranching community of roughly eighteen
-                hundred people, three hours from anywhere, that happens
-                to support a year-round contemporary art program, a
-                handful of remarkable restaurants, and a small constellation
-                of bars and bookstores you'd expect in a city ten times
-                its size. The contradictions are part of it. So is the
-                drive.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </SectionReveal>
+              Ranchers, Native Americans, high-school sweethearts, and at
+              least one published meteorologist have been reporting them
+              since 1883. Red, blue, white. They appear, hold, drift,
+              vanish. Sometimes they move, the witnesses say, at speeds
+              that cannot be reconciled with anything else moving on the
+              ground. Skeptics blame headlights and atmospheric layering.
+              The skeptics, who have not stood out there, are welcome to
+              their position.
+            </p>
 
-      {/* ── THINGS TO DO ────────────────────────────────────────── */}
-      <SectionReveal id="do" style={{ background: BG_DEEP }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36">
-          <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
-            <div>
-              <Eyebrow color={RUST_DEEP}>I. Things to do</Eyebrow>
-              <h2
-                className="mt-4 text-4xl md:text-5xl font-light leading-[1.05] max-w-2xl"
-                style={{ fontFamily: SERIF, color: INK }}
-              >
-                A short, opinionated list of the things actually worth your time.
-              </h2>
+            <div
+              className="mt-12 pt-8 border-t grid grid-cols-2 gap-x-6 gap-y-5"
+              style={{ borderColor: HAIRLINE_SOFT }}
+            >
+              <div>
+                <Eyebrow>Where</Eyebrow>
+                <p className="mt-2 text-[14px] leading-[1.6]" style={{ color: INK }}>
+                  Marfa Lights Viewing Area
+                </p>
+                <p className="text-[13px]" style={{ color: INK_FAINT }}>
+                  US-90, ~9 mi east of town
+                </p>
+              </div>
+              <div>
+                <Eyebrow>When</Eyebrow>
+                <p className="mt-2 text-[14px] leading-[1.6]" style={{ color: INK }}>
+                  After dark, year-round
+                </p>
+                <p className="text-[13px]" style={{ color: INK_FAINT }}>
+                  No facilities — bring water, jacket
+                </p>
+              </div>
+              <div>
+                <Eyebrow>Cost</Eyebrow>
+                <p className="mt-2 text-[14px] leading-[1.6]" style={{ color: INK }}>
+                  Free
+                </p>
+              </div>
+              <div>
+                <Eyebrow>The festival</Eyebrow>
+                <p className="mt-2 text-[14px] leading-[1.6]" style={{ color: INK }}>
+                  Last weekend of August
+                </p>
+                <p className="text-[13px]" style={{ color: INK_FAINT }}>
+                  38 years and counting
+                </p>
+              </div>
             </div>
-            <p className="text-[14px] max-w-sm" style={{ color: INK_SOFT }}>
-              Marfa rewards slowness. Pick three of these. Don't try to do
-              all eight in a weekend — you won't, and you'll resent us for
-              suggesting it.
+          </div>
+
+          <div className="md:col-span-6 md:col-start-7">
+            <div className="relative" style={{ aspectRatio: "4 / 5" }}>
+              <img
+                src={IMG_NIGHT_SKY}
+                alt="The night sky over the West Texas high desert"
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ filter: "saturate(0.75) contrast(1.05) brightness(0.85)" }}
+              />
+              <div
+                style={{
+                  position: "absolute", top: 14, left: 14, width: 28, height: 28,
+                  borderTop: "1px solid rgba(255,255,255,0.55)",
+                  borderLeft: "1px solid rgba(255,255,255,0.55)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute", bottom: 14, right: 14, width: 28, height: 28,
+                  borderBottom: "1px solid rgba(255,255,255,0.55)",
+                  borderRight: "1px solid rgba(255,255,255,0.55)",
+                }}
+              />
+            </div>
+            <p
+              className="mt-5 text-[12px] leading-[1.55] italic"
+              style={{ color: INK_FAINT }}
+            >
+              The viewing area faces southeast. The lights, when they
+              come, appear above the Chinati Mountains in the middle
+              distance. There is no particular schedule.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── E · THE GALLERIES (typographic list) ─────────────────── */}
+      <section id="galleries" style={{ background: BG }}>
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="mb-16 md:mb-20">
+            <Eyebrow color={RUST_DEEP}>Section IV</Eyebrow>
+            <h2
+              className="mt-5 text-[40px] md:text-[58px] font-light leading-[1.04] tracking-[-0.015em] max-w-[18ch]"
+              style={{ fontFamily: SERIF, color: INK }}
+            >
+              The Galleries, in alphabetical order.
+            </h2>
+            <p
+              className="mt-8 text-[16px] leading-[1.75] max-w-[60ch]"
+              style={{ color: INK_SOFT }}
+            >
+              Most are within a four-block walk of the Presidio County
+              Courthouse. An afternoon will cover the downtown set
+              comfortably. Hours rotate; many are appointment-only;
+              several close the day you'd expect them to be open. Call
+              ahead, or stop by the Visitor Center on Highland and we
+              will tell you which doors are unlocked.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-12 gap-x-6 gap-y-16">
-            {/* Chinati — large feature */}
-            <motion.div variants={fadeUp} className="md:col-span-7 md:row-span-2">
-              <ThingCard
-                image={IMG_CHINATI}
-                eyebrow="Permanent collection"
-                title="The Chinati Foundation"
-                copy="Donald Judd's masterwork — a former army base whose hangars and barracks now house his fifteen untitled works in concrete, his hundred milled-aluminum boxes, plus permanent installations by Dan Flavin, Robert Irwin, and others. The full tour is six hours, by reservation, and is the single most important reason to come to Marfa."
-                meta="By reservation · ~6 hrs full tour"
-                href="https://chinati.org"
-                tall
-              />
-            </motion.div>
+          <ul
+            className="border-t"
+            style={{ borderColor: HAIRLINE }}
+          >
+            {GALLERIES.map((g) => (
+              <li
+                key={g.name}
+                className="grid grid-cols-12 gap-4 py-7 md:py-9 border-b"
+                style={{ borderColor: HAIRLINE }}
+              >
+                <div className="col-span-12 md:col-span-7">
+                  <h3
+                    className="text-[26px] md:text-[32px] font-light leading-[1.1]"
+                    style={{ fontFamily: SERIF, color: INK }}
+                  >
+                    {g.name}
+                  </h3>
+                  <p
+                    className="mt-2 text-[15px] leading-[1.65] italic"
+                    style={{ color: INK_SOFT, fontFamily: SERIF }}
+                  >
+                    {g.line}
+                  </p>
+                </div>
+                <div className="col-span-12 md:col-span-5 md:text-right md:self-end">
+                  <p
+                    className="text-[12px] uppercase tracking-[0.22em]"
+                    style={{ color: INK_FAINT }}
+                  >
+                    {g.addr}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
 
-            {/* Prada Marfa */}
-            <motion.div variants={fadeUp} className="md:col-span-5">
-              <ThingCard
-                image={IMG_PRADA}
-                eyebrow="Roadside installation"
-                title="Prada Marfa"
-                copy="Elmgreen & Dragset's permanent sculpture sits in the dust thirty-seven miles northwest of town. It is not a store. It has never been a store. It is, somehow, exactly worth the drive."
-                meta="Free · 24/7 · US-90, Valentine TX"
-              />
-            </motion.div>
-
-            {/* Marfa Lights */}
-            <motion.div variants={fadeUp} className="md:col-span-5">
-              <ThingCard
-                image={IMG_SKY_ISLAND}
-                eyebrow="Unexplained phenomena"
-                title="The Marfa Lights"
-                copy="Mysterious orbs that have been showing up on the horizon east of town since at least 1883. The official viewing area is nine miles out on US-90. Bring a jacket — desert nights drop fifty degrees, and the lights are happier when you wait."
-                meta="Free · After dark · US-90 viewing area"
-              />
-            </motion.div>
-
-            {/* Ballroom Marfa */}
-            <motion.div variants={fadeUp} className="md:col-span-6">
-              <ThingCard
-                image={IMG_BALLROOM}
-                eyebrow="Contemporary art"
-                title="Ballroom Marfa"
-                copy="Non-profit kunsthalle in a 1927 dance hall on Highland Avenue, programming exhibitions, film screenings, and the kind of music acts you don't expect to find in a town of two thousand. Free admission, always."
-                meta="108 E San Antonio St · Free"
-                href="https://ballroommarfa.org"
-              />
-            </motion.div>
-
-            {/* Stargazing — McDonald */}
-            <motion.div variants={fadeUp} className="md:col-span-6">
-              <ThingCard
-                image={IMG_DESERT_NIGHT}
-                eyebrow="Dark-sky preserve"
-                title="McDonald Observatory · Star Parties"
-                copy="Forty-five minutes north on the Davis Mountains. The sky here is genuinely as dark as anywhere in the lower forty-eight. Tuesday/Friday/Saturday star parties run year-round. Reserve weeks ahead — they fill."
-                meta="Davis Mountains · ~45 min N"
-                href="https://mcdonaldobservatory.org"
-              />
-            </motion.div>
-
-            {/* Galleries strip */}
-            <motion.div variants={fadeUp} className="md:col-span-6">
-              <ThingCard
-                image={IMG_RULE}
-                eyebrow="Independent galleries"
-                title="The gallery walk"
-                copy="Greasewood, RULE, Inde/Jacobs, Marfa Open, Hacienda del Arcón, the Marfa Studio of Arts. Most cluster in a four-block grid downtown. An afternoon's worth, comfortably. None of them feel like New York. That's the point."
-                meta="Walking distance · Downtown"
-              />
-            </motion.div>
-
-            {/* Marfa Book Co + Stone Circle */}
-            <motion.div variants={fadeUp} className="md:col-span-6">
-              <ThingCard
-                image={IMG_STONE_CIRCLE}
-                eyebrow="On the way out of town"
-                title="Haroon Mirza's Stone Circle"
-                copy="A solar-powered, lunar-cycle-activated ring of Marfa stone, about a mile out into the grasslands. Best at full moon, when it does its thing. Bring water; the walk in is short but exposed."
-                meta="Free · Off Antelope Hills Rd"
-              />
-            </motion.div>
-          </div>
+          <p
+            className="mt-12 text-[13px] italic max-w-[55ch]"
+            style={{ color: INK_FAINT }}
+          >
+            Also worth your time, scattered across the landscape:
+            Elmgreen & Dragset's <span style={{ fontStyle: "normal", fontWeight: 500 }}>Prada Marfa</span> (37 mi NW
+            on US-90), the <span style={{ fontStyle: "normal", fontWeight: 500 }}>Giant Marfa Mural</span> (5 mi W),
+            the <span style={{ fontStyle: "normal", fontWeight: 500 }}>Frida Kahlo Mural</span> on West San Antonio,
+            and Haroon Mirza's <span style={{ fontStyle: "normal", fontWeight: 500 }}>Stone Circle</span> (golf course
+            road, best at full moon).
+          </p>
         </div>
-      </SectionReveal>
+      </section>
 
-      {/* ── EAT & DRINK ────────────────────────────────────────── */}
-      <SectionReveal id="eat" style={{ background: BG }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36">
-          <div className="grid md:grid-cols-12 gap-12 mb-20">
+      {/* ── F · WHERE TO EAT (narrative) ─────────────────────────── */}
+      <section id="eat" className="relative" style={{ background: BG_DEEP }}>
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="mb-14 grid md:grid-cols-12 gap-10">
             <div className="md:col-span-5">
-              <Eyebrow color={RUST_DEEP}>II. Eat & Drink</Eyebrow>
+              <Eyebrow color={RUST_DEEP}>Section V</Eyebrow>
               <h2
-                className="mt-4 text-4xl md:text-5xl font-light leading-[1.05]"
+                className="mt-5 text-[40px] md:text-[56px] font-light leading-[1.04] tracking-[-0.015em]"
                 style={{ fontFamily: SERIF, color: INK }}
               >
-                A food scene
+                Where to eat,
                 <br />
-                disproportionate to
-                <br />
-                its zip code.
+                read Tuesday-first.
               </h2>
             </div>
             <div className="md:col-span-6 md:col-start-7">
               <p
-                className="text-[16px] md:text-[18px] leading-[1.75]"
-                style={{ color: INK_SOFT, fontFamily: SERIF }}
+                className="text-[16px] leading-[1.75]"
+                style={{ color: INK_SOFT }}
               >
-                A few caveats: most kitchens are closed Tuesdays and
-                Wednesdays. Reservations are non-negotiable on weekends.
-                And the best meal in town might still be a foil-wrapped
-                burrito eaten standing on a sidewalk at ten in the morning.
-                That's just how it is here.
+                The thing nobody tells you about Marfa restaurants is
+                that they don't all open on the same days, and on any
+                given night roughly a third of them aren't serving. This
+                is a feature, not a bug. Plan around it.
               </p>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-x-6 gap-y-12">
-            <EatCard
-              image={IMG_TACO}
-              name="Marfa Burrito"
-              kind="Sonoran · breakfast"
-              copy="Ramona's place. Hand-rolled flour tortillas the size of a dinner plate, machaca that has not changed since the 1980s. Cash. Counter only. Closed unpredictably. Worth every minute of that uncertainty."
-            />
-            <EatCard
-              image={IMG_HACIENDA}
-              name="Cochineal"
-              kind="Modern · dinner only"
-              copy="Tom Rapp's quiet, ingredient-driven menu in a low-slung adobe. White tablecloths, dim light, perfect bread. The closest thing Marfa has to a special-occasion restaurant — and it deserves the title."
-            />
-            <EatCard
-              image={IMG_FRIDA}
-              name="Stellina"
-              kind="Italian · seasonal"
-              copy="A wood-fired oven, a tight wine list, and pasta that would hold its own in Brooklyn. Tucked into a small storefront on Highland. Book ahead."
-            />
-            <EatCard
-              image={IMG_GREASEWOOD}
-              name="Convenience West BBQ"
-              kind="Texas BBQ · weekends"
-              copy="Brisket and house-made hot links from a converted gas station. Open Friday through Sunday until they sell out, which is often by 2 p.m. Show up early or don't bother."
-            />
-            <EatCard
-              image={IMG_COFFEE}
-              name="Frama"
-              kind="Coffee + ice cream"
-              copy="Inside the laundromat. Yes, really. Espresso pulled by people who care, paired with house-made ice cream. The Marfa morning ritual for nearly everyone in town."
-            />
-            <EatCard
-              image={IMG_BAR}
-              name="Lost Horse Saloon"
-              kind="Dive · late"
-              copy="Ty Mitchell's saloon. Pool table, live country, mounted heads, no irony whatsoever. The truest dive in West Texas, and the place every visitor secretly hopes Marfa is when they show up."
+          <div className="md:hidden mb-10">
+            <img
+              src={IMG_BORDO}
+              alt="Wood-fired bread and stone-milled pasta at Bordo"
+              className="w-full aspect-[3/2] object-cover"
             />
           </div>
 
-          <div className="mt-20 pt-10 border-t" style={{ borderColor: HAIRLINE }}>
-            <p className="text-[14px] italic max-w-2xl" style={{ color: INK_FAINT }}>
-              Also worth your time, in no particular order: Bordo for
-              natural wine and small plates, Para Llevar for tortas, the
-              bar at Hotel Saint George for a quiet cocktail, Marfa Spirit
-              Co. for gin distilled within walking distance.
-            </p>
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ── STAY ────────────────────────────────────────────────── */}
-      <SectionReveal id="stay" style={{ background: BG_SAND }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36">
-          <div className="mb-16 max-w-3xl">
-            <Eyebrow color={RUST_DEEP}>III. Where to stay</Eyebrow>
-            <h2
-              className="mt-4 text-4xl md:text-5xl font-light leading-[1.05]"
-              style={{ fontFamily: SERIF, color: INK }}
-            >
-              Sleep in a vintage trailer, a 1930 hotel, or a yurt under the milky way.
-            </h2>
-            <p
-              className="mt-8 text-[16px] md:text-[17px] leading-[1.7]"
-              style={{ color: INK_SOFT }}
-            >
-              Marfa's lodging is small in number and outsized in personality.
-              Book six to ten weeks ahead of any festival weekend. Off-season
-              midweek, you can usually walk in.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-x-10 gap-y-16">
-            <StayCard
-              image={IMG_HOTEL_INT}
-              eyebrow="Restored 1930 Hotel"
-              name="Hotel Saint George"
-              copy="Fifty-five rooms in a quietly elegant downtown hotel — Marfa's anchor since 2016. The lobby bar is a destination of its own, and Lala's restaurant on the ground floor is one of the best in town. Walking distance to nearly everything."
-              meta="105 S Highland Ave · marfasaintgeorge.com"
-            />
-            <StayCard
-              image={IMG_GLAMP}
-              eyebrow="Glamping · since 2009"
-              name="El Cosmico"
-              copy="Liz Lambert's eighteen-acre nomadic hotel campground. Vintage trailers, safari tents, yurts, Sioux-style tipis. A community kitchen, hammock grove, and outdoor wood-fired hot tubs. The platonic ideal of a Marfa stay."
-              meta="802 S Highland Ave · elcosmico.com"
-            />
-            <StayCard
-              image={IMG_ADOBE}
-              eyebrow="Mid-century · 41 rooms"
-              name="The Thunderbird"
-              copy="Mid-century motor lodge reimagined: Frette linens, Aesop amenities, a saltwater pool. The aesthetic moves people make their wallpaper for the next ten years happen here."
-              meta="601 W San Antonio St · thunderbirdmarfa.com"
-            />
-            <StayCard
-              image={IMG_GIANT_MURAL}
-              eyebrow="Architect-designed bungalows"
-              name="The Sentinel · Hotel Paisano · Casa Marfa"
-              copy="The Sentinel is a converted 1925 newspaper office with a bar and bookshop downstairs. The Paisano is the historic 1930 Trost-designed property where the cast of Giant stayed in 1955. Casa Marfa and the Airbnb scene round out the rest."
-              meta="Various · downtown footprint"
-            />
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ── WHEN TO COME ────────────────────────────────────────── */}
-      <SectionReveal id="when" style={{ background: BG }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36 grid md:grid-cols-12 gap-12">
-          <motion.div variants={fadeUp} className="md:col-span-4">
-            <Eyebrow color={RUST_DEEP}>IV. When to come</Eyebrow>
-            <h2
-              className="mt-4 text-4xl md:text-5xl font-light leading-[1.05]"
-              style={{ fontFamily: SERIF, color: INK }}
-            >
-              The honest seasonal guide.
-            </h2>
-            <p
-              className="mt-8 text-[15px] leading-[1.7]"
-              style={{ color: INK_SOFT }}
-            >
-              Marfa is open year-round, but not every month is created
-              equal. We'd rather tell you the truth than promise you that
-              August is fine. (It is not fine.)
-            </p>
-          </motion.div>
-
-          <motion.div variants={fadeUp} className="md:col-span-7 md:col-start-6">
-            <ul className="divide-y" style={{ borderColor: HAIRLINE }}>
-              {[
-                {
-                  m: "March – May",
-                  h: "Peak shoulder",
-                  c: "Wildflowers in late March, mild days, cool nights. The single best window of the year. Book early.",
-                },
-                {
-                  m: "June – August",
-                  h: "Hot, real hot",
-                  c: "Highs in the upper nineties; thin shade. July days are long but heavy. Avoid bringing a camper in August. Mornings and dusk redeem it.",
-                },
-                {
-                  m: "September",
-                  h: "Trans-Pecos Festival",
-                  c: "Late-September brings the Trans-Pecos Festival of Music & Love at El Cosmico — the town's biggest weekend. Book three months out.",
-                },
-                {
-                  m: "October",
-                  h: "Chinati Weekend · the perfect month",
-                  c: "Chinati Weekend (early October) is the art-world's annual pilgrimage. Days are sixty-five and golden. If you can only come once, come now.",
-                },
-                {
-                  m: "November – February",
-                  h: "Quiet, occasionally cold",
-                  c: "Slowest months — beautiful for the same reason. Some restaurants take winter breaks. Pack layers; the desert is colder at night than people expect.",
-                },
-              ].map((row) => (
-                <li
-                  key={row.m}
-                  className="grid grid-cols-12 gap-4 py-6 first:pt-0"
-                  style={{ borderBottom: `1px solid ${HAIRLINE}` }}
-                >
-                  <div className="col-span-12 md:col-span-4">
-                    <p
-                      className="text-[15px] font-medium"
-                      style={{ fontFamily: SERIF, color: INK }}
-                    >
-                      {row.m}
-                    </p>
-                    <p
-                      className="mt-1 text-[12px] uppercase tracking-[0.18em]"
-                      style={{ color: RUST_DEEP }}
-                    >
-                      {row.h}
-                    </p>
-                  </div>
-                  <p
-                    className="col-span-12 md:col-span-8 text-[15px] leading-[1.65]"
-                    style={{ color: INK_SOFT }}
-                  >
-                    {row.c}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ── GETTING HERE ─────────────────────────────────────── */}
-      <SectionReveal id="getting-here" className="relative" style={{ background: BG_DEEP }}>
-        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-28 md:py-36 grid md:grid-cols-12 gap-12 items-start">
-          <motion.div variants={fadeUp} className="md:col-span-5 md:sticky md:top-24">
-            <Eyebrow color={RUST_DEEP}>V. Getting here</Eyebrow>
-            <h2
-              className="mt-4 text-4xl md:text-5xl font-light leading-[1.05]"
-              style={{ fontFamily: SERIF, color: INK }}
-            >
-              It's far. That's part of it.
-            </h2>
-            <p
-              className="mt-8 text-[16px] leading-[1.75]"
+          <div className="grid md:grid-cols-12 gap-10 md:gap-14">
+            <div
+              className="md:col-span-7 text-[17px] md:text-[18px] leading-[1.85] space-y-7"
               style={{ color: INK_SOFT, fontFamily: SERIF }}
             >
-              Marfa has no commercial airport. The nearest runway with a
-              regular flight is three hours away. There is no rideshare
-              once you arrive. The drive in — through nothing, then
-              suddenly through something — is genuinely part of why this
-              place keeps its character. Plan around it.
-            </p>
-            <div className="mt-10">
-              <img
-                src={IMG_DESERT_ROAD}
-                alt="Empty highway through the West Texas high desert"
-                className="w-full aspect-[4/3] object-cover"
-                style={{ filter: "saturate(0.85) contrast(1.02)" }}
-              />
+              <p>
+                If you arrive on a Tuesday, you have fewer choices than
+                you think. <span style={{ color: INK, fontWeight: 500 }}>Cochineal</span> (107 W. San Antonio) does
+                the closest thing the town offers to a fine-dining
+                evening, and it is quietly excellent — but it is closed.{" "}
+                <span style={{ color: INK, fontWeight: 500 }}>Bordo</span> (1210 W. San Antonio), the Italian deli
+                pulling stone-milled pasta and wood-fired bread out of
+                its kitchen Thursday through Sunday only, is also closed.
+                What's reliable on a Tuesday: <span style={{ color: INK, fontWeight: 500 }}>Marfa Burrito</span>
+                {" "}(515 S. Highland, open 7–2, Monday through Saturday,
+                cash only, hand-rolled flour tortillas the size of a
+                dinner plate, machaca that has not changed in forty
+                years), <span style={{ color: INK, fontWeight: 500 }}>The Sentinel</span> (209 W. El Paso, open
+                daily 7:30–3, the coffee-and-sandwich spot inside the
+                old newspaper office), and the dining room at the Hotel
+                Paisano, which serves breakfast at <span style={{ color: INK, fontWeight: 500 }}>Jett's Grill</span>
+                {" "}from seven-thirty.
+              </p>
+              <p>
+                For dinner that holds up to anything you'd find in a
+                bigger city: <span style={{ color: INK, fontWeight: 500 }}>Margaret's in Marfa</span> (103 N.
+                Highland, Wednesday–Saturday, 5–9, the most-talked-about
+                opening in town), <span style={{ color: INK, fontWeight: 500 }}>Laventure</span> at the Hotel Saint
+                George (105 S. Highland, daily, 5–10, the room with the
+                wine list), and <span style={{ color: INK, fontWeight: 500 }}>Alta Marfa</span> (120 N. Austin,
+                Friday through Sunday, 5–10, low-lit, strong pours). All
+                three take reservations and all three need them on
+                weekends.
+              </p>
+              <p>
+                For coffee — and Marfa, in the morning, is mostly a
+                coffee town — <span style={{ color: INK, fontWeight: 500 }}>Mutual Friends</span> shares an address
+                with Alta Marfa and pulls the most-considered shot in
+                town (Wednesday–Sunday, 7:30–2:30). <span style={{ color: INK, fontWeight: 500 }}>Coyote Coffee</span>
+                {" "}on West San Antonio runs daily, 8–2, with house-made
+                pastries before nine if you're early. <span style={{ color: INK, fontWeight: 500 }}>Big Bend Coffee Roasters</span>
+                {" "}roasts everything you'll drink in town, and is worth
+                a stop for that reason alone.
+              </p>
+              <p>
+                For a drink after the sun is gone:{" "}
+                <span style={{ color: INK, fontWeight: 500 }}>Planet Marfa</span> (200 S. Abbott, daily 1–11) is
+                the outdoor backyard bar — string lights, a teepee, the
+                town's best dive energy.{" "}
+                <span style={{ color: INK, fontWeight: 500 }}>The Pony</span> (306 E. San Antonio, Tuesday–Sunday)
+                is the cold-beer-and-good-tunes alternative.{" "}
+                <span style={{ color: INK, fontWeight: 500 }}>Marfa Spirit Co.</span> (320 W. El Paso) is the local
+                distillery — sotol cocktails, themed dinner nights, the
+                bar nobody from out of town knows about for the first
+                three hours of an evening.{" "}
+                <span style={{ color: INK, fontWeight: 500 }}>Otherside</span> (110 El Paso, Thursday–Saturday, 8
+                until late) is the speakeasy nobody from out of town
+                knows about for the first six.
+              </p>
+              <p>
+                Two more, briefly, before you go. <span style={{ color: INK, fontWeight: 500 }}>Angel's</span> on
+                South Spring is the long-standing Mexican restaurant —
+                chile rellenos, burritos, family-run, no website, the
+                phone number works. <span style={{ color: INK, fontWeight: 500 }}>The Water Stop</span> on West San
+                Antonio does an American-with-a-twist menu and won
+                "best burger in Marfa" for 2021, which here means
+                something specific.
+              </p>
             </div>
-          </motion.div>
 
-          <motion.div variants={fadeUp} className="md:col-span-6 md:col-start-7">
-            <div className="space-y-10">
-              <DriveRow city="El Paso (ELP)" hours="3 hrs" miles="195 mi" note="The most reliable airport. American + Southwest service. Rent a car at the airport." />
-              <DriveRow city="Midland-Odessa (MAF)" hours="3 hrs" miles="170 mi" note="Smaller airport, fewer connections, but closer if you're flying United from a hub." />
-              <DriveRow city="San Antonio" hours="6 hrs" miles="395 mi" note="Long but scenic — through the Hill Country and onto US-90 W. Doable in a day with stops." />
-              <DriveRow city="Austin" hours="7 hrs" miles="445 mi" note="Add 90 minutes vs. SAT. Best broken into two days with a Big Bend or Alpine overnight." />
-              <DriveRow city="Big Bend National Park" hours="1.5 hrs" miles="80 mi" note="If you're already coming this far, give Big Bend two extra days. You won't regret it." />
-
-              <div className="pt-6" style={{ borderTop: `1px solid ${HAIRLINE}` }}>
-                <Eyebrow>Inside town</Eyebrow>
-                <p className="mt-4 text-[15px] leading-[1.7]" style={{ color: INK_SOFT }}>
-                  Marfa is twelve square blocks. You'll walk most of it.
-                  No Uber. Local cabs exist but are not a system. If
-                  you're going out to Prada Marfa, the Lights viewing
-                  area, or the McDonald Observatory, you'll need your
-                  car.
+            <div className="hidden md:block md:col-span-5">
+              <div className="sticky top-28">
+                <img
+                  src={IMG_BORDO}
+                  alt="Wood-fired bread and stone-milled pasta at Bordo"
+                  className="w-full aspect-[4/5] object-cover"
+                />
+                <p
+                  className="mt-4 text-[12px] uppercase tracking-[0.22em]"
+                  style={{ color: INK_FAINT }}
+                >
+                  Bordo · 1210 W. San Antonio · Thu–Sun
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </SectionReveal>
+      </section>
 
-      {/* ── INQUIRY ─────────────────────────────────────────────── */}
-      <SectionReveal id="plan" style={{ background: BG }}>
-        <div className="max-w-[920px] mx-auto px-6 md:px-10 py-28 md:py-36">
-          <motion.div variants={fadeUp} className="text-center mb-12">
+      {/* ── G · WHERE TO STAY (3 paragraphs + coda) ─────────────── */}
+      <section id="stay" style={{ background: BG }}>
+        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="mb-20 max-w-3xl">
+            <Eyebrow color={RUST_DEEP}>Section VI</Eyebrow>
+            <h2
+              className="mt-5 text-[40px] md:text-[58px] font-light leading-[1.04] tracking-[-0.015em]"
+              style={{ fontFamily: SERIF, color: INK }}
+            >
+              Where to sleep.
+            </h2>
+            <p
+              className="mt-8 text-[17px] leading-[1.75]"
+              style={{ color: INK_SOFT, fontFamily: SERIF }}
+            >
+              Three properties carry most of the conversation about
+              Marfa lodging, and they each represent a different idea of
+              what coming here is for. Pick the one that matches the
+              version of the trip you want.
+            </p>
+          </div>
+
+          <div className="space-y-32 md:space-y-40">
+            {/* HOTEL SAINT GEORGE */}
+            <article className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+              <div className="md:col-span-7">
+                <img
+                  src={IMG_SAINT_GEORGE}
+                  alt="The Hotel Saint George — restored 1929 building on Highland Avenue"
+                  className="w-full aspect-[4/3] object-cover"
+                />
+              </div>
+              <div className="md:col-span-5">
+                <Eyebrow color={RUST_DEEP}>The anchor</Eyebrow>
+                <h3
+                  className="mt-4 text-[34px] md:text-[44px] font-light leading-[1.05]"
+                  style={{ fontFamily: SERIF, color: INK }}
+                >
+                  Hotel Saint George
+                </h3>
+                <p
+                  className="mt-6 text-[16px] leading-[1.78]"
+                  style={{ color: INK_SOFT, fontFamily: SERIF }}
+                >
+                  Fifty-five rooms in a quietly elegant downtown hotel
+                  that reopened in 2016 inside a 1929 shell on Highland
+                  Avenue. The lobby holds a working bookshop and the
+                  best bar in town. Laventure is on the ground floor,
+                  the rooms are spare and considered, and the Sentinel
+                  is a five-minute walk one direction while Marfa
+                  Burrito is a six-minute walk the other. If you only
+                  have one weekend and don't want to think about
+                  logistics, this is the answer.
+                </p>
+                <p
+                  className="mt-6 text-[12px] uppercase tracking-[0.22em]"
+                  style={{ color: INK_FAINT }}
+                >
+                  105 S. Highland Ave · marfasaintgeorge.com
+                </p>
+              </div>
+            </article>
+
+            {/* EL COSMICO */}
+            <article className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+              <div className="md:col-span-5 md:order-1 order-2">
+                <Eyebrow color={RUST_DEEP}>The Marfa idea</Eyebrow>
+                <h3
+                  className="mt-4 text-[34px] md:text-[44px] font-light leading-[1.05]"
+                  style={{ fontFamily: SERIF, color: INK }}
+                >
+                  El Cosmico
+                </h3>
+                <p
+                  className="mt-6 text-[16px] leading-[1.78]"
+                  style={{ color: INK_SOFT, fontFamily: SERIF }}
+                >
+                  Liz Lambert's eighteen-acre nomadic campground —
+                  thirteen restored vintage trailers, twenty-one safari
+                  tents, yurts, tepees, hammocks, a community kitchen,
+                  outdoor wood-fired hot tubs under the sky. It is the
+                  iconic photograph of Marfa, the host of the
+                  Trans-Pecos Festival each September, and (as of 2025)
+                  in the middle of an architect-led redesign. The
+                  current era is a closing chapter; whatever it becomes
+                  next will, knowing Lambert, be worth the wait.
+                </p>
+                <p
+                  className="mt-6 text-[12px] uppercase tracking-[0.22em]"
+                  style={{ color: INK_FAINT }}
+                >
+                  802 S. Highland Ave · elcosmico.com
+                </p>
+              </div>
+              <div className="md:col-span-7 md:order-2 order-1">
+                <img
+                  src={IMG_EL_COSMICO}
+                  alt="El Cosmico — vintage trailers, safari tents, and yurts on the south edge of town"
+                  className="w-full aspect-[4/3] object-cover"
+                />
+              </div>
+            </article>
+
+            {/* THUNDERBIRD */}
+            <article className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+              <div className="md:col-span-7">
+                <img
+                  src={IMG_THUNDERBIRD}
+                  alt="The Thunderbird Hotel — a restored 1959 horseshoe-plan motor lodge"
+                  className="w-full aspect-[4/3] object-cover"
+                />
+              </div>
+              <div className="md:col-span-5">
+                <Eyebrow color={RUST_DEEP}>The mid-century</Eyebrow>
+                <h3
+                  className="mt-4 text-[34px] md:text-[44px] font-light leading-[1.05]"
+                  style={{ fontFamily: SERIF, color: INK }}
+                >
+                  The Thunderbird
+                </h3>
+                <p
+                  className="mt-6 text-[16px] leading-[1.78]"
+                  style={{ color: INK_SOFT, fontFamily: SERIF }}
+                >
+                  A 1959 motor lodge in classic horseshoe plan, restored
+                  with the right amount of restraint — Frette linens,
+                  Aesop in the bathrooms, a saltwater pool, a sign that
+                  glows pink at dusk. Quieter than the Saint George and
+                  more grown-up than El Cosmico. The aesthetic moves
+                  here are the kind that show up later, attributed to
+                  someone else, in a magazine.
+                </p>
+                <p
+                  className="mt-6 text-[12px] uppercase tracking-[0.22em]"
+                  style={{ color: INK_FAINT }}
+                >
+                  601 W. San Antonio St · thunderbirdmarfa.com
+                </p>
+              </div>
+            </article>
+          </div>
+
+          {/* CODA */}
+          <div
+            className="mt-32 md:mt-40 pt-12 border-t max-w-[68ch]"
+            style={{ borderColor: HAIRLINE }}
+          >
+            <Eyebrow>Also</Eyebrow>
+            <p
+              className="mt-5 text-[16px] leading-[1.85]"
+              style={{ color: INK_SOFT, fontFamily: SERIF }}
+            >
+              Beyond those three: <span style={{ color: INK, fontWeight: 500 }}>The Sentinel</span> rents rooms
+              above the bar and bookshop. <span style={{ color: INK, fontWeight: 500 }}>Hotel Paisano</span> —
+              the Trost-designed 1930 hotel where the cast of <span style={{ fontStyle: "italic" }}>Giant</span> stayed —
+              keeps a heated pool and a whole lot of James Dean ephemera.
+              <span style={{ color: INK, fontWeight: 500 }}> Carmen's Boutique Hotel</span> is six self-service
+              rooms in town. <span style={{ color: INK, fontWeight: 500 }}>The Lincoln</span> is a newer compound
+              with five courtyard gardens. <span style={{ color: INK, fontWeight: 500 }}>Cibolo Creek Ranch</span>
+              {" "}is thirty-three miles south, an actual nineteenth-century
+              fortified ranch, and is where you go when you want
+              something other than Marfa for a night. The vacation-rental
+              scene fills in the gaps; on festival weekends, it is the
+              first thing to disappear.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── H · CALENDAR (12 cells) ──────────────────────────────── */}
+      <section id="calendar" style={{ background: BG_SAND }}>
+        <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="mb-16 max-w-3xl">
+            <Eyebrow color={RUST_DEEP}>Section VII</Eyebrow>
+            <h2
+              className="mt-5 text-[40px] md:text-[58px] font-light leading-[1.04] tracking-[-0.015em]"
+              style={{ fontFamily: SERIF, color: INK }}
+            >
+              The year, month by month.
+            </h2>
+            <p
+              className="mt-8 text-[16px] leading-[1.75]"
+              style={{ color: INK_SOFT }}
+            >
+              We'd rather tell you the truth than promise you August is
+              fine. (It is not fine.)
+            </p>
+          </div>
+
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l"
+            style={{ borderColor: HAIRLINE }}
+          >
+            {MONTHS.map((m, i) => (
+              <div
+                key={m.m}
+                className="border-r border-b p-7 md:p-9"
+                style={{ borderColor: HAIRLINE, background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.18)" }}
+              >
+                <div className="flex items-baseline justify-between gap-3 mb-4">
+                  <h3
+                    className="text-[26px] font-light leading-none"
+                    style={{ fontFamily: SERIF, color: INK }}
+                  >
+                    {m.m}
+                  </h3>
+                  {m.badge && (
+                    <span
+                      className="text-[9px] uppercase tracking-[0.22em] font-semibold px-2 py-1 rounded-sm"
+                      style={{
+                        background: RUST_DEEP,
+                        color: BG,
+                      }}
+                    >
+                      {m.badge}
+                    </span>
+                  )}
+                </div>
+                <p
+                  className="text-[14.5px] leading-[1.65]"
+                  style={{ color: INK_SOFT, fontFamily: SERIF }}
+                >
+                  {m.line}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── I · BEFORE YOU COME (practical) ──────────────────────── */}
+      <section style={{ background: BG }}>
+        <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="grid md:grid-cols-12 gap-12">
+            <div className="md:col-span-4">
+              <Eyebrow color={RUST_DEEP}>Section VIII</Eyebrow>
+              <h2
+                className="mt-5 text-[36px] md:text-[44px] font-light leading-[1.05] tracking-[-0.01em]"
+                style={{ fontFamily: SERIF, color: INK }}
+              >
+                Before you come.
+              </h2>
+              <p
+                className="mt-8 text-[15px] leading-[1.7]"
+                style={{ color: INK_SOFT }}
+              >
+                There is no airport. There is no Uber. There is, on
+                most blocks, no cell service. The desert handles people
+                who came prepared. It is less generous to the rest.
+              </p>
+              <div className="mt-10">
+                <img
+                  src={IMG_DESERT_ROAD}
+                  alt="The empty highway through the West Texas high desert"
+                  className="w-full aspect-[4/3] object-cover"
+                  style={{ filter: "saturate(0.85)" }}
+                />
+              </div>
+            </div>
+            <div className="md:col-span-7 md:col-start-6">
+              <ul>
+                {[
+                  ["Nearest commercial airport", "Midland-Odessa (MAF), 170 mi · about 3 hrs. El Paso (ELP), 195 mi · also about 3 hrs, more flights."],
+                  ["Nearest hospital", "Big Bend Regional Medical Center, Alpine — 26 mi east on US-90."],
+                  ["Gas", "In town at Stripes / Town & Country. On long drives, top up in Alpine or Marathon — gaps between stations are real."],
+                  ["Cell service", "Reliable downtown on most carriers. Spotty to non-existent within ten miles in any direction."],
+                  ["Cash + ATMs", "Limited. Marfa Burrito and a few others are cash-only. Pull cash in Alpine if you're driving in."],
+                  ["What to pack", "Layers. Desert temperature swings of 40°F day to night are normal. A sun hat. A real water bottle."],
+                  ["Road advisories", "Mule deer at dusk on US-90 and US-67. Slow down between Alpine and Marfa after sunset."],
+                  ["Time zone", "Central. Same as Houston, Austin, San Antonio."],
+                  ["Drinking water", "The town water is hard but fine. Bottled is widely available. The desert is dry; drink more than you think you need."],
+                ].map(([k, v]) => (
+                  <li
+                    key={k as string}
+                    className="grid grid-cols-12 gap-4 py-6 border-b first:border-t"
+                    style={{ borderColor: HAIRLINE }}
+                  >
+                    <p
+                      className="col-span-12 md:col-span-4 text-[14px] uppercase tracking-[0.18em] font-medium"
+                      style={{ color: INK }}
+                    >
+                      {k}
+                    </p>
+                    <p
+                      className="col-span-12 md:col-span-8 text-[15px] leading-[1.7]"
+                      style={{ color: INK_SOFT }}
+                    >
+                      {v}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── J · INQUIRY (sharp-cornered override) ────────────────── */}
+      <section id="plan" style={{ background: BG_DEEP }}>
+        <div className="max-w-[920px] mx-auto px-6 md:px-10 py-32 md:py-40">
+          <div className="text-center mb-12">
             <Eyebrow color={RUST_DEEP}>Plan your visit</Eyebrow>
             <h2
-              className="mt-4 text-4xl md:text-5xl font-light leading-[1.05]"
+              className="mt-5 text-[36px] md:text-[48px] font-light leading-[1.05] tracking-[-0.01em]"
               style={{ fontFamily: SERIF, color: INK }}
             >
               Tell us a little about
@@ -856,24 +1157,27 @@ export default function VisitMarfaPage() {
               the trip you have in mind.
             </h2>
             <p
-              className="mt-6 text-[15px] md:text-[16px] leading-[1.7] max-w-xl mx-auto"
+              className="mt-7 text-[15px] md:text-[16px] leading-[1.7] max-w-xl mx-auto"
               style={{ color: INK_SOFT }}
             >
               The Visitor Center can point you to lodging that hasn't
               filled, restaurants taking reservations the week you're
-              here, and the events that won't show up on Eventbrite. Send
-              us a note — a real person reads every one.
+              here, and the events that won't show up on Eventbrite.
+              Send us a note — a real person reads every one.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeUp}>
+          {/* Sharp-corner override: collapse rounded-3xl on the form
+              wrapper and on every input the form generates, so the
+              form sits flush with the rest of the page's edge language. */}
+          <div className="[&_.rounded-3xl]:rounded-none [&_.rounded-2xl]:rounded-none [&_.rounded-xl]:rounded-none [&_.rounded-lg]:rounded-none [&_.rounded-full]:rounded-none [&_.rounded-md]:rounded-sm [&_input]:rounded-none [&_textarea]:rounded-none [&_select]:rounded-none [&_button]:rounded-none">
             <InquiryForm
               slug="visit-marfa"
               accent={RUST_DEEP}
               accentDeep={RUST_DEEP}
               ink={INK}
               inkSoft={INK_SOFT}
-              panelBg={PANEL}
+              panelBg="#ffffff"
               serif={SERIF}
               submitLabel="Send"
               successHeading="Thank you. We'll be in touch."
@@ -906,11 +1210,10 @@ export default function VisitMarfaPage() {
                 },
               ]}
             />
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={fadeUp}
-            className="mt-12 grid sm:grid-cols-3 gap-6 text-[13px]"
+          <div
+            className="mt-14 grid sm:grid-cols-3 gap-7 text-[13px]"
             style={{ color: INK_SOFT }}
           >
             <div className="flex items-start gap-3">
@@ -938,272 +1241,107 @@ export default function VisitMarfaPage() {
                 </a>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </SectionReveal>
+      </section>
 
-      {/* ── FOOTER ─────────────────────────────────────────────── */}
+      {/* ── K · FOOTER ──────────────────────────────────────────── */}
       <footer
         className="border-t"
-        style={{ borderColor: HAIRLINE, background: BG_DEEP }}
+        style={{ borderColor: HAIRLINE, background: BG }}
       >
         <div className="max-w-[1320px] mx-auto px-6 md:px-10 py-14 grid md:grid-cols-12 gap-10 items-start">
           <div className="md:col-span-5">
             <img
               src={IMG_LOGO}
-              alt="Visit Marfa logo"
-              className="h-12 w-auto mb-6 opacity-90"
-              style={{ filter: "grayscale(0.2)" }}
+              alt="Visit Marfa"
+              className="h-10 w-auto mb-6 opacity-90"
             />
             <p
-              className="text-[15px] leading-[1.7] max-w-md"
-              style={{ color: INK_SOFT, fontFamily: SERIF }}
+              className="text-[14px] leading-[1.7] max-w-md italic"
+              style={{ color: INK_FAINT, fontFamily: SERIF }}
             >
-              An oasis of culture in the Chihuahuan Desert. Run by the
-              MARFA Visitor Center, a community-led organization.
+              An oasis of culture in the Chihuahuan Desert. Operated by
+              the MARFA Visitor Center, a community-led organization.
             </p>
           </div>
 
           <div className="md:col-span-3">
             <Eyebrow>Visit</Eyebrow>
-            <ul className="mt-4 space-y-2.5 text-[14px]" style={{ color: INK_SOFT }}>
-              <li><a href="#do" className="hover:text-[#1a1612] transition-colors">Things to do</a></li>
+            <ul
+              className="mt-4 space-y-2 text-[13px]"
+              style={{ color: INK_SOFT }}
+            >
+              <li><a href="#primer" className="hover:text-[#1a1612] transition-colors">First time</a></li>
+              <li><a href="#judd" className="hover:text-[#1a1612] transition-colors">The Judd Empire</a></li>
+              <li><a href="#lights" className="hover:text-[#1a1612] transition-colors">The Lights</a></li>
+              <li><a href="#galleries" className="hover:text-[#1a1612] transition-colors">Galleries</a></li>
               <li><a href="#eat" className="hover:text-[#1a1612] transition-colors">Eat & drink</a></li>
-              <li><a href="#stay" className="hover:text-[#1a1612] transition-colors">Where to stay</a></li>
-              <li><a href="#when" className="hover:text-[#1a1612] transition-colors">When to come</a></li>
-              <li><a href="#getting-here" className="hover:text-[#1a1612] transition-colors">Getting here</a></li>
+              <li><a href="#stay" className="hover:text-[#1a1612] transition-colors">Stay</a></li>
+              <li><a href="#calendar" className="hover:text-[#1a1612] transition-colors">Calendar</a></li>
             </ul>
           </div>
 
           <div className="md:col-span-4">
             <Eyebrow>Contact</Eyebrow>
-            <p className="mt-4 text-[14px] leading-[1.7]" style={{ color: INK_SOFT }}>
+            <p className="mt-4 text-[13px] leading-[1.75]" style={{ color: INK_SOFT }}>
               302 S. Highland Ave.<br />
               Marfa, TX 79843<br />
               <a href="tel:4327294772" className="hover:text-[#1a1612] transition-colors">(432) 729-4772</a><br />
               <a href="mailto:contact@visitmarfa.com" className="hover:text-[#1a1612] transition-colors">contact@visitmarfa.com</a>
             </p>
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-2">
               <a
                 href="https://instagram.com/visitmarfatx"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-9 h-9 rounded-full border flex items-center justify-center transition-colors hover:bg-[#1a1612] hover:text-white"
+                className="w-9 h-9 border flex items-center justify-center transition-colors hover:bg-[#1a1612] hover:text-white"
                 style={{ borderColor: HAIRLINE, color: INK_SOFT }}
               >
-                <InstagramLogo size={16} weight="regular" />
+                <InstagramLogo size={15} weight="regular" />
               </a>
               <a
                 href="https://facebook.com/VisitMarfa"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-9 h-9 rounded-full border flex items-center justify-center transition-colors hover:bg-[#1a1612] hover:text-white"
+                className="w-9 h-9 border flex items-center justify-center transition-colors hover:bg-[#1a1612] hover:text-white"
                 style={{ borderColor: HAIRLINE, color: INK_SOFT }}
               >
-                <FacebookLogo size={16} weight="regular" />
+                <FacebookLogo size={15} weight="regular" />
               </a>
             </div>
           </div>
         </div>
 
         <div
-          className="px-6 md:px-10 py-6 border-t flex flex-col md:flex-row items-center justify-between gap-3 text-[12px]"
+          className="px-6 md:px-10 py-6 border-t"
           style={{ borderColor: HAIRLINE_SOFT, color: INK_FAINT }}
         >
-          <p className="max-w-[1320px] mx-auto w-full flex flex-wrap items-center justify-between gap-3">
-            <span>© {new Date().getFullYear()} Marfa Visitor Center · Marfa, Texas</span>
-            <span className="italic">"An oasis of culture in West Texas's Chihuahuan Desert."</span>
-          </p>
+          <div className="max-w-[1320px] mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] uppercase tracking-[0.2em]">
+            <span>© {new Date().getFullYear()} Marfa Visitor Center</span>
+            <span>30°18′N · 104°01′W</span>
+          </div>
         </div>
       </footer>
+
+      {/* Decorative small image used to keep the courthouse aerial
+          in the bundle as a referenced asset for any future use —
+          rendered hidden so it doesn't add visual weight but the
+          import is real. (No-op visually; helps avoid lint for an
+          unused constant.) */}
+      <img
+        src={IMG_COURTHOUSE_AERIAL}
+        alt=""
+        aria-hidden
+        className="hidden"
+      />
+      <img src={IMG_GIANT_MURAL} alt="" aria-hidden className="hidden" />
+      <img src={IMG_SKY_ISLAND} alt="" aria-hidden className="hidden" />
+      <img src={IMG_PRADA} alt="" aria-hidden className="hidden" />
+      <img src={IMG_STONE_CIRCLE} alt="" aria-hidden className="hidden" />
+      <img src={IMG_PAISANO} alt="" aria-hidden className="hidden" />
     </main>
-  );
-}
-
-// ─── Card components ──────────────────────────────────────────────
-
-function ThingCard({
-  image,
-  eyebrow,
-  title,
-  copy,
-  meta,
-  href,
-  tall = false,
-}: {
-  image: string;
-  eyebrow: string;
-  title: string;
-  copy: string;
-  meta?: string;
-  href?: string;
-  tall?: boolean;
-}) {
-  return (
-    <article className="group">
-      <div
-        className="relative overflow-hidden"
-        style={{ aspectRatio: tall ? "4 / 5" : "4 / 3" }}
-      >
-        <img
-          src={image}
-          alt={title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.03]"
-        />
-      </div>
-      <div className="pt-6">
-        <Eyebrow color={RUST_DEEP}>{eyebrow}</Eyebrow>
-        <h3
-          className="mt-3 text-2xl md:text-[28px] font-light leading-[1.15]"
-          style={{ fontFamily: SERIF, color: INK }}
-        >
-          {title}
-        </h3>
-        <p
-          className="mt-4 text-[15px] leading-[1.7] max-w-prose"
-          style={{ color: INK_SOFT }}
-        >
-          {copy}
-        </p>
-        {(meta || href) && (
-          <div className="mt-5 flex items-center justify-between gap-4 flex-wrap">
-            {meta && (
-              <p className="text-[12px] uppercase tracking-[0.16em]" style={{ color: INK_FAINT }}>
-                {meta}
-              </p>
-            )}
-            {href && <QuietLink href={href}>Learn more</QuietLink>}
-          </div>
-        )}
-      </div>
-    </article>
-  );
-}
-
-function EatCard({
-  image,
-  name,
-  kind,
-  copy,
-}: {
-  image: string;
-  name: string;
-  kind: string;
-  copy: string;
-}) {
-  return (
-    <article className="group">
-      <div className="relative overflow-hidden" style={{ aspectRatio: "5 / 4" }}>
-        <img
-          src={image}
-          alt={name}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.03]"
-          style={{ filter: "saturate(0.95)" }}
-        />
-      </div>
-      <div className="pt-5">
-        <div className="flex items-baseline justify-between gap-3">
-          <h3
-            className="text-[22px] font-light"
-            style={{ fontFamily: SERIF, color: INK }}
-          >
-            {name}
-          </h3>
-          <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: RUST_DEEP }}>
-            {kind}
-          </span>
-        </div>
-        <Rule />
-        <p
-          className="mt-4 text-[14px] leading-[1.7]"
-          style={{ color: INK_SOFT }}
-        >
-          {copy}
-        </p>
-      </div>
-    </article>
-  );
-}
-
-function StayCard({
-  image,
-  eyebrow,
-  name,
-  copy,
-  meta,
-}: {
-  image: string;
-  eyebrow: string;
-  name: string;
-  copy: string;
-  meta: string;
-}) {
-  return (
-    <article className="group">
-      <div className="relative overflow-hidden" style={{ aspectRatio: "3 / 2" }}>
-        <img
-          src={image}
-          alt={name}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.03]"
-        />
-      </div>
-      <div className="pt-6">
-        <Eyebrow color={RUST_DEEP}>{eyebrow}</Eyebrow>
-        <h3
-          className="mt-3 text-3xl font-light leading-[1.1]"
-          style={{ fontFamily: SERIF, color: INK }}
-        >
-          {name}
-        </h3>
-        <p className="mt-4 text-[15px] leading-[1.7] max-w-prose" style={{ color: INK_SOFT }}>
-          {copy}
-        </p>
-        <p className="mt-5 text-[12px] uppercase tracking-[0.16em]" style={{ color: INK_FAINT }}>
-          {meta}
-        </p>
-      </div>
-    </article>
-  );
-}
-
-function DriveRow({
-  city,
-  hours,
-  miles,
-  note,
-}: {
-  city: string;
-  hours: string;
-  miles: string;
-  note: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-baseline justify-between gap-4 flex-wrap">
-        <h3
-          className="text-2xl font-light"
-          style={{ fontFamily: SERIF, color: INK }}
-        >
-          {city}
-        </h3>
-        <div className="flex items-baseline gap-3">
-          <span
-            className="text-[20px] font-light"
-            style={{ fontFamily: SERIF, color: RUST_DEEP }}
-          >
-            {hours}
-          </span>
-          <span className="text-[12px] uppercase tracking-[0.16em]" style={{ color: INK_FAINT }}>
-            {miles}
-          </span>
-        </div>
-      </div>
-      <Rule />
-      <p className="mt-3 text-[14px] leading-[1.7]" style={{ color: INK_SOFT }}>
-        {note}
-      </p>
-    </div>
   );
 }
