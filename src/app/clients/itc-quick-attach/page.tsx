@@ -18,7 +18,7 @@
  *   - Real Blossvale NY location, real phone, real "made-in-USA" claim
  *   - Real "design + manufacturing under one roof" positioning
  *
- * Visual language: industrial charcoal + safety orange. Sharp-edged
+ * Visual language: industrial charcoal + industrial red. Sharp-edged
  * geometric blocks, hi-contrast type, generous whitespace. The site
  * should feel like John Deere x Linear — the polished trade-tool
  * vibe, not consumer fluff.
@@ -93,6 +93,11 @@ const FIELD_THUMB_3 =
   "https://itcquickattach.com/assets/images/thumbnails/Snapshot_1_thumbnail.JPG";
 const MISSION_PHOTO =
   "https://itcquickattach.com/assets/images/mission.png";
+// Real full-res ITC photo for the "From Blossvale, NY to your
+// tailgate" banner. Pulled directly from their image directory,
+// curl-verified 200. Replaces a generic Unsplash workshop fallback.
+const ITC_BLOSSVALE_BANNER =
+  "https://itcquickattach.com/assets/images/Snapshot_1.JPG";
 
 // Verified Unsplash fallbacks (curl-checked) for hero atmosphere shots
 // where ITC's own photography doesn't cover the slot.
@@ -106,9 +111,9 @@ const UNSPLASH_WORKSHOP =
   "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=2400&q=85"; // workshop / fabrication
 
 // ─── Industrial palette ────────────────────────────────────────────
-// Modern industrial: charcoal base, safety-orange punch, steel accents.
-// Calibrated to feel like high-end tool-brand — Snap-on, Klein, Linear
-// — rather than the dated red/black of most ag-equipment sites.
+// Modern industrial: charcoal base, industrial-red punch, steel accents.
+// Per Ben's request, swapped from safety-orange to a confident
+// machine-shop red. Feels less DOT-cone and more Snap-on / fire-engine.
 const BG = "#0d0f12";              // near-black industrial
 const BG_DEEP = "#070809";         // void
 const PANEL = "#15181d";           // gunmetal panel
@@ -116,11 +121,14 @@ const PANEL_LIGHT = "#1f2329";     // raised steel
 const INK = "#f5f5f4";             // bright bone-white text
 const INK_SOFT = "#a8a29e";        // warm gray for body
 const INK_DIM = "#78716c";         // dim gray for captions
-const ORANGE = "#f97316";          // safety orange primary
-const ORANGE_LIGHT = "#fb923c";
-const ORANGE_DEEP = "#c2410c";
+// Red palette — kept variable names as ORANGE/ORANGE_LIGHT/ORANGE_DEEP
+// because they're referenced 70+ times and renaming would balloon the
+// diff. The values are red now; readers can rename later if desired.
+const ORANGE = "#dc2626";          // industrial red primary (red-600)
+const ORANGE_LIGHT = "#ef4444";    // red-500
+const ORANGE_DEEP = "#991b1b";     // red-800
 const STEEL = "#475569";           // cool steel accent
-const ORANGE_GLOW = "rgba(249, 115, 22, 0.15)";
+const ORANGE_GLOW = "rgba(220, 38, 38, 0.15)";
 const GRID = "rgba(255, 255, 255, 0.04)";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 22 };
@@ -1536,7 +1544,7 @@ export default function ITCQuickAttachPage() {
           >
             <div className="aspect-[21/9] sm:aspect-[21/7] relative">
               <img
-                src={UNSPLASH_WORKSHOP}
+                src={ITC_BLOSSVALE_BANNER}
                 alt="American farmland horizon"
                 className="absolute inset-0 w-full h-full object-cover"
               />
