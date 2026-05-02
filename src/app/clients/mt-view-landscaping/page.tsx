@@ -623,7 +623,7 @@ export default function MtViewLandscapingPage() {
                     className="text-sm md:text-base uppercase tracking-widest font-medium"
                     style={{ color: PRIMARY_LIGHT }}
                   >
-                    Family-Owned in Western Washington Since {BUSINESS.established}
+                    Over 5,000 Satisfied Customers Since {BUSINESS.established}
                   </motion.p>
 
                   <h1 className="text-4xl md:text-5xl lg:text-[60px] xl:text-[72px] tracking-tighter leading-[1.02] font-bold text-white">
