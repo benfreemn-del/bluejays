@@ -104,6 +104,91 @@ export function getSuggestedSlots(
   return slots;
 }
 
+/**
+ * Build slots for a specific calendar day. Used when the rep needs to
+ * navigate to a different day in the modal (e.g. prospect can't do
+ * Monday, push to Wednesday). Lead-time logic still applies — if the
+ * day IS today, slots that have already passed are filtered out.
+ *
+ * Returns [] for weekends.
+ */
+export function getSlotsForDay(
+  day: Date,
+  now: Date = new Date(),
+  leadTimeMins = 90,
+): BookingSlot[] {
+  const dow = day.getDay();
+  if (!BUSINESS_DAYS.includes(dow)) return [];
+
+  const earliest = new Date(now.getTime() + leadTimeMins * 60_000);
+  const slots: BookingSlot[] = [];
+  for (let hour = DAY_START_HOUR; hour < DAY_END_HOUR; hour += 1) {
+    if (hour >= LUNCH_START_HOUR && hour < LUNCH_END_HOUR) continue;
+    for (const minute of [15, 45]) {
+      const slot = new Date(day);
+      slot.setHours(hour, minute, 0, 0);
+      if (slot < earliest) continue;
+      slots.push(buildSlot(slot, now));
+    }
+  }
+  return slots;
+}
+
+/**
+ * Returns the next `count` business-day Date objects starting from
+ * `start` (or today). Each Date is set to midnight local time so the
+ * caller can render it as a tab/pill. Skips weekends.
+ *
+ * If start is itself a weekend, the first returned day is the
+ * following Monday.
+ */
+export function getNextBusinessDays(
+  start: Date = new Date(),
+  count = 10,
+): Date[] {
+  const days: Date[] = [];
+  const cursor = new Date(start);
+  cursor.setHours(0, 0, 0, 0);
+  let safety = 0;
+  while (days.length < count && safety < 30) {
+    safety += 1;
+    if (BUSINESS_DAYS.includes(cursor.getDay())) {
+      days.push(new Date(cursor));
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
+/**
+ * Format a calendar day for the day-tab pill. Returns short weekday
+ * + numeric date so the rep can scan: "Mon 5/5", "Tue 5/6". The
+ * "Today" / "Tomorrow" markers are still applied to the date that
+ * matches.
+ */
+export function formatDayTab(day: Date, now: Date = new Date()): {
+  primary: string; // "Today" / "Tomorrow" / "Mon"
+  secondary: string; // "May 5"
+} {
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(day);
+  target.setHours(0, 0, 0, 0);
+  const diffDays = Math.round(
+    (target.getTime() - today.getTime()) / 86_400_000,
+  );
+  let primary: string;
+  if (diffDays === 0) primary = "Today";
+  else if (diffDays === 1) primary = "Tomorrow";
+  else
+    primary = day.toLocaleDateString("en-US", { weekday: "short" });
+  const secondary = day.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  return { primary, secondary };
+}
+
 function buildSlot(slot: Date, now: Date): BookingSlot {
   return {
     iso: slot.toISOString(),
