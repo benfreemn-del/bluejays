@@ -392,11 +392,11 @@ const services = [
 
 // Process — 5 steps, voiced for Tim. Site visit → concept → plants → install → aftercare.
 const processSteps = [
-  { step: "01", title: "Site Visit", desc: "Tim walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the four-county service area.", icon: Eye },
+  { step: "01", title: "Site Visit", desc: "Tim walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the four-county service area. Bonnie joins for maintenance-only visits.", icon: Eye },
   { step: "02", title: "Concept & Design", desc: "A concept drawing with materials, planting plan, and a clear scope. You see the install on paper before we break ground — phased to your budget if it needs to be.", icon: Ruler },
   { step: "03", title: "Plant Selection", desc: "Plants picked for your site — natives and climate-adapted species first. Forty-nine seasons of installs in this region tells you which ones make it past their second winter.", icon: Plant },
-  { step: "04", title: "Installation", desc: "One crew, run by Tim, from the first cleared lot to the last lit pathway. Every discipline in-house — design, hardscape, irrigation, planting, lighting.", icon: Shovel },
-  { step: "05", title: "Aftercare", desc: "We come back. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands. Most of our work is repeat clients.", icon: Heart },
+  { step: "04", title: "Installation", desc: "One crew, run by Tim, from the first cleared lot to the last lit pathway. Every discipline in-house — design, hardscape, irrigation, planting, lighting. When it's done, Bonnie's maintenance team takes the keys.", icon: Shovel },
+  { step: "05", title: "Aftercare", desc: "Bonnie's maintenance route picks up where the install ends. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands. Most of our work is repeat clients.", icon: Heart },
 ];
 
 // 5 named Mt View projects, mapped from the existing PROJECTS array. Each
@@ -455,7 +455,7 @@ const seasonalData = [
 const observations = [
   { name: "What clients tell us", text: "The most common line we hear: 'we wish we'd called you the first time.' That's the work — building landscapes the second contractor doesn't have to come fix.", image: PHOTOS.kirse048 },
   { name: "On longevity", text: "Most of our clients came back five, ten, fifteen years after the first install for the next phase. That's the standard we install to.", image: PHOTOS.olano032 },
-  { name: "On the install", text: "One crew, run by Tim, from cleared lot to lit pathway. Every discipline in-house means nothing falls between the trades.", image: PHOTOS.aqua022 },
+  { name: "On the install", text: "One crew, run by Tim from cleared lot to lit pathway. Bonnie's crew picks it up after the install — same family, same standard. Nothing falls between the trades.", image: PHOTOS.aqua022 },
 ];
 
 const comparisonRows = [
@@ -481,7 +481,7 @@ const faqs = [
   { q: "What's your service area?", a: "King, Pierce, Snohomish, and Kittitas counties — based out of Auburn, WA. Site visits across the four-county footprint are free. If you're close to the edge of that footprint and not sure, call. We'll tell you straight." },
   { q: "Can you maintain a landscape someone else installed?", a: "We can — pruning, bed work, seasonal cleanup, and re-grading or re-planting where it's needed. We won't take over a maintenance contract on a brand-new install we don't know the bones of, but for established yards, yes." },
   { q: "Do you do residential and commercial?", a: "Both, though our archive leans residential. Property managers, HOAs, and commercial sites have hired us for hardscape and planting work — same in-house crew, same standard." },
-  { q: "How long has Mountain View been around?", a: "Tim Hunsaker has been landscaping in this region since 1976 — first under the Shamrock Landscaping name, then as Mountain View. Same owner, same crew style, same standard the whole way through." },
+  { q: "How long has Mountain View been around?", a: "Tim Hunsaker has been landscaping in this region since 1976 — first under the Shamrock Landscaping name, then as Mountain View. Bonnie Hunsaker runs the maintenance side. Same family, same standard the whole way through." },
 ];
 
 // Hero floating cards — three feature views from Mt View's archive.
@@ -552,9 +552,10 @@ export default function MtViewLandscapingPage() {
                     transition={{ ...spring, delay: 0.6 }}
                     className="text-lg text-slate-400 leading-relaxed max-w-md"
                   >
-                    From the first concept sketch to the lawn we cut every other Tuesday — Tim
-                    Hunsaker and his crew have built and kept Pacific Northwest landscapes
-                    healthy for nearly fifty years.
+                    From the first concept sketch to the lawn Bonnie cuts every other Tuesday —
+                    the Hunsakers have built and kept Pacific Northwest landscapes
+                    healthy for nearly fifty years. Tim runs design and install. Bonnie runs
+                    the maintenance route.
                   </motion.p>
 
                   <motion.div
@@ -575,7 +576,7 @@ export default function MtViewLandscapingPage() {
                     <a href={BUSINESS.phoneHref}>
                       <MagneticButton className="px-7 py-3.5 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                         <Phone size={18} weight="duotone" />
-                        Call Tim
+                        Call the Hunsakers
                       </MagneticButton>
                     </a>
                   </motion.div>
@@ -682,9 +683,10 @@ export default function MtViewLandscapingPage() {
             </h2>
             <p className="leading-relaxed" style={{ color: BG_CREAM_INK_SOFT }}>
               Ongoing care is what keeps a $30,000 install looking like one a decade
-              later. Mt View runs a year-round maintenance route across King, Pierce,
-              Snohomish &amp; Kittitas counties — three plans, all built around your
-              property, all serviced by the same crew that&rsquo;s been doing this since 1976.
+              later. Bonnie Hunsaker runs Mt View&rsquo;s year-round maintenance route across
+              King, Pierce, Snohomish &amp; Kittitas counties — three plans, all built around
+              your property, all serviced by the same family crew that&rsquo;s been doing this
+              since 1976.
             </p>
           </div>
 
@@ -735,7 +737,7 @@ export default function MtViewLandscapingPage() {
                   "On-call repairs & touch-ups",
                   "Seasonal redesign & replanting",
                   "Lighting maintenance",
-                  "Direct line to Tim",
+                  "Direct line to Tim & Bonnie",
                 ],
                 accent: EARTH_DARK,
               },
@@ -875,7 +877,7 @@ export default function MtViewLandscapingPage() {
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
-              { icon: Certificate, title: "Same Owner Since 1976", desc: "Tim Hunsaker — same standard, same crew style, the whole way through. Most of our work is repeat clients on their next phase." },
+              { icon: Certificate, title: "Same Family Since 1976", desc: "Tim and Bonnie Hunsaker — same standard, same crew style, the whole way through. Most of our work is repeat clients on their next phase." },
               { icon: PaintBrush, title: "Design You See First", desc: "A concept and planting plan with materials and scope, before we break ground. The install runs from the same drawing." },
               { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and water features sized for a Pacific Northwest rainy season — not for a finish photograph." },
               { icon: Recycle, title: "Climate-Smart First", desc: "PNW natives and adapted species default. Lower water, lower maintenance, plants that make it past their second winter." },
@@ -960,11 +962,11 @@ export default function MtViewLandscapingPage() {
             <div>
               <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>About</p>
               <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Tim Hunsaker" />
+                <WordReveal text="The Hunsakers" />
               </h2>
               <div className="space-y-4 text-slate-400 leading-relaxed">
-                <p>Mountain View Landscape &amp; Design is a family-owned firm based in Auburn, Washington. Tim has been landscaping in the Pacific Northwest since 1976 — first under the Shamrock Landscaping name, then as Mountain View. The work is residential, the crew is local, and every discipline runs in-house.</p>
-                <p>Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don&rsquo;t. It tells you how to size a base course for our rainfall. It tells you which clients call back, and why.</p>
+                <p>Mountain View Landscape &amp; Design is a family-owned firm based in Auburn, Washington. <span className="text-white font-medium">Tim Hunsaker</span> has been landscaping in the Pacific Northwest since 1976 — first under the Shamrock Landscaping name, then as Mountain View. <span className="text-white font-medium">Bonnie Hunsaker</span> runs the maintenance side of the business — the year-round route, bed work, pruning, and the relationships with clients who call back every season.</p>
+                <p>The work is residential, the crew is local, and every discipline runs in-house. Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don&rsquo;t. It tells you how to size a base course for our rainfall. It tells you which clients call back, and why.</p>
               </div>
               <div className="mt-8 grid grid-cols-2 gap-4">
                 {[
@@ -1274,7 +1276,7 @@ export default function MtViewLandscapingPage() {
             <div>
               <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Get Started</p>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Tell Tim about the project" />
+                <WordReveal text="Tell the Hunsakers about your yard" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md mb-8">
                 Site visits are free across King, Pierce, Snohomish &amp; Kittitas counties. We typically respond within one business day, usually faster.
@@ -1437,7 +1439,7 @@ export default function MtViewLandscapingPage() {
                 <li><a href="#work" className="hover:text-white transition-colors">Selected Work</a></li>
                 <li><a href="#process" className="hover:text-white transition-colors">Process</a></li>
                 <li><a href="#service-area" className="hover:text-white transition-colors">Service Area</a></li>
-                <li><a href="#contact" className="hover:text-white transition-colors">Tell Tim about the project</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Tell the Hunsakers about your yard</a></li>
               </ul>
             </div>
             {/* Contact */}
