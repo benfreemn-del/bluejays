@@ -89,9 +89,20 @@ const LOGO =
    ?format=1500w. Excluded: hero.jpg sprinkler shot, 67738826_* team
    portrait, "unnamed (14).jpg" portrait. */
 const PHOTOS = {
-  // Hero — most cinematic engineered-stonework frame in the archive (1.32MB).
-  hero:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG?format=2500w",
+  // Hero — new (2026-05-02): Ben supplied a tiered red-block retaining-wall
+  // hillside shot with stone steps + path-light bollards. Far stronger
+  // hero subject than DSC00543 (which was a single-tier wall) — this
+  // one shows the engineered-build + plantings + lighting + scale all
+  // in one frame. Source PNG (991x741) was processed through
+  // scripts/process-mt-view-hero.mjs: progressive JPEG q=85, modulated
+  // saturation 0.95 + brightness 1.02 + linear contrast bump for
+  // tonal cohesion with the rest of the page (229KB output).
+  hero: "/clients/mt-view-landscaping/tiered-stairs-hero.jpg",
+  // The previous hero (DSC00543, single-tier retaining wall) is now
+  // surfaced inside the Stoneworks project section — see PHOTOS.stone543
+  // below — so we don't lose a verified portfolio shot.
+  stone543:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG?format=1500w",
 
   // Kirse Residence — full-yard installation
   kirseLead:
@@ -914,11 +925,11 @@ export default function MtViewLandscapingPage() {
           <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
               { src: PHOTOS.kirse006, alt: "Kirse residence — entry walkway in natural stone" },
+              { src: PHOTOS.stone543, alt: "Stoneworks — engineered single-tier retaining wall" },
               { src: PHOTOS.stone409, alt: "Stoneworks — landscape integrated with retaining wall" },
               { src: PHOTOS.aqua9406, alt: "Aquavista — water feature integrated into the landscape" },
               { src: PHOTOS.olano024, alt: "Olano residence — yard view" },
               { src: PHOTOS.june022, alt: "Mountain View — summer plantings" },
-              { src: PHOTOS.night414, alt: "Mountain View finished landscape, evening" },
             ].map((d, i) => (
               <motion.div key={i} variants={fadeUp} className="aspect-square rounded-xl overflow-hidden border border-white/15">
                 <img src={d.src} alt={d.alt} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
