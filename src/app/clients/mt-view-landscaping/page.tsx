@@ -723,7 +723,7 @@ export default function MtViewLandscapingPage() {
                   "Bed weeding, mulch refresh",
                   "Pruning & deadheading",
                   "Spring & fall fertilization",
-                  "Irrigation start-up &amp; winterize",
+                  "Irrigation start-up & winterize",
                 ],
                 accent: PRIMARY,
                 featured: true,
@@ -1107,9 +1107,9 @@ export default function MtViewLandscapingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { label: "Full-Yard Install", color: PRIMARY_LIGHT, desc: "Design, plant, hardscape — start to finish" },
-                  { label: "Hardscape Project", color: "#f59e0b", desc: "Patio, walkway, retaining wall" },
-                  { label: "Water Feature", color: EARTH, desc: "Pond, waterfall, naturalistic stream" },
-                  { label: "Lighting & Aftercare", color: "#f97316", desc: "Night lighting or maintenance on existing" },
+                  { label: "Hardscape Project", color: EARTH, desc: "Patio, walkway, retaining wall" },
+                  { label: "Water Feature", color: PRIMARY, desc: "Pond, waterfall, naturalistic stream" },
+                  { label: "Lighting & Aftercare", color: EARTH_DARK, desc: "Night lighting or maintenance on existing" },
                 ].map((opt, i) => (
                   <button
                     key={i}
@@ -1435,7 +1435,7 @@ export default function MtViewLandscapingPage() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-4">On the page</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#about" className="hover:text-white transition-colors">About Tim</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">About the Hunsakers</a></li>
                 <li><a href="#work" className="hover:text-white transition-colors">Selected Work</a></li>
                 <li><a href="#process" className="hover:text-white transition-colors">Process</a></li>
                 <li><a href="#service-area" className="hover:text-white transition-colors">Service Area</a></li>
