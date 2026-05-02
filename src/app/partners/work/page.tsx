@@ -173,8 +173,11 @@ export default async function PartnerWorkPage() {
                 status: prospect.status,
                 hasCompletedAudit: prospect.hasCompletedAudit,
                 latestAuditId: prospect.latestAuditId,
+                // Partner-leadpool only loads ready-status audits, so
+                // if latestAuditId is set we know it's a ready one.
+                latestAuditStatus: prospect.latestAuditId ? "ready" : null,
                 previewUrl: `${SITE_ORIGIN}/preview/${prospect.id}?ref=${partner.code}`,
-                auditViewUrl: prospect.latestAuditId
+                auditViewUrl: prospect.hasCompletedAudit && prospect.latestAuditId
                   ? `${SITE_ORIGIN}/audit/${prospect.latestAuditId}?ref=${partner.code}`
                   : null,
                 categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,

@@ -76,6 +76,11 @@ type Props = {
     status: string | null;
     hasCompletedAudit: boolean;
     latestAuditId: string | null;
+    /** Latest audit row status — 'ready' / 'pending' / 'processing' /
+     *  'generating' / 'failed' / null when no audit has ever been
+     *  requested. Lets the workspace surface "Audit generating…"
+     *  instead of just hiding the View-audit button. */
+    latestAuditStatus: string | null;
     websiteUrl: string | null;
     googleSearchUrl: string;
     // Hours / open-status (always computed; "precise" flag tells us
@@ -178,12 +183,18 @@ export default function CallWorkspace(props: Props) {
   const [bookingLinkSent, setBookingLinkSent] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingSpoken, setBookingSpoken] = useState<string | null>(null);
-  // Email-preview-link button state — fires the SendGrid pipeline so
-  // the prospect gets the same preview link from ben@bluejayportfolio.com
-  // that's already wired up for cold outreach + transactional sends.
-  const [emailPreviewSending, setEmailPreviewSending] = useState(false);
-  const [emailPreviewSent, setEmailPreviewSent] = useState(false);
-  const [emailPreviewError, setEmailPreviewError] = useState<string | null>(null);
+  // Per-link send tracking — separate text vs email so the rep can
+  // see exactly what they've sent for THIS prospect at a glance.
+  // (Pre-2026-05-02: a single auto-sending email button hit the
+  // SendGrid API. Replaced with mailto: at user's request — they
+  // want to review the message before it goes out, same UX as SMS.)
+  const [previewEmailSent, setPreviewEmailSent] = useState(false);
+  const [bookingEmailSent, setBookingEmailSent] = useState(false);
+  const [auditEmailSent, setAuditEmailSent] = useState(false);
+  // Booking modal can be opened in either "sms" or "email" mode —
+  // both pick a time first, then the rep gets a pre-filled message
+  // ready to review before sending.
+  const [bookingModalChannel, setBookingModalChannel] = useState<"sms" | "email">("sms");
   const [sentText, setSentText] = useState(false);
   // Admin (Ben) bypasses the partner-agreement gate entirely — he doesn't
   // need to accept his own contractor terms.
@@ -270,8 +281,9 @@ export default function CallWorkspace(props: Props) {
     setBookingLinkSent(false);
     setBookingSpoken(null);
     setSentText(false);
-    setEmailPreviewSent(false);
-    setEmailPreviewError(null);
+    setPreviewEmailSent(false);
+    setBookingEmailSent(false);
+    setAuditEmailSent(false);
     setSection("intro");
     setSavedOutcome(null);
 
@@ -298,19 +310,36 @@ export default function CallWorkspace(props: Props) {
     window.location.href = "/partners/login";
   }
 
-  function smsBody(kind: "preview" | "audit" | "booking") {
+  type LinkKind = "preview" | "audit" | "booking";
+
+  /** The destination URL for each link type. Audit prefers the
+   *  prospect's COMPLETED audit (auditViewUrl) when ready — only
+   *  falls back to the lead-magnet form URL if no audit exists. */
+  function urlFor(kind: LinkKind): string {
+    if (kind === "preview") return links.previewUrl;
+    if (kind === "booking") return links.scheduleUrl;
+    // audit
+    return prospect?.auditViewUrl || links.auditUrl;
+  }
+
+  function smsBody(kind: LinkKind): string {
     const firstName = prospect?.ownerName?.trim().split(/\s+/)[0] || "there";
     const callerFirst = partner.name.split(/\s+/)[0];
     if (kind === "preview") {
-      return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that website we built for ${prospect?.businessName || "your business"}: ${links.previewUrl}`;
+      return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that website we built for ${prospect?.businessName || "your business"}: ${urlFor("preview")}`;
     }
     if (kind === "booking") {
-      return `Hey ${firstName}, ${callerFirst} with BlueJays — pick a 15-min slot for the walkthrough with Ben here: ${links.scheduleUrl}`;
+      return `Hey ${firstName}, ${callerFirst} with BlueJays — pick a 15-min slot for the walkthrough with Ben here: ${urlFor("booking")}`;
     }
-    return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that free 60-second audit of your site: ${links.auditUrl}`;
+    // Audit copy depends on whether the prospect has a completed audit
+    // or whether we're sending the lead-magnet form
+    if (prospect?.auditViewUrl) {
+      return `Hey ${firstName}, ${callerFirst} with BlueJays — here's the audit of ${prospect.businessName || "your site"}, the issues + fixes are inside: ${urlFor("audit")}`;
+    }
+    return `Hey ${firstName}, ${callerFirst} with BlueJays — here's that free 60-second audit of your site: ${urlFor("audit")}`;
   }
 
-  function smsHref(kind: "preview" | "audit" | "booking"): string {
+  function smsHref(kind: LinkKind): string {
     if (!prospect) return "#";
     const body = encodeURIComponent(smsBody(kind));
     // sms: deep-link with body. Phone number first so messages app
@@ -318,34 +347,92 @@ export default function CallWorkspace(props: Props) {
     return `sms:${prospect.phone.replace(/[^0-9+]/g, "")}?&body=${body}`;
   }
 
-  async function emailPreviewLink() {
-    if (!prospect || emailPreviewSending) return;
-    setEmailPreviewSending(true);
-    setEmailPreviewError(null);
-    try {
-      const res = await fetch(
-        `/api/partners/work/send-preview-email/${prospect.id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            previewUrl: links.previewUrl,
-            callerFirstName: partner.name.split(/\s+/)[0],
-          }),
-        },
-      );
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setEmailPreviewError(data.error || "Email send failed");
-        return;
-      }
-      setEmailPreviewSent(true);
-      setSentText(true); // counts as a "link sent" for outcome panel context
-    } catch {
-      setEmailPreviewError("Network error");
-    } finally {
-      setEmailPreviewSending(false);
+  /** Email subject line per link type. Personalized by business name
+   *  so it stands out in a crowded inbox. */
+  function emailSubject(kind: LinkKind): string {
+    const biz = prospect?.businessName || "your business";
+    if (kind === "preview") return `${biz} — your new website preview`;
+    if (kind === "booking") return `Quick 15-min walkthrough — ${biz}`;
+    if (prospect?.auditViewUrl) return `${biz} — your site audit (issues + fixes inside)`;
+    return `Free 60-second audit of ${biz}`;
+  }
+
+  /** Email body — multi-line plain text. Opens in the rep's mail
+   *  client via mailto: so they can review/edit before sending,
+   *  same UX as the SMS button (no auto-send). */
+  function emailBody(kind: LinkKind): string {
+    const firstName = prospect?.ownerName?.trim().split(/\s+/)[0] || "there";
+    const callerFirst = partner.name.split(/\s+/)[0];
+    const biz = prospect?.businessName || "your business";
+    const url = urlFor(kind);
+
+    if (kind === "preview") {
+      return `Hey ${firstName},
+
+${callerFirst} with BlueJays — as promised on the phone, here's the new website I built for ${biz}:
+
+${url}
+
+Take 60 seconds to scroll through. Anything you want changed (colors, copy, photos) just reply and I'll update it on my end — no charge for tweaks.
+
+If you want to walk through it together, my calendar's open here: ${links.scheduleUrl}
+
+Talk soon,
+${callerFirst}
+BlueJays
+ben@bluejayportfolio.com`;
     }
+
+    if (kind === "booking") {
+      return `Hey ${firstName},
+
+${callerFirst} with BlueJays — locking in a 15-min walkthrough so I can show you the new website for ${biz} live and answer any questions:
+
+${url}
+
+Pick whatever time works — slots fill up fast so the sooner the better.
+
+Talk soon,
+${callerFirst}
+BlueJays
+ben@bluejayportfolio.com`;
+    }
+
+    // audit
+    if (prospect?.auditViewUrl) {
+      return `Hey ${firstName},
+
+${callerFirst} with BlueJays — here's the full audit of ${biz}'s current site. The issues we found plus the fixes are all inside:
+
+${url}
+
+Most of these are things we'd handle for you on a new build. Reply or grab a 15-min slot if you want me to walk you through it: ${links.scheduleUrl}
+
+${callerFirst}
+BlueJays
+ben@bluejayportfolio.com`;
+    }
+    return `Hey ${firstName},
+
+${callerFirst} with BlueJays — here's that free 60-second audit tool for ${biz}'s website:
+
+${url}
+
+Drop in your URL and you'll get a personalized rundown of what's working, what's hurting conversions, and how to fix it. Takes a minute, totally free.
+
+${callerFirst}
+BlueJays
+ben@bluejayportfolio.com`;
+  }
+
+  /** mailto: href with pre-filled to / subject / body. Opens the
+   *  rep's default mail client (Gmail web if configured, Apple Mail,
+   *  Outlook, etc.) so they can review + edit before clicking send. */
+  function emailHref(kind: LinkKind): string {
+    if (!prospect?.email) return "#";
+    const subject = encodeURIComponent(emailSubject(kind));
+    const body = encodeURIComponent(emailBody(kind));
+    return `mailto:${prospect.email}?subject=${subject}&body=${body}`;
   }
 
   if (showAgreement) {
@@ -515,80 +602,91 @@ export default function CallWorkspace(props: Props) {
 
         {/* RIGHT: action panel — link send + outcomes */}
         <aside className="space-y-4">
-          {/* Send links */}
-          <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5 space-y-3">
-            <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">
+          {/* Send links — three paired rows (Preview / Booking / Audit)
+              each with Text + Email options. Both options OPEN the
+              respective app pre-filled (sms: opens Messages, mailto:
+              opens default mail client) so the rep can review + edit
+              the message before clicking send. No auto-sends. */}
+          <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5 space-y-4">
+            <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
               Send to {prospect.ownerName?.split(/\s+/)[0] || "them"}
             </p>
 
-            <a
-              href={smsHref("preview")}
-              onClick={() => { setPreviewLinkSent(true); setSentText(true); }}
-              className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
-                previewLinkSent
-                  ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
-                  : "bg-sky-500 hover:bg-sky-400 text-sky-950 shadow-lg shadow-sky-500/25"
-              }`}
-            >
-              {previewLinkSent ? "✓ Preview text sent" : "📱 Text preview link (START HERE)"}
-            </a>
+            {/* PREVIEW — start here */}
+            <SendActionRow
+              label="Preview link"
+              hint="START HERE — drop this on every call"
+              accent="sky"
+              primary
+              textHref={smsHref("preview")}
+              onTextClick={() => { setPreviewLinkSent(true); setSentText(true); }}
+              textSent={previewLinkSent}
+              email={prospect.email}
+              emailHref={emailHref("preview")}
+              onEmailClick={() => { setPreviewEmailSent(true); setSentText(true); }}
+              emailSent={previewEmailSent}
+            />
 
-            {/* Email preview link — fires the same preview URL via
-                SendGrid from ben@bluejayportfolio.com. Useful when the
-                prospect prefers email, or when you want them to have
-                BOTH (text for the now-moment, email for tonight when
-                they're actually at a desk). */}
-            {prospect.email && (
-              <button
-                type="button"
-                onClick={emailPreviewLink}
-                disabled={emailPreviewSending || emailPreviewSent}
-                className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors disabled:cursor-not-allowed ${
-                  emailPreviewSent
-                    ? "bg-sky-500/20 border border-sky-500/50 text-sky-200"
-                    : emailPreviewSending
-                      ? "bg-sky-500/40 text-sky-100"
-                      : "bg-sky-500/15 border border-sky-500/40 text-sky-200 hover:bg-sky-500/25"
-                }`}
+            {/* BOOKING — both buttons open the time-picker modal first.
+                After picking a time, the modal hands off the right
+                channel (sms: or mailto:) with the spoken time pre-
+                filled into the message. */}
+            <SendActionRow
+              label="Booking link"
+              hint="Lock the 15-min walkthrough"
+              accent="emerald"
+              onTextClick={() => {
+                setBookingModalChannel("sms");
+                setBookingModalOpen(true);
+              }}
+              textSent={bookingLinkSent}
+              textSentLabel={bookingSpoken ? `Sent (${bookingSpoken})` : undefined}
+              email={prospect.email}
+              onEmailClick={() => {
+                setBookingModalChannel("email");
+                setBookingModalOpen(true);
+              }}
+              emailSent={bookingEmailSent}
+            />
+
+            {/* AUDIT — links to the prospect's COMPLETED audit if ready,
+                otherwise to the lead-magnet audit form. The state pill
+                makes it clear which one the rep is sending. */}
+            <SendActionRow
+              label="Audit report"
+              hint={
+                prospect.hasCompletedAudit
+                  ? "✓ Their completed audit is ready"
+                  : prospect.latestAuditStatus &&
+                      ["pending", "processing", "generating"].includes(prospect.latestAuditStatus)
+                    ? "⏳ Audit generating — refresh in 30s"
+                    : prospect.latestAuditStatus === "failed"
+                      ? "⚠ Last audit failed — sending lead-magnet form instead"
+                      : "Sending lead-magnet form (no audit on file)"
+              }
+              accent="amber"
+              textHref={smsHref("audit")}
+              onTextClick={() => { setAuditLinkSent(true); setSentText(true); }}
+              textSent={auditLinkSent}
+              email={prospect.email}
+              emailHref={emailHref("audit")}
+              onEmailClick={() => { setAuditEmailSent(true); setSentText(true); }}
+              emailSent={auditEmailSent}
+            />
+
+            {/* Audit-view button — separate from send buttons; lets the
+                rep open the prospect's audit IN A NEW TAB to read it
+                themselves before sharing. */}
+            {prospect.auditViewUrl && (
+              <a
+                href={prospect.auditViewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-md border border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/15 px-4 py-2.5 text-xs font-semibold text-center text-emerald-200 hover:text-white transition-colors"
               >
-                {emailPreviewSent
-                  ? `✓ Preview emailed to ${prospect.email}`
-                  : emailPreviewSending
-                    ? "Sending email..."
-                    : `📧 Email preview link (${prospect.email})`}
-              </button>
+                🔍 Open audit in new tab (read before sending)
+              </a>
             )}
-            {emailPreviewError && (
-              <p className="text-[11px] text-rose-300 leading-relaxed">
-                ⚠ {emailPreviewError}
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setBookingModalOpen(true)}
-              className={`block w-full rounded-md px-4 py-3 text-sm font-bold text-center transition-colors ${
-                bookingLinkSent
-                  ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-200"
-                  : "bg-emerald-500 hover:bg-emerald-400 text-emerald-950 shadow-lg shadow-emerald-500/20"
-              }`}
-            >
-              {bookingLinkSent
-                ? `✓ Booking link sent${bookingSpoken ? ` (${bookingSpoken})` : ""}`
-                : "📞 Send booking link (pick a time)"}
-            </button>
-
-            <a
-              href={smsHref("audit")}
-              onClick={() => { setAuditLinkSent(true); setSentText(true); }}
-              className={`block w-full rounded-md px-4 py-3 text-sm font-semibold text-center transition-colors ${
-                auditLinkSent
-                  ? "bg-amber-500/20 border border-amber-500/50 text-amber-200"
-                  : "bg-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500/20"
-              }`}
-            >
-              {auditLinkSent ? "✓ Audit link sent" : "📄 Send audit link (fallback)"}
-            </a>
 
             <a
               href={`tel:${prospect.phone.replace(/[^0-9+]/g, "")}`}
@@ -598,8 +696,8 @@ export default function CallWorkspace(props: Props) {
             </a>
 
             <p className="text-[10px] text-slate-500 leading-relaxed">
-              Tap a button to open your messages app pre-filled.
-              Lead with the preview, follow up with booking.
+              Text or email opens the app pre-filled — review, then send.
+              Lead with the preview; follow up with booking.
             </p>
           </div>
 
@@ -741,19 +839,28 @@ export default function CallWorkspace(props: Props) {
 
       <BookingTimeModal
         open={bookingModalOpen}
+        channel={bookingModalChannel}
         onClose={() => setBookingModalOpen(false)}
-        onConfirm={(slot, smsHref) => {
-          setBookingLinkSent(true);
+        onConfirm={(slot, href, channel) => {
+          if (channel === "email") {
+            setBookingEmailSent(true);
+          } else {
+            setBookingLinkSent(true);
+          }
           setSentText(true);
           setBookingSpoken(slot.spoken);
           setBookingModalOpen(false);
-          // Open the partner's messages app pre-filled with the
-          // slot-specific SMS body. window.location works for sms:
-          // links across iOS/Android/desktop.
-          window.location.href = smsHref;
+          // Open the partner's messages app (sms:) or default mail
+          // client (mailto:) pre-filled with the slot-specific body.
+          // window.location works for both schemes across iOS / Android
+          // / desktop. mailto: lets the rep edit + review before send,
+          // matching the SMS UX (no auto-send).
+          window.location.href = href;
         }}
         prospectFirstName={prospect.ownerName?.trim().split(/\s+/)[0] || "there"}
         prospectPhone={prospect.phone || ""}
+        prospectEmail={prospect.email}
+        prospectBusinessName={prospect.businessName}
         callerFirstName={partner.name.split(/\s+/)[0]}
         bookingUrl={links.scheduleUrl}
       />
@@ -1153,6 +1260,141 @@ function ObjectionList({ objections }: { objections: FilledObjection[] }) {
             </div>
           </details>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SendActionRow — paired Text + Email buttons under a single label.
+ * Used in the right-rail action panel for Preview / Booking / Audit.
+ *
+ * Both buttons either:
+ *   - Open an external app pre-filled (sms: / mailto:) — provide href +
+ *     onClick (onClick fires for state tracking, href fires the deep
+ *     link), OR
+ *   - Trigger an in-app modal (e.g. booking time picker) — provide only
+ *     onClick, leave href undefined so we render a <button> instead of
+ *     an <a>.
+ *
+ * Email button auto-disables when no email is on file for the prospect.
+ */
+function SendActionRow({
+  label,
+  hint,
+  accent,
+  primary,
+  textHref,
+  onTextClick,
+  textSent,
+  textSentLabel,
+  email,
+  emailHref,
+  onEmailClick,
+  emailSent,
+}: {
+  label: string;
+  hint?: string;
+  accent: "sky" | "emerald" | "amber";
+  primary?: boolean;
+  textHref?: string;
+  onTextClick: () => void;
+  textSent: boolean;
+  textSentLabel?: string;
+  email: string | null;
+  emailHref?: string;
+  onEmailClick: () => void;
+  emailSent: boolean;
+}) {
+  const accentMap = {
+    sky: {
+      activeBtn: "bg-sky-500 hover:bg-sky-400 text-sky-950 shadow-md shadow-sky-500/20",
+      ghostBtn: "bg-sky-500/10 border border-sky-500/40 text-sky-200 hover:bg-sky-500/20",
+      sentBtn: "bg-sky-500/20 border border-sky-500/50 text-sky-200",
+      label: "text-sky-300",
+    },
+    emerald: {
+      activeBtn: "bg-emerald-500 hover:bg-emerald-400 text-emerald-950 shadow-md shadow-emerald-500/20",
+      ghostBtn: "bg-emerald-500/10 border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/20",
+      sentBtn: "bg-emerald-500/20 border border-emerald-500/50 text-emerald-200",
+      label: "text-emerald-300",
+    },
+    amber: {
+      activeBtn: "bg-amber-500 hover:bg-amber-400 text-amber-950 shadow-md shadow-amber-500/20",
+      ghostBtn: "bg-amber-500/10 border border-amber-500/40 text-amber-200 hover:bg-amber-500/20",
+      sentBtn: "bg-amber-500/20 border border-amber-500/50 text-amber-200",
+      label: "text-amber-300",
+    },
+  } as const;
+  const a = accentMap[accent];
+  const baseBtnCls = primary ? a.activeBtn : a.ghostBtn;
+
+  const textBtnCls = `flex-1 rounded-md px-3 py-2.5 text-xs font-bold text-center transition-colors ${
+    textSent ? a.sentBtn : baseBtnCls
+  }`;
+  const emailBtnCls = `flex-1 rounded-md px-3 py-2.5 text-xs font-bold text-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+    emailSent ? a.sentBtn : baseBtnCls
+  }`;
+
+  const textLabel = textSent
+    ? `✓ ${textSentLabel || "Texted"}`
+    : "📱 Text";
+  const emailLabel = emailSent
+    ? "✓ Emailed"
+    : email
+      ? "📧 Email"
+      : "📧 No email";
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between gap-2">
+        <p className={`text-[11px] uppercase tracking-wider font-bold ${a.label}`}>
+          {label}
+        </p>
+        {hint && (
+          <p className="text-[10px] text-slate-500 italic truncate">{hint}</p>
+        )}
+      </div>
+      <div className="flex gap-2">
+        {textHref ? (
+          <a
+            href={textHref}
+            onClick={onTextClick}
+            className={textBtnCls}
+          >
+            {textLabel}
+          </a>
+        ) : (
+          <button type="button" onClick={onTextClick} className={textBtnCls}>
+            {textLabel}
+          </button>
+        )}
+        {emailHref ? (
+          <a
+            href={email ? emailHref : "#"}
+            onClick={(e) => {
+              if (!email) {
+                e.preventDefault();
+                return;
+              }
+              onEmailClick();
+            }}
+            aria-disabled={!email}
+            className={emailBtnCls}
+            style={!email ? { pointerEvents: "none", opacity: 0.4 } : undefined}
+          >
+            {emailLabel}
+          </a>
+        ) : (
+          <button
+            type="button"
+            onClick={onEmailClick}
+            disabled={!email}
+            className={emailBtnCls}
+          >
+            {emailLabel}
+          </button>
+        )}
       </div>
     </div>
   );

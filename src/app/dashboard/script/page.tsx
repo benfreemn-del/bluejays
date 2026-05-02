@@ -164,22 +164,29 @@ export default async function DashboardScriptPage({
     typeof prospect.scrapedData?.hours === "string" ? prospect.scrapedData.hours : null;
   const openStatus = getOpenStatus(clock, rawHours);
 
-  // ─── Latest audit + call history ─────────────────────────────────
+  // ─── Latest audit (any status) + call history ────────────────────
+  // Pull the latest audit row regardless of status so the workspace
+  // can show "Audit generating…" / "Audit failed" instead of just
+  // hiding the View-audit button. Ben needs to know WHY it's not
+  // available, not just that it isn't.
   let latestAuditId: string | null = null;
+  let latestAuditStatus: string | null = null;
   let hasCompletedAudit = false;
   if (isSupabaseConfigured()) {
     try {
       const { data: auditRow } = await supabase
         .from("site_audits")
-        .select("id")
+        .select("id, status")
         .eq("prospect_id", prospect.id)
-        .eq("status", "ready")
-        .order("generated_at", { ascending: false })
+        .order("generated_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       if (auditRow) {
-        latestAuditId = (auditRow as { id: string }).id;
-        hasCompletedAudit = true;
+        const row = auditRow as { id: string; status: string };
+        latestAuditId = row.id;
+        latestAuditStatus = row.status;
+        hasCompletedAudit = row.status === "ready";
       }
     } catch {
       // ignore — workspace renders fine without audit ID
@@ -217,8 +224,11 @@ export default async function DashboardScriptPage({
         status: prospect.status ?? null,
         hasCompletedAudit,
         latestAuditId,
+        latestAuditStatus,
         previewUrl,
-        auditViewUrl: latestAuditId ? `${SITE_ORIGIN}/audit/${latestAuditId}?ref=ben` : null,
+        auditViewUrl: hasCompletedAudit && latestAuditId
+          ? `${SITE_ORIGIN}/audit/${latestAuditId}?ref=ben`
+          : null,
         categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,
         websiteUrl: prospect.currentWebsite ?? null,
         googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(

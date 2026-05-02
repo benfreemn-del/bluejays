@@ -22,14 +22,29 @@ import {
  * pushes back.
  */
 
+type Channel = "sms" | "email";
+
 type Props = {
   open: boolean;
   onClose: () => void;
-  onConfirm: (slot: BookingSlot, smsHref: string) => void;
+  /**
+   * Fires after the rep picks a slot and clicks confirm. The href is
+   * either an `sms:` or `mailto:` deep-link (depending on `channel`)
+   * pre-filled with the spoken time + booking URL. The caller is
+   * responsible for actually opening it (window.location.href = href)
+   * so it can also update its own UI state (mark sent, etc.).
+   */
+  onConfirm: (slot: BookingSlot, href: string, channel: Channel) => void;
   prospectFirstName: string;
   prospectPhone: string;
+  prospectEmail?: string | null;
   callerFirstName: string;
   bookingUrl: string;
+  prospectBusinessName?: string;
+  /** Default channel when modal opens. Caller controls so the
+   *  text/email Booking buttons each route to their respective
+   *  channel without two separate modals. */
+  channel?: Channel;
 };
 
 export default function BookingTimeModal({
@@ -38,8 +53,11 @@ export default function BookingTimeModal({
   onConfirm,
   prospectFirstName,
   prospectPhone,
+  prospectEmail,
   callerFirstName,
   bookingUrl,
+  prospectBusinessName,
+  channel = "sms",
 }: Props) {
   const slots = useMemo<BookingSlot[]>(
     () => (open ? getSuggestedSlots(new Date(), 12) : []),
@@ -70,15 +88,26 @@ export default function BookingTimeModal({
 
   function handleConfirm() {
     if (!selected) return;
-    const body = buildBookingSmsBody({
+    const smsBody = buildBookingSmsBody({
       firstName: prospectFirstName || "there",
       callerFirst: callerFirstName,
       spoken: selected.spoken,
       bookingUrl,
     });
+    if (channel === "email" && prospectEmail) {
+      const subject = encodeURIComponent(
+        `Quick 15-min walkthrough — ${prospectBusinessName || "your business"} (${selected.spoken})`,
+      );
+      const body = encodeURIComponent(
+        `Hey ${prospectFirstName || "there"},\n\n${callerFirstName} with BlueJays — locking in ${selected.spoken} for the 15-min walkthrough we just talked about. Confirm here:\n\n${bookingUrl}\n\nIf that time stops working, pick anything else on the calendar and it'll re-route automatically.\n\nTalk soon,\n${callerFirstName}\nBlueJays\nben@bluejayportfolio.com`,
+      );
+      const href = `mailto:${prospectEmail}?subject=${subject}&body=${body}`;
+      onConfirm(selected, href, "email");
+      return;
+    }
     const cleanedPhone = prospectPhone.replace(/[^0-9+]/g, "");
-    const href = `sms:${cleanedPhone}?&body=${encodeURIComponent(body)}`;
-    onConfirm(selected, href);
+    const href = `sms:${cleanedPhone}?&body=${encodeURIComponent(smsBody)}`;
+    onConfirm(selected, href, "sms");
   }
 
   return (
@@ -162,7 +191,9 @@ export default function BookingTimeModal({
             className="flex-1 rounded-md px-4 py-2.5 text-sm font-bold bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 text-emerald-950 transition-colors shadow-lg shadow-emerald-500/20"
           >
             {selected
-              ? `📞 Send "${selected.spoken}"`
+              ? channel === "email"
+                ? `📧 Email "${selected.spoken}"`
+                : `📱 Text "${selected.spoken}"`
               : "Pick a time"}
           </button>
         </div>
