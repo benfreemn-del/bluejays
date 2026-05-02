@@ -620,10 +620,16 @@ export default function MtViewLandscapingPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ ...spring, delay: 0.1 }}
-                    className="text-sm md:text-base uppercase tracking-widest font-medium"
+                    className="text-sm md:text-base uppercase tracking-widest font-medium flex items-center gap-2 flex-wrap"
                     style={{ color: PRIMARY_LIGHT }}
                   >
-                    Over 5,000 Satisfied Customers Since {BUSINESS.established}
+                    <span>Over 5,000 Satisfied Customers Since {BUSINESS.established}</span>
+                    <SealCheck
+                      size={18}
+                      weight="fill"
+                      style={{ color: "#1d9bf0" }}
+                      aria-label="Verified business"
+                    />
                   </motion.p>
 
                   <h1 className="text-4xl md:text-5xl lg:text-[60px] xl:text-[72px] tracking-tighter leading-[1.02] font-bold text-white">
