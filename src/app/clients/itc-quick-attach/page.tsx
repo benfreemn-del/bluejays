@@ -1536,7 +1536,7 @@ export default function ITCQuickAttachPage() {
           >
             <div className="aspect-[21/9] sm:aspect-[21/7] relative">
               <img
-                src={UNSPLASH_FARMLAND}
+                src={UNSPLASH_WORKSHOP}
                 alt="American farmland horizon"
                 className="absolute inset-0 w-full h-full object-cover"
               />
