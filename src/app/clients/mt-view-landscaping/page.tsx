@@ -61,6 +61,7 @@ import {
 
 import StickyNav from "./sticky-nav";
 import MtViewContactForm from "./contact-form";
+import ReviewsCarousel from "./reviews-carousel";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -448,14 +449,90 @@ const seasonalData = [
   },
 ];
 
-// Voice-of-Tim observations (NOT fabricated client quotes). Each card pairs
-// an editorial pull-quote-style line with a real Mt View landscape photo as
-// the backdrop — so the section reads "what we hear from clients" instead
-// of inventing names.
-const observations = [
-  { name: "What clients tell us", text: "The most common line we hear: 'we wish we'd called you the first time.' That's the work — building landscapes the second contractor doesn't have to come fix.", image: PHOTOS.kirse048 },
-  { name: "On longevity", text: "Most of our clients came back five, ten, fifteen years after the first install for the next phase. That's the standard we install to.", image: PHOTOS.olano032 },
-  { name: "On the install", text: "One crew, run by Tim from cleared lot to lit pathway. Bonnie's crew picks it up after the install — same family, same standard. Nothing falls between the trades.", image: PHOTOS.aqua022 },
+// REAL Google reviews — pulled directly from Mt View's Google Business
+// Profile (5.0 average · 14 total · all 5-star). 10 reviews with full
+// reviewer names, profile photos (Google CDN), text, and dates. Verified
+// 2026-05-02 via Chrome automation against
+// https://search.google.com/local/reviews?placeid=...
+// We do NOT fabricate or paraphrase — these are exact quotes.
+type Review = {
+  name: string;
+  meta: string;       // "Local Guide · 127 reviews" / "5 reviews" etc.
+  date: string;       // "9 months ago"
+  text: string;
+  profilePic: string; // Google CDN URL
+};
+const reviews: Review[] = [
+  {
+    name: "Cody H",
+    meta: "1 review",
+    date: "9 months ago",
+    text: "If you're considering any type of landscaping or lawn maintenance, I can't recommend Mountain View Landscape & Design enough. Their expert team makes the entire process seamless and stress-free. If you're thinking about improving your yard whether a new design or just want to keep your lawn well maintained, this is the company you'll want to use!",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocIhFh6Y5gPkgtnvqko0Wd8nZ2roGxDpE_vx_ngK3-qJQw6qsA=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Jay Freeman",
+    meta: "Local Guide · 127 reviews · 932 photos",
+    date: "9 months ago",
+    text: "Always been amazing, helped us fix our sprinkler system. Tim & Bonnie are the best!",
+    profilePic: "https://lh3.googleusercontent.com/a-/ALV-UjW7favqis2z2n9X9uF3xqXNLQB331PPUocuGg3Z0el0UR76M5B-2Q=s128-c-rp-mo-ba5-br100",
+  },
+  {
+    name: "Jennifer Cline",
+    meta: "2 reviews",
+    date: "2 years ago",
+    text: "The team that showed up to do our yard was on time, kind and did an amazing job. Could not be happier with the outcome and customer service - from sales to install - restored my faith in contracting out work for sure!",
+    profilePic: "https://lh3.googleusercontent.com/a-/ALV-UjU973V77tJoDBQM9ZJ4NemJ2nhRSJ_EmkOVtmzT2Hq2SEWNsWw2_w=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Brandi Whitehurst",
+    meta: "5 reviews",
+    date: "9 months ago",
+    text: "They did an amazing job, couldn't have turned out any better.",
+    profilePic: "https://lh3.googleusercontent.com/a-/ALV-UjU7s7ftxlAoH8cLI8aAVuRFkc4qzCSNRnicjuzKKALBiEdZAMg=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Tierney Goaslind",
+    meta: "6 reviews",
+    date: "9 months ago",
+    text: "Great installation and everything came together quicker than expected!",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocJU92HajdoW-EiZ21tBZJuCZksIUOALbjpyiKjtS5djw_MOMA=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Kylee Trombley",
+    meta: "1 review",
+    date: "9 months ago",
+    text: "This guy knows what he's doing!! I can't believe how good my yard looks. It's exactly how I wanted it.",
+    profilePic: "https://lh3.googleusercontent.com/a-/ALV-UjVrD63Wya0zQ1lA2eDmicXIkCmwT7kTpKGxw0x2veWXsTmL60md=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Cindy McNabb",
+    meta: "Local Guide · 202 reviews · 118 photos",
+    date: "5 years ago",
+    text: "Super friendly and professional family oriented business. I highly recommend.",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocKWLFl5Bvu6Dj8UGX_tVdbo8WmKbWLFcJMBuhjOgce6FysdHw=s128-c-rp-mo-ba4-br100",
+  },
+  {
+    name: "Monica Rein",
+    meta: "2 reviews",
+    date: "5 years ago",
+    text: "Really professional and friendly! Would recommend to anyone!",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocLdRRtiCACtCSlARU1ygzGdmEc4yTVObZ3PEyjr2u7-HaFvFg=s128-c-rp-mo-br100",
+  },
+  {
+    name: "Brad Baker",
+    meta: "Local Guide · 44 reviews · 192 photos",
+    date: "8 years ago",
+    text: "Easy to work with. Great pricing.",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocJ6eVlKI_LNwSLF_lfPUaC-FEwJLGvmLvcmHgJl-rSfCwwMzw=s128-c-rp-mo-ba4-br100",
+  },
+  {
+    name: "bob marley",
+    meta: "5 reviews",
+    date: "10 months ago",
+    text: "Fast, competent, honest.",
+    profilePic: "https://lh3.googleusercontent.com/a/ACg8ocJKq55aA8GoNvb9JJwvZvr4meV-b3-tW8FUPB_Wn1PplYYvbA=s128-c-rp-mo-br100",
+  },
 ];
 
 const comparisonRows = [
@@ -1181,40 +1258,33 @@ export default function MtViewLandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ 11. WHAT CLIENTS TELL US (no fabricated testimonials) ═══════════════
-          Template's testimonials section had 5 fake review cards. Mt View has
-          no published testimonials, so this is rebuilt as voice-of-Tim
-          observations on Mountain View landscape photos — kept as 3 cards
-          (vs. 5) so it doesn't read as filler. */}
+      {/* ═══════════════ 11. REAL GOOGLE REVIEWS — sliding carousel ═══════════════
+          10 real 5-star reviews pulled from Mt View's Google Business
+          Profile (5.0 · 14 total, all 5-star) on 2026-05-02. Sliding
+          carousel built on CSS scroll-snap so it works the same on
+          mobile (swipe) and desktop (prev/next arrows). View All
+          link points back to the live GMB listing. */}
       <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-14">
-            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>The Standard</p>
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2" style={{ color: EARTH }}>
+              <Star size={14} weight="fill" style={{ color: "#fbbf24" }} />
+              5.0 on Google · 14 Reviews
+              <Star size={14} weight="fill" style={{ color: "#fbbf24" }} />
+            </p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-4">
-              <WordReveal text="What Clients Tell Us" />
+              <WordReveal text="Five Stars. Fifty Years." />
             </h2>
-            <p className="max-w-xl mx-auto text-slate-400 leading-relaxed mt-4">Three observations from forty-nine seasons of installing in this region — about the work, the crew, and the clients who keep coming back.</p>
+            <p className="max-w-xl mx-auto text-slate-400 leading-relaxed mt-4">
+              Verified Google reviews from Mountain View clients across King, Pierce,
+              Snohomish &amp; Kittitas counties. Every review below is real — names,
+              dates, and photos pulled directly from their public Google Business Profile.
+            </p>
           </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {observations.map((t, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="overflow-hidden h-full flex flex-col">
-                  <div className="h-36 overflow-hidden relative">
-                    <img src={t.image} alt="A Mountain View landscape" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1a0f] via-transparent to-transparent" />
-                  </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <Quotes size={24} weight="fill" style={{ color: PRIMARY_LIGHT }} className="mb-2 opacity-40" />
-                    <p className="text-sm text-slate-300 leading-relaxed flex-1">{t.text}</p>
-                    <div className="mt-4 pt-3 border-t border-white/8 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white">{t.name}</span>
-                      <Star size={14} weight="fill" style={{ color: PRIMARY_LIGHT }} />
-                    </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
+          <ReviewsCarousel
+            reviews={reviews}
+            viewAllUrl="https://www.google.com/maps/place/Mountain+View+Landscape+%26+Design/@47.3207062,-122.0984311,17z/data=!4m8!3m7!1s0x5490f596db529cf5:0x8182c072f204747f!8m2!3d47.3207062!4d-122.0984311!9m1!1b1"
+          />
         </div>
       </SectionReveal>
 
