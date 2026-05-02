@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- ═══════════════════════════════════════════════════
+     REIKI TEMPLATE — swap these values per client:
+     BUSINESS_NAME  → e.g. "Serenity Reiki"
+     PRACTITIONER   → e.g. "Sarah Thompson"
+     CITY           → e.g. "Bellevue, WA"
+     PHONE          → e.g. "(425) 555-0192"
+     EMAIL          → e.g. "hello@serenityreiki.com"
+     BOOKING_URL    → Calendly or booking page link
+     YEARS          → years in practice
+     SESSIONS       → total sessions completed
+     GOOGLE_URL     → Google Maps link
+═══════════════════════════════════════════════════ -->
+<title>BUSINESS_NAME — Reiki Healing | CITY</title>
+<meta name="description" content="BUSINESS_NAME offers professional Reiki healing sessions in CITY. Restore balance, reduce stress, and reconnect with your natural energy. Book a session with PRACTITIONER today." />
+<meta name="robots" content="index, follow" />
+<link rel="stylesheet" href="/sites/reiki/css/styles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand"><span>✦</span> BUSINESS_NAME</a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="BOOKING_URL" class="nav-cta">Book a Session</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+  </div>
+  <div id="mobile-menu hidden">
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#testimonials">Reviews</a>
+    <a href="#faq">FAQ</a>
+    <a href="BOOKING_URL" style="color:#7c3aed;font-weight:600;">Book a Session →</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div style="max-width:1100px;margin:0 auto;position:relative;z-index:1;">
+    <div class="hero-eyebrow">✦ Certified Reiki Master · CITY</div>
+    <h1>Restore Your<br><em>Natural Balance</em></h1>
+    <p class="hero-sub">Gentle, professional energy healing sessions to reduce stress, ease pain, and reconnect you with your body's own healing wisdom.</p>
+    <div class="hero-buttons">
+      <a href="BOOKING_URL" class="btn-primary">Book Your Session</a>
+      <a href="#services" class="btn-secondary">View Services</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-badge"><div class="dot"></div>Certified Reiki Master</div>
+      <div class="trust-badge"><div class="dot"></div>SESSIONS+ Sessions Completed</div>
+      <div class="trust-badge"><div class="dot"></div>YEARS+ Years of Practice</div>
+      <div class="trust-badge"><div class="dot"></div>Safe &amp; Fully Clothed</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHAT IS REIKI ══ -->
+<section class="section what-section" id="about-reiki">
+  <div class="section-inner">
+    <div class="what-grid">
+      <div class="what-image reveal">
+        <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=600&q=80&auto=format&fit=crop" alt="Reiki healing session" />
+        <div class="what-image-badge">
+          <div class="num">SESSIONS+</div>
+          <div class="label">Healing Sessions</div>
+        </div>
+      </div>
+      <div class="what-content reveal">
+        <div class="section-label">What Is Reiki</div>
+        <h2 class="section-title">Ancient Healing<br><em>Modern Wellness</em></h2>
+        <p>Reiki is a Japanese energy healing technique that promotes relaxation, reduces stress, and supports your body's natural healing processes. The word Reiki comes from two Japanese words — Rei (universal) and Ki (life energy).</p>
+        <p>During a session, gentle touch or hands held slightly above the body channels healing energy through specific points. Clients remain fully clothed and typically feel deep relaxation, warmth, or tingling sensations.</p>
+        <p>Reiki works beautifully alongside conventional medicine and other holistic therapies, making it a perfect complement to your existing wellness routine.</p>
+        <div class="what-pillars">
+          <div class="pillar">
+            <div class="pillar-icon">🌿</div>
+            <div class="pillar-name">Non-Invasive</div>
+            <div class="pillar-desc">Fully clothed, gentle touch — safe for all ages</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">⚡</div>
+            <div class="pillar-name">Energy Balancing</div>
+            <div class="pillar-desc">Clears blockages in your body's energy centers</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">🧘</div>
+            <div class="pillar-name">Deep Relaxation</div>
+            <div class="pillar-desc">Most clients drift into a meditative state</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">💜</div>
+            <div class="pillar-name">Holistic Healing</div>
+            <div class="pillar-desc">Addresses body, mind, and spirit together</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section class="section services-section" id="services">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Services &amp; Pricing</div>
+      <h2 class="section-title">Choose Your<br><em>Healing Journey</em></h2>
+      <p class="section-desc">Every session is tailored to your unique needs and intentions. Not sure which to choose? We'll find the right fit together.</p>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-icon">🌸</div>
+        <div class="service-name">Introductory Session</div>
+        <div class="service-desc">Perfect for first-timers. We'll discuss your intentions, answer all your questions, and ease you into your first full Reiki experience.</div>
+        <div class="service-duration">⏱ 60 minutes</div>
+        <div class="service-price">$75 <span>/ session</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">✨</div>
+        <div class="service-name">Full Reiki Session</div>
+        <div class="service-desc">A complete energy balancing session covering all major chakras. Deeply restorative and ideal for stress relief, emotional release, and clarity.</div>
+        <div class="service-duration">⏱ 90 minutes</div>
+        <div class="service-price">$110 <span>/ session</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">💎</div>
+        <div class="service-name">Crystal Reiki</div>
+        <div class="service-desc">Reiki combined with carefully selected healing crystals placed on and around the body to amplify energy flow and deepen the healing experience.</div>
+        <div class="service-duration">⏱ 90 minutes</div>
+        <div class="service-price">$130 <span>/ session</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">🌐</div>
+        <div class="service-name">Distance Healing</div>
+        <div class="service-desc">Reiki energy transcends physical space. Receive a complete remote session from the comfort of your home — just as powerful as in-person.</div>
+        <div class="service-duration">⏱ 60 minutes</div>
+        <div class="service-price">$80 <span>/ session</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">🔮</div>
+        <div class="service-name">Chakra Balancing</div>
+        <div class="service-desc">Focused work on your seven main energy centers. Ideal if you're feeling stuck, emotionally heavy, or physically out of sync with yourself.</div>
+        <div class="service-duration">⏱ 75 minutes</div>
+        <div class="service-price">$95 <span>/ session</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">🎁</div>
+        <div class="service-name">Healing Package</div>
+        <div class="service-desc">Three full sessions for the price of two and a half. The most effective way to experience lasting transformation and deep energetic shifts.</div>
+        <div class="service-duration">⏱ 3 × 90 minutes</div>
+        <div class="service-price">$275 <span>/ 3 sessions</span></div>
+      </div>
+
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="BOOKING_URL" class="btn-primary">Book Any Session</a>
+    </div>
+  </div>
+</section>
+
+      <!-- BENEFITS -->
+      <section class="section benefits-section" id="benefits">
+        <div class="container">
+          <div class="section-eyebrow">Why Reiki</div>
+          <h2 class="section-title">What Clients Experience</h2>
+          <p class="section-subtitle">Reiki supports the whole person — body, mind, and spirit. These are some of the most common shifts clients notice.</p>
+          <div class="benefits-grid">
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+              </div>
+              <h3>Deep Relaxation</h3>
+              <p>Release tension held in the body and arrive at a state of profound calm that lingers long after your session ends.</p>
+            </div>
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </div>
+              <h3>Emotional Balance</h3>
+              <p>Gently clear emotional blocks and find more ease in navigating life's challenges, relationships, and transitions.</p>
+            </div>
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <h3>Renewed Energy</h3>
+              <p>Restore vitality and clear the fatigue that accumulates from stress, illness, or simply the demands of modern life.</p>
+            </div>
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              </div>
+              <h3>Pain Support</h3>
+              <p>Many clients find relief from chronic pain, headaches, and physical discomfort as the body's natural healing response activates.</p>
+            </div>
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+              </div>
+              <h3>Better Sleep</h3>
+              <p>Regular sessions help calm an overactive nervous system so you fall asleep more easily and wake feeling truly rested.</p>
+            </div>
+            <div class="benefit-card reveal">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v1m0 16v1M4.22 4.22l.71.71m14.14 14.14.71.71M3 12H2m20 0h-1M4.22 19.78l.71-.71M18.36 5.64l.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              </div>
+              <h3>Mental Clarity</h3>
+              <p>Quiet the mental noise and access a clearer, more grounded perspective — especially helpful during periods of change or overwhelm.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="section about-section" id="about">
+        <div class="container">
+          <div class="about-grid">
+            <div class="about-image reveal">
+              <div class="about-img-wrap">
+                <img src="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=700&q=80" alt="PRACTITIONER — Reiki practitioner in CITY" loading="lazy" />
+                <div class="about-badge">YEARS Years of Practice</div>
+              </div>
+            </div>
+            <div class="about-content reveal">
+              <div class="section-eyebrow">Your Practitioner</div>
+              <h2>Meet PRACTITIONER</h2>
+              <p class="about-lead">PRACTITIONER is a certified Reiki Master Teacher based in CITY, dedicated to helping clients find balance, healing, and peace through the gentle power of Reiki energy work.</p>
+              <p>PRACTITIONER_BIO</p>
+              <div class="about-credentials">
+                <div class="credential">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  <span>Usui Reiki Master Teacher</span>
+                </div>
+                <div class="credential">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  <span>SESSIONS+ Sessions Completed</span>
+                </div>
+                <div class="credential">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  <span>Serving CITY Since FOUNDED</span>
+                </div>
+              </div>
+              <a href="BOOKING_URL" class="btn btn-primary">Book a Session</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TESTIMONIALS -->
+      <section class="section testimonials-section" id="testimonials">
+        <div class="container">
+          <div class="section-eyebrow">Client Stories</div>
+          <h2 class="section-title">What Clients Say</h2>
+          <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"I came in exhausted and left feeling like myself again. PRACTITIONER has such a gentle, grounded presence. I've been sleeping through the night for the first time in months."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">S</div>
+                <div>
+                  <div class="author-name">Sarah M.</div>
+                  <div class="author-detail">CITY, Regular Client</div>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card reveal">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"I was skeptical at first, but after my first session I was completely sold. The stress I'd been carrying for years started to dissolve. I'm now on my fifth session and the results keep building."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">J</div>
+                <div>
+                  <div class="author-name">James T.</div>
+                  <div class="author-detail">CITY, New to Reiki</div>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card reveal">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"The distance healing session surprised me — I could feel the warmth and energy even through the screen. PRACTITIONER is truly gifted and takes time to explain everything."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">L</div>
+                <div>
+                  <div class="author-name">Linda R.</div>
+                  <div class="author-detail">Distance Session Client</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="google-review-cta reveal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+            <span>GOOGLE_RATING stars across REVIEW_COUNT Google reviews</span>
+            <a href="GOOGLE_URL" target="_blank" rel="noopener">Read all reviews →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section faq-section" id="faq">
+        <div class="container faq-container">
+          <div class="section-eyebrow">Questions</div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                Do I have to believe in Reiki for it to work?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>No belief is required. Reiki works with your body's natural energy regardless of your belief system. Many clients come in curious or even skeptical and still experience noticeable shifts. An open mind is helpful, but it is not a requirement.</p>
+              </div>
+            </div>
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                What does a session feel like?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Most clients feel warmth, tingling, or a pleasant heaviness in the body. Many fall into a deeply relaxed, meditative state. Some experience vivid imagery or emotional release. Every session is unique — there is no "right" way to experience Reiki.</p>
+              </div>
+            </div>
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                Is Reiki safe? Are there any side effects?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Reiki is completely non-invasive and safe for people of all ages, including children and those undergoing medical treatment. After a session some clients feel temporarily tired as the body integrates the healing — this usually passes within a day. Drinking extra water after your session is recommended.</p>
+              </div>
+            </div>
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                How many sessions do I need?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>A single session can bring noticeable relief. For deeper, lasting shifts, most practitioners recommend a series of 3–4 sessions close together, then monthly maintenance. PRACTITIONER will discuss a plan that fits your specific needs and goals during your first visit.</p>
+              </div>
+            </div>
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                What should I wear and what do I bring?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Wear comfortable, loose clothing — you remain fully clothed throughout the session. Leave jewelry at home if possible, and avoid heavy meals directly beforehand. Bring any intentions, questions, or areas of focus you'd like to work on — PRACTITIONER will incorporate them into your session.</p>
+              </div>
+            </div>
+            <div class="faq-item reveal">
+              <button class="faq-question">
+                How does distance healing work?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Reiki energy is not limited by physical proximity. During a distance session, you simply find a comfortable, quiet place at the scheduled time. PRACTITIONER transmits Reiki across space using the Hon Sha Ze Sho Nen symbol, and clients routinely report experiencing the same sensations they feel in person.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA BANNER -->
+      <section class="cta-banner">
+        <div class="container cta-inner">
+          <div class="cta-content reveal">
+            <h2>Ready to Begin Your Healing Journey?</h2>
+            <p>Your first session is the most important step. PRACTITIONER welcomes clients of all backgrounds — whether you are navigating stress, seeking balance, or simply curious about what Reiki can offer.</p>
+            <div class="cta-actions">
+              <a href="BOOKING_URL" class="btn btn-white">Book Your Session</a>
+              <a href="mailto:EMAIL" class="btn btn-outline-white">Ask a Question</a>
+            </div>
+            <p class="cta-note">Located in CITY &nbsp;·&nbsp; PHONE &nbsp;·&nbsp; Usually responds within 24 hours</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="container footer-inner">
+          <div class="footer-brand">
+            <div class="footer-logo">BUSINESS_NAME</div>
+            <p class="footer-tagline">Reiki Healing &amp; Energy Work in CITY</p>
+            <div class="footer-contact">
+              <a href="tel:PHONE">PHONE</a>
+              <a href="mailto:EMAIL">EMAIL</a>
+            </div>
+          </div>
+          <div class="footer-links">
+            <div class="footer-col">
+              <h4>Services</h4>
+              <a href="#services">Reiki Sessions</a>
+              <a href="#services">Crystal Reiki</a>
+              <a href="#services">Distance Healing</a>
+              <a href="#services">Chakra Balancing</a>
+              <a href="#services">Healing Packages</a>
+            </div>
+            <div class="footer-col">
+              <h4>Learn More</h4>
+              <a href="#what-is-reiki">What Is Reiki</a>
+              <a href="#benefits">Benefits</a>
+              <a href="#about">About PRACTITIONER</a>
+              <a href="#faq">FAQ</a>
+            </div>
+            <div class="footer-col">
+              <h4>Book Now</h4>
+              <a href="BOOKING_URL">Schedule Online</a>
+              <a href="tel:PHONE">Call Us</a>
+              <a href="mailto:EMAIL">Email Us</a>
+              <a href="GOOGLE_URL" target="_blank" rel="noopener">Google Reviews</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 BUSINESS_NAME &nbsp;·&nbsp; CITY &nbsp;·&nbsp; All rights reserved</p>
+          <p class="footer-credit">
+            <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:middle;margin-right:4px;" class="text-sky-500"><path d="M8 24 C4 20 4 12 8 8 L16 4 L24 8 C28 12 28 20 24 24 L16 28 Z" fill="currentColor" opacity="0.15"/><path d="M16 4 L24 8 C28 12 26 18 20 22 L16 28 L12 24 C8 20 8 14 12 10 Z" fill="currentColor" opacity="0.3"/><circle cx="16" cy="15" r="4" fill="currentColor"/><path d="M20 10 L26 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M22 13 L29 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <a href="https://bluejayportfolio.com/audit" target="_blank" rel="noopener">Built by BlueJays — get your free site audit</a>
+          </p>
+        </div>
+      </footer>
+
+    </main>
+
+    <script src="/sites/reiki/js/main.js"></script>
+  </body>
+</html>
