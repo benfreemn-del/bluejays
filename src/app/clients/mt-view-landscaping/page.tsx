@@ -142,13 +142,14 @@ const PHOTOS = {
   june022:
     "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/167a4d4f-ee04-45c8-a371-c79486d4a0f3/June2009+022.JPG?format=1500w",
 
-  // Night Work — landscape lighting
+  // Night Work — landscape lighting (the only verified after-dark shot)
   nightLead:
     "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/a9e639ed-ae6a-418d-a533-bf224253f6af/DSC00449.JPG?format=2500w",
-  night415:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/af64af10-4922-4da7-9a20-2ea0e50d5acf/DSC00415.JPG?format=1500w",
-  night414:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ac46896-19bc-45ae-9f3e-53be1e4cb507/DSC00414.JPG?format=1500w",
+  // night415 (DSC00415) and night414 (DSC00414) declarations removed
+  // 2026-05-02 — both are daytime photos that were misnamed as "night
+  // work" in the v3 template clone. Ben caught the DSC00415 daytime
+  // work-van shot in the original "Night Work" feature strip, which
+  // was removed. These constants are no longer referenced.
 } as const;
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -185,16 +186,26 @@ const EARTH_GLOW = "rgba(163, 132, 91, 0.12)";
 
 /* ───────────────────────── FLOATING LEAF SVG BG ───────────────────────── */
 function FloatingLeaves() {
-  const leaves = Array.from({ length: 14 }, (_, i) => ({
+  // Bumped 2026-05-02 for visibility: opacity 0.06-0.16 → 0.22-0.42
+  // (~3-4x more visible but still ambient, not distracting). Size
+  // 14-24 → 20-36px. Leaf count 14 → 18 for slightly fuller density.
+  // Color mix expanded — adds a warm autumn-orange accent so the
+  // leaves now read as actual fall-color leaves, not just sage flecks.
+  const leaves = Array.from({ length: 18 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 14,
     duration: 12 + Math.random() * 10,
-    size: 14 + Math.random() * 10,
-    opacity: 0.06 + Math.random() * 0.1,
+    size: 20 + Math.random() * 16,
+    opacity: 0.22 + Math.random() * 0.2,
     rotation: Math.random() * 360,
     sway: 25 + Math.random() * 50,
-    color: i % 3 === 0 ? EARTH : PRIMARY_LIGHT,
+    color:
+      i % 4 === 0
+        ? EARTH
+        : i % 4 === 1
+          ? "#d97706"      // warm autumn orange — color punctuation
+          : PRIMARY_LIGHT,
   }));
 
   return (
@@ -502,7 +513,7 @@ export default function MtViewLandscapingPage() {
                     Family-Owned in Western Washington Since {BUSINESS.established}
                   </motion.p>
 
-                  <h1 className="text-5xl md:text-7xl lg:text-[88px] xl:text-[104px] tracking-tighter leading-[0.98] font-bold text-white">
+                  <h1 className="text-5xl md:text-7xl lg:text-[80px] xl:text-[92px] tracking-tighter leading-[0.98] font-bold text-white">
                     <WordReveal text="Custom Landscapes. Maintained for Life." />
                   </h1>
 
@@ -620,7 +631,13 @@ export default function MtViewLandscapingPage() {
            — capturing a maintenance customer for $200/mo is worth more over five
            years than a one-time $20k install. The hero badge "Maintenance plans
            available" anchors here. */}
-      <SectionReveal id="maintenance" className="relative z-10 py-20 md:py-32" style={{ background: BG_CREAM }}>
+      <SectionReveal id="maintenance" className="relative z-10 py-20 md:py-32 overflow-hidden" style={{ background: BG_CREAM }}>
+        {/* Soft fade-in from the dark Trust Bar above so the cream
+            doesn't slam in as a hard horizontal stripe. */}
+        <div
+          className="absolute inset-x-0 top-0 h-20 pointer-events-none"
+          style={{ background: `linear-gradient(to bottom, ${BG}, transparent)` }}
+        />
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY }}>
@@ -655,7 +672,7 @@ export default function MtViewLandscapingPage() {
                 ideal: "Front-yard homeowners, small lots",
                 features: [
                   "Mowing, edging, line-trim",
-                  "Blower clean-up of walks &amp; drives",
+                  "Blower clean-up of walks & drives",
                   "Seasonal debris removal",
                   "Curbside-bag disposal",
                 ],
@@ -668,8 +685,8 @@ export default function MtViewLandscapingPage() {
                 features: [
                   "Everything in Essentials",
                   "Bed weeding, mulch refresh",
-                  "Pruning &amp; deadheading",
-                  "Spring &amp; fall fertilization",
+                  "Pruning & deadheading",
+                  "Spring & fall fertilization",
                   "Irrigation start-up &amp; winterize",
                 ],
                 accent: PRIMARY,
@@ -681,20 +698,26 @@ export default function MtViewLandscapingPage() {
                 ideal: "Larger properties, custom landscapes",
                 features: [
                   "Everything in Full Care",
-                  "On-call repairs &amp; touch-ups",
-                  "Seasonal redesign &amp; replanting",
+                  "On-call repairs & touch-ups",
+                  "Seasonal redesign & replanting",
                   "Lighting maintenance",
                   "Direct line to Tim",
                 ],
                 accent: EARTH_DARK,
               },
             ].map((plan, i) => (
-              <motion.div key={i} variants={fadeUp} className="h-full">
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className={`h-full ${plan.featured ? "md:-translate-y-3" : ""}`}
+              >
                 <div
                   className="h-full p-7 md:p-8 flex flex-col rounded-2xl bg-white transition-shadow"
                   style={{
+                    // Featured tier: 2px ring + 6px halo + tall green-tinted shadow
+                    // for genuine "elevated" feel. Non-featured: hairline + soft shadow.
                     boxShadow: plan.featured
-                      ? `0 20px 60px -15px ${PRIMARY}55, 0 0 0 2px ${PRIMARY}`
+                      ? `0 0 0 2px ${PRIMARY}, 0 0 0 8px ${PRIMARY}1f, 0 28px 80px -20px ${PRIMARY}55`
                       : "0 4px 20px -8px rgba(26, 36, 18, 0.12)",
                     border: plan.featured ? "none" : "1px solid rgba(26, 36, 18, 0.08)",
                   }}
@@ -715,7 +738,7 @@ export default function MtViewLandscapingPage() {
                     {plan.features.map((f, fi) => (
                       <li key={fi} className="flex items-start gap-2.5 text-sm" style={{ color: BG_CREAM_INK }}>
                         <CheckCircle size={16} weight="fill" style={{ color: plan.accent }} className="shrink-0 mt-0.5" />
-                        <span dangerouslySetInnerHTML={{ __html: f }} />
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -984,8 +1007,13 @@ export default function MtViewLandscapingPage() {
            Sage band added 2026-05-02. Different texture from the cream
            Maintenance band — paler, more meadow-toned. Cards stay
            neutral white with forest-ink type for contrast. */}
-      <SectionReveal className="relative z-10 py-16 md:py-24" style={{ background: BG_SAGE }}>
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
+      <SectionReveal className="relative z-10 py-20 md:py-32 overflow-hidden" style={{ background: BG_SAGE }}>
+        {/* Soft fade-in from the dark portfolio above */}
+        <div
+          className="absolute inset-x-0 top-0 h-20 pointer-events-none"
+          style={{ background: `linear-gradient(to bottom, ${BG}, transparent)` }}
+        />
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center mb-14">
             <p className="text-sm uppercase tracking-[0.2em] mb-3 font-medium" style={{ color: EARTH_DARK }}>Year-Round Partnership</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold" style={{ color: BG_SAGE_INK }}>
@@ -1097,7 +1125,7 @@ export default function MtViewLandscapingPage() {
               </motion.div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={PHOTOS.olanoLead} alt="Mountain View installation — climate-smart plantings on a multi-yard property" className="w-full h-full object-cover" />
+              <img src={PHOTOS.stone420} alt="Mountain View installation — climate-adapted plantings carried through engineered hardscape" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f1a0f]/70 to-transparent" />
               <div className="absolute bottom-6 left-6">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md border border-green-500/30 bg-black/40 flex items-center gap-2">

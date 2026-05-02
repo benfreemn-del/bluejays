@@ -87,6 +87,16 @@ export default function StickyNav({
 
         {/* Right rail — phone, primary CTA, hamburger (mobile only) */}
         <div className="flex items-center gap-3">
+          {/* Icon-only phone tap below sm — keeps the primary CTA reachable
+              in one tap on iPhone SE-width devices instead of buried in the
+              hamburger menu. */}
+          <a
+            href={phoneHref}
+            className="sm:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-[#1a2e1a] hover:bg-[#1a2e1a]/5 transition rounded-full"
+            aria-label={`Call ${phoneDisplay}`}
+          >
+            <Phone size={18} weight="fill" />
+          </a>
           <a
             href={phoneHref}
             className="hidden sm:inline-flex items-center gap-2 text-[13px] font-medium text-[#1a2e1a] hover:opacity-80"
