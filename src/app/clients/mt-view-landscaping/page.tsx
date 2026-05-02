@@ -19,6 +19,7 @@
  */
 
 import MtViewContactForm from "./contact-form";
+import StickyNav from "./sticky-nav";
 import {
   Phone,
   EnvelopeSimple,
@@ -70,17 +71,23 @@ const LOGO =
 // Pulled from Mt View's existing Squarespace CDN. Grouped roughly by
 // what's in the frame, so we can sequence the gallery editorially.
 const HERO_PHOTO =
-  "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/1719016043641-AKE4V9XVUZUQLGIANGKZ/hero.jpg";
+  "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/1719016043641-AKE4V9XVUZUQLGIANGKZ/hero.jpg?format=2500w";
 
+// Append ?format=2500w to upgrade Squarespace's auto-served default
+// resolution. Hero and feature photos otherwise serve at ~1600w which
+// looks soft on retina laptops + 1440p+ displays. KirseKatrina+051 is
+// the lead feature (was previously a 2500x3333 portrait being center-
+// cropped into a wide letterbox — fixed 2026-05-02 to use a verified
+// landscape-orientation full-yard shot instead).
 const FEATURE_PHOTOS = {
   fullYard:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/10a27d43-8fd9-4288-ba12-8fb02a1dc14b/unnamed+%2814%29.jpg",
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG?format=2500w",
   pondScape:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG",
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG?format=2500w",
   designConcept:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b695ab5e-b543-4d94-acee-2acb6eb77b61/771466035.587875.jpg",
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b695ab5e-b543-4d94-acee-2acb6eb77b61/771466035.587875.jpg?format=2500w",
   customProject:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/d860c6e9-9e79-48ea-b469-c1950db9a18e/DSC00412.JPG",
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/d860c6e9-9e79-48ea-b469-c1950db9a18e/DSC00412.JPG?format=2500w",
 };
 
 // Every other verified photo from their gallery + service pages.
@@ -190,7 +197,12 @@ const SERVICES = [
 export default function MtViewLandscapingPage() {
   return (
     <div className="min-h-screen bg-[#f8f5ef] text-[#1a1612] antialiased selection:bg-[#1a2e1a] selection:text-[#f8f5ef]">
-      <StickyNav />
+      <StickyNav
+        businessName={BUSINESS.name}
+        logoSrc={LOGO}
+        phoneDisplay={BUSINESS.phoneDisplay}
+        phoneHref={BUSINESS.phoneHref}
+      />
       <Hero />
       <ServicesSection />
       <WorkSection />
@@ -202,54 +214,9 @@ export default function MtViewLandscapingPage() {
   );
 }
 
-// ─── Sticky nav ──────────────────────────────────────────────────────
-function StickyNav() {
-  return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#f8f5ef]/85 border-b border-[#1a2e1a]/10">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
-        <a href="#top" className="flex items-center gap-3 min-w-0">
-          <img
-            src={LOGO}
-            alt={BUSINESS.name}
-            className="h-9 sm:h-11 w-auto"
-          />
-          <span className="hidden md:block font-serif text-[15px] tracking-tight text-[#1a2e1a] leading-tight">
-            Mountain View
-            <br />
-            <span className="text-[12px] tracking-[0.18em] uppercase text-[#5a6a4f]">
-              Landscape &amp; Design
-            </span>
-          </span>
-        </a>
-
-        <nav className="hidden lg:flex items-center gap-8 text-[13px] tracking-wide text-[#1a1612]/80">
-          <a href="#services" className="hover:text-[#1a2e1a] transition">Services</a>
-          <a href="#work" className="hover:text-[#1a2e1a] transition">Work</a>
-          <a href="#about" className="hover:text-[#1a2e1a] transition">About</a>
-          <a href="#service-area" className="hover:text-[#1a2e1a] transition">Service Area</a>
-          <a href="#contact" className="hover:text-[#1a2e1a] transition">Contact</a>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <a
-            href={BUSINESS.phoneHref}
-            className="hidden sm:inline-flex items-center gap-2 text-[13px] font-medium text-[#1a2e1a] hover:opacity-80"
-          >
-            <Phone size={16} weight="fill" />
-            {BUSINESS.phoneDisplay}
-          </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-1.5 bg-[#1a2e1a] text-[#f8f5ef] px-4 py-2 text-[13px] font-medium tracking-wide hover:bg-[#0d1a0d] transition"
-          >
-            Get an estimate
-            <ArrowRight size={14} weight="bold" />
-          </a>
-        </div>
-      </div>
-    </header>
-  );
-}
+// StickyNav extracted to ./sticky-nav.tsx (client component) so the
+// mobile hamburger menu can use useState. The rest of this page stays
+// server-rendered.
 
 // ─── Hero ────────────────────────────────────────────────────────────
 function Hero() {
@@ -264,22 +231,23 @@ function Hero() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a1408]/30 via-[#0a1408]/15 to-[#0a1408]/70" />
 
-        <div className="relative z-10 mx-auto max-w-7xl h-full px-5 sm:px-8 flex flex-col justify-end pb-16 sm:pb-24">
+        <div className="relative z-10 mx-auto max-w-7xl h-full px-5 sm:px-8 flex flex-col justify-end pb-20 sm:pb-32">
           <div className="max-w-3xl">
             <p className="text-[#e8dfc8] text-[12px] sm:text-[13px] tracking-[0.28em] uppercase mb-5 sm:mb-6 font-medium">
               Auburn, WA &middot; Since {BUSINESS.established}
             </p>
             <h1 className="font-serif text-white text-[40px] leading-[1.05] sm:text-[64px] sm:leading-[1.02] lg:text-[80px] tracking-tight">
-              Landscapes the
+              Pacific Northwest
               <br />
-              <em className="not-italic text-[#cfe0a8]">Pacific Northwest</em>
+              landscapes,
               <br />
-              was made for.
+              <em className="not-italic text-[#e8efd4]">since 1976.</em>
             </h1>
-            <p className="mt-7 text-white/85 text-[16px] sm:text-[18px] leading-relaxed max-w-xl">
-              Family-owned design and installation across King, Pierce, Snohomish
-              and Kittitas counties. Tim has been building outdoor spaces in
-              Western Washington since 1976.
+            <p className="mt-7 text-white/90 text-[16px] sm:text-[18px] leading-relaxed max-w-xl">
+              Tim Hunsaker has been building outdoor spaces in Western
+              Washington for nearly fifty years — design, hardscape, and
+              full installation across King, Pierce, Snohomish and Kittitas
+              counties.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <a
@@ -496,7 +464,7 @@ function AboutSection() {
               Our story
             </p>
             <h2 className="font-serif text-[#1a1612] text-[40px] leading-[1.05] sm:text-[54px] sm:leading-[1.02] tracking-tight">
-              Fifty years of
+              {new Date().getFullYear() - BUSINESS.established} years of
               <br />
               <em className="not-italic text-[#1a2e1a]">Pacific Northwest</em>
               <br />
