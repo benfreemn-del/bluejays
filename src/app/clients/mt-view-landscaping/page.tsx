@@ -412,11 +412,40 @@ const projects = [
   { title: "Stoneworks Detail", location: "King County", scope: "Tiered hardscape integration — stone wall meeting bed work and finished plantings.", image: PHOTOS.stone560 },
 ];
 
+// Each season gets its own palette so the row reads as four distinct
+// moods rather than four identical white cards. Tints are kept SUBTLE
+// (10-15% hue) so they sit comfortably on the sage band without
+// fighting it. Accent (top strip + icon tint) is the seasonal
+// signature color.
 const seasonalData = [
-  { season: "Spring", color: PRIMARY_LIGHT, icon: Flower, tasks: ["New plantings & mulching", "Irrigation start-up & adjustment", "Bed cleanup & soil amendment", "Lawn dethatching"] },
-  { season: "Summer", color: EARTH, icon: Sun, tasks: ["Irrigation monitoring", "Pruning & shaping", "Weed & bed maintenance", "Hardscape installs"] },
-  { season: "Fall", color: EARTH_DARK, icon: Leaf, tasks: ["Leaf removal & cleanup", "Fall planting window", "Aeration & overseed", "Irrigation winterization"] },
-  { season: "Winter", color: PRIMARY, icon: Snowflake, tasks: ["Structural pruning", "Wall & hardscape repairs", "Concept design for spring", "Lighting installs"] },
+  {
+    season: "Spring",
+    accent: "#7eb84a",        // fresh moss-green
+    bg: "#eef2dc",            // pale sage-cream
+    icon: Flower,
+    tasks: ["New plantings & mulching", "Irrigation start-up & adjustment", "Bed cleanup & soil amendment", "Lawn dethatching"],
+  },
+  {
+    season: "Summer",
+    accent: "#d97706",        // warm marigold
+    bg: "#f7ecd2",            // sunlit cream
+    icon: Sun,
+    tasks: ["Irrigation monitoring", "Pruning & shaping", "Weed & bed maintenance", "Hardscape installs"],
+  },
+  {
+    season: "Fall",
+    accent: "#b45309",        // burnt amber
+    bg: "#f4dec7",            // peach-rust
+    icon: Leaf,
+    tasks: ["Leaf removal & cleanup", "Fall planting window", "Aeration & overseed", "Irrigation winterization"],
+  },
+  {
+    season: "Winter",
+    accent: "#6b8a96",        // cool slate-blue
+    bg: "#dde6ea",            // frost-gray
+    icon: Snowflake,
+    tasks: ["Structural pruning", "Wall & hardscape repairs", "Concept design for spring", "Lighting installs"],
+  },
 ];
 
 // Voice-of-Tim observations (NOT fabricated client quotes). Each card pairs
@@ -1029,22 +1058,29 @@ export default function MtViewLandscapingPage() {
             {seasonalData.map((s, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <div
-                  className="p-6 h-full rounded-2xl bg-white transition-shadow"
+                  className="p-6 h-full rounded-2xl transition-shadow relative overflow-hidden"
                   style={{
-                    boxShadow: "0 4px 20px -8px rgba(31, 44, 28, 0.15)",
-                    border: "1px solid rgba(31, 44, 28, 0.08)",
+                    background: s.bg,
+                    boxShadow: "0 4px 20px -8px rgba(31, 44, 28, 0.18)",
+                    border: `1px solid ${s.accent}33`,
                   }}
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}25` }}>
-                      <s.icon size={22} weight="duotone" style={{ color: s.color }} />
+                  {/* Top accent strip — gives each season its own
+                      visual signature without overpowering the card. */}
+                  <div
+                    className="absolute inset-x-0 top-0 h-1"
+                    style={{ background: s.accent }}
+                  />
+                  <div className="flex items-center gap-3 mb-4 mt-1">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.accent}30` }}>
+                      <s.icon size={22} weight="duotone" style={{ color: s.accent }} />
                     </div>
                     <h3 className="text-xl font-bold" style={{ color: BG_SAGE_INK }}>{s.season}</h3>
                   </div>
                   <ul className="space-y-2">
                     {s.tasks.map((t, j) => (
                       <li key={j} className="flex items-start gap-2 text-sm" style={{ color: BG_SAGE_INK }}>
-                        <CheckCircle size={14} weight="duotone" style={{ color: s.color }} className="shrink-0 mt-0.5" />
+                        <CheckCircle size={14} weight="duotone" style={{ color: s.accent }} className="shrink-0 mt-0.5" />
                         {t}
                       </li>
                     ))}
