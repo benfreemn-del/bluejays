@@ -167,6 +167,15 @@ const fadeUp = {
 
 /* ───────────────────────── COLORS ───────────────────────── */
 const BG = "#0f1a0f";
+// Alt section bands — added 2026-05-02 to break the "endless dark"
+// scroll that was making the page feel monochromatic. Cream and sage
+// bands punctuate the dark editorial base at maintenance + seasonal
+// sections so the eye gets visual rest between long dark stretches.
+const BG_CREAM = "#f4ede1";        // warm parchment — for the maintenance band
+const BG_CREAM_INK = "#1a2412";    // dark forest type for cream band
+const BG_CREAM_INK_SOFT = "#3d4a35"; // muted dark sage for body type on cream
+const BG_SAGE = "#dde2d3";         // desaturated sage — for seasonal calendar band
+const BG_SAGE_INK = "#1f2c1c";     // forest type for sage band
 const PRIMARY = "#16a34a";
 const PRIMARY_LIGHT = "#22c55e";
 const EARTH = "#a3845b";
@@ -226,11 +235,21 @@ function WordReveal({ text, className = "" }: { text: string; className?: string
   );
 }
 
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({
+  children,
+  className = "",
+  id,
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+  style?: React.CSSProperties;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
+    <motion.section ref={ref} id={id} className={className} style={style} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
       {children}
     </motion.section>
   );
@@ -601,16 +620,16 @@ export default function MtViewLandscapingPage() {
            — capturing a maintenance customer for $200/mo is worth more over five
            years than a one-time $20k install. The hero badge "Maintenance plans
            available" anchors here. */}
-      <SectionReveal id="maintenance" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="maintenance" className="relative z-10 py-20 md:py-32" style={{ background: BG_CREAM }}>
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY_LIGHT }}>
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY }}>
               Already have a yard?
             </p>
-            <h2 className="text-3xl md:text-5xl tracking-tighter leading-[1.05] font-bold text-white mb-5">
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-[1.05] font-bold mb-5" style={{ color: BG_CREAM_INK }}>
               <WordReveal text="We'll keep it that way." />
             </h2>
-            <p className="text-slate-400 leading-relaxed">
+            <p className="leading-relaxed" style={{ color: BG_CREAM_INK_SOFT }}>
               Ongoing care is what keeps a $30,000 install looking like one a decade
               later. Mt View runs a year-round maintenance route across King, Pierce,
               Snohomish &amp; Kittitas counties — three plans, all built around your
@@ -618,7 +637,10 @@ export default function MtViewLandscapingPage() {
             </p>
           </div>
 
-          {/* Three-tier maintenance plans — Essentials / Full Care / Estate */}
+          {/* Three-tier maintenance plans — Essentials / Full Care / Estate.
+              Restyled for the cream band: solid white cards with forest-ink
+              type instead of glass-on-dark. Featured tier (Full Care) gets
+              a real visible ring + slightly elevated shadow + green wash. */}
           <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-5"
             variants={stagger}
@@ -650,7 +672,7 @@ export default function MtViewLandscapingPage() {
                   "Spring &amp; fall fertilization",
                   "Irrigation start-up &amp; winterize",
                 ],
-                accent: PRIMARY_LIGHT,
+                accent: PRIMARY,
                 featured: true,
               },
               {
@@ -664,29 +686,34 @@ export default function MtViewLandscapingPage() {
                   "Lighting maintenance",
                   "Direct line to Tim",
                 ],
-                accent: EARTH,
+                accent: EARTH_DARK,
               },
             ].map((plan, i) => (
               <motion.div key={i} variants={fadeUp} className="h-full">
-                <GlassCard
-                  className={`h-full p-7 md:p-8 flex flex-col ${plan.featured ? "ring-2 ring-offset-0" : ""}`}
-                  // featured plan gets a subtle ring tinted with its accent
+                <div
+                  className="h-full p-7 md:p-8 flex flex-col rounded-2xl bg-white transition-shadow"
+                  style={{
+                    boxShadow: plan.featured
+                      ? `0 20px 60px -15px ${PRIMARY}55, 0 0 0 2px ${PRIMARY}`
+                      : "0 4px 20px -8px rgba(26, 36, 18, 0.12)",
+                    border: plan.featured ? "none" : "1px solid rgba(26, 36, 18, 0.08)",
+                  }}
                 >
-                  <div className="flex items-baseline justify-between mb-1">
-                    <span className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: plan.accent }}>
+                  <div className="flex items-baseline justify-between mb-1 gap-2">
+                    <span className="text-xs uppercase tracking-[0.2em] font-bold" style={{ color: plan.accent }}>
                       {plan.name}
                     </span>
                     {plan.featured && (
-                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold px-2.5 py-1 rounded-full" style={{ background: `${PRIMARY_LIGHT}22`, color: PRIMARY_LIGHT, border: `1px solid ${PRIMARY_LIGHT}44` }}>
+                      <span className="text-[10px] uppercase tracking-[0.18em] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: PRIMARY }}>
                         Most popular
                       </span>
                     )}
                   </div>
-                  <p className="text-2xl md:text-3xl font-bold text-white mb-1">{plan.cadence}</p>
-                  <p className="text-sm text-slate-400 mb-6">{plan.ideal}</p>
+                  <p className="text-2xl md:text-3xl font-bold mb-1" style={{ color: BG_CREAM_INK }}>{plan.cadence}</p>
+                  <p className="text-sm mb-6" style={{ color: BG_CREAM_INK_SOFT }}>{plan.ideal}</p>
                   <ul className="space-y-2.5 mb-7 flex-1">
                     {plan.features.map((f, fi) => (
-                      <li key={fi} className="flex items-start gap-2.5 text-sm text-slate-300">
+                      <li key={fi} className="flex items-start gap-2.5 text-sm" style={{ color: BG_CREAM_INK }}>
                         <CheckCircle size={16} weight="fill" style={{ color: plan.accent }} className="shrink-0 mt-0.5" />
                         <span dangerouslySetInnerHTML={{ __html: f }} />
                       </li>
@@ -694,17 +721,21 @@ export default function MtViewLandscapingPage() {
                   </ul>
                   <a
                     href="#contact"
-                    className="block w-full text-center px-5 py-3 rounded-full text-sm font-semibold text-white transition-colors"
-                    style={{ background: plan.featured ? PRIMARY : "rgba(255,255,255,0.08)", border: plan.featured ? "none" : "1px solid rgba(255,255,255,0.15)" }}
+                    className="block w-full text-center px-5 py-3 rounded-full text-sm font-semibold transition-colors"
+                    style={{
+                      background: plan.featured ? PRIMARY : "transparent",
+                      color: plan.featured ? "#ffffff" : BG_CREAM_INK,
+                      border: plan.featured ? "none" : `1.5px solid ${BG_CREAM_INK}`,
+                    }}
                   >
                     {plan.featured ? "Join the route" : "Get a quote"}
                   </a>
-                </GlassCard>
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <p className="text-center text-xs text-slate-500 mt-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-center text-xs mt-8 max-w-2xl mx-auto leading-relaxed" style={{ color: BG_CREAM_INK_SOFT }}>
             Pricing is per-property — quoted after a free walk-through so we can see
             the lot before we put numbers on it. Most clients sit at $180&ndash;$420/mo.
           </p>
@@ -766,9 +797,19 @@ export default function MtViewLandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ WHY MT VIEW — VALUE PROPS ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-20">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* ═══════════════ WHY MT VIEW — VALUE PROPS ═══════════════
+           Warm color wash added 2026-05-02: subtle radial gradient
+           combining PRIMARY_GLOW + EARTH_GLOW. Breaks up the dark
+           monochromatic stretch between Services and Process. */}
+      <SectionReveal className="relative z-10 py-12 md:py-20 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse at 25% 50%, ${PRIMARY_GLOW} 0%, transparent 55%),
+                          radial-gradient(ellipse at 75% 50%, ${EARTH_GLOW} 0%, transparent 50%)`,
+          }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY_LIGHT }}>The Mountain View Standard</p>
             <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
@@ -843,7 +884,7 @@ export default function MtViewLandscapingPage() {
           the photo-screening rule (the team-portrait + "unnamed (14)" are
           excluded). Spotlight uses a Mountain View landscape photo as the
           feature image instead — keeps the section but stays honest. */}
-      <SectionReveal id="about" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="about" className="relative z-10 py-20 md:py-32">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
         </div>
@@ -889,7 +930,7 @@ export default function MtViewLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 7. PROJECT PORTFOLIO — STAGGERED MASONRY ═══════════════ */}
-      <SectionReveal id="work" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="work" className="relative z-10 py-20 md:py-32">
         <LeafPattern opacity={0.02} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center mb-14">
@@ -939,34 +980,43 @@ export default function MtViewLandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ 8. SEASONAL SERVICES CALENDAR ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      {/* ═══════════════ 8. SEASONAL SERVICES CALENDAR ═══════════════
+           Sage band added 2026-05-02. Different texture from the cream
+           Maintenance band — paler, more meadow-toned. Cards stay
+           neutral white with forest-ink type for contrast. */}
+      <SectionReveal className="relative z-10 py-16 md:py-24" style={{ background: BG_SAGE }}>
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-14">
-            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Year-Round Partnership</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-medium" style={{ color: EARTH_DARK }}>Year-Round Partnership</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold" style={{ color: BG_SAGE_INK }}>
               <WordReveal text="A Yard Through the Seasons" />
             </h2>
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {seasonalData.map((s, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full group hover:border-green-500/20 transition-colors duration-300">
+                <div
+                  className="p-6 h-full rounded-2xl bg-white transition-shadow"
+                  style={{
+                    boxShadow: "0 4px 20px -8px rgba(31, 44, 28, 0.15)",
+                    border: "1px solid rgba(31, 44, 28, 0.08)",
+                  }}
+                >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}20` }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}25` }}>
                       <s.icon size={22} weight="duotone" style={{ color: s.color }} />
                     </div>
-                    <h3 className="text-xl font-bold text-white">{s.season}</h3>
+                    <h3 className="text-xl font-bold" style={{ color: BG_SAGE_INK }}>{s.season}</h3>
                   </div>
                   <ul className="space-y-2">
                     {s.tasks.map((t, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm text-slate-400">
+                      <li key={j} className="flex items-start gap-2 text-sm" style={{ color: BG_SAGE_INK }}>
                         <CheckCircle size={14} weight="duotone" style={{ color: s.color }} className="shrink-0 mt-0.5" />
                         {t}
                       </li>
                     ))}
                   </ul>
-                </GlassCard>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -974,7 +1024,7 @@ export default function MtViewLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 9. YARD QUIZ ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      <SectionReveal className="relative z-10 py-12 md:py-20">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <ShimmerBorder>
             <div className="p-8 md:p-12">
@@ -1098,7 +1148,7 @@ export default function MtViewLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 12. COMPETITOR COMPARISON ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      <SectionReveal className="relative z-10 py-12 md:py-20">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Why Mountain View</p>
@@ -1146,7 +1196,7 @@ export default function MtViewLandscapingPage() {
           this section can come back. */}
 
       {/* ═══════════════ 14. CONTACT — uses MtViewContactForm ═══════════════ */}
-      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="contact" className="relative z-10 py-20 md:py-32">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.05, filter: "blur(100px)" }} />
         </div>
@@ -1252,7 +1302,7 @@ export default function MtViewLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 16. FAQ ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      <SectionReveal className="relative z-10 py-12 md:py-20">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Common Questions</p>
