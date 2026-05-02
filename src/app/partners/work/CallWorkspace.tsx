@@ -236,6 +236,7 @@ export default function CallWorkspace(props: Props) {
       // to read the voicemail / objection script after marking the
       // outcome. They click "Next prospect →" when ready.
       if (isAdmin) {
+        // 1. Always save the outcome as a note for timeline visibility
         try {
           await fetch(`/api/notes/${prospect.id}`, {
             method: "POST",
@@ -248,6 +249,47 @@ export default function CallWorkspace(props: Props) {
           // Note save failed — non-blocking. Outcome still tracked
           // locally so the rep sees their selection persist.
         }
+
+        // 2. Bump prospect status when outcome implies contact-was-
+        //    made. Pre-2026-05-02 admin call outcomes only saved a
+        //    note — status stayed at audit_lead, so the dashboard's
+        //    "Contacted" counter never moved when Ben dialed inbound
+        //    leads. This block fixes that.
+        const CONTACT_MADE: Outcome[] = [
+          "answered_call_scheduled",
+          "answered_preview_sent",
+          "answered_audit_sent",
+          "answered_callback",
+          "answered_not_interested",
+          "voicemail",
+        ];
+        // do_not_call → flip to unsubscribed (TCPA compliance — same
+        // as partner-mode log-call route)
+        let nextStatus: string | null = null;
+        if (outcome === "do_not_call") {
+          nextStatus = "unsubscribed";
+        } else if (CONTACT_MADE.includes(outcome)) {
+          // Only bump UP — don't downgrade a more-progressed prospect
+          // (e.g. don't flip a 'paid' lead back to 'contacted' just
+          // because Ben dialed for a follow-up). Audit-funnel statuses
+          // are upstream of 'contacted' so this safely catches them.
+          const upstream = ["scouted", "scraped", "generated", "approved", "audit_lead", "audit_preview_requested"];
+          if (upstream.includes(prospect.status ?? "")) {
+            nextStatus = "contacted";
+          }
+        }
+        if (nextStatus) {
+          try {
+            await fetch(`/api/prospects/${prospect.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status: nextStatus }),
+            });
+          } catch {
+            // Status patch failed — non-blocking. Note is still saved.
+          }
+        }
+
         setSavedOutcome(outcome);
         setBusy(false);
         return;

@@ -19,13 +19,42 @@ export default function DashboardStats({
   const generated = active.filter(
     (p) => p.generatedSiteUrl && p.status !== "scouted" && p.status !== "scraped" && p.status !== "generated"
   ).length;
-  const contacted = active.filter(
-    (p) => p.status === "contacted" || p.status === "responded" || p.status === "paid"
-  ).length;
+  // "Contacted" = we have made contact in any form. Cold-outreach
+  // pitches (status='contacted'), engagement signals (email_opened,
+  // link_clicked, engaged), inbound interactions (audit_preview_
+  // requested = clicked CTA, audit_marketing = manually tagged after
+  // a call, fullsystem_inquiry = booked discovery), all the way
+  // through to live customers — any of these mean we've touched
+  // them. Was previously only counting (contacted, responded, paid)
+  // which missed every audit-funnel touch + every post-paid stage.
+  const CONTACTED_STATUSES = new Set([
+    "contacted",
+    "email_opened",
+    "engaged",
+    "link_clicked",
+    "responded",
+    "interested",
+    "claimed",
+    "paid",
+    "dns_transfer",
+    "live",
+    "audit_preview_requested",
+    "audit_marketing",
+    "fullsystem_inquiry",
+  ]);
+  const contacted = active.filter((p) => CONTACTED_STATUSES.has(p.status)).length;
   const responded = active.filter(
-    (p) => p.status === "responded" || p.status === "paid"
+    (p) =>
+      p.status === "responded" ||
+      p.status === "interested" ||
+      p.status === "claimed" ||
+      p.status === "paid" ||
+      p.status === "dns_transfer" ||
+      p.status === "live"
   ).length;
-  const paid = active.filter((p) => p.status === "paid").length;
+  const paid = active.filter(
+    (p) => p.status === "paid" || p.status === "dns_transfer" || p.status === "live"
+  ).length;
   const qcPassed = active.filter((p) => p.status === "ready_to_review").length;
   const qcFailed = active.filter((p) => p.status === "qc_failed").length;
   const approved = active.filter((p) => p.status === "approved").length;
