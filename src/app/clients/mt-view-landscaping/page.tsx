@@ -626,7 +626,7 @@ export default function MtViewLandscapingPage() {
                     Family-Owned in Western Washington Since {BUSINESS.established}
                   </motion.p>
 
-                  <h1 className="text-5xl md:text-7xl lg:text-[84px] xl:text-[96px] tracking-tighter leading-[0.98] font-bold text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-[60px] xl:text-[72px] tracking-tighter leading-[1.02] font-bold text-white">
                     <WordReveal text="Custom Landscapes. Maintained for Life." />
                   </h1>
 
