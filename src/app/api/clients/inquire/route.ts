@@ -60,6 +60,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "jake@itcquickattach.com",
     emoji: "🚜",
   },
+  "visit-marfa": {
+    businessLabel: "Visit Marfa (MARFA Visitor Center)",
+    clientEmail: "contact@visitmarfa.com",
+    emoji: "🌵",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
