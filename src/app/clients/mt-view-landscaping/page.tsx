@@ -1,53 +1,71 @@
-/* eslint-disable @next/next/no-img-element */
+"use client";
+
+/* eslint-disable @next/next/no-img-element -- Static marketing showcase uses plain img tags intentionally. */
 
 /**
- * /clients/mt-view-landscaping — bespoke single-page site for
- * Mountain View Landscape & Design Inc. (Auburn, WA).
+ * /clients/mt-view-landscaping — Mountain View Landscape & Design Inc. (Auburn, WA).
  *
- * v2 rebuild (2026-05-01): the v1 felt like a tradesman template —
- * sprinkler hero, photo-dump gallery, ten-icon service grid. This
- * version is rebuilt against the visual identities of editorial
- * landscape-architect firms (Reed Hilderbrand, Hollander Design,
- * Andrea Cochran, Wirtz International). It treats Tim's archive as
- * monograph material, not a portfolio dump.
+ * v3 rebuild (2026-05-01): clones the v2/landscaping portfolio template
+ * (`src/app/v2/landscaping/page.tsx`) verbatim in structure, then swaps
+ * every placeholder for Mt View's real business details and 19
+ * curl-verified Squarespace CDN photos. All Unsplash URLs removed.
  *
- * Structure:
- *   Hero        — full-bleed, single line of type, no CTA
- *   Statement   — one editorial sentence, half a screen of breathing room
- *   Selected Work — case-study format (5 named projects, ~22 photos total)
- *   Practice    — six services, treated as a list, not a grid of icons
- *   About       — Tim's story, one pull-quote, zero portraits
- *   Philosophy  — three principles, generous typography
- *   Service Area — typographic four-county listing
- *   Process     — four-step intake → install → aftercare flow
- *   Contact     — sharp-cornered form
- *   Footer
- *
- * Photography: every photo is sourced directly from Mt View's existing
- * Squarespace CDN. Each URL was curl-verified 2026-05-01 with content-
- * length captured to ensure feature spots get genuinely high-resolution
- * source files (>800KB at 2500w). The sprinkler hero (`hero.jpg`) and
- * the team-portrait `67738826_*` photo from v1 are explicitly excluded.
+ * Components preserved from the prior bespoke build:
+ *   StickyNav         (mobile-hamburger client nav)
+ *   MtViewContactForm (wired to /api/clients/mt-view-landscaping/contact)
  */
 
-import MtViewContactForm from "./contact-form";
-import StickyNav from "./sticky-nav";
+import { useState, useRef, useCallback } from "react";
 import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useInView,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  Star,
+  ShieldCheck,
+  CaretDown,
   Phone,
-  EnvelopeSimple,
   MapPin,
-} from "@phosphor-icons/react/dist/ssr";
+  Clock,
+  ArrowRight,
+  Tree,
+  Leaf,
+  Quotes,
+  CalendarCheck,
+  Heart,
+  Sun,
+  Drop,
+  Lightning,
+  Shovel,
+  Mountains,
+  Flower,
+  CheckCircle,
+  Snowflake,
+  PaintBrush,
+  Ruler,
+  Eye,
+  Envelope,
+  Recycle,
+  Plant,
+  Medal,
+  Check,
+  Certificate,
+  HandPointing,
+  SealCheck,
+  FlowerLotus,
+  X as XIcon,
+} from "@phosphor-icons/react";
 
-export const metadata = {
-  title:
-    "Mountain View Landscape & Design — Custom Landscapes in King, Pierce, Snohomish & Kittitas Counties, WA",
-  description:
-    "Family-owned landscape design and installation in Auburn, WA. Hardscapes, water features, retaining walls, irrigation, sod, native planting and night lighting. Serving King, Pierce, Snohomish and Kittitas counties since 1976.",
-};
+import StickyNav from "./sticky-nav";
+import MtViewContactForm from "./contact-form";
 
-// ─── Business details ────────────────────────────────────────────────
+/* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
   name: "Mountain View Landscape & Design",
+  shortName: "Mountain View",
   established: 1976,
   phoneDisplay: "(253) 638-0500",
   phoneHref: "tel:+12536380500",
@@ -57,6 +75,7 @@ const BUSINESS = {
     city: "Auburn",
     state: "WA",
     zip: "98092",
+    full: "18225 Southeast 313th Street, Auburn, WA 98092",
   },
   counties: ["King", "Pierce", "Snohomish", "Kittitas"],
 } as const;
@@ -64,824 +83,1096 @@ const BUSINESS = {
 const LOGO =
   "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/c7d25e65-6d11-45a8-a51f-87fc78e33417/Untitled+design+%2818%29.png?format=1500w";
 
-// ─── Photo library ───────────────────────────────────────────────────
-// Every URL curl-verified 2026-05-01. Content-length recorded inline so
-// future edits can preserve the resolution floor (target: >800KB @ 2500w
-// for hero + feature spots, >400KB for in-grid).
-//
-// Hero pick: DSC00543.JPG. Of the four largest archive files (1.0–1.4MB),
-// it reads from the filename ("custom retaining wall") as the most
-// engineered, structural shot — closer to Reed Hilderbrand than to a
-// residential front-yard photo. KirseKatrina 051 (the v1 fallback) is
-// reserved as the second-act feature inside Selected Work where its
-// full-yard composition lands better.
-const HERO =
-  "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG?format=2500w"; // 1.32MB
+/* ───────────────────────── MT VIEW PHOTO LIBRARY (19 verified) ─────────────────────────
+   Every URL pulled from Mt View's Squarespace CDN and curl-verified.
+   Hero / feature spots use ?format=2500w. Gallery / cluster spots use
+   ?format=1500w. Excluded: hero.jpg sprinkler shot, 67738826_* team
+   portrait, "unnamed (14).jpg" portrait. */
+const PHOTOS = {
+  // Hero — most cinematic engineered-stonework frame in the archive (1.32MB).
+  hero:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG?format=2500w",
 
-// Project case-studies. Names inferred from filename clusters; years are
-// best-guess from filename date stems and intentionally hedged in copy.
-type Project = {
-  number: string;
-  name: string;
-  meta: string;
-  description: string;
-  lead: { src: string; alt: string };
-  detail: { src: string; alt: string }[];
+  // Kirse Residence — full-yard installation
+  kirseLead:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG?format=2500w",
+  kirse006:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8344f184-3bdb-47ac-ae07-97531fae03a1/KirseKatrina+006.JPG?format=1500w",
+  kirse048:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2beab713-b1a3-4b91-b3ce-65a733df6609/KirseKatrina+048.JPG?format=1500w",
+  kirse017:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b6fd68f4-c87e-45cc-bef7-a32957c88d9d/KirseKatrina+017.JPG?format=1500w",
+
+  // Custom Stoneworks — hardscape & retaining walls
+  stoneLead:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8d16b7b2-0967-4b4c-ab23-a20636723fe8/DSC00545.JPG?format=2500w",
+  stone409:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/0a45be1e-f6e8-4630-9247-7c2705eee4f5/DSC00409.JPG?format=1500w",
+  stone560:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/ab58e650-dea6-4df0-b619-cc9d6d967db0/DSC00560.JPG?format=1500w",
+  stone420:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/655a746a-4fe7-4d0d-ad65-9cd8b4bc50b0/DSC00420.JPG?format=1500w",
+
+  // Aquavista — water feature
+  aquaLead:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/28200408-a8ad-4f8a-af91-037b8c322cec/May2008aquavista+004.JPG?format=2500w",
+  aqua022:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/75ff38cf-1acd-4320-87bd-754268863706/May2008aquavista+022.JPG?format=1500w",
+  aqua9406:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG?format=1500w",
+
+  // Olano Property — full-yard transformation
+  olanoLead:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/6eb92fa7-668f-4db2-8866-47b0899bad29/OlanoCorky+027.JPG?format=2500w",
+  olano024:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/20b5ab64-8dd4-494a-b927-6b0b284a7487/OlanoCorky+024.JPG?format=1500w",
+  olano032:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/16da4e07-19d6-4990-b977-77e471487bd4/OlanoCorky+032.JPG?format=1500w",
+  june022:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/167a4d4f-ee04-45c8-a371-c79486d4a0f3/June2009+022.JPG?format=1500w",
+
+  // Night Work — landscape lighting
+  nightLead:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/a9e639ed-ae6a-418d-a533-bf224253f6af/DSC00449.JPG?format=2500w",
+  night415:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/af64af10-4922-4da7-9a20-2ea0e50d5acf/DSC00415.JPG?format=1500w",
+  night414:
+    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ac46896-19bc-45ae-9f3e-53be1e4cb507/DSC00414.JPG?format=1500w",
+} as const;
+
+/* ───────────────────────── SPRING CONFIG ───────────────────────── */
+const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
+const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
 };
 
-const PROJECTS: Project[] = [
-  {
-    number: "01",
-    name: "Kirse Residence",
-    meta: "Full-yard installation · King County",
-    description:
-      "A multi-phase residential transformation: terraced front-yard plantings, a stone entry walkway, and integrated bed work that reads as one continuous landscape from the curb to the back door.",
-    lead: {
-      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG?format=2500w",
-      alt: "Kirse residence — full yard view with mature plantings",
-    },
-    detail: [
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8344f184-3bdb-47ac-ae07-97531fae03a1/KirseKatrina+006.JPG?format=1500w",
-        alt: "Kirse residence — entry walkway in natural stone",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2beab713-b1a3-4b91-b3ce-65a733df6609/KirseKatrina+048.JPG?format=1500w",
-        alt: "Kirse residence — terraced bed work",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b6fd68f4-c87e-45cc-bef7-a32957c88d9d/KirseKatrina+017.JPG?format=1500w",
-        alt: "Kirse residence — garden path detail",
-      },
-    ],
-  },
-  {
-    number: "02",
-    name: "Custom Stoneworks",
-    meta: "Hardscape & retaining walls",
-    description:
-      "Engineered walls in natural stone — built to hold a slope through a real Pacific Northwest rainy season, and to look like they belong there long after the equipment leaves.",
-    lead: {
-      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8d16b7b2-0967-4b4c-ab23-a20636723fe8/DSC00545.JPG?format=2500w",
-      alt: "Tiered retaining wall in natural stone",
-    },
-    detail: [
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/0a45be1e-f6e8-4630-9247-7c2705eee4f5/DSC00409.JPG?format=1500w",
-        alt: "Landscape integrated with retaining wall",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/ab58e650-dea6-4df0-b619-cc9d6d967db0/DSC00560.JPG?format=1500w",
-        alt: "Stone hardscape feature in finished landscape",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/655a746a-4fe7-4d0d-ad65-9cd8b4bc50b0/DSC00420.JPG?format=1500w",
-        alt: "Installed landscape with stonework integration",
-      },
-    ],
-  },
-  {
-    number: "03",
-    name: "Aquavista",
-    meta: "Water feature · Pierce County",
-    description:
-      "A naturalistic water feature carried through the surrounding plantings — the kind of install where the stone, the water, and the planting all arrive at the same time so nothing reads as bolted on.",
-    lead: {
-      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/28200408-a8ad-4f8a-af91-037b8c322cec/May2008aquavista+004.JPG?format=2500w",
-      alt: "Aquavista — water feature with surrounding landscape",
-    },
-    detail: [
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/75ff38cf-1acd-4320-87bd-754268863706/May2008aquavista+022.JPG?format=1500w",
-        alt: "Aquavista — landscape paired with hardscape edging",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG?format=1500w",
-        alt: "Custom water feature integrated into the landscape",
-      },
-    ],
-  },
-  {
-    number: "04",
-    name: "Olano Property",
-    meta: "Full-yard transformation",
-    description:
-      "Half-acre transformation across front, side, and rear yards: a coordinated plan of plantings, walkways, and grade work that turned a series of disconnected outdoor spaces into one designed property.",
-    lead: {
-      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/6eb92fa7-668f-4db2-8866-47b0899bad29/OlanoCorky+027.JPG?format=2500w",
-      alt: "Olano property — full yard transformation",
-    },
-    detail: [
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/20b5ab64-8dd4-494a-b927-6b0b284a7487/OlanoCorky+024.JPG?format=1500w",
-        alt: "Olano residence landscape",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/16da4e07-19d6-4990-b977-77e471487bd4/OlanoCorky+032.JPG?format=1500w",
-        alt: "Olano residence — yard detail with mature plantings",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/167a4d4f-ee04-45c8-a371-c79486d4a0f3/June2009+022.JPG?format=1500w",
-        alt: "Olano residence — summer plantings",
-      },
-    ],
-  },
-  {
-    number: "05",
-    name: "Night Work",
-    meta: "Landscape lighting",
-    description:
-      "Low-voltage LED lighting designed alongside the planting plan — pathway, accent, and architectural — so the yard you spent on actually reads after sunset.",
-    lead: {
-      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/a9e639ed-ae6a-418d-a533-bf224253f6af/DSC00449.JPG?format=2500w",
-      alt: "Outdoor lighting installation at night",
-    },
-    detail: [
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/af64af10-4922-4da7-9a20-2ea0e50d5acf/DSC00415.JPG?format=1500w",
-        alt: "Landscape with mature trees and integrated lighting",
-      },
-      {
-        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ac46896-19bc-45ae-9f3e-53be1e4cb507/DSC00414.JPG?format=1500w",
-        alt: "Mountain View finished landscape, evening",
-      },
-    ],
-  },
-];
-
-// Editorial practice list — six disciplines, written as a sentence each.
-const PRACTICE = [
-  {
-    name: "Landscape Design",
-    body:
-      "A consultation walks the site, then a concept and planting plan that respects what's already there before adding to it. Installation runs from the same drawing.",
-  },
-  {
-    name: "Hardscape",
-    body:
-      "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in the Pacific Northwest, not just to look right on day one.",
-  },
-  {
-    name: "Retaining Walls",
-    body:
-      "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.",
-  },
-  {
-    name: "Water Features",
-    body:
-      "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed arrive together.",
-  },
-  {
-    name: "Native Planting",
-    body:
-      "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.",
-  },
-  {
-    name: "Night Lighting",
-    body:
-      "Low-voltage LED, designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.",
-  },
-];
-
-const PHILOSOPHY = [
-  {
-    title: "Climate-appropriate plantings.",
-    body:
-      "Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don't. We default to natives and adapted species — the landscape costs less to keep alive and looks better doing it.",
-  },
-  {
-    title: "Engineered hardscape.",
-    body:
-      "Walls, walkways, and water features are built once. We size the base, the drainage, and the structure to a Pacific Northwest rainy season — not to a finish photograph.",
-  },
-  {
-    title: "Long-term relationships.",
-    body:
-      "Most of our work is for clients who came back five, ten, fifteen years after the first install for the next phase. That's the work we're proudest of, and the standard we install to.",
-  },
-];
-
-const PROCESS = [
-  {
-    step: "01",
-    title: "Site visit",
-    body:
-      "We come out, walk the property, and listen. No charge across our four-county service area.",
-  },
-  {
-    step: "02",
-    title: "Concept & design",
-    body:
-      "A concept and planting plan, with materials, plant list, and a clear scope. You see the install on paper before we break ground.",
-  },
-  {
-    step: "03",
-    title: "Installation",
-    body:
-      "One crew, run by Tim, from the first cleared lot to the last lit pathway. Every discipline in-house.",
-  },
-  {
-    step: "04",
-    title: "Aftercare",
-    body:
-      "We come back. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands.",
-  },
-];
-
-const COUNTY_TOWNS: Record<string, string[]> = {
-  King: [
-    "Seattle",
-    "Bellevue",
-    "Renton",
-    "Kent",
-    "Auburn",
-    "Federal Way",
-    "Issaquah",
-    "Sammamish",
-    "Maple Valley",
-    "Black Diamond",
-    "Enumclaw",
-  ],
-  Pierce: [
-    "Tacoma",
-    "Puyallup",
-    "Sumner",
-    "Bonney Lake",
-    "Lakewood",
-    "Gig Harbor",
-    "Edgewood",
-    "Orting",
-  ],
-  Snohomish: [
-    "Everett",
-    "Lynnwood",
-    "Bothell",
-    "Mill Creek",
-    "Mukilteo",
-    "Snohomish",
-    "Monroe",
-  ],
-  Kittitas: ["Ellensburg", "Cle Elum", "Roslyn", "Kittitas", "Easton"],
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: spring },
 };
 
-// ─── Page ────────────────────────────────────────────────────────────
-export default function MtViewLandscapingPage() {
+/* ───────────────────────── COLORS ───────────────────────── */
+const BG = "#0f1a0f";
+const PRIMARY = "#16a34a";
+const PRIMARY_LIGHT = "#22c55e";
+const EARTH = "#a3845b";
+const EARTH_DARK = "#7c6340";
+const PRIMARY_GLOW = "rgba(22, 163, 74, 0.15)";
+const EARTH_GLOW = "rgba(163, 132, 91, 0.12)";
+
+/* ───────────────────────── FLOATING LEAF SVG BG ───────────────────────── */
+function FloatingLeaves() {
+  const leaves = Array.from({ length: 14 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    delay: Math.random() * 14,
+    duration: 12 + Math.random() * 10,
+    size: 14 + Math.random() * 10,
+    opacity: 0.06 + Math.random() * 0.1,
+    rotation: Math.random() * 360,
+    sway: 25 + Math.random() * 50,
+    color: i % 3 === 0 ? EARTH : PRIMARY_LIGHT,
+  }));
+
   return (
-    <div className="min-h-screen bg-[#f8f5ef] text-[#1a1612] antialiased selection:bg-[#1a2e1a] selection:text-[#f8f5ef]">
-      <StickyNav
-        businessName={BUSINESS.name}
-        logoSrc={LOGO}
-        phoneDisplay={BUSINESS.phoneDisplay}
-        phoneHref={BUSINESS.phoneHref}
-      />
-      <Hero />
-      <Statement />
-      <SelectedWork />
-      <Practice />
-      <About />
-      <Philosophy />
-      <ServiceArea />
-      <Process />
-      <Contact />
-      <Footer />
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
+      {leaves.map((l) => (
+        <motion.div
+          key={l.id}
+          className="absolute"
+          style={{ left: `${l.x}%`, willChange: "transform, opacity" }}
+          animate={{
+            y: ["-5vh", "110vh"],
+            x: [-l.sway / 2, l.sway / 2, -l.sway / 2],
+            rotate: [l.rotation, l.rotation + 360],
+            opacity: [0, l.opacity, l.opacity, 0],
+          }}
+          transition={{
+            y: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            x: { duration: l.duration / 3, repeat: Infinity, delay: l.delay, ease: "easeInOut" },
+            rotate: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            opacity: { duration: l.duration, repeat: Infinity, delay: l.delay, times: [0, 0.05, 0.9, 1] },
+          }}
+        >
+          <Leaf size={l.size} weight="fill" style={{ color: l.color }} />
+        </motion.div>
+      ))}
     </div>
   );
 }
 
-// ─── Hero ────────────────────────────────────────────────────────────
-// Full-bleed, single-image, no CTA. The landscape sells itself; the
-// only type is the wordmark + place + year. Reed Hilderbrand homepage
-// is the reference — quiet, confident, no visible UI chrome.
-function Hero() {
+/* ───────────────────────── REUSABLE COMPONENTS ───────────────────────── */
+function WordReveal({ text, className = "" }: { text: string; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
   return (
-    <section id="top" className="relative">
-      <div className="relative h-[78vh] min-h-[560px] sm:h-[88vh] sm:min-h-[640px] sm:max-h-[1000px] w-full overflow-hidden bg-[#0a1408]">
-        <img
-          src={HERO}
-          alt="A Mountain View landscape: engineered stonework integrated with naturalistic plantings"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "saturate(0.95) contrast(1.04)" }}
+    <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>
+      {text.split(" ").map((word, i) => (<motion.span key={i} variants={fadeUp} className="inline-block">{word}</motion.span>))}
+    </motion.span>
+  );
+}
+
+function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
+      {children}
+    </motion.section>
+  );
+}
+
+function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>;
+}
+
+function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, springFast);
+  const springY = useSpring(y, springFast);
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current || isTouchDevice) return;
+    const rect = ref.current.getBoundingClientRect();
+    x.set((e.clientX - (rect.left + rect.width / 2)) * 0.25);
+    y.set((e.clientY - (rect.top + rect.height / 2)) * 0.25);
+  }, [x, y, isTouchDevice]);
+  const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+  return (
+    <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>
+      {children}
+    </motion.button>
+  );
+}
+
+function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
+      <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${PRIMARY}, transparent, ${EARTH}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+      <div className="relative rounded-2xl z-10" style={{ background: BG }}>{children}</div>
+    </div>
+  );
+}
+
+/* ───────────────────────── 3D TILT CARD ───────────────────────── */
+function TiltCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const rotX = useMotionValue(0);
+  const rotY = useMotionValue(0);
+  const sRotX = useSpring(rotX, springFast);
+  const sRotY = useSpring(rotY, springFast);
+
+  const handleMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    rotX.set(((e.clientY - cy) / (rect.height / 2)) * -8);
+    rotY.set(((e.clientX - cx) / (rect.width / 2)) * 8);
+  }, [rotX, rotY]);
+
+  const handleLeave = useCallback(() => { rotX.set(0); rotY.set(0); }, [rotX, rotY]);
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ rotateX: sRotX, rotateY: sRotY, transformStyle: "preserve-3d", willChange: "transform", ...style }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ───────────────────────── LEAF SVG PATTERN ───────────────────────── */
+function LeafPattern({ opacity = 0.03 }: { opacity?: number }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+      <svg width="100%" height="100%">
+        <defs>
+          <pattern id="leaf-pat" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M40 10 Q50 30 40 50 Q30 30 40 10Z" fill={PRIMARY_LIGHT} fillOpacity="0.4" />
+            <path d="M10 60 Q20 50 30 60 Q20 70 10 60Z" fill={EARTH} fillOpacity="0.3" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#leaf-pat)" />
+      </svg>
+    </div>
+  );
+}
+
+/* ───────────────────────── DATA ───────────────────────── */
+
+// Mt View's actual 10 disciplines, condensed to the 8 most premium-feeling
+// for the accordion section. Native Planting and Night Lights become their
+// own service rows (vs. being folded into Design / Lighting elsewhere).
+const services = [
+  { title: "Landscape Design", desc: "Site walk, concept, and a planting plan that respects what's already there before adding to it. The install runs from the same drawing — no surprises between the page and the ground.", icon: PaintBrush },
+  { title: "Hardscapes", desc: "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in a Pacific Northwest rainy season, not just to look right on day one.", icon: Mountains },
+  { title: "Retaining Walls", desc: "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.", icon: Shovel },
+  { title: "Water Features", desc: "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed all arrive together.", icon: Drop },
+  { title: "Irrigation", desc: "System design, install, and repair. Zoned for plant type and exposure, scheduled for our climate, and built to be serviceable years out.", icon: Drop },
+  { title: "Sod Installation", desc: "Grade work, soil amendment, and clean-edge sod laydown. The lawn looks finished the day we leave and roots in for the long haul.", icon: Leaf },
+  { title: "Native & Climate-Smart Planting", desc: "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.", icon: Plant },
+  { title: "Night Lighting", desc: "Low-voltage LED designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.", icon: Lightning },
+];
+
+// Process — 5 steps, voiced for Tim. Site visit → concept → plants → install → aftercare.
+const processSteps = [
+  { step: "01", title: "Site Visit", desc: "Tim walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the four-county service area.", icon: Eye },
+  { step: "02", title: "Concept & Design", desc: "A concept drawing with materials, planting plan, and a clear scope. You see the install on paper before we break ground — phased to your budget if it needs to be.", icon: Ruler },
+  { step: "03", title: "Plant Selection", desc: "Plants picked for your site — natives and climate-adapted species first. Forty-nine seasons of installs in this region tells you which ones make it past their second winter.", icon: Plant },
+  { step: "04", title: "Installation", desc: "One crew, run by Tim, from the first cleared lot to the last lit pathway. Every discipline in-house — design, hardscape, irrigation, planting, lighting.", icon: Shovel },
+  { step: "05", title: "Aftercare", desc: "We come back. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands. Most of our work is repeat clients.", icon: Heart },
+];
+
+// 5 named Mt View projects, mapped from the existing PROJECTS array. Each
+// project stays as one image in the masonry portfolio grid + has its lead
+// photo reused in section spotlights (heroCards, owner spotlight, eco
+// section, video placeholder, testimonial backdrops). All 19 photos used.
+const projects = [
+  { title: "Kirse Residence", location: "King County", scope: "Full-yard installation — terraced front-yard plantings, stone entry walkway, integrated bed work from curb to back door.", image: PHOTOS.kirseLead },
+  { title: "Custom Stoneworks", location: "Western Washington", scope: "Engineered retaining walls in natural stone — built to hold a slope through a real PNW rainy season.", image: PHOTOS.stoneLead },
+  { title: "Aquavista", location: "Pierce County", scope: "Naturalistic water feature carried through the surrounding plantings — stone, water, and beds installed together.", image: PHOTOS.aquaLead },
+  { title: "Olano Property", location: "Puget Sound", scope: "Half-acre transformation across front, side, and rear yards — coordinated plantings, walkways, and grade work.", image: PHOTOS.olanoLead },
+  { title: "Night Work", location: "Multi-site", scope: "Low-voltage LED lighting designed alongside the planting plan — pathway, accent, and architectural.", image: PHOTOS.nightLead },
+  { title: "Stoneworks Detail", location: "King County", scope: "Tiered hardscape integration — stone wall meeting bed work and finished plantings.", image: PHOTOS.stone560 },
+];
+
+const seasonalData = [
+  { season: "Spring", color: PRIMARY_LIGHT, icon: Flower, tasks: ["New plantings & mulching", "Irrigation start-up & adjustment", "Bed cleanup & soil amendment", "Lawn dethatching"] },
+  { season: "Summer", color: EARTH, icon: Sun, tasks: ["Irrigation monitoring", "Pruning & shaping", "Weed & bed maintenance", "Hardscape installs"] },
+  { season: "Fall", color: EARTH_DARK, icon: Leaf, tasks: ["Leaf removal & cleanup", "Fall planting window", "Aeration & overseed", "Irrigation winterization"] },
+  { season: "Winter", color: PRIMARY, icon: Snowflake, tasks: ["Structural pruning", "Wall & hardscape repairs", "Concept design for spring", "Lighting installs"] },
+];
+
+// Voice-of-Tim observations (NOT fabricated client quotes). Each card pairs
+// an editorial pull-quote-style line with a real Mt View landscape photo as
+// the backdrop — so the section reads "what we hear from clients" instead
+// of inventing names.
+const observations = [
+  { name: "What clients tell us", text: "The most common line we hear: 'we wish we'd called you the first time.' That's the work — building landscapes the second contractor doesn't have to come fix.", image: PHOTOS.kirse048 },
+  { name: "On longevity", text: "Most of our clients came back five, ten, fifteen years after the first install for the next phase. That's the standard we install to.", image: PHOTOS.olano032 },
+  { name: "On the install", text: "One crew, run by Tim, from cleared lot to lit pathway. Every discipline in-house means nothing falls between the trades.", image: PHOTOS.aqua022 },
+];
+
+const comparisonRows = [
+  { feature: "In-house design, hardscape & planting", us: true, them: false },
+  { feature: "Engineered retaining walls", us: true, them: "Sometimes" },
+  { feature: "Water feature design & install", us: true, them: false },
+  { feature: "Native & climate-adapted plantings", us: true, them: "Limited" },
+  { feature: "Low-voltage LED lighting design", us: true, them: false },
+  { feature: "Same-owner continuity since 1976", us: true, them: false },
+  { feature: "Aftercare on installs we built", us: true, them: "Varies" },
+];
+
+const ecoFeatures = [
+  { title: "PNW Natives", desc: "Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — species that already belong to this climate.", icon: Plant },
+  { title: "Water-Smart Irrigation", desc: "Zoned for plant type and exposure, scheduled for our actual rainfall — not a stock evapotranspiration rate from out of state.", icon: Drop },
+  { title: "Climate-Adapted Landscapes", desc: "Plants chosen so the yard costs less to keep alive past its second winter. Lower water, lower maintenance, longer life.", icon: Recycle },
+  { title: "Pollinator-Friendly Beds", desc: "Layered planting plans that support bees, hummingbirds, and beneficial insects — habitat as a side effect of good design.", icon: FlowerLotus },
+];
+
+const faqs = [
+  { q: "How long does a project take?", a: "It depends on scope. A focused install — say a patio with surrounding beds and irrigation — is typically 1–3 weeks of build time after the design is signed off. A multi-phase, full-yard transformation can run a season. We'll give you a realistic timeline at concept stage, not a hopeful one." },
+  { q: "Do you handle permits and engineering?", a: "Yes — for retaining walls that need engineering, drainage work, and any hardscape that triggers a permit, we coordinate with the engineer and the permitting jurisdiction. You're not chasing offices on weekends." },
+  { q: "What's your service area?", a: "King, Pierce, Snohomish, and Kittitas counties — based out of Auburn, WA. Site visits across the four-county footprint are free. If you're close to the edge of that footprint and not sure, call. We'll tell you straight." },
+  { q: "Can you maintain a landscape someone else installed?", a: "We can — pruning, bed work, seasonal cleanup, and re-grading or re-planting where it's needed. We won't take over a maintenance contract on a brand-new install we don't know the bones of, but for established yards, yes." },
+  { q: "Do you do residential and commercial?", a: "Both, though our archive leans residential. Property managers, HOAs, and commercial sites have hired us for hardscape and planting work — same in-house crew, same standard." },
+  { q: "How long has Mountain View been around?", a: "Tim Hunsaker has been landscaping in this region since 1976 — first under the Shamrock Landscaping name, then as Mountain View. Same owner, same crew style, same standard the whole way through." },
+];
+
+// Hero floating cards — three feature views from Mt View's archive.
+const heroCards = [
+  { src: PHOTOS.kirseLead, alt: "Kirse residence — full-yard installation with mature plantings" },
+  { src: PHOTOS.aquaLead, alt: "Aquavista — naturalistic water feature with surrounding landscape" },
+  { src: PHOTOS.stoneLead, alt: "Custom Stoneworks — tiered retaining wall in natural stone" },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════════════════════════════ */
+export default function MtViewLandscapingPage() {
+  const [openService, setOpenService] = useState<number | null>(0);
+  const [quizChoice, setQuizChoice] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const yearsInBusiness = new Date().getFullYear() - BUSINESS.established;
+
+  return (
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+      <FloatingLeaves />
+
+      {/* ═══════════════ NAV — uses existing StickyNav client component ═══════════════ */}
+      <div className="relative z-50">
+        <StickyNav
+          businessName={BUSINESS.name}
+          logoSrc={LOGO}
+          phoneDisplay={BUSINESS.phoneDisplay}
+          phoneHref={BUSINESS.phoneHref}
         />
-        {/* Minimal overlay — just enough to keep type legible. No vignette. */}
-        <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-[#0a1408]/80 via-[#0a1408]/35 to-transparent" />
+      </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl h-full px-5 sm:px-10 flex flex-col justify-end pb-12 sm:pb-20">
-          <h1 className="font-serif text-[#f8f5ef] tracking-[-0.02em] leading-[0.92] text-[64px] sm:text-[112px] lg:text-[152px]">
-            Mountain
-            <br />
-            View
-          </h1>
-          <p className="mt-5 sm:mt-7 text-[#e8dfc8] text-[10px] sm:text-[11px] tracking-[0.32em] uppercase font-medium">
-            Landscape &amp; Design &nbsp;·&nbsp; Auburn, WA &nbsp;·&nbsp; Since {BUSINESS.established}
-          </p>
+      {/* ═══════════════ 1. HERO — FLOATING CARDS OVER GRADIENT ═══════════════ */}
+      <section id="top" className="relative min-h-[100dvh] flex items-center pt-12 pb-12 z-10 overflow-hidden">
+        {/* Rich gradient background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG} 0%, #0a2a12 30%, #0f1a0f 50%, #1a0f0a 70%, ${BG} 100%)` }} />
+          <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.12, filter: "blur(100px)" }} />
+          <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${EARTH} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
         </div>
 
-        {/* Scroll cue, bottom-right. Hairline + tiny tracked label. */}
-        <div className="absolute right-5 sm:right-10 bottom-12 sm:bottom-20 z-10 hidden sm:flex flex-col items-center gap-3">
-          <span className="text-[#e8dfc8]/70 text-[10px] tracking-[0.32em] uppercase">
-            Scroll
-          </span>
-          <span className="block w-px h-14 bg-[#e8dfc8]/40" />
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[70vh]">
+            {/* Text */}
+            <div className="lg:col-span-5 space-y-6 z-10">
+              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.2em]" style={{ color: PRIMARY_LIGHT }}>
+                Landscape &amp; Design — Auburn, WA — Since {BUSINESS.established}
+              </motion.p>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl tracking-tighter leading-[0.95] font-bold text-white">
+                <WordReveal text="Pacific Northwest Landscapes Since 1976" />
+              </h1>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+                Tim Hunsaker has been building outdoor spaces across King, Pierce, Snohomish &amp; Kittitas counties for nearly fifty years — every discipline run in-house, from the first cleared lot to the last lit pathway.
+              </motion.p>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
+                <a href="#contact">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                    Tell Tim about your project <ArrowRight size={18} weight="bold" />
+                  </MagneticButton>
+                </a>
+                <a href={BUSINESS.phoneHref}>
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
+                    <Phone size={18} weight="duotone" /> {BUSINESS.phoneDisplay}
+                  </MagneticButton>
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Floating Cards */}
+            <div className="lg:col-span-7 relative hidden md:block" style={{ perspective: 1200 }}>
+              <div className="relative h-[520px]">
+                {heroCards.map((card, i) => {
+                  const positions = [
+                    { top: "0%", left: "5%", rotate: -6, z: 3 },
+                    { top: "12%", left: "35%", rotate: 4, z: 2 },
+                    { top: "30%", left: "10%", rotate: -2, z: 1 },
+                  ];
+                  const p = positions[i];
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 60, rotateY: -15 }}
+                      animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                      transition={{ ...spring, delay: 0.3 + i * 0.2 }}
+                      className="absolute"
+                      style={{ top: p.top, left: p.left, zIndex: p.z }}
+                    >
+                      <TiltCard
+                        className="rounded-2xl overflow-hidden border border-white/15 shadow-2xl shadow-black/40"
+                        style={{ transform: `rotate(${p.rotate}deg)` }}
+                      >
+                        <div className="relative w-[280px] h-[200px] md:w-[320px] md:h-[220px]">
+                          <img src={card.src} alt={card.alt} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                          <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.3)` }} />
+                        </div>
+                      </TiltCard>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Mobile hero image */}
+            <div className="md:hidden">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
+                <img src={PHOTOS.hero} alt="Mountain View landscape — engineered stonework with naturalistic plantings" className="w-full h-[250px] object-cover" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-// ─── Statement ───────────────────────────────────────────────────────
-// Single editorial sentence. One screen of breathing room. No icons,
-// no buttons, no decorations. Charcoal serif on cream.
-function Statement() {
-  return (
-    <section className="py-32 sm:py-48 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-4xl px-6 sm:px-10 text-center">
-        <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-10 sm:mb-14">
-          A Practice in Western Washington
-        </p>
-        <p className="font-serif text-[#1a1612] text-[28px] sm:text-[40px] lg:text-[52px] leading-[1.18] tracking-[-0.01em]">
-          For nearly fifty years, Tim Hunsaker has built outdoor spaces
-          across King, Pierce, Snohomish &amp; Kittitas counties — from
-          the first cleared lot to the last lit pathway, every discipline
-          in-house.
-        </p>
-      </div>
-    </section>
-  );
-}
+      {/* ═══════════════ 2. TRUST BAR ═══════════════ */}
+      <SectionReveal className="relative z-10 pb-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-5 md:p-6">
+            <motion.div className="flex flex-wrap justify-center gap-6 md:gap-10 text-sm" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              {[
+                { icon: Medal, label: `${yearsInBusiness}+ Years in the Region` },
+                { icon: Certificate, label: "Family-Owned Since 1976" },
+                { icon: CheckCircle, label: "Every Discipline In-House" },
+                { icon: SealCheck, label: "Licensed & Insured (WA)" },
+                { icon: Recycle, label: "Native & Climate-Smart Planting" },
+              ].map((item, i) => (
+                <motion.div key={i} variants={fadeUp} className="flex items-center gap-2 text-slate-300">
+                  <item.icon size={18} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                  <span className="whitespace-nowrap">{item.label}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
 
-// ─── Selected Work ───────────────────────────────────────────────────
-// Five named projects, case-study format. One full-bleed lead photo
-// per project + a 2-up or 3-up cluster underneath. Numbered "01 / 05"
-// with hairline rule between projects. ~22 photos total — down from 40.
-function SelectedWork() {
-  return (
-    <section id="work" className="bg-[#f8f5ef]">
-      {/* Section opener */}
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-32 sm:pt-48 pb-16 sm:pb-24">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8 border-b border-[#1a1612]/15 pb-10">
-          <div>
-            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
-              Selected Work
-            </p>
-            <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
-              Five Projects
+      {/* ═══════════════ 3. SERVICES — 8 ACCORDION CARDS ═══════════════ */}
+      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
+        <LeafPattern opacity={0.025} />
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Left side — sticky header */}
+            <div className="lg:sticky lg:top-32">
+              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Practice</p>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Every Discipline In-House" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
+                Mountain View runs design, hardscape, planting, irrigation, and lighting under one crew. Nothing falls between trades, and nothing waits on a sub. Click any service to learn more.
+              </p>
+              <div className="hidden lg:block">
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-white/8 bg-white/[0.07]">
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PRIMARY_LIGHT }} />
+                  <span className="text-sm text-slate-400">Now scheduling spring &amp; summer projects</span>
+                </div>
+              </div>
+            </div>
+            {/* Right side — accordion */}
+            <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+              {services.map((svc, i) => (
+                <motion.div key={i} variants={fadeUp}>
+                  <GlassCard className="overflow-hidden">
+                    <button
+                      onClick={() => setOpenService(openService === i ? null : i)}
+                      className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: i % 2 === 0 ? PRIMARY_GLOW : EARTH_GLOW }}>
+                          <svc.icon size={20} weight="duotone" style={{ color: i % 2 === 0 ? PRIMARY_LIGHT : EARTH }} />
+                        </div>
+                        <span className="text-lg font-semibold text-white">{svc.title}</span>
+                      </div>
+                      <motion.div animate={{ rotate: openService === i ? 180 : 0 }} transition={spring}>
+                        <CaretDown size={20} className="text-slate-400" />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {openService === i && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
+                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{svc.desc}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ WHY MT VIEW — VALUE PROPS ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY_LIGHT }}>The Mountain View Standard</p>
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Why Homeowners Call Us Back" />
             </h2>
           </div>
-          <p className="text-[14px] sm:text-[15px] text-[#1a1612]/65 max-w-md leading-relaxed">
-            A representative slice of the archive — residential
-            installations, hardscape, water features, and lighting — drawn
-            from work delivered across the four-county footprint.
-          </p>
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {[
+              { icon: Certificate, title: "Same Owner Since 1976", desc: "Tim Hunsaker — same standard, same crew style, the whole way through. Most of our work is repeat clients on their next phase." },
+              { icon: PaintBrush, title: "Design You See First", desc: "A concept and planting plan with materials and scope, before we break ground. The install runs from the same drawing." },
+              { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and water features sized for a Pacific Northwest rainy season — not for a finish photograph." },
+              { icon: Recycle, title: "Climate-Smart First", desc: "PNW natives and adapted species default. Lower water, lower maintenance, plants that make it past their second winter." },
+            ].map((v, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full text-center">
+                  <div className="w-12 h-12 rounded-xl mx-auto flex items-center justify-center mb-4" style={{ background: PRIMARY_GLOW }}>
+                    <v.icon size={24} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                  </div>
+                  <h3 className="text-base font-semibold text-white mb-2">{v.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{v.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </SectionReveal>
 
-      {PROJECTS.map((project, idx) => (
-        <ProjectStudy key={project.number} project={project} total={PROJECTS.length} isLast={idx === PROJECTS.length - 1} />
-      ))}
-    </section>
-  );
-}
-
-function ProjectStudy({
-  project,
-  total,
-  isLast,
-}: {
-  project: Project;
-  total: number;
-  isLast: boolean;
-}) {
-  return (
-    <article className={`pb-32 sm:pb-48 ${isLast ? "" : "border-b border-[#1a1612]/10"}`}>
-      {/* Project header */}
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 mb-12 sm:mb-16">
-        <div className="flex items-baseline gap-6 sm:gap-10">
-          <span className="font-serif text-[#5a6a4f] text-[14px] sm:text-[15px] tracking-[0.18em]">
-            {project.number} / {String(total).padStart(2, "0")}
-          </span>
-          <span className="h-px flex-1 bg-[#1a1612]/15" />
-          <span className="text-[10px] sm:text-[11px] tracking-[0.32em] uppercase text-[#5a6a4f]">
-            {project.meta}
-          </span>
+      {/* ═══════════════ 5. PROCESS — 5 STEPS ═══════════════ */}
+      <SectionReveal id="process" className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
+          <svg width="100%" height="100%"><pattern id="land-dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill={PRIMARY_LIGHT} /></pattern><rect width="100%" height="100%" fill="url(#land-dots)" /></svg>
         </div>
-      </div>
-
-      {/* Lead photo — full-bleed feature */}
-      <figure className="relative">
-        <img
-          src={project.lead.src}
-          alt={project.lead.alt}
-          className="w-full h-[68vh] min-h-[480px] max-h-[820px] object-cover"
-          style={{ filter: "saturate(0.95) contrast(1.04)" }}
-        />
-      </figure>
-
-      {/* Title + body — sits below the lead, editorial 5/7 layout */}
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-12 sm:mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-          <div className="lg:col-span-5">
-            <h3 className="font-serif text-[#1a1612] text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.02] tracking-[-0.02em]">
-              {project.name}
-            </h3>
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/80">
-              {project.description}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Detail cluster — 2-up or 3-up, no rounded corners */}
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-16 sm:mt-24">
-        <div
-          className={
-            project.detail.length === 2
-              ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
-              : "grid grid-cols-1 sm:grid-cols-3 gap-6"
-          }
-        >
-          {project.detail.map((d) => (
-            <div key={d.src} className="aspect-[4/5] overflow-hidden bg-[#1a1612]">
-              <img
-                src={d.src}
-                alt={d.alt}
-                className="w-full h-full object-cover"
-                style={{ filter: "saturate(0.95) contrast(1.04)" }}
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-// ─── Practice / Services ─────────────────────────────────────────────
-// Six disciplines, treated as an editorial list. Hairline-divided rows,
-// serif heading on left, paragraph on right. No icons.
-function Practice() {
-  return (
-    <section id="services" className="bg-[#1a1612] text-[#f8f5ef] py-32 sm:py-48">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="max-w-3xl mb-20 sm:mb-28">
-          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
-            Practice
-          </p>
-          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
-            Six disciplines, run in-house.
-          </h2>
-        </div>
-
-        <div className="border-t border-[#f8f5ef]/15">
-          {PRACTICE.map((p, i) => (
-            <div
-              key={p.name}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 py-10 sm:py-14 border-b border-[#f8f5ef]/15"
-            >
-              <div className="lg:col-span-1 text-[12px] tracking-[0.22em] uppercase text-[#5a6a4f] font-medium pt-2">
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <div className="lg:col-span-4">
-                <h3 className="font-serif text-[28px] sm:text-[32px] lg:text-[36px] leading-[1.05] tracking-[-0.01em]">
-                  {p.name}
-                </h3>
-              </div>
-              <div className="lg:col-span-7">
-                <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[#f8f5ef]/75 max-w-xl">
-                  {p.body}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── About ───────────────────────────────────────────────────────────
-// Tim's story, one paragraph. Pull-quote. Zero portraits.
-function About() {
-  return (
-    <section id="about" className="py-32 sm:py-48 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-          <div className="lg:col-span-4">
-            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
-              About
-            </p>
-            <h2 className="font-serif text-[#1a1612] text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.02] tracking-[-0.02em]">
-              {new Date().getFullYear() - BUSINESS.established} years in the region.
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>How We Work</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="How a Project Unfolds" />
             </h2>
           </div>
-
-          <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-[16px] sm:text-[17px] leading-[1.75] text-[#1a1612]/80">
-            <p>
-              Mountain View Landscape &amp; Design is a family-owned firm
-              based in Auburn, Washington. Tim Hunsaker has been
-              landscaping in the region since 1976 — first under the
-              Shamrock Landscaping name, then as Mountain View. The work
-              is residential, the crew is local, and every discipline runs
-              in-house.
-            </p>
+          <div className="relative max-w-4xl mx-auto">
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px hidden md:block" style={{ background: `linear-gradient(180deg, transparent, ${PRIMARY}60, ${EARTH}40, transparent)` }} />
+            <motion.div className="space-y-5 md:space-y-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+              {processSteps.map((step, i) => (
+                <motion.div key={i} variants={fadeUp} className={`flex items-start gap-6 md:gap-12 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
+                  <div className={`flex-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
+                    <GlassCard className="p-6 inline-block">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
+                          <step.icon size={20} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: EARTH }}>Step {step.step}</span>
+                          <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                    </GlassCard>
+                  </div>
+                  <div className="hidden md:flex w-12 shrink-0 justify-center relative z-10">
+                    <div className="w-4 h-4 rounded-full border-2 mt-8" style={{ borderColor: PRIMARY_LIGHT, background: BG }} />
+                  </div>
+                  <div className="flex-1 hidden md:block" />
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
+      </SectionReveal>
 
-        {/* Pull-quote — huge serif, breathing room above and below */}
-        <figure className="mt-24 sm:mt-32 mx-auto max-w-5xl">
-          <blockquote className="font-serif text-[#1a2e1a] text-[28px] sm:text-[40px] lg:text-[52px] leading-[1.18] tracking-[-0.01em]">
-            <span className="text-[#1a2e1a]/40 mr-2">&ldquo;</span>
-            We&rsquo;ve built relationships with people who come back
-            every five, ten, fifteen years for the next phase of their
-            yard. That&rsquo;s the work we&rsquo;re proudest of.
-            <span className="text-[#1a2e1a]/40 ml-1">&rdquo;</span>
-          </blockquote>
-          <figcaption className="mt-8 text-[11px] tracking-[0.28em] uppercase text-[#5a6a4f] font-medium">
-            — Tim Hunsaker, Founder
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-// ─── Philosophy ──────────────────────────────────────────────────────
-// Three principles, generous typography, no decorations.
-function Philosophy() {
-  return (
-    <section id="philosophy" className="py-32 sm:py-48 bg-[#1a2e1a] text-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="max-w-3xl mb-20 sm:mb-24">
-          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
-            Philosophy
-          </p>
-          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
-            How we approach the work.
-          </h2>
+      {/* ═══════════════ 6. ABOUT TIM — OWNER SPOTLIGHT ═══════════════
+          NOTE: Mt View has no client-released portrait of Tim that survived
+          the photo-screening rule (the team-portrait + "unnamed (14)" are
+          excluded). Spotlight uses a Mountain View landscape photo as the
+          feature image instead — keeps the section but stays honest. */}
+      <SectionReveal id="about" className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
-          {PHILOSOPHY.map((item, i) => (
-            <div key={item.title} className="border-t border-[#f8f5ef]/20 pt-10">
-              <p className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/60 font-medium mb-5">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <h3 className="font-serif text-[26px] sm:text-[30px] leading-[1.15] tracking-[-0.01em] mb-5">
-                {item.title}
-              </h3>
-              <p className="text-[15px] sm:text-[16px] leading-[1.7] text-[#f8f5ef]/75">
-                {item.body}
-              </p>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+              <img src={PHOTOS.kirse017} alt="A Mountain View installation — garden path detail" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <GlassCard className="px-5 py-3 flex items-center gap-3">
+                  <Certificate size={20} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                  <span className="text-sm text-white font-medium">{yearsInBusiness} years landscaping in the region</span>
+                </GlassCard>
+              </div>
             </div>
-          ))}
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>About</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Tim Hunsaker" />
+              </h2>
+              <div className="space-y-4 text-slate-400 leading-relaxed">
+                <p>Mountain View Landscape &amp; Design is a family-owned firm based in Auburn, Washington. Tim has been landscaping in the Pacific Northwest since 1976 — first under the Shamrock Landscaping name, then as Mountain View. The work is residential, the crew is local, and every discipline runs in-house.</p>
+                <p>Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don&rsquo;t. It tells you how to size a base course for our rainfall. It tells you which clients call back, and why.</p>
+              </div>
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                {[
+                  { icon: Certificate, label: "Family-Owned Since 1976" },
+                  { icon: ShieldCheck, label: "Licensed & Insured (WA)" },
+                  { icon: Recycle, label: "Climate-Smart Planting" },
+                  { icon: Heart, label: "Locally Run" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
+                      <item.icon size={16} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                    </div>
+                    <span className="text-sm text-slate-300">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </SectionReveal>
 
-// ─── Service area ────────────────────────────────────────────────────
-// Typographic four-county listing. Each county is a serif H3 with a
-// small-tracked town list. No icons.
-function ServiceArea() {
-  return (
-    <section id="service-area" className="py-32 sm:py-48 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="max-w-3xl mb-20 sm:mb-28">
-          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
-            Service Area
-          </p>
-          <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
-            Where we work.
-          </h2>
-          <p className="mt-8 text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/75 max-w-2xl">
-            Based in Auburn, we serve homeowners and property managers
-            across four Washington counties. If you&rsquo;re close to that
-            footprint and not sure — call. We&rsquo;ll tell you straight.
-          </p>
+      {/* ═══════════════ 7. PROJECT PORTFOLIO — STAGGERED MASONRY ═══════════════ */}
+      <SectionReveal id="work" className="relative z-10 py-16 md:py-24">
+        <LeafPattern opacity={0.02} />
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Selected Work</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="From the Archive" />
+            </h2>
+            <p className="mt-6 max-w-2xl mx-auto text-slate-400 leading-relaxed">A representative slice of the archive — residential installations, hardscape, water features, and lighting — drawn from work delivered across the four-county footprint.</p>
+          </div>
+          <motion.div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {projects.map((p, i) => {
+              const heights = ["h-[280px]", "h-[340px]", "h-[260px]", "h-[320px]", "h-[290px]", "h-[350px]"];
+              return (
+                <motion.div key={i} variants={fadeUp} className="break-inside-avoid">
+                  <div className="group relative rounded-2xl overflow-hidden border border-white/15">
+                    <img src={p.image} alt={p.title} className={`w-full ${heights[i]} object-cover transition-transform duration-700 group-hover:scale-105`} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 className="text-white font-semibold text-lg">{p.title}</h3>
+                      <p className="text-sm mt-1 flex items-center gap-1" style={{ color: PRIMARY_LIGHT }}>
+                        <MapPin size={14} weight="fill" /> {p.location}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">{p.scope}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Detail strip — 6 in-grid photos under the lead masonry. Reuses
+              cluster shots from each project so the archive depth shows. */}
+          <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {[
+              { src: PHOTOS.kirse006, alt: "Kirse residence — entry walkway in natural stone" },
+              { src: PHOTOS.stone409, alt: "Stoneworks — landscape integrated with retaining wall" },
+              { src: PHOTOS.aqua9406, alt: "Aquavista — water feature integrated into the landscape" },
+              { src: PHOTOS.olano024, alt: "Olano residence — yard view" },
+              { src: PHOTOS.june022, alt: "Mountain View — summer plantings" },
+              { src: PHOTOS.night414, alt: "Mountain View finished landscape, evening" },
+            ].map((d, i) => (
+              <motion.div key={i} variants={fadeUp} className="aspect-square rounded-xl overflow-hidden border border-white/15">
+                <img src={d.src} alt={d.alt} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
+      </SectionReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10 border-t border-[#1a1612]/15 pt-12">
-          {BUSINESS.counties.map((county) => (
-            <div key={county}>
-              <h3 className="font-serif text-[#1a2e1a] text-[28px] sm:text-[32px] tracking-[-0.01em] mb-6">
-                {county}
-              </h3>
-              <ul className="space-y-2 text-[13px] tracking-[0.04em] text-[#1a1612]/70 uppercase">
-                {COUNTY_TOWNS[county].map((town) => (
-                  <li key={town}>{town}</li>
+      {/* ═══════════════ 8. SEASONAL SERVICES CALENDAR ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Year-Round Partnership</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="A Yard Through the Seasons" />
+            </h2>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {seasonalData.map((s, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full group hover:border-green-500/20 transition-colors duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}20` }}>
+                      <s.icon size={22} weight="duotone" style={{ color: s.color }} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">{s.season}</h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {s.tasks.map((t, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-400">
+                        <CheckCircle size={14} weight="duotone" style={{ color: s.color }} className="shrink-0 mt-0.5" />
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 9. YARD QUIZ ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <ShimmerBorder>
+            <div className="p-8 md:p-12">
+              <div className="text-center mb-8">
+                <HandPointing size={32} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mx-auto mb-3" />
+                <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white mb-2">What does your yard need?</h2>
+                <p className="text-slate-400">Select the option that best describes the project.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { label: "Full-Yard Install", color: PRIMARY_LIGHT, desc: "Design, plant, hardscape — start to finish" },
+                  { label: "Hardscape Project", color: "#f59e0b", desc: "Patio, walkway, retaining wall" },
+                  { label: "Water Feature", color: EARTH, desc: "Pond, waterfall, naturalistic stream" },
+                  { label: "Lighting & Aftercare", color: "#f97316", desc: "Night lighting or maintenance on existing" },
+                ].map((opt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setQuizChoice(i)}
+                    className={`p-5 rounded-xl text-left border transition-all duration-300 cursor-pointer ${quizChoice === i ? "border-green-500/50 bg-white/[0.08]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.08]"}`}
+                  >
+                    <div className="w-3 h-3 rounded-full mb-3" style={{ background: opt.color }} />
+                    <div className="text-white font-semibold">{opt.label}</div>
+                    <div className="text-xs text-slate-500 mt-1">{opt.desc}</div>
+                  </button>
+                ))}
+              </div>
+              {quizChoice !== null && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 text-center">
+                  <a href={BUSINESS.phoneHref}>
+                    <MagneticButton className="px-8 py-3 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                      <span className="flex items-center gap-2"><Phone size={16} weight="duotone" /> Call {BUSINESS.phoneDisplay} for a free site visit</span>
+                    </MagneticButton>
+                  </a>
+                </motion.div>
+              )}
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 10. ECO / CLIMATE-SMART SECTION ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-0 left-1/4 w-[600px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.06, filter: "blur(100px)" }} />
+        </div>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY_LIGHT }}>Climate-Smart Landscapes</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Plants That Belong Here" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed mb-8">
+                We default to Pacific Northwest natives and climate-adapted species. Forty-nine seasons of installs in this region tells you which plants make it past their second winter — and water-smart irrigation keeps the rest of the planting plan honest.
+              </p>
+              <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                {ecoFeatures.map((eco, i) => (
+                  <motion.div key={i} variants={fadeUp}>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
+                        <eco.icon size={20} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-white">{eco.title}</h4>
+                        <p className="text-xs text-slate-500 leading-relaxed mt-1">{eco.desc}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+              <img src={PHOTOS.olanoLead} alt="Mountain View installation — climate-smart plantings on a multi-yard property" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f1a0f]/70 to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <div className="px-4 py-2 rounded-full backdrop-blur-md border border-green-500/30 bg-black/40 flex items-center gap-2">
+                  <Recycle size={16} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                  <span className="text-sm font-medium text-white">Native &amp; Climate-Adapted</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 11. WHAT CLIENTS TELL US (no fabricated testimonials) ═══════════════
+          Template's testimonials section had 5 fake review cards. Mt View has
+          no published testimonials, so this is rebuilt as voice-of-Tim
+          observations on Mountain View landscape photos — kept as 3 cards
+          (vs. 5) so it doesn't read as filler. */}
+      <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>The Standard</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="What Clients Tell Us" />
+            </h2>
+            <p className="max-w-xl mx-auto text-slate-400 leading-relaxed mt-4">Three observations from forty-nine seasons of installing in this region — about the work, the crew, and the clients who keep coming back.</p>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {observations.map((t, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden h-full flex flex-col">
+                  <div className="h-36 overflow-hidden relative">
+                    <img src={t.image} alt="A Mountain View landscape" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1a0f] via-transparent to-transparent" />
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <Quotes size={24} weight="fill" style={{ color: PRIMARY_LIGHT }} className="mb-2 opacity-40" />
+                    <p className="text-sm text-slate-300 leading-relaxed flex-1">{t.text}</p>
+                    <div className="mt-4 pt-3 border-t border-white/8 flex items-center justify-between">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <Star size={14} weight="fill" style={{ color: PRIMARY_LIGHT }} />
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 12. COMPETITOR COMPARISON ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Why Mountain View</p>
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Mountain View vs Mow-and-Go Crews" />
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left p-4 text-slate-400 font-medium">Capability</th>
+                    <th className="text-center p-4 font-semibold text-white">Mountain View</th>
+                    <th className="text-center p-4 text-slate-500 font-medium">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={i} className="border-b border-white/8">
+                      <td className="p-4 text-slate-300">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle size={20} weight="fill" style={{ color: PRIMARY_LIGHT }} className="inline-block" />
+                      </td>
+                      <td className="p-4 text-center text-slate-500">
+                        {row.them === true ? <CheckCircle size={20} weight="fill" className="inline-block text-slate-500" /> : row.them === false ? <XIcon size={20} className="inline-block text-red-400/60" /> : <span className="text-xs">{row.them}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 13. NIGHT WORK FEATURE STRIP ═══════════════
+          Template had a video placeholder here. Mt View has no video, so
+          it's repurposed as a feature strip on the night-lighting work —
+          keeps the section's visual rhythm without faking a play button. */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/15 group">
+            <img src={PHOTOS.night415} alt="Mountain View — landscape with mature trees and integrated lighting" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute bottom-8 left-8 right-8">
+              <p className="text-[11px] tracking-[0.32em] uppercase font-medium mb-3" style={{ color: PRIMARY_LIGHT }}>Night Work</p>
+              <p className="text-white font-semibold text-2xl md:text-3xl tracking-tight">The yard you spent on, after sunset.</p>
+              <p className="text-slate-300 text-sm mt-2 max-w-lg">Low-voltage LED designed alongside the planting plan — pathway, accent, architectural.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 14. CONTACT — uses MtViewContactForm ═══════════════ */}
+      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.05, filter: "blur(100px)" }} />
+        </div>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Get Started</p>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Tell Tim about the project" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
+                Site visits are free across King, Pierce, Snohomish &amp; Kittitas counties. We typically respond within one business day, usually faster.
+              </p>
+              <div className="space-y-5">
+                {[
+                  { icon: MapPin, label: "Office", value: BUSINESS.address.full, href: `https://maps.google.com/?q=${encodeURIComponent(BUSINESS.address.full)}` },
+                  { icon: Phone, label: "Phone", value: BUSINESS.phoneDisplay, href: BUSINESS.phoneHref },
+                  { icon: Envelope, label: "Email", value: BUSINESS.email, href: `mailto:${BUSINESS.email}` },
+                  { icon: Clock, label: "Service Area", value: `${BUSINESS.counties.join(", ")} counties` },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <item.icon size={20} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-white">{item.label}</p>
+                      {item.href ? (
+                        <a href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="text-sm text-slate-400 hover:text-white transition-colors">{item.value}</a>
+                      ) : (
+                        <p className="text-sm text-slate-400">{item.value}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PRIMARY_LIGHT }} />
+                <span className="text-sm text-slate-400">Now booking spring &amp; summer projects</span>
+              </div>
+            </div>
+            {/* Inverted color treatment: the contact form is a light, sharp-
+                cornered card so it visually registers as the primary action
+                against the dark page. Strips rounded-* so MtViewContactForm
+                children render as squared boxes per the form's editorial
+                styling. */}
+            <div className="bg-[#f8f5ef] text-[#1a1612] rounded-2xl p-6 md:p-8 border border-white/10 [&_.rounded-2xl]:rounded-none [&_.rounded-xl]:rounded-none [&_.rounded-lg]:rounded-none [&_.rounded-3xl]:rounded-none">
+              <h3 className="text-xl font-semibold mb-6">Request a free site visit</h3>
+              <MtViewContactForm services={services.map((s) => s.title)} />
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 15. SERVICE AREA ═══════════════ */}
+      <SectionReveal id="service-area" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Where We Work</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Four Counties, Same Crew" />
+            </h2>
+          </div>
+          <GlassCard className="p-8 md:p-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: PRIMARY_GLOW }}>
+                  <MapPin size={28} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Coverage</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">King, Pierce, Snohomish &amp; Kittitas counties — based out of Auburn, WA. Site visits across the four-county footprint are free.</p>
+              </div>
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: PRIMARY_GLOW }}>
+                  <Clock size={28} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Response</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">Typically within one business day, usually faster. Site visits scheduled at your pace, not on a quarterly cadence.</p>
+              </div>
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: PRIMARY_GLOW }}>
+                  <CalendarCheck size={28} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Availability</h3>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PRIMARY_LIGHT }} />
+                  <span className="text-sm font-medium" style={{ color: PRIMARY_LIGHT }}>Booking new projects</span>
+                </div>
+                <p className="text-sm text-slate-400">Family-owned since {BUSINESS.established}</p>
+              </div>
+            </div>
+            <div className="mt-8 pt-6 border-t border-white/8">
+              <div className="flex flex-wrap justify-center gap-3">
+                {[
+                  "Auburn", "Seattle", "Bellevue", "Kent", "Renton", "Federal Way",
+                  "Tacoma", "Puyallup", "Bonney Lake", "Gig Harbor",
+                  "Everett", "Lynnwood", "Bothell",
+                  "Ellensburg", "Cle Elum",
+                ].map((area) => (
+                  <span key={area} className="px-3 py-1 rounded-full text-xs border border-white/15 text-slate-400 bg-white/[0.07]">{area}</span>
+                ))}
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 16. FAQ ═══════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Frequently Asked" />
+            </h2>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {faqs.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} className="text-slate-400 shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 17. FOOTER ═══════════════ */}
+      <footer className="relative z-10 border-t border-white/8 py-12">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Tree size={22} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                <span className="text-lg font-bold text-white">{BUSINESS.shortName}</span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed mb-4">Family-owned landscape design and installation in Auburn, WA. Serving King, Pierce, Snohomish &amp; Kittitas counties since {BUSINESS.established}.</p>
+              <div className="flex flex-wrap gap-2">
+                {["Family-Owned", "In-House", "Licensed", "Insured"].map((badge) => (
+                  <span key={badge} className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-white/15 text-slate-500 bg-white/[0.07]">{badge}</span>
+                ))}
+              </div>
+            </div>
+            {/* Services */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4">Practice</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                {services.slice(0, 6).map((svc) => (
+                  <li key={svc.title}><a href="#services" className="hover:text-white transition-colors">{svc.title}</a></li>
                 ))}
               </ul>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Process ─────────────────────────────────────────────────────────
-// Four steps, numbered, editorial.
-function Process() {
-  return (
-    <section id="process" className="py-32 sm:py-48 bg-[#1a1612] text-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="max-w-3xl mb-20 sm:mb-28">
-          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
-            Process
-          </p>
-          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
-            How a project unfolds.
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-          {PROCESS.map((p) => (
-            <div key={p.step} className="border-t border-[#f8f5ef]/20 pt-8">
-              <p className="font-serif text-[#cfe0a8]/80 text-[18px] tracking-[0.18em] mb-6">
-                {p.step}
-              </p>
-              <h3 className="font-serif text-[24px] sm:text-[28px] tracking-[-0.01em] mb-4">
-                {p.title}
-              </h3>
-              <p className="text-[15px] leading-[1.7] text-[#f8f5ef]/75">
-                {p.body}
-              </p>
+            {/* Company */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4">On the page</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li><a href="#about" className="hover:text-white transition-colors">About Tim</a></li>
+                <li><a href="#work" className="hover:text-white transition-colors">Selected Work</a></li>
+                <li><a href="#process" className="hover:text-white transition-colors">Process</a></li>
+                <li><a href="#service-area" className="hover:text-white transition-colors">Service Area</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Tell Tim about the project</a></li>
+              </ul>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Contact ─────────────────────────────────────────────────────────
-function Contact() {
-  return (
-    <section id="contact" className="py-32 sm:py-48 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-          <div className="lg:col-span-5">
-            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
-              Contact
-            </p>
-            <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[64px] leading-[1.02] tracking-[-0.02em]">
-              Tell Tim about
-              <br />
-              the project.
-            </h2>
-            <p className="mt-8 text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/75 max-w-md">
-              Site visits are free across King, Pierce, Snohomish &amp;
-              Kittitas counties. We typically respond within one business
-              day, usually faster.
-            </p>
-
-            <dl className="mt-12 space-y-6 text-[15px]">
-              <ContactRow
-                Icon={Phone}
-                label="Phone"
-                value={BUSINESS.phoneDisplay}
-                href={BUSINESS.phoneHref}
-              />
-              <ContactRow
-                Icon={EnvelopeSimple}
-                label="Email"
-                value={BUSINESS.email}
-                href={`mailto:${BUSINESS.email}`}
-              />
-              <ContactRow
-                Icon={MapPin}
-                label="Office"
-                value={`${BUSINESS.address.street}, ${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}`}
-              />
-            </dl>
-          </div>
-
-          {/* Sharp-cornered editorial container — strips rounded corners
-              from any nested form children to match the rest of the page. */}
-          <div className="lg:col-span-7 [&_.rounded-2xl]:rounded-none [&_.rounded-xl]:rounded-none [&_.rounded-lg]:rounded-none [&_.rounded-3xl]:rounded-none">
-            <div className="border border-[#1a1612]/15 p-6 sm:p-10 bg-[#f8f5ef]">
-              <MtViewContactForm services={PRACTICE.map((p) => p.name)} />
+            {/* Contact */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4">Contact</h4>
+              <div className="space-y-3 text-sm text-slate-500">
+                <p className="flex items-start gap-2">
+                  <Phone size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
+                  <a href={BUSINESS.phoneHref} className="hover:text-white transition-colors">{BUSINESS.phoneDisplay}</a>
+                </p>
+                <p className="flex items-start gap-2">
+                  <Envelope size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
+                  <a href={`mailto:${BUSINESS.email}`} className="hover:text-white transition-colors break-all">{BUSINESS.email}</a>
+                </p>
+                <p className="flex items-start gap-2">
+                  <MapPin size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
+                  <a href={`https://maps.google.com/?q=${encodeURIComponent(BUSINESS.address.full)}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{BUSINESS.address.street}<br />{BUSINESS.address.city}, {BUSINESS.address.state} {BUSINESS.address.zip}</a>
+                </p>
+                <p className="flex items-start gap-2">
+                  <Clock size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
+                  <span>{BUSINESS.counties.join(", ")} counties</span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ContactRow({
-  Icon,
-  label,
-  value,
-  href,
-}: {
-  Icon: typeof Phone;
-  label: string;
-  value: string;
-  href?: string;
-}) {
-  const content = (
-    <div className="flex items-start gap-4 border-t border-[#1a1612]/15 pt-5">
-      <Icon size={16} weight="regular" className="text-[#1a2e1a] mt-1 shrink-0" />
-      <div>
-        <dt className="text-[10px] tracking-[0.32em] uppercase text-[#5a6a4f] mb-1 font-medium">
-          {label}
-        </dt>
-        <dd className="text-[#1a1612] font-medium">{value}</dd>
-      </div>
-    </div>
-  );
-  return href ? (
-    <a href={href} className="block hover:opacity-70 transition">
-      {content}
-    </a>
-  ) : (
-    content
-  );
-}
-
-// ─── Footer ──────────────────────────────────────────────────────────
-function Footer() {
-  return (
-    <footer className="bg-[#0d0d0a] text-[#f8f5ef]/80 pt-20 pb-10 border-t border-[#f8f5ef]/5">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          <div className="md:col-span-5">
-            <div className="font-serif text-[28px] sm:text-[32px] tracking-[-0.02em] text-[#f8f5ef] leading-[1.05]">
-              Mountain View
+          <div className="pt-6 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Tree size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+              <span>{BUSINESS.name} &copy; {new Date().getFullYear()}. All rights reserved.</span>
             </div>
-            <p className="mt-2 text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 font-medium">
-              Landscape &amp; Design
-            </p>
-            <p className="mt-7 text-[14px] leading-relaxed max-w-sm text-[#f8f5ef]/65">
-              Family-owned landscape design and installation. Auburn, WA
-              and the four surrounding counties since {BUSINESS.established}.
-            </p>
-          </div>
-
-          <div className="md:col-span-3">
-            <h4 className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 mb-5 font-medium">
-              Contact
-            </h4>
-            <ul className="space-y-2 text-[14px]">
-              <li>
-                <a href={BUSINESS.phoneHref} className="hover:text-white">
-                  {BUSINESS.phoneDisplay}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${BUSINESS.email}`}
-                  className="hover:text-white break-all"
-                >
-                  {BUSINESS.email}
-                </a>
-              </li>
-              <li className="text-[#f8f5ef]/55 pt-1">
-                {BUSINESS.address.street}
-                <br />
-                {BUSINESS.address.city}, {BUSINESS.address.state}{" "}
-                {BUSINESS.address.zip}
-              </li>
-            </ul>
-          </div>
-
-          <div className="md:col-span-4">
-            <h4 className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 mb-5 font-medium">
-              On the page
-            </h4>
-            <ul className="grid grid-cols-2 gap-y-2 text-[14px]">
-              <li><a href="#work" className="hover:text-white">Work</a></li>
-              <li><a href="#services" className="hover:text-white">Practice</a></li>
-              <li><a href="#about" className="hover:text-white">About</a></li>
-              <li><a href="#philosophy" className="hover:text-white">Philosophy</a></li>
-              <li><a href="#service-area" className="hover:text-white">Service Area</a></li>
-              <li><a href="#process" className="hover:text-white">Process</a></li>
-              <li><a href="#contact" className="hover:text-white">Contact</a></li>
-            </ul>
+            <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Built by <a href="https://bluejayportfolio.com/audit" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400 transition-colors">BlueJays</a>{" "}— get your free site audit</p>
           </div>
         </div>
-
-        <div className="mt-20 pt-6 border-t border-[#f8f5ef]/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] tracking-[0.04em] text-[#f8f5ef]/40">
-          <span>
-            &copy; {new Date().getFullYear()} Mountain View Landscape &amp;
-            Design Inc. All rights reserved.
-          </span>
-          <span>
-            Site by{" "}
-            <a
-              href="https://bluejayportfolio.com"
-              className="hover:text-white underline underline-offset-4 decoration-[#cfe0a8]/40"
-            >
-              BlueJays
-            </a>
-            .
-          </span>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </main>
   );
 }
