@@ -427,8 +427,8 @@ const seasonalData = [
   },
   {
     season: "Summer",
-    accent: "#d97706",        // warm marigold
-    bg: "#f7ecd2",            // sunlit cream
+    accent: "#ca8a04",        // amber-yellow (warm but clearly yellow, not marigold)
+    bg: "#fef9c3",            // pale yellow / sunshine cream
     icon: Sun,
     tasks: ["Irrigation monitoring", "Pruning & shaping", "Weed & bed maintenance", "Hardscape installs"],
   },
