@@ -259,7 +259,14 @@ function SectionReveal({
   style?: React.CSSProperties;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // margin: "300px 0px 300px 0px" — POSITIVE margin expands the
+  // detection area so sections register as in-view BEFORE they
+  // actually scroll into the viewport. Was previously "-80px" which
+  // meant anchor-link jumps (e.g. #contact) landed on a section that
+  // hadn't yet triggered its fade-in, leaving the user staring at a
+  // blank void until they scrolled 1px. With this margin, anchor
+  // jumps always land on already-revealed content.
+  const isInView = useInView(ref, { once: true, margin: "300px" });
   return (
     <motion.section ref={ref} id={id} className={className} style={style} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
       {children}
