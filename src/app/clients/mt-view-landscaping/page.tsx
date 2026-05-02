@@ -477,13 +477,13 @@ export default function MtViewLandscapingPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ ...spring, delay: 0.1 }}
-                    className="text-sm uppercase tracking-widest"
+                    className="text-sm md:text-base uppercase tracking-widest font-medium"
                     style={{ color: PRIMARY_LIGHT }}
                   >
                     Family-Owned in Western Washington Since {BUSINESS.established}
                   </motion.p>
 
-                  <h1 className="text-4xl md:text-6xl tracking-tighter leading-[1.05] font-bold text-white">
+                  <h1 className="text-5xl md:text-7xl lg:text-[88px] xl:text-[104px] tracking-tighter leading-[0.98] font-bold text-white">
                     <WordReveal text="Custom Landscapes. Maintained for Life." />
                   </h1>
 
