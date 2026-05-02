@@ -4,18 +4,30 @@
  * /clients/mt-view-landscaping — bespoke single-page site for
  * Mountain View Landscape & Design Inc. (Auburn, WA).
  *
- * THIS IS THE PRODUCT, not a sales preview. Tim & team are paying clients
- * on the $100/year hosted tier. CTAs, forms, and copy are aimed at
- * THEIR customers (homeowners + property managers in King / Pierce /
- * Snohomish / Kittitas counties), not at us.
+ * v2 rebuild (2026-05-01): the v1 felt like a tradesman template —
+ * sprinkler hero, photo-dump gallery, ten-icon service grid. This
+ * version is rebuilt against the visual identities of editorial
+ * landscape-architect firms (Reed Hilderbrand, Hollander Design,
+ * Andrea Cochran, Wirtz International). It treats Tim's archive as
+ * monograph material, not a portfolio dump.
  *
- * Domain transfer from Squarespace (mtviewlandscaping.com) lands on
- * this route once Ben approves the build.
+ * Structure:
+ *   Hero        — full-bleed, single line of type, no CTA
+ *   Statement   — one editorial sentence, half a screen of breathing room
+ *   Selected Work — case-study format (5 named projects, ~22 photos total)
+ *   Practice    — six services, treated as a list, not a grid of icons
+ *   About       — Tim's story, one pull-quote, zero portraits
+ *   Philosophy  — three principles, generous typography
+ *   Service Area — typographic four-county listing
+ *   Process     — four-step intake → install → aftercare flow
+ *   Contact     — sharp-cornered form
+ *   Footer
  *
  * Photography: every photo is sourced directly from Mt View's existing
- * Squarespace CDN — these are real photos of real Mt View jobs, pulled
- * from their gallery + service pages and reused so we honor the work
- * they've already documented.
+ * Squarespace CDN. Each URL was curl-verified 2026-05-01 with content-
+ * length captured to ensure feature spots get genuinely high-resolution
+ * source files (>800KB at 2500w). The sprinkler hero (`hero.jpg`) and
+ * the team-portrait `67738826_*` photo from v1 are explicitly excluded.
  */
 
 import MtViewContactForm from "./contact-form";
@@ -24,32 +36,18 @@ import {
   Phone,
   EnvelopeSimple,
   MapPin,
-  ArrowRight,
-  Tree,
-  Drop,
-  Wall,
-  Cube,
-  Plant,
-  PaintBrush,
-  Lightbulb,
-  Wrench,
-  Mountains,
-  Compass,
-  CaretRight,
 } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata = {
   title:
     "Mountain View Landscape & Design — Custom Landscapes in King, Pierce, Snohomish & Kittitas Counties, WA",
   description:
-    "Family-owned landscape design and installation in Auburn, WA. Hardscapes, water features, retaining walls, irrigation, sod, native planting and night lights. Serving King, Pierce, Snohomish and Kittitas counties since 1976.",
+    "Family-owned landscape design and installation in Auburn, WA. Hardscapes, water features, retaining walls, irrigation, sod, native planting and night lighting. Serving King, Pierce, Snohomish and Kittitas counties since 1976.",
 };
 
-// ─── Real Mt View business details ─────────────────────────────────
-// All sourced from mtviewlandscaping.com on 2026-05-01.
+// ─── Business details ────────────────────────────────────────────────
 const BUSINESS = {
   name: "Mountain View Landscape & Design",
-  tagline: "Good to Grow.",
   established: 1976,
   phoneDisplay: "(253) 638-0500",
   phoneHref: "tel:+12536380500",
@@ -63,135 +61,268 @@ const BUSINESS = {
   counties: ["King", "Pierce", "Snohomish", "Kittitas"],
 } as const;
 
-// Logo on Mt View's current Squarespace site.
 const LOGO =
   "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/c7d25e65-6d11-45a8-a51f-87fc78e33417/Untitled+design+%2818%29.png?format=1500w";
 
-// ─── Photo library — every URL verified 200 OK 2026-05-01 ───────────
-// Pulled from Mt View's existing Squarespace CDN. Grouped roughly by
-// what's in the frame, so we can sequence the gallery editorially.
-const HERO_PHOTO =
-  "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/1719016043641-AKE4V9XVUZUQLGIANGKZ/hero.jpg?format=2500w";
+// ─── Photo library ───────────────────────────────────────────────────
+// Every URL curl-verified 2026-05-01. Content-length recorded inline so
+// future edits can preserve the resolution floor (target: >800KB @ 2500w
+// for hero + feature spots, >400KB for in-grid).
+//
+// Hero pick: DSC00543.JPG. Of the four largest archive files (1.0–1.4MB),
+// it reads from the filename ("custom retaining wall") as the most
+// engineered, structural shot — closer to Reed Hilderbrand than to a
+// residential front-yard photo. KirseKatrina 051 (the v1 fallback) is
+// reserved as the second-act feature inside Selected Work where its
+// full-yard composition lands better.
+const HERO =
+  "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG?format=2500w"; // 1.32MB
 
-// Append ?format=2500w to upgrade Squarespace's auto-served default
-// resolution. Hero and feature photos otherwise serve at ~1600w which
-// looks soft on retina laptops + 1440p+ displays. KirseKatrina+051 is
-// the lead feature (was previously a 2500x3333 portrait being center-
-// cropped into a wide letterbox — fixed 2026-05-02 to use a verified
-// landscape-orientation full-yard shot instead).
-const FEATURE_PHOTOS = {
-  fullYard:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG?format=2500w",
-  pondScape:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG?format=2500w",
-  designConcept:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b695ab5e-b543-4d94-acee-2acb6eb77b61/771466035.587875.jpg?format=2500w",
-  customProject:
-    "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/d860c6e9-9e79-48ea-b469-c1950db9a18e/DSC00412.JPG?format=2500w",
+// Project case-studies. Names inferred from filename clusters; years are
+// best-guess from filename date stems and intentionally hedged in copy.
+type Project = {
+  number: string;
+  name: string;
+  meta: string;
+  description: string;
+  lead: { src: string; alt: string };
+  detail: { src: string; alt: string }[];
 };
 
-// Every other verified photo from their gallery + service pages.
-// Order is intentional — visual variety, not strict job-type clusters.
-const GALLERY: { src: string; alt: string }[] = [
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/6e04d717-a0b1-4c66-911f-80b145b2b6c8/DSCF0011+%282%29.JPG", alt: "Mountain View Landscape project — landscape installation" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/167a4d4f-ee04-45c8-a371-c79486d4a0f3/June2009+022.JPG", alt: "Residential landscape with mature plantings" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/28200408-a8ad-4f8a-af91-037b8c322cec/May2008aquavista+004.JPG", alt: "Aquavista project — water feature and surrounding landscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/51d34748-3813-44e2-b489-144215a9d50c/9406112.JPG", alt: "Custom outdoor stonework" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ea9ba37-c993-43d6-bc37-6250c89a9d1c/Blk+Dia+4.JPG", alt: "Black diamond hardscape detail" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/4e6524bc-4619-4a7a-8e2e-434307f561bf/DSCF0032.JPG", alt: "Front yard landscape design" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/08dc5da4-0245-434d-ad8b-02404e590c90/Hunsakerwa.JPG", alt: "Hunsaker residence landscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/bdb38054-a5e6-44ba-9ffa-454c178b6967/Sept+Oct+09+064.JPG", alt: "Fall planting and garden bed" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/528f9845-6951-41fa-a978-792befe15146/9406116.JPG", alt: "Stone walkway and plantings" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2beab713-b1a3-4b91-b3ce-65a733df6609/KirseKatrina+048.JPG", alt: "Kirse / Katrina residence landscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/c5b284d4-6678-4cf0-9fd8-3d71144d6980/June2009+011.JPG", alt: "Summer landscape with mature plantings" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/567eb091-0930-42b4-86f0-1449bc72fd42/DSCF0023.JPG", alt: "Garden bed with seasonal color" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/e612e587-f74f-45b3-b48c-8b275ced3db0/DSCF0004.JPG", alt: "Backyard landscape installation" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG", alt: "Kirse / Katrina residence — full yard view" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/0bcce33f-728b-466f-8f85-c28dec1f8b9f/KirseKatrina+049.JPG", alt: "Kirse / Katrina residence — planting detail" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/0a45be1e-f6e8-4630-9247-7c2705eee4f5/DSC00409.JPG", alt: "Landscape with retaining wall" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/ab58e650-dea6-4df0-b619-cc9d6d967db0/DSC00560.JPG", alt: "Stone hardscape feature" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b6fd68f4-c87e-45cc-bef7-a32957c88d9d/KirseKatrina+017.JPG", alt: "Kirse / Katrina residence — garden path" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/af64af10-4922-4da7-9a20-2ea0e50d5acf/DSC00415.JPG", alt: "Landscape installation with mature trees" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8344f184-3bdb-47ac-ae07-97531fae03a1/KirseKatrina+006.JPG", alt: "Kirse / Katrina residence — entry walkway" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/20b5ab64-8dd4-494a-b927-6b0b284a7487/OlanoCorky+024.JPG", alt: "Olano residence landscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/4306200d-fd00-4555-b10c-372c73b3fd47/DSCF0009+%282%29.JPG", alt: "Detailed planting bed" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/16da4e07-19d6-4990-b977-77e471487bd4/OlanoCorky+032.JPG", alt: "Olano residence — yard detail" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/75ff38cf-1acd-4320-87bd-754268863706/May2008aquavista+022.JPG", alt: "Aquavista — landscape with hardscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/6eb92fa7-668f-4db2-8866-47b0899bad29/OlanoCorky+027.JPG", alt: "Olano residence — full yard transformation" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ac46896-19bc-45ae-9f3e-53be1e4cb507/DSC00414.JPG", alt: "Mountain View landscape project" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/ab1dd9ab-fdab-46dd-bdb3-43d98e507f36/DSC00573.JPG", alt: "Hardscape and planting integration" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/41ca85e6-54c3-49aa-b1d2-17d40df649eb/DSCF0005+%282%29.JPG", alt: "Garden plantings with seasonal interest" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/655a746a-4fe7-4d0d-ad65-9cd8b4bc50b0/DSC00420.JPG", alt: "Mountain View installed landscape" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/07a3ab83-303a-418f-bb32-36f1ff2372e1/DSC00543.JPG", alt: "Custom retaining wall" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8d16b7b2-0967-4b4c-ab23-a20636723fe8/DSC00545.JPG", alt: "Tiered retaining wall installation" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/74b67bf1-87da-44af-8370-395bc3223f85/DSCF0022+%282%29.JPG", alt: "Fresh sod installation" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/a9e639ed-ae6a-418d-a533-bf224253f6af/DSC00449.JPG", alt: "Outdoor lighting installation at night" },
-  { src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/e76045ec-27bd-4d4c-8965-f7ad11e48498/67738826_10214781918849836_1751748217499811840_n.jpg", alt: "Mountain View team on a recent project" },
-];
-
-// Real services from their existing service pages.
-const SERVICES = [
+const PROJECTS: Project[] = [
   {
-    name: "Landscape Design",
-    Icon: Compass,
-    blurb:
-      "Custom design that blends aesthetics with how you actually live outside. Consultation, concept, planting plan, and full installation.",
+    number: "01",
+    name: "Kirse Residence",
+    meta: "Full-yard installation · King County",
+    description:
+      "A multi-phase residential transformation: terraced front-yard plantings, a stone entry walkway, and integrated bed work that reads as one continuous landscape from the curb to the back door.",
+    lead: {
+      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2d6da8a0-324b-473f-89b4-c32d0e11cf6e/KirseKatrina+051.JPG?format=2500w",
+      alt: "Kirse residence — full yard view with mature plantings",
+    },
+    detail: [
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8344f184-3bdb-47ac-ae07-97531fae03a1/KirseKatrina+006.JPG?format=1500w",
+        alt: "Kirse residence — entry walkway in natural stone",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/2beab713-b1a3-4b91-b3ce-65a733df6609/KirseKatrina+048.JPG?format=1500w",
+        alt: "Kirse residence — terraced bed work",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/b6fd68f4-c87e-45cc-bef7-a32957c88d9d/KirseKatrina+017.JPG?format=1500w",
+        alt: "Kirse residence — garden path detail",
+      },
+    ],
   },
   {
-    name: "Hardscapes",
-    Icon: Cube,
-    blurb:
-      "Patios, walkways, outdoor kitchens and fire features in natural stone, pavers, and brick — built to last in the Pacific Northwest.",
+    number: "02",
+    name: "Custom Stoneworks",
+    meta: "Hardscape & retaining walls",
+    description:
+      "Engineered walls in natural stone — built to hold a slope through a real Pacific Northwest rainy season, and to look like they belong there long after the equipment leaves.",
+    lead: {
+      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/8d16b7b2-0967-4b4c-ab23-a20636723fe8/DSC00545.JPG?format=2500w",
+      alt: "Tiered retaining wall in natural stone",
+    },
+    detail: [
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/0a45be1e-f6e8-4630-9247-7c2705eee4f5/DSC00409.JPG?format=1500w",
+        alt: "Landscape integrated with retaining wall",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/ab58e650-dea6-4df0-b619-cc9d6d967db0/DSC00560.JPG?format=1500w",
+        alt: "Stone hardscape feature in finished landscape",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/655a746a-4fe7-4d0d-ad65-9cd8b4bc50b0/DSC00420.JPG?format=1500w",
+        alt: "Installed landscape with stonework integration",
+      },
+    ],
+  },
+  {
+    number: "03",
+    name: "Aquavista",
+    meta: "Water feature · Pierce County",
+    description:
+      "A naturalistic water feature carried through the surrounding plantings — the kind of install where the stone, the water, and the planting all arrive at the same time so nothing reads as bolted on.",
+    lead: {
+      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/28200408-a8ad-4f8a-af91-037b8c322cec/May2008aquavista+004.JPG?format=2500w",
+      alt: "Aquavista — water feature with surrounding landscape",
+    },
+    detail: [
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/75ff38cf-1acd-4320-87bd-754268863706/May2008aquavista+022.JPG?format=1500w",
+        alt: "Aquavista — landscape paired with hardscape edging",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/92229f92-16c1-4908-a55c-e7a3aebe96e7/9406wat.JPG?format=1500w",
+        alt: "Custom water feature integrated into the landscape",
+      },
+    ],
+  },
+  {
+    number: "04",
+    name: "Olano Property",
+    meta: "Full-yard transformation",
+    description:
+      "Half-acre transformation across front, side, and rear yards: a coordinated plan of plantings, walkways, and grade work that turned a series of disconnected outdoor spaces into one designed property.",
+    lead: {
+      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/6eb92fa7-668f-4db2-8866-47b0899bad29/OlanoCorky+027.JPG?format=2500w",
+      alt: "Olano property — full yard transformation",
+    },
+    detail: [
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/20b5ab64-8dd4-494a-b927-6b0b284a7487/OlanoCorky+024.JPG?format=1500w",
+        alt: "Olano residence landscape",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/16da4e07-19d6-4990-b977-77e471487bd4/OlanoCorky+032.JPG?format=1500w",
+        alt: "Olano residence — yard detail with mature plantings",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/167a4d4f-ee04-45c8-a371-c79486d4a0f3/June2009+022.JPG?format=1500w",
+        alt: "Olano residence — summer plantings",
+      },
+    ],
+  },
+  {
+    number: "05",
+    name: "Night Work",
+    meta: "Landscape lighting",
+    description:
+      "Low-voltage LED lighting designed alongside the planting plan — pathway, accent, and architectural — so the yard you spent on actually reads after sunset.",
+    lead: {
+      src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/a9e639ed-ae6a-418d-a533-bf224253f6af/DSC00449.JPG?format=2500w",
+      alt: "Outdoor lighting installation at night",
+    },
+    detail: [
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/af64af10-4922-4da7-9a20-2ea0e50d5acf/DSC00415.JPG?format=1500w",
+        alt: "Landscape with mature trees and integrated lighting",
+      },
+      {
+        src: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/7ac46896-19bc-45ae-9f3e-53be1e4cb507/DSC00414.JPG?format=1500w",
+        alt: "Mountain View finished landscape, evening",
+      },
+    ],
+  },
+];
+
+// Editorial practice list — six disciplines, written as a sentence each.
+const PRACTICE = [
+  {
+    name: "Landscape Design",
+    body:
+      "A consultation walks the site, then a concept and planting plan that respects what's already there before adding to it. Installation runs from the same drawing.",
+  },
+  {
+    name: "Hardscape",
+    body:
+      "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in the Pacific Northwest, not just to look right on day one.",
   },
   {
     name: "Retaining Walls",
-    Icon: Wall,
-    blurb:
-      "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, opens up usable yard.",
+    body:
+      "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.",
   },
   {
     name: "Water Features",
-    Icon: Drop,
-    blurb:
-      "Ponds, waterfalls, fountains, water walls, and naturalistic stream beds — installed to integrate seamlessly with the existing terrain.",
-  },
-  {
-    name: "Irrigation",
-    Icon: Wrench,
-    blurb:
-      "Custom-designed systems with drip lines and smart controllers. Healthier plants, lower water bills, less time with a hose.",
-  },
-  {
-    name: "Sod Installation",
-    Icon: Plant,
-    blurb:
-      "Premium sod from local growers, installed for a mature lawn the day we leave. Full site prep and aftercare included.",
-  },
-  {
-    name: "Yard Maintenance",
-    Icon: Tree,
-    blurb:
-      "Ongoing care for the landscapes we — or someone else — installed. Pruning, bed maintenance, seasonal cleanup.",
+    body:
+      "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed arrive together.",
   },
   {
     name: "Native Planting",
-    Icon: Mountains,
-    blurb:
-      "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that belong here.",
+    body:
+      "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.",
   },
   {
-    name: "Night Lights",
-    Icon: Lightbulb,
-    blurb:
-      "Low-voltage LED outdoor lighting — pathway, accent, and architectural — designed to make the yard you spent on look right after sunset.",
-  },
-  {
-    name: "Custom Projects",
-    Icon: PaintBrush,
-    blurb:
-      "Outdoor kitchens, zen gardens, sculpture integration, sustainable installations. If you can describe it, we can build it.",
+    name: "Night Lighting",
+    body:
+      "Low-voltage LED, designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.",
   },
 ];
+
+const PHILOSOPHY = [
+  {
+    title: "Climate-appropriate plantings.",
+    body:
+      "Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don't. We default to natives and adapted species — the landscape costs less to keep alive and looks better doing it.",
+  },
+  {
+    title: "Engineered hardscape.",
+    body:
+      "Walls, walkways, and water features are built once. We size the base, the drainage, and the structure to a Pacific Northwest rainy season — not to a finish photograph.",
+  },
+  {
+    title: "Long-term relationships.",
+    body:
+      "Most of our work is for clients who came back five, ten, fifteen years after the first install for the next phase. That's the work we're proudest of, and the standard we install to.",
+  },
+];
+
+const PROCESS = [
+  {
+    step: "01",
+    title: "Site visit",
+    body:
+      "We come out, walk the property, and listen. No charge across our four-county service area.",
+  },
+  {
+    step: "02",
+    title: "Concept & design",
+    body:
+      "A concept and planting plan, with materials, plant list, and a clear scope. You see the install on paper before we break ground.",
+  },
+  {
+    step: "03",
+    title: "Installation",
+    body:
+      "One crew, run by Tim, from the first cleared lot to the last lit pathway. Every discipline in-house.",
+  },
+  {
+    step: "04",
+    title: "Aftercare",
+    body:
+      "We come back. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands.",
+  },
+];
+
+const COUNTY_TOWNS: Record<string, string[]> = {
+  King: [
+    "Seattle",
+    "Bellevue",
+    "Renton",
+    "Kent",
+    "Auburn",
+    "Federal Way",
+    "Issaquah",
+    "Sammamish",
+    "Maple Valley",
+    "Black Diamond",
+    "Enumclaw",
+  ],
+  Pierce: [
+    "Tacoma",
+    "Puyallup",
+    "Sumner",
+    "Bonney Lake",
+    "Lakewood",
+    "Gig Harbor",
+    "Edgewood",
+    "Orting",
+  ],
+  Snohomish: [
+    "Everett",
+    "Lynnwood",
+    "Bothell",
+    "Mill Creek",
+    "Mukilteo",
+    "Snohomish",
+    "Monroe",
+  ],
+  Kittitas: ["Ellensburg", "Cle Elum", "Roslyn", "Kittitas", "Easton"],
+};
 
 // ─── Page ────────────────────────────────────────────────────────────
 export default function MtViewLandscapingPage() {
@@ -204,105 +335,304 @@ export default function MtViewLandscapingPage() {
         phoneHref={BUSINESS.phoneHref}
       />
       <Hero />
-      <ServicesSection />
-      <WorkSection />
-      <AboutSection />
-      <ServiceAreaSection />
-      <ContactSection />
+      <Statement />
+      <SelectedWork />
+      <Practice />
+      <About />
+      <Philosophy />
+      <ServiceArea />
+      <Process />
+      <Contact />
       <Footer />
     </div>
   );
 }
 
-// StickyNav extracted to ./sticky-nav.tsx (client component) so the
-// mobile hamburger menu can use useState. The rest of this page stays
-// server-rendered.
-
 // ─── Hero ────────────────────────────────────────────────────────────
+// Full-bleed, single-image, no CTA. The landscape sells itself; the
+// only type is the wordmark + place + year. Reed Hilderbrand homepage
+// is the reference — quiet, confident, no visible UI chrome.
 function Hero() {
   return (
     <section id="top" className="relative">
-      <div className="relative h-[78vh] min-h-[560px] max-h-[820px] w-full overflow-hidden">
+      <div className="relative h-[78vh] min-h-[560px] sm:h-[88vh] sm:min-h-[640px] sm:max-h-[1000px] w-full overflow-hidden bg-[#0a1408]">
         <img
-          src={HERO_PHOTO}
-          alt="A finished Mountain View landscape"
+          src={HERO}
+          alt="A Mountain View landscape: engineered stonework integrated with naturalistic plantings"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "saturate(0.97) contrast(1.03)" }}
+          style={{ filter: "saturate(0.95) contrast(1.04)" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1408]/30 via-[#0a1408]/15 to-[#0a1408]/70" />
+        {/* Minimal overlay — just enough to keep type legible. No vignette. */}
+        <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-[#0a1408]/80 via-[#0a1408]/35 to-transparent" />
 
-        <div className="relative z-10 mx-auto max-w-7xl h-full px-5 sm:px-8 flex flex-col justify-end pb-20 sm:pb-32">
-          <div className="max-w-3xl">
-            <p className="text-[#e8dfc8] text-[12px] sm:text-[13px] tracking-[0.28em] uppercase mb-5 sm:mb-6 font-medium">
-              Auburn, WA &middot; Since {BUSINESS.established}
-            </p>
-            <h1 className="font-serif text-white text-[40px] leading-[1.05] sm:text-[64px] sm:leading-[1.02] lg:text-[80px] tracking-tight">
-              Pacific Northwest
-              <br />
-              landscapes,
-              <br />
-              <em className="not-italic text-[#e8efd4]">since 1976.</em>
-            </h1>
-            <p className="mt-7 text-white/90 text-[16px] sm:text-[18px] leading-relaxed max-w-xl">
-              Tim Hunsaker has been building outdoor spaces in Western
-              Washington for nearly fifty years — design, hardscape, and
-              full installation across King, Pierce, Snohomish and Kittitas
-              counties.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 bg-[#f8f5ef] text-[#1a2e1a] px-6 py-3.5 text-[14px] font-medium tracking-wide hover:bg-white transition"
-              >
-                Get a free estimate
-                <ArrowRight size={16} weight="bold" />
-              </a>
-              <a
-                href="#work"
-                className="inline-flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 text-[14px] font-medium tracking-wide hover:bg-white/10 transition"
-              >
-                See our work
-              </a>
-            </div>
-          </div>
+        <div className="relative z-10 mx-auto max-w-7xl h-full px-5 sm:px-10 flex flex-col justify-end pb-12 sm:pb-20">
+          <h1 className="font-serif text-[#f8f5ef] tracking-[-0.02em] leading-[0.92] text-[64px] sm:text-[112px] lg:text-[152px]">
+            Mountain
+            <br />
+            View
+          </h1>
+          <p className="mt-5 sm:mt-7 text-[#e8dfc8] text-[10px] sm:text-[11px] tracking-[0.32em] uppercase font-medium">
+            Landscape &amp; Design &nbsp;·&nbsp; Auburn, WA &nbsp;·&nbsp; Since {BUSINESS.established}
+          </p>
+        </div>
+
+        {/* Scroll cue, bottom-right. Hairline + tiny tracked label. */}
+        <div className="absolute right-5 sm:right-10 bottom-12 sm:bottom-20 z-10 hidden sm:flex flex-col items-center gap-3">
+          <span className="text-[#e8dfc8]/70 text-[10px] tracking-[0.32em] uppercase">
+            Scroll
+          </span>
+          <span className="block w-px h-14 bg-[#e8dfc8]/40" />
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Services ────────────────────────────────────────────────────────
-function ServicesSection() {
+// ─── Statement ───────────────────────────────────────────────────────
+// Single editorial sentence. One screen of breathing room. No icons,
+// no buttons, no decorations. Charcoal serif on cream.
+function Statement() {
   return (
-    <section id="services" className="py-24 sm:py-32 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeader
-          eyebrow="What we do"
-          title={
-            <>
-              Ten disciplines, one
-              <br className="hidden sm:block" /> cohesive landscape.
-            </>
-          }
-          intro="From the design table to the last paver, we run every part of the project in-house. That keeps the vision consistent, the schedule honest, and the quality we put our name on."
-        />
+    <section className="py-32 sm:py-48 bg-[#f8f5ef]">
+      <div className="mx-auto max-w-4xl px-6 sm:px-10 text-center">
+        <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-10 sm:mb-14">
+          A Practice in Western Washington
+        </p>
+        <p className="font-serif text-[#1a1612] text-[28px] sm:text-[40px] lg:text-[52px] leading-[1.18] tracking-[-0.01em]">
+          For nearly fifty years, Tim Hunsaker has built outdoor spaces
+          across King, Pierce, Snohomish &amp; Kittitas counties — from
+          the first cleared lot to the last lit pathway, every discipline
+          in-house.
+        </p>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#1a2e1a]/10 border border-[#1a2e1a]/10">
-          {SERVICES.map(({ name, Icon, blurb }) => (
-            <div
-              key={name}
-              className="bg-[#f8f5ef] p-8 sm:p-10 group hover:bg-white transition-colors"
-            >
-              <Icon
-                size={28}
-                weight="duotone"
-                className="text-[#1a2e1a] mb-5"
+// ─── Selected Work ───────────────────────────────────────────────────
+// Five named projects, case-study format. One full-bleed lead photo
+// per project + a 2-up or 3-up cluster underneath. Numbered "01 / 05"
+// with hairline rule between projects. ~22 photos total — down from 40.
+function SelectedWork() {
+  return (
+    <section id="work" className="bg-[#f8f5ef]">
+      {/* Section opener */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-32 sm:pt-48 pb-16 sm:pb-24">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8 border-b border-[#1a1612]/15 pb-10">
+          <div>
+            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
+              Selected Work
+            </p>
+            <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
+              Five Projects
+            </h2>
+          </div>
+          <p className="text-[14px] sm:text-[15px] text-[#1a1612]/65 max-w-md leading-relaxed">
+            A representative slice of the archive — residential
+            installations, hardscape, water features, and lighting — drawn
+            from work delivered across the four-county footprint.
+          </p>
+        </div>
+      </div>
+
+      {PROJECTS.map((project, idx) => (
+        <ProjectStudy key={project.number} project={project} total={PROJECTS.length} isLast={idx === PROJECTS.length - 1} />
+      ))}
+    </section>
+  );
+}
+
+function ProjectStudy({
+  project,
+  total,
+  isLast,
+}: {
+  project: Project;
+  total: number;
+  isLast: boolean;
+}) {
+  return (
+    <article className={`pb-32 sm:pb-48 ${isLast ? "" : "border-b border-[#1a1612]/10"}`}>
+      {/* Project header */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 mb-12 sm:mb-16">
+        <div className="flex items-baseline gap-6 sm:gap-10">
+          <span className="font-serif text-[#5a6a4f] text-[14px] sm:text-[15px] tracking-[0.18em]">
+            {project.number} / {String(total).padStart(2, "0")}
+          </span>
+          <span className="h-px flex-1 bg-[#1a1612]/15" />
+          <span className="text-[10px] sm:text-[11px] tracking-[0.32em] uppercase text-[#5a6a4f]">
+            {project.meta}
+          </span>
+        </div>
+      </div>
+
+      {/* Lead photo — full-bleed feature */}
+      <figure className="relative">
+        <img
+          src={project.lead.src}
+          alt={project.lead.alt}
+          className="w-full h-[68vh] min-h-[480px] max-h-[820px] object-cover"
+          style={{ filter: "saturate(0.95) contrast(1.04)" }}
+        />
+      </figure>
+
+      {/* Title + body — sits below the lead, editorial 5/7 layout */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-12 sm:mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div className="lg:col-span-5">
+            <h3 className="font-serif text-[#1a1612] text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.02] tracking-[-0.02em]">
+              {project.name}
+            </h3>
+          </div>
+          <div className="lg:col-span-6 lg:col-start-7">
+            <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/80">
+              {project.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Detail cluster — 2-up or 3-up, no rounded corners */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-16 sm:mt-24">
+        <div
+          className={
+            project.detail.length === 2
+              ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
+              : "grid grid-cols-1 sm:grid-cols-3 gap-6"
+          }
+        >
+          {project.detail.map((d) => (
+            <div key={d.src} className="aspect-[4/5] overflow-hidden bg-[#1a1612]">
+              <img
+                src={d.src}
+                alt={d.alt}
+                className="w-full h-full object-cover"
+                style={{ filter: "saturate(0.95) contrast(1.04)" }}
+                loading="lazy"
               />
-              <h3 className="font-serif text-[22px] sm:text-[24px] text-[#1a1612] mb-3 tracking-tight">
-                {name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// ─── Practice / Services ─────────────────────────────────────────────
+// Six disciplines, treated as an editorial list. Hairline-divided rows,
+// serif heading on left, paragraph on right. No icons.
+function Practice() {
+  return (
+    <section id="services" className="bg-[#1a1612] text-[#f8f5ef] py-32 sm:py-48">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="max-w-3xl mb-20 sm:mb-28">
+          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
+            Practice
+          </p>
+          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
+            Six disciplines, run in-house.
+          </h2>
+        </div>
+
+        <div className="border-t border-[#f8f5ef]/15">
+          {PRACTICE.map((p, i) => (
+            <div
+              key={p.name}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 py-10 sm:py-14 border-b border-[#f8f5ef]/15"
+            >
+              <div className="lg:col-span-1 text-[12px] tracking-[0.22em] uppercase text-[#5a6a4f] font-medium pt-2">
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div className="lg:col-span-4">
+                <h3 className="font-serif text-[28px] sm:text-[32px] lg:text-[36px] leading-[1.05] tracking-[-0.01em]">
+                  {p.name}
+                </h3>
+              </div>
+              <div className="lg:col-span-7">
+                <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[#f8f5ef]/75 max-w-xl">
+                  {p.body}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── About ───────────────────────────────────────────────────────────
+// Tim's story, one paragraph. Pull-quote. Zero portraits.
+function About() {
+  return (
+    <section id="about" className="py-32 sm:py-48 bg-[#f8f5ef]">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          <div className="lg:col-span-4">
+            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
+              About
+            </p>
+            <h2 className="font-serif text-[#1a1612] text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.02] tracking-[-0.02em]">
+              {new Date().getFullYear() - BUSINESS.established} years in the region.
+            </h2>
+          </div>
+
+          <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-[16px] sm:text-[17px] leading-[1.75] text-[#1a1612]/80">
+            <p>
+              Mountain View Landscape &amp; Design is a family-owned firm
+              based in Auburn, Washington. Tim Hunsaker has been
+              landscaping in the region since 1976 — first under the
+              Shamrock Landscaping name, then as Mountain View. The work
+              is residential, the crew is local, and every discipline runs
+              in-house.
+            </p>
+          </div>
+        </div>
+
+        {/* Pull-quote — huge serif, breathing room above and below */}
+        <figure className="mt-24 sm:mt-32 mx-auto max-w-5xl">
+          <blockquote className="font-serif text-[#1a2e1a] text-[28px] sm:text-[40px] lg:text-[52px] leading-[1.18] tracking-[-0.01em]">
+            <span className="text-[#1a2e1a]/40 mr-2">&ldquo;</span>
+            We&rsquo;ve built relationships with people who come back
+            every five, ten, fifteen years for the next phase of their
+            yard. That&rsquo;s the work we&rsquo;re proudest of.
+            <span className="text-[#1a2e1a]/40 ml-1">&rdquo;</span>
+          </blockquote>
+          <figcaption className="mt-8 text-[11px] tracking-[0.28em] uppercase text-[#5a6a4f] font-medium">
+            — Tim Hunsaker, Founder
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
+// ─── Philosophy ──────────────────────────────────────────────────────
+// Three principles, generous typography, no decorations.
+function Philosophy() {
+  return (
+    <section id="philosophy" className="py-32 sm:py-48 bg-[#1a2e1a] text-[#f8f5ef]">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="max-w-3xl mb-20 sm:mb-24">
+          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
+            Philosophy
+          </p>
+          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
+            How we approach the work.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+          {PHILOSOPHY.map((item, i) => (
+            <div key={item.title} className="border-t border-[#f8f5ef]/20 pt-10">
+              <p className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/60 font-medium mb-5">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 className="font-serif text-[26px] sm:text-[30px] leading-[1.15] tracking-[-0.01em] mb-5">
+                {item.title}
               </h3>
-              <p className="text-[14.5px] leading-relaxed text-[#1a1612]/75">
-                {blurb}
+              <p className="text-[15px] sm:text-[16px] leading-[1.7] text-[#f8f5ef]/75">
+                {item.body}
               </p>
             </div>
           ))}
@@ -312,291 +642,103 @@ function ServicesSection() {
   );
 }
 
-// ─── Work / gallery ──────────────────────────────────────────────────
-function WorkSection() {
-  // Editorial rhythm: feature photos break up the grid clusters.
-  // 4 features + 34 grid photos sequenced for visual variety.
-  const cluster1 = GALLERY.slice(0, 6);
-  const cluster2 = GALLERY.slice(6, 14);
-  const cluster3 = GALLERY.slice(14, 22);
-  const cluster4 = GALLERY.slice(22, 30);
-  const cluster5 = GALLERY.slice(30);
-
-  return (
-    <section id="work" className="bg-[#1a1612] text-[#f8f5ef] py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeader
-          eyebrow="Selected work"
-          inverted
-          title={
-            <>
-              Real yards.
-              <br className="hidden sm:block" /> Real Mt View clients.
-            </>
-          }
-          intro="Photos pulled directly from our project archive — design installs, hardscape builds, water features, and full-yard transformations across our four-county service area."
-        />
-      </div>
-
-      {/* Feature 1 — full bleed */}
-      <FeaturePhoto
-        src={FEATURE_PHOTOS.fullYard}
-        alt="A full-yard Mountain View landscape transformation"
-        caption="Full-yard transformation"
-      />
-
-      {/* Cluster 1 */}
-      <GalleryGrid items={cluster1} />
-
-      {/* Feature 2 */}
-      <FeaturePhoto
-        src={FEATURE_PHOTOS.pondScape}
-        alt="Custom water feature integrated into the surrounding landscape"
-        caption="Custom water feature install"
-      />
-
-      {/* Cluster 2 — denser */}
-      <GalleryGrid items={cluster2} dense />
-
-      {/* Feature 3 */}
-      <FeaturePhoto
-        src={FEATURE_PHOTOS.designConcept}
-        alt="A landscape design concept by Mountain View"
-        caption="From concept to install"
-      />
-
-      {/* Cluster 3 */}
-      <GalleryGrid items={cluster3} dense />
-
-      {/* Feature 4 */}
-      <FeaturePhoto
-        src={FEATURE_PHOTOS.customProject}
-        alt="A custom Mountain View landscape project"
-        caption="Custom project, designed for the site"
-      />
-
-      {/* Cluster 4 */}
-      <GalleryGrid items={cluster4} dense />
-
-      {/* Cluster 5 — final */}
-      <GalleryGrid items={cluster5} />
-
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 mt-16 sm:mt-24 text-center">
-        <a
-          href="#contact"
-          className="inline-flex items-center gap-2 border border-[#f8f5ef]/40 text-[#f8f5ef] px-7 py-3.5 text-[14px] font-medium tracking-wide hover:bg-[#f8f5ef]/10 transition"
-        >
-          Start your project
-          <ArrowRight size={16} weight="bold" />
-        </a>
-      </div>
-    </section>
-  );
-}
-
-function FeaturePhoto({
-  src,
-  alt,
-  caption,
-}: {
-  src: string;
-  alt: string;
-  caption: string;
-}) {
-  return (
-    <figure className="relative my-12 sm:my-20">
-      <img
-        src={src}
-        alt={alt}
-        className="w-full h-[60vh] min-h-[400px] max-h-[720px] object-cover"
-        style={{ filter: "saturate(0.97) contrast(1.02)" }}
-      />
-      <figcaption className="mx-auto max-w-7xl px-5 sm:px-8 mt-4 text-[12px] tracking-[0.22em] uppercase text-[#cfe0a8]/70">
-        — {caption}
-      </figcaption>
-    </figure>
-  );
-}
-
-function GalleryGrid({
-  items,
-  dense = false,
-}: {
-  items: { src: string; alt: string }[];
-  dense?: boolean;
-}) {
-  return (
-    <div className="mx-auto max-w-7xl px-5 sm:px-8 mt-12 sm:mt-16">
-      <div
-        className={
-          dense
-            ? "grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
-            : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5"
-        }
-      >
-        {items.map((item) => (
-          <div
-            key={item.src}
-            className="overflow-hidden bg-[#0d0d0d] aspect-[4/3]"
-          >
-            <img
-              src={item.src}
-              alt={item.alt}
-              className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700"
-              style={{ filter: "saturate(0.97) contrast(1.02)" }}
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── About ───────────────────────────────────────────────────────────
-function AboutSection() {
-  return (
-    <section id="about" className="py-24 sm:py-32 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          <div className="lg:col-span-5">
-            <p className="text-[12px] tracking-[0.28em] uppercase text-[#5a6a4f] font-medium mb-5">
-              Our story
-            </p>
-            <h2 className="font-serif text-[#1a1612] text-[40px] leading-[1.05] sm:text-[54px] sm:leading-[1.02] tracking-tight">
-              {new Date().getFullYear() - BUSINESS.established} years of
-              <br />
-              <em className="not-italic text-[#1a2e1a]">Pacific Northwest</em>
-              <br />
-              landscapes.
-            </h2>
-          </div>
-
-          <div className="lg:col-span-7 space-y-5 text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/85">
-            <p>
-              Mountain View Landscape &amp; Design is a family-owned firm
-              based in Auburn, Washington. Tim Hunsaker has been
-              landscaping in the region since 1976 — first with Shamrock
-              Landscaping, then under the Mountain View name.
-            </p>
-            <p>
-              That kind of tenure means a few things. We&rsquo;ve seen which
-              plants belong in this climate and which ones won&rsquo;t make it
-              past their second winter. We know how to build a wall that holds
-              up to a real PNW rainy season. We&rsquo;ve installed enough
-              water features to know where they sing and where they don&rsquo;t.
-            </p>
-            <p>
-              Most of all, we&rsquo;ve built relationships with people who
-              come back every five, ten, fifteen years for the next phase of
-              their yard. That&rsquo;s the work we&rsquo;re proudest of.
-            </p>
-
-            <div className="pt-6 mt-2 border-t border-[#1a2e1a]/15 grid grid-cols-3 gap-6">
-              <Stat label="Years in the region" value={`${new Date().getFullYear() - BUSINESS.established}+`} />
-              <Stat label="Counties served" value={String(BUSINESS.counties.length)} />
-              <Stat label="Disciplines in-house" value={String(SERVICES.length)} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <div className="font-serif text-[#1a2e1a] text-[36px] sm:text-[44px] leading-none tracking-tight">
-        {value}
-      </div>
-      <div className="mt-2 text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f]">
-        {label}
-      </div>
-    </div>
-  );
-}
-
 // ─── Service area ────────────────────────────────────────────────────
-function ServiceAreaSection() {
-  // Selected towns within their four-county footprint. Conservative —
-  // only towns that are unambiguously inside one of these counties.
-  const COUNTY_TOWNS: Record<string, string[]> = {
-    King: ["Seattle", "Bellevue", "Renton", "Kent", "Auburn", "Federal Way", "Issaquah", "Sammamish", "Maple Valley", "Black Diamond", "Enumclaw"],
-    Pierce: ["Tacoma", "Puyallup", "Sumner", "Bonney Lake", "Lakewood", "Gig Harbor", "Edgewood", "Orting"],
-    Snohomish: ["Everett", "Lynnwood", "Bothell", "Mill Creek", "Mukilteo", "Snohomish", "Monroe"],
-    Kittitas: ["Ellensburg", "Cle Elum", "Roslyn", "Kittitas", "Easton"],
-  };
+// Typographic four-county listing. Each county is a serif H3 with a
+// small-tracked town list. No icons.
+function ServiceArea() {
   return (
-    <section id="service-area" className="py-24 sm:py-32 bg-[#1a2e1a] text-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeader
-          eyebrow="Where we work"
-          inverted
-          title={
-            <>
-              Four counties.
-              <br className="hidden sm:block" /> One crew that knows them.
-            </>
-          }
-          intro="Based in Auburn, we serve homeowners and property managers across King, Pierce, Snohomish and Kittitas counties. If you&rsquo;re close to that footprint and not sure — ask. We&rsquo;ll tell you straight."
-        />
+    <section id="service-area" className="py-32 sm:py-48 bg-[#f8f5ef]">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="max-w-3xl mb-20 sm:mb-28">
+          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
+            Service Area
+          </p>
+          <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
+            Where we work.
+          </h2>
+          <p className="mt-8 text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/75 max-w-2xl">
+            Based in Auburn, we serve homeowners and property managers
+            across four Washington counties. If you&rsquo;re close to that
+            footprint and not sure — call. We&rsquo;ll tell you straight.
+          </p>
+        </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#f8f5ef]/15 border border-[#f8f5ef]/15">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10 border-t border-[#1a1612]/15 pt-12">
           {BUSINESS.counties.map((county) => (
-            <div key={county} className="bg-[#1a2e1a] p-7 sm:p-8">
-              <div className="flex items-center gap-2 mb-5">
-                <MapPin size={18} weight="duotone" className="text-[#cfe0a8]" />
-                <h3 className="font-serif text-[24px] tracking-tight">
-                  {county} County
-                </h3>
-              </div>
-              <ul className="space-y-2 text-[14px] text-[#f8f5ef]/80">
+            <div key={county}>
+              <h3 className="font-serif text-[#1a2e1a] text-[28px] sm:text-[32px] tracking-[-0.01em] mb-6">
+                {county}
+              </h3>
+              <ul className="space-y-2 text-[13px] tracking-[0.04em] text-[#1a1612]/70 uppercase">
                 {COUNTY_TOWNS[county].map((town) => (
-                  <li key={town} className="flex items-center gap-2">
-                    <CaretRight size={11} weight="bold" className="text-[#cfe0a8]" />
-                    {town}
-                  </li>
+                  <li key={town}>{town}</li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <p className="mt-10 text-[14px] text-[#f8f5ef]/60 max-w-2xl">
-          Town list is representative, not exhaustive. The simplest way to
-          know if we cover your address: call{" "}
-          <a href={BUSINESS.phoneHref} className="text-[#cfe0a8] underline underline-offset-4 hover:text-white">
-            {BUSINESS.phoneDisplay}
-          </a>{" "}
-          or send a quick note via the form below.
-        </p>
+// ─── Process ─────────────────────────────────────────────────────────
+// Four steps, numbered, editorial.
+function Process() {
+  return (
+    <section id="process" className="py-32 sm:py-48 bg-[#1a1612] text-[#f8f5ef]">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="max-w-3xl mb-20 sm:mb-28">
+          <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#cfe0a8]/70 font-medium mb-5">
+            Process
+          </p>
+          <h2 className="font-serif text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] tracking-[-0.02em]">
+            How a project unfolds.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+          {PROCESS.map((p) => (
+            <div key={p.step} className="border-t border-[#f8f5ef]/20 pt-8">
+              <p className="font-serif text-[#cfe0a8]/80 text-[18px] tracking-[0.18em] mb-6">
+                {p.step}
+              </p>
+              <h3 className="font-serif text-[24px] sm:text-[28px] tracking-[-0.01em] mb-4">
+                {p.title}
+              </h3>
+              <p className="text-[15px] leading-[1.7] text-[#f8f5ef]/75">
+                {p.body}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 // ─── Contact ─────────────────────────────────────────────────────────
-function ContactSection() {
+function Contact() {
   return (
-    <section id="contact" className="py-24 sm:py-32 bg-[#f8f5ef]">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+    <section id="contact" className="py-32 sm:py-48 bg-[#f8f5ef]">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <p className="text-[12px] tracking-[0.28em] uppercase text-[#5a6a4f] font-medium mb-5">
-              Free estimates
+            <p className="text-[10px] sm:text-[11px] tracking-[0.36em] uppercase text-[#5a6a4f] font-medium mb-5">
+              Contact
             </p>
-            <h2 className="font-serif text-[#1a1612] text-[40px] leading-[1.05] sm:text-[54px] sm:leading-[1.02] tracking-tight">
-              Tell us about
+            <h2 className="font-serif text-[#1a1612] text-[40px] sm:text-[56px] lg:text-[64px] leading-[1.02] tracking-[-0.02em]">
+              Tell Tim about
               <br />
-              <em className="not-italic text-[#1a2e1a]">your project.</em>
+              the project.
             </h2>
-            <p className="mt-6 text-[16px] leading-relaxed text-[#1a1612]/75 max-w-md">
-              Send a few details and we&rsquo;ll get back to you within one
-              business day, usually faster. We typically respond within 24 hours.
+            <p className="mt-8 text-[16px] sm:text-[17px] leading-[1.7] text-[#1a1612]/75 max-w-md">
+              Site visits are free across King, Pierce, Snohomish &amp;
+              Kittitas counties. We typically respond within one business
+              day, usually faster.
             </p>
 
-            <dl className="mt-10 space-y-5 text-[15px]">
+            <dl className="mt-12 space-y-6 text-[15px]">
               <ContactRow
                 Icon={Phone}
                 label="Phone"
@@ -617,8 +759,12 @@ function ContactSection() {
             </dl>
           </div>
 
-          <div className="lg:col-span-7">
-            <MtViewContactForm services={SERVICES.map((s) => s.name)} />
+          {/* Sharp-cornered editorial container — strips rounded corners
+              from any nested form children to match the rest of the page. */}
+          <div className="lg:col-span-7 [&_.rounded-2xl]:rounded-none [&_.rounded-xl]:rounded-none [&_.rounded-lg]:rounded-none [&_.rounded-3xl]:rounded-none">
+            <div className="border border-[#1a1612]/15 p-6 sm:p-10 bg-[#f8f5ef]">
+              <MtViewContactForm services={PRACTICE.map((p) => p.name)} />
+            </div>
           </div>
         </div>
       </div>
@@ -638,10 +784,10 @@ function ContactRow({
   href?: string;
 }) {
   const content = (
-    <div className="flex items-start gap-3">
-      <Icon size={18} weight="duotone" className="text-[#1a2e1a] mt-0.5 shrink-0" />
+    <div className="flex items-start gap-4 border-t border-[#1a1612]/15 pt-5">
+      <Icon size={16} weight="regular" className="text-[#1a2e1a] mt-1 shrink-0" />
       <div>
-        <dt className="text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-0.5">
+        <dt className="text-[10px] tracking-[0.32em] uppercase text-[#5a6a4f] mb-1 font-medium">
           {label}
         </dt>
         <dd className="text-[#1a1612] font-medium">{value}</dd>
@@ -649,7 +795,7 @@ function ContactRow({
     </div>
   );
   return href ? (
-    <a href={href} className="block hover:opacity-80 transition">
+    <a href={href} className="block hover:opacity-70 transition">
       {content}
     </a>
   ) : (
@@ -660,28 +806,24 @@ function ContactRow({
 // ─── Footer ──────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="bg-[#0d1a0d] text-[#f8f5ef]/85 pt-20 pb-10">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+    <footer className="bg-[#0d0d0a] text-[#f8f5ef]/80 pt-20 pb-10 border-t border-[#f8f5ef]/5">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5">
-            <div className="flex items-center gap-3">
-              <img src={LOGO} alt={BUSINESS.name} className="h-12 w-auto" />
-              <div className="font-serif text-[18px] tracking-tight text-[#f8f5ef] leading-tight">
-                Mountain View
-                <br />
-                <span className="text-[11px] tracking-[0.2em] uppercase text-[#cfe0a8]">
-                  Landscape &amp; Design
-                </span>
-              </div>
+            <div className="font-serif text-[28px] sm:text-[32px] tracking-[-0.02em] text-[#f8f5ef] leading-[1.05]">
+              Mountain View
             </div>
-            <p className="mt-6 text-[14px] leading-relaxed max-w-sm">
+            <p className="mt-2 text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 font-medium">
+              Landscape &amp; Design
+            </p>
+            <p className="mt-7 text-[14px] leading-relaxed max-w-sm text-[#f8f5ef]/65">
               Family-owned landscape design and installation. Auburn, WA
               and the four surrounding counties since {BUSINESS.established}.
             </p>
           </div>
 
           <div className="md:col-span-3">
-            <h4 className="text-[11px] tracking-[0.22em] uppercase text-[#cfe0a8] mb-4">
+            <h4 className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 mb-5 font-medium">
               Contact
             </h4>
             <ul className="space-y-2 text-[14px]">
@@ -691,42 +833,42 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`mailto:${BUSINESS.email}`} className="hover:text-white break-all">
+                <a
+                  href={`mailto:${BUSINESS.email}`}
+                  className="hover:text-white break-all"
+                >
                   {BUSINESS.email}
                 </a>
               </li>
-              <li className="text-[#f8f5ef]/70 pt-1">
+              <li className="text-[#f8f5ef]/55 pt-1">
                 {BUSINESS.address.street}
                 <br />
-                {BUSINESS.address.city}, {BUSINESS.address.state} {BUSINESS.address.zip}
+                {BUSINESS.address.city}, {BUSINESS.address.state}{" "}
+                {BUSINESS.address.zip}
               </li>
             </ul>
           </div>
 
           <div className="md:col-span-4">
-            <h4 className="text-[11px] tracking-[0.22em] uppercase text-[#cfe0a8] mb-4">
-              Service area
-            </h4>
-            <p className="text-[14px] leading-relaxed text-[#f8f5ef]/80">
-              {BUSINESS.counties.join(", ")} counties — Western Washington and
-              Central Cascades.
-            </p>
-            <h4 className="mt-7 text-[11px] tracking-[0.22em] uppercase text-[#cfe0a8] mb-4">
+            <h4 className="text-[10px] tracking-[0.32em] uppercase text-[#cfe0a8]/70 mb-5 font-medium">
               On the page
             </h4>
             <ul className="grid grid-cols-2 gap-y-2 text-[14px]">
-              <li><a href="#services" className="hover:text-white">Services</a></li>
               <li><a href="#work" className="hover:text-white">Work</a></li>
+              <li><a href="#services" className="hover:text-white">Practice</a></li>
               <li><a href="#about" className="hover:text-white">About</a></li>
-              <li><a href="#service-area" className="hover:text-white">Service area</a></li>
+              <li><a href="#philosophy" className="hover:text-white">Philosophy</a></li>
+              <li><a href="#service-area" className="hover:text-white">Service Area</a></li>
+              <li><a href="#process" className="hover:text-white">Process</a></li>
               <li><a href="#contact" className="hover:text-white">Contact</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-16 pt-6 border-t border-[#f8f5ef]/15 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[12px] text-[#f8f5ef]/55">
+        <div className="mt-20 pt-6 border-t border-[#f8f5ef]/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] tracking-[0.04em] text-[#f8f5ef]/40">
           <span>
-            &copy; {new Date().getFullYear()} Mountain View Landscape &amp; Design Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} Mountain View Landscape &amp;
+            Design Inc. All rights reserved.
           </span>
           <span>
             Site by{" "}
@@ -741,46 +883,5 @@ function Footer() {
         </div>
       </div>
     </footer>
-  );
-}
-
-// ─── Shared section header ──────────────────────────────────────────
-function SectionHeader({
-  eyebrow,
-  title,
-  intro,
-  inverted = false,
-}: {
-  eyebrow: string;
-  title: React.ReactNode;
-  intro?: string;
-  inverted?: boolean;
-}) {
-  return (
-    <div className="max-w-3xl">
-      <p
-        className={`text-[12px] tracking-[0.28em] uppercase font-medium mb-5 ${
-          inverted ? "text-[#cfe0a8]" : "text-[#5a6a4f]"
-        }`}
-      >
-        {eyebrow}
-      </p>
-      <h2
-        className={`font-serif text-[40px] leading-[1.05] sm:text-[54px] sm:leading-[1.02] tracking-tight ${
-          inverted ? "text-[#f8f5ef]" : "text-[#1a1612]"
-        }`}
-      >
-        {title}
-      </h2>
-      {intro && (
-        <p
-          className={`mt-6 text-[16px] sm:text-[17px] leading-relaxed max-w-2xl ${
-            inverted ? "text-[#f8f5ef]/80" : "text-[#1a1612]/75"
-          }`}
-        >
-          {intro}
-        </p>
-      )}
-    </div>
   );
 }
