@@ -14,7 +14,7 @@ import {
 import { buildBookingUrlForCall } from "@/lib/booking";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { getCallHistoryForProspect } from "@/lib/partner-leadpool";
+import { getInteractionHistoryForProspect } from "@/lib/partner-leadpool";
 import type { Prospect } from "@/lib/types";
 import CallWorkspace from "@/app/partners/work/CallWorkspace";
 
@@ -193,7 +193,7 @@ export default async function DashboardScriptPage({
     }
   }
 
-  const callHistory = await getCallHistoryForProspect(prospect.id);
+  const callHistory = await getInteractionHistoryForProspect(prospect.id);
 
   return (
     <CallWorkspace

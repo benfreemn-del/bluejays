@@ -243,6 +243,84 @@ export async function getCallHistoryForProspect(
   }
 }
 
+/**
+ * Unified interaction-history entry: covers partner calls AND admin
+ * notes (Ben's admin-mode call outcomes are written to the `notes`
+ * table, not partner_calls — so a call-history view that only reads
+ * partner_calls misses every admin call). Merge both into one
+ * timeline so the workspace shows the full picture.
+ */
+export type InteractionEntry =
+  | {
+      kind: "call";
+      id: string;
+      timestamp: string;
+      outcome: string;
+      notes: string | null;
+      auditLinkSent: boolean;
+      actorName: string;
+      actorCode: string;
+    }
+  | {
+      kind: "note";
+      id: string;
+      timestamp: string;
+      text: string;
+      /** True if the note text starts with "Call outcome:" — i.e. it
+       *  was logged by the call workspace in admin mode. Lets the UI
+       *  render these like calls instead of generic notes. */
+      isAdminCallOutcome: boolean;
+    };
+
+/** Pull the merged call + note history for a prospect, newest first. */
+export async function getInteractionHistoryForProspect(
+  prospectId: string,
+): Promise<InteractionEntry[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  // Pull both in parallel — small queries, no need to await sequentially
+  const [calls, notesData] = await Promise.all([
+    getCallHistoryForProspect(prospectId),
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("notes")
+          .select("id, text, created_at")
+          .eq("prospect_id", prospectId)
+          .order("created_at", { ascending: false })
+          .limit(20);
+        if (error || !data) return [];
+        return data as { id: string; text: string; created_at: string }[];
+      } catch {
+        return [];
+      }
+    })(),
+  ]);
+
+  const callEntries: InteractionEntry[] = calls.map((c) => ({
+    kind: "call",
+    id: c.id,
+    timestamp: c.calledAt,
+    outcome: c.outcome,
+    notes: c.notes,
+    auditLinkSent: c.auditLinkSent,
+    actorName: c.partnerName,
+    actorCode: c.partnerCode,
+  }));
+
+  const noteEntries: InteractionEntry[] = notesData.map((n) => ({
+    kind: "note",
+    id: n.id,
+    timestamp: n.created_at,
+    text: n.text,
+    isAdminCallOutcome: n.text.trim().startsWith("Call outcome:"),
+  }));
+
+  return [...callEntries, ...noteEntries].sort((a, b) =>
+    b.timestamp.localeCompare(a.timestamp),
+  );
+}
+
 /** How many calls has this partner logged in the current session
  *  (since their most recent login). Used by the workspace /100 counter.
  *

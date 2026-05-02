@@ -27,15 +27,30 @@ type CallTip = {
   body: string;
 };
 
-type CallHistoryEntry = {
-  id: string;
-  calledAt: string;
-  outcome: string;
-  notes: string | null;
-  auditLinkSent: boolean;
-  partnerName: string;
-  partnerCode: string;
-};
+/**
+ * Unified interaction-history entry. Discriminated union covers both
+ * partner_calls rows (kind="call") and notes-table rows (kind="note").
+ * Admin (Ben) outcomes go to notes; partner outcomes go to partner_calls.
+ * Workspace shows both in one timeline.
+ */
+type InteractionEntry =
+  | {
+      kind: "call";
+      id: string;
+      timestamp: string;
+      outcome: string;
+      notes: string | null;
+      auditLinkSent: boolean;
+      actorName: string;
+      actorCode: string;
+    }
+  | {
+      kind: "note";
+      id: string;
+      timestamp: string;
+      text: string;
+      isAdminCallOutcome: boolean;
+    };
 
 type Props = {
   /**
@@ -120,7 +135,7 @@ type Props = {
   };
   tips: CallTip[];
   mantra: string;
-  callHistory: CallHistoryEntry[];
+  callHistory: InteractionEntry[];
 };
 
 type Outcome =
@@ -817,12 +832,15 @@ ben@bluejayportfolio.com`;
                   : "⤼ Skip this prospect")}
           </button>
 
-          {/* Past calls with this prospect — shown right under the
-              advance button so the rep can scan history before moving
-              on (or reference it mid-call). */}
-          {callHistory.length > 0 && (
-            <CallHistoryPanel entries={callHistory} />
-          )}
+          {/* Interaction history — calls + notes merged. Shown right
+              under the advance button so the rep can scan history
+              before moving on (or reference it mid-call). Always
+              renders; shows an empty state when there's no prior
+              contact instead of disappearing. */}
+          <CallHistoryPanel entries={callHistory} />
+          <p className="text-[10px] text-slate-500 leading-relaxed text-center">
+            Includes both partner calls and admin (Ben) outcomes.
+          </p>
         </aside>
       </div>
 
@@ -1571,23 +1589,85 @@ const OUTCOME_COLOR: Record<string, string> = {
   do_not_call: "text-rose-400",
 };
 
-function CallHistoryPanel({ entries }: { entries: CallHistoryEntry[] }) {
-  const [open, setOpen] = useState(false);
-  const preview = entries[0];
+function CallHistoryPanel({ entries }: { entries: InteractionEntry[] }) {
+  // Default-open when there IS history so the rep sees prior context
+  // immediately. Default-closed only on the empty state to keep the
+  // bottom of the page tight.
+  const [open, setOpen] = useState(entries.length > 0);
 
   function relativeTime(iso: string) {
     const diff = Date.now() - new Date(iso).getTime();
     const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
     if (mins < 60) return `${mins}m ago`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
     const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    return `${months}mo ago`;
   }
+
+  /** For note entries, parse "Call outcome: voicemail\n\nfree-text"
+   *  into { outcome: 'voicemail', body: 'free-text' } so admin notes
+   *  render with the same outcome color/label as partner_calls rows. */
+  function parseNote(text: string): { outcome: string | null; body: string } {
+    const m = text.match(/^Call outcome:\s*(\S[^\n]*)\s*(?:\n\n([\s\S]*))?$/);
+    if (!m) return { outcome: null, body: text };
+    return {
+      outcome: m[1].trim().replace(/\s+/g, "_"),
+      body: (m[2] || "").trim(),
+    };
+  }
+
+  /** Pull the headline outcome + actor for the collapsed-header row. */
+  function summaryFor(e: InteractionEntry): {
+    outcomeLabel: string;
+    outcomeColor: string;
+    actor: string;
+  } {
+    if (e.kind === "call") {
+      return {
+        outcomeLabel: OUTCOME_LABEL[e.outcome] ?? e.outcome,
+        outcomeColor: OUTCOME_COLOR[e.outcome] ?? "text-slate-400",
+        actor: e.actorName.split(/\s+/)[0],
+      };
+    }
+    const parsed = parseNote(e.text);
+    if (parsed.outcome) {
+      return {
+        outcomeLabel: OUTCOME_LABEL[parsed.outcome] ?? parsed.outcome.replace(/_/g, " "),
+        outcomeColor: OUTCOME_COLOR[parsed.outcome] ?? "text-slate-300",
+        actor: "Ben",
+      };
+    }
+    return {
+      outcomeLabel: "Note",
+      outcomeColor: "text-slate-300",
+      actor: "Ben",
+    };
+  }
+
+  // Empty state — still renders so the rep doesn't wonder "where did
+  // the history go?" Tells them this is first contact.
+  if (entries.length === 0) {
+    return (
+      <div className="mt-3 rounded-xl border border-slate-700/50 bg-slate-900/40 px-4 py-3 text-center">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+          Contact history
+        </p>
+        <p className="text-xs text-slate-500 leading-relaxed">
+          No prior interactions — this is the first contact with this prospect.
+        </p>
+      </div>
+    );
+  }
+
+  const preview = entries[0];
+  const previewSummary = summaryFor(preview);
 
   return (
     <div className="mt-3 rounded-xl border border-slate-700/50 bg-slate-900/60 overflow-hidden">
-      {/* Collapsed header — always shows the most recent call */}
       <button
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-800/40 transition-colors"
@@ -1597,11 +1677,15 @@ function CallHistoryPanel({ entries }: { entries: CallHistoryEntry[] }) {
             Contact history
           </span>
           <span className="text-xs text-slate-600">·</span>
-          <span className={`text-xs font-medium truncate ${OUTCOME_COLOR[preview.outcome] ?? "text-slate-400"}`}>
-            {OUTCOME_LABEL[preview.outcome] ?? preview.outcome}
+          <span className="text-[10px] text-slate-500 flex-shrink-0">
+            {entries.length} {entries.length === 1 ? "entry" : "entries"}
+          </span>
+          <span className="text-xs text-slate-600">·</span>
+          <span className={`text-xs font-medium truncate ${previewSummary.outcomeColor}`}>
+            {previewSummary.outcomeLabel}
           </span>
           <span className="text-xs text-slate-600 flex-shrink-0">
-            {relativeTime(preview.calledAt)} by {preview.partnerName.split(/\s+/)[0]}
+            {relativeTime(preview.timestamp)} by {previewSummary.actor}
           </span>
         </div>
         <span className="text-slate-500 flex-shrink-0 ml-2">
@@ -1610,28 +1694,45 @@ function CallHistoryPanel({ entries }: { entries: CallHistoryEntry[] }) {
       </button>
 
       {open && (
-        <ul className="divide-y divide-slate-800/60 border-t border-slate-800/60">
-          {entries.map((e) => (
-            <li key={e.id} className="px-4 py-2.5 text-xs">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <span className={`font-semibold ${OUTCOME_COLOR[e.outcome] ?? "text-slate-300"}`}>
-                    {OUTCOME_LABEL[e.outcome] ?? e.outcome}
-                  </span>
-                  {e.auditLinkSent && (
-                    <span className="ml-2 text-amber-400/80">[audit sent]</span>
-                  )}
-                  {e.notes && (
-                    <p className="text-slate-400 mt-0.5 leading-snug whitespace-pre-wrap">{e.notes}</p>
-                  )}
+        <ul className="divide-y divide-slate-800/60 border-t border-slate-800/60 max-h-[420px] overflow-y-auto">
+          {entries.map((e) => {
+            const s = summaryFor(e);
+            const body =
+              e.kind === "call"
+                ? e.notes
+                : parseNote(e.text).body;
+            const auditTag = e.kind === "call" && e.auditLinkSent;
+            return (
+              <li key={`${e.kind}-${e.id}`} className="px-4 py-2.5 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`font-semibold ${s.outcomeColor}`}>
+                        {s.outcomeLabel}
+                      </span>
+                      {e.kind === "note" && !parseNote(e.text).outcome && (
+                        <span className="text-[9px] uppercase tracking-wide text-slate-500 bg-slate-800/60 rounded px-1.5 py-0.5">
+                          Note
+                        </span>
+                      )}
+                      {auditTag && (
+                        <span className="text-amber-400/80">[audit sent]</span>
+                      )}
+                    </div>
+                    {body && (
+                      <p className="text-slate-400 mt-0.5 leading-snug whitespace-pre-wrap break-words">
+                        {body}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-slate-500 flex-shrink-0 text-right">
+                    <div>{relativeTime(e.timestamp)}</div>
+                    <div className="text-slate-600">{s.actor}</div>
+                  </div>
                 </div>
-                <div className="text-slate-500 flex-shrink-0 text-right">
-                  <div>{relativeTime(e.calledAt)}</div>
-                  <div className="text-slate-600">{e.partnerName.split(/\s+/)[0]}</div>
-                </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
