@@ -55,6 +55,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "reece@danielconsultinggroup.com",
     emoji: "🔋",
   },
+  "itc-quick-attach": {
+    businessLabel: "Innovative Tractor Components (Jake McCall)",
+    clientEmail: "jake@itcquickattach.com",
+    emoji: "🚜",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
