@@ -104,7 +104,10 @@ async function runCron(request?: NextRequest) {
     .in("id", uniqueProspectIds)
     .is("audit_postcard_sent_at", null)
     .eq("manually_managed", false)
-    .not("status", "in", "(paid,dismissed,unsubscribed,bounced,audit_preview_requested)");
+    // audit_marketing excluded: those leads explicitly aren't a $997
+    // pitch fit, so don't burn postcard spend on them — they stay in
+    // the cheaper email sequence instead.
+    .not("status", "in", "(paid,dismissed,unsubscribed,bounced,audit_preview_requested,audit_marketing)");
 
   if (prospectErr) {
     console.error("[audit/postcard-cron] prospect query failed:", prospectErr);

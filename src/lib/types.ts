@@ -79,6 +79,7 @@ export type ProspectStatus =
   | "unsubscribed"
   | "bounced"          // hard-bounce or 3-soft-in-7-days escalation — see Rule 42
   | "audit_lead"              // submitted via /audit lead-magnet; receiving Hormozi 5-email sequence
+  | "audit_marketing"         // audit submitter who isn't website-pitch fit but is digital-presence curious — STAYS in email sequence, OFF the call queue + auto-preview cron
   | "audit_preview_requested" // clicked "Build me a preview" on the audit page; Ben handles manually
   | "fullsystem_inquiry"      // clicked "The Full System" — discovery call booked; Ben handles manually
   | "pro-bono";

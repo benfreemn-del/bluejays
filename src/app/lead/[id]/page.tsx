@@ -177,6 +177,34 @@ export default function LeadPage() {
     }
   };
 
+  /**
+   * Move an inbound audit submitter to the "audit marketing" list.
+   * Use this for leads who submitted via /audit but aren't website-
+   * pitch fit (wrong category, low budget signals, etc.) — they STAY
+   * subscribed to the audit-email sequence (so they keep getting
+   * Hormozi nurture content) but drop off the inbound call queue and
+   * the auto-build-a-preview cron. Different from "Dismiss" which
+   * removes them entirely.
+   */
+  const handleMoveToAuditMarketing = async () => {
+    if (!confirm("Move this lead to the Audit Marketing list? They'll stay in the email sequence but drop off your call queue.")) return;
+    try {
+      await fetch(`/api/prospects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "audit_marketing" }),
+      });
+      await fetch(`/api/notes/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: "Moved to Audit Marketing list — not a website-pitch fit, keep on email sequence only." }),
+      });
+      router.push("/dashboard");
+    } catch {
+      alert("Failed to move");
+    }
+  };
+
   const sendEmail = async () => {
     await fetch(`/api/email/send/${id}`, { method: "POST" });
     loadData();
@@ -338,6 +366,13 @@ export default function LeadPage() {
               className="text-xs px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-50"
             >
               {simLoading ? "Simulating..." : "Simulate Funnel"}
+            </button>
+            <button
+              onClick={handleMoveToAuditMarketing}
+              className="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20"
+              title="Stays in the audit email sequence but drops off the call queue. Use for inbound leads not worth pitching a $997 site to."
+            >
+              📬 Add to Audit Marketing
             </button>
             <button
               onClick={() => setShowDismiss(!showDismiss)}
@@ -722,6 +757,7 @@ export default function LeadPage() {
               <option value="paid">Paid</option>
               <option value="dns_transfer">DNS Transfer (in progress)</option>
               <option value="live">Live ✦</option>
+              <option value="audit_marketing">📬 Audit Marketing (no pitch)</option>
               <option value="dismissed">Dismissed</option>
             </select>
           </div>

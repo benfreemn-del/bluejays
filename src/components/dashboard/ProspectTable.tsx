@@ -164,7 +164,10 @@ export default function ProspectTable({
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
-    if (!statusFilter && p.status === "dismissed") return false;
+    // Hidden by default: dismissed (gone) and audit_marketing (still
+    // on email sequence but not in the call queue — accessible if you
+    // explicitly filter for the status).
+    if (!statusFilter && (p.status === "dismissed" || p.status === "audit_marketing")) return false;
     if (liveOnly && !p.siteLiveAt) return false;
     if (inboundOnly && p.source !== "inbound") return false;
     return true;

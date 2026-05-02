@@ -113,6 +113,11 @@ const statusConfig: Record<
     bg: "bg-violet-900/60",
     text: "text-violet-300",
   },
+  audit_marketing: {
+    label: "Audit Marketing 📬",
+    bg: "bg-indigo-900/60",
+    text: "text-indigo-300",
+  },
   audit_preview_requested: {
     label: "Preview Requested",
     bg: "bg-fuchsia-900/60",
