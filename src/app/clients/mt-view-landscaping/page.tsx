@@ -1124,23 +1124,15 @@ export default function MtViewLandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ 13. NIGHT WORK FEATURE STRIP ═══════════════
-          Template had a video placeholder here. Mt View has no video, so
-          it's repurposed as a feature strip on the night-lighting work —
-          keeps the section's visual rhythm without faking a play button. */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-5xl px-4 md:px-6">
-          <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/15 group">
-            <img src={PHOTOS.night415} alt="Mountain View — landscape with mature trees and integrated lighting" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            <div className="absolute bottom-8 left-8 right-8">
-              <p className="text-[11px] tracking-[0.32em] uppercase font-medium mb-3" style={{ color: PRIMARY_LIGHT }}>Night Work</p>
-              <p className="text-white font-semibold text-2xl md:text-3xl tracking-tight">The yard you spent on, after sunset.</p>
-              <p className="text-slate-300 text-sm mt-2 max-w-lg">Low-voltage LED designed alongside the planting plan — pathway, accent, architectural.</p>
-            </div>
-          </div>
-        </div>
-      </SectionReveal>
+      {/* Removed 2026-05-02: "Night Work" feature strip used DSC00415
+          (a daytime work-van shot) with "after sunset" copy — Ben
+          flagged it as out-of-context. Mt View only has ONE real
+          after-dark photo (DSC00449 / PHOTOS.nightLead) and it's
+          already used in the projects section. Rather than reuse the
+          same photo twice, the night-lighting content stays where
+          the photography supports it (services accordion + projects).
+          If Tim commissions actual night-lighting photography later,
+          this section can come back. */}
 
       {/* ═══════════════ 14. CONTACT — uses MtViewContactForm ═══════════════ */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
