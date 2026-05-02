@@ -37,18 +37,10 @@ import {
 // has no equivalent.
 const IMG_HERO_CUPOLA =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/0855170c-4600-49ea-9523-bee7d1cc6f52/cupolaview3.jpg";
-const IMG_COURTHOUSE_AERIAL =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/c54c2e0e-e06c-48cf-9d43-edb29f4b2660/History_Courthouse+Square+aerial_2.jpg";
-const IMG_GIANT_MURAL =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/463c18c2-7b40-4938-b31d-eb3d17900504/Art_Giant+Mural_lowres.jpg";
-const IMG_SKY_ISLAND =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/6b855feb-d4a6-4434-b3e0-75590d88e90b/Sky+Island.jpg";
 const IMG_CHINATI =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/61c2c138-d073-4dd9-bcd6-5afeef099004/chinati-foundation-inside-1-600x400.jpg";
 const IMG_PRADA =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/382dd722-6e40-43b4-aa81-bc8a48a4d214/Culture_Prada_lowres.jpeg";
-const IMG_STONE_CIRCLE =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/0ff1081e-b492-4bca-b68a-744a154fcb41/Stone+Circle+Activation.jpg";
 const IMG_BORDO =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/fb322c04-3412-495d-92c5-6ca7d478402a/Bordo023.jpg";
 const IMG_SAINT_GEORGE =
@@ -57,15 +49,17 @@ const IMG_EL_COSMICO =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/d1691d06-88a0-4654-90e3-c181fb767a3b/el_cosmicohotel.jpg";
 const IMG_THUNDERBIRD =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/5351fa98-c097-47ab-b5dd-2ad70b7a4539/thunderbird-sign-daylight-1-600x400.jpg";
-const IMG_PAISANO =
-  "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/13fce2ff-85fb-45fd-a6e8-1fffe4814643/paisano-1-600x400hotel.jpg";
 const IMG_LOGO =
   "https://images.squarespace-cdn.com/content/v1/68360adf55bb667dc8c3e5f4/72165222-acd9-4e48-b97e-830ddbfd57d6/MARFA_primary+logo_300ppi.png";
 
 // Last-resort fallbacks — curl-verified, used only where their library
 // did not surface a fitting photo (the night sky and the open highway).
+// Replaced 2026-05-02: photo-1532978879514 was returning 404 from
+// Unsplash. Swapped to a verified Milky Way / starfield photo
+// (curl-checked 200) — better fit anyway for the high-desert
+// dark-sky context this section describes.
 const IMG_NIGHT_SKY =
-  "https://images.unsplash.com/photo-1532978879514-6cae1bbf16e2?w=1600&q=80";
+  "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=80";
 const IMG_DESERT_ROAD =
   "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&q=80";
 
@@ -721,6 +715,39 @@ export default function VisitMarfaPage() {
         </div>
       </section>
 
+      {/* ── E.5 · SECTION BREAK · Prada Marfa full-bleed ──────────
+           Quiet visual rhythm-break between the typographic galleries
+           list and the long Eat section. Prada Marfa is the most-
+           photographed thing in the county; on the page it earns its
+           own moment without a header or caption. */}
+      <section
+        aria-hidden
+        style={{ background: BG_DEEP }}
+        className="relative"
+      >
+        <div className="relative w-full" style={{ aspectRatio: "16 / 7" }}>
+          <img
+            src={IMG_PRADA}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "saturate(0.92) contrast(1.02)" }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(13,9,7,0.18) 0%, rgba(13,9,7,0) 30%, rgba(13,9,7,0) 70%, rgba(13,9,7,0.55) 100%)",
+            }}
+          />
+          <p
+            className="absolute bottom-5 right-6 md:bottom-7 md:right-10 text-[11px] md:text-[12px] uppercase tracking-[0.3em]"
+            style={{ color: "rgba(255,255,255,0.68)" }}
+          >
+            Prada Marfa · 37 mi NW on US-90 · 2005, Elmgreen & Dragset
+          </p>
+        </div>
+      </section>
+
       {/* ── F · WHERE TO EAT (narrative) ─────────────────────────── */}
       <section id="eat" className="relative" style={{ background: BG_DEEP }}>
         <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-32 md:py-40">
@@ -1326,22 +1353,6 @@ export default function VisitMarfaPage() {
         </div>
       </footer>
 
-      {/* Decorative small image used to keep the courthouse aerial
-          in the bundle as a referenced asset for any future use —
-          rendered hidden so it doesn't add visual weight but the
-          import is real. (No-op visually; helps avoid lint for an
-          unused constant.) */}
-      <img
-        src={IMG_COURTHOUSE_AERIAL}
-        alt=""
-        aria-hidden
-        className="hidden"
-      />
-      <img src={IMG_GIANT_MURAL} alt="" aria-hidden className="hidden" />
-      <img src={IMG_SKY_ISLAND} alt="" aria-hidden className="hidden" />
-      <img src={IMG_PRADA} alt="" aria-hidden className="hidden" />
-      <img src={IMG_STONE_CIRCLE} alt="" aria-hidden className="hidden" />
-      <img src={IMG_PAISANO} alt="" aria-hidden className="hidden" />
     </main>
   );
 }
