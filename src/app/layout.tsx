@@ -7,6 +7,7 @@ import FloatingAuditCTA from "@/components/FloatingAuditCTA";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import RetargetingPixels from "@/components/RetargetingPixels";
 import AttributionCapture from "@/components/AttributionCapture";
+import ClarityScript from "@/components/ClarityScript";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -137,6 +138,10 @@ export default function RootLayout({
             any page (audit form, claim flow, get-started, etc.) — not just
             the homepage. Self-gates on env vars + ?embed=1. */}
         <RetargetingPixels />
+        {/* Microsoft Clarity — free heatmaps + session replays. Same
+            ?embed=1 gate as RetargetingPixels so iframe captures don't
+            pollute heatmap data. Loads via afterInteractive (no LCP impact). */}
+        <ClarityScript />
         {/* Captures utm_*, gclid, fbclid, msclkid, ttclid + referrer to
             localStorage on every route so lead forms can read attribution
             even after internal navigation. First-touch wins, 30-day TTL.
