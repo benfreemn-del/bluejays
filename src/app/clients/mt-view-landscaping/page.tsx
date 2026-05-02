@@ -229,6 +229,31 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>;
 }
 
+/**
+ * RippleBorderCard — animated conic-gradient border that slowly rotates.
+ * Lifted from the v2/plumber template's hero card (Ben asked specifically
+ * for the plumber-style overlapping-card hero on Mt View). Tinted with
+ * Mt View's PRIMARY (forest green) + EARTH (warm brown) instead of the
+ * plumber's teal/blue.
+ */
+function RippleBorderCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[2px] overflow-hidden ${className}`}>
+      <motion.div
+        className="absolute inset-0 rounded-2xl"
+        style={{
+          background: `conic-gradient(from 0deg, ${PRIMARY}44, ${EARTH}66, ${PRIMARY}22, transparent, ${PRIMARY}44, ${EARTH}44, ${PRIMARY}66, transparent)`,
+          willChange: "transform",
+        }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="absolute inset-[2px] rounded-2xl" style={{ background: "rgba(15, 26, 15, 0.97)" }} />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
@@ -420,83 +445,119 @@ export default function MtViewLandscapingPage() {
         />
       </div>
 
-      {/* ═══════════════ 1. HERO — FLOATING CARDS OVER GRADIENT ═══════════════ */}
-      <section id="top" className="relative min-h-[100dvh] flex items-center pt-12 pb-12 z-10 overflow-hidden">
-        {/* Rich gradient background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG} 0%, #0a2a12 30%, #0f1a0f 50%, #1a0f0a 70%, ${BG} 100%)` }} />
-          <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.12, filter: "blur(100px)" }} />
-          <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${EARTH} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
-        </div>
+      {/* ═══════════════ 1. HERO — OVERLAPPING CARD (plumber-template style) ═══════════════ */}
+      <section id="top" className="relative min-h-[100dvh] flex items-center pt-28 pb-16 z-10 overflow-hidden">
+        {/* Background gradients — subtler than the floating-cards version */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse at 20% 30%, ${PRIMARY_GLOW} 0%, transparent 60%),
+                          radial-gradient(ellipse at 80% 70%, ${EARTH_GLOW} 0%, transparent 50%)`,
+          }}
+        />
 
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[70vh]">
-            {/* Text */}
-            <div className="lg:col-span-5 space-y-6 z-10">
-              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.2em]" style={{ color: PRIMARY_LIGHT }}>
-                Landscape &amp; Design — Auburn, WA — Since {BUSINESS.established}
-              </motion.p>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl tracking-tighter leading-[0.95] font-bold text-white">
-                <WordReveal text="Pacific Northwest Landscapes Since 1976" />
-              </h1>
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
-                Tim Hunsaker has been building outdoor spaces across King, Pierce, Snohomish &amp; Kittitas counties for nearly fifty years — every discipline run in-house, from the first cleared lot to the last lit pathway.
-              </motion.p>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-                <a href="#contact">
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                    Tell Tim about your project <ArrowRight size={18} weight="bold" />
-                  </MagneticButton>
-                </a>
-                <a href={BUSINESS.phoneHref}>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                    <Phone size={18} weight="duotone" /> {BUSINESS.phoneDisplay}
-                  </MagneticButton>
-                </a>
-              </motion.div>
-            </div>
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6 w-full">
+          <div className="relative flex flex-col lg:flex-row items-center lg:items-stretch gap-8 lg:gap-0">
+            {/* Glass / ripple-border card — overlaps the image on desktop */}
+            <div className="relative z-20 lg:w-[48%] lg:mr-[-8%]">
+              <RippleBorderCard className="h-full">
+                <div className="p-8 md:p-10 lg:p-12 space-y-6">
+                  <motion.p
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ ...spring, delay: 0.1 }}
+                    className="text-sm uppercase tracking-widest"
+                    style={{ color: PRIMARY_LIGHT }}
+                  >
+                    Family-Owned in Western Washington Since {BUSINESS.established}
+                  </motion.p>
 
-            {/* Floating Cards */}
-            <div className="lg:col-span-7 relative hidden md:block" style={{ perspective: 1200 }}>
-              <div className="relative h-[520px]">
-                {heroCards.map((card, i) => {
-                  const positions = [
-                    { top: "0%", left: "5%", rotate: -6, z: 3 },
-                    { top: "12%", left: "35%", rotate: 4, z: 2 },
-                    { top: "30%", left: "10%", rotate: -2, z: 1 },
-                  ];
-                  const p = positions[i];
-                  return (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 60, rotateY: -15 }}
-                      animate={{ opacity: 1, y: 0, rotateY: 0 }}
-                      transition={{ ...spring, delay: 0.3 + i * 0.2 }}
-                      className="absolute"
-                      style={{ top: p.top, left: p.left, zIndex: p.z }}
-                    >
-                      <TiltCard
-                        className="rounded-2xl overflow-hidden border border-white/15 shadow-2xl shadow-black/40"
-                        style={{ transform: `rotate(${p.rotate}deg)` }}
+                  <h1 className="text-4xl md:text-6xl tracking-tighter leading-[1.05] font-bold text-white">
+                    <WordReveal text="Custom Landscapes. Maintained for Life." />
+                  </h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...spring, delay: 0.6 }}
+                    className="text-lg text-slate-400 leading-relaxed max-w-md"
+                  >
+                    From the first concept sketch to the lawn we cut every other Tuesday — Tim
+                    Hunsaker and his crew have built and kept Pacific Northwest landscapes
+                    healthy for nearly fifty years.
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...spring, delay: 0.8 }}
+                    className="flex flex-wrap gap-4"
+                  >
+                    <a href="#contact">
+                      <MagneticButton
+                        className="px-7 py-3.5 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
+                        style={{ background: PRIMARY } as React.CSSProperties}
                       >
-                        <div className="relative w-[280px] h-[200px] md:w-[320px] md:h-[220px]">
-                          <img src={card.src} alt={card.alt} className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                          <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.3)` }} />
-                        </div>
-                      </TiltCard>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                        Free Estimate
+                        <ArrowRight size={18} weight="bold" />
+                      </MagneticButton>
+                    </a>
+                    <a href={BUSINESS.phoneHref}>
+                      <MagneticButton className="px-7 py-3.5 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
+                        <Phone size={18} weight="duotone" />
+                        Call Tim
+                      </MagneticButton>
+                    </a>
+                  </motion.div>
+
+                  {/* Badges below CTAs — recurring-maintenance + family-owned signal */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ ...spring, delay: 1.0 }}
+                    className="flex flex-wrap gap-3 pt-2"
+                  >
+                    {/* Maintenance-route badge — pulses to draw attention because
+                        recurring service is the highest-LTV product Mt View sells */}
+                    <a
+                      href="#maintenance"
+                      className="relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white hover:opacity-90 transition"
+                      style={{ background: `${PRIMARY}33`, border: `1px solid ${PRIMARY}66` }}
+                    >
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: PRIMARY_LIGHT }} />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: PRIMARY_LIGHT }} />
+                      </span>
+                      Maintenance plans available
+                    </a>
+                    <span
+                      className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white"
+                      style={{ background: EARTH_GLOW, border: `1px solid ${EARTH}44` }}
+                    >
+                      <Certificate size={14} weight="bold" style={{ color: EARTH }} />
+                      Family-owned since 1976
+                    </span>
+                  </motion.div>
+                </div>
+              </RippleBorderCard>
             </div>
 
-            {/* Mobile hero image */}
-            <div className="md:hidden">
-              <div className="rounded-2xl overflow-hidden border border-white/15">
-                <img src={PHOTOS.hero} alt="Mountain View landscape — engineered stonework with naturalistic plantings" className="w-full h-[250px] object-cover" />
-              </div>
-            </div>
+            {/* Hero Image — 60% width on desktop, behind the card overlap */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ...spring, delay: 0.3 }}
+              className="relative z-10 lg:w-[60%] rounded-2xl overflow-hidden"
+              style={{ minHeight: 400 }}
+            >
+              <img
+                src={PHOTOS.hero}
+                alt="Mountain View landscape — engineered stonework with naturalistic plantings, Auburn WA"
+                className="w-full h-full object-cover rounded-2xl"
+                style={{ minHeight: 400, maxHeight: 560 }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0f1a0f]/60 rounded-2xl" />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -520,6 +581,122 @@ export default function MtViewLandscapingPage() {
               ))}
             </motion.div>
           </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ 2.5 · MAINTENANCE PLANS — RECURRING-REVENUE PRODUCT ═══════════════
+           This section is intentionally placed BEFORE the design-build services
+           section. Recurring maintenance is the highest-LTV product Mt View sells
+           — capturing a maintenance customer for $200/mo is worth more over five
+           years than a one-time $20k install. The hero badge "Maintenance plans
+           available" anchors here. */}
+      <SectionReveal id="maintenance" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY_LIGHT }}>
+              Already have a yard?
+            </p>
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-[1.05] font-bold text-white mb-5">
+              <WordReveal text="We'll keep it that way." />
+            </h2>
+            <p className="text-slate-400 leading-relaxed">
+              Ongoing care is what keeps a $30,000 install looking like one a decade
+              later. Mt View runs a year-round maintenance route across King, Pierce,
+              Snohomish &amp; Kittitas counties — three plans, all built around your
+              property, all serviced by the same crew that&rsquo;s been doing this since 1976.
+            </p>
+          </div>
+
+          {/* Three-tier maintenance plans — Essentials / Full Care / Estate */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-5"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              {
+                name: "Essentials",
+                cadence: "Weekly or bi-weekly",
+                ideal: "Front-yard homeowners, small lots",
+                features: [
+                  "Mowing, edging, line-trim",
+                  "Blower clean-up of walks &amp; drives",
+                  "Seasonal debris removal",
+                  "Curbside-bag disposal",
+                ],
+                accent: PRIMARY,
+              },
+              {
+                name: "Full Care",
+                cadence: "Weekly · year-round",
+                ideal: "Most clients we install for",
+                features: [
+                  "Everything in Essentials",
+                  "Bed weeding, mulch refresh",
+                  "Pruning &amp; deadheading",
+                  "Spring &amp; fall fertilization",
+                  "Irrigation start-up &amp; winterize",
+                ],
+                accent: PRIMARY_LIGHT,
+                featured: true,
+              },
+              {
+                name: "Estate",
+                cadence: "Custom schedule · 1+ acre",
+                ideal: "Larger properties, custom landscapes",
+                features: [
+                  "Everything in Full Care",
+                  "On-call repairs &amp; touch-ups",
+                  "Seasonal redesign &amp; replanting",
+                  "Lighting maintenance",
+                  "Direct line to Tim",
+                ],
+                accent: EARTH,
+              },
+            ].map((plan, i) => (
+              <motion.div key={i} variants={fadeUp} className="h-full">
+                <GlassCard
+                  className={`h-full p-7 md:p-8 flex flex-col ${plan.featured ? "ring-2 ring-offset-0" : ""}`}
+                  // featured plan gets a subtle ring tinted with its accent
+                >
+                  <div className="flex items-baseline justify-between mb-1">
+                    <span className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: plan.accent }}>
+                      {plan.name}
+                    </span>
+                    {plan.featured && (
+                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold px-2.5 py-1 rounded-full" style={{ background: `${PRIMARY_LIGHT}22`, color: PRIMARY_LIGHT, border: `1px solid ${PRIMARY_LIGHT}44` }}>
+                        Most popular
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-2xl md:text-3xl font-bold text-white mb-1">{plan.cadence}</p>
+                  <p className="text-sm text-slate-400 mb-6">{plan.ideal}</p>
+                  <ul className="space-y-2.5 mb-7 flex-1">
+                    {plan.features.map((f, fi) => (
+                      <li key={fi} className="flex items-start gap-2.5 text-sm text-slate-300">
+                        <CheckCircle size={16} weight="fill" style={{ color: plan.accent }} className="shrink-0 mt-0.5" />
+                        <span dangerouslySetInnerHTML={{ __html: f }} />
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="#contact"
+                    className="block w-full text-center px-5 py-3 rounded-full text-sm font-semibold text-white transition-colors"
+                    style={{ background: plan.featured ? PRIMARY : "rgba(255,255,255,0.08)", border: plan.featured ? "none" : "1px solid rgba(255,255,255,0.15)" }}
+                  >
+                    {plan.featured ? "Join the route" : "Get a quote"}
+                  </a>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <p className="text-center text-xs text-slate-500 mt-8 max-w-2xl mx-auto leading-relaxed">
+            Pricing is per-property — quoted after a free walk-through so we can see
+            the lot before we put numbers on it. Most clients sit at $180&ndash;$420/mo.
+          </p>
         </div>
       </SectionReveal>
 
