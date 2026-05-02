@@ -513,7 +513,7 @@ export default function MtViewLandscapingPage() {
                     Family-Owned in Western Washington Since {BUSINESS.established}
                   </motion.p>
 
-                  <h1 className="text-5xl md:text-7xl lg:text-[80px] xl:text-[92px] tracking-tighter leading-[0.98] font-bold text-white">
+                  <h1 className="text-5xl md:text-7xl lg:text-[84px] xl:text-[96px] tracking-tighter leading-[0.98] font-bold text-white">
                     <WordReveal text="Custom Landscapes. Maintained for Life." />
                   </h1>
 
@@ -583,19 +583,24 @@ export default function MtViewLandscapingPage() {
               </RippleBorderCard>
             </div>
 
-            {/* Hero Image — 60% width on desktop, behind the card overlap */}
+            {/* Hero Image — 60% width on desktop, behind the card overlap.
+                Stretches to match the glass card's natural height (driven by
+                the H1 + subhead + CTAs + badges). Removed maxHeight clamp
+                that was creating the visible "card taller than image" gap
+                where the rectangle bumped into the square. items-stretch
+                on the parent flex makes both children share the tallest
+                child's height now. */}
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...spring, delay: 0.3 }}
-              className="relative z-10 lg:w-[60%] rounded-2xl overflow-hidden"
+              className="relative z-10 lg:w-[60%] rounded-2xl overflow-hidden self-stretch"
               style={{ minHeight: 400 }}
             >
               <img
                 src={PHOTOS.hero}
                 alt="Mountain View landscape — engineered stonework with naturalistic plantings, Auburn WA"
-                className="w-full h-full object-cover rounded-2xl"
-                style={{ minHeight: 400, maxHeight: 560 }}
+                className="absolute inset-0 w-full h-full object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0f1a0f]/60 rounded-2xl" />
             </motion.div>
