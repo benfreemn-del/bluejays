@@ -34,7 +34,6 @@ import {
   Star,
   Lightning,
   ShoppingCart,
-  PlayCircle,
   Crosshair,
   Barbell,
   Brain,
@@ -49,6 +48,7 @@ import {
 import StickyNav from "./sticky-nav";
 import { PhotoZoom, ZoomTrigger } from "./photo-zoom";
 import TrainingDrills from "./training-drills";
+import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
@@ -293,7 +293,11 @@ export default function ZenithSportsPage() {
             </Eyebrow>
 
             <h1
-              className="mt-7 text-[14vw] sm:text-7xl md:text-8xl lg:text-[8.4rem] xl:text-[9.5rem] font-black uppercase leading-[0.88] tracking-tighter text-white"
+              // text-[14vw] was eating the entire mobile viewport with
+              // almost no breathing room next to the px-5 horizontal
+              // padding. Capped to a fixed scale on phones and let it
+              // grow back up on tablet+.
+              className="mt-7 text-[52px] sm:text-7xl md:text-8xl lg:text-[8.4rem] xl:text-[9.5rem] font-black uppercase leading-[0.88] tracking-tighter text-white"
               style={{
                 fontFeatureSettings: '"ss01", "cv11"',
               }}
@@ -326,13 +330,9 @@ export default function ZenithSportsPage() {
                   className="group-hover:translate-x-1 transition-transform"
                 />
               </a>
-              <a
-                href="#meet"
-                className="inline-flex items-center gap-2 border border-white/40 text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white/10 transition"
-              >
-                <PlayCircle size={16} weight="bold" />
-                See it in action
-              </a>
+              {/* Was an anchor to #meet (just scrolled to product copy).
+                  Now opens an actual TEKKY drill video in a modal. */}
+              <VideoCta />
             </div>
           </div>
 

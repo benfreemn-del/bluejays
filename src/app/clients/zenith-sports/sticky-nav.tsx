@@ -63,6 +63,7 @@ export default function StickyNav({
   };
 
   return (
+    <>
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0a1832]/90 border-b border-white/10">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
         <a
@@ -121,15 +122,21 @@ export default function StickyNav({
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open menu"
-            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 text-white hover:bg-white/5 transition"
+            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 text-white hover:bg-white/5 transition cursor-pointer"
           >
             <List size={22} weight="bold" />
           </button>
         </div>
       </div>
-
+    </header>
+    {/* Mobile menu rendered OUTSIDE <header>. The header uses
+        backdrop-blur-md which creates a containing block for
+        position:fixed descendants, so a fixed inset-0 child was
+        constrained to the header's 64–80px height — that's why the
+        page bled through under the menu items. Lifting it out of
+        the header restores true viewport-fixed behaviour. */}
       {open && (
-        <div className="lg:hidden fixed inset-0 z-[60] bg-[#0a1832] flex flex-col">
+        <div className="lg:hidden fixed inset-0 z-[100] bg-[#0a1832] flex flex-col overflow-y-auto">
           <div className="h-16 sm:h-20 px-5 sm:px-8 flex items-center justify-between border-b border-white/10">
             <a
               href="/clients/zenith-sports"
@@ -150,13 +157,13 @@ export default function StickyNav({
               <X size={22} weight="bold" />
             </button>
           </div>
-          <nav className="flex-1 flex flex-col px-5 sm:px-8 py-8 gap-1">
+          <nav className="flex-1 flex flex-col px-5 sm:px-8 py-6 gap-0">
             {MAIN_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`text-[28px] sm:text-[34px] py-3 border-b border-white/10 transition font-bold uppercase tracking-tight ${
+                className={`text-[22px] sm:text-[28px] py-3 border-b border-white/10 transition font-bold uppercase tracking-tight ${
                   isActive(l.label)
                     ? "text-[#a3e635]"
                     : "text-white hover:text-[#a3e635]"
@@ -179,6 +186,6 @@ export default function StickyNav({
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
