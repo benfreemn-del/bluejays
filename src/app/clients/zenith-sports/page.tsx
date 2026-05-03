@@ -33,8 +33,6 @@ import {
   CheckCircle,
   Star,
   Lightning,
-  Target,
-  SoccerBall,
   ShoppingCart,
   PlayCircle,
   Crosshair,
@@ -49,6 +47,8 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 import StickyNav from "./sticky-nav";
+import { PhotoZoom, ZoomTrigger } from "./photo-zoom";
+import TrainingDrills from "./training-drills";
 import InquiryForm from "@/components/clients/InquiryForm";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
@@ -479,11 +479,17 @@ export default function ZenithSportsPage() {
             <article
               className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
             >
-              <div className="relative aspect-[5/4] overflow-hidden bg-slate-100">
+              {/* Native aspect of source photo is 1024x1535 (~2:3 portrait).
+                  Was aspect-[5/4] (landscape) + object-cover, which cropped
+                  the top of Philip's head. Switched to aspect-[4/5] with
+                  object-position top so the framing keeps the full head and
+                  any minor crop comes from the bottom of the chest. */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
                 <img
                   src={PHOTOS.philip}
                   alt="Philip Lund, co-founder of Zenith Sports"
                   className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: "center top" }}
                 />
               </div>
               <div className="p-8 lg:p-10 flex-1 flex flex-col">
@@ -518,11 +524,14 @@ export default function ZenithSportsPage() {
             <article
               className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
             >
-              <div className="relative aspect-[5/4] overflow-hidden bg-slate-100">
+              {/* See Philip card above — same aspect/position fix to keep
+                  Paul's head fully in frame. */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
                 <img
                   src={PHOTOS.paul}
                   alt="Paul Hanson, co-founder of Zenith Sports, with 40+ years in the game"
                   className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: "center top" }}
                 />
               </div>
               <div className="p-8 lg:p-10 flex-1 flex flex-col">
@@ -762,37 +771,57 @@ export default function ZenithSportsPage() {
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center" id="meet">
-            {/* Photo */}
+            {/* Photo — click any of the 3 to zoom into the gallery */}
             <div className="lg:col-span-7 order-2 lg:order-1">
-              <div className="relative">
-                {/* Big primary photo */}
-                <div className="relative aspect-square bg-slate-100 overflow-hidden">
-                  <img
-                    src={PHOTOS.product01}
-                    alt="The TEKKY Advanced Training Ball"
-                    className="absolute inset-0 w-full h-full object-cover"
-                    style={{ filter: "saturate(1.06) contrast(1.04)" }}
-                  />
+              <PhotoZoom
+                images={[
+                  { src: PHOTOS.product01, alt: "The TEKKY Advanced Training Ball" },
+                  { src: PHOTOS.product05, alt: "TEKKY ball — angled view" },
+                  { src: PHOTOS.product07, alt: "TEKKY ball — side panel detail" },
+                ]}
+              >
+                <div className="relative">
+                  {/* Big primary photo */}
+                  <ZoomTrigger
+                    index={0}
+                    ariaLabel="Zoom in on the TEKKY ball"
+                    className="block w-full aspect-square bg-slate-100 overflow-hidden"
+                  >
+                    <img
+                      src={PHOTOS.product01}
+                      alt="The TEKKY Advanced Training Ball"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      style={{ filter: "saturate(1.06) contrast(1.04)" }}
+                    />
+                  </ZoomTrigger>
+                  {/* Floating thumbnail badge */}
+                  <ZoomTrigger
+                    index={1}
+                    ariaLabel="Zoom in on TEKKY angled view"
+                    className="absolute -bottom-6 -right-6 sm:-bottom-10 sm:-right-10 w-32 sm:w-44 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
+                  >
+                    <img
+                      src={PHOTOS.product05}
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </ZoomTrigger>
+                  {/* Floating thumbnail badge 2 */}
+                  <ZoomTrigger
+                    index={2}
+                    ariaLabel="Zoom in on TEKKY side panel"
+                    className="hidden sm:block absolute -top-8 -left-8 w-32 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
+                  >
+                    <img
+                      src={PHOTOS.product07}
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </ZoomTrigger>
                 </div>
-                {/* Floating thumbnail badge */}
-                <div className="absolute -bottom-6 -right-6 sm:-bottom-10 sm:-right-10 w-32 sm:w-44 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden">
-                  <img
-                    src={PHOTOS.product05}
-                    alt=""
-                    aria-hidden
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </div>
-                {/* Floating thumbnail badge 2 */}
-                <div className="hidden sm:block absolute -top-8 -left-8 w-32 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden">
-                  <img
-                    src={PHOTOS.product07}
-                    alt=""
-                    aria-hidden
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </div>
-              </div>
+              </PhotoZoom>
             </div>
 
             {/* Copy */}
@@ -967,86 +996,19 @@ export default function ZenithSportsPage() {
             </div>
           </div>
 
-          {/* WARM UP */}
-          <div className="mb-16">
-            <div className="flex items-center gap-4 mb-8">
-              <div
-                className="text-[10px] tracking-[0.32em] uppercase font-extrabold flex items-center gap-3"
-                style={{ color: ELECTRIC }}
-              >
-                <span className="inline-block w-10 h-px" style={{ background: ELECTRIC }} />
-                01 · Warm Up
-              </div>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {[
-                { name: "Instep Touch", desc: "Soft, repeated taps with the laces — wakes up the ankle and trains rhythm." },
-                { name: "Outside-Foot Gather, Instep Pass", desc: "Trap with the outside, redirect, pass with the laces in one motion." },
-                { name: "1 Touch Instep Pass", desc: "Single-touch passing pattern — no second chances, builds composure." },
-              ].map((d, i) => (
-                <article
-                  key={d.name}
-                  className="group bg-white border border-slate-200 p-7 hover:border-[#1d4ed8] transition relative"
-                >
-                  <div className="text-[44px] font-black tabular-nums leading-none" style={{ color: "#cbd5e1" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <h3 className="mt-4 text-xl font-black uppercase tracking-tight" style={{ color: NAVY_INK }}>
-                    {d.name}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed" style={{ color: INK_SOFT_LIGHT }}>
-                    {d.desc}
-                  </p>
-                  <SoccerBall size={20} weight="fill" className="absolute top-7 right-7" style={{ color: ELECTRIC }} />
-                </article>
-              ))}
-            </div>
-          </div>
-
-          {/* INTERMEDIATE */}
-          <div>
-            <div className="flex items-center gap-4 mb-8">
-              <div
-                className="text-[10px] tracking-[0.32em] uppercase font-extrabold flex items-center gap-3"
-                style={{ color: ELECTRIC }}
-              >
-                <span className="inline-block w-10 h-px" style={{ background: ELECTRIC }} />
-                02 · Intermediate
-              </div>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {[
-                { name: "Tap Tap Drag + La Croqueta", desc: "Two-touch setup into the classic Iniesta croqueta — quick lateral shift." },
-                { name: "Push Pull U Drag with Cone", desc: "Push out, pull back, drag around the cone — game-realistic deception." },
-                { name: "L Drag Roll", desc: "Sole-roll through the L pattern — micro-control under both feet." },
-              ].map((d, i) => (
-                <article
-                  key={d.name}
-                  className="group bg-white border border-slate-200 p-7 hover:border-[#1d4ed8] transition relative"
-                >
-                  <div className="text-[44px] font-black tabular-nums leading-none" style={{ color: "#cbd5e1" }}>
-                    {String(i + 4).padStart(2, "0")}
-                  </div>
-                  <h3 className="mt-4 text-xl font-black uppercase tracking-tight" style={{ color: NAVY_INK }}>
-                    {d.name}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed" style={{ color: INK_SOFT_LIGHT }}>
-                    {d.desc}
-                  </p>
-                  <Target size={20} weight="bold" className="absolute top-7 right-7" style={{ color: ELECTRIC }} />
-                </article>
-              ))}
-            </div>
-          </div>
+          {/* Full drill library — 26 videos across 3 tiers, each card opens
+              its YouTube watch URL in a new tab. See training-drills.tsx for
+              the complete list (scraped from zenithsports.org/pages/training). */}
+          <TrainingDrills />
 
           <div className="mt-16 text-center">
             <a
-              href="https://zenithsports.org/pages/training"
+              href="https://www.youtube.com/@zenithsports.tekky"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border-2 border-[#0a1832] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#0a1832] hover:text-white transition group"
             >
-              Browse the full drill library
+              See more on the TEKKY YouTube channel
               <ArrowUpRight size={16} weight="bold" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
           </div>

@@ -33,6 +33,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 import StickyNav from "../sticky-nav";
+import { PhotoZoom, ZoomTrigger } from "../photo-zoom";
 
 export const metadata: Metadata = {
   title:
@@ -154,44 +155,61 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       className="group bg-white border border-slate-200 hover:border-[#1d4ed8]/40 transition overflow-hidden"
     >
       <div className={`grid lg:grid-cols-2 ${reversed ? "lg:[direction:rtl]" : ""}`}>
-        {/* Photos */}
-        <div className="relative bg-[#f5f3ee] aspect-[4/3] lg:aspect-auto lg:[direction:ltr]">
-          <img
-            src={product.hero}
-            alt={product.name}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "saturate(1.06) contrast(1.04)" }}
-          />
-          {product.badge && (
-            <div
-              className="absolute top-5 left-5 px-3 py-1.5 text-[10px] tracking-[0.22em] uppercase font-extrabold"
-              style={{
-                background: product.badge.color || LIME,
-                color: NAVY_INK,
-              }}
+        {/* Photos — hero + thumbs all share one zoom gallery. Click any
+            of them to open the lightbox at the matching index. */}
+        <PhotoZoom
+          images={[
+            { src: product.hero, alt: product.name },
+            ...product.thumbs.map((t) => ({ src: t, alt: product.name })),
+          ]}
+        >
+          <div className="relative bg-[#f5f3ee] aspect-[4/3] lg:aspect-auto lg:[direction:ltr]">
+            <ZoomTrigger
+              index={0}
+              ariaLabel={`Zoom in on ${product.name}`}
+              className="absolute inset-0 w-full h-full overflow-hidden"
             >
-              {product.badge.label}
-            </div>
-          )}
-          {/* Thumbnail strip */}
-          {product.thumbs.length > 0 && (
-            <div className="absolute bottom-4 left-4 right-4 flex gap-2 overflow-x-auto">
-              {product.thumbs.map((t, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white border border-white/80 shadow overflow-hidden"
-                >
-                  <img
-                    src={t}
-                    alt=""
-                    aria-hidden
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+              <img
+                src={product.hero}
+                alt={product.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                style={{ filter: "saturate(1.06) contrast(1.04)" }}
+              />
+            </ZoomTrigger>
+            {product.badge && (
+              <div
+                className="absolute top-5 left-5 px-3 py-1.5 text-[10px] tracking-[0.22em] uppercase font-extrabold pointer-events-none z-10"
+                style={{
+                  background: product.badge.color || LIME,
+                  color: NAVY_INK,
+                }}
+              >
+                {product.badge.label}
+              </div>
+            )}
+            {/* Thumbnail strip — each thumb opens the lightbox at its
+                position in the gallery (offset by 1 because hero is 0). */}
+            {product.thumbs.length > 0 && (
+              <div className="absolute bottom-4 left-4 right-4 flex gap-2 overflow-x-auto z-10">
+                {product.thumbs.map((t, i) => (
+                  <ZoomTrigger
+                    key={i}
+                    index={i + 1}
+                    ariaLabel={`Zoom in — view ${i + 2}`}
+                    className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white border border-white/80 shadow overflow-hidden hover:border-[#1d4ed8] transition"
+                  >
+                    <img
+                      src={t}
+                      alt=""
+                      aria-hidden
+                      className="w-full h-full object-cover"
+                    />
+                  </ZoomTrigger>
+                ))}
+              </div>
+            )}
+          </div>
+        </PhotoZoom>
 
         {/* Copy */}
         <div className="p-8 sm:p-10 lg:p-14 flex flex-col [direction:ltr]">
