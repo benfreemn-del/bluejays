@@ -75,6 +75,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@greatminds.ae",
     emoji: "🦋",
   },
+  "zenith-sports": {
+    businessLabel: "Zenith Sports (Philip Lund + Paul Hanson)",
+    clientEmail: "info@zenithsports.org",
+    emoji: "⚽",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
