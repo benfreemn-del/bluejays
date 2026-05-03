@@ -65,6 +65,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "contact@visitmarfa.com",
     emoji: "🌵",
   },
+  "wholme-naturopathy": {
+    businessLabel: "Wholme Naturopathic Clinic (Debbie Kaczor)",
+    clientEmail: "debbie@wholmenaturopathy.com.au",
+    emoji: "🌿",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
