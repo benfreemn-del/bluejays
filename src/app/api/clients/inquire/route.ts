@@ -70,6 +70,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "debbie@wholmenaturopathy.com.au",
     emoji: "🌿",
   },
+  "greatminds-ae": {
+    businessLabel: "Great Minds Early Childhood Center (Areti Panagiotou)",
+    clientEmail: "info@greatminds.ae",
+    emoji: "🦋",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
