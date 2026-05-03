@@ -314,7 +314,7 @@ export default function ZenithSportsShopPage() {
   const products: Product[] = [
     {
       id: "tekky-ball",
-      name: "The TEKKY — Advanced Training Ball",
+      name: "The TEKKY® — Advanced Training Ball",
       tagline: "The hero product",
       price: "$59.95",
       priceCents: 5995,
@@ -327,7 +327,7 @@ export default function ZenithSportsShopPage() {
         PHOTOS.ballThumb4,
       ],
       description:
-        "Elevate your game with TEKKY, the ultimate training ball. The smaller, heavier design has been engineered to help players improve technical abilities, control, and comfort on the pitch. Smaller in size yet weighted to FIFA size-5 spec — perfect for ages 5 and up.",
+        "Elevate your game with TEKKY®, the patent-pending technical training accelerator. FIFA Size 3 control. FIFA Size 5 match-day weight. Engineered to help players improve technical ability, touch, and confidence — perfect for ages 5 and up.",
       bullets: [
         "Smaller surface area trains pinpoint touch",
         "Full FIFA-spec weight builds genuine strength",
@@ -339,7 +339,7 @@ export default function ZenithSportsShopPage() {
     },
     {
       id: "grip-socks",
-      name: "TEKKY Grip Socks",
+      name: "TEKKY® Grip Socks",
       tagline: "Footwork foundation",
       price: "$15.00",
       priceCents: 1500,
@@ -347,7 +347,7 @@ export default function ZenithSportsShopPage() {
       hero: PHOTOS.socksWhite,
       thumbs: [PHOTOS.socksBlack],
       description:
-        "Stable footwork starts with stable feet. TEKKY grip socks lock the foot inside the boot — no internal slide, no wasted motion, no blisters from a foot sliding sideways through a turn.",
+        "Stable footwork starts with stable feet. TEKKY® grip socks lock the foot inside the boot — no internal slide, no wasted motion, no blisters from a foot sliding sideways through a turn.",
       bullets: [
         "Internal grip pads at the forefoot and heel",
         "Premium athletic-cotton blend for breathability",
@@ -359,7 +359,7 @@ export default function ZenithSportsShopPage() {
     },
     {
       id: "performance-tee",
-      name: "High Performance TEKKY Training Tee",
+      name: "High Performance TEKKY® Training Tee",
       tagline: "On-pitch identity",
       price: "$17.50",
       priceCents: 1750,
@@ -371,7 +371,7 @@ export default function ZenithSportsShopPage() {
       bullets: [
         "Moisture-wicking high-performance fabric",
         "Athletic cut — no bunching, no twisting",
-        "TEKKY badge embroidered, not printed",
+        "TEKKY® badge embroidered, not printed",
         "Currently 30% off across all colors",
       ],
       variants: "4 colors available",
@@ -437,7 +437,7 @@ export default function ZenithSportsShopPage() {
               className="mt-8 max-w-2xl text-base md:text-xl leading-relaxed"
               style={{ color: "rgba(255,255,255,0.8)" }}
             >
-              The TEKKY ball, grip socks engineered for stable footwork, and
+              The TEKKY® ball, grip socks engineered for stable footwork, and
               high-performance training tees — every checkout runs through
               Zenith Sports&apos; own store.
             </p>
@@ -605,11 +605,11 @@ export default function ZenithSportsShopPage() {
                 className="mt-8 max-w-2xl text-base md:text-lg leading-relaxed"
                 style={{ color: INK_SOFT_LIGHT }}
               >
-                The TEKKY is engineered smaller in size yet weighted to
-                regulation FIFA size-5. The combination forces sharper focus
-                on every touch, builds real foot strength through resistance,
-                and trains the kind of precision US Soccer&apos;s player pipeline
-                has been missing for years.
+                The TEKKY® is engineered with FIFA Size 3 control and Size 5
+                match-day weight. The combination forces sharper focus on
+                every touch, builds real foot strength through resistance,
+                and trains the kind of precision US Soccer&apos;s player
+                pipeline has been missing for years.
               </p>
               <a
                 href="/clients/zenith-sports#about"
@@ -661,7 +661,7 @@ export default function ZenithSportsShopPage() {
                 </div>
               </a>
               <p className="mt-7 max-w-md text-sm leading-relaxed">
-                Building Better Players, One Touch at a Time. The TEKKY is an
+                Building Better Players, One Touch at a Time. The TEKKY® is an
                 innovative training tool designed to reshape the future of US
                 Soccer by building a stronger technical foundation for the
                 next generation of players.
@@ -675,7 +675,7 @@ export default function ZenithSportsShopPage() {
                 <input
                   type="email"
                   name="body"
-                  placeholder="Email for TEKKY drops + drills"
+                  placeholder="Email for TEKKY® drops + drills"
                   className="flex-1 px-4 py-3 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
                 />
                 <button
@@ -695,7 +695,7 @@ export default function ZenithSportsShopPage() {
                 {[
                   { href: "/clients/zenith-sports", label: "Home" },
                   { href: "/clients/zenith-sports#about", label: "About" },
-                  { href: "/clients/zenith-sports#tekky", label: "The TEKKY" },
+                  { href: "/clients/zenith-sports#tekky", label: "The TEKKY®" },
                   { href: "/clients/zenith-sports/shop", label: "Apparel & Shop" },
                   { href: "/clients/zenith-sports#training", label: "Trainings" },
                   { href: "/clients/zenith-sports#contact", label: "Contact" },
@@ -747,7 +747,10 @@ export default function ZenithSportsShopPage() {
           </div>
 
           <div className="mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between text-[11px] tracking-[0.18em] uppercase font-semibold text-white/40">
-            <div>© 2026 — Zenith Sports · All Rights Reserved</div>
+            <div>
+              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] align-top">®</sup>{" "}
+              is a registered trademark · Patent Pending
+            </div>
             <div>
               Site by{" "}
               <a

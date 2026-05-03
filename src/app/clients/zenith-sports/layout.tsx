@@ -6,9 +6,9 @@ import type { Metadata, Viewport } from "next";
  */
 export const metadata: Metadata = {
   title:
-    "Zenith Sports — The TEKKY Ball · Smaller Ball, Bigger Gains · Youth Soccer Training",
+    "Zenith Sports — TEKKY® · Building Better Players, One Touch at a Time · Patent Pending",
   description:
-    "TEKKY by Zenith Sports — an innovative youth soccer training ball, smaller in size yet weighted to FIFA regulation. Build touch, control, and confidence in players ages 5 to high school. Founded by Philip Lund and Paul Hanson.",
+    "TEKKY® by Zenith Sports — a patent-pending technical training accelerator for youth soccer. FIFA Size 3 control, FIFA Size 5 match-day weight. Inspired by European-style development. Founded by Philip Lund and Paul Hanson.",
 };
 
 export const viewport: Viewport = {

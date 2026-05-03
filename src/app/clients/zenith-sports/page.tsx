@@ -288,33 +288,34 @@ export default function ZenithSportsPage() {
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-20 sm:pt-28 lg:pt-36 pb-24 sm:pb-32 lg:pb-44 min-h-[88vh] flex flex-col justify-end">
           <div className="max-w-4xl">
+            {/* Eyebrow + H1 + subhead all rewritten per the
+                TEKKY Unified Brand Voice Guide (2025-05). The doc
+                specifies the EXACT copy for these three lines — they
+                are the anchor of the brand voice framework. */}
             <Eyebrow color={LIME}>
-              TEKKY · An innovative training tool to maximize technical skill
+              Patent-pending technical training accelerator
             </Eyebrow>
 
             <h1
-              // text-[14vw] was eating the entire mobile viewport with
-              // almost no breathing room next to the px-5 horizontal
-              // padding. Capped to a fixed scale on phones and let it
-              // grow back up on tablet+.
-              className="mt-7 text-[52px] sm:text-7xl md:text-8xl lg:text-[8.4rem] xl:text-[9.5rem] font-black uppercase leading-[0.88] tracking-tighter text-white"
+              className="mt-7 text-[44px] sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black uppercase leading-[0.9] tracking-tighter text-white"
               style={{
                 fontFeatureSettings: '"ss01", "cv11"',
               }}
             >
-              Smaller ball.
+              Building better players.
               <br />
-              <span style={{ color: LIME }}>Bigger gains.</span>
+              <span style={{ color: LIME }}>One touch at a time.</span>
             </h1>
 
             <p
               className="mt-8 max-w-2xl text-base md:text-xl leading-relaxed"
               style={{ color: "rgba(255,255,255,0.8)" }}
             >
-              The TEKKY is a youth training ball, engineered smaller than
-              regulation but weighted to FIFA size-5 spec — so every touch is
-              sharper, every pass demands focus, every rep builds real
-              technical strength.
+              TEKKY<sup className="text-[0.55em] align-top">®</sup> is a
+              specialized, patent-pending technical tool designed to
+              accelerate development. Use it alongside your standard ball
+              to build precision, confidence, and strength that transfers
+              directly to match day.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4 items-center">
@@ -336,10 +337,12 @@ export default function ZenithSportsPage() {
             </div>
           </div>
 
-          {/* Bottom strip — ambient stats */}
+          {/* Bottom strip — ambient stats. Updated per brand voice guide:
+              the differentiator is "Size 3 control + Size 5 weight" not just
+              "FIFA regulation weight". That dual-spec is the BAE proof. */}
           <div className="mt-16 sm:mt-20 grid grid-cols-3 gap-6 sm:gap-12 max-w-3xl border-t border-white/15 pt-8">
-            <StatBlock value="5–18" label="Ages built for" />
-            <StatBlock value="FIFA" label="Regulation weight" />
+            <StatBlock value="Size 3" label="Control · feel" />
+            <StatBlock value="Size 5" label="Match-day weight" />
             <StatBlock value="5.0★" label="From verified buyers" />
           </div>
         </div>
@@ -370,7 +373,7 @@ export default function ZenithSportsPage() {
               style={{ color: "rgba(255,255,255,0.7)" }}
             >
               Zenith Sports doesn&apos;t sell another ball. We sell the foundation
-              — three pillars every TEKKY rep is engineered around.
+              — three pillars every TEKKY® rep is engineered around.
             </p>
           </div>
 
@@ -385,20 +388,23 @@ export default function ZenithSportsPage() {
               },
               {
                 no: "02",
-                title: "Designed for development",
+                title: "The Before & After Effect",
                 // Was PHOTOS.product03 — a white-background eComm shot that
                 // visually broke cohesion next to the action shots in cards
                 // 1 & 3. Swapped to slide2 (in-context training photo).
                 photo: PHOTOS.slide2,
                 icon: Barbell,
-                body: "The TEKKY ball is engineered to challenge and inspire. With its smaller size and increased weight, it builds strength and precision in every session — transforming simple drills into impactful development.",
+                // Body rewritten per brand voice guide — the BAE is one of
+                // the 5 required key messages. Train with TEKKY → switch
+                // back → feel the difference.
+                body: "Train with TEKKY®. Switch back to your standard ball. Feel the difference. Players notice their touch is sharper, their first step is faster, their confidence is higher — that's the product proving itself, every session.",
               },
               {
                 no: "03",
                 title: "Made for all ages",
                 photo: PHOTOS.ages,
                 icon: UsersThree,
-                body: "Whether you're coaching five-year-olds or training high school athletes, our products adapt to every stage. TEKKY bridges the gap between fun and performance — ideal for any level of youth soccer.",
+                body: "Whether you're coaching five-year-olds or training high school athletes, our products adapt to every stage. TEKKY® bridges the gap between fun and performance — ideal for any level of youth soccer.",
               },
             ].map((p) => {
               const Icon = p.icon;
@@ -470,7 +476,7 @@ export default function ZenithSportsPage() {
             >
               Zenith Sports was founded by two people who&apos;d watched American
               youth soccer optimize for the wrong things for too long. The
-              TEKKY is what they built to change that.
+              TEKKY® is what they built to change that.
             </p>
           </div>
 
@@ -592,7 +598,7 @@ export default function ZenithSportsPage() {
               className="mt-8 text-base md:text-lg leading-relaxed"
               style={{ color: "rgba(255,255,255,0.7)" }}
             >
-              See the difference TEKKY makes in just weeks of consistent reps.
+              See the difference TEKKY® makes in just weeks of consistent reps.
             </p>
           </div>
 
@@ -675,6 +681,123 @@ export default function ZenithSportsPage() {
         </div>
       </section>
 
+      {/* ─────────────── EUROPEAN-STYLE DEVELOPMENT — REQUIRED on site ───────────────
+          Added per the TEKKY Unified Brand Voice Guide (Section 2, Message
+          3 — explicitly flagged as MISSING from the prior site and REQUIRED
+          on launch). "Technique before tactics. Street football principles.
+          Elite European training methodology brought to your driveway." */}
+      <section
+        className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
+        style={{ background: IVORY }}
+      >
+        {/* Soft texture — diagonal mint stripe */}
+        <div
+          aria-hidden
+          className="absolute -right-32 top-0 bottom-0 w-[60%] opacity-[0.04] pointer-events-none"
+          style={{
+            background:
+              "repeating-linear-gradient(135deg, transparent 0 22px, #0a1832 22px 23px)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div className="lg:col-span-7">
+              <Eyebrow color={ELECTRIC}>Inspired by European-style development</Eyebrow>
+              <h2
+                className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
+                style={{ color: NAVY_INK }}
+              >
+                Technique
+                <br />
+                <span style={{ color: ELECTRIC }}>before tactics.</span>
+              </h2>
+              <p
+                className="mt-8 max-w-2xl text-lg md:text-2xl leading-relaxed"
+                style={{
+                  color: NAVY_INK,
+                  fontFamily:
+                    "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
+                }}
+              >
+                The best youth academies in Europe don&apos;t start with
+                tactics. They start with touch.
+              </p>
+              <p
+                className="mt-6 max-w-2xl text-base md:text-lg leading-relaxed"
+                style={{ color: INK_SOFT_LIGHT }}
+              >
+                TEKKY® brings that methodology to your driveway — built on
+                street football principles and elite European training, where
+                technique is the foundation before tactics. The same approach
+                that produced Iniesta, Modrić, and a generation of players
+                who could solve any moment with their feet.
+              </p>
+
+              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+                {[
+                  { tag: "01", label: "Street football roots" },
+                  { tag: "02", label: "Touch before tactics" },
+                  { tag: "03", label: "Driveway, daily" },
+                ].map((p) => (
+                  <div
+                    key={p.tag}
+                    className="border-l-2 pl-4 py-1"
+                    style={{ borderColor: ELECTRIC }}
+                  >
+                    <div
+                      className="text-[10px] tracking-[0.28em] uppercase font-extrabold"
+                      style={{ color: ELECTRIC }}
+                    >
+                      {p.tag}
+                    </div>
+                    <div
+                      className="mt-1 text-[15px] font-bold tracking-tight"
+                      style={{ color: NAVY_INK }}
+                    >
+                      {p.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Visual — Tekky in action photo, framed editorially */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img
+                  src={PHOTOS.bread}
+                  alt="TEKKY in real training — street football discipline brought home"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ filter: "saturate(1.05) contrast(1.04)" }}
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, transparent 55%, rgba(10,24,50,0.7) 100%)",
+                  }}
+                />
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+                    The European way
+                  </div>
+                  <p className="mt-2 text-base font-medium leading-snug">
+                    Train the touch. The game follows.
+                  </p>
+                </div>
+              </div>
+              {/* Decorative rule */}
+              <div
+                aria-hidden
+                className="hidden lg:block absolute -left-6 top-12 bottom-12 w-px"
+                style={{ background: `${ELECTRIC}40` }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─────────────── BUILT FOR BETTER TRAINING — banner band ─────────────── */}
       <section
         className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
@@ -703,17 +826,21 @@ export default function ZenithSportsPage() {
             <div className="lg:col-span-7">
               <Eyebrow color={LIME}>Built for better training</Eyebrow>
               <h2 className="mt-6 text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] text-white">
-                Smaller ball.
+                Real-game
                 <br />
-                <span style={{ color: LIME }}>Bigger gains.</span>
+                <span style={{ color: LIME }}>feel.</span>
               </h2>
+              {/* Subhead rewritten with the brand voice guide's dual-spec
+                  one-liner: Size 3 control. Size 5 match-day weight. That's
+                  the differentiator — not just "smaller and weighted". */}
               <p
                 className="mt-8 max-w-xl text-base md:text-xl leading-relaxed"
                 style={{ color: "rgba(255,255,255,0.85)" }}
               >
-                TEKKY challenges young players to focus, adjust, and improve —
-                faster than traditional methods. The compact size and extra
-                weight build strength, control, and precision with every rep.
+                FIFA Size 3 control. FIFA Size 5 match-day weight. Real
+                movement that transfers directly to game day. TEKKY®
+                challenges young players to focus, adjust, and improve faster
+                than traditional methods.
               </p>
             </div>
 
@@ -727,7 +854,7 @@ export default function ZenithSportsPage() {
                 {
                   icon: Barbell,
                   title: "Builds strength",
-                  body: "FIFA-spec weight in a tighter form factor.",
+                  body: "Size 5 match-day weight. Size 3 control surface.",
                 },
                 {
                   icon: ChartLineUp,
@@ -826,24 +953,29 @@ export default function ZenithSportsPage() {
 
             {/* Copy */}
             <div className="lg:col-span-5 order-1 lg:order-2">
-              <Eyebrow color={ELECTRIC}>Your game-changer starts here</Eyebrow>
+              <Eyebrow color={ELECTRIC}>Patent-pending · Built by Zenith</Eyebrow>
               <h2
                 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
                 style={{ color: NAVY_INK }}
               >
                 Meet the
                 <br />
-                <span style={{ color: ELECTRIC }}>TEKKY.</span>
+                <span style={{ color: ELECTRIC }}>
+                  TEKKY<sup className="text-[0.45em] align-top">®</sup>.
+                </span>
               </h2>
 
+              {/* Copy refresh — leads with the dual-spec differentiator
+                  (Size 3 control / Size 5 weight) per the brand voice guide. */}
               <p
                 className="mt-8 text-base md:text-lg leading-relaxed"
                 style={{ color: INK_SOFT_LIGHT }}
               >
-                Designed to sharpen technique and elevate performance, the
-                TEKKY ball is the ultimate training tool for developing
-                confident, skillful players. Smaller in size — yet full
-                regulation weight.
+                FIFA Size 3 control. FIFA Size 5 match-day weight. The
+                TEKKY® is a specialized, patent-pending technical tool
+                designed to accelerate development — sharper technique,
+                stronger touch, real results that transfer directly to
+                game day.
               </p>
 
               <div className="mt-10 grid grid-cols-2 gap-6">
@@ -891,9 +1023,134 @@ export default function ZenithSportsPage() {
                   className="inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group"
                 >
                   <ShoppingCart size={16} weight="bold" />
-                  Shop the TEKKY · $59.95
+                  Shop the TEKKY® · $59.95
                   <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── COACH-CREDIBLE (COACH-07) ───────────────
+          Added per the brand voice guide (Section 6 Copy Vault — COACH-07).
+          B2B trust block targeted at coaches, clubs, DOCs. The doc
+          specifically calls out Rec / ECNL / MLS Next as the credibility
+          ladder. Primary CTA for this audience: "Request a Club Demo." */}
+      <section
+        id="coaches"
+        className="relative py-28 sm:py-36 lg:py-40 overflow-hidden"
+        style={{ background: NAVY }}
+      >
+        {/* Subtle grid — credibility / serious tool feel */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.07] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div className="lg:col-span-7">
+              <Eyebrow color={LIME}>For coaches, clubs &amp; DOCs</Eyebrow>
+              <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92] text-white">
+                Coach-credible.
+                <br />
+                <span style={{ color: LIME }}>Not influencer-first.</span>
+              </h2>
+              <p
+                className="mt-8 max-w-2xl text-base md:text-lg leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.78)" }}
+              >
+                TEKKY® was developed by professionals for professionals.
+                Trusted by coaches, clubs, and Directors of Coaching focused
+                on individual technical outcomes — at every level, from Rec
+                to ECNL and MLS Next.
+              </p>
+
+              {/* Tier ladder — the credibility chain coaches recognize */}
+              <div className="mt-10 flex flex-wrap items-center gap-2 sm:gap-3">
+                {["Rec", "Travel", "ECNL", "MLS Next", "College", "Pro pathway"].map((tier) => (
+                  <span
+                    key={tier}
+                    className="inline-flex items-center px-3 py-1.5 text-[11px] tracking-[0.18em] uppercase font-bold border border-white/15 text-white/85 bg-white/[0.04]"
+                  >
+                    {tier}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-3">
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
+                >
+                  Request a club demo
+                  <ArrowRight
+                    size={16}
+                    weight="bold"
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </a>
+                <a
+                  href="#training"
+                  className="inline-flex items-center gap-2 border border-white/30 text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white/5 transition"
+                >
+                  See the drills
+                </a>
+              </div>
+            </div>
+
+            {/* Right column — 3 outcome stat tiles + testimonial-shaped quote */}
+            <div className="lg:col-span-5">
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { v: "10–15", l: "Min / session" },
+                  { v: "Daily", l: "Reps that count" },
+                  { v: "Match-day", l: "Transfer" },
+                ].map((s) => (
+                  <div
+                    key={s.l}
+                    className="border border-white/10 bg-white/[0.03] p-4 text-center"
+                  >
+                    <div className="text-3xl font-black tracking-tighter text-white">
+                      {s.v}
+                    </div>
+                    <div className="mt-1 text-[9px] tracking-[0.22em] uppercase font-bold text-white/55">
+                      {s.l}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                className="mt-5 border-l-2 pl-6 py-2"
+                style={{ borderColor: LIME }}
+              >
+                <Quotes
+                  size={22}
+                  weight="fill"
+                  className="-ml-1 mb-2"
+                  style={{ color: LIME }}
+                />
+                <p
+                  className="text-lg md:text-xl leading-snug italic"
+                  style={{
+                    color: "rgba(255,255,255,0.92)",
+                    fontFamily:
+                      "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
+                  }}
+                >
+                  Designed by professionals. Trusted by families. Built for
+                  your future star.
+                </p>
+                <p className="mt-3 text-[11px] tracking-[0.22em] uppercase font-bold text-[#a3e635]">
+                  The Zenith Sports promise
+                </p>
               </div>
             </div>
           </div>
@@ -950,7 +1207,7 @@ export default function ZenithSportsPage() {
                 "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
             }}
           >
-            TEKKY is how we change that.
+            TEKKY® is how we change that.
           </p>
 
           <p
@@ -974,7 +1231,7 @@ export default function ZenithSportsPage() {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-12 gap-10 items-end mb-16">
             <div className="lg:col-span-7">
-              <Eyebrow color={ELECTRIC}>Train the right way</Eyebrow>
+              <Eyebrow color={ELECTRIC}>#TEKKYTouch · Tuesday hub</Eyebrow>
               <h2
                 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
                 style={{ color: NAVY_INK }}
@@ -985,13 +1242,21 @@ export default function ZenithSportsPage() {
               </h2>
             </div>
             <div className="lg:col-span-5">
+              {/* Copy reframed as the recurring training destination per
+                  brand voice guide PRIORITY 2 — VID-08 hub fed by Touch
+                  Tuesday social posts. New drill weekly = new reason to
+                  return. */}
               <p
                 className="text-base md:text-lg leading-relaxed"
                 style={{ color: INK_SOFT_LIGHT }}
               >
-                A starter library of TEKKY-specific drills, built by Philip
-                and Paul. Run them solo in the backyard, or fold them into
-                team sessions.
+                A growing library of TEKKY®-specific drills, built by Philip
+                and Paul. New drill every Touch Tuesday — run them solo in
+                the driveway, or fold them into team sessions. Tag us with{" "}
+                <span className="font-bold" style={{ color: NAVY_INK }}>
+                  #TEKKYTouch
+                </span>{" "}
+                and you might land in next week&apos;s feature.
               </p>
             </div>
           </div>
@@ -1008,7 +1273,7 @@ export default function ZenithSportsPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border-2 border-[#0a1832] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#0a1832] hover:text-white transition group"
             >
-              See more on the TEKKY YouTube channel
+              See more on the TEKKY® YouTube channel
               <ArrowUpRight size={16} weight="bold" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
           </div>
@@ -1078,8 +1343,8 @@ export default function ZenithSportsPage() {
 
           <div className="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto">
             {[
-              { label: "The TEKKY Ball", reviews: "5.0", count: "5 reviews" },
-              { label: "TEKKY Grip Socks", reviews: "5.0", count: "Verified" },
+              { label: "The TEKKY® Ball", reviews: "5.0", count: "5 reviews" },
+              { label: "TEKKY® Grip Socks", reviews: "5.0", count: "Verified" },
               { label: "Performance Tee", reviews: "5.0", count: "Verified" },
             ].map((p) => (
               <div key={p.label} className="border border-slate-200 bg-white py-6 px-3">
@@ -1231,7 +1496,7 @@ export default function ZenithSportsPage() {
                       Skip the form
                     </div>
                     <div className="text-base font-bold" style={{ color: NAVY_INK }}>
-                      Shop the TEKKY now →
+                      Shop the TEKKY® now →
                     </div>
                   </div>
                 </a>
@@ -1300,7 +1565,7 @@ export default function ZenithSportsPage() {
                     name: "interest",
                     label: "What's brought you to Zenith?",
                     options: [
-                      { value: "tekky-ball", label: "The TEKKY Ball", description: "Individual training ball purchase" },
+                      { value: "tekky-ball", label: "The TEKKY® Ball", description: "Individual training ball purchase" },
                       { value: "team-order", label: "Team / club order", description: "Bulk for a roster, club, or program" },
                       { value: "apparel", label: "Apparel & gear", description: "Tees, grip socks" },
                       { value: "drills", label: "Training drills & curriculum", description: "Coaching resources" },
@@ -1322,7 +1587,7 @@ export default function ZenithSportsPage() {
                     type: "textarea",
                     name: "message",
                     label: "Anything else?",
-                    placeholder: "Roster size, training context, specific questions about TEKKY for your age group — whatever's helpful.",
+                    placeholder: "Roster size, training context, specific questions about TEKKY® for your age group — whatever's helpful.",
                     rows: 5,
                     full: true,
                   },
@@ -1351,7 +1616,7 @@ export default function ZenithSportsPage() {
                 </div>
               </a>
               <p className="mt-7 max-w-md text-sm leading-relaxed">
-                Building Better Players, One Touch at a Time. The TEKKY is an
+                Building Better Players, One Touch at a Time. The TEKKY® is an
                 innovative training tool designed to reshape the future of US
                 Soccer by building a stronger technical foundation for the next
                 generation of players.
@@ -1366,7 +1631,7 @@ export default function ZenithSportsPage() {
                 <input
                   type="email"
                   name="body"
-                  placeholder="Email for TEKKY drops + drills"
+                  placeholder="Email for TEKKY® drops + drills"
                   className="flex-1 px-4 py-3 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
                 />
                 <button
@@ -1387,7 +1652,7 @@ export default function ZenithSportsPage() {
                 {[
                   { href: "/clients/zenith-sports", label: "Home" },
                   { href: "/clients/zenith-sports#about", label: "About" },
-                  { href: "/clients/zenith-sports#tekky", label: "The TEKKY" },
+                  { href: "/clients/zenith-sports#tekky", label: "The TEKKY®" },
                   { href: "/clients/zenith-sports/shop", label: "Apparel & Shop" },
                   { href: "/clients/zenith-sports#training", label: "Trainings" },
                   { href: "/clients/zenith-sports#contact", label: "Contact" },
@@ -1439,8 +1704,14 @@ export default function ZenithSportsPage() {
             </div>
           </div>
 
+          {/* Updated copyright + trademark line per brand voice guide
+              legal notes. Once the patent is granted, swap "Patent Pending"
+              for "Patented." */}
           <div className="mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between text-[11px] tracking-[0.18em] uppercase font-semibold text-white/40">
-            <div>© 2026 — Zenith Sports · All Rights Reserved</div>
+            <div>
+              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] align-top">®</sup>{" "}
+              is a registered trademark · Patent Pending
+            </div>
             <div>
               Site by{" "}
               <a

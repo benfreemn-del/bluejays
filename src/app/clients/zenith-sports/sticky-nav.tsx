@@ -78,7 +78,7 @@ export default function StickyNav({
           <span className="hidden md:block tracking-tight text-[15px] font-bold uppercase text-white leading-tight">
             Zenith Sports
             <span className="block text-[10px] tracking-[0.22em] uppercase text-[#a3e635] font-semibold">
-              The TEKKY Ball
+              The TEKKY<sup className="text-[0.7em] align-top">®</sup> Ball
             </span>
           </span>
         </a>
