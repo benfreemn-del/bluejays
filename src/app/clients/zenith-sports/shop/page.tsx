@@ -602,17 +602,22 @@ export default function ZenithSportsShopPage() {
               </a>
             </div>
             <div className="lg:col-span-5">
+              {/* Clean 2x2 grid (was staggered with mt-8 / -mt-4 / mt-4 which
+                  pushed the photo column noticeably taller than the text
+                  column on desktop, leaving an awkward whitespace gap below
+                  "Read the full story"). Even grid keeps both columns the
+                  same visual weight under items-center. */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="aspect-square overflow-hidden bg-slate-200">
                   <img src={PHOTOS.ballHero} alt="" aria-hidden className="w-full h-full object-cover" />
                 </div>
-                <div className="aspect-square overflow-hidden bg-slate-200 mt-8">
+                <div className="aspect-square overflow-hidden bg-slate-200">
                   <img src={PHOTOS.ballThumb1} alt="" aria-hidden className="w-full h-full object-cover" />
                 </div>
-                <div className="aspect-square overflow-hidden bg-slate-200 -mt-4">
+                <div className="aspect-square overflow-hidden bg-slate-200">
                   <img src={PHOTOS.ballThumb2} alt="" aria-hidden className="w-full h-full object-cover" />
                 </div>
-                <div className="aspect-square overflow-hidden bg-slate-200 mt-4">
+                <div className="aspect-square overflow-hidden bg-slate-200">
                   <img src={PHOTOS.ballThumb3} alt="" aria-hidden className="w-full h-full object-cover" />
                 </div>
               </div>

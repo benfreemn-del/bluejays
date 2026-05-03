@@ -386,7 +386,10 @@ export default function ZenithSportsPage() {
               {
                 no: "02",
                 title: "Designed for development",
-                photo: PHOTOS.product03,
+                // Was PHOTOS.product03 — a white-background eComm shot that
+                // visually broke cohesion next to the action shots in cards
+                // 1 & 3. Swapped to slide2 (in-context training photo).
+                photo: PHOTOS.slide2,
                 icon: Barbell,
                 body: "The TEKKY ball is engineered to challenge and inspire. With its smaller size and increased weight, it builds strength and precision in every session — transforming simple drills into impactful development.",
               },
