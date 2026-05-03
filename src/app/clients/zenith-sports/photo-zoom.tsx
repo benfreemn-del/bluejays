@@ -8,9 +8,9 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import {
-  MagnifyingGlassPlus,
   X,
   CaretLeft,
   CaretRight,
@@ -43,19 +43,56 @@ export function PhotoZoom({
   children: React.ReactNode;
 }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  // Real magnification inside the lightbox. scale=1 fits to viewport,
+  // scale=2.5 doubles+ for inspecting product details. originX/Y are the
+  // click point in image-coordinate-space so the zoom expands FROM where
+  // the user clicked instead of from the center.
+  const [scale, setScale] = useState(1);
+  const [origin, setOrigin] = useState({ x: 50, y: 50 }); // percent
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const close = useCallback(() => setOpenIdx(null), []);
-  const next = useCallback(
-    () => setOpenIdx((i) => (i === null ? null : (i + 1) % images.length)),
-    [images.length],
-  );
-  const prev = useCallback(
-    () =>
-      setOpenIdx((i) =>
-        i === null ? null : (i - 1 + images.length) % images.length,
-      ),
-    [images.length],
-  );
+  const resetZoom = useCallback(() => {
+    setScale(1);
+    setOrigin({ x: 50, y: 50 });
+  }, []);
+  const next = useCallback(() => {
+    resetZoom();
+    setOpenIdx((i) => (i === null ? null : (i + 1) % images.length));
+  }, [images.length, resetZoom]);
+  const prev = useCallback(() => {
+    resetZoom();
+    setOpenIdx((i) =>
+      i === null ? null : (i - 1 + images.length) % images.length,
+    );
+  }, [images.length, resetZoom]);
+
+  // Click on the image: toggle 1x ↔ 2.5x, anchored on where you clicked.
+  // Second click anywhere on a zoomed image resets back to fit-to-viewport.
+  const onImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    e.stopPropagation();
+    if (scale > 1) {
+      resetZoom();
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setOrigin({ x, y });
+    setScale(2.5);
+  };
+
+  // Wheel = continuous zoom (1x to 5x). Trackpads + mice both work.
+  const onWheel = (e: React.WheelEvent<HTMLImageElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setScale((s) => Math.min(5, Math.max(1, s - e.deltaY * 0.005)));
+  };
+
+  // Reset zoom whenever the lightbox closes or the image changes.
+  useEffect(() => {
+    if (openIdx === null) resetZoom();
+  }, [openIdx, resetZoom]);
 
   useEffect(() => {
     if (openIdx === null) return;
@@ -63,6 +100,11 @@ export function PhotoZoom({
       if (e.key === "Escape") close();
       else if (e.key === "ArrowRight") next();
       else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "+" || e.key === "=")
+        setScale((s) => Math.min(5, s + 0.5));
+      else if (e.key === "-" || e.key === "_")
+        setScale((s) => Math.max(1, s - 0.5));
+      else if (e.key === "0") resetZoom();
     };
     window.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
@@ -71,7 +113,7 @@ export function PhotoZoom({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [openIdx, close, next, prev]);
+  }, [openIdx, close, next, prev, resetZoom]);
 
   return (
     <ZoomContext.Provider value={{ open: setOpenIdx }}>
@@ -116,11 +158,23 @@ export function PhotoZoom({
             </button>
           )}
 
+          {/* Click image to toggle 2.5x zoom anchored at click point.
+              Wheel/trackpad scrolls between 1x and 5x. Keyboard +/-/0 also
+              work. transform-origin uses percent so the zoom anchors on
+              the user's click instead of the image center. */}
           <img
+            ref={imgRef}
             src={images[openIdx].src}
             alt={images[openIdx].alt || ""}
-            onClick={(e) => e.stopPropagation()}
-            className="max-w-full max-h-full object-contain cursor-default select-none shadow-2xl"
+            onClick={onImageClick}
+            onWheel={onWheel}
+            style={{
+              transform: `scale(${scale})`,
+              transformOrigin: `${origin.x}% ${origin.y}%`,
+              transition: "transform 180ms ease-out",
+              cursor: scale > 1 ? "zoom-out" : "zoom-in",
+            }}
+            className="max-w-full max-h-full object-contain select-none shadow-2xl"
             draggable={false}
           />
 
@@ -178,26 +232,6 @@ export function ZoomTrigger({
       className={"group cursor-zoom-in " + className}
     >
       {children}
-      <ZoomBadge />
     </button>
-  );
-}
-
-/**
- * ZoomBadge — small "magnifier" pill for hover-reveal on a photo.
- * Usually rendered automatically by ZoomTrigger; exported separately
- * for advanced layouts.
- */
-export function ZoomBadge({ className = "" }: { className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={
-        "pointer-events-none absolute top-3 right-3 z-10 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/85 text-[#0a1832] backdrop-blur shadow-md opacity-0 group-hover:opacity-100 transition " +
-        className
-      }
-    >
-      <MagnifyingGlassPlus size={16} weight="bold" />
-    </span>
   );
 }
