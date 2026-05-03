@@ -46,6 +46,8 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 import StickyNav from "./sticky-nav";
+import StickyMobileCta from "./sticky-mobile-cta";
+import EmailCapture from "./email-capture";
 import { PhotoZoom, ZoomTrigger } from "./photo-zoom";
 import TrainingDrills from "./training-drills";
 import VideoCta from "./video-cta";
@@ -82,6 +84,20 @@ const BUSINESS = {
 
 const LOGO =
   "https://zenithsports.org/cdn/shop/files/Zenith_Sports-02-removebg-preview.png";
+
+/**
+ * BAE (Before & After Effect) hero video — see hero section below for
+ * full context. Set this to the URL of Philip + Paul's BAE clip when
+ * they deliver it; null = fall back to the static hero photo.
+ *
+ * Recommended specs (per brand voice guide PRIORITY 1):
+ *   - Format: mp4 (H.264, AAC), <8MB
+ *   - Length: 6–12 seconds, looped seamlessly
+ *   - Content: player on TEKKY®, switches to standard ball, visibly
+ *     sharper touch within the same shot
+ *   - No audio (autoplay requires muted on iOS/Android anyway)
+ */
+const BAE_VIDEO_SRC: string | null = null;
 
 /* ───────────────────────── PHOTOS (curl-verified 200 — 2026-05-01) ───────────────────────── */
 const PHOTOS = {
@@ -252,19 +268,56 @@ export default function ZenithSportsPage() {
         activePath="main"
       />
 
+      {/* Mobile sticky CTA — appears after the user scrolls past
+          the hero, hides while they're reading the contact form.
+          70%+ of traffic is mobile per the brand voice guide. */}
+      <StickyMobileCta page="main" />
+
       {/* ─────────────── HERO ─────────────── */}
       <section
         className="relative overflow-hidden"
         style={{ background: NAVY }}
       >
-        {/* Background photo, full-bleed, dramatically overlaid */}
+        {/*
+          BAE (Before & After Effect) hero video slot.
+
+          Per the brand voice guide PRIORITY 1: the hero must show a
+          looped, muted, autoplaying clip of a player using TEKKY®, then
+          switching back to a standard ball with visibly sharper touch.
+
+          When Philip + Paul deliver the footage, drop the URL into
+          BAE_VIDEO_SRC below and it'll replace the static photo
+          automatically. Until then, the hero falls back to the
+          existing static photo (which still loads as <video> poster
+          so first paint is identical).
+
+          BAE_VIDEO_SRC accepts:
+            - an mp4 URL on Zenith's CDN  (preferred)
+            - a Vercel Blob URL we host for them
+            - leave null to use the static photo fallback
+        */}
         <div className="absolute inset-0">
-          <img
-            src={PHOTOS.heroBall}
-            alt="The TEKKY ball positioned in front of a soccer goal"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "saturate(1.08) contrast(1.06)" }}
-          />
+          {BAE_VIDEO_SRC ? (
+            <video
+              src={BAE_VIDEO_SRC}
+              poster={PHOTOS.heroBall}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ filter: "saturate(1.08) contrast(1.06)" }}
+            />
+          ) : (
+            <img
+              src={PHOTOS.heroBall}
+              alt="The TEKKY ball positioned in front of a soccer goal"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ filter: "saturate(1.08) contrast(1.06)" }}
+            />
+          )}
           <div
             className="absolute inset-0"
             style={{
@@ -311,7 +364,7 @@ export default function ZenithSportsPage() {
               className="mt-8 max-w-2xl text-base md:text-xl leading-relaxed"
               style={{ color: "rgba(255,255,255,0.8)" }}
             >
-              TEKKY<sup className="text-[0.55em] align-top">®</sup> is a
+              TEKKY<sup className="text-[0.4em] -ml-0.5 top-[-0.6em]">®</sup> is a
               specialized, patent-pending technical tool designed to
               accelerate development. Use it alongside your standard ball
               to build precision, confidence, and strength that transfers
@@ -961,7 +1014,7 @@ export default function ZenithSportsPage() {
                 Meet the
                 <br />
                 <span style={{ color: ELECTRIC }}>
-                  TEKKY<sup className="text-[0.45em] align-top">®</sup>.
+                  TEKKY<sup className="text-[0.32em] -ml-0.5 top-[-0.95em]">®</sup>.
                 </span>
               </h2>
 
@@ -1102,6 +1155,23 @@ export default function ZenithSportsPage() {
                 >
                   See the drills
                 </a>
+              </div>
+
+              {/* Training Guide email capture (gated PDF). Per brand
+                  voice guide PRIORITY 3 — coaches leave with the guide,
+                  we get the list. Routes through inquire endpoint with
+                  intent="Training Guide" so Ben can triage. */}
+              <div className="mt-10 max-w-xl">
+                <EmailCapture
+                  variant="lime"
+                  intent="Training Guide PDF"
+                  badge="Free coach PDF"
+                  headline="Get the TEKKY® coaching guide."
+                  body="Drill progressions, session plans, and the European-style technical curriculum we use with ECNL and MLS Next clubs — sent straight to your inbox."
+                  cta="Send me the guide"
+                  successHeadline="Guide is on the way."
+                  successBody="Check your inbox in the next few minutes. Reply if anything's missing or you want to schedule a club demo."
+                />
               </div>
             </div>
 
@@ -1266,7 +1336,24 @@ export default function ZenithSportsPage() {
               the complete list (scraped from zenithsports.org/pages/training). */}
           <TrainingDrills />
 
-          <div className="mt-16 text-center">
+          {/* Player Challenge email capture — per brand voice guide
+              PRIORITY 3 (email capture at every section exit). Lets
+              non-buyers leave with something + builds the list that
+              powers the 4.5–6% returning-visitor conversion bump. */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <EmailCapture
+              variant="navy"
+              intent="Player Challenge"
+              badge="Player Challenge"
+              headline="Submit your touches. Get featured."
+              body="Every Touch Tuesday, we feature one player from the community. Send us your reps with #TEKKYTouch and we'll send you next week's drill drop, plus a chance to be the featured player."
+              cta="Submit my touches"
+              successHeadline="You're in the rotation."
+              successBody="Watch your inbox — next Touch Tuesday's drill drop is heading your way. Tag @ZenithSports and #TEKKYTouch in your training reels for a feature shot."
+            />
+          </div>
+
+          <div className="mt-12 text-center">
             <a
               href="https://www.youtube.com/@zenithsports.tekky"
               target="_blank"
@@ -1709,7 +1796,7 @@ export default function ZenithSportsPage() {
               for "Patented." */}
           <div className="mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between text-[11px] tracking-[0.18em] uppercase font-semibold text-white/40">
             <div>
-              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] align-top">®</sup>{" "}
+              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.55em] -ml-px top-[-0.4em]">®</sup>{" "}
               is a registered trademark · Patent Pending
             </div>
             <div>

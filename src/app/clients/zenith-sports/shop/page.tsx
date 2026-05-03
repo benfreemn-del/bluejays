@@ -748,7 +748,7 @@ export default function ZenithSportsShopPage() {
 
           <div className="mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between text-[11px] tracking-[0.18em] uppercase font-semibold text-white/40">
             <div>
-              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] align-top">®</sup>{" "}
+              © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.55em] -ml-px top-[-0.4em]">®</sup>{" "}
               is a registered trademark · Patent Pending
             </div>
             <div>
