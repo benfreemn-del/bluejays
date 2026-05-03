@@ -387,15 +387,19 @@ function LeafPattern({ opacity = 0.03 }: { opacity?: number }) {
 // Mt View's actual 10 disciplines, condensed to the 8 most premium-feeling
 // for the accordion section. Native Planting and Night Lights become their
 // own service rows (vs. being folded into Design / Lighting elsewhere).
+// Each service now has a `photo` for the accordion expansion. Mt View's
+// archive doesn't have one unique photo per discipline, so duplicates
+// across services are deliberate and acceptable per Ben's call (one
+// time exception to the no-duplicate rule).
 const services = [
-  { title: "Landscape Design", desc: "Site walk, concept, and a planting plan that respects what's already there before adding to it. The install runs from the same drawing — no surprises between the page and the ground.", icon: PaintBrush },
-  { title: "Hardscapes", desc: "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in a Pacific Northwest rainy season, not just to look right on day one.", icon: Mountains },
-  { title: "Retaining Walls", desc: "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.", icon: Shovel },
-  { title: "Water Features", desc: "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed all arrive together.", icon: Drop },
-  { title: "Irrigation", desc: "System design, install, and repair. Zoned for plant type and exposure, scheduled for our climate, and built to be serviceable years out.", icon: Drop },
-  { title: "Sod Installation", desc: "Grade work, soil amendment, and clean-edge sod laydown. The lawn looks finished the day we leave and roots in for the long haul.", icon: Leaf },
-  { title: "Native & Climate-Smart Planting", desc: "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.", icon: Plant },
-  { title: "Night Lighting", desc: "Low-voltage LED designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.", icon: Lightning },
+  { title: "Landscape Design", desc: "Site walk, concept, and a planting plan that respects what's already there before adding to it. The install runs from the same drawing — no surprises between the page and the ground.", icon: PaintBrush, photo: PHOTOS.kirseLead },
+  { title: "Hardscapes", desc: "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in a Pacific Northwest rainy season, not just to look right on day one.", icon: Mountains, photo: PHOTOS.stone560 },
+  { title: "Retaining Walls", desc: "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.", icon: Shovel, photo: PHOTOS.stoneLead },
+  { title: "Water Features", desc: "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed all arrive together.", icon: Drop, photo: PHOTOS.aquaLead },
+  { title: "Irrigation", desc: "System design, install, and repair. Zoned for plant type and exposure, scheduled for our climate, and built to be serviceable years out.", icon: Drop, photo: PHOTOS.olano024 },
+  { title: "Sod Installation", desc: "Grade work, soil amendment, and clean-edge sod laydown. The lawn looks finished the day we leave and roots in for the long haul.", icon: Leaf, photo: PHOTOS.olano032 },
+  { title: "Native & Climate-Smart Planting", desc: "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.", icon: Plant, photo: PHOTOS.kirse048 },
+  { title: "Night Lighting", desc: "Low-voltage LED designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.", icon: Lightning, photo: PHOTOS.nightLead },
 ];
 
 // Process — 5 steps, voiced for Tim. Site visit → concept → plants → install → aftercare.
@@ -934,7 +938,22 @@ export default function MtViewLandscapingPage() {
                     <AnimatePresence initial={false}>
                       {openService === i && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{svc.desc}</p>
+                          <div className="px-5 pb-5 md:px-6 md:pb-6 pl-[4.5rem] space-y-4">
+                            <p className="text-slate-400 leading-relaxed">{svc.desc}</p>
+                            {/* Context-relevant photo from the Mt View archive.
+                                Per Ben: duplicates across services are OK
+                                here since the archive doesn't have one
+                                unique frame per discipline. */}
+                            <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-[16/9]">
+                              <img
+                                src={svc.photo}
+                                alt={`${svc.title} — Mountain View Landscape & Design`}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                            </div>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
