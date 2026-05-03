@@ -210,6 +210,16 @@ export default function DashboardPage() {
             >
               Agency
             </Link>
+            {/* Per-client task lists — open decisions / asset asks / build
+                items per custom-tier client (Zenith, Mt View, Wholme, etc).
+                Mobile-friendly so Ben can triage from his phone. */}
+            <Link
+              href="/dashboard/clients"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-cyan-300 transition-colors hover:bg-background hover:text-cyan-200"
+              title="Per-client job task lists (decisions, blockers, assets)"
+            >
+              Client Jobs
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">
