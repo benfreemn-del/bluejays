@@ -80,6 +80,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@zenithsports.org",
     emoji: "⚽",
   },
+  "riv-inc": {
+    businessLabel: "RIV Inc. / CibusCloud (Ikkei Uemura + Arjun Sharma)",
+    clientEmail: "info@riv-inc.jp",
+    emoji: "🌾",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
