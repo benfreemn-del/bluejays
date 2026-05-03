@@ -171,7 +171,11 @@ export function ZoomTrigger({
         ctx?.open(index);
       }}
       aria-label={ariaLabel}
-      className={"group relative cursor-zoom-in " + className}
+      // Don't hardcode `relative` here — callers need to be able to pass
+      // their own positioning (e.g. `absolute -bottom-6 -right-6` for the
+      // floating thumbnail badges on the Meet TEKKY layout). Two
+      // conflicting Tailwind position classes leads to undefined wins.
+      className={"group cursor-zoom-in " + className}
     >
       {children}
       <ZoomBadge />
