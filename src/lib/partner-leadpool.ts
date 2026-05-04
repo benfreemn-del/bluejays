@@ -321,6 +321,86 @@ export async function getInteractionHistoryForProspect(
   );
 }
 
+export type RecentActivityEntry = {
+  id: string;
+  calledAt: string;
+  outcome: string;
+  notes: string | null;
+  auditLinkSent: boolean;
+  businessName: string;
+  prospectId: string;
+  phone: string;
+};
+
+/**
+ * Fetch all calls logged by this partner since their last login,
+ * joined with prospect names. Used by the workspace session activity log.
+ */
+export async function getRecentCallsForPartner(
+  partnerId: string,
+  sessionStartIso: string | null,
+  limit = 100,
+): Promise<RecentActivityEntry[]> {
+  if (!isSupabaseConfigured()) return [];
+  let cutoff = sessionStartIso;
+  if (!cutoff) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    cutoff = startOfDay.toISOString();
+  }
+  try {
+    const { data, error } = await supabase
+      .from("partner_calls")
+      .select("id, called_at, outcome, notes, audit_link_sent_at, prospect_id")
+      .eq("partner_id", partnerId)
+      .gte("called_at", cutoff)
+      .order("called_at", { ascending: false })
+      .limit(limit);
+    if (error || !data) return [];
+
+    const prospectIds = [
+      ...new Set(
+        (data as { prospect_id: string }[]).map((r) => r.prospect_id),
+      ),
+    ];
+    const { data: prospects } = await supabase
+      .from("prospects")
+      .select("id, business_name, phone")
+      .in("id", prospectIds);
+    const prospectMap = new Map(
+      (prospects || []).map((p) => [
+        (p as { id: string; business_name: string; phone: string }).id,
+        p as { id: string; business_name: string; phone: string },
+      ]),
+    );
+
+    return (
+      data as {
+        id: string;
+        called_at: string;
+        outcome: string;
+        notes: string | null;
+        audit_link_sent_at: string | null;
+        prospect_id: string;
+      }[]
+    ).map((row) => {
+      const p = prospectMap.get(row.prospect_id);
+      return {
+        id: row.id,
+        calledAt: row.called_at,
+        outcome: row.outcome,
+        notes: row.notes ?? null,
+        auditLinkSent: !!row.audit_link_sent_at,
+        businessName: p?.business_name ?? "Unknown Business",
+        prospectId: row.prospect_id,
+        phone: p?.phone ?? "",
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 /** How many calls has this partner logged in the current session
  *  (since their most recent login). Used by the workspace /100 counter.
  *

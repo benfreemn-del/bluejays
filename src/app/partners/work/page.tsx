@@ -4,8 +4,9 @@ import {
   getNextProspectForPartner,
   countCallsThisSessionForPartner,
   getInteractionHistoryForProspect,
+  getRecentCallsForPartner,
 } from "@/lib/partner-leadpool";
-import type { InteractionEntry } from "@/lib/partner-leadpool";
+import type { InteractionEntry, RecentActivityEntry } from "@/lib/partner-leadpool";
 import {
   fillVars,
   HORMOZI_CALL_SCRIPT,
@@ -59,9 +60,11 @@ export default async function PartnerWorkPage() {
     getNextProspectForPartner(),
   ]);
 
-  const callHistory: InteractionEntry[] = prospect
-    ? await getInteractionHistoryForProspect(prospect.id)
-    : [];
+  const [callHistory, recentActivity]: [InteractionEntry[], RecentActivityEntry[]] =
+    await Promise.all([
+      prospect ? getInteractionHistoryForProspect(prospect.id) : Promise.resolve([]),
+      getRecentCallsForPartner(partner.id, partner.last_login_at ?? null),
+    ]);
 
   // Resolve merge tags. Use the partner's first name for "this is X"
   // self-intro — pulled from partner.name, first token only.
@@ -213,6 +216,7 @@ export default async function PartnerWorkPage() {
       tips={HORMOZI_CALL_TIPS}
       mantra={HORMOZI_MANTRA}
       callHistory={callHistory}
+      recentActivity={recentActivity}
     />
   );
 }

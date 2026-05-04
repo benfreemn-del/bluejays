@@ -52,6 +52,17 @@ type InteractionEntry =
       isAdminCallOutcome: boolean;
     };
 
+type RecentActivityEntry = {
+  id: string;
+  calledAt: string;
+  outcome: string;
+  notes: string | null;
+  auditLinkSent: boolean;
+  businessName: string;
+  prospectId: string;
+  phone: string;
+};
+
 type Props = {
   /**
    * "partner" (default) — used by /partners/work. Partner cookie auth,
@@ -136,6 +147,7 @@ type Props = {
   tips: CallTip[];
   mantra: string;
   callHistory: InteractionEntry[];
+  recentActivity: RecentActivityEntry[];
 };
 
 type Outcome =
@@ -185,7 +197,7 @@ const OUTCOME_META: Record<
 };
 
 export default function CallWorkspace(props: Props) {
-  const { partner, prospect, counters, links, script, tips, mantra, callHistory } = props;
+  const { partner, prospect, counters, links, script, tips, mantra, callHistory, recentActivity } = props;
   const mode = props.mode ?? "partner";
   const isAdmin = mode === "admin";
   const adminQueueNav = props.adminQueueNav;
@@ -655,6 +667,8 @@ ben@bluejayportfolio.com`;
               className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 resize-none"
             />
           </label>
+
+          <RecentActivityPanel entries={recentActivity} />
         </div>
 
         {/* RIGHT: action panel — link send + outcomes */}
@@ -1776,6 +1790,73 @@ function CallHistoryPanel({ entries }: { entries: InteractionEntry[] }) {
             );
           })}
         </ul>
+      )}
+    </div>
+  );
+}
+
+function RecentActivityPanel({ entries }: { entries: RecentActivityEntry[] }) {
+  const [open, setOpen] = useState(true);
+
+  function relativeTime(iso: string) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  }
+
+  return (
+    <div className="mt-5 rounded-xl border border-slate-700/50 bg-slate-900/60 overflow-hidden">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-800/40 transition-colors"
+      >
+        <div className="flex items-center gap-2.5">
+          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+            📋 Session log
+          </span>
+          <span className="text-xs font-mono bg-slate-800 text-slate-400 rounded px-1.5 py-0.5">
+            {entries.length} call{entries.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+        <span className="text-slate-500">{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        entries.length === 0 ? (
+          <p className="px-4 pb-3 text-xs text-slate-500 border-t border-slate-800/60 pt-2">
+            No calls logged yet this session. Log an outcome above to track your work here.
+          </p>
+        ) : (
+          <ul className="divide-y divide-slate-800/60 border-t border-slate-800/60 max-h-80 overflow-y-auto">
+            {entries.map((e) => (
+              <li key={e.id} className="px-4 py-2.5 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="font-semibold text-slate-200 block truncate">
+                      {e.businessName}
+                    </span>
+                    <span className={`${OUTCOME_COLOR[e.outcome] ?? "text-slate-400"} font-medium`}>
+                      {OUTCOME_LABEL[e.outcome] ?? e.outcome}
+                    </span>
+                    {e.auditLinkSent && (
+                      <span className="ml-2 text-amber-400/80">[audit sent]</span>
+                    )}
+                    {e.notes && (
+                      <p className="text-slate-400 mt-0.5 leading-snug truncate">{e.notes}</p>
+                    )}
+                  </div>
+                  <span className="text-slate-500 flex-shrink-0 tabular-nums">
+                    {relativeTime(e.calledAt)}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
       )}
     </div>
   );
