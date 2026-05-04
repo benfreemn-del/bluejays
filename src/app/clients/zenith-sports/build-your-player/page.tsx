@@ -499,6 +499,7 @@ function BuilderStep({
           age={state.age}
           heightInches={state.heightInches}
           skillLevel={state.skillLevel}
+          currentWeeklyHours={state.currentWeeklyHours}
         />
       </div>
     </div>

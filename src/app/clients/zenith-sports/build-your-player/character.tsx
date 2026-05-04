@@ -30,6 +30,7 @@ type Props = {
   age: number;
   heightInches: number;
   skillLevel: number; // 1-5
+  currentWeeklyHours: number; // 0-30 — drives the 10K hour rule bar
 };
 
 type Kit = {
@@ -104,8 +105,19 @@ export default function CharacterBuilder({
   age,
   heightInches,
   skillLevel,
+  currentWeeklyHours,
 }: Props) {
   const kit = KITS[Math.min(Math.max(skillLevel - 1, 0), 4)];
+
+  // 10,000-hour rule visual — at this weekly pace, how many years
+  // until they hit Gladwell's mastery threshold? Plus what fraction
+  // of 10K hours they'd accumulate per year. The bar fills based on
+  // % of 10K covered in a single year of training (caps at ~16% at
+  // max 30 hrs/wk, so we visually scale to a 5,000 cap so the bar
+  // hits ~31% at peak — feels meaningful instead of always tiny).
+  const annualHours = currentWeeklyHours * 52;
+  const yearsToMastery = currentWeeklyHours > 0 ? 10000 / annualHours : null;
+  const barFillPct = Math.min((annualHours / 5000) * 100, 100);
 
   // Player figure scales with height. FEET anchored at FOOT_Y so the
   // floor shadow + ball + stat chips all sit cleanly at the bottom.
@@ -587,6 +599,61 @@ export default function CharacterBuilder({
           </text>
         </g>
       </svg>
+
+      {/* 10,000-hour rule visual — fun proxy for the weekly-training
+          slider. Years-to-mastery is the headline number, the bar
+          fills with intensity, and the kit's primary color carries
+          through so it ties to the tier. */}
+      <div className="absolute bottom-[88px] left-3 right-3 z-10">
+        <div className="rounded-md backdrop-blur p-2.5 border" style={{ background: "rgba(10,24,50,0.55)", borderColor: `${kit.primary}33` }}>
+          <div className="flex items-center justify-between mb-1.5">
+            <div
+              className="text-[8px] tracking-[0.32em] uppercase font-extrabold"
+              style={{ color: `${kit.primary}cc` }}
+            >
+              ⏱ 10,000-hr rule
+            </div>
+            <div className="text-[10px] font-bold tabular-nums">
+              {yearsToMastery === null ? (
+                <span className="text-white/40">— add hours →</span>
+              ) : yearsToMastery > 50 ? (
+                <span className="text-white/55">
+                  <span className="text-white">{yearsToMastery.toFixed(0)}</span> yrs to mastery
+                </span>
+              ) : (
+                <span className="text-white/55">
+                  <span className="text-white">{yearsToMastery.toFixed(1)}</span> yrs to mastery
+                </span>
+              )}
+            </div>
+          </div>
+          {/* Progress bar — intensity proxy. Track shows full 10K
+              ceiling; fill grows as weekly hours grow. */}
+          <div className="h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${barFillPct}%`,
+                background: `linear-gradient(90deg, ${kit.primary} 0%, ${kit.trim} 100%)`,
+              }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-1 text-[8px] tracking-[0.18em] uppercase text-white/45 tabular-nums">
+            <span>
+              <span className="text-white/70 font-bold">
+                {currentWeeklyHours}
+              </span>{" "}
+              hrs / wk
+            </span>
+            <span>
+              <span className="text-white/70 font-bold">
+                {annualHours.toLocaleString()}
+              </span>{" "}
+              hrs / yr
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Stat overlay bottom */}
       <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-1.5">
