@@ -1,6 +1,6 @@
 {
   "name": "Tekky Avatar System",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "client": "Zenith Sports \u2014 TEKKY\u00ae",
   "description": "Pixar-style 3D character avatar cards for the Tekky in-app skill tier system.",
   "total_cards": 15,
@@ -518,7 +518,14 @@
         "cleats",
         "gold_captain_armband"
       ],
-      "size_bytes": 2283182
+      "size_bytes": 2311685
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-04",
+      "change": "Replaced ELITE 25-35 (#15) \u2014 original render had wrong soccer ball; corrected to use the actual Tekky ball."
     }
   ]
 }
