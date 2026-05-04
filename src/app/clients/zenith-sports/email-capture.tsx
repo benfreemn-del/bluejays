@@ -40,6 +40,9 @@ type Props = {
   variant?: Variant;
   /** Optional badge above the headline (eg. "FREE PDF"). */
   badge?: string;
+  /** If set, success state surfaces a CTA button to this URL (e.g. instant
+      delivery of the Training Guide page rather than waiting for an email). */
+  successCta?: { label: string; href: string };
 };
 
 const VARIANT_STYLES: Record<
@@ -128,6 +131,7 @@ export default function EmailCapture({
   cta = "Send it to me",
   variant = "lime",
   badge,
+  successCta,
 }: Props) {
   const s = VARIANT_STYLES[variant];
 
@@ -194,6 +198,16 @@ export default function EmailCapture({
         <p className={`mt-2 text-sm leading-relaxed ${s.successBody}`}>
           {successBody}
         </p>
+        {successCta && (
+          <a
+            href={successCta.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.18em] uppercase ${s.btnBg} ${s.btnText} ${s.btnHover} transition`}
+          >
+            {successCta.label}
+          </a>
+        )}
       </div>
     );
   }

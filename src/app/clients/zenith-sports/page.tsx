@@ -1167,10 +1167,14 @@ export default function ZenithSportsPage() {
                   intent="Training Guide PDF"
                   badge="Free coach PDF"
                   headline="Get the TEKKY® coaching guide."
-                  body="Drill progressions, session plans, and the European-style technical curriculum we use with ECNL and MLS Next clubs — sent straight to your inbox."
+                  body="Drill progressions, session plans, and the European-style technical curriculum we use with ECNL and MLS Next clubs — open it now or save it for later."
                   cta="Send me the guide"
-                  successHeadline="Guide is on the way."
-                  successBody="Check your inbox in the next few minutes. Reply if anything's missing or you want to schedule a club demo."
+                  successHeadline="Guide is ready."
+                  successBody="We've also queued a follow-up so you can save it. Open it now ↓"
+                  successCta={{
+                    label: "Open the guide",
+                    href: "/clients/zenith-sports/training-guide",
+                  }}
                 />
               </div>
             </div>

@@ -139,7 +139,9 @@ Quick share. We just heard back from a parent whose 11-year-old has been on the 
 
 That's typical. You don't need a club program or a $2,000 camp. You need 10–15 minutes a day with the right tool. That's it.
 
-Here's the ball if you want to start: {{shopUrl}}
+Two ways to start:
+  • Grab a TEKKY® and train at home: {{shopUrl}}
+  • Get notified when a TEKKY camp opens near you: {{campsUrl}}
 
 — Philip
 TEKKY® · Patent Pending`,
@@ -198,6 +200,8 @@ Two things I can do for you right now:
 1. Send you our coaching guide — drill progressions, session plans, the European-style technical curriculum we use. Free PDF: {{trainingUrl}}
 
 2. Walk you through a 30-minute club demo (in person if you're in WA, video call anywhere else). Book here: {{contactUrl}}
+
+The coaching guide lives here too if you want to skim it now: {{coachGuideUrl}}
 
 — Philip
 Zenith Sports / TEKKY®`,

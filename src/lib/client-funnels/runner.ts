@@ -55,6 +55,10 @@ function substitutions(lead: ClientLead): Record<string, string> {
     shopUrl: "https://bluejayportfolio.com/clients/zenith-sports/shop",
     trainingUrl: "https://bluejayportfolio.com/clients/zenith-sports#training",
     contactUrl: "https://bluejayportfolio.com/clients/zenith-sports#contact",
+    // Lead-magnet pages (Sprint 3) — usable in any funnel template.
+    campsUrl: "https://bluejayportfolio.com/clients/zenith-sports/camps",
+    coachGuideUrl:
+      "https://bluejayportfolio.com/clients/zenith-sports/training-guide",
   };
 }
 
