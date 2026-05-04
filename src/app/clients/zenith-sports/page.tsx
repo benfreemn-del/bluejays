@@ -210,6 +210,19 @@ function PromoMarquee() {
 }
 
 /* ───────────────────────── REUSABLE BITS ───────────────────────── */
+
+/** Tiny 5-point star for the Build-Your-Player promo halo. Fast,
+    inline-renderable, no external deps. */
+function Star10({ cx, cy, r }: { cx: number; cy: number; r: number }) {
+  const pts: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const rr = i % 2 === 0 ? r : r * 0.42;
+    const a = (i * Math.PI) / 5 - Math.PI / 2;
+    pts.push(`${cx + Math.cos(a) * rr},${cy + Math.sin(a) * rr}`);
+  }
+  return <polygon points={pts.join(" ")} />;
+}
+
 function Eyebrow({
   children,
   color = LIME,
@@ -1419,35 +1432,12 @@ export default function ZenithSportsPage() {
               the complete list (scraped from zenithsports.org/pages/training). */}
           <TrainingDrills />
 
-          {/* "Build Your Player" lead-gen — replaces the old Player
-              Challenge email-capture. Multi-step character builder at
-              /clients/zenith-sports/build-your-player. Captures the
-              lead AND delivers a personalized training plan + kit
-              recommendation. */}
-          <div className="mt-16 max-w-3xl mx-auto">
-            <a
-              href="/clients/zenith-sports/build-your-player"
-              className="group block rounded-2xl border-2 border-[#a3e635]/40 hover:border-[#a3e635] bg-gradient-to-br from-[#0a1832] via-[#0a1832] to-[#1d4ed8]/30 p-7 sm:p-9 transition shadow-[0_0_60px_rgba(163,230,53,0.08)]"
-            >
-              <div className="flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.32em] uppercase font-extrabold text-[#a3e635] mb-3">
-                <span className="inline-block w-6 h-px bg-[#a3e635]" />
-                Free · 60 seconds
-              </div>
-              <h3 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter leading-[0.92] text-white">
-                Build your player.
-                <br />
-                <span className="text-[#a3e635]">Get your custom plan.</span>
-              </h3>
-              <p className="mt-5 text-base text-white/70 leading-relaxed max-w-xl">
-                Tell us about the player. Get a personalized TEKKY®
-                training plan + recommended kit, built by Philip + Paul
-                in real time as you adjust the sliders.
-              </p>
-              <div className="mt-6 inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-3.5 text-[13px] font-extrabold tracking-[0.2em] uppercase rounded-md group-hover:bg-white transition">
-                Build your player →
-              </div>
-            </a>
-          </div>
+          {/* (Build Your Player CTA was previously inside this section
+              as a plain text-only card. Promoted to a dedicated
+              landscape strip immediately after this section — see the
+              "BUILD YOUR PLAYER PROMO STRIP" block below. Strip has a
+              mini character preview which makes the tool feel alive
+              and ties visually to the actual builder UX.) */}
 
           <div className="mt-12 text-center">
             <a
@@ -1460,6 +1450,140 @@ export default function ZenithSportsPage() {
               <ArrowUpRight size={16} weight="bold" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* ─────────────── BUILD YOUR PLAYER PROMO STRIP ───────────────
+          Player + parent parallel to the COACH-07 free PDF. Soft-
+          conversion lead magnet for visitors who aren't ready to buy
+          yet — captures them via a personalized training plan that
+          itself recommends the right TEKKY product mix, so the lead
+          loops back to a sale.
+
+          Sized as a landscape strip, NOT a full-screen hero, so it
+          doesn't slow scroll velocity or eat real estate from the
+          Shop CTAs. Skippable for hot buyers, magnetic for warm
+          leads. Brand-voice doc PRIORITY 3 ("email capture at every
+          section exit") — this fills the player/parent gap. */}
+      <section className="relative py-16 sm:py-20" style={{ background: NAVY_DEEP }}>
+        {/* Background flair — radial glow in TEAL/violet (ball palette) */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at 20% 50%, rgba(59,218,192,0.10) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(138,111,223,0.10) 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+          <a
+            href="/clients/zenith-sports/build-your-player"
+            className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#a3e635]/40 transition-all overflow-hidden"
+          >
+            <div className="grid lg:grid-cols-[auto_1fr_auto] gap-6 sm:gap-10 items-center p-6 sm:p-10">
+              {/* Mini character preview — pure CSS/SVG echo of the
+                  builder character so the promo strip looks alive
+                  without loading the full component */}
+              <div className="hidden sm:flex items-center justify-center w-28 lg:w-32 shrink-0">
+                <svg
+                  viewBox="0 0 100 140"
+                  className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+                  style={{ filter: "drop-shadow(0 8px 16px rgba(59,218,192,0.4))" }}
+                >
+                  {/* Subtle floor */}
+                  <ellipse cx="50" cy="135" rx="28" ry="4" fill="#3BDAC0" opacity="0.3" />
+                  {/* Stars halo */}
+                  <g fill="#fbbf24" opacity="0.85">
+                    <Star10 cx={20} cy={30} r={2.5} />
+                    <Star10 cx={80} cy={28} r={2.5} />
+                    <Star10 cx={15} cy={70} r={2} />
+                    <Star10 cx={85} cy={68} r={2} />
+                    <Star10 cx={50} cy={10} r={2.5} />
+                  </g>
+                  {/* Player */}
+                  <g transform="translate(50, 18)">
+                    {/* Head */}
+                    <ellipse cx="0" cy="8" rx="9" ry="10" fill="#f6d5b5" />
+                    {/* Hair */}
+                    <path d="M -10 6 Q -11 -4 -4 -6 Q 0 -8 4 -6 Q 11 -4 10 6 L 8 2 Q 4 -2 0 -2 Q -4 -2 -8 2 Z" fill="#1a0f08" />
+                    {/* Jersey body — violet (Elite tier) */}
+                    <path
+                      d="M -22 22 L -20 70 L 20 70 L 22 22 Q 16 18 0 22 Q -16 18 -22 22 Z"
+                      fill="#8A6FDF"
+                    />
+                    {/* V-neck */}
+                    <path d="M -6 22 L 0 30 L 6 22 L 5 22 L 0 28 L -5 22 Z" fill="#fbbf24" />
+                    {/* Number */}
+                    <text x="0" y="55" textAnchor="middle" fontSize="14" fontWeight="900" fill="#fbbf24" fontFamily="ui-sans-serif, system-ui">
+                      10
+                    </text>
+                    {/* Shorts */}
+                    <path d="M -20 70 L -22 92 L -6 92 L 0 76 L 6 92 L 20 92 L 22 70 Z" fill="#0a0a1a" />
+                    {/* Legs */}
+                    <rect x="-15" y="92" width="8" height="14" fill="#f6d5b5" />
+                    <rect x="7" y="92" width="8" height="14" fill="#f6d5b5" />
+                    {/* Socks (gold band) */}
+                    <rect x="-15" y="106" width="8" height="10" fill="#0a0a1a" />
+                    <rect x="7" y="106" width="8" height="10" fill="#0a0a1a" />
+                    <rect x="-15" y="107" width="8" height="2" fill="#fbbf24" />
+                    <rect x="7" y="107" width="8" height="2" fill="#fbbf24" />
+                    {/* Cleats */}
+                    <ellipse cx="-11" cy="118" rx="7" ry="3" fill="#0a0a0a" />
+                    <ellipse cx="11" cy="118" rx="7" ry="3" fill="#0a0a0a" />
+                  </g>
+                  {/* Mini ball */}
+                  <circle cx="72" cy="120" r="6" fill="white" stroke="#0a1832" strokeWidth="0.5" />
+                  <circle cx="71" cy="118" r="1.2" fill="#3BDAC0" />
+                  <circle cx="74" cy="120" r="0.8" fill="#2C4DD8" />
+                  <circle cx="71" cy="121" r="0.6" fill="#8A6FDF" />
+                </svg>
+              </div>
+
+              {/* Copy block */}
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-3">
+                  <span
+                    className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] tracking-[0.22em] uppercase font-extrabold rounded-full"
+                    style={{
+                      background: "rgba(59,218,192,0.15)",
+                      border: "1px solid rgba(59,218,192,0.35)",
+                      color: "#3BDAC0",
+                    }}
+                  >
+                    🎮 Free interactive tool
+                  </span>
+                  <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-white/40">
+                    60 seconds
+                  </span>
+                </div>
+                <h3
+                  className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter leading-[0.95] text-white"
+                >
+                  Get a plan built for{" "}
+                  <span style={{ color: "#a3e635" }}>your</span> player.
+                </h3>
+                <p className="mt-3 sm:mt-4 text-[13px] sm:text-[15px] leading-relaxed text-white/70 max-w-xl">
+                  Slide age, height, skill, and weekly training. We email a
+                  personalized plan — drills, hours, and the right TEKKY®
+                  product mix for where they are right now.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <div className="flex lg:flex-col gap-3 lg:items-end">
+                <span
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.18em] uppercase whitespace-nowrap shadow-lg group-hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
+                  style={{ background: LIME, color: NAVY_INK }}
+                >
+                  Build Your Player
+                  <ArrowRight size={14} weight="bold" />
+                </span>
+                <span className="text-[10px] tracking-[0.22em] uppercase text-white/40 self-center lg:text-right">
+                  Parent · Player · Coach
+                </span>
+              </div>
+            </div>
+          </a>
         </div>
       </section>
 
