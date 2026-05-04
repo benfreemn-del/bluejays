@@ -40,6 +40,14 @@ type ClientLead = {
   funnel_step: number | null;
   notes: string | null;
   created_at: string;
+  touch_count?: number;
+  touch_channels?: string[];
+};
+
+type LeadsSummary = {
+  total: number;
+  contacted: number;
+  uncontacted: number;
 };
 
 type ReplyDraft = {
@@ -167,6 +175,7 @@ export default function PortalPage({
   const [owner, setOwner] = useState<Owner | null>(null);
   const [tab, setTab] = useState<Tab>("overview");
   const [leads, setLeads] = useState<ClientLead[]>([]);
+  const [leadsSummary, setLeadsSummary] = useState<LeadsSummary | null>(null);
   const [report, setReport] = useState<Report | null>(null);
   const [subs, setSubs] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
@@ -201,8 +210,13 @@ export default function PortalPage({
   // Per-tab data fetchers.
   const loadLeads = useCallback(async () => {
     const r = await fetch(`/api/client-portal/leads`);
-    const j = (await r.json()) as { ok: boolean; leads?: ClientLead[] };
+    const j = (await r.json()) as {
+      ok: boolean;
+      leads?: ClientLead[];
+      summary?: LeadsSummary;
+    };
     if (j.ok && j.leads) setLeads(j.leads);
+    if (j.ok && j.summary) setLeadsSummary(j.summary);
   }, []);
   const loadReport = useCallback(async () => {
     const r = await fetch(`/api/client-portal/report`);
@@ -315,6 +329,7 @@ export default function PortalPage({
             slug={slug}
             owner={owner}
             leads={leads}
+            leadsSummary={leadsSummary}
             report={report}
             subs={subs}
             onSetTab={setTab}
@@ -322,7 +337,12 @@ export default function PortalPage({
           />
         )}
         {tab === "leads" && (
-          <LeadsTab leads={leads} onStatus={updateLeadStatus} />
+          <LeadsTab
+            leads={leads}
+            summary={leadsSummary}
+            onStatus={updateLeadStatus}
+            onMutate={loadLeads}
+          />
         )}
         {tab === "insights" && <InsightsTab report={report} />}
         {tab === "account" && (
@@ -339,6 +359,7 @@ function OverviewTab({
   slug,
   owner,
   leads,
+  leadsSummary,
   report,
   subs,
   onSetTab,
@@ -347,6 +368,7 @@ function OverviewTab({
   slug: string;
   owner: Owner;
   leads: ClientLead[];
+  leadsSummary: LeadsSummary | null;
   report: Report | null;
   subs: Subscription[];
   onSetTab: (t: Tab) => void;
@@ -418,6 +440,44 @@ function OverviewTab({
           />
         </div>
       </section>
+
+      {/* OUTREACH PROGRESS — bluejays-style "contacted vs not" pulse */}
+      {leadsSummary && leadsSummary.total > 0 && (
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+              Outreach
+            </h2>
+            <button
+              onClick={() => onSetTab("leads")}
+              className="text-[11px] text-slate-400 hover:text-white"
+            >
+              Open leads →
+            </button>
+          </div>
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl font-black tracking-tighter text-emerald-300">
+              {leadsSummary.contacted}
+            </span>
+            <span className="text-sm text-slate-400">
+              of {leadsSummary.total} contacted
+            </span>
+            {leadsSummary.uncontacted > 0 && (
+              <span className="ml-auto text-[11px] tracking-wider uppercase font-bold text-amber-300">
+                {leadsSummary.uncontacted} waiting
+              </span>
+            )}
+          </div>
+          <div className="h-2 bg-slate-800 rounded mt-3 overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 rounded"
+              style={{
+                width: `${(leadsSummary.contacted / leadsSummary.total) * 100}%`,
+              }}
+            />
+          </div>
+        </section>
+      )}
 
       {/* ACTION REQUIRED — the most important part of the dashboard */}
       {report && report.action_required.length > 0 && (
@@ -853,10 +913,14 @@ function InsightsTab({ report }: { report: Report | null }) {
 
 function LeadsTab({
   leads,
+  summary,
   onStatus,
+  onMutate,
 }: {
   leads: ClientLead[];
+  summary: LeadsSummary | null;
   onStatus: (id: string, status: string) => void;
+  onMutate: () => void;
 }) {
   const [filter, setFilter] = useState<string>("all");
   const filtered =
@@ -864,10 +928,13 @@ function LeadsTab({
       ? leads
       : filter === "unread"
         ? leads.filter((l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled")
-        : leads.filter((l) => l.funnel_status === filter);
+        : filter === "uncontacted"
+          ? leads.filter((l) => (l.touch_count ?? 0) === 0)
+          : leads.filter((l) => l.funnel_status === filter);
 
   const counts = {
     all: leads.length,
+    uncontacted: summary?.uncontacted ?? leads.filter((l) => (l.touch_count ?? 0) === 0).length,
     unread: leads.filter((l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled").length,
     enrolled: leads.filter((l) => l.funnel_status === "enrolled").length,
     converted: leads.filter((l) => l.funnel_status === "converted").length,
@@ -878,6 +945,7 @@ function LeadsTab({
       <div className="flex flex-wrap gap-1.5 mb-4">
         {[
           { id: "all", label: "All" },
+          { id: "uncontacted", label: "Uncontacted" },
           { id: "unread", label: "Needs attention" },
           { id: "enrolled", label: "In funnel" },
           { id: "converted", label: "Won" },
@@ -904,7 +972,12 @@ function LeadsTab({
       ) : (
         <div className="space-y-2">
           {filtered.map((l) => (
-            <LeadCard key={l.id} lead={l} onStatus={onStatus} />
+            <LeadCard
+              key={l.id}
+              lead={l}
+              onStatus={onStatus}
+              onMutate={onMutate}
+            />
           ))}
         </div>
       )}
@@ -917,9 +990,11 @@ function LeadsTab({
 function LeadCard({
   lead,
   onStatus,
+  onMutate,
 }: {
   lead: ClientLead;
   onStatus: (id: string, status: string) => void;
+  onMutate: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [notes, setNotes] = useState(lead.notes ?? "");
@@ -930,6 +1005,42 @@ function LeadCard({
   const [draftErr, setDraftErr] = useState<string | null>(null);
   const [ownerCtx, setOwnerCtx] = useState("");
   const [copied, setCopied] = useState(false);
+  const [logging, setLogging] = useState<string | null>(null);
+  const [logMsg, setLogMsg] = useState<string | null>(null);
+  const [enrolling, setEnrolling] = useState(false);
+
+  const logContact = async (channel: "email" | "sms" | "call") => {
+    setLogging(channel);
+    setLogMsg(null);
+    const r = await fetch(`/api/client-portal/leads/${lead.id}/log-contact`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ channel }),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setLogging(null);
+    if (j.ok) {
+      setLogMsg(`✓ ${channel} logged`);
+      onMutate();
+      setTimeout(() => setLogMsg(null), 1800);
+    } else {
+      setLogMsg(j.error || "Couldn't log.");
+    }
+  };
+
+  const enrollInFunnel = async () => {
+    if (!confirm("Start the automated funnel for this lead?")) return;
+    setEnrolling(true);
+    const r = await fetch(`/api/client-portal/leads/${lead.id}/enroll`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setEnrolling(false);
+    if (j.ok) onMutate();
+    else alert(j.error || "Couldn't enroll.");
+  };
 
   const saveNotes = async () => {
     setSavingNotes(true);
@@ -1008,6 +1119,15 @@ function LeadCard({
                 📝 note
               </span>
             )}
+            {(lead.touch_count ?? 0) > 0 ? (
+              <span className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300">
+                ✓ contacted · {lead.touch_count}
+              </span>
+            ) : (
+              <span className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">
+                · uncontacted
+              </span>
+            )}
           </div>
           <div className="mt-1.5 flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
             {lead.email && <span>✉ {lead.email}</span>}
@@ -1032,36 +1152,90 @@ function LeadCard({
 
       {expanded && (
         <div className="border-t border-slate-800 p-4 space-y-4">
-          {/* Quick contact */}
-          <div className="flex flex-wrap gap-2">
-            {lead.email && (
-              <a
-                href={`mailto:${lead.email}`}
-                className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
-              >
-                ✉ Email
-              </a>
-            )}
-            {lead.phone && (
-              <>
+          {/* Contact + log — clicking opens the native handler AND records
+              the touch in client_lead_messages so the "Contacted" stat
+              counts it. Tap "Just log it" to record without opening
+              email/SMS app (e.g. when you've already reached out). */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+                Contact &amp; log
+              </label>
+              {logMsg && (
+                <span className="text-[10px] text-emerald-400">{logMsg}</span>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {lead.email && (
                 <a
-                  href={`tel:${lead.phone}`}
+                  href={`mailto:${lead.email}`}
+                  onClick={() => logContact("email")}
                   className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
                 >
-                  ☎ Call
+                  ✉ Email {logging === "email" && "…"}
                 </a>
-                <a
-                  href={`sms:${lead.phone}`}
-                  className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+              )}
+              {lead.phone && (
+                <>
+                  <a
+                    href={`tel:${lead.phone}`}
+                    onClick={() => logContact("call")}
+                    className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+                  >
+                    ☎ Call {logging === "call" && "…"}
+                  </a>
+                  <a
+                    href={`sms:${lead.phone}`}
+                    onClick={() => logContact("sms")}
+                    className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+                  >
+                    💬 Text {logging === "sms" && "…"}
+                  </a>
+                </>
+              )}
+            </div>
+            <div className="flex gap-1 mt-2">
+              <span className="text-[10px] text-slate-500 self-center mr-1">
+                Just log it:
+              </span>
+              {lead.email && (
+                <button
+                  onClick={() => logContact("email")}
+                  disabled={logging !== null}
+                  className="text-[10px] font-bold text-slate-400 hover:text-white border border-slate-700 px-2 py-0.5 rounded disabled:opacity-50"
                 >
-                  💬 Text
-                </a>
-              </>
+                  ✉ email
+                </button>
+              )}
+              {lead.phone && (
+                <>
+                  <button
+                    onClick={() => logContact("call")}
+                    disabled={logging !== null}
+                    className="text-[10px] font-bold text-slate-400 hover:text-white border border-slate-700 px-2 py-0.5 rounded disabled:opacity-50"
+                  >
+                    ☎ call
+                  </button>
+                  <button
+                    onClick={() => logContact("sms")}
+                    disabled={logging !== null}
+                    className="text-[10px] font-bold text-slate-400 hover:text-white border border-slate-700 px-2 py-0.5 rounded disabled:opacity-50"
+                  >
+                    💬 text
+                  </button>
+                </>
+              )}
+            </div>
+            {(lead.touch_channels?.length ?? 0) > 0 && (
+              <div className="mt-2 text-[10px] text-slate-500">
+                History: {lead.touch_count} touch{lead.touch_count === 1 ? "" : "es"}{" "}
+                ({lead.touch_channels?.join(", ")})
+              </div>
             )}
           </div>
 
-          {/* Status flips */}
-          <div className="flex flex-wrap gap-1">
+          {/* Status flips + manual enroll */}
+          <div className="flex flex-wrap gap-1 items-center">
             {["enrolled", "paused", "responded", "converted"].map((s) => (
               <button
                 key={s}
@@ -1076,6 +1250,16 @@ function LeadCard({
                 {s === "converted" ? "Won" : s}
               </button>
             ))}
+            {lead.funnel_status !== "enrolled" && (
+              <button
+                onClick={enrollInFunnel}
+                disabled={enrolling}
+                className="ml-auto text-[10px] tracking-wider uppercase font-bold px-2.5 py-1 rounded bg-blue-500 hover:bg-blue-400 text-white disabled:opacity-60"
+                title="Kick off the automated email/SMS sequence for this lead."
+              >
+                {enrolling ? "Enrolling…" : "▶ Start funnel"}
+              </button>
+            )}
           </div>
 
           {/* Notes */}

@@ -82,22 +82,42 @@ fills in parallel with the showcase build:
 - Customer ID (10-digit, e.g. `123-456-7890`)
 - GA4 Measurement ID (`G-XXXXXXXXX`) — create a property if needed
 
+**Microsoft Clarity (FREE — request day 1):**
+- Sign in at https://clarity.microsoft.com/ (Microsoft / Google account)
+- Create a new project, name = client business
+- Site URL = the showcase URL (`https://bluejayportfolio.com/clients/{slug}`)
+- Copy the 10-char Project ID — send to Ben
+- Gives us free heatmaps + session recordings + dead-clicks → fuels
+  the Hyperloop weekly UX optimization loop
+
+**Shopify (if e-commerce):**
+- Add Ben as Staff member with View Orders/Products/Customers/Marketing
+  permissions, OR install our private Custom App
+- Confirm storefront URL
+- Once connected, portal Insights tab shows live revenue/AOV/repeat-rate
+
 **Stripe (optional):**
 - Only if processing payments through us. Add Ben as account user OR
   share a Stripe Connect account ID + restricted key.
 
-Once received, set Vercel env vars (per-client prefix):
+Once received, set Vercel env vars (per-client prefix — slug uppercase
+with hyphens replaced by underscores, e.g. `ZENITH_SPORTS_*`):
 ```
+{SLUG}_CLARITY_ID=...
 {SLUG}_META_PIXEL_ID=...
 {SLUG}_META_CAPI_TOKEN=...
 {SLUG}_META_AD_ACCOUNT_ID=act_...
 {SLUG}_GA_MEASUREMENT_ID=G-...
+{SLUG}_GOOGLE_ADS_ID=AW-...
 {SLUG}_GOOGLE_ADS_CUSTOMER_ID=...
 {SLUG}_TWILIO_NUMBER=+1...
 ```
 
-The pixel + tag scripts auto-load on `/clients/{slug}/*` once the env
-is set — no code changes needed (see `src/components/ClientTrackingScripts.tsx`).
+The Clarity + pixel + tag scripts all auto-load on `/clients/{slug}/*`
+once the envs are set — no code changes needed. Wired through
+`src/components/client-tracking-scripts.tsx`, configured in
+`src/lib/client-tracking.ts`. Each tracker is independent — missing
+envs simply omit that script.
 
 ---
 

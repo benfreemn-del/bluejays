@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 
 /**
  * Layout for /clients/zenith-sports. Houses metadata that the page
  * itself can't export — the page uses client components nested inside.
+ *
+ * Tracking stack (Clarity, Meta Pixel, GA4) loads via
+ * ClientTrackingScripts — each individual tracker is gated on its own
+ * env var, so missing vars simply omit the script (no errors).
  */
 export const metadata: Metadata = {
   title:
@@ -20,5 +25,10 @@ export default function ZenithSportsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <ClientTrackingScripts slug="zenith-sports" />
+      {children}
+    </>
+  );
 }
