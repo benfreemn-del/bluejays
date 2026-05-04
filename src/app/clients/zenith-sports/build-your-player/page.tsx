@@ -457,7 +457,7 @@ function BuilderStep({
             value={state.heightInches}
             onChange={(v) => update("heightInches", v)}
             min={36}
-            max={72}
+            max={84}
             step={1}
             display={`${Math.floor(state.heightInches / 12)}'${state.heightInches % 12}"`}
           />
@@ -479,7 +479,7 @@ function BuilderStep({
             value={state.currentWeeklyHours}
             onChange={(v) => update("currentWeeklyHours", v)}
             min={0}
-            max={10}
+            max={30}
             step={1}
             display={`${state.currentWeeklyHours} hrs / wk`}
           />
