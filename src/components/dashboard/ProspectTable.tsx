@@ -57,10 +57,15 @@ function getInitialDraft(prospect: Prospect): NoteDraft {
 }
 
 function getThemedPreviewHref(prospect: Prospect) {
-  // Custom-tier prospects have a real hand-built site at customSiteUrl
-  // (e.g. lcautism-coalition.vercel.app). No themed-device preview exists
-  // for those — the "preview" IS their real live site.
-  if (prospect.pricingTier === "custom" && prospect.customSiteUrl) {
+  // Custom-tier AND fullsystem-tier (AI Package buyers) prospects have
+  // a real hand-built site at customSiteUrl (e.g. /clients/zenith-sports).
+  // No themed-device preview exists for those — the "preview" IS their
+  // real live site.
+  if (
+    (prospect.pricingTier === "custom" ||
+      prospect.pricingTier === "fullsystem") &&
+    prospect.customSiteUrl
+  ) {
     return prospect.customSiteUrl;
   }
   const theme = prospect.selectedTheme || prospect.aiThemeRecommendation || "dark";
@@ -68,7 +73,9 @@ function getThemedPreviewHref(prospect: Prospect) {
 }
 
 function hasPreviewAvailable(prospect: Prospect): boolean {
-  if (prospect.pricingTier === "custom") return !!prospect.customSiteUrl;
+  if (prospect.pricingTier === "custom" || prospect.pricingTier === "fullsystem") {
+    return !!prospect.customSiteUrl;
+  }
   return !!prospect.generatedSiteUrl;
 }
 
@@ -933,18 +940,49 @@ export default function ProspectTable({
                       })()}
                       {hasPreviewAvailable(prospect) ? (
                         <>
-                          <a
-                            href={getThemedPreviewHref(mergedProspect)}
-                            target={prospect.pricingTier === "custom" ? "_blank" : undefined}
-                            rel={prospect.pricingTier === "custom" ? "noopener noreferrer" : undefined}
-                            className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
-                            title={prospect.pricingTier === "custom" ? "Open live custom site" : "Preview desktop & mobile"}
-                          >
-                            {prospect.pricingTier === "custom" ? "View Site" : "Preview"}
-                          </a>
+                          {(() => {
+                            // custom + fullsystem both have a real live
+                            // site at customSiteUrl — open in new tab,
+                            // labeled "View Site". Other tiers get the
+                            // themed-device preview.
+                            const isLiveSite =
+                              prospect.pricingTier === "custom" ||
+                              prospect.pricingTier === "fullsystem";
+                            return (
+                              <a
+                                href={getThemedPreviewHref(mergedProspect)}
+                                target={isLiveSite ? "_blank" : undefined}
+                                rel={isLiveSite ? "noopener noreferrer" : undefined}
+                                className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors ${
+                                  prospect.pricingTier === "fullsystem"
+                                    ? "bg-amber-300/15 text-amber-300 hover:bg-amber-300/25 border border-amber-300/30"
+                                    : "bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20"
+                                }`}
+                                title={
+                                  isLiveSite
+                                    ? "Open live custom site"
+                                    : "Preview desktop & mobile"
+                                }
+                              >
+                                {isLiveSite ? "View Site" : "Preview"}
+                              </a>
+                            );
+                          })()}
                           <button
                             onClick={async () => {
-                              const url = getShortPreviewUrl(prospect);
+                              // For custom + fullsystem prospects with a
+                              // real live showcase site, copy the FULL URL
+                              // (not the short preview) so the recipient
+                              // lands directly on the bespoke site.
+                              const isLiveSite =
+                                (prospect.pricingTier === "custom" ||
+                                  prospect.pricingTier === "fullsystem") &&
+                                prospect.customSiteUrl;
+                              const url = isLiveSite
+                                ? (prospect.customSiteUrl?.startsWith("http")
+                                    ? prospect.customSiteUrl
+                                    : `https://bluejayportfolio.com${prospect.customSiteUrl}`)
+                                : getShortPreviewUrl(prospect);
                               try {
                                 await navigator.clipboard.writeText(url);
                               } catch {
