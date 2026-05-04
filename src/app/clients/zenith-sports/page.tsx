@@ -54,6 +54,7 @@ import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
 import ClientTrackingScripts from "@/components/ClientTrackingScripts";
 import BluejayLogo from "@/components/BluejayLogo";
+import Image from "next/image";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -210,18 +211,6 @@ function PromoMarquee() {
 }
 
 /* ───────────────────────── REUSABLE BITS ───────────────────────── */
-
-/** Tiny 5-point star for the Build-Your-Player promo halo. Fast,
-    inline-renderable, no external deps. */
-function Star10({ cx, cy, r }: { cx: number; cy: number; r: number }) {
-  const pts: string[] = [];
-  for (let i = 0; i < 10; i++) {
-    const rr = i % 2 === 0 ? r : r * 0.42;
-    const a = (i * Math.PI) / 5 - Math.PI / 2;
-    pts.push(`${cx + Math.cos(a) * rr},${cy + Math.sin(a) * rr}`);
-  }
-  return <polygon points={pts.join(" ")} />;
-}
 
 function Eyebrow({
   children,
@@ -1481,62 +1470,18 @@ export default function ZenithSportsPage() {
             className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#a3e635]/40 transition-all overflow-hidden"
           >
             <div className="grid lg:grid-cols-[auto_1fr_auto] gap-6 sm:gap-10 items-center p-6 sm:p-10">
-              {/* Mini character preview — pure CSS/SVG echo of the
-                  builder character so the promo strip looks alive
-                  without loading the full component */}
-              <div className="hidden sm:flex items-center justify-center w-28 lg:w-32 shrink-0">
-                <svg
-                  viewBox="0 0 100 140"
-                  className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                  style={{ filter: "drop-shadow(0 8px 16px rgba(59,218,192,0.4))" }}
-                >
-                  {/* Subtle floor */}
-                  <ellipse cx="50" cy="135" rx="28" ry="4" fill="#3BDAC0" opacity="0.3" />
-                  {/* Stars halo */}
-                  <g fill="#fbbf24" opacity="0.85">
-                    <Star10 cx={20} cy={30} r={2.5} />
-                    <Star10 cx={80} cy={28} r={2.5} />
-                    <Star10 cx={15} cy={70} r={2} />
-                    <Star10 cx={85} cy={68} r={2} />
-                    <Star10 cx={50} cy={10} r={2.5} />
-                  </g>
-                  {/* Player */}
-                  <g transform="translate(50, 18)">
-                    {/* Head */}
-                    <ellipse cx="0" cy="8" rx="9" ry="10" fill="#f6d5b5" />
-                    {/* Hair */}
-                    <path d="M -10 6 Q -11 -4 -4 -6 Q 0 -8 4 -6 Q 11 -4 10 6 L 8 2 Q 4 -2 0 -2 Q -4 -2 -8 2 Z" fill="#1a0f08" />
-                    {/* Jersey body — violet (Elite tier) */}
-                    <path
-                      d="M -22 22 L -20 70 L 20 70 L 22 22 Q 16 18 0 22 Q -16 18 -22 22 Z"
-                      fill="#8A6FDF"
-                    />
-                    {/* V-neck */}
-                    <path d="M -6 22 L 0 30 L 6 22 L 5 22 L 0 28 L -5 22 Z" fill="#fbbf24" />
-                    {/* Number */}
-                    <text x="0" y="55" textAnchor="middle" fontSize="14" fontWeight="900" fill="#fbbf24" fontFamily="ui-sans-serif, system-ui">
-                      10
-                    </text>
-                    {/* Shorts */}
-                    <path d="M -20 70 L -22 92 L -6 92 L 0 76 L 6 92 L 20 92 L 22 70 Z" fill="#0a0a1a" />
-                    {/* Legs */}
-                    <rect x="-15" y="92" width="8" height="14" fill="#f6d5b5" />
-                    <rect x="7" y="92" width="8" height="14" fill="#f6d5b5" />
-                    {/* Socks (gold band) */}
-                    <rect x="-15" y="106" width="8" height="10" fill="#0a0a1a" />
-                    <rect x="7" y="106" width="8" height="10" fill="#0a0a1a" />
-                    <rect x="-15" y="107" width="8" height="2" fill="#fbbf24" />
-                    <rect x="7" y="107" width="8" height="2" fill="#fbbf24" />
-                    {/* Cleats */}
-                    <ellipse cx="-11" cy="118" rx="7" ry="3" fill="#0a0a0a" />
-                    <ellipse cx="11" cy="118" rx="7" ry="3" fill="#0a0a0a" />
-                  </g>
-                  {/* Mini ball */}
-                  <circle cx="72" cy="120" r="6" fill="white" stroke="#0a1832" strokeWidth="0.5" />
-                  <circle cx="71" cy="118" r="1.2" fill="#3BDAC0" />
-                  <circle cx="74" cy="120" r="0.8" fill="#2C4DD8" />
-                  <circle cx="71" cy="121" r="0.6" fill="#8A6FDF" />
-                </svg>
+              {/* Mini character preview — uses the actual Pixar avatar
+                  card (Club tier teen, the middle of the road for age +
+                  skill) so the promo feels native to the builder UX. */}
+              <div className="hidden sm:flex items-center justify-center w-28 lg:w-40 shrink-0">
+                <Image
+                  src="/avatars/tekky/08_club_age_13-25.png"
+                  alt="Build Your Player — Club tier preview"
+                  width={400}
+                  height={533}
+                  className="w-full h-auto rounded-xl group-hover:scale-105 transition-transform duration-500"
+                  style={{ filter: "drop-shadow(0 12px 24px rgba(124,58,237,0.5))" }}
+                />
               </div>
 
               {/* Copy block */}
