@@ -153,11 +153,17 @@ export default function ClientTasksPage({
             </div>
           </div>
           <Link
+            href={`/dashboard/clients/${slug}/leads`}
+            className="text-[11px] tracking-wider uppercase font-bold text-cyan-300 hover:text-white border border-cyan-700/50 px-2.5 py-1 rounded"
+          >
+            Leads
+          </Link>
+          <Link
             href={`/clients/${slug}`}
             target="_blank"
             className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
           >
-            View site ↗
+            Site ↗
           </Link>
         </div>
       </header>

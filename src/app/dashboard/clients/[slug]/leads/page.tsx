@@ -1,0 +1,517 @@
+"use client";
+
+import { use, useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import type {
+  ClientLead,
+  ClientLeadAudience,
+  ClientLeadFunnelStatus,
+} from "@/lib/client-leads";
+
+/**
+ * /dashboard/clients/[slug]/leads
+ *
+ * Per-client lead board. Shows everyone who's submitted a form on
+ * /clients/[slug] in the last 200 captures, plus aggregate counts at the
+ * top so Ben can see at a glance: how many leads total, how they break
+ * down by audience, and where they sit in the funnel.
+ *
+ * Mobile-first like the tasks board. One-tap audience tag for leads the
+ * detector couldn't auto-classify.
+ */
+
+const AUDIENCE_LABEL: Record<ClientLeadAudience, string> = {
+  parent: "👪 Parent",
+  coach: "🏟️ Coach",
+  player: "⚽ Player",
+  club: "🏛️ Club",
+  unknown: "❓ Unknown",
+};
+const AUDIENCE_COLOR: Record<ClientLeadAudience, string> = {
+  parent: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  coach: "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  player: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  club: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  unknown: "bg-slate-700/40 text-slate-400 border-slate-600",
+};
+const STATUS_LABEL: Record<ClientLeadFunnelStatus, string> = {
+  not_enrolled: "Not enrolled",
+  enrolled: "In funnel",
+  paused: "Paused",
+  responded: "Responded",
+  converted: "Converted",
+  completed: "Completed",
+};
+const STATUS_COLOR: Record<ClientLeadFunnelStatus, string> = {
+  not_enrolled: "bg-slate-800 text-slate-300",
+  enrolled: "bg-blue-500/20 text-blue-300",
+  paused: "bg-amber-500/20 text-amber-300",
+  responded: "bg-emerald-500/20 text-emerald-300",
+  converted: "bg-emerald-500 text-white",
+  completed: "bg-slate-700 text-slate-400",
+};
+
+type Counts = {
+  total: number;
+  byAudience: Record<string, number>;
+  byStatus: Record<string, number>;
+};
+
+export default function ClientLeadsPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = use(params);
+  const [leads, setLeads] = useState<ClientLead[]>([]);
+  const [counts, setCounts] = useState<Counts | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [audienceFilter, setAudienceFilter] = useState<"" | ClientLeadAudience>("");
+  const [statusFilter, setStatusFilter] = useState<"" | ClientLeadFunnelStatus>(
+    "",
+  );
+  const [openLead, setOpenLead] = useState<ClientLead | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const params = new URLSearchParams({ client: slug });
+    if (audienceFilter) params.set("audience", audienceFilter);
+    if (statusFilter) params.set("status", statusFilter);
+
+    const [leadsRes, countsRes] = await Promise.all([
+      fetch(`/api/client-leads?${params}`),
+      fetch(`/api/client-leads?client=${encodeURIComponent(slug)}&counts=1`),
+    ]);
+    const leadsJson = (await leadsRes.json()) as {
+      ok: boolean;
+      leads?: ClientLead[];
+    };
+    const countsJson = (await countsRes.json()) as Counts & { ok: boolean };
+    if (leadsJson.ok && leadsJson.leads) setLeads(leadsJson.leads);
+    if (countsJson.ok) setCounts(countsJson);
+    setLoading(false);
+  }, [slug, audienceFilter, statusFilter]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const updateLead = async (id: string, patch: Partial<ClientLead>) => {
+    setLeads((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, ...patch } : l)),
+    );
+    if (openLead?.id === id) setOpenLead({ ...openLead, ...patch });
+    await fetch(`/api/client-leads/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    load();
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center gap-3">
+          <Link
+            href={`/dashboard/clients/${slug}`}
+            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
+          >
+            ← Tasks
+          </Link>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
+              {slug} <span className="text-slate-500 font-normal">/ leads</span>
+            </h1>
+            <div className="text-[11px] text-slate-500">
+              {counts ? `${counts.total} total leads` : "Loading…"}
+            </div>
+          </div>
+          <Link
+            href={`/clients/${slug}`}
+            target="_blank"
+            className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
+          >
+            View site ↗
+          </Link>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-32">
+        {/* Stats cards */}
+        {counts && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+            <StatCard label="Total" value={counts.total} accent="slate" />
+            <StatCard
+              label="In funnel"
+              value={counts.byStatus["enrolled"] ?? 0}
+              accent="blue"
+            />
+            <StatCard
+              label="Responded"
+              value={counts.byStatus["responded"] ?? 0}
+              accent="emerald"
+            />
+            <StatCard
+              label="Converted"
+              value={counts.byStatus["converted"] ?? 0}
+              accent="amber"
+            />
+          </div>
+        )}
+
+        {/* Audience breakdown */}
+        {counts && Object.keys(counts.byAudience).length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-5">
+            {(Object.keys(counts.byAudience) as string[]).map((aud) => {
+              const k = (aud as ClientLeadAudience) ?? "unknown";
+              const count = counts.byAudience[aud] ?? 0;
+              const isActive = audienceFilter === aud;
+              return (
+                <button
+                  key={aud}
+                  onClick={() =>
+                    setAudienceFilter(isActive ? "" : (aud as ClientLeadAudience))
+                  }
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+                    isActive
+                      ? AUDIENCE_COLOR[k] + " ring-2 ring-white/30"
+                      : AUDIENCE_COLOR[k]
+                  }`}
+                >
+                  {AUDIENCE_LABEL[k] ?? aud} · {count}
+                </button>
+              );
+            })}
+            {audienceFilter && (
+              <button
+                onClick={() => setAudienceFilter("")}
+                className="text-[11px] text-slate-400 hover:text-white px-2 py-1"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Status filter */}
+        <div className="flex items-center gap-2 mb-4 text-xs">
+          <span className="text-slate-500">Status:</span>
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              setStatusFilter(e.target.value as ClientLeadFunnelStatus | "")
+            }
+            className="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-sm"
+          >
+            <option value="">All</option>
+            {(Object.keys(STATUS_LABEL) as ClientLeadFunnelStatus[]).map(
+              (s) => (
+                <option key={s} value={s}>
+                  {STATUS_LABEL[s]}
+                </option>
+              ),
+            )}
+          </select>
+        </div>
+
+        {loading && leads.length === 0 && (
+          <div className="text-center text-slate-500 py-10">Loading…</div>
+        )}
+
+        {!loading && leads.length === 0 && (
+          <div className="text-center text-slate-500 py-10 border border-dashed border-slate-800 rounded-lg">
+            <div className="text-4xl mb-2">📥</div>
+            <p>No leads yet for {slug}.</p>
+            <p className="text-xs mt-2">
+              Submissions to /clients/{slug} forms will appear here.
+            </p>
+          </div>
+        )}
+
+        {/* Lead list */}
+        <div className="space-y-2">
+          {leads.map((lead) => (
+            <button
+              key={lead.id}
+              onClick={() => setOpenLead(lead)}
+              className="block w-full text-left rounded-lg border border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900 p-3 sm:p-4 transition"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-[15px] truncate">
+                      {lead.name || "(no name)"}
+                    </span>
+                    {lead.audience_segment && (
+                      <span
+                        className={`text-[9px] tracking-wider uppercase font-extrabold px-1.5 py-0.5 rounded border ${AUDIENCE_COLOR[lead.audience_segment]}`}
+                      >
+                        {AUDIENCE_LABEL[lead.audience_segment].split(" ")[1]}
+                      </span>
+                    )}
+                    <span
+                      className={`text-[9px] tracking-wider uppercase font-extrabold px-1.5 py-0.5 rounded ${STATUS_COLOR[lead.funnel_status]}`}
+                    >
+                      {STATUS_LABEL[lead.funnel_status]}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+                    {lead.email && <span className="truncate">{lead.email}</span>}
+                    {lead.phone && (
+                      <>
+                        <span>·</span>
+                        <span>{lead.phone}</span>
+                      </>
+                    )}
+                  </div>
+                  {lead.intent && (
+                    <div className="mt-1 text-[12px] text-slate-300">
+                      <span className="text-slate-500">Intent:</span> {lead.intent}
+                    </div>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-500 shrink-0">
+                  {timeAgo(lead.created_at)}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </main>
+
+      {/* Detail drawer */}
+      {openLead && (
+        <LeadDetailDrawer
+          lead={openLead}
+          onClose={() => setOpenLead(null)}
+          onUpdate={updateLead}
+        />
+      )}
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: number;
+  accent: "slate" | "blue" | "emerald" | "amber";
+}) {
+  const colors: Record<typeof accent, string> = {
+    slate: "bg-slate-900/60 border-slate-800 text-slate-100",
+    blue: "bg-blue-950/40 border-blue-500/30 text-blue-100",
+    emerald: "bg-emerald-950/40 border-emerald-500/30 text-emerald-100",
+    amber: "bg-amber-950/40 border-amber-500/30 text-amber-100",
+  };
+  return (
+    <div className={`rounded-lg border p-3 ${colors[accent]}`}>
+      <div className="text-[10px] tracking-wider uppercase font-bold opacity-70">
+        {label}
+      </div>
+      <div className="mt-1 text-2xl font-black tracking-tighter">{value}</div>
+    </div>
+  );
+}
+
+function LeadDetailDrawer({
+  lead,
+  onClose,
+  onUpdate,
+}: {
+  lead: ClientLead;
+  onClose: () => void;
+  onUpdate: (id: string, patch: Partial<ClientLead>) => void;
+}) {
+  const [notesDraft, setNotesDraft] = useState(lead.notes ?? "");
+
+  return (
+    <div
+      className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-slate-900 border border-slate-700 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-5 py-3 flex items-center justify-between">
+          <div className="font-semibold">{lead.name || "(no name)"}</div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          {/* Contact */}
+          <section>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+              Contact
+            </div>
+            <div className="space-y-1 text-sm">
+              {lead.email && (
+                <div>
+                  <a
+                    className="text-blue-300 hover:text-blue-200"
+                    href={`mailto:${lead.email}`}
+                  >
+                    ✉ {lead.email}
+                  </a>
+                </div>
+              )}
+              {lead.phone && (
+                <div className="flex gap-3">
+                  <a
+                    className="text-blue-300 hover:text-blue-200"
+                    href={`tel:${lead.phone}`}
+                  >
+                    ☎ {lead.phone}
+                  </a>
+                  <a
+                    className="text-blue-300 hover:text-blue-200"
+                    href={`sms:${lead.phone}`}
+                  >
+                    💬 Text
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Audience tagging */}
+          <section>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+              Audience
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {(["parent", "coach", "player", "club", "unknown"] as ClientLeadAudience[]).map(
+                (a) => (
+                  <button
+                    key={a}
+                    onClick={() => onUpdate(lead.id, { audience_segment: a })}
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+                      lead.audience_segment === a
+                        ? AUDIENCE_COLOR[a] + " ring-2 ring-white/30"
+                        : "border-slate-700 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {AUDIENCE_LABEL[a]}
+                  </button>
+                ),
+              )}
+            </div>
+          </section>
+
+          {/* Funnel status */}
+          <section>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+              Funnel status
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {(Object.keys(STATUS_LABEL) as ClientLeadFunnelStatus[]).map(
+                (s) => (
+                  <button
+                    key={s}
+                    onClick={() => onUpdate(lead.id, { funnel_status: s })}
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded transition ${
+                      lead.funnel_status === s
+                        ? STATUS_COLOR[s] + " ring-2 ring-white/40"
+                        : "border border-slate-700 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {STATUS_LABEL[s]}
+                  </button>
+                ),
+              )}
+            </div>
+            {lead.funnel_step !== null && (
+              <div className="mt-2 text-xs text-slate-400">
+                Step {lead.funnel_step}
+                {lead.last_contact_at &&
+                  ` · last contact ${timeAgo(lead.last_contact_at)}`}
+              </div>
+            )}
+          </section>
+
+          {/* Intent + source */}
+          {(lead.intent || lead.source) && (
+            <section className="grid grid-cols-2 gap-3 text-sm">
+              {lead.intent && (
+                <div>
+                  <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-1">
+                    Intent
+                  </div>
+                  <div>{lead.intent}</div>
+                </div>
+              )}
+              {lead.source && (
+                <div>
+                  <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-1">
+                    Source
+                  </div>
+                  <div>{lead.source}</div>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Notes */}
+          <section>
+            <label className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+              Notes
+            </label>
+            <textarea
+              value={notesDraft}
+              onChange={(e) => setNotesDraft(e.target.value)}
+              rows={3}
+              className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-[13px]"
+              placeholder="Per-lead context (e.g. ‘called Mom, son tried out for WA Premier last week’)"
+            />
+            {notesDraft !== (lead.notes ?? "") && (
+              <button
+                onClick={() => onUpdate(lead.id, { notes: notesDraft })}
+                className="mt-1.5 text-[11px] font-bold bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded"
+              >
+                Save notes
+              </button>
+            )}
+          </section>
+
+          {/* Raw payload */}
+          <section>
+            <details>
+              <summary className="text-[10px] tracking-wider uppercase font-bold text-slate-500 cursor-pointer">
+                Raw payload
+              </summary>
+              <pre className="mt-2 text-[11px] bg-slate-950 border border-slate-800 rounded p-3 overflow-x-auto text-slate-300">
+                {JSON.stringify(lead.raw_payload, null, 2)}
+              </pre>
+            </details>
+          </section>
+
+          <div className="text-[10px] text-slate-600 pt-2 border-t border-slate-800">
+            Created {new Date(lead.created_at).toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d`;
+  return new Date(iso).toLocaleDateString();
+}

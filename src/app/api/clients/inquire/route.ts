@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOwnerAlert, sendOwnerEmail } from "@/lib/alerts";
+import {
+  createClientLead,
+  detectAudience,
+  type NewClientLead,
+} from "@/lib/client-leads";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * POST /api/clients/inquire
@@ -169,6 +175,38 @@ export async function POST(request: NextRequest) {
   const subject = `${cfg.emoji} New inquiry — ${cfg.businessLabel} — ${name}`;
   const smsMessage = `${cfg.emoji} ${cfg.businessLabel}\n${name} <${email}>\n→ Check email for details`;
 
+  // Persist as a client_lead so the per-client dashboard + funnel engine
+  // can pick it up. Best-effort — if Supabase isn't configured (local
+  // dev) we still fire the owner alerts. The audience-segment auto-tag
+  // runs on the raw payload; null result surfaces in the dashboard as
+  // "needs manual tag" instead of false-confidently bucketing.
+  let leadId: string | null = null;
+  if (isSupabaseConfigured()) {
+    try {
+      const audience = detectAudience(slug, body);
+      // Source heuristic — the email-capture component posts a
+      // "source": "email-capture" field; main inquiry forms don't.
+      const source = (body.source as string) || "main-inquiry-form";
+      const phone = (body.phone as string) || (body.tel as string) || null;
+      const newLead: NewClientLead = {
+        client_slug: slug,
+        audience_segment: audience,
+        name,
+        email,
+        phone,
+        intent: (body.intent as string) || null,
+        source,
+        raw_payload: body,
+      };
+      const created = await createClientLead(newLead);
+      leadId = created.id;
+    } catch (err) {
+      // Don't fail the form submit if the DB write fails — the owner
+      // alert below still surfaces the lead.
+      console.error("[clients/inquire] client_leads insert failed:", err);
+    }
+  }
+
   await Promise.allSettled([
     sendOwnerAlert(smsMessage).catch((err) =>
       console.error("[clients/inquire] owner SMS failed:", err),
@@ -178,5 +216,5 @@ export async function POST(request: NextRequest) {
     ),
   ]);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, leadId });
 }
