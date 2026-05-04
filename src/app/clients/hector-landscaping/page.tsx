@@ -106,6 +106,11 @@ const PHOTOS = {
   yardDec3: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371909114-QJ3WAQXOO51Z7TBKA9V6/Photo+Dec+14+2022%2C+10+24+16+AM.jpg",
   yardDec5: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/366bffd1-20ae-49ef-be4f-10747ab0adc6/Photo+Dec+14+2022%2C+10+24+09+AM.jpg",
 
+  // ─── FULL BACKYARD TRANSFORMATION ─── The "whole deal" wide shot:
+  // patio + dry creek + curved beds + bushes + fresh lawn + house in
+  // frame. Used as the About Hector spotlight + featured project lead.
+  fullYard: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477064017-WYM36TXYQVTAVMT045FC/maxresdefault.jpg",
+
   // ─── HARDSCAPE & PAVERS — Squarespace web crops (lower res but
   // verified portfolio shots: backyard paver patios, brick walkways,
   // fire-pit area) ───
@@ -1045,7 +1050,7 @@ export default function HectorLandscapingLandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={PHOTOS.brick2} alt="A Hector Landscaping installation — garden path detail" className="w-full h-full object-cover" />
+              <img src={PHOTOS.fullYard} alt="Hector Landscaping — full backyard transformation: patio, dry creek, curved beds, fresh lawn" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-5 py-3 flex items-center gap-3">
