@@ -220,6 +220,13 @@ export default function DashboardPage() {
             >
               Client Jobs
             </Link>
+            <Link
+              href="/dashboard/tekky-map"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-amber-300 transition-colors hover:bg-background hover:text-amber-200"
+              title="US lead-scrape map for Zenith/TEKKY — soccer-town overlay + audience filter"
+            >
+              ⚽ Tekky Map
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">
