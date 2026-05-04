@@ -57,17 +57,32 @@ export default function StickyNav({
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#f8f5ef]/85 border-b border-[#1a2e1a]/10">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
-        <a href="#top" className="flex items-center gap-3 min-w-0">
-          <img
-            src={logoSrc}
-            alt={businessName}
-            className="h-9 sm:h-11 w-auto"
-          />
-          <span className="hidden md:block font-serif text-[15px] tracking-tight text-[#1a2e1a] leading-tight">
+        {/* CSS-rendered monogram + wordmark — replaces the JPEG logo
+            which had a white-square background that clashed with the
+            cream nav. This is more premium and fully responsive.
+            `logoSrc` and `businessName` props kept for API parity. */}
+        <a
+          href="#top"
+          className="flex items-center gap-3 min-w-0"
+          aria-label={businessName}
+        >
+          <span
+            className="inline-flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-md font-serif text-[15px] sm:text-[17px] font-bold tracking-tight shrink-0 shadow-sm"
+            style={{
+              background:
+                "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+              color: "#f8f5ef",
+              border: "1px solid rgba(0,0,0,0.08)",
+            }}
+            aria-hidden
+          >
+            HL
+          </span>
+          <span className="font-serif text-[14px] sm:text-[16px] tracking-tight text-[#1a2e1a] leading-tight whitespace-nowrap">
             Hector Landscaping
             <br />
-            <span className="text-[12px] tracking-[0.18em] uppercase text-[#5a6a4f]">
-              Landscape &amp; Design
+            <span className="text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] font-sans">
+              &amp; Design · Renton, WA
             </span>
           </span>
         </a>
@@ -127,8 +142,17 @@ export default function StickyNav({
       {open && (
         <div className="lg:hidden fixed inset-0 z-[60] bg-[#f8f5ef] flex flex-col">
           <div className="h-16 sm:h-20 px-5 sm:px-8 flex items-center justify-between border-b border-[#1a2e1a]/10">
-            <a href="#top" onClick={() => setOpen(false)} className="flex items-center gap-3">
-              <img src={logoSrc} alt={businessName} className="h-9 w-auto" />
+            <a href="#top" onClick={() => setOpen(false)} className="flex items-center gap-3" aria-label={businessName}>
+              <span
+                className="inline-flex items-center justify-center h-10 w-10 rounded-md font-serif text-[15px] font-bold"
+                style={{
+                  background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                  color: "#f8f5ef",
+                }}
+                aria-hidden
+              >
+                HL
+              </span>
               <span className="font-serif text-[15px] tracking-tight text-[#1a2e1a]">
                 Hector Landscaping
               </span>

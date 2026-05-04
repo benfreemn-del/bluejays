@@ -91,66 +91,52 @@ const LOGO =
    Older Squarespace URLs don't accept ?format= so they're rendered as
    originals. */
 const PHOTOS = {
-  // Hero — large hardscape shot showing a finished paved patio with
-  // surrounding plantings. Anchor image, used full-bleed.
-  hero:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477339937-LY6F1JKFRWRDSLXUEX1O/hardscape-11.jpg",
+  // ─── HERO ─── Strongest portfolio shot: side-yard with stepping
+  // stones, dark mulch beds, plantings, cedar privacy fence + bollard
+  // light. Real Hector phone capture — 1.9MB native, beats every
+  // Squarespace-cropped web shot in resolution + composition.
+  hero: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
 
-  // Hardscape & Pavers cluster (10 photos)
-  paver1:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471480808-J78224F71OX3SKTR56AH/paver1.PNG",
-  paver2:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471481073-1MW9D768SGLBXCITI8X4/paver2.PNG",
-  paver3:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471484506-II1PRTWCLXN28YR7B9IT/paver3.PNG",
-  paver4:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471485624-RQN3BNDNFMFOEDPLLW3C/paver4.PNG",
-  brick1:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472109602-G4P99NXLRBKGG89US7M3/brick1.PNG",
-  brick2:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472109131-EIDYS20LTHA5T36LHZVD/brick2.PNG",
-  brick3:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472111007-FWU4BDK8EEYJN4VVGPTG/brick3.PNG",
-  hardscapeWide:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477064017-WYM36TXYQVTAVMT045FC/maxresdefault.jpg",
-  hardscapeShot1:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477157975-1T50QJCR20443AOBE924/68123f35b9641031fba4fa33f5d95329+%281%29.jpg",
-  hardscapeShot2:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1565060181745-I6F8GNMTUTDJW3SYYJNC/a81086567c2e8cc6564121c92e77a797.jpg",
+  // ─── REAL PORTFOLIO — Hector's Phone Captures (1.5–2.1MB each) ───
+  yardJun1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
+  yardJun2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1c1a47d7-39fc-4917-b830-182ff2a1b2ef/Photo+Jun+08+2021%2C+3+30+58+PM.jpg",
+  yardJul:  "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/3ad7db31-09c6-4525-82e3-288033b2ffa7/Photo+Jul+27+2021%2C+2+34+23+PM.jpg",
+  yardDec1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371741329-2LRC8980E8URYZJ8RGHQ/Photo+Dec+14+2022%2C+10+23+36+AM.jpg",
+  yardDec2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371857664-RNVXY4XTDZIU5AFGPPZX/Photo+Dec+14+2022%2C+10+23+43+AM.jpg",
+  yardDec3: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371909114-QJ3WAQXOO51Z7TBKA9V6/Photo+Dec+14+2022%2C+10+24+16+AM.jpg",
+  yardDec5: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/366bffd1-20ae-49ef-be4f-10747ab0adc6/Photo+Dec+14+2022%2C+10+24+09+AM.jpg",
 
-  // Retaining walls (3 photos)
-  retainingMain:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1565058891162-OIS6MHJGI9ZH3JNJAJO1/retaining-wall1.jpg",
-  retainingBuild:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567476997964-HPYD72R2J4QQUFMGM1J4/Building_a_Retaining_Wall_at_Home.jpg",
-  stoneAccent:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1565059027088-5T1D83B1HKJRNCNGJ69B/1861659.jpg",
+  // ─── HARDSCAPE & PAVERS — Squarespace web crops (lower res but
+  // verified portfolio shots: backyard paver patios, brick walkways,
+  // fire-pit area) ───
+  hardscapeWide:  "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477339937-LY6F1JKFRWRDSLXUEX1O/hardscape-11.jpg",
+  paver1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471480808-J78224F71OX3SKTR56AH/paver1.PNG",
+  paver2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471481073-1MW9D768SGLBXCITI8X4/paver2.PNG",
+  paver3: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471484506-II1PRTWCLXN28YR7B9IT/paver3.PNG",
+  paver4: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471485624-RQN3BNDNFMFOEDPLLW3C/paver4.PNG",
+  brick1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472109602-G4P99NXLRBKGG89US7M3/brick1.PNG",
+  brick2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472109131-EIDYS20LTHA5T36LHZVD/brick2.PNG",
+  brick3: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567472111007-FWU4BDK8EEYJN4VVGPTG/brick3.PNG",
 
-  // Sod & Lawn (2 photos)
-  sodInstall:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/7dbf34e4-ce87-4042-97c9-246a04ed4b69/sod-installation-Optimized.jpg",
-  lawnFinished:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477190007-T44NY9I44S0Z3307JUJC/lawn.jpg",
+  // ─── RETAINING WALL ─── Single verified Hector wall + plantings shot.
+  retainingMain: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1565058891162-OIS6MHJGI9ZH3JNJAJO1/retaining-wall1.jpg",
 
-  // Full-yard project shots — December 2022 build
-  yardDec1:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371741329-2LRC8980E8URYZJ8RGHQ/Photo+Dec+14+2022%2C+10+23+36+AM.jpg",
-  yardDec2:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371857664-RNVXY4XTDZIU5AFGPPZX/Photo+Dec+14+2022%2C+10+23+43+AM.jpg",
-  yardDec3:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371909114-QJ3WAQXOO51Z7TBKA9V6/Photo+Dec+14+2022%2C+10+24+16+AM.jpg",
-  yardDec4:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371476657-SPF2NUXX5LRGR85LFIV4/Photo+Dec+29+2022%2C+4+53+50+PM.jpg",
-  yardDec5:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/366bffd1-20ae-49ef-be4f-10747ab0adc6/Photo+Dec+14+2022%2C+10+24+09+AM.jpg",
+  // ─── LAWN ─── Single high-quality lawn shot.
+  lawnFinished: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477190007-T44NY9I44S0Z3307JUJC/lawn.jpg",
 
-  // Summer 2021 build
-  yardJul:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/3ad7db31-09c6-4525-82e3-288033b2ffa7/Photo+Jul+27+2021%2C+2+34+23+PM.jpg",
-  yardJun1:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
-  yardJun2:
-    "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1c1a47d7-39fc-4917-b830-182ff2a1b2ef/Photo+Jun+08+2021%2C+3+30+58+PM.jpg",
+  // ─── ALIASES (legacy keys still referenced by some sections,
+  // re-pointed at strong real shots) ───
+  // hardscapeShot1 + hardscapeShot2 were stock/hash files. yardDec4
+  // was a 53KB low-quality phone shot. retainingBuild was a stock
+  // "Building a Retaining Wall at Home" pull. stoneAccent was a
+  // stock 1861659.jpg lawn-mower closeup. sodInstall was a low-res
+  // staged shot. All re-pointed at verified portfolio.
+  hardscapeShot1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471480808-J78224F71OX3SKTR56AH/paver1.PNG",
+  hardscapeShot2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567471481073-1MW9D768SGLBXCITI8X4/paver2.PNG",
+  yardDec4: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371741329-2LRC8980E8URYZJ8RGHQ/Photo+Dec+14+2022%2C+10+23+36+AM.jpg",
+  retainingBuild: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371909114-QJ3WAQXOO51Z7TBKA9V6/Photo+Dec+14+2022%2C+10+24+16+AM.jpg",
+  stoneAccent: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371741329-2LRC8980E8URYZJ8RGHQ/Photo+Dec+14+2022%2C+10+23+36+AM.jpg",
+  sodInstall: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477190007-T44NY9I44S0Z3307JUJC/lawn.jpg",
 } as const;
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
