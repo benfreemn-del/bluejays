@@ -1353,7 +1353,18 @@ Each template uses a DIFFERENT color variable name. Using the wrong one crashes 
 - The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, Stripe session, and dashboard rendering all respect this field dynamically.
 
 ## AI Package — Custom AI Marketing Funnel (`fullsystem` tier)
-The full pipeline behind the $9,700 + $500–1,000/mo offering on the audit page. **Documented in `docs/AI_PACKAGE_PLAYBOOK.md`** — read that file before building anything for an AI-package client.
+The full pipeline behind the $9,700 + $500–1,000/mo offering on the audit page. **Documented in `docs/AI_PACKAGE_PLAYBOOK.md`** — read that file before building anything for an AI-package client. **Closeout deliverable in `docs/AI_PACKAGE_HANDOFF.md`** — the doc the client receives at handoff.
+
+### Subscription model (capability tiers)
+The system DEGRADES GRACEFULLY based on per-client subscriptions tracked in `client_subscriptions`. Source of truth in `src/lib/client-subscriptions.ts → TIERS`.
+- **Hyperloop** — Off / Starter $99 / Pro $249 / Elite $499. Off = funnel runs static. Pro+ = auto-optimize variants weekly + Claude variant gen.
+- **Claude** — Off / Starter $49 / Pro $149 / Unlimited $399. Off = no AI features. Starter+ = reply drafting + audience detection.
+- **Twilio / SendGrid / Meta-Ads / Google-Ads** — tracked as `managed_by: bluejays` during 30-day onboarding then transitioned to `managed_by: client`.
+
+Capability checks via `hasCapability(slug, "hyperloop.weekly")` etc. Code that uses an AI feature MUST gate on the capability — never assume Hyperloop or Claude is available. The system never hard-fails because of a missing subscription.
+
+### Frictionless onboarding
+**Phase 0a** of the playbook: ask for delegated business-email access (`info@theirbusiness.com`) so Ben can stand up Twilio + Google Ads + Meta + Calendly + SendGrid accounts in one day. Accounts are still OWNED by the client; we just do the verification heavy-lifting. Massive value multiplier on the offer.
 
 Per-client artifacts (all keyed by `client_slug`):
 - Showcase site at `/clients/{slug}`

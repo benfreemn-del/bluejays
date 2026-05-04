@@ -27,6 +27,44 @@ gold $ badge in the dashboard.
 
 ---
 
+## Phase 0a — BUSINESS EMAIL ACCESS (the frictionless onboarding lever)
+
+**Ask for this before anything else.** A delegated business email account
+(`info@theirbusiness.com`) with permissions to:
+- Receive verification emails
+- Sign up for new accounts on the client's behalf
+
+This is the unlock that makes the AI Package "frictionless." With this
+access, BlueJays can stand up Twilio + Google Ads + Meta Business
+Manager + Calendly + SendGrid in ONE day instead of dragging the client
+through 4–8 hours of disjointed verification flows. Massive value
+multiplier on the offer.
+
+The accounts created are still OWNED by the client (they get the
+billing + control), we just do the heavy lifting of standing them up.
+
+Add to client_tasks at kickoff as a CLIENT-ACTION:
+  "Grant Ben delegated access to {info@…} for 14-day account-stand-up
+   sprint."
+
+---
+
+## Phase 0b — Subscription decisions
+
+The client picks their Hyperloop + Claude tiers. See
+`docs/AI_PACKAGE_HANDOFF.md` for the full pricing menu + recommendations.
+Default new-client setup:
+- **Hyperloop: Off** for the first 30 days (need data first), then upgrade
+  to Starter ($99) once they have 50+ leads in the system.
+- **Claude: Starter ($49)** from day 1 — reply drafting saves hours
+  immediately even at low lead volume.
+
+Both subscriptions tracked in `client_subscriptions` table. The runner
+in `src/lib/client-hyperloop.ts` self-gates by capability — no
+subscription = system runs static, no errors.
+
+---
+
 ## Phase 0 — Ad-platform + tracking access (CRITICAL — request day 1)
 
 The single biggest delay risk on AI Package builds is waiting for ad-

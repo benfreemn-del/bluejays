@@ -171,6 +171,13 @@ export default function ClientTasksPage({
             Affiliates
           </Link>
           <Link
+            href={`/dashboard/clients/${slug}/insights`}
+            className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded"
+            title="Hyperloop variant analysis + subscriptions"
+          >
+            Insights
+          </Link>
+          <Link
             href={`/dashboard/clients/${slug}/reports`}
             className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
           >
