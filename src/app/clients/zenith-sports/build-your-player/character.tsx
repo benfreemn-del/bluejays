@@ -36,10 +36,14 @@ export default function CharacterBuilder({
 }: Props) {
   const tier = SKILL_TIERS[Math.min(Math.max(skillLevel - 1, 0), 4)];
 
-  // Map height inches (36-72) to SVG height (260-380)
-  const svgHeight = 260 + ((heightInches - 36) / (72 - 36)) * 120;
-  // Player figure scales with height
+  // Player figure scales with height. We anchor the FEET at y=370 so
+  // the floor ellipse + ball + stat chips all sit at the bottom of the
+  // SVG cleanly regardless of which height the user picked.
   const figureScale = 0.7 + ((heightInches - 36) / (72 - 36)) * 0.45;
+  // Native figure runs from y≈-8 (hair top) to y≈275 (cleat bottom) =
+  // 283px native height. Scaled, the foot needs to land on the floor.
+  const FOOT_Y = 370;
+  const figureTopY = FOOT_Y - 275 * figureScale;
   // Ball is always TEKKY-smaller — about 75% of the regulation reference
   const ballRadius = 22 * (figureScale * 0.85);
   // Aura intensity grows with skill
@@ -69,36 +73,36 @@ export default function CharacterBuilder({
       </div>
 
       <svg
-        viewBox="0 0 220 460"
+        viewBox="0 0 220 400"
         width="100%"
         height="100%"
-        className="max-h-[460px] transition-all duration-500"
+        className="max-h-[440px] transition-all duration-500"
         style={{ filter: `drop-shadow(0 12px 24px ${tier.color}44)` }}
       >
-        {/* Floor circle */}
+        {/* Floor ellipse — anchors the player. Slightly below FOOT_Y. */}
         <ellipse
           cx="110"
-          cy="430"
-          rx={50 * figureScale}
-          ry={10 * figureScale}
+          cy={FOOT_Y + 5}
+          rx={55 * figureScale}
+          ry={9 * figureScale}
           fill={tier.color}
-          opacity="0.18"
+          opacity="0.22"
         />
 
-        {/* Skill aura — particles scale with skill */}
+        {/* Skill aura — particles around upper body, scale with skill */}
         {Array.from({ length: skillLevel * 2 }).map((_, i) => (
           <circle
             key={i}
             cx={110 + Math.sin((i / (skillLevel * 2)) * Math.PI * 2) * 70 * figureScale}
-            cy={300 - Math.cos((i / (skillLevel * 2)) * Math.PI * 2) * 110 * figureScale}
+            cy={(figureTopY + 130 * figureScale) - Math.cos((i / (skillLevel * 2)) * Math.PI * 2) * 110 * figureScale}
             r={2}
             fill={tier.color}
             opacity={auraOpacity * 6}
           />
         ))}
 
-        {/* Player figure (centered, scaled) */}
-        <g transform={`translate(110, ${430 - svgHeight}) scale(${figureScale})`}>
+        {/* Player figure — feet planted at FOOT_Y. */}
+        <g transform={`translate(110, ${figureTopY}) scale(${figureScale})`}>
           {/* Head */}
           <circle cx="0" cy="20" r="22" fill="#f5d3b1" stroke={tier.color} strokeWidth="2" />
           {/* Hair */}
@@ -149,7 +153,7 @@ export default function CharacterBuilder({
         </g>
 
         {/* The TEKKY ball — at the right foot, sized smaller-than-reg */}
-        <g transform="translate(150, 425)">
+        <g transform={`translate(160, ${FOOT_Y - 5})`}>
           <circle
             cx="0"
             cy="0"
@@ -176,8 +180,8 @@ export default function CharacterBuilder({
           </text>
         </g>
 
-        {/* Reg-ball reference (faded, smaller-when-skill-higher) */}
-        <g transform="translate(40, 425)" opacity="0.25">
+        {/* Reg-ball reference (faded — visual proof TEKKY is smaller) */}
+        <g transform={`translate(50, ${FOOT_Y - 5})`} opacity="0.22">
           <circle
             cx="0"
             cy="0"
