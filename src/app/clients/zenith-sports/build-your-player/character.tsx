@@ -21,12 +21,16 @@ type Props = {
   skillLevel: number; // 1-5
 };
 
+// Skill-tier colors now ladder up the TEKKY ball palette:
+// slate (rec) → mint-teal → cobalt-blue → lime → violet (elite/pro).
+// Mirrors the ball's swoosh hierarchy and gives the Elite tier a
+// premium feel via the same violet that's on the back of the ball.
 const SKILL_TIERS: { name: string; color: string; subtitle: string }[] = [
   { name: "Rec", color: "#94a3b8", subtitle: "Just getting started" },
-  { name: "Travel", color: "#60a5fa", subtitle: "Comp soccer" },
-  { name: "Club", color: "#a78bfa", subtitle: "Premier / Travel-elite" },
-  { name: "ECNL / MLS Next", color: "#a3e635", subtitle: "National-tier" },
-  { name: "Elite", color: "#facc15", subtitle: "Pro / academy pathway" },
+  { name: "Travel", color: "#3BDAC0", subtitle: "Comp soccer" },           // teal
+  { name: "Club", color: "#2C4DD8", subtitle: "Premier / Travel-elite" },  // cobalt
+  { name: "ECNL / MLS Next", color: "#a3e635", subtitle: "National-tier" }, // lime
+  { name: "Elite", color: "#8A6FDF", subtitle: "Pro / academy pathway" },  // violet
 ];
 
 export default function CharacterBuilder({

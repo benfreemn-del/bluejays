@@ -149,10 +149,20 @@ const NAVY_DEEP = "#050d1f";     // even deeper navy for layered sections
 const NAVY_INK = "#0f172a";      // type on light bg
 const IVORY = "#f5f3ee";         // clean ivory — primary light base
 const IVORY_SOFT = "#ebe7dd";    // band variant
-const ELECTRIC = "#1d4ed8";      // electric blue — brand
+const ELECTRIC = "#1d4ed8";      // electric blue — brand (close to ball cobalt)
 const LIME = "#a3e635";          // energy pop
 const INK_SOFT_LIGHT = "#475569";
 const INK_SOFT_DARK = "rgba(255,255,255,0.65)";
+
+// TEKKY ball palette — pulled from the actual product photos
+// (zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg).
+// Mint-teal → cobalt-blue → violet swooshes across white panels.
+// Used as supporting accents to make the site feel native to the
+// product without overhauling the existing lime/electric system.
+const TEAL = "#3BDAC0";          // mint-teal swoosh — fresh accent
+const TEAL_DK = "#1FAE96";       // deeper teal for hover states
+const VIOLET = "#8A6FDF";        // violet swoosh — premium-tier accent
+const VIOLET_DK = "#6448C2";     // deeper violet for hover states
 
 /* Real Shopify product URLs live in /shop/page.tsx — this page funnels
  * to /clients/zenith-sports/shop where the BUY NOW buttons exist. */
@@ -1084,15 +1094,19 @@ export default function ZenithSportsPage() {
                 ))}
               </div>
 
+              {/* "Zenith Sports promise" testimonial — switched to TEAL
+                  to mirror the mint-teal swoosh on the actual ball. Lime
+                  stays the dominant CTA accent; teal handles the
+                  brand-credibility / quote treatments. */}
               <div
                 className="mt-5 border-l-2 pl-6 py-2"
-                style={{ borderColor: LIME }}
+                style={{ borderColor: TEAL }}
               >
                 <Quotes
                   size={22}
                   weight="fill"
                   className="-ml-1 mb-2"
-                  style={{ color: LIME }}
+                  style={{ color: TEAL }}
                 />
                 <p
                   className="text-lg md:text-xl leading-snug italic"
