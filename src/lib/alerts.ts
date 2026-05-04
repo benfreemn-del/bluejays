@@ -62,7 +62,11 @@ export async function alertOwner(alert: Alert): Promise<void> {
   console.log(fullMessage);
   console.log(`${"=".repeat(50)}\n`);
 
-  await sendOwnerSms(fullMessage);
+  // Run SMS + email in parallel — email works even when Twilio A2P is pending
+  await Promise.all([
+    sendOwnerSms(fullMessage),
+    sendOwnerEmail({ subject: `${prefix} BlueJays Alert`, body: alert.message }),
+  ]);
 }
 
 function getAlertEmoji(type: AlertType): string {
@@ -80,9 +84,12 @@ function getAlertEmoji(type: AlertType): string {
 
 // Trigger functions for common alert scenarios
 
-/** Send a raw SMS alert to Ben — use for custom messages with action links. */
+/** Send a raw SMS + email alert to Ben — works even when Twilio A2P is pending. */
 export async function sendOwnerAlert(message: string): Promise<void> {
-  await sendOwnerSms(message);
+  await Promise.all([
+    sendOwnerSms(message),
+    sendOwnerEmail({ subject: "🔔 BlueJays Alert", body: message }),
+  ]);
 }
 
 /**
