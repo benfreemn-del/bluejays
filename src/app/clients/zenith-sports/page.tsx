@@ -1470,18 +1470,33 @@ export default function ZenithSportsPage() {
             className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#a3e635]/40 transition-all overflow-hidden"
           >
             <div className="grid lg:grid-cols-[auto_1fr_auto] gap-6 sm:gap-10 items-center p-6 sm:p-10">
-              {/* Pixar avatar preview (Club teen — middle-of-the-road
-                  for skill + age). Visible at every breakpoint so
-                  mobile users see the artwork too — just smaller. */}
-              <div className="flex items-center justify-center w-20 sm:w-28 lg:w-40 shrink-0">
-                <Image
-                  src="/avatars/tekky/08_club_age_13-25.png"
-                  alt="Build Your Player — Club tier preview"
-                  width={400}
-                  height={533}
-                  className="w-full h-auto rounded-xl group-hover:scale-105 transition-transform duration-500"
-                  style={{ filter: "drop-shadow(0 12px 24px rgba(124,58,237,0.5))" }}
-                />
+              {/* Three Pixar previews — youngest → oldest, left to
+                  right. Tells the "growth journey" story (kid Rec →
+                  teen Club → adult Elite) so the value of the tool
+                  is obvious before the user even reads. Sized to scale
+                  cleanly: 80px phone → 100px tablet → 124px desktop.
+                  Whole row is justify-center so the middle card sits
+                  dead-center on phone where the strip stacks. */}
+              <div className="flex items-end justify-center gap-2 sm:gap-3 lg:gap-3 shrink-0">
+                {[
+                  { src: "01_rec_age_5-15.png", alt: "Rec — kid", glow: "rgba(59,189,248,0.45)" },
+                  { src: "08_club_age_13-25.png", alt: "Club — teen", glow: "rgba(124,58,237,0.55)" },
+                  { src: "15_elite_age_25-35.png", alt: "Elite — adult", glow: "rgba(251,191,36,0.55)" },
+                ].map((a) => (
+                  <div
+                    key={a.src}
+                    className="w-[80px] sm:w-[100px] lg:w-[124px]"
+                  >
+                    <Image
+                      src={`/avatars/tekky/${a.src}`}
+                      alt={`Build Your Player — ${a.alt}`}
+                      width={400}
+                      height={533}
+                      className="w-full h-auto rounded-xl group-hover:scale-105 transition-transform duration-500"
+                      style={{ filter: `drop-shadow(0 10px 20px ${a.glow})` }}
+                    />
+                  </div>
+                ))}
               </div>
 
               {/* Copy block */}
