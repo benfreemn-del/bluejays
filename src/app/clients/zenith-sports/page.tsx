@@ -1119,7 +1119,12 @@ export default function ZenithSportsPage() {
                   Designed by professionals. Trusted by families. Built for
                   your future star.
                 </p>
-                <p className="mt-3 text-[11px] tracking-[0.22em] uppercase font-bold text-[#a3e635]">
+                {/* Subtitle color matches the new TEAL testimonial border
+                    + quote-mark for visual coherence in this block. */}
+                <p
+                  className="mt-3 text-[11px] tracking-[0.22em] uppercase font-bold"
+                  style={{ color: TEAL }}
+                >
                   The Zenith Sports promise
                 </p>
               </div>
