@@ -618,13 +618,15 @@ export default function HectorLandscapingLandscapingPage() {
                     className="text-sm md:text-base uppercase tracking-widest font-medium flex items-center gap-2 flex-wrap"
                     style={{ color: PRIMARY_LIGHT }}
                   >
-                    <span>Affordable Landscaping with a 5-Star Reputation</span>
-                    <SealCheck
-                      size={18}
-                      weight="fill"
-                      style={{ color: "#1d9bf0" }}
-                      aria-label="Verified business"
-                    />
+                    <span className="inline-flex items-center gap-1.5">
+                      Affordable Landscaping with a 5-Star Reputation
+                      <SealCheck
+                        size={18}
+                        weight="fill"
+                        style={{ color: "#1d9bf0" }}
+                        aria-label="Verified 5-star reputation"
+                      />
+                    </span>
                   </motion.p>
 
                   <h1 className="text-4xl md:text-5xl lg:text-[60px] xl:text-[72px] tracking-tighter leading-[1.02] font-bold text-white">
@@ -713,8 +715,8 @@ export default function HectorLandscapingLandscapingPage() {
               style={{ minHeight: 400 }}
             >
               <img
-                src={PHOTOS.hero}
-                alt="Hector Landscaping landscape — engineered stonework with naturalistic plantings, Renton WA"
+                src={PHOTOS.fullYard}
+                alt="Hector Landscaping — full backyard transformation: patio, dry creek, curved beds, fresh lawn — Renton WA"
                 className="absolute inset-0 w-full h-full object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0f1a0f]/60 rounded-2xl" />
@@ -1050,7 +1052,7 @@ export default function HectorLandscapingLandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={PHOTOS.fullYard} alt="Hector Landscaping — full backyard transformation: patio, dry creek, curved beds, fresh lawn" className="w-full h-full object-cover" />
+              <img src={PHOTOS.hero} alt="Hector Landscaping — side-yard pathway, dark mulch beds, plantings, cedar privacy fence with bollard light" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-5 py-3 flex items-center gap-3">
@@ -1563,7 +1565,12 @@ export default function HectorLandscapingLandscapingPage() {
               <Tree size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
               <span>{BUSINESS.name} &copy; {new Date().getFullYear()}. All rights reserved.</span>
             </div>
-            <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Built by <a href="https://bluejayportfolio.com/audit" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400 transition-colors">BlueJays</a>{" "}— get your free site audit</p>
+            <p className="text-xs text-slate-600 flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500" aria-hidden>
+                <path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/>
+              </svg>
+              Built by <a href="/clients/hector-landscaping/login" className="underline hover:text-slate-400 transition-colors">BlueJays</a>
+            </p>
           </div>
         </div>
       </footer>
