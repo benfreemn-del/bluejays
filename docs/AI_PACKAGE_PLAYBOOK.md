@@ -467,6 +467,28 @@ defaults for client #2.
   excludes adult-league players and returning amateurs. Extend to 35
   and switch the display from `U-{age}` to `Adult · {age}` for ≥24.
   Pattern in `build-your-player/page.tsx`.
+- **Never let raw Postgres errors leak to clients (NON-NEGOTIABLE)** —
+  caught during 2026-05-04 funnel review. Bad ids passed to bulk
+  endpoints were producing 500s with `"invalid input syntax for type
+  uuid"` text exposed to the caller. Fix pattern (now mandatory on
+  every portal API endpoint):
+    1. UUID-validate every path param + every id in a bulk array
+       BEFORE the DB call.
+    2. Validate `action.kind` (and nested fields like `action.status`,
+       `action.channel`) BEFORE the DB read on any discriminated-union
+       endpoint. Don't burn a query on a bogus action.
+    3. No user-reachable code path should return 500 with a raw
+       Postgres error. Input-shape failures = 400 + friendly string.
+       Internal failures = 500 + generic message; real error logged.
+  See `Owner Portal Rules → 4a` in CLAUDE.md for the canonical regex
+  + code snippets. Applied across all `client-portal/[id]` routes
+  + `client-portal/{leads,tasks}/bulk` in commit aa19d06.
+- **Sticky-nav anchors must match real ids (NON-NEGOTIABLE)** — every
+  href like `/clients/{slug}#section` must resolve to a real
+  `id="section"` somewhere in the page DOM. Run a quick crawl script
+  before launch (one already in
+  `funnel-review/audit-anchors.js` pattern). Broken anchors fail
+  silently — visitor clicks, page does nothing, conversion lost.
 
 ### Operational patterns added since v1
 - **Funnel-runs observability log** (`client_funnel_runs` table) writes

@@ -6664,6 +6664,39 @@ endpoint MUST:
 
 Same pattern as the per-row PATCH endpoints. Defense in depth.
 
+### 4a. Input validation — UUID + action shape BEFORE the DB read
+
+Found during the 2026-05-04 funnel review: bad inputs were producing
+500s with raw Postgres errors (`"invalid input syntax for type uuid"`)
+leaking through to the client. Fixed and now mandatory:
+
+**Every [id] route handler** must validate the path param is a valid
+UUID before any DB call:
+```ts
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+if (!UUID_RE.test(id)) {
+  return NextResponse.json({ ok: false, error: "Invalid <resource> id" }, { status: 400 });
+}
+```
+
+**Every bulk endpoint** must filter the ids array through the same
+regex before passing to the DB:
+```ts
+const ids = Array.isArray(body.ids)
+  ? (body.ids as unknown[]).filter((v): v is string => typeof v === "string" && UUID_RE.test(v))
+  : [];
+```
+
+**Action shape validation runs BEFORE the DB read.** If the request
+contains an `action.kind` or similar discriminator, validate it +
+nested fields up front. Don't let `action.kind === "unknown"` burn a
+DB query and surface a confusing pg-syntax error.
+
+Rule: **no user-reachable path should ever return a 500 with a raw
+Postgres error message.** All input-shape errors are 400 with a
+friendly `error` string. Internal failures are 500 with a generic
+message; the real error is logged server-side, never returned.
+
 ### 5. Mutating-API gating
 
 - AI features (reply drafts, future agent actions) MUST gate on
