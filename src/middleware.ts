@@ -164,10 +164,12 @@ const PUBLIC_API_PATHS = [
  *     where the site is rendered from prospects DB row + theme)
  */
 const CLIENT_DOMAIN_MAP: Record<string, string> = {
-  // Hector Landscaping & Design — generated showcase, custom tier
-  // Prospect ID a8f6...→ wrong row (audit-form junk). Real paid row
-  // is ad954c6f-c00e-45cc-9d45-59a13d19da8c.
-  "hectorlandscaping.com": "/preview/ad954c6f-c00e-45cc-9d45-59a13d19da8c",
+  // Hector Landscaping & Design — bespoke custom showcase at
+  // /clients/hector-landscaping (cloned from Mt View landscaping
+  // template + customized with Hector's photos, copy, and contact
+  // info). Was previously pointed at /preview/{prospect-id}; now
+  // upgraded to the bespoke build.
+  "hectorlandscaping.com": "/clients/hector-landscaping",
   // "tekky.org": "/clients/zenith-sports",  // (when Philip activates)
 };
 

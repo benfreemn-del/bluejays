@@ -92,6 +92,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@riv-inc.jp",
     emoji: "🌾",
   },
+  "hector-landscaping": {
+    businessLabel: "Hector Landscaping & Design (Renton, WA)",
+    clientEmail: "hectorlandscapingonline@gmail.com",
+    emoji: "🌿",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
