@@ -233,42 +233,43 @@ export default function EmailCapture({
 
       <form
         onSubmit={onSubmit}
-        // Stack on mobile + tablet; only go inline at lg (1024px+).
-        // The CTA "SEND ME THE GUIDE" + arrow needs ~210px, which
-        // doesn't leave enough room for both inputs in the rounded
-        // card at <1024px widths — caused the button to overflow the
-        // card edge. At lg+, the card is wide enough for the 3-col grid.
-        className="mt-6 grid gap-3 lg:grid-cols-[1fr_1fr_auto]"
+        // Two-row layout at every width: inputs row + button row.
+        // The CTA "SEND ME THE GUIDE" + arrow is too wide for an
+        // inline 3-col grid inside the rounded card at any realistic
+        // breakpoint, and a full-width button looked like it was
+        // bursting out of the card. This stacks predictably and keeps
+        // the button contained.
+        className="mt-6 flex flex-col gap-3"
       >
-        <input
-          type="text"
-          name="name"
-          autoComplete="name"
-          required
-          placeholder="First name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={`px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
-        />
-        <input
-          type="email"
-          name="email"
-          autoComplete="email"
-          required
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={`px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
-        />
+        {/* Inputs row — single column on phone, side-by-side on sm+ */}
+        <div className="grid sm:grid-cols-2 gap-3">
+          <input
+            type="text"
+            name="name"
+            autoComplete="name"
+            required
+            placeholder="First name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
+          />
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            required
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
+          />
+        </div>
+        {/* Button row — left-aligned, intrinsic width so it doesn't
+            stretch edge-to-edge and look like it's bursting the card */}
         <button
           type="submit"
           disabled={status.kind === "submitting"}
-          // whitespace-nowrap prevents the CTA + arrow from wrapping
-          // when the button column is narrow. Tightened tracking from
-          // 0.18em → 0.1em for the same reason — the wide letter-
-          // spacing was pushing two-word CTAs ("Notify me", "Send it")
-          // into a 2-line wrap on tablet widths.
-          className={`inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.1em] uppercase ${s.btnBg} ${s.btnText} ${s.btnHover} transition cursor-pointer disabled:opacity-60 disabled:cursor-wait`}
+          className={`self-start inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.1em] uppercase ${s.btnBg} ${s.btnText} ${s.btnHover} transition cursor-pointer disabled:opacity-60 disabled:cursor-wait`}
         >
           {status.kind === "submitting" ? "Sending…" : cta}
           {status.kind !== "submitting" && (

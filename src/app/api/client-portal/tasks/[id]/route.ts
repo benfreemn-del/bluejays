@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CLIENT_PORTAL_COOKIE, ownerFromCookie } from "@/lib/client-auth";
 import { updatePortalTask, type PortalTaskStatus } from "@/lib/client-tasks-portal";
+import { sendOwnerEmail, sendOwnerAlert } from "@/lib/alerts";
 
 /**
  * PATCH /api/client-portal/tasks/[id]
@@ -53,6 +54,50 @@ export async function PATCH(
       ownerId: owner.id,
       patch,
     });
+
+    // Notify Ben if the owner did anything that needs his attention:
+    //   - Sent the task back to him (owner='ben')
+    //   - Marked it blocked
+    //   - Posted a notes reply (typical: pasting a Pixel/Clarity ID)
+    const wantsBenAttn =
+      patch.owner === "ben" ||
+      patch.status === "blocked" ||
+      typeof patch.notes === "string";
+    if (wantsBenAttn) {
+      const ownerName = owner.name || owner.email;
+      const subjBits: string[] = [];
+      if (patch.owner === "ben") subjBits.push("↩ Sent back");
+      else if (patch.status === "blocked") subjBits.push("🚫 Blocked");
+      else if (typeof patch.notes === "string") subjBits.push("📝 Reply");
+      const subject = `${subjBits[0]}: ${task.title} · ${owner.client_slug}`;
+      const body = [
+        `${ownerName} (${owner.email}) updated a portal task.`,
+        "",
+        `Client:  ${owner.client_slug}`,
+        `Task:    ${task.title}`,
+        `Status:  ${task.status}`,
+        `Owner:   ${task.owner}`,
+        ...(typeof patch.notes === "string"
+          ? ["", "Reply / paste:", task.notes ?? "(empty)"]
+          : []),
+        "",
+        `Open admin dashboard: https://bluejayportfolio.com/dashboard/clients/${owner.client_slug}`,
+      ].join("\n");
+
+      // Fire-and-forget — never block the API response on email send.
+      sendOwnerEmail({ subject, body }).catch((err) =>
+        console.error("[tasks PATCH] Ben email failed:", err),
+      );
+      // SMS too if it's a "send back" — that's the most urgent flavor.
+      if (patch.owner === "ben") {
+        sendOwnerAlert(
+          `↩ ${ownerName} sent back: "${task.title}" — ${owner.client_slug}`,
+        ).catch((err) =>
+          console.error("[tasks PATCH] Ben SMS failed:", err),
+        );
+      }
+    }
+
     return NextResponse.json({ ok: true, task });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "unknown";

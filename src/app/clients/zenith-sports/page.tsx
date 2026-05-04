@@ -1066,22 +1066,18 @@ export default function ZenithSportsPage() {
             <div className="lg:col-span-5">
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  // Use spaced en-dash for the range so "10 – 15" reads
-                  // as "ten to fifteen" instead of a tight "10–15".
                   { v: "10 – 15", l: "Min / session" },
                   { v: "Daily", l: "Reps that count" },
-                  // Match‑day uses a non-breaking hyphen so the word
-                  // never splits across two lines in the narrow tile.
                   { v: "Match‑day", l: "Transfer" },
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="border border-white/10 bg-white/[0.03] px-3 py-6 text-center flex flex-col items-center justify-center gap-4 min-h-[120px]"
+                    className="border border-white/10 bg-white/[0.03] px-3 py-8 text-center flex flex-col items-center justify-between min-h-[150px]"
                   >
                     <div className="text-2xl font-black tracking-tight text-white whitespace-nowrap leading-none">
                       {s.v}
                     </div>
-                    <div className="text-[9px] tracking-[0.22em] uppercase font-bold text-white/55 leading-[1.4]">
+                    <div className="mt-6 text-[9px] tracking-[0.22em] uppercase font-bold text-white/55 leading-[1.4]">
                       {s.l}
                     </div>
                   </div>
@@ -1672,6 +1668,8 @@ export default function ZenithSportsPage() {
                       { value: "9-12", label: "9 – 12 years" },
                       { value: "13-15", label: "13 – 15 years" },
                       { value: "16-18", label: "16 – 18 / high school" },
+                      { value: "19-23", label: "19 – 23 / college + academy" },
+                      { value: "adult", label: "Adult (24+) / amateur league" },
                       { value: "mixed", label: "Mixed age team" },
                     ],
                   },

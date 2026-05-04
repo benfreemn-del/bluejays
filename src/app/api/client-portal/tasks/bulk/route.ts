@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CLIENT_PORTAL_COOKIE, ownerFromCookie } from "@/lib/client-auth";
 import { bulkUpdatePortalTasks, type PortalTaskStatus } from "@/lib/client-tasks-portal";
+import { sendOwnerEmail, sendOwnerAlert } from "@/lib/alerts";
 
 /**
  * POST /api/client-portal/tasks/bulk
@@ -60,6 +61,30 @@ export async function POST(req: NextRequest) {
       ownerId: owner.id,
       patch,
     });
+
+    // Notify Ben on bulk send-back or bulk-blocked. Mark-done bulks
+    // are intentionally silent — those don't need Ben's attention.
+    if (patch.owner === "ben" || patch.status === "blocked") {
+      const ownerName = owner.name || owner.email;
+      const verb = patch.owner === "ben" ? "sent back" : "marked blocked";
+      const subject = `↩ ${updated} task${updated === 1 ? "" : "s"} ${verb} · ${owner.client_slug}`;
+      const body = [
+        `${ownerName} (${owner.email}) bulk-${verb} ${updated} task${updated === 1 ? "" : "s"}.`,
+        "",
+        `Client: ${owner.client_slug}`,
+        "",
+        `Open admin dashboard: https://bluejayportfolio.com/dashboard/clients/${owner.client_slug}`,
+      ].join("\n");
+      sendOwnerEmail({ subject, body }).catch((err) =>
+        console.error("[tasks bulk] Ben email failed:", err),
+      );
+      sendOwnerAlert(
+        `↩ ${ownerName} ${verb} ${updated} task${updated === 1 ? "" : "s"} (${owner.client_slug})`,
+      ).catch((err) =>
+        console.error("[tasks bulk] Ben SMS failed:", err),
+      );
+    }
+
     return NextResponse.json({ ok: true, updated });
   } catch (err) {
     return NextResponse.json(
