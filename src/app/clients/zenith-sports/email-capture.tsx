@@ -233,7 +233,12 @@ export default function EmailCapture({
 
       <form
         onSubmit={onSubmit}
-        className="mt-6 grid sm:grid-cols-[1fr_1fr_auto] gap-3"
+        // Stack on mobile + tablet; only go inline at lg (1024px+).
+        // The CTA "SEND ME THE GUIDE" + arrow needs ~210px, which
+        // doesn't leave enough room for both inputs in the rounded
+        // card at <1024px widths — caused the button to overflow the
+        // card edge. At lg+, the card is wide enough for the 3-col grid.
+        className="mt-6 grid gap-3 lg:grid-cols-[1fr_1fr_auto]"
       >
         <input
           type="text"
