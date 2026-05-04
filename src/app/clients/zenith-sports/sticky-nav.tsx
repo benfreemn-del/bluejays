@@ -32,6 +32,7 @@ const MAIN_LINKS = [
   { href: "/clients/zenith-sports#about", label: "About" },
   { href: "/clients/zenith-sports#tekky", label: "TEKKY" },
   { href: "/clients/zenith-sports#training", label: "Training" },
+  { href: "/clients/zenith-sports/build-your-player", label: "Build" },
   { href: "/clients/zenith-sports/shop", label: "Shop" },
   { href: "/clients/zenith-sports#contact", label: "Contact" },
 ];

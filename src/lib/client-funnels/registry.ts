@@ -37,6 +37,26 @@ export type ClientFunnelConfig = {
     /** E.164 Twilio number. Null = SMS sends skipped (logged, not attempted). */
     from: string | null;
   };
+  /** Missed-call → text-back behavior. */
+  missedCall?: {
+    /**
+     * "always" = auto-text every missed caller
+     * "after-hours" = only text if outside the after-hours window
+     * "off" = log the call but never auto-text
+     */
+    mode: "always" | "after-hours" | "off";
+    /**
+     * Outbound text body. {{firstName}} not available (we don't know
+     * the caller yet); keep it warm and self-introducing.
+     */
+    text: string;
+    /** For "after-hours" mode — local hour the auto-text turns on. */
+    afterHoursStart?: number;
+    /** For "after-hours" mode — local hour the auto-text turns off. */
+    afterHoursEnd?: number;
+    /** Local timezone for the after-hours calc. */
+    timezone?: string;
+  };
   /** Look up the funnel for a given audience. */
   getFunnel: (audience: ClientLeadAudience | null) => AudienceFunnel | null;
   /** All defined audience funnels for this client. */
@@ -57,6 +77,13 @@ export const CLIENT_FUNNELS: Record<string, ClientFunnelConfig> = {
       email: "ben@bluejayportfolio.com",
       name: "Philip @ Zenith Sports / TEKKY®",
       replyTo: "info@zenithsports.org",
+    },
+    // Missed-call → text-back behavior. Decision logged 2026-05-04 by
+    // Ben: ALWAYS-ON. Auto-fires once ZENITH_TWILIO_NUMBER is set.
+    missedCall: {
+      mode: "always",
+      text:
+        "Hi, this is Philip @ TEKKY® — sorry I missed your call. Quickest reply is text. What's the best way to help — info on the ball, club demo, or training?",
     },
     sms: {
       // Until Philip provisions a Twilio number (see client_tasks),

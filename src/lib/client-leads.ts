@@ -109,6 +109,14 @@ export function detectAudience(
     return "player";
   if (source === "email-capture" && intent === "camp finder") return "parent";
 
+  // Build Your Player lead-gen — role field is the source of truth.
+  if (source === "lead-gen-builder") {
+    const builderRole = str("role");
+    if (builderRole === "parent") return "parent";
+    if (builderRole === "coach") return "coach";
+    if (builderRole === "player") return "player";
+  }
+
   // Role select on the main inquiry form
   if (role.includes("coach") || role.includes("doc")) return "coach";
   if (role.includes("parent")) return "parent";

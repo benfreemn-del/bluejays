@@ -52,6 +52,7 @@ import { PhotoZoom, ZoomTrigger } from "./photo-zoom";
 import TrainingDrills from "./training-drills";
 import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
+import ClientTrackingScripts from "@/components/ClientTrackingScripts";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -258,6 +259,11 @@ export default function ZenithSportsPage() {
           "ui-sans-serif, system-ui, 'Inter', 'Helvetica Neue', Arial, sans-serif",
       }}
     >
+      {/* Per-client tracking scripts (Meta Pixel + GA4). Self-gates on
+          per-client env vars — renders nothing until ZENITH_META_PIXEL_ID
+          / ZENITH_GA_MEASUREMENT_ID are set. */}
+      <ClientTrackingScripts slug="zenith-sports" />
+
       {/* ─────────────── PROMO BAR ─────────────── */}
       <PromoMarquee />
 
@@ -1340,21 +1346,34 @@ export default function ZenithSportsPage() {
               the complete list (scraped from zenithsports.org/pages/training). */}
           <TrainingDrills />
 
-          {/* Player Challenge email capture — per brand voice guide
-              PRIORITY 3 (email capture at every section exit). Lets
-              non-buyers leave with something + builds the list that
-              powers the 4.5–6% returning-visitor conversion bump. */}
+          {/* "Build Your Player" lead-gen — replaces the old Player
+              Challenge email-capture. Multi-step character builder at
+              /clients/zenith-sports/build-your-player. Captures the
+              lead AND delivers a personalized training plan + kit
+              recommendation. */}
           <div className="mt-16 max-w-3xl mx-auto">
-            <EmailCapture
-              variant="navy"
-              intent="Player Challenge"
-              badge="Player Challenge"
-              headline="Submit your touches. Get featured."
-              body="Every Touch Tuesday, we feature one player from the community. Send us your reps with #TEKKYTouch and we'll send you next week's drill drop, plus a chance to be the featured player."
-              cta="Submit my touches"
-              successHeadline="You're in the rotation."
-              successBody="Watch your inbox — next Touch Tuesday's drill drop is heading your way. Tag @ZenithSports and #TEKKYTouch in your training reels for a feature shot."
-            />
+            <a
+              href="/clients/zenith-sports/build-your-player"
+              className="group block rounded-2xl border-2 border-[#a3e635]/40 hover:border-[#a3e635] bg-gradient-to-br from-[#0a1832] via-[#0a1832] to-[#1d4ed8]/30 p-7 sm:p-9 transition shadow-[0_0_60px_rgba(163,230,53,0.08)]"
+            >
+              <div className="flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.32em] uppercase font-extrabold text-[#a3e635] mb-3">
+                <span className="inline-block w-6 h-px bg-[#a3e635]" />
+                Free · 60 seconds
+              </div>
+              <h3 className="text-3xl sm:text-5xl font-black uppercase tracking-tighter leading-[0.92] text-white">
+                Build your player.
+                <br />
+                <span className="text-[#a3e635]">Get your custom plan.</span>
+              </h3>
+              <p className="mt-5 text-base text-white/70 leading-relaxed max-w-xl">
+                Tell us about the player. Get a personalized TEKKY®
+                training plan + recommended kit, built by Philip + Paul
+                in real time as you adjust the sliders.
+              </p>
+              <div className="mt-6 inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-3.5 text-[13px] font-extrabold tracking-[0.2em] uppercase rounded-md group-hover:bg-white transition">
+                Build your player →
+              </div>
+            </a>
           </div>
 
           <div className="mt-12 text-center">

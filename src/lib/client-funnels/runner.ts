@@ -59,6 +59,8 @@ function substitutions(lead: ClientLead): Record<string, string> {
     campsUrl: "https://bluejayportfolio.com/clients/zenith-sports/camps",
     coachGuideUrl:
       "https://bluejayportfolio.com/clients/zenith-sports/training-guide",
+    builderUrl:
+      "https://bluejayportfolio.com/clients/zenith-sports/build-your-player",
   };
 }
 

@@ -27,7 +27,43 @@ gold $ badge in the dashboard.
 
 ---
 
-## Phase 0 — Discovery (1–2 hours)
+## Phase 0 — Ad-platform + tracking access (CRITICAL — request day 1)
+
+The single biggest delay risk on AI Package builds is waiting for ad-
+platform access. Ask for these on the discovery call so the pipeline
+fills in parallel with the showcase build:
+
+**Meta:**
+- Add Ben as Admin in Meta Business Manager
+- Pixel ID (15-16 digits) — create one if they don't have one
+- Conversions API (CAPI) access token — Events Manager → Pixel → Settings → Generate Access Token
+- Ad Account ID (`act_XXXXXXXXX`) — Ben needs Advertiser/Admin role
+
+**Google:**
+- Add Ben to their Google Ads account (Standard or Admin level)
+- Customer ID (10-digit, e.g. `123-456-7890`)
+- GA4 Measurement ID (`G-XXXXXXXXX`) — create a property if needed
+
+**Stripe (optional):**
+- Only if processing payments through us. Add Ben as account user OR
+  share a Stripe Connect account ID + restricted key.
+
+Once received, set Vercel env vars (per-client prefix):
+```
+{SLUG}_META_PIXEL_ID=...
+{SLUG}_META_CAPI_TOKEN=...
+{SLUG}_META_AD_ACCOUNT_ID=act_...
+{SLUG}_GA_MEASUREMENT_ID=G-...
+{SLUG}_GOOGLE_ADS_CUSTOMER_ID=...
+{SLUG}_TWILIO_NUMBER=+1...
+```
+
+The pixel + tag scripts auto-load on `/clients/{slug}/*` once the env
+is set — no code changes needed (see `src/components/ClientTrackingScripts.tsx`).
+
+---
+
+## Phase 0.5 — Discovery (1–2 hours)
 
 ### Inputs
 - Their existing website
@@ -389,6 +425,31 @@ already uses for paid customers). Scope: ~1 day of work.
 
 For now: forward the weekly performance email + send Loom walkthroughs
 of the showcase + new lead magnets when they land.
+
+---
+
+## Phase 9 — Auto-optimization layer (Hyperloop client integration)
+
+`src/lib/hyperloop-*.ts` is the BlueJays auto-optimization brain — it
+runs Wilson-confidence-interval analysis on variant performance, retires
+losers, promotes winners, and seeds the Claude generator with proven
+patterns. Currently scoped to BlueJays' own prospect/ad data.
+
+**Per-client extension** (apply to each AI Package buyer):
+- Funnel template performance — which subject lines / SMS bodies are
+  getting opens + replies? Surfaces in `/dashboard/clients/{slug}/insights`.
+- Ad creative performance — once Meta/Google data syncs into
+  `client_ad_creatives.impressions/clicks/conversions`, run the same
+  Wilson analysis to auto-flag winners + losers per audience.
+- Audience conversion lift — which audience (parent/coach/player) is
+  converting hottest? Auto-suggest budget reallocation to winning
+  audience.
+- Generator seed — feed top-performing template_ids back into the
+  Claude generator so future per-client builds start from proven copy.
+
+**Build status:** scaffolding TBD — flagged as Sprint 5 on the next
+client engagement (or refit on Zenith once we have 4+ weeks of real
+funnel data to analyze).
 
 ---
 

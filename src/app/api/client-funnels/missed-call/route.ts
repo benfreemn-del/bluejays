@@ -128,10 +128,31 @@ export async function POST(req: NextRequest) {
         },
       ]);
 
-      // TODO (when Philip + Paul finalize the auto-text decision —
-      // see client_tasks: "Decide: missed-call → text-back behavior"):
-      //   send the configured auto-text via Twilio using cfg.sms.from →
-      //   fromPhone with the configured body.
+      // Auto-text the caller per the per-client missedCall config.
+      // Decision logged for Zenith 2026-05-04: mode='always'.
+      // For after-hours mode we'd compare local hour against the
+      // configured window — not used for Zenith but the logic is here.
+      const mc = cfg.missedCall;
+      const shouldText =
+        mc?.mode === "always"
+          ? true
+          : mc?.mode === "after-hours"
+            ? isAfterHours(mc.afterHoursStart, mc.afterHoursEnd, mc.timezone)
+            : false;
+
+      if (shouldText && cfg.sms.from && mc?.text) {
+        try {
+          await sendMissedCallText({
+            from: cfg.sms.from,
+            to: fromPhone,
+            body: mc.text,
+            leadId,
+            clientSlug,
+          });
+        } catch (err) {
+          console.error("[missed-call] auto-text send failed:", err);
+        }
+      }
     } catch (err) {
       console.error("[missed-call] log failed:", err);
     }
@@ -141,6 +162,115 @@ export async function POST(req: NextRequest) {
   // automatically yet — we're holding until Philip's decision is logged
   // in client_tasks.
   return twiml("<Response/>");
+}
+
+/* ─────────────── HELPERS ─────────────── */
+
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+
+/**
+ * Send the auto-text-back via Twilio + log the outbound message.
+ * Mirrors src/lib/client-funnels/sender.ts but inline because this
+ * call originates from a webhook context with no funnel-step (-1
+ * sentinel for the message log).
+ */
+async function sendMissedCallText(args: {
+  from: string;
+  to: string;
+  body: string;
+  leadId: string;
+  clientSlug: string;
+}): Promise<void> {
+  const sb = getSupabase();
+
+  // Insert queued row first so a crash mid-send leaves a record.
+  const { data: queued } = await sb
+    .from("client_lead_messages")
+    .insert([
+      {
+        lead_id: args.leadId,
+        client_slug: args.clientSlug,
+        funnel_step: null, // not part of a funnel cadence
+        channel: "sms",
+        direction: "outbound",
+        to_address: args.to,
+        from_address: args.from,
+        body: args.body,
+        template_id: "missed-call.auto-text",
+        status: "queued",
+        provider: TWILIO_ACCOUNT_SID ? "twilio" : "mock",
+      },
+    ])
+    .select("id")
+    .single();
+  const msgId = queued?.id;
+
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
+    if (msgId)
+      await sb.from("client_lead_messages").update({ status: "sent" }).eq("id", msgId);
+    console.log(`  [missed-call · MOCK] To ${args.to}: ${args.body}`);
+    return;
+  }
+
+  const auth = Buffer.from(
+    `${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`,
+  ).toString("base64");
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        From: args.from,
+        To: args.to,
+        Body: args.body,
+      }),
+    },
+  );
+  if (!res.ok) {
+    const txt = await res.text();
+    if (msgId)
+      await sb
+        .from("client_lead_messages")
+        .update({
+          status: "failed",
+          error: `Twilio ${res.status}: ${txt.slice(0, 200)}`,
+        })
+        .eq("id", msgId);
+    throw new Error(`Twilio ${res.status}`);
+  }
+  const data = (await res.json()) as { sid?: string };
+  if (msgId)
+    await sb
+      .from("client_lead_messages")
+      .update({ status: "sent", provider_id: data.sid ?? null })
+      .eq("id", msgId);
+}
+
+/** Local-hour comparison for after-hours mode. */
+function isAfterHours(
+  start: number | undefined,
+  end: number | undefined,
+  tz: string | undefined,
+): boolean {
+  if (start === undefined || end === undefined) return false;
+  try {
+    const fmt = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      hour12: false,
+      timeZone: tz || "America/Los_Angeles",
+    });
+    const hour = parseInt(fmt.format(new Date()), 10);
+    // Window can wrap midnight (e.g. start=21, end=7).
+    if (start <= end) return hour >= start && hour < end;
+    return hour >= start || hour < end;
+  } catch {
+    return false;
+  }
 }
 
 // GET for health-check / Twilio "test webhook" button
