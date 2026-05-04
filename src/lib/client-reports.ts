@@ -366,8 +366,11 @@ export async function generateWeeklyReport(
   const next_actions: string[] = [];
 
   if (newThisWeek.length > 0) {
+    const wk = newThisWeek.length;
+    const prev = newPriorWeek.length;
+    const delta = wk - prev;
     highlights.push(
-      `${newThisWeek.length} new leads this week (${newPriorWeek.length} prior week — Δ ${newThisWeek.length - newPriorWeek.length}).`,
+      `${wk} new lead${wk === 1 ? "" : "s"} this week (${prev} prior — Δ ${delta >= 0 ? "+" : ""}${delta}).`,
     );
   } else {
     highlights.push(`No new leads this week.`);
@@ -413,9 +416,18 @@ export async function generateWeeklyReport(
     );
   }
   if (Object.keys(bySource).length > 0) {
+    // Friendly source labels — matches SOURCE_LABEL in the portal page
+    // so highlights read like a human wrote them.
+    const sourceLabel: Record<string, string> = {
+      "main-inquiry-form": "Contact form",
+      "email-capture": "Email capture",
+      "lead-gen-builder": "Build Your Player",
+      "missed-call-text": "Missed call",
+    };
     const topSrc = Object.entries(bySource).sort((a, b) => b[1] - a[1])[0];
+    const label = sourceLabel[topSrc[0]] ?? topSrc[0];
     highlights.push(
-      `Top lead source: ${topSrc[0]} (${topSrc[1]} of ${leads.length} leads).`,
+      `Top lead source: ${label} (${topSrc[1]} of ${leads.length} leads).`,
     );
   }
   if (avg_response_time_hours !== null) {
