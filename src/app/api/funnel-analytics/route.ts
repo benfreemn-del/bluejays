@@ -3,6 +3,7 @@ import { getAllProspects } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
+import { totalRevenueFromProspects } from "@/lib/actual-revenue";
 
 /**
  * GET /api/funnel-analytics
@@ -322,7 +323,7 @@ export async function GET() {
         overallResponseRate,
         overallClaimRate,
         overallConversionRate,
-        revenue: totalPaid * 997,
+        revenue: totalRevenueFromProspects(prospects),
       },
       funnel,
       byCategory,

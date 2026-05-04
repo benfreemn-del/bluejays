@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { estimatedRevenueFromPaidCount } from "@/lib/actual-revenue";
 
 /**
  * GET /api/costs/analytics
@@ -48,9 +49,9 @@ export async function GET() {
         },
       },
       roi: {
-        totalRevenue: paidCount * 997,
+        totalRevenue: estimatedRevenueFromPaidCount(paidCount),
         totalSpend: 0,
-        netProfit: paidCount * 997,
+        netProfit: estimatedRevenueFromPaidCount(paidCount),
         roiMultiple: 0,
         conversionRate: Math.round(conversionRate * 100) / 100,
         costPerAcquisition: 0,
@@ -206,7 +207,10 @@ export async function GET() {
       : 0;
 
     // ── ROI projections ──
-    const totalRevenue = paidCount * 997;
+    // Uses estimatedRevenueFromPaidCount() to account for Hector's
+    // negotiated $100 (vs. $997 list) and Zenith's $10k contract that
+    // sits outside the prospect funnel. See @/lib/actual-revenue.
+    const totalRevenue = estimatedRevenueFromPaidCount(paidCount);
     const netProfit = totalRevenue - allTimeTotal;
     const roiMultiple = allTimeTotal > 0 ? totalRevenue / allTimeTotal : 0;
     const costPerAcquisition = paidCount > 0 ? allTimeTotal / paidCount : allTimeTotal;

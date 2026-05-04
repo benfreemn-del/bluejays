@@ -137,7 +137,51 @@ type Report = {
   next_actions: string[];
 };
 
-type Tab = "overview" | "leads" | "todo" | "budget" | "insights" | "account";
+type Tab =
+  | "overview"
+  | "leads"
+  | "todo"
+  | "budget"
+  | "campaigns"
+  | "insights"
+  | "account";
+
+type Campaign = {
+  id: string;
+  client_slug: string;
+  name: string;
+  subject: string;
+  body: string;
+  audience_filter: string[];
+  lead_status_filter: string[];
+  status: "draft" | "scheduled" | "sending" | "sent" | "cancelled";
+  scheduled_for: string | null;
+  sent_at: string | null;
+  recipient_count: number;
+  send_count: number;
+  open_count: number;
+  click_count: number;
+  reply_count: number;
+  bounce_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+type CampaignSend = {
+  id: string;
+  campaign_id: string;
+  lead_id: string;
+  to_email: string;
+  rendered_subject: string;
+  rendered_body: string;
+  status: string;
+  error: string | null;
+  sent_at: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
+  replied_at: string | null;
+  created_at: string;
+};
 
 type BudgetItem = {
   id: string;
@@ -296,6 +340,7 @@ export default function PortalPage({
   const [tasksSummary, setTasksSummary] = useState<TasksSummary | null>(null);
   const [budgetItems, setBudgetItems] = useState<BudgetItem[]>([]);
   const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
 
   /* Identity check on load. */
@@ -366,6 +411,11 @@ export default function PortalPage({
     if (j.ok && j.items) setBudgetItems(j.items);
     if (j.ok && j.summary) setBudgetSummary(j.summary);
   }, []);
+  const loadCampaigns = useCallback(async () => {
+    const r = await fetch(`/api/client-portal/campaigns`);
+    const j = (await r.json()) as { ok: boolean; campaigns?: Campaign[] };
+    if (j.ok && j.campaigns) setCampaigns(j.campaigns);
+  }, []);
 
   // Overview tab needs leads + report + subs + tasks all at once.
   useEffect(() => {
@@ -379,9 +429,22 @@ export default function PortalPage({
     if (tab === "leads") loadLeads();
     if (tab === "todo") loadTasks();
     if (tab === "budget") loadBudget();
+    if (tab === "campaigns") {
+      loadCampaigns();
+      loadLeads();
+    }
     if (tab === "insights") loadReport();
     if (tab === "account") loadSubs();
-  }, [tab, owner, loadLeads, loadReport, loadSubs, loadTasks, loadBudget]);
+  }, [
+    tab,
+    owner,
+    loadLeads,
+    loadReport,
+    loadSubs,
+    loadTasks,
+    loadBudget,
+    loadCampaigns,
+  ]);
 
   const updateLeadStatus = async (id: string, status: string) => {
     setLeads((prev) =>
@@ -446,6 +509,7 @@ export default function PortalPage({
               { id: "leads", label: "Leads", emoji: "📥" },
               { id: "todo", label: "To-Do", emoji: "✅" },
               { id: "budget", label: "Budget", emoji: "💰" },
+              { id: "campaigns", label: "Campaigns", emoji: "📧" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
@@ -501,6 +565,13 @@ export default function PortalPage({
             items={budgetItems}
             summary={budgetSummary}
             onMutate={loadBudget}
+          />
+        )}
+        {tab === "campaigns" && (
+          <CampaignsTab
+            campaigns={campaigns}
+            leads={leads}
+            onMutate={loadCampaigns}
           />
         )}
         {tab === "insights" && <InsightsTab report={report} />}
@@ -3060,6 +3131,449 @@ function PrefRow({
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────── CAMPAIGNS TAB ─────────────────────────── */
+
+const CAMPAIGN_STATUS_COLOR: Record<string, string> = {
+  draft: "bg-slate-700/40 text-slate-300",
+  scheduled: "bg-blue-500/20 text-blue-300",
+  sending: "bg-amber-500/20 text-amber-300",
+  sent: "bg-emerald-500/20 text-emerald-300",
+  cancelled: "bg-rose-500/20 text-rose-300",
+};
+
+const AUDIENCE_OPTIONS = ["parent", "coach", "player", "club", "unknown"];
+const LEAD_STATUS_OPTIONS = [
+  "not_enrolled",
+  "enrolled",
+  "paused",
+  "responded",
+  "converted",
+  "completed",
+];
+
+function CampaignsTab({
+  campaigns,
+  leads,
+  onMutate,
+}: {
+  campaigns: Campaign[];
+  leads: ClientLead[];
+  onMutate: () => void;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <h2 className="text-lg font-bold tracking-tight mb-1">
+              Email campaigns
+            </h2>
+            <p className="text-sm text-slate-400">
+              Blast filtered subsets of your leads with merge-tag-aware
+              templates. Track opens, clicks, replies.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowForm((v) => !v)}
+            className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-400 text-white whitespace-nowrap"
+          >
+            {showForm ? "Cancel" : "+ New campaign"}
+          </button>
+        </div>
+        {showForm && (
+          <CampaignForm
+            leads={leads}
+            onDone={() => {
+              setShowForm(false);
+              onMutate();
+            }}
+          />
+        )}
+      </div>
+
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] divide-y divide-white/[0.06]">
+        {campaigns.length === 0 && (
+          <div className="p-8 text-center text-sm text-slate-500">
+            No campaigns yet. Create your first to reach your audience.
+          </div>
+        )}
+        {campaigns.map((c) => (
+          <CampaignRow
+            key={c.id}
+            campaign={c}
+            isOpen={openId === c.id}
+            onToggle={() => setOpenId(openId === c.id ? null : c.id)}
+            onMutate={onMutate}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CampaignForm({
+  leads,
+  onDone,
+}: {
+  leads: ClientLead[];
+  onDone: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState(
+    "Hi {{first_name}},\n\n[your message here]\n\n— TEKKY",
+  );
+  const [audSel, setAudSel] = useState<string[]>([]);
+  const [statusSel, setStatusSel] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+
+  // Live preview of recipient count.
+  const livePreview = leads.filter((l) => {
+    if (!l.email) return false;
+    if (
+      audSel.length > 0 &&
+      !audSel.includes(l.audience_segment ?? "unknown")
+    )
+      return false;
+    if (statusSel.length > 0 && !statusSel.includes(l.funnel_status))
+      return false;
+    return true;
+  });
+
+  const submit = async (action: "save" | "send") => {
+    if (!name || !subject || !body) {
+      alert("Name, subject, and body are required.");
+      return;
+    }
+    setBusy(true);
+    const r = await fetch("/api/client-portal/campaigns", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name,
+        subject,
+        body,
+        audience_filter: audSel,
+        lead_status_filter: statusSel,
+      }),
+    });
+    const j = (await r.json()) as { ok: boolean; campaign?: Campaign; error?: string };
+    if (!j.ok || !j.campaign) {
+      alert(j.error || "Failed to save");
+      setBusy(false);
+      return;
+    }
+    if (action === "send") {
+      if (
+        !confirm(
+          `Send to ${livePreview.length} recipient${livePreview.length === 1 ? "" : "s"} now?`,
+        )
+      ) {
+        setBusy(false);
+        onDone();
+        return;
+      }
+      const sr = await fetch(`/api/client-portal/campaigns/${j.campaign.id}/send`, {
+        method: "POST",
+      });
+      const sj = (await sr.json()) as { ok: boolean; sent?: number; failed?: number; error?: string };
+      if (!sj.ok) {
+        alert(sj.error || "Send failed");
+      } else {
+        alert(`Sent: ${sj.sent ?? 0}, Failed: ${sj.failed ?? 0}`);
+      }
+    }
+    setBusy(false);
+    onDone();
+  };
+
+  const toggleArr = (arr: string[], v: string, set: (a: string[]) => void) => {
+    set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  };
+
+  return (
+    <div className="mt-4 space-y-3 border-t border-white/[0.06] pt-4">
+      <div>
+        <label className="text-[11px] uppercase tracking-wider text-slate-400 block mb-1">
+          Internal name
+        </label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Spring camp announcement v2"
+          className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-400"
+        />
+      </div>
+      <div>
+        <label className="text-[11px] uppercase tracking-wider text-slate-400 block mb-1">
+          Subject line
+        </label>
+        <input
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Hey {{first_name}} — quick TEKKY question"
+          className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-400"
+        />
+      </div>
+      <div>
+        <label className="text-[11px] uppercase tracking-wider text-slate-400 block mb-1">
+          Body — supports{" "}
+          <code className="text-blue-300">{"{{first_name}}"}</code>{" "}
+          <code className="text-blue-300">{"{{audience}}"}</code>{" "}
+          <code className="text-blue-300">{"{{intent}}"}</code>
+        </label>
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={8}
+          className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-400 font-mono"
+        />
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div>
+          <label className="text-[11px] uppercase tracking-wider text-slate-400 block mb-1.5">
+            Audience filter (empty = all)
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {AUDIENCE_OPTIONS.map((a) => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => toggleArr(audSel, a, setAudSel)}
+                className={`text-[11px] font-bold px-2.5 py-1 rounded border transition ${
+                  audSel.includes(a)
+                    ? "bg-blue-500 border-blue-400 text-white"
+                    : "border-slate-700 text-slate-400 hover:text-white"
+                }`}
+              >
+                {AUDIENCE_EMOJI[a] || ""} {a}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="text-[11px] uppercase tracking-wider text-slate-400 block mb-1.5">
+            Lead status filter (empty = all)
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {LEAD_STATUS_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => toggleArr(statusSel, s, setStatusSel)}
+                className={`text-[11px] font-bold px-2.5 py-1 rounded border transition ${
+                  statusSel.includes(s)
+                    ? "bg-blue-500 border-blue-400 text-white"
+                    : "border-slate-700 text-slate-400 hover:text-white"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 pt-2">
+        <span className="text-xs text-slate-400">
+          Will reach{" "}
+          <span className="font-bold text-white">{livePreview.length}</span>{" "}
+          lead{livePreview.length === 1 ? "" : "s"}
+        </span>
+        <div className="flex-1" />
+        <button
+          disabled={busy}
+          onClick={() => submit("save")}
+          className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:text-white disabled:opacity-50"
+        >
+          Save draft
+        </button>
+        <button
+          disabled={busy || livePreview.length === 0}
+          onClick={() => submit("send")}
+          className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white disabled:opacity-50"
+        >
+          {busy ? "…" : "Send now"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CampaignRow({
+  campaign,
+  isOpen,
+  onToggle,
+  onMutate,
+}: {
+  campaign: Campaign;
+  isOpen: boolean;
+  onToggle: () => void;
+  onMutate: () => void;
+}) {
+  const [sends, setSends] = useState<CampaignSend[]>([]);
+  const [liveCount, setLiveCount] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    (async () => {
+      const r = await fetch(`/api/client-portal/campaigns/${campaign.id}`);
+      const j = (await r.json()) as {
+        ok: boolean;
+        sends?: CampaignSend[];
+        live_recipient_count?: number;
+      };
+      if (cancelled) return;
+      if (j.ok) {
+        setSends(j.sends ?? []);
+        setLiveCount(j.live_recipient_count ?? null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, campaign.id]);
+
+  const sendNow = async () => {
+    if (!confirm(`Send "${campaign.name}" now?`)) return;
+    setBusy(true);
+    const r = await fetch(`/api/client-portal/campaigns/${campaign.id}/send`, {
+      method: "POST",
+    });
+    const j = (await r.json()) as { ok: boolean; sent?: number; failed?: number; error?: string };
+    setBusy(false);
+    if (!j.ok) alert(j.error || "Send failed");
+    else alert(`Sent: ${j.sent ?? 0}, Failed: ${j.failed ?? 0}`);
+    onMutate();
+  };
+
+  const remove = async () => {
+    if (!confirm(`Delete "${campaign.name}"? This can't be undone.`)) return;
+    await fetch(`/api/client-portal/campaigns/${campaign.id}`, { method: "DELETE" });
+    onMutate();
+  };
+
+  const canSend = campaign.status === "draft" || campaign.status === "scheduled";
+  const canDelete = campaign.status !== "sending" && campaign.status !== "sent";
+
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        className="w-full text-left p-4 hover:bg-slate-800/40 transition flex items-center gap-3"
+      >
+        <span className="text-base">📧</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-white truncate">
+              {campaign.name}
+            </span>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${CAMPAIGN_STATUS_COLOR[campaign.status]}`}
+            >
+              {campaign.status}
+            </span>
+          </div>
+          <div className="text-xs text-slate-500 truncate mt-0.5">
+            {campaign.subject}
+          </div>
+        </div>
+        <div className="text-right text-[11px] text-slate-500 whitespace-nowrap">
+          <div>
+            {campaign.send_count} sent · {campaign.open_count} opens
+          </div>
+          <div>
+            {campaign.click_count} clicks · {campaign.reply_count} replies
+          </div>
+        </div>
+      </button>
+      {isOpen && (
+        <div className="px-4 pb-4 space-y-3 bg-slate-950/40">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+            <Stat label="Recipients" value={String(campaign.recipient_count)} />
+            <Stat label="Sent" value={String(campaign.send_count)} />
+            <Stat label="Opens" value={String(campaign.open_count)} />
+            <Stat label="Replies" value={String(campaign.reply_count)} />
+          </div>
+          {liveCount !== null && canSend && (
+            <div className="text-xs text-slate-400">
+              Will reach{" "}
+              <span className="font-bold text-white">{liveCount}</span> lead
+              {liveCount === 1 ? "" : "s"} based on current filters.
+            </div>
+          )}
+          <div className="text-xs text-slate-300 whitespace-pre-wrap rounded-lg bg-slate-900 border border-slate-800 p-3 max-h-48 overflow-auto">
+            {campaign.body}
+          </div>
+          {sends.length > 0 && (
+            <div className="rounded-lg border border-slate-800 divide-y divide-slate-800 max-h-64 overflow-auto">
+              {sends.slice(0, 50).map((s) => (
+                <div
+                  key={s.id}
+                  className="px-3 py-2 text-[11px] flex items-center gap-2"
+                >
+                  <span className="font-mono text-slate-300 truncate flex-1">
+                    {s.to_email}
+                  </span>
+                  <span
+                    className={`font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                      s.status === "sent" || s.status === "delivered"
+                        ? "bg-emerald-500/20 text-emerald-300"
+                        : s.status === "opened" || s.status === "clicked"
+                          ? "bg-blue-500/20 text-blue-300"
+                          : s.status === "replied"
+                            ? "bg-violet-500/20 text-violet-300"
+                            : s.status === "failed" || s.status === "bounced"
+                              ? "bg-rose-500/20 text-rose-300"
+                              : "bg-slate-700/40 text-slate-400"
+                    }`}
+                  >
+                    {s.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2">
+            {canSend && (
+              <button
+                onClick={sendNow}
+                disabled={busy}
+                className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white disabled:opacity-50"
+              >
+                {busy ? "…" : "Send now"}
+              </button>
+            )}
+            {canDelete && (
+              <button
+                onClick={remove}
+                className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-rose-500/40 text-rose-300 hover:bg-rose-500/10"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg bg-slate-900 border border-slate-800 p-2">
+      <div className="text-[10px] uppercase tracking-wider text-slate-500">
+        {label}
+      </div>
+      <div className="text-base font-bold text-white">{value}</div>
     </div>
   );
 }
