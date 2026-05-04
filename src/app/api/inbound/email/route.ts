@@ -6,6 +6,7 @@ import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertOb
 import { markProspectReplied } from "@/lib/followup-scheduler";
 import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib/delayed-replies";
 import { alertOwner } from "@/lib/alerts";
+import { detectReply } from "@/lib/client-funnels/reply-detector";
 
 /**
  * POST /api/inbound/email
@@ -55,6 +56,26 @@ export async function POST(request: NextRequest) {
       envelopeFrom = envelope.from || "";
     } catch {
       // Envelope parsing failed, use fromRaw
+    }
+
+    // First — does this match a client_lead (per-client AI funnel)?
+    // If so, mark them responded and bail. Tone for client funnels
+    // belongs to the client, not the BlueJay AI responder.
+    try {
+      const detected = await detectReply({
+        channel: "email",
+        fromAddress: fromEmail,
+        subject,
+        body,
+      });
+      if (detected) {
+        console.log(
+          `[Inbound Email] Matched client_lead ${detected.lead.id} (${detected.client_slug}) — marked responded.`,
+        );
+        return NextResponse.json({ received: true, matched: "client_lead" });
+      }
+    } catch (err) {
+      console.error("[Inbound Email] client-funnel reply detect failed:", err);
     }
 
     // Match sender to a prospect

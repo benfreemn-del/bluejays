@@ -71,6 +71,36 @@ export default function ClientLeadsPage({
     "",
   );
   const [openLead, setOpenLead] = useState<ClientLead | null>(null);
+  const [runningFunnel, setRunningFunnel] = useState(false);
+  const [runResult, setRunResult] = useState<string | null>(null);
+
+  const runFunnelNow = async () => {
+    setRunningFunnel(true);
+    setRunResult(null);
+    try {
+      const r = await fetch("/api/client-funnels/run", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ client: slug }),
+      });
+      const j = (await r.json()) as {
+        ok: boolean;
+        summaries?: { enrolled: number; steps_sent: number; errors: unknown[] }[];
+        error?: string;
+      };
+      if (j.ok && j.summaries?.[0]) {
+        const s = j.summaries[0];
+        setRunResult(
+          `Enrolled ${s.enrolled} · sent ${s.steps_sent}${s.errors.length > 0 ? ` · ${s.errors.length} errors` : ""}`,
+        );
+      } else {
+        setRunResult(`Error: ${j.error ?? "unknown"}`);
+      }
+      await load();
+    } finally {
+      setRunningFunnel(false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -127,14 +157,27 @@ export default function ClientLeadsPage({
               {counts ? `${counts.total} total leads` : "Loading…"}
             </div>
           </div>
+          <button
+            onClick={runFunnelNow}
+            disabled={runningFunnel}
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded disabled:opacity-50"
+            title="Enroll new leads + send any due funnel steps right now"
+          >
+            {runningFunnel ? "Running…" : "Run funnel"}
+          </button>
           <Link
             href={`/clients/${slug}`}
             target="_blank"
             className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
           >
-            View site ↗
+            Site ↗
           </Link>
         </div>
+        {runResult && (
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-2 text-[11px] text-emerald-300">
+            ✓ {runResult}
+          </div>
+        )}
       </header>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-32">
@@ -317,6 +360,22 @@ function StatCard({
   );
 }
 
+type LeadMessage = {
+  id: string;
+  funnel_step: number | null;
+  channel: "email" | "sms" | "voicemail";
+  direction: "outbound" | "inbound";
+  to_address: string | null;
+  from_address: string | null;
+  subject: string | null;
+  body: string | null;
+  template_id: string | null;
+  status: string;
+  provider: string | null;
+  error: string | null;
+  sent_at: string;
+};
+
 function LeadDetailDrawer({
   lead,
   onClose,
@@ -327,6 +386,22 @@ function LeadDetailDrawer({
   onUpdate: (id: string, patch: Partial<ClientLead>) => void;
 }) {
   const [notesDraft, setNotesDraft] = useState(lead.notes ?? "");
+  const [messages, setMessages] = useState<LeadMessage[]>([]);
+  const [loadingMsgs, setLoadingMsgs] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoadingMsgs(true);
+      const r = await fetch(`/api/client-leads/${lead.id}/messages`);
+      const j = (await r.json()) as { ok: boolean; messages?: LeadMessage[] };
+      if (!cancelled && j.ok && j.messages) setMessages(j.messages);
+      setLoadingMsgs(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [lead.id]);
 
   return (
     <div
@@ -480,6 +555,96 @@ function LeadDetailDrawer({
               >
                 Save notes
               </button>
+            )}
+          </section>
+
+          {/* Funnel timeline */}
+          <section>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+              Funnel timeline ({messages.length})
+            </div>
+            {loadingMsgs ? (
+              <div className="text-xs text-slate-500">Loading…</div>
+            ) : messages.length === 0 ? (
+              <div className="text-xs text-slate-500 border border-dashed border-slate-800 rounded p-3 text-center">
+                No messages yet. Hit “Run funnel” on the leads page header to
+                fire any due steps now.
+              </div>
+            ) : (
+              <ol className="relative border-l border-slate-800 ml-2 space-y-3">
+                {messages.map((m) => (
+                  <li key={m.id} className="pl-4 relative">
+                    <span
+                      className={`absolute -left-[7px] top-1.5 w-3 h-3 rounded-full border-2 ${
+                        m.direction === "inbound"
+                          ? "bg-emerald-500 border-emerald-300"
+                          : m.status === "sent"
+                            ? "bg-blue-500 border-blue-300"
+                            : m.status === "failed"
+                              ? "bg-rose-500 border-rose-300"
+                              : m.status === "skipped"
+                                ? "bg-slate-700 border-slate-500"
+                                : "bg-amber-500 border-amber-300"
+                      }`}
+                    />
+                    <div className="text-[11px] text-slate-400 flex flex-wrap items-center gap-1.5">
+                      <span className="font-bold text-slate-200">
+                        {m.direction === "inbound" ? "← Reply" : "→ Sent"}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] uppercase tracking-wider font-bold">
+                        {m.channel}
+                      </span>
+                      {m.funnel_step !== null && (
+                        <span className="text-slate-500">step {m.funnel_step}</span>
+                      )}
+                      <span
+                        className={`text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded ${
+                          m.status === "sent"
+                            ? "bg-blue-500/15 text-blue-300"
+                            : m.status === "failed"
+                              ? "bg-rose-500/15 text-rose-300"
+                              : m.status === "skipped"
+                                ? "bg-slate-700/40 text-slate-400"
+                                : m.status === "replied"
+                                  ? "bg-emerald-500/15 text-emerald-300"
+                                  : "bg-amber-500/15 text-amber-300"
+                        }`}
+                      >
+                        {m.status}
+                      </span>
+                      <span className="text-slate-500">
+                        · {timeAgo(m.sent_at)}
+                      </span>
+                    </div>
+                    {m.subject && (
+                      <div className="text-[13px] font-semibold text-slate-200 mt-1">
+                        {m.subject}
+                      </div>
+                    )}
+                    {m.body && (
+                      <details className="mt-1">
+                        <summary className="text-[11px] text-slate-500 cursor-pointer hover:text-slate-300">
+                          {m.body.slice(0, 90)}
+                          {m.body.length > 90 ? "…" : ""}
+                        </summary>
+                        <pre className="mt-1.5 text-[12px] bg-slate-950 border border-slate-800 rounded p-2 whitespace-pre-wrap text-slate-300">
+                          {m.body}
+                        </pre>
+                      </details>
+                    )}
+                    {m.error && (
+                      <div className="text-[11px] text-rose-400 mt-1">
+                        ⚠ {m.error}
+                      </div>
+                    )}
+                    {m.template_id && (
+                      <div className="text-[10px] text-slate-600 mt-0.5">
+                        {m.template_id}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ol>
             )}
           </section>
 

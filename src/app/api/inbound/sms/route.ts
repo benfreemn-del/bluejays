@@ -7,6 +7,7 @@ import { markProspectReplied } from "@/lib/followup-scheduler";
 import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib/delayed-replies";
 import { alertOwner } from "@/lib/alerts";
 import { tryHandleReviewBlastReply } from "@/lib/review-blast";
+import { detectReply } from "@/lib/client-funnels/reply-detector";
 
 /**
  * POST /api/inbound/sms
@@ -60,6 +61,26 @@ export async function POST(request: NextRequest) {
         `[Inbound SMS] Routed to Review Blast business owner${reviewBlastReply.forwardedTo ? ` (${reviewBlastReply.forwardedTo})` : ""}`,
       );
       return twimlResponse("");
+    }
+
+    // First — does this match a client_lead (per-client AI funnel)? If
+    // so, mark them responded and bail. The dashboard surfaces the
+    // reply for the specific client owner; we don't auto-respond on a
+    // client funnel because tone needs to be the client's, not Ben's.
+    try {
+      const detected = await detectReply({
+        channel: "sms",
+        fromAddress: fromPhone,
+        body,
+      });
+      if (detected) {
+        console.log(
+          `[Inbound SMS] Matched client_lead ${detected.lead.id} (${detected.client_slug}) — marked responded.`,
+        );
+        return twimlResponse("");
+      }
+    } catch (err) {
+      console.error("[Inbound SMS] client-funnel reply detect failed:", err);
     }
 
     // Match sender to a prospect by phone number
