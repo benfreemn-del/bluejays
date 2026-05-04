@@ -514,126 +514,144 @@ export default function ZenithSportsPage() {
         </div>
       </section>
 
-      {/* ─────────────── FOUNDER DUO ─────────────── */}
+      {/* ─────────────── MEET THE TEKKY — product spotlight ─────────────── */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44"
+        id="tekky"
+        className="relative py-28 sm:py-36 lg:py-48"
         style={{ background: IVORY }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="max-w-3xl">
-            <Eyebrow color={ELECTRIC}>The people behind TEKKY</Eyebrow>
-            <h2
-              className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
-              style={{ color: NAVY_INK }}
-            >
-              Two coaches.
-              <br />
-              <span style={{ color: ELECTRIC }}>One belief.</span>
-            </h2>
-            <p
-              className="mt-8 text-base md:text-lg leading-relaxed max-w-xl"
-              style={{ color: INK_SOFT_LIGHT }}
-            >
-              Zenith Sports was founded by two people who&apos;d watched American
-              youth soccer optimize for the wrong things for too long. The
-              TEKKY® is what they built to change that.
-            </p>
-          </div>
-
-          <div className="mt-16 sm:mt-20 grid lg:grid-cols-2 gap-6 lg:gap-10">
-            {/* Philip */}
-            <article
-              className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
-            >
-              {/* Native aspect of source photo is 1024x1535 (~2:3 portrait).
-                  Was aspect-[5/4] (landscape) + object-cover, which cropped
-                  the top of Philip's head. Switched to aspect-[4/5] with
-                  object-position top so the framing keeps the full head and
-                  any minor crop comes from the bottom of the chest. */}
-              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
-                <img
-                  src={PHOTOS.philip}
-                  alt="Philip Lund, co-founder of Zenith Sports"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={{ objectPosition: "center top" }}
-                />
-              </div>
-              <div className="p-8 lg:p-10 flex-1 flex flex-col">
-                <Eyebrow color={ELECTRIC}>Co-Founder</Eyebrow>
-                <h3
-                  className="mt-4 text-3xl md:text-4xl font-black tracking-tight"
-                  style={{ color: NAVY_INK }}
-                >
-                  Philip Lund
-                </h3>
-                <div className="mt-6 relative pl-6 border-l-2 border-[#1d4ed8]">
-                  <Quotes
-                    size={24}
-                    weight="fill"
-                    className="absolute -left-3 -top-1 text-[#1d4ed8] bg-white"
-                  />
-                  <p
-                    className="text-lg md:text-xl leading-relaxed italic"
-                    style={{
-                      color: NAVY_INK,
-                      fontFamily:
-                        "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
-                    }}
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center" id="meet">
+            {/* Photo — click any of the 3 to zoom into the gallery */}
+            <div className="lg:col-span-7 order-2 lg:order-1">
+              <PhotoZoom
+                images={[
+                  { src: PHOTOS.product01, alt: "The TEKKY Advanced Training Ball" },
+                  { src: PHOTOS.product05, alt: "TEKKY ball — angled view" },
+                  { src: PHOTOS.product07, alt: "TEKKY ball — side panel detail" },
+                ]}
+              >
+                <div className="relative">
+                  {/* Big primary photo */}
+                  <ZoomTrigger
+                    index={0}
+                    ariaLabel="Zoom in on the TEKKY ball"
+                    className="block w-full aspect-square bg-slate-100 overflow-hidden"
                   >
-                    {BUSINESS.founders.philip.quote}
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            {/* Paul */}
-            <article
-              className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
-            >
-              {/* See Philip card above — same aspect/position fix to keep
-                  Paul's head fully in frame. */}
-              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
-                <img
-                  src={PHOTOS.paul}
-                  alt="Paul Hanson, co-founder of Zenith Sports, with 40+ years in the game"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={{ objectPosition: "center top" }}
-                />
-              </div>
-              <div className="p-8 lg:p-10 flex-1 flex flex-col">
-                <div className="flex items-center justify-between gap-4">
-                  <Eyebrow color={ELECTRIC}>Co-Founder</Eyebrow>
-                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#0a1832] bg-[#a3e635] px-2.5 py-1">
-                    <Medal size={11} weight="bold" />
-                    40+ Years
-                  </span>
-                </div>
-                <h3
-                  className="mt-4 text-3xl md:text-4xl font-black tracking-tight"
-                  style={{ color: NAVY_INK }}
-                >
-                  Paul Hanson
-                </h3>
-                <div className="mt-6 relative pl-6 border-l-2 border-[#1d4ed8]">
-                  <Quotes
-                    size={24}
-                    weight="fill"
-                    className="absolute -left-3 -top-1 text-[#1d4ed8] bg-white"
-                  />
-                  <p
-                    className="text-lg md:text-xl leading-relaxed italic"
-                    style={{
-                      color: NAVY_INK,
-                      fontFamily:
-                        "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
-                    }}
+                    <img
+                      src={PHOTOS.product01}
+                      alt="The TEKKY Advanced Training Ball"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      style={{ filter: "saturate(1.06) contrast(1.04)" }}
+                    />
+                  </ZoomTrigger>
+                  {/* Floating thumbnail badge */}
+                  <ZoomTrigger
+                    index={1}
+                    ariaLabel="Zoom in on TEKKY angled view"
+                    className="absolute -bottom-6 -right-6 sm:-bottom-10 sm:-right-10 w-32 sm:w-44 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
                   >
-                    With over 40 years in the game — collegiate play through
-                    post-collegiate competition — {BUSINESS.founders.paul.quote.toLowerCase()}
-                  </p>
+                    <img
+                      src={PHOTOS.product05}
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </ZoomTrigger>
+                  {/* Floating thumbnail badge 2 */}
+                  <ZoomTrigger
+                    index={2}
+                    ariaLabel="Zoom in on TEKKY side panel"
+                    className="hidden sm:block absolute -top-8 -left-8 w-32 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
+                  >
+                    <img
+                      src={PHOTOS.product07}
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </ZoomTrigger>
+                </div>
+              </PhotoZoom>
+            </div>
+
+            {/* Copy */}
+            <div className="lg:col-span-5 order-1 lg:order-2">
+              <Eyebrow color={ELECTRIC}>Patent-pending · Built by Zenith</Eyebrow>
+              <h2
+                className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
+                style={{ color: NAVY_INK }}
+              >
+                Meet the
+                <br />
+                <span style={{ color: ELECTRIC }}>
+                  TEKKY<sup className="text-[0.32em] -ml-0.5 top-[-0.95em]">®</sup>.
+                </span>
+              </h2>
+
+              {/* Copy refresh — leads with the dual-spec differentiator
+                  (Size 3 control / Size 5 weight) per the brand voice guide. */}
+              <p
+                className="mt-8 text-base md:text-lg leading-relaxed"
+                style={{ color: INK_SOFT_LIGHT }}
+              >
+                FIFA Size 3 control. FIFA Size 5 match-day weight. The
+                TEKKY® is a specialized, patent-pending technical tool
+                designed to accelerate development — sharper technique,
+                stronger touch, real results that transfer directly to
+                game day.
+              </p>
+
+              <div className="mt-10 grid grid-cols-2 gap-6">
+                <div>
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#1d4ed8]">
+                    Price
+                  </div>
+                  <div className="mt-1 text-5xl font-black tracking-tight" style={{ color: NAVY_INK }}>
+                    $59.95
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#1d4ed8]">
+                    Rated
+                  </div>
+                  <div className="mt-1 flex items-center gap-1">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <Star key={i} size={20} weight="fill" className="text-[#f59e0b]" />
+                    ))}
+                  </div>
+                  <div className="mt-1 text-xs uppercase tracking-wider font-semibold" style={{ color: INK_SOFT_LIGHT }}>
+                    5.0 from buyers
+                  </div>
                 </div>
               </div>
-            </article>
+
+              <div className="mt-10 space-y-3">
+                {[
+                  "Pinpoint accuracy and precision",
+                  "Sharper focus and consistency",
+                  "Strength and control through touch",
+                ].map((b) => (
+                  <div key={b} className="flex items-start gap-3">
+                    <CheckCircle size={20} weight="fill" className="mt-0.5 flex-shrink-0" style={{ color: ELECTRIC }} />
+                    <span className="text-base" style={{ color: NAVY_INK }}>
+                      {b}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-3">
+                <a
+                  href="/clients/zenith-sports/shop"
+                  className="inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group"
+                >
+                  <ShoppingCart size={16} weight="bold" />
+                  Shop the TEKKY® · $59.95
+                  <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -950,148 +968,6 @@ export default function ZenithSportsPage() {
         </div>
       </section>
 
-      {/* ─────────────── MEET THE TEKKY — product spotlight ─────────────── */}
-      <section
-        id="tekky"
-        className="relative py-28 sm:py-36 lg:py-48"
-        style={{ background: IVORY }}
-      >
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center" id="meet">
-            {/* Photo — click any of the 3 to zoom into the gallery */}
-            <div className="lg:col-span-7 order-2 lg:order-1">
-              <PhotoZoom
-                images={[
-                  { src: PHOTOS.product01, alt: "The TEKKY Advanced Training Ball" },
-                  { src: PHOTOS.product05, alt: "TEKKY ball — angled view" },
-                  { src: PHOTOS.product07, alt: "TEKKY ball — side panel detail" },
-                ]}
-              >
-                <div className="relative">
-                  {/* Big primary photo */}
-                  <ZoomTrigger
-                    index={0}
-                    ariaLabel="Zoom in on the TEKKY ball"
-                    className="block w-full aspect-square bg-slate-100 overflow-hidden"
-                  >
-                    <img
-                      src={PHOTOS.product01}
-                      alt="The TEKKY Advanced Training Ball"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      style={{ filter: "saturate(1.06) contrast(1.04)" }}
-                    />
-                  </ZoomTrigger>
-                  {/* Floating thumbnail badge */}
-                  <ZoomTrigger
-                    index={1}
-                    ariaLabel="Zoom in on TEKKY angled view"
-                    className="absolute -bottom-6 -right-6 sm:-bottom-10 sm:-right-10 w-32 sm:w-44 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
-                  >
-                    <img
-                      src={PHOTOS.product05}
-                      alt=""
-                      aria-hidden
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </ZoomTrigger>
-                  {/* Floating thumbnail badge 2 */}
-                  <ZoomTrigger
-                    index={2}
-                    ariaLabel="Zoom in on TEKKY side panel"
-                    className="hidden sm:block absolute -top-8 -left-8 w-32 aspect-square bg-white shadow-xl border border-slate-200 overflow-hidden"
-                  >
-                    <img
-                      src={PHOTOS.product07}
-                      alt=""
-                      aria-hidden
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </ZoomTrigger>
-                </div>
-              </PhotoZoom>
-            </div>
-
-            {/* Copy */}
-            <div className="lg:col-span-5 order-1 lg:order-2">
-              <Eyebrow color={ELECTRIC}>Patent-pending · Built by Zenith</Eyebrow>
-              <h2
-                className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
-                style={{ color: NAVY_INK }}
-              >
-                Meet the
-                <br />
-                <span style={{ color: ELECTRIC }}>
-                  TEKKY<sup className="text-[0.32em] -ml-0.5 top-[-0.95em]">®</sup>.
-                </span>
-              </h2>
-
-              {/* Copy refresh — leads with the dual-spec differentiator
-                  (Size 3 control / Size 5 weight) per the brand voice guide. */}
-              <p
-                className="mt-8 text-base md:text-lg leading-relaxed"
-                style={{ color: INK_SOFT_LIGHT }}
-              >
-                FIFA Size 3 control. FIFA Size 5 match-day weight. The
-                TEKKY® is a specialized, patent-pending technical tool
-                designed to accelerate development — sharper technique,
-                stronger touch, real results that transfer directly to
-                game day.
-              </p>
-
-              <div className="mt-10 grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#1d4ed8]">
-                    Price
-                  </div>
-                  <div className="mt-1 text-5xl font-black tracking-tight" style={{ color: NAVY_INK }}>
-                    $59.95
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#1d4ed8]">
-                    Rated
-                  </div>
-                  <div className="mt-1 flex items-center gap-1">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <Star key={i} size={20} weight="fill" className="text-[#f59e0b]" />
-                    ))}
-                  </div>
-                  <div className="mt-1 text-xs uppercase tracking-wider font-semibold" style={{ color: INK_SOFT_LIGHT }}>
-                    5.0 from buyers
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-10 space-y-3">
-                {[
-                  "Pinpoint accuracy and precision",
-                  "Sharper focus and consistency",
-                  "Strength and control through touch",
-                ].map((b) => (
-                  <div key={b} className="flex items-start gap-3">
-                    <CheckCircle size={20} weight="fill" className="mt-0.5 flex-shrink-0" style={{ color: ELECTRIC }} />
-                    <span className="text-base" style={{ color: NAVY_INK }}>
-                      {b}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                <a
-                  href="/clients/zenith-sports/shop"
-                  className="inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group"
-                >
-                  <ShoppingCart size={16} weight="bold" />
-                  Shop the TEKKY® · $59.95
-                  <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ─────────────── COACH-CREDIBLE (COACH-07) ───────────────
           Added per the brand voice guide (Section 6 Copy Vault — COACH-07).
           B2B trust block targeted at coaches, clubs, DOCs. The doc
@@ -1238,6 +1114,183 @@ export default function ZenithSportsPage() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── REVIEWS / SOCIAL PROOF ─────────────── */}
+      <section className="relative py-28 sm:py-36 lg:py-44" style={{ background: IVORY }}>
+        <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
+          <Eyebrow color={ELECTRIC}>Verified buyers</Eyebrow>
+          <h2
+            className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
+            style={{ color: NAVY_INK }}
+          >
+            5.0 stars
+            <br />
+            <span style={{ color: ELECTRIC }}>across the line.</span>
+          </h2>
+
+          <div className="mt-10 inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Star key={i} size={28} weight="fill" className="text-[#f59e0b]" />
+            ))}
+            <span className="ml-3 text-sm font-bold tracking-wide uppercase" style={{ color: NAVY_INK }}>
+              5.0 / 5.0
+            </span>
+          </div>
+
+          <p
+            className="mt-10 max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
+            style={{ color: INK_SOFT_LIGHT }}
+          >
+            Every Zenith Sports product carries a perfect 5.0 from verified
+            Zenith Sports buyers. Read the full reviews on each product
+            listing.
+          </p>
+
+          <div className="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto">
+            {[
+              { label: "The TEKKY® Ball", reviews: "5.0", count: "5 reviews" },
+              { label: "TEKKY® Grip Socks", reviews: "5.0", count: "Verified" },
+              { label: "Performance Tee", reviews: "5.0", count: "Verified" },
+            ].map((p) => (
+              <div key={p.label} className="border border-slate-200 bg-white py-6 px-3">
+                <div className="text-3xl font-black tracking-tight" style={{ color: NAVY_INK }}>
+                  {p.reviews}★
+                </div>
+                <div className="mt-2 text-[10px] tracking-[0.22em] uppercase font-semibold" style={{ color: INK_SOFT_LIGHT }}>
+                  {p.label}
+                </div>
+                <div className="text-[10px] tracking-[0.22em] uppercase font-semibold mt-1" style={{ color: ELECTRIC }}>
+                  {p.count}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── FOUNDER DUO ─────────────── */}
+      <section
+        className="relative py-28 sm:py-36 lg:py-44"
+        style={{ background: IVORY }}
+      >
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="max-w-3xl">
+            <Eyebrow color={ELECTRIC}>The people behind TEKKY</Eyebrow>
+            <h2
+              className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
+              style={{ color: NAVY_INK }}
+            >
+              Two coaches.
+              <br />
+              <span style={{ color: ELECTRIC }}>One belief.</span>
+            </h2>
+            <p
+              className="mt-8 text-base md:text-lg leading-relaxed max-w-xl"
+              style={{ color: INK_SOFT_LIGHT }}
+            >
+              Zenith Sports was founded by two people who&apos;d watched American
+              youth soccer optimize for the wrong things for too long. The
+              TEKKY® is what they built to change that.
+            </p>
+          </div>
+
+          <div className="mt-16 sm:mt-20 grid lg:grid-cols-2 gap-6 lg:gap-10">
+            {/* Philip */}
+            <article
+              className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
+            >
+              {/* Native aspect of source photo is 1024x1535 (~2:3 portrait).
+                  Was aspect-[5/4] (landscape) + object-cover, which cropped
+                  the top of Philip's head. Switched to aspect-[4/5] with
+                  object-position top so the framing keeps the full head and
+                  any minor crop comes from the bottom of the chest. */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img
+                  src={PHOTOS.philip}
+                  alt="Philip Lund, co-founder of Zenith Sports"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: "center top" }}
+                />
+              </div>
+              <div className="p-8 lg:p-10 flex-1 flex flex-col">
+                <Eyebrow color={ELECTRIC}>Co-Founder</Eyebrow>
+                <h3
+                  className="mt-4 text-3xl md:text-4xl font-black tracking-tight"
+                  style={{ color: NAVY_INK }}
+                >
+                  Philip Lund
+                </h3>
+                <div className="mt-6 relative pl-6 border-l-2 border-[#1d4ed8]">
+                  <Quotes
+                    size={24}
+                    weight="fill"
+                    className="absolute -left-3 -top-1 text-[#1d4ed8] bg-white"
+                  />
+                  <p
+                    className="text-lg md:text-xl leading-relaxed italic"
+                    style={{
+                      color: NAVY_INK,
+                      fontFamily:
+                        "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
+                    }}
+                  >
+                    {BUSINESS.founders.philip.quote}
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            {/* Paul */}
+            <article
+              className="bg-white border border-slate-200 flex flex-col hover:border-[#1d4ed8]/40 transition"
+            >
+              {/* See Philip card above — same aspect/position fix to keep
+                  Paul's head fully in frame. */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img
+                  src={PHOTOS.paul}
+                  alt="Paul Hanson, co-founder of Zenith Sports, with 40+ years in the game"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: "center top" }}
+                />
+              </div>
+              <div className="p-8 lg:p-10 flex-1 flex flex-col">
+                <div className="flex items-center justify-between gap-4">
+                  <Eyebrow color={ELECTRIC}>Co-Founder</Eyebrow>
+                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#0a1832] bg-[#a3e635] px-2.5 py-1">
+                    <Medal size={11} weight="bold" />
+                    40+ Years
+                  </span>
+                </div>
+                <h3
+                  className="mt-4 text-3xl md:text-4xl font-black tracking-tight"
+                  style={{ color: NAVY_INK }}
+                >
+                  Paul Hanson
+                </h3>
+                <div className="mt-6 relative pl-6 border-l-2 border-[#1d4ed8]">
+                  <Quotes
+                    size={24}
+                    weight="fill"
+                    className="absolute -left-3 -top-1 text-[#1d4ed8] bg-white"
+                  />
+                  <p
+                    className="text-lg md:text-xl leading-relaxed italic"
+                    style={{
+                      color: NAVY_INK,
+                      fontFamily:
+                        "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
+                    }}
+                  >
+                    With over 40 years in the game — collegiate play through
+                    post-collegiate competition — {BUSINESS.founders.paul.quote.toLowerCase()}
+                  </p>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -1421,59 +1474,6 @@ export default function ZenithSportsPage() {
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────── REVIEWS / SOCIAL PROOF ─────────────── */}
-      <section className="relative py-28 sm:py-36 lg:py-44" style={{ background: IVORY }}>
-        <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
-          <Eyebrow color={ELECTRIC}>Verified buyers</Eyebrow>
-          <h2
-            className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92]"
-            style={{ color: NAVY_INK }}
-          >
-            5.0 stars
-            <br />
-            <span style={{ color: ELECTRIC }}>across the line.</span>
-          </h2>
-
-          <div className="mt-10 inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <Star key={i} size={28} weight="fill" className="text-[#f59e0b]" />
-            ))}
-            <span className="ml-3 text-sm font-bold tracking-wide uppercase" style={{ color: NAVY_INK }}>
-              5.0 / 5.0
-            </span>
-          </div>
-
-          <p
-            className="mt-10 max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
-            style={{ color: INK_SOFT_LIGHT }}
-          >
-            Every Zenith Sports product carries a perfect 5.0 from verified
-            Zenith Sports buyers. Read the full reviews on each product
-            listing.
-          </p>
-
-          <div className="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto">
-            {[
-              { label: "The TEKKY® Ball", reviews: "5.0", count: "5 reviews" },
-              { label: "TEKKY® Grip Socks", reviews: "5.0", count: "Verified" },
-              { label: "Performance Tee", reviews: "5.0", count: "Verified" },
-            ].map((p) => (
-              <div key={p.label} className="border border-slate-200 bg-white py-6 px-3">
-                <div className="text-3xl font-black tracking-tight" style={{ color: NAVY_INK }}>
-                  {p.reviews}★
-                </div>
-                <div className="mt-2 text-[10px] tracking-[0.22em] uppercase font-semibold" style={{ color: INK_SOFT_LIGHT }}>
-                  {p.label}
-                </div>
-                <div className="text-[10px] tracking-[0.22em] uppercase font-semibold mt-1" style={{ color: ELECTRIC }}>
-                  {p.count}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
