@@ -1823,26 +1823,17 @@ export default function ZenithSportsPage() {
               is a registered trademark · Patent Pending
             </div>
             <div className="flex items-center gap-3">
-              {/* Owner-only login link. Subtle dot is the secret-entry
-                  affordance per request — anyone who knows it can hit
-                  /login directly too. Auth is gated by email+password,
-                  not URL discovery. */}
-              <a
-                href="/clients/zenith-sports/login"
-                className="text-white/30 hover:text-[#a3e635] transition text-base leading-none"
-                title="Owner login"
-                aria-label="Owner login"
-              >
-                ·
-              </a>
-              <span className="text-white/20">|</span>
+              {/* "BlueJays" is now the owner-portal entry. Outwardly
+                  reads as a credit line ("Site by BlueJays") — clicking
+                  it lands on the password-gated owner login. Auth is
+                  email+password, not URL discovery, so this can stay
+                  visible without exposing anything. */}
               <span>
                 Site by{" "}
                 <a
-                  href="https://bluejaywebdesign.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/clients/zenith-sports/login"
                   className="text-white/70 hover:text-[#a3e635] transition"
+                  title="Owner login"
                 >
                   BlueJays
                 </a>
