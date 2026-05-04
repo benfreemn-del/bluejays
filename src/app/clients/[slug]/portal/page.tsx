@@ -137,7 +137,45 @@ type Report = {
   next_actions: string[];
 };
 
-type Tab = "overview" | "leads" | "insights" | "account";
+type Tab = "overview" | "leads" | "todo" | "insights" | "account";
+
+type PortalTask = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: "pending" | "in_progress" | "blocked" | "done";
+  priority: "urgent" | "high" | "medium" | "low";
+  category: string;
+  blocked_on: string | null;
+  due_date: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+  last_updated_by_owner_id: string | null;
+};
+
+type TasksSummary = {
+  total: number;
+  pending: number;
+  in_progress: number;
+  blocked: number;
+  done: number;
+};
+
+const TASK_STATUS_COLOR: Record<string, string> = {
+  pending: "bg-slate-700/40 text-slate-300",
+  in_progress: "bg-blue-500/20 text-blue-300",
+  blocked: "bg-rose-500/20 text-rose-300",
+  done: "bg-emerald-500/20 text-emerald-300",
+};
+
+const TASK_PRIORITY_COLOR: Record<string, string> = {
+  urgent: "bg-rose-500/20 text-rose-300",
+  high: "bg-amber-500/20 text-amber-300",
+  medium: "bg-slate-700/40 text-slate-400",
+  low: "bg-slate-700/40 text-slate-500",
+};
 
 const STATUS_COLOR: Record<string, string> = {
   not_enrolled: "bg-slate-700/40 text-slate-300",
@@ -178,6 +216,8 @@ export default function PortalPage({
   const [leadsSummary, setLeadsSummary] = useState<LeadsSummary | null>(null);
   const [report, setReport] = useState<Report | null>(null);
   const [subs, setSubs] = useState<Subscription[]>([]);
+  const [tasks, setTasks] = useState<PortalTask[]>([]);
+  const [tasksSummary, setTasksSummary] = useState<TasksSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* Identity check on load. */
@@ -228,19 +268,31 @@ export default function PortalPage({
     const j = (await r.json()) as { ok: boolean; subscriptions?: Subscription[] };
     if (j.ok && j.subscriptions) setSubs(j.subscriptions);
   }, []);
+  const loadTasks = useCallback(async () => {
+    const r = await fetch(`/api/client-portal/tasks`);
+    const j = (await r.json()) as {
+      ok: boolean;
+      tasks?: PortalTask[];
+      summary?: TasksSummary;
+    };
+    if (j.ok && j.tasks) setTasks(j.tasks);
+    if (j.ok && j.summary) setTasksSummary(j.summary);
+  }, []);
 
-  // Overview tab needs leads + report + subs all at once.
+  // Overview tab needs leads + report + subs + tasks all at once.
   useEffect(() => {
     if (!owner) return;
     if (tab === "overview") {
       loadLeads();
       loadReport();
       loadSubs();
+      loadTasks();
     }
     if (tab === "leads") loadLeads();
+    if (tab === "todo") loadTasks();
     if (tab === "insights") loadReport();
     if (tab === "account") loadSubs();
-  }, [tab, owner, loadLeads, loadReport, loadSubs]);
+  }, [tab, owner, loadLeads, loadReport, loadSubs, loadTasks]);
 
   const updateLeadStatus = async (id: string, status: string) => {
     setLeads((prev) =>
@@ -303,6 +355,7 @@ export default function PortalPage({
             [
               { id: "overview", label: "Overview", emoji: "🏠" },
               { id: "leads", label: "Leads", emoji: "📥" },
+              { id: "todo", label: "To-Do", emoji: "✅" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
@@ -332,6 +385,8 @@ export default function PortalPage({
             leadsSummary={leadsSummary}
             report={report}
             subs={subs}
+            tasks={tasks}
+            tasksSummary={tasksSummary}
             onSetTab={setTab}
             onLeadStatus={updateLeadStatus}
           />
@@ -342,6 +397,13 @@ export default function PortalPage({
             summary={leadsSummary}
             onStatus={updateLeadStatus}
             onMutate={loadLeads}
+          />
+        )}
+        {tab === "todo" && (
+          <TodoTab
+            tasks={tasks}
+            summary={tasksSummary}
+            onMutate={loadTasks}
           />
         )}
         {tab === "insights" && <InsightsTab report={report} />}
@@ -362,6 +424,8 @@ function OverviewTab({
   leadsSummary,
   report,
   subs,
+  tasks,
+  tasksSummary,
   onSetTab,
   onLeadStatus,
 }: {
@@ -371,6 +435,8 @@ function OverviewTab({
   leadsSummary: LeadsSummary | null;
   report: Report | null;
   subs: Subscription[];
+  tasks: PortalTask[];
+  tasksSummary: TasksSummary | null;
   onSetTab: (t: Tab) => void;
   onLeadStatus: (id: string, status: string) => void;
 }) {
@@ -475,6 +541,49 @@ function OverviewTab({
                 width: `${(leadsSummary.contacted / leadsSummary.total) * 100}%`,
               }}
             />
+          </div>
+        </section>
+      )}
+
+      {/* ACTION ITEMS FROM BEN — open client-action tasks (top 3) */}
+      {tasksSummary && tasksSummary.pending + tasksSummary.in_progress + tasksSummary.blocked > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-2.5">
+            <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-blue-300 flex items-center gap-2">
+              ✅ Action items from Ben · {tasksSummary.pending + tasksSummary.in_progress + tasksSummary.blocked}
+            </h2>
+            <button
+              onClick={() => onSetTab("todo")}
+              className="text-[11px] text-slate-400 hover:text-white"
+            >
+              Open to-do →
+            </button>
+          </div>
+          <div className="space-y-2">
+            {tasks
+              .filter((t) => t.status !== "done")
+              .slice(0, 3)
+              .map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => onSetTab("todo")}
+                  className="w-full text-left rounded-lg border border-blue-500/20 bg-blue-950/15 p-3 flex items-center gap-3 hover:bg-blue-950/30 transition"
+                >
+                  <span className="text-lg">
+                    {t.status === "blocked" ? "🚫" : t.status === "in_progress" ? "⏳" : "○"}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm truncate">{t.title}</div>
+                    <div className="text-[11px] text-slate-400">
+                      {t.priority !== "medium" && (
+                        <span className="uppercase font-bold tracking-wider mr-2">{t.priority}</span>
+                      )}
+                      {t.notes ? `📝 ${t.notes.slice(0, 60)}…` : t.category}
+                    </div>
+                  </div>
+                  <span className="text-blue-300 text-xs">→</span>
+                </button>
+              ))}
           </div>
         </section>
       )}
@@ -982,6 +1091,245 @@ function LeadsTab({
         </div>
       )}
     </div>
+  );
+}
+
+/* ─────────────────────────── TO-DO TAB ─────────────────────────── */
+
+function TodoTab({
+  tasks,
+  summary,
+  onMutate,
+}: {
+  tasks: PortalTask[];
+  summary: TasksSummary | null;
+  onMutate: () => void;
+}) {
+  const [filter, setFilter] = useState<"open" | "all" | "done">("open");
+  const filtered =
+    filter === "all"
+      ? tasks
+      : filter === "done"
+        ? tasks.filter((t) => t.status === "done")
+        : tasks.filter((t) => t.status !== "done");
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-lg font-bold tracking-tight mb-1">Your to-do list</h2>
+        <p className="text-[12px] text-slate-500 leading-relaxed">
+          Things we need from you to get the AI system fully turned on. Tap a
+          task to expand, mark progress, or paste in what we asked for.
+          You and your co-founder share this list.
+        </p>
+      </div>
+
+      {summary && summary.total > 0 && (
+        <div className="grid grid-cols-4 gap-2">
+          <Mini label="Open" value={summary.pending + summary.in_progress + summary.blocked} accent="amber" />
+          <Mini label="In progress" value={summary.in_progress} accent="blue" />
+          <Mini label="Blocked" value={summary.blocked} accent="rose" />
+          <Mini label="Done" value={summary.done} accent="emerald" />
+        </div>
+      )}
+
+      <div className="flex gap-1.5">
+        {[
+          { id: "open", label: "Open" },
+          { id: "done", label: "Done" },
+          { id: "all", label: "All" },
+        ].map((f) => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id as typeof filter)}
+            className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+              filter === f.id
+                ? "bg-blue-500 border-blue-400 text-white"
+                : "border-slate-700 text-slate-400 hover:text-white"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
+          <div className="text-4xl mb-2">🎉</div>
+          <p>{filter === "open" ? "Nothing on your plate. Nice work." : "No tasks here."}</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filtered.map((t) => (
+            <TaskCard key={t.id} task={t} onMutate={onMutate} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TaskCard({
+  task,
+  onMutate,
+}: {
+  task: PortalTask;
+  onMutate: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [notes, setNotes] = useState(task.notes ?? "");
+  const [savingNotes, setSavingNotes] = useState(false);
+  const [savingStatus, setSavingStatus] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const setStatus = async (status: PortalTask["status"]) => {
+    setSavingStatus(status);
+    setMsg(null);
+    const r = await fetch(`/api/client-portal/tasks/${task.id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setSavingStatus(null);
+    if (j.ok) {
+      onMutate();
+    } else {
+      setMsg(j.error || "Couldn't update.");
+    }
+  };
+
+  const saveNotes = async () => {
+    setSavingNotes(true);
+    setMsg(null);
+    const r = await fetch(`/api/client-portal/tasks/${task.id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ notes }),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setSavingNotes(false);
+    if (j.ok) {
+      setMsg("Saved — Ben will see it.");
+      onMutate();
+      setTimeout(() => setMsg(null), 2200);
+    } else {
+      setMsg(j.error || "Couldn't save.");
+    }
+  };
+
+  return (
+    <article className="rounded-lg border border-slate-800 bg-slate-900/40">
+      <button
+        onClick={() => setExpanded((x) => !x)}
+        className="w-full text-left p-4 flex items-start gap-3 hover:bg-slate-900/60 transition rounded-lg"
+      >
+        <input
+          type="checkbox"
+          checked={task.status === "done"}
+          onChange={(e) => {
+            e.stopPropagation();
+            setStatus(e.target.checked ? "done" : "pending");
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="mt-1 w-4 h-4 accent-emerald-500 cursor-pointer"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={`font-semibold text-[15px] ${task.status === "done" ? "line-through text-slate-500" : ""}`}
+            >
+              {task.title}
+            </span>
+            <span
+              className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_STATUS_COLOR[task.status]}`}
+            >
+              {task.status.replace("_", " ")}
+            </span>
+            {task.priority !== "medium" && task.priority !== "low" && (
+              <span
+                className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_PRIORITY_COLOR[task.priority]}`}
+              >
+                {task.priority}
+              </span>
+            )}
+          </div>
+          {task.notes && !expanded && (
+            <div className="text-[11px] text-amber-300 mt-1 truncate">
+              📝 {task.notes}
+            </div>
+          )}
+        </div>
+        <span className="text-slate-600 text-[10px] shrink-0 mt-1">
+          {expanded ? "▴" : "▾"}
+        </span>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-slate-800 p-4 space-y-3">
+          {task.description && (
+            <pre className="text-[12px] leading-relaxed text-slate-300 whitespace-pre-wrap font-sans bg-slate-950/40 border border-slate-800 rounded p-3">
+              {task.description}
+            </pre>
+          )}
+
+          {/* Status flips */}
+          <div>
+            <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1.5">
+              Mark progress
+            </label>
+            <div className="flex flex-wrap gap-1">
+              {(["pending", "in_progress", "blocked", "done"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatus(s)}
+                  disabled={task.status === s || savingStatus !== null}
+                  className={`text-[10px] tracking-wider uppercase font-bold px-2.5 py-1 rounded transition ${
+                    task.status === s
+                      ? TASK_STATUS_COLOR[s] + " cursor-default"
+                      : "border border-slate-700 text-slate-500 hover:text-white"
+                  } ${savingStatus === s ? "opacity-60" : ""}`}
+                >
+                  {s.replace("_", " ")}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Notes — used to paste in Pixel IDs, Clarity IDs, etc. */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+                Reply / paste here
+              </label>
+              {msg && (
+                <span className="text-[10px] text-emerald-400">{msg}</span>
+              )}
+            </div>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Paste in the Clarity Project ID, Pixel ID, or any reply you want Ben to see."
+              className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm placeholder:text-slate-600 focus:border-slate-600 outline-none"
+            />
+            <button
+              onClick={saveNotes}
+              disabled={savingNotes || notes === (task.notes ?? "")}
+              className="mt-2 text-[11px] font-bold bg-blue-500 hover:bg-blue-400 text-white px-3 py-1.5 rounded disabled:opacity-50"
+            >
+              {savingNotes ? "Saving…" : "Send to Ben"}
+            </button>
+          </div>
+
+          {task.completed_at && (
+            <div className="text-[10px] text-slate-500">
+              ✓ Completed {new Date(task.completed_at).toLocaleString()}
+            </div>
+          )}
+        </div>
+      )}
+    </article>
   );
 }
 
