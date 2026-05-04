@@ -53,6 +53,7 @@ import TrainingDrills from "./training-drills";
 import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
 import ClientTrackingScripts from "@/components/ClientTrackingScripts";
+import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -1822,23 +1823,30 @@ export default function ZenithSportsPage() {
               © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.55em] -ml-px top-[-0.4em]">®</sup>{" "}
               is a registered trademark · Patent Pending
             </div>
-            <div className="flex items-center gap-3">
-              {/* "BlueJays" is now the owner-portal entry. Outwardly
-                  reads as a credit line ("Site by BlueJays") — clicking
-                  it lands on the password-gated owner login. Auth is
-                  email+password, not URL discovery, so this can stay
-                  visible without exposing anything. */}
-              <span>
-                Site by{" "}
-                <a
-                  href="/clients/zenith-sports/login"
-                  className="text-white/70 hover:text-[#a3e635] transition"
-                  title="Owner login"
-                >
-                  BlueJays
-                </a>
-              </span>
-            </div>
+            {/* Match the BlueJays portfolio footer pattern: small
+                Bluejay bird mark + "Built by BlueJays". The BIRD itself
+                is the owner-portal entry — outwardly reads as a normal
+                credit, the discoverable affordance is just the hover
+                state. Auth is email+password so visibility is fine. */}
+            <p className="flex items-center gap-2 normal-case tracking-normal text-white/40">
+              <a
+                href="/clients/zenith-sports/login"
+                title="Owner login"
+                aria-label="Owner login"
+                className="text-sky-500/80 hover:text-[#a3e635] transition"
+              >
+                <BluejayLogo size={16} />
+              </a>
+              Built by{" "}
+              <a
+                href="https://bluejayportfolio.com/audit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#a3e635] transition underline underline-offset-2"
+              >
+                BlueJays
+              </a>
+            </p>
           </div>
         </div>
       </footer>
