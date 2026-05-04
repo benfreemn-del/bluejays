@@ -1076,12 +1076,12 @@ export default function ZenithSportsPage() {
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="border border-white/10 bg-white/[0.03] px-3 py-5 text-center flex flex-col items-center justify-center gap-3 min-h-[104px]"
+                    className="border border-white/10 bg-white/[0.03] px-3 py-6 text-center flex flex-col items-center justify-center gap-4 min-h-[120px]"
                   >
                     <div className="text-2xl font-black tracking-tight text-white whitespace-nowrap leading-none">
                       {s.v}
                     </div>
-                    <div className="text-[9px] tracking-[0.22em] uppercase font-bold text-white/55 leading-tight">
+                    <div className="text-[9px] tracking-[0.22em] uppercase font-bold text-white/55 leading-[1.4]">
                       {s.l}
                     </div>
                   </div>
