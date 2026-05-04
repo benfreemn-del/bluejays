@@ -157,9 +157,17 @@ const PUBLIC_API_PATHS = [
  *
  * Strip www in the lookup (we accept both apex and www and treat them
  * the same — Vercel handles www→apex redirect at the edge).
+ *
+ * Path can point at either:
+ *   - A static showcase folder under /clients/{slug}  (Zenith pattern)
+ *   - A generated /preview/{prospect-id}              (Hector pattern,
+ *     where the site is rendered from prospects DB row + theme)
  */
 const CLIENT_DOMAIN_MAP: Record<string, string> = {
-  "hectorlandscaping.com": "/clients/hector-landscaping",
+  // Hector Landscaping & Design — generated showcase, custom tier
+  // Prospect ID a8f6...→ wrong row (audit-form junk). Real paid row
+  // is ad954c6f-c00e-45cc-9d45-59a13d19da8c.
+  "hectorlandscaping.com": "/preview/ad954c6f-c00e-45cc-9d45-59a13d19da8c",
   // "tekky.org": "/clients/zenith-sports",  // (when Philip activates)
 };
 
