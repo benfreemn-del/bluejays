@@ -1,0 +1,524 @@
+{
+  "name": "Tekky Avatar System",
+  "version": "1.0.0",
+  "client": "Zenith Sports \u2014 TEKKY\u00ae",
+  "description": "Pixar-style 3D character avatar cards for the Tekky in-app skill tier system.",
+  "total_cards": 15,
+  "image_format": {
+    "extension": ".png",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "3:4 portrait",
+    "resolution": "2K",
+    "color_space": "sRGB"
+  },
+  "design_system": {
+    "background_gradient": [
+      "#0a1628",
+      "#1e3a5f"
+    ],
+    "character": {
+      "look": "Tan caramel-bronze 'everyman' with bright blonde hair. Same character ages and develops across tiers.",
+      "facial_hair_rules": {
+        "5-15": "None \u2014 kid faces are smooth.",
+        "13-25": "None \u2014 clean-shaven across ALL 5 tiers.",
+        "25-35": "Light scruff at TRAVEL & CLUB; short groomed beard at ECNL/MLS NEXT; full mature beard at ELITE."
+      }
+    },
+    "ball": {
+      "name": "TEKKY training ball",
+      "description": "White carbon-fiber-textured base panels with iridescent ribbon graphics in teal/cyan, royal blue, and purple/violet (with black outline edges). Bold black 'TEKKY' wordmark on front-center white panel. Circular Zenith Sports 'Z' medallion at top.",
+      "source": "https://zenithsports.org/products/the-tekky-advanced-youth-training-ball"
+    },
+    "pose": "Both hands wrapped around the Tekky ball, held at chest level (slightly elevated for ELITE). Bare hands across all tiers \u2014 no gloves anywhere.",
+    "stars_rule": "Equal split: half on upper-left of card, half on upper-right. Color-matched to tier accent (sky-blue for REC, red for TRAVEL, purple for CLUB, gold for ECNL/MLS NEXT and ELITE).",
+    "label_rule": "Tier name (large bold sans-serif) at bottom of card. Age range below in smaller text."
+  },
+  "tiers": [
+    {
+      "id": 1,
+      "name": "REC",
+      "slug": "rec",
+      "stars": 2,
+      "jersey_number": 7,
+      "jersey_color": "Sky Blue",
+      "jersey_color_hex": "#38BDF8",
+      "description": "Recreational level \u2014 beginner soccer player. Lean build, basic kit only."
+    },
+    {
+      "id": 2,
+      "name": "TRAVEL",
+      "slug": "travel",
+      "stars": 4,
+      "jersey_number": 10,
+      "jersey_color": "Crimson Red",
+      "jersey_color_hex": "#DC2626",
+      "description": "Travel team \u2014 competitive youth soccer outside of rec leagues. More developed athletic build."
+    },
+    {
+      "id": 3,
+      "name": "CLUB",
+      "slug": "club",
+      "stars": 6,
+      "jersey_number": 9,
+      "jersey_color": "Royal Purple",
+      "jersey_color_hex": "#7C3AED",
+      "description": "Club soccer \u2014 serious competitive level. Captain of the team."
+    },
+    {
+      "id": 4,
+      "name": "ECNL / MLS NEXT",
+      "slug": "ecnl_mls_next",
+      "stars": 8,
+      "jersey_number": 23,
+      "jersey_color": "Black + Gold",
+      "jersey_color_hex": "#0F172A",
+      "description": "Top US youth development pathway \u2014 ECNL / MLS NEXT level. Pro-level athletic build."
+    },
+    {
+      "id": 5,
+      "name": "ELITE",
+      "slug": "elite",
+      "stars": 10,
+      "jersey_number": 1,
+      "jersey_color": "White + Gold",
+      "jersey_color_hex": "#FFFFFF",
+      "description": "Pinnacle tier \u2014 world-class peak athletic form. Championship aura with gold rim glow + light particles."
+    }
+  ],
+  "age_groups": [
+    {
+      "slug": "5-15",
+      "range": "5\u201315",
+      "label": "kid",
+      "notes": "Kid proportions: larger head, smaller body, child build. NO facial hair. NO captain armband on REC/TRAVEL tiers."
+    },
+    {
+      "slug": "13-25",
+      "range": "13\u201325",
+      "label": "teen / young adult",
+      "notes": "Lean teen-athlete build progressing toward pro. NO facial hair (clean-shaven across ALL tiers). Captain armband appears at CLUB and above."
+    },
+    {
+      "slug": "25-35",
+      "range": "25\u201335",
+      "label": "adult",
+      "notes": "Mature athletic build. Light scruff at TRAVEL/CLUB, short groomed beard at ECNL/MLS NEXT, full mature beard at ELITE."
+    }
+  ],
+  "cards": [
+    {
+      "sequence": 1,
+      "filename": "01_rec_age_5-15.png",
+      "tier": {
+        "id": 1,
+        "name": "REC",
+        "slug": "rec",
+        "stars": 2,
+        "jersey_color": "Sky Blue",
+        "jersey_color_hex": "#38BDF8",
+        "jersey_number": 7,
+        "rim_lighting": "sky-blue",
+        "description": "Recreational level \u2014 beginner soccer player. Lean build, basic kit only."
+      },
+      "age_group": {
+        "range": "5\u201315",
+        "slug": "5-15",
+        "label": "kid"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 1828576
+    },
+    {
+      "sequence": 2,
+      "filename": "02_rec_age_13-25.png",
+      "tier": {
+        "id": 1,
+        "name": "REC",
+        "slug": "rec",
+        "stars": 2,
+        "jersey_color": "Sky Blue",
+        "jersey_color_hex": "#38BDF8",
+        "jersey_number": 7,
+        "rim_lighting": "sky-blue",
+        "description": "Recreational level \u2014 beginner soccer player. Lean build, basic kit only."
+      },
+      "age_group": {
+        "range": "13\u201325",
+        "slug": "13-25",
+        "label": "teen / young adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 1829313
+    },
+    {
+      "sequence": 3,
+      "filename": "03_rec_age_25-35.png",
+      "tier": {
+        "id": 1,
+        "name": "REC",
+        "slug": "rec",
+        "stars": 2,
+        "jersey_color": "Sky Blue",
+        "jersey_color_hex": "#38BDF8",
+        "jersey_number": 7,
+        "rim_lighting": "sky-blue",
+        "description": "Recreational level \u2014 beginner soccer player. Lean build, basic kit only."
+      },
+      "age_group": {
+        "range": "25\u201335",
+        "slug": "25-35",
+        "label": "adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 2010991
+    },
+    {
+      "sequence": 4,
+      "filename": "04_travel_age_5-15.png",
+      "tier": {
+        "id": 2,
+        "name": "TRAVEL",
+        "slug": "travel",
+        "stars": 4,
+        "jersey_color": "Crimson Red",
+        "jersey_color_hex": "#DC2626",
+        "jersey_number": 10,
+        "rim_lighting": "warm-red",
+        "description": "Travel team \u2014 competitive youth soccer outside of rec leagues. More developed athletic build."
+      },
+      "age_group": {
+        "range": "5\u201315",
+        "slug": "5-15",
+        "label": "kid"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 2016222
+    },
+    {
+      "sequence": 5,
+      "filename": "05_travel_age_13-25.png",
+      "tier": {
+        "id": 2,
+        "name": "TRAVEL",
+        "slug": "travel",
+        "stars": 4,
+        "jersey_color": "Crimson Red",
+        "jersey_color_hex": "#DC2626",
+        "jersey_number": 10,
+        "rim_lighting": "warm-red",
+        "description": "Travel team \u2014 competitive youth soccer outside of rec leagues. More developed athletic build."
+      },
+      "age_group": {
+        "range": "13\u201325",
+        "slug": "13-25",
+        "label": "teen / young adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 1880194
+    },
+    {
+      "sequence": 6,
+      "filename": "06_travel_age_25-35.png",
+      "tier": {
+        "id": 2,
+        "name": "TRAVEL",
+        "slug": "travel",
+        "stars": 4,
+        "jersey_color": "Crimson Red",
+        "jersey_color_hex": "#DC2626",
+        "jersey_number": 10,
+        "rim_lighting": "warm-red",
+        "description": "Travel team \u2014 competitive youth soccer outside of rec leagues. More developed athletic build."
+      },
+      "age_group": {
+        "range": "25\u201335",
+        "slug": "25-35",
+        "label": "adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats"
+      ],
+      "size_bytes": 2037572
+    },
+    {
+      "sequence": 7,
+      "filename": "07_club_age_5-15.png",
+      "tier": {
+        "id": 3,
+        "name": "CLUB",
+        "slug": "club",
+        "stars": 6,
+        "jersey_color": "Royal Purple",
+        "jersey_color_hex": "#7C3AED",
+        "jersey_number": 9,
+        "rim_lighting": "purple-violet",
+        "description": "Club soccer \u2014 serious competitive level. Captain of the team."
+      },
+      "age_group": {
+        "range": "5\u201315",
+        "slug": "5-15",
+        "label": "kid"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "white_captain_armband"
+      ],
+      "size_bytes": 2059234
+    },
+    {
+      "sequence": 8,
+      "filename": "08_club_age_13-25.png",
+      "tier": {
+        "id": 3,
+        "name": "CLUB",
+        "slug": "club",
+        "stars": 6,
+        "jersey_color": "Royal Purple",
+        "jersey_color_hex": "#7C3AED",
+        "jersey_number": 9,
+        "rim_lighting": "purple-violet",
+        "description": "Club soccer \u2014 serious competitive level. Captain of the team."
+      },
+      "age_group": {
+        "range": "13\u201325",
+        "slug": "13-25",
+        "label": "teen / young adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "white_captain_armband"
+      ],
+      "size_bytes": 2014455
+    },
+    {
+      "sequence": 9,
+      "filename": "09_club_age_25-35.png",
+      "tier": {
+        "id": 3,
+        "name": "CLUB",
+        "slug": "club",
+        "stars": 6,
+        "jersey_color": "Royal Purple",
+        "jersey_color_hex": "#7C3AED",
+        "jersey_number": 9,
+        "rim_lighting": "purple-violet",
+        "description": "Club soccer \u2014 serious competitive level. Captain of the team."
+      },
+      "age_group": {
+        "range": "25\u201335",
+        "slug": "25-35",
+        "label": "adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "white_captain_armband"
+      ],
+      "size_bytes": 2148919
+    },
+    {
+      "sequence": 10,
+      "filename": "10_ecnl_mls_next_age_5-15.png",
+      "tier": {
+        "id": 4,
+        "name": "ECNL / MLS NEXT",
+        "slug": "ecnl_mls_next",
+        "stars": 8,
+        "jersey_color": "Black + Gold",
+        "jersey_color_hex": "#0F172A",
+        "jersey_number": 23,
+        "rim_lighting": "warm-gold",
+        "description": "Top US youth development pathway \u2014 ECNL / MLS NEXT level. Pro-level athletic build."
+      },
+      "age_group": {
+        "range": "5\u201315",
+        "slug": "5-15",
+        "label": "kid"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 2034529
+    },
+    {
+      "sequence": 11,
+      "filename": "11_ecnl_mls_next_age_13-25.png",
+      "tier": {
+        "id": 4,
+        "name": "ECNL / MLS NEXT",
+        "slug": "ecnl_mls_next",
+        "stars": 8,
+        "jersey_color": "Black + Gold",
+        "jersey_color_hex": "#0F172A",
+        "jersey_number": 23,
+        "rim_lighting": "warm-gold",
+        "description": "Top US youth development pathway \u2014 ECNL / MLS NEXT level. Pro-level athletic build."
+      },
+      "age_group": {
+        "range": "13\u201325",
+        "slug": "13-25",
+        "label": "teen / young adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 2013894
+    },
+    {
+      "sequence": 12,
+      "filename": "12_ecnl_mls_next_age_25-35.png",
+      "tier": {
+        "id": 4,
+        "name": "ECNL / MLS NEXT",
+        "slug": "ecnl_mls_next",
+        "stars": 8,
+        "jersey_color": "Black + Gold",
+        "jersey_color_hex": "#0F172A",
+        "jersey_number": 23,
+        "rim_lighting": "warm-gold",
+        "description": "Top US youth development pathway \u2014 ECNL / MLS NEXT level. Pro-level athletic build."
+      },
+      "age_group": {
+        "range": "25\u201335",
+        "slug": "25-35",
+        "label": "adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 2127278
+    },
+    {
+      "sequence": 13,
+      "filename": "13_elite_age_5-15.png",
+      "tier": {
+        "id": 5,
+        "name": "ELITE",
+        "slug": "elite",
+        "stars": 10,
+        "jersey_color": "White + Gold",
+        "jersey_color_hex": "#FFFFFF",
+        "jersey_number": 1,
+        "rim_lighting": "bright-gold",
+        "description": "Pinnacle tier \u2014 world-class peak athletic form. Championship aura with gold rim glow + light particles."
+      },
+      "age_group": {
+        "range": "5\u201315",
+        "slug": "5-15",
+        "label": "kid"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 2046967
+    },
+    {
+      "sequence": 14,
+      "filename": "14_elite_age_13-25.png",
+      "tier": {
+        "id": 5,
+        "name": "ELITE",
+        "slug": "elite",
+        "stars": 10,
+        "jersey_color": "White + Gold",
+        "jersey_color_hex": "#FFFFFF",
+        "jersey_number": 1,
+        "rim_lighting": "bright-gold",
+        "description": "Pinnacle tier \u2014 world-class peak athletic form. Championship aura with gold rim glow + light particles."
+      },
+      "age_group": {
+        "range": "13\u201325",
+        "slug": "13-25",
+        "label": "teen / young adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 1963255
+    },
+    {
+      "sequence": 15,
+      "filename": "15_elite_age_25-35.png",
+      "tier": {
+        "id": 5,
+        "name": "ELITE",
+        "slug": "elite",
+        "stars": 10,
+        "jersey_color": "White + Gold",
+        "jersey_color_hex": "#FFFFFF",
+        "jersey_number": 1,
+        "rim_lighting": "bright-gold",
+        "description": "Pinnacle tier \u2014 world-class peak athletic form. Championship aura with gold rim glow + light particles."
+      },
+      "age_group": {
+        "range": "25\u201335",
+        "slug": "25-35",
+        "label": "adult"
+      },
+      "equipment": [
+        "jersey",
+        "shorts",
+        "socks",
+        "cleats",
+        "gold_captain_armband"
+      ],
+      "size_bytes": 2283182
+    }
+  ]
+}
