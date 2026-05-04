@@ -447,6 +447,26 @@ defaults for client #2.
   py-44 (176px) on a desktop layout where the right column is empty
   reads as broken. Either fill the right column with decorative content
   (mint glow + pattern grid) or drop the column entirely.
+- **NEVER nest interactive form controls inside a `<button>`** — a
+  `<input type="checkbox">` (or any `<input>`) inside a parent
+  `<button>` is invalid HTML. Browsers proxy click events into the
+  inner control AND React surfaces the click on both — so any tap on
+  the row fires the checkbox `onChange`, marking it "done"
+  unintentionally. Always split into sibling elements with their own
+  click handlers (label+input vs separate button), or use `pointer-
+  events-none` on the inner control if it's truly decorative. Bug
+  found in TaskCard 2026-05-04 — two Zenith tasks were auto-completed.
+- **Long stat tile values break layout in 3-column grids** — `text-3xl
+  + tracking-tighter` will wrap on hyphens (e.g. "Match-day"). Use a
+  non-breaking hyphen `‑` (U+2011) + `whitespace-nowrap` and/or step
+  down a font size (text-2xl) so all values sit on one line. Pair with
+  `flex flex-col + min-h` to lock equal tile heights regardless of
+  content length.
+- **Long-tail age sliders need to handle adult bracket** — a
+  "Build Your Player" / character-builder age slider that maxes at 18
+  excludes adult-league players and returning amateurs. Extend to 35
+  and switch the display from `U-{age}` to `Adult · {age}` for ≥24.
+  Pattern in `build-your-player/page.tsx`.
 
 ### Operational patterns added since v1
 - **Funnel-runs observability log** (`client_funnel_runs` table) writes
@@ -470,19 +490,59 @@ defaults for client #2.
   with `status='skipped'` so the timeline still shows what *would* have
   happened. Never silently no-op.
 
-### Client access model (NOT YET BUILT)
+### Client access model — Owner Portal (SHIPPED)
 
-The current system assumes Ben (or Claude) operates the dashboard. The
-client (Philip + Paul) does NOT have a login to `/dashboard/clients/...`
-— that's gated by the admin password.
+Each client gets a per-client owner portal at
+`/clients/{slug}/portal` — self-serve, password-gated. Both co-founders
+(Philip + Paul for Zenith) get their own `client_owners` row keyed by
+`client_slug`, share the same view of the data.
 
-If a future AI Package client wants self-serve access, it'd be a Phase
-9 add-on: a per-client read-only portal at `/clients/{slug}/portal`
-with magic-link auth (URL-as-secret pattern, like `/client/[id]`
-already uses for paid customers). Scope: ~1 day of work.
+Auth: separate cookie `client-portal-session` (NOT the admin cookie).
+Signed with `sha256(owner_id + password_hash + CLIENT_PORTAL_SALT)`.
+Bcrypt would be better — kept simple for sub-millisecond verify in
+edge runtime. Lockout: 5 failed attempts → 15-min lock.
 
-For now: forward the weekly performance email + send Loom walkthroughs
-of the showcase + new lead magnets when they land.
+**Tabs:**
+- **Overview** — pipeline value, weekly trend, action-required, "Action
+  items from Ben" peek (top 3 open client-action tasks), outreach
+  contacted-vs-uncontacted progress bar, recent leads with quick contact.
+- **Leads** — full lead list with audience badges, manual contact logging
+  (Email/Call/Text — opens native handler AND records the touch),
+  manual funnel enroll, AI reply drafts (Claude Sonnet 4, locked to the
+  client's brand voice — gated on Claude subscription).
+- **To-Do** — `client_tasks` filtered to `owner='client'`. Both co-
+  founders share this list. Clicking the title expands the task; clicking
+  the checkbox marks it done. Includes a "Reply / paste here" textarea
+  so the client can drop the Clarity Project ID, Pixel ID, etc. directly
+  into the task and Ben sees it on his admin dashboard. Stamps
+  `last_updated_by_owner_id` so the audit trail knows which co-founder
+  did what.
+- **Insights** — weekly report rendered visually: lead-volume trend
+  chart with 7d/30d/90d/All filter, leads-by-hour, leads-by-day,
+  funnel performance, top template, Shopify revenue strip (when
+  Shopify is connected — gracefully degrades to a "Connect Your Store"
+  placeholder until then).
+- **Account** — name/email/role/last-login, active subscriptions,
+  notification preferences (instant / daily-digest / off for new-lead
+  emails + texts), Shopify connect placeholder, change password.
+
+**Footer entry**: the small Bluejay bird mark in the client site footer
+("Built by BlueJays") IS the portal login link. Outwardly reads as a
+designer credit; auth is email+password so visibility is safe.
+
+**Notification fan-out**: `/api/clients/inquire` reads
+`client_owner_preferences` and fires an instant email to every owner
+opted in. SMS fan-out lands when per-client Twilio sub-accounts exist.
+
+**Subscription gating**: AI reply drafts require
+`hasCapability(slug, "claude.reply-draft")`. Endpoint returns 402
+`upgrade_required: true` if the client isn't on a Claude tier — UI
+shows "Email Ben to enable."
+
+Code surface:
+- `src/app/clients/[slug]/portal/page.tsx` — single 1500-line client component
+- `src/app/api/client-portal/{leads,tasks,preferences,shopify,ai-reply,me,login,logout,change-password,subscriptions,report}/`
+- `src/lib/client-{auth,owner-preferences,shopify,ai-reply,tasks-portal,leads}.ts`
 
 ---
 
