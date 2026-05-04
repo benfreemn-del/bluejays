@@ -1032,6 +1032,41 @@ function LeadsTab({
   onMutate: () => void;
 }) {
   const [filter, setFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const toggleSelect = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const clearSelection = () => setSelected(new Set());
+
+  const bulkAction = async (
+    action: Record<string, unknown>,
+    confirmText: string,
+  ) => {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    if (!confirm(`${confirmText} ${ids.length} lead${ids.length === 1 ? "" : "s"}?`)) return;
+    setBulkBusy(true);
+    const r = await fetch("/api/client-portal/leads/bulk", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ids, action }),
+    });
+    setBulkBusy(false);
+    if (r.ok) {
+      clearSelection();
+      onMutate();
+    } else {
+      const j = await r.json().catch(() => ({}));
+      alert(j.error || "Bulk update failed.");
+    }
+  };
+
   const filtered =
     filter === "all"
       ? leads
@@ -1079,16 +1114,88 @@ function LeadsTab({
           <p>No leads in this filter.</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((l) => (
-            <LeadCard
-              key={l.id}
-              lead={l}
-              onStatus={onStatus}
-              onMutate={onMutate}
-            />
-          ))}
-        </div>
+        <>
+          {/* Bulk action toolbar — same pattern as TodoTab + admin */}
+          {selected.size > 0 && (
+            <div className="sticky top-[110px] z-10 mb-3 rounded-lg border border-blue-500/40 bg-blue-950/80 backdrop-blur p-3 flex items-center gap-2 flex-wrap">
+              <span className="text-[12px] font-bold text-blue-200 mr-2">
+                {selected.size} selected
+              </span>
+              <BulkBtn
+                label="🏆 Mark won"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "status", status: "converted" }, "Mark won on")}
+              />
+              <BulkBtn
+                label="💬 Mark responded"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "status", status: "responded" }, "Mark responded on")}
+              />
+              <BulkBtn
+                label="▶ Start funnel"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "enroll" }, "Enroll in funnel for")}
+              />
+              <BulkBtn
+                label="⏸ Pause"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "status", status: "paused" }, "Pause funnel on")}
+              />
+              <span className="text-slate-600 mx-1">|</span>
+              <BulkBtn
+                label="✉ Log email"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "log_contact", channel: "email" }, "Log email touch on")}
+              />
+              <BulkBtn
+                label="☎ Log call"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "log_contact", channel: "call" }, "Log call touch on")}
+              />
+              <BulkBtn
+                label="💬 Log text"
+                disabled={bulkBusy}
+                onClick={() => bulkAction({ kind: "log_contact", channel: "sms" }, "Log text touch on")}
+              />
+              <button
+                onClick={clearSelection}
+                className="ml-auto text-[10px] font-bold text-slate-400 hover:text-white"
+              >
+                Clear ✕
+              </button>
+            </div>
+          )}
+
+          {/* Select-all helper */}
+          <div className="flex items-center gap-2 mb-2 text-[11px] text-slate-500">
+            <button
+              onClick={() =>
+                selected.size === filtered.length
+                  ? clearSelection()
+                  : setSelected(new Set(filtered.map((l) => l.id)))
+              }
+              className="font-bold text-slate-400 hover:text-white border border-slate-700 px-2 py-0.5 rounded"
+            >
+              {selected.size === filtered.length && filtered.length > 0
+                ? "Clear all"
+                : "Select all visible"}
+            </button>
+            <span>· {filtered.length} shown</span>
+          </div>
+
+          <div className="space-y-2">
+            {filtered.map((l) => (
+              <LeadCard
+                key={l.id}
+                lead={l}
+                selected={selected.has(l.id)}
+                onToggleSelect={() => toggleSelect(l.id)}
+                onStatus={onStatus}
+                onMutate={onMutate}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
@@ -1106,6 +1213,13 @@ function TodoTab({
   onMutate: () => void;
 }) {
   const [filter, setFilter] = useState<"open" | "all" | "done">("open");
+  // Selection model — checkboxes select for bulk actions; they DO NOT
+  // mark done. This mirrors the bluejays admin dashboard pattern so
+  // owners can change many tasks at once and never accidentally
+  // complete one with a stray click.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   const filtered =
     filter === "all"
       ? tasks
@@ -1113,14 +1227,48 @@ function TodoTab({
         ? tasks.filter((t) => t.status === "done")
         : tasks.filter((t) => t.status !== "done");
 
+  const toggleSelect = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const selectAllVisible = () => setSelected(new Set(filtered.map((t) => t.id)));
+  const clearSelection = () => setSelected(new Set());
+
+  const bulkApply = async (
+    patch: { status?: PortalTask["status"]; owner?: "ben" },
+    confirmText: string,
+  ) => {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    if (!confirm(`${confirmText} ${ids.length} task${ids.length === 1 ? "" : "s"}?`)) return;
+    setBulkBusy(true);
+    const r = await fetch("/api/client-portal/tasks/bulk", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ids, patch }),
+    });
+    setBulkBusy(false);
+    if (r.ok) {
+      clearSelection();
+      onMutate();
+    } else {
+      const j = await r.json().catch(() => ({}));
+      alert(j.error || "Bulk update failed.");
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-bold tracking-tight mb-1">Your to-do list</h2>
         <p className="text-[12px] text-slate-500 leading-relaxed">
           Things we need from you to get the AI system fully turned on. Tap a
-          task to expand, mark progress, or paste in what we asked for.
-          You and your co-founder share this list.
+          task to expand, check the box to select multiple, then use the
+          bulk-action bar to change them in one go. You and your co-founder
+          share this list.
         </p>
       </div>
 
@@ -1133,7 +1281,7 @@ function TodoTab({
         </div>
       )}
 
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 items-center flex-wrap">
         {[
           { id: "open", label: "Open" },
           { id: "done", label: "Done" },
@@ -1141,7 +1289,7 @@ function TodoTab({
         ].map((f) => (
           <button
             key={f.id}
-            onClick={() => setFilter(f.id as typeof filter)}
+            onClick={() => { setFilter(f.id as typeof filter); clearSelection(); }}
             className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
               filter === f.id
                 ? "bg-blue-500 border-blue-400 text-white"
@@ -1151,7 +1299,57 @@ function TodoTab({
             {f.label}
           </button>
         ))}
+        {filtered.length > 0 && (
+          <button
+            onClick={selected.size === filtered.length ? clearSelection : selectAllVisible}
+            className="ml-auto text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-700 text-slate-400 hover:text-white"
+          >
+            {selected.size === filtered.length ? "Clear all" : "Select all visible"}
+          </button>
+        )}
       </div>
+
+      {/* Bulk action toolbar — mirrors bluejays admin */}
+      {selected.size > 0 && (
+        <div className="sticky top-[110px] z-10 rounded-lg border border-blue-500/40 bg-blue-950/80 backdrop-blur p-3 flex items-center gap-2 flex-wrap">
+          <span className="text-[12px] font-bold text-blue-200 mr-2">
+            {selected.size} selected
+          </span>
+          <BulkBtn
+            label="✓ Mark done"
+            disabled={bulkBusy}
+            onClick={() => bulkApply({ status: "done" }, "Mark done on")}
+          />
+          <BulkBtn
+            label="⏳ In progress"
+            disabled={bulkBusy}
+            onClick={() => bulkApply({ status: "in_progress" }, "Set in-progress on")}
+          />
+          <BulkBtn
+            label="🚫 Blocked"
+            disabled={bulkBusy}
+            onClick={() => bulkApply({ status: "blocked" }, "Set blocked on")}
+          />
+          <BulkBtn
+            label="○ Pending"
+            disabled={bulkBusy}
+            onClick={() => bulkApply({ status: "pending" }, "Reset to pending on")}
+          />
+          <span className="text-slate-600 mx-1">|</span>
+          <BulkBtn
+            label="↩ Send back to Ben"
+            disabled={bulkBusy}
+            tone="amber"
+            onClick={() => bulkApply({ owner: "ben" }, "Hand back to Ben for")}
+          />
+          <button
+            onClick={clearSelection}
+            className="ml-auto text-[10px] font-bold text-slate-400 hover:text-white"
+          >
+            Clear ✕
+          </button>
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
@@ -1161,7 +1359,13 @@ function TodoTab({
       ) : (
         <div className="space-y-2">
           {filtered.map((t) => (
-            <TaskCard key={t.id} task={t} onMutate={onMutate} />
+            <TaskCard
+              key={t.id}
+              task={t}
+              selected={selected.has(t.id)}
+              onToggleSelect={() => toggleSelect(t.id)}
+              onMutate={onMutate}
+            />
           ))}
         </div>
       )}
@@ -1169,11 +1373,41 @@ function TodoTab({
   );
 }
 
+function BulkBtn({
+  label,
+  onClick,
+  disabled,
+  tone = "default",
+}: {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  tone?: "default" | "amber";
+}) {
+  const colors =
+    tone === "amber"
+      ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border-amber-500/40"
+      : "bg-slate-800 hover:bg-slate-700 text-white border-slate-700";
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`text-[11px] font-bold px-2.5 py-1.5 rounded border ${colors} transition disabled:opacity-50`}
+    >
+      {label}
+    </button>
+  );
+}
+
 function TaskCard({
   task,
+  selected,
+  onToggleSelect,
   onMutate,
 }: {
   task: PortalTask;
+  selected: boolean;
+  onToggleSelect: () => void;
   onMutate: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -1219,23 +1453,27 @@ function TaskCard({
   };
 
   return (
-    <article className="rounded-lg border border-slate-800 bg-slate-900/40">
-      {/* Row uses a <div> (not a <button>) so we can host the checkbox
-          as a real interactive element without invalid-nested-button
-          HTML. The expand toggle lives on a dedicated button to the
-          right — clicking the title area or the chevron expands;
-          clicking the checkbox toggles done. They never collide. */}
+    <article
+      className={`rounded-lg border bg-slate-900/40 transition ${
+        selected ? "border-blue-400/60 ring-1 ring-blue-400/30" : "border-slate-800"
+      }`}
+    >
+      {/* Checkbox = SELECTION ONLY. It does NOT mark done — that
+          would let a stray click "complete" a task. To mark done, use
+          the explicit button inside the expanded card OR the
+          "Mark done" bulk action above. */}
       <div className="p-4 flex items-start gap-3">
         <label
-          className="mt-1 cursor-pointer"
+          className="mt-1 cursor-pointer select-none"
           onClick={(e) => e.stopPropagation()}
+          title="Select for bulk actions"
         >
           <input
             type="checkbox"
-            checked={task.status === "done"}
-            onChange={(e) => setStatus(e.target.checked ? "done" : "pending")}
-            className="w-4 h-4 accent-emerald-500 cursor-pointer"
-            aria-label={`Mark ${task.title} ${task.status === "done" ? "incomplete" : "done"}`}
+            checked={selected}
+            onChange={onToggleSelect}
+            className="w-4 h-4 accent-blue-500 cursor-pointer"
+            aria-label={`Select task ${task.title}`}
           />
         </label>
         <button
@@ -1283,12 +1521,12 @@ function TaskCard({
             </pre>
           )}
 
-          {/* Status flips */}
+          {/* Status flips + send-back */}
           <div>
             <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1.5">
               Mark progress
             </label>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 items-center">
               {(["pending", "in_progress", "blocked", "done"] as const).map((s) => (
                 <button
                   key={s}
@@ -1303,6 +1541,24 @@ function TaskCard({
                   {s.replace("_", " ")}
                 </button>
               ))}
+              <button
+                onClick={async () => {
+                  if (!confirm("Hand this task back to Ben? It'll disappear from your to-do.")) return;
+                  setSavingStatus("ben");
+                  await fetch(`/api/client-portal/tasks/${task.id}`, {
+                    method: "PATCH",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ owner: "ben" }),
+                  });
+                  setSavingStatus(null);
+                  onMutate();
+                }}
+                disabled={savingStatus !== null}
+                className="ml-auto text-[10px] tracking-wider uppercase font-bold px-2.5 py-1 rounded border border-amber-500/40 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition disabled:opacity-50"
+                title="If you can't do this, send it back to Ben."
+              >
+                ↩ Send back to Ben
+              </button>
             </div>
           </div>
 
@@ -1347,10 +1603,14 @@ function TaskCard({
 
 function LeadCard({
   lead,
+  selected,
+  onToggleSelect,
   onStatus,
   onMutate,
 }: {
   lead: ClientLead;
+  selected: boolean;
+  onToggleSelect: () => void;
   onStatus: (id: string, status: string) => void;
   onMutate: () => void;
 }) {
@@ -1449,10 +1709,31 @@ function LeadCard({
   };
 
   return (
-    <article className="rounded-lg border border-slate-800 bg-slate-900/40">
+    <article
+      className={`rounded-lg border bg-slate-900/40 transition ${
+        selected ? "border-blue-400/60 ring-1 ring-blue-400/30" : "border-slate-800"
+      }`}
+    >
+      <div className="flex items-start gap-2 p-4">
+        {/* Checkbox = SELECT for bulk actions. Lives outside the
+            expand-button so a stray click on the row never selects
+            (or worse, mutates) the lead. */}
+        <label
+          className="mt-1.5 cursor-pointer select-none shrink-0"
+          onClick={(e) => e.stopPropagation()}
+          title="Select for bulk actions"
+        >
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            className="w-4 h-4 accent-blue-500 cursor-pointer"
+            aria-label={`Select lead ${lead.name ?? lead.email ?? ""}`}
+          />
+        </label>
       <button
         onClick={() => setExpanded((x) => !x)}
-        className="w-full text-left p-4 flex items-start gap-3 hover:bg-slate-900/60 transition rounded-lg"
+        className="flex-1 min-w-0 text-left flex items-start gap-3 hover:opacity-95 transition"
       >
         <span className="text-2xl mt-0.5">
           {AUDIENCE_EMOJI[lead.audience_segment ?? "unknown"] ?? "❓"}
@@ -1507,6 +1788,7 @@ function LeadCard({
           <span className="text-slate-600">{expanded ? "▴" : "▾"}</span>
         </div>
       </button>
+      </div>
 
       {expanded && (
         <div className="border-t border-slate-800 p-4 space-y-4">

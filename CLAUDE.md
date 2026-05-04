@@ -6592,3 +6592,96 @@ This is the most important moment — don't let him quit before compounding kick
 - Accept "I'll do it later" without pushing back
 - Let a session end without confirming at least one of the three daily habits got done
 
+---
+
+## Owner Portal Rules (NON-NEGOTIABLE — added 2026-05-04)
+
+The per-client `/clients/{slug}/portal` is the customer-facing surface
+for AI Package clients (Zenith first, more to come). Treat it as a
+miniature version of the bluejays admin dashboard, not a one-off page.
+
+### 1. Checkbox semantics — selection ONLY
+
+When a portal list (Leads, To-Do, anything multi-row) has checkboxes
+on each row:
+- The checkbox MUST select the row for bulk-action purposes only
+- The checkbox MUST NOT mutate row state (no "checkbox = mark done")
+- All mutating actions (mark done, mark won, etc.) live in:
+  - The bulk-action toolbar (visible when `selected.size > 0`)
+  - Explicit buttons inside the row's expanded view
+- Visual: selected row gets `border-blue-400/60 ring-1 ring-blue-400/30`
+
+This is a hard rule. The opposite ("checkbox = action") was shipped
+once on the To-Do tab and accidentally completed two real client
+tasks within minutes. Bug pattern: `<input type="checkbox">` nested
+inside a parent `<button>` proxies clicks to the inner control.
+
+**Architecture rule:** never put any interactive form control (input,
+select, textarea) inside a `<button>`. Always make the checkbox + its
+`<label>` siblings of any expand/click target, with their own
+isolated `onClick={(e) => e.stopPropagation()}` on the label.
+
+### 2. Bulk-action toolbar — required pattern
+
+Every multi-row list in the portal MUST have:
+- `selected: Set<string>` state
+- `toggleSelect(id)` / `clearSelection()` helpers
+- "Select all visible" / "Clear all" toggle button next to the filters
+- A sticky bulk-action toolbar that appears ONLY when `selected.size > 0`
+  - Class: `sticky top-[110px] z-10 rounded-lg border border-blue-500/40 bg-blue-950/80 backdrop-blur p-3`
+  - Leads with: "X selected" badge → action buttons → `Clear ✕`
+- Server-side bulk endpoint at `/api/client-portal/{resource}/bulk`
+  - Always pre-fetches the rows by id and filters by `client_slug` so
+    an owner can NEVER bulk-update another client's data even if they
+    forge the ids
+  - Caps at 200 ids per request
+
+Reuse the `<BulkBtn>` component in `portal/page.tsx` for consistent
+button styling (default = slate, `tone="amber"` for "send back" / risky).
+
+### 3. Bulk action menus — what each list MUST surface
+
+**To-Do tab:**
+- Status: ✓ Mark done · ⏳ In progress · 🚫 Blocked · ○ Pending
+- Reassign: ↩ Send back to Ben (sets `owner='ben'`, removes from portal)
+
+**Leads tab:**
+- Status: 🏆 Mark won · 💬 Mark responded · ▶ Start funnel · ⏸ Pause
+- Touch logging: ✉ Log email · ☎ Log call · 💬 Log text
+  (each writes one `client_lead_messages` row per selected lead with
+  `provider='manual'` and `template_id='manual.owner-log.bulk'`)
+
+These menus are the contract. Don't omit options, don't add net-new
+ones without updating this rule.
+
+### 4. Server-side guard — always re-verify ownership
+
+Even though the cookie scopes to `owner.client_slug`, every bulk
+endpoint MUST:
+1. Pre-fetch rows by id with `.in('id', ids).eq('client_slug', owner.client_slug)`
+2. Use the returned `safeIds` (the intersection) for the actual update
+3. Return 404 if `safeIds.length === 0`
+
+Same pattern as the per-row PATCH endpoints. Defense in depth.
+
+### 5. Mutating-API gating
+
+- AI features (reply drafts, future agent actions) MUST gate on
+  `hasCapability(slug, "claude.…")` and return 402 with
+  `{ upgrade_required: true }` when the client isn't on a Claude tier
+- SMS fan-out MUST gate on per-client Twilio number availability
+  (env var or `client_subscriptions` capability check)
+- Shopify metrics MUST return `{ connected: false }` gracefully when
+  no row in `client_shopify` — never throw or return zero data that
+  reads as "your store has no sales"
+
+### 6. Documentation contract
+
+Any change to the portal — new tab, new bulk action, new mutation —
+MUST update BOTH:
+1. `docs/AI_PACKAGE_PLAYBOOK.md` (Owner Portal section)
+2. This file (Owner Portal Rules)
+
+So the next AI Package client onboards with the same surface, and
+the next Claude session knows what's already shipped.
+

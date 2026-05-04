@@ -509,12 +509,17 @@ edge runtime. Lockout: 5 failed attempts → 15-min lock.
 - **Leads** — full lead list with audience badges, manual contact logging
   (Email/Call/Text — opens native handler AND records the touch),
   manual funnel enroll, AI reply drafts (Claude Sonnet 4, locked to the
-  client's brand voice — gated on Claude subscription).
+  client's brand voice — gated on Claude subscription). Multi-select
+  checkboxes + bulk-action toolbar with: Mark won / Mark responded /
+  Start funnel / Pause / Log email-call-text touch in bulk.
 - **To-Do** — `client_tasks` filtered to `owner='client'`. Both co-
-  founders share this list. Clicking the title expands the task; clicking
-  the checkbox marks it done. Includes a "Reply / paste here" textarea
-  so the client can drop the Clarity Project ID, Pixel ID, etc. directly
-  into the task and Ben sees it on his admin dashboard. Stamps
+  founders share this list. Clicking the title expands the task;
+  the checkbox SELECTS the task for bulk actions (it does NOT mark it
+  done — see Owner Portal Rules in CLAUDE.md). Bulk toolbar surfaces:
+  Mark done / In progress / Blocked / Pending / Send back to Ben.
+  Each task has a "Reply / paste here" textarea so the client can
+  drop the Clarity Project ID, Pixel ID, etc. directly into the task
+  and Ben sees it on his admin dashboard. Stamps
   `last_updated_by_owner_id` so the audit trail knows which co-founder
   did what.
 - **Insights** — weekly report rendered visually: lead-volume trend
@@ -540,9 +545,12 @@ opted in. SMS fan-out lands when per-client Twilio sub-accounts exist.
 shows "Email Ben to enable."
 
 Code surface:
-- `src/app/clients/[slug]/portal/page.tsx` — single 1500-line client component
-- `src/app/api/client-portal/{leads,tasks,preferences,shopify,ai-reply,me,login,logout,change-password,subscriptions,report}/`
+- `src/app/clients/[slug]/portal/page.tsx` — single ~1900-line client component
+- `src/app/api/client-portal/{leads,leads/bulk,leads/[id]/log-contact,leads/[id]/enroll,tasks,tasks/bulk,tasks/[id],preferences,shopify,ai-reply,me,login,logout,change-password,subscriptions,report}/`
 - `src/lib/client-{auth,owner-preferences,shopify,ai-reply,tasks-portal,leads}.ts`
+- Bulk endpoints (`/leads/bulk`, `/tasks/bulk`) always pre-fetch by id
+  + `client_slug` filter to enforce tenant isolation regardless of
+  what ids the caller posts. Cap at 200 ids per request.
 
 ---
 

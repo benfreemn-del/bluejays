@@ -27,7 +27,7 @@ export async function PATCH(
     return NextResponse.json({ ok: false, error: "Not signed in" }, { status: 401 });
   }
 
-  let body: { status?: string; notes?: string } = {};
+  let body: { status?: string; notes?: string; owner?: string } = {};
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -42,6 +42,9 @@ export async function PATCH(
     patch.status = body.status as PortalTaskStatus;
   }
   if (typeof body.notes === "string") patch.notes = body.notes;
+  // Only "ben" reassignment is allowed — owner can hand a task back
+  // to Ben if they can't do it. They cannot reassign to claude / external.
+  if (body.owner === "ben") patch.owner = "ben";
 
   try {
     const task = await updatePortalTask({

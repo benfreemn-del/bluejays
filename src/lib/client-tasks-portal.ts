@@ -64,19 +64,22 @@ export async function listPortalTasks(clientSlug: string): Promise<PortalTask[]>
 }
 
 /**
- * Owner-driven task update. Only `status` and `notes` are patchable
- * from the portal — title/priority/category etc. stay locked to Ben.
- * Stamps `last_updated_by_owner_id` so we can tell Philip from Paul
- * in the audit trail.
+ * Owner-driven task update. Whitelisted fields:
+ *   - status (pending → in_progress → blocked → done)
+ *   - notes  (free-text reply field)
+ *   - owner  (only "ben" allowed — lets the owner "send back" a task
+ *            they can't do; it disappears from their portal and shows
+ *            up as Ben's again. They cannot reassign to claude/external.)
+ *
+ * Stamps `last_updated_by_owner_id` so we can tell Philip from Paul.
  */
 export async function updatePortalTask(args: {
   taskId: string;
   clientSlug: string;
   ownerId: string;
-  patch: { status?: PortalTaskStatus; notes?: string };
+  patch: { status?: PortalTaskStatus; notes?: string; owner?: "ben" };
 }): Promise<PortalTask> {
   const sb = getSupabase();
-  // Verify task belongs to this client + is client-owned.
   const { data: existing, error: getErr } = await sb
     .from("client_tasks")
     .select("id, client_slug, owner")
@@ -91,6 +94,7 @@ export async function updatePortalTask(args: {
   };
   if (args.patch.status) patch.status = args.patch.status;
   if (typeof args.patch.notes === "string") patch.notes = args.patch.notes.slice(0, 4000);
+  if (args.patch.owner === "ben") patch.owner = "ben";
 
   const { data, error } = await sb
     .from("client_tasks")
@@ -100,4 +104,35 @@ export async function updatePortalTask(args: {
     .single();
   if (error) throw new Error(`updatePortalTask: ${error.message}`);
   return data as PortalTask;
+}
+
+/**
+ * Bulk update — applies the same patch to many client-owned tasks in
+ * one round-trip. Used by the To-Do bulk action toolbar.
+ *
+ * Returns count of rows updated. Filtering is enforced server-side
+ * via the same client-slug + owner='client' guard.
+ */
+export async function bulkUpdatePortalTasks(args: {
+  taskIds: string[];
+  clientSlug: string;
+  ownerId: string;
+  patch: { status?: PortalTaskStatus; owner?: "ben" };
+}): Promise<number> {
+  if (args.taskIds.length === 0) return 0;
+  const patch: Record<string, unknown> = {
+    last_updated_by_owner_id: args.ownerId,
+  };
+  if (args.patch.status) patch.status = args.patch.status;
+  if (args.patch.owner === "ben") patch.owner = "ben";
+
+  const { data, error } = await getSupabase()
+    .from("client_tasks")
+    .update(patch)
+    .in("id", args.taskIds)
+    .eq("client_slug", args.clientSlug)
+    .eq("owner", "client")
+    .select("id");
+  if (error) throw new Error(`bulkUpdatePortalTasks: ${error.message}`);
+  return (data ?? []).length;
 }
