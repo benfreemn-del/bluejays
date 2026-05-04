@@ -1345,7 +1345,26 @@ Each template uses a DIFFERENT color variable name. Using the wrong one crashes 
 ## Approval & Pricing Rules (NON-NEGOTIABLE)
 - **Ben approves ALL preview sites and final sites manually before they go live or enter the funnel. No site goes out without approval.** This applies to both standard and free-tier prospects. Every site must pass quality gates AND receive explicit manual approval from Ben before any outreach or deployment.
 - **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($997).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront to cover basic domain registration and hosting setup costs instead of the standard $997 one-time fee, which includes custom website design, domain registration, and hosting setup. Both tiers still create the same deferred $100/year maintenance subscription after 1 year, which covers domain renewal, hosting, ongoing maintenance, and support. Never auto-assign free tier — it requires manual tagging by Ben.
-- **Two pricing tiers exist**: Standard ($997 one-time for custom website design, domain registration, and hosting setup → $100/yr after 1 year for domain renewal, hosting, ongoing maintenance, and support) and Free ($30 upfront for basic domain registration and hosting setup costs → $100/yr after 1 year for domain renewal, hosting, ongoing maintenance, and support). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
+- **Four pricing tiers exist**:
+  1. **Standard ($997)** — one-time for custom website + domain + hosting setup → $100/yr after 1 year. Default for cold-outreach prospects.
+  2. **Free ($30 upfront)** — friends/family only. Same $100/yr after.
+  3. **Custom ($100/yr)** — bespoke hand-built showcase at `customSiteUrl` (e.g. `/clients/wholme-naturopathy`). Inbound leads. No setup fee.
+  4. **Fullsystem ($9,700 + $500–1,000/mo)** — Custom AI Marketing Funnel package. Includes everything in Custom plus the per-audience funnel engine, ad library, affiliate pipeline, weekly reports, and lead magnets. Renders with the **gold $ badge** in the dashboard. See `docs/AI_PACKAGE_PLAYBOOK.md` for the full buildout pattern.
+- The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, Stripe session, and dashboard rendering all respect this field dynamically.
+
+## AI Package — Custom AI Marketing Funnel (`fullsystem` tier)
+The full pipeline behind the $9,700 + $500–1,000/mo offering on the audit page. **Documented in `docs/AI_PACKAGE_PLAYBOOK.md`** — read that file before building anything for an AI-package client.
+
+Per-client artifacts (all keyed by `client_slug`):
+- Showcase site at `/clients/{slug}`
+- Funnel definitions in `src/lib/client-funnels/{slug}.ts` + registry entry
+- Ad creative library in `src/lib/client-ads/{slug}-creatives.ts` + registry entry
+- Affiliate seed list in `src/lib/client-affiliates-seeds/{slug}.ts`
+- Per-client dashboards at `/dashboard/clients/{slug}/{leads|ads|affiliates|reports}`
+
+DB tables (all `client_slug`-keyed): `client_tasks`, `client_leads`, `client_lead_messages`, `client_ad_creatives`, `client_affiliates`, `client_funnel_runs`.
+
+When adding a new AI Package client, walk the 8 phases in the playbook. Roughly 60-80% config, 20-40% bespoke content. ~1 week of focused work per client.
 
 ## Active Template Categories (46 total — verified 2026-04-26 via `ls src/components/templates/V2*Preview.tsx`)
 The canonical list lives in `src/lib/scout.ts::ACTIVE_CATEGORIES` — that's source of truth. The hand-maintained list below drifted historically (was "41 total"); on disk we have 46 V2 preview templates + 46 V2 showcase pages. When in doubt, `ls src/components/templates/V2*Preview.tsx | wc -l`.

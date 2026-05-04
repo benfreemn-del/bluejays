@@ -269,9 +269,126 @@ When a new client is fully onboarded, every box should be checked:
 | `client_lead_messages` | Funnel send + reply log | `20260503_client_lead_messages.sql` |
 | `client_ad_creatives` | Per-client ad variant library | `20260503_client_ad_creatives.sql` |
 | `client_affiliates` | Per-client affiliate pipeline | `20260503_client_affiliates.sql` |
+| `client_funnel_runs` | Cron observability log | `20260503_client_funnel_runs.sql` |
 
 All keyed by `client_slug` so cross-tenant queries are trivial. No
 per-client schema work needed.
+
+## Per-client artifact paths
+
+```
+src/app/clients/{slug}/                       # Showcase site
+  page.tsx                                    # Main page
+  layout.tsx                                  # Metadata
+  sticky-nav.tsx                              # Nav (mobile menu sibling-of-header pattern)
+  email-capture.tsx                           # Email-capture component
+  photo-zoom.tsx                              # If product photos
+  training-guide/                             # If coach lead magnet
+  camps/ or {magnet}/                         # If parent lead magnet
+
+src/lib/client-funnels/{slug}.ts              # 3-audience funnel definitions
+src/lib/client-funnels/registry.ts            # ADD entry
+src/lib/client-ads/{slug}-creatives.ts        # ~27 ad variants
+src/lib/client-ads/index.ts                   # ADD to REGISTRY
+src/lib/client-affiliates-seeds/{slug}.ts     # 30–50 starter targets
+src/app/api/client-affiliates/seed/route.ts   # ADD to SEED_REGISTRY
+src/app/api/clients/inquire/route.ts          # ADD to SLUG_CONFIG
+src/lib/client-leads.ts                       # ADD detectAudience() branch
+src/lib/client-affiliates.ts                  # ADD scoreAffiliate() branch + cold-email templates
+vercel.json                                   # ADD weekly report cron
+```
+
+---
+
+## Lessons learned from Zenith Sports (first AI Package client)
+
+Patterns + gotchas that surfaced building the first one. Use these as
+defaults for client #2.
+
+### Defaults that work
+- **Always start with the brand voice doc.** If they have one, treat it
+  as gospel — pull H1/eyebrow/subhead/coach-section copy verbatim from
+  their Copy Vault. If they don't, do a 30-min call before writing a
+  single email and produce one yourself.
+- **Three audiences is the right grain.** Don't split coach into "head
+  coach + assistant" — over-segmenting kills funnel content quality.
+  Three is optimal: emotional buyer, B2B decider, end-user.
+- **Cadence rule of thumb:** parents 5-touch / 14d, coaches 6-touch /
+  21d, players 3-touch / 7d. Adjust ± 1 touch per audience based on
+  the brand voice doc's tone.
+- **Lead magnets need to ship Phase 5, not earlier.** A coach guide
+  PDF is the highest-leverage one — it doubles as the affiliate cold-
+  email asset. Build it FIRST among the three magnets.
+- **Affiliate seed list is non-negotiable.** Empty `/affiliates` page
+  is the #1 thing Ben won't actually use. Pre-research 30-50 targets
+  per client (mostly geo-warm + national category leaders) and seed
+  them with `source='seed-list'` so the page is populated on day one.
+
+### Gotchas to avoid (from Zenith QA)
+- **Mobile menu in a sticky-nav with backdrop-filter** — the menu must
+  render as a sibling of `<header>`, not a child. backdrop-filter
+  creates a containing block for fixed descendants and the menu will
+  be pinned to the header's 64px height. (See zenith-sports/sticky-nav.tsx
+  for the fix pattern.)
+- **Photo aspect ratios for headshots** — original headshot photos
+  are usually portrait (~2:3). Default `aspect-[5/4]` + `object-cover`
+  crops the top of the head off. Use `aspect-[4/5]` + `objectPosition:
+  center top`.
+- **® trademark superscript** — `<sup className="text-[0.4em]
+  -ml-0.5 top-[-0.6em]">®</sup>` is the scale-correct treatment for
+  inline body text. The default `<sup>` floats too high.
+- **Phone normalization in reply detection** — Twilio sends E.164
+  (`+12065551234`); forms typically capture `(206) 555-1234`. The reply
+  detector must generate variants (raw / digits / last-10 / +1+last-10)
+  and try each.
+- **Pricing-tier rendering** — both `custom` AND `fullsystem` should
+  resolve via `customSiteUrl` in `hasPreviewAvailable()` and
+  `getThemedPreviewHref()`. Otherwise fullsystem rows show "Build Site"
+  instead of "View Site" and Copy Link copies the wrong URL.
+- **Funnel runner enrollment guard** — only enroll a lead if
+  `cfg.getFunnel(audience)` returns non-null. Audiences without a defined
+  funnel (e.g. "club" for Zenith) must stay `not_enrolled` for manual
+  review, not silently sit at `enrolled` with no sends happening.
+- **Section padding makes empty rows look bad** — any section with
+  py-44 (176px) on a desktop layout where the right column is empty
+  reads as broken. Either fill the right column with decorative content
+  (mint glow + pattern grid) or drop the column entirely.
+
+### Operational patterns added since v1
+- **Funnel-runs observability log** (`client_funnel_runs` table) writes
+  one row per cron pulse so Ben can confirm "the funnel is firing,
+  no errors." Surfaced as a one-liner at the top of the leads page.
+- **Bulk actions on the leads dashboard** — Pause / Force Enroll /
+  Mark Responded / Mark Converted with multi-select checkboxes.
+  Standard pattern, ship it on every client dashboard.
+- **Affiliate seed bulk-loader** — `/api/client-affiliates/seed?client=...`
+  reads from `src/lib/client-affiliates-seeds/{slug}.ts` and bulk-inserts
+  with idempotent dedupe on `lower(org_name)`. Add a "Seed list" button
+  to the affiliates page header for one-click load.
+- **Lead magnets cross-reference funnel templates** — every per-audience
+  funnel email should mention the magnet that fits that audience
+  (parents → camps url, coaches → coach guide url, players → training
+  url). Use template variables `{{campsUrl}}`, `{{coachGuideUrl}}`,
+  `{{trainingUrl}}`, `{{shopUrl}}`, `{{contactUrl}}` from the runner's
+  `substitutions()`.
+- **Always log skipped sends, not just sent ones.** If SMS can't fire
+  because Twilio isn't provisioned, write a `client_lead_messages` row
+  with `status='skipped'` so the timeline still shows what *would* have
+  happened. Never silently no-op.
+
+### Client access model (NOT YET BUILT)
+
+The current system assumes Ben (or Claude) operates the dashboard. The
+client (Philip + Paul) does NOT have a login to `/dashboard/clients/...`
+— that's gated by the admin password.
+
+If a future AI Package client wants self-serve access, it'd be a Phase
+9 add-on: a per-client read-only portal at `/clients/{slug}/portal`
+with magic-link auth (URL-as-secret pattern, like `/client/[id]`
+already uses for paid customers). Scope: ~1 day of work.
+
+For now: forward the weekly performance email + send Loom walkthroughs
+of the showcase + new lead magnets when they land.
 
 ---
 
