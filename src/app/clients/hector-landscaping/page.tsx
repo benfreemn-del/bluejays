@@ -582,6 +582,20 @@ export default function HectorLandscapingLandscapingPage() {
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+      {/* Earthy scrollbar — brown roots → green growth */}
+      <style>{`
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f1a0f; }
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(to top, #16a34a, #4a7c2f, #7c5a1e, #5c3311);
+          border-radius: 8px;
+          border: 2px solid #0f1a0f;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to top, #22c55e, #5a9c3a, #9c7030, #7a4418);
+        }
+        * { scrollbar-width: thin; scrollbar-color: #5c7a2a #0f1a0f; }
+      `}</style>
       <FloatingLeaves />
 
       {/* ═══════════════ NAV — uses existing StickyNav client component ═══════════════ */}
