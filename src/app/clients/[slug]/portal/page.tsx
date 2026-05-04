@@ -42,6 +42,37 @@ type ClientLead = {
   created_at: string;
 };
 
+type ReplyDraft = {
+  body: string;
+  subject: string | null;
+  channel: "email" | "sms" | "either";
+  rationale: string;
+};
+
+type NotificationMode = "instant" | "digest" | "off";
+type OwnerPrefs = {
+  new_lead_email: NotificationMode;
+  new_lead_sms: NotificationMode;
+  digest_hour: number;
+  digest_timezone: string;
+};
+
+type ShopifyState = {
+  connected: boolean;
+  status: string;
+  store_url: string | null;
+  metrics: {
+    revenue_30d_cents?: number;
+    revenue_7d_cents?: number;
+    aov_cents?: number;
+    orders_30d?: number;
+    orders_7d?: number;
+    top_product?: { name: string; units: number; revenue_cents: number };
+    repeat_rate?: number;
+  };
+  cached_at: string | null;
+};
+
 type Subscription = {
   id: string;
   service: string;
@@ -558,20 +589,68 @@ function OverviewTab({
 /* ─────────────────────────── INSIGHTS TAB ─────────────────────────── */
 
 function InsightsTab({ report }: { report: Report | null }) {
+  const [range, setRange] = useState<"7d" | "30d" | "90d" | "all">("30d");
+  const [shopify, setShopify] = useState<ShopifyState | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const r = await fetch("/api/client-portal/shopify");
+      const j = (await r.json().catch(() => ({}))) as ShopifyState & { ok?: boolean };
+      if (j.ok) setShopify(j);
+    })();
+  }, []);
+
   if (!report) {
     return (
       <div className="text-center text-slate-500 py-16">Loading insights…</div>
     );
   }
-  const maxTrend = Math.max(...report.leads.weekly_trend.map((w) => w.count), 1);
+  // Filter weekly_trend client-side based on range. Backend report is
+  // weekly-anchored already, so date ranges below ~7d gracefully fall
+  // back to showing the full 13-week trend.
+  const trendByRange =
+    range === "all"
+      ? report.leads.weekly_trend
+      : report.leads.weekly_trend.slice(
+          range === "7d" ? -1 : range === "30d" ? -4 : -13,
+        );
+  const maxTrend = Math.max(...trendByRange.map((w) => w.count), 1);
   const maxHour = Math.max(...report.patterns.by_hour, 1);
   const maxDay = Math.max(...report.patterns.by_day_of_week, 1);
 
   return (
     <div className="space-y-6">
-      <div className="text-[11px] uppercase tracking-wider text-slate-500">
-        Period: {new Date(report.period.start).toDateString()} → {new Date(report.period.end).toDateString()}
+      {/* Range selector */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-[11px] uppercase tracking-wider text-slate-500">
+          Period: {new Date(report.period.start).toDateString()} → {new Date(report.period.end).toDateString()}
+        </div>
+        <div className="flex gap-1">
+          {(
+            [
+              { id: "7d", label: "7d" },
+              { id: "30d", label: "30d" },
+              { id: "90d", label: "90d" },
+              { id: "all", label: "All" },
+            ] as const
+          ).map((r) => (
+            <button
+              key={r.id}
+              onClick={() => setRange(r.id)}
+              className={`text-[11px] font-bold px-2.5 py-1 rounded border transition ${
+                range === r.id
+                  ? "bg-blue-500 border-blue-400 text-white"
+                  : "border-slate-700 text-slate-400 hover:text-white"
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Shopify revenue strip */}
+      <ShopifyStrip shopify={shopify} />
 
       {/* Headline grid */}
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -605,14 +684,14 @@ function InsightsTab({ report }: { report: Report | null }) {
         />
       </section>
 
-      {/* Weekly trend chart — last 13 weeks */}
+      {/* Weekly trend chart */}
       <section>
         <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-2.5">
-          Lead volume — last 13 weeks
+          Lead volume — {range === "all" ? "all weeks" : `last ${range}`}
         </h2>
         <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
           <div className="flex items-end gap-1 h-24">
-            {report.leads.weekly_trend.map((w) => (
+            {trendByRange.map((w) => (
               <div
                 key={w.week}
                 className="flex-1 flex flex-col items-center justify-end gap-1 group"
@@ -629,8 +708,8 @@ function InsightsTab({ report }: { report: Report | null }) {
             ))}
           </div>
           <div className="flex justify-between text-[10px] text-slate-500 mt-2">
-            <span>{report.leads.weekly_trend[0]?.week.slice(5)}</span>
-            <span>{report.leads.weekly_trend[report.leads.weekly_trend.length - 1]?.week.slice(5)}</span>
+            <span>{trendByRange[0]?.week.slice(5)}</span>
+            <span>{trendByRange[trendByRange.length - 1]?.week.slice(5)}</span>
           </div>
         </div>
       </section>
@@ -825,83 +904,277 @@ function LeadsTab({
       ) : (
         <div className="space-y-2">
           {filtered.map((l) => (
-            <article
-              key={l.id}
-              className="rounded-lg border border-slate-800 bg-slate-900/40 p-4"
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl mt-0.5">
-                  {AUDIENCE_EMOJI[l.audience_segment ?? "unknown"] ?? "❓"}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-[15px]">
-                      {l.name || "(no name)"}
-                    </span>
-                    {l.audience_segment && (
-                      <span className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300">
-                        {l.audience_segment}
-                      </span>
-                    )}
-                    <span
-                      className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${STATUS_COLOR[l.funnel_status] ?? STATUS_COLOR.not_enrolled}`}
-                    >
-                      {l.funnel_status.replace("_", " ")}
-                    </span>
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
-                    {l.email && (
-                      <a href={`mailto:${l.email}`} className="hover:text-blue-300">
-                        ✉ {l.email}
-                      </a>
-                    )}
-                    {l.phone && (
-                      <>
-                        <a href={`tel:${l.phone}`} className="hover:text-blue-300">
-                          ☎ {l.phone}
-                        </a>
-                        <a href={`sms:${l.phone}`} className="hover:text-blue-300">
-                          💬 Text
-                        </a>
-                      </>
-                    )}
-                    {l.source && (
-                      <span className="text-slate-500">
-                        from {SOURCE_LABEL[l.source] ?? l.source}
-                      </span>
-                    )}
-                  </div>
-                  {l.intent && (
-                    <div className="mt-1.5 text-[12px] text-slate-300">
-                      <span className="text-slate-500">Wants:</span> {l.intent}
-                    </div>
-                  )}
-                </div>
-                <div className="text-[10px] text-slate-500 shrink-0">
-                  {timeAgo(l.created_at)}
-                </div>
-              </div>
-              <div className="mt-3 pt-2 border-t border-slate-800 flex flex-wrap gap-1">
-                {["enrolled", "paused", "responded", "converted"].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => onStatus(l.id, s)}
-                    disabled={l.funnel_status === s}
-                    className={`text-[10px] tracking-wider uppercase font-bold px-2 py-1 rounded transition ${
-                      l.funnel_status === s
-                        ? STATUS_COLOR[s] + " cursor-default"
-                        : "border border-slate-700 text-slate-500 hover:text-white"
-                    }`}
-                  >
-                    {s === "converted" ? "Won" : s}
-                  </button>
-                ))}
-              </div>
-            </article>
+            <LeadCard key={l.id} lead={l} onStatus={onStatus} />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/* ─────────────────────────── LEAD CARD ─────────────────────────── */
+
+function LeadCard({
+  lead,
+  onStatus,
+}: {
+  lead: ClientLead;
+  onStatus: (id: string, status: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [notes, setNotes] = useState(lead.notes ?? "");
+  const [savingNotes, setSavingNotes] = useState(false);
+  const [notesMsg, setNotesMsg] = useState<string | null>(null);
+  const [draft, setDraft] = useState<ReplyDraft | null>(null);
+  const [drafting, setDrafting] = useState(false);
+  const [draftErr, setDraftErr] = useState<string | null>(null);
+  const [ownerCtx, setOwnerCtx] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const saveNotes = async () => {
+    setSavingNotes(true);
+    setNotesMsg(null);
+    const r = await fetch(`/api/client-portal/leads/${lead.id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ notes }),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setSavingNotes(false);
+    setNotesMsg(j.ok ? "Saved." : j.error || "Couldn't save.");
+    setTimeout(() => setNotesMsg(null), 2000);
+  };
+
+  const draftReply = async () => {
+    setDrafting(true);
+    setDraftErr(null);
+    setDraft(null);
+    const r = await fetch("/api/client-portal/ai-reply", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ lead_id: lead.id, owner_context: ownerCtx || undefined }),
+    });
+    const j = (await r.json().catch(() => ({}))) as {
+      ok?: boolean;
+      error?: string;
+      draft?: ReplyDraft;
+      upgrade_required?: boolean;
+    };
+    setDrafting(false);
+    if (j.ok && j.draft) {
+      setDraft(j.draft);
+    } else {
+      setDraftErr(
+        j.upgrade_required
+          ? "AI replies need a Claude subscription. Email Ben to enable."
+          : j.error || "Draft failed.",
+      );
+    }
+  };
+
+  const copyDraft = async () => {
+    if (!draft) return;
+    await navigator.clipboard.writeText(draft.body);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <article className="rounded-lg border border-slate-800 bg-slate-900/40">
+      <button
+        onClick={() => setExpanded((x) => !x)}
+        className="w-full text-left p-4 flex items-start gap-3 hover:bg-slate-900/60 transition rounded-lg"
+      >
+        <span className="text-2xl mt-0.5">
+          {AUDIENCE_EMOJI[lead.audience_segment ?? "unknown"] ?? "❓"}
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-[15px]">
+              {lead.name || "(no name)"}
+            </span>
+            {lead.audience_segment && (
+              <span className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300">
+                {lead.audience_segment}
+              </span>
+            )}
+            <span
+              className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${STATUS_COLOR[lead.funnel_status] ?? STATUS_COLOR.not_enrolled}`}
+            >
+              {lead.funnel_status.replace("_", " ")}
+            </span>
+            {lead.notes && (
+              <span className="text-[10px] tracking-wider uppercase font-bold text-amber-300">
+                📝 note
+              </span>
+            )}
+          </div>
+          <div className="mt-1.5 flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
+            {lead.email && <span>✉ {lead.email}</span>}
+            {lead.phone && <span>☎ {lead.phone}</span>}
+            {lead.source && (
+              <span className="text-slate-500">
+                from {SOURCE_LABEL[lead.source] ?? lead.source}
+              </span>
+            )}
+          </div>
+          {lead.intent && (
+            <div className="mt-1.5 text-[12px] text-slate-300">
+              <span className="text-slate-500">Wants:</span> {lead.intent}
+            </div>
+          )}
+        </div>
+        <div className="text-[10px] text-slate-500 shrink-0 flex flex-col items-end gap-1">
+          <span>{timeAgo(lead.created_at)}</span>
+          <span className="text-slate-600">{expanded ? "▴" : "▾"}</span>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-slate-800 p-4 space-y-4">
+          {/* Quick contact */}
+          <div className="flex flex-wrap gap-2">
+            {lead.email && (
+              <a
+                href={`mailto:${lead.email}`}
+                className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+              >
+                ✉ Email
+              </a>
+            )}
+            {lead.phone && (
+              <>
+                <a
+                  href={`tel:${lead.phone}`}
+                  className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+                >
+                  ☎ Call
+                </a>
+                <a
+                  href={`sms:${lead.phone}`}
+                  className="text-[11px] font-bold border border-slate-700 px-2.5 py-1.5 rounded hover:bg-slate-800"
+                >
+                  💬 Text
+                </a>
+              </>
+            )}
+          </div>
+
+          {/* Status flips */}
+          <div className="flex flex-wrap gap-1">
+            {["enrolled", "paused", "responded", "converted"].map((s) => (
+              <button
+                key={s}
+                onClick={() => onStatus(lead.id, s)}
+                disabled={lead.funnel_status === s}
+                className={`text-[10px] tracking-wider uppercase font-bold px-2 py-1 rounded transition ${
+                  lead.funnel_status === s
+                    ? STATUS_COLOR[s] + " cursor-default"
+                    : "border border-slate-700 text-slate-500 hover:text-white"
+                }`}
+              >
+                {s === "converted" ? "Won" : s}
+              </button>
+            ))}
+          </div>
+
+          {/* Notes */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+                Your notes
+              </label>
+              {notesMsg && (
+                <span className="text-[10px] text-emerald-400">{notesMsg}</span>
+              )}
+            </div>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Called Tuesday — said he'd think about it. Follow up Friday."
+              className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm placeholder:text-slate-600 focus:border-slate-600 outline-none"
+            />
+            <button
+              onClick={saveNotes}
+              disabled={savingNotes || notes === (lead.notes ?? "")}
+              className="mt-2 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded disabled:opacity-50"
+            >
+              {savingNotes ? "Saving…" : "Save note"}
+            </button>
+          </div>
+
+          {/* AI reply draft */}
+          <div className="rounded-md border border-violet-500/20 bg-violet-950/20 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-violet-300">
+                ✨ Draft a reply with Claude
+              </div>
+              {draft && (
+                <button
+                  onClick={copyDraft}
+                  className="text-[10px] font-bold border border-violet-500/40 text-violet-200 px-2 py-0.5 rounded hover:bg-violet-500/20"
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+              )}
+            </div>
+            {!draft && (
+              <>
+                <input
+                  value={ownerCtx}
+                  onChange={(e) => setOwnerCtx(e.target.value)}
+                  placeholder="Optional: extra context (e.g. 'they called yesterday')"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-[12px] placeholder:text-slate-600 outline-none mb-2"
+                />
+                <button
+                  onClick={draftReply}
+                  disabled={drafting}
+                  className="text-[11px] font-bold bg-violet-500 hover:bg-violet-400 text-white px-3 py-1.5 rounded disabled:opacity-60"
+                >
+                  {drafting ? "Drafting…" : "Generate draft"}
+                </button>
+              </>
+            )}
+            {draftErr && (
+              <div className="text-[11px] text-rose-300 mt-1">{draftErr}</div>
+            )}
+            {draft && (
+              <div className="space-y-2">
+                {draft.subject && (
+                  <div className="text-[11px] text-slate-400">
+                    <span className="text-slate-500">Subject:</span>{" "}
+                    <span className="font-semibold text-slate-200">
+                      {draft.subject}
+                    </span>
+                  </div>
+                )}
+                <div className="text-[11px] text-slate-500">
+                  Channel: <span className="text-slate-300">{draft.channel}</span>
+                </div>
+                <pre className="text-[13px] leading-relaxed whitespace-pre-wrap font-sans bg-slate-950/60 border border-slate-800 rounded p-3">
+                  {draft.body}
+                </pre>
+                {draft.rationale && (
+                  <div className="text-[10px] text-slate-500 italic">
+                    Why: {draft.rationale}
+                  </div>
+                )}
+                <button
+                  onClick={() => {
+                    setDraft(null);
+                    setOwnerCtx("");
+                  }}
+                  className="text-[10px] text-slate-500 hover:text-white underline"
+                >
+                  Generate a different draft
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -916,6 +1189,47 @@ function AccountTab({
   subs: Subscription[];
   onLogout: () => void;
 }) {
+  const [prefs, setPrefs] = useState<OwnerPrefs | null>(null);
+  const [prefsMsg, setPrefsMsg] = useState<string | null>(null);
+  const [shopify, setShopify] = useState<ShopifyState | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const r = await fetch("/api/client-portal/preferences");
+      const j = (await r.json().catch(() => ({}))) as { ok?: boolean; preferences?: OwnerPrefs };
+      if (j.ok && j.preferences) setPrefs(j.preferences);
+    })();
+    (async () => {
+      const r = await fetch("/api/client-portal/shopify");
+      const j = (await r.json().catch(() => ({}))) as ShopifyState & { ok?: boolean };
+      if (j.ok) setShopify(j);
+    })();
+  }, []);
+
+  const updatePrefs = async (patch: Partial<OwnerPrefs>) => {
+    if (!prefs) return;
+    const optimistic = { ...prefs, ...patch };
+    setPrefs(optimistic);
+    setPrefsMsg(null);
+    const r = await fetch("/api/client-portal/preferences", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    const j = (await r.json().catch(() => ({}))) as {
+      ok?: boolean;
+      preferences?: OwnerPrefs;
+      error?: string;
+    };
+    if (j.ok && j.preferences) {
+      setPrefs(j.preferences);
+      setPrefsMsg("Saved.");
+      setTimeout(() => setPrefsMsg(null), 1500);
+    } else {
+      setPrefsMsg(j.error || "Couldn't save.");
+    }
+  };
+
   const [cur, setCur] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -950,7 +1264,7 @@ function AccountTab({
   };
 
   return (
-    <div className="space-y-8 max-w-md">
+    <div className="space-y-8 max-w-xl">
       <section>
         <h2 className="text-sm font-bold mb-3">Your account</h2>
         <div className="space-y-1 text-sm">
@@ -1003,6 +1317,87 @@ function AccountTab({
           </div>
         </section>
       )}
+
+      {/* NOTIFICATION PREFERENCES */}
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-bold">Notifications</h2>
+          {prefsMsg && (
+            <span className="text-[11px] text-emerald-400">{prefsMsg}</span>
+          )}
+        </div>
+        {!prefs ? (
+          <div className="text-[11px] text-slate-500">Loading…</div>
+        ) : (
+          <div className="space-y-4 border border-slate-800 bg-slate-900/40 rounded p-4">
+            <PrefRow
+              label="New lead emails"
+              hint="Get an email the moment a lead lands, a once-a-day digest, or nothing."
+              value={prefs.new_lead_email}
+              onChange={(v) => updatePrefs({ new_lead_email: v })}
+            />
+            <PrefRow
+              label="New lead texts"
+              hint="Same — but to your phone. (Requires Twilio on your plan.)"
+              value={prefs.new_lead_sms}
+              onChange={(v) => updatePrefs({ new_lead_sms: v })}
+            />
+            {(prefs.new_lead_email === "digest" || prefs.new_lead_sms === "digest") && (
+              <div className="pt-2 border-t border-slate-800">
+                <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+                  Digest hour ({prefs.digest_timezone})
+                </label>
+                <select
+                  value={prefs.digest_hour}
+                  onChange={(e) => updatePrefs({ digest_hour: Number(e.target.value) })}
+                  className="mt-1.5 w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+                >
+                  {Array.from({ length: 24 }).map((_, h) => (
+                    <option key={h} value={h}>
+                      {h === 0 ? "12:00 AM" : h < 12 ? `${h}:00 AM` : h === 12 ? "12:00 PM" : `${h - 12}:00 PM`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* SHOPIFY CONNECTION */}
+      <section>
+        <h2 className="text-sm font-bold mb-3">Connect your Shopify store</h2>
+        {shopify?.connected ? (
+          <div className="border border-emerald-500/30 bg-emerald-950/20 rounded p-4 text-sm space-y-1">
+            <div className="font-semibold text-emerald-300">
+              ✓ Connected
+            </div>
+            <div className="text-[12px] text-slate-400">{shopify.store_url}</div>
+            {shopify.cached_at && (
+              <div className="text-[11px] text-slate-500">
+                Last sync: {new Date(shopify.cached_at).toLocaleString()}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="border border-slate-800 bg-slate-900/40 rounded p-4 space-y-2 text-sm">
+            <div className="font-semibold">Pull revenue + AOV into your dashboard</div>
+            <p className="text-[12px] text-slate-400 leading-relaxed">
+              Hook up your Shopify store and we&apos;ll surface your revenue,
+              average order value, top product, and repeat-customer rate
+              right alongside your leads — so you can see which campaigns
+              are actually moving sales.
+            </p>
+            <div className="text-[11px] text-amber-300">
+              When you&apos;re ready, email{" "}
+              <a href="mailto:bluejaycontactme@gmail.com" className="underline">
+                bluejaycontactme@gmail.com
+              </a>{" "}
+              and Ben will turn this on for you.
+            </div>
+          </div>
+        )}
+      </section>
 
       <section>
         <h2 className="text-sm font-bold mb-3">Change password</h2>
@@ -1208,6 +1603,87 @@ function QuickLink({
       <span className="text-xl">{icon}</span>
       <span className="font-semibold truncate">{label}</span>
     </a>
+  );
+}
+
+function ShopifyStrip({ shopify }: { shopify: ShopifyState | null }) {
+  if (!shopify) return null;
+  if (!shopify.connected) {
+    return (
+      <section className="rounded-lg border border-dashed border-slate-700 bg-slate-900/30 p-4 flex items-center gap-3">
+        <span className="text-2xl">🛒</span>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-bold">Connect Shopify for live revenue</div>
+          <div className="text-[11px] text-slate-500">
+            See revenue, AOV, top product, and repeat-rate alongside your leads.
+            Email Ben to flip it on.
+          </div>
+        </div>
+        <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
+          Not connected
+        </span>
+      </section>
+    );
+  }
+  const m = shopify.metrics;
+  const dollars = (cents?: number) =>
+    cents === undefined ? "—" : `$${Math.round(cents / 100).toLocaleString()}`;
+  return (
+    <section>
+      <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-2.5 flex items-center gap-2">
+        🛒 Shopify · last 30 days
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <StatCard label="Revenue 30d" value={dollars(m.revenue_30d_cents)} sub={`${m.orders_30d ?? 0} orders`} accent="emerald" />
+        <StatCard label="Revenue 7d" value={dollars(m.revenue_7d_cents)} sub={`${m.orders_7d ?? 0} orders`} accent="blue" />
+        <StatCard label="AOV" value={dollars(m.aov_cents)} sub="per order" accent="amber" />
+        <StatCard
+          label="Repeat rate"
+          value={m.repeat_rate !== undefined ? `${Math.round(m.repeat_rate * 100)}%` : "—"}
+          sub={m.top_product ? `Top: ${m.top_product.name}` : "second-time buyers"}
+          accent="violet"
+        />
+      </div>
+    </section>
+  );
+}
+
+function PrefRow({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: NotificationMode;
+  onChange: (v: NotificationMode) => void;
+}) {
+  const opts: { id: NotificationMode; label: string }[] = [
+    { id: "instant", label: "Instant" },
+    { id: "digest", label: "Daily digest" },
+    { id: "off", label: "Off" },
+  ];
+  return (
+    <div>
+      <div className="text-sm font-semibold">{label}</div>
+      {hint && <div className="text-[11px] text-slate-500 mb-2">{hint}</div>}
+      <div className="flex gap-1">
+        {opts.map((o) => (
+          <button
+            key={o.id}
+            onClick={() => onChange(o.id)}
+            className={`flex-1 text-[11px] font-bold py-1.5 rounded border transition ${
+              value === o.id
+                ? "bg-blue-500 border-blue-400 text-white"
+                : "border-slate-700 text-slate-400 hover:text-white"
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

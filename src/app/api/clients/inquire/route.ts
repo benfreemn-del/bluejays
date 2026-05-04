@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOwnerAlert, sendOwnerEmail } from "@/lib/alerts";
+import { sendOwnerAlert, sendOwnerEmail, sendEmailTo } from "@/lib/alerts";
 import {
   createClientLead,
   detectAudience,
   type NewClientLead,
 } from "@/lib/client-leads";
+import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 /**
@@ -207,6 +208,41 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Fan-out to client portal owners that have opted into INSTANT email
+  // alerts. Owners on "digest" wait for the daily roll-up; "off" gets
+  // nothing. This is the system that lets Philip get a ping the moment
+  // a parent submits a Camp Finder lead — without spamming Ben for it.
+  const clientOwnerSends: Promise<unknown>[] = [];
+  if (isSupabaseConfigured()) {
+    try {
+      const owners = await listOwnersWithPrefsForClient(slug);
+      const audience = detectAudience(slug, body);
+      for (const o of owners) {
+        const filter = o.prefs.instant_audience_filter ?? [];
+        if (filter.length > 0 && audience && !filter.includes(audience)) {
+          continue; // owner only wants specific audiences
+        }
+        if (o.prefs.new_lead_email === "instant") {
+          clientOwnerSends.push(
+            sendEmailTo({
+              to: o.email,
+              subject: `${cfg.emoji} New lead — ${name}`,
+              body: fullMessage,
+              fromName: `${cfg.businessLabel} Alerts`,
+            }).catch((err) =>
+              console.error("[clients/inquire] client-owner email failed:", err),
+            ),
+          );
+        }
+        // SMS fan-out is intentionally skipped here — owners' personal
+        // numbers + Twilio routing happens in a follow-up sprint when we
+        // wire per-client Twilio sub-accounts.
+      }
+    } catch (err) {
+      console.error("[clients/inquire] owner pref fan-out failed:", err);
+    }
+  }
+
   await Promise.allSettled([
     sendOwnerAlert(smsMessage).catch((err) =>
       console.error("[clients/inquire] owner SMS failed:", err),
@@ -214,6 +250,7 @@ export async function POST(request: NextRequest) {
     sendOwnerEmail({ subject, body: fullMessage }).catch((err) =>
       console.error("[clients/inquire] owner email failed:", err),
     ),
+    ...clientOwnerSends,
   ]);
 
   return NextResponse.json({ ok: true, leadId });

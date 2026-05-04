@@ -153,6 +153,61 @@ export async function sendOwnerEmail(args: {
   }
 }
 
+/**
+ * Send an email to an arbitrary recipient (e.g. a client owner getting
+ * an instant lead notification). Same delivery path as sendOwnerEmail
+ * but the `to` address is not pinned to OWNER_EMAIL.
+ *
+ * Returns true on send success, false otherwise. Logs (no throw) when
+ * SENDGRID_API_KEY isn't configured so local dev / CI doesn't break.
+ */
+export async function sendEmailTo(args: {
+  to: string;
+  subject: string;
+  body: string;
+  fromName?: string;
+}): Promise<boolean> {
+  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+  const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+  if (!SENDGRID_API_KEY) {
+    console.log(`  🔔 [ALERT - would email ${args.to}]: ${args.subject}\n${args.body}`);
+    return false;
+  }
+  const htmlBody = args.body
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br/>");
+  try {
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: args.to }] }],
+        from: { email: FROM_EMAIL, name: args.fromName || "BlueJays Alerts" },
+        subject: args.subject,
+        content: [
+          { type: "text/plain", value: args.body },
+          {
+            type: "text/html",
+            value: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55;color:#1f2937">${htmlBody}</div>`,
+          },
+        ],
+      }),
+    });
+    if (!response.ok) {
+      console.error("[sendEmailTo]", response.status, await response.text());
+    }
+    return response.ok;
+  } catch (err) {
+    console.error("[sendEmailTo] failed:", err);
+    return false;
+  }
+}
+
 export async function alertHighValueLead(prospect: Prospect) {
   // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
   const BASE_URL = "https://bluejayportfolio.com";
