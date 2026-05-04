@@ -571,7 +571,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             {data.stats.map((stat, i) => {
               const statIcons = [Tree, Leaf, Star, CheckCircle];
               const Icon = statIcons[i % statIcons.length];
-              return (<div key={stat.label} className="text-center"><div className="flex items-center justify-center gap-2 mb-2"><Icon size={22} weight="fill" style={{ color: PRIMARY }} /><span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span></div><span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span></div>);
+              return (<div key={stat.label} className="text-center"><div className="flex flex-nowrap items-center justify-center gap-1.5 mb-2"><Icon size={18} weight="fill" style={{ color: PRIMARY }} className="shrink-0" /><span className="text-2xl md:text-4xl font-extrabold text-white whitespace-nowrap">{stat.value}</span></div><span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span></div>);
             })}
           </div>
         </div>
