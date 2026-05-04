@@ -1470,10 +1470,10 @@ export default function ZenithSportsPage() {
             className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#a3e635]/40 transition-all overflow-hidden"
           >
             <div className="grid lg:grid-cols-[auto_1fr_auto] gap-6 sm:gap-10 items-center p-6 sm:p-10">
-              {/* Mini character preview — uses the actual Pixar avatar
-                  card (Club tier teen, the middle of the road for age +
-                  skill) so the promo feels native to the builder UX. */}
-              <div className="hidden sm:flex items-center justify-center w-28 lg:w-40 shrink-0">
+              {/* Pixar avatar preview (Club teen — middle-of-the-road
+                  for skill + age). Visible at every breakpoint so
+                  mobile users see the artwork too — just smaller. */}
+              <div className="flex items-center justify-center w-20 sm:w-28 lg:w-40 shrink-0">
                 <Image
                   src="/avatars/tekky/08_club_age_13-25.png"
                   alt="Build Your Player — Club tier preview"

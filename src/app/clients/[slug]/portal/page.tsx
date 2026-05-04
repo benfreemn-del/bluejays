@@ -184,6 +184,7 @@ const STATUS_COLOR: Record<string, string> = {
   responded: "bg-emerald-500/20 text-emerald-300",
   converted: "bg-emerald-500 text-white",
   completed: "bg-slate-700 text-slate-400",
+  dismissed: "bg-slate-800 text-slate-500 line-through",
 };
 
 const AUDIENCE_EMOJI: Record<string, string> = {
@@ -192,6 +193,59 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   player: "⚽",
   club: "🏛️",
   unknown: "❓",
+};
+
+/**
+ * Per-audience color tokens, mapped to the brand-voice doc's three
+ * primary audiences (parent / coach / player) plus club + unknown
+ * fallbacks. Used to color-code lead cards so an owner can scan the
+ * pipeline at a glance — "we have a wave of parents this week" reads
+ * instantly without parsing each card's audience badge.
+ *
+ *   parent → warm amber  (the "buyer for someone else" audience)
+ *   coach  → cobalt blue (the "trust + authority" audience)
+ *   player → lime green  (the "that's me on the field" audience)
+ *   club   → violet      (B2B group buyers, premium tier)
+ */
+const AUDIENCE_COLOR: Record<
+  string,
+  { bg: string; ring: string; text: string; chip: string; accent: string }
+> = {
+  parent: {
+    bg: "bg-amber-500/[0.06]",
+    ring: "border-amber-500/30",
+    text: "text-amber-200",
+    chip: "bg-amber-500/15 text-amber-200 border border-amber-500/30",
+    accent: "#f59e0b",
+  },
+  coach: {
+    bg: "bg-blue-500/[0.06]",
+    ring: "border-blue-500/30",
+    text: "text-blue-200",
+    chip: "bg-blue-500/15 text-blue-200 border border-blue-500/30",
+    accent: "#1d4ed8",
+  },
+  player: {
+    bg: "bg-lime-500/[0.06]",
+    ring: "border-lime-500/30",
+    text: "text-lime-200",
+    chip: "bg-lime-500/15 text-lime-200 border border-lime-500/30",
+    accent: "#a3e635",
+  },
+  club: {
+    bg: "bg-violet-500/[0.06]",
+    ring: "border-violet-500/30",
+    text: "text-violet-200",
+    chip: "bg-violet-500/15 text-violet-200 border border-violet-500/30",
+    accent: "#8b5cf6",
+  },
+  unknown: {
+    bg: "bg-slate-800/40",
+    ring: "border-slate-700",
+    text: "text-slate-300",
+    chip: "bg-slate-700/40 text-slate-300 border border-slate-600",
+    accent: "#94a3b8",
+  },
 };
 
 const SOURCE_LABEL: Record<string, string> = {
@@ -1067,21 +1121,35 @@ function LeadsTab({
     }
   };
 
+  // Active leads = everything except dismissed. The dismissed filter
+  // shows ONLY dismissed (so an owner can restore a mistaken dismiss).
+  // All other filters apply on top of "active" (i.e. they implicitly
+  // exclude dismissed) so the pipeline stays clean.
+  const activeLeads = leads.filter((l) => l.funnel_status !== "dismissed");
   const filtered =
     filter === "all"
-      ? leads
-      : filter === "unread"
-        ? leads.filter((l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled")
-        : filter === "uncontacted"
-          ? leads.filter((l) => (l.touch_count ?? 0) === 0)
-          : leads.filter((l) => l.funnel_status === filter);
+      ? activeLeads
+      : filter === "dismissed"
+        ? leads.filter((l) => l.funnel_status === "dismissed")
+        : filter === "unread"
+          ? activeLeads.filter(
+              (l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled",
+            )
+          : filter === "uncontacted"
+            ? activeLeads.filter((l) => (l.touch_count ?? 0) === 0)
+            : activeLeads.filter((l) => l.funnel_status === filter);
 
   const counts = {
-    all: leads.length,
-    uncontacted: summary?.uncontacted ?? leads.filter((l) => (l.touch_count ?? 0) === 0).length,
-    unread: leads.filter((l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled").length,
-    enrolled: leads.filter((l) => l.funnel_status === "enrolled").length,
-    converted: leads.filter((l) => l.funnel_status === "converted").length,
+    all: activeLeads.length,
+    uncontacted:
+      summary?.uncontacted ??
+      activeLeads.filter((l) => (l.touch_count ?? 0) === 0).length,
+    unread: activeLeads.filter(
+      (l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled",
+    ).length,
+    enrolled: activeLeads.filter((l) => l.funnel_status === "enrolled").length,
+    converted: activeLeads.filter((l) => l.funnel_status === "converted").length,
+    dismissed: leads.filter((l) => l.funnel_status === "dismissed").length,
   };
 
   return (
@@ -1093,6 +1161,7 @@ function LeadsTab({
           { id: "unread", label: "Needs attention" },
           { id: "enrolled", label: "In funnel" },
           { id: "converted", label: "Won" },
+          { id: "dismissed", label: "Dismissed" },
         ].map((f) => (
           <button
             key={f.id}
@@ -1140,6 +1209,17 @@ function LeadsTab({
                 label="⏸ Pause"
                 disabled={bulkBusy}
                 onClick={() => bulkAction({ kind: "status", status: "paused" }, "Pause funnel on")}
+              />
+              <BulkBtn
+                label="✕ Dismiss"
+                disabled={bulkBusy}
+                tone="amber"
+                onClick={() =>
+                  bulkAction(
+                    { kind: "status", status: "dismissed" },
+                    "Dismiss (hide from active views)",
+                  )
+                }
               />
               <span className="text-slate-600 mx-1">|</span>
               <BulkBtn
@@ -1672,6 +1752,7 @@ function LeadCard({
     setSavingNotes(false);
     setNotesMsg(j.ok ? "Saved." : j.error || "Couldn't save.");
     setTimeout(() => setNotesMsg(null), 2000);
+    if (j.ok) onMutate(); // refresh the parent list so the 📝 note badge appears
   };
 
   const draftReply = async () => {
@@ -1708,13 +1789,26 @@ function LeadCard({
     setTimeout(() => setCopied(false), 1500);
   };
 
+  // Audience-driven theming — left accent strip + soft tint so the
+  // pipeline reads color-coded at a glance.
+  const audKey = (lead.audience_segment ?? "unknown") as keyof typeof AUDIENCE_COLOR;
+  const aud = AUDIENCE_COLOR[audKey] ?? AUDIENCE_COLOR.unknown;
+  const isDismissed = lead.funnel_status === "dismissed";
+
   return (
     <article
-      className={`rounded-lg border bg-slate-900/40 transition ${
-        selected ? "border-blue-400/60 ring-1 ring-blue-400/30" : "border-slate-800"
-      }`}
+      className={`relative rounded-lg border transition overflow-hidden ${
+        selected
+          ? "border-blue-400/60 ring-1 ring-blue-400/30"
+          : `${aud.ring}`
+      } ${aud.bg} ${isDismissed ? "opacity-50" : ""}`}
     >
-      <div className="flex items-start gap-2 p-4">
+      {/* Left audience accent strip — 4px color bar */}
+      <div
+        className="absolute top-0 left-0 bottom-0 w-1"
+        style={{ background: aud.accent }}
+      />
+      <div className="flex items-start gap-2 p-4 pl-5">
         {/* Checkbox = SELECT for bulk actions. Lives outside the
             expand-button so a stray click on the row never selects
             (or worse, mutates) the lead. */}
@@ -1744,7 +1838,9 @@ function LeadCard({
               {lead.name || "(no name)"}
             </span>
             {lead.audience_segment && (
-              <span className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300">
+              <span
+                className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${aud.chip}`}
+              >
                 {lead.audience_segment}
               </span>
             )}
@@ -1874,7 +1970,7 @@ function LeadCard({
             )}
           </div>
 
-          {/* Status flips + manual enroll */}
+          {/* Status flips + manual enroll + dismiss */}
           <div className="flex flex-wrap gap-1 items-center">
             {["enrolled", "paused", "responded", "converted"].map((s) => (
               <button
@@ -1890,7 +1986,31 @@ function LeadCard({
                 {s === "converted" ? "Won" : s}
               </button>
             ))}
-            {lead.funnel_status !== "enrolled" && (
+            {/* Dismiss — for spam / bot submissions / not-a-real-lead.
+                Doesn't delete; just hides from the active filter set
+                so the pipeline stays clean. Restoreable via the All
+                or Dismissed filter. */}
+            <button
+              onClick={() => {
+                if (
+                  confirm(
+                    "Dismiss this lead? It'll be hidden from active filters but the record stays in your DB and you can restore it via the Dismissed filter.",
+                  )
+                ) {
+                  onStatus(lead.id, "dismissed");
+                }
+              }}
+              disabled={lead.funnel_status === "dismissed"}
+              className={`text-[10px] tracking-wider uppercase font-bold px-2 py-1 rounded transition ${
+                lead.funnel_status === "dismissed"
+                  ? STATUS_COLOR.dismissed + " cursor-default"
+                  : "border border-rose-500/40 text-rose-300 hover:bg-rose-500/15"
+              }`}
+              title="Hide spam / not-a-real-lead from active views"
+            >
+              ✕ Dismiss
+            </button>
+            {lead.funnel_status !== "enrolled" && lead.funnel_status !== "dismissed" && (
               <button
                 onClick={enrollInFunnel}
                 disabled={enrolling}

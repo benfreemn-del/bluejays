@@ -20,7 +20,7 @@ import { getSupabase } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const VALID_STATUSES = ["enrolled", "paused", "responded", "converted"];
+const VALID_STATUSES = ["enrolled", "paused", "responded", "converted", "dismissed"];
 const VALID_CHANNELS = ["email", "sms", "call"];
 
 export async function POST(req: NextRequest) {
