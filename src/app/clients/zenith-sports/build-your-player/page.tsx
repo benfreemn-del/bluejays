@@ -490,11 +490,12 @@ function BuilderStep({
         </div>
       </div>
 
-      {/* Right — character */}
-      <div
-        className="relative h-[520px] rounded-2xl border border-white/10 overflow-hidden"
-        style={{ background: NAVY_DEEP }}
-      >
+      {/* Right — character. Container is the avatar's natural 3:4
+          width × auto height; CharacterBuilder renders the 3:4 image
+          zone first, then the 10K-rule + Height-chip strip flows
+          below it as a sibling at natural height. No letterbox, no
+          crop, full text always visible. */}
+      <div className="w-full max-w-[420px] mx-auto rounded-2xl border border-white/10 overflow-hidden flex flex-col" style={{ background: "#0a1628" }}>
         <CharacterBuilder
           age={state.age}
           heightInches={state.heightInches}

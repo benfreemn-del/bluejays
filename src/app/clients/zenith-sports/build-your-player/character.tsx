@@ -73,36 +73,50 @@ export default function CharacterBuilder({
   const ageSlug = ageToSlug(age);
   const filename = avatarFilename(tier.slug, ageSlug);
 
-  // Height drives a subtle scale on the avatar so taller players read
-  // visually larger. Range deliberately gentle (0.85x → 1.05x) so the
-  // baked-in proportions still read correctly — a 7'0" rendered at
-  // 1.5x would crop or distort. The card's own framing is the
-  // canonical look.
-  const scale = 0.85 + ((heightInches - 36) / (84 - 36)) * 0.2;
-
   // 10,000-hour-rule bar
   const annualHours = currentWeeklyHours * 52;
   const yearsToMastery = currentWeeklyHours > 0 ? 10000 / annualHours : null;
   const barFillPct = Math.min((annualHours / 5000) * 100, 100);
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
-      {/* Avatar — top zone (flex-1). object-contain preserves the 3:4
-          card. The card's own navy gradient extends to the edges so
-          there's no border seam. Height-driven scale stays gentle so
-          the baked-in proportions still read correctly. */}
-      <div className="relative flex-1 min-h-0">
+    <div className="relative w-full flex flex-col">
+      {/* Inline keyframes for the cross-fade swap. Each new avatar
+          instance starts at opacity 0 + slight zoom-in so the swap
+          feels like a soft focus pull rather than a hard pop. */}
+      <style>{`
+        @keyframes avatarSwap {
+          from { opacity: 0; transform: scale(1.04); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
+      {/* Avatar — natural 3:4 zone. object-cover fills the box
+          edge-to-edge so there's NO letterbox or white seam at the
+          corners. The card's own baked-in tier label + stars + body
+          live INSIDE the safe area of the 3:4 frame, so cover-fitting
+          a 3:4 source into a 3:4 box is a 1:1 fit (no actual crop).
+          Background still matches the card's gradient as a fallback
+          for any sub-pixel rendering edge. */}
+      <div
+        className="relative w-full"
+        style={{
+          aspectRatio: "3 / 4",
+          background:
+            "linear-gradient(180deg, #0a1628 0%, #1e3a5f 100%)",
+        }}
+      >
         <div
-          className="absolute inset-0 flex items-center justify-center transition-transform duration-500"
-          style={{ transform: `scale(${scale})` }}
+          key={filename}
+          className="absolute inset-0"
+          style={{ animation: "avatarSwap 350ms ease-out forwards" }}
         >
           <Image
             src={`/avatars/tekky/${filename}`}
             alt={`${tier.name} player, age ${ageSlug}`}
             fill
-            className="object-contain"
+            className="object-cover"
             priority
-            sizes="(max-width: 768px) 100vw, 520px"
+            sizes="(max-width: 768px) 100vw, 420px"
           />
         </div>
       </div>
