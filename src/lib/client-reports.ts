@@ -21,8 +21,22 @@ export type WeeklyReport = {
   leads: {
     total: number;
     byAudience: Record<string, number>;
+    bySource: Record<string, number>;     // where leads came from
+    byIntent: Record<string, number>;     // what they wanted
     new_this_week: number;
-    delta_vs_prior_week: number;          // simple int delta
+    delta_vs_prior_week: number;
+    /** Estimated $ pipeline value: leads × est conv % × est AOV. */
+    pipeline_value_usd: number;
+    /** Last-90-day weekly trend (oldest first). */
+    weekly_trend: { week: string; count: number }[];
+  };
+
+  /** When in the day/week leads come in. */
+  patterns: {
+    by_hour: number[];                    // 24-element array (UTC hour)
+    by_day_of_week: number[];             // 7-element array (Sun-Sat)
+    busiest_hour: number;
+    busiest_day: number;
   };
 
   funnel: {
@@ -30,8 +44,12 @@ export type WeeklyReport = {
     responded: number;
     converted: number;
     completed: number;
-    response_rate_pct: number;            // responded / total leads
-    conversion_rate_pct: number;          // converted / total leads
+    response_rate_pct: number;
+    conversion_rate_pct: number;
+    /** Avg hours from lead-in to first response. */
+    avg_response_time_hours: number | null;
+    /** Top performing template_id by reply rate. */
+    top_template: { id: string; sends: number; replies: number; rate_pct: number } | null;
   };
 
   messages: {
@@ -57,6 +75,15 @@ export type WeeklyReport = {
     by_status: Record<string, number>;
   } | null;
 
+  /** Leads that need owner attention (responded but not converted/handled). */
+  action_required: {
+    id: string;
+    name: string | null;
+    audience: string | null;
+    intent: string | null;
+    days_since_response: number;
+  }[];
+
   highlights: string[];                   // human-friendly bullets
   next_actions: string[];                 // suggested optimizations
 };
@@ -73,12 +100,22 @@ export async function generateWeeklyReport(
 
   const sb = getSupabase();
 
-  /* Leads */
+  /* Leads — full set including source/intent/responded_at for the new
+     business-owner metrics. */
   const { data: leadsAll } = await sb
     .from("client_leads")
-    .select("audience_segment, funnel_status, created_at")
+    .select("id, name, audience_segment, funnel_status, created_at, source, intent, responded_at")
     .eq("client_slug", clientSlug);
-  const leads = leadsAll ?? [];
+  const leads = (leadsAll ?? []) as {
+    id: string;
+    name: string | null;
+    audience_segment: string | null;
+    funnel_status: string;
+    created_at: string;
+    source: string | null;
+    intent: string | null;
+    responded_at: string | null;
+  }[];
 
   const newThisWeek = leads.filter(
     (l) => new Date(l.created_at as string) >= start,
@@ -89,10 +126,75 @@ export async function generateWeeklyReport(
   });
 
   const byAudience: Record<string, number> = {};
+  const bySource: Record<string, number> = {};
+  const byIntent: Record<string, number> = {};
   for (const l of leads) {
-    const a = (l.audience_segment as string) ?? "untagged";
+    const a = l.audience_segment ?? "untagged";
     byAudience[a] = (byAudience[a] ?? 0) + 1;
+    if (l.source) bySource[l.source] = (bySource[l.source] ?? 0) + 1;
+    if (l.intent) byIntent[l.intent] = (byIntent[l.intent] ?? 0) + 1;
   }
+
+  // Pipeline value estimate. Tunable assumptions per audience.
+  // Parents → ~$60 AOV (one ball), Coaches → ~$600 (bulk roster order),
+  // Players → ~$75 (ball + grip socks). Assumed conv rates baked in.
+  const PIPELINE_PER_AUDIENCE: Record<string, number> = {
+    parent: 60 * 0.08,    // $4.80 expected per parent lead
+    coach: 600 * 0.05,    // $30 expected per coach lead
+    player: 75 * 0.06,    // $4.50 expected per player lead
+    club: 1500 * 0.04,    // $60 expected per club lead
+    unknown: 50 * 0.05,
+  };
+  const pipeline_value_usd = leads.reduce((sum, l) => {
+    const k = l.audience_segment ?? "unknown";
+    return sum + (PIPELINE_PER_AUDIENCE[k] ?? PIPELINE_PER_AUDIENCE.unknown);
+  }, 0);
+
+  // Weekly trend — last 13 weeks (90 days) of lead counts
+  const trendStart = new Date(end.getTime() - 13 * WEEK_MS);
+  const weekly_trend: { week: string; count: number }[] = [];
+  for (let i = 0; i < 13; i++) {
+    const wStart = new Date(trendStart.getTime() + i * WEEK_MS);
+    const wEnd = new Date(wStart.getTime() + WEEK_MS);
+    const count = leads.filter((l) => {
+      const t = new Date(l.created_at);
+      return t >= wStart && t < wEnd;
+    }).length;
+    weekly_trend.push({
+      week: wStart.toISOString().slice(0, 10),
+      count,
+    });
+  }
+
+  // Time-of-day + day-of-week patterns (across all leads, not just this week
+  // — gives a stable signal even for early-stage clients).
+  const by_hour = Array(24).fill(0) as number[];
+  const by_day_of_week = Array(7).fill(0) as number[];
+  for (const l of leads) {
+    const d = new Date(l.created_at);
+    by_hour[d.getUTCHours()] += 1;
+    by_day_of_week[d.getUTCDay()] += 1;
+  }
+  const busiest_hour = by_hour.indexOf(Math.max(...by_hour));
+  const busiest_day = by_day_of_week.indexOf(Math.max(...by_day_of_week));
+
+  // Action-required: leads that responded but haven't been converted/handled.
+  // Sorted by oldest response first (most-stale first).
+  const now = end.getTime();
+  const action_required = leads
+    .filter((l) => l.funnel_status === "responded" && l.responded_at)
+    .map((l) => ({
+      id: l.id,
+      name: l.name,
+      audience: l.audience_segment,
+      intent: l.intent,
+      days_since_response: Math.max(
+        0,
+        Math.floor((now - new Date(l.responded_at!).getTime()) / (24 * 60 * 60 * 1000)),
+      ),
+    }))
+    .sort((a, b) => b.days_since_response - a.days_since_response)
+    .slice(0, 10);
 
   const fStatus: Record<string, number> = {};
   for (const l of leads) {
@@ -125,6 +227,72 @@ export async function generateWeeklyReport(
   for (const m of messages) {
     if (m.direction !== "outbound") continue;
     byChannel[m.channel] = (byChannel[m.channel] ?? 0) + 1;
+  }
+
+  /* Avg response time + top template — needs the full message history,
+     not just this week. */
+  const { data: allMsgs } = await sb
+    .from("client_lead_messages")
+    .select("lead_id, template_id, direction, status, sent_at")
+    .eq("client_slug", clientSlug);
+  const allMessages = (allMsgs ?? []) as {
+    lead_id: string;
+    template_id: string | null;
+    direction: string;
+    status: string;
+    sent_at: string;
+  }[];
+
+  // Avg hours from FIRST outbound to FIRST inbound per lead.
+  const responseTimes: number[] = [];
+  const leadFirstOut = new Map<string, string>();
+  for (const m of allMessages) {
+    if (m.direction !== "outbound") continue;
+    if (m.status !== "sent" && m.status !== "delivered") continue;
+    const cur = leadFirstOut.get(m.lead_id);
+    if (!cur || m.sent_at < cur) leadFirstOut.set(m.lead_id, m.sent_at);
+  }
+  for (const m of allMessages) {
+    if (m.direction !== "inbound") continue;
+    const out = leadFirstOut.get(m.lead_id);
+    if (!out) continue;
+    const hours =
+      (new Date(m.sent_at).getTime() - new Date(out).getTime()) /
+      (60 * 60 * 1000);
+    if (hours >= 0) responseTimes.push(hours);
+  }
+  const avg_response_time_hours =
+    responseTimes.length > 0
+      ? responseTimes.reduce((s, h) => s + h, 0) / responseTimes.length
+      : null;
+
+  // Top template — sends per template_id + reply rate.
+  type TplStat = { sends: number; replies: number };
+  const tplStats = new Map<string, TplStat>();
+  const tplLeads = new Map<string, Set<string>>();
+  for (const m of allMessages) {
+    if (m.direction !== "outbound" || !m.template_id) continue;
+    if (m.status !== "sent" && m.status !== "delivered") continue;
+    if (!tplStats.has(m.template_id)) tplStats.set(m.template_id, { sends: 0, replies: 0 });
+    tplStats.get(m.template_id)!.sends += 1;
+    if (!tplLeads.has(m.template_id)) tplLeads.set(m.template_id, new Set());
+    tplLeads.get(m.template_id)!.add(m.lead_id);
+  }
+  const repliedLeadIds = new Set(
+    allMessages.filter((m) => m.direction === "inbound").map((m) => m.lead_id),
+  );
+  for (const [tplId, leadSet] of tplLeads) {
+    tplStats.get(tplId)!.replies = Array.from(leadSet).filter((id) =>
+      repliedLeadIds.has(id),
+    ).length;
+  }
+  let top_template: WeeklyReport["funnel"]["top_template"] = null;
+  for (const [id, s] of tplStats) {
+    if (s.sends < 3) continue; // need minimum sample
+    const rate = (s.replies / s.sends) * 100;
+    if (!top_template || rate > top_template.rate_pct) {
+      top_template = { id, sends: s.sends, replies: s.replies, rate_pct: rate };
+    }
   }
 
   /* Ads (optional — table may not exist if migration not run yet) */
@@ -232,14 +400,53 @@ export async function generateWeeklyReport(
     );
   }
 
+  // Add a few highlight sentences using the new metrics so owners see
+  // the story even if they don't dig into the data themselves.
+  if (top_template) {
+    highlights.push(
+      `Best-performing template: ${top_template.id} (${top_template.rate_pct.toFixed(1)}% reply rate over ${top_template.sends} sends).`,
+    );
+  }
+  if (action_required.length > 0) {
+    highlights.push(
+      `${action_required.length} lead${action_required.length === 1 ? "" : "s"} responded but ${action_required.length === 1 ? "is" : "are"} awaiting follow-up.`,
+    );
+  }
+  if (Object.keys(bySource).length > 0) {
+    const topSrc = Object.entries(bySource).sort((a, b) => b[1] - a[1])[0];
+    highlights.push(
+      `Top lead source: ${topSrc[0]} (${topSrc[1]} of ${leads.length} leads).`,
+    );
+  }
+  if (avg_response_time_hours !== null) {
+    const h = avg_response_time_hours;
+    const display = h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(1)} hrs`;
+    highlights.push(`Average response time: ${display}.`);
+  }
+  if (action_required.length > 0) {
+    next_actions.push(
+      `Follow up on ${action_required.length} responded lead${action_required.length === 1 ? "" : "s"} (oldest: ${action_required[0].days_since_response} days). Open the Leads tab to action.`,
+    );
+  }
+
   return {
     client_slug: clientSlug,
     period: { start: start.toISOString(), end: end.toISOString() },
     leads: {
       total: leads.length,
       byAudience,
+      bySource,
+      byIntent,
       new_this_week: newThisWeek.length,
       delta_vs_prior_week: newThisWeek.length - newPriorWeek.length,
+      pipeline_value_usd,
+      weekly_trend,
+    },
+    patterns: {
+      by_hour,
+      by_day_of_week,
+      busiest_hour,
+      busiest_day,
     },
     funnel: {
       enrolled,
@@ -248,6 +455,8 @@ export async function generateWeeklyReport(
       completed,
       response_rate_pct: (responded / totalLeads) * 100,
       conversion_rate_pct: (converted / totalLeads) * 100,
+      avg_response_time_hours,
+      top_template,
     },
     messages: {
       sent,
@@ -257,6 +466,7 @@ export async function generateWeeklyReport(
     },
     ads,
     affiliates,
+    action_required,
     highlights,
     next_actions,
   };
