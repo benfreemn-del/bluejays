@@ -149,8 +149,42 @@ const PUBLIC_API_PATHS = [
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
 ];
 
+/**
+ * Per-client custom-domain map. When a request comes in on one of these
+ * hostnames, rewrite the URL so `/` serves that client's showcase page
+ * instead of the BlueJays portfolio homepage. Add a row here every time
+ * a client points their custom domain at the bluejays Vercel project.
+ *
+ * Strip www in the lookup (we accept both apex and www and treat them
+ * the same — Vercel handles www→apex redirect at the edge).
+ */
+const CLIENT_DOMAIN_MAP: Record<string, string> = {
+  "hectorlandscaping.com": "/clients/hector-landscaping",
+  // "tekky.org": "/clients/zenith-sports",  // (when Philip activates)
+};
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Custom-domain rewrite ──
+  // hectorlandscaping.com/anything → /clients/hector-landscaping/anything
+  // Strip Vercel's _next + api paths to avoid breaking framework + APIs.
+  const host = (request.headers.get("host") || "").toLowerCase().split(":")[0];
+  const apexHost = host.replace(/^www\./, "");
+  const showcasePath = CLIENT_DOMAIN_MAP[apexHost];
+  if (
+    showcasePath &&
+    !pathname.startsWith("/_next") &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith(showcasePath)
+  ) {
+    const rewriteUrl = new URL(
+      showcasePath + (pathname === "/" ? "" : pathname),
+      request.url,
+    );
+    rewriteUrl.search = request.nextUrl.search;
+    return NextResponse.rewrite(rewriteUrl);
+  }
 
   // Always allow public API paths (webhooks, inbound handlers)
   if (PUBLIC_API_PATHS.some((p) => pathname.startsWith(p))) {
