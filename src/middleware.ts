@@ -126,6 +126,7 @@ const PUBLIC_API_PATHS = [
   "/api/funnel/run",                   // Vercel cron (daily 08:00 UTC) — gated by CRON_SECRET
   "/api/client-funnels/run",           // Vercel cron (hourly) — gated by CRON_SECRET. Per-client AI-package funnel runner.
   "/api/client-funnels/missed-call",   // Twilio voice webhook — per-client missed-call → text-back.
+  "/api/client-reports",               // Vercel cron (weekly Mon 14:00 UTC) — gated by CRON_SECRET. Per-client weekly digest.
   "/api/replies/process",              // Vercel cron (per minute) — gated by CRON_SECRET
   "/api/postcards/html/",              // Lob's renderer fetches these; public (just pre-rendered preview HTML)
   "/api/inquire/",                     // Public form submission from /inquire/[code]

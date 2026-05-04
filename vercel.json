@@ -9,6 +9,10 @@
       "schedule": "0 * * * *"
     },
     {
+      "path": "/api/client-reports?client=zenith-sports&email=1",
+      "schedule": "0 14 * * 1"
+    },
+    {
       "path": "/api/replies/process",
       "schedule": "* * * * *"
     },

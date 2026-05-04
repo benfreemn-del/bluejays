@@ -156,7 +156,13 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
-    pricingTier: (row.pricing_tier as "standard" | "free" | "custom" | undefined) || "standard",
+    pricingTier:
+      (row.pricing_tier as
+        | "standard"
+        | "free"
+        | "custom"
+        | "fullsystem"
+        | undefined) || "standard",
     customSiteUrl: (row.custom_site_url as string | null) || undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,

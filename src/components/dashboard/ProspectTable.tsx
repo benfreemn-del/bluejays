@@ -723,11 +723,16 @@ export default function ProspectTable({
                   className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
                     isSelected(prospect.id) ? "bg-blue-electric/5" : ""
                   } ${
-                    prospect.pricingTier === "free"
-                      ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
-                      : prospect.source === "inbound"
-                        ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
-                        : ""
+                    prospect.pricingTier === "fullsystem"
+                      ? // Gold treatment for AI-Package buyers — the
+                        // top-tier offering ($9,700 + $500-1k/mo). Bigger
+                        // visual weight than every other row.
+                        "border-l-4 border-l-amber-300 bg-gradient-to-r from-amber-500/[0.08] via-yellow-500/[0.04] to-transparent shadow-[inset_0_0_28px_rgba(251,191,36,0.07)]"
+                      : prospect.pricingTier === "free"
+                        ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
+                        : prospect.source === "inbound"
+                          ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
+                          : ""
                   }`}
                 >
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
@@ -760,7 +765,18 @@ export default function ProspectTable({
                           updates automatically when Ben re-tags a prospect.
                           See CLAUDE.md "Approval & Pricing Rules" + "Custom
                           Pricing Tier Rules". */}
-                      {prospect.pricingTier === "free" ? (
+                      {prospect.pricingTier === "fullsystem" ? (
+                        // Gold-tier badge for AI Package buyers ($9,700
+                        // + $500–1k/mo). Larger + brighter than the
+                        // other tiers so paid AI-system clients pop in
+                        // the table at a glance.
+                        <span
+                          className="text-base px-2.5 py-1 rounded-md bg-gradient-to-b from-amber-300 to-yellow-500 text-amber-950 font-black tracking-tight border border-amber-200/70 shadow-[0_0_12px_rgba(251,191,36,0.55)]"
+                          title="Full AI System — $9,700 + $500–1,000/mo · Custom AI Marketing Funnel"
+                        >
+                          $
+                        </span>
+                      ) : prospect.pricingTier === "free" ? (
                         <span
                           className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 font-extrabold tracking-tight border border-emerald-500/40 shadow-[0_0_6px_rgba(16,185,129,0.25)]"
                           title="Free tier — $30 upfront, $100/yr starting Day 365"
