@@ -10,12 +10,19 @@ const ALLOW_PATTERNS: Array<RegExp> = [
   /^\/templates(\/|$)/,
 ];
 
+// Only show on the BlueJays portfolio domain — never on client custom domains
+const PORTFOLIO_HOSTNAMES = ["bluejayportfolio.com", "www.bluejayportfolio.com", "localhost"];
+
 // How far the user must scroll before the pill appears (clears nav bar)
 const SCROLL_THRESHOLD = 120;
 
 export default function FloatingAuditCTA() {
   const pathname = usePathname() || "/";
-  const allowed = ALLOW_PATTERNS.some((rx) => rx.test(pathname));
+  const isPortfolioDomain =
+    typeof window === "undefined" ||
+    PORTFOLIO_HOSTNAMES.some((h) => window.location.hostname === h) ||
+    window.location.hostname.endsWith(".vercel.app");
+  const allowed = isPortfolioDomain && ALLOW_PATTERNS.some((rx) => rx.test(pathname));
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
