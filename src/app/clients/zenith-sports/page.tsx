@@ -1192,16 +1192,20 @@ export default function ZenithSportsPage() {
                 {[
                   { v: "10–15", l: "Min / session" },
                   { v: "Daily", l: "Reps that count" },
-                  { v: "Match-day", l: "Transfer" },
+                  // Match‑day uses a non-breaking hyphen so the word
+                  // never splits across two lines in the narrow tile.
+                  // Also `text-2xl` (vs the prior `text-3xl`) lets all
+                  // three values sit on one line at any tile width.
+                  { v: "Match‑day", l: "Transfer" },
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="border border-white/10 bg-white/[0.03] p-4 text-center"
+                    className="border border-white/10 bg-white/[0.03] p-4 text-center flex flex-col items-center justify-center min-h-[88px]"
                   >
-                    <div className="text-3xl font-black tracking-tighter text-white">
+                    <div className="text-2xl font-black tracking-tight text-white whitespace-nowrap leading-none">
                       {s.v}
                     </div>
-                    <div className="mt-1 text-[9px] tracking-[0.22em] uppercase font-bold text-white/55">
+                    <div className="mt-2 text-[9px] tracking-[0.22em] uppercase font-bold text-white/55 leading-tight">
                       {s.l}
                     </div>
                   </div>
