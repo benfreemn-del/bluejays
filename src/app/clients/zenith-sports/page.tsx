@@ -1803,16 +1803,31 @@ export default function ZenithSportsPage() {
               © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.55em] -ml-px top-[-0.4em]">®</sup>{" "}
               is a registered trademark · Patent Pending
             </div>
-            <div>
-              Site by{" "}
+            <div className="flex items-center gap-3">
+              {/* Owner-only login link. Subtle dot is the secret-entry
+                  affordance per request — anyone who knows it can hit
+                  /login directly too. Auth is gated by email+password,
+                  not URL discovery. */}
               <a
-                href="https://bluejaywebdesign.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/70 hover:text-[#a3e635] transition"
+                href="/clients/zenith-sports/login"
+                className="text-white/30 hover:text-[#a3e635] transition text-base leading-none"
+                title="Owner login"
+                aria-label="Owner login"
               >
-                BlueJays
+                ·
               </a>
+              <span className="text-white/20">|</span>
+              <span>
+                Site by{" "}
+                <a
+                  href="https://bluejaywebdesign.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/70 hover:text-[#a3e635] transition"
+                >
+                  BlueJays
+                </a>
+              </span>
             </div>
           </div>
         </div>
