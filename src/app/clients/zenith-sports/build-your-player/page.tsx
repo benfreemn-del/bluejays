@@ -444,9 +444,13 @@ function BuilderStep({
             value={state.age}
             onChange={(v) => update("age", v)}
             min={5}
-            max={18}
+            max={35}
             step={1}
-            display={`U-${state.age}`}
+            // U-{N} bracket through 23 (covers youth → academy/college
+            // pathway). 24+ becomes the "Adult" senior bracket so
+            // current/returning players + adult-league users can
+            // generate a plan too.
+            display={state.age >= 24 ? `Adult · ${state.age}` : `U-${state.age}`}
           />
           <Slider
             label="Height"

@@ -1220,50 +1220,60 @@ function TaskCard({
 
   return (
     <article className="rounded-lg border border-slate-800 bg-slate-900/40">
-      <button
-        onClick={() => setExpanded((x) => !x)}
-        className="w-full text-left p-4 flex items-start gap-3 hover:bg-slate-900/60 transition rounded-lg"
-      >
-        <input
-          type="checkbox"
-          checked={task.status === "done"}
-          onChange={(e) => {
-            e.stopPropagation();
-            setStatus(e.target.checked ? "done" : "pending");
-          }}
+      {/* Row uses a <div> (not a <button>) so we can host the checkbox
+          as a real interactive element without invalid-nested-button
+          HTML. The expand toggle lives on a dedicated button to the
+          right — clicking the title area or the chevron expands;
+          clicking the checkbox toggles done. They never collide. */}
+      <div className="p-4 flex items-start gap-3">
+        <label
+          className="mt-1 cursor-pointer"
           onClick={(e) => e.stopPropagation()}
-          className="mt-1 w-4 h-4 accent-emerald-500 cursor-pointer"
-        />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={`font-semibold text-[15px] ${task.status === "done" ? "line-through text-slate-500" : ""}`}
-            >
-              {task.title}
-            </span>
-            <span
-              className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_STATUS_COLOR[task.status]}`}
-            >
-              {task.status.replace("_", " ")}
-            </span>
-            {task.priority !== "medium" && task.priority !== "low" && (
+        >
+          <input
+            type="checkbox"
+            checked={task.status === "done"}
+            onChange={(e) => setStatus(e.target.checked ? "done" : "pending")}
+            className="w-4 h-4 accent-emerald-500 cursor-pointer"
+            aria-label={`Mark ${task.title} ${task.status === "done" ? "incomplete" : "done"}`}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => setExpanded((x) => !x)}
+          className="flex-1 min-w-0 text-left flex items-start gap-3 hover:opacity-90 transition"
+        >
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
               <span
-                className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_PRIORITY_COLOR[task.priority]}`}
+                className={`font-semibold text-[15px] ${task.status === "done" ? "line-through text-slate-500" : ""}`}
               >
-                {task.priority}
+                {task.title}
               </span>
+              <span
+                className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_STATUS_COLOR[task.status]}`}
+              >
+                {task.status.replace("_", " ")}
+              </span>
+              {task.priority !== "medium" && task.priority !== "low" && (
+                <span
+                  className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_PRIORITY_COLOR[task.priority]}`}
+                >
+                  {task.priority}
+                </span>
+              )}
+            </div>
+            {task.notes && !expanded && (
+              <div className="text-[11px] text-amber-300 mt-1 truncate">
+                📝 {task.notes}
+              </div>
             )}
           </div>
-          {task.notes && !expanded && (
-            <div className="text-[11px] text-amber-300 mt-1 truncate">
-              📝 {task.notes}
-            </div>
-          )}
-        </div>
-        <span className="text-slate-600 text-[10px] shrink-0 mt-1">
-          {expanded ? "▴" : "▾"}
-        </span>
-      </button>
+          <span className="text-slate-600 text-[10px] shrink-0 mt-1">
+            {expanded ? "▴" : "▾"}
+          </span>
+        </button>
+      </div>
 
       {expanded && (
         <div className="border-t border-slate-800 p-4 space-y-3">

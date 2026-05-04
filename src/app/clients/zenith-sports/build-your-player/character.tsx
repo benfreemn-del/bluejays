@@ -206,7 +206,11 @@ export default function CharacterBuilder({
 
       {/* Stat overlay bottom-left */}
       <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-1.5">
-        <StatChip label="Age" value={`U-${age}`} color={tier.color} />
+        <StatChip
+          label="Age"
+          value={age >= 24 ? `${age}` : `U-${age}`}
+          color={tier.color}
+        />
         <StatChip
           label="Height"
           value={`${Math.floor(heightInches / 12)}'${heightInches % 12}"`}
