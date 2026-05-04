@@ -137,7 +137,29 @@ type Report = {
   next_actions: string[];
 };
 
-type Tab = "overview" | "leads" | "todo" | "insights" | "account";
+type Tab = "overview" | "leads" | "todo" | "budget" | "insights" | "account";
+
+type BudgetItem = {
+  id: string;
+  label: string;
+  description: string | null;
+  amount_cents: number;
+  recurring_monthly: boolean;
+  charge_date: string;
+  ended_on: string | null;
+  category: string;
+  vendor: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+type BudgetSummary = {
+  thisMonthCents: number;
+  monthlyRecurringCents: number;
+  last12MonthsCents: number;
+  byCategoryCents: Record<string, number>;
+  itemCount: number;
+};
 
 type PortalTask = {
   id: string;
@@ -272,6 +294,8 @@ export default function PortalPage({
   const [subs, setSubs] = useState<Subscription[]>([]);
   const [tasks, setTasks] = useState<PortalTask[]>([]);
   const [tasksSummary, setTasksSummary] = useState<TasksSummary | null>(null);
+  const [budgetItems, setBudgetItems] = useState<BudgetItem[]>([]);
+  const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* Identity check on load. */
@@ -332,6 +356,16 @@ export default function PortalPage({
     if (j.ok && j.tasks) setTasks(j.tasks);
     if (j.ok && j.summary) setTasksSummary(j.summary);
   }, []);
+  const loadBudget = useCallback(async () => {
+    const r = await fetch(`/api/client-portal/budget`);
+    const j = (await r.json()) as {
+      ok: boolean;
+      items?: BudgetItem[];
+      summary?: BudgetSummary;
+    };
+    if (j.ok && j.items) setBudgetItems(j.items);
+    if (j.ok && j.summary) setBudgetSummary(j.summary);
+  }, []);
 
   // Overview tab needs leads + report + subs + tasks all at once.
   useEffect(() => {
@@ -344,9 +378,10 @@ export default function PortalPage({
     }
     if (tab === "leads") loadLeads();
     if (tab === "todo") loadTasks();
+    if (tab === "budget") loadBudget();
     if (tab === "insights") loadReport();
     if (tab === "account") loadSubs();
-  }, [tab, owner, loadLeads, loadReport, loadSubs, loadTasks]);
+  }, [tab, owner, loadLeads, loadReport, loadSubs, loadTasks, loadBudget]);
 
   const updateLeadStatus = async (id: string, status: string) => {
     setLeads((prev) =>
@@ -410,6 +445,7 @@ export default function PortalPage({
               { id: "overview", label: "Overview", emoji: "🏠" },
               { id: "leads", label: "Leads", emoji: "📥" },
               { id: "todo", label: "To-Do", emoji: "✅" },
+              { id: "budget", label: "Budget", emoji: "💰" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
@@ -458,6 +494,13 @@ export default function PortalPage({
             tasks={tasks}
             summary={tasksSummary}
             onMutate={loadTasks}
+          />
+        )}
+        {tab === "budget" && (
+          <BudgetTab
+            items={budgetItems}
+            summary={budgetSummary}
+            onMutate={loadBudget}
           />
         )}
         {tab === "insights" && <InsightsTab report={report} />}
@@ -1278,6 +1321,396 @@ function LeadsTab({
         </>
       )}
     </div>
+  );
+}
+
+/* ─────────────────────────── BUDGET TAB ─────────────────────────── */
+
+const BUDGET_CATEGORIES = [
+  { id: "site", label: "Site / Build", emoji: "🌐" },
+  { id: "ai-system", label: "AI System", emoji: "🤖" },
+  { id: "ad-spend", label: "Ad Spend", emoji: "📣" },
+  { id: "communication", label: "SMS / Email / Voice", emoji: "📞" },
+  { id: "tools", label: "Tools & SaaS", emoji: "🛠️" },
+  { id: "marketing", label: "Marketing / Print", emoji: "🖨️" },
+  { id: "other", label: "Other", emoji: "💼" },
+];
+
+function fmtMoney(cents: number): string {
+  const dollars = Math.abs(cents) / 100;
+  const formatted = dollars.toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: dollars >= 1000 ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+  return cents < 0 ? `-${formatted}` : formatted;
+}
+
+function BudgetTab({
+  items,
+  summary,
+  onMutate,
+}: {
+  items: BudgetItem[];
+  summary: BudgetSummary | null;
+  onMutate: () => void;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [filter, setFilter] = useState<"all" | "recurring" | "onetime">("all");
+
+  const filtered =
+    filter === "all"
+      ? items
+      : filter === "recurring"
+        ? items.filter((i) => i.recurring_monthly)
+        : items.filter((i) => !i.recurring_monthly);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-bold tracking-tight mb-1">Budget &amp; investment</h2>
+        <p className="text-[12px] text-slate-500 leading-relaxed max-w-xl">
+          Track every dollar you&apos;re putting into your site + AI system,
+          ad spend, tools, marketing. Add custom items any time.
+          Recurring items roll up into your monthly total automatically.
+        </p>
+      </div>
+
+      {/* Summary tiles */}
+      {summary && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <StatCard
+            label="This month"
+            value={fmtMoney(summary.thisMonthCents)}
+            sub={`${summary.itemCount} items`}
+            accent="emerald"
+          />
+          <StatCard
+            label="Monthly recurring"
+            value={fmtMoney(summary.monthlyRecurringCents)}
+            sub="MRR / spend"
+            accent="blue"
+          />
+          <StatCard
+            label="Last 12 months"
+            value={fmtMoney(summary.last12MonthsCents)}
+            sub="rolling total"
+            accent="amber"
+          />
+          <StatCard
+            label="Largest category"
+            value={
+              Object.entries(summary.byCategoryCents).sort(
+                (a, b) => b[1] - a[1],
+              )[0]?.[0] ?? "—"
+            }
+            sub={
+              Object.entries(summary.byCategoryCents).sort(
+                (a, b) => b[1] - a[1],
+              )[0]
+                ? fmtMoney(
+                    Object.entries(summary.byCategoryCents).sort(
+                      (a, b) => b[1] - a[1],
+                    )[0]![1],
+                  ) + " over 12mo"
+                : ""
+            }
+            accent="violet"
+          />
+        </div>
+      )}
+
+      {/* Category breakdown bar */}
+      {summary && Object.keys(summary.byCategoryCents).length > 0 && (
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h3 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-3">
+            Breakdown · last 12 months
+          </h3>
+          <BarList
+            data={summary.byCategoryCents}
+            labelMap={Object.fromEntries(
+              BUDGET_CATEGORIES.map((c) => [c.id, `${c.emoji} ${c.label}`]),
+            )}
+          />
+        </section>
+      )}
+
+      {/* Filter chips + Add button */}
+      <div className="flex gap-1.5 items-center flex-wrap">
+        {[
+          { id: "all", label: "All" },
+          { id: "recurring", label: "Recurring" },
+          { id: "onetime", label: "One-time" },
+        ].map((f) => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id as typeof filter)}
+            className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+              filter === f.id
+                ? "bg-blue-500 border-blue-400 text-white"
+                : "border-slate-700 text-slate-400 hover:text-white"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+        <button
+          onClick={() => setShowForm((x) => !x)}
+          className="ml-auto text-[11px] font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded"
+        >
+          {showForm ? "× Cancel" : "+ Add line item"}
+        </button>
+      </div>
+
+      {/* Inline new-item form */}
+      {showForm && (
+        <BudgetForm
+          onClose={() => setShowForm(false)}
+          onSaved={() => {
+            setShowForm(false);
+            onMutate();
+          }}
+        />
+      )}
+
+      {/* Item list */}
+      {filtered.length === 0 ? (
+        <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
+          <div className="text-4xl mb-2">💰</div>
+          <p>
+            {filter === "all"
+              ? "No budget items yet. Add your first to start tracking."
+              : "No items in this filter."}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          {filtered.map((it) => (
+            <BudgetRow key={it.id} item={it} onMutate={onMutate} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BudgetForm({
+  onClose,
+  onSaved,
+}: {
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [label, setLabel] = useState("");
+  const [amount, setAmount] = useState(""); // dollars as string for nicer UX
+  const [recurring, setRecurring] = useState(false);
+  const [category, setCategory] = useState("tools");
+  const [vendor, setVendor] = useState("");
+  const [chargeDate, setChargeDate] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const submit = async () => {
+    setErr(null);
+    if (!label.trim()) {
+      setErr("Label is required.");
+      return;
+    }
+    const amountCents = Math.round(parseFloat(amount) * 100);
+    if (!Number.isFinite(amountCents)) {
+      setErr("Amount must be a number.");
+      return;
+    }
+    setBusy(true);
+    const r = await fetch("/api/client-portal/budget", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        label: label.trim(),
+        amount_cents: amountCents,
+        recurring_monthly: recurring,
+        category,
+        vendor: vendor.trim() || null,
+        charge_date: chargeDate,
+        notes: notes.trim() || null,
+      }),
+    });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    setBusy(false);
+    if (j.ok) {
+      onSaved();
+    } else {
+      setErr(j.error || "Couldn't save.");
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-4 space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div>
+          <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+            Label
+          </label>
+          <input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            placeholder="Twilio SMS · Meta ad spend · Yard signs"
+            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm placeholder:text-slate-600"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+            Amount (USD)
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="49.00"
+            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm tabular-nums"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+            Category
+          </label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm"
+          >
+            {BUDGET_CATEGORIES.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.emoji} {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+            Vendor (optional)
+          </label>
+          <input
+            value={vendor}
+            onChange={(e) => setVendor(e.target.value)}
+            placeholder="Twilio, Meta, Vistaprint..."
+            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm placeholder:text-slate-600"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+            Charge date
+          </label>
+          <input
+            type="date"
+            value={chargeDate}
+            onChange={(e) => setChargeDate(e.target.value)}
+            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm"
+          />
+        </div>
+        <div className="flex items-center pt-6">
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={recurring}
+              onChange={(e) => setRecurring(e.target.checked)}
+              className="w-4 h-4 accent-emerald-500"
+            />
+            Recurring every month
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1">
+          Notes (optional)
+        </label>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={2}
+          placeholder="Account ID, plan name, anything you want to remember..."
+          className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm placeholder:text-slate-600"
+        />
+      </div>
+      {err && <div className="text-rose-400 text-[11px]">{err}</div>}
+      <div className="flex gap-2">
+        <button
+          onClick={submit}
+          disabled={busy}
+          className="text-[11px] font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded disabled:opacity-60"
+        >
+          {busy ? "Saving…" : "Save item"}
+        </button>
+        <button
+          onClick={onClose}
+          className="text-[11px] font-bold text-slate-400 hover:text-white border border-slate-700 px-3 py-1.5 rounded"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function BudgetRow({
+  item,
+  onMutate,
+}: {
+  item: BudgetItem;
+  onMutate: () => void;
+}) {
+  const cat = BUDGET_CATEGORIES.find((c) => c.id === item.category);
+  const [busy, setBusy] = useState(false);
+  const onDelete = async () => {
+    if (!confirm(`Delete "${item.label}"? This can't be undone.`)) return;
+    setBusy(true);
+    await fetch(`/api/client-portal/budget/${item.id}`, { method: "DELETE" });
+    setBusy(false);
+    onMutate();
+  };
+  return (
+    <article className="rounded-lg border border-slate-800 bg-slate-900/40 p-3 flex items-center gap-3">
+      <span className="text-2xl shrink-0">{cat?.emoji ?? "💼"}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-semibold text-[14px]">{item.label}</span>
+          {item.recurring_monthly && (
+            <span className="text-[9px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">
+              monthly
+            </span>
+          )}
+          {item.vendor && (
+            <span className="text-[10px] text-slate-500">· {item.vendor}</span>
+          )}
+        </div>
+        <div className="text-[11px] text-slate-500">
+          {new Date(item.charge_date).toLocaleDateString()} · {cat?.label ?? item.category}
+        </div>
+        {item.notes && (
+          <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{item.notes}</div>
+        )}
+      </div>
+      <div className="text-right shrink-0">
+        <div className="text-[15px] font-black text-white tabular-nums">
+          {fmtMoney(item.amount_cents)}
+          {item.recurring_monthly && (
+            <span className="text-[10px] text-slate-500 font-normal"> /mo</span>
+          )}
+        </div>
+        <button
+          onClick={onDelete}
+          disabled={busy}
+          className="text-[10px] text-slate-500 hover:text-rose-400 transition disabled:opacity-50"
+        >
+          {busy ? "..." : "delete"}
+        </button>
+      </div>
+    </article>
   );
 }
 
