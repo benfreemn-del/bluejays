@@ -258,7 +258,12 @@ export default function EmailCapture({
         <button
           type="submit"
           disabled={status.kind === "submitting"}
-          className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.18em] uppercase ${s.btnBg} ${s.btnText} ${s.btnHover} transition cursor-pointer disabled:opacity-60 disabled:cursor-wait`}
+          // whitespace-nowrap prevents the CTA + arrow from wrapping
+          // when the button column is narrow. Tightened tracking from
+          // 0.18em → 0.1em for the same reason — the wide letter-
+          // spacing was pushing two-word CTAs ("Notify me", "Send it")
+          // into a 2-line wrap on tablet widths.
+          className={`inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.1em] uppercase ${s.btnBg} ${s.btnText} ${s.btnHover} transition cursor-pointer disabled:opacity-60 disabled:cursor-wait`}
         >
           {status.kind === "submitting" ? "Sending…" : cta}
           {status.kind !== "submitting" && (
