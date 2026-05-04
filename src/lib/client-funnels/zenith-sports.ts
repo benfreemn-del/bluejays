@@ -83,6 +83,8 @@ The ball is FIFA Size 3 control with FIFA Size 5 match-day weight. Smaller surfa
 
 If you want to grab one and start training this week, here's the link: {{shopUrl}}
 
+Or if you'd rather see what training with TEKKY looks like first, here's the drill library: {{trainingUrl}}
+
 If you have questions first, just reply to this email — I read every one.
 
 — Philip
@@ -119,6 +121,8 @@ Player works the TEKKY for 60 seconds, switches to a regulation ball, you can se
 That's what we're after. Confidence on every touch — not luck.
 
 If your player's ready: {{shopUrl}}
+
+If you're looking for a coached camp or clinic in your area: {{campsUrl}}
 
 — Philip`,
         },
@@ -365,7 +369,7 @@ Two next moves:
 1. Step up to the Intermediate drills (La Croqueta, Push Pull U-Drag): {{trainingUrl}}
 2. Get your own TEKKY® if you've been borrowing one: {{shopUrl}}
 
-And keep tagging #TEKKYTouch — we're picking next week's feature on Tuesday.
+And keep tagging #TEKKYTouch — we're picking next week's feature on Tuesday. Best clip wins.
 
 — Philip
 Zenith Sports / TEKKY®`,

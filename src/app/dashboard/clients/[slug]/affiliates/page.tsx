@@ -67,6 +67,21 @@ export default function AffiliatesPage({ params }: { params: Promise<{ slug: str
             {slug} <span className="text-slate-500 font-normal">/ affiliates</span>
           </h1>
           <button
+            onClick={async () => {
+              if (!confirm("Bulk-seed the starter affiliate list? Idempotent — safe to re-run.")) return;
+              const r = await fetch(`/api/client-affiliates/seed?client=${slug}`, {
+                method: "POST",
+              });
+              const j = (await r.json()) as { ok: boolean; inserted?: number; skipped?: number };
+              if (j.ok) alert(`Seeded ${j.inserted} affiliates (${j.skipped} already existed).`);
+              load();
+            }}
+            className="text-[11px] tracking-wider uppercase font-bold text-amber-300 hover:text-white border border-amber-700/50 px-2.5 py-1 rounded"
+            title="Bulk-load 30+ pre-researched affiliate prospects"
+          >
+            Seed list
+          </button>
+          <button
             onClick={() => setShowAdd((v) => !v)}
             className="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-3 py-1.5 rounded"
           >

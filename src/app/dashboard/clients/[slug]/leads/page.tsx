@@ -57,6 +57,17 @@ type Counts = {
   byStatus: Record<string, number>;
 };
 
+type FunnelRun = {
+  id: string;
+  enrolled: number;
+  steps_sent: number;
+  steps_skipped: number;
+  errors_count: number;
+  triggered_by: "cron" | "manual" | "api";
+  duration_ms: number | null;
+  ran_at: string;
+};
+
 export default function ClientLeadsPage({
   params,
 }: {
@@ -73,6 +84,8 @@ export default function ClientLeadsPage({
   const [openLead, setOpenLead] = useState<ClientLead | null>(null);
   const [runningFunnel, setRunningFunnel] = useState(false);
   const [runResult, setRunResult] = useState<string | null>(null);
+  const [runs, setRuns] = useState<FunnelRun[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const runFunnelNow = async () => {
     setRunningFunnel(true);
@@ -108,17 +121,20 @@ export default function ClientLeadsPage({
     if (audienceFilter) params.set("audience", audienceFilter);
     if (statusFilter) params.set("status", statusFilter);
 
-    const [leadsRes, countsRes] = await Promise.all([
+    const [leadsRes, countsRes, runsRes] = await Promise.all([
       fetch(`/api/client-leads?${params}`),
       fetch(`/api/client-leads?client=${encodeURIComponent(slug)}&counts=1`),
+      fetch(`/api/client-funnels/runs?client=${encodeURIComponent(slug)}&limit=10`),
     ]);
     const leadsJson = (await leadsRes.json()) as {
       ok: boolean;
       leads?: ClientLead[];
     };
     const countsJson = (await countsRes.json()) as Counts & { ok: boolean };
+    const runsJson = (await runsRes.json()) as { ok: boolean; runs?: FunnelRun[] };
     if (leadsJson.ok && leadsJson.leads) setLeads(leadsJson.leads);
     if (countsJson.ok) setCounts(countsJson);
+    if (runsJson.ok && runsJson.runs) setRuns(runsJson.runs);
     setLoading(false);
   }, [slug, audienceFilter, statusFilter]);
 
@@ -138,6 +154,32 @@ export default function ClientLeadsPage({
     });
     load();
   };
+
+  /** Bulk apply a patch to all selected leads. */
+  const bulkUpdate = async (patch: Partial<ClientLead>) => {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    if (!confirm(`Apply to ${ids.length} lead${ids.length === 1 ? "" : "s"}?`)) return;
+    await Promise.all(
+      ids.map((id) =>
+        fetch(`/api/client-leads/${id}`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(patch),
+        }),
+      ),
+    );
+    setSelected(new Set());
+    load();
+  };
+
+  const toggleSelect = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -181,6 +223,96 @@ export default function ClientLeadsPage({
       </header>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-32">
+        {/* Run history strip — last cron pulse so Ben can confirm
+            "yes the funnel is firing". Hidden if no runs logged yet. */}
+        {runs.length > 0 && (
+          <div className="mb-3 flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+            <span className="text-slate-500">Funnel cron:</span>
+            <span className="text-emerald-300">
+              ✓ last ran {timeAgo(runs[0].ran_at)} ({runs[0].triggered_by})
+            </span>
+            <span className="text-slate-600">·</span>
+            <span>
+              {runs[0].enrolled} enrolled · {runs[0].steps_sent} sent
+              {runs[0].errors_count > 0 && (
+                <span className="text-rose-400"> · {runs[0].errors_count} errors</span>
+              )}
+            </span>
+            <details className="ml-auto">
+              <summary className="text-slate-500 hover:text-slate-300 cursor-pointer">
+                Run history ({runs.length})
+              </summary>
+              <div className="absolute right-4 sm:right-6 mt-2 z-10 bg-slate-900 border border-slate-700 rounded-lg p-3 max-w-md w-72 shadow-xl">
+                <ol className="space-y-1.5 text-[11px]">
+                  {runs.map((r) => (
+                    <li key={r.id} className="flex items-center gap-2 text-slate-300">
+                      <span className="text-slate-500 w-12 shrink-0">
+                        {timeAgo(r.ran_at)}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] uppercase tracking-wider font-bold">
+                        {r.triggered_by}
+                      </span>
+                      <span>
+                        {r.enrolled}E · {r.steps_sent}S
+                        {r.steps_skipped > 0 && (
+                          <span className="text-amber-300"> · {r.steps_skipped}sk</span>
+                        )}
+                        {r.errors_count > 0 && (
+                          <span className="text-rose-400"> · {r.errors_count}!</span>
+                        )}
+                      </span>
+                      {r.duration_ms !== null && (
+                        <span className="ml-auto text-slate-600">
+                          {r.duration_ms}ms
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </details>
+          </div>
+        )}
+
+        {/* Bulk-action toolbar — shows when leads selected */}
+        {selected.size > 0 && (
+          <div className="mb-3 sticky top-[60px] z-10 bg-blue-950/80 backdrop-blur border border-blue-500/40 rounded-lg p-2 flex items-center gap-2 text-xs flex-wrap">
+            <span className="font-bold text-blue-200 px-2">
+              {selected.size} selected
+            </span>
+            <button
+              onClick={() => bulkUpdate({ funnel_status: "paused" })}
+              className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 px-2.5 py-1 rounded font-bold"
+            >
+              Pause funnel
+            </button>
+            <button
+              onClick={() => bulkUpdate({ funnel_status: "enrolled" })}
+              className="bg-blue-500/30 hover:bg-blue-500/40 text-blue-200 px-2.5 py-1 rounded font-bold"
+            >
+              Force enroll
+            </button>
+            <button
+              onClick={() => bulkUpdate({ funnel_status: "responded" })}
+              className="bg-emerald-500/30 hover:bg-emerald-500/40 text-emerald-200 px-2.5 py-1 rounded font-bold"
+            >
+              Mark responded
+            </button>
+            <button
+              onClick={() => bulkUpdate({ funnel_status: "converted" })}
+              className="bg-emerald-500 hover:bg-emerald-400 text-white px-2.5 py-1 rounded font-bold"
+            >
+              Mark converted
+            </button>
+            <button
+              onClick={() => setSelected(new Set())}
+              className="ml-auto text-slate-400 hover:text-white px-2 py-1"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+
         {/* Stats cards */}
         {counts && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
@@ -275,11 +407,29 @@ export default function ClientLeadsPage({
         {/* Lead list */}
         <div className="space-y-2">
           {leads.map((lead) => (
-            <button
+            <div
               key={lead.id}
-              onClick={() => setOpenLead(lead)}
-              className="block w-full text-left rounded-lg border border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900 p-3 sm:p-4 transition"
+              className={`flex items-stretch gap-2 rounded-lg border transition ${
+                selected.has(lead.id)
+                  ? "border-blue-500/50 bg-blue-950/30"
+                  : "border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900"
+              }`}
             >
+              <label
+                className="px-3 py-3 sm:py-4 flex items-start cursor-pointer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.has(lead.id)}
+                  onChange={() => toggleSelect(lead.id)}
+                  className="rounded mt-1"
+                />
+              </label>
+              <button
+                onClick={() => setOpenLead(lead)}
+                className="flex-1 text-left p-3 sm:p-4 pl-0"
+              >
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -318,7 +468,8 @@ export default function ClientLeadsPage({
                   {timeAgo(lead.created_at)}
                 </div>
               </div>
-            </button>
+              </button>
+            </div>
           ))}
         </div>
       </main>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAllClientFunnels, runClientFunnel } from "@/lib/client-funnels/runner";
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * POST /api/client-funnels/run
@@ -52,10 +53,45 @@ export async function POST(req: NextRequest) {
     // empty body is fine
   }
 
+  // Identify the trigger so we can attribute manual vs cron runs in
+  // the observability log.
+  const triggeredBy = req.headers
+    .get("authorization")
+    ?.startsWith("Bearer ")
+    ? "cron"
+    : req.cookies.get("bluejays-session")
+      ? "manual"
+      : "api";
+
   try {
+    const startedAt = Date.now();
     const summaries = client
       ? [await runClientFunnel(client)]
       : await runAllClientFunnels();
+    const duration = Date.now() - startedAt;
+
+    // Persist run results — best-effort; never fail the response if
+    // logging fails. Lets the dashboard show "last cron at HH:MM,
+    // sent N steps, no errors" without log diving.
+    if (isSupabaseConfigured()) {
+      try {
+        const sb = getSupabase();
+        const rows = summaries.map((s) => ({
+          client_slug: s.client_slug,
+          enrolled: s.enrolled,
+          steps_sent: s.steps_sent,
+          steps_skipped: s.steps_skipped,
+          errors_count: s.errors.length,
+          errors: s.errors,
+          triggered_by: triggeredBy,
+          duration_ms: Math.round(duration / Math.max(summaries.length, 1)),
+        }));
+        await sb.from("client_funnel_runs").insert(rows);
+      } catch (err) {
+        console.error("[client-funnels/run] log insert failed:", err);
+      }
+    }
+
     return NextResponse.json({ ok: true, summaries });
   } catch (err) {
     return NextResponse.json(
