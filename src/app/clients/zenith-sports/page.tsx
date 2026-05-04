@@ -1785,6 +1785,7 @@ export default function ZenithSportsPage() {
                   { href: "/clients/zenith-sports", label: "Home" },
                   { href: "/clients/zenith-sports#about", label: "About" },
                   { href: "/clients/zenith-sports#tekky", label: "The TEKKY®" },
+                  { href: "/clients/zenith-sports/build-your-player", label: "Build Your Player" },
                   { href: "/clients/zenith-sports/shop", label: "Apparel & Shop" },
                   { href: "/clients/zenith-sports#training", label: "Trainings" },
                   { href: "/clients/zenith-sports#contact", label: "Contact" },
