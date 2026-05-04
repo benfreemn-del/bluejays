@@ -429,7 +429,7 @@ export default function ZenithSportsPage() {
       {/* ─────────────── WHY TEKKY · 3 PILLARS ─────────────── */}
       <section
         id="about"
-        className="relative py-28 sm:py-36 lg:py-44"
+        className="relative py-20 sm:py-24 lg:py-32"
         style={{ background: NAVY_DEEP }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -529,7 +529,7 @@ export default function ZenithSportsPage() {
       {/* ─────────────── MEET THE TEKKY — product spotlight ─────────────── */}
       <section
         id="tekky"
-        className="relative py-28 sm:py-36 lg:py-48"
+        className="relative py-20 sm:py-24 lg:py-36"
         style={{ background: IVORY }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -670,7 +670,7 @@ export default function ZenithSportsPage() {
 
       {/* ─────────────── BEFORE / AFTER ─────────────── */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
         style={{ background: NAVY }}
       >
         {/* Diagonal accent */}
@@ -777,7 +777,7 @@ export default function ZenithSportsPage() {
           on launch). "Technique before tactics. Street football principles.
           Elite European training methodology brought to your driveway." */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
         style={{ background: IVORY }}
       >
         {/* Soft texture — diagonal mint stripe */}
@@ -890,7 +890,7 @@ export default function ZenithSportsPage() {
 
       {/* ─────────────── BUILT FOR BETTER TRAINING — banner band ─────────────── */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
         style={{ background: ELECTRIC }}
       >
         {/* Background photo, low opacity */}
@@ -987,7 +987,7 @@ export default function ZenithSportsPage() {
           ladder. Primary CTA for this audience: "Request a Club Demo." */}
       <section
         id="coaches"
-        className="relative py-28 sm:py-36 lg:py-40 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
         style={{ background: NAVY }}
       >
         {/* Subtle grid — credibility / serious tool feel */}
@@ -1136,7 +1136,7 @@ export default function ZenithSportsPage() {
       </section>
 
       {/* ─────────────── REVIEWS / SOCIAL PROOF ─────────────── */}
-      <section className="relative py-28 sm:py-36 lg:py-44" style={{ background: IVORY }}>
+      <section className="relative py-20 sm:py-24 lg:py-32" style={{ background: IVORY }}>
         <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
           <Eyebrow color={ELECTRIC}>Verified buyers</Eyebrow>
           <h2
@@ -1190,7 +1190,7 @@ export default function ZenithSportsPage() {
 
       {/* ─────────────── FOUNDER DUO ─────────────── */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44"
+        className="relative py-20 sm:py-24 lg:py-32"
         style={{ background: IVORY }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -1314,7 +1314,7 @@ export default function ZenithSportsPage() {
 
       {/* ─────────────── ORIGIN / MISSION ─────────────── */}
       <section
-        className="relative py-28 sm:py-36 lg:py-44 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
         style={{ background: NAVY_DEEP }}
       >
         <div className="absolute inset-0 opacity-15">
@@ -1380,7 +1380,7 @@ export default function ZenithSportsPage() {
       {/* ─────────────── TRAINING PREVIEW ─────────────── */}
       <section
         id="training"
-        className="relative py-28 sm:py-36 lg:py-44"
+        className="relative py-20 sm:py-24 lg:py-32"
         style={{ background: IVORY_SOFT }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -1638,7 +1638,7 @@ export default function ZenithSportsPage() {
       </section>
 
       {/* ─────────────── INQUIRY FORM ─────────────── */}
-      <section id="contact" className="relative py-28 sm:py-36 lg:py-44" style={{ background: IVORY }}>
+      <section id="contact" className="relative py-20 sm:py-24 lg:py-32" style={{ background: IVORY }}>
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
             {/* Left rail */}
