@@ -29,6 +29,26 @@ export type DetectedReply = {
 };
 
 /**
+ * Normalize a phone number to its last-10-digit form so we can match
+ * a Twilio-formatted "+12065551234" against a user-typed
+ * "(206) 555-1234" stored on a lead. Conservative — keeps the original
+ * for the per-slug lookup AND tries the normalized form as a fallback.
+ */
+function phoneVariants(raw: string): string[] {
+  const trimmed = raw.trim();
+  const digits = trimmed.replace(/\D/g, "");
+  const last10 = digits.slice(-10);
+  const variants = new Set<string>([
+    trimmed,
+    digits,
+    last10,
+    `+1${last10}`,
+    `+${digits}`,
+  ]);
+  return Array.from(variants).filter(Boolean);
+}
+
+/**
  * Try every registered client until we find a lead whose email or phone
  * matches. Returns the first match (most recent by created_at).
  */
@@ -39,12 +59,16 @@ export async function detectReply(args: {
   subject?: string;
 }): Promise<DetectedReply | null> {
   const isEmail = args.channel === "email";
-  const contact = isEmail
-    ? { email: args.fromAddress.toLowerCase().trim() }
-    : { phone: args.fromAddress.trim() };
+  const candidates: { email?: string; phone?: string }[] = isEmail
+    ? [{ email: args.fromAddress.toLowerCase().trim() }]
+    : phoneVariants(args.fromAddress).map((p) => ({ phone: p }));
 
   for (const slug of Object.keys(CLIENT_FUNNELS)) {
-    const lead = await findClientLeadByContact(slug, contact);
+    let lead = null;
+    for (const contact of candidates) {
+      lead = await findClientLeadByContact(slug, contact);
+      if (lead) break;
+    }
     if (lead) {
       await recordInboundReply({
         lead,

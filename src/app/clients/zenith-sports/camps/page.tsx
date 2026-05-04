@@ -80,25 +80,87 @@ export default function CampFinderPage() {
 
       {/* HERO */}
       <section
-        className="relative py-24 lg:py-32 border-b border-white/10"
+        className="relative py-24 lg:py-32 border-b border-white/10 overflow-hidden"
         style={{ background: NAVY_DEEP }}
       >
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.32em] text-[#a3e635] mb-4 flex items-center gap-2">
-            <span className="inline-block w-6 h-px bg-[#a3e635]" />
-            For parents · Find a camp near you
+        {/* Decorative background — soft mint glow + faint stadium-grid
+            pattern so the right side doesn't read as empty navy. Pure
+            CSS — no extra image to load. */}
+        <div
+          aria-hidden
+          className="absolute -bottom-32 -right-32 w-[640px] h-[640px] rounded-full opacity-25 blur-3xl pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(163,230,53,0.45) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+            maskImage:
+              "radial-gradient(ellipse at right, rgba(0,0,0,0.6) 0%, transparent 70%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse at right, rgba(0,0,0,0.6) 0%, transparent 70%)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-6xl px-5 sm:px-8 grid lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-7">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.32em] text-[#a3e635] mb-4 flex items-center gap-2">
+              <span className="inline-block w-6 h-px bg-[#a3e635]" />
+              For parents · Find a camp near you
+            </div>
+            <h1 className="text-5xl sm:text-7xl font-black uppercase leading-[0.92] tracking-tighter">
+              Train with TEKKY<sup className="text-[0.4em] -ml-1 top-[-0.6em]">®</sup>.
+              <br />
+              <span style={{ color: LIME }}>In your zip code.</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-base lg:text-lg leading-relaxed text-white/70">
+              Day camps, residential weeks, and clinics where every player
+              trains with the patent-pending TEKKY® ball. Scroll for camps
+              near you — or drop your email and we&apos;ll text you the
+              second a camp opens nearby.
+            </p>
           </div>
-          <h1 className="text-5xl sm:text-7xl font-black uppercase leading-[0.92] tracking-tighter">
-            Train with TEKKY<sup className="text-[0.4em] -ml-1 top-[-0.6em]">®</sup>.
-            <br />
-            <span style={{ color: LIME }}>In your zip code.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-base lg:text-lg leading-relaxed text-white/70">
-            Day camps, residential weeks, and clinics where every player
-            trains with the patent-pending TEKKY® ball. Scroll for camps
-            near you — or drop your email and we&apos;ll text you the
-            second a camp opens nearby.
-          </p>
+
+          {/* Right column — region tile grid placeholder. Once camps-data.ts
+              populates, this becomes a heatmap; for now it's a static
+              "we cover all 50 states" visual + stat row. */}
+          <div className="lg:col-span-5 hidden lg:block">
+            <div className="grid grid-cols-3 gap-2">
+              {REGION_ORDER.map((region) => (
+                <div
+                  key={region}
+                  className="aspect-square rounded-lg border border-white/10 bg-white/[0.03] backdrop-blur-sm flex flex-col items-center justify-center text-center p-3 hover:border-[#a3e635]/30 transition"
+                >
+                  <span className="text-[9px] tracking-[0.18em] uppercase font-bold text-[#a3e635]">
+                    Region
+                  </span>
+                  <span className="mt-1 text-[12px] font-bold text-white leading-tight">
+                    {region}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div className="border border-white/10 rounded p-2">
+                <div className="text-lg font-black text-white">All</div>
+                <div className="text-[9px] tracking-wider uppercase text-white/40">50 states</div>
+              </div>
+              <div className="border border-white/10 rounded p-2">
+                <div className="text-lg font-black text-white">5–18</div>
+                <div className="text-[9px] tracking-wider uppercase text-white/40">Ages</div>
+              </div>
+              <div className="border border-white/10 rounded p-2">
+                <div className="text-lg font-black text-[#a3e635]">TEKKY®</div>
+                <div className="text-[9px] tracking-wider uppercase text-white/40">Included</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

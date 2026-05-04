@@ -59,16 +59,18 @@ export default function ReportsPage({ params }: { params: Promise<{ slug: string
           <Stat label="Converted" value={report.funnel.converted} suffix={`${report.funnel.conversion_rate_pct.toFixed(0)}%`} accent="emerald" />
         </section>
 
-        <section>
-          <h2 className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-2">Leads by audience</h2>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(report.leads.byAudience).map(([k, v]) => (
-              <span key={k} className="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded text-sm">
-                <span className="font-bold">{v}</span> <span className="text-slate-500">{k}</span>
-              </span>
-            ))}
-          </div>
-        </section>
+        {Object.keys(report.leads.byAudience).length > 0 && (
+          <section>
+            <h2 className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-2">Leads by audience</h2>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(report.leads.byAudience).map(([k, v]) => (
+                <span key={k} className="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded text-sm">
+                  <span className="font-bold">{v}</span> <span className="text-slate-500">{k}</span>
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section>
           <h2 className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-2">Messages this week</h2>
