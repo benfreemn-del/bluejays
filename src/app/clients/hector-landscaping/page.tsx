@@ -763,7 +763,7 @@ export default function HectorLandscapingLandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY }}>
-              Already have a yard?
+              Already have a beautiful yard?
             </p>
             <h2 className="text-3xl md:text-5xl tracking-tighter leading-[1.05] font-bold mb-5" style={{ color: BG_CREAM_INK }}>
               <WordReveal text="We'll keep it that way." />
