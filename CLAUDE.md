@@ -6718,3 +6718,117 @@ MUST update BOTH:
 So the next AI Package client onboards with the same surface, and
 the next Claude session knows what's already shipped.
 
+### 7. Auto-refresh on save (NON-NEGOTIABLE)
+
+Any per-row mutation in the portal MUST call the parent's `onMutate`
+callback after a successful response. The parent owns the data fetch
+(`loadLeads`, `loadTasks`) and a stale parent makes the badge / chip
+/ counter on the collapsed card render the OLD value, which reads
+as "did my save work?" UX rot.
+
+Already enforced on:
+- Lead status flips (per-row + bulk)
+- Lead notes save
+- Lead enroll / log-contact
+- Task status, owner-reassign, notes
+
+Pattern: `if (j.ok) onMutate();` immediately after the API call.
+Don't wait for the next user action to refresh; mutations should
+feel instant.
+
+### 8. Audience color-coding (NON-NEGOTIABLE for multi-audience clients)
+
+Any client with 2+ audience segments (parent / coach / player / club
+/ etc.) MUST surface that segmentation visually on every lead card,
+not just as a text badge:
+- 4px left accent strip in the audience color
+- Soft `bg-{color}/[0.06]` tint on the card
+- Audience badge re-themed to match
+- Brand-voice doc audience taxonomy maps directly to colors
+  (Zenith: parent=amber / coach=cobalt / player=lime / club=violet)
+
+Why: owners scan the pipeline visually — "we have a wave of parents
+this week" reads instantly without parsing each card. Text-only
+audience badges fail this test on mobile where badge text shrinks.
+
+The canonical token shape lives in `portal/page.tsx` as
+`AUDIENCE_COLOR` — copy/extend per client, don't reinvent.
+
+### 9. Dismiss is its own status (NON-NEGOTIABLE)
+
+Spam / bot / not-a-real-lead entries need a way out of the active
+pipeline that ISN'T deletion. Pattern:
+- Add `'dismissed'` to the `funnel_status` enum (DB migration)
+- Per-row "✕ Dismiss" button (rose accent, confirms before applying)
+- Bulk-toolbar "✕ Dismiss" option
+- Default filters silently exclude `funnel_status='dismissed'`
+- Separate "Dismissed" filter chip surfaces them for restore
+- Dismissed leads visually fade (opacity-50 + line-through status)
+
+Do NOT use `paused` or `completed` as a substitute. Those mean
+something specific (paused = funnel-runner skip; completed = hit
+the end of the funnel). Conflating with dismiss makes reports lie.
+
+---
+
+## Custom-Domain Rewrite Pattern (NON-NEGOTIABLE — added 2026-05-04)
+
+When a client transfers their custom domain to Namecheap and points
+DNS at Vercel, the domain by default serves the bluejays portfolio
+homepage (because Vercel maps the domain to the project root). To
+serve their actual showcase, add an entry to `CLIENT_DOMAIN_MAP` in
+`src/middleware.ts`:
+
+```ts
+const CLIENT_DOMAIN_MAP: Record<string, string> = {
+  "hectorlandscaping.com": "/preview/ad954c6f-...",  // generated tier
+  // "tekky.org": "/clients/zenith-sports",         // custom tier
+};
+```
+
+Path may be either:
+- A static showcase folder under `/clients/{slug}` (custom / fullsystem)
+- A generated `/preview/{prospect-id}` (template / standard tier)
+
+Middleware strips `www.` for lookup so apex + www both resolve.
+Edge cases handled: `_next/*` and `/api/*` paths bypass the rewrite,
+already-prefixed paths bypass (no double-rewrite), query string
+preserved.
+
+Add the custom domain to the Vercel project (Settings → Domains)
+BEFORE merging the middleware change, otherwise Vercel will 404 the
+incoming requests at the edge before middleware runs.
+
+---
+
+## Vertical Padding Standards (NON-NEGOTIABLE — added 2026-05-04)
+
+Premium DTC reference (Whoop / AG1 / Manscaped / Tonal): 64-96px
+mobile, 96-128px desktop section padding. Heavier feels luxurious
+but kills scroll velocity on the 70%+ mobile traffic typical of
+local-business clients.
+
+Standard for content sections on every showcase:
+```
+py-20 sm:py-24 lg:py-32   // 80 / 96 / 128px
+```
+
+Heavier OK (intentional drama):
+- Hero (page anchor)
+- Final CTA / closer ("welcome to ...")
+
+DO NOT go heavier than `py-32 sm:py-44 lg:py-56` (128/176/224px) on
+any section. Anything more reads as "the page is over."
+
+Side padding (`px-*`) stays consistent across the page — this rule
+is about TOP/BOTTOM gaps only. Reduce vertical, leave horizontal.
+
+Quick math: each `py-28 → py-20` change saves 64px per section.
+A typical showcase has ~10 sections. That's ~640px of scroll cut
+out before reaching the inquiry form — about one full mobile
+screen of momentum recovered without changing any copy.
+
+If a client's design feels "tight" after this, the fix is more
+internal section spacing (`space-y-*` between elements WITHIN a
+section), NOT wider top/bottom gaps.
+

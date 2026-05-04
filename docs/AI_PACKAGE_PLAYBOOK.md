@@ -489,6 +489,128 @@ defaults for client #2.
   before launch (one already in
   `funnel-review/audit-anchors.js` pattern). Broken anchors fail
   silently — visitor clicks, page does nothing, conversion lost.
+- **Vertical section padding standard** — `py-20 sm:py-24 lg:py-32`
+  for content sections (hero + final CTA may go heavier). See the
+  "Vertical Padding Standards" rule in CLAUDE.md for the math.
+  Default Tailwind starter templates often use `py-28 sm:py-36
+  lg:py-44` which feels luxurious but eats ~640px of mobile scroll
+  on a typical 10-section showcase. Don't ship heavy by default.
+- **Custom-domain rewrites need a `CLIENT_DOMAIN_MAP` entry** —
+  see `src/middleware.ts`. Whenever a client transfers their domain
+  to Namecheap + points DNS at Vercel, the domain serves the
+  bluejays homepage by default. Map it to their showcase path
+  (`/clients/{slug}` for custom/fullsystem, `/preview/{prospect-id}`
+  for template/standard). Rule covered in CLAUDE.md.
+- **Vercel 404 cache stickiness** — if you push assets in a deploy
+  and the corresponding URL was previously hit and 404'd, Vercel
+  edge will keep serving the cached 404 even after the new deploy
+  lands (saw this with the avatar PNGs). Push a no-op empty commit
+  (`git commit --allow-empty`) to force a fresh build that
+  invalidates the cache. The redeploy itself takes ~60-90s.
+
+---
+
+## Domain Onboarding Checklist (when a client transfers their domain to Namecheap)
+
+Standard sequence after the registrar transfer completes:
+
+1. **Namecheap → Domain List → Manage → Domain tab → Nameservers**:
+   change "Custom DNS" to "**Namecheap BasicDNS**". Save (✓).
+2. **Advanced DNS tab** — delete any old Squarespace/Wix records,
+   add:
+   ```
+   A Record       @       76.76.21.21
+   CNAME Record   www     cname.vercel-dns.com
+   ```
+3. **Redirect Email tab** — add forwards:
+   `info@theirdomain.com` → their personal email,
+   plus `contact@`, `hello@`, etc. as aliases.
+4. **Vercel** → bluejays project → Settings → Domains → Add
+   `theirdomain.com` AND `www.theirdomain.com` (set www to redirect
+   to root). Vercel auto-issues SSL.
+5. **Add `CLIENT_DOMAIN_MAP` entry** in `src/middleware.ts` mapping
+   the apex domain to their showcase path. Push.
+6. **Set per-client owner email env** on Vercel:
+   `{SLUG_UPPER}_OWNER_EMAIL=their@email.com` so contact-form
+   submissions email them directly.
+7. **Verify in incognito**: `https://theirdomain.com` loads showcase,
+   `/sitemap.xml` returns valid XML, contact form submits and
+   delivers to their inbox.
+8. **Submit / re-verify Google Search Console** — DNS TXT record
+   verification, submit the new sitemap. If they had a GSC property
+   before (e.g. from Squarespace), re-verify with the token now at
+   their new registrar; old impressions data carries over since
+   the domain is unchanged.
+9. **Audit old URLs** if migrating from a prior site — list every
+   path the old site had (`/services`, `/contact`, etc.) and
+   either match them on the new showcase or 301-redirect via Vercel
+   rewrites (preserves Google rank + external backlink value).
+
+Each step is also a row in `client_tasks` for the client (cf. the
+`20260507_zenith_*` and `20260504_hector_landscaping_*` migrations
+for the canonical seed pattern).
+
+---
+
+## Avatar / Character-Builder Pattern (when a client wants a "Build Your X" tool)
+
+Reference: Zenith TEKKY's "Build Your Player" character builder.
+
+### What works (canonical pattern)
+
+1. **Use rendered PNGs, not SVG** — premium 3D / Pixar-style character
+   cards key the user's inputs (skill tier × age bracket × etc.) to a
+   manifest of pre-rendered images. SVG hits a quality ceiling fast;
+   2K PNG cards look like a $59 product mockup.
+2. **Manifest at `/src/data/{client}-avatars.json`**, assets at
+   `/public/avatars/{client}/{NN}_{tier}_{age}.png`. Filename
+   convention `seqNN_tierSlug_age_brackets.png` lets you compute the
+   filename deterministically from inputs.
+3. **3:4 portrait aspect** — match container aspect ratio to image
+   aspect for edge-to-edge fill. Pattern:
+   ```jsx
+   <div style={{ aspectRatio: "3 / 4" }}>
+     <Image fill className="object-cover" ... />
+   </div>
+   ```
+   No letterbox, no crop, no white seam — when source = container
+   aspect, object-cover is a 1:1 fit.
+4. **Cross-fade on swap** — wrap with `key={filename}` + inline
+   `@keyframes` animation (opacity 0→1 + scale 1.04→1, 350ms
+   ease-out). Reads as a soft camera-focus pull, not a hard pop.
+5. **Things to BAKE INTO the cards** (so they look canonical):
+   - Tier label + age range printed at the bottom of each card
+   - Stars / equipment / kit colors per tier
+   - Background gradient — no transparent backgrounds
+6. **Things to keep LIVE-WIRED** in the React layer:
+   - Card swap on input change (the headline UX)
+   - Live counter / chip overlays (Height, Years-to-Mastery, etc.)
+   - Anything that doesn't show in the image (Height is invisible
+     in a portrait card — surface as a stat chip below)
+
+### Promo strip on homepage
+
+When the same builder is the page's lead-magnet promo, render a
+"growth journey" row of 3 avatars (youngest → oldest, lowest tier
+→ highest tier) instead of a single image. Tells the value-of-tool
+story before the visitor reads. Justify-center so the middle card
+sits dead-center on phone.
+
+Drop-shadow on each card uses that tier's accent color (e.g.
+sky-blue / violet / gold) so the trio feels distinct, not three
+duplicates.
+
+### Anti-patterns to avoid
+
+- Don't try to live-color-shift a baked-in jersey via CSS overlays —
+  that's why we use 15 distinct PNGs, not 5 with a color filter.
+- Don't drive a PNG-character size off the height slider — the
+  card's canonical proportions read correctly at all heights;
+  scaling makes the head-to-body ratio look wrong. Surface height
+  as a stat chip below instead.
+- Don't render the SVG fallback in production code paths. If the
+  PNGs aren't deployed yet, hide the character zone entirely; never
+  show a degraded version to users.
 
 ### Operational patterns added since v1
 - **Funnel-runs observability log** (`client_funnel_runs` table) writes
