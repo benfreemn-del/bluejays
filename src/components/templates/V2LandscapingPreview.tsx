@@ -129,29 +129,40 @@ const STOCK_GALLERY = [
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING LEAF PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingLeaves({ accent }: { accent: string }) {
-  const particles = Array.from({ length: 18 }, (_, i) => ({
+  const leaves = Array.from({ length: 14 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
-    delay: Math.random() * 8,
-    duration: 7 + Math.random() * 8,
-    size: 2 + Math.random() * 4,
-    opacity: 0.1 + Math.random() * 0.25,
-    isBrown: Math.random() > 0.6,
+    delay: Math.random() * 14,
+    duration: 12 + Math.random() * 10,
+    size: 14 + Math.random() * 10,
+    opacity: 0.06 + Math.random() * 0.1,
+    rotation: Math.random() * 360,
+    sway: 25 + Math.random() * 50,
+    color: i % 3 === 0 ? EARTH_BROWN : accent,
   }));
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
-      {particles.map((p) => (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {leaves.map((l) => (
         <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{ left: `${p.x}%`, width: p.size, height: p.size, background: p.isBrown ? EARTH_BROWN : accent, willChange: "transform, opacity" }}
-          animate={{ y: ["-10vh", "110vh"], opacity: [0, p.opacity, p.opacity, 0] }}
-          transition={{
-            y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" },
-            opacity: { duration: p.duration, repeat: Infinity, delay: p.delay, times: [0, 0.1, 0.9, 1] },
+          key={l.id}
+          className="absolute"
+          style={{ left: `${l.x}%`, willChange: "transform, opacity" }}
+          animate={{
+            y: ["-5vh", "110vh"],
+            x: [-l.sway / 2, l.sway / 2, -l.sway / 2],
+            rotate: [l.rotation, l.rotation + 360],
+            opacity: [0, l.opacity, l.opacity, 0],
           }}
-        />
+          transition={{
+            y: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            x: { duration: l.duration / 3, repeat: Infinity, delay: l.delay, ease: "easeInOut" },
+            rotate: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            opacity: { duration: l.duration, repeat: Infinity, delay: l.delay, times: [0, 0.05, 0.9, 1] },
+          }}
+        >
+          <Leaf size={l.size} weight="fill" style={{ color: l.color }} />
+        </motion.div>
       ))}
     </div>
   );
@@ -420,58 +431,40 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       <FloatingLeaves accent={PRIMARY} />
 
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      {/* When a real logo is provided we switch to a solid white nav so
-          the logo reads cleanly. Dark-theme glass nav only kicks in for
-          the text-fallback case. */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          {data.logoUrl ? (
-            <div className="flex items-center justify-between px-5 md:px-7 py-3 rounded-2xl bg-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] border border-slate-200">
-              <div className="flex items-center gap-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
+            <div className="flex items-center gap-2">
+              {data.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={data.logoUrl}
                   alt={`${data.businessName} logo`}
-                  className="h-14 md:h-16 w-auto max-w-[220px] object-contain"
+                  className="h-10 md:h-12 w-auto max-w-[180px] object-contain"
+                  style={{ filter: "brightness(0) invert(1)" }}
                 />
-              </div>
-              <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-700">
-                <a href="#portfolio" className="hover:text-slate-900 transition-colors">Gallery</a>
-                <a href="#services" className="hover:text-slate-900 transition-colors">Services</a>
-                <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
-                <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
-              </div>
-              <div className="flex items-center gap-3">
-                <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                  Free Estimate
-                </MagneticButton>
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
-                  {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
-                </button>
-              </div>
+              ) : (
+                <>
+                  <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
+                  <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
+                </>
+              )}
             </div>
-          ) : (
-            <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-              <div className="flex items-center gap-2">
-                <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
-                <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
-              </div>
-              <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-                <a href="#portfolio" className="hover:text-white transition-colors">Gallery</a>
-                <a href="#services" className="hover:text-white transition-colors">Services</a>
-                <a href="#about" className="hover:text-white transition-colors">About</a>
-                <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-              </div>
-              <div className="flex items-center gap-3">
-                <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                  Free Estimate
-                </MagneticButton>
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
-                  {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
-                </button>
-              </div>
-            </GlassCard>
-          )}
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+              <a href="#portfolio" className="hover:text-white transition-colors">Gallery</a>
+              <a href="#services" className="hover:text-white transition-colors">Services</a>
+              <a href="#about" className="hover:text-white transition-colors">About</a>
+              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            </div>
+            <div className="flex items-center gap-3">
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                Free Estimate
+              </MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+              </button>
+            </div>
+          </GlassCard>
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
