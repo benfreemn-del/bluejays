@@ -35,8 +35,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const ids = Array.isArray(body.ids)
-    ? (body.ids as unknown[]).filter((v): v is string => typeof v === "string")
+    ? (body.ids as unknown[]).filter((v): v is string => typeof v === "string" && UUID_RE.test(v))
     : [];
   if (ids.length === 0) {
     return NextResponse.json({ ok: false, error: "ids required" }, { status: 400 });
@@ -47,6 +48,18 @@ export async function POST(req: NextRequest) {
   const action = body.action;
   if (!action || typeof action.kind !== "string") {
     return NextResponse.json({ ok: false, error: "action required" }, { status: 400 });
+  }
+  // Validate action shape upfront so we don't burn a DB read on a
+  // bogus action and then return a confusing pg-syntax error.
+  const VALID_ACTION_KINDS = ["status", "enroll", "log_contact"];
+  if (!VALID_ACTION_KINDS.includes(action.kind as string)) {
+    return NextResponse.json({ ok: false, error: "Unknown action.kind" }, { status: 400 });
+  }
+  if (action.kind === "status" && !VALID_STATUSES.includes(String(action.status || ""))) {
+    return NextResponse.json({ ok: false, error: "Invalid status" }, { status: 400 });
+  }
+  if (action.kind === "log_contact" && !VALID_CHANNELS.includes(String(action.channel || ""))) {
+    return NextResponse.json({ ok: false, error: "Invalid channel" }, { status: 400 });
   }
 
   const sb = getSupabase();

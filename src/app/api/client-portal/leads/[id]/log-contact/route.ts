@@ -23,11 +23,16 @@ export const runtime = "nodejs";
 const VALID_CHANNELS = ["email", "sms", "call"] as const;
 type Channel = (typeof VALID_CHANNELS)[number];
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ ok: false, error: "Invalid lead id" }, { status: 400 });
+  }
   const cookie = req.cookies.get(CLIENT_PORTAL_COOKIE)?.value;
   const owner = await ownerFromCookie(cookie);
   if (!owner) {

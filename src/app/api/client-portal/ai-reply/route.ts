@@ -31,8 +31,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
-  if (!body.lead_id) {
-    return NextResponse.json({ ok: false, error: "lead_id required" }, { status: 400 });
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!body.lead_id || !UUID_RE.test(body.lead_id)) {
+    return NextResponse.json({ ok: false, error: "valid lead_id required" }, { status: 400 });
   }
 
   // Subscription gate

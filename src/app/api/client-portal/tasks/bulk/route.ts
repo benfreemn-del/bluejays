@@ -33,8 +33,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const ids = Array.isArray(body.ids)
-    ? (body.ids as unknown[]).filter((v): v is string => typeof v === "string")
+    ? (body.ids as unknown[]).filter((v): v is string => typeof v === "string" && UUID_RE.test(v))
     : [];
   if (ids.length === 0) {
     return NextResponse.json({ ok: false, error: "ids required" }, { status: 400 });

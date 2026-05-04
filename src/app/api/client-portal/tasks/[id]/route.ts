@@ -16,12 +16,16 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const VALID_STATUSES: PortalTaskStatus[] = ["pending", "in_progress", "blocked", "done"];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ ok: false, error: "Invalid task id" }, { status: 400 });
+  }
   const cookie = req.cookies.get(CLIENT_PORTAL_COOKIE)?.value;
   const owner = await ownerFromCookie(cookie);
   if (!owner) {
