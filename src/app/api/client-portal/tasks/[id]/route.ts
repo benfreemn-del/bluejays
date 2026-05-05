@@ -80,7 +80,7 @@ export async function PATCH(
         `Client:  ${owner.client_slug}`,
         `Task:    ${task.title}`,
         `Status:  ${task.status}`,
-        `Owner:   ${task.owner}`,
+        `Updated by: ${ownerName} (${owner.email})`,
         ...(typeof patch.notes === "string"
           ? ["", "Reply / paste:", task.notes ?? "(empty)"]
           : []),

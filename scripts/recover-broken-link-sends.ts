@@ -166,22 +166,23 @@ async function main() {
       console.log(`\nHit --max=${maxSends} cap. Stopping.`);
       break;
     }
-    if (!isRealEmail(p.email)) {
+    if (!p.email || !isRealEmail(p.email)) {
       skipped++;
-      if (dryRun) console.log(`  [skip] ${p.businessName.slice(0, 35).padEnd(35)}  ← junk email: ${p.email}`);
+      if (dryRun) console.log(`  [skip] ${p.businessName.slice(0, 35).padEnd(35)}  ← junk email: ${p.email ?? "(none)"}`);
       continue;
     }
 
     const { subject, body } = buildEmail(p);
+    const email = p.email;
 
     if (dryRun) {
-      console.log(`  [${(sent + 1).toString().padStart(3)}] ${p.businessName.slice(0, 35).padEnd(35)}  ${p.email.slice(0, 40).padEnd(40)}  short_code=${p.short_code || "(derived)"}`);
+      console.log(`  [${(sent + 1).toString().padStart(3)}] ${p.businessName.slice(0, 35).padEnd(35)}  ${email.slice(0, 40).padEnd(40)}  short_code=${p.short_code || "(derived)"}`);
       sent++;
       continue;
     }
 
     try {
-      await sendEmail(p.id, p.email, subject, body, RESEND_SEQUENCE);
+      await sendEmail(p.id, email, subject, body, RESEND_SEQUENCE);
       sent++;
       console.log(`  ✓ [${sent.toString().padStart(3)}] ${p.businessName}`);
       await new Promise((r) => setTimeout(r, DELAY_MS));

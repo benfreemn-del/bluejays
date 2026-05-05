@@ -3155,6 +3155,19 @@ const LEAD_STATUS_OPTIONS = [
   "completed",
 ];
 
+type CampaignToast = {
+  type: "success" | "error" | "info";
+  message: string;
+};
+
+type CampaignConfirm = {
+  title: string;
+  body?: string;
+  confirmLabel: string;
+  destructive?: boolean;
+  onConfirm: () => void | Promise<void>;
+};
+
 function CampaignsTab({
   campaigns,
   leads,
@@ -3166,9 +3179,96 @@ function CampaignsTab({
 }) {
   const [showForm, setShowForm] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [toast, setToast] = useState<CampaignToast | null>(null);
+  const [pendingConfirm, setPendingConfirm] =
+    useState<CampaignConfirm | null>(null);
+
+  // Auto-dismiss toast after 5s.
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(id);
+  }, [toast]);
+
+  const notify = useCallback(
+    (t: CampaignToast) => setToast(t),
+    [],
+  );
+  const askConfirm = useCallback(
+    (c: CampaignConfirm) => setPendingConfirm(c),
+    [],
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {toast && (
+        <div
+          role="status"
+          className={`fixed top-20 right-4 z-50 max-w-sm rounded-xl border px-4 py-3 shadow-2xl backdrop-blur ${
+            toast.type === "error"
+              ? "bg-rose-950/90 border-rose-500/40 text-rose-100"
+              : toast.type === "success"
+                ? "bg-emerald-950/90 border-emerald-500/40 text-emerald-100"
+                : "bg-slate-900/90 border-slate-700 text-slate-100"
+          }`}
+        >
+          <div className="flex items-start gap-2">
+            <span className="text-lg leading-none">
+              {toast.type === "error"
+                ? "⚠️"
+                : toast.type === "success"
+                  ? "✅"
+                  : "ℹ️"}
+            </span>
+            <div className="flex-1 text-sm">{toast.message}</div>
+            <button
+              onClick={() => setToast(null)}
+              className="text-slate-400 hover:text-white text-xs"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {pendingConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-white/10 p-5 shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-1">
+              {pendingConfirm.title}
+            </h3>
+            {pendingConfirm.body && (
+              <p className="text-sm text-slate-400 mb-4">
+                {pendingConfirm.body}
+              </p>
+            )}
+            <div className="flex gap-2 justify-end mt-4">
+              <button
+                onClick={() => setPendingConfirm(null)}
+                className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  const c = pendingConfirm;
+                  setPendingConfirm(null);
+                  await c.onConfirm();
+                }}
+                className={`text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg text-white ${
+                  pendingConfirm.destructive
+                    ? "bg-rose-500 hover:bg-rose-400"
+                    : "bg-emerald-500 hover:bg-emerald-400"
+                }`}
+              >
+                {pendingConfirm.confirmLabel}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
@@ -3194,6 +3294,8 @@ function CampaignsTab({
               setShowForm(false);
               onMutate();
             }}
+            notify={notify}
+            askConfirm={askConfirm}
           />
         )}
       </div>
@@ -3211,6 +3313,8 @@ function CampaignsTab({
             isOpen={openId === c.id}
             onToggle={() => setOpenId(openId === c.id ? null : c.id)}
             onMutate={onMutate}
+            notify={notify}
+            askConfirm={askConfirm}
           />
         ))}
       </div>
@@ -3221,9 +3325,13 @@ function CampaignsTab({
 function CampaignForm({
   leads,
   onDone,
+  notify,
+  askConfirm,
 }: {
   leads: ClientLead[];
   onDone: () => void;
+  notify: (t: CampaignToast) => void;
+  askConfirm: (c: CampaignConfirm) => void;
 }) {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -3247,12 +3355,10 @@ function CampaignForm({
     return true;
   });
 
-  const submit = async (action: "save" | "send") => {
-    if (!name || !subject || !body) {
-      alert("Name, subject, and body are required.");
-      return;
-    }
-    setBusy(true);
+  const saveDraft = async (): Promise<{
+    ok: boolean;
+    campaign?: Campaign;
+  }> => {
     const r = await fetch("/api/client-portal/campaigns", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -3264,34 +3370,76 @@ function CampaignForm({
         lead_status_filter: statusSel,
       }),
     });
-    const j = (await r.json()) as { ok: boolean; campaign?: Campaign; error?: string };
+    const j = (await r.json()) as {
+      ok: boolean;
+      campaign?: Campaign;
+      error?: string;
+    };
     if (!j.ok || !j.campaign) {
-      alert(j.error || "Failed to save");
-      setBusy(false);
+      notify({ type: "error", message: j.error || "Failed to save" });
+      return { ok: false };
+    }
+    return { ok: true, campaign: j.campaign };
+  };
+
+  const onSaveClick = async () => {
+    if (!name || !subject || !body) {
+      notify({
+        type: "error",
+        message: "Name, subject, and body are required.",
+      });
       return;
     }
-    if (action === "send") {
-      if (
-        !confirm(
-          `Send to ${livePreview.length} recipient${livePreview.length === 1 ? "" : "s"} now?`,
-        )
-      ) {
-        setBusy(false);
-        onDone();
-        return;
-      }
-      const sr = await fetch(`/api/client-portal/campaigns/${j.campaign.id}/send`, {
-        method: "POST",
-      });
-      const sj = (await sr.json()) as { ok: boolean; sent?: number; failed?: number; error?: string };
-      if (!sj.ok) {
-        alert(sj.error || "Send failed");
-      } else {
-        alert(`Sent: ${sj.sent ?? 0}, Failed: ${sj.failed ?? 0}`);
-      }
-    }
+    setBusy(true);
+    const j = await saveDraft();
     setBusy(false);
-    onDone();
+    if (j.ok) {
+      notify({ type: "success", message: "Draft saved." });
+      onDone();
+    }
+  };
+
+  const onSendClick = () => {
+    if (!name || !subject || !body) {
+      notify({
+        type: "error",
+        message: "Name, subject, and body are required.",
+      });
+      return;
+    }
+    askConfirm({
+      title: `Send to ${livePreview.length} recipient${livePreview.length === 1 ? "" : "s"}?`,
+      body: "This saves the campaign and fires real emails. Can't be undone.",
+      confirmLabel: "Send now",
+      onConfirm: async () => {
+        setBusy(true);
+        const j = await saveDraft();
+        if (!j.ok || !j.campaign) {
+          setBusy(false);
+          return;
+        }
+        const sr = await fetch(
+          `/api/client-portal/campaigns/${j.campaign.id}/send`,
+          { method: "POST" },
+        );
+        const sj = (await sr.json()) as {
+          ok: boolean;
+          sent?: number;
+          failed?: number;
+          error?: string;
+        };
+        setBusy(false);
+        if (!sj.ok) {
+          notify({ type: "error", message: sj.error || "Send failed" });
+        } else {
+          notify({
+            type: "success",
+            message: `Sent ${sj.sent ?? 0} · failed ${sj.failed ?? 0}`,
+          });
+        }
+        onDone();
+      },
+    });
   };
 
   const toggleArr = (arr: string[], v: string, set: (a: string[]) => void) => {
@@ -3389,14 +3537,14 @@ function CampaignForm({
         <div className="flex-1" />
         <button
           disabled={busy}
-          onClick={() => submit("save")}
+          onClick={onSaveClick}
           className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:text-white disabled:opacity-50"
         >
           Save draft
         </button>
         <button
           disabled={busy || livePreview.length === 0}
-          onClick={() => submit("send")}
+          onClick={onSendClick}
           className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white disabled:opacity-50"
         >
           {busy ? "…" : "Send now"}
@@ -3411,11 +3559,15 @@ function CampaignRow({
   isOpen,
   onToggle,
   onMutate,
+  notify,
+  askConfirm,
 }: {
   campaign: Campaign;
   isOpen: boolean;
   onToggle: () => void;
   onMutate: () => void;
+  notify: (t: CampaignToast) => void;
+  askConfirm: (c: CampaignConfirm) => void;
 }) {
   const [sends, setSends] = useState<CampaignSend[]>([]);
   const [liveCount, setLiveCount] = useState<number | null>(null);
@@ -3442,23 +3594,55 @@ function CampaignRow({
     };
   }, [isOpen, campaign.id]);
 
-  const sendNow = async () => {
-    if (!confirm(`Send "${campaign.name}" now?`)) return;
-    setBusy(true);
-    const r = await fetch(`/api/client-portal/campaigns/${campaign.id}/send`, {
-      method: "POST",
+  const sendNow = () => {
+    askConfirm({
+      title: `Send "${campaign.name}" now?`,
+      body: "Fires real emails to current recipients. Can't be undone.",
+      confirmLabel: "Send now",
+      onConfirm: async () => {
+        setBusy(true);
+        const r = await fetch(
+          `/api/client-portal/campaigns/${campaign.id}/send`,
+          { method: "POST" },
+        );
+        const j = (await r.json()) as {
+          ok: boolean;
+          sent?: number;
+          failed?: number;
+          error?: string;
+        };
+        setBusy(false);
+        if (!j.ok) {
+          notify({ type: "error", message: j.error || "Send failed" });
+        } else {
+          notify({
+            type: "success",
+            message: `Sent ${j.sent ?? 0} · failed ${j.failed ?? 0}`,
+          });
+        }
+        onMutate();
+      },
     });
-    const j = (await r.json()) as { ok: boolean; sent?: number; failed?: number; error?: string };
-    setBusy(false);
-    if (!j.ok) alert(j.error || "Send failed");
-    else alert(`Sent: ${j.sent ?? 0}, Failed: ${j.failed ?? 0}`);
-    onMutate();
   };
 
-  const remove = async () => {
-    if (!confirm(`Delete "${campaign.name}"? This can't be undone.`)) return;
-    await fetch(`/api/client-portal/campaigns/${campaign.id}`, { method: "DELETE" });
-    onMutate();
+  const remove = () => {
+    askConfirm({
+      title: `Delete "${campaign.name}"?`,
+      body: "This can't be undone.",
+      confirmLabel: "Delete",
+      destructive: true,
+      onConfirm: async () => {
+        const r = await fetch(`/api/client-portal/campaigns/${campaign.id}`, {
+          method: "DELETE",
+        });
+        if (!r.ok) {
+          notify({ type: "error", message: "Couldn't delete." });
+          return;
+        }
+        notify({ type: "success", message: "Campaign deleted." });
+        onMutate();
+      },
+    });
   };
 
   const canSend = campaign.status === "draft" || campaign.status === "scheduled";
