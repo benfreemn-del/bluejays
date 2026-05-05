@@ -107,15 +107,10 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@mountainviewlandscape.com",
     emoji: "⛰️",
   },
-  pine: {
-    businessLabel: "Pine",
-    clientEmail: "info@pine.com",
+  "pine-and-particle": {
+    businessLabel: "Pine & Particle",
+    clientEmail: "info@pineandparticle.com",
     emoji: "🌲",
-  },
-  particle: {
-    businessLabel: "Particle",
-    clientEmail: "info@particle.com",
-    emoji: "✨",
   },
 };
 

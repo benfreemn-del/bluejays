@@ -4606,8 +4606,7 @@ const SLUG_DISPLAY_NAME: Record<string, string> = {
   "heale-counseling": "Heale Counseling",
   "lewis-county-autism": "Lewis County Autism Coalition",
   "mountain-view-landscape": "Mountain View Landscape",
-  pine: "Pine",
-  particle: "Particle",
+  "pine-and-particle": "Pine & Particle",
 };
 
 function humanizeSlug(slug: string): string {
