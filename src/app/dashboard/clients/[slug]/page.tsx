@@ -152,6 +152,18 @@ export default function ClientTasksPage({
               {totalOpen} open · {tasks.length - totalOpen} done
             </div>
           </div>
+          {/* Auto-impersonate the client owner — opens their portal in
+              a new tab without asking for the password. Admin-cookie
+              gated server-side. */}
+          <a
+            href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open this client's owner portal as them (no login required)"
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+          >
+            Backend ↗
+          </a>
           <Link
             href={`/dashboard/clients/${slug}/leads`}
             className="text-[11px] tracking-wider uppercase font-bold text-cyan-300 hover:text-white border border-cyan-700/50 px-2.5 py-1 rounded"

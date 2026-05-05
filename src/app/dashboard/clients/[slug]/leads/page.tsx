@@ -21,11 +21,19 @@ import type {
  */
 
 const AUDIENCE_LABEL: Record<ClientLeadAudience, string> = {
+  // Zenith / TEKKY soccer
   parent: "👪 Parent",
   coach: "🏟️ Coach",
   player: "⚽ Player",
   club: "🏛️ Club",
-  unknown: "❓ Unknown",
+  unknown: "📥 Unknown",
+  // ITC tractor accessories
+  hobbyist: "🚜 Hobbyist",
+  forester: "🌲 Forester",
+  tym: "⚙️ TYM",
+  hunter: "🦌 Hunter",
+  dealer: "🤝 Dealer",
+  community: "🏆 Community",
 };
 const AUDIENCE_COLOR: Record<ClientLeadAudience, string> = {
   parent: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
@@ -33,6 +41,12 @@ const AUDIENCE_COLOR: Record<ClientLeadAudience, string> = {
   player: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   club: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   unknown: "bg-slate-700/40 text-slate-400 border-slate-600",
+  hobbyist: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  forester: "bg-lime-500/15 text-lime-300 border-lime-500/30",
+  tym: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  hunter: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+  dealer: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  community: "bg-violet-500/15 text-violet-300 border-violet-500/30",
 };
 const STATUS_LABEL: Record<ClientLeadFunnelStatus, string> = {
   not_enrolled: "Not enrolled",
@@ -438,9 +452,15 @@ export default function ClientLeadsPage({
                     </span>
                     {lead.audience_segment && (
                       <span
-                        className={`text-[9px] tracking-wider uppercase font-extrabold px-1.5 py-0.5 rounded border ${AUDIENCE_COLOR[lead.audience_segment]}`}
+                        className={`text-[9px] tracking-wider uppercase font-extrabold px-1.5 py-0.5 rounded border ${
+                          AUDIENCE_COLOR[lead.audience_segment] ??
+                          "bg-slate-700/40 text-slate-300 border-slate-600"
+                        }`}
                       >
-                        {AUDIENCE_LABEL[lead.audience_segment].split(" ")[1]}
+                        {(AUDIENCE_LABEL[lead.audience_segment] ?? lead.audience_segment)
+                          .split(" ")
+                          .slice(1)
+                          .join(" ") || lead.audience_segment}
                       </span>
                     )}
                     <span
