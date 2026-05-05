@@ -1,3 +1,5 @@
+"use client";
+
 import nextDynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -9,13 +11,10 @@ import Link from "next/link";
  * with golden-glow overlays for places we've curated as strong soccer
  * markets per audience (parents / coaches / players).
  *
- * The actual Leaflet map is client-only (DOM + window dependencies), so
- * we dynamic-import it with ssr:false and render a small skeleton
- * during the initial paint.
+ * Client component because the Leaflet map (./map.client) is DOM-bound
+ * and we dynamic-import it with ssr:false. Next 16 disallows ssr:false
+ * in server components, so this whole page is a client component.
  */
-
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 const TekkyMapClient = nextDynamic(() => import("./map.client"), {
   ssr: false,
