@@ -344,21 +344,33 @@
                     </ol>
                 </div>
                 <div class="order-calc reveal">
-                    <div class="calc-label">Choose your share</div>
-                    <div class="cut-options">
-                        <div class="cut-option">
-                            <input type="radio" id="cut-quarter" name="order-cut" value="quarter">
-                            <label for="cut-quarter">Quarter</label>
-                        </div>
-                        <div class="cut-option">
-                            <input type="radio" id="cut-half" name="order-cut" value="half" checked>
-                            <label for="cut-half">Half</label>
-                        </div>
-                        <div class="cut-option">
-                            <input type="radio" id="cut-whole" name="order-cut" value="whole">
-                            <label for="cut-whole">Whole</label>
+                    <div class="calc-label">Mess with the numbers</div>
+
+                    <div class="calc-step">
+                        <span class="calc-step-label">1. Pick your animal</span>
+                        <div class="calc-pills" data-group="animal">
+                            <button type="button" class="calc-pill is-active" data-animal="beef">🐄 Beef</button>
+                            <button type="button" class="calc-pill" data-animal="pork">🐖 Pork</button>
+                            <button type="button" class="calc-pill" data-animal="lamb">🐑 Lamb</button>
                         </div>
                     </div>
+
+                    <div class="calc-step">
+                        <span class="calc-step-label">2. Choose your share</span>
+                        <div class="calc-pills" data-group="share">
+                            <button type="button" class="calc-pill" data-share="quarter">Quarter</button>
+                            <button type="button" class="calc-pill is-active" data-share="half">Half</button>
+                            <button type="button" class="calc-pill" data-share="whole">Whole</button>
+                        </div>
+                        <span class="calc-step-note" id="calc-share-note">Quarters available for beef. Pork &amp; lamb come in halves or whole.</span>
+                    </div>
+
+                    <div class="calc-price-card">
+                        <div class="calc-price-label">Estimated total</div>
+                        <div class="calc-price-value" id="calc-price">$1,500 – $2,200</div>
+                        <div class="calc-price-sub" id="calc-price-sub">Includes harvest, USDA cut &amp; wrap, vacuum-sealed packaging.</div>
+                    </div>
+
                     <div class="calc-output">
                         <div class="calc-row">
                             <span class="calc-key">Estimated yield</span>
@@ -369,10 +381,20 @@
                             <span class="calc-val" id="calc-freezer">8 to 10 cubic feet of freezer space</span>
                         </div>
                         <div class="calc-row">
-                            <span class="calc-key">To get on the schedule</span>
-                            <span class="calc-val" id="calc-deposit">Reserve with a deposit</span>
+                            <span class="calc-key">Deposit to reserve</span>
+                            <span class="calc-val" id="calc-deposit">$300 holds your spot</span>
+                        </div>
+                        <div class="calc-row calc-row-shipping">
+                            <span class="calc-key">Pickup or shipping</span>
+                            <span class="calc-val">
+                                <span class="calc-pickup-pill">📍 Ranch pickup only</span>
+                                <span class="calc-shipping-note">No shipping. We do not ship frozen meat. Bring coolers — we will help you load.</span>
+                            </span>
                         </div>
                     </div>
+
+                    <p class="calc-disclaimer">Estimate only. Final price is based on hanging weight × per-pound rate when the animal goes to the butcher. We will confirm the exact total before charging the balance.</p>
+
                     <a href="#contact" class="calc-cta">Reserve My Share</a>
                 </div>
             </div>

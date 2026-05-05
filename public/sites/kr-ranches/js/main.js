@@ -125,35 +125,175 @@
     }
   }
 
-  // ---- ORDER CALC (whole/half/quarter estimator) ----
+  // ---- ORDER CALC (animal × share live estimator) ----
   function initOrderCalc() {
-    var radios = document.querySelectorAll('input[name="order-cut"]');
+    var animalPills = document.querySelectorAll('[data-group="animal"] .calc-pill');
+    var sharePills = document.querySelectorAll('[data-group="share"] .calc-pill');
     var yieldEl = document.getElementById("calc-yield");
     var freezerEl = document.getElementById("calc-freezer");
     var depositEl = document.getElementById("calc-deposit");
-    if (!radios.length || !yieldEl) return;
+    var priceEl = document.getElementById("calc-price");
+    var priceSubEl = document.getElementById("calc-price-sub");
+    var shareNoteEl = document.getElementById("calc-share-note");
 
-    // Approximate, conservative numbers for whole-animal beef orders.
-    // These are estimates only. The Notes / FAQ explain the variability.
-    var data = {
-      quarter: { yield: "100 to 130 lbs", freezer: "4 to 5 cubic feet" },
-      half: { yield: "200 to 250 lbs", freezer: "8 to 10 cubic feet" },
-      whole: { yield: "400 to 500 lbs", freezer: "16 to 20 cubic feet" }
+    if (!animalPills.length || !sharePills.length || !priceEl) return;
+
+    // Pricing matrix — realistic ranch ballpark for the Yakima Valley.
+    // Numbers are conservative ranges. Final price = hanging weight ×
+    // per-lb rate, locked in at the butcher.
+    var MATRIX = {
+      beef: {
+        quarter: {
+          yield: "100 to 130 lbs",
+          freezer: "4 to 5 cubic feet",
+          priceLow: 750,
+          priceHigh: 1100,
+          deposit: "$200 holds your spot",
+          sub: "Includes harvest, USDA cut & wrap, vacuum-sealed packaging.",
+        },
+        half: {
+          yield: "200 to 250 lbs",
+          freezer: "8 to 10 cubic feet",
+          priceLow: 1500,
+          priceHigh: 2200,
+          deposit: "$300 holds your spot",
+          sub: "Includes harvest, USDA cut & wrap, vacuum-sealed packaging.",
+        },
+        whole: {
+          yield: "400 to 500 lbs",
+          freezer: "16 to 20 cubic feet",
+          priceLow: 3000,
+          priceHigh: 4400,
+          deposit: "$500 holds your spot",
+          sub: "Includes harvest, USDA cut & wrap, vacuum-sealed packaging. Whole-animal best value per pound.",
+        },
+      },
+      pork: {
+        half: {
+          yield: "60 to 80 lbs",
+          freezer: "3 to 4 cubic feet",
+          priceLow: 400,
+          priceHigh: 650,
+          deposit: "$150 holds your spot",
+          sub: "Heritage hog. Includes harvest, custom cut, smoking & sausage if desired.",
+        },
+        whole: {
+          yield: "120 to 160 lbs",
+          freezer: "6 to 7 cubic feet",
+          priceLow: 800,
+          priceHigh: 1300,
+          deposit: "$250 holds your spot",
+          sub: "Heritage hog. Includes harvest, custom cut, smoking & sausage if desired.",
+        },
+      },
+      lamb: {
+        half: {
+          yield: "20 to 25 lbs",
+          freezer: "1 to 2 cubic feet",
+          priceLow: 250,
+          priceHigh: 400,
+          deposit: "$100 holds your spot",
+          sub: "Grass-finished. Includes harvest, USDA cut & wrap.",
+        },
+        whole: {
+          yield: "40 to 50 lbs",
+          freezer: "2 to 3 cubic feet",
+          priceLow: 500,
+          priceHigh: 800,
+          deposit: "$150 holds your spot",
+          sub: "Grass-finished. Includes harvest, USDA cut & wrap.",
+        },
+      },
     };
 
-    function update(value) {
-      var d = data[value] || data.half;
-      yieldEl.textContent = d.yield + " of cut and wrapped meat";
-      if (freezerEl) freezerEl.textContent = d.freezer + " of freezer space";
-      if (depositEl) depositEl.textContent = "Reserve with a deposit";
+    var SHARE_NOTES = {
+      beef: "Quarter, half, or whole — beef is the most flexible.",
+      pork: "Pork comes in halves or whole. Quarter not available.",
+      lamb: "Lamb comes in halves or whole. Quarter not available.",
+    };
+
+    var state = { animal: "beef", share: "half" };
+
+    function fmtMoney(n) {
+      return "$" + n.toLocaleString("en-US");
     }
 
-    for (var i = 0; i < radios.length; i++) {
-      radios[i].addEventListener("change", function () {
-        if (this.checked) update(this.value);
-      });
-      if (radios[i].checked) update(radios[i].value);
+    function flashPrice() {
+      priceEl.classList.remove("flash");
+      // force reflow so the animation re-fires
+      void priceEl.offsetWidth;
+      priceEl.classList.add("flash");
     }
+
+    function setActive(pills, attrName, value) {
+      for (var i = 0; i < pills.length; i++) {
+        if (pills[i].getAttribute(attrName) === value) {
+          pills[i].classList.add("is-active");
+        } else {
+          pills[i].classList.remove("is-active");
+        }
+      }
+    }
+
+    function updateShareAvailability() {
+      // Pork & lamb don't sell quarters — disable the quarter pill.
+      for (var i = 0; i < sharePills.length; i++) {
+        var size = sharePills[i].getAttribute("data-share");
+        if (size === "quarter" && state.animal !== "beef") {
+          sharePills[i].setAttribute("disabled", "disabled");
+          // If quarter was active, snap to half
+          if (state.share === "quarter") {
+            state.share = "half";
+            setActive(sharePills, "data-share", "half");
+          }
+        } else {
+          sharePills[i].removeAttribute("disabled");
+        }
+      }
+      if (shareNoteEl) shareNoteEl.textContent = SHARE_NOTES[state.animal];
+    }
+
+    function render() {
+      var bucket = MATRIX[state.animal];
+      if (!bucket) return;
+      var data = bucket[state.share] || bucket.half || bucket.whole;
+      if (!data) return;
+
+      priceEl.textContent =
+        fmtMoney(data.priceLow) + " – " + fmtMoney(data.priceHigh);
+      flashPrice();
+      if (priceSubEl) priceSubEl.textContent = data.sub;
+      if (yieldEl) yieldEl.textContent = data.yield + " of cut and wrapped meat";
+      if (freezerEl) freezerEl.textContent = data.freezer + " of freezer space";
+      if (depositEl) depositEl.textContent = data.deposit;
+    }
+
+    // Wire animal pills
+    for (var i = 0; i < animalPills.length; i++) {
+      (function (pill) {
+        pill.addEventListener("click", function () {
+          state.animal = pill.getAttribute("data-animal");
+          setActive(animalPills, "data-animal", state.animal);
+          updateShareAvailability();
+          render();
+        });
+      })(animalPills[i]);
+    }
+
+    // Wire share pills
+    for (var j = 0; j < sharePills.length; j++) {
+      (function (pill) {
+        pill.addEventListener("click", function () {
+          if (pill.hasAttribute("disabled")) return;
+          state.share = pill.getAttribute("data-share");
+          setActive(sharePills, "data-share", state.share);
+          render();
+        });
+      })(sharePills[j]);
+    }
+
+    updateShareAvailability();
+    render();
   }
 
   // ---- FAQ ACCORDION ----

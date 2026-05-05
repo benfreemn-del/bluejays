@@ -3478,5 +3478,175 @@ body {
 }
 
 
+/* ==========================================================================
+   ROUND 12 — INTERACTIVE ORDER CALCULATOR
+   Animal × Share → live price + yield + freezer + pickup-only badge
+   ========================================================================== */
+
+/* Two-step "pick animal / pick share" pill rows */
+.calc-step {
+  margin-bottom: 18px;
+}
+.calc-step-label {
+  display: block;
+  font-family: var(--impact);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber) !important;
+  margin-bottom: 10px;
+}
+.calc-step-note {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(244, 237, 224, 0.55);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+.calc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.calc-pill {
+  flex: 1 1 auto;
+  min-width: 90px;
+  padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  color: rgba(244, 237, 224, 0.82);
+  font-family: var(--sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease,
+    transform 0.18s ease, color 0.18s ease;
+  text-align: center;
+}
+.calc-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(244, 237, 224, 0.32);
+  transform: translateY(-1px);
+}
+.calc-pill.is-active {
+  background: linear-gradient(180deg, var(--wagyu) 0%, var(--wagyu-dark) 100%);
+  border-color: #4a0c0c;
+  color: #fff;
+  box-shadow: 0 4px 10px -3px rgba(139, 30, 30, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+.calc-pill[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Big price card — the headline output */
+.calc-price-card {
+  background: linear-gradient(135deg, rgba(200, 123, 41, 0.18) 0%, rgba(139, 30, 30, 0.18) 100%);
+  border: 1.5px solid rgba(200, 123, 41, 0.40);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin: 22px 0 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.calc-price-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(212, 168, 58, 0.20) 0%, transparent 70%);
+  pointer-events: none;
+}
+.calc-price-label {
+  font-family: var(--impact);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+  position: relative;
+}
+.calc-price-value {
+  font-family: var(--serif);
+  font-size: clamp(1.85rem, 4.4vw, 2.4rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+  position: relative;
+  transition: transform 0.25s ease;
+}
+.calc-price-value.flash {
+  animation: priceFlash 0.4s ease;
+}
+@keyframes priceFlash {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.calc-price-sub {
+  font-size: 0.84rem;
+  color: rgba(244, 237, 224, 0.72);
+  position: relative;
+}
+
+/* Pickup-only badge inside the output rows */
+.calc-row-shipping .calc-val {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+.calc-pickup-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(47, 93, 58, 0.20);
+  border: 1.5px solid rgba(132, 196, 142, 0.50);
+  border-radius: 100px;
+  color: #a8d4ad;
+  font-family: var(--impact);
+  font-size: 0.74rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.calc-shipping-note {
+  font-size: 0.78rem;
+  color: rgba(244, 237, 224, 0.55);
+  font-style: italic;
+  text-align: right;
+}
+
+.calc-disclaimer {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: rgba(244, 237, 224, 0.50) !important;
+  margin: 14px 0 18px !important;
+  line-height: 1.55;
+}
+
+@media (max-width: 680px) {
+  .calc-pill {
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 0.88rem;
+  }
+  .calc-row-shipping .calc-val {
+    align-items: flex-start;
+  }
+  .calc-shipping-note {
+    text-align: left;
+  }
+}
+
+
 
 
