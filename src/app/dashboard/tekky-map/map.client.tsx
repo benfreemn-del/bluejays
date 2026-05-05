@@ -18,6 +18,7 @@ import majorCitiesData from "@/data/us-major-cities.json";
 import soccerTownsData from "@/data/us-soccer-towns.json";
 import mlsNextClubsData from "@/data/us-mls-next-clubs.json";
 import uslClubsData from "@/data/us-usl-clubs.json";
+import ecnlClubsData from "@/data/us-ecnl-clubs.json";
 
 /**
  * Tekky lead-scrape map.
@@ -58,7 +59,12 @@ type UslClub = MlsNextClub & {
   league: "USLC" | "USL1";
 };
 
-type MapLayer = "all" | "mls" | "next" | "usl" | "cities";
+type EcnlClub = MlsNextClub & {
+  /** "boys" | "girls" | "both" — drives icon color */
+  division: "boys" | "girls" | "both";
+};
+
+type MapLayer = "all" | "mls" | "next" | "usl" | "ecnl" | "cities";
 
 type TekkyAudience = "parent" | "coach" | "player";
 
@@ -136,6 +142,7 @@ const LAYER_OPTIONS: Array<{ id: MapLayer; label: string; emoji: string }> = [
   { id: "mls", label: "MLS host cities only", emoji: "⚽" },
   { id: "next", label: "MLS NEXT clubs", emoji: "🏆" },
   { id: "usl", label: "USL Champ + League One", emoji: "🥈" },
+  { id: "ecnl", label: "ECNL clubs (youth)", emoji: "🥇" },
   { id: "cities", label: "Cities only", emoji: "🏙️" },
 ];
 
@@ -451,6 +458,7 @@ export default function TekkyMapClient() {
     ...((uslClubsData.championship as UslClub[]) ?? []),
     ...((uslClubsData.league_one as UslClub[]) ?? []),
   ];
+  const ecnlClubs = (ecnlClubsData.clubs as EcnlClub[]) ?? [];
 
   const mlsKeys = useMemo(
     () => new Set(mlsMarkets.map((t) => `${t.name}|${t.state}`)),
@@ -467,6 +475,7 @@ export default function TekkyMapClient() {
   const showMls = layer === "all" || layer === "mls";
   const showNext = layer === "all" || layer === "next";
   const showUsl = layer === "all" || layer === "usl";
+  const showEcnl = layer === "all" || layer === "ecnl";
 
   // Sidebar list — focus state filters; otherwise national
   const focusState = lockedState ?? hoveredState;
@@ -892,6 +901,51 @@ export default function TekkyMapClient() {
                 </Tooltip>
               </CircleMarker>
             ))}
+
+          {/* ECNL clubs (Elite Clubs National League) — youth tier ABOVE
+               MLS NEXT for many regions. Highest TEKKY-LTV audience.
+               Pink/violet bullets to differentiate from emerald (NEXT)
+               and sky-blue (USL). Boys vs Girls vs Both → icon variant. */}
+          {showEcnl &&
+            ecnlClubs.map((c, i) => {
+              const color =
+                c.division === "girls"
+                  ? "#ec4899" // pink-500
+                  : c.division === "boys"
+                    ? "#a855f7" // purple-500
+                    : "#d946ef"; // fuchsia-500 for "both"
+              return (
+                <CircleMarker
+                  key={`ecnl-${c.name}-${i}`}
+                  center={[c.lat, c.lng]}
+                  radius={4.5}
+                  pathOptions={{
+                    color,
+                    weight: 1,
+                    fillColor: color,
+                    fillOpacity: 0.8,
+                  }}
+                >
+                  <Tooltip direction="top" offset={[0, -4]} opacity={0.95}>
+                    <div className="text-xs max-w-[260px]">
+                      <div className="font-bold text-pink-300">🥇 {c.name}</div>
+                      <div className="text-slate-300 mb-0.5">
+                        {c.city}, {c.state}
+                      </div>
+                      <div className="text-[10px] text-slate-500 italic">
+                        ECNL{" "}
+                        {c.division === "both"
+                          ? "Boys + Girls"
+                          : c.division === "girls"
+                            ? "Girls"
+                            : "Boys"}{" "}
+                        · Source: theecnl.com (verified subset)
+                      </div>
+                    </div>
+                  </Tooltip>
+                </CircleMarker>
+              );
+            })}
         </MapContainer>
 
         {/* Prominent "Back to US" button when a state is locked */}
