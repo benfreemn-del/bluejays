@@ -402,6 +402,34 @@ const AUDIENCE_COLOR: Record<
   },
 };
 
+/**
+ * Per-audience filter-pill metadata. Drives the Category filter row in
+ * LeadsTab. Covers every audience tag across all tenants (Zenith soccer,
+ * ITC tractor, Laser Lakes, etc.) so a single LeadsTab handles all.
+ *
+ * activeChip = pill style when this audience is the active filter.
+ */
+const AUDIENCE_FILTER_META: Record<
+  string,
+  { emoji: string; label: string; activeChip: string }
+> = {
+  // Zenith Sports / TEKKY soccer audiences
+  parent: { emoji: "👪", label: "Parents", activeChip: "bg-amber-500 border-amber-400 text-amber-950" },
+  coach: { emoji: "🏟️", label: "Coaches", activeChip: "bg-blue-500 border-blue-400 text-white" },
+  player: { emoji: "🥇", label: "Players", activeChip: "bg-lime-500 border-lime-400 text-lime-950" },
+  club: { emoji: "🏟", label: "Clubs", activeChip: "bg-violet-500 border-violet-400 text-white" },
+  // ITC Quick Attach tractor audiences
+  dealer: { emoji: "🏪", label: "Dealers", activeChip: "bg-blue-500 border-blue-400 text-white" },
+  tym: { emoji: "🚜", label: "TYM owners", activeChip: "bg-amber-500 border-amber-400 text-amber-950" },
+  forester: { emoji: "🌲", label: "Foresters", activeChip: "bg-lime-500 border-lime-400 text-lime-950" },
+  hunter: { emoji: "🦌", label: "Hunters", activeChip: "bg-rose-500 border-rose-400 text-white" },
+  hobbyist: { emoji: "🏡", label: "Hobbyists", activeChip: "bg-emerald-500 border-emerald-400 text-emerald-950" },
+  community: { emoji: "🤝", label: "Community", activeChip: "bg-violet-500 border-violet-400 text-white" },
+  // Catch-all
+  untagged: { emoji: "•", label: "Untagged", activeChip: "bg-slate-500 border-slate-400 text-white" },
+  unknown: { emoji: "?", label: "Unknown", activeChip: "bg-slate-500 border-slate-400 text-white" },
+};
+
 const SOURCE_LABEL: Record<string, string> = {
   "main-inquiry-form": "Contact form",
   "email-capture": "Email capture",
@@ -1344,6 +1372,7 @@ function LeadsTab({
   onMutate: () => void;
 }) {
   const [filter, setFilter] = useState<string>("all");
+  const [audienceFilter, setAudienceFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
 
@@ -1384,7 +1413,7 @@ function LeadsTab({
   // All other filters apply on top of "active" (i.e. they implicitly
   // exclude dismissed) so the pipeline stays clean.
   const activeLeads = leads.filter((l) => l.funnel_status !== "dismissed");
-  const filtered =
+  const stageFiltered =
     filter === "all"
       ? activeLeads
       : filter === "dismissed"
@@ -1396,6 +1425,30 @@ function LeadsTab({
           : filter === "uncontacted"
             ? activeLeads.filter((l) => (l.touch_count ?? 0) === 0)
             : activeLeads.filter((l) => l.funnel_status === filter);
+
+  // Second filter axis — audience / category. Cuts across funnel stages
+  // so an owner can see e.g. "all Coach leads regardless of stage" or
+  // "all Won leads who came in as Players".
+  const filtered =
+    audienceFilter === "all"
+      ? stageFiltered
+      : audienceFilter === "untagged"
+        ? stageFiltered.filter((l) => !l.audience_segment)
+        : stageFiltered.filter((l) => l.audience_segment === audienceFilter);
+
+  // Audiences present in the data — drives the filter pill row. Only
+  // surfaces this row if 2+ audience tags exist (otherwise the filter
+  // adds zero signal). Counts are computed against stageFiltered so they
+  // reflect the currently-selected stage filter.
+  const audienceCounts = new Map<string, number>();
+  for (const l of stageFiltered) {
+    const key = l.audience_segment ?? "untagged";
+    audienceCounts.set(key, (audienceCounts.get(key) ?? 0) + 1);
+  }
+  const audienceOptions = Array.from(audienceCounts.entries())
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]);
+  const showAudienceRow = audienceOptions.length >= 2;
 
   const counts = {
     all: activeLeads.length,
@@ -1412,28 +1465,77 @@ function LeadsTab({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {[
-          { id: "all", label: "All" },
-          { id: "uncontacted", label: "Uncontacted" },
-          { id: "unread", label: "Needs attention" },
-          { id: "enrolled", label: "In funnel" },
-          { id: "converted", label: "Won" },
-          { id: "dismissed", label: "Dismissed" },
-        ].map((f) => (
-          <button
-            key={f.id}
-            onClick={() => setFilter(f.id)}
-            className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
-              filter === f.id
-                ? "bg-blue-500 border-blue-400 text-white"
-                : "border-slate-700 text-slate-400 hover:text-white"
-            }`}
-          >
-            {f.label} · {counts[f.id as keyof typeof counts]}
-          </button>
-        ))}
+      {/* Funnel-stage filter (where they are in the journey) */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">
+          Stage
+        </span>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { id: "all", label: "All" },
+            { id: "uncontacted", label: "Uncontacted" },
+            { id: "unread", label: "Needs attention" },
+            { id: "enrolled", label: "In funnel" },
+            { id: "converted", label: "Won" },
+            { id: "dismissed", label: "Dismissed" },
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+                filter === f.id
+                  ? "bg-blue-500 border-blue-400 text-white"
+                  : "border-slate-700 text-slate-400 hover:text-white"
+              }`}
+            >
+              {f.label} · {counts[f.id as keyof typeof counts]}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Audience / category filter — orthogonal to stage. Only renders
+          when 2+ audiences exist in the current stage filter (otherwise
+          adds no signal and just clutters the UI). */}
+      {showAudienceRow && (
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">
+            Category
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setAudienceFilter("all")}
+              className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+                audienceFilter === "all"
+                  ? "bg-blue-500 border-blue-400 text-white"
+                  : "border-slate-700 text-slate-400 hover:text-white"
+              }`}
+            >
+              All audiences · {stageFiltered.length}
+            </button>
+            {audienceOptions.map(([aud, n]) => {
+              const meta = AUDIENCE_FILTER_META[aud] ?? AUDIENCE_FILTER_META.unknown;
+              const isActive = audienceFilter === aud;
+              return (
+                <button
+                  key={aud}
+                  onClick={() => setAudienceFilter(aud)}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition inline-flex items-center gap-1 ${
+                    isActive
+                      ? `${meta.activeChip}`
+                      : "border-slate-700 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>{meta.emoji}</span>
+                  <span>{meta.label} · {n}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {!showAudienceRow && <div className="mb-4" />}
 
       {filtered.length === 0 ? (
         <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
