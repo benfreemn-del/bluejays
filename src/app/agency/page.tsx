@@ -42,7 +42,8 @@ const INCLUDED = [
   { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. Captures the voicemail you'd lose." },
   { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to every warm lead — hands-free" },
   { icon: "🎁", title: "Interactive Lead Magnet", detail: "Industry-specific configurator quiz that builds personalized recommendations + auto-routes leads to the right funnel" },
-  { icon: "🗺️", title: "County-Level Lead Scout", detail: "Click any US county on a map → audience-scoped Google Places scrape pulls fresh leads to your inbox" },
+  { icon: "🗺️", title: "County-Level Lead Scout", detail: "Click any US county on a map → audience-scoped Google Places scrape pulls fresh leads to your inbox. Universal status colors: blue while scouting, green when completed, red ✕ if no results — so you always know where you've been." },
+  { icon: "🤝", title: "Partner / Sales-Team Program", detail: "Recruitment landing page + audience-branched script library so you (or your reps) can call leads with a different pitch per customer type. Per-audience objection handlers + payout structure, built for ITC-style $50-retail/$250-dealer commission models or any flat-fee program." },
   { icon: "📊", title: "Owner Portal", detail: "Live cockpit: Leads · To-Do · Budget · Campaigns · Funnels · Map · Insights · Account. One login, everything in view." },
   { icon: "🔬", title: "Hyperloop A/B Engine", detail: "Wilson-CI statistical testing on every email subject + ad creative. Winners auto-promoted." },
   { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds while the ads learn" },
@@ -84,6 +85,10 @@ const FAQS = [
   {
     q: "What's an 'audience-segmented funnel'?",
     a: "Most agencies blast the same email to every lead. We map your customer mix into segments (e.g. for a tractor-accessory shop: Dealer / TYM owner / Forester / Hunter / Sub-compact owner) and run a separate funnel for each. The Dealer gets ROI math; the Hunter gets gun-mount install tips; the Forester gets chainsaw-rig content. Same lead-magnet site, six conversion paths.",
+  },
+  {
+    q: "Can my sales team or referral partners use the system?",
+    a: "Yes — the partner program is built in. You get a public recruitment landing page (your branding, your payout structure) plus an audience-branched script library: every customer type gets its own intro, qualifier, pitch, CTA, voicemail, and objection handlers. A rep picks the audience tag, the right script auto-loads, they dial. Built for flat-fee commission models ($50 retail / $250 dealer is the ITC default — yours can be whatever you set) and warm-referrer programs. Manual payout dashboard included; full Stripe Connect integration optional in v2.",
   },
   {
     q: "What's an interactive lead magnet?",

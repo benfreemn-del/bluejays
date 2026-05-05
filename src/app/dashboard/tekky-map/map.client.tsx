@@ -182,14 +182,29 @@ export default function TekkyMapClient() {
   // time we tried — show a red X over those tiles. Persisted to
   // localStorage so the indicator survives page reloads.
   const [exhausted, setExhausted] = useState<Set<string>>(new Set());
+  // ── Universal AI-package map state ─────────────────────────────
+  //  inProgress = blue ring while a scout is actively scraping
+  //  completed  = green ring once the tile has been successfully scouted
+  //  Both are county×audience-keyed and follow the same pattern as
+  //  exhausted; completed persists so the owner sees their progress
+  //  across sessions.
+  const [inProgress, setInProgress] = useState<Set<string>>(new Set());
+  const [completed, setCompleted] = useState<Set<string>>(new Set());
 
-  // Hydrate exhausted set from localStorage once on mount.
+  // Hydrate exhausted + completed sets from localStorage once on mount.
+  // inProgress is intentionally ephemeral — an in-flight request that
+  // didn't actually finish shouldn't survive a reload.
   useEffect(() => {
     try {
       const raw = localStorage.getItem("tekky-map.exhausted");
       if (raw) {
         const arr = JSON.parse(raw) as string[];
         if (Array.isArray(arr)) setExhausted(new Set(arr));
+      }
+      const rawDone = localStorage.getItem("tekky-map.completed");
+      if (rawDone) {
+        const arr = JSON.parse(rawDone) as string[];
+        if (Array.isArray(arr)) setCompleted(new Set(arr));
       }
     } catch {
       // ignore
@@ -253,6 +268,19 @@ export default function TekkyMapClient() {
   ) => {
     const key = `${city}|${state}|${audience}`;
     setScrapeStatus({ key, state: "running" });
+    // Mark blue (in-progress) for the universal map rule.
+    setInProgress((prev) => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+    const clearInProgress = () =>
+      setInProgress((prev) => {
+        if (!prev.has(key)) return prev;
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
     try {
       const r = await fetch("/api/dashboard/tekky-scrape", {
         method: "POST",
@@ -272,6 +300,7 @@ export default function TekkyMapClient() {
           state: "error",
           message: j.error ?? "Scrape failed",
         });
+        clearInProgress();
         return;
       }
       setScrapeStatus({
@@ -312,7 +341,22 @@ export default function TekkyMapClient() {
           }
           return next;
         });
+        // Mark green (completed) — universal map rule.
+        setCompleted((prev) => {
+          const next = new Set(prev);
+          next.add(key);
+          try {
+            localStorage.setItem(
+              "tekky-map.completed",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
       }
+      clearInProgress();
       refreshSummary();
     } catch (err) {
       setScrapeStatus({
@@ -320,6 +364,7 @@ export default function TekkyMapClient() {
         state: "error",
         message: err instanceof Error ? err.message : "Network error",
       });
+      clearInProgress();
     }
   };
 
@@ -864,28 +909,69 @@ export default function TekkyMapClient() {
               Pick an audience, then hit Run. Google Places search runs
               across the county; matches land in the Leads tab.
             </p>
+            {/* Universal AI-package map legend */}
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-2 text-[9px] text-slate-500">
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-blue-500 ring-1 ring-blue-400" />
+                In progress
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-green-500/80 ring-1 ring-green-500" />
+                Completed
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="text-rose-500 font-black">✕</span>
+                No results
+              </span>
+            </div>
             <div className="grid grid-cols-3 gap-1.5">
               {(["parent", "coach", "player"] as TekkyAudience[]).map((aud) => {
                 const meta = AUDIENCE_META[aud];
                 const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
                 const isRunning =
-                  scrapeStatus?.key === k && scrapeStatus.state === "running";
+                  (scrapeStatus?.key === k && scrapeStatus.state === "running") ||
+                  inProgress.has(k);
                 const isExhausted = exhausted.has(k);
+                const isCompleted = completed.has(k);
                 const isStaged = stagedAudience === aud;
+                // ── Universal AI-package status ring ─────────────────
+                //  staged:  amber      (existing UX)
+                //  running: blue-500   (in progress of being scouted)
+                //  done:    green-500  (already completed)
+                //  default: slate-700
+                const ringClass = isStaged
+                  ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                  : isRunning
+                    ? "border-blue-400 bg-blue-500/15 ring-1 ring-blue-400 animate-pulse"
+                    : isCompleted
+                      ? "border-green-500 bg-green-500/10 ring-1 ring-green-500/50"
+                      : "border-slate-700 hover:border-amber-400";
                 return (
                   <button
                     key={aud}
                     onClick={() => setStagedAudience(aud)}
                     disabled={isRunning}
-                    className={`relative text-[11px] font-bold rounded-md px-2 py-2 border transition disabled:opacity-50 flex flex-col items-center gap-0.5 ${
-                      isStaged
-                        ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
-                        : "border-slate-700 hover:border-amber-400"
-                    }`}
+                    title={
+                      isRunning
+                        ? `Scouting ${meta.label.toLowerCase()} now…`
+                        : isCompleted
+                          ? `${meta.label} — already scouted (re-run to refresh)`
+                          : `Scout ${meta.label.toLowerCase()}`
+                    }
+                    className={`relative text-[11px] font-bold rounded-md px-2 py-2 border transition disabled:opacity-50 flex flex-col items-center gap-0.5 ${ringClass}`}
                     style={{ color: meta.color }}
                   >
                     <span>{meta.emoji}</span>
                     <span>{isRunning ? "…" : meta.label}</span>
+                    {isCompleted && !isRunning && !isExhausted && (
+                      <span
+                        aria-hidden
+                        title="Already scouted"
+                        className="absolute top-0.5 right-0.5 text-green-400 text-[10px] leading-none"
+                      >
+                        ✓
+                      </span>
+                    )}
                     {isExhausted && (
                       <span
                         aria-label="Resource exhausted"

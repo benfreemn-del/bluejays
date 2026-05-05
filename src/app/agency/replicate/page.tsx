@@ -227,7 +227,7 @@ const ANALYTICS: Component[] = [
   {
     title: "County-level lead scout map",
     detail:
-      "US county GeoJSON overlay (3000+ features), click any county to scout audience-tagged businesses via Google Places, fly-to-bounds zoom, exhausted-county tracking, MLS/USL/MLS-NEXT data layers.",
+      "US county GeoJSON overlay (3000+ features), click any county to scout audience-tagged businesses via Google Places, fly-to-bounds zoom, universal status colors (blue=in-progress, green=completed, red ✕=no results) persisted in localStorage, MLS/USL/MLS-NEXT data layers.",
     hours: 56,
     monthly: 12,
     trap: "Loading 3000-feature GeoJSON without bounding-box filtering tanks mobile performance — needs progressive loading.",

@@ -142,6 +142,11 @@ export default function ItcMarketMap() {
   // Set of "city|state|audience" keys exhausted last attempt.
   // Persisted to localStorage so the red X survives page reloads.
   const [exhausted, setExhausted] = useState<Set<string>>(new Set());
+  // ── Universal AI-package map state (shared rule across all client maps) ──
+  //  inProgress = blue ring while a scout is actively scraping
+  //  completed  = green ring once the tile has been successfully scouted
+  const [inProgress, setInProgress] = useState<Set<string>>(new Set());
+  const [completed, setCompleted] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     try {
@@ -149,6 +154,11 @@ export default function ItcMarketMap() {
       if (raw) {
         const arr = JSON.parse(raw) as string[];
         if (Array.isArray(arr)) setExhausted(new Set(arr));
+      }
+      const rawDone = localStorage.getItem("itc-map.completed");
+      if (rawDone) {
+        const arr = JSON.parse(rawDone) as string[];
+        if (Array.isArray(arr)) setCompleted(new Set(arr));
       }
     } catch {
       // ignore
@@ -302,6 +312,19 @@ export default function ItcMarketMap() {
   ) => {
     const key = `${city}|${state}|${audience}`;
     setScoutStatus({ key, state: "running" });
+    // Mark blue (in-progress) — universal AI-package map rule.
+    setInProgress((prev) => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+    const clearInProgress = () =>
+      setInProgress((prev) => {
+        if (!prev.has(key)) return prev;
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
     try {
       const r = await fetch("/api/dashboard/itc-scrape", {
         method: "POST",
@@ -317,6 +340,7 @@ export default function ItcMarketMap() {
       };
       if (!j.ok) {
         setScoutStatus({ key, state: "error", message: j.error ?? "Scrape failed" });
+        clearInProgress();
         return;
       }
       setScoutStatus({
@@ -325,9 +349,10 @@ export default function ItcMarketMap() {
         message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
       });
       // Mark exhausted (red X) when zero results come back.
+      const foundResults = (j.found ?? 0) > 0;
       setExhausted((prev) => {
         const next = new Set(prev);
-        if ((j.found ?? 0) === 0) next.add(key);
+        if (!foundResults) next.add(key);
         else next.delete(key);
         try {
           localStorage.setItem(
@@ -339,12 +364,30 @@ export default function ItcMarketMap() {
         }
         return next;
       });
+      // Mark green (completed) when results came back.
+      if (foundResults) {
+        setCompleted((prev) => {
+          const next = new Set(prev);
+          next.add(key);
+          try {
+            localStorage.setItem(
+              "itc-map.completed",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+      }
+      clearInProgress();
     } catch (err) {
       setScoutStatus({
         key,
         state: "error",
         message: err instanceof Error ? err.message : "Network error",
       });
+      clearInProgress();
     }
   };
 
@@ -578,36 +621,70 @@ export default function ItcMarketMap() {
               Pick an audience, then hit Run. Google Places searches the
               county; matches land in your Leads tab.
             </p>
+            {/* Universal AI-package map legend */}
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-2 text-[9px] text-slate-500">
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-blue-500 ring-1 ring-blue-400" />
+                In progress
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-green-500/80 ring-1 ring-green-500" />
+                Completed
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="text-rose-500 font-black">✕</span>
+                No results
+              </span>
+            </div>
             <div className="grid grid-cols-5 gap-1">
               {(["dealer", "tym", "forester", "hunter", "hobbyist"] as ItcAudience[]).map(
                 (aud) => {
                   const meta = ITC_AUDIENCE_META[aud];
                   const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
                   const isRunning =
-                    scoutStatus?.key === k && scoutStatus.state === "running";
+                    (scoutStatus?.key === k && scoutStatus.state === "running") ||
+                    inProgress.has(k);
                   const isExhausted = exhausted.has(k);
+                  const isCompleted = completed.has(k);
                   const isStaged = stagedAudience === aud;
+                  // Universal status ring — staged amber, running blue,
+                  // done green, default slate. Matches tekky-map exactly.
+                  const ringClass = isStaged
+                    ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                    : isRunning
+                      ? "border-blue-400 bg-blue-500/15 ring-1 ring-blue-400 animate-pulse"
+                      : isCompleted
+                        ? "border-green-500 bg-green-500/10 ring-1 ring-green-500/50"
+                        : "border-slate-700 hover:border-amber-400";
                   return (
                     <button
                       key={aud}
                       onClick={() => setStagedAudience(aud)}
                       disabled={isRunning}
                       title={
-                        isExhausted
-                          ? `${meta.label} — last scrape exhausted`
-                          : meta.label
+                        isRunning
+                          ? `Scouting ${meta.label.toLowerCase()} now…`
+                          : isCompleted
+                            ? `${meta.label} — already scouted (re-run to refresh)`
+                            : isExhausted
+                              ? `${meta.label} — last scrape exhausted`
+                              : meta.label
                       }
-                      className={`relative text-[10px] font-bold rounded-md py-1.5 border transition disabled:opacity-50 flex flex-col items-center ${
-                        isStaged
-                          ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
-                          : "border-slate-700 hover:border-amber-400"
-                      }`}
+                      className={`relative text-[10px] font-bold rounded-md py-1.5 border transition disabled:opacity-50 flex flex-col items-center ${ringClass}`}
                       style={{ color: meta.color }}
                     >
                       <span className="text-base">{meta.emoji}</span>
                       <span className="text-[9px]">
                         {isRunning ? "…" : meta.label}
                       </span>
+                      {isCompleted && !isRunning && !isExhausted && (
+                        <span
+                          aria-hidden
+                          className="absolute top-0.5 right-0.5 text-green-400 text-[9px] leading-none"
+                        >
+                          ✓
+                        </span>
+                      )}
                       {isExhausted && (
                         <span
                           aria-label="Resource exhausted"
