@@ -48,6 +48,7 @@ const INCLUDED = [
   { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds while the ads learn" },
   { icon: "🖼️", title: "Logo Revision", detail: "Brand polish so your system looks as good as it runs" },
   { icon: "📈", title: "Live Open/Click Tracking", detail: "SendGrid + pixel tracking flows back into your dashboard in real time" },
+  { icon: "🔥", title: "Microsoft Clarity Heatmaps", detail: "Session recordings + click/scroll heatmaps wired into your site so we see exactly where users drop off — and tighten the loop with proof" },
   { icon: "📊", title: "Weekly + Monthly Reports", detail: "Auto-generated digests in your inbox. Real numbers showing the loop tightening." },
 ];
 
