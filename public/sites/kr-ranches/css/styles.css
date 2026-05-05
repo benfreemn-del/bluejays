@@ -3417,4 +3417,66 @@ body {
 }
 
 
+/* ==========================================================================
+   ROUND 11 — CUT TILE EMOJI ICONS (Don't Want a Whole Animal? section)
+   ========================================================================== */
+
+/* Replace the round red SVG-icon container with a transparent emoji block.
+   Emoji renders at 30px so it's visible alongside the cut name + descriptor. */
+.cut-tile-icon-emoji {
+  background: transparent !important;
+  border: none !important;
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
+  color: inherit !important;
+  filter: drop-shadow(0 2px 4px rgba(31, 26, 20, 0.15));
+  transition: transform 0.25s ease;
+  position: relative;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+    "Twemoji Mozilla", system-ui, sans-serif;
+}
+
+.cut-tile:hover .cut-tile-icon-emoji {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+/* Two-emoji combo — main emoji centered, accent floats top-right small */
+.emoji-stack {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: inherit;
+}
+.emoji-stack .emoji-accent {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  font-size: 16px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(31, 26, 20, 0.25));
+  pointer-events: none;
+}
+
+@media (max-width: 680px) {
+  .cut-tile-icon-emoji {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 26px !important;
+  }
+  .emoji-stack .emoji-accent {
+    font-size: 13px;
+    top: -6px;
+    right: -8px;
+  }
+}
+
+
+
 
