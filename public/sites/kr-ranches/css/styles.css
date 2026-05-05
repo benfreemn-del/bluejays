@@ -3665,5 +3665,124 @@ body {
 .calc-step.is-hidden { display: none; }
 
 
+/* ==========================================================================
+   ROUND 14 — COLORIZE TRUST ROW
+   Each of the 4 trust cells gets its own farm-life accent color.
+   ========================================================================== */
+
+/* Shared treatment: solid colored circle, white icon inside, colored
+   underline accent under each strong heading. Subtle hover lift. */
+.trust-row .trust-cell {
+  position: relative;
+  padding-top: 6px;
+  transition: transform 0.25s ease;
+}
+.trust-row .trust-cell:hover {
+  transform: translateY(-2px);
+}
+.trust-row .trust-cell strong {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+.trust-row .trust-cell strong::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* Override the v4 sage-only icon — each cell gets a unique color via nth-child */
+
+/* Cell 1: USDA-inspected — wagyu red (authority / certification) */
+.trust-row .trust-cell:nth-child(1) {
+  --cell-color: #9d3030;
+}
+/* Cell 2: No hormones — pasture green (clean / natural) */
+.trust-row .trust-cell:nth-child(2) {
+  --cell-color: #5a7d3a;
+}
+/* Cell 3: Family-owned — wheat gold (warm / personal) */
+.trust-row .trust-cell:nth-child(3) {
+  --cell-color: #c89a2a;
+}
+/* Cell 4: Yakima Valley pasture — harvest amber (landscape / sunset) */
+.trust-row .trust-cell:nth-child(4) {
+  --cell-color: #c87b29;
+}
+
+.trust-row .trust-cell .trust-cell-icon {
+  background: linear-gradient(
+    135deg,
+    var(--cell-color) 0%,
+    color-mix(in srgb, var(--cell-color) 70%, #000) 100%
+  ) !important;
+  color: #fff !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50%;
+  box-shadow:
+    0 6px 14px -4px color-mix(in srgb, var(--cell-color) 55%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+.trust-row .trust-cell:hover .trust-cell-icon {
+  transform: scale(1.1) rotate(-4deg);
+  box-shadow:
+    0 10px 20px -4px color-mix(in srgb, var(--cell-color) 65%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+.trust-row .trust-cell .trust-cell-icon svg {
+  stroke-width: 2 !important;
+  width: 22px;
+  height: 22px;
+}
+
+/* The heading underline picks up the same cell color */
+.trust-row .trust-cell:nth-child(1) strong { color: #2d1d10; }
+.trust-row .trust-cell:nth-child(1) strong::after { background: #9d3030; }
+.trust-row .trust-cell:nth-child(2) strong::after { background: #5a7d3a; }
+.trust-row .trust-cell:nth-child(3) strong::after { background: #c89a2a; }
+.trust-row .trust-cell:nth-child(4) strong::after { background: #c87b29; }
+
+/* Tiny colored top stripe across the inner card so the row reads as
+   the connecting strip of all 4 cell accents. */
+.trust-row .trust-inner {
+  position: relative;
+  overflow: hidden;
+}
+.trust-row .trust-inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    #9d3030 0%, #9d3030 25%,
+    #5a7d3a 25%, #5a7d3a 50%,
+    #c89a2a 50%, #c89a2a 75%,
+    #c87b29 75%, #c87b29 100%
+  );
+}
+
+/* Fallback for browsers without color-mix() — solid colors are still good */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .trust-row .trust-cell .trust-cell-icon {
+    background: var(--cell-color) !important;
+    box-shadow: 0 6px 14px -4px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+}
+
+
 
 
