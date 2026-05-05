@@ -516,7 +516,22 @@
     <section class="freezer">
         <div class="container">
             <h2 class="section-title reveal">This Week at the Freezer</h2>
-            <p class="section-sub reveal">Real inventory, updated weekly. When it is gone, it is gone until the next harvest.</p>
+            <p class="section-sub reveal">When it&rsquo;s gone, it&rsquo;s gone! Join our waiting list.</p>
+            <form id="krWaitlistForm" class="waitlist-form reveal" novalidate>
+                <label for="krWaitlistEmail" class="visually-hidden">Email address</label>
+                <input
+                    type="email"
+                    id="krWaitlistEmail"
+                    name="email"
+                    placeholder="your@email.com"
+                    autocomplete="email"
+                    required
+                />
+                <button type="submit" class="waitlist-btn">
+                    <span class="waitlist-btn-label">Notify me</span>
+                </button>
+                <span class="waitlist-msg" aria-live="polite"></span>
+            </form>
             <div class="freezer-card reveal">
                 <div class="freezer-col">
                     <span class="freezer-eyebrow"><span class="pulse-dot"></span>This week</span>

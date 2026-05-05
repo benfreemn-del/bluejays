@@ -451,3 +451,59 @@
       // Silent fail — static fallback in HTML stays visible
     });
 })();
+
+/* ----------------------------------------------------------------------
+   FREEZER WAITLIST FORM — captures email when an item is gone-but-coming
+   POSTs to /api/clients/kr-ranches/waitlist. Shows inline success/error.
+   ---------------------------------------------------------------------- */
+(function () {
+  var form = document.getElementById("krWaitlistForm");
+  if (!form) return;
+  var input = form.querySelector('input[type="email"]');
+  var btn = form.querySelector(".waitlist-btn");
+  var msg = form.querySelector(".waitlist-msg");
+  var label = form.querySelector(".waitlist-btn-label");
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function setMsg(text, kind) {
+    msg.textContent = text;
+    msg.className = "waitlist-msg show " + (kind || "");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var email = (input.value || "").trim().toLowerCase();
+    if (!EMAIL_RE.test(email)) {
+      setMsg("Please enter a valid email.", "error");
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    label.textContent = "Adding…";
+    setMsg("", "");
+
+    fetch("/api/clients/kr-ranches/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email }),
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (res.ok && res.j && res.j.ok) {
+          form.classList.add("success");
+          if (res.j.already) {
+            setMsg("You're already on the list — we'll be in touch.", "success");
+          } else {
+            setMsg("You're on the list. We'll text when fresh meat hits the freezer.", "success");
+          }
+        } else {
+          throw new Error("save_failed");
+        }
+      })
+      .catch(function () {
+        btn.disabled = false;
+        label.textContent = "Notify me";
+        setMsg("Something went wrong — try again or call us.", "error");
+      });
+  });
+})();
