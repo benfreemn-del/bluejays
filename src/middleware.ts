@@ -147,6 +147,7 @@ const PUBLIC_API_PATHS = [
   "/api/watchdog/",                    // Vercel cron (daily 13:00 UTC) — gated by CRON_SECRET. Rule 66 heartbeat checker for all monitored crons + stuck-audit detector
   "/audit",                            // Audit landing page (public)
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
+  "/api/clients/kr-ranches/menu/public", // Public menu fetch for KR static site (no auth, 60s cache)
 ];
 
 /**

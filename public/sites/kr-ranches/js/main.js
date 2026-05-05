@@ -388,3 +388,66 @@
 
   nodes.forEach(function (n) { io.observe(n); });
 })();
+
+/* ----------------------------------------------------------------------
+   LIVE MENU FETCH — pulls freezer items from the admin-edited DB row
+   on page load, replaces the hardcoded HTML fallback. If the API is
+   slow/down, the original HTML stays visible. 60s response cache.
+   ---------------------------------------------------------------------- */
+(function () {
+  var list = document.querySelector(".freezer-list");
+  if (!list) return;
+
+  var STATUS_LABEL = { available: "Available", low: "Low Stock", gone: "Gone" };
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function render(items) {
+    if (!Array.isArray(items) || items.length === 0) return;
+    var html = items
+      .map(function (it) {
+        var status = STATUS_LABEL[it.status] || "Available";
+        var statusCls = it.status || "available";
+        var nameSafe = escapeHtml(it.name);
+        var priceSafe = escapeHtml(it.price);
+        var noteSafe = escapeHtml(it.note || "call to confirm");
+        return (
+          '<li class="freezer-item">' +
+          '<span><span class="freezer-name">' + nameSafe + "</span>" +
+          '<span class="freezer-price">' + priceSafe +
+          ' &middot; ' + noteSafe + "</span></span>" +
+          '<span class="freezer-badge ' + statusCls + '">' + status + "</span>" +
+          "</li>"
+        );
+      })
+      .join("");
+    list.innerHTML = html;
+  }
+
+  // 4-second timeout — if API is slow, leave the static fallback visible
+  var ctrl = new AbortController();
+  var timeout = setTimeout(function () { ctrl.abort(); }, 4000);
+
+  fetch("/api/clients/kr-ranches/menu/public", {
+    signal: ctrl.signal,
+    cache: "no-cache",
+  })
+    .then(function (r) {
+      clearTimeout(timeout);
+      if (!r.ok) throw new Error("api_" + r.status);
+      return r.json();
+    })
+    .then(function (j) {
+      if (j && j.ok && Array.isArray(j.items)) render(j.items);
+    })
+    .catch(function () {
+      // Silent fail — static fallback in HTML stays visible
+    });
+})();

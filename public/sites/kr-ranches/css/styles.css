@@ -3077,6 +3077,24 @@ body {
   box-shadow: 0 1px 3px rgba(31, 26, 20, 0.10);
 }
 
+/* BlueJay feather is the hidden owner-sign-in link. Subtle hover lift
+   so curious users can find it; not advertised. */
+.kr-owner-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+.kr-owner-key:hover {
+  opacity: 1;
+  transform: translateY(-1px) scale(1.08);
+}
+
 
 /* ==========================================================================
    ROUND 8 — FREEZER MENU READABILITY: softer text, bigger type, better
