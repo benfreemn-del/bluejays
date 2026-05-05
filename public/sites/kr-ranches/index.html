@@ -864,7 +864,38 @@
             <h2 class="section-title reveal">Place Your Order</h2>
             <p class="section-sub reveal">Tell us what you are looking for and we will be in touch within a day. For faster scheduling, just call.</p>
             <div class="contact-form-wrap reveal">
+                <div class="contact-calc">
+                    <div class="calc-step">
+                        <span class="calc-step-label">1. What do you want?</span>
+                        <div class="calc-pills" data-group="animal-contact">
+                            <button type="button" class="calc-pill is-active" data-animal="beef">🐄 Beef</button>
+                            <button type="button" class="calc-pill" data-animal="pork">🐖 Pork</button>
+                            <button type="button" class="calc-pill" data-animal="lamb">🐑 Lamb</button>
+                            <button type="button" class="calc-pill" data-animal="chicken">🐓 Chicken</button>
+                            <button type="button" class="calc-pill" data-animal="eggs">🥚 Eggs</button>
+                            <button type="button" class="calc-pill" data-animal="cuts">🥩 Just cuts</button>
+                        </div>
+                    </div>
+                    <div class="calc-step" id="contactShareStep">
+                        <span class="calc-step-label">2. How much?</span>
+                        <div class="calc-pills" data-group="share-contact">
+                            <button type="button" class="calc-pill" data-share="quarter">Quarter</button>
+                            <button type="button" class="calc-pill is-active" data-share="half">Half</button>
+                            <button type="button" class="calc-pill" data-share="whole">Whole</button>
+                        </div>
+                        <span class="calc-step-note" id="contactShareNote">Beef: quarter, half, or whole.</span>
+                    </div>
+
+                    <div class="calc-price-card">
+                        <div class="calc-price-label">Estimated total</div>
+                        <div class="calc-price-value" id="contactCalcPrice">$1,500 – $2,200</div>
+                        <div class="calc-price-sub" id="contactCalcSub">About 200&ndash;250 lbs cut and wrapped &middot; <span class="calc-pickup-pill" style="margin-left:6px;">📍 Ranch pickup only</span></div>
+                    </div>
+                </div>
+
                 <form id="orderForm">
+                    <input type="hidden" id="interest" name="interest" value="half-beef">
+
                     <div class="form-group">
                         <label for="name">Your Name</label>
                         <input type="text" id="name" name="name" placeholder="Jane Smith" required>
@@ -878,22 +909,6 @@
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" placeholder="you@email.com">
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="interest">What are you interested in?</label>
-                        <select id="interest" name="interest" required>
-                            <option value="">Choose one...</option>
-                            <option value="quarter-beef">Quarter Beef</option>
-                            <option value="half-beef">Half Beef</option>
-                            <option value="whole-beef">Whole Beef</option>
-                            <option value="half-hog">Half Hog</option>
-                            <option value="whole-hog">Whole Hog</option>
-                            <option value="lamb">Lamb (whole or half)</option>
-                            <option value="chicken">Chicken</option>
-                            <option value="eggs">Eggs</option>
-                            <option value="cuts">Individual Cuts</option>
-                            <option value="other">Something else</option>
-                        </select>
                     </div>
                     <div class="form-group">
                         <label for="message">Notes</label>

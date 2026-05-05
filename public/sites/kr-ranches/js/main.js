@@ -12,6 +12,7 @@
     initSmoothScroll();
     initScrollReveal();
     initOrderCalc();
+    initContactCalc();
     initFaqToggle();
     initContactForm();
     initYearStamp();
@@ -312,6 +313,139 @@
         if (!open) item.classList.add("open");
       });
     }
+  }
+
+  // ---- CONTACT-FORM CALCULATOR (mirrors order calc, drives hidden interest) ----
+  function initContactCalc() {
+    var animalPills = document.querySelectorAll('[data-group="animal-contact"] .calc-pill');
+    var sharePills = document.querySelectorAll('[data-group="share-contact"] .calc-pill');
+    var priceEl = document.getElementById("contactCalcPrice");
+    var subEl = document.getElementById("contactCalcSub");
+    var interestEl = document.getElementById("interest");
+    var shareStep = document.getElementById("contactShareStep");
+    var shareNote = document.getElementById("contactShareNote");
+
+    if (!animalPills.length || !priceEl) return;
+
+    // Same matrix shape as the order calculator. Animals without shares
+    // (chicken/eggs/cuts) skip step 2 and show a single price line.
+    var MATRIX = {
+      beef: {
+        quarter: { yield: "100–130 lbs", priceLow: 750, priceHigh: 1100, interest: "quarter-beef" },
+        half:    { yield: "200–250 lbs", priceLow: 1500, priceHigh: 2200, interest: "half-beef" },
+        whole:   { yield: "400–500 lbs", priceLow: 3000, priceHigh: 4400, interest: "whole-beef" },
+      },
+      pork: {
+        half:  { yield: "60–80 lbs", priceLow: 400, priceHigh: 650, interest: "half-hog" },
+        whole: { yield: "120–160 lbs", priceLow: 800, priceHigh: 1300, interest: "whole-hog" },
+      },
+      lamb: {
+        half:  { yield: "20–25 lbs", priceLow: 250, priceHigh: 400, interest: "half-lamb" },
+        whole: { yield: "40–50 lbs", priceLow: 500, priceHigh: 800, interest: "whole-lamb" },
+      },
+      // No-share animals — single flat estimate.
+      chicken: { yield: "Whole birds, 4–6 lbs each", priceLow: 25, priceHigh: 35, interest: "chicken", perUnit: " per bird" },
+      eggs:    { yield: "By the dozen", priceLow: 8, priceHigh: 8, interest: "eggs", perUnit: " / dozen" },
+      cuts:    { yield: "Whatever is in the freezer", priceLow: 9, priceHigh: 26, interest: "cuts", perUnit: " / lb" },
+    };
+
+    var SHARE_NOTES = {
+      beef: "Beef: quarter, half, or whole.",
+      pork: "Pork: halves or whole only.",
+      lamb: "Lamb: halves or whole only.",
+    };
+
+    var state = { animal: "beef", share: "half" };
+
+    function fmtMoney(n) { return "$" + n.toLocaleString("en-US"); }
+
+    function setActive(pills, attr, value) {
+      for (var i = 0; i < pills.length; i++) {
+        if (pills[i].getAttribute(attr) === value) pills[i].classList.add("is-active");
+        else pills[i].classList.remove("is-active");
+      }
+    }
+
+    function flashPrice() {
+      priceEl.classList.remove("flash");
+      void priceEl.offsetWidth;
+      priceEl.classList.add("flash");
+    }
+
+    function render() {
+      var bucket = MATRIX[state.animal];
+      if (!bucket) return;
+
+      var noShare = !!bucket.perUnit;
+
+      if (noShare) {
+        // Single flat-price animal (chicken/eggs/cuts) — hide share step
+        if (shareStep) shareStep.classList.add("is-hidden");
+        var priceText = bucket.priceLow === bucket.priceHigh
+          ? fmtMoney(bucket.priceLow) + bucket.perUnit
+          : fmtMoney(bucket.priceLow) + "–" + fmtMoney(bucket.priceHigh) + bucket.perUnit;
+        priceEl.textContent = priceText;
+        if (subEl) {
+          subEl.innerHTML = bucket.yield +
+            ' &middot; <span class="calc-pickup-pill" style="margin-left:6px;">📍 Ranch pickup only</span>';
+        }
+        if (interestEl) interestEl.value = bucket.interest;
+        flashPrice();
+        return;
+      }
+
+      // Share-based animal (beef/pork/lamb) — show share step
+      if (shareStep) shareStep.classList.remove("is-hidden");
+      if (shareNote) shareNote.textContent = SHARE_NOTES[state.animal] || "";
+
+      // Pork/lamb: no quarter — disable + auto-snap
+      for (var i = 0; i < sharePills.length; i++) {
+        var size = sharePills[i].getAttribute("data-share");
+        if (size === "quarter" && state.animal !== "beef") {
+          sharePills[i].setAttribute("disabled", "disabled");
+          if (state.share === "quarter") {
+            state.share = "half";
+            setActive(sharePills, "data-share", "half");
+          }
+        } else {
+          sharePills[i].removeAttribute("disabled");
+        }
+      }
+
+      var data = bucket[state.share] || bucket.half || bucket.whole;
+      if (!data) return;
+
+      priceEl.textContent = fmtMoney(data.priceLow) + " – " + fmtMoney(data.priceHigh);
+      if (subEl) {
+        subEl.innerHTML = "About " + data.yield + " cut and wrapped" +
+          ' &middot; <span class="calc-pickup-pill" style="margin-left:6px;">📍 Ranch pickup only</span>';
+      }
+      if (interestEl) interestEl.value = data.interest;
+      flashPrice();
+    }
+
+    for (var i = 0; i < animalPills.length; i++) {
+      (function (pill) {
+        pill.addEventListener("click", function () {
+          state.animal = pill.getAttribute("data-animal");
+          setActive(animalPills, "data-animal", state.animal);
+          render();
+        });
+      })(animalPills[i]);
+    }
+
+    for (var j = 0; j < sharePills.length; j++) {
+      (function (pill) {
+        pill.addEventListener("click", function () {
+          if (pill.hasAttribute("disabled")) return;
+          state.share = pill.getAttribute("data-share");
+          setActive(sharePills, "data-share", state.share);
+          render();
+        });
+      })(sharePills[j]);
+    }
+
+    render();
   }
 
   // ---- CONTACT FORM (POST to BlueJays contact-form API) ----

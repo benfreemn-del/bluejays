@@ -3647,6 +3647,23 @@ body {
   }
 }
 
+/* Contact-form variant of the calculator — sits inside .contact-form-wrap
+   above the form fields. Bordered block with a divider after it. */
+.contact-calc {
+  padding-bottom: 28px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+.contact-calc .calc-price-card {
+  margin-bottom: 0;
+}
+.contact-calc .calc-step:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Hidden when "no share" animals are picked (chicken/eggs/cuts) */
+.calc-step.is-hidden { display: none; }
+
 
 
 
