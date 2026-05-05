@@ -1100,12 +1100,29 @@ function InsightsTab({
     : report?.leads.pipeline_value_usd ?? 0;
   const [range, setRange] = useState<"7d" | "30d" | "90d" | "all">("30d");
   const [shopify, setShopify] = useState<ShopifyState | null>(null);
+  const [budgetSummary, setBudgetSummary] = useState<{
+    thisMonthCents: number;
+    monthlyRecurringCents: number;
+    byCategoryCents: Record<string, number>;
+  } | null>(null);
 
   useEffect(() => {
     (async () => {
       const r = await fetch("/api/client-portal/shopify");
       const j = (await r.json().catch(() => ({}))) as ShopifyState & { ok?: boolean };
       if (j.ok) setShopify(j);
+    })();
+    (async () => {
+      const r = await fetch("/api/client-portal/budget");
+      const j = (await r.json().catch(() => ({}))) as {
+        ok?: boolean;
+        summary?: {
+          thisMonthCents: number;
+          monthlyRecurringCents: number;
+          byCategoryCents: Record<string, number>;
+        };
+      };
+      if (j.ok && j.summary) setBudgetSummary(j.summary);
     })();
   }, []);
 
@@ -1161,7 +1178,7 @@ function InsightsTab({
       {/* Shopify revenue strip */}
       <ShopifyStrip shopify={shopify} />
 
-      {/* Headline grid */}
+      {/* Headline grid · row 1 — pipeline outcomes */}
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         <StatCard
           label="Total leads"
@@ -1191,6 +1208,81 @@ function InsightsTab({
           sub="from first send"
           accent="violet"
         />
+      </section>
+
+      {/* Headline grid · row 2 — marketing efficiency
+          Computed mix of REAL (reply rate, deal size, messages sent)
+          and PLACEHOLDER (CPC, CPL — populate when ad accounts get
+          wired). Honest "ad data pending" hint where data isn't there. */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        {(() => {
+          const adSpendCents =
+            (budgetSummary?.byCategoryCents?.["ads"] ?? 0) +
+            (budgetSummary?.byCategoryCents?.["ad-spend"] ?? 0) +
+            (budgetSummary?.byCategoryCents?.["meta-ads"] ?? 0) +
+            (budgetSummary?.byCategoryCents?.["google-ads"] ?? 0);
+          const totalSpendCents = budgetSummary?.thisMonthCents ?? 0;
+          const newThisWeek = report.leads.new_this_week;
+          // Approximate clicks from leads (assumes ~12% lead-rate from clicks)
+          const estimatedClicks = newThisWeek > 0 ? Math.round(newThisWeek / 0.12) : 0;
+          const cpc =
+            adSpendCents > 0 && estimatedClicks > 0
+              ? `$${(adSpendCents / 100 / estimatedClicks).toFixed(2)}`
+              : "—";
+          const cpl =
+            totalSpendCents > 0 && newThisWeek > 0
+              ? `$${(totalSpendCents / 100 / newThisWeek).toFixed(2)}`
+              : "—";
+          const replyRate =
+            report.messages.sent > 0
+              ? `${((report.funnel.responded / report.messages.sent) * 100).toFixed(1)}%`
+              : "—";
+          const avgDeal =
+            report.funnel.converted > 0
+              ? `$${Math.round(pipelineValueUsd / report.funnel.converted).toLocaleString()}`
+              : "—";
+
+          return (
+            <>
+              <StatCard
+                label="Cost per click"
+                value={cpc}
+                sub={
+                  cpc === "—" ? "Connect ad accounts" : "weekly · est"
+                }
+                accent="rose"
+              />
+              <StatCard
+                label="Cost per lead"
+                value={cpl}
+                sub={
+                  cpl === "—" ? "Awaiting spend data" : "this month"
+                }
+                accent="rose"
+              />
+              <StatCard
+                label="Reply rate"
+                value={replyRate}
+                sub={
+                  replyRate === "—"
+                    ? "No sends yet"
+                    : `${report.funnel.responded} of ${report.messages.sent}`
+                }
+                accent="sky"
+              />
+              <StatCard
+                label="Avg deal size"
+                value={avgDeal}
+                sub={
+                  avgDeal === "—"
+                    ? "No closes yet"
+                    : `from ${report.funnel.converted} closed`
+                }
+                accent="emerald"
+              />
+            </>
+          );
+        })()}
       </section>
 
       {/* Weekly trend chart */}
@@ -3304,7 +3396,7 @@ function StatCard({
   label: string;
   value: number | string;
   sub?: string;
-  accent?: "slate" | "blue" | "emerald" | "amber" | "violet";
+  accent?: "slate" | "blue" | "emerald" | "amber" | "violet" | "rose" | "sky";
 }) {
   const colors: Record<string, string> = {
     slate: "bg-slate-900 border-slate-800",
@@ -3312,6 +3404,8 @@ function StatCard({
     emerald: "bg-emerald-950/40 border-emerald-500/30",
     amber: "bg-amber-950/40 border-amber-500/30",
     violet: "bg-violet-950/40 border-violet-500/30",
+    rose: "bg-rose-950/40 border-rose-500/30",
+    sky: "bg-sky-950/40 border-sky-500/30",
   };
   return (
     <div className={`rounded-lg border p-3 sm:p-4 ${colors[accent]}`}>
