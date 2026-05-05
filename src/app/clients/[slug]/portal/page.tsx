@@ -176,6 +176,7 @@ type Tab =
   | "funnels"
   | "map"
   | "insights"
+  | "partners"
   | "account";
 
 type Campaign = {
@@ -597,6 +598,9 @@ export default function PortalPage({
               { id: "funnels", label: "Funnels", emoji: "🎯" },
               { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
+              ...(slug === "itc-quick-attach"
+                ? [{ id: "partners" as Tab, label: "Partners", emoji: "🤝" }]
+                : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -667,6 +671,9 @@ export default function PortalPage({
         {tab === "map" && <MapTab slug={slug} />}
         {tab === "activity" && <ActivityTab />}
         {tab === "insights" && <InsightsTab slug={slug} report={report} leads={leads} />}
+        {tab === "partners" && slug === "itc-quick-attach" && (
+          <PartnersTab slug={slug} />
+        )}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}
@@ -4907,6 +4914,180 @@ function ActivityCounter({
       </div>
       <div className={`text-xl font-black ${accentClass}`}>{value}</div>
     </div>
+  );
+}
+
+/* ─────────────────────────── PARTNERS TAB (ITC) ─────────────────────────── */
+/**
+ * In-portal recruitment hub for ITC's commission sales program. Surfaces
+ * the public partners landing page + the audience-branched script viewer
+ * as quick-launch cards so Jake (or anyone he hands the portal to) can
+ * jump straight to the recruit pitch or the script library without
+ * remembering the URLs.
+ */
+function PartnersTab({ slug }: { slug: string }) {
+  const audiences = [
+    { emoji: "🏪", label: "Dealer / wholesale", payout: "$250 / signed" },
+    { emoji: "🚜", label: "TYM owner", payout: "$50 / close" },
+    { emoji: "🌲", label: "Professional forester", payout: "$50 / close" },
+    { emoji: "🎯", label: "Hunter / outdoorsman", payout: "$50 / close" },
+    { emoji: "🏡", label: "Hobbyist · first-year", payout: "$50 / close" },
+    { emoji: "🤝", label: "Existing customer · referral", payout: "Toolbox kit" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Hero */}
+      <div className="rounded-2xl bg-gradient-to-br from-amber-950/40 via-amber-900/15 to-slate-900/60 border border-amber-500/20 p-6">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="min-w-0">
+            <h2 className="text-2xl font-black tracking-tight text-amber-100 mb-1">
+              ITC Partner Program
+            </h2>
+            <p className="text-sm text-amber-200/70 max-w-xl leading-relaxed">
+              Commission sales reps + warm-referrer partners. Six audience
+              scripts, one workspace. Paid Venmo or Zelle within 7 days.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+            <Link
+              href={`/clients/${slug}/partners`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-amber-950 text-center transition-colors"
+            >
+              View partner page ↗
+            </Link>
+            <Link
+              href={`/clients/${slug}/partners/script`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg border border-amber-500/30 bg-slate-900/50 hover:bg-slate-800 text-amber-200 text-center transition-colors"
+            >
+              Open script library ↗
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
+          <StatPill label="Active partners" value="0" tone="slate" />
+          <StatPill label="This-month payout" value="$0" tone="emerald" />
+          <StatPill label="Audience scripts" value="6" tone="amber" />
+          <StatPill label="Cap" value="12" tone="slate" />
+        </div>
+      </div>
+
+      {/* Six audience cards */}
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-baseline justify-between mb-4">
+          <h3 className="text-sm font-bold tracking-tight text-white uppercase">
+            Six audience scripts
+          </h3>
+          <Link
+            href={`/clients/${slug}/partners/script`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] uppercase tracking-wider font-bold text-amber-300 hover:text-amber-200"
+          >
+            Open library →
+          </Link>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {audiences.map((a) => (
+            <div
+              key={a.label}
+              className="rounded-xl border border-amber-500/15 bg-amber-950/10 p-3 hover:border-amber-500/40 transition-colors"
+            >
+              <div className="flex items-start gap-2">
+                <span className="text-2xl shrink-0 leading-none">
+                  {a.emoji}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-amber-100 leading-tight mb-1 truncate">
+                    {a.label}
+                  </p>
+                  <p className="text-[11px] text-emerald-300/90 font-bold tabular-nums">
+                    {a.payout}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick start */}
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <h3 className="text-sm font-bold tracking-tight text-white uppercase mb-3">
+          How to onboard a rep
+        </h3>
+        <ol className="space-y-2.5 text-sm text-slate-300">
+          <Step n={1}>
+            Send them the partner page link:{" "}
+            <code className="text-amber-300 bg-black/30 px-1.5 py-0.5 rounded text-xs">
+              /clients/{slug}/partners
+            </code>
+          </Step>
+          <Step n={2}>
+            They email <span className="text-amber-300">partners@itcquickattach.com</span> with a one-paragraph application.
+          </Step>
+          <Step n={3}>
+            You approve them, hand them the script library URL:{" "}
+            <code className="text-amber-300 bg-black/30 px-1.5 py-0.5 rounded text-xs">
+              /clients/{slug}/partners/script
+            </code>
+          </Step>
+          <Step n={4}>
+            They pick the audience tag for each prospect, the matching script
+            auto-loads, and they dial.
+          </Step>
+        </ol>
+      </div>
+
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-4 text-xs text-slate-500 italic leading-relaxed">
+        Application + payout tracking is currently manual via email. Full
+        partner workspace (auto-assigned prospects, in-app outcome tracking,
+        payout dashboard) ships in the v2 expansion — same shape as the
+        BlueJays partner workspace.
+      </div>
+    </div>
+  );
+}
+
+function StatPill({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "slate" | "emerald" | "amber";
+}) {
+  const toneCls: Record<typeof tone, string> = {
+    slate: "text-white",
+    emerald: "text-emerald-300",
+    amber: "text-amber-300",
+  };
+  return (
+    <div className="rounded-md bg-black/30 border border-white/5 px-3 py-2 text-center">
+      <div className="text-[9px] uppercase tracking-wider text-slate-500 mb-0.5">
+        {label}
+      </div>
+      <div className={`text-lg font-black tabular-nums ${toneCls[tone]}`}>
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Step({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <span className="shrink-0 w-6 h-6 rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-300 font-black text-xs">
+        {n}
+      </span>
+      <span className="leading-relaxed pt-0.5">{children}</span>
+    </li>
   );
 }
 
