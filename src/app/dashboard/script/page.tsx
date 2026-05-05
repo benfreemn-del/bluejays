@@ -258,6 +258,7 @@ export default async function DashboardScriptPage({
       tips={HORMOZI_CALL_TIPS}
       mantra={HORMOZI_MANTRA}
       callHistory={callHistory}
+      recentActivity={[]}
     />
   );
 }
