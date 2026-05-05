@@ -44,6 +44,24 @@ type MlsMarket = City & {
 
 type MapLayer = "all" | "mls" | "cities";
 
+type TekkyAudience = "parent" | "coach" | "player";
+
+type MarketSummaryRow = {
+  city: string;
+  state: string;
+  audience: TekkyAudience;
+  count: number;
+};
+
+const AUDIENCE_META: Record<
+  TekkyAudience,
+  { label: string; emoji: string; color: string }
+> = {
+  parent: { label: "Parents", emoji: "👪", color: "#fbbf24" },
+  coach: { label: "Coaches", emoji: "🏟️", color: "#60a5fa" },
+  player: { label: "Players", emoji: "🥇", color: "#a3e635" },
+};
+
 const STATE_BORDERS_URL =
   "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
 
@@ -64,6 +82,12 @@ export default function TekkyMapClient() {
   const [lockedState, setLockedState] = useState<string | null>(null);
   const [statesGeoJson, setStatesGeoJson] =
     useState<FeatureCollection | null>(null);
+  const [marketSummary, setMarketSummary] = useState<MarketSummaryRow[]>([]);
+  const [scrapeStatus, setScrapeStatus] = useState<{
+    key: string; // `${city}|${state}|${audience}`
+    state: "running" | "done" | "error";
+    message?: string;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +103,77 @@ export default function TekkyMapClient() {
       cancelled = true;
     };
   }, []);
+
+  // Pull lead-count summary so the sidebar + tooltips can show how
+  // many leads we already have per market/audience.
+  const refreshSummary = async () => {
+    try {
+      const r = await fetch("/api/dashboard/tekky-scrape");
+      const j = (await r.json()) as { ok: boolean; summary?: MarketSummaryRow[] };
+      if (j.ok && j.summary) setMarketSummary(j.summary);
+    } catch {
+      // silent — summary is a nice-to-have
+    }
+  };
+  useEffect(() => {
+    refreshSummary();
+  }, []);
+
+  /** Fire one scrape against a (city, state, audience) target. */
+  const runScrape = async (
+    city: string,
+    state: string,
+    audience: TekkyAudience,
+  ) => {
+    const key = `${city}|${state}|${audience}`;
+    setScrapeStatus({ key, state: "running" });
+    try {
+      const r = await fetch("/api/dashboard/tekky-scrape", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ city, state, audience }),
+      });
+      const j = (await r.json()) as {
+        ok: boolean;
+        inserted?: number;
+        skipped?: number;
+        found?: number;
+        error?: string;
+      };
+      if (!j.ok) {
+        setScrapeStatus({
+          key,
+          state: "error",
+          message: j.error ?? "Scrape failed",
+        });
+        return;
+      }
+      setScrapeStatus({
+        key,
+        state: "done",
+        message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
+      });
+      refreshSummary();
+    } catch (err) {
+      setScrapeStatus({
+        key,
+        state: "error",
+        message: err instanceof Error ? err.message : "Network error",
+      });
+    }
+  };
+
+  const summaryFor = (
+    city: string,
+    state: string,
+    audience: TekkyAudience,
+  ): number => {
+    const row = marketSummary.find(
+      (r) =>
+        r.city === city && r.state === state && r.audience === audience,
+    );
+    return row?.count ?? 0;
+  };
 
   const cities = (majorCitiesData.cities as City[]) ?? [];
   const mlsMarkets = (soccerTownsData.mls_markets as MlsMarket[]) ?? [];
@@ -342,30 +437,81 @@ export default function TekkyMapClient() {
                 No MLS host city in {focusState}.
               </li>
             )}
-            {sidebarMarkets.map((t) => (
-              <li
-                key={`mls-${t.name}-${t.state}`}
-                className="px-4 py-2.5 flex items-start gap-3 hover:bg-slate-800/40 transition"
-              >
-                <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-black text-[10px] bg-amber-400 text-slate-950">
-                  ⚽
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-white truncate">
-                    {t.name}
-                    <span className="text-slate-500 font-normal ml-1">
-                      {t.state}
-                    </span>
+            {sidebarMarkets.map((t) => {
+              const audiences: TekkyAudience[] = ["parent", "coach", "player"];
+              return (
+                <li
+                  key={`mls-${t.name}-${t.state}`}
+                  className="px-4 py-3 hover:bg-slate-800/40 transition"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-black text-[10px] bg-amber-400 text-slate-950">
+                      ⚽
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-white truncate">
+                        {t.name}
+                        <span className="text-slate-500 font-normal ml-1">
+                          {t.state}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-amber-200 truncate">
+                        {t.club}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        {t.population.toLocaleString()} pop. · est.{" "}
+                        {t.founded}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-[11px] text-amber-200 truncate">
-                    {t.club}
+                  {/* Per-audience scrape controls */}
+                  <div className="mt-2 grid grid-cols-3 gap-1.5">
+                    {audiences.map((aud) => {
+                      const meta = AUDIENCE_META[aud];
+                      const k = `${t.name}|${t.state}|${aud}`;
+                      const isRunning =
+                        scrapeStatus?.key === k &&
+                        scrapeStatus.state === "running";
+                      const count = summaryFor(t.name, t.state, aud);
+                      return (
+                        <button
+                          key={aud}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            runScrape(t.name, t.state, aud);
+                          }}
+                          disabled={isRunning}
+                          title={`Scrape ${meta.label} in ${t.name}, ${t.state}`}
+                          className="text-[10px] font-bold rounded-md px-1.5 py-1 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center gap-0.5"
+                          style={{ color: meta.color }}
+                        >
+                          <span>
+                            {meta.emoji} {isRunning ? "…" : meta.label}
+                          </span>
+                          <span className="text-slate-400 font-normal">
+                            {count > 0 ? `${count} leads` : "scrape"}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                  <div className="text-[10px] text-slate-500">
-                    {t.population.toLocaleString()} pop. · est. {t.founded}
-                  </div>
-                </div>
-              </li>
-            ))}
+                  {scrapeStatus &&
+                    scrapeStatus.key.startsWith(`${t.name}|${t.state}|`) && (
+                      <div
+                        className={`mt-1.5 text-[10px] ${
+                          scrapeStatus.state === "error"
+                            ? "text-rose-400"
+                            : scrapeStatus.state === "done"
+                              ? "text-emerald-400"
+                              : "text-slate-400"
+                        }`}
+                      >
+                        {scrapeStatus.message ?? "running…"}
+                      </div>
+                    )}
+                </li>
+              );
+            })}
           </ol>
         </section>
 
