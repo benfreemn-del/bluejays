@@ -3030,4 +3030,49 @@ body {
 }
 
 
+/* ==========================================================================
+   ROUND 7 — KR LOGO MOBILE FIX: tighter circle crop + white pill bg
+   so the logo's white background blends seamlessly with the navbar.
+   ========================================================================== */
 
+/* Tighter crop: image is square, container shorter than wide so only
+   the barbed-wire circle shows (no "Ranches" script peeking in) */
+.nav-logo .nav-mark {
+  width: 48px !important;
+  height: 30px !important;            /* was 38 — drops the script line */
+  background: #fff !important;        /* matches logo's white background */
+  border-radius: 6px !important;
+  padding: 2px 0 !important;
+  box-shadow: 0 1px 3px rgba(31, 26, 20, 0.08);
+  overflow: hidden;
+}
+.nav-logo .nav-mark img.kr-logo-circle {
+  width: 48px !important;
+  height: auto !important;
+  object-fit: cover;
+  object-position: top center;
+  margin-top: -2px;                   /* nudge up so circle is centered */
+}
+
+/* Mobile drawer logo — same tighter crop, larger size */
+.mobile-mark {
+  width: 88px !important;
+  height: 56px !important;            /* was 64 — drops the script line */
+  background: #fff !important;
+  border-radius: 10px !important;
+  padding: 4px 0 !important;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(31, 26, 20, 0.10);
+}
+.mobile-mark img.kr-logo-circle {
+  width: 88px !important;
+  height: auto !important;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* When navbar is at top (transparent bg), the white logo pill stands out.
+   When scrolled (cream bg), logo pill matches with subtle shadow. */
+#navbar.scrolled .nav-mark {
+  box-shadow: 0 1px 3px rgba(31, 26, 20, 0.10);
+}
