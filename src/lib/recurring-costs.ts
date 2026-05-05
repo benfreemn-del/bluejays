@@ -181,13 +181,21 @@ export async function endRecurringCost(service: string, endedOn?: Date): Promise
   if (error) throw error;
 }
 
-export async function getActiveRecurringCosts(): Promise<RecurringCost[]> {
+export async function getActiveRecurringCosts(opts?: {
+  /** When set, return ONLY rows attributed to this client (their
+   *  Twilio number, dedicated SendGrid sub, etc.) — excludes shared
+   *  infra rows. When null/omitted, returns ALL active rows including
+   *  shared infra (Vercel Pro, Claude Max, etc.) — legacy behavior. */
+  clientSlug?: string;
+}): Promise<RecurringCost[]> {
   if (!isSupabaseConfigured()) return [];
-  const { data, error } = await supabase
+  let q = supabase
     .from("recurring_costs")
     .select("*")
     .eq("active", true)
     .order("monthly_cost_usd", { ascending: false });
+  if (opts?.clientSlug) q = q.eq("client_slug", opts.clientSlug);
+  const { data, error } = await q;
   if (error) {
     console.error(`  [RecurringCosts] Failed to fetch active rows: ${error.message}`);
     return [];
@@ -218,8 +226,10 @@ export interface MonthlyRecurringTotal {
   byCategory: Record<string, number>;
 }
 
-export async function getMonthlyRecurringTotal(): Promise<MonthlyRecurringTotal> {
-  const rows = await getActiveRecurringCosts();
+export async function getMonthlyRecurringTotal(opts?: {
+  clientSlug?: string;
+}): Promise<MonthlyRecurringTotal> {
+  const rows = await getActiveRecurringCosts(opts);
   const byCategory: Record<string, number> = {};
   let total = 0;
   for (const r of rows) {

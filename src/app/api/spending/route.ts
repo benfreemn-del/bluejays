@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAllProspects } from "@/lib/store";
 import { getSystemCostEstimate } from "@/lib/cost-tracker";
 import { getEmailHistory } from "@/lib/email-sender";
@@ -12,11 +12,15 @@ import { totalRevenueFromProspects } from "@/lib/actual-revenue";
  * Alias for /api/costs — returns cost and spending data for the dashboard.
  * Updated to prioritize real cost data from Supabase system_costs table.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Per-client filter — when ?client=zenith-sports etc. is set, all
+  // numbers slice to just that tenant's costs. Default = global.
+  const clientSlug =
+    new URL(req.url).searchParams.get("client") || undefined;
   const prospects = await getAllProspects();
 
   // Try to get real cost data from system_costs table
-  const realCosts = await getCostData();
+  const realCosts = await getCostData({ clientSlug });
   const hasRealData = realCosts.thisMonth.total > 0;
 
   // Always compute legacy estimates as fallback / comparison

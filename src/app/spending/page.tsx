@@ -124,6 +124,19 @@ interface DeliverabilityHealth {
 // Fixed monthly costs — update here when subscriptions change
 const FIXED_MONTHLY = 242.09; // Vercel $20 + SendGrid $20 + Twilio $1.15 + Domain $0.94 + Claude Max $200
 
+// Per-client filter options. "all" = global (legacy default).
+// Adding a client = drop a slug here (matches what's in
+// SLUG_CONFIG / client_owners). Order shown to user as ↓.
+const CLIENT_FILTER_OPTIONS: Array<{ slug: string; label: string }> = [
+  { slug: "all", label: "All clients" },
+  { slug: "zenith-sports", label: "Zenith Sports" },
+  { slug: "itc-quick-attach", label: "ITC Quick Attach" },
+  { slug: "hector-landscaping", label: "Hector Landscaping" },
+  { slug: "lewis-county-autism", label: "Lewis County Autism" },
+  { slug: "mountain-view-landscape", label: "Mountain View Landscape" },
+  { slug: "pine-and-particle", label: "Pine & Particle" },
+];
+
 export default function SpendingPage() {
   const [costs, setCosts] = useState<SystemCosts | null>(null);
   const [analytics, setAnalytics] = useState<CostAnalytics | null>(null);
@@ -136,6 +149,9 @@ export default function SpendingPage() {
   const [siteTarget, setSiteTarget] = useState(5000);
   const [projection, setProjection] = useState<BurnProjection | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clientFilter, setClientFilter] = useState<string>("all");
+  // Build the ?client= query param (omit when "all" so we get global).
+  const clientQ = clientFilter === "all" ? "" : `?client=${encodeURIComponent(clientFilter)}`;
 
   const refreshRecurring = useCallback(async () => {
     setRecurringLoading(true);
@@ -150,9 +166,10 @@ export default function SpendingPage() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
-      fetch("/api/costs").then((r) => r.json()),
-      fetch("/api/costs/analytics").then((r) => r.json()).catch(() => null),
+      fetch(`/api/costs${clientQ}`).then((r) => r.json()),
+      fetch(`/api/costs/analytics${clientQ}`).then((r) => r.json()).catch(() => null),
       fetch("/api/pipeline-velocity").then((r) => r.json()),
       fetch("/api/email-stats").then((r) => r.json()).catch(() => null),
       fetch("/api/email-deliverability").then((r) => r.json()).catch(() => null),
@@ -168,7 +185,7 @@ export default function SpendingPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [clientQ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -200,13 +217,47 @@ export default function SpendingPage() {
   return (
     <div className="min-h-screen bg-[#050a14]">
       <header className="border-b border-white/[0.06] bg-[#0a1628] sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-blue-600" />
             <h1 className="text-xl font-bold">Spending & Analytics</h1>
           </div>
-          <a href="/dashboard" className="text-sm text-white/50 hover:text-white transition-colors">Dashboard</a>
+          <div className="flex items-center gap-3">
+            {/* Per-tenant filter — slices every cost number on the page
+                to one client_slug. "All clients" = global rollup. */}
+            <label className="text-[10px] uppercase tracking-wider text-white/40 font-bold hidden sm:inline">
+              View
+            </label>
+            <select
+              value={clientFilter}
+              onChange={(e) => setClientFilter(e.target.value)}
+              className="bg-[#0f2238] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:border-sky-400 focus:outline-none"
+              title="Filter all numbers on this page to one client"
+            >
+              {CLIENT_FILTER_OPTIONS.map((o) => (
+                <option key={o.slug} value={o.slug}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <a
+              href="/dashboard"
+              className="text-sm text-white/50 hover:text-white transition-colors"
+            >
+              Dashboard
+            </a>
+          </div>
         </div>
+        {clientFilter !== "all" && (
+          <div className="max-w-6xl mx-auto px-6 pb-2 text-[11px] text-sky-300">
+            Showing costs attributed to{" "}
+            <span className="font-bold">
+              {CLIENT_FILTER_OPTIONS.find((o) => o.slug === clientFilter)?.label}
+            </span>
+            . Shared infra (Vercel Pro, Claude Max) is excluded — those
+            roll into the All-Clients view.
+          </div>
+        )}
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">

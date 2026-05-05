@@ -53,6 +53,14 @@ export type CostService = keyof typeof COST_RATES;
 export interface LogCostParams {
   prospectId?: string;
   batchId?: string;
+  /**
+   * Optional. When set, this cost row is attributed to a specific
+   * BlueJays client (e.g. zenith-sports, itc-quick-attach). When null
+   * the row is treated as shared/cross-client infra (Vercel, Claude
+   * Max, etc.). The /spending dashboard's per-client filter uses this
+   * to slice ROI per tenant.
+   */
+  clientSlug?: string;
   service: string;
   action: string;
   costUsd: number;
@@ -77,6 +85,7 @@ export async function logCost(params: LogCostParams): Promise<void> {
     const { error } = await supabase.from("system_costs").insert({
       prospect_id: params.prospectId || null,
       batch_id: params.batchId || null,
+      client_slug: params.clientSlug || null,
       service: params.service,
       action: params.action,
       cost_usd: params.costUsd,
@@ -102,7 +111,12 @@ export async function logCost(params: LogCostParams): Promise<void> {
  * + recurring) so the dashboard can show true monthly burn. The
  * existing fields stay backwards-compatible.
  */
-export async function getCostData(): Promise<{
+export async function getCostData(opts?: {
+  /** When set, filter all aggregates to rows tagged with this
+   *  client_slug. Default = unfiltered (all clients combined, the
+   *  legacy behavior). */
+  clientSlug?: string;
+}): Promise<{
   today: { total: number; byService: Record<string, number> };
   thisWeek: { total: number; byService: Record<string, number> };
   thisMonth: { total: number; byService: Record<string, number> };
@@ -113,6 +127,7 @@ export async function getCostData(): Promise<{
   recurringByCategory: Record<string, number>;
   totalMonthlyCombined: number;
 }> {
+  const clientSlug = opts?.clientSlug;
   const defaultResult = {
     today: { total: 0, byService: {} },
     thisWeek: { total: 0, byService: {} },
@@ -156,11 +171,13 @@ export async function getCostData(): Promise<{
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
     // Fetch all costs for this month (covers today, week, and month)
-    const { data: monthlyCosts, error: monthlyError } = await supabase
+    let monthlyQ = supabase
       .from("system_costs")
       .select("service, cost_usd, created_at, prospect_id")
       .gte("created_at", monthStart)
       .eq("status", "success");
+    if (clientSlug) monthlyQ = monthlyQ.eq("client_slug", clientSlug);
+    const { data: monthlyCosts, error: monthlyError } = await monthlyQ;
 
     if (monthlyError || !monthlyCosts) {
       return {

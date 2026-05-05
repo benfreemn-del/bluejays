@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSystemCostEstimate } from "@/lib/cost-tracker";
 import { getCostData } from "@/lib/cost-logger";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -18,7 +18,9 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  *     the actual rows. Total queries: 4 cheap COUNTs in parallel.
  *     Expected: <1s.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const clientSlug =
+    new URL(req.url).searchParams.get("client") || undefined;
   // Default response shape used when Supabase isn't configured
   const empty = {
     totalEmailsSent: 0,
@@ -62,7 +64,7 @@ export async function GET() {
       supabase.from("prospects").select("*", { count: "exact", head: true }).eq("status", "paid"),
       supabase.from("emails").select("*", { count: "exact", head: true }),
       supabase.from("sms_messages").select("*", { count: "exact", head: true }),
-      getCostData(),
+      getCostData({ clientSlug }),
     ]);
     totalProspects = prospectRes.count ?? 0;
     paidCount = paidRes.count ?? 0;
