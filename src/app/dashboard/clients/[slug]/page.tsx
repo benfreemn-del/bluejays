@@ -10,6 +10,7 @@ import type {
   ClientTaskPriority,
   ClientTaskStatus,
 } from "@/lib/client-tasks";
+import { clientSiteFor } from "@/lib/client-site-urls";
 
 /**
  * /dashboard/clients/[slug]
@@ -195,13 +196,7 @@ export default function ClientTasksPage({
           >
             Report
           </Link>
-          <Link
-            href={`/clients/${slug}`}
-            target="_blank"
-            className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
-          >
-            Site ↗
-          </Link>
+          <SiteButton slug={slug} />
         </div>
       </header>
 
@@ -527,5 +522,39 @@ function NewTaskForm({
         </button>
       </div>
     </div>
+  );
+}
+
+/**
+ * Site ↗ button — renders one of three states based on what we know
+ * about this client's public site:
+ *   internal → linkable, opens our /clients/{slug} page
+ *   external → linkable, opens the client's actual production URL
+ *   none     → disabled, tooltip says "no site URL set yet"
+ */
+function SiteButton({ slug }: { slug: string }) {
+  const site = clientSiteFor(slug);
+  const base =
+    "text-[11px] tracking-wider uppercase font-bold border px-2.5 py-1 rounded";
+
+  if (site.kind === "none") {
+    return (
+      <span
+        title="No site URL set yet — wire it in src/lib/client-site-urls.ts"
+        className={`${base} text-slate-600 border-slate-800 cursor-not-allowed`}
+      >
+        Site ↗
+      </span>
+    );
+  }
+  return (
+    <a
+      href={site.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${base} text-slate-400 hover:text-white border-slate-700`}
+    >
+      Site ↗
+    </a>
   );
 }

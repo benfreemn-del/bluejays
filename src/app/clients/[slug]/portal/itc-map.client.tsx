@@ -103,14 +103,8 @@ const ITC_AUDIENCE_META: Record<
   hobbyist: { label: "Sub-compact", emoji: "🚜", color: "#34d399" },
 };
 
-/** Map ITC audiences → existing tekky-scrape audience buckets so the
- * existing scrape pipeline can run today. Full ITC-native scrape lib
- * queued. */
-function mapItcToScrapeAudience(a: ItcAudience): "parent" | "coach" | "player" {
-  if (a === "dealer") return "coach";
-  if (a === "tym" || a === "hobbyist") return "parent";
-  return "player";
-}
+// (ITC now hits its own /api/dashboard/itc-scrape pipeline — see
+//  src/lib/itc-scrape.ts. No more mapping to soccer-audience buckets.)
 
 function ZoomController({ bounds }: { bounds: L.LatLngBounds | null }) {
   const map = useMap();
@@ -309,14 +303,10 @@ export default function ItcMarketMap() {
     const key = `${city}|${state}|${audience}`;
     setScoutStatus({ key, state: "running" });
     try {
-      const r = await fetch("/api/dashboard/tekky-scrape", {
+      const r = await fetch("/api/dashboard/itc-scrape", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          city,
-          state,
-          audience: mapItcToScrapeAudience(audience),
-        }),
+        body: JSON.stringify({ city, state, audience }),
       });
       const j = (await r.json()) as {
         ok: boolean;

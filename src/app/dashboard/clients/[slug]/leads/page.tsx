@@ -7,6 +7,7 @@ import type {
   ClientLeadAudience,
   ClientLeadFunnelStatus,
 } from "@/lib/client-leads";
+import { clientSiteFor } from "@/lib/client-site-urls";
 
 /**
  * /dashboard/clients/[slug]/leads
@@ -221,13 +222,7 @@ export default function ClientLeadsPage({
           >
             {runningFunnel ? "Running…" : "Run funnel"}
           </button>
-          <Link
-            href={`/clients/${slug}`}
-            target="_blank"
-            className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
-          >
-            Site ↗
-          </Link>
+          <SiteButton slug={slug} />
         </div>
         {runResult && (
           <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-2 text-[11px] text-emerald-300">
@@ -850,4 +845,32 @@ function timeAgo(iso: string): string {
   const d = Math.floor(h / 24);
   if (d < 30) return `${d}d`;
   return new Date(iso).toLocaleDateString();
+}
+
+/** Per-client Site ↗ button — see /dashboard/clients/[slug]/page.tsx
+ *  for the canonical version. Renders disabled when no URL is wired. */
+function SiteButton({ slug }: { slug: string }) {
+  const site = clientSiteFor(slug);
+  const base =
+    "text-[11px] tracking-wider uppercase font-bold border px-2.5 py-1 rounded";
+  if (site.kind === "none") {
+    return (
+      <span
+        title="No site URL set yet — wire it in src/lib/client-site-urls.ts"
+        className={`${base} text-slate-600 border-slate-800 cursor-not-allowed`}
+      >
+        Site ↗
+      </span>
+    );
+  }
+  return (
+    <a
+      href={site.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${base} text-slate-400 hover:text-white border-slate-700`}
+    >
+      Site ↗
+    </a>
+  );
 }
