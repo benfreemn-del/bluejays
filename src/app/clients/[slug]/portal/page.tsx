@@ -6,6 +6,7 @@ import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
+import AISkillsTab from "@/components/portal/AISkillsTab";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -179,6 +180,7 @@ type Tab =
   | "insights"
   | "partners"
   | "customers"
+  | "ai-skills"
   | "account";
 
 type Campaign = {
@@ -606,6 +608,11 @@ export default function PortalPage({
               ...(slug === "laser-lakes"
                 ? [{ id: "customers" as Tab, label: "Customers", emoji: "🪵" }]
                 : []),
+              // 🧠 AI Skills tab — AI-package buyers only. See CLAUDE.md
+              // "Client Tenant Status" table for who's gated in/out.
+              ...(slug === "itc-quick-attach" || slug === "zenith-sports"
+                ? [{ id: "ai-skills" as Tab, label: "AI Skills", emoji: "🧠" }]
+                : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -683,6 +690,10 @@ export default function PortalPage({
         {tab === "customers" && slug === "laser-lakes" && (
           <CustomersTab slug={slug} />
         )}
+        {tab === "ai-skills" &&
+          (slug === "itc-quick-attach" || slug === "zenith-sports") && (
+            <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
+          )}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}

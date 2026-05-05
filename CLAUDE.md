@@ -7,6 +7,34 @@
 - **Outreach emails MUST use three separate fenced code blocks** — one for TO, one for SUBJECT, one for BODY. Never combine them. Never put the signature in the body (Ben has an auto-signature). This format lets Ben copy each field independently and forward without editing. Every single email Claude writes, no exceptions.
 - **ALWAYS drop runnable SQL / scripts inline in the chat — never just point at a file path.** When a migration, seed script, one-off SQL, or any "Ben must run this somewhere" snippet is needed, paste the FULL code into the chat inside a fenced ```sql / ```bash / ```powershell block so Ben can copy it directly. Telling him to "open `supabase/migrations/X.sql` and paste the contents" forces an extra step every single time. Also state where to paste it (Supabase SQL Editor, Vercel CLI, terminal, etc.). The file in the repo is the source of truth; the inline drop is for ergonomics. Both, every time.
 
+## Client Tenant Status — READ BEFORE BUILDING ANY TENANT FEATURE
+
+Different BlueJays clients buy different tiers. NOT all clients have an
+owner-portal backend, and NOT all clients with a backend bought the AI
+system. **Default to gating new features by slug.** When in doubt, ask
+Ben which clients should see the feature instead of auto-adding for
+every slug.
+
+| Slug | Owner-Portal Backend | AI Marketing System | Sales Portal (commission program) | Notes |
+|---|---|---|---|---|
+| `zenith-sports` | ✓ | ✓ | ✓ | TEKKY · 4-qtr $10K AI plan · soccer, Caleb + Philip + Paul |
+| `itc-quick-attach` | ✓ | ✓ (queued) | ✓ | Jake · $9.7K AI System · tractor accessories · signing later |
+| `laser-lakes` | ✓ | ✗ | ✗ | Nate · custom site + Customers/Email tab ONLY · explicitly NO AI features |
+| `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |
+| `pine-and-particle` | ✗ | ✗ | ✗ | Inquire-only routing |
+| `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
+| `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
+| Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
+
+**Rules when adding a tenant-facing feature:**
+1. **AI-related features** (AI inbound responder · Hyperloop · AI postcards · AI Skills tab · funnel automation · self-learning ads): gate to `slug === "zenith-sports" || slug === "itc-quick-attach"` ONLY.
+2. **Portal backend features in general**: only ship for slugs with ✓ in column 2 of the table above.
+3. **Sales-portal / partner features**: only ship for slugs with ✓ in column 3.
+4. **Custom-build / e-commerce / customer-tracking features** (e.g. Laser Lakes Customers tab, Shopify webhook): can be specific to non-AI clients with portals — those clients still get a portal, just without the AI surface.
+5. **Inquire-only clients** (✗ in column 2): don't get any portal features. Don't seed `client_owners` rows for them. Their entries in `/api/clients/inquire/route.ts` `SLUG_CONFIG` are routing-only (lead emails to the right person).
+
+**When the table needs updating:** any time a client moves between tiers (e.g. Hector signs the AI System tomorrow), update this table FIRST in the same commit as the feature gate. The table is the source of truth for what's deployed where — don't let the code and the table drift.
+
 ## Core Philosophy
 This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
 

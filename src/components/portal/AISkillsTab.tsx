@@ -1,0 +1,448 @@
+"use client";
+
+/**
+ * AISkillsTab — universal owner-portal panel showing every AI capability
+ * the BlueJays AI Marketing System runs on the tenant's behalf.
+ *
+ * Designed for live walkthroughs: when Caleb / Jake / Nate / Hector asks
+ * "what does my AI actually do?", this is the single screen that answers
+ * it without making them dig through 10 tabs.
+ *
+ * Categorized into 5 buckets that map to the value chain:
+ *   🎯 Lead acquisition
+ *   ✉️ Messaging
+ *   🎙 Sales conversations
+ *   📊 Performance optimization
+ *   📈 Analytics + reporting
+ *
+ * Each capability card carries a status pill so the owner sees what's
+ * ACTIVE (running today on their data), AVAILABLE (built, awaiting their
+ * config — env vars, API keys, content approval), or COMING (queued for
+ * a future sprint).
+ */
+
+type Status = "active" | "available" | "coming";
+
+type Capability = {
+  emoji: string;
+  title: string;
+  detail: string;
+  /** Status keyed by tenant slug — uses "default" if a slug isn't listed. */
+  status: Record<string, Status> | { default: Status };
+  /** Optional: where in the portal to see it in action. */
+  seeItIn?: { label: string; tab: string };
+  /** Optional: per-tenant trap to call out (for the engineering-replicate page) */
+  trap?: string;
+};
+
+const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; capabilities: Capability[] }[] = [
+  {
+    id: "lead-acquisition",
+    label: "Lead acquisition",
+    emoji: "🎯",
+    subtitle: "How net-new leads enter your system without you lifting a finger.",
+    capabilities: [
+      {
+        emoji: "🗺️",
+        title: "County-Level Lead Scout",
+        detail:
+          "Click any U.S. county on the Map tab. AI runs an audience-tagged Google Places search, dedupes against your existing pipeline, and writes the new businesses into your Leads tab — typically 5-25 fresh prospects per scout.",
+        status: { default: "active" },
+        seeItIn: { label: "Map tab", tab: "map" },
+      },
+      {
+        emoji: "🎯",
+        title: "Audience Auto-Detection",
+        detail:
+          "Every form submission and inbound message is classified into your pre-defined customer segments (e.g. Coach / Parent / Player / Camp Director) so the right funnel fires automatically.",
+        status: { default: "active" },
+        seeItIn: { label: "Leads tab", tab: "leads" },
+      },
+      {
+        emoji: "🎁",
+        title: "Interactive Lead Magnet",
+        detail:
+          "Configurator quizzes (Build Your Player, Build Your Tractor, Build Your Lake Map) generate a personalized recommendation and capture the lead with full context — 3-5× the conversion of static PDF magnets.",
+        status: { default: "active" },
+        seeItIn: { label: "Funnels tab", tab: "funnels" },
+      },
+      {
+        emoji: "📥",
+        title: "Missed-Call Text-Back",
+        detail:
+          "Caller hangs up. Within 60 seconds, AI sends an SMS in your voice asking what they needed — recovers ~25% of the leads voicemail used to lose.",
+        status: { default: "available" },
+      },
+    ],
+  },
+  {
+    id: "messaging",
+    label: "Messaging AI",
+    emoji: "✉️",
+    subtitle: "Multi-channel funnels that know which message goes to which lead, when, and through what channel.",
+    capabilities: [
+      {
+        emoji: "📧",
+        title: "Audience-Segmented Funnels",
+        detail:
+          "Up to 6 audience tracks per tenant. Each track has its own day-by-day cadence using all 4 channels: email, SMS, ringless voicemail, and AI postcards via Lob.",
+        status: { default: "active" },
+        seeItIn: { label: "Funnels tab", tab: "funnels" },
+      },
+      {
+        emoji: "🤖",
+        title: "AI Inbound Responder",
+        detail:
+          "Every inbound reply is classified into 6 intent classes (interested / not-now / objection-price / objection-timing / question / unsubscribe), drafts a voice-matched response in your tone, and queues it for one-tap approve.",
+        status: { default: "available" },
+        trap: "Voice-matching the owner takes 50+ training examples — generic LLM output tanks reply rates by ~40%.",
+      },
+      {
+        emoji: "💬",
+        title: "SMS Campaign Engine",
+        detail:
+          "Twilio-backed outbound SMS with cohort segmenting and reply detection. Auto-pauses funnel steps when a lead replies so the system doesn't talk over them.",
+        status: { default: "available" },
+      },
+      {
+        emoji: "🎙",
+        title: "Ringless Voicemail Drops",
+        detail:
+          "Slybroadcast or Drop Cowboy drop a personalized voicemail directly to a lead's voicemail without ringing their phone — high-touch re-engagement for warm leads.",
+        status: { default: "available" },
+      },
+      {
+        emoji: "📮",
+        title: "AI Postcards (Lob)",
+        detail:
+          "Physical mail step inside the funnel. AI generates the front artwork + back copy per lead (their tractor model, their child's age, their lake) — Lob prints + ships. Costs ~$1/card, lifts response 3-5× over email-only.",
+        status: { default: "available" },
+        seeItIn: { label: "Funnels tab", tab: "funnels" },
+      },
+    ],
+  },
+  {
+    id: "sales",
+    label: "Sales conversations",
+    emoji: "🎙",
+    subtitle: "When the funnel earns the call, AI helps you close.",
+    capabilities: [
+      {
+        emoji: "📋",
+        title: "Audience-Branched Sales Scripts",
+        detail:
+          "A full intro / qualify / pitch / CTA / voicemail / objection-handling tree per audience. Live variable substitution as you type the prospect's name + biz + tractor brand + age group.",
+        status: { default: "active" },
+        seeItIn: { label: "Sales Portal", tab: "partners" },
+      },
+      {
+        emoji: "📞",
+        title: "Cold-Call Workspace",
+        detail:
+          "Auto-pulls the next prospect, displays color-coded script, click-to-dial + click-to-text, one-tap outcome buttons, per-call notes — the script + the lead pool feel like one app.",
+        status: { default: "active" },
+      },
+      {
+        emoji: "🤝",
+        title: "Partner Recruitment Page",
+        detail:
+          "Public landing page where reps + warm-referrer partners apply. Built-in payout structure (per-close commissions). Each partner gets a tracked link.",
+        status: { default: "active" },
+        seeItIn: { label: "Sales Portal", tab: "partners" },
+      },
+      {
+        emoji: "🎯",
+        title: "Lead Pool Smart Dispatch",
+        detail:
+          "When you (or your reps) start dialing, AI filters the pool: excludes paid / in-progress / unsubscribed / DNC, excludes anyone called by ANY rep in the last 30 days, prefers leads with a completed audit. No collisions.",
+        status: { default: "active" },
+      },
+    ],
+  },
+  {
+    id: "optimization",
+    label: "Performance optimization",
+    emoji: "📊",
+    subtitle: "The system learns from what works without you running A/B tests yourself.",
+    capabilities: [
+      {
+        emoji: "🔬",
+        title: "Hyperloop A/B Engine",
+        detail:
+          "Wilson Confidence Interval testing on every email subject, ad creative, and landing-page variant. AI auto-promotes winners once the lower CI bound exceeds the runner-up's upper bound — no false positives from noise.",
+        status: { default: "available" },
+        trap: "Most A/B 'winners' aren't statistically significant — without Wilson-CI gating you optimize for noise.",
+      },
+      {
+        emoji: "🧠",
+        title: "Site Audit Engine",
+        detail:
+          "Crawl any competitor URL, AI generates a hero / structure / speed / mobile / copy audit with findings + recommended fixes + a 0-100 score. Useful for partner pitches AND for keeping your own site sharp.",
+        status: { default: "active" },
+      },
+      {
+        emoji: "📈",
+        title: "Self-Learning Ad Campaigns",
+        detail:
+          "Google Ads + Meta Ads campaigns wired to push conversion data back to the algorithms. Headlines that win get more budget. Audiences that don't convert get cut. No babysitting.",
+        status: { default: "available" },
+      },
+      {
+        emoji: "🔥",
+        title: "Microsoft Clarity Heatmaps",
+        detail:
+          "Free session recordings + click/scroll heatmaps on your site. AI surfaces drop-off patterns into your weekly digest so the optimization loop stays evidence-based.",
+        status: { default: "available" },
+      },
+    ],
+  },
+  {
+    id: "analytics",
+    label: "Analytics + reporting",
+    emoji: "📈",
+    subtitle: "What the system thinks you should know each week.",
+    capabilities: [
+      {
+        emoji: "⚡",
+        title: "Real-Time Activity Feed",
+        detail:
+          "Joins your leads, lead messages, campaign sends, and API costs into one time-sorted live stream. 6-second polling. Pause when you want to focus.",
+        status: { default: "active" },
+        seeItIn: { label: "Activity tab", tab: "activity" },
+      },
+      {
+        emoji: "📊",
+        title: "Weekly + Monthly Auto-Reports",
+        detail:
+          "Cron-rendered Monday digest: leads captured, replies received, campaigns sent, top-performing audience, biggest cost line. Emailed to you. No spreadsheet building.",
+        status: { default: "active" },
+        seeItIn: { label: "Insights tab", tab: "insights" },
+      },
+      {
+        emoji: "💰",
+        title: "Per-Tenant Cost Attribution",
+        detail:
+          "Every Claude / SendGrid / Twilio / Google Places API call attributes itself to your account. You see exactly what your AI cost to run last month — typically $20-80/mo total.",
+        status: { default: "active" },
+        seeItIn: { label: "Budget tab", tab: "budget" },
+      },
+      {
+        emoji: "🎯",
+        title: "Per-Audience Conversion Tracking",
+        detail:
+          "Every funnel step writes to the analytics ledger. AI rolls up: which audience opens the most? Which converts? Where do leads drop off? Surfaces the weakest link in your sequence.",
+        status: { default: "active" },
+        seeItIn: { label: "Insights tab", tab: "insights" },
+      },
+    ],
+  },
+];
+
+const STATUS_META: Record<Status, { label: string; chip: string; ring: string; dot: string }> = {
+  active: {
+    label: "Active",
+    chip: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    ring: "border-emerald-500/30",
+    dot: "bg-emerald-400",
+  },
+  available: {
+    label: "Available",
+    chip: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    ring: "border-amber-500/20",
+    dot: "bg-amber-400",
+  },
+  coming: {
+    label: "Coming",
+    chip: "bg-slate-500/15 text-slate-400 border-slate-500/30",
+    ring: "border-white/[0.06]",
+    dot: "bg-slate-500",
+  },
+};
+
+export default function AISkillsTab({
+  slug,
+  onJumpToTab,
+}: {
+  slug: string;
+  /** Hook back to the parent's setTab so "see it in action" jumps the user there. */
+  onJumpToTab?: (tab: string) => void;
+}) {
+  // Aggregate stats across all categories.
+  const allCaps = CATEGORIES.flatMap((c) => c.capabilities);
+  const counts = {
+    active: allCaps.filter((c) => statusFor(c, slug) === "active").length,
+    available: allCaps.filter((c) => statusFor(c, slug) === "available").length,
+    coming: allCaps.filter((c) => statusFor(c, slug) === "coming").length,
+    total: allCaps.length,
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* HEADER */}
+      <div className="rounded-2xl bg-gradient-to-br from-violet-950/40 via-violet-900/15 to-slate-900/60 border border-violet-500/20 p-6">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.22em] text-violet-300 font-bold mb-1">
+              Your AI · what it does
+            </p>
+            <h2 className="text-2xl font-black tracking-tight text-violet-100 mb-1">
+              🧠 AI Skills
+            </h2>
+            <p className="text-sm text-violet-200/70 max-w-2xl leading-relaxed">
+              Every AI capability running on your account — what&apos;s active
+              today, what&apos;s built and waiting for your config, and
+              what&apos;s queued. One screen so you don&apos;t have to dig
+              through 10 tabs to know what your AI is doing.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
+          <Stat label="Total skills" value={String(counts.total)} tone="white" />
+          <Stat
+            label="Active"
+            value={String(counts.active)}
+            tone="emerald"
+            withDot
+          />
+          <Stat
+            label="Available"
+            value={String(counts.available)}
+            tone="amber"
+            withDot
+          />
+          <Stat
+            label="Coming"
+            value={String(counts.coming)}
+            tone="slate"
+            withDot={counts.coming > 0}
+          />
+        </div>
+      </div>
+
+      {/* CATEGORIES */}
+      {CATEGORIES.map((cat) => (
+        <section key={cat.id} className="space-y-3">
+          <div className="flex items-baseline gap-3 px-1">
+            <h3 className="text-sm font-bold tracking-wider uppercase text-white">
+              {cat.emoji} {cat.label}
+            </h3>
+            <span className="text-[11px] text-slate-500 leading-tight">
+              {cat.subtitle}
+            </span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {cat.capabilities.map((cap) => {
+              const status = statusFor(cap, slug);
+              const meta = STATUS_META[status];
+              return (
+                <div
+                  key={cap.title}
+                  className={`rounded-xl border ${meta.ring} bg-slate-900/40 p-4 hover:bg-slate-900/60 transition-colors`}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl shrink-0 leading-none mt-0.5">
+                      {cap.emoji}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                        <p className="font-bold text-white text-sm leading-tight">
+                          {cap.title}
+                        </p>
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 border inline-flex items-center gap-1 ${meta.chip}`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${meta.dot} ${
+                              status === "active" ? "animate-pulse" : ""
+                            }`}
+                          />
+                          {meta.label}
+                        </span>
+                      </div>
+                      <p className="text-[12px] text-slate-400 leading-relaxed mt-1.5">
+                        {cap.detail}
+                      </p>
+                      {cap.seeItIn && onJumpToTab && (
+                        <button
+                          type="button"
+                          onClick={() => onJumpToTab(cap.seeItIn!.tab)}
+                          className="mt-2.5 inline-flex items-center gap-1 text-[11px] uppercase tracking-wider font-bold text-violet-300 hover:text-violet-200"
+                        >
+                          See it in action · {cap.seeItIn.label} →
+                        </button>
+                      )}
+                      {cap.seeItIn && !onJumpToTab && (
+                        <p className="mt-2 text-[11px] text-slate-500 italic">
+                          See it: {cap.seeItIn.label}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+
+      {/* FOOTER NOTE */}
+      <div className="rounded-2xl bg-slate-900/40 border border-white/[0.06] p-4 text-xs text-slate-500 italic leading-relaxed">
+        <span className="text-emerald-400">●</span> Active = running on your
+        account today &nbsp;
+        <span className="text-amber-400">●</span> Available = built, ready to
+        flip on with your config &nbsp;
+        <span className="text-slate-500">●</span> Coming = queued for a future
+        sprint. Want anything moved up the queue? Email{" "}
+        <a
+          href="mailto:ben@bluejayportfolio.com"
+          className="text-violet-300 hover:text-violet-200"
+        >
+          ben@bluejayportfolio.com
+        </a>
+        .
+      </div>
+    </div>
+  );
+}
+
+function statusFor(cap: Capability, slug: string): Status {
+  const s = cap.status as Record<string, Status>;
+  return s[slug] ?? s.default ?? "available";
+}
+
+function Stat({
+  label,
+  value,
+  tone,
+  withDot,
+}: {
+  label: string;
+  value: string;
+  tone: "white" | "emerald" | "amber" | "slate";
+  withDot?: boolean;
+}) {
+  const cls: Record<typeof tone, string> = {
+    white: "text-white",
+    emerald: "text-emerald-300",
+    amber: "text-amber-300",
+    slate: "text-slate-400",
+  };
+  const dotCls: Record<typeof tone, string> = {
+    white: "bg-white",
+    emerald: "bg-emerald-400",
+    amber: "bg-amber-400",
+    slate: "bg-slate-500",
+  };
+  return (
+    <div className="rounded-md bg-black/30 border border-white/5 px-3 py-2 text-center">
+      <div className="text-[9px] uppercase tracking-wider text-slate-500 mb-0.5 inline-flex items-center gap-1.5 justify-center">
+        {withDot && <span className={`w-1.5 h-1.5 rounded-full ${dotCls[tone]}`} />}
+        {label}
+      </div>
+      <div className={`text-lg font-black tabular-nums ${cls[tone]}`}>
+        {value}
+      </div>
+    </div>
+  );
+}
