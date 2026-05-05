@@ -3076,3 +3076,140 @@ body {
 #navbar.scrolled .nav-mark {
   box-shadow: 0 1px 3px rgba(31, 26, 20, 0.10);
 }
+
+
+/* ==========================================================================
+   ROUND 8 — FREEZER MENU READABILITY: softer text, bigger type, better
+   use of the open space on desktop and mobile.
+   ========================================================================== */
+
+/* ---- Soften the harsh near-black browns + reds ---- */
+.freezer-card {
+  color: #3d2a18 !important;            /* was #2d1d10 — warmer mid-brown */
+}
+.freezer-col h3 {
+  color: #3d2a18 !important;            /* matches body */
+  border-bottom-color: #a04444 !important; /* softer red rule */
+}
+.freezer-col p {
+  color: #5a4632 !important;            /* slightly muted, easier on eyes */
+  line-height: 1.6 !important;
+}
+.freezer-item .freezer-name {
+  color: #3d2a18 !important;
+}
+.freezer-item .freezer-price {
+  color: #9d3030 !important;            /* softer red than #8b1e1e */
+}
+.freezer-eyebrow {
+  color: #9d3030 !important;
+}
+.pulse-dot {
+  background: #9d3030 !important;
+}
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(157, 48, 48, 0.65); }
+  70% { box-shadow: 0 0 0 12px rgba(157, 48, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(157, 48, 48, 0); }
+}
+
+/* Section title above the menu — soften too */
+.freezer .section-title {
+  color: #f6ecc9 !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- Use the open space: bigger type + better grid balance ---- */
+@media (min-width: 961px) {
+  /* Give the menu column more room (was 1fr 1.6fr 1fr) */
+  .freezer-card {
+    grid-template-columns: 0.9fr 2.1fr 1fr !important;
+    padding: 56px 64px !important;
+    gap: 52px !important;
+  }
+
+  /* Header column type */
+  .freezer-col h3 {
+    font-size: 1.95rem !important;       /* was 1.6 */
+    line-height: 1.15 !important;
+    margin-bottom: 18px !important;
+  }
+  .freezer-col p {
+    font-size: 1.08rem !important;       /* was 1 */
+  }
+
+  /* Menu list type */
+  .freezer-item {
+    padding: 20px 6px !important;        /* was 14 4 */
+  }
+  .freezer-item .freezer-name {
+    font-size: 1.42rem !important;       /* was 1.18 */
+    letter-spacing: -0.005em;
+  }
+  .freezer-item .freezer-price {
+    font-size: 1.18rem !important;       /* was 1.05 */
+    letter-spacing: 0.04em;
+  }
+  .freezer-badge {
+    font-size: 0.82rem !important;       /* was 0.72 */
+    padding: 8px 14px !important;
+  }
+
+  /* CTA column — make the date / hold-message larger too */
+  .freezer-update {
+    font-size: 1.04rem !important;       /* was 0.92 */
+    padding-bottom: 14px;
+  }
+  .freezer-col:last-child p {
+    font-size: 1.08rem !important;
+    line-height: 1.55;
+  }
+  .freezer-cta {
+    padding: 18px !important;
+    font-size: 1.05rem !important;
+  }
+}
+
+/* ---- Mobile: softer, bigger type, more line-height ---- */
+@media (max-width: 680px) {
+  .freezer-card {
+    padding: 36px 26px !important;
+  }
+  .freezer-col h3 {
+    font-size: 1.55rem !important;
+    line-height: 1.2;
+  }
+  .freezer-col p {
+    font-size: 1.02rem !important;
+    line-height: 1.55;
+  }
+  .freezer-item {
+    padding: 16px 4px !important;
+  }
+  .freezer-item .freezer-name {
+    font-size: 1.18rem !important;       /* was 1.05 */
+  }
+  .freezer-item .freezer-price {
+    font-size: 1.04rem !important;       /* was 0.94 */
+  }
+  .freezer-badge {
+    font-size: 0.74rem !important;
+    padding: 6px 11px !important;
+  }
+  .freezer-update {
+    font-size: 1rem !important;
+  }
+  .freezer-cta {
+    font-size: 1rem !important;
+    padding: 16px !important;
+  }
+}
+
+/* The dotted leader line gets a touch softer too */
+.freezer-item > span:first-child::after {
+  border-bottom-color: rgba(70, 38, 18, 0.25) !important;
+}
+.freezer-item {
+  border-bottom-color: rgba(70, 38, 18, 0.22) !important;
+}
+
