@@ -31,7 +31,7 @@ values (
   ),
   'Nate · Laser Lakes'
 )
-on conflict (email) do nothing;
+on conflict (lower(email)) do nothing;
 
 -- 2. client_purchases — per-customer purchase log spanning Shopify + manual.
 --    Joined to client_leads via email or phone for cross-channel rollups.
