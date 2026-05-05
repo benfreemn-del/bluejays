@@ -231,7 +231,7 @@ export async function scrapeTekkyMarket(args: {
     // ── Mirror into client_leads so scouted businesses surface in the
     //    Zenith Sports owner portal Leads tab alongside form-captures.
     try {
-      await sb.from("client_leads").insert({
+      const { error: mirrorErr } = await sb.from("client_leads").insert({
         client_slug: "zenith-sports",
         audience_segment: audience,
         name: place.name ?? null,
@@ -249,8 +249,17 @@ export async function scrapeTekkyMarket(args: {
           source_query: sourceQuery,
         },
       });
-    } catch {
-      // non-fatal — scout row is still saved in tekky_scrape_leads
+      if (mirrorErr) {
+        console.warn(
+          `[tekky-scrape] client_leads mirror failed for ${place.name}:`,
+          mirrorErr.message,
+        );
+      }
+    } catch (err) {
+      console.warn(
+        `[tekky-scrape] client_leads mirror threw for ${place.name}:`,
+        err instanceof Error ? err.message : err,
+      );
     }
   }
 

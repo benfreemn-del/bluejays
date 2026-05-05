@@ -233,9 +233,10 @@ export async function scrapeItcMarket(args: {
 
     // ── Mirror into client_leads so the scouted business surfaces in
     //    the ITC owner portal Leads tab alongside form-captured leads.
-    //    Source = "scout-{audience}" so the user can filter by it.
+    //    The audience_segment matches the scout audience exactly so the
+    //    Leads tab can filter by it. Source = "scout-{audience}".
     try {
-      await sb.from("client_leads").insert({
+      const { error: mirrorErr } = await sb.from("client_leads").insert({
         client_slug: "itc-quick-attach",
         audience_segment: audience,
         name: place.name ?? null,
@@ -253,8 +254,17 @@ export async function scrapeItcMarket(args: {
           source_query: sourceQuery,
         },
       });
-    } catch {
-      // mirror failure is non-fatal — scout row is still saved
+      if (mirrorErr) {
+        console.warn(
+          `[itc-scrape] client_leads mirror failed for ${place.name}:`,
+          mirrorErr.message,
+        );
+      }
+    } catch (err) {
+      console.warn(
+        `[itc-scrape] client_leads mirror threw for ${place.name}:`,
+        err instanceof Error ? err.message : err,
+      );
     }
   }
 

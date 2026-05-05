@@ -218,12 +218,72 @@ export default function ItcMarketMap() {
     };
   };
 
-  const countyStyle = () => ({
-    color: "#1e293b",
-    weight: 0.25,
-    fillColor: "#0a0f1c",
-    fillOpacity: 0.15,
-  });
+  // Aggregate the three status sets to a per-county verdict so the
+  // county polygon colors blue/green/red — matches tekky-map exactly.
+  const countyStatus = useMemo(() => {
+    const map = new Map<string, "in-progress" | "completed" | "exhausted">();
+    const stamp = (
+      key: string,
+      status: "in-progress" | "completed" | "exhausted",
+    ) => {
+      const [city, st] = key.split("|");
+      if (!city || !st) return;
+      const k = `${city}|${st}`;
+      const cur = map.get(k);
+      if (status === "in-progress") {
+        map.set(k, "in-progress");
+        return;
+      }
+      if (status === "completed" && cur !== "in-progress") {
+        map.set(k, "completed");
+        return;
+      }
+      if (status === "exhausted" && !cur) {
+        map.set(k, "exhausted");
+      }
+    };
+    inProgress.forEach((k) => stamp(k, "in-progress"));
+    completed.forEach((k) => stamp(k, "completed"));
+    exhausted.forEach((k) => stamp(k, "exhausted"));
+    return map;
+  }, [inProgress, completed, exhausted]);
+
+  const styleForCounty = (countyName: string, stateAbbr: string | undefined) => {
+    if (!stateAbbr) {
+      return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+    }
+    const status = countyStatus.get(`${countyName}|${stateAbbr}`);
+    if (status === "in-progress")
+      return { color: "#3b82f6", weight: 1.5, fillColor: "#3b82f6", fillOpacity: 0.32 };
+    if (status === "completed")
+      return { color: "#22c55e", weight: 1, fillColor: "#22c55e", fillOpacity: 0.22 };
+    if (status === "exhausted")
+      return { color: "#ef4444", weight: 0.6, fillColor: "#ef4444", fillOpacity: 0.12 };
+    return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+  };
+
+  const countyStyle = (feature?: Feature<Geometry>) => {
+    if (!feature)
+      return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+    const id = String(feature.id ?? "").padStart(5, "0");
+    const stateAbbr = STATE_FIPS_TO_ABBR[id.slice(0, 2)];
+    const countyName = (feature.properties?.NAME ??
+      feature.properties?.name ??
+      "Unknown") as string;
+    return styleForCounty(countyName, stateAbbr);
+  };
+
+  const countyStatusKey = useMemo(
+    () =>
+      `${inProgress.size}-${completed.size}-${exhausted.size}-${
+        Array.from(inProgress).sort().join(",") +
+        "|" +
+        Array.from(completed).sort().join(",") +
+        "|" +
+        Array.from(exhausted).sort().join(",")
+      }`,
+    [inProgress, completed, exhausted],
+  );
 
   const onEachState = (feature: Feature<Geometry>, leafletLayer: import("leaflet").Layer) => {
     const fullName = (feature.properties?.name ?? "") as string;
@@ -278,7 +338,7 @@ export default function ItcMarketMap() {
       },
       mouseout: () => {
         const path = leafletLayer as L.Path;
-        path.setStyle(countyStyle());
+        path.setStyle(styleForCounty(countyName, stateAbbr));
       },
       click: (e) => {
         L.DomEvent.stopPropagation(e);
@@ -440,7 +500,7 @@ export default function ItcMarketMap() {
               is clickable to open the audience-picker drawer. */}
           {showCounties && visibleCounties && (
             <GeoJSON
-              key={`counties-${lockedState ?? "us"}`}
+              key={`counties-${lockedState ?? "us"}-${countyStatusKey}`}
               data={visibleCounties}
               style={countyStyle}
               onEachFeature={onEachCounty}
