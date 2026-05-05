@@ -16,6 +16,7 @@ import type { Layer } from "leaflet";
 
 import majorCitiesData from "@/data/us-major-cities.json";
 import soccerTownsData from "@/data/us-soccer-towns.json";
+import mlsNextClubsData from "@/data/us-mls-next-clubs.json";
 
 /**
  * Tekky lead-scrape map.
@@ -44,7 +45,15 @@ type MlsMarket = City & {
   founded: number;
 };
 
-type MapLayer = "all" | "mls" | "cities";
+type MlsNextClub = {
+  name: string;
+  city: string;
+  state: string;
+  lat: number;
+  lng: number;
+};
+
+type MapLayer = "all" | "mls" | "next" | "cities";
 
 type TekkyAudience = "parent" | "coach" | "player";
 
@@ -120,6 +129,7 @@ const STATE_FIPS_TO_ABBR: Record<string, string> = {
 const LAYER_OPTIONS: Array<{ id: MapLayer; label: string; emoji: string }> = [
   { id: "all", label: "All markets", emoji: "🗺️" },
   { id: "mls", label: "MLS host cities only", emoji: "⚽" },
+  { id: "next", label: "MLS NEXT clubs", emoji: "🏆" },
   { id: "cities", label: "Cities only", emoji: "🏙️" },
 ];
 
@@ -362,6 +372,7 @@ export default function TekkyMapClient() {
 
   const cities = (majorCitiesData.cities as City[]) ?? [];
   const mlsMarkets = (soccerTownsData.mls_markets as MlsMarket[]) ?? [];
+  const nextClubs = (mlsNextClubsData.clubs as MlsNextClub[]) ?? [];
 
   const mlsKeys = useMemo(
     () => new Set(mlsMarkets.map((t) => `${t.name}|${t.state}`)),
@@ -376,6 +387,7 @@ export default function TekkyMapClient() {
 
   const showCities = layer === "all" || layer === "cities";
   const showMls = layer === "all" || layer === "mls";
+  const showNext = layer === "all" || layer === "next";
 
   // Sidebar list — focus state filters; otherwise national
   const focusState = lockedState ?? hoveredState;
@@ -644,6 +656,39 @@ export default function TekkyMapClient() {
                 </CircleMarker>
               );
             })}
+
+          {/* MLS NEXT clubs — smaller emerald bullets to differentiate
+               from the gold MLS host cities. Many cluster around the
+               same metro (LA has 4+, Orlando has 3) so we use small
+               radii to avoid crowding. */}
+          {showNext &&
+            nextClubs.map((c, i) => (
+              <CircleMarker
+                key={`next-${c.name}-${i}`}
+                center={[c.lat, c.lng]}
+                radius={5}
+                pathOptions={{
+                  color: "#10b981",
+                  weight: 1,
+                  fillColor: "#34d399",
+                  fillOpacity: 0.85,
+                }}
+              >
+                <Tooltip direction="top" offset={[0, -4]} opacity={0.95}>
+                  <div className="text-xs max-w-[260px]">
+                    <div className="font-bold text-emerald-400">
+                      🏆 {c.name}
+                    </div>
+                    <div className="text-slate-300 mb-0.5">
+                      {c.city}, {c.state}
+                    </div>
+                    <div className="text-[10px] text-slate-500 italic">
+                      MLS NEXT Homegrown Division · Source: mlssoccer.com
+                    </div>
+                  </div>
+                </Tooltip>
+              </CircleMarker>
+            ))}
         </MapContainer>
 
         {/* Prominent "Back to US" button when a state is locked */}
@@ -696,6 +741,17 @@ export default function TekkyMapClient() {
               }}
             />
             <span className="text-slate-300">MLS host city (verified)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block rounded-full"
+              style={{
+                width: 10,
+                height: 10,
+                background: "#34d399",
+              }}
+            />
+            <span className="text-slate-300">MLS NEXT club ({nextClubs.length} verified)</span>
           </div>
           <div className="flex items-center gap-2">
             <span
