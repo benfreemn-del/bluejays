@@ -603,7 +603,7 @@ export default function PortalPage({
               { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
               ...(slug === "itc-quick-attach" || slug === "zenith-sports"
-                ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🎯" }]
+                ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🤝" }]
                 : []),
               ...(slug === "laser-lakes"
                 ? [{ id: "customers" as Tab, label: "Customers", emoji: "🪵" }]
@@ -5147,15 +5147,14 @@ function PartnersTab({ slug }: { slug: string }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
-          <StatPill label="Active partners" value="0" tone="slate" />
-          <StatPill label="This-month payout" value="$0" tone="emerald" />
+        <div className="grid grid-cols-3 gap-2 mt-5">
           <StatPill
             label="Audience scripts"
             value={String(cfg.audienceScriptCount)}
             tone={palette.statPillTone}
           />
-          <StatPill label="Cap" value={String(cfg.cap)} tone="slate" />
+          <StatPill label="Channels per script" value="5" tone="emerald" />
+          <StatPill label="Partner cap" value={String(cfg.cap)} tone="slate" />
         </div>
       </div>
 
@@ -5226,10 +5225,11 @@ function PartnersTab({ slug }: { slug: string }) {
       </div>
 
       <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-4 text-xs text-slate-500 italic leading-relaxed">
-        Application + payout tracking is currently manual via email. Full
-        partner workspace (auto-assigned prospects, in-app outcome tracking,
-        payout dashboard) ships in the v2 expansion — same shape as the
-        BlueJays partner workspace.
+        Lightweight by design. Reps apply via email, you approve, hand them
+        the script library URL — no extra software for them to learn. When
+        you scale past 10 reps, a full in-app workspace (auto-assigned
+        prospects, outcome tracking, payout dashboard) is one config flag
+        away.
       </div>
     </div>
   );

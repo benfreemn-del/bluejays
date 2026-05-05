@@ -138,7 +138,17 @@ export default function ItcMarketMap() {
   } | null>(null);
   // Audience the user has staged in the drawer (one at a time). Click
   // an audience tile → selects. Click the green Run button → fires.
-  const [stagedAudience, setStagedAudience] = useState<ItcAudience | null>(null);
+  const [stagedAudiences, setStagedAudiences] = useState<Set<ItcAudience>>(
+    new Set(),
+  );
+  const toggleStaged = (aud: ItcAudience) => {
+    setStagedAudiences((prev) => {
+      const next = new Set(prev);
+      if (next.has(aud)) next.delete(aud);
+      else next.add(aud);
+      return next;
+    });
+  };
   // Set of "city|state|audience" keys exhausted last attempt.
   // Persisted to localStorage so the red X survives page reloads.
   const [exhausted, setExhausted] = useState<Set<string>>(new Set());
@@ -460,9 +470,14 @@ export default function ItcMarketMap() {
         });
       }
       clearInProgress();
-      // Drop the staged amber ring so the green completed (or red ✕)
-      // state becomes visible immediately.
-      setStagedAudience((prev) => (prev === audience ? null : prev));
+      // Drop the staged amber ring for THIS audience so the green
+      // completed (or red ✕) state becomes visible immediately.
+      setStagedAudiences((prev) => {
+        if (!prev.has(audience)) return prev;
+        const next = new Set(prev);
+        next.delete(audience);
+        return next;
+      });
     } catch (err) {
       setScoutStatus({
         key,
@@ -470,7 +485,21 @@ export default function ItcMarketMap() {
         message: err instanceof Error ? err.message : "Network error",
       });
       clearInProgress();
-      setStagedAudience((prev) => (prev === audience ? null : prev));
+      setStagedAudiences((prev) => {
+        if (!prev.has(audience)) return prev;
+        const next = new Set(prev);
+        next.delete(audience);
+        return next;
+      });
+    }
+  };
+
+  /** Run all currently-staged ITC audiences sequentially against a county. */
+  const runAllStaged = async (city: string, state: string) => {
+    const queue = Array.from(stagedAudiences);
+    for (const aud of queue) {
+      // eslint-disable-next-line no-await-in-loop
+      await runScout(city, state, aud);
     }
   };
 
@@ -692,7 +721,7 @@ export default function ItcMarketMap() {
               <button
                 onClick={() => {
                   setCountyTarget(null);
-                  setStagedAudience(null);
+                  setStagedAudiences(new Set());
                 }}
                 className="text-slate-400 hover:text-white text-sm"
                 aria-label="Close"
@@ -701,8 +730,9 @@ export default function ItcMarketMap() {
               </button>
             </div>
             <p className="text-[10px] text-slate-400 mb-2">
-              Pick an audience, then hit Run. Google Places searches the
-              county; matches land in your Leads tab.
+              Tap any combination of audiences, then hit Run. Each fires
+              its own Google Places search; matches land in your Leads
+              tab tagged by audience.
             </p>
             {/* Universal AI-package map legend */}
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-2 text-[9px] text-slate-500">
@@ -719,6 +749,34 @@ export default function ItcMarketMap() {
                 No results
               </span>
             </div>
+            {/* Quick-select shortcut */}
+            <div className="flex items-center justify-between mb-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  const all: ItcAudience[] = [
+                    "dealer",
+                    "tym",
+                    "forester",
+                    "hunter",
+                    "hobbyist",
+                  ];
+                  const allStaged = all.every((a) => stagedAudiences.has(a));
+                  setStagedAudiences(allStaged ? new Set() : new Set(all));
+                }}
+                className="text-[9px] uppercase tracking-wider font-bold text-amber-300 hover:text-amber-200"
+              >
+                {(["dealer", "tym", "forester", "hunter", "hobbyist"] as ItcAudience[]).every(
+                  (a) => stagedAudiences.has(a),
+                )
+                  ? "Clear all"
+                  : "Stage all 5"}
+              </button>
+              <span className="text-[9px] text-slate-500">
+                {stagedAudiences.size} staged
+              </span>
+            </div>
+
             <div className="grid grid-cols-5 gap-1">
               {(["dealer", "tym", "forester", "hunter", "hobbyist"] as ItcAudience[]).map(
                 (aud) => {
@@ -729,39 +787,46 @@ export default function ItcMarketMap() {
                     inProgress.has(k);
                   const isExhausted = exhausted.has(k);
                   const isCompleted = completed.has(k);
-                  const isStaged = stagedAudience === aud;
-                  // Universal status ring — running wins over staged so
-                  // blue is visible during the actual scrape. Matches
-                  // tekky-map exactly.
+                  const isStaged = stagedAudiences.has(aud);
                   const ringClass = isRunning
                     ? "border-blue-400 bg-blue-500/25 ring-2 ring-blue-400 animate-pulse"
                     : isStaged
-                      ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                      ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400"
                       : isCompleted
                         ? "border-green-500 bg-green-500/10 ring-1 ring-green-500/50"
                         : "border-slate-700 hover:border-amber-400";
                   return (
                     <button
                       key={aud}
-                      onClick={() => setStagedAudience(aud)}
+                      onClick={() => toggleStaged(aud)}
                       disabled={isRunning}
                       title={
                         isRunning
                           ? `Scouting ${meta.label.toLowerCase()} now…`
-                          : isCompleted
-                            ? `${meta.label} — already scouted (re-run to refresh)`
-                            : isExhausted
-                              ? `${meta.label} — last scrape exhausted`
-                              : meta.label
+                          : isStaged
+                            ? `${meta.label} — staged · click to remove`
+                            : isCompleted
+                              ? `${meta.label} — already scouted (re-run to refresh)`
+                              : isExhausted
+                                ? `${meta.label} — last scrape exhausted`
+                                : `Stage ${meta.label.toLowerCase()}`
                       }
                       className={`relative text-[10px] font-bold rounded-md py-1.5 border transition disabled:opacity-50 flex flex-col items-center ${ringClass}`}
                       style={{ color: meta.color }}
                     >
+                      {isStaged && !isRunning && (
+                        <span
+                          aria-hidden
+                          className="absolute top-0.5 left-0.5 w-3 h-3 rounded-sm bg-amber-400 text-slate-950 text-[8px] font-black leading-none flex items-center justify-center"
+                        >
+                          ✓
+                        </span>
+                      )}
                       <span className="text-base">{meta.emoji}</span>
                       <span className="text-[9px]">
                         {isRunning ? "…" : meta.label}
                       </span>
-                      {isCompleted && !isRunning && !isExhausted && (
+                      {isCompleted && !isRunning && !isExhausted && !isStaged && (
                         <span
                           aria-hidden
                           className="absolute top-0.5 right-0.5 text-green-400 text-[9px] leading-none"
@@ -785,29 +850,27 @@ export default function ItcMarketMap() {
               )}
             </div>
 
-            {/* Green Run button — fires the scrape against the staged
-                 audience. Disabled until an audience is selected. */}
+            {/* Green Run button — fires the scrape against ALL staged
+                 audiences sequentially. */}
             <div className="mt-2 flex items-center gap-2">
               <span className="text-[10px] text-slate-400">
-                {stagedAudience
-                  ? `Ready: ${ITC_AUDIENCE_META[stagedAudience].label}`
-                  : "Select an audience"}
+                {stagedAudiences.size === 0
+                  ? "Select audience(s)"
+                  : stagedAudiences.size === 1
+                    ? `Ready: ${ITC_AUDIENCE_META[Array.from(stagedAudiences)[0]!].label}`
+                    : `Ready: ${stagedAudiences.size} audiences`}
               </span>
               <div className="flex-1" />
               <button
                 onClick={() => {
-                  if (!stagedAudience) return;
-                  runScout(countyTarget.name, countyTarget.state, stagedAudience);
+                  if (stagedAudiences.size === 0) return;
+                  runAllStaged(countyTarget.name, countyTarget.state);
                 }}
-                disabled={
-                  !stagedAudience ||
-                  (scoutStatus?.state === "running" &&
-                    scoutStatus.key ===
-                      `${countyTarget.name}|${countyTarget.state}|${stagedAudience}`)
-                }
+                disabled={stagedAudiences.size === 0 || inProgress.size > 0}
                 className="text-[10px] font-black uppercase tracking-wider rounded-md px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition"
               >
                 ▶ Run
+                {stagedAudiences.size > 1 ? ` ×${stagedAudiences.size}` : ""}
               </button>
             </div>
             {scoutStatus &&

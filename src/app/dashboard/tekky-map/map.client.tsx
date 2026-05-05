@@ -189,9 +189,20 @@ export default function TekkyMapClient() {
     name: string;
     state: string;
   } | null>(null);
-  // Audience the user has staged in the drawer (one at a time). Click
-  // an audience tile → selects. Click the green Run button → fires.
-  const [stagedAudience, setStagedAudience] = useState<TekkyAudience | null>(null);
+  // Audiences the user has staged in the drawer (multi-select). Click
+  // an audience tile → toggle. Click the green Run button → fires
+  // sequentially through every staged audience for the focused county.
+  const [stagedAudiences, setStagedAudiences] = useState<Set<TekkyAudience>>(
+    new Set(),
+  );
+  const toggleStaged = (aud: TekkyAudience) => {
+    setStagedAudiences((prev) => {
+      const next = new Set(prev);
+      if (next.has(aud)) next.delete(aud);
+      else next.add(aud);
+      return next;
+    });
+  };
   // Set of "city|state|audience" keys that returned 0 results last
   // time we tried — show a red X over those tiles. Persisted to
   // localStorage so the indicator survives page reloads.
@@ -390,9 +401,14 @@ export default function TekkyMapClient() {
         });
       }
       clearInProgress();
-      // Drop the "primed/staged" amber ring once the run finishes so the
-      // green/red completion state is visible.
-      setStagedAudience((prev) => (prev === audience ? null : prev));
+      // Drop the "primed/staged" amber ring for THIS audience once it
+      // finishes so the green/red completion state is visible.
+      setStagedAudiences((prev) => {
+        if (!prev.has(audience)) return prev;
+        const next = new Set(prev);
+        next.delete(audience);
+        return next;
+      });
       refreshSummary();
     } catch (err) {
       setScrapeStatus({
@@ -401,7 +417,23 @@ export default function TekkyMapClient() {
         message: err instanceof Error ? err.message : "Network error",
       });
       clearInProgress();
-      setStagedAudience((prev) => (prev === audience ? null : prev));
+      setStagedAudiences((prev) => {
+        if (!prev.has(audience)) return prev;
+        const next = new Set(prev);
+        next.delete(audience);
+        return next;
+      });
+    }
+  };
+
+  /** Run all currently-staged audiences sequentially against a county. */
+  const runAllStaged = async (city: string, state: string) => {
+    // Snapshot the staged set so concurrent toggles during the run
+    // don't change what fires.
+    const queue = Array.from(stagedAudiences);
+    for (const aud of queue) {
+      // eslint-disable-next-line no-await-in-loop
+      await runScrape(city, state, aud);
     }
   };
 
@@ -1120,7 +1152,7 @@ export default function TekkyMapClient() {
               <button
                 onClick={() => {
                   setCountyTarget(null);
-                  setStagedAudience(null);
+                  setStagedAudiences(new Set());
                 }}
                 className="text-slate-400 hover:text-white text-sm"
                 aria-label="Close"
@@ -1129,8 +1161,9 @@ export default function TekkyMapClient() {
               </button>
             </div>
             <p className="text-[10px] text-slate-400 mb-2">
-              Pick an audience, then hit Run. Google Places search runs
-              across the county; matches land in the Leads tab.
+              Tap any combination of audiences, then hit Run. Each one
+              fires a Google Places search across the county; matches
+              land in the Leads tab tagged by audience.
             </p>
             {/* Universal AI-package map legend */}
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-2 text-[9px] text-slate-500">
@@ -1147,6 +1180,28 @@ export default function TekkyMapClient() {
                 No results
               </span>
             </div>
+            {/* Quick-select shortcut — "all 3" is the most common ask. */}
+            <div className="flex items-center justify-between mb-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  const all: TekkyAudience[] = ["parent", "coach", "player"];
+                  const allStaged = all.every((a) => stagedAudiences.has(a));
+                  setStagedAudiences(allStaged ? new Set() : new Set(all));
+                }}
+                className="text-[9px] uppercase tracking-wider font-bold text-amber-300 hover:text-amber-200"
+              >
+                {(["parent", "coach", "player"] as TekkyAudience[]).every((a) =>
+                  stagedAudiences.has(a),
+                )
+                  ? "Clear all"
+                  : "Stage all 3"}
+              </button>
+              <span className="text-[9px] text-slate-500">
+                {stagedAudiences.size} staged
+              </span>
+            </div>
+
             <div className="grid grid-cols-3 gap-1.5">
               {(["parent", "coach", "player"] as TekkyAudience[]).map((aud) => {
                 const meta = AUDIENCE_META[aud];
@@ -1156,7 +1211,7 @@ export default function TekkyMapClient() {
                   inProgress.has(k);
                 const isExhausted = exhausted.has(k);
                 const isCompleted = completed.has(k);
-                const isStaged = stagedAudience === aud;
+                const isStaged = stagedAudiences.has(aud);
                 // ── Universal AI-package status ring ─────────────────
                 //  running: blue-500   (in progress — wins over staging)
                 //  staged:  amber      (primed/ready)
@@ -1165,28 +1220,39 @@ export default function TekkyMapClient() {
                 const ringClass = isRunning
                   ? "border-blue-400 bg-blue-500/25 ring-2 ring-blue-400 animate-pulse"
                   : isStaged
-                    ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                    ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400"
                     : isCompleted
                       ? "border-green-500 bg-green-500/10 ring-1 ring-green-500/50"
                       : "border-slate-700 hover:border-amber-400";
                 return (
                   <button
                     key={aud}
-                    onClick={() => setStagedAudience(aud)}
+                    onClick={() => toggleStaged(aud)}
                     disabled={isRunning}
                     title={
                       isRunning
                         ? `Scouting ${meta.label.toLowerCase()} now…`
-                        : isCompleted
-                          ? `${meta.label} — already scouted (re-run to refresh)`
-                          : `Scout ${meta.label.toLowerCase()}`
+                        : isStaged
+                          ? `${meta.label} — staged · click to remove`
+                          : isCompleted
+                            ? `${meta.label} — already scouted (re-run to refresh)`
+                            : `Stage ${meta.label.toLowerCase()}`
                     }
                     className={`relative text-[11px] font-bold rounded-md px-2 py-2 border transition disabled:opacity-50 flex flex-col items-center gap-0.5 ${ringClass}`}
                     style={{ color: meta.color }}
                   >
+                    {/* Checkbox indicator (top-left) when staged */}
+                    {isStaged && !isRunning && (
+                      <span
+                        aria-hidden
+                        className="absolute top-0.5 left-0.5 w-3 h-3 rounded-sm bg-amber-400 text-slate-950 text-[9px] font-black leading-none flex items-center justify-center"
+                      >
+                        ✓
+                      </span>
+                    )}
                     <span>{meta.emoji}</span>
                     <span>{isRunning ? "…" : meta.label}</span>
-                    {isCompleted && !isRunning && !isExhausted && (
+                    {isCompleted && !isRunning && !isExhausted && !isStaged && (
                       <span
                         aria-hidden
                         title="Already scouted"
@@ -1211,29 +1277,28 @@ export default function TekkyMapClient() {
               })}
             </div>
 
-            {/* Green Run button — fires the scrape against the staged
-                 audience. Disabled until the user picks one. */}
+            {/* Green Run button — fires the scrape against ALL staged
+                 audiences sequentially. Disabled until at least one is
+                 picked. Shows count when 2+. */}
             <div className="mt-2 flex items-center gap-2">
               <span className="text-[10px] text-slate-400">
-                {stagedAudience
-                  ? `Ready: ${AUDIENCE_META[stagedAudience].label}`
-                  : "Select an audience"}
+                {stagedAudiences.size === 0
+                  ? "Select audience(s)"
+                  : stagedAudiences.size === 1
+                    ? `Ready: ${AUDIENCE_META[Array.from(stagedAudiences)[0]!].label}`
+                    : `Ready: ${stagedAudiences.size} audiences`}
               </span>
               <div className="flex-1" />
               <button
                 onClick={() => {
-                  if (!stagedAudience) return;
-                  runScrape(countyTarget.name, countyTarget.state, stagedAudience);
+                  if (stagedAudiences.size === 0) return;
+                  runAllStaged(countyTarget.name, countyTarget.state);
                 }}
-                disabled={
-                  !stagedAudience ||
-                  (scrapeStatus?.state === "running" &&
-                    scrapeStatus.key ===
-                      `${countyTarget.name}|${countyTarget.state}|${stagedAudience}`)
-                }
+                disabled={stagedAudiences.size === 0 || inProgress.size > 0}
                 className="text-[11px] font-black uppercase tracking-wider rounded-md px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition"
               >
                 ▶ Run
+                {stagedAudiences.size > 1 ? ` ×${stagedAudiences.size}` : ""}
               </button>
             </div>
             {scrapeStatus &&

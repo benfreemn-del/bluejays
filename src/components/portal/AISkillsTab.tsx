@@ -46,7 +46,7 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "🗺️",
         title: "County-Level Lead Scout",
         detail:
-          "Click any U.S. county on the Map tab. AI runs an audience-tagged Google Places search, dedupes against your existing pipeline, and writes the new businesses into your Leads tab — typically 5-25 fresh prospects per scout.",
+          "Click any U.S. county. AI runs an audience-tagged Google Places search across the whole county, dedupes against your existing pipeline, drops 5-25 fresh leads into your Leads tab — every click. Multi-audience: stage Parent + Coach + Player, hit Run once, AI works all 3 in sequence. Replaces ~40 hrs of manual prospecting per county.",
         status: { default: "active" },
         seeItIn: { label: "Map tab", tab: "map" },
       },
@@ -70,7 +70,7 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "📥",
         title: "Missed-Call Text-Back",
         detail:
-          "Caller hangs up. Within 60 seconds, AI sends an SMS in your voice asking what they needed — recovers ~25% of the leads voicemail used to lose.",
+          "Caller hangs up. Within 60 seconds, AI texts them in your voice. Recovers 25-30% of leads that voicemail loses. For a service business doing 50 missed calls/month, that's 12-15 saved leads/month — typically $4-8K in recovered revenue.",
         status: { default: "available" },
       },
     ],
@@ -93,7 +93,7 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "🤖",
         title: "AI Inbound Responder",
         detail:
-          "Every inbound reply is classified into 6 intent classes (interested / not-now / objection-price / objection-timing / question / unsubscribe), drafts a voice-matched response in your tone, and queues it for one-tap approve.",
+          "Every inbound reply classified into 6 intent classes, drafted in your voice within 10 seconds, queued for one-tap approve. You stop reading every email. Reply latency drops from 3 hours to 90 seconds — the data says replies under 5 min convert 5× more.",
         status: { default: "available" },
         trap: "Voice-matching the owner takes 50+ training examples — generic LLM output tanks reply rates by ~40%.",
       },
@@ -115,7 +115,7 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "📮",
         title: "AI Postcards (Lob)",
         detail:
-          "Physical mail step inside the funnel. AI generates the front artwork + back copy per lead (their tractor model, their child's age, their lake) — Lob prints + ships. Costs ~$1/card, lifts response 3-5× over email-only.",
+          "Physical mail step inside your funnel. AI generates artwork + copy per lead (their tractor model, kid's age group, their lake's shoreline) — Lob prints + ships. ~$1/card. Multi-channel sequences with a postcard step pull 3-5× the response of email-only. Hits when the inbox doesn't.",
         status: { default: "available" },
         seeItIn: { label: "Funnels tab", tab: "funnels" },
       },
@@ -169,7 +169,7 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "🔬",
         title: "Hyperloop A/B Engine",
         detail:
-          "Wilson Confidence Interval testing on every email subject, ad creative, and landing-page variant. AI auto-promotes winners once the lower CI bound exceeds the runner-up's upper bound — no false positives from noise.",
+          "Wilson Confidence Interval testing on every subject line, ad creative, landing-page variant. AI auto-promotes winners only when statistically real (no noise winners). Compounds — at 10 tests/yr, your top funnel typically lifts 30-50% conversion vs the baseline.",
         status: { default: "available" },
         trap: "Most A/B 'winners' aren't statistically significant — without Wilson-CI gating you optimize for noise.",
       },
@@ -244,65 +244,65 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
     capabilities: [
       {
         emoji: "🗣️",
-        title: "Voice Cloning · outbound calls in your voice",
+        title: "Voice Cloning · outbound in your voice",
         detail:
-          "Train the AI on 30 minutes of you talking. After that, every voicemail drop, every missed-call text-back voice reply, every follow-up call sounds like you — not a robot. Indistinguishable from human in blind A/B tests.",
+          "Drop a 30-min recording. Within 48 hours, every voicemail, missed-call text-back voice reply, and AI-driven follow-up sounds like you — not a robot. Voice-cloned outreach pulls 2-4× the call-back rate of generic AI voice. Setup once, runs forever.",
         status: { default: "trainable" },
       },
       {
         emoji: "🎯",
         title: "Predictive Lead Scoring",
         detail:
-          "AI scores every lead 0-100 likely-to-convert based on behavior signals: form-completion speed, audience tag, source channel, time-of-day, prior similar-lead outcomes. Your dashboard sorts hottest leads to the top automatically.",
+          "AI scores every lead 0-100 on close-likelihood. Your dashboard sorts hot to cold automatically — the top 20% close 5× more often than the bottom 20%. You stop wasting hours on tire-kickers. Live within 1 week of training.",
         status: { default: "trainable" },
       },
       {
         emoji: "🌶️",
         title: "Sentiment Hot-Lead Alerts",
         detail:
-          "AI reads every inbound reply and flags emotional intensity in real time. Excited reply → SMS you NOW with 'this one's hot, call today.' Frustrated reply → AI auto-sends a calming response and routes to your inbox for personal handling.",
+          "AI reads every inbound reply for emotional intensity. Excited buyer → SMS you in under 60s with \"this one's ready, call today.\" Frustrated → auto-soothing response + your inbox. Catches 90%+ of urgent intent vs hours of manual triage. Live in 3 days.",
         status: { default: "trainable" },
       },
       {
         emoji: "🌎",
         title: "Multi-Language Funnels",
         detail:
-          "AI translates and tone-adapts your entire funnel into Spanish, Portuguese, Mandarin — whatever your audience speaks. Critical for soccer (Latino market = 60M+ in the US) and any service business with non-English-first communities. Context-aware, not literal — picks idioms parents actually use.",
+          "AI translates + tone-adapts your entire funnel into Spanish, Portuguese, Mandarin — whatever your audience speaks. Latino soccer market alone = 60M+ in the US. Idiom-aware (la pelota, el entrenamiento), not literal. One funnel, 2-3× the addressable audience. Live in 2 weeks.",
         status: { default: "trainable" },
       },
       {
         emoji: "📅",
         title: "AI Social Media Calendar",
         detail:
-          "Train AI on your voice + brand + best-performing past posts. AI generates 90 days of social posts at a time — captions, hashtags, suggested image prompts, timing — for review and one-click schedule. Replaces a $1500/mo content writer.",
+          "Train AI on your voice + your top-performing posts. Generates 90 days of captions + hashtags + image prompts + post times at a time. One-click schedule. Replaces a $1500/mo content writer; you spend 10 min/quarter reviewing instead of 4 hours/week creating.",
         status: { default: "trainable" },
       },
       {
         emoji: "🤖",
         title: "Custom Site Chatbot · trained on your FAQ",
         detail:
-          "We feed AI your product info, FAQ, pricing, services. Chatbot lives on your site, answers parent / customer questions in your voice 24/7, books calls when it can't answer. Most service-business chatbots handle 70% of inbound questions before a human sees them.",
+          "We feed AI your products, pricing, services, every past customer question. Bot lives on your site 24/7 answering in your voice. Books calls when it can't. Average service business: 70%+ of inbound questions handled before you see them. ~25 hrs/week reclaimed.",
         status: { default: "trainable" },
       },
       {
         emoji: "🔁",
         title: "Smart Re-Engagement of Dormant Customers",
         detail:
-          "AI mines your past-customer list for who's gone quiet, predicts which would respond to a personalized re-engagement message, generates a unique message per customer (referencing what they bought + when), schedules across email + SMS + postcard. Average 8-12% reactivation lift.",
+          "AI mines past customers, predicts who'll respond, writes a unique message per person (references what they bought + when + their family's lake / kid's age group / tractor model), ships across email + SMS + postcard. 8-12% reactivation = $X thousand in immediate recovered revenue from a list you already paid to build.",
         status: { default: "trainable" },
       },
       {
         emoji: "📞",
         title: "Conversational AI Sales Rep (voice)",
         detail:
-          "AI agent answers missed calls live, holds a real voice conversation in your tone, qualifies the lead (budget, timeline, fit), books the call on your calendar — then SMS-summarizes it to you. Works 24/7. Catches the leads that voicemail loses.",
+          "AI agent answers missed calls live in your tone, qualifies the lead (budget, timeline, fit), books the call on your calendar, SMS-summarizes to you. Works 24/7 including 2 AM Sunday. Recovers 30-50% of leads voicemail loses — the difference between a $40K and $60K month.",
         status: { default: "trainable" },
       },
       {
         emoji: "📸",
         title: "Photo / Video AI Analysis",
         detail:
-          "Customer uploads a photo, AI replies with what they need. Great for service businesses (landscaping: 'send a yard photo' → AI suggests services), product fit (tractor: 'send a photo' → AI identifies brand/model + compatible accessories), and lake-map customizations. Built on Claude Vision.",
+          "Customer sends a pic, AI replies with what they need. Soccer parent: \"send a video of your kid juggling\" → AI scores skill + recommends drills. Lake customer: photo of their cabin wall → AI suggests map size. Tractor: photo of mower → AI identifies brand + accessories. Built on Claude Vision · 2-3 weeks to train.",
         status: { default: "trainable" },
       },
     ],
