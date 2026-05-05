@@ -8,6 +8,7 @@ import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
+import SignatureBuilder from "@/components/portal/SignatureBuilder";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -1744,7 +1745,13 @@ function LeadsTab({
       {filtered.length === 0 ? (
         <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
           <div className="text-4xl mb-2">📥</div>
-          <p>No leads in this filter.</p>
+          <p className="text-base font-bold text-slate-300 mb-1">
+            No leads match this filter
+          </p>
+          <p className="text-sm leading-relaxed max-w-md mx-auto">
+            Adjust the Stage or Category filters above, or scout a county
+            on the Map tab to bring fresh prospects into the queue.
+          </p>
         </div>
       ) : (
         <>
@@ -2103,7 +2110,7 @@ function BudgetForm({
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm"
+            className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500/60"
           >
             {BUDGET_CATEGORIES.map((c) => (
               <option key={c.id} value={c.id}>
@@ -3393,7 +3400,7 @@ function AccountTab({
                 <select
                   value={prefs.digest_hour}
                   onChange={(e) => updatePrefs({ digest_hour: Number(e.target.value) })}
-                  className="mt-1.5 w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm"
+                  className="mt-1.5 w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500/60"
                 >
                   {Array.from({ length: 24 }).map((_, h) => (
                     <option key={h} value={h}>
@@ -3486,6 +3493,8 @@ function AccountTab({
           </button>
         </form>
       </section>
+
+      <SignatureBuilder slug={owner.client_slug} />
 
       <button
         onClick={onLogout}
