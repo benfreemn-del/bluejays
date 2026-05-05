@@ -31,7 +31,7 @@ values (
   ),
   'Nate · Laser Lakes'
 )
-on conflict (client_slug) do nothing;
+on conflict (email) do nothing;
 
 -- 2. client_purchases — per-customer purchase log spanning Shopify + manual.
 --    Joined to client_leads via email or phone for cross-channel rollups.
@@ -106,10 +106,13 @@ comment on table public.client_purchases is
 
 -- 3. Seed a few starter rows so the Customers tab isn't empty when Nate
 --    logs in for the first time. Delete after he syncs his actual Shopify.
+-- Skip the seed block entirely on re-run — cleaner than ON CONFLICT for
+-- a table with no natural unique key on (slug, customer, product).
 insert into public.client_purchases (
   client_slug, customer_name, customer_email,
   product_name, amount_cents, quantity, channel, context, ordered_at
-) values
+)
+select * from (values
   ('laser-lakes', 'Aimee Larsen', 'aimee.l@example.com',
    'Custom Lake Map · Burntside Lake', 47500, 1, 'shopify',
    'Burntside Lake', now() - interval '14 days'),
@@ -125,4 +128,7 @@ insert into public.client_purchases (
   ('laser-lakes', 'Twin Cities Cabin Co.', 'orders@twincitiescabinco.example',
    'Wholesale: Mixed Ornaments', 84000, 60, 'wholesale',
    'Q4 holiday restock', now() - interval '60 days')
-on conflict do nothing;
+) as v(client_slug, customer_name, customer_email, product_name, amount_cents, quantity, channel, context, ordered_at)
+where not exists (
+  select 1 from public.client_purchases where client_slug = 'laser-lakes'
+);
