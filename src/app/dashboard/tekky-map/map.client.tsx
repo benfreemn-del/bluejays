@@ -1050,14 +1050,14 @@ export default function TekkyMapClient() {
                 const isCompleted = completed.has(k);
                 const isStaged = stagedAudience === aud;
                 // ── Universal AI-package status ring ─────────────────
-                //  staged:  amber      (existing UX)
-                //  running: blue-500   (in progress of being scouted)
+                //  running: blue-500   (in progress — wins over staging)
+                //  staged:  amber      (primed/ready)
                 //  done:    green-500  (already completed)
                 //  default: slate-700
-                const ringClass = isStaged
-                  ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
-                  : isRunning
-                    ? "border-blue-400 bg-blue-500/15 ring-1 ring-blue-400 animate-pulse"
+                const ringClass = isRunning
+                  ? "border-blue-400 bg-blue-500/25 ring-2 ring-blue-400 animate-pulse"
+                  : isStaged
+                    ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
                     : isCompleted
                       ? "border-green-500 bg-green-500/10 ring-1 ring-green-500/50"
                       : "border-slate-700 hover:border-amber-400";
