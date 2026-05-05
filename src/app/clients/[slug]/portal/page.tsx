@@ -4443,9 +4443,9 @@ const QUICK_LINKS_BY_SLUG: Record<string, (slug: string) => QuickLinkDef[]> = {
     { href: `/clients/${slug}/shop`, icon: "🛒", label: "Shop" },
   ],
   "itc-quick-attach": (slug) => [
+    { href: `/clients/${slug}/lp/dream-tractor`, icon: "🚜", label: "Dream tractor" },
     { href: `/clients/${slug}/lp/tym`, icon: "⚙️", label: "TYM owners" },
     { href: `/clients/${slug}/lp/dealer`, icon: "🤝", label: "Dealer ROI" },
-    { href: `/clients/${slug}/lp/forester`, icon: "🌲", label: "Forester gear" },
     { href: "https://itcquickattach.com", icon: "🛒", label: "ITC shop" },
   ],
 };

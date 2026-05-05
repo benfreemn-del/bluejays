@@ -109,6 +109,20 @@ export function detectAudience(
     if (lp === "dealer") return "dealer";
     if (lp === "community") return "community";
 
+    // Dream Tractor quiz — synthesize audience from the answer mix.
+    // Priority: explicit dealer signal > use case > size > brand-only.
+    if (lp === "dream-tractor") {
+      const size = String(payload.quiz_size ?? "").toLowerCase();
+      const use = String(payload.quiz_use_case ?? "").toLowerCase();
+      const qbrand = String(payload.quiz_brand ?? "").toLowerCase();
+      if (size === "fleet") return "dealer";
+      if (use === "hunting") return "hunter";
+      if (use === "firewood") return "forester";
+      if (qbrand === "tym") return "tym";
+      if (size === "backyard" || size === "hobby") return "hobbyist";
+      // Fall through to heuristics below if no quiz signal won.
+    }
+
     // Fallback heuristics for inbound that didn't come through a landing page.
     const message = String(payload.message ?? "").toLowerCase();
     const tractor = String(payload.tractor_model ?? payload.tractor ?? "").toLowerCase();

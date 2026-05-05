@@ -109,6 +109,68 @@ export default function ItcMarketMap() {
   const showPins = layer === "all" || layer === "dealers";
   const showCities = layer === "all";
 
+  // Click-to-scout state — when set, the audience-picker drawer opens.
+  const [scoutTarget, setScoutTarget] = useState<{
+    name: string;
+    state: string;
+  } | null>(null);
+  const [scoutAudience, setScoutAudience] = useState<
+    "dealer" | "tym" | "forester" | "hunter" | "hobbyist" | null
+  >(null);
+  const [scoutResult, setScoutResult] = useState<{
+    state: "running" | "done" | "error";
+    message?: string;
+  } | null>(null);
+
+  const runScout = async (
+    city: string,
+    state: string,
+    audience: NonNullable<typeof scoutAudience>,
+  ) => {
+    setScoutAudience(audience);
+    setScoutResult({ state: "running" });
+    try {
+      const r = await fetch("/api/dashboard/tekky-scrape", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          city,
+          state,
+          // Only parent/coach/player are valid in the existing tekky-scrape
+          // pipeline. Map ITC audiences → closest available bucket so we
+          // can demo the flow today; full ITC-native scrape pipeline is
+          // queued.
+          audience:
+            audience === "dealer"
+              ? "coach"
+              : audience === "tym" || audience === "hobbyist"
+                ? "parent"
+                : "player",
+        }),
+      });
+      const j = (await r.json()) as {
+        ok: boolean;
+        inserted?: number;
+        skipped?: number;
+        found?: number;
+        error?: string;
+      };
+      if (!j.ok) {
+        setScoutResult({ state: "error", message: j.error ?? "Scrape failed" });
+        return;
+      }
+      setScoutResult({
+        state: "done",
+        message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
+      });
+    } catch (err) {
+      setScoutResult({
+        state: "error",
+        message: err instanceof Error ? err.message : "Network error",
+      });
+    }
+  };
+
   // Sidebar: top 10 cities by population, optionally filtered to a state
   // when the user later clicks one.
   const [focusState, setFocusState] = useState<string | null>(null);
@@ -186,7 +248,8 @@ export default function ItcMarketMap() {
             />
           )}
 
-          {/* Population-sized city bullets */}
+          {/* Population-sized city bullets — clickable: opens audience-picker
+              drawer to scout that city for tractor-customer leads. */}
           {showCities &&
             cities.map((c) => (
               <CircleMarker
@@ -197,7 +260,14 @@ export default function ItcMarketMap() {
                   color: "#475569",
                   weight: 1,
                   fillColor: "#94a3b8",
-                  fillOpacity: 0.35,
+                  fillOpacity: 0.45,
+                }}
+                eventHandlers={{
+                  click: () => {
+                    setScoutTarget({ name: c.name, state: c.state });
+                    setScoutAudience(null);
+                    setScoutResult(null);
+                  },
                 }}
               >
                 <Tooltip direction="top" offset={[0, -4]} opacity={0.95}>
@@ -207,6 +277,9 @@ export default function ItcMarketMap() {
                     </div>
                     <div className="text-slate-300">
                       {c.population.toLocaleString()} pop.
+                    </div>
+                    <div className="text-amber-300 italic mt-0.5">
+                      Click to scout this market →
                     </div>
                   </div>
                 </Tooltip>
