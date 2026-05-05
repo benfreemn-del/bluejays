@@ -263,53 +263,90 @@ export default function SpendingPage() {
           onChange={refreshRecurring}
         />
 
-        {/* 5K-Site Projection Calculator */}
+        {/* Road to $5M — two-product revenue tracker (replaces legacy 5K calc) */}
+        <RoadTo5M
+          monthlyBurnUsd={projection?.total ?? null}
+          burnNotes={projection?.notes ?? []}
+        />
+
+        {/* Legacy 5K-Site burn calculator — still useful for per-site infra math */}
         <ProjectionCalculator
           siteTarget={siteTarget}
           onChange={setSiteTarget}
           projection={projection}
         />
 
-        {/* Daily Cost Chart */}
-        {analytics && analytics.dailyCosts.length > 0 && (
-          <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-            <h2 className="text-lg font-bold mb-2">Daily Cost Chart</h2>
-            <p className="text-white/40 text-sm mb-6">Last 30 days of API spending</p>
-            <div className="flex items-end gap-[3px] h-40">
-              {analytics.dailyCosts.map((day) => {
-                const maxCost = Math.max(...analytics.dailyCosts.map((d) => d.total), 0.01);
-                const height = day.total > 0 ? Math.max(4, (day.total / maxCost) * 100) : 2;
-                const isToday = day.date === new Date().toISOString().split("T")[0];
-                return (
-                  <div key={day.date} className="flex-1 flex flex-col items-center group relative">
-                    <div
-                      className={`w-full rounded-t transition-all cursor-pointer ${
-                        isToday ? "bg-sky-400" : day.total > 0 ? "bg-sky-500/70 hover:bg-sky-400" : "bg-white/[0.04]"
-                      }`}
-                      style={{ height: `${height}%` }}
-                    />
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full mb-2 hidden group-hover:block z-10">
-                      <div className="bg-[#1a2744] border border-white/10 rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-xl">
-                        <p className="font-medium text-white">{day.date}</p>
-                        <p className="text-sky-400 font-bold">${day.total.toFixed(4)}</p>
-                        {Object.entries(day.byService).map(([svc, cost]) => (
-                          <p key={svc} className="text-white/50">
-                            {svc.replace(/_/g, " ")}: ${(cost as number).toFixed(4)}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+        {/* Daily Cost Chart — always rendered so the section never silently disappears */}
+        <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <h2 className="text-lg font-bold">Daily Cost Chart</h2>
+              <p className="text-white/40 text-sm">Last 30 days. Includes API costs + logged ad spend (Google/Meta).</p>
             </div>
-            <div className="flex justify-between mt-2 text-[10px] text-white/30">
-              <span>{analytics.dailyCosts[0]?.date}</span>
-              <span>{analytics.dailyCosts[analytics.dailyCosts.length - 1]?.date}</span>
+            <div className="text-right">
+              <p className="text-[10px] text-white/30 uppercase tracking-wider">30-day total</p>
+              <p className="text-xl font-black text-sky-400">
+                ${(
+                  analytics?.dailyCosts?.reduce((s, d) => s + d.total, 0) ?? 0
+                ).toFixed(2)}
+              </p>
             </div>
           </div>
-        )}
+          {!analytics ? (
+            <p className="text-white/40 text-sm py-12 text-center">Loading…</p>
+          ) : analytics.dailyCosts.length === 0 ||
+            analytics.dailyCosts.every((d) => d.total === 0) ? (
+            <div className="py-10 text-center">
+              <p className="text-white/40 text-sm mb-2">
+                No cost data in the last 30 days.
+              </p>
+              <p className="text-white/30 text-xs">
+                Use the <span className="text-amber-300 font-bold">Log ad spend</span>{" "}
+                form below to record Google/Meta spend, or hit{" "}
+                <code className="text-amber-300">POST /api/spending/ad-spend/sync</code>{" "}
+                to pull from connected ad accounts.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-end gap-[3px] h-40 mt-4">
+                {analytics.dailyCosts.map((day) => {
+                  const maxCost = Math.max(...analytics.dailyCosts.map((d) => d.total), 0.01);
+                  const height = day.total > 0 ? Math.max(4, (day.total / maxCost) * 100) : 2;
+                  const isToday = day.date === new Date().toISOString().split("T")[0];
+                  return (
+                    <div key={day.date} className="flex-1 flex flex-col items-center group relative">
+                      <div
+                        className={`w-full rounded-t transition-all cursor-pointer ${
+                          isToday ? "bg-sky-400" : day.total > 0 ? "bg-sky-500/70 hover:bg-sky-400" : "bg-white/[0.04]"
+                        }`}
+                        style={{ height: `${height}%` }}
+                      />
+                      <div className="absolute bottom-full mb-2 hidden group-hover:block z-10">
+                        <div className="bg-[#1a2744] border border-white/10 rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-xl">
+                          <p className="font-medium text-white">{day.date}</p>
+                          <p className="text-sky-400 font-bold">${day.total.toFixed(4)}</p>
+                          {Object.entries(day.byService).map(([svc, cost]) => (
+                            <p key={svc} className="text-white/50">
+                              {svc.replace(/_/g, " ")}: ${(cost as number).toFixed(4)}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex justify-between mt-2 text-[10px] text-white/30">
+                <span>{analytics.dailyCosts[0]?.date}</span>
+                <span>{analytics.dailyCosts[analytics.dailyCosts.length - 1]?.date}</span>
+              </div>
+            </>
+          )}
+        </div>
+
+        <AdSpendLogger />
+
 
         {/* Per-Lead Cost Breakdown */}
         {analytics && (
@@ -1222,6 +1259,510 @@ function AddRecurringForm({ onSaved }: { onSaved: () => void | Promise<void> }) 
 // ---------------------------------------------------------------------------
 // 5K-site projection calculator
 // ---------------------------------------------------------------------------
+
+/* ─────────────────────────── AD SPEND LOGGER ─────────────────────────── */
+/**
+ * Why this exists: the GoogleAdsClient + MetaAdsClient already log
+ * API-CALL costs (logCost(service='google_ads', costUsd: 0)) but never
+ * write the actual ad SPEND. The daily chart was showing $15 in
+ * google_places + sendgrid costs while $220 of Google Ads spend
+ * stayed invisible. This panel lets the user record real ad spend
+ * (manual one-off) or trigger an API sync that writes daily totals
+ * pulled from each platform's getAccountSpendUsd() into system_costs.
+ */
+function AdSpendLogger() {
+  const [recent, setRecent] = useState<
+    Array<{
+      id: string;
+      service: string;
+      cost_usd: number;
+      created_at: string;
+      metadata: Record<string, unknown> | null;
+    }>
+  >([]);
+  const [service, setService] = useState<
+    "google_ads_spend" | "meta_ads_spend" | "other_ads"
+  >("google_ads_spend");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [amount, setAmount] = useState("");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  const refresh = useCallback(async () => {
+    try {
+      const r = await fetch("/api/spending/ad-spend").then((res) => res.json());
+      if (r.ok) setRecent(r.rows ?? []);
+    } catch {
+      // ignore
+    }
+  }, []);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const submit = async () => {
+    const n = Number(amount);
+    if (!isFinite(n) || n <= 0) {
+      setMsg({ type: "err", text: "Enter a positive amount." });
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await fetch("/api/spending/ad-spend", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service, date, amountUsd: n, notes: notes || undefined }),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        setMsg({ type: "ok", text: `Logged $${n.toFixed(2)} on ${date}.` });
+        setAmount("");
+        setNotes("");
+        refresh();
+      } else {
+        setMsg({ type: "err", text: j.error || "Save failed." });
+      }
+    } catch (err) {
+      setMsg({ type: "err", text: err instanceof Error ? err.message : "Network error" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const sync = async () => {
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await fetch("/api/spending/ad-spend/sync", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ daysBack: 30 }),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        const g = j.google?.spentUsd ?? 0;
+        const m = j.meta?.spentUsd ?? 0;
+        const errs: string[] = [];
+        if (j.google?.error) errs.push(`Google: ${j.google.error}`);
+        if (j.meta?.error) errs.push(`Meta: ${j.meta.error}`);
+        const errText = errs.length ? ` · ${errs.join(" / ")}` : "";
+        setMsg({
+          type: "ok",
+          text: `Synced 30d: Google $${g.toFixed(2)} · Meta $${m.toFixed(2)}${errText}`,
+        });
+        refresh();
+      } else {
+        setMsg({ type: "err", text: j.error || "Sync failed." });
+      }
+    } catch (err) {
+      setMsg({ type: "err", text: err instanceof Error ? err.message : "Network error" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const removeRow = async (id: string) => {
+    if (!confirm("Delete this ad-spend row?")) return;
+    await fetch(`/api/spending/ad-spend?id=${id}`, { method: "DELETE" }).catch(() => {});
+    refresh();
+  };
+
+  const totalLogged = recent.reduce((s, r) => s + Number(r.cost_usd), 0);
+
+  return (
+    <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/[0.03]">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div>
+          <h2 className="text-lg font-bold">Log ad spend</h2>
+          <p className="text-white/40 text-sm mt-1">
+            Records actual Google/Meta ad dollars into system_costs so they
+            show on the daily chart + roll into ROI math.
+          </p>
+        </div>
+        <button
+          onClick={sync}
+          disabled={busy}
+          className="text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-sky-400/40 text-sky-300 hover:bg-sky-400/10 disabled:opacity-50"
+        >
+          ↻ Sync from APIs
+        </button>
+      </div>
+
+      <div className="grid sm:grid-cols-4 gap-2 mb-2">
+        <select
+          value={service}
+          onChange={(e) =>
+            setService(e.target.value as "google_ads_spend" | "meta_ads_spend" | "other_ads")
+          }
+          className="rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+        >
+          <option value="google_ads_spend">Google Ads</option>
+          <option value="meta_ads_spend">Meta Ads</option>
+          <option value="other_ads">Other</option>
+        </select>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+        />
+        <input
+          type="number"
+          inputMode="decimal"
+          step="0.01"
+          min="0"
+          placeholder="Amount $"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+        />
+        <button
+          onClick={submit}
+          disabled={busy}
+          className="text-sm font-bold uppercase tracking-wider rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 disabled:opacity-50"
+        >
+          {busy ? "…" : "Log"}
+        </button>
+      </div>
+      <input
+        type="text"
+        placeholder="Notes (campaign name, audience, etc.)"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        className="w-full rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+      />
+      {msg && (
+        <div
+          className={`mt-2 text-xs ${
+            msg.type === "err" ? "text-rose-300" : "text-emerald-300"
+          }`}
+        >
+          {msg.text}
+        </div>
+      )}
+
+      <div className="mt-5">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] uppercase tracking-wider text-white/40 font-bold">
+            Recent ad-spend rows
+          </p>
+          <p className="text-[10px] text-white/40">
+            {recent.length} rows · ${totalLogged.toFixed(2)} total (90d)
+          </p>
+        </div>
+        {recent.length === 0 ? (
+          <p className="text-white/30 text-xs py-3 text-center">No ad-spend logged yet.</p>
+        ) : (
+          <ul className="divide-y divide-white/[0.04] text-xs max-h-64 overflow-auto">
+            {recent.map((r) => (
+              <li key={r.id} className="py-2 flex items-center gap-3">
+                <span className="font-mono text-white/60 w-24 flex-shrink-0">
+                  {r.created_at.slice(0, 10)}
+                </span>
+                <span className="font-bold text-amber-300 w-32 flex-shrink-0">
+                  {r.service.replace(/_/g, " ")}
+                </span>
+                <span className="font-bold text-white w-20 flex-shrink-0">
+                  ${Number(r.cost_usd).toFixed(2)}
+                </span>
+                <span className="flex-1 text-white/50 truncate">
+                  {(r.metadata?.notes as string) ?? ""}
+                </span>
+                <button
+                  onClick={() => removeRow(r.id)}
+                  className="text-rose-400/70 hover:text-rose-300 px-1"
+                  aria-label="Delete"
+                >
+                  ✕
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────── ROAD TO $5M ─────────────────────────── */
+/**
+ * Replaces the old 5K-Site Projection. Two product sliders (BlueJays
+ * AI sites + TEKKY balls), each with a configurable unit price, sum
+ * to a total revenue figure tracked toward the $5M goal.
+ *
+ * Persisted to localStorage so the sliders survive reloads. Pulls
+ * `/api/spending/projection` for the burn estimate at the BlueJays
+ * site count to compute a months-to-goal estimate.
+ */
+const GOAL_USD = 5_000_000;
+const STORAGE_KEY = "bluejays.road5m.v1";
+
+type Road5MState = {
+  bluejaysSites: number;
+  bluejaysPrice: number;
+  tekkyUnits: number;
+  tekkyPrice: number;
+};
+
+const ROAD_DEFAULTS: Road5MState = {
+  bluejaysSites: 100,
+  bluejaysPrice: 997,
+  tekkyUnits: 5000,
+  tekkyPrice: 79,
+};
+
+function RoadTo5M({
+  monthlyBurnUsd,
+  burnNotes,
+}: {
+  monthlyBurnUsd: number | null;
+  burnNotes: string[];
+}) {
+  const [s, setS] = useState<Road5MState>(ROAD_DEFAULTS);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<Road5MState>;
+        setS({ ...ROAD_DEFAULTS, ...parsed });
+      }
+    } catch {
+      // bad JSON — ignore
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    } catch {
+      // storage full / blocked — ignore
+    }
+  }, [s, hydrated]);
+
+  const bluejaysRevenue = s.bluejaysSites * s.bluejaysPrice;
+  const tekkyRevenue = s.tekkyUnits * s.tekkyPrice;
+  const totalRevenue = bluejaysRevenue + tekkyRevenue;
+  const pctOfGoal = Math.min(100, (totalRevenue / GOAL_USD) * 100);
+  const remaining = Math.max(0, GOAL_USD - totalRevenue);
+
+  // Months to goal: assume current monthlyBurn applies + a notional 30%
+  // gross margin on revenue (so net profit per $1 revenue is $0.30).
+  // If monthlyBurn is null we can't compute.
+  const grossMargin = 0.3;
+  const monthlyNet = totalRevenue * grossMargin - (monthlyBurnUsd ?? 0);
+  const monthsToGoal =
+    monthlyNet > 0 ? Math.ceil(remaining / Math.max(1, totalRevenue * grossMargin)) : null;
+
+  const reset = () => setS(ROAD_DEFAULTS);
+
+  return (
+    <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-bold">Road to $5M</h2>
+          <p className="text-white/40 text-sm mt-1">
+            BlueJays AI sites + TEKKY balls. Sliders persist locally so the
+            target survives reloads. Edit unit price if your packaging shifts.
+          </p>
+        </div>
+        <button
+          onClick={reset}
+          className="text-[10px] uppercase tracking-wider text-white/40 hover:text-white border border-white/10 rounded-lg px-2 py-1"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Total + progress bar */}
+      <div className="mb-5">
+        <div className="flex items-baseline justify-between mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-white/40 font-bold">
+            Total projected revenue
+          </span>
+          <span className="text-xs text-white/40">
+            {pctOfGoal.toFixed(1)}% of $5M
+          </span>
+        </div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-3xl font-black text-emerald-400">
+            ${totalRevenue.toLocaleString()}
+          </span>
+          <span className="text-sm text-white/40">
+            / ${GOAL_USD.toLocaleString()}
+          </span>
+        </div>
+        <div className="mt-2 h-2 rounded-full bg-white/[0.05] overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-emerald-500 to-amber-400 transition-all"
+            style={{ width: `${pctOfGoal}%` }}
+          />
+        </div>
+        <p className="text-[10px] text-white/40 mt-1">
+          ${remaining.toLocaleString()} to go.
+          {monthsToGoal !== null && (
+            <>
+              {" "}
+              At {(grossMargin * 100).toFixed(0)}% gross margin minus current
+              burn, ~<span className="text-amber-300 font-bold">{monthsToGoal}</span>{" "}
+              months at this pace.
+            </>
+          )}
+          {monthlyNet <= 0 && (
+            <span className="text-rose-300">
+              {" "}
+              · Net is non-positive at the assumed margin — slide either product up.
+            </span>
+          )}
+        </p>
+      </div>
+
+      {/* Sliders */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <ProductSlider
+          label="BlueJays AI Sites"
+          accent="text-blue-300"
+          ringClass="border-blue-500/30 bg-blue-500/[0.05]"
+          count={s.bluejaysSites}
+          maxCount={5000}
+          stepCount={5}
+          unitPrice={s.bluejaysPrice}
+          revenue={bluejaysRevenue}
+          onCount={(n) => setS((prev) => ({ ...prev, bluejaysSites: n }))}
+          onPrice={(n) => setS((prev) => ({ ...prev, bluejaysPrice: n }))}
+        />
+        <ProductSlider
+          label="TEKKY Balls"
+          accent="text-amber-300"
+          ringClass="border-amber-500/30 bg-amber-500/[0.05]"
+          count={s.tekkyUnits}
+          maxCount={100_000}
+          stepCount={50}
+          unitPrice={s.tekkyPrice}
+          revenue={tekkyRevenue}
+          onCount={(n) => setS((prev) => ({ ...prev, tekkyUnits: n }))}
+          onPrice={(n) => setS((prev) => ({ ...prev, tekkyPrice: n }))}
+        />
+      </div>
+
+      {/* Burn linkage */}
+      <div className="mt-5 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] grid sm:grid-cols-3 gap-3 text-center">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-white/40">
+            Current monthly burn
+          </p>
+          <p className="text-lg font-bold text-orange-300">
+            {monthlyBurnUsd === null ? "—" : `$${monthlyBurnUsd.toFixed(2)}`}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-white/40">
+            Net @ {(grossMargin * 100).toFixed(0)}% gross
+          </p>
+          <p
+            className={`text-lg font-bold ${
+              monthlyNet >= 0 ? "text-emerald-300" : "text-rose-300"
+            }`}
+          >
+            ${monthlyNet.toFixed(2)}/mo
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-white/40">
+            Months to $5M
+          </p>
+          <p className="text-lg font-bold text-amber-300">
+            {monthsToGoal === null ? "—" : monthsToGoal}
+          </p>
+        </div>
+      </div>
+      {burnNotes.length > 0 && (
+        <div className="mt-3 space-y-1">
+          {burnNotes.map((n, i) => (
+            <p key={i} className="text-[10px] text-white/30">
+              · {n}
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProductSlider({
+  label,
+  accent,
+  ringClass,
+  count,
+  maxCount,
+  stepCount,
+  unitPrice,
+  revenue,
+  onCount,
+  onPrice,
+}: {
+  label: string;
+  accent: string;
+  ringClass: string;
+  count: number;
+  maxCount: number;
+  stepCount: number;
+  unitPrice: number;
+  revenue: number;
+  onCount: (n: number) => void;
+  onPrice: (n: number) => void;
+}) {
+  return (
+    <div className={`p-4 rounded-xl border ${ringClass}`}>
+      <div className="flex items-baseline justify-between mb-2">
+        <h3 className={`text-sm font-bold ${accent}`}>{label}</h3>
+        <span className={`text-xl font-black ${accent}`}>
+          {count.toLocaleString()}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={maxCount}
+        step={stepCount}
+        value={count}
+        onChange={(e) => onCount(Number(e.target.value))}
+        className="w-full accent-current"
+      />
+      <div className="flex justify-between text-[9px] text-white/30 mt-1">
+        <span>0</span>
+        <span>{(maxCount / 2).toLocaleString()}</span>
+        <span>{maxCount.toLocaleString()}</span>
+      </div>
+      <div className="flex items-center gap-2 mt-3">
+        <label className="text-[10px] uppercase tracking-wider text-white/40">
+          Unit price $
+        </label>
+        <input
+          type="number"
+          step="0.01"
+          min={0}
+          value={unitPrice}
+          onChange={(e) => onPrice(Number(e.target.value))}
+          className="w-24 rounded-md bg-white/[0.03] border border-white/10 px-2 py-1 text-xs"
+        />
+        <span className="ml-auto text-[10px] uppercase tracking-wider text-white/40">
+          revenue
+        </span>
+        <span className={`text-sm font-bold ${accent}`}>
+          ${revenue.toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function ProjectionCalculator({
   siteTarget,

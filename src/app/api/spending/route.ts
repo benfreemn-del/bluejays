@@ -4,6 +4,7 @@ import { getSystemCostEstimate } from "@/lib/cost-tracker";
 import { getEmailHistory } from "@/lib/email-sender";
 import { getSmsHistory } from "@/lib/sms";
 import { getCostData } from "@/lib/cost-logger";
+import { totalRevenueFromProspects } from "@/lib/actual-revenue";
 
 /**
  * GET /api/spending
@@ -30,13 +31,14 @@ export async function GET() {
 
   const systemCost = getSystemCostEstimate(prospects.length, totalEmails, totalSms);
   const paid = prospects.filter((p) => p.status === "paid").length;
+  const revenue = totalRevenueFromProspects(prospects);
 
   return NextResponse.json({
     // Legacy fields (for backward compatibility)
     ...systemCost,
     paidCustomers: paid,
-    revenue: paid * 997,
-    profit: paid * 997 - systemCost.totalEstimatedCost,
+    revenue,
+    profit: revenue - systemCost.totalEstimatedCost,
     
     // Real cost data from system_costs table
     realCosts: hasRealData ? realCosts : null,
