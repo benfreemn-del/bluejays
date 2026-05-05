@@ -24,7 +24,9 @@ import {
   MapContainer,
   TileLayer,
   Tooltip,
+  useMap,
 } from "react-leaflet";
+import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 
 import majorCitiesData from "@/data/us-major-cities.json";
@@ -74,6 +76,54 @@ function popRadius(population: number): number {
   return Math.max(3, Math.min(22, Math.sqrt(population / 4000)));
 }
 
+/** First two digits of a county FIPS = state FIPS. Map → 2-letter
+ * USPS abbr so we can filter counties by the locked state. */
+const STATE_FIPS_TO_ABBR: Record<string, string> = {
+  "01": "AL", "02": "AK", "04": "AZ", "05": "AR", "06": "CA", "08": "CO",
+  "09": "CT", "10": "DE", "11": "DC", "12": "FL", "13": "GA", "15": "HI",
+  "16": "ID", "17": "IL", "18": "IN", "19": "IA", "20": "KS", "21": "KY",
+  "22": "LA", "23": "ME", "24": "MD", "25": "MA", "26": "MI", "27": "MN",
+  "28": "MS", "29": "MO", "30": "MT", "31": "NE", "32": "NV", "33": "NH",
+  "34": "NJ", "35": "NM", "36": "NY", "37": "NC", "38": "ND", "39": "OH",
+  "40": "OK", "41": "OR", "42": "PA", "44": "RI", "45": "SC", "46": "SD",
+  "47": "TN", "48": "TX", "49": "UT", "50": "VT", "51": "VA", "53": "WA",
+  "54": "WV", "55": "WI", "56": "WY",
+};
+
+type ItcAudience = "dealer" | "tym" | "forester" | "hunter" | "hobbyist";
+
+const ITC_AUDIENCE_META: Record<
+  ItcAudience,
+  { label: string; emoji: string; color: string }
+> = {
+  dealer: { label: "Dealers", emoji: "🤝", color: "#60a5fa" },
+  tym: { label: "TYM", emoji: "⚙️", color: "#fbbf24" },
+  forester: { label: "Foresters", emoji: "🌲", color: "#a3e635" },
+  hunter: { label: "Hunters", emoji: "🦌", color: "#f87171" },
+  hobbyist: { label: "Sub-compact", emoji: "🚜", color: "#34d399" },
+};
+
+/** Map ITC audiences → existing tekky-scrape audience buckets so the
+ * existing scrape pipeline can run today. Full ITC-native scrape lib
+ * queued. */
+function mapItcToScrapeAudience(a: ItcAudience): "parent" | "coach" | "player" {
+  if (a === "dealer") return "coach";
+  if (a === "tym" || a === "hobbyist") return "parent";
+  return "player";
+}
+
+function ZoomController({ bounds }: { bounds: L.LatLngBounds | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) {
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 0.8 });
+    } else {
+      map.flyTo([39.5, -97], 4, { duration: 0.8 });
+    }
+  }, [bounds, map]);
+  return null;
+}
+
 export default function ItcMarketMap() {
   const [layer, setLayer] = useState<Layer>("all");
   const [statesGeoJson, setStatesGeoJson] =
@@ -81,6 +131,17 @@ export default function ItcMarketMap() {
   const [countiesGeoJson, setCountiesGeoJson] =
     useState<FeatureCollection | null>(null);
   const [showCounties, setShowCounties] = useState(true);
+  const [lockedState, setLockedState] = useState<string | null>(null);
+  const [zoomBounds, setZoomBounds] = useState<L.LatLngBounds | null>(null);
+  const [countyTarget, setCountyTarget] = useState<{
+    name: string;
+    state: string;
+  } | null>(null);
+  const [scoutStatus, setScoutStatus] = useState<{
+    key: string;
+    state: "running" | "done" | "error";
+    message?: string;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,67 +170,8 @@ export default function ItcMarketMap() {
   const showPins = layer === "all" || layer === "dealers";
   const showCities = layer === "all";
 
-  // Click-to-scout state — when set, the audience-picker drawer opens.
-  const [scoutTarget, setScoutTarget] = useState<{
-    name: string;
-    state: string;
-  } | null>(null);
-  const [scoutAudience, setScoutAudience] = useState<
-    "dealer" | "tym" | "forester" | "hunter" | "hobbyist" | null
-  >(null);
-  const [scoutResult, setScoutResult] = useState<{
-    state: "running" | "done" | "error";
-    message?: string;
-  } | null>(null);
-
-  const runScout = async (
-    city: string,
-    state: string,
-    audience: NonNullable<typeof scoutAudience>,
-  ) => {
-    setScoutAudience(audience);
-    setScoutResult({ state: "running" });
-    try {
-      const r = await fetch("/api/dashboard/tekky-scrape", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          city,
-          state,
-          // Only parent/coach/player are valid in the existing tekky-scrape
-          // pipeline. Map ITC audiences → closest available bucket so we
-          // can demo the flow today; full ITC-native scrape pipeline is
-          // queued.
-          audience:
-            audience === "dealer"
-              ? "coach"
-              : audience === "tym" || audience === "hobbyist"
-                ? "parent"
-                : "player",
-        }),
-      });
-      const j = (await r.json()) as {
-        ok: boolean;
-        inserted?: number;
-        skipped?: number;
-        found?: number;
-        error?: string;
-      };
-      if (!j.ok) {
-        setScoutResult({ state: "error", message: j.error ?? "Scrape failed" });
-        return;
-      }
-      setScoutResult({
-        state: "done",
-        message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
-      });
-    } catch (err) {
-      setScoutResult({
-        state: "error",
-        message: err instanceof Error ? err.message : "Network error",
-      });
-    }
-  };
+  // (legacy city-click scout state removed — replaced by county-click
+  //  drawer with full ITC audience picker below)
 
   // Sidebar: top 10 cities by population, optionally filtered to a state
   // when the user later clicks one.
@@ -204,10 +206,123 @@ export default function ItcMarketMap() {
   const onEachState = (feature: Feature<Geometry>, leafletLayer: import("leaflet").Layer) => {
     const fullName = (feature.properties?.name ?? "") as string;
     const abbr = stateNameToAbbr(fullName);
+    // Disable interactivity on the locked state so clicks pass to counties.
+    if (lockedState && abbr === lockedState) {
+      const path = leafletLayer as L.Path;
+      const elem = (path as L.Path & { _path?: SVGElement })._path;
+      if (elem) elem.style.pointerEvents = "none";
+      return;
+    }
     leafletLayer.on({
       mouseover: () => setFocusState(abbr),
       mouseout: () => setFocusState(null),
+      click: () => {
+        setLockedState((prev) => {
+          if (prev === abbr) {
+            setZoomBounds(null);
+            return null;
+          }
+          const layerWithBounds = leafletLayer as import("leaflet").Layer & {
+            getBounds?: () => L.LatLngBounds;
+          };
+          if (typeof layerWithBounds.getBounds === "function") {
+            setZoomBounds(layerWithBounds.getBounds());
+          }
+          return abbr;
+        });
+      },
     });
+  };
+
+  const onEachCounty = (
+    feature: Feature<Geometry>,
+    leafletLayer: import("leaflet").Layer,
+  ) => {
+    const id = String(feature.id ?? "").padStart(5, "0");
+    const stateFips = id.slice(0, 2);
+    const stateAbbr = STATE_FIPS_TO_ABBR[stateFips];
+    const countyName = (feature.properties?.NAME ??
+      feature.properties?.name ??
+      "Unknown") as string;
+    leafletLayer.on({
+      mouseover: () => {
+        const path = leafletLayer as L.Path;
+        path.setStyle({
+          color: "#facc15",
+          weight: 1.5,
+          fillColor: "#facc15",
+          fillOpacity: 0.25,
+        });
+      },
+      mouseout: () => {
+        const path = leafletLayer as L.Path;
+        path.setStyle(countyStyle());
+      },
+      click: (e) => {
+        L.DomEvent.stopPropagation(e);
+        if (!stateAbbr) return;
+        setCountyTarget({ name: countyName, state: stateAbbr });
+      },
+    });
+  };
+
+  // Filter counties to the locked state when zoomed in.
+  const visibleCounties = useMemo(() => {
+    if (!countiesGeoJson) return null;
+    if (!lockedState) return countiesGeoJson;
+    const target = Object.entries(STATE_FIPS_TO_ABBR).find(
+      ([, abbr]) => abbr === lockedState,
+    )?.[0];
+    if (!target) return countiesGeoJson;
+    return {
+      ...countiesGeoJson,
+      features: countiesGeoJson.features.filter((f) => {
+        const id = String(f.id ?? "").padStart(5, "0");
+        return id.slice(0, 2) === target;
+      }),
+    } as FeatureCollection;
+  }, [countiesGeoJson, lockedState]);
+
+  const runScout = async (
+    city: string,
+    state: string,
+    audience: ItcAudience,
+  ) => {
+    const key = `${city}|${state}|${audience}`;
+    setScoutStatus({ key, state: "running" });
+    try {
+      const r = await fetch("/api/dashboard/tekky-scrape", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          city,
+          state,
+          audience: mapItcToScrapeAudience(audience),
+        }),
+      });
+      const j = (await r.json()) as {
+        ok: boolean;
+        inserted?: number;
+        skipped?: number;
+        found?: number;
+        error?: string;
+      };
+      if (!j.ok) {
+        setScoutStatus({ key, state: "error", message: j.error ?? "Scrape failed" });
+        return;
+      }
+      setScoutStatus({
+        key,
+        state: "done",
+        message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
+      });
+    } catch (err) {
+      setScoutStatus({
+        key,
+        state: "error",
+        message: err instanceof Error ? err.message : "Network error",
+      });
+    }
   };
 
   const activeLayer = LAYER_OPTIONS.find((o) => o.id === layer);
@@ -229,19 +344,24 @@ export default function ItcMarketMap() {
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
 
-          {/* Counties layer — toggleable, faint by default */}
-          {showCounties && countiesGeoJson && (
+          <ZoomController bounds={zoomBounds} />
+
+          {/* Counties layer — toggleable. When a state is locked, only
+              that state's counties render (perf + clarity). Each county
+              is clickable to open the audience-picker drawer. */}
+          {showCounties && visibleCounties && (
             <GeoJSON
-              key="counties"
-              data={countiesGeoJson}
+              key={`counties-${lockedState ?? "us"}`}
+              data={visibleCounties}
               style={countyStyle}
+              onEachFeature={onEachCounty}
             />
           )}
 
           {/* State borders — focus highlight on hover */}
           {statesGeoJson && (
             <GeoJSON
-              key="states"
+              key={`states-${lockedState ?? "us"}`}
               data={statesGeoJson}
               style={stateStyle}
               onEachFeature={onEachState}
@@ -264,9 +384,10 @@ export default function ItcMarketMap() {
                 }}
                 eventHandlers={{
                   click: () => {
-                    setScoutTarget({ name: c.name, state: c.state });
-                    setScoutAudience(null);
-                    setScoutResult(null);
+                    // Clicking a city is shorthand for scouting that
+                    // city's county (uses the city name as the search
+                    // target — Google Places matches both).
+                    setCountyTarget({ name: c.name, state: c.state });
                   },
                 }}
               >
@@ -314,6 +435,21 @@ export default function ItcMarketMap() {
               </CircleMarker>
             ))}
         </MapContainer>
+
+        {/* Prominent "Back to US" button when a state is locked */}
+        {lockedState && (
+          <button
+            onClick={() => {
+              setLockedState(null);
+              setCountyTarget(null);
+              setZoomBounds(null);
+              setFocusState(null);
+            }}
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-wider text-xs px-4 py-2 shadow-2xl border border-amber-300"
+          >
+            ← Back to US · {stateAbbrToName(lockedState)}
+          </button>
+        )}
 
         {/* Layer filter top-left */}
         <div className="absolute top-3 left-3 z-[1000] rounded-xl bg-slate-900/95 border border-white/10 backdrop-blur p-2 shadow-2xl max-w-[230px]">
@@ -370,13 +506,93 @@ export default function ItcMarketMap() {
         </div>
 
         {/* Empty-state callout for layers without data yet */}
-        {(layer === "tym" ||
-          layer === "foresters" ||
-          layer === "hunters" ||
-          layer === "hobbyists") && (
-          <div className="absolute top-3 right-3 z-[1000] rounded-xl bg-amber-950/80 border border-amber-500/40 backdrop-blur px-3 py-2 shadow-2xl text-[10px] text-amber-200 max-w-[240px]">
-            <p className="font-bold mb-0.5">{activeLayer?.emoji} {activeLayer?.label} layer queued</p>
-            <p>Concrete data source needs to be wired. See us-major-cities.json + itc-verified-pins.json for the current verified set.</p>
+        {!countyTarget &&
+          (layer === "tym" ||
+            layer === "foresters" ||
+            layer === "hunters" ||
+            layer === "hobbyists") && (
+            <div className="absolute top-3 right-3 z-[1000] rounded-xl bg-amber-950/80 border border-amber-500/40 backdrop-blur px-3 py-2 shadow-2xl text-[10px] text-amber-200 max-w-[240px]">
+              <p className="font-bold mb-0.5">
+                {activeLayer?.emoji} {activeLayer?.label} layer queued
+              </p>
+              <p>
+                Concrete data source needs to be wired. See us-major-cities.json
+                + itc-verified-pins.json for the current verified set.
+              </p>
+            </div>
+          )}
+
+        {/* County scout drawer — opens when a county is clicked. Five
+             ITC audience buttons (dealer / TYM / forester / hunter /
+             hobbyist) each fire a Google Places scrape mapped to the
+             existing tekky-scrape pipeline. */}
+        {countyTarget && (
+          <div className="absolute top-3 right-3 z-[1000] rounded-xl bg-slate-900/95 border border-amber-500/40 backdrop-blur p-3 shadow-2xl w-[270px]">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-amber-300 font-bold">
+                  Scout this county
+                </div>
+                <div className="text-sm font-bold text-white">
+                  {countyTarget.name}
+                  <span className="text-slate-400 font-normal ml-1">
+                    {countyTarget.state}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setCountyTarget(null)}
+                className="text-slate-400 hover:text-white text-sm"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-400 mb-2">
+              Pick an audience. Google Places searches the county;
+              matching businesses land in your Leads tab.
+            </p>
+            <div className="grid grid-cols-5 gap-1">
+              {(["dealer", "tym", "forester", "hunter", "hobbyist"] as ItcAudience[]).map(
+                (aud) => {
+                  const meta = ITC_AUDIENCE_META[aud];
+                  const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
+                  const isRunning =
+                    scoutStatus?.key === k && scoutStatus.state === "running";
+                  return (
+                    <button
+                      key={aud}
+                      onClick={() =>
+                        runScout(countyTarget.name, countyTarget.state, aud)
+                      }
+                      disabled={isRunning}
+                      title={meta.label}
+                      className="text-[10px] font-bold rounded-md py-1.5 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center"
+                      style={{ color: meta.color }}
+                    >
+                      <span className="text-base">{meta.emoji}</span>
+                      <span className="text-[9px]">{isRunning ? "…" : meta.label}</span>
+                    </button>
+                  );
+                },
+              )}
+            </div>
+            {scoutStatus &&
+              scoutStatus.key.startsWith(
+                `${countyTarget.name}|${countyTarget.state}|`,
+              ) && (
+                <div
+                  className={`mt-2 text-[10px] ${
+                    scoutStatus.state === "error"
+                      ? "text-rose-400"
+                      : scoutStatus.state === "done"
+                        ? "text-emerald-400"
+                        : "text-slate-400"
+                  }`}
+                >
+                  {scoutStatus.message ?? "running…"}
+                </div>
+              )}
           </div>
         )}
       </div>

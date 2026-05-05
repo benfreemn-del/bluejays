@@ -339,13 +339,48 @@ export default function TekkyMapClient() {
     return [...pool].sort((a, b) => b.population - a.population).slice(0, 10);
   }, [cities, focusState]);
 
+  // Filter counties to the locked state for both the map render
+  // and the sidebar list.
+  const visibleCounties = useMemo(() => {
+    if (!countiesGeoJson) return null;
+    if (!lockedState) return countiesGeoJson;
+    const target = Object.entries(STATE_FIPS_TO_ABBR).find(
+      ([, abbr]) => abbr === lockedState,
+    )?.[0];
+    if (!target) return countiesGeoJson;
+    return {
+      ...countiesGeoJson,
+      features: countiesGeoJson.features.filter((f) => {
+        const id = String(f.id ?? "").padStart(5, "0");
+        return id.slice(0, 2) === target;
+      }),
+    } as FeatureCollection;
+  }, [countiesGeoJson, lockedState]);
+
+  // Sidebar county list — much richer than the 1-3 cities we have
+  // per state in the curated dataset.
+  const sidebarCounties = useMemo(() => {
+    if (!lockedState || !visibleCounties) return [];
+    return visibleCounties.features
+      .map((f) => {
+        const name = (f.properties?.NAME ?? f.properties?.name ?? "") as string;
+        return name;
+      })
+      .filter((n) => n.length > 0)
+      .sort();
+  }, [lockedState, visibleCounties]);
+
   /* GeoJSON style + event hooks */
   const stateStyle = (feature?: Feature<Geometry>) => {
     const name = (feature?.properties?.name ?? "") as string;
     const isFocus = focusState && stateNameToAbbr(name) === focusState;
+    const isLocked = lockedState && stateNameToAbbr(name) === lockedState;
     return {
       color: isFocus ? "#facc15" : "#1e293b",
       weight: isFocus ? 2 : 0.7,
+      // When locked, we want clicks to pass through to the county
+      // polygons underneath. Setting fillOpacity to 0 + interactive=false
+      // (handled in onEachState) makes that work.
       fillColor: isFocus ? "#facc15" : "#0f172a",
       fillOpacity: isFocus ? 0.08 : 0.35,
     };
@@ -354,6 +389,20 @@ export default function TekkyMapClient() {
   const onEachState = (feature: Feature<Geometry>, leafletLayer: Layer) => {
     const fullName = (feature.properties?.name ?? "") as string;
     const abbr = stateNameToAbbr(fullName);
+    // When this state is currently the locked one, disable its
+    // interactivity so clicks pass through to the county polygons
+    // beneath. Without this, the user can only ever click the state
+    // (one big polygon swallows all clicks).
+    if (lockedState && abbr === lockedState) {
+      const path = leafletLayer as L.Path;
+      const elem = (path as L.Path & { _path?: SVGElement })._path;
+      if (elem) elem.style.pointerEvents = "none";
+      return;
+    } else {
+      const path = leafletLayer as L.Path;
+      const elem = (path as L.Path & { _path?: SVGElement })._path;
+      if (elem) elem.style.pointerEvents = "";
+    }
     leafletLayer.on({
       mouseover: () => setHoveredState(abbr),
       mouseout: () => setHoveredState(null),
@@ -416,24 +465,6 @@ export default function TekkyMapClient() {
     });
   };
 
-  // Filter counties to the locked state so we render fewer polygons
-  // when zoomed in (perf + clarity).
-  const visibleCounties = useMemo(() => {
-    if (!countiesGeoJson) return null;
-    if (!lockedState) return countiesGeoJson;
-    const target = Object.entries(STATE_FIPS_TO_ABBR).find(
-      ([, abbr]) => abbr === lockedState,
-    )?.[0];
-    if (!target) return countiesGeoJson;
-    return {
-      ...countiesGeoJson,
-      features: countiesGeoJson.features.filter((f) => {
-        const id = String(f.id ?? "").padStart(5, "0");
-        return id.slice(0, 2) === target;
-      }),
-    } as FeatureCollection;
-  }, [countiesGeoJson, lockedState]);
-
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-0 h-[calc(100vh-64px)]">
       {/* MAP */}
@@ -467,6 +498,7 @@ export default function TekkyMapClient() {
 
           {statesGeoJson && (
             <GeoJSON
+              key={`states-${lockedState ?? "us"}`}
               data={statesGeoJson}
               style={stateStyle}
               onEachFeature={onEachState}
@@ -559,6 +591,20 @@ export default function TekkyMapClient() {
               );
             })}
         </MapContainer>
+
+        {/* Prominent "Back to US" button when a state is locked */}
+        {lockedState && (
+          <button
+            onClick={() => {
+              setLockedState(null);
+              setCountyTarget(null);
+              setZoomBounds(null);
+            }}
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-wider text-xs px-4 py-2 shadow-2xl border border-amber-300 flex items-center gap-2"
+          >
+            ← Back to US · {stateAbbrToName(lockedState)}
+          </button>
+        )}
 
         {/* Layer filter — overlaid top-left */}
         <div className="absolute top-3 left-3 z-[1000] rounded-xl bg-slate-900/90 border border-white/10 backdrop-blur p-2 shadow-2xl">
@@ -846,6 +892,39 @@ export default function TekkyMapClient() {
                       {c.population.toLocaleString()} pop.
                     </div>
                   </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {/* Counties list — only when state is locked. Each county gets
+            a click-to-pick-audience action. Click selects the county
+            (same as clicking it on the map) and opens the audience
+            drawer top-right. */}
+        {lockedState && sidebarCounties.length > 0 && (
+          <section>
+            <div className="px-4 pt-4 pb-2 text-[10px] uppercase tracking-wider text-amber-300 font-bold flex items-center justify-between">
+              <span>Counties in {stateAbbrToName(lockedState)}</span>
+              <span className="text-slate-500">{sidebarCounties.length}</span>
+            </div>
+            <ol className="divide-y divide-white/[0.04] max-h-[400px] overflow-y-auto">
+              {sidebarCounties.map((c) => (
+                <li
+                  key={`co-${c}`}
+                  className="px-4 py-2 hover:bg-slate-800/40 transition flex items-center justify-between gap-2"
+                >
+                  <span className="text-xs text-slate-200 truncate flex-1">
+                    {c} County
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCountyTarget({ name: c, state: lockedState })
+                    }
+                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                  >
+                    Scout →
+                  </button>
                 </li>
               ))}
             </ol>
