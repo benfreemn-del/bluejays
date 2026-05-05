@@ -179,13 +179,6 @@ export default function DashboardPage() {
             <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Home
             </Link>
-            <Link
-              href="/dashboard/customers"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-400 transition-colors hover:bg-background hover:text-emerald-300"
-              title="Manage already-purchased customers (paid, in-progress, deployed, renewing)"
-            >
-              Customers
-            </Link>
             <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Images
             </Link>
