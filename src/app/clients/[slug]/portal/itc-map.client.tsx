@@ -260,7 +260,7 @@ export default function ItcMarketMap() {
 
   const styleForCounty = (countyName: string, stateAbbr: string | undefined) => {
     if (!stateAbbr) {
-      return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+      return { color: "#475569", weight: 0.7, fillColor: "#0a0f1c", fillOpacity: 0.15 };
     }
     const status = countyStatus.get(`${countyName}|${stateAbbr}`);
     if (status === "in-progress")
@@ -269,12 +269,12 @@ export default function ItcMarketMap() {
       return { color: "#22c55e", weight: 1, fillColor: "#22c55e", fillOpacity: 0.22 };
     if (status === "exhausted")
       return { color: "#ef4444", weight: 0.6, fillColor: "#ef4444", fillOpacity: 0.12 };
-    return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+    return { color: "#475569", weight: 0.7, fillColor: "#0a0f1c", fillOpacity: 0.15 };
   };
 
   const countyStyle = (feature?: Feature<Geometry>) => {
     if (!feature)
-      return { color: "#1e293b", weight: 0.25, fillColor: "#0a0f1c", fillOpacity: 0.15 };
+      return { color: "#475569", weight: 0.7, fillColor: "#0a0f1c", fillOpacity: 0.15 };
     const id = String(feature.id ?? "").padStart(5, "0");
     const stateAbbr = STATE_FIPS_TO_ABBR[id.slice(0, 2)];
     const countyName = (feature.properties?.NAME ??

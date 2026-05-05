@@ -656,8 +656,8 @@ export default function TekkyMapClient() {
   const styleForCounty = (countyName: string, stateAbbr: string | undefined) => {
     if (!stateAbbr) {
       return {
-        color: "#1e293b",
-        weight: 0.4,
+        color: "#475569",
+        weight: 0.8,
         fillColor: "#0a0f1c",
         fillOpacity: 0.1,
       };
@@ -688,8 +688,8 @@ export default function TekkyMapClient() {
       };
     }
     return {
-      color: "#1e293b",
-      weight: 0.4,
+      color: "#475569",
+      weight: 0.8,
       fillColor: "#0a0f1c",
       fillOpacity: 0.1,
     };
@@ -697,7 +697,7 @@ export default function TekkyMapClient() {
 
   const countyStyle = (feature?: Feature<Geometry>) => {
     if (!feature)
-      return { color: "#1e293b", weight: 0.4, fillColor: "#0a0f1c", fillOpacity: 0.1 };
+      return { color: "#475569", weight: 0.8, fillColor: "#0a0f1c", fillOpacity: 0.1 };
     const id = String(feature.id ?? "").padStart(5, "0");
     const stateAbbr = STATE_FIPS_TO_ABBR[id.slice(0, 2)];
     const countyName = (feature.properties?.NAME ??
