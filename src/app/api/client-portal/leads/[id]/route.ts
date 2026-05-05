@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CLIENT_PORTAL_COOKIE, ownerFromCookie } from "@/lib/client-auth";
 import { getClientLead, updateClientLead } from "@/lib/client-leads";
+import { getSupabase } from "@/lib/supabase";
 
 /**
  * PATCH /api/client-portal/leads/[id]
@@ -15,6 +16,35 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * GET /api/client-portal/leads/[id] — return lead + touchpoint history.
+ * Owner-scoped. Powers the LeadCard expand-view timeline.
+ */
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ ok: false, error: "Invalid lead id" }, { status: 400 });
+  }
+  const cookie = req.cookies.get(CLIENT_PORTAL_COOKIE)?.value;
+  const owner = await ownerFromCookie(cookie);
+  if (!owner) {
+    return NextResponse.json({ ok: false, error: "Not signed in" }, { status: 401 });
+  }
+  const lead = await getClientLead(id);
+  if (!lead || lead.client_slug !== owner.client_slug) {
+    return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+  }
+  const { data: messages } = await getSupabase()
+    .from("client_lead_messages")
+    .select("*")
+    .eq("lead_id", id)
+    .order("sent_at", { ascending: true });
+  return NextResponse.json({ ok: true, lead, messages: messages ?? [] });
+}
 
 export async function PATCH(
   req: NextRequest,

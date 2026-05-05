@@ -9,11 +9,19 @@
 import { getSupabase } from "./supabase";
 
 export type ClientLeadAudience =
+  // Zenith Sports / TEKKY soccer audiences
   | "parent"
   | "coach"
   | "player"
   | "club"
-  | "unknown";
+  | "unknown"
+  // ITC Quick Attach tractor-accessory audiences
+  | "hobbyist"
+  | "forester"
+  | "tym"
+  | "hunter"
+  | "dealer"
+  | "community";
 
 export type ClientLeadFunnelStatus =
   | "not_enrolled"
@@ -89,6 +97,29 @@ export function detectAudience(
   clientSlug: string,
   payload: Record<string, unknown>,
 ): ClientLeadAudience | null {
+  // ─── ITC Quick Attach (Innovative Tractor Components) ───────────────
+  // Routes by lead-magnet landing page slug. Each /clients/itc-quick-attach/lp/*
+  // page posts with `lp` set to the segment name; that's a hard signal.
+  if (clientSlug === "itc-quick-attach") {
+    const lp = String(payload.lp ?? "").trim().toLowerCase();
+    if (lp === "tym") return "tym";
+    if (lp === "hobbyist") return "hobbyist";
+    if (lp === "forester") return "forester";
+    if (lp === "hunter") return "hunter";
+    if (lp === "dealer") return "dealer";
+    if (lp === "community") return "community";
+
+    // Fallback heuristics for inbound that didn't come through a landing page.
+    const message = String(payload.message ?? "").toLowerCase();
+    const tractor = String(payload.tractor_model ?? payload.tractor ?? "").toLowerCase();
+    if (tractor.includes("tym")) return "tym";
+    if (/dealer|wholesale|stock/.test(message)) return "dealer";
+    if (/firewood|forest|chainsaw|sawboss/.test(message)) return "forester";
+    if (/hunt|firearm|gun|rifle/.test(message)) return "hunter";
+    if (/sub-?compact|first tractor|new tractor|hobby/.test(message)) return "hobbyist";
+    return null;
+  }
+
   if (clientSlug !== "zenith-sports") {
     // Other clients don't have audience segments yet. Add per-client
     // rules here as we expand the funnel system to more showcase pages.

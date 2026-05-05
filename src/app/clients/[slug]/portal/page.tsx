@@ -143,6 +143,7 @@ type Tab =
   | "todo"
   | "budget"
   | "campaigns"
+  | "funnels"
   | "insights"
   | "account";
 
@@ -165,6 +166,25 @@ type Campaign = {
   bounce_count: number;
   created_at: string;
   updated_at: string;
+};
+
+type LeadMessage = {
+  id: string;
+  lead_id: string;
+  client_slug: string;
+  funnel_step: number | null;
+  channel: "email" | "sms" | "voicemail";
+  direction: "outbound" | "inbound";
+  to_address: string | null;
+  from_address: string | null;
+  subject: string | null;
+  body: string | null;
+  template_id: string | null;
+  status: string;
+  provider: string | null;
+  provider_id: string | null;
+  error: string | null;
+  sent_at: string;
 };
 
 type CampaignSend = {
@@ -510,6 +530,7 @@ export default function PortalPage({
               { id: "todo", label: "To-Do", emoji: "✅" },
               { id: "budget", label: "Budget", emoji: "💰" },
               { id: "campaigns", label: "Campaigns", emoji: "📧" },
+              { id: "funnels", label: "Funnels", emoji: "🎯" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
@@ -573,6 +594,9 @@ export default function PortalPage({
             leads={leads}
             onMutate={loadCampaigns}
           />
+        )}
+        {tab === "funnels" && (
+          <FunnelsTab slug={slug} leads={leads} />
         )}
         {tab === "insights" && <InsightsTab report={report} />}
         {tab === "account" && (
@@ -2185,6 +2209,124 @@ function TaskCard({
 
 /* ─────────────────────────── LEAD CARD ─────────────────────────── */
 
+/**
+ * LeadTimeline — funnel-step + touchpoint history for one lead. Renders
+ * every client_lead_messages row (outbound funnel sends + inbound replies)
+ * as a vertical timeline, plus a header strip showing current funnel
+ * step / status.
+ */
+function LeadTimeline({
+  timeline,
+  funnelStatus,
+  funnelStep,
+}: {
+  timeline: LeadMessage[] | null;
+  funnelStatus: string;
+  funnelStep: number | null;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+          Funnel timeline
+        </span>
+        <span className="text-[10px] text-slate-500">
+          {funnelStep !== null ? `Step ${funnelStep} · ` : ""}
+          <span
+            className={`font-bold ${
+              STATUS_COLOR[funnelStatus]
+                ? STATUS_COLOR[funnelStatus].split(" ")[1]
+                : "text-slate-300"
+            }`}
+          >
+            {funnelStatus.replace(/_/g, " ")}
+          </span>
+        </span>
+      </div>
+      {timeline === null ? (
+        <p className="text-[11px] text-slate-500 italic py-2 text-center">
+          Loading touchpoints…
+        </p>
+      ) : timeline.length === 0 ? (
+        <p className="text-[11px] text-slate-500 italic py-2 text-center">
+          No touches yet. Enroll the lead to start the funnel.
+        </p>
+      ) : (
+        <ol className="space-y-2 relative pl-4">
+          {/* Vertical rail */}
+          <span
+            aria-hidden
+            className="absolute top-2 bottom-2 left-1.5 w-px bg-slate-700"
+          />
+          {timeline.map((m) => {
+            const isInbound = m.direction === "inbound";
+            const dotColor = isInbound
+              ? "bg-emerald-400"
+              : m.status === "sent" || m.status === "delivered"
+                ? "bg-blue-400"
+                : m.status === "failed" || m.status === "bounced"
+                  ? "bg-rose-400"
+                  : m.status === "skipped"
+                    ? "bg-slate-500"
+                    : "bg-amber-400";
+            const channelEmoji =
+              m.channel === "email" ? "✉" : m.channel === "sms" ? "💬" : "🎙";
+            return (
+              <li key={m.id} className="relative">
+                <span
+                  aria-hidden
+                  className={`absolute -left-[10px] top-1.5 w-2.5 h-2.5 rounded-full ring-2 ring-slate-950 ${dotColor}`}
+                />
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-[11px] font-bold text-white">
+                    {channelEmoji} {isInbound ? "← inbound" : "→ outbound"}
+                  </span>
+                  <span
+                    className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                      m.status === "sent" || m.status === "delivered" || m.status === "replied"
+                        ? "bg-emerald-500/20 text-emerald-300"
+                        : m.status === "failed" || m.status === "bounced"
+                          ? "bg-rose-500/20 text-rose-300"
+                          : m.status === "skipped"
+                            ? "bg-slate-700/40 text-slate-400"
+                            : "bg-amber-500/20 text-amber-300"
+                    }`}
+                  >
+                    {m.status}
+                  </span>
+                  {m.funnel_step !== null && (
+                    <span className="text-[9px] uppercase tracking-wider text-slate-500">
+                      step {m.funnel_step}
+                    </span>
+                  )}
+                  {m.template_id && (
+                    <span className="text-[9px] text-slate-500 font-mono">
+                      {m.template_id}
+                    </span>
+                  )}
+                  <span className="text-[10px] text-slate-500 ml-auto">
+                    {timeAgo(m.sent_at)}
+                  </span>
+                </div>
+                {m.subject && (
+                  <p className="text-[11px] text-slate-300 mt-0.5 truncate">
+                    {m.subject}
+                  </p>
+                )}
+                {m.body && (
+                  <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                    {m.body}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 function LeadCard({
   lead,
   selected,
@@ -2210,6 +2352,24 @@ function LeadCard({
   const [logging, setLogging] = useState<string | null>(null);
   const [logMsg, setLogMsg] = useState<string | null>(null);
   const [enrolling, setEnrolling] = useState(false);
+  const [timeline, setTimeline] = useState<LeadMessage[] | null>(null);
+
+  // Lazy-load the touchpoint timeline when the card expands.
+  useEffect(() => {
+    if (!expanded || timeline !== null) return;
+    let cancelled = false;
+    fetch(`/api/client-portal/leads/${lead.id}`)
+      .then((r) => r.json())
+      .then((j: { ok: boolean; messages?: LeadMessage[] }) => {
+        if (!cancelled && j.ok) setTimeline(j.messages ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setTimeline([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [expanded, lead.id, timeline]);
 
   const logContact = async (channel: "email" | "sms" | "call") => {
     setLogging(channel);
@@ -2392,6 +2552,15 @@ function LeadCard({
 
       {expanded && (
         <div className="border-t border-slate-800 p-4 space-y-4">
+          {/* Funnel-step timeline — every outbound + inbound message linked
+              to this lead, in order. Loaded lazily on expand. Proves to
+              the owner that every step is tracked. */}
+          <LeadTimeline
+            timeline={timeline}
+            funnelStatus={lead.funnel_status}
+            funnelStep={lead.funnel_step}
+          />
+
           {/* Contact + log — clicking opens the native handler AND records
               the touch in client_lead_messages so the "Contacted" stat
               counts it. Tap "Just log it" to record without opening
@@ -3758,6 +3927,308 @@ function Stat({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div className="text-base font-bold text-white">{value}</div>
+    </div>
+  );
+}
+
+/* ─────────────────────────── FUNNELS TAB ─────────────────────────── */
+
+/**
+ * Per-client list of audience-segmented lead-magnet landing pages + their
+ * live capture stats. Currently configured for itc-quick-attach (six
+ * segments). Other clients see an empty-state pointing at the segment
+ * config helper.
+ *
+ * Each card links out to the public LP at /clients/{slug}/lp/{seg} so
+ * the owner can preview it. The lead count comes from filtering the
+ * already-loaded `leads` array by audience_segment.
+ */
+type FunnelStep = {
+  day: number;
+  channel: "email" | "sms";
+  label: string;
+};
+
+type FunnelDef = {
+  segment: string;
+  audienceTag: ClientLead["audience_segment"];
+  emoji: string;
+  title: string;
+  pitch: string;
+  cardClass: string;
+  accentText: string;
+  /**
+   * Touchpoint sequence. Same 4-step shape across all six segments
+   * (Day 0 lead-magnet delivery → Day 3 product feature → Day 7
+   * upsell → Day 14 community/loyalty). Different content per segment.
+   */
+  steps: FunnelStep[];
+};
+
+const ITC_FUNNELS: FunnelDef[] = [
+  {
+    segment: "tym",
+    audienceTag: "tym",
+    emoji: "⚙️",
+    title: "TYM Owner Hub",
+    pitch: "Brand-owner accessory hub. Sticker pack on signup. T474 + T264 + T234 fit guide.",
+    cardClass: "border-amber-500/30 bg-amber-500/[0.05]",
+    accentText: "text-amber-300",
+    steps: [
+      { day: 0, channel: "email", label: "Welcome + sticker pack confirmation" },
+      { day: 3, channel: "email", label: "T474 review reel (28 owners)" },
+      { day: 7, channel: "email", label: "Toolbox bundle upsell" },
+      { day: 14, channel: "email", label: "TYM new-product alerts opt-in" },
+    ],
+  },
+  {
+    segment: "hobbyist",
+    audienceTag: "hobbyist",
+    emoji: "🚜",
+    title: "Sub-Compact First-Year Setup",
+    pitch: "12-item PDF checklist for new owners. Top of funnel.",
+    cardClass: "border-emerald-500/30 bg-emerald-500/[0.05]",
+    accentText: "text-emerald-300",
+    steps: [
+      { day: 0, channel: "email", label: "12-item checklist PDF delivery" },
+      { day: 3, channel: "email", label: "Brush guard 101 video" },
+      { day: 7, channel: "email", label: "Universal toolbox upsell" },
+      { day: 14, channel: "email", label: "SawBoss intro + winter-prep tips" },
+    ],
+  },
+  {
+    segment: "forester",
+    audienceTag: "forester",
+    emoji: "🌲",
+    title: "Forester Gear List",
+    pitch: "SawBoss + Chainbox pro setup. Higher AOV.",
+    cardClass: "border-lime-500/30 bg-lime-500/[0.05]",
+    accentText: "text-lime-300",
+    steps: [
+      { day: 0, channel: "email", label: "1-acre clearing gear PDF" },
+      { day: 3, channel: "email", label: "SawBoss mounting walkthrough video" },
+      { day: 7, channel: "email", label: "Chainbox cross-sell + bulk discount" },
+      { day: 14, channel: "email", label: "Pro forester operator network invite" },
+    ],
+  },
+  {
+    segment: "hunter",
+    audienceTag: "hunter",
+    emoji: "🦌",
+    title: "Hunter Install Guide",
+    pitch: "Gun-mount install + safety tips. Seasonal bundle.",
+    cardClass: "border-rose-500/30 bg-rose-500/[0.05]",
+    accentText: "text-rose-300",
+    steps: [
+      { day: 0, channel: "email", label: "Install + safety guide PDF" },
+      { day: 3, channel: "email", label: "Bundle quote: mount + LED + canvas" },
+      { day: 7, channel: "email", label: "Brush guard cross-sell (scouting trails)" },
+      { day: 14, channel: "email", label: "Pre-season prep checklist" },
+    ],
+  },
+  {
+    segment: "dealer",
+    audienceTag: "dealer",
+    emoji: "🤝",
+    title: "Dealer Wholesale ROI",
+    pitch: "Interactive ROI calc. B2B greenfield channel.",
+    cardClass: "border-blue-500/30 bg-blue-500/[0.05]",
+    accentText: "text-blue-300",
+    steps: [
+      { day: 0, channel: "email", label: "Custom ROI report (24h SLA)" },
+      { day: 1, channel: "sms", label: "Owner SMS: high-volume dealer alert" },
+      { day: 3, channel: "email", label: "Wholesale price sheet + bestsellers" },
+      { day: 7, channel: "email", label: "Sample shipment offer + onboarding call" },
+    ],
+  },
+  {
+    segment: "community",
+    audienceTag: "community",
+    emoji: "🏆",
+    title: "Submit Your Build",
+    pitch: "Operator of the month — UGC + email-list growth.",
+    cardClass: "border-violet-500/30 bg-violet-500/[0.05]",
+    accentText: "text-violet-300",
+    steps: [
+      { day: 0, channel: "email", label: "Photo submission instructions" },
+      { day: 7, channel: "email", label: "Newsletter intro + last winner" },
+      { day: 14, channel: "email", label: "Selection + spotlight notification" },
+      { day: 30, channel: "email", label: "Recurring monthly newsletter" },
+    ],
+  },
+];
+
+function FunnelsTab({
+  slug,
+  leads,
+}: {
+  slug: string;
+  leads: ClientLead[];
+}) {
+  // Today only ITC has segment-specific LPs. Adding more clients = drop
+  // their funnel defs into a per-slug map here.
+  const funnels = slug === "itc-quick-attach" ? ITC_FUNNELS : [];
+
+  if (funnels.length === 0) {
+    return (
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-8 text-center">
+        <h2 className="text-lg font-bold mb-2">No segment funnels yet</h2>
+        <p className="text-sm text-slate-400 max-w-md mx-auto">
+          We&apos;ll wire your audience-specific lead-magnet landing pages here
+          once we&apos;ve mapped your customer segments. Reach out to your
+          BlueJays contact to kick that off.
+        </p>
+      </div>
+    );
+  }
+
+  const totalLeads = leads.filter((l) =>
+    funnels.some((f) => f.audienceTag === l.audience_segment),
+  ).length;
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold tracking-tight mb-1">
+              Audience funnels
+            </h2>
+            <p className="text-sm text-slate-400">
+              Each card is a live lead-capture page tuned to one customer
+              segment. Click <span className="text-amber-300 font-bold">View page</span>{" "}
+              to preview the public version.
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] uppercase tracking-wider text-slate-500">
+              Total captured
+            </div>
+            <div className="text-2xl font-black text-amber-300">
+              {totalLeads}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-3">
+        {funnels.map((f) => {
+          const tag = f.audienceTag;
+          const segLeads = leads.filter((l) => l.audience_segment === tag);
+          const newCount = segLeads.filter((l) => l.funnel_status === "not_enrolled").length;
+          const enrolledCount = segLeads.filter((l) => l.funnel_status === "enrolled").length;
+          const respondedCount = segLeads.filter((l) => l.funnel_status === "responded").length;
+          const convertedCount = segLeads.filter((l) => l.funnel_status === "converted").length;
+          const lpUrl = `/clients/${slug}/lp/${f.segment}`;
+          return (
+            <div
+              key={f.segment}
+              className={`rounded-2xl border p-5 ${f.cardClass}`}
+            >
+              <div className="flex items-start gap-3 mb-3">
+                <span className="text-2xl">{f.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-white">{f.title}</h3>
+                  <p className="text-[11px] text-slate-400 leading-snug">
+                    {f.pitch}
+                  </p>
+                </div>
+                <span className={`text-[10px] font-bold uppercase tracking-wider ${f.accentText}`}>
+                  {f.segment}
+                </span>
+              </div>
+
+              {/* 4-step funnel flow visualization */}
+              <div className="mb-3">
+                <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500 mb-1.5">
+                  Touchpoint sequence
+                </div>
+                <ol className="grid grid-cols-4 gap-1">
+                  {f.steps.map((s, i) => (
+                    <li
+                      key={i}
+                      className={`relative rounded-md bg-black/30 border border-white/[0.04] px-2 py-1.5`}
+                    >
+                      <div className={`text-[10px] font-black ${f.accentText} mb-0.5`}>
+                        D{s.day}
+                      </div>
+                      <div className="text-[9px] text-slate-500 mb-0.5">
+                        {s.channel === "email" ? "✉ email" : "💬 sms"}
+                      </div>
+                      <div
+                        className="text-[10px] text-slate-300 leading-tight line-clamp-2"
+                        title={s.label}
+                      >
+                        {s.label}
+                      </div>
+                      {i < f.steps.length - 1 && (
+                        <span
+                          aria-hidden
+                          className={`absolute top-1/2 -right-[2.5px] -translate-y-1/2 ${f.accentText} text-[10px]`}
+                        >
+                          ▶
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              <div className="grid grid-cols-4 gap-1.5 mb-3 text-center">
+                <div className="rounded-md bg-black/30 px-1.5 py-1">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Total
+                  </div>
+                  <div className="text-sm font-black text-white">
+                    {segLeads.length}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    New
+                  </div>
+                  <div className="text-sm font-black text-blue-300">
+                    {newCount}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Active
+                  </div>
+                  <div className="text-sm font-black text-amber-300">
+                    {enrolledCount}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Won
+                  </div>
+                  <div className="text-sm font-black text-emerald-300">
+                    {convertedCount + respondedCount}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <a
+                  href={lpUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-center`}
+                >
+                  View landing page ↗
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-4 text-xs text-slate-500 italic">
+        Each funnel posts to <code className="text-slate-300">/api/clients/inquire</code>{" "}
+        with the audience tag pre-set. Leads land in the Leads tab tagged
+        automatically — no manual sorting.
+      </div>
     </div>
   );
 }
