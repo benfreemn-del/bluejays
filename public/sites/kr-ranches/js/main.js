@@ -15,6 +15,8 @@
     initFaqToggle();
     initContactForm();
     initYearStamp();
+    initStickyCta();
+    initNeedsCalculator();
   });
 
   // ---- PRELOADER ----
@@ -233,5 +235,106 @@
   function initYearStamp() {
     var el = document.getElementById("year");
     if (el) el.textContent = String(new Date().getFullYear());
+  }
+
+  // ---- MOBILE STICKY CTA (show after scrolling past hero) ----
+  function initStickyCta() {
+    var bar = document.getElementById("mobileStickyCta");
+    if (!bar) return;
+    function update() {
+      var triggerPoint = window.innerHeight * 0.7;
+      var y = window.scrollY || document.documentElement.scrollTop;
+      if (y > triggerPoint) {
+        bar.classList.add("show");
+      } else {
+        bar.classList.remove("show");
+      }
+    }
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+  }
+
+  // ---- HOW MUCH MEAT DO I NEED? CALCULATOR ----
+  function initNeedsCalculator() {
+    var minus = document.getElementById("needs-minus");
+    var plus = document.getElementById("needs-plus");
+    var count = document.getElementById("needs-count");
+    var share = document.getElementById("needs-share");
+    var yieldEl = document.getElementById("needs-yield");
+    var freezer = document.getElementById("needs-freezer");
+    if (!minus || !plus || !count || !share) return;
+
+    // Per-eater estimates: about 100 lbs of cut meat per person per year for an
+    // average eater. We round UP to a real share size (quarter, half, whole).
+    function recommendation(n) {
+      // total pounds needed for the household over a year
+      var totalLbs = n * 100;
+      var data;
+      if (n <= 1) {
+        data = {
+          share: "A quarter beef",
+          yield: "100 to 130 lbs of cut and wrapped meat",
+          freezer: "4 to 5 cubic feet"
+        };
+      } else if (n <= 3) {
+        data = {
+          share: "A half beef",
+          yield: "200 to 250 lbs of cut and wrapped meat",
+          freezer: "8 to 10 cubic feet"
+        };
+      } else if (n <= 5) {
+        data = {
+          share: "A half beef plus a half hog",
+          yield: "300 to 360 lbs of cut and wrapped meat",
+          freezer: "12 to 14 cubic feet"
+        };
+      } else if (n <= 7) {
+        data = {
+          share: "A whole beef",
+          yield: "400 to 500 lbs of cut and wrapped meat",
+          freezer: "16 to 20 cubic feet"
+        };
+      } else {
+        data = {
+          share: "A whole beef plus a whole hog",
+          yield: "550 to 650 lbs of cut and wrapped meat",
+          freezer: "22 to 26 cubic feet"
+        };
+      }
+      data.totalLbs = totalLbs;
+      return data;
+    }
+
+    function flash(el) {
+      if (!el) return;
+      el.classList.add("flash");
+      setTimeout(function () { el.classList.remove("flash"); }, 350);
+    }
+
+    function update() {
+      var n = parseInt(count.textContent, 10) || 0;
+      if (n < 1) n = 1;
+      if (n > 14) n = 14;
+      count.textContent = String(n);
+      var d = recommendation(n);
+      share.textContent = d.share;
+      yieldEl.textContent = d.yield;
+      freezer.textContent = d.freezer;
+      flash(share); flash(yieldEl); flash(freezer);
+    }
+
+    minus.addEventListener("click", function () {
+      var n = parseInt(count.textContent, 10) || 1;
+      count.textContent = String(Math.max(1, n - 1));
+      update();
+    });
+    plus.addEventListener("click", function () {
+      var n = parseInt(count.textContent, 10) || 1;
+      count.textContent = String(Math.min(14, n + 1));
+      update();
+    });
+
+    update();
   }
 })();

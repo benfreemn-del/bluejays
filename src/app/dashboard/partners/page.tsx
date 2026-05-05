@@ -7,7 +7,7 @@ import PartnerAdminTopPanel from "./PartnerAdminTopPanel";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Partners — BlueJays Admin",
+  title: "Sales Portal — BlueJays Admin",
   robots: { index: false, follow: false },
 };
 
@@ -63,7 +63,7 @@ export default async function PartnersAdminPage() {
           <Link href="/dashboard" className="text-sm text-slate-400 hover:text-white">
             ← Dashboard
           </Link>
-          <h1 className="text-lg font-bold">Partners</h1>
+          <h1 className="text-lg font-bold">🎯 Sales Portal</h1>
         </div>
       </header>
 

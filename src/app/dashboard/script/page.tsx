@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getProspect } from "@/lib/store";
+import LeadPicker from "./LeadPicker.client";
 import {
   fillVars,
   HORMOZI_CALL_SCRIPT,
@@ -48,13 +48,17 @@ export default async function DashboardScriptPage({
 }) {
   const params = await searchParams;
   const idsParam = (params.ids || "").trim();
+
+  // No queue param → render the Sales Portal lead picker so Ben can browse
+  // prospects, build a queue, and start the call workflow. Replaces the
+  // old redirect-to-dashboard fallback.
   if (!idsParam) {
-    redirect("/dashboard");
+    return <LeadPicker />;
   }
 
   const ids = idsParam.split(",").map((s) => s.trim()).filter(Boolean);
   if (ids.length === 0) {
-    redirect("/dashboard");
+    return <LeadPicker />;
   }
 
   const indexParam = parseInt(params.i || "0", 10);

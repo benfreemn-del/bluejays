@@ -599,7 +599,7 @@ export default function PortalPage({
               { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
               ...(slug === "itc-quick-attach"
-                ? [{ id: "partners" as Tab, label: "Partners", emoji: "🤝" }]
+                ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🎯" }]
                 : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]

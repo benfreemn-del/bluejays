@@ -41,8 +41,13 @@
     <!-- PRELOADER -->
     <div id="preloader">
         <div class="preloader-mark">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#8b1e1e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 9c0-3 2-5 5-5 1.5 0 2.5.5 3 1.5.5-1 1.5-1.5 3-1.5 3 0 5 2 5 5 0 4-5 8-8 11C10 17 5 13 5 9z" opacity="0.85"/>
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="40" cy="40" r="36" fill="#f8f4ee" stroke="#8b1e1e" stroke-width="2.5"/>
+                <circle cx="40" cy="40" r="31" fill="none" stroke="#8b1e1e" stroke-width="0.8" opacity="0.5"/>
+                <path d="M28 16c-1.5-2.5-1-4 0-4.5 1.2-.5 2.5.2 3.2 1.2.7-1 2-1.7 3.2-1.2 1 .5 1.5 2 0 4.5" fill="none" stroke="#8b1e1e" stroke-width="1.5" stroke-linecap="round"/>
+                <text x="40" y="50" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="800" fill="#8b1e1e" letter-spacing="1">KR</text>
+                <path d="M30 60h20" stroke="#8b1e1e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                <path d="M36 64l4-2 4 2" fill="none" stroke="#8b1e1e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
             </svg>
         </div>
     </div>
@@ -51,7 +56,15 @@
     <nav id="navbar">
         <div class="container nav-inner">
             <a href="#home" class="nav-logo">
-                <span class="nav-mark">KR</span>
+                <span class="nav-mark">
+                    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="20" cy="20" r="18" fill="#f8f4ee" stroke="#8b1e1e" stroke-width="1.6"/>
+                        <circle cx="20" cy="20" r="15.2" fill="none" stroke="#8b1e1e" stroke-width="0.5" opacity="0.5"/>
+                        <path d="M14 8.5c-.7-1.2-.5-2 0-2.2.6-.25 1.2.1 1.6.6.4-.5 1-.85 1.6-.6.5.2.7 1 0 2.2" fill="none" stroke="#8b1e1e" stroke-width="0.9" stroke-linecap="round"/>
+                        <text x="20" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" font-weight="800" fill="#8b1e1e" letter-spacing="0.5">KR</text>
+                        <path d="M15 30h10" stroke="#8b1e1e" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/>
+                    </svg>
+                </span>
                 <span>KR Ranches</span>
             </a>
             <div class="nav-links">
@@ -72,6 +85,15 @@
 
     <!-- MOBILE MENU -->
     <div class="mobile-menu">
+        <div class="mobile-mark">
+            <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="30" cy="30" r="27" fill="#f8f4ee" stroke="#8b1e1e" stroke-width="2"/>
+                <circle cx="30" cy="30" r="23" fill="none" stroke="#8b1e1e" stroke-width="0.6" opacity="0.5"/>
+                <path d="M21 13c-1-1.7-.7-2.8 0-3 .8-.3 1.7.2 2.3.9.5-.7 1.5-1.2 2.3-.9.7.3 1 1.4 0 3" fill="none" stroke="#8b1e1e" stroke-width="1.2" stroke-linecap="round"/>
+                <text x="30" y="38" text-anchor="middle" font-family="Georgia, serif" font-size="17" font-weight="800" fill="#8b1e1e" letter-spacing="0.8">KR</text>
+                <path d="M22 46h16" stroke="#8b1e1e" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+        </div>
         <a href="#story">Story</a>
         <a href="#products">What We Raise</a>
         <a href="#order">How It Works</a>
@@ -84,7 +106,7 @@
     <!-- HERO -->
     <section id="home" class="hero">
         <div class="hero-bg">
-            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80" alt="Cattle grazing at sunrise on a Yakima Valley pasture" loading="eager">
+            <img src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1600&q=80" alt="Black Angus cattle on a wide pasture under Yakima Valley skies" loading="eager">
         </div>
         <div class="container">
             <div class="hero-content reveal">
@@ -99,6 +121,43 @@
                     <span>Family Owned</span>
                     <span>Prosser, WA</span>
                     <span>Custom Cuts</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST SIGNAL ROW -->
+    <section class="trust-row" aria-label="What you can count on">
+        <div class="container">
+            <div class="trust-inner reveal">
+                <div class="trust-cell">
+                    <div class="trust-cell-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    </div>
+                    <strong>USDA-inspected facility</strong>
+                    <span>Cut and wrapped to spec</span>
+                </div>
+                <div class="trust-cell">
+                    <div class="trust-cell-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </div>
+                    <strong>No hormones, no antibiotics</strong>
+                    <span>Just grass, time, and care</span>
+                </div>
+                <div class="trust-cell">
+                    <div class="trust-cell-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <!-- BEN: real founding year -->
+                    <strong>Family-owned since 2010</strong>
+                    <span>Real ranchers, real names</span>
+                </div>
+                <div class="trust-cell">
+                    <div class="trust-cell-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 18 8 12 12 15 16 9 21 14"/><polyline points="3 21 21 21"/></svg>
+                    </div>
+                    <strong>Yakima Valley pasture</strong>
+                    <span>Born and finished on our land</span>
                 </div>
             </div>
         </div>
@@ -130,9 +189,34 @@
                     </div>
                 </div>
                 <div class="story-image reveal">
+                    <svg class="corner-ornament top-left" viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 16c2-7 5-10 12-12"/>
+                        <path d="M4 4l3 3M4 8l5 5M8 4l5 5"/>
+                    </svg>
+                    <svg class="corner-ornament top-right" viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 16c2-7 5-10 12-12"/>
+                        <path d="M4 4l3 3M4 8l5 5M8 4l5 5"/>
+                    </svg>
                     <img src="https://images.unsplash.com/photo-1551888419-7b7a520fe0ca?w=1200&q=80" alt="Cattle grazing on open pasture in eastern Washington" loading="lazy">
                     <div class="story-tag">Raised on Yakima Valley grass, the way ranching used to be.</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAMILY QUOTE PANEL -->
+    <section class="family-quote">
+        <div class="container">
+            <div class="quote-panel reveal">
+                <svg class="quote-mark left" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9 11H6a3 3 0 0 1 0-6h3v3H7a1 1 0 0 0 0 2h2v-2zM18 11h-3a3 3 0 0 1 0-6h3v3h-2a1 1 0 0 0 0 2h2v-2zM9 13H6c0 3 2 5 5 5v-2c-1.5 0-2-.5-2-1v-2zM18 13h-3c0 3 2 5 5 5v-2c-1.5 0-2-.5-2-1v-2z"/>
+                </svg>
+                <svg class="quote-mark right" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9 11H6a3 3 0 0 1 0-6h3v3H7a1 1 0 0 0 0 2h2v-2zM18 11h-3a3 3 0 0 1 0-6h3v3h-2a1 1 0 0 0 0 2h2v-2zM9 13H6c0 3 2 5 5 5v-2c-1.5 0-2-.5-2-1v-2zM18 13h-3c0 3 2 5 5 5v-2c-1.5 0-2-.5-2-1v-2z"/>
+                </svg>
+                <!-- BEN: swap to a real quote from the family when ready -->
+                <blockquote>We do not market these animals. We raise them, and then we feed our neighbors.</blockquote>
+                <cite>The KR Family</cite>
             </div>
         </div>
     </section>
@@ -214,6 +298,61 @@
         </div>
     </section>
 
+    <!-- MONTHLY MEAT BOX (NEW OFFERING) -->
+    <!-- BEN: this is a NEW offering KR may not yet have decided to launch. Keep, kill, or modify the prices, pounds, and contents to match what you actually want to sell. -->
+    <section id="boxes" class="boxes">
+        <div class="container">
+            <h2 class="section-title reveal">A Monthly Box, On Repeat</h2>
+            <p class="section-sub reveal">New for 2026. A subscription for the family that wants ranch meat in the freezer every month, without ordering a whole animal. Limited subscriber slots.</p>
+            <div class="box-grid">
+                <div class="box-card reveal">
+                    <h3>Starter Box</h3>
+                    <!-- BEN: real price -->
+                    <div class="box-price">$89<small> / month</small></div>
+                    <p class="box-pounds">About 8 to 10 pounds, ships or pickup monthly.</p>
+                    <ul>
+                        <li>3 lbs ground beef</li>
+                        <li>1 pack of brats or sausage</li>
+                        <li>2 lbs steaks or chops</li>
+                        <li>1 small roast</li>
+                    </ul>
+                    <a href="#contact" class="box-cta">Reserve a Starter Box</a>
+                </div>
+                <div class="box-card popular reveal">
+                    <span class="box-popular-badge">Most Popular</span>
+                    <h3>Family Box</h3>
+                    <!-- BEN: real price -->
+                    <div class="box-price">$159<small> / month</small></div>
+                    <p class="box-pounds">About 18 to 22 pounds, feeds a family of four.</p>
+                    <ul>
+                        <li>5 lbs ground beef</li>
+                        <li>2 packs of brats and sausage</li>
+                        <li>4 lbs steaks (ribeye, sirloin, NY strip)</li>
+                        <li>2 roasts (chuck and rump)</li>
+                        <li>1 dozen farm eggs</li>
+                    </ul>
+                    <a href="#contact" class="box-cta">Reserve a Family Box</a>
+                </div>
+                <div class="box-card reveal">
+                    <h3>Freezer Builder</h3>
+                    <!-- BEN: real price -->
+                    <div class="box-price">$249<small> / month</small></div>
+                    <p class="box-pounds">About 30 to 35 pounds, fills a freezer over time.</p>
+                    <ul>
+                        <li>8 lbs ground beef</li>
+                        <li>3 packs of brats and sausage</li>
+                        <li>6 lbs steaks and chops</li>
+                        <li>3 roasts</li>
+                        <li>1 lb bacon</li>
+                        <li>2 dozen farm eggs</li>
+                    </ul>
+                    <a href="#contact" class="box-cta">Reserve a Freezer Builder</a>
+                </div>
+            </div>
+            <p class="box-note reveal">Cancel any time. Pickup at the ranch in Prosser, or local delivery in the Yakima Valley.</p>
+        </div>
+    </section>
+
     <!-- ORDER / HOW IT WORKS -->
     <section id="order" class="order">
         <div class="container">
@@ -287,6 +426,36 @@
                 </div>
             </div>
             <p class="section-sub reveal" style="color: rgba(244, 237, 224, 0.65); max-width: 720px; margin-top: 8px;">Yields are estimates. Final hanging and cut weights vary by animal. Call us for current per-pound pricing on whole and half animal orders.</p>
+
+            <!-- NEXT HARVEST DATES (BEN: update each season) -->
+            <div class="harvest-inner reveal" style="margin-top: 60px;">
+                <div class="harvest-head">
+                    <h3>Next harvest dates</h3>
+                    <span class="harvest-eyebrow">Reserve a spot</span>
+                </div>
+                <div class="harvest-grid">
+                    <div class="harvest-card">
+                        <span class="harvest-animal">Beef</span>
+                        <span class="harvest-when">Late June</span>
+                        <span class="harvest-status">Spots available</span>
+                    </div>
+                    <div class="harvest-card">
+                        <span class="harvest-animal">Pork</span>
+                        <span class="harvest-when">Mid July</span>
+                        <span class="harvest-status">2 halves left</span>
+                    </div>
+                    <div class="harvest-card">
+                        <span class="harvest-animal">Lamb</span>
+                        <span class="harvest-when">August</span>
+                        <span class="harvest-status">Taking deposits</span>
+                    </div>
+                    <div class="harvest-card">
+                        <span class="harvest-animal">Chicken</span>
+                        <span class="harvest-when">Rolling</span>
+                        <span class="harvest-status">Call ahead</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -391,6 +560,60 @@
         </div>
     </section>
 
+    <!-- THIS WEEK AT THE FREEZER -->
+    <!-- BEN: update weekly. Real inventory goes here. Prices are placeholders. -->
+    <section class="freezer">
+        <div class="container">
+            <h2 class="section-title reveal">This Week at the Freezer</h2>
+            <p class="section-sub reveal">Real inventory, updated weekly. When it is gone, it is gone until the next harvest.</p>
+            <div class="freezer-card reveal">
+                <div class="freezer-col">
+                    <span class="freezer-eyebrow"><span class="pulse-dot"></span>This week</span>
+                    <h3>What is in the freezer right now</h3>
+                    <p>Stop by the ranch or call ahead and we will pull your pack for pickup.</p>
+                </div>
+                <div class="freezer-col">
+                    <ul class="freezer-list">
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Ribeye Steaks</span><span class="freezer-price">$22/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge available">Available</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Ground Beef (1 lb packs)</span><span class="freezer-price">$9/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge available">Available</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Pork Chops</span><span class="freezer-price">$12/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge low">Low Stock</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">House Bratwurst</span><span class="freezer-price">$11/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge available">Available</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Beef Short Ribs</span><span class="freezer-price">$14/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge low">Low Stock</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Lamb Chops</span><span class="freezer-price">$26/lb &middot; call to confirm</span></span>
+                            <span class="freezer-badge gone">Gone</span>
+                        </li>
+                        <li class="freezer-item">
+                            <span><span class="freezer-name">Farm Eggs (dozen)</span><span class="freezer-price">$8/dozen &middot; call to confirm</span></span>
+                            <span class="freezer-badge available">Available</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="freezer-col">
+                    <!-- BEN: update this date when you refresh inventory -->
+                    <span class="freezer-update">Updated: this week</span>
+                    <p style="margin-top: 12px;">Call us to lock yours in. We can hold packs for 24 hours.</p>
+                    <a href="tel:5095550000" class="freezer-cta">Call (509) 555-0000</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- WHY DIRECT -->
     <section id="why" class="why">
         <div class="container">
@@ -454,6 +677,27 @@
                     <li>5 lb burger bundles ready for the season opener</li>
                     <li>Local pickup at the ranch, no shipping headaches</li>
                 </ul>
+
+                <!-- GAME DAY BOX (BEN: real price + cuts) -->
+                <div class="gameday-card">
+                    <div>
+                        <span class="gameday-eyebrow">Featured Pack</span>
+                        <h4>The Game Day Box</h4>
+                        <p style="color: rgba(255,255,255,0.78); font-size: 0.96rem; margin-bottom: 0;">Sized to feed a couch full of 12s. Pickup at the ranch the Friday before kickoff.</p>
+                        <ul class="gameday-cuts">
+                            <li>10 lb ground beef</li>
+                            <li>2 lb brats</li>
+                            <li>4 ribeyes</li>
+                            <li>2 lb short ribs</li>
+                            <li>1 lb bacon</li>
+                        </ul>
+                    </div>
+                    <div class="gameday-action">
+                        <!-- BEN: real price -->
+                        <span class="gameday-price">$199<small>One Pack &middot; Pickup Friday</small></span>
+                        <a href="#contact" class="gameday-cta">Reserve a Box</a>
+                    </div>
+                </div>
             </div>
             <div class="community-image reveal">
                 <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1200&q=80" alt="Cuts of beef on a butcher counter ready for grilling" loading="lazy">
@@ -618,6 +862,40 @@
         </div>
     </section>
 
+    <!-- HOW MUCH MEAT DO I NEED CALCULATOR (bonus feature) -->
+    <section class="calc-needs">
+        <div class="container">
+            <h2 class="section-title reveal">How Much Meat Do I Need?</h2>
+            <p class="section-sub reveal">Tell us how many people you feed. We will tell you what to order.</p>
+            <div class="calc-needs-card reveal">
+                <h3>Number of people in your household</h3>
+                <p class="calc-sub">Including kids who eat real portions. We assume an average eater, about 2 pounds of meat per person per week.</p>
+                <div class="calc-input-row">
+                    <label for="needs-count">Eaters:</label>
+                    <div class="calc-counter">
+                        <button type="button" id="needs-minus" aria-label="Decrease">&minus;</button>
+                        <span id="needs-count">4</span>
+                        <button type="button" id="needs-plus" aria-label="Increase">+</button>
+                    </div>
+                </div>
+                <div class="calc-result">
+                    <div>
+                        <span class="calc-result-key">Recommended share for one year</span>
+                        <span class="calc-result-val" id="needs-share">A half beef plus a half hog</span>
+                    </div>
+                    <div>
+                        <span class="calc-result-key">Estimated yield</span>
+                        <span class="calc-result-val" id="needs-yield">300 to 360 lbs of cut and wrapped meat</span>
+                    </div>
+                    <div>
+                        <span class="calc-result-key">Freezer space needed</span>
+                        <span class="calc-result-val" id="needs-freezer">12 to 14 cubic feet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CONTACT FORM -->
     <section id="contact" class="contact">
         <div class="container">
@@ -678,7 +956,16 @@
         <div class="container">
             <div class="footer-grid">
                 <div>
-                    <span class="footer-brand">KR Ranches</span>
+                    <div class="footer-mark">
+                        <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="22" cy="22" r="20" fill="#14110d" stroke="#8b1e1e" stroke-width="1.6"/>
+                            <circle cx="22" cy="22" r="17" fill="none" stroke="#8b1e1e" stroke-width="0.5" opacity="0.6"/>
+                            <path d="M16 10c-.8-1.4-.6-2.2 0-2.4.7-.3 1.4.1 1.8.7.4-.6 1.1-1 1.8-.7.6.2.8 1 0 2.4" fill="none" stroke="#c87b29" stroke-width="1" stroke-linecap="round"/>
+                            <text x="22" y="28" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="800" fill="#f4ede0" letter-spacing="0.8">KR</text>
+                            <path d="M16 33h12" stroke="#8b1e1e" stroke-width="0.8" stroke-linecap="round" opacity="0.7"/>
+                        </svg>
+                        <span class="footer-brand">KR Ranches</span>
+                    </div>
                     <p class="footer-tagline">Family ranch in the Yakima Valley. Pasture-raised beef, pork, lamb, chicken, and eggs since the day we started.</p>
                     <div class="footer-social">
                         <a href="https://www.facebook.com/p/KR-Ranches-100078139106960/" target="_blank" rel="noopener" aria-label="Facebook">
@@ -725,6 +1012,18 @@
             </div>
         </div>
     </footer>
+
+    <!-- MOBILE STICKY CTA BAR -->
+    <div class="mobile-sticky-cta" id="mobileStickyCta" aria-label="Quick contact">
+        <a href="tel:5095550000" aria-label="Call the ranch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.4a16 16 0 0 0 5.66 5.65l.85-.84a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Call
+        </a>
+        <a href="#order" class="secondary" aria-label="Reserve a share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            Reserve
+        </a>
+    </div>
 
     <script src="/sites/kr-ranches/js/main.js"></script>
 </body>

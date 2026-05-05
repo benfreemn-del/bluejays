@@ -23,7 +23,7 @@ import CallWorkspace from "./CallWorkspace";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Workspace — BlueJays Partners",
+  title: "Sales Portal — BlueJays",
   robots: { index: false, follow: false },
 };
 

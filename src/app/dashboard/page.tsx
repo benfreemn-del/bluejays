@@ -187,9 +187,9 @@ export default function DashboardPage() {
             <Link
               href="/dashboard/partners"
               className="rounded-lg px-3 py-2 text-sm font-medium text-amber-300 transition-colors hover:bg-background hover:text-amber-200"
-              title="Approve partners + mark $200 affiliate payouts"
+              title="Sales Portal · approve reps, manage call queue, mark payouts"
             >
-              Partners
+              🎯 Sales Portal
             </Link>
             <Link
               href="/dashboard/case-studies"
