@@ -547,7 +547,7 @@ export default function DreamTractorPage() {
           </div>
 
           {/* Capture form + submit */}
-          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.05] p-5 space-y-3 sticky bottom-3">
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.05] p-5 space-y-3">
             <div className="flex items-baseline justify-between">
               <p className="text-[10px] uppercase tracking-[0.22em] text-amber-300 font-bold">
                 Your build
