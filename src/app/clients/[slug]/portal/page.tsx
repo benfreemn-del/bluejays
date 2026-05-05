@@ -5,7 +5,8 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
-// Lazy-load the Leaflet map — heavy + SSR-incompatible.
+// Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
+// gets the map flavored to their business; we dynamic-import per slug.
 const ItcMarketMap = nextDynamic(() => import("./itc-map.client"), {
   ssr: false,
   loading: () => (
@@ -14,6 +15,21 @@ const ItcMarketMap = nextDynamic(() => import("./itc-map.client"), {
     </div>
   ),
 });
+
+// Zenith / TEKKY soccer-town map — same Leaflet engine, soccer audiences.
+// Lives at /dashboard/tekky-map historically; we embed it here so soccer
+// scouting belongs to Zenith's owner portal, not the admin dashboard.
+const ZenithSoccerMap = nextDynamic(
+  () => import("@/app/dashboard/tekky-map/map.client"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[640px] flex items-center justify-center text-slate-500 text-sm rounded-2xl border border-white/[0.06] bg-slate-900/40">
+        Loading map…
+      </div>
+    ),
+  },
+);
 
 /**
  * /clients/[slug]/portal — the owner-facing dashboard.
@@ -2980,7 +2996,7 @@ function AccountTab({
                       {s.service} <span className="text-slate-400 font-normal text-[12px]">· {s.tier}</span>
                     </div>
                     <div className="text-[11px] text-slate-500">
-                      {s.managed_by === "bluejays" ? "Managed by BlueJays" : "Owned by you"}
+                      {s.managed_by === "bluejays" ? "Managed for you" : "Owned by you"}
                     </div>
                   </div>
                   <div className="text-right">
@@ -4165,8 +4181,7 @@ function FunnelsTab({
         <h2 className="text-lg font-bold mb-2">No segment funnels yet</h2>
         <p className="text-sm text-slate-400 max-w-md mx-auto">
           We&apos;ll wire your audience-specific lead-magnet landing pages here
-          once we&apos;ve mapped your customer segments. Reach out to your
-          BlueJays contact to kick that off.
+          once we&apos;ve mapped your customer segments.
         </p>
       </div>
     );
@@ -4395,37 +4410,53 @@ function estimatePipelineValueUsd(
 
 /* ─────────────────────────── MAP TAB ─────────────────────────── */
 /**
- * ITC-flavored market map. For now only renders for itc-quick-attach
- * since itc-map.client is hard-coded with ITC's verified pin set. When
- * we wire per-slug map data this gates per-slug accordingly.
+ * Per-tenant market map. Each tenant gets a map flavored to their
+ * customer mix — ITC sees the tractor-market map, Zenith sees the
+ * soccer-town map. Other clients see an empty state until we wire
+ * their data.
  */
 function MapTab({ slug }: { slug: string }) {
-  if (slug !== "itc-quick-attach") {
+  if (slug === "itc-quick-attach") {
     return (
-      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-8 text-center">
-        <h2 className="text-lg font-bold mb-2">Market map coming</h2>
-        <p className="text-sm text-slate-400 max-w-md mx-auto">
-          Per-tenant geographic targeting wires up on a per-client basis.
-          Talk to your BlueJays contact about the data sources we&apos;d
-          map for your customer mix.
-        </p>
+      <div className="space-y-3">
+        <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+          <h2 className="text-lg font-bold tracking-tight mb-1">
+            Tractor-market map
+          </h2>
+          <p className="text-sm text-slate-400">
+            County-level US map with population-sized city bullets. Toggle
+            audience layers (Dealers / TYM owners / Foresters / Hunters /
+            Sub-compact owners) — concrete data sources for each are queued.
+            Currently showing verified pins: ITC HQ + Cascade Tractor Supply.
+          </p>
+        </div>
+        <ItcMarketMap />
+      </div>
+    );
+  }
+  if (slug === "zenith-sports") {
+    return (
+      <div className="space-y-3">
+        <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+          <h2 className="text-lg font-bold tracking-tight mb-1">
+            Soccer-market map
+          </h2>
+          <p className="text-sm text-slate-400">
+            Population-sized US city bullets + curated soccer-town overlay
+            (verified MLS host cities). Click a city to scout audience-scoped
+            leads (parents / coaches / players).
+          </p>
+        </div>
+        <ZenithSoccerMap />
       </div>
     );
   }
   return (
-    <div className="space-y-3">
-      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
-        <h2 className="text-lg font-bold tracking-tight mb-1">
-          Tractor-market map
-        </h2>
-        <p className="text-sm text-slate-400">
-          County-level US map with population-sized city bullets. Toggle
-          audience layers (Dealers / TYM owners / Foresters / Hunters /
-          Sub-compact owners) — concrete data sources for each are queued.
-          Currently showing verified pins only: ITC HQ + Cascade Tractor Supply.
-        </p>
-      </div>
-      <ItcMarketMap />
+    <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-8 text-center">
+      <h2 className="text-lg font-bold mb-2">Market map coming</h2>
+      <p className="text-sm text-slate-400 max-w-md mx-auto">
+        Per-tenant geographic targeting wires up on a per-client basis.
+      </p>
     </div>
   );
 }

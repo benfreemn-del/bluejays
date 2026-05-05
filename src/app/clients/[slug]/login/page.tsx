@@ -138,13 +138,7 @@ export default function ClientLoginPage({
       </main>
 
       <footer className="relative py-6 px-5 text-center text-[10px] tracking-[0.22em] uppercase text-slate-700">
-        Operated by{" "}
-        <a
-          href="https://bluejayportfolio.com"
-          className="hover:text-slate-500"
-        >
-          BlueJays
-        </a>
+        {humanizeSlug(slug)}
       </footer>
     </div>
   );
