@@ -2,14 +2,15 @@
   "_README": "VERIFIED data points only for the ITC market map. Sources cited per pin. Do not add unsourced entries — see _TODO_DATA_SOURCES below for concrete feeds we still need to wire.",
   "_LAST_UPDATED": "2026-05-04",
   "_TODO_DATA_SOURCES": [
-    "TYM official dealer locator (tym.com) — yields verified TYM dealer pins",
-    "Kioti dealer locator (kioti.com)",
-    "Mahindra Tractors dealer locator (mahindrausa.com)",
-    "Branson Tractors dealer locator (bransontractors.com)",
+    "TYM official dealer locator (tym.world) — page is dynamic JS, blocked by simple WebFetch. Need a Puppeteer scraper or Google Places enumeration.",
+    "Kioti dealer locator (kioti.com) — same dynamic-JS challenge",
+    "Mahindra Tractors dealer locator (mahindrausa.com) — same",
+    "Branson Tractors dealer locator (bransontractors.com) — same",
     "USDA Forest Service county boundaries — yields forestry-rich county overlay",
     "USDA Census of Agriculture compact-tractor sales by county",
     "US Fish & Wildlife state hunting-license counts — yields hunter-density layer"
   ],
+  "_NEXT_BUILD_NOTE": "For dealer pins specifically, the cleanest path is a one-shot Puppeteer scraper that calls each brand's dealer-locator API directly, dumps the JSON to a static file in this directory, and rebuilds the map. Run quarterly so we stay current. Until that lands, the audience-scoped Google Places scrape (clicking a county on the ITC map → 'Dealers') gives a working substitute by surfacing local tractor dealerships dynamically.",
   "pins": [
     {
       "kind": "hq",
