@@ -86,13 +86,13 @@
     <!-- HERO -->
     <section id="home" class="hero">
         <div class="hero-bg">
-            <img src="/sites/kr-ranches/assets/images/kr-3.jpg" alt="Pasture-raised turkeys at the KR Ranches farm in Prosser, WA, with Yakima Valley sunset and a hot air balloon overhead" loading="eager">
+            <img src="/sites/kr-ranches/assets/images/kr-3.jpg" alt="Pasture-raised turkeys at the KR Ranches farm in Prosser, WA" loading="eager">
         </div>
         <div class="container">
             <div class="hero-content reveal">
                 <span class="hero-eyebrow">Family ranch &middot; Yakima Valley</span>
                 <h1>Raised right.<br>Cut to your <span class="accent">spec</span>.</h1>
-                <p class="hero-sub">Pasture-raised beef, pork, lamb, chicken, turkey, and hand-gathered eggs from our family ranch in Prosser, Washington. Whole and half animal orders, cut to your spec, picked up at the ranch.</p>
+                <p class="hero-sub">Beef, pork, lamb, chicken, turkey, and farm eggs. Raised on grass at our family ranch in Prosser. You pick the cuts. We do the rest.</p>
                 <div class="hero-ctas">
                     <a href="#order" class="btn-primary">Place Your Order</a>
                     <a href="tel:3607086369" class="btn-outline">Call the Ranch</a>
@@ -102,6 +102,9 @@
                     <span>Prosser, WA</span>
                     <span>Custom Cuts</span>
                 </div>
+            </div>
+            <div class="hero-card reveal" aria-hidden="true">
+                <img src="/sites/kr-ranches/assets/images/kr-1.jpg" alt="">
             </div>
         </div>
     </section>
@@ -206,88 +209,113 @@
             <h2 class="section-title reveal">What We Raise</h2>
             <p class="section-sub reveal">Five proteins, one family, one ranch. Every animal is born and finished on our land.</p>
             <div class="products-grid">
-                <div class="product-card reveal">
+                <a href="#order" class="product-card reveal" id="beef">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 11c-1-2 0-4 2-4 1 0 1.5.5 2 1 .5-.5 1-1 2-1s1.5.5 2 1c.5-.5 1-1 2-1 2 0 3 2 2 4"/>
-                            <path d="M5 11c0 4 2 7 7 7s7-3 7-7"/>
-                            <circle cx="9" cy="9" r="0.6" fill="currentColor"/>
-                            <circle cx="15" cy="9" r="0.6" fill="currentColor"/>
+                        <!-- Cow head -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 18c-2-3-2-7 1-9 3-2 6 0 7 2"/>
+                            <path d="M38 18c2-3 2-7-1-9-3-2-6 0-7 2"/>
+                            <path d="M12 22c0-7 5-12 12-12s12 5 12 12c0 8-5 14-12 14s-12-6-12-14z"/>
+                            <ellipse cx="24" cy="29" rx="6" ry="4"/>
+                            <path d="M21 28v3M27 28v3"/>
+                            <circle cx="19" cy="22" r="1.4" fill="currentColor"/>
+                            <circle cx="29" cy="22" r="1.4" fill="currentColor"/>
+                            <path d="M16 14c-1-2-1-3 0-4M32 14c1-2 1-3 0-4"/>
                         </svg>
                     </div>
                     <h3>Beef</h3>
-                    <p>Pasture-raised on Yakima Valley grass. No hormones, no shortcuts. Available by the cut, quarter, half, or whole.</p>
-                    <a href="#order" class="product-link">Order Beef &rarr;</a>
-                </div>
-                <div class="product-card reveal">
+                    <p>Raised on grass right here. No hormones. No shortcuts. Buy a cut, a quarter, a half, or a whole.</p>
+                    <span class="product-link">Order Beef &rarr;</span>
+                </a>
+                <a href="#order" class="product-card reveal" id="pork">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="13" rx="7" ry="5"/>
-                            <circle cx="9" cy="12" r="0.7" fill="currentColor"/>
-                            <circle cx="15" cy="12" r="0.7" fill="currentColor"/>
-                            <ellipse cx="12" cy="14.5" rx="1.4" ry="0.9"/>
-                            <path d="M6 10c-1-1.5-1-3 0-3.5 1-.5 2 0 2.5 1"/>
-                            <path d="M18 10c1-1.5 1-3 0-3.5-1-.5-2 0-2.5 1"/>
+                        <!-- Pig head -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="24" cy="26" rx="14" ry="11"/>
+                            <ellipse cx="24" cy="29" rx="5" ry="4"/>
+                            <ellipse cx="22" cy="29" rx="0.8" ry="1" fill="currentColor"/>
+                            <ellipse cx="26" cy="29" rx="0.8" ry="1" fill="currentColor"/>
+                            <circle cx="18" cy="22" r="1.2" fill="currentColor"/>
+                            <circle cx="30" cy="22" r="1.2" fill="currentColor"/>
+                            <path d="M11 18c-1-2-1-5 1-6 2-1 4 0 5 2"/>
+                            <path d="M37 18c1-2 1-5-1-6-2-1-4 0-5 2"/>
                         </svg>
                     </div>
                     <h3>Pork</h3>
-                    <p>Heritage-style hogs, slow grown for marbling and flavor you cannot get from a grocery store. Half or whole hog.</p>
-                    <a href="#order" class="product-link">Order Pork &rarr;</a>
-                </div>
-                <div class="product-card reveal">
+                    <p>Heritage hogs, raised slow for real marbling. The kind of pork you cannot get from a store.</p>
+                    <span class="product-link">Order Pork &rarr;</span>
+                </a>
+                <a href="#order" class="product-card reveal" id="lamb">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M7 9c-1.5 0-2 1.5-1 2.5"/>
-                            <path d="M17 9c1.5 0 2 1.5 1 2.5"/>
-                            <ellipse cx="12" cy="13" rx="6" ry="4.5"/>
-                            <circle cx="12" cy="9" r="2.5"/>
-                            <circle cx="11" cy="9" r="0.5" fill="currentColor"/>
-                            <circle cx="13" cy="9" r="0.5" fill="currentColor"/>
+                        <!-- Sheep head with curly wool -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="14" cy="20" r="5"/>
+                            <circle cx="34" cy="20" r="5"/>
+                            <circle cx="20" cy="14" r="5"/>
+                            <circle cx="28" cy="14" r="5"/>
+                            <circle cx="24" cy="22" r="6"/>
+                            <ellipse cx="24" cy="28" rx="6" ry="7"/>
+                            <ellipse cx="24" cy="32" rx="3" ry="2"/>
+                            <circle cx="21" cy="28" r="1" fill="currentColor"/>
+                            <circle cx="27" cy="28" r="1" fill="currentColor"/>
+                            <path d="M11 24c-2 0-3 1-3 3M37 24c2 0 3 1 3 3"/>
                         </svg>
                     </div>
                     <h3>Lamb</h3>
-                    <p>Tender, mild, and finished on grass. A favorite for holiday tables and the freezer alike. Whole or half lamb.</p>
-                    <a href="#order" class="product-link">Order Lamb &rarr;</a>
-                </div>
-                <div class="product-card reveal">
+                    <p>Mild, tender, finished on grass. Great for the holidays or the freezer. Whole or half lamb.</p>
+                    <span class="product-link">Order Lamb &rarr;</span>
+                </a>
+                <a href="#order" class="product-card reveal" id="chicken">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 4c-3 0-5 3-5 7s2 7 5 7 5-3 5-7-2-7-5-7z"/>
-                            <path d="M12 4c.5-1 1.5-2 3-1"/>
-                            <circle cx="11" cy="9" r="0.5" fill="currentColor"/>
-                            <path d="M11 11l1 1"/>
+                        <!-- Chicken / hen profile -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="24" cy="28" rx="11" ry="10"/>
+                            <path d="M14 22c-2-2-2-5 0-7 2-2 5-2 7 0"/>
+                            <circle cx="17" cy="20" r="1.2" fill="currentColor"/>
+                            <path d="M14 17c-1-1-1-3 0-4M16 16c-1-2 0-4 1-4M19 16c0-2 1-4 2-4"/>
+                            <path d="M11 22l-3 1 3 1"/>
+                            <path d="M14 24l-2-1 2-1"/>
+                            <path d="M22 38l-1 4M26 38l1 4"/>
+                            <path d="M21 42l-2 1M27 42l2 1"/>
                         </svg>
                     </div>
                     <h3>Chicken</h3>
-                    <p>Pasture-raised, processed in small batches. Whole birds available seasonally. Call the ranch for current availability.</p>
-                    <a href="#order" class="product-link">Order Chicken &rarr;</a>
-                </div>
-                <div class="product-card reveal">
+                    <p>Raised on pasture, hand processed in small batches. Whole birds when in season. Call to check.</p>
+                    <span class="product-link">Order Chicken &rarr;</span>
+                </a>
+                <a href="#contact" class="product-card reveal" id="eggs">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="13" rx="6" ry="8"/>
-                            <ellipse cx="12" cy="11" rx="2.5" ry="3.5" opacity="0.5"/>
+                        <!-- Three eggs in a nest -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="18" cy="22" rx="5" ry="7" transform="rotate(-12 18 22)"/>
+                            <ellipse cx="30" cy="22" rx="5" ry="7" transform="rotate(12 30 22)"/>
+                            <ellipse cx="24" cy="18" rx="5" ry="7"/>
+                            <path d="M8 32c2-3 6-5 16-5s14 2 16 5"/>
+                            <path d="M10 34l-2 2M14 36l-2 2M38 34l2 2M34 36l2 2M22 36l-1 3M26 36l1 3"/>
                         </svg>
                     </div>
                     <h3>Eggs</h3>
-                    <p>Hand gathered, laid by happy hens. Brown, blue, cream, and speckled. By the dozen or by the flat.</p>
-                    <a href="#contact" class="product-link">Reserve a Dozen &rarr;</a>
-                </div>
-                <div class="product-card reveal">
+                    <p>Hand gathered, laid by happy hens. Brown, blue, cream, and speckled. By the dozen or the flat.</p>
+                    <span class="product-link">Reserve a Dozen &rarr;</span>
+                </a>
+                <a href="#contact" class="product-card reveal" id="turkey">
                     <div class="product-icon">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="13" rx="6" ry="5"/>
-                            <path d="M12 8c-1.5-2 0-3 1-3s1.5 1 1 2"/>
-                            <path d="M14 9.5c.5-.5 1.5-.3 1.5.7"/>
-                            <path d="M5 14c-1.5 1-2 2.5-1 3.5"/>
-                            <path d="M19 14c1.5 1 2 2.5 1 3.5"/>
-                            <path d="M9 18l-1 2M15 18l1 2"/>
+                        <!-- Turkey with fan -->
+                        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M24 8c-8 0-15 4-15 12 0 4 3 6 7 6"/>
+                            <path d="M24 8c8 0 15 4 15 12 0 4-3 6-7 6"/>
+                            <path d="M24 10v14M16 12c1 4 3 8 6 11M32 12c-1 4-3 8-6 11"/>
+                            <ellipse cx="24" cy="32" rx="7" ry="8"/>
+                            <circle cx="22" cy="30" r="0.9" fill="currentColor"/>
+                            <circle cx="26" cy="30" r="0.9" fill="currentColor"/>
+                            <path d="M24 33l-2 2 2 1 2-1z" fill="currentColor"/>
+                            <path d="M22 36c-1 1-1 2 0 2M26 36c1 1 1 2 0 2"/>
                         </svg>
                     </div>
                     <h3>Turkey</h3>
-                    <p>Pasture-raised heritage turkeys, walking the Yakima Valley with the chickens. Whole birds available seasonally. Reserve early for Thanksgiving.</p>
-                    <a href="#contact" class="product-link">Reserve a Bird &rarr;</a>
-                </div>
+                    <p>Pasture-raised heritage birds. Out walking with the chickens. Reserve early for Thanksgiving.</p>
+                    <span class="product-link">Reserve a Bird &rarr;</span>
+                </a>
             </div>
         </div>
     </section>
