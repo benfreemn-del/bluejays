@@ -19,6 +19,7 @@ import soccerTownsData from "@/data/us-soccer-towns.json";
 import mlsNextClubsData from "@/data/us-mls-next-clubs.json";
 import uslClubsData from "@/data/us-usl-clubs.json";
 import ecnlClubsData from "@/data/us-ecnl-clubs.json";
+import ncaaSoccerData from "@/data/us-ncaa-soccer.json";
 
 /**
  * Tekky lead-scrape map.
@@ -64,7 +65,12 @@ type EcnlClub = MlsNextClub & {
   division: "boys" | "girls" | "both";
 };
 
-type MapLayer = "all" | "mls" | "next" | "usl" | "ecnl" | "cities";
+type NcaaSchool = MlsNextClub & {
+  /** Which D1 sides the school fields. */
+  divisions: Array<"mens" | "womens">;
+};
+
+type MapLayer = "all" | "mls" | "next" | "usl" | "ecnl" | "ncaa" | "cities";
 
 type TekkyAudience = "parent" | "coach" | "player";
 
@@ -143,6 +149,7 @@ const LAYER_OPTIONS: Array<{ id: MapLayer; label: string; emoji: string }> = [
   { id: "next", label: "MLS NEXT clubs", emoji: "🏆" },
   { id: "usl", label: "USL Champ + League One", emoji: "🥈" },
   { id: "ecnl", label: "ECNL clubs (youth)", emoji: "🥇" },
+  { id: "ncaa", label: "NCAA D1 soccer", emoji: "🎓" },
   { id: "cities", label: "Cities only", emoji: "🏙️" },
 ];
 
@@ -459,6 +466,7 @@ export default function TekkyMapClient() {
     ...((uslClubsData.league_one as UslClub[]) ?? []),
   ];
   const ecnlClubs = (ecnlClubsData.clubs as EcnlClub[]) ?? [];
+  const ncaaSchools = (ncaaSoccerData.schools as NcaaSchool[]) ?? [];
 
   const mlsKeys = useMemo(
     () => new Set(mlsMarkets.map((t) => `${t.name}|${t.state}`)),
@@ -476,6 +484,7 @@ export default function TekkyMapClient() {
   const showNext = layer === "all" || layer === "next";
   const showUsl = layer === "all" || layer === "usl";
   const showEcnl = layer === "all" || layer === "ecnl";
+  const showNcaa = layer === "all" || layer === "ncaa";
 
   // Sidebar list — focus state filters; otherwise national
   const focusState = lockedState ?? hoveredState;
@@ -940,6 +949,51 @@ export default function TekkyMapClient() {
                             ? "Girls"
                             : "Boys"}{" "}
                         · Source: theecnl.com (verified subset)
+                      </div>
+                    </div>
+                  </Tooltip>
+                </CircleMarker>
+              );
+            })}
+
+          {/* NCAA D1 soccer programs — 240 schools (men's + women's
+               combined). Indigo/navy bullets to convey academic /
+               institutional and stay distinct from emerald (NEXT),
+               sky (USL), pink (ECNL), gold (MLS). Small radius (3.5px)
+               so the dense northeast / mid-atlantic clusters don't
+               turn the map into a smear. */}
+          {showNcaa &&
+            ncaaSchools.map((s, i) => {
+              const both = s.divisions.length > 1;
+              return (
+                <CircleMarker
+                  key={`ncaa-${s.name}-${i}`}
+                  center={[s.lat, s.lng]}
+                  radius={both ? 4 : 3.5}
+                  pathOptions={{
+                    color: "#4f46e5",
+                    weight: 1,
+                    fillColor: both ? "#6366f1" : "#818cf8",
+                    fillOpacity: 0.8,
+                  }}
+                >
+                  <Tooltip direction="top" offset={[0, -4]} opacity={0.95}>
+                    <div className="text-xs max-w-[260px]">
+                      <div className="font-bold text-indigo-300">
+                        🎓 {s.name}
+                      </div>
+                      <div className="text-slate-300 mb-0.5">
+                        {s.city}, {s.state}
+                      </div>
+                      <div className="text-[10px] text-slate-500 italic">
+                        NCAA D1 ·{" "}
+                        {s.divisions.includes("mens") &&
+                        s.divisions.includes("womens")
+                          ? "Men's + Women's"
+                          : s.divisions.includes("mens")
+                            ? "Men's only"
+                            : "Women's only"}{" "}
+                        · Source: ncaa.com / Wikipedia
                       </div>
                     </div>
                   </Tooltip>
