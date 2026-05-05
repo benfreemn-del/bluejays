@@ -5,6 +5,7 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
+import CustomersTab from "@/components/portal/CustomersTab";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -177,6 +178,7 @@ type Tab =
   | "map"
   | "insights"
   | "partners"
+  | "customers"
   | "account";
 
 type Campaign = {
@@ -601,6 +603,9 @@ export default function PortalPage({
               ...(slug === "itc-quick-attach"
                 ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🎯" }]
                 : []),
+              ...(slug === "laser-lakes"
+                ? [{ id: "customers" as Tab, label: "Customers", emoji: "🪵" }]
+                : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -673,6 +678,9 @@ export default function PortalPage({
         {tab === "insights" && <InsightsTab slug={slug} report={report} leads={leads} />}
         {tab === "partners" && slug === "itc-quick-attach" && (
           <PartnersTab slug={slug} />
+        )}
+        {tab === "customers" && slug === "laser-lakes" && (
+          <CustomersTab slug={slug} />
         )}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />

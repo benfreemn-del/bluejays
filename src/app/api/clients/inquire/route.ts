@@ -112,6 +112,11 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@pineandparticle.com",
     emoji: "🌲",
   },
+  "laser-lakes": {
+    businessLabel: "Laser Lakes (Nate)",
+    clientEmail: "hello@laserlakes.com",
+    emoji: "🪵",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
