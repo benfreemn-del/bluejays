@@ -338,3 +338,53 @@
     update();
   }
 })();
+
+/* ----------------------------------------------------------------------
+   COUNTER ANIMATION — count up on scroll into view
+   Targets: .num[data-count-to]  (optional data-suffix)
+   ---------------------------------------------------------------------- */
+(function () {
+  var nodes = document.querySelectorAll(".num[data-count-to]");
+  if (!nodes.length) return;
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animate(node) {
+    var target = parseFloat(node.getAttribute("data-count-to")) || 0;
+    var suffix = node.getAttribute("data-suffix") || "";
+    var duration = 1600;
+    var start = null;
+
+    function step(ts) {
+      if (start === null) start = ts;
+      var elapsed = ts - start;
+      var p = Math.min(elapsed / duration, 1);
+      var eased = easeOutCubic(p);
+      var current = Math.round(target * eased);
+      node.textContent = current + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else node.textContent = target + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (!("IntersectionObserver" in window)) {
+    nodes.forEach(function (n) {
+      n.textContent = n.getAttribute("data-count-to") + (n.getAttribute("data-suffix") || "");
+    });
+    return;
+  }
+
+  var seen = new WeakSet();
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting && !seen.has(e.target)) {
+        seen.add(e.target);
+        animate(e.target);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  nodes.forEach(function (n) { io.observe(n); });
+})();
