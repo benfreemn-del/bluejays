@@ -39,6 +39,7 @@ type ClientLead = {
   funnel_status: string;
   funnel_step: number | null;
   notes: string | null;
+  raw_payload?: Record<string, unknown> | null;
   created_at: string;
   touch_count?: number;
   touch_channels?: string[];
@@ -274,11 +275,19 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const AUDIENCE_EMOJI: Record<string, string> = {
+  // Zenith Sports
   parent: "👪",
   coach: "🏟️",
   player: "⚽",
   club: "🏛️",
   unknown: "❓",
+  // ITC Quick Attach
+  hobbyist: "🚜",
+  forester: "🌲",
+  tym: "⚙️",
+  hunter: "🦌",
+  dealer: "🤝",
+  community: "🏆",
 };
 
 /**
@@ -598,7 +607,7 @@ export default function PortalPage({
         {tab === "funnels" && (
           <FunnelsTab slug={slug} leads={leads} />
         )}
-        {tab === "insights" && <InsightsTab report={report} />}
+        {tab === "insights" && <InsightsTab report={report} leads={leads} />}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}
@@ -676,7 +685,7 @@ function OverviewTab({
           />
           <StatCard
             label="Pipeline value"
-            value={report ? `$${Math.round(report.leads.pipeline_value_usd)}` : "—"}
+            value={`$${Math.round(estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0)).toLocaleString()}`}
             sub="estimated"
             accent="emerald"
           />
@@ -949,7 +958,19 @@ function OverviewTab({
 
 /* ─────────────────────────── INSIGHTS TAB ─────────────────────────── */
 
-function InsightsTab({ report }: { report: Report | null }) {
+function InsightsTab({
+  report,
+  leads,
+}: {
+  report: Report | null;
+  leads?: ClientLead[];
+}) {
+  // We accept leads optionally so per-tenant deal-value overrides can
+  // surface here too. Falls through to the report's server-computed
+  // value when leads aren't loaded.
+  const pipelineValueUsd = leads
+    ? estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0)
+    : report?.leads.pipeline_value_usd ?? 0;
   const [range, setRange] = useState<"7d" | "30d" | "90d" | "all">("30d");
   const [shopify, setShopify] = useState<ShopifyState | null>(null);
 
@@ -1029,7 +1050,7 @@ function InsightsTab({ report }: { report: Report | null }) {
         />
         <StatCard
           label="Pipeline value"
-          value={`$${Math.round(report.leads.pipeline_value_usd)}`}
+          value={`$${Math.round(pipelineValueUsd).toLocaleString()}`}
           sub="estimated"
           accent="amber"
         />
@@ -4117,8 +4138,11 @@ function FunnelsTab({
           const segLeads = leads.filter((l) => l.audience_segment === tag);
           const newCount = segLeads.filter((l) => l.funnel_status === "not_enrolled").length;
           const enrolledCount = segLeads.filter((l) => l.funnel_status === "enrolled").length;
-          const respondedCount = segLeads.filter((l) => l.funnel_status === "responded").length;
-          const convertedCount = segLeads.filter((l) => l.funnel_status === "converted").length;
+          // "Won" rolls up everyone past the active-funnel stage: replied,
+          // closed, or graduated through the lifecycle.
+          const wonCount = segLeads.filter((l) =>
+            ["responded", "converted", "completed"].includes(l.funnel_status),
+          ).length;
           const lpUrl = `/clients/${slug}/lp/${f.segment}`;
           return (
             <div
@@ -4204,7 +4228,7 @@ function FunnelsTab({
                     Won
                   </div>
                   <div className="text-sm font-black text-emerald-300">
-                    {convertedCount + respondedCount}
+                    {wonCount}
                   </div>
                 </div>
               </div>
@@ -4235,7 +4259,66 @@ function FunnelsTab({
 
 /* ─────────────────────────── HELPERS ─────────────────────────── */
 
+/**
+ * Estimate pipeline value from the loaded leads. Prefers an explicit
+ * `deal_value_usd` baked into raw_payload (set by the dealer ROI form
+ * etc.). Falls back to per-audience defaults so segments without a
+ * captured deal size still show a reasonable number rather than $0
+ * or $15. Final fallback is the server-computed `report` value.
+ */
+const AUDIENCE_DEFAULT_DEAL_USD: Record<string, number> = {
+  // ITC
+  hobbyist: 250,
+  forester: 600,
+  tym: 400,
+  hunter: 350,
+  dealer: 3600,
+  community: 100,
+  // Zenith
+  parent: 60,
+  coach: 250,
+  player: 80,
+  club: 1500,
+  unknown: 100,
+};
+
+function estimatePipelineValueUsd(
+  leads: ClientLead[],
+  fallback: number,
+): number {
+  if (!leads || leads.length === 0) return fallback;
+  // Only count leads that progressed past first contact — these are
+  // the ones representing real pipeline value, not passive list size.
+  const inPipeline = leads.filter((l) =>
+    ["enrolled", "responded", "converted", "completed"].includes(l.funnel_status),
+  );
+  if (inPipeline.length === 0) return fallback;
+  let sum = 0;
+  for (const l of inPipeline) {
+    const explicit = Number(l.raw_payload?.["deal_value_usd"] ?? 0);
+    if (explicit > 0) {
+      sum += explicit;
+      continue;
+    }
+    const seg = l.audience_segment ?? "unknown";
+    sum += AUDIENCE_DEFAULT_DEAL_USD[seg] ?? 100;
+  }
+  return Math.max(sum, fallback);
+}
+
+// Per-slug branding overrides for headers / display. Keeps the title-case
+// fallback for new clients while giving us pixel-correct names for existing
+// ones (e.g. "ITC Quick Attach" — not "Itc Quick Attach").
+const SLUG_DISPLAY_NAME: Record<string, string> = {
+  "itc-quick-attach": "ITC Quick Attach",
+  "zenith-sports": "Zenith Sports",
+  "hector-landscaping": "Hector Landscaping",
+  "ps-reiki": "PS Reiki",
+  "heale-counseling": "Heale Counseling",
+};
+
 function humanizeSlug(slug: string): string {
+  if (SLUG_DISPLAY_NAME[slug]) return SLUG_DISPLAY_NAME[slug];
   return slug
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
