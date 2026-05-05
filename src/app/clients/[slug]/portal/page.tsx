@@ -4,6 +4,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -4287,6 +4288,29 @@ function FunnelsTab({
   leads: ClientLead[];
 }) {
   const funnels = FUNNELS_BY_SLUG[slug] ?? [];
+  const [openFunnelSegment, setOpenFunnelSegment] = useState<string | null>(
+    null,
+  );
+  const openFunnel =
+    funnels.find((f) => f.segment === openFunnelSegment) ?? null;
+  const openSegLeads = openFunnel
+    ? leads.filter((l) => l.audience_segment === openFunnel.audienceTag)
+    : [];
+  const openCounts = {
+    total: openSegLeads.length,
+    newCount: openSegLeads.filter((l) => l.funnel_status === "not_enrolled")
+      .length,
+    enrolledCount: openSegLeads.filter((l) => l.funnel_status === "enrolled")
+      .length,
+    wonCount: openSegLeads.filter((l) =>
+      ["responded", "converted", "completed"].includes(l.funnel_status),
+    ).length,
+  };
+  const openLandingUrl = openFunnel
+    ? openFunnel.landingPath
+      ? `/clients/${slug}${openFunnel.landingPath}`
+      : `/clients/${slug}/lp/${openFunnel.segment}`
+    : "";
 
   if (funnels.length === 0) {
     return (
@@ -4433,6 +4457,13 @@ function FunnelsTab({
               </div>
 
               <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenFunnelSegment(f.segment)}
+                  className="flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-white/15 bg-slate-900/70 hover:border-amber-400/50 hover:bg-slate-800 text-amber-200 text-center transition-colors"
+                >
+                  View funnel
+                </button>
                 <a
                   href={lpUrl}
                   target="_blank"
@@ -4452,6 +4483,26 @@ function FunnelsTab({
         with the audience tag pre-set. Leads land in the Leads tab tagged
         automatically — no manual sorting.
       </div>
+
+      <FunnelVisualModal
+        isOpen={openFunnelSegment !== null}
+        onClose={() => setOpenFunnelSegment(null)}
+        funnel={
+          openFunnel
+            ? {
+                segment: openFunnel.segment,
+                audienceTag: String(openFunnel.audienceTag ?? ""),
+                emoji: openFunnel.emoji,
+                title: openFunnel.title,
+                pitch: openFunnel.pitch,
+                accentText: openFunnel.accentText,
+                steps: openFunnel.steps,
+              }
+            : null
+        }
+        counts={openCounts}
+        landingUrl={openLandingUrl}
+      />
     </div>
   );
 }
