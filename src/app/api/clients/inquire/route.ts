@@ -249,6 +249,7 @@ export async function POST(request: NextRequest) {
               subject: `${cfg.emoji} New lead — ${name}`,
               body: fullMessage,
               fromName: `${cfg.businessLabel} Alerts`,
+              clientSlug: slug,
             }).catch((err) =>
               console.error("[clients/inquire] client-owner email failed:", err),
             ),
@@ -264,11 +265,13 @@ export async function POST(request: NextRequest) {
   }
 
   await Promise.allSettled([
-    sendOwnerAlert(smsMessage).catch((err) =>
+    // Tag every owner alert with the client_slug so /spending's
+    // per-client filter counts these against the right tenant.
+    sendOwnerAlert(smsMessage, { clientSlug: slug }).catch((err) =>
       console.error("[clients/inquire] owner SMS failed:", err),
     ),
-    sendOwnerEmail({ subject, body: fullMessage }).catch((err) =>
-      console.error("[clients/inquire] owner email failed:", err),
+    sendOwnerEmail({ subject, body: fullMessage, clientSlug: slug }).catch(
+      (err) => console.error("[clients/inquire] owner email failed:", err),
     ),
     ...clientOwnerSends,
   ]);

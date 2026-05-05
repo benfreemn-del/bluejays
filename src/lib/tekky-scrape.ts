@@ -103,6 +103,7 @@ async function googleTextSearch(
     service: "google_places",
     action: "text_search",
     costUsd: COST_RATES.google_places_search,
+    clientSlug: "zenith-sports",
     metadata: { query, source: "tekky-scrape" },
   });
   if (j.status === "ZERO_RESULTS") return [];
@@ -124,6 +125,7 @@ async function googleDetails(
       service: "google_places",
       action: "place_details",
       costUsd: COST_RATES.google_places_detail,
+      clientSlug: "zenith-sports",
       metadata: { placeId, source: "tekky-scrape" },
     });
     return j.result ?? null;

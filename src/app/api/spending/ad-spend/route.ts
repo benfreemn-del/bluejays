@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
     amountUsd?: number;
     notes?: string;
     platformAccountId?: string;
+    /** Optional client slug to attribute this ad spend to. */
+    clientSlug?: string;
   } = {};
   try {
     body = await req.json();
@@ -71,7 +73,7 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  const { service, date, amountUsd, notes, platformAccountId } = body;
+  const { service, date, amountUsd, notes, platformAccountId, clientSlug } = body;
   if (!service || !VALID_SERVICES.includes(service as AdSpendService)) {
     return NextResponse.json(
       {
@@ -115,6 +117,7 @@ export async function POST(req: NextRequest) {
       action: "manual_log",
       cost_usd: amountUsd,
       status: "success",
+      client_slug: clientSlug ?? null,
       created_at: createdAt,
       metadata: {
         source: "manual_ui",

@@ -22,7 +22,10 @@ interface Alert {
   timestamp: string;
 }
 
-async function sendOwnerSms(message: string): Promise<boolean> {
+async function sendOwnerSms(
+  message: string,
+  ctx?: { clientSlug?: string; prospectId?: string },
+): Promise<boolean> {
   if (!OWNER_PHONE || !TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
     console.log(`  🔔 [ALERT - would text owner]: ${message}`);
     return false;
@@ -47,6 +50,8 @@ async function sendOwnerSms(message: string): Promise<boolean> {
       service: "twilio_sms",
       action: "owner_alert",
       costUsd: COST_RATES.twilio_sms,
+      clientSlug: ctx?.clientSlug,
+      prospectId: ctx?.prospectId,
       metadata: { to: OWNER_PHONE, type: "alert" },
     });
   }
@@ -84,11 +89,17 @@ function getAlertEmoji(type: AlertType): string {
 
 // Trigger functions for common alert scenarios
 
-/** Send a raw SMS + email alert to Ben — works even when Twilio A2P is pending. */
-export async function sendOwnerAlert(message: string): Promise<void> {
+/** Send a raw SMS + email alert to Ben — works even when Twilio A2P is pending.
+ *  Pass `clientSlug` when the alert is triggered by a per-client event
+ *  (e.g. an inbound lead on /clients/zenith-sports) so the cost row
+ *  is attributed to that tenant in the spending dashboard. */
+export async function sendOwnerAlert(
+  message: string,
+  ctx?: { clientSlug?: string; prospectId?: string },
+): Promise<void> {
   await Promise.all([
-    sendOwnerSms(message),
-    sendOwnerEmail({ subject: "🔔 BlueJays Alert", body: message }),
+    sendOwnerSms(message, ctx),
+    sendOwnerEmail({ subject: "🔔 BlueJays Alert", body: message, ...ctx }),
   ]);
 }
 
@@ -106,6 +117,8 @@ export async function sendOwnerAlert(message: string): Promise<void> {
 export async function sendOwnerEmail(args: {
   subject: string;
   body: string;
+  clientSlug?: string;
+  prospectId?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
   const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
@@ -152,6 +165,18 @@ export async function sendOwnerEmail(args: {
         response.status,
         await response.text(),
       );
+    } else {
+      // Tag this send with the originating tenant when one was passed
+      // through. Lets the per-client filter on /spending count owner-
+      // alert email costs against the right client.
+      await logCost({
+        service: "sendgrid_email",
+        action: "owner_alert",
+        costUsd: COST_RATES.sendgrid_email,
+        clientSlug: args.clientSlug,
+        prospectId: args.prospectId,
+        metadata: { to: OWNER_EMAIL, type: "owner_alert" },
+      });
     }
     return response.ok;
   } catch (err) {
@@ -173,6 +198,7 @@ export async function sendEmailTo(args: {
   subject: string;
   body: string;
   fromName?: string;
+  clientSlug?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
   const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
@@ -207,6 +233,17 @@ export async function sendEmailTo(args: {
     });
     if (!response.ok) {
       console.error("[sendEmailTo]", response.status, await response.text());
+    } else {
+      // Per-client cost attribution — fired from campaign blasts and
+      // client-portal owner notifications. Tag with the originating
+      // tenant so /spending?client=zenith-sports counts these.
+      await logCost({
+        service: "sendgrid_email",
+        action: "client_send",
+        costUsd: COST_RATES.sendgrid_email,
+        clientSlug: args.clientSlug,
+        metadata: { to: args.to, fromName: args.fromName ?? null },
+      });
     }
     return response.ok;
   } catch (err) {

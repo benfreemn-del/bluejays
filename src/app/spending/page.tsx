@@ -1337,6 +1337,8 @@ function AdSpendLogger() {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
+  // Optional per-client attribution. "" = global / shared spend.
+  const [adClient, setAdClient] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
@@ -1364,7 +1366,13 @@ function AdSpendLogger() {
       const r = await fetch("/api/spending/ad-spend", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ service, date, amountUsd: n, notes: notes || undefined }),
+        body: JSON.stringify({
+          service,
+          date,
+          amountUsd: n,
+          notes: notes || undefined,
+          clientSlug: adClient || undefined,
+        }),
       });
       const j = await r.json();
       if (j.ok) {
@@ -1477,13 +1485,28 @@ function AdSpendLogger() {
           {busy ? "…" : "Log"}
         </button>
       </div>
-      <input
-        type="text"
-        placeholder="Notes (campaign name, audience, etc.)"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="w-full rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
-      />
+      <div className="grid sm:grid-cols-[180px_1fr] gap-2">
+        <select
+          value={adClient}
+          onChange={(e) => setAdClient(e.target.value)}
+          title="Attribute this ad spend to a specific client (or leave blank for global)"
+          className="rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+        >
+          <option value="">Shared / global</option>
+          {CLIENT_FILTER_OPTIONS.filter((o) => o.slug !== "all").map((o) => (
+            <option key={o.slug} value={o.slug}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <input
+          type="text"
+          placeholder="Notes (campaign name, audience, etc.)"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="w-full rounded-lg bg-white/[0.03] border border-white/10 px-3 py-2 text-sm"
+        />
+      </div>
       {msg && (
         <div
           className={`mt-2 text-xs ${

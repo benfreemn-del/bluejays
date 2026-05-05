@@ -123,6 +123,7 @@ async function googleTextSearch(query: string): Promise<GooglePlace[]> {
     service: "google_places",
     action: "text_search",
     costUsd: COST_RATES.google_places_search,
+    clientSlug: "itc-quick-attach",
     metadata: { query, source: "itc-scrape" },
   });
   if (j.status === "ZERO_RESULTS") return [];
@@ -144,6 +145,7 @@ async function googleDetails(
       service: "google_places",
       action: "place_details",
       costUsd: COST_RATES.google_places_detail,
+      clientSlug: "itc-quick-attach",
       metadata: { placeId, source: "itc-scrape" },
     });
     return j.result ?? null;
