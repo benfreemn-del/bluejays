@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
+import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
 import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
@@ -351,6 +352,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
+            {/* Quick-paste Stripe Payment Link URLs — copy-to-clipboard for
+                live sales calls. One click → URL on clipboard, paste into
+                next text/email. */}
+            <PaymentLinksPanel />
+
             {/* Needs Review — AI-drafted replies awaiting Ben's approval.
                 Mounts at the very top so Ben sees them before anything else;
                 renders an empty pill when the queue is clear. */}
