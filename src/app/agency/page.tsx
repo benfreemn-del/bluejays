@@ -161,6 +161,15 @@ export default function AgencyPage() {
         <p className="text-xs text-slate-500 mt-4">
           8-question fit check · Ben answers personally · Most apps reviewed within 24h
         </p>
+        <p className="text-sm text-slate-400 mt-6">
+          Thinking &quot;I could build this myself with Claude&quot;?{" "}
+          <Link
+            href="/agency/replicate"
+            className="text-violet-300 hover:text-violet-200 underline underline-offset-2 font-semibold"
+          >
+            See the full engineering teardown →
+          </Link>
+        </p>
       </section>
 
       {/* ── THE MATH ─────────────────────────────────────────────────────────── */}
