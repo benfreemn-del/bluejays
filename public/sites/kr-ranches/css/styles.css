@@ -1494,38 +1494,79 @@ body {
 }
 
 /* ---------- POLISHED KR LOGO MARK ---------- */
+/* KR Logo image rules.
+   .kr-logo-circle: header / nav / mobile menu — crops bottom 26% of the
+     image (the cursive "Ranches" script) so only the barbed-wire + KR
+     monogram shows. Achieved by sizing the container to 75% of image
+     aspect ratio and letting the img overflow upward (object-position
+     top + container overflow:hidden).
+   .kr-logo-full: footer / preloader — full uncropped logo with the
+     cursive "Ranches" script visible.
+*/
 .nav-logo .nav-mark {
   background: transparent !important;
   border: none !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 46px !important;
+  height: 38px !important;
   padding: 0;
   position: relative;
+  overflow: hidden;
+  display: inline-block;
 }
-.nav-logo .nav-mark svg { width: 40px; height: 40px; display: block; }
+.nav-logo .nav-mark img.kr-logo-circle {
+  width: 46px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
 
 .preloader-mark {
   border: none !important;
-  width: 80px !important;
-  height: 80px !important;
+  width: 100px !important;
+  height: 100px !important;
 }
-.preloader-mark svg { width: 80px; height: 80px; }
+.preloader-mark img.kr-logo-full {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  display: block;
+}
 
 .footer-mark {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
-.footer-mark svg { width: 44px; height: 44px; }
+.footer-mark img.kr-logo-full {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  display: block;
+  background: #faf6ee;
+  border-radius: 8px;
+  padding: 4px;
+}
 .footer-mark .footer-brand { margin-bottom: 0; }
 
 .mobile-mark {
   display: flex;
   justify-content: center;
   margin-bottom: 30px;
+  overflow: hidden;
+  width: 80px;
+  height: 64px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.mobile-mark svg { width: 60px; height: 60px; }
+.mobile-mark img.kr-logo-circle {
+  width: 80px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
 
 /* ---------- CORNER ORNAMENTS ---------- */
 .corner-ornament {
