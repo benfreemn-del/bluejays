@@ -8,7 +8,9 @@ import {
   MapContainer,
   TileLayer,
   Tooltip,
+  useMap,
 } from "react-leaflet";
+import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type { Layer } from "leaflet";
 
@@ -98,6 +100,22 @@ const AUDIENCE_META: Record<
 
 const STATE_BORDERS_URL =
   "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
+const COUNTIES_URL =
+  "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json";
+
+/** First two digits of a county FIPS = state FIPS. Map → 2-letter
+ * USPS abbr so we can filter counties by the locked state. */
+const STATE_FIPS_TO_ABBR: Record<string, string> = {
+  "01": "AL", "02": "AK", "04": "AZ", "05": "AR", "06": "CA", "08": "CO",
+  "09": "CT", "10": "DE", "11": "DC", "12": "FL", "13": "GA", "15": "HI",
+  "16": "ID", "17": "IL", "18": "IN", "19": "IA", "20": "KS", "21": "KY",
+  "22": "LA", "23": "ME", "24": "MD", "25": "MA", "26": "MI", "27": "MN",
+  "28": "MS", "29": "MO", "30": "MT", "31": "NE", "32": "NV", "33": "NH",
+  "34": "NJ", "35": "NM", "36": "NY", "37": "NC", "38": "ND", "39": "OH",
+  "40": "OK", "41": "OR", "42": "PA", "44": "RI", "45": "SC", "46": "SD",
+  "47": "TN", "48": "TX", "49": "UT", "50": "VT", "51": "VA", "53": "WA",
+  "54": "WV", "55": "WI", "56": "WY",
+};
 
 const LAYER_OPTIONS: Array<{ id: MapLayer; label: string; emoji: string }> = [
   { id: "all", label: "All markets", emoji: "🗺️" },
@@ -110,12 +128,39 @@ function popRadius(population: number): number {
   return Math.max(3, Math.min(22, Math.sqrt(population / 4000)));
 }
 
+/**
+ * ZoomController — child of <MapContainer>, fires fitBounds whenever
+ * the parent passes a new bounds object (e.g. on state click). Null
+ * resets to the default US view.
+ */
+function ZoomController({ bounds }: { bounds: L.LatLngBounds | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) {
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 0.8 });
+    } else {
+      map.flyTo([39.5, -97], 4, { duration: 0.8 });
+    }
+  }, [bounds, map]);
+  return null;
+}
+
 export default function TekkyMapClient() {
   const [layer, setLayer] = useState<MapLayer>("all");
   const [hoveredState, setHoveredState] = useState<string | null>(null);
   const [lockedState, setLockedState] = useState<string | null>(null);
   const [statesGeoJson, setStatesGeoJson] =
     useState<FeatureCollection | null>(null);
+  const [countiesGeoJson, setCountiesGeoJson] =
+    useState<FeatureCollection | null>(null);
+  const [showCounties, setShowCounties] = useState(true);
+  // When a county is clicked, opens an audience picker drawer.
+  const [countyTarget, setCountyTarget] = useState<{
+    name: string;
+    state: string;
+  } | null>(null);
+  // Bounds to fly to when a state is clicked. null = default US view.
+  const [zoomBounds, setZoomBounds] = useState<L.LatLngBounds | null>(null);
   const [marketSummary, setMarketSummary] = useState<MarketSummaryRow[]>([]);
   const [scrapeStatus, setScrapeStatus] = useState<{
     key: string; // `${city}|${state}|${audience}`
@@ -137,9 +182,13 @@ export default function TekkyMapClient() {
       .then((j: FeatureCollection) => {
         if (!cancelled) setStatesGeoJson(j);
       })
-      .catch(() => {
-        // network blip — map still renders without state outlines
-      });
+      .catch(() => {});
+    fetch(COUNTIES_URL)
+      .then((r) => r.json())
+      .then((j: FeatureCollection) => {
+        if (!cancelled) setCountiesGeoJson(j);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -309,10 +358,81 @@ export default function TekkyMapClient() {
       mouseover: () => setHoveredState(abbr),
       mouseout: () => setHoveredState(null),
       click: () => {
-        setLockedState((prev) => (prev === abbr ? null : abbr));
+        // Toggle: clicking an already-locked state unlocks back to US view.
+        setLockedState((prev) => {
+          if (prev === abbr) {
+            setZoomBounds(null);
+            return null;
+          }
+          // Compute bounds of the state polygon and trigger a zoom.
+          const layerWithBounds = leafletLayer as Layer & {
+            getBounds?: () => L.LatLngBounds;
+          };
+          if (typeof layerWithBounds.getBounds === "function") {
+            setZoomBounds(layerWithBounds.getBounds());
+          }
+          return abbr;
+        });
       },
     });
   };
+
+  const countyStyle = () => ({
+    color: "#1e293b",
+    weight: 0.4,
+    fillColor: "#0a0f1c",
+    fillOpacity: 0.10,
+  });
+
+  const onEachCounty = (
+    feature: Feature<Geometry>,
+    leafletLayer: Layer,
+  ) => {
+    const id = String(feature.id ?? "").padStart(5, "0");
+    const stateFips = id.slice(0, 2);
+    const stateAbbr = STATE_FIPS_TO_ABBR[stateFips];
+    const countyName = (feature.properties?.NAME ?? feature.properties?.name ?? "Unknown") as string;
+
+    leafletLayer.on({
+      mouseover: () => {
+        const path = leafletLayer as L.Path;
+        path.setStyle({
+          color: "#facc15",
+          weight: 1.5,
+          fillColor: "#facc15",
+          fillOpacity: 0.25,
+        });
+      },
+      mouseout: () => {
+        const path = leafletLayer as L.Path;
+        path.setStyle(countyStyle());
+      },
+      click: (e) => {
+        // Stop event so it doesn't bubble to the state polygon underneath.
+        L.DomEvent.stopPropagation(e);
+        if (!stateAbbr) return;
+        setCountyTarget({ name: countyName, state: stateAbbr });
+      },
+    });
+  };
+
+  // Filter counties to the locked state so we render fewer polygons
+  // when zoomed in (perf + clarity).
+  const visibleCounties = useMemo(() => {
+    if (!countiesGeoJson) return null;
+    if (!lockedState) return countiesGeoJson;
+    const target = Object.entries(STATE_FIPS_TO_ABBR).find(
+      ([, abbr]) => abbr === lockedState,
+    )?.[0];
+    if (!target) return countiesGeoJson;
+    return {
+      ...countiesGeoJson,
+      features: countiesGeoJson.features.filter((f) => {
+        const id = String(f.id ?? "").padStart(5, "0");
+        return id.slice(0, 2) === target;
+      }),
+    } as FeatureCollection;
+  }, [countiesGeoJson, lockedState]);
 
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-0 h-[calc(100vh-64px)]">
@@ -331,6 +451,19 @@ export default function TekkyMapClient() {
             attribution="&copy; OpenStreetMap"
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
+
+          <ZoomController bounds={zoomBounds} />
+
+          {/* County overlay — fades on hover, click to scout. Filtered
+              to the locked state when zoomed for perf + clarity. */}
+          {showCounties && visibleCounties && (
+            <GeoJSON
+              key={`counties-${lockedState ?? "us"}`}
+              data={visibleCounties}
+              style={countyStyle}
+              onEachFeature={onEachCounty}
+            />
+          )}
 
           {statesGeoJson && (
             <GeoJSON
@@ -476,10 +609,88 @@ export default function TekkyMapClient() {
             <span className="text-slate-300">Major city · sized by pop.</span>
           </div>
           <div className="text-slate-500 pt-1 max-w-[220px]">
-            Click a state to lock the sidebar. ECNL/MLS NEXT/USL layers
-            land once we wire real data.
+            Click a state to zoom + show counties. Click any county to
+            scrape leads by audience.
           </div>
+          <button
+            onClick={() => setShowCounties((v) => !v)}
+            className={`mt-2 text-[10px] font-bold px-2 py-1 rounded border w-full ${
+              showCounties
+                ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
+                : "border-slate-700 text-slate-500"
+            }`}
+          >
+            counties {showCounties ? "✓ on" : "off"}
+          </button>
         </div>
+
+        {/* County scout drawer — opens on county click */}
+        {countyTarget && (
+          <div className="absolute top-3 right-3 z-[1000] rounded-xl bg-slate-900/95 border border-amber-500/40 backdrop-blur p-3 shadow-2xl w-[260px]">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-amber-300 font-bold">
+                  Scout this county
+                </div>
+                <div className="text-sm font-bold text-white">
+                  {countyTarget.name}
+                  <span className="text-slate-400 font-normal ml-1">
+                    {countyTarget.state}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setCountyTarget(null)}
+                className="text-slate-400 hover:text-white text-sm"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-400 mb-2">
+              Pick an audience. Google Places search runs across the
+              county and matching businesses land in the Leads tab.
+            </p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(["parent", "coach", "player"] as TekkyAudience[]).map((aud) => {
+                const meta = AUDIENCE_META[aud];
+                const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
+                const isRunning =
+                  scrapeStatus?.key === k && scrapeStatus.state === "running";
+                return (
+                  <button
+                    key={aud}
+                    onClick={() =>
+                      runScrape(countyTarget.name, countyTarget.state, aud)
+                    }
+                    disabled={isRunning}
+                    className="text-[11px] font-bold rounded-md px-2 py-2 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center gap-0.5"
+                    style={{ color: meta.color }}
+                  >
+                    <span>{meta.emoji}</span>
+                    <span>{isRunning ? "…" : meta.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {scrapeStatus &&
+              scrapeStatus.key.startsWith(
+                `${countyTarget.name}|${countyTarget.state}|`,
+              ) && (
+                <div
+                  className={`mt-2 text-[10px] ${
+                    scrapeStatus.state === "error"
+                      ? "text-rose-400"
+                      : scrapeStatus.state === "done"
+                        ? "text-emerald-400"
+                        : "text-slate-400"
+                  }`}
+                >
+                  {scrapeStatus.message ?? "running…"}
+                </div>
+              )}
+          </div>
+        )}
       </div>
 
       {/* SIDEBAR */}

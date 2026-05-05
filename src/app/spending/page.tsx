@@ -1488,29 +1488,37 @@ function AdSpendLogger() {
 
 /* ─────────────────────────── ROAD TO $5M ─────────────────────────── */
 /**
- * Replaces the old 5K-Site Projection. Two product sliders (BlueJays
- * AI sites + TEKKY balls), each with a configurable unit price, sum
- * to a total revenue figure tracked toward the $5M goal.
+ * Two-tier revenue tracker for BlueJays' actual product mix:
+ *   1. AI Marketing System ($9,700) — the custom AI deal Ben sells
+ *      (sites + backend AI software bundled, e.g. Zenith, ITC, Hector)
+ *   2. Standard sites ($997) — the templated tier
  *
- * Persisted to localStorage so the sliders survive reloads. Pulls
- * `/api/spending/projection` for the burn estimate at the BlueJays
- * site count to compute a months-to-goal estimate.
+ * Both feed the $5M goal. Sliders persist to localStorage so the
+ * target survives reloads. Pulls `/api/spending/projection` for the
+ * monthly burn so we can compute months-to-goal.
+ *
+ * Note: TEKKY balls / Zenith ball revenue is intentionally NOT in
+ * here — those belong to Zenith Sports (a client), not BlueJays.
+ * Ben's revenue from Zenith is captured under the AI Marketing
+ * System tier (one closed deal, $9,700).
  */
 const GOAL_USD = 5_000_000;
-const STORAGE_KEY = "bluejays.road5m.v1";
+const STORAGE_KEY = "bluejays.road5m.v2";
 
 type Road5MState = {
-  bluejaysSites: number;
-  bluejaysPrice: number;
-  tekkyUnits: number;
-  tekkyPrice: number;
+  /** Number of AI Marketing System deals closed ($9,700 each) */
+  aiSystemDeals: number;
+  aiSystemPrice: number;
+  /** Number of standard $997 site builds */
+  standardSites: number;
+  standardPrice: number;
 };
 
 const ROAD_DEFAULTS: Road5MState = {
-  bluejaysSites: 100,
-  bluejaysPrice: 997,
-  tekkyUnits: 5000,
-  tekkyPrice: 79,
+  aiSystemDeals: 3,
+  aiSystemPrice: 9700,
+  standardSites: 50,
+  standardPrice: 997,
 };
 
 function RoadTo5M({
@@ -1547,9 +1555,9 @@ function RoadTo5M({
     }
   }, [s, hydrated]);
 
-  const bluejaysRevenue = s.bluejaysSites * s.bluejaysPrice;
-  const tekkyRevenue = s.tekkyUnits * s.tekkyPrice;
-  const totalRevenue = bluejaysRevenue + tekkyRevenue;
+  const aiRevenue = s.aiSystemDeals * s.aiSystemPrice;
+  const standardRevenue = s.standardSites * s.standardPrice;
+  const totalRevenue = aiRevenue + standardRevenue;
   const pctOfGoal = Math.min(100, (totalRevenue / GOAL_USD) * 100);
   const remaining = Math.max(0, GOAL_USD - totalRevenue);
 
@@ -1569,8 +1577,9 @@ function RoadTo5M({
         <div>
           <h2 className="text-lg font-bold">Road to $5M</h2>
           <p className="text-white/40 text-sm mt-1">
-            BlueJays AI sites + TEKKY balls. Sliders persist locally so the
-            target survives reloads. Edit unit price if your packaging shifts.
+            Your two product tiers: $9,700 AI Marketing System deals +
+            $997 standard sites. Edit unit price if your packaging shifts.
+            Sliders persist locally.
           </p>
         </div>
         <button
@@ -1627,28 +1636,28 @@ function RoadTo5M({
       {/* Sliders */}
       <div className="grid md:grid-cols-2 gap-4">
         <ProductSlider
-          label="BlueJays AI Sites"
-          accent="text-blue-300"
-          ringClass="border-blue-500/30 bg-blue-500/[0.05]"
-          count={s.bluejaysSites}
-          maxCount={5000}
-          stepCount={5}
-          unitPrice={s.bluejaysPrice}
-          revenue={bluejaysRevenue}
-          onCount={(n) => setS((prev) => ({ ...prev, bluejaysSites: n }))}
-          onPrice={(n) => setS((prev) => ({ ...prev, bluejaysPrice: n }))}
-        />
-        <ProductSlider
-          label="TEKKY Balls"
+          label="AI Marketing System deals"
           accent="text-amber-300"
           ringClass="border-amber-500/30 bg-amber-500/[0.05]"
-          count={s.tekkyUnits}
-          maxCount={100_000}
-          stepCount={50}
-          unitPrice={s.tekkyPrice}
-          revenue={tekkyRevenue}
-          onCount={(n) => setS((prev) => ({ ...prev, tekkyUnits: n }))}
-          onPrice={(n) => setS((prev) => ({ ...prev, tekkyPrice: n }))}
+          count={s.aiSystemDeals}
+          maxCount={500}
+          stepCount={1}
+          unitPrice={s.aiSystemPrice}
+          revenue={aiRevenue}
+          onCount={(n) => setS((prev) => ({ ...prev, aiSystemDeals: n }))}
+          onPrice={(n) => setS((prev) => ({ ...prev, aiSystemPrice: n }))}
+        />
+        <ProductSlider
+          label="Standard sites"
+          accent="text-blue-300"
+          ringClass="border-blue-500/30 bg-blue-500/[0.05]"
+          count={s.standardSites}
+          maxCount={5000}
+          stepCount={5}
+          unitPrice={s.standardPrice}
+          revenue={standardRevenue}
+          onCount={(n) => setS((prev) => ({ ...prev, standardSites: n }))}
+          onPrice={(n) => setS((prev) => ({ ...prev, standardPrice: n }))}
         />
       </div>
 
