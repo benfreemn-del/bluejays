@@ -2733,3 +2733,301 @@ body {
 .story-stat .num { letter-spacing: -0.02em; }
 
 
+/* ==========================================================================
+   ROUND 6 — FREEZER SECTION REDESIGN: old-school wooden butcher menu
+   Wood plank background + parchment menu paper + dotted leaders +
+   hand-stamped status badges
+   ========================================================================== */
+
+/* ---- Wood plank section background ---- */
+.freezer {
+  background:
+    /* wood-grain stripes via repeating linear gradient */
+    repeating-linear-gradient(
+      90deg,
+      rgba(70, 38, 18, 0) 0px,
+      rgba(70, 38, 18, 0) 60px,
+      rgba(70, 38, 18, 0.06) 60px,
+      rgba(70, 38, 18, 0.06) 62px,
+      rgba(70, 38, 18, 0) 62px,
+      rgba(70, 38, 18, 0) 180px,
+      rgba(40, 22, 10, 0.10) 180px,
+      rgba(40, 22, 10, 0.10) 182px
+    ),
+    /* horizontal subtle grain */
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0.03) 4px,
+      rgba(0, 0, 0, 0) 8px
+    ),
+    /* warm wood color gradient */
+    linear-gradient(180deg, #6a3e22 0%, #5a3219 50%, #4d2a14 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* knot-holes scattered subtly */
+.freezer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80px 30px at 8% 22%, rgba(0, 0, 0, 0.18), transparent 70%),
+    radial-gradient(ellipse 120px 40px at 92% 78%, rgba(0, 0, 0, 0.16), transparent 70%),
+    radial-gradient(ellipse 60px 20px at 78% 12%, rgba(0, 0, 0, 0.12), transparent 70%);
+  pointer-events: none;
+}
+.freezer .container { position: relative; z-index: 1; }
+
+/* Section title on wood needs cream color + soft shadow */
+.freezer .section-title {
+  color: #f5e8c8 !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.freezer .section-sub {
+  color: rgba(245, 232, 200, 0.85) !important;
+}
+.freezer .section-title::after {
+  background: linear-gradient(90deg, #d4a83a, #c87b29) !important;
+  height: 4px !important;
+  width: 80px !important;
+}
+
+/* ---- The parchment menu card ---- */
+.freezer-card {
+  background:
+    /* paper texture: faint cross-hatch + warm cream gradient */
+    repeating-linear-gradient(
+      45deg,
+      rgba(120, 80, 30, 0) 0px,
+      rgba(120, 80, 30, 0) 4px,
+      rgba(120, 80, 30, 0.015) 4px,
+      rgba(120, 80, 30, 0.015) 5px
+    ),
+    linear-gradient(180deg, #f8efd4 0%, #f3e6c4 100%) !important;
+  color: #2d1d10 !important;
+  border-radius: 6px !important;
+  padding: 48px 56px !important;
+  border: 1px solid rgba(70, 38, 18, 0.20);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.55),
+    0 8px 16px -8px rgba(0, 0, 0, 0.40),
+    inset 0 0 60px rgba(120, 80, 30, 0.08);
+  grid-template-columns: 1fr 1.6fr 1fr !important;
+  gap: 44px !important;
+  position: relative;
+}
+
+/* corner pins / nails on the menu paper */
+.freezer-card::before,
+.freezer-card::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #6b4520 0%, #2d1808 70%, #1a0e04 100%);
+  box-shadow:
+    inset -1px -1px 2px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.freezer-card::before { top: 16px; left: 16px; }
+.freezer-card::after  { top: 16px; right: 16px; }
+
+/* second pair of pins (bottom corners) via wrapper background-image */
+.freezer-card {
+  background-image:
+    radial-gradient(circle 7px at 22px calc(100% - 22px), #2d1808 35%, transparent 38%),
+    radial-gradient(circle 7px at calc(100% - 22px) calc(100% - 22px), #2d1808 35%, transparent 38%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(120, 80, 30, 0) 0px,
+      rgba(120, 80, 30, 0) 4px,
+      rgba(120, 80, 30, 0.015) 4px,
+      rgba(120, 80, 30, 0.015) 5px
+    ),
+    linear-gradient(180deg, #f8efd4 0%, #f3e6c4 100%) !important;
+}
+
+/* ---- Left column: menu header ---- */
+.freezer-col h3 {
+  font-family: var(--impact);
+  color: #2d1d10 !important;
+  font-size: 1.6rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase;
+  border-bottom: 3px double #8b1e1e;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.freezer-eyebrow {
+  color: #8b1e1e !important;
+  font-weight: 800 !important;
+}
+.pulse-dot {
+  background: #8b1e1e !important;
+}
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(139, 30, 30, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(139, 30, 30, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 30, 30, 0); }
+}
+.freezer-col p {
+  color: #4a3520 !important;
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 1rem !important;
+}
+
+/* ---- Menu list with dotted leaders ---- */
+.freezer-list {
+  border-top: 1px solid rgba(70, 38, 18, 0.25);
+  padding-top: 8px !important;
+  gap: 0 !important;
+}
+.freezer-item {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px dashed rgba(70, 38, 18, 0.30) !important;
+  border-radius: 0 !important;
+  padding: 14px 4px !important;
+  position: relative;
+  align-items: baseline !important;
+}
+.freezer-item:last-child { border-bottom: none !important; }
+
+/* item name + price grouping */
+.freezer-item > span:first-child {
+  display: flex !important;
+  align-items: baseline;
+  flex: 1;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* dotted leader line between name and price */
+.freezer-item > span:first-child::after {
+  content: "";
+  flex: 1;
+  margin: 0 8px 6px;
+  border-bottom: 2px dotted rgba(70, 38, 18, 0.35);
+  height: 0;
+}
+
+.freezer-item .freezer-name {
+  font-family: var(--serif) !important;
+  font-size: 1.18rem !important;
+  font-weight: 700 !important;
+  color: #2d1d10 !important;
+  white-space: nowrap;
+  order: 0;
+}
+.freezer-item .freezer-price {
+  font-family: var(--impact) !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.04em;
+  color: #8b1e1e !important;
+  white-space: nowrap;
+  margin-left: 0 !important;
+  order: 2;
+}
+
+/* ---- Hand-stamped status badges ---- */
+.freezer-badge {
+  font-family: var(--impact) !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.16em !important;
+  padding: 6px 12px !important;
+  border-radius: 3px !important;
+  border: 2px solid currentColor;
+  background: transparent !important;
+  transform: rotate(-3deg);
+  display: inline-block;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+.freezer-badge.available {
+  color: #2f5d3a !important;
+  border-color: #2f5d3a !important;
+  box-shadow: inset 0 0 0 2px transparent;
+}
+.freezer-badge.low {
+  color: #b8651c !important;
+  border-color: #b8651c !important;
+  transform: rotate(-2deg);
+}
+.freezer-badge.gone {
+  color: rgba(45, 29, 16, 0.45) !important;
+  border-color: rgba(45, 29, 16, 0.35) !important;
+  text-decoration: line-through !important;
+  transform: rotate(-4deg);
+}
+
+/* ---- Right column: order info + CTA stamp ---- */
+.freezer-update {
+  color: #4a3520 !important;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.92rem !important;
+  border-bottom: 2px solid rgba(70, 38, 18, 0.35);
+  padding-bottom: 10px;
+  display: block;
+}
+.freezer-col:last-child p {
+  color: #2d1d10 !important;
+  font-style: normal !important;
+  font-family: var(--serif) !important;
+  font-size: 0.96rem !important;
+}
+.freezer-cta {
+  background: linear-gradient(180deg, #a02525 0%, #6b1414 100%) !important;
+  color: #f5e8c8 !important;
+  border-radius: 4px !important;
+  padding: 16px !important;
+  border: 2px solid #4a0c0c !important;
+  font-family: var(--impact) !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase;
+  box-shadow:
+    0 6px 14px -4px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  margin-top: 18px !important;
+}
+.freezer-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 18px -4px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  background: linear-gradient(180deg, #b02828 0%, #7b1818 100%) !important;
+}
+
+/* ---- Mobile: collapse to one column, keep the menu vibe ---- */
+@media (max-width: 960px) {
+  .freezer-card {
+    grid-template-columns: 1fr !important;
+    padding: 36px 28px !important;
+    gap: 28px !important;
+  }
+  .freezer-col h3 { font-size: 1.4rem !important; }
+}
+@media (max-width: 680px) {
+  .freezer-card {
+    padding: 32px 22px !important;
+  }
+  .freezer-item .freezer-name { font-size: 1.05rem !important; }
+  .freezer-item .freezer-price { font-size: 0.94rem !important; }
+  .freezer-badge { font-size: 0.66rem !important; padding: 4px 9px !important; }
+  /* on tight screens hide the dotted leader, just space it out */
+  .freezer-item > span:first-child::after { display: none; }
+  .freezer-item > span:first-child {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+
+

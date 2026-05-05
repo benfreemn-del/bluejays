@@ -600,7 +600,7 @@ export default function PortalPage({
               { id: "funnels", label: "Funnels", emoji: "🎯" },
               { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
-              ...(slug === "itc-quick-attach"
+              ...(slug === "itc-quick-attach" || slug === "zenith-sports"
                 ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🎯" }]
                 : []),
               ...(slug === "laser-lakes"
@@ -676,9 +676,10 @@ export default function PortalPage({
         {tab === "map" && <MapTab slug={slug} />}
         {tab === "activity" && <ActivityTab />}
         {tab === "insights" && <InsightsTab slug={slug} report={report} leads={leads} />}
-        {tab === "partners" && slug === "itc-quick-attach" && (
-          <PartnersTab slug={slug} />
-        )}
+        {tab === "partners" &&
+          (slug === "itc-quick-attach" || slug === "zenith-sports") && (
+            <PartnersTab slug={slug} />
+          )}
         {tab === "customers" && slug === "laser-lakes" && (
           <CustomersTab slug={slug} />
         )}
@@ -5002,28 +5003,117 @@ function ActivityCounter({
  * jump straight to the recruit pitch or the script library without
  * remembering the URLs.
  */
+/**
+ * Per-tenant Sales Portal config. Each client gets their own audiences,
+ * payout copy, contact email, and accent palette. Adding a new client to
+ * the program is one config block + the underlying script library.
+ */
+const PARTNERS_CONFIG: Record<
+  string,
+  {
+    title: string;
+    tagline: string;
+    audiences: { emoji: string; label: string; payout: string }[];
+    audienceScriptCount: number;
+    contactEmail: string;
+    cap: number;
+    accent: "amber" | "lime";
+  }
+> = {
+  "itc-quick-attach": {
+    title: "ITC Partner Program",
+    tagline:
+      "Commission sales reps + warm-referrer partners. Six audience scripts, one workspace. Paid Venmo or Zelle within 7 days.",
+    audiences: [
+      { emoji: "🏪", label: "Dealer / wholesale", payout: "$250 / signed" },
+      { emoji: "🚜", label: "TYM owner", payout: "$50 / close" },
+      { emoji: "🌲", label: "Professional forester", payout: "$50 / close" },
+      { emoji: "🎯", label: "Hunter / outdoorsman", payout: "$50 / close" },
+      { emoji: "🏡", label: "Hobbyist · first-year", payout: "$50 / close" },
+      { emoji: "🤝", label: "Existing customer · referral", payout: "Toolbox kit" },
+    ],
+    audienceScriptCount: 6,
+    contactEmail: "partners@itcquickattach.com",
+    cap: 12,
+    accent: "amber",
+  },
+  "zenith-sports": {
+    title: "Zenith / TEKKY Partner Program",
+    tagline:
+      "Coaches, clubs, parents, camps. Four audience scripts, soccer-tuned. Paid Venmo or Zelle within 7 days.",
+    audiences: [
+      { emoji: "🥅", label: "Coach affiliate", payout: "$25 / ball + $100 / package" },
+      { emoji: "🏟️", label: "Club / academy wholesale", payout: "$30-40 / ball margin" },
+      { emoji: "👨‍👩‍👧", label: "Parent referrer", payout: "$20 / referred sale" },
+      { emoji: "🏕️", label: "Camp / academy director", payout: "Co-branded box · $30/ball" },
+    ],
+    audienceScriptCount: 4,
+    contactEmail: "partners@zenithsports.org",
+    cap: 25,
+    accent: "lime",
+  },
+};
+
 function PartnersTab({ slug }: { slug: string }) {
-  const audiences = [
-    { emoji: "🏪", label: "Dealer / wholesale", payout: "$250 / signed" },
-    { emoji: "🚜", label: "TYM owner", payout: "$50 / close" },
-    { emoji: "🌲", label: "Professional forester", payout: "$50 / close" },
-    { emoji: "🎯", label: "Hunter / outdoorsman", payout: "$50 / close" },
-    { emoji: "🏡", label: "Hobbyist · first-year", payout: "$50 / close" },
-    { emoji: "🤝", label: "Existing customer · referral", payout: "Toolbox kit" },
-  ];
+  const cfg = PARTNERS_CONFIG[slug] ?? PARTNERS_CONFIG["itc-quick-attach"];
+  const audiences = cfg.audiences;
+  const isLime = cfg.accent === "lime";
+  const accentBg = isLime ? "amber-100" : "amber-100"; // text — handled inline below
+  // Tailwind safelist hint for the per-accent classes used below:
+  // amber-100 amber-200/70 amber-200 amber-300 amber-400 amber-500 amber-500/15
+  // amber-500/20 amber-500/30 amber-500/40 amber-900/15 amber-950 amber-950/10 amber-950/40
+  // lime-100 lime-200/70 lime-200 lime-300 lime-400 lime-500 lime-500/15
+  // lime-500/20 lime-500/30 lime-500/40 lime-900/15 lime-950 lime-950/10 lime-950/40
+  void accentBg;
+
+  // Per-accent palette atoms — kept inline so Tailwind JIT picks them up.
+  const palette = isLime
+    ? {
+        heroBg:
+          "bg-gradient-to-br from-lime-950/40 via-lime-900/15 to-slate-900/60",
+        heroBorder: "border-lime-500/20",
+        heroHeading: "text-lime-100",
+        heroBody: "text-lime-200/70",
+        primaryBtn: "bg-lime-500 hover:bg-lime-400 text-lime-950",
+        secondaryBtn:
+          "border-lime-500/30 bg-slate-900/50 hover:bg-slate-800 text-lime-200",
+        statPillTone: "amber" as const, // keep amber for "scripts count" so it pops
+        cardBorder: "border-lime-500/15",
+        cardBg: "bg-lime-950/10",
+        cardHover: "hover:border-lime-500/40",
+        cardLabel: "text-lime-100",
+        accentText: "text-lime-300",
+        accentTextHover: "hover:text-lime-200",
+      }
+    : {
+        heroBg:
+          "bg-gradient-to-br from-amber-950/40 via-amber-900/15 to-slate-900/60",
+        heroBorder: "border-amber-500/20",
+        heroHeading: "text-amber-100",
+        heroBody: "text-amber-200/70",
+        primaryBtn: "bg-amber-500 hover:bg-amber-400 text-amber-950",
+        secondaryBtn:
+          "border-amber-500/30 bg-slate-900/50 hover:bg-slate-800 text-amber-200",
+        statPillTone: "amber" as const,
+        cardBorder: "border-amber-500/15",
+        cardBg: "bg-amber-950/10",
+        cardHover: "hover:border-amber-500/40",
+        cardLabel: "text-amber-100",
+        accentText: "text-amber-300",
+        accentTextHover: "hover:text-amber-200",
+      };
 
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="rounded-2xl bg-gradient-to-br from-amber-950/40 via-amber-900/15 to-slate-900/60 border border-amber-500/20 p-6">
+      <div className={`rounded-2xl ${palette.heroBg} border ${palette.heroBorder} p-6`}>
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div className="min-w-0">
-            <h2 className="text-2xl font-black tracking-tight text-amber-100 mb-1">
-              ITC Partner Program
+            <h2 className={`text-2xl font-black tracking-tight ${palette.heroHeading} mb-1`}>
+              {cfg.title}
             </h2>
-            <p className="text-sm text-amber-200/70 max-w-xl leading-relaxed">
-              Commission sales reps + warm-referrer partners. Six audience
-              scripts, one workspace. Paid Venmo or Zelle within 7 days.
+            <p className={`text-sm ${palette.heroBody} max-w-xl leading-relaxed`}>
+              {cfg.tagline}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 shrink-0">
@@ -5031,7 +5121,7 @@ function PartnersTab({ slug }: { slug: string }) {
               href={`/clients/${slug}/partners`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-amber-950 text-center transition-colors"
+              className={`text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg ${palette.primaryBtn} text-center transition-colors`}
             >
               View partner page ↗
             </Link>
@@ -5039,7 +5129,7 @@ function PartnersTab({ slug }: { slug: string }) {
               href={`/clients/${slug}/partners/script`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg border border-amber-500/30 bg-slate-900/50 hover:bg-slate-800 text-amber-200 text-center transition-colors"
+              className={`text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg border ${palette.secondaryBtn} text-center transition-colors`}
             >
               Open script library ↗
             </Link>
@@ -5049,22 +5139,26 @@ function PartnersTab({ slug }: { slug: string }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
           <StatPill label="Active partners" value="0" tone="slate" />
           <StatPill label="This-month payout" value="$0" tone="emerald" />
-          <StatPill label="Audience scripts" value="6" tone="amber" />
-          <StatPill label="Cap" value="12" tone="slate" />
+          <StatPill
+            label="Audience scripts"
+            value={String(cfg.audienceScriptCount)}
+            tone={palette.statPillTone}
+          />
+          <StatPill label="Cap" value={String(cfg.cap)} tone="slate" />
         </div>
       </div>
 
-      {/* Six audience cards */}
+      {/* Audience cards */}
       <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
         <div className="flex items-baseline justify-between mb-4">
           <h3 className="text-sm font-bold tracking-tight text-white uppercase">
-            Six audience scripts
+            {cfg.audienceScriptCount} audience scripts
           </h3>
           <Link
             href={`/clients/${slug}/partners/script`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] uppercase tracking-wider font-bold text-amber-300 hover:text-amber-200"
+            className={`text-[11px] uppercase tracking-wider font-bold ${palette.accentText} ${palette.accentTextHover}`}
           >
             Open library →
           </Link>
@@ -5073,14 +5167,12 @@ function PartnersTab({ slug }: { slug: string }) {
           {audiences.map((a) => (
             <div
               key={a.label}
-              className="rounded-xl border border-amber-500/15 bg-amber-950/10 p-3 hover:border-amber-500/40 transition-colors"
+              className={`rounded-xl border ${palette.cardBorder} ${palette.cardBg} p-3 ${palette.cardHover} transition-colors`}
             >
               <div className="flex items-start gap-2">
-                <span className="text-2xl shrink-0 leading-none">
-                  {a.emoji}
-                </span>
+                <span className="text-2xl shrink-0 leading-none">{a.emoji}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-amber-100 leading-tight mb-1 truncate">
+                  <p className={`text-sm font-bold ${palette.cardLabel} leading-tight mb-1 truncate`}>
                     {a.label}
                   </p>
                   <p className="text-[11px] text-emerald-300/90 font-bold tabular-nums">
@@ -5101,16 +5193,17 @@ function PartnersTab({ slug }: { slug: string }) {
         <ol className="space-y-2.5 text-sm text-slate-300">
           <Step n={1}>
             Send them the partner page link:{" "}
-            <code className="text-amber-300 bg-black/30 px-1.5 py-0.5 rounded text-xs">
+            <code className={`${palette.accentText} bg-black/30 px-1.5 py-0.5 rounded text-xs`}>
               /clients/{slug}/partners
             </code>
           </Step>
           <Step n={2}>
-            They email <span className="text-amber-300">partners@itcquickattach.com</span> with a one-paragraph application.
+            They email{" "}
+            <span className={palette.accentText}>{cfg.contactEmail}</span> with a one-paragraph application.
           </Step>
           <Step n={3}>
             You approve them, hand them the script library URL:{" "}
-            <code className="text-amber-300 bg-black/30 px-1.5 py-0.5 rounded text-xs">
+            <code className={`${palette.accentText} bg-black/30 px-1.5 py-0.5 rounded text-xs`}>
               /clients/{slug}/partners/script
             </code>
           </Step>
