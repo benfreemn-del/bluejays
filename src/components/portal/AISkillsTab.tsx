@@ -85,8 +85,8 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "📧",
         title: "Audience-Segmented Funnels",
         detail:
-          "Up to 6 audience tracks per tenant. Each track has its own day-by-day cadence using all 4 channels: email, SMS, ringless voicemail, and AI postcards via Lob.",
-        status: { default: "active" },
+          "Up to 6 audience tracks per tenant. Each track has its own day-by-day cadence using all 4 channels: email, SMS, ringless voicemail, and AI postcards via Lob. Definitions live; firing waits on email-domain auth + Twilio setup per tenant.",
+        status: { "zenith-sports": "available", "itc-quick-attach": "available", default: "active" },
         seeItIn: { label: "Funnels tab", tab: "funnels" },
       },
       {
@@ -230,8 +230,8 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
         emoji: "🎯",
         title: "Per-Audience Conversion Tracking",
         detail:
-          "Every funnel step writes to the analytics ledger. AI rolls up: which audience opens the most? Which converts? Where do leads drop off? Surfaces the weakest link in your sequence.",
-        status: { default: "active" },
+          "Every funnel step writes to the analytics ledger. AI rolls up: which audience opens the most? Which converts? Where do leads drop off? Surfaces the weakest link in your sequence. Numbers populate as funnels start firing.",
+        status: { "zenith-sports": "available", "itc-quick-attach": "available", default: "active" },
         seeItIn: { label: "Insights tab", tab: "insights" },
       },
     ],
