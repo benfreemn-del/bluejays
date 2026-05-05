@@ -59,6 +59,9 @@
     { "name": "McLean Youth Soccer", "city": "McLean", "state": "VA", "lat": 38.9339, "lng": -77.1773, "division": "girls" },
     { "name": "Pipeline SC", "city": "Baltimore", "state": "MD", "lat": 39.2904, "lng": -76.6122, "division": "boys" },
     { "name": "Carolina Elite SA", "city": "Greenville", "state": "SC", "lat": 34.8526, "lng": -82.3940, "division": "boys" },
-    { "name": "South Carolina Surf SC", "city": "Columbia", "state": "SC", "lat": 34.0007, "lng": -81.0348, "division": "boys" }
+    { "name": "South Carolina Surf SC", "city": "Columbia", "state": "SC", "lat": 34.0007, "lng": -81.0348, "division": "boys" },
+    { "name": "FC Wisconsin", "city": "Madison", "state": "WI", "lat": 43.0731, "lng": -89.4012, "division": "girls" },
+    { "name": "Western New York Flash", "city": "Rochester", "state": "NY", "lat": 43.1566, "lng": -77.6088, "division": "girls" },
+    { "name": "Albertson Soccer Club", "city": "Albertson", "state": "NY", "lat": 40.7707, "lng": -73.6457, "division": "girls" }
   ]
 }
