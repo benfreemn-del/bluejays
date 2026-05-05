@@ -4069,9 +4069,32 @@ type FunnelDef = {
    * upsell → Day 14 community/loyalty). Different content per segment.
    */
   steps: FunnelStep[];
+  /**
+   * Optional explicit path for the landing page. When omitted we
+   * default to `/clients/{slug}/lp/{segment}`. Zenith uses bespoke
+   * paths (e.g. /build-your-player) so each funnel sets its own.
+   */
+  landingPath?: string;
 };
 
 const ITC_FUNNELS: FunnelDef[] = [
+  {
+    segment: "dream-tractor",
+    audienceTag: null,
+    emoji: "🚜",
+    title: "Build Your Dream Tractor",
+    pitch:
+      "Interactive configurator quiz. Live SVG tractor updates with each pick. Routes lead to the right segment automatically.",
+    cardClass: "border-amber-400/50 bg-amber-400/[0.07]",
+    accentText: "text-amber-200",
+    steps: [
+      { day: 0, channel: "email", label: "Custom build sheet PDF (their picks)" },
+      { day: 0, channel: "sms", label: "Owner instant alert (Jake)" },
+      { day: 3, channel: "email", label: "Personal review + tweak from Jake" },
+      { day: 7, channel: "email", label: "Routes into segment-specific funnel" },
+    ],
+    landingPath: "/lp/dream-tractor",
+  },
   {
     segment: "tym",
     audienceTag: "tym",
@@ -4164,6 +4187,89 @@ const ITC_FUNNELS: FunnelDef[] = [
   },
 ];
 
+/**
+ * Zenith Sports / TEKKY funnels. Each funnel maps to a real page
+ * already live on the showcase site:
+ *   - /clients/zenith-sports/build-your-player → audience=player
+ *   - /clients/zenith-sports/training-guide    → audience=coach
+ *   - /clients/zenith-sports/camps             → audience=parent
+ *   - /clients/zenith-sports/shop              → general / no audience
+ */
+const ZENITH_FUNNELS: FunnelDef[] = [
+  {
+    segment: "build-your-player",
+    audienceTag: "player",
+    emoji: "🎮",
+    title: "Build Your Player",
+    pitch:
+      "Player-facing configurator. Pick traits + style → personalized challenge prescription.",
+    cardClass: "border-lime-500/30 bg-lime-500/[0.05]",
+    accentText: "text-lime-300",
+    steps: [
+      { day: 0, channel: "email", label: "Personalized challenge PDF (their picks)" },
+      { day: 3, channel: "email", label: "Drill-of-the-day video reel" },
+      { day: 7, channel: "email", label: "TEKKY ball intro + parent-purchase nudge" },
+      { day: 14, channel: "email", label: "Progress check-in + next-level drills" },
+    ],
+    landingPath: "/build-your-player",
+  },
+  {
+    segment: "training-guide",
+    audienceTag: "coach",
+    emoji: "📘",
+    title: "Coach Training Guide",
+    pitch: "Free PDF playbook for club coaches. Lead magnet + free club demo upsell.",
+    cardClass: "border-blue-500/30 bg-blue-500/[0.05]",
+    accentText: "text-blue-300",
+    steps: [
+      { day: 0, channel: "email", label: "Coach guide PDF" },
+      { day: 3, channel: "email", label: "Free club demo offer" },
+      { day: 7, channel: "email", label: "Drill bundle for U10/U12/U14" },
+      { day: 14, channel: "email", label: "Quote request + bulk pricing" },
+    ],
+    landingPath: "/training-guide",
+  },
+  {
+    segment: "camps",
+    audienceTag: "parent",
+    emoji: "👪",
+    title: "Camps Finder",
+    pitch:
+      "Parent-facing camp directory + email-capture. Highest-volume top-of-funnel.",
+    cardClass: "border-amber-500/30 bg-amber-500/[0.05]",
+    accentText: "text-amber-300",
+    steps: [
+      { day: 0, channel: "email", label: "Camp recommendations matched to age" },
+      { day: 3, channel: "email", label: "TEKKY ball intro (off-season prep)" },
+      { day: 7, channel: "email", label: "Player Challenge invite for the kid" },
+      { day: 14, channel: "email", label: "Pre-season checklist + gear bundle" },
+    ],
+    landingPath: "/camps",
+  },
+  {
+    segment: "shop",
+    audienceTag: null,
+    emoji: "🛒",
+    title: "Shop · TEKKY Ball",
+    pitch:
+      "Direct shop entry. Catches mid-funnel buyers ready to convert.",
+    cardClass: "border-violet-500/30 bg-violet-500/[0.05]",
+    accentText: "text-violet-300",
+    steps: [
+      { day: 0, channel: "email", label: "Cart-abandon recovery (if applicable)" },
+      { day: 3, channel: "email", label: "TEKKY drill add-ons" },
+      { day: 7, channel: "email", label: "Coach + player tag-in (referral hook)" },
+      { day: 14, channel: "email", label: "Replenish + apparel upsell" },
+    ],
+    landingPath: "/shop",
+  },
+];
+
+const FUNNELS_BY_SLUG: Record<string, FunnelDef[]> = {
+  "itc-quick-attach": ITC_FUNNELS,
+  "zenith-sports": ZENITH_FUNNELS,
+};
+
 function FunnelsTab({
   slug,
   leads,
@@ -4171,9 +4277,7 @@ function FunnelsTab({
   slug: string;
   leads: ClientLead[];
 }) {
-  // Today only ITC has segment-specific LPs. Adding more clients = drop
-  // their funnel defs into a per-slug map here.
-  const funnels = slug === "itc-quick-attach" ? ITC_FUNNELS : [];
+  const funnels = FUNNELS_BY_SLUG[slug] ?? [];
 
   if (funnels.length === 0) {
     return (
@@ -4227,7 +4331,9 @@ function FunnelsTab({
           const wonCount = segLeads.filter((l) =>
             ["responded", "converted", "completed"].includes(l.funnel_status),
           ).length;
-          const lpUrl = `/clients/${slug}/lp/${f.segment}`;
+          const lpUrl = f.landingPath
+            ? `/clients/${slug}${f.landingPath}`
+            : `/clients/${slug}/lp/${f.segment}`;
           return (
             <div
               key={f.segment}
