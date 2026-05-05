@@ -79,7 +79,7 @@ export default function ClientLoginPage({
           </h1>
           <p className="text-sm text-slate-400 mb-8">
             Manage your leads, ads, and weekly reports. <br />
-            Account: <span className="text-slate-300">{slug}</span>
+            Account: <span className="text-slate-300">{humanizeSlug(slug)}</span>
           </p>
 
           <form onSubmit={onSubmit} className="space-y-4">
@@ -148,4 +148,23 @@ export default function ClientLoginPage({
       </footer>
     </div>
   );
+}
+
+// Per-slug branding overrides for headers / display. Mirrors the
+// portal's SLUG_DISPLAY_NAME so "itc-quick-attach" reads as "ITC Quick
+// Attach" instead of the title-case fallback.
+const SLUG_DISPLAY_NAME: Record<string, string> = {
+  "itc-quick-attach": "ITC Quick Attach",
+  "zenith-sports": "Zenith Sports",
+  "hector-landscaping": "Hector Landscaping",
+  "ps-reiki": "PS Reiki",
+  "heale-counseling": "Heale Counseling",
+};
+
+function humanizeSlug(slug: string): string {
+  if (SLUG_DISPLAY_NAME[slug]) return SLUG_DISPLAY_NAME[slug];
+  return slug
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }

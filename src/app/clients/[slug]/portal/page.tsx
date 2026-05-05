@@ -552,7 +552,7 @@ export default function PortalPage({
               { id: "budget", label: "Budget", emoji: "💰" },
               { id: "campaigns", label: "Campaigns", emoji: "📧" },
               { id: "funnels", label: "Funnels", emoji: "🎯" },
-              { id: "map", label: "Market map", emoji: "🗺️" },
+              { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
