@@ -9,6 +9,7 @@ import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
+import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
 import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
@@ -352,6 +353,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
+            {/* BlueJays compliance ledger — tax + legal + ops to-dos pulled
+                from the 2026-05-04 audit. Mounts at the top because the
+                blockers gate Jake's $9.7K close. */}
+            <BusinessSetupChecklist />
+
             {/* Quick-paste Stripe Payment Link URLs — copy-to-clipboard for
                 live sales calls. One click → URL on clipboard, paste into
                 next text/email. */}
