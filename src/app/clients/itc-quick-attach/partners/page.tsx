@@ -28,9 +28,15 @@ export default function ItcPartnersPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/clients/itc-quick-attach/partners/script"
+              className="text-xs text-amber-300/60 hover:text-amber-200/80 transition-colors"
+            >
+              Script library
+            </Link>
+            <Link
+              href="/clients/itc-quick-attach/partners/work"
               className="text-sm text-amber-300/80 hover:text-amber-200 transition-colors"
             >
-              View script library
+              Open workspace →
             </Link>
             <a
               href="mailto:partners@itcquickattach.com?subject=ITC Sales Partner Application"
@@ -73,10 +79,10 @@ export default function ItcPartnersPage() {
               Apply to be a partner →
             </a>
             <Link
-              href="/clients/itc-quick-attach/partners/script"
+              href="/clients/itc-quick-attach/partners/work"
               className="inline-flex items-center justify-center rounded-md border border-amber-500/30 hover:border-amber-500/60 bg-[#1a1a1a] hover:bg-[#222] px-6 py-4 text-sm text-amber-200 hover:text-white transition-colors"
             >
-              See the 6-audience script →
+              Open the partner workspace →
             </Link>
           </div>
           <p className="text-xs text-slate-500 mt-5">
@@ -175,12 +181,18 @@ export default function ItcPartnersPage() {
               body="Already owns one of our products. Goal isn't a sale — it's a 30-second testimonial video OR a referral. Free toolbox kit as the thank-you incentive."
             />
           </div>
-          <div className="text-center mt-10">
+          <div className="text-center mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/clients/itc-quick-attach/partners/script"
+              href="/clients/itc-quick-attach/partners/work"
               className="inline-flex items-center justify-center rounded-md bg-amber-500 hover:bg-amber-400 text-amber-950 px-6 py-3 text-sm font-bold transition-colors"
             >
-              View the full script library →
+              Open the partner workspace →
+            </Link>
+            <Link
+              href="/clients/itc-quick-attach/partners/script"
+              className="inline-flex items-center justify-center rounded-md border border-amber-500/20 hover:border-amber-500/40 bg-[#1a1a1a] hover:bg-[#222] px-5 py-3 text-xs text-amber-300/70 hover:text-amber-200 transition-colors"
+            >
+              Static script library
             </Link>
           </div>
         </div>
