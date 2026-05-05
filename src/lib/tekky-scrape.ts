@@ -227,6 +227,31 @@ export async function scrapeTekkyMarket(args: {
       continue;
     }
     inserted++;
+
+    // ── Mirror into client_leads so scouted businesses surface in the
+    //    Zenith Sports owner portal Leads tab alongside form-captures.
+    try {
+      await sb.from("client_leads").insert({
+        client_slug: "zenith-sports",
+        audience_segment: audience,
+        name: place.name ?? null,
+        email: null,
+        phone: details?.formatted_phone_number ?? null,
+        intent: `Scouted via Google Places · ${city}, ${state}`,
+        source: `scout-${audience}`,
+        raw_payload: {
+          scout_origin: "map",
+          google_place_id: place.place_id,
+          website: details?.website ?? null,
+          address: place.formatted_address ?? null,
+          google_rating: place.rating ?? null,
+          google_review_count: place.user_ratings_total ?? null,
+          source_query: sourceQuery,
+        },
+      });
+    } catch {
+      // non-fatal — scout row is still saved in tekky_scrape_leads
+    }
   }
 
   return {

@@ -230,6 +230,32 @@ export async function scrapeItcMarket(args: {
       continue;
     }
     inserted++;
+
+    // ── Mirror into client_leads so the scouted business surfaces in
+    //    the ITC owner portal Leads tab alongside form-captured leads.
+    //    Source = "scout-{audience}" so the user can filter by it.
+    try {
+      await sb.from("client_leads").insert({
+        client_slug: "itc-quick-attach",
+        audience_segment: audience,
+        name: place.name ?? null,
+        email: null,
+        phone: details?.formatted_phone_number ?? null,
+        intent: `Scouted via Google Places · ${city}, ${state}`,
+        source: `scout-${audience}`,
+        raw_payload: {
+          scout_origin: "map",
+          google_place_id: place.place_id,
+          website: details?.website ?? null,
+          address: place.formatted_address ?? null,
+          google_rating: place.rating ?? null,
+          google_review_count: place.user_ratings_total ?? null,
+          source_query: sourceQuery,
+        },
+      });
+    } catch {
+      // mirror failure is non-fatal — scout row is still saved
+    }
   }
 
   return { found: candidates.length, inserted, skipped, queries };

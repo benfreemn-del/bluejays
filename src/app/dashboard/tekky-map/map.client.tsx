@@ -357,6 +357,9 @@ export default function TekkyMapClient() {
         });
       }
       clearInProgress();
+      // Drop the "primed/staged" amber ring once the run finishes so the
+      // green/red completion state is visible.
+      setStagedAudience((prev) => (prev === audience ? null : prev));
       refreshSummary();
     } catch (err) {
       setScrapeStatus({
@@ -365,6 +368,7 @@ export default function TekkyMapClient() {
         message: err instanceof Error ? err.message : "Network error",
       });
       clearInProgress();
+      setStagedAudience((prev) => (prev === audience ? null : prev));
     }
   };
 
