@@ -2453,3 +2453,223 @@ body {
 /* Cut some inter-element gaps in story */
 .story-text p { margin-bottom: 14px; }
 .story-stats { margin-top: 28px !important; }
+
+
+/* ==========================================================================
+   ROUND 4 — VISUAL POLISH: bug fixes, white-space cuts, farm-life palette
+   ========================================================================== */
+
+/* Extend palette: pasture sage + wheat gold for farm-life depth */
+:root {
+  --pasture: #5a6e4a;            /* sage green — grass / no hormones / trust */
+  --pasture-soft: rgba(90, 110, 74, 0.10);
+  --wheat: #d4a83a;              /* honey wheat — slightly more golden than amber */
+  --sky: #6b89a4;                /* dusty rural sky — used very sparingly */
+  --bg-cream: #faf6ee;           /* warmer than --bg */
+}
+
+/* ---- 1. PRODUCTS GRID: 4-col 4+2 → 3-col 3+3 balanced ---- */
+@media (min-width: 961px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 28px !important;
+  }
+}
+@media (min-width: 1200px) {
+  .products-grid {
+    max-width: 1100px;
+    gap: 32px !important;
+  }
+}
+
+/* Slimmer product cards (less 36/28 padding) */
+.product-card {
+  padding: 30px 24px !important;
+}
+.product-card .product-icon {
+  margin-bottom: 16px !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+.product-card h3 {
+  margin-bottom: 8px !important;
+}
+.product-card p {
+  margin-bottom: 14px !important;
+}
+
+/* ---- 2. HERO: tighter padding desktop, image bigger / less letterbox ---- */
+@media (min-width: 961px) {
+  .hero { padding: 96px 0 64px !important; min-height: 80vh !important; }
+  .hero .container {
+    grid-template-columns: 1.05fr 1fr !important;
+    gap: 56px !important;
+  }
+  .hero-card {
+    aspect-ratio: 4 / 4.6 !important;  /* less tall, more square */
+  }
+  .hero h1 { font-size: clamp(2.4rem, 5.6vw, 4.6rem) !important; }
+  .hero-sub { margin-bottom: 28px !important; }
+  .hero-ctas { margin-bottom: 32px !important; }
+}
+
+/* ---- 3. WHITE-SPACE CUTS across the page ---- */
+.section-sub {
+  margin-bottom: 28px !important;
+  font-size: 1.05rem !important;
+}
+@media (min-width: 961px) {
+  .section-sub { margin-bottom: 32px !important; }
+}
+
+/* Story grid gap was 80px, way too much */
+@media (min-width: 961px) {
+  .story-grid { gap: 56px !important; }
+  .order-grid { gap: 48px !important; margin-bottom: 48px !important; }
+  .visit-grid { gap: 48px !important; }
+  .community .container { gap: 56px !important; }
+}
+
+/* Trust row tighter */
+.trust-row .trust-inner {
+  padding: 22px 22px !important;
+  margin-top: -36px !important;
+}
+
+/* Cards / panels — slimmer padding */
+.contact-form-wrap { padding: 32px !important; }
+@media (max-width: 680px) { .contact-form-wrap { padding: 24px 20px !important; } }
+.freezer-card { padding: 32px !important; gap: 28px !important; }
+.gameday-card { padding: 22px !important; margin-top: 24px !important; }
+.calc-needs-card { padding: 28px !important; }
+.box-card { padding: 30px 26px !important; }
+
+/* FAQ list — tighter rows (padding lives on .faq-question, not .faq-item) */
+.faq-list { gap: 10px !important; }
+.faq-question { padding: 18px 22px !important; }
+.faq-answer { padding: 0 22px !important; }
+.faq-item.open .faq-answer { padding-bottom: 18px !important; }
+
+/* Family quote */
+.family-quote { padding: 48px 0 !important; }
+.quote-panel { padding: 28px 32px !important; }
+
+/* Trust row mobile collapse */
+@media (max-width: 680px) {
+  .trust-row .trust-inner {
+    padding: 18px 16px !important;
+    margin-top: -28px !important;
+    gap: 12px !important;
+  }
+}
+
+/* ---- 4. FARM-LIFE COLOR ACCENTS ---- */
+/* Trust signals get pasture-green tinge — "raised on grass" feel */
+.trust-cell-icon {
+  background: linear-gradient(135deg, var(--pasture-soft), rgba(200, 123, 41, 0.08)) !important;
+  color: var(--pasture) !important;
+}
+
+/* Story stat numbers alternate: red, sage, amber — not all-red */
+.story-stat:nth-child(1) .num { color: var(--wagyu) !important; }
+.story-stat:nth-child(2) .num { color: var(--pasture) !important; }
+.story-stat:nth-child(3) .num { color: var(--amber) !important; }
+
+/* Hero-eyebrow on desktop: warm wheat dot */
+@media (min-width: 961px) {
+  .hero-eyebrow::before {
+    background: var(--wheat) !important;
+    box-shadow: 0 0 8px var(--wheat) !important;
+  }
+}
+
+/* Section-title accent underline (small, decorative) */
+.section-title {
+  position: relative;
+  padding-bottom: 14px;
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--wagyu), var(--amber));
+  border-radius: 3px;
+}
+
+/* Story image frame — warmer, more "farmhouse photo" */
+.story-image img,
+.hero-card {
+  border: 8px solid var(--bg-cream) !important;
+  box-shadow:
+    0 24px 48px -16px rgba(31, 26, 20, 0.30),
+    0 8px 16px -8px rgba(139, 30, 30, 0.18) !important;
+}
+
+/* Footer brighter farm-y stripe */
+.footer-bottom {
+  border-top: 2px solid var(--wagyu) !important;
+  padding-top: 20px !important;
+  margin-top: 32px !important;
+}
+
+/* Body / page background a touch warmer */
+body {
+  background: var(--bg-cream) !important;
+}
+.story          { background: var(--bg-cream) !important; }
+.cuts           { background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-warm) 100%) !important; }
+
+/* Subtle pasture-green accent for the "100% Family Owned" feel:
+   the calc-result number reads as "good" stat */
+.calc-result-val { color: var(--pasture) !important; }
+.calc-result-val.flash { color: var(--wheat) !important; }
+
+/* Hero CTA primary button — slightly richer red so it pops on cream */
+@media (min-width: 961px) {
+  .hero .btn-primary {
+    background: linear-gradient(180deg, var(--wagyu), var(--wagyu-dark)) !important;
+    box-shadow: 0 6px 18px -6px rgba(139, 30, 30, 0.50) !important;
+  }
+}
+
+/* Cuts note inline phone in green-stamp style — tiny farm touch */
+.cuts-note {
+  margin-top: 28px !important;
+}
+
+/* Order section (dark) — warm up the dark with a hint of barn-wood */
+.order {
+  background: linear-gradient(180deg, #1f1a14 0%, #2a201a 100%) !important;
+}
+
+/* "Why" section — give the comparison rows a subtle farm-stripe feel */
+.why-row.head { border-bottom: 2px solid var(--wagyu) !important; }
+
+/* Mobile: prevent product card oversize on small screens */
+@media (max-width: 680px) {
+  .products-grid { grid-template-columns: 1fr 1fr !important; gap: 14px !important; }
+  .product-card { padding: 22px 16px !important; }
+  .product-card h3 { font-size: 1.25rem !important; }
+  .product-card p { font-size: 0.88rem !important; }
+  .product-card .product-icon { width: 52px !important; height: 52px !important; margin-bottom: 12px !important; }
+  .product-card .product-icon svg { width: 30px !important; height: 30px !important; }
+}
+
+/* Mobile hero — prevent the long subtitle from stealing the screen */
+@media (max-width: 680px) {
+  .hero { min-height: auto !important; }
+  .hero h1 { margin-bottom: 14px !important; }
+  .hero-sub {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 22px !important;
+  }
+  .hero-trust { margin-top: 8px; }
+}
+
