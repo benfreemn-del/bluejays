@@ -27,6 +27,7 @@ export const COST_RATES = {
   sendgridMonthly: 20, // SendGrid Essentials/Pro plan
   twilioMonthly: 1.15, // $1.15/month for phone number + per-use
   domainYearly: 11.25, // bluejayportfolio.com via Vercel
+  claudeMembershipMonthly: 200, // Claude Pro / Max subscription — primary AI tooling
 
   // Google Places API (when connected)
   googlePlacesPerSearch: 0.017, // $17 per 1000 searches
@@ -91,7 +92,12 @@ export function getSystemCostEstimate(
   const emailCost = totalEmails * COST_RATES.emailCost;
   const smsCost = totalSms * COST_RATES.smsCost;
   const aiCost = totalLeads * COST_RATES.claudePerRequest * 2;
-  const infraCost = COST_RATES.twilioMonthly + COST_RATES.vercelMonthly + COST_RATES.supabaseMonthly + COST_RATES.sendgridMonthly;
+  const infraCost =
+    COST_RATES.twilioMonthly +
+    COST_RATES.vercelMonthly +
+    COST_RATES.supabaseMonthly +
+    COST_RATES.sendgridMonthly +
+    COST_RATES.claudeMembershipMonthly;
   const totalCost = emailCost + smsCost + aiCost + infraCost;
   const costPerLead = totalLeads > 0 ? totalCost / totalLeads : 0;
 

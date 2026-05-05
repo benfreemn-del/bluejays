@@ -53,6 +53,40 @@ type MarketSummaryRow = {
   count: number;
 };
 
+type TekkyLeadStatus =
+  | "new"
+  | "contacted"
+  | "responded"
+  | "converted"
+  | "dismissed";
+
+type TekkyLead = {
+  id: string;
+  business_name: string;
+  phone: string | null;
+  website: string | null;
+  address: string | null;
+  google_rating: number | null;
+  google_review_count: number | null;
+  google_place_id: string | null;
+  audience: TekkyAudience;
+  city: string;
+  state: string;
+  source_query: string;
+  status: TekkyLeadStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+const LEAD_STATUS_COLOR: Record<TekkyLeadStatus, string> = {
+  new: "bg-slate-700/50 text-slate-200",
+  contacted: "bg-blue-500/20 text-blue-300",
+  responded: "bg-amber-500/20 text-amber-300",
+  converted: "bg-emerald-500/20 text-emerald-300",
+  dismissed: "bg-rose-500/20 text-rose-300 line-through",
+};
+
 const AUDIENCE_META: Record<
   TekkyAudience,
   { label: string; emoji: string; color: string }
@@ -88,6 +122,13 @@ export default function TekkyMapClient() {
     state: "running" | "done" | "error";
     message?: string;
   } | null>(null);
+  const [drawer, setDrawer] = useState<{
+    city: string;
+    state: string;
+    audience: TekkyAudience | null;
+  } | null>(null);
+  const [drawerLeads, setDrawerLeads] = useState<TekkyLead[]>([]);
+  const [drawerLoading, setDrawerLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -161,6 +202,47 @@ export default function TekkyMapClient() {
         message: err instanceof Error ? err.message : "Network error",
       });
     }
+  };
+
+  /** Open the drawer for one (city, state, audience?) target. */
+  const openDrawer = async (
+    city: string,
+    state: string,
+    audience: TekkyAudience | null,
+  ) => {
+    setDrawer({ city, state, audience });
+    setDrawerLoading(true);
+    setDrawerLeads([]);
+    try {
+      const params = new URLSearchParams({ city, state });
+      if (audience) params.set("audience", audience);
+      const r = await fetch(`/api/dashboard/tekky-scrape?${params}`);
+      const j = (await r.json()) as { ok: boolean; leads?: TekkyLead[] };
+      if (j.ok && j.leads) setDrawerLeads(j.leads);
+    } catch {
+      // silent
+    }
+    setDrawerLoading(false);
+  };
+
+  /** Patch one lead optimistically. */
+  const patchLead = async (id: string, patch: Partial<TekkyLead>) => {
+    setDrawerLeads((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, ...patch } : l)),
+    );
+    await fetch(`/api/dashboard/tekky-scrape/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    }).catch(() => {});
+  };
+
+  const deleteLead = async (id: string) => {
+    setDrawerLeads((prev) => prev.filter((l) => l.id !== id));
+    await fetch(`/api/dashboard/tekky-scrape/${id}`, {
+      method: "DELETE",
+    }).catch(() => {});
+    refreshSummary();
   };
 
   const summaryFor = (
@@ -478,10 +560,20 @@ export default function TekkyMapClient() {
                           key={aud}
                           onClick={(e) => {
                             e.stopPropagation();
-                            runScrape(t.name, t.state, aud);
+                            // No leads yet → scrape. Already have some → open
+                            // the drawer. Shift-click to force a re-scrape.
+                            if (e.shiftKey || count === 0) {
+                              runScrape(t.name, t.state, aud);
+                            } else {
+                              openDrawer(t.name, t.state, aud);
+                            }
                           }}
                           disabled={isRunning}
-                          title={`Scrape ${meta.label} in ${t.name}, ${t.state}`}
+                          title={
+                            count > 0
+                              ? `${count} ${meta.label} leads — click to view, shift-click to scrape more`
+                              : `Scrape ${meta.label} in ${t.name}, ${t.state}`
+                          }
                           className="text-[10px] font-bold rounded-md px-1.5 py-1 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center gap-0.5"
                           style={{ color: meta.color }}
                         >
@@ -489,7 +581,7 @@ export default function TekkyMapClient() {
                             {meta.emoji} {isRunning ? "…" : meta.label}
                           </span>
                           <span className="text-slate-400 font-normal">
-                            {count > 0 ? `${count} leads` : "scrape"}
+                            {count > 0 ? `${count} leads ›` : "scrape"}
                           </span>
                         </button>
                       );
@@ -555,7 +647,214 @@ export default function TekkyMapClient() {
           wire real sources.
         </div>
       </aside>
+
+      {/* DRAWER — slides in from the right when a lead-count badge is clicked */}
+      {drawer && (
+        <div
+          className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm"
+          onClick={() => setDrawer(null)}
+        >
+          <aside
+            className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[#0a0f1c] border-l border-white/10 shadow-2xl overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-[#0a0f1c]/95 backdrop-blur border-b border-white/[0.06] p-4 z-10 flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-wider text-slate-400">
+                  {drawer.audience
+                    ? `${AUDIENCE_META[drawer.audience].label} leads`
+                    : "All leads"}
+                </div>
+                <h2 className="text-lg font-bold tracking-tight">
+                  {drawer.city}, {drawer.state}
+                </h2>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  {drawerLoading
+                    ? "Loading…"
+                    : `${drawerLeads.length} lead${drawerLeads.length === 1 ? "" : "s"} · ${drawerLeads.filter((l) => l.status === "new").length} new`}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {drawer.audience && (
+                  <button
+                    onClick={() =>
+                      runScrape(drawer.city, drawer.state, drawer.audience!)
+                    }
+                    className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border border-amber-400/40 text-amber-300 hover:bg-amber-400/10"
+                  >
+                    ↻ Scrape more
+                  </button>
+                )}
+                <button
+                  onClick={() => setDrawer(null)}
+                  className="text-slate-400 hover:text-white text-lg leading-none px-2"
+                  aria-label="Close drawer"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Lead list */}
+            {drawerLoading ? (
+              <div className="p-8 text-center text-sm text-slate-500">
+                Loading…
+              </div>
+            ) : drawerLeads.length === 0 ? (
+              <div className="p-8 text-center text-sm text-slate-500">
+                No leads yet for this market. Click{" "}
+                <span className="text-amber-300 font-bold">↻ Scrape more</span>{" "}
+                to run the audience-scoped Google Places search.
+              </div>
+            ) : (
+              <ul className="divide-y divide-white/[0.04]">
+                {drawerLeads.map((l) => (
+                  <LeadRow
+                    key={l.id}
+                    lead={l}
+                    onPatch={(patch) => patchLead(l.id, patch)}
+                    onDelete={() => deleteLead(l.id)}
+                  />
+                ))}
+              </ul>
+            )}
+
+            <div className="p-4 text-[10px] text-slate-500 italic border-t border-white/[0.04]">
+              Source: Google Places. Dedupe via google_place_id.
+              Status flow: new → contacted → responded → converted.
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
+  );
+}
+
+/* ───────────── Lead row (drawer) ───────────── */
+
+function LeadRow({
+  lead,
+  onPatch,
+  onDelete,
+}: {
+  lead: TekkyLead;
+  onPatch: (patch: Partial<TekkyLead>) => void;
+  onDelete: () => void;
+}) {
+  const [showNotes, setShowNotes] = useState(false);
+  const [notesDraft, setNotesDraft] = useState(lead.notes ?? "");
+  const STATUSES: TekkyLeadStatus[] = [
+    "new",
+    "contacted",
+    "responded",
+    "converted",
+    "dismissed",
+  ];
+  return (
+    <li className="p-4 hover:bg-slate-800/30 transition">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-bold text-white text-sm truncate">
+              {lead.business_name}
+            </span>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${LEAD_STATUS_COLOR[lead.status]}`}
+            >
+              {lead.status}
+            </span>
+            {typeof lead.google_rating === "number" && (
+              <span className="text-[10px] text-amber-300">
+                ★ {lead.google_rating}
+                {lead.google_review_count
+                  ? ` (${lead.google_review_count})`
+                  : ""}
+              </span>
+            )}
+          </div>
+          <div className="text-[11px] text-slate-400 mt-0.5 space-y-0.5">
+            {lead.phone && (
+              <div>
+                <a
+                  href={`tel:${lead.phone}`}
+                  className="hover:text-white"
+                >
+                  📞 {lead.phone}
+                </a>
+              </div>
+            )}
+            {lead.website && (
+              <div className="truncate">
+                <a
+                  href={lead.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline truncate"
+                >
+                  🌐 {lead.website.replace(/^https?:\/\//, "")}
+                </a>
+              </div>
+            )}
+            {lead.address && (
+              <div className="text-slate-500 truncate">📍 {lead.address}</div>
+            )}
+          </div>
+          <div className="text-[10px] text-slate-600 mt-1 truncate">
+            via &ldquo;{lead.source_query}&rdquo;
+          </div>
+        </div>
+      </div>
+
+      {/* Status pills */}
+      <div className="flex flex-wrap gap-1.5 mt-3">
+        {STATUSES.map((s) => (
+          <button
+            key={s}
+            onClick={() => onPatch({ status: s })}
+            className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border transition ${
+              lead.status === s
+                ? `${LEAD_STATUS_COLOR[s]} border-current`
+                : "border-slate-700 text-slate-500 hover:text-white"
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+        <div className="flex-1" />
+        <button
+          onClick={() => setShowNotes((v) => !v)}
+          className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-slate-700 text-slate-400 hover:text-white"
+        >
+          📝 {showNotes ? "Hide" : "Notes"}
+        </button>
+        <button
+          onClick={() => {
+            if (confirm(`Delete "${lead.business_name}"?`)) onDelete();
+          }}
+          className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-rose-500/40 text-rose-400 hover:bg-rose-500/10"
+        >
+          Delete
+        </button>
+      </div>
+
+      {showNotes && (
+        <div className="mt-2">
+          <textarea
+            value={notesDraft}
+            onChange={(e) => setNotesDraft(e.target.value)}
+            onBlur={() => {
+              if (notesDraft !== (lead.notes ?? "")) {
+                onPatch({ notes: notesDraft });
+              }
+            }}
+            rows={3}
+            placeholder="Notes (saves on blur)…"
+            className="w-full rounded bg-slate-800 border border-slate-700 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-500"
+          />
+        </div>
+      )}
+    </li>
   );
 }
 
