@@ -97,6 +97,26 @@ const SLUG_CONFIG: Record<
     clientEmail: "hectorlandscapingonline@gmail.com",
     emoji: "🌿",
   },
+  "lewis-county-autism": {
+    businessLabel: "Lewis County Autism Coalition",
+    clientEmail: "info@lewiscountyautism.com",
+    emoji: "🧩",
+  },
+  "mountain-view-landscape": {
+    businessLabel: "Mountain View Landscape",
+    clientEmail: "info@mountainviewlandscape.com",
+    emoji: "⛰️",
+  },
+  pine: {
+    businessLabel: "Pine",
+    clientEmail: "info@pine.com",
+    emoji: "🌲",
+  },
+  particle: {
+    businessLabel: "Particle",
+    clientEmail: "info@particle.com",
+    emoji: "✨",
+  },
 };
 
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP

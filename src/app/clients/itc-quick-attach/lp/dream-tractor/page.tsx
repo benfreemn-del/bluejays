@@ -243,19 +243,9 @@ export default function DreamTractorPage() {
     return t;
   }, [picked]);
 
-  // Translate accessory selections into the visual layer flags. The
-  // SVG accepts a pain[] array — we map each picked accessory to a
-  // "pain" code so the visual layers light up. Direct, no quiz step.
-  const visualPains = useMemo(() => {
-    const list: string[] = [];
-    if (picked.has("brush-guard")) list.push("branch-scratches");
-    if (picked.has("sawboss")) list.push("saw-doesnt-fit");
-    if (picked.has("toolbox") || picked.has("milwaukee-packout"))
-      list.push("no-storage");
-    if (picked.has("light-kit")) list.push("low-light");
-    if (picked.has("chainbox")) list.push("loose-tools");
-    return list as ("branch-scratches" | "saw-doesnt-fit" | "no-storage" | "low-light" | "loose-tools" | "chain-falls-off")[];
-  }, [picked]);
+  // (visualPains removed — TractorVisual now reads `picked` directly,
+  //  so every accessory toggle drives its own SVG layer with no
+  //  intermediate translation.)
 
   // Pseudo-size for the visual based on acreage.
   const size: "backyard" | "hobby" | "pro" | "fleet" =
@@ -369,7 +359,7 @@ export default function DreamTractorPage() {
             size={size}
             useCase={use}
             brand={brand}
-            pains={visualPains}
+            picked={picked}
           />
         </div>
       </ItcLpShell>
@@ -602,7 +592,7 @@ export default function DreamTractorPage() {
             size={size}
             useCase={use}
             brand={brand}
-            pains={visualPains}
+            picked={picked}
           />
         </div>
       </div>
