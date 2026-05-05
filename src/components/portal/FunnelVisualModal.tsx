@@ -17,7 +17,7 @@ import { useEffect } from "react";
 
 export type FunnelStepLite = {
   day: number;
-  channel: "email" | "sms" | "voicemail";
+  channel: "email" | "sms" | "voicemail" | "postcard";
   label: string;
 };
 
@@ -242,13 +242,21 @@ function FunnelStepRow({
   accentText: string;
 }) {
   const channelEmoji =
-    step.channel === "email" ? "✉" : step.channel === "sms" ? "💬" : "🎙";
+    step.channel === "email"
+      ? "✉"
+      : step.channel === "sms"
+        ? "💬"
+        : step.channel === "voicemail"
+          ? "🎙"
+          : "📮";
   const channelLabel =
     step.channel === "email"
       ? "Email"
       : step.channel === "sms"
         ? "SMS"
-        : "Voicemail";
+        : step.channel === "voicemail"
+          ? "Voicemail"
+          : "AI Postcard";
 
   return (
     <div className="w-full flex flex-col items-center">

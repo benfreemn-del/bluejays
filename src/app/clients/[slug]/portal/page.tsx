@@ -4068,7 +4068,17 @@ function Stat({ label, value }: { label: string; value: string }) {
  */
 type FunnelStep = {
   day: number;
-  channel: "email" | "sms";
+  /**
+   * Touchpoint channel. Each channel maps to a different sender path
+   * in the funnel engine:
+   *   email     → SendGrid (transactional + drip)
+   *   sms       → Twilio outbound text
+   *   voicemail → Slybroadcast / Drop Cowboy ringless voicemail
+   *   postcard  → Lob direct-mail with AI-generated artwork +
+   *               personalized copy (tractor brand / hunting season /
+   *               coach + drill card / etc.)
+   */
+  channel: "email" | "sms" | "voicemail" | "postcard";
   label: string;
 };
 
@@ -4107,7 +4117,8 @@ const ITC_FUNNELS: FunnelDef[] = [
     steps: [
       { day: 0, channel: "email", label: "Custom build sheet PDF (their picks)" },
       { day: 0, channel: "sms", label: "Owner instant alert (Jake)" },
-      { day: 3, channel: "email", label: "Personal review + tweak from Jake" },
+      { day: 1, channel: "sms", label: "Lead confirmation + Jake's cell" },
+      { day: 3, channel: "voicemail", label: "Jake personal review · ringless VM" },
       { day: 7, channel: "email", label: "Routes into segment-specific funnel" },
     ],
     landingPath: "/lp/dream-tractor",
@@ -4117,14 +4128,20 @@ const ITC_FUNNELS: FunnelDef[] = [
     audienceTag: "tym",
     emoji: "⚙️",
     title: "TYM Owner Hub",
-    pitch: "Brand-owner accessory hub. Sticker pack on signup. T474 + T264 + T234 fit guide.",
+    pitch:
+      "Brand-owner accessory hub. Sticker pack on signup. T474 + T264 + T234 fit guide.",
     cardClass: "border-amber-500/30 bg-amber-500/[0.05]",
     accentText: "text-amber-300",
     steps: [
       { day: 0, channel: "email", label: "Welcome + sticker pack confirmation" },
-      { day: 3, channel: "email", label: "T474 review reel (28 owners)" },
-      { day: 7, channel: "email", label: "Toolbox bundle upsell" },
-      { day: 14, channel: "email", label: "TYM new-product alerts opt-in" },
+      { day: 2, channel: "sms", label: "Sticker shipping update + tracking" },
+      { day: 5, channel: "email", label: "T474 review reel (28 owners)" },
+      {
+        day: 10,
+        channel: "postcard",
+        label: "AI postcard · their TYM model + matched accessories",
+      },
+      { day: 14, channel: "email", label: "Toolbox bundle upsell" },
     ],
   },
   {
@@ -4138,7 +4155,8 @@ const ITC_FUNNELS: FunnelDef[] = [
     steps: [
       { day: 0, channel: "email", label: "12-item checklist PDF delivery" },
       { day: 3, channel: "email", label: "Brush guard 101 video" },
-      { day: 7, channel: "email", label: "Universal toolbox upsell" },
+      { day: 5, channel: "sms", label: "Quick check-in · need help with anything?" },
+      { day: 10, channel: "voicemail", label: "Friendly Jake VM · winter-prep nudge" },
       { day: 14, channel: "email", label: "SawBoss intro + winter-prep tips" },
     ],
   },
@@ -4152,9 +4170,14 @@ const ITC_FUNNELS: FunnelDef[] = [
     accentText: "text-lime-300",
     steps: [
       { day: 0, channel: "email", label: "1-acre clearing gear PDF" },
-      { day: 3, channel: "email", label: "SawBoss mounting walkthrough video" },
-      { day: 7, channel: "email", label: "Chainbox cross-sell + bulk discount" },
-      { day: 14, channel: "email", label: "Pro forester operator network invite" },
+      { day: 2, channel: "voicemail", label: "Jake VM · saw your inquiry, quick Q" },
+      { day: 4, channel: "sms", label: "SawBoss mounting walkthrough video link" },
+      { day: 8, channel: "email", label: "Chainbox cross-sell + bulk discount" },
+      {
+        day: 14,
+        channel: "postcard",
+        label: "AI postcard · acreage-matched pro setup recap",
+      },
     ],
   },
   {
@@ -4167,9 +4190,14 @@ const ITC_FUNNELS: FunnelDef[] = [
     accentText: "text-rose-300",
     steps: [
       { day: 0, channel: "email", label: "Install + safety guide PDF" },
-      { day: 3, channel: "email", label: "Bundle quote: mount + LED + canvas" },
-      { day: 7, channel: "email", label: "Brush guard cross-sell (scouting trails)" },
-      { day: 14, channel: "email", label: "Pre-season prep checklist" },
+      { day: 2, channel: "sms", label: "Mount + LED + canvas bundle text quote" },
+      { day: 5, channel: "email", label: "Brush guard cross-sell (scouting trails)" },
+      { day: 10, channel: "voicemail", label: "Pre-season urgency VM · season cutoff" },
+      {
+        day: 14,
+        channel: "postcard",
+        label: "AI postcard · season checklist + state hunting dates",
+      },
     ],
   },
   {
@@ -4182,9 +4210,15 @@ const ITC_FUNNELS: FunnelDef[] = [
     accentText: "text-blue-300",
     steps: [
       { day: 0, channel: "email", label: "Custom ROI report (24h SLA)" },
-      { day: 1, channel: "sms", label: "Owner SMS: high-volume dealer alert" },
+      { day: 0, channel: "sms", label: "Owner SMS: high-volume dealer alert" },
+      { day: 1, channel: "voicemail", label: "B2B intro VM · wholesale rep" },
       { day: 3, channel: "email", label: "Wholesale price sheet + bestsellers" },
-      { day: 7, channel: "email", label: "Sample shipment offer + onboarding call" },
+      {
+        day: 7,
+        channel: "postcard",
+        label: "AI dealer kit · printed catalog + sample order form",
+      },
+      { day: 14, channel: "email", label: "Sample shipment offer + onboarding call" },
     ],
   },
   {
@@ -4199,6 +4233,11 @@ const ITC_FUNNELS: FunnelDef[] = [
       { day: 0, channel: "email", label: "Photo submission instructions" },
       { day: 7, channel: "email", label: "Newsletter intro + last winner" },
       { day: 14, channel: "email", label: "Selection + spotlight notification" },
+      {
+        day: 21,
+        channel: "postcard",
+        label: "AI postcard · featured-build keepsake card (winners)",
+      },
       { day: 30, channel: "email", label: "Recurring monthly newsletter" },
     ],
   },
@@ -4224,9 +4263,14 @@ const ZENITH_FUNNELS: FunnelDef[] = [
     accentText: "text-lime-300",
     steps: [
       { day: 0, channel: "email", label: "Personalized challenge PDF (their picks)" },
-      { day: 3, channel: "email", label: "Drill-of-the-day video reel" },
-      { day: 7, channel: "email", label: "TEKKY ball intro + parent-purchase nudge" },
-      { day: 14, channel: "email", label: "Progress check-in + next-level drills" },
+      { day: 2, channel: "sms", label: "Today's drill video link · text-to-watch" },
+      { day: 5, channel: "email", label: "Drill-of-the-day reel + leaderboard" },
+      { day: 7, channel: "sms", label: "TEKKY ball nudge · parent share-link" },
+      {
+        day: 14,
+        channel: "postcard",
+        label: "AI postcard · player progress card + sticker keepsake",
+      },
     ],
     landingPath: "/build-your-player",
   },
@@ -4240,9 +4284,14 @@ const ZENITH_FUNNELS: FunnelDef[] = [
     accentText: "text-blue-300",
     steps: [
       { day: 0, channel: "email", label: "Coach guide PDF" },
-      { day: 3, channel: "email", label: "Free club demo offer" },
-      { day: 7, channel: "email", label: "Drill bundle for U10/U12/U14" },
-      { day: 14, channel: "email", label: "Quote request + bulk pricing" },
+      { day: 2, channel: "voicemail", label: "Caleb VM · saw you grabbed the guide" },
+      { day: 5, channel: "email", label: "Free club demo offer + drill bundle" },
+      { day: 10, channel: "sms", label: "SMS demo confirmation + calendar link" },
+      {
+        day: 14,
+        channel: "postcard",
+        label: "AI coach kit · laminated drill cards mailed",
+      },
     ],
     landingPath: "/training-guide",
   },
@@ -4257,8 +4306,9 @@ const ZENITH_FUNNELS: FunnelDef[] = [
     accentText: "text-amber-300",
     steps: [
       { day: 0, channel: "email", label: "Camp recommendations matched to age" },
-      { day: 3, channel: "email", label: "TEKKY ball intro (off-season prep)" },
-      { day: 7, channel: "email", label: "Player Challenge invite for the kid" },
+      { day: 2, channel: "sms", label: "Sign-up reminder · 2-tap RSVP" },
+      { day: 5, channel: "email", label: "TEKKY ball intro (off-season prep)" },
+      { day: 10, channel: "sms", label: "Player Challenge invite for the kid" },
       { day: 14, channel: "email", label: "Pre-season checklist + gear bundle" },
     ],
     landingPath: "/camps",
@@ -4274,8 +4324,9 @@ const ZENITH_FUNNELS: FunnelDef[] = [
     accentText: "text-violet-300",
     steps: [
       { day: 0, channel: "email", label: "Cart-abandon recovery (if applicable)" },
+      { day: 1, channel: "sms", label: "SMS recovery · 2-tap return-to-cart" },
       { day: 3, channel: "email", label: "TEKKY drill add-ons" },
-      { day: 7, channel: "email", label: "Coach + player tag-in (referral hook)" },
+      { day: 7, channel: "sms", label: "Free-shipping nudge text" },
       { day: 14, channel: "email", label: "Replenish + apparel upsell" },
     ],
     landingPath: "/shop",
@@ -4392,39 +4443,57 @@ function FunnelsTab({
                 </span>
               </div>
 
-              {/* 4-step funnel flow visualization */}
+              {/* Multi-channel touchpoint flow visualization. Variable
+                  step count per audience (4–6 typical) — grid auto-sizes. */}
               <div className="mb-3">
                 <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500 mb-1.5">
                   Touchpoint sequence
                 </div>
-                <ol className="grid grid-cols-4 gap-1">
-                  {f.steps.map((s, i) => (
-                    <li
-                      key={i}
-                      className={`relative rounded-md bg-black/30 border border-white/[0.04] px-2 py-1.5`}
-                    >
-                      <div className={`text-[10px] font-black ${f.accentText} mb-0.5`}>
-                        D{s.day}
-                      </div>
-                      <div className="text-[9px] text-slate-500 mb-0.5">
-                        {s.channel === "email" ? "✉ email" : "💬 sms"}
-                      </div>
-                      <div
-                        className="text-[10px] text-slate-300 leading-tight line-clamp-2"
-                        title={s.label}
+                <ol
+                  className="grid gap-1"
+                  style={{
+                    gridTemplateColumns: `repeat(${Math.min(f.steps.length, 6)}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {f.steps.map((s, i) => {
+                    const channelLabel =
+                      s.channel === "email"
+                        ? "✉ email"
+                        : s.channel === "sms"
+                          ? "💬 sms"
+                          : s.channel === "voicemail"
+                            ? "🎙 vm"
+                            : "📮 mail";
+                    return (
+                      <li
+                        key={i}
+                        className={`relative rounded-md bg-black/30 border border-white/[0.04] px-1.5 py-1.5`}
                       >
-                        {s.label}
-                      </div>
-                      {i < f.steps.length - 1 && (
-                        <span
-                          aria-hidden
-                          className={`absolute top-1/2 -right-[2.5px] -translate-y-1/2 ${f.accentText} text-[10px]`}
+                        <div
+                          className={`text-[10px] font-black ${f.accentText} mb-0.5`}
                         >
-                          ▶
-                        </span>
-                      )}
-                    </li>
-                  ))}
+                          D{s.day}
+                        </div>
+                        <div className="text-[9px] text-slate-500 mb-0.5 whitespace-nowrap">
+                          {channelLabel}
+                        </div>
+                        <div
+                          className="text-[10px] text-slate-300 leading-tight line-clamp-2"
+                          title={s.label}
+                        >
+                          {s.label}
+                        </div>
+                        {i < f.steps.length - 1 && (
+                          <span
+                            aria-hidden
+                            className={`absolute top-1/2 -right-[2.5px] -translate-y-1/2 ${f.accentText} text-[10px]`}
+                          >
+                            ▶
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ol>
               </div>
 

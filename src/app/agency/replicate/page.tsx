@@ -111,10 +111,11 @@ const FUNNELS: Component[] = [
     trap: "Webhook signature verification is in SendGrid docs but rarely implemented; without it, anyone can spoof opens.",
   },
   {
-    title: "Multi-step audience funnels",
+    title: "Multi-step, 4-channel audience funnels",
     detail:
-      "Each audience has its own day-by-day drip schedule (Day 0 capture, Day 2, Day 5, Day 14, Day 30). Step-skip logic if the lead replies or buys.",
+      "Each audience has its own day-by-day drip schedule (Day 0 capture, Day 2, Day 5, Day 14, Day 30) using ALL FOUR channels — email, SMS, voicemail, AI postcard — interleaved by audience preference. Step-skip logic if the lead replies or buys.",
     hours: 22,
+    trap: "Mixing channels in one funnel multiplies the bug surface — a SMS step that fires before the email arrives looks robotic. The cron has to know which channel ships first per audience.",
   },
   {
     title: "SMS follow-ups + missed-call text-back",
@@ -126,9 +127,17 @@ const FUNNELS: Component[] = [
   {
     title: "Voicemail drops",
     detail:
-      "Ringless voicemail vendor integration, queueing system, per-audience voicemail script library.",
+      "Ringless voicemail vendor integration (Slybroadcast / Drop Cowboy), queueing system, per-audience voicemail script library.",
     hours: 16,
     monthly: 30,
+  },
+  {
+    title: "AI postcards via Lob",
+    detail:
+      "Physical-mail funnel step. Lob print-and-mail API integration, AI-generated front artwork (tuned per lead's context — tractor model, hunting state, kid's age), personalized back copy, address-validation pipeline, deliverability tracking. Adds ~$1/lead but lifts response 3-5× over email-only sequences.",
+    hours: 26,
+    monthly: 0,
+    trap: "Lob's address verification rejects ~8% of inbound addresses — needs a fallback that queues the failure for owner review instead of silently dropping the postcard.",
   },
 ];
 

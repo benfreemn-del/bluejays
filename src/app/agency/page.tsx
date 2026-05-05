@@ -35,12 +35,13 @@ const INCLUDED = [
   { icon: "🌐", title: "Custom Website", detail: "Conversion-tracked — every click feeds the loop" },
   { icon: "📈", title: "Google Ads — Self-Learning", detail: "Headlines that win get more budget automatically" },
   { icon: "🎯", title: "Meta Ads — Self-Learning", detail: "Audiences that don't convert get cut without touching it" },
-  { icon: "🧭", title: "Audience-Segmented Funnels", detail: "Up to 6 separate funnel tracks per customer type — never a generic blast" },
+  { icon: "🧭", title: "Audience-Segmented Funnels", detail: "Up to 6 separate funnel tracks per customer type, each using all 4 channels: email, SMS, ringless voicemail, AI postcards. Never a generic blast." },
   { icon: "✉️", title: "AI Inbound Responder", detail: "Auto-classifies every reply into 6 intent classes; drafts in your voice for one-tap send" },
   { icon: "📅", title: "Scheduled Campaigns", detail: "Pick a date — system queues + ships at the minute, no babysitting" },
   { icon: "📱", title: "SMS Follow-Ups", detail: "Automated texts that improve based on reply data" },
   { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. Captures the voicemail you'd lose." },
   { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to every warm lead — hands-free" },
+  { icon: "📮", title: "AI Postcards (via Lob)", detail: "Physical mail step inside your funnel. AI generates the artwork + copy per lead — their tractor model, hunting season, kid's age — and Lob prints + ships it. Multi-channel funnels that step out of the inbox have 3-5× the response of email-only sequences." },
   { icon: "🎁", title: "Interactive Lead Magnet", detail: "Industry-specific configurator quiz that builds personalized recommendations + auto-routes leads to the right funnel" },
   { icon: "🗺️", title: "County-Level Lead Scout", detail: "Click any US county on a map → audience-scoped Google Places scrape pulls fresh leads to your inbox. Universal status colors: blue while scouting, green when completed, red ✕ if no results — so you always know where you've been." },
   { icon: "🤝", title: "Partner / Sales-Team Program", detail: "Recruitment landing page + audience-branched script library so you (or your reps) can call leads with a different pitch per customer type. Per-audience objection handlers + payout structure, built for ITC-style $50-retail/$250-dealer commission models or any flat-fee program." },
@@ -84,7 +85,11 @@ const FAQS = [
   },
   {
     q: "What's an 'audience-segmented funnel'?",
-    a: "Most agencies blast the same email to every lead. We map your customer mix into segments (e.g. for a tractor-accessory shop: Dealer / TYM owner / Forester / Hunter / Sub-compact owner) and run a separate funnel for each. The Dealer gets ROI math; the Hunter gets gun-mount install tips; the Forester gets chainsaw-rig content. Same lead-magnet site, six conversion paths.",
+    a: "Most agencies blast the same email to every lead. We map your customer mix into segments (e.g. for a tractor-accessory shop: Dealer / TYM owner / Forester / Hunter / Sub-compact owner) and run a separate funnel for each — and each funnel uses ALL FOUR channels: email, SMS, ringless voicemail, and AI-generated physical postcards via Lob. The Dealer gets ROI math + a printed catalog mailed to their shop; the Hunter gets gun-mount install tips + a season-checklist postcard; the Forester gets chainsaw-rig content + an acreage-matched setup recap card. Same lead-magnet site, six conversion paths, four channels per path.",
+  },
+  {
+    q: "How do AI Postcards work?",
+    a: "Inside the funnel, certain audiences get a physical postcard delivered around day 7-14. We use Lob's print-and-mail API: we feed in the lead's data (their TYM model, their hunting state, their kid's age) and an AI-generated postcard goes out — front artwork tuned to their context, back copy referencing their specific situation. Costs us about $1 per card. Multi-channel sequences that step out of the inbox respond 3-5× better than email-only — especially for B2B (a printed catalog at the dealer counter) and seasonal (a hunter's pre-season checklist landing the week of opening day).",
   },
   {
     q: "Can my sales team or referral partners use the system?",
