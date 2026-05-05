@@ -308,16 +308,35 @@ export default function TekkyMapClient() {
         state: "done",
         message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
       });
-      // If Google Places returned nothing, mark the (city,state,audience)
-      // tile as exhausted so a red X overlays it next time. Persist so
-      // it survives a page reload.
-      if ((j.found ?? 0) === 0) {
+      // Tile is "exhausted" (red ✕) if NOTHING new came in — either
+      // Places returned zero, or every result was already in the
+      // database (all dupes). The owner cares about "did this scout
+      // surface any new value?", not "did Google return anything".
+      const noNewValue = (j.inserted ?? 0) === 0;
+      if (noNewValue) {
         setExhausted((prev) => {
           const next = new Set(prev);
           next.add(key);
           try {
             localStorage.setItem(
               "tekky-map.exhausted",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+        // If this tile was previously green-completed, drop that — a
+        // re-run that yields nothing new should read as exhausted, not
+        // doubly-decorated.
+        setCompleted((prev) => {
+          if (!prev.has(key)) return prev;
+          const next = new Set(prev);
+          next.delete(key);
+          try {
+            localStorage.setItem(
+              "tekky-map.completed",
               JSON.stringify(Array.from(next)),
             );
           } catch {

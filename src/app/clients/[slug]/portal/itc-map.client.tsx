@@ -348,11 +348,13 @@ export default function ItcMarketMap() {
         state: "done",
         message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
       });
-      // Mark exhausted (red X) when zero results come back.
-      const foundResults = (j.found ?? 0) > 0;
+      // Tile is exhausted (red ✕) if NOTHING new came in — Places
+      // returned zero OR every result was already in the database.
+      // "Found 14, inserted 0" reads as exhausted, not completed.
+      const newValue = (j.inserted ?? 0) > 0;
       setExhausted((prev) => {
         const next = new Set(prev);
-        if (!foundResults) next.add(key);
+        if (!newValue) next.add(key);
         else next.delete(key);
         try {
           localStorage.setItem(
@@ -364,11 +366,28 @@ export default function ItcMarketMap() {
         }
         return next;
       });
-      // Mark green (completed) when results came back.
-      if (foundResults) {
+      if (newValue) {
+        // Mark green (completed) — actually surfaced new businesses.
         setCompleted((prev) => {
           const next = new Set(prev);
           next.add(key);
+          try {
+            localStorage.setItem(
+              "itc-map.completed",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+      } else {
+        // Drop any prior green state so a re-run with all-dupes shows
+        // only the red ✕, not both rings.
+        setCompleted((prev) => {
+          if (!prev.has(key)) return prev;
+          const next = new Set(prev);
+          next.delete(key);
           try {
             localStorage.setItem(
               "itc-map.completed",
