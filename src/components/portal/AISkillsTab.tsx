@@ -21,7 +21,7 @@
  * a future sprint).
  */
 
-type Status = "active" | "available" | "coming";
+type Status = "active" | "available" | "coming" | "trainable";
 
 type Capability = {
   emoji: string;
@@ -236,6 +236,77 @@ const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; 
       },
     ],
   },
+  {
+    id: "trainable",
+    label: "Custom training",
+    emoji: "🚀",
+    subtitle: "What we can train your AI to do for you. Tell us what you want; we wire it.",
+    capabilities: [
+      {
+        emoji: "🗣️",
+        title: "Voice Cloning · outbound calls in your voice",
+        detail:
+          "Train the AI on 30 minutes of you talking. After that, every voicemail drop, every missed-call text-back voice reply, every follow-up call sounds like you — not a robot. Indistinguishable from human in blind A/B tests.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "🎯",
+        title: "Predictive Lead Scoring",
+        detail:
+          "AI scores every lead 0-100 likely-to-convert based on behavior signals: form-completion speed, audience tag, source channel, time-of-day, prior similar-lead outcomes. Your dashboard sorts hottest leads to the top automatically.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "🌶️",
+        title: "Sentiment Hot-Lead Alerts",
+        detail:
+          "AI reads every inbound reply and flags emotional intensity in real time. Excited reply → SMS you NOW with 'this one's hot, call today.' Frustrated reply → AI auto-sends a calming response and routes to your inbox for personal handling.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "🌎",
+        title: "Multi-Language Funnels",
+        detail:
+          "AI translates and tone-adapts your entire funnel into Spanish, Portuguese, Mandarin — whatever your audience speaks. Critical for soccer (Latino market = 60M+ in the US) and any service business with non-English-first communities. Context-aware, not literal — picks idioms parents actually use.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "📅",
+        title: "AI Social Media Calendar",
+        detail:
+          "Train AI on your voice + brand + best-performing past posts. AI generates 90 days of social posts at a time — captions, hashtags, suggested image prompts, timing — for review and one-click schedule. Replaces a $1500/mo content writer.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "🤖",
+        title: "Custom Site Chatbot · trained on your FAQ",
+        detail:
+          "We feed AI your product info, FAQ, pricing, services. Chatbot lives on your site, answers parent / customer questions in your voice 24/7, books calls when it can't answer. Most service-business chatbots handle 70% of inbound questions before a human sees them.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "🔁",
+        title: "Smart Re-Engagement of Dormant Customers",
+        detail:
+          "AI mines your past-customer list for who's gone quiet, predicts which would respond to a personalized re-engagement message, generates a unique message per customer (referencing what they bought + when), schedules across email + SMS + postcard. Average 8-12% reactivation lift.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "📞",
+        title: "Conversational AI Sales Rep (voice)",
+        detail:
+          "AI agent answers missed calls live, holds a real voice conversation in your tone, qualifies the lead (budget, timeline, fit), books the call on your calendar — then SMS-summarizes it to you. Works 24/7. Catches the leads that voicemail loses.",
+        status: { default: "trainable" },
+      },
+      {
+        emoji: "📸",
+        title: "Photo / Video AI Analysis",
+        detail:
+          "Customer uploads a photo, AI replies with what they need. Great for service businesses (landscaping: 'send a yard photo' → AI suggests services), product fit (tractor: 'send a photo' → AI identifies brand/model + compatible accessories), and lake-map customizations. Built on Claude Vision.",
+        status: { default: "trainable" },
+      },
+    ],
+  },
 ];
 
 const STATUS_META: Record<Status, { label: string; chip: string; ring: string; dot: string }> = {
@@ -257,6 +328,12 @@ const STATUS_META: Record<Status, { label: string; chip: string; ring: string; d
     ring: "border-white/[0.06]",
     dot: "bg-slate-500",
   },
+  trainable: {
+    label: "Trainable",
+    chip: "bg-violet-500/15 text-violet-300 border-violet-500/40",
+    ring: "border-violet-500/25",
+    dot: "bg-violet-400",
+  },
 };
 
 export default function AISkillsTab({
@@ -273,6 +350,7 @@ export default function AISkillsTab({
     active: allCaps.filter((c) => statusFor(c, slug) === "active").length,
     available: allCaps.filter((c) => statusFor(c, slug) === "available").length,
     coming: allCaps.filter((c) => statusFor(c, slug) === "coming").length,
+    trainable: allCaps.filter((c) => statusFor(c, slug) === "trainable").length,
     total: allCaps.length,
   };
 
@@ -298,7 +376,6 @@ export default function AISkillsTab({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
-          <Stat label="Total skills" value={String(counts.total)} tone="white" />
           <Stat
             label="Active"
             value={String(counts.active)}
@@ -312,10 +389,15 @@ export default function AISkillsTab({
             withDot
           />
           <Stat
-            label="Coming"
-            value={String(counts.coming)}
-            tone="slate"
-            withDot={counts.coming > 0}
+            label="Trainable"
+            value={String(counts.trainable)}
+            tone="violet"
+            withDot
+          />
+          <Stat
+            label="Total"
+            value={String(counts.total)}
+            tone="white"
           />
         </div>
       </div>
@@ -377,6 +459,18 @@ export default function AISkillsTab({
                           See it: {cap.seeItIn.label}
                         </p>
                       )}
+                      {!cap.seeItIn && status === "trainable" && (
+                        <a
+                          href={`mailto:ben@bluejayportfolio.com?subject=Train AI · ${encodeURIComponent(
+                            cap.title,
+                          )}&body=${encodeURIComponent(
+                            `Hey Ben — interested in turning on "${cap.title}" for our account. Let's talk scope + quote.`,
+                          )}`}
+                          className="mt-2.5 inline-flex items-center gap-1 text-[11px] uppercase tracking-wider font-bold text-violet-300 hover:text-violet-200"
+                        >
+                          Get a quote → email Ben
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -387,20 +481,34 @@ export default function AISkillsTab({
       ))}
 
       {/* FOOTER NOTE */}
-      <div className="rounded-2xl bg-slate-900/40 border border-white/[0.06] p-4 text-xs text-slate-500 italic leading-relaxed">
-        <span className="text-emerald-400">●</span> Active = running on your
-        account today &nbsp;
-        <span className="text-amber-400">●</span> Available = built, ready to
-        flip on with your config &nbsp;
-        <span className="text-slate-500">●</span> Coming = queued for a future
-        sprint. Want anything moved up the queue? Email{" "}
-        <a
-          href="mailto:ben@bluejayportfolio.com"
-          className="text-violet-300 hover:text-violet-200"
-        >
-          ben@bluejayportfolio.com
-        </a>
-        .
+      <div className="rounded-2xl bg-slate-900/40 border border-white/[0.06] p-4 text-xs text-slate-500 italic leading-relaxed space-y-1.5">
+        <div>
+          <span className="text-emerald-400">●</span> <strong>Active</strong> ·
+          running on your account today
+        </div>
+        <div>
+          <span className="text-amber-400">●</span> <strong>Available</strong>{" "}
+          · built, ready to flip on with your config
+        </div>
+        <div>
+          <span className="text-violet-400">●</span> <strong>Trainable</strong>{" "}
+          · custom-build for your business — extra scope, scoped quote
+        </div>
+        <div>
+          <span className="text-slate-500">●</span> <strong>Coming</strong> ·
+          queued for a future sprint
+        </div>
+        <div className="pt-2 border-t border-white/[0.05] mt-2">
+          Want a Trainable capability turned on, or anything moved up the
+          queue? Email{" "}
+          <a
+            href="mailto:ben@bluejayportfolio.com"
+            className="text-violet-300 hover:text-violet-200"
+          >
+            ben@bluejayportfolio.com
+          </a>
+          .
+        </div>
       </div>
     </div>
   );
@@ -419,7 +527,7 @@ function Stat({
 }: {
   label: string;
   value: string;
-  tone: "white" | "emerald" | "amber" | "slate";
+  tone: "white" | "emerald" | "amber" | "slate" | "violet";
   withDot?: boolean;
 }) {
   const cls: Record<typeof tone, string> = {
@@ -427,12 +535,14 @@ function Stat({
     emerald: "text-emerald-300",
     amber: "text-amber-300",
     slate: "text-slate-400",
+    violet: "text-violet-300",
   };
   const dotCls: Record<typeof tone, string> = {
     white: "bg-white",
     emerald: "bg-emerald-400",
     amber: "bg-amber-400",
     slate: "bg-slate-500",
+    violet: "bg-violet-400",
   };
   return (
     <div className="rounded-md bg-black/30 border border-white/5 px-3 py-2 text-center">
