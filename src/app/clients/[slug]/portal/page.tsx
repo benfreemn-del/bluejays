@@ -292,7 +292,7 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   coach: "🏟️",
   player: "⚽",
   club: "🏛️",
-  unknown: "❓",
+  unknown: "📥",
   // ITC Quick Attach
   hobbyist: "🚜",
   forester: "🌲",
@@ -301,6 +301,30 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   dealer: "🤝",
   community: "🏆",
 };
+
+/**
+ * Resolve the right audience icon for a lead. Tries audience_segment
+ * first, then derives from the `source` field (lp-hunter → 🦌) so
+ * leads that came in before audience-tagging was wired still render
+ * with the right emoji. Final fallback is the inbox icon.
+ */
+function audienceEmoji(audience: string | null | undefined, source?: string | null): string {
+  if (audience && AUDIENCE_EMOJI[audience]) return AUDIENCE_EMOJI[audience];
+  if (source) {
+    const s = source.toLowerCase();
+    if (s.includes("tym")) return AUDIENCE_EMOJI.tym;
+    if (s.includes("hobbyist")) return AUDIENCE_EMOJI.hobbyist;
+    if (s.includes("forester")) return AUDIENCE_EMOJI.forester;
+    if (s.includes("hunter")) return AUDIENCE_EMOJI.hunter;
+    if (s.includes("dealer")) return AUDIENCE_EMOJI.dealer;
+    if (s.includes("community")) return AUDIENCE_EMOJI.community;
+    if (s.includes("parent")) return AUDIENCE_EMOJI.parent;
+    if (s.includes("coach")) return AUDIENCE_EMOJI.coach;
+    if (s.includes("player")) return AUDIENCE_EMOJI.player;
+    if (s.includes("club")) return AUDIENCE_EMOJI.club;
+  }
+  return AUDIENCE_EMOJI.unknown;
+}
 
 /**
  * Per-audience color tokens, mapped to the brand-voice doc's three
@@ -824,7 +848,7 @@ function OverviewTab({
                 key={l.id}
                 className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 flex items-start gap-3"
               >
-                <span className="text-xl">{AUDIENCE_EMOJI[l.audience ?? "unknown"] ?? "❓"}</span>
+                <span className="text-xl">{audienceEmoji(l.audience)}</span>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold">{l.name || "(no name)"}</div>
                   <div className="text-[11px] text-slate-400">
@@ -892,7 +916,7 @@ function OverviewTab({
                 key={l.id}
                 className="rounded-lg border border-slate-800 bg-slate-900/40 p-3 flex items-center gap-3"
               >
-                <span className="text-xl">{AUDIENCE_EMOJI[l.audience_segment ?? "unknown"] ?? "❓"}</span>
+                <span className="text-xl">{audienceEmoji(l.audience_segment, l.source)}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{l.name || "(no name)"}</span>
@@ -920,16 +944,21 @@ function OverviewTab({
         )}
       </section>
 
-      {/* QUICK LINKS */}
+      {/* QUICK LINKS — per-slug. Each tenant gets the URLs that
+           actually live on their stack. */}
       <section>
         <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-2.5">
           Quick links
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <QuickLink href={`/clients/${slug}`} icon="🌐" label="Your site" />
-          <QuickLink href={`/clients/${slug}/build-your-player`} icon="🎮" label="Build Your Player" />
-          <QuickLink href={`/clients/${slug}/training-guide`} icon="📘" label="Coach guide" />
-          <QuickLink href={`/clients/${slug}/shop`} icon="🛒" label="Shop" />
+          {quickLinksFor(slug).map((q) => (
+            <QuickLink
+              key={q.label}
+              href={q.href}
+              icon={q.icon}
+              label={q.label}
+            />
+          ))}
         </div>
       </section>
 
@@ -2532,7 +2561,7 @@ function LeadCard({
         className="flex-1 min-w-0 text-left flex items-start gap-3 hover:opacity-95 transition"
       >
         <span className="text-2xl mt-0.5">
-          {AUDIENCE_EMOJI[lead.audience_segment ?? "unknown"] ?? "❓"}
+          {audienceEmoji(lead.audience_segment, lead.source)}
         </span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -4399,6 +4428,34 @@ function MapTab({ slug }: { slug: string }) {
       <ItcMarketMap />
     </div>
   );
+}
+
+// Per-slug Overview "Quick links" rail. Each entry = one tile. Each
+// tenant gets the four links that actually map to their business —
+// e.g. ITC's segment-specific lead-magnet pages, Zenith's player
+// builder + training guide.
+type QuickLinkDef = { href: string; icon: string; label: string };
+const QUICK_LINKS_BY_SLUG: Record<string, (slug: string) => QuickLinkDef[]> = {
+  "zenith-sports": (slug) => [
+    { href: `/clients/${slug}`, icon: "🌐", label: "Your site" },
+    { href: `/clients/${slug}/build-your-player`, icon: "🎮", label: "Build Your Player" },
+    { href: `/clients/${slug}/training-guide`, icon: "📘", label: "Coach guide" },
+    { href: `/clients/${slug}/shop`, icon: "🛒", label: "Shop" },
+  ],
+  "itc-quick-attach": (slug) => [
+    { href: `/clients/${slug}/lp/tym`, icon: "⚙️", label: "TYM owners" },
+    { href: `/clients/${slug}/lp/dealer`, icon: "🤝", label: "Dealer ROI" },
+    { href: `/clients/${slug}/lp/forester`, icon: "🌲", label: "Forester gear" },
+    { href: "https://itcquickattach.com", icon: "🛒", label: "ITC shop" },
+  ],
+};
+
+function quickLinksFor(slug: string): QuickLinkDef[] {
+  const fn = QUICK_LINKS_BY_SLUG[slug];
+  if (fn) return fn(slug);
+  // Fallback: just a "your site" link for new clients we haven't
+  // configured yet.
+  return [{ href: `/clients/${slug}`, icon: "🌐", label: "Your site" }];
 }
 
 // Per-slug branding overrides for headers / display. Keeps the title-case
