@@ -5,6 +5,7 @@
 ## Output Formatting Rules (NON-NEGOTIABLE)
 - **Never wrap URLs in bold (`**`).** Write links as plain text or plain markdown `[text](url)`. Bold markers around a URL break it when copied — the `**` gets included in the copied string. This applies everywhere: chat responses, code comments, commit messages, HTML, anywhere a URL appears.
 - **Outreach emails MUST use three separate fenced code blocks** — one for TO, one for SUBJECT, one for BODY. Never combine them. Never put the signature in the body (Ben has an auto-signature). This format lets Ben copy each field independently and forward without editing. Every single email Claude writes, no exceptions.
+- **ALWAYS drop runnable SQL / scripts inline in the chat — never just point at a file path.** When a migration, seed script, one-off SQL, or any "Ben must run this somewhere" snippet is needed, paste the FULL code into the chat inside a fenced ```sql / ```bash / ```powershell block so Ben can copy it directly. Telling him to "open `supabase/migrations/X.sql` and paste the contents" forces an extra step every single time. Also state where to paste it (Supabase SQL Editor, Vercel CLI, terminal, etc.). The file in the repo is the source of truth; the inline drop is for ergonomics. Both, every time.
 
 ## Core Philosophy
 This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
