@@ -1,0 +1,35 @@
+{
+  "_README": "VERIFIED data points only for the ITC market map. Sources cited per pin. Do not add unsourced entries — see _TODO_DATA_SOURCES below for concrete feeds we still need to wire.",
+  "_LAST_UPDATED": "2026-05-04",
+  "_TODO_DATA_SOURCES": [
+    "TYM official dealer locator (tym.com) — yields verified TYM dealer pins",
+    "Kioti dealer locator (kioti.com)",
+    "Mahindra Tractors dealer locator (mahindrausa.com)",
+    "Branson Tractors dealer locator (bransontractors.com)",
+    "USDA Forest Service county boundaries — yields forestry-rich county overlay",
+    "USDA Census of Agriculture compact-tractor sales by county",
+    "US Fish & Wildlife state hunting-license counts — yields hunter-density layer"
+  ],
+  "pins": [
+    {
+      "kind": "hq",
+      "name": "ITC Quick Attach HQ",
+      "city": "Blossvale",
+      "state": "NY",
+      "lat": 43.2492,
+      "lng": -75.6155,
+      "label": "Headquarters",
+      "detail": "American-made, in-house manufacturing. Source: itcquickattach.com homepage."
+    },
+    {
+      "kind": "dealer",
+      "name": "Cascade Tractor Supply",
+      "city": "Spokane",
+      "state": "WA",
+      "lat": 47.6588,
+      "lng": -117.4260,
+      "label": "Verified dealer",
+      "detail": "Carries ITC Quick Attach inventory. Source: cascadetractorsupply.com listing for the 2025 ITC Fixed-Mount Chainsaw Carrier."
+    }
+  ]
+}

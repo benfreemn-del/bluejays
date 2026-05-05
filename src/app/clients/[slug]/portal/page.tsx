@@ -2,7 +2,18 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
+// Lazy-load the Leaflet map — heavy + SSR-incompatible.
+const ItcMarketMap = nextDynamic(() => import("./itc-map.client"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[640px] flex items-center justify-center text-slate-500 text-sm rounded-2xl border border-white/[0.06] bg-slate-900/40">
+      Loading map…
+    </div>
+  ),
+});
 
 /**
  * /clients/[slug]/portal — the owner-facing dashboard.
@@ -145,6 +156,7 @@ type Tab =
   | "budget"
   | "campaigns"
   | "funnels"
+  | "map"
   | "insights"
   | "account";
 
@@ -540,6 +552,7 @@ export default function PortalPage({
               { id: "budget", label: "Budget", emoji: "💰" },
               { id: "campaigns", label: "Campaigns", emoji: "📧" },
               { id: "funnels", label: "Funnels", emoji: "🎯" },
+              { id: "map", label: "Market map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
@@ -599,6 +612,7 @@ export default function PortalPage({
         )}
         {tab === "campaigns" && (
           <CampaignsTab
+            slug={slug}
             campaigns={campaigns}
             leads={leads}
             onMutate={loadCampaigns}
@@ -607,7 +621,8 @@ export default function PortalPage({
         {tab === "funnels" && (
           <FunnelsTab slug={slug} leads={leads} />
         )}
-        {tab === "insights" && <InsightsTab report={report} leads={leads} />}
+        {tab === "map" && <MapTab slug={slug} />}
+        {tab === "insights" && <InsightsTab slug={slug} report={report} leads={leads} />}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}
@@ -685,7 +700,7 @@ function OverviewTab({
           />
           <StatCard
             label="Pipeline value"
-            value={`$${Math.round(estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0)).toLocaleString()}`}
+            value={`$${Math.round(estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0, slug)).toLocaleString()}`}
             sub="estimated"
             accent="emerald"
           />
@@ -959,9 +974,11 @@ function OverviewTab({
 /* ─────────────────────────── INSIGHTS TAB ─────────────────────────── */
 
 function InsightsTab({
+  slug,
   report,
   leads,
 }: {
+  slug?: string;
   report: Report | null;
   leads?: ClientLead[];
 }) {
@@ -969,7 +986,7 @@ function InsightsTab({
   // surface here too. Falls through to the report's server-computed
   // value when leads aren't loaded.
   const pipelineValueUsd = leads
-    ? estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0)
+    ? estimatePipelineValueUsd(leads, report?.leads.pipeline_value_usd ?? 0, slug)
     : report?.leads.pipeline_value_usd ?? 0;
   const [range, setRange] = useState<"7d" | "30d" | "90d" | "all">("30d");
   const [shopify, setShopify] = useState<ShopifyState | null>(null);
@@ -3335,7 +3352,24 @@ const CAMPAIGN_STATUS_COLOR: Record<string, string> = {
   cancelled: "bg-rose-500/20 text-rose-300",
 };
 
-const AUDIENCE_OPTIONS = ["parent", "coach", "player", "club", "unknown"];
+// Per-slug audience filter set. Zenith uses parent/coach/player/club;
+// ITC uses hobbyist/forester/tym/hunter/dealer/community. New clients
+// fall through to the "unknown only" set until their audiences are mapped.
+const AUDIENCE_OPTIONS_BY_SLUG: Record<string, string[]> = {
+  "zenith-sports": ["parent", "coach", "player", "club", "unknown"],
+  "itc-quick-attach": [
+    "hobbyist",
+    "forester",
+    "tym",
+    "hunter",
+    "dealer",
+    "community",
+  ],
+};
+function audienceOptionsFor(slug: string): string[] {
+  return AUDIENCE_OPTIONS_BY_SLUG[slug] ?? ["unknown"];
+}
+
 const LEAD_STATUS_OPTIONS = [
   "not_enrolled",
   "enrolled",
@@ -3359,10 +3393,12 @@ type CampaignConfirm = {
 };
 
 function CampaignsTab({
+  slug,
   campaigns,
   leads,
   onMutate,
 }: {
+  slug: string;
   campaigns: Campaign[];
   leads: ClientLead[];
   onMutate: () => void;
@@ -3479,6 +3515,7 @@ function CampaignsTab({
         </div>
         {showForm && (
           <CampaignForm
+            slug={slug}
             leads={leads}
             onDone={() => {
               setShowForm(false);
@@ -3513,16 +3550,19 @@ function CampaignsTab({
 }
 
 function CampaignForm({
+  slug,
   leads,
   onDone,
   notify,
   askConfirm,
 }: {
+  slug: string;
   leads: ClientLead[];
   onDone: () => void;
   notify: (t: CampaignToast) => void;
   askConfirm: (c: CampaignConfirm) => void;
 }) {
+  const audienceOptions = audienceOptionsFor(slug);
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState(
@@ -3680,7 +3720,7 @@ function CampaignForm({
             Audience filter (empty = all)
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {AUDIENCE_OPTIONS.map((a) => (
+            {audienceOptions.map((a) => (
               <button
                 key={a}
                 type="button"
@@ -4260,50 +4300,105 @@ function FunnelsTab({
 /* ─────────────────────────── HELPERS ─────────────────────────── */
 
 /**
- * Estimate pipeline value from the loaded leads. Prefers an explicit
- * `deal_value_usd` baked into raw_payload (set by the dealer ROI form
- * etc.). Falls back to per-audience defaults so segments without a
- * captured deal size still show a reasonable number rather than $0
- * or $15. Final fallback is the server-computed `report` value.
+ * Estimate pipeline value from the loaded leads. Prefers explicit
+ * `deal_value_usd` set in raw_payload (e.g. dealer ROI form). For
+ * clients in `AUDIENCE_DEFAULT_OPTIN_SLUGS`, falls back to per-audience
+ * default deal sizes when the lead has no explicit value. Other clients
+ * use the server-computed value untouched (avoids inflating Zenith's
+ * pipeline number with synthetic defaults).
  */
 const AUDIENCE_DEFAULT_DEAL_USD: Record<string, number> = {
-  // ITC
   hobbyist: 250,
   forester: 600,
   tym: 400,
   hunter: 350,
   dealer: 3600,
   community: 100,
-  // Zenith
-  parent: 60,
-  coach: 250,
-  player: 80,
-  club: 1500,
-  unknown: 100,
 };
+
+// Only clients in this set get the per-audience-default fallback.
+// Others rely on the server-computed value to avoid surprise
+// inflation of historical numbers.
+const AUDIENCE_DEFAULT_OPTIN_SLUGS = new Set(["itc-quick-attach"]);
 
 function estimatePipelineValueUsd(
   leads: ClientLead[],
   fallback: number,
+  clientSlug?: string,
 ): number {
   if (!leads || leads.length === 0) return fallback;
-  // Only count leads that progressed past first contact — these are
-  // the ones representing real pipeline value, not passive list size.
+
+  // Count explicit deal values regardless of slug — these are user-set
+  // and always trustworthy.
   const inPipeline = leads.filter((l) =>
     ["enrolled", "responded", "converted", "completed"].includes(l.funnel_status),
   );
-  if (inPipeline.length === 0) return fallback;
-  let sum = 0;
+  let explicitSum = 0;
+  let leadsNeedingDefault = 0;
   for (const l of inPipeline) {
     const explicit = Number(l.raw_payload?.["deal_value_usd"] ?? 0);
     if (explicit > 0) {
-      sum += explicit;
-      continue;
+      explicitSum += explicit;
+    } else {
+      leadsNeedingDefault++;
     }
-    const seg = l.audience_segment ?? "unknown";
-    sum += AUDIENCE_DEFAULT_DEAL_USD[seg] ?? 100;
   }
-  return Math.max(sum, fallback);
+
+  // If this client opted into the audience-default fallback, layer those
+  // estimates in for leads without explicit values.
+  if (clientSlug && AUDIENCE_DEFAULT_OPTIN_SLUGS.has(clientSlug)) {
+    let defaultSum = 0;
+    for (const l of inPipeline) {
+      const explicit = Number(l.raw_payload?.["deal_value_usd"] ?? 0);
+      if (explicit > 0) continue;
+      const seg = l.audience_segment ?? "unknown";
+      defaultSum += AUDIENCE_DEFAULT_DEAL_USD[seg] ?? 0;
+    }
+    return Math.max(explicitSum + defaultSum, fallback);
+  }
+
+  // Default behavior (Zenith, etc.): explicit-only sum or server fallback,
+  // whichever is bigger.
+  return leadsNeedingDefault === 0 && explicitSum > 0
+    ? Math.max(explicitSum, fallback)
+    : fallback;
+}
+
+/* ─────────────────────────── MAP TAB ─────────────────────────── */
+/**
+ * ITC-flavored market map. For now only renders for itc-quick-attach
+ * since itc-map.client is hard-coded with ITC's verified pin set. When
+ * we wire per-slug map data this gates per-slug accordingly.
+ */
+function MapTab({ slug }: { slug: string }) {
+  if (slug !== "itc-quick-attach") {
+    return (
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-8 text-center">
+        <h2 className="text-lg font-bold mb-2">Market map coming</h2>
+        <p className="text-sm text-slate-400 max-w-md mx-auto">
+          Per-tenant geographic targeting wires up on a per-client basis.
+          Talk to your BlueJays contact about the data sources we&apos;d
+          map for your customer mix.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <h2 className="text-lg font-bold tracking-tight mb-1">
+          Tractor-market map
+        </h2>
+        <p className="text-sm text-slate-400">
+          County-level US map with population-sized city bullets. Toggle
+          audience layers (Dealers / TYM owners / Foresters / Hunters /
+          Sub-compact owners) — concrete data sources for each are queued.
+          Currently showing verified pins only: ITC HQ + Cascade Tractor Supply.
+        </p>
+      </div>
+      <ItcMarketMap />
+    </div>
+  );
 }
 
 // Per-slug branding overrides for headers / display. Keeps the title-case
