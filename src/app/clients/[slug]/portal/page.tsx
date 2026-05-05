@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
+import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -323,6 +324,23 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   hunter: "🦌",
   dealer: "🤝",
   community: "🏆",
+};
+
+/** Plain-text labels for audience IDs — pairs with AUDIENCE_EMOJI when
+ *  rendering bar charts / stat rows. */
+const AUDIENCE_LABEL_PLAIN: Record<string, string> = {
+  parent: "Parents",
+  coach: "Coaches",
+  player: "Players",
+  club: "Clubs",
+  unknown: "Unknown",
+  untagged: "Untagged",
+  hobbyist: "Hobbyists",
+  forester: "Foresters",
+  tym: "TYM owners",
+  hunter: "Hunters",
+  dealer: "Dealers",
+  community: "Community",
 };
 
 /**
@@ -827,6 +845,12 @@ function OverviewTab({
           />
         </div>
       </section>
+
+      {/* ZENITH SPOTLIGHT — soccer-specific dashboard moment for Philip + Paul.
+           Drill-of-the-week (deterministic, date-seeded) + next 3 camps.
+           Renders only for slug=zenith-sports because the data sources
+           (training-drills, camps-data) are tenant-specific. */}
+      {slug === "zenith-sports" && <ZenithSpotlight />}
 
       {/* OUTREACH PROGRESS — bluejays-style "contacted vs not" pulse */}
       {leadsSummary && leadsSummary.total > 0 && (
@@ -1375,6 +1399,94 @@ function InsightsTab({
           <BarList data={report.leads.byAudience} emojiMap={AUDIENCE_EMOJI} />
         </div>
       </section>
+
+      {/* Conversion lift by audience — answers "which segment is hottest?"
+          Computed client-side from the leads array. Only renders when 2+
+          audiences have leads (saves the section when a tenant has only
+          one or no audience tags). */}
+      {leads && leads.length > 0 && (() => {
+        const byAud: Record<
+          string,
+          { total: number; converted: number; pipelineCents: number }
+        > = {};
+        for (const l of leads) {
+          if (l.funnel_status === "dismissed") continue;
+          const aud = l.audience_segment ?? "untagged";
+          if (!byAud[aud]) byAud[aud] = { total: 0, converted: 0, pipelineCents: 0 };
+          byAud[aud].total += 1;
+          if (l.funnel_status === "converted") byAud[aud].converted += 1;
+        }
+        const rows = Object.entries(byAud)
+          .filter(([, s]) => s.total >= 1)
+          .map(([aud, s]) => ({
+            aud,
+            total: s.total,
+            converted: s.converted,
+            rate: s.total > 0 ? (s.converted / s.total) * 100 : 0,
+          }))
+          .sort((a, b) => b.rate - a.rate || b.total - a.total);
+        if (rows.length < 2) return null;
+        const best = rows[0]!;
+        const worst = rows[rows.length - 1]!;
+        const lift =
+          worst.rate > 0
+            ? `${(best.rate / worst.rate).toFixed(1)}×`
+            : best.rate > 0
+              ? "∞"
+              : "—";
+        return (
+          <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+            <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+              <h3 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500">
+                Conversion lift by audience
+              </h3>
+              {best.rate > 0 && (
+                <p className="text-[11px] text-slate-400">
+                  <span className="text-emerald-300 font-bold">
+                    {AUDIENCE_EMOJI[best.aud] ?? ""}{" "}
+                    {AUDIENCE_LABEL_PLAIN[best.aud] ?? best.aud}
+                  </span>{" "}
+                  converts{" "}
+                  <span className="text-emerald-300 font-bold">{lift}</span>{" "}
+                  the worst-performing segment — double down here.
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              {rows.map((r) => {
+                const widthPct = best.rate > 0 ? (r.rate / best.rate) * 100 : 0;
+                const isBest = r.aud === best.aud;
+                return (
+                  <div key={r.aud} className="flex items-center gap-3 text-sm">
+                    <span className="w-28 sm:w-36 shrink-0 text-slate-300 truncate">
+                      {AUDIENCE_EMOJI[r.aud] ?? "•"}{" "}
+                      {AUDIENCE_LABEL_PLAIN[r.aud] ?? r.aud}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="h-3 rounded-full bg-slate-800 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            isBest ? "bg-emerald-500" : "bg-blue-500/60"
+                          }`}
+                          style={{ width: `${Math.max(widthPct, 2)}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="w-24 sm:w-32 text-right shrink-0">
+                      <span className="font-bold text-white tabular-nums">
+                        {r.rate.toFixed(1)}%
+                      </span>
+                      <span className="text-[10px] text-slate-500 ml-1">
+                        ({r.converted}/{r.total})
+                      </span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Funnel + messaging */}
       <section className="grid sm:grid-cols-2 gap-4">
