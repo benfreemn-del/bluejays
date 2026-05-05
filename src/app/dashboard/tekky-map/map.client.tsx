@@ -654,6 +654,20 @@ export default function TekkyMapClient() {
   }, [inProgress, completed, exhausted]);
 
   const styleForCounty = (countyName: string, stateAbbr: string | undefined) => {
+    // Selected county wins over status — keep it amber while the drawer
+    // is open so the user always knows which county they're scouting.
+    if (
+      countyTarget &&
+      countyTarget.name === countyName &&
+      countyTarget.state === stateAbbr
+    ) {
+      return {
+        color: "#facc15",
+        weight: 2.5,
+        fillColor: "#facc15",
+        fillOpacity: 0.32,
+      };
+    }
     if (!stateAbbr) {
       return {
         color: "#475569",
@@ -711,13 +725,15 @@ export default function TekkyMapClient() {
   const countyStatusKey = useMemo(
     () =>
       `${inProgress.size}-${completed.size}-${exhausted.size}-${
+        countyTarget ? `${countyTarget.name}|${countyTarget.state}` : "none"
+      }-${
         Array.from(inProgress).sort().join(",") +
         "|" +
         Array.from(completed).sort().join(",") +
         "|" +
         Array.from(exhausted).sort().join(",")
       }`,
-    [inProgress, completed, exhausted],
+    [inProgress, completed, exhausted, countyTarget],
   );
 
   const onEachCounty = (

@@ -259,6 +259,14 @@ export default function ItcMarketMap() {
   }, [inProgress, completed, exhausted]);
 
   const styleForCounty = (countyName: string, stateAbbr: string | undefined) => {
+    // Selected county wins over status — keep it amber while drawer open.
+    if (
+      countyTarget &&
+      countyTarget.name === countyName &&
+      countyTarget.state === stateAbbr
+    ) {
+      return { color: "#facc15", weight: 2.5, fillColor: "#facc15", fillOpacity: 0.32 };
+    }
     if (!stateAbbr) {
       return { color: "#475569", weight: 0.7, fillColor: "#0a0f1c", fillOpacity: 0.15 };
     }
@@ -286,13 +294,15 @@ export default function ItcMarketMap() {
   const countyStatusKey = useMemo(
     () =>
       `${inProgress.size}-${completed.size}-${exhausted.size}-${
+        countyTarget ? `${countyTarget.name}|${countyTarget.state}` : "none"
+      }-${
         Array.from(inProgress).sort().join(",") +
         "|" +
         Array.from(completed).sort().join(",") +
         "|" +
         Array.from(exhausted).sort().join(",")
       }`,
-    [inProgress, completed, exhausted],
+    [inProgress, completed, exhausted, countyTarget],
   );
 
   const onEachState = (feature: Feature<Geometry>, leafletLayer: import("leaflet").Layer) => {
