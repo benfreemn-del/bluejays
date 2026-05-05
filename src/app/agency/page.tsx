@@ -35,13 +35,20 @@ const INCLUDED = [
   { icon: "🌐", title: "Custom Website", detail: "Conversion-tracked — every click feeds the loop" },
   { icon: "📈", title: "Google Ads — Self-Learning", detail: "Headlines that win get more budget automatically" },
   { icon: "🎯", title: "Meta Ads — Self-Learning", detail: "Audiences that don't convert get cut without touching it" },
-  { icon: "✉️", title: "Email Sequences", detail: "Subject lines tested, winners kept, losers replaced" },
+  { icon: "🧭", title: "Audience-Segmented Funnels", detail: "Up to 6 separate funnel tracks per customer type — never a generic blast" },
+  { icon: "✉️", title: "AI Inbound Responder", detail: "Auto-classifies every reply into 6 intent classes; drafts in your voice for one-tap send" },
+  { icon: "📅", title: "Scheduled Campaigns", detail: "Pick a date — system queues + ships at the minute, no babysitting" },
   { icon: "📱", title: "SMS Follow-Ups", detail: "Automated texts that improve based on reply data" },
+  { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. Captures the voicemail you'd lose." },
   { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to every warm lead — hands-free" },
+  { icon: "🎁", title: "Interactive Lead Magnet", detail: "Industry-specific configurator quiz that builds personalized recommendations + auto-routes leads to the right funnel" },
+  { icon: "🗺️", title: "County-Level Lead Scout", detail: "Click any US county on a map → audience-scoped Google Places scrape pulls fresh leads to your inbox" },
+  { icon: "📊", title: "Owner Portal", detail: "Live cockpit: Leads · To-Do · Budget · Campaigns · Funnels · Map · Insights · Account. One login, everything in view." },
+  { icon: "🔬", title: "Hyperloop A/B Engine", detail: "Wilson-CI statistical testing on every email subject + ad creative. Winners auto-promoted." },
   { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds while the ads learn" },
-  { icon: "🎁", title: "Custom Lead Magnet", detail: "Industry-specific hook that feeds the top of the funnel" },
   { icon: "🖼️", title: "Logo Revision", detail: "Brand polish so your system looks as good as it runs" },
-  { icon: "📊", title: "Monthly Reports", detail: "Real numbers showing exactly how the loop is tightening" },
+  { icon: "📈", title: "Live Open/Click Tracking", detail: "SendGrid + pixel tracking flows back into your dashboard in real time" },
+  { icon: "📊", title: "Weekly + Monthly Reports", detail: "Auto-generated digests in your inbox. Real numbers showing the loop tightening." },
 ];
 
 const FAQS = [
@@ -68,6 +75,18 @@ const FAQS = [
   {
     q: "Do you manage the ad accounts or just set them up?",
     a: "Both. Ben sets them up, owns the structure, and manages them monthly. You have full transparency — login access, real reporting, no black-box dashboards.",
+  },
+  {
+    q: "What does the owner portal actually look like?",
+    a: "One login at /clients/{your-business}/portal. Nine tabs: Overview (pipeline value + alerts), Leads (audience-tagged + click-to-expand timeline), To-Do, Budget, Campaigns (compose + schedule blasts), Funnels (your live audience-segmented sequences), Map (county-level lead scout for your industry), Insights (weekly auto-report), Account. Built for a phone or a laptop — your team logs in every morning, you see the whole business in 60 seconds.",
+  },
+  {
+    q: "What's an 'audience-segmented funnel'?",
+    a: "Most agencies blast the same email to every lead. We map your customer mix into segments (e.g. for a tractor-accessory shop: Dealer / TYM owner / Forester / Hunter / Sub-compact owner) and run a separate funnel for each. The Dealer gets ROI math; the Hunter gets gun-mount install tips; the Forester gets chainsaw-rig content. Same lead-magnet site, six conversion paths.",
+  },
+  {
+    q: "What's an interactive lead magnet?",
+    a: "Instead of a passive PDF, your top-of-funnel page is a configurator quiz. The user picks options; a live preview updates as they answer (e.g. a tractor that adds accessories on the right as the user toggles them). At submission, the system builds a personalized recommendation, captures the lead, fires you an instant SMS, and auto-routes them into the right segment funnel. Conversion rates 3-5× a static lead magnet because the user co-builds the offer.",
   },
 ];
 

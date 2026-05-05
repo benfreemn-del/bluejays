@@ -5,7 +5,6 @@ import {
   makeSessionCookie,
 } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
-import { checkSessionCookie } from "@/lib/auth";
 
 /**
  * GET /api/admin/impersonate-client?slug=itc-quick-attach
@@ -27,15 +26,9 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  // 1. Gate on admin cookie. If you can read this endpoint, you've
-  //    already passed the BlueJays admin login on /dashboard.
-  const adminCookie = req.cookies.get("bluejays-session")?.value;
-  if (!checkSessionCookie(adminCookie)) {
-    return NextResponse.json(
-      { ok: false, error: "Admin auth required" },
-      { status: 401 },
-    );
-  }
+  // 1. Auth is handled by middleware.ts — /api/admin/* is in
+  //    PROTECTED_PATHS and gated on the bluejays_auth cookie. If
+  //    we got here, the caller has already passed admin login.
 
   const url = new URL(req.url);
   const slug = url.searchParams.get("slug");
