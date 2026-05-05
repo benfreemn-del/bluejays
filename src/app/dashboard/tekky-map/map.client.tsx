@@ -159,6 +159,26 @@ export default function TekkyMapClient() {
     name: string;
     state: string;
   } | null>(null);
+  // Audience the user has staged in the drawer (one at a time). Click
+  // an audience tile → selects. Click the green Run button → fires.
+  const [stagedAudience, setStagedAudience] = useState<TekkyAudience | null>(null);
+  // Set of "city|state|audience" keys that returned 0 results last
+  // time we tried — show a red X over those tiles. Persisted to
+  // localStorage so the indicator survives page reloads.
+  const [exhausted, setExhausted] = useState<Set<string>>(new Set());
+
+  // Hydrate exhausted set from localStorage once on mount.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("tekky-map.exhausted");
+      if (raw) {
+        const arr = JSON.parse(raw) as string[];
+        if (Array.isArray(arr)) setExhausted(new Set(arr));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
   // Bounds to fly to when a state is clicked. null = default US view.
   const [zoomBounds, setZoomBounds] = useState<L.LatLngBounds | null>(null);
   const [marketSummary, setMarketSummary] = useState<MarketSummaryRow[]>([]);
@@ -243,6 +263,40 @@ export default function TekkyMapClient() {
         state: "done",
         message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
       });
+      // If Google Places returned nothing, mark the (city,state,audience)
+      // tile as exhausted so a red X overlays it next time. Persist so
+      // it survives a page reload.
+      if ((j.found ?? 0) === 0) {
+        setExhausted((prev) => {
+          const next = new Set(prev);
+          next.add(key);
+          try {
+            localStorage.setItem(
+              "tekky-map.exhausted",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+      } else {
+        // Found results → make sure this tile isn't stale-marked exhausted.
+        setExhausted((prev) => {
+          if (!prev.has(key)) return prev;
+          const next = new Set(prev);
+          next.delete(key);
+          try {
+            localStorage.setItem(
+              "tekky-map.exhausted",
+              JSON.stringify(Array.from(next)),
+            );
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+      }
       refreshSummary();
     } catch (err) {
       setScrapeStatus({
@@ -686,7 +740,10 @@ export default function TekkyMapClient() {
                 </div>
               </div>
               <button
-                onClick={() => setCountyTarget(null)}
+                onClick={() => {
+                  setCountyTarget(null);
+                  setStagedAudience(null);
+                }}
                 className="text-slate-400 hover:text-white text-sm"
                 aria-label="Close"
               >
@@ -694,8 +751,8 @@ export default function TekkyMapClient() {
               </button>
             </div>
             <p className="text-[10px] text-slate-400 mb-2">
-              Pick an audience. Google Places search runs across the
-              county and matching businesses land in the Leads tab.
+              Pick an audience, then hit Run. Google Places search runs
+              across the county; matches land in the Leads tab.
             </p>
             <div className="grid grid-cols-3 gap-1.5">
               {(["parent", "coach", "player"] as TekkyAudience[]).map((aud) => {
@@ -703,21 +760,62 @@ export default function TekkyMapClient() {
                 const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
                 const isRunning =
                   scrapeStatus?.key === k && scrapeStatus.state === "running";
+                const isExhausted = exhausted.has(k);
+                const isStaged = stagedAudience === aud;
                 return (
                   <button
                     key={aud}
-                    onClick={() =>
-                      runScrape(countyTarget.name, countyTarget.state, aud)
-                    }
+                    onClick={() => setStagedAudience(aud)}
                     disabled={isRunning}
-                    className="text-[11px] font-bold rounded-md px-2 py-2 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center gap-0.5"
+                    className={`relative text-[11px] font-bold rounded-md px-2 py-2 border transition disabled:opacity-50 flex flex-col items-center gap-0.5 ${
+                      isStaged
+                        ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                        : "border-slate-700 hover:border-amber-400"
+                    }`}
                     style={{ color: meta.color }}
                   >
                     <span>{meta.emoji}</span>
                     <span>{isRunning ? "…" : meta.label}</span>
+                    {isExhausted && (
+                      <span
+                        aria-label="Resource exhausted"
+                        title="Last scrape returned no new results"
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                      >
+                        <span className="text-rose-500 text-3xl font-black drop-shadow-[0_0_4px_rgba(0,0,0,0.8)]">
+                          ✕
+                        </span>
+                      </span>
+                    )}
                   </button>
                 );
               })}
+            </div>
+
+            {/* Green Run button — fires the scrape against the staged
+                 audience. Disabled until the user picks one. */}
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[10px] text-slate-400">
+                {stagedAudience
+                  ? `Ready: ${AUDIENCE_META[stagedAudience].label}`
+                  : "Select an audience"}
+              </span>
+              <div className="flex-1" />
+              <button
+                onClick={() => {
+                  if (!stagedAudience) return;
+                  runScrape(countyTarget.name, countyTarget.state, stagedAudience);
+                }}
+                disabled={
+                  !stagedAudience ||
+                  (scrapeStatus?.state === "running" &&
+                    scrapeStatus.key ===
+                      `${countyTarget.name}|${countyTarget.state}|${stagedAudience}`)
+                }
+                className="text-[11px] font-black uppercase tracking-wider rounded-md px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              >
+                ▶ Run
+              </button>
             </div>
             {scrapeStatus &&
               scrapeStatus.key.startsWith(

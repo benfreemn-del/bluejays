@@ -142,6 +142,24 @@ export default function ItcMarketMap() {
     state: "running" | "done" | "error";
     message?: string;
   } | null>(null);
+  // Audience the user has staged in the drawer (one at a time). Click
+  // an audience tile → selects. Click the green Run button → fires.
+  const [stagedAudience, setStagedAudience] = useState<ItcAudience | null>(null);
+  // Set of "city|state|audience" keys exhausted last attempt.
+  // Persisted to localStorage so the red X survives page reloads.
+  const [exhausted, setExhausted] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("itc-map.exhausted");
+      if (raw) {
+        const arr = JSON.parse(raw) as string[];
+        if (Array.isArray(arr)) setExhausted(new Set(arr));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -315,6 +333,21 @@ export default function ItcMarketMap() {
         key,
         state: "done",
         message: `+${j.inserted ?? 0} new · ${j.skipped ?? 0} dup · ${j.found ?? 0} found`,
+      });
+      // Mark exhausted (red X) when zero results come back.
+      setExhausted((prev) => {
+        const next = new Set(prev);
+        if ((j.found ?? 0) === 0) next.add(key);
+        else next.delete(key);
+        try {
+          localStorage.setItem(
+            "itc-map.exhausted",
+            JSON.stringify(Array.from(next)),
+          );
+        } catch {
+          // ignore
+        }
+        return next;
       });
     } catch (err) {
       setScoutStatus({
@@ -541,7 +574,10 @@ export default function ItcMarketMap() {
                 </div>
               </div>
               <button
-                onClick={() => setCountyTarget(null)}
+                onClick={() => {
+                  setCountyTarget(null);
+                  setStagedAudience(null);
+                }}
                 className="text-slate-400 hover:text-white text-sm"
                 aria-label="Close"
               >
@@ -549,8 +585,8 @@ export default function ItcMarketMap() {
               </button>
             </div>
             <p className="text-[10px] text-slate-400 mb-2">
-              Pick an audience. Google Places searches the county;
-              matching businesses land in your Leads tab.
+              Pick an audience, then hit Run. Google Places searches the
+              county; matches land in your Leads tab.
             </p>
             <div className="grid grid-cols-5 gap-1">
               {(["dealer", "tym", "forester", "hunter", "hobbyist"] as ItcAudience[]).map(
@@ -559,23 +595,69 @@ export default function ItcMarketMap() {
                   const k = `${countyTarget.name}|${countyTarget.state}|${aud}`;
                   const isRunning =
                     scoutStatus?.key === k && scoutStatus.state === "running";
+                  const isExhausted = exhausted.has(k);
+                  const isStaged = stagedAudience === aud;
                   return (
                     <button
                       key={aud}
-                      onClick={() =>
-                        runScout(countyTarget.name, countyTarget.state, aud)
-                      }
+                      onClick={() => setStagedAudience(aud)}
                       disabled={isRunning}
-                      title={meta.label}
-                      className="text-[10px] font-bold rounded-md py-1.5 border border-slate-700 hover:border-amber-400 transition disabled:opacity-50 flex flex-col items-center"
+                      title={
+                        isExhausted
+                          ? `${meta.label} — last scrape exhausted`
+                          : meta.label
+                      }
+                      className={`relative text-[10px] font-bold rounded-md py-1.5 border transition disabled:opacity-50 flex flex-col items-center ${
+                        isStaged
+                          ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400"
+                          : "border-slate-700 hover:border-amber-400"
+                      }`}
                       style={{ color: meta.color }}
                     >
                       <span className="text-base">{meta.emoji}</span>
-                      <span className="text-[9px]">{isRunning ? "…" : meta.label}</span>
+                      <span className="text-[9px]">
+                        {isRunning ? "…" : meta.label}
+                      </span>
+                      {isExhausted && (
+                        <span
+                          aria-label="Resource exhausted"
+                          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                        >
+                          <span className="text-rose-500 text-2xl font-black drop-shadow-[0_0_4px_rgba(0,0,0,0.8)]">
+                            ✕
+                          </span>
+                        </span>
+                      )}
                     </button>
                   );
                 },
               )}
+            </div>
+
+            {/* Green Run button — fires the scrape against the staged
+                 audience. Disabled until an audience is selected. */}
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[10px] text-slate-400">
+                {stagedAudience
+                  ? `Ready: ${ITC_AUDIENCE_META[stagedAudience].label}`
+                  : "Select an audience"}
+              </span>
+              <div className="flex-1" />
+              <button
+                onClick={() => {
+                  if (!stagedAudience) return;
+                  runScout(countyTarget.name, countyTarget.state, stagedAudience);
+                }}
+                disabled={
+                  !stagedAudience ||
+                  (scoutStatus?.state === "running" &&
+                    scoutStatus.key ===
+                      `${countyTarget.name}|${countyTarget.state}|${stagedAudience}`)
+                }
+                className="text-[10px] font-black uppercase tracking-wider rounded-md px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              >
+                ▶ Run
+              </button>
             </div>
             {scoutStatus &&
               scoutStatus.key.startsWith(
