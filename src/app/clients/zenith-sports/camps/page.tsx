@@ -76,7 +76,8 @@ type QuizState = {
   /** Up to 2 skill tiers so a player straddling levels gets both pools. */
   skillLevels: string[];
   formats: string[];
-  timing: string;
+  /** Any/all season windows — multi-select. */
+  timings: string[];
   parentName: string;
   email: string;
   phone: string;
@@ -91,7 +92,7 @@ const INITIAL: QuizState = {
   travelMiles: 50, // sensible default — most parents drive ~30-60mi to a camp
   skillLevels: [],
   formats: [],
-  timing: "",
+  timings: [],
   parentName: "",
   email: "",
   phone: "",
@@ -125,13 +126,14 @@ const FORMATS = [
   { id: "demo", label: "Demo / open house", emoji: "👋", note: "Try-it-out events" },
 ];
 
-// Q5 — Timing window.
+// Q5 — Timing window. Multi-select: a parent who's flexible can tick
+// any combination, or all four to mean "whenever". Picking all four is
+// equivalent to the old "Any time" option.
 const TIMING = [
   { id: "summer-2026", label: "Summer 2026", emoji: "☀️" },
   { id: "fall-2026", label: "Fall break 2026", emoji: "🍂" },
   { id: "winter-2026", label: "Winter 2026/27", emoji: "❄️" },
   { id: "spring-2027", label: "Spring 2027", emoji: "🌸" },
-  { id: "any", label: "Any time · keep me posted", emoji: "📅" },
 ];
 
 const STATE_NAMES: Record<string, string> = {
@@ -217,8 +219,14 @@ function estimateAvailability(s: QuizState): number {
     );
     count *= Math.min(1, sum);
   }
-  if (s.timing && s.timing !== "any") {
-    count *= TIMING_FRAC[s.timing] ?? 0.3;
+  // Timings sum up — picking summer + fall stacks both season pools.
+  // Picking all four is effectively "any time" → no filter applied.
+  if (s.timings.length > 0 && s.timings.length < 4) {
+    const sum = s.timings.reduce(
+      (acc, id) => acc + (TIMING_FRAC[id] ?? 0.3),
+      0,
+    );
+    count *= Math.min(1, sum);
   }
 
   return Math.max(1, Math.round(count));
@@ -279,7 +287,7 @@ export default function CampFinderPage() {
     if (step === "travel") return state.travelMiles > 0;
     if (step === "skill") return state.skillLevels.length >= 1;
     if (step === "format") return state.formats.length >= 1;
-    if (step === "timing") return state.timing !== "";
+    if (step === "timing") return state.timings.length >= 1;
     if (step === "notify")
       return (
         state.parentName.trim().length >= 2 &&
@@ -308,7 +316,7 @@ export default function CampFinderPage() {
           travelMiles: state.travelMiles,
           skillLevels: state.skillLevels,
           formats: state.formats,
-          timing: state.timing,
+          timings: state.timings,
           playerName: state.playerName || null,
           notifyOptIn: state.notifyOptIn,
         }),
@@ -406,6 +414,38 @@ export default function CampFinderPage() {
               }}
             />
           </div>
+
+          {/* STAT BANNER — sticks under the step bar across every question.
+              Source: US Youth Soccer "About" page (2024) — usyouthsoccer.org/about/.
+              Note: a specific "% of pros attended camps as kids" stat
+              isn't published in any survey I could verify. Swap the
+              copy below if Philip has a sourced figure he prefers. */}
+          <div
+            className="mt-3 rounded-xl border border-lime-300/20 px-4 py-2.5 flex items-center gap-3"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(163,230,53,0.08) 0%, rgba(29,78,216,0.04) 100%)",
+            }}
+          >
+            <span className="text-lg" aria-hidden>
+              📊
+            </span>
+            <p className="text-[12px] sm:text-[13px] leading-snug text-white/80">
+              <strong className="font-black" style={{ color: LIME }}>
+                3M+ U.S. kids
+              </strong>{" "}
+              play registered youth soccer — the #1 youth team sport.
+              Camps are how the top players sharpen the gap.
+              <a
+                href="https://www.usyouthsoccer.org/about/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/40 hover:text-white/70 ml-1.5 underline decoration-white/20 decoration-from-font underline-offset-2"
+              >
+                source
+              </a>
+            </p>
+          </div>
         </div>
       )}
 
@@ -456,8 +496,15 @@ export default function CampFinderPage() {
         )}
         {step === "timing" && (
           <TimingStep
-            value={state.timing}
-            onChange={(v) => update("timing", v)}
+            values={state.timings}
+            onToggle={(id) =>
+              setState((s) => ({
+                ...s,
+                timings: s.timings.includes(id)
+                  ? s.timings.filter((t) => t !== id)
+                  : [...s.timings, id],
+              }))
+            }
           />
         )}
         {step === "notify" && (
@@ -1027,7 +1074,15 @@ function AvailabilityRail({
             label="Format"
             value={state.formats.join(", ")}
           />
-          <RailRow on={!!state.timing} label="When" value={state.timing} />
+          <RailRow
+            on={state.timings.length > 0}
+            label="When"
+            value={
+              state.timings.length === 4
+                ? "any time"
+                : state.timings.join(" + ")
+            }
+          />
         </ul>
       </div>
     </aside>
@@ -1189,12 +1244,13 @@ function FormatStep({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function TimingStep({
-  value,
-  onChange,
+  values,
+  onToggle,
 }: {
-  value: string;
-  onChange: (v: string) => void;
+  values: string[];
+  onToggle: (id: string) => void;
 }) {
+  const allFour = values.length === 4;
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
@@ -1203,23 +1259,32 @@ function TimingStep({
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         When are you looking?
       </h1>
-      <p className="text-base text-white/60 mb-8 leading-relaxed">
-        Helps us alert you when camps in your window go live.
+      <p className="text-base text-white/60 mb-2 leading-relaxed">
+        Pick any or all — flexible families that tick multiple windows
+        unlock more matches.
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-white/40 mb-6">
+        {values.length} / 4 selected{allFour ? " · any time" : ""}
       </p>
 
       <div className="space-y-2">
         {TIMING.map((opt) => {
-          const active = value === opt.id;
+          const active = values.includes(opt.id);
           return (
             <button
               key={opt.id}
-              onClick={() => onChange(opt.id)}
-              className={`w-full text-left rounded-xl p-4 border-2 transition-all flex items-center gap-3 ${
+              onClick={() => onToggle(opt.id)}
+              className={`relative w-full text-left rounded-xl p-4 border-2 transition-all flex items-center gap-3 ${
                 active
                   ? "bg-lime-300 border-lime-300 text-slate-950"
                   : "bg-white/5 border-white/10 hover:border-lime-300/40"
               }`}
             >
+              {active && (
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                  ✓
+                </span>
+              )}
               <span className="text-2xl">{opt.emoji}</span>
               <span className={`text-base font-bold ${active ? "text-slate-950" : "text-white"}`}>
                 {opt.label}
