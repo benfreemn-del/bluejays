@@ -924,33 +924,61 @@ export default function CutMyAgencyPage() {
               </div>
             </div>
 
-            {/* 4. AI efficiency fact — savings is one half. Profit lift
-                is the other. McKinsey: companies using AI in marketing
-                report avg 35% ROI improvement; ad-optimization alone
-                drops cost-per-acquisition by ~41%. We're using the
-                conservative 35% ROI number anchored to the source. */}
-            <div className="rounded-2xl border border-violet-500/30 bg-violet-500/[0.06] p-5 sm:p-6">
-              <div className="flex items-start gap-3">
-                <span className="text-3xl shrink-0 leading-none">⚡</span>
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-violet-300 font-bold mb-2">
-                    Bonus: more profit, not just less cost
-                  </p>
-                  <p className="text-sm sm:text-base text-slate-200 leading-relaxed mb-2">
-                    AI-driven marketing systems deliver an average{" "}
-                    <span className="font-bold text-violet-200">
-                      35% ROI improvement
-                    </span>{" "}
-                    over manual agency campaigns — your same ad spend works
-                    harder, brings in more leads, more revenue.
-                  </p>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Source: McKinsey + Salesforce marketing-AI research, 2025-2026.
-                    Ad-optimization alone typically cuts cost-per-acquisition by
-                    ~41% vs manual management.
-                  </p>
+            {/* 4. Bonus stats — savings is one half; profit lift is the
+                other. Two anchored research stats side-by-side: AI
+                efficiency (McKinsey/Salesforce) and custom-personalization
+                revenue lift (McKinsey "Next in Personalization 2021").
+                Both reinforce the BlueJays advantage over agencies:
+                custom-built + AI-driven > cookie-cutter + manual. */}
+            <div>
+              <p className="text-xs uppercase tracking-widest text-violet-300 font-bold mb-3 text-center">
+                Bonus: more profit, not just less cost
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {/* AI efficiency stat */}
+                <div className="rounded-2xl border border-violet-500/30 bg-violet-500/[0.06] p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl shrink-0 leading-none">⚡</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-violet-300/80 font-semibold mb-1">
+                        AI vs manual
+                      </p>
+                      <p className="text-2xl sm:text-3xl font-black text-violet-200 mb-1">
+                        +35% ROI
+                      </p>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        AI-driven marketing systems beat manual agency
+                        campaigns by ~35% on average. Same ad spend, more
+                        leads.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Custom-build / personalization stat */}
+                <div className="rounded-2xl border border-fuchsia-500/30 bg-fuchsia-500/[0.06] p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl shrink-0 leading-none">🎯</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-fuchsia-300/80 font-semibold mb-1">
+                        Custom vs templated
+                      </p>
+                      <p className="text-2xl sm:text-3xl font-black text-fuchsia-200 mb-1">
+                        +40% revenue
+                      </p>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        Companies that personalize at scale earn 40% more
+                        revenue than those running cookie-cutter playbooks.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed mt-3 text-center">
+                Sources: McKinsey &quot;Next in Personalization&quot;,
+                Salesforce marketing-AI research. Ad-optimization alone
+                cuts cost-per-acquisition by ~41% vs manual.
+              </p>
             </div>
 
             {/* 5. Side-by-side comparison — full-cost view incl. ad
