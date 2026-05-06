@@ -85,21 +85,39 @@ export default function AgencySection() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-3">
+              {/* Top CTA — agency cost calculator. Highest-intent
+                  conversion path right now (the Hormozi calculator
+                  funnel feeding the agency-replacement Google Ads
+                  campaign). Promoted above the other two buttons per
+                  Ben 2026-05-06 — calculator funnel converts at
+                  3-8x the rate of generic landing-page CTAs. Amber
+                  gradient (calc-page accent) so it visually pops
+                  vs the violet-primary + outline-secondary below. */}
               <a
-                href="/agency"
-                className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.45)] active:scale-[0.97]"
-                style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)" }}
+                href="/cut-my-agency"
+                className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-amber-950 transition-all duration-300 hover:shadow-[0_0_40px_rgba(251,191,36,0.5)] active:scale-[0.97] w-fit"
+                style={{ background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)" }}
               >
-                See how the loop works
+                💰 Calculate your agency cost — free 60-sec tool
                 <ArrowIcon />
               </a>
-              <a
-                href="/get-started"
-                className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/20 font-semibold text-sm transition-all duration-300"
-              >
-                Start with a website first
-              </a>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="/agency"
+                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.45)] active:scale-[0.97]"
+                  style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)" }}
+                >
+                  See how the loop works
+                  <ArrowIcon />
+                </a>
+                <a
+                  href="/get-started"
+                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/20 font-semibold text-sm transition-all duration-300"
+                >
+                  Start with a website first
+                </a>
+              </div>
             </div>
           </motion.div>
 
