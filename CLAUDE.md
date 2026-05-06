@@ -5418,6 +5418,81 @@ RUNNABLE artifacts only.
 
 ---
 
+## AI / LLM Discoverability — Every Site Ships With llms.txt (NON-NEGOTIABLE — added 2026-05-05)
+
+Every BlueJays site (bluejayportfolio.com itself + every client static
+site + every paid customer site) MUST ship with an `llms.txt` file
+following the emerging llmstxt.org spec. This is how AI crawlers
+(ChatGPT browse, Claude browse, Perplexity, Gemini, Bing AI) parse
+the site without choking on JS / Next.js bundles, and it's a clean
+SEO-discoverable topic map. Tiny file. Zero ongoing maintenance.
+
+**This is also a SELLING POINT.** Pitch it on the audit page,
+the claim page, and in outreach: *"every BlueJays site ships
+AI-discoverable so when someone asks ChatGPT for [your service] in
+[your city], your business shows up."*
+
+### File location and naming
+
+- **Next.js sites** (bluejayportfolio.com): route handlers at
+  `src/app/llms.txt/route.ts` and `src/app/llms-full.txt/route.ts`,
+  both returning `Content-Type: text/markdown; charset=utf-8`.
+  Use `dynamic = "force-static"` + `revalidate = 3600` so it caches
+  cleanly on Vercel.
+- **Static client sites** (\`/public/sites/[slug]/\`): literal
+  \`/public/sites/[slug]/llms.txt\` file. Vercel serves it as static
+  text. The shorter form is enough — most client sites don't need a
+  full split.
+- **Paid customer sites on custom domains**: same pattern —
+  every customer site gets at least an \`llms.txt\`.
+
+### Required content (the spec)
+
+1. **H1 title** — business name + 1-line industry tag
+2. **Blockquote summary** — 2-3 sentence elevator pitch with location
+3. **Markdown sections** with \`## \` headers covering:
+   - What the business does (services list with internal links)
+   - Pricing (concrete numbers when applicable, ranges when not)
+   - Process / how it works (numbered steps for service businesses)
+   - Contact info (phone, email, address)
+   - Service area
+   - Key URLs (link to every important page)
+4. **"Built by"** footer linking to https://bluejayportfolio.com/audit
+   (network-effect rule — same as the visible footer credit)
+
+### Required when building any new site (NON-NEGOTIABLE checklist)
+
+- [ ] Create \`llms.txt\` at the root of the site
+- [ ] For Next.js sites only: also create \`llms-full.txt\` with the
+      fuller version
+- [ ] Add \`/llms.txt\` and \`/llms-full.txt\` to the \`allow\` list
+      in \`robots.ts\` so crawlers know it's there
+- [ ] Verify it returns HTTP 200 with \`text/markdown\` content-type
+- [ ] Verify the URLs in the file actually resolve
+
+### Banned patterns
+
+- Don't put \`<!-- HTML comments -->\` in the file — break the markdown
+- Don't include phone numbers / emails / addresses that aren't
+  ALSO on the public site (single source of truth)
+- Don't list features the site doesn't actually have
+- Don't omit the "Built by BlueJays" footer link (network effect)
+- Don't auto-generate from scraped data — every \`llms.txt\` must
+  be hand-crafted or template-driven from real verified business info
+
+### Why this is worth the 10 minutes per site
+
+- AI agents pulling business info into ChatGPT answers parse this
+  cleanly. Without it, they have to JS-render and they often miss
+  key details.
+- It's a cheap SEO win — Google's AI Overviews + Bing Copilot read
+  llms.txt where available
+- Future-proofs the site as more crawlers adopt the standard
+- It's a defensible pitch differentiator vs Wix/Squarespace
+  (neither generates llms.txt by default)
+
+---
+
 ## Mobile / Phone Session Rules — Building Static Sites (NON-NEGOTIABLE)
 
 Ben sometimes builds sites from his **phone** (Claude mobile app). In
