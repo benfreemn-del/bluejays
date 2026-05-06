@@ -6,29 +6,24 @@ Static marketing site for Southern Crescent Women In Business.
 
 ---
 
-## When Ariel sends real photos · 4 swap points
+## Real photos · already wired
 
-All 4 placeholder images use Unsplash CDN URLs. To swap, find each
-`SWAP-ME-LATER` HTML comment in `index.html` and replace the `src=` URL
-with the real photo. Aspect ratios are baked in — match them to avoid
-layout shifts.
+Three real SCWIBGA photos are wired into `assets/images/`:
 
-| # | Section | Aspect ratio | What it should be |
-|---|---|---|---|
-| 1 | Hero (right side, vertical card) | **4:5** portrait · 900×1125 | Photo of an SCWIBGA event with members visible. Real candid > posed. |
-| 2 | Women's Business Center (interior shot) | **5:4** landscape · 900×720 | Photo of the actual WBC space — workshop in session, co-working area, signage. |
-| 3 | Founder (vertical portrait) | **4:5** portrait · 900×1125 | Real Ariel Shaw headshot · pull from LinkedIn or press kit. **Highest-impact swap.** |
-| 4 | Magazine cover (vertical) | **3:4** portrait · 600×800 | Real recent magazine cover photo or member-feature portrait. |
+| File | Section | Source |
+|---|---|---|
+| `hero.jpg` | Hero (right side card) | Real SCWIBGA event photo · audience under chandeliers |
+| `cohort.jpg` | Women's Business Center section | Entrepreneur Cohort graduation photo · 7 women with certs |
+| `founder.jpg` | Founder section | Ariel Shaw, MBA professional headshot |
 
-### Quick swap workflow
+Magazine cover is type-only (no photo) — when a real cover image lands,
+add the `cover-photo` class back into `index.html` and drop the file into
+`assets/images/magazine.jpg`.
 
-1. Drop new photos into `public/sites/scwibga/assets/images/` — name them `hero.jpg`, `wbc.jpg`, `founder.jpg`, `magazine.jpg`
-2. In `index.html`, replace each Unsplash URL with the local path:
-   ```html
-   src="/sites/scwibga/assets/images/hero.jpg"
-   ```
-3. Match the `width=` / `height=` attributes to your photo's actual dimensions
-4. Commit + push — Vercel rebuilds in 90 seconds
+### To swap a photo later
+
+Replace the file in `assets/images/` keeping the same filename.
+Vercel redeploys in ~90 seconds. No HTML edit needed.
 
 ---
 

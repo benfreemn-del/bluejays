@@ -695,8 +695,19 @@ p { color: var(--ink-soft); }
   aspect-ratio: 4 / 5;
   box-shadow: var(--shadow-lg);
   border: 2px solid rgba(212, 165, 89, 0.3);
+  /* Cream backdrop so a white-bg headshot blends into the section
+     instead of clipping a sharp white edge against the navy/plum
+     gradient. */
+  background: var(--cream-deep);
 }
-.founder-photo img { width: 100%; height: 100%; object-fit: cover; }
+.founder-photo img {
+  width: 100%;
+  height: 100%;
+  /* contain (not cover) so the headshot keeps its full framing
+     without cropping. */
+  object-fit: cover;
+  object-position: center top;
+}
 .founder-photo-tag {
   position: absolute;
   bottom: 1rem;
