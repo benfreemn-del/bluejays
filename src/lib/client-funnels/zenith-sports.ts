@@ -190,25 +190,50 @@ const COACHES: AudienceFunnel = {
         {
           channel: "email",
           templateId: "coaches.d0.welcome",
-          subject: "TEKKY® for {{firstName}} — coach-credible, not influencer-first",
+          subject: "Your TEKKY® Coaching Guide, {{firstName}} — open inside",
           body: `Hi {{firstName}},
 
-Thanks for reaching out about TEKKY®. I'm Philip — Zenith Sports co-founder, ex-academy coach.
+Thanks for grabbing the TEKKY® Coaching Guide. I'm Philip — Zenith Sports co-founder, ex-academy coach. The full curriculum is linked at the bottom of this email; here's the snack version so you can use it tomorrow.
 
-Short version: TEKKY is a patent-pending technical training ball. FIFA Size 3 control surface. FIFA Size 5 match-day weight. Built specifically to force more touches per minute and tighter technique under fatigue.
+──────────────────
+WARM-UP · 3 DRILLS YOU CAN RUN AT YOUR NEXT SESSION
+──────────────────
 
-Trusted by Rec, Travel, ECNL, MLS Next clubs and college programs. We didn't go influencer-first. We went coach-first.
+1. INSIDE-OUTSIDE FOOTWORK (2 min)
+   Why: Wakes up the ankle and re-trains the foot to the smaller TEKKY surface.
+   Cue: "Light touches. The ball stays under your hip."
 
-Two things I can do for you right now:
+2. STATIONARY V-PULLBACK x 12 EACH FOOT (3 min)
+   Why: First-touch composure under pressure starts with knowing exactly where the ball is.
+   Cue: "Eyes up after the pull, not down."
 
-1. Send you our coaching guide — drill progressions, session plans, the European-style technical curriculum we use. Free PDF: {{trainingUrl}}
+3. FIGURE-8 ROLLOVER (3 min)
+   Why: Both feet, both surfaces. Forces sole-of-foot control instead of the toe-poke default.
+   Cue: "Sole on top, then the other sole. No air."
 
-2. Walk you through a 30-minute club demo (in person if you're in WA, video call anywhere else). Book here: {{contactUrl}}
+──────────────────
+THE FULL GUIDE
+──────────────────
 
-The coaching guide lives here too if you want to skim it now: {{coachGuideUrl}}
+Open here: {{coachGuideUrl}}
+
+It's a hosted page — works on any device, always the latest version, and prints clean as a PDF: hit Cmd+P (Mac) or Ctrl+P (Windows) → "Save as PDF" if you want to drop it in your team's Drive folder.
+
+What's inside:
+  • All 26 drills with the why + cue (so an assistant coach can run them cold)
+  • A 4-week starter session plan, age-banded
+  • The European-style technical curriculum we use at TEKKY academies
+  • A printable warm-up card you can clip to your training board
+
+──────────────────
+WANT ME TO WALK YOU THROUGH IT?
+──────────────────
+
+15-min club demo, in person if you're in WA, video call anywhere else: {{contactUrl}}
 
 — Philip
-Zenith Sports / TEKKY®`,
+Zenith Sports / TEKKY®
+Trusted by Rec, Travel, ECNL, MLS Next clubs + college programs.`,
         },
       ],
     },
@@ -218,7 +243,7 @@ Zenith Sports / TEKKY®`,
         {
           channel: "sms",
           templateId: "coaches.d1.sms",
-          body: `{{firstName}} — Philip @ TEKKY. Sent you the coaching guide PDF and a club-demo booking link. Want me to set up a quick call this week to walk through it together?`,
+          body: `{{firstName}} — Philip @ TEKKY. Sent you the coaching guide + a club-demo booking link. Want me to set up a quick call this week to walk through it?`,
         },
       ],
     },
