@@ -484,6 +484,47 @@ const AUDIENCE_FILTER_META: Record<
   unknown: { emoji: "?", label: "Unknown", activeChip: "bg-slate-500 border-slate-400 text-white" },
 };
 
+/**
+ * Per-client audience taxonomy. Drives the Category dropdown in LeadsTab
+ * so the dropdown surfaces the FULL list of customer types for that
+ * tenant — even ones that don't have leads yet — instead of only the
+ * audiences currently present in data. Lets an owner drill through every
+ * segment without first having data in it.
+ *
+ * If a tenant isn't listed here, the dropdown falls back to data-driven
+ * options only (whatever audiences appear in the leads array).
+ */
+const AUDIENCES_BY_SLUG: Record<string, string[]> = {
+  "zenith-sports": ["parent", "coach", "player", "club"],
+  "itc-quick-attach": ["dealer", "tym", "forester", "hunter", "hobbyist", "community"],
+  // Laser Lakes — no audience taxonomy yet, falls through to data-driven
+  "laser-lakes": [],
+};
+
+/**
+ * Funnel-stage dropdown options for LeadsTab. Drill-through every part
+ * of the funnel pipeline — synthetic helpers (uncontacted / unread) on
+ * top, then every direct ClientLeadFunnelStatus value, then the dismiss
+ * archive view at the bottom.
+ *
+ * id matches the existing filter-key contract:
+ *   "all" / "uncontacted" / "unread" / "dismissed" → synthetic filters
+ *   anything else → exact funnel_status match (works for not_enrolled,
+ *     enrolled, responded, paused, converted, completed)
+ */
+const STAGE_DROPDOWN_OPTIONS: { id: string; label: string; emoji?: string }[] = [
+  { id: "all", label: "All leads" },
+  { id: "uncontacted", label: "Uncontacted (no touches yet)", emoji: "🆕" },
+  { id: "unread", label: "Needs attention", emoji: "🔔" },
+  { id: "not_enrolled", label: "Not enrolled", emoji: "○" },
+  { id: "enrolled", label: "In funnel", emoji: "▶" },
+  { id: "responded", label: "Responded", emoji: "💬" },
+  { id: "paused", label: "Paused", emoji: "⏸" },
+  { id: "converted", label: "Won", emoji: "🏆" },
+  { id: "completed", label: "Funnel completed", emoji: "✅" },
+  { id: "dismissed", label: "Dismissed (archive)", emoji: "✕" },
+];
+
 const SOURCE_LABEL: Record<string, string> = {
   "main-inquiry-form": "Contact form",
   "email-capture": "Email capture",
@@ -731,6 +772,7 @@ export default function PortalPage({
         )}
         {tab === "leads" && (
           <LeadsTab
+            slug={slug}
             leads={leads}
             summary={leadsSummary}
             onStatus={updateLeadStatus}
@@ -1601,11 +1643,13 @@ function InsightsTab({
 /* ─────────────────────────── LEADS TAB ─────────────────────────── */
 
 function LeadsTab({
+  slug,
   leads,
   summary,
   onStatus,
   onMutate,
 }: {
+  slug: string;
   leads: ClientLead[];
   summary: LeadsSummary | null;
   onStatus: (id: string, status: string) => void;
@@ -1671,6 +1715,24 @@ function LeadsTab({
             ? activeLeads.filter((l) => (l.touch_count ?? 0) === 0)
             : activeLeads.filter((l) => l.funnel_status === filter);
 
+  // Per-stage counts — used to render the count next to each option in
+  // the Stage dropdown so an owner can see at a glance how many leads
+  // are sitting in each part of the funnel.
+  const stageDropdownCounts: Record<string, number> = {
+    all: activeLeads.length,
+    uncontacted: activeLeads.filter((l) => (l.touch_count ?? 0) === 0).length,
+    unread: activeLeads.filter(
+      (l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled",
+    ).length,
+    not_enrolled: activeLeads.filter((l) => l.funnel_status === "not_enrolled").length,
+    enrolled: activeLeads.filter((l) => l.funnel_status === "enrolled").length,
+    responded: activeLeads.filter((l) => l.funnel_status === "responded").length,
+    paused: activeLeads.filter((l) => l.funnel_status === "paused").length,
+    converted: activeLeads.filter((l) => l.funnel_status === "converted").length,
+    completed: activeLeads.filter((l) => l.funnel_status === "completed").length,
+    dismissed: leads.filter((l) => l.funnel_status === "dismissed").length,
+  };
+
   // Second filter axis — audience / category. Cuts across funnel stages
   // so an owner can see e.g. "all Coach leads regardless of stage" or
   // "all Won leads who came in as Players".
@@ -1702,19 +1764,34 @@ function LeadsTab({
   const searchHasNoResults =
     !!searchQuery && tierFiltered.length > 0 && filtered.length === 0;
 
-  // Audiences present in the data — drives the filter pill row. Only
-  // surfaces this row if 2+ audience tags exist (otherwise the filter
-  // adds zero signal). Counts are computed against stageFiltered so they
-  // reflect the currently-selected stage filter.
+  // Audiences present in the data — drives the filter dropdown counts.
+  // Counts are computed against stageFiltered so they reflect the
+  // currently-selected stage filter. The dropdown ALWAYS shows the full
+  // tenant audience taxonomy (per AUDIENCES_BY_SLUG) so owners can drill
+  // through every customer type — even ones with zero leads — without
+  // first having to wait for data to land in them.
   const audienceCounts = new Map<string, number>();
   for (const l of stageFiltered) {
     const key = l.audience_segment ?? "untagged";
     audienceCounts.set(key, (audienceCounts.get(key) ?? 0) + 1);
   }
-  const audienceOptions = Array.from(audienceCounts.entries())
-    .filter(([, n]) => n > 0)
-    .sort((a, b) => b[1] - a[1]);
-  const showAudienceRow = audienceOptions.length >= 2;
+  // Merge tenant taxonomy + data-present audiences. Tenant order first,
+  // then any extras that showed up in data (so a stray audience tag
+  // doesn't disappear from the UI just because it's not in the static
+  // map yet).
+  const tenantAudiences = AUDIENCES_BY_SLUG[slug] ?? [];
+  const dataAudiences = Array.from(audienceCounts.keys()).filter(
+    (k) => k !== "untagged",
+  );
+  const mergedAudiences = [
+    ...tenantAudiences,
+    ...dataAudiences.filter((a) => !tenantAudiences.includes(a)),
+  ];
+  const audienceDropdownOptions = mergedAudiences.map((aud) => ({
+    id: aud,
+    count: audienceCounts.get(aud) ?? 0,
+  }));
+  const untaggedCount = audienceCounts.get("untagged") ?? 0;
 
   // Competition tiers present in the data — same pattern as audiences.
   const tierCounts = new Map<string, number>();
@@ -1728,18 +1805,11 @@ function LeadsTab({
   // Show tier row when at least one lead has a tier set (encourages tagging).
   const showTierRow = tierOptions.some(([k]) => k !== "untagged");
 
-  const counts = {
-    all: activeLeads.length,
-    uncontacted:
-      summary?.uncontacted ??
-      activeLeads.filter((l) => (l.touch_count ?? 0) === 0).length,
-    unread: activeLeads.filter(
-      (l) => l.funnel_status === "responded" || l.funnel_status === "not_enrolled",
-    ).length,
-    enrolled: activeLeads.filter((l) => l.funnel_status === "enrolled").length,
-    converted: activeLeads.filter((l) => l.funnel_status === "converted").length,
-    dismissed: leads.filter((l) => l.funnel_status === "dismissed").length,
-  };
+  // `summary` prop carries server-computed totals (used by Overview tab).
+  // Currently the dropdown counts come from the in-memory `leads` array —
+  // accurate enough for the per-tab filter UI. Reference here just so the
+  // unused-prop lint rule stays quiet when summary is null.
+  void summary;
 
   return (
     <div>
@@ -1757,75 +1827,68 @@ function LeadsTab({
         />
       </div>
 
-      {/* Funnel-stage filter (where they are in the journey) */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">
-          Stage
-        </span>
-        <div className="flex flex-wrap gap-1.5">
-          {[
-            { id: "all", label: "All" },
-            { id: "uncontacted", label: "Uncontacted" },
-            { id: "unread", label: "Needs attention" },
-            { id: "enrolled", label: "In funnel" },
-            { id: "converted", label: "Won" },
-            { id: "dismissed", label: "Dismissed" },
-          ].map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
-                filter === f.id
-                  ? "bg-blue-500 border-blue-400 text-white"
-                  : "border-slate-700 text-slate-400 hover:text-white"
-              }`}
-            >
-              {f.label} · {counts[f.id as keyof typeof counts]}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Filter dropdowns — two side-by-side selects to drill across
+          every part of the funnel (Stage) AND every customer type
+          (Category). Mobile-stacked, desktop side-by-side. The Stage
+          dropdown always shows every funnel stage; the Category
+          dropdown always shows the full tenant audience taxonomy
+          (per AUDIENCES_BY_SLUG) so an owner can drill through a
+          customer type even if no leads have landed in it yet.
 
-      {/* Audience / category filter — orthogonal to stage. Only renders
-          when 2+ audiences exist in the current stage filter (otherwise
-          adds no signal and just clutters the UI). */}
-      {showAudienceRow && (
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">
-            Category
+          Replaces the previous chip-row pattern — chips broke at 6+
+          audiences and didn't surface stages with zero leads. Native
+          <select> is used (not a custom popover) for accessibility +
+          mobile-friendliness + smaller bundle. */}
+      <div className="grid sm:grid-cols-2 gap-3 mb-4">
+        {/* Stage dropdown — every part of the funnel */}
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1.5 block">
+            Stage · {stageFiltered.length} matching
           </span>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              onClick={() => setAudienceFilter("all")}
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
-                audienceFilter === "all"
-                  ? "bg-blue-500 border-blue-400 text-white"
-                  : "border-slate-700 text-slate-400 hover:text-white"
-              }`}
-            >
-              All audiences · {stageFiltered.length}
-            </button>
-            {audienceOptions.map(([aud, n]) => {
-              const meta = AUDIENCE_FILTER_META[aud] ?? AUDIENCE_FILTER_META.unknown;
-              const isActive = audienceFilter === aud;
-              return (
-                <button
-                  key={aud}
-                  onClick={() => setAudienceFilter(aud)}
-                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition inline-flex items-center gap-1 ${
-                    isActive
-                      ? `${meta.activeChip}`
-                      : "border-slate-700 text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <span>{meta.emoji}</span>
-                  <span>{meta.label} · {n}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+          >
+            {STAGE_DROPDOWN_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.emoji ? `${opt.emoji} ` : ""}
+                {opt.label} ({stageDropdownCounts[opt.id] ?? 0})
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {/* Category dropdown — every customer type for this tenant */}
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1.5 block">
+            Category · {audienceFiltered.length} matching
+          </span>
+          <select
+            value={audienceFilter}
+            onChange={(e) => setAudienceFilter(e.target.value)}
+            className="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+          >
+            <option value="all">
+              All categories ({stageFiltered.length})
+            </option>
+            {audienceDropdownOptions.length > 0 && (
+              <optgroup label="Customer types">
+                {audienceDropdownOptions.map(({ id, count }) => {
+                  const meta =
+                    AUDIENCE_FILTER_META[id] ?? AUDIENCE_FILTER_META.unknown;
+                  return (
+                    <option key={id} value={id}>
+                      {meta.emoji} {meta.label} ({count})
+                    </option>
+                  );
+                })}
+              </optgroup>
+            )}
+            <option value="untagged">• Untagged ({untaggedCount})</option>
+          </select>
+        </label>
+      </div>
 
       {/* Competition-tier filter — third axis. Renders when any lead
           in the current audience filter has a tier set. */}
@@ -1869,7 +1932,7 @@ function LeadsTab({
         </div>
       )}
 
-      {!showAudienceRow && !showTierRow && <div className="mb-4" />}
+      {!showTierRow && <div className="mb-2" />}
 
       {filtered.length === 0 ? (
         <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
