@@ -2634,59 +2634,101 @@ Landing page is live at `/agency`. This block covers the paid ad campaigns that 
 
 =======
 
-## SMS A2P 10DLC Compliance Rules (NON-NEGOTIABLE — locked in 2026-04-20)
+## SMS A2P 10DLC Compliance Rules — Rule 35 (NON-NEGOTIABLE — UPDATED 2026-05-06)
 
-TCR rejected the first A2P 10DLC campaign submission citing issues
-verifying the Call-to-Action (CTA). Root cause: the opt-in description
-said "businesses whose numbers appeared on public business listings
-(Google, Yelp, BBB)" — which TCR does NOT accept as valid SMS consent
-under TCPA. Scraped public business numbers are not opt-ins.
+**History:** TCR rejected the first A2P 10DLC submission (April 2026)
+because the opt-in description claimed "businesses whose numbers appeared
+on public business listings". TCR rejected the SECOND submission
+(May 2026) because the SMS consent checkbox on `/get-started` was
+REQUIRED to submit the form — TCPA 47 CFR 64.1200(a)(7)(i) forbids
+making SMS consent a condition of service.
 
-**The fix is permanent and enforced in code:**
+**The fix is permanent and enforced in code (the BELT + SUSPENDERS gate):**
 
-### SMS fires ONLY for `prospect.source === "inbound"` prospects
+### SMS fires ONLY when BOTH flags are true on the prospect record
 
-This is gated inside `src/lib/funnel-manager.ts`:
-- `buildStepPayload()` checks `prospect.source === "inbound"` before
-  building any SMS payload. Cold-outreach prospects (`source: "scouted"`)
-  get `smsBody = undefined` and only receive email + voicemail.
-- `buildVoicemailFollowUpPayload()` applies the same gate to the
-  post-voicemail SMS follow-up.
+Gated inside `src/lib/funnel-manager.ts` in TWO places
+(`buildStepPayload()` + `buildVoicemailFollowUpPayload()`):
 
-### What counts as a valid opt-in source
-1. **Inbound form submission** — prospect fills out `/get-started` and
-   ticks the required SMS consent checkbox. `/api/leads/submit` sets
-   `source: "inbound"` on the created prospect. The checkbox wording
-   is locked — it must reference both email AND SMS, mention frequency
-   (up to 4/week), "Msg & data rates may apply", and "Reply STOP to
-   opt out". See `src/app/get-started/page.tsx` for the current copy.
-2. **Direct reply expressing interest + providing phone** — manually
-   updated to `source: "inbound"` when a prospect replies to email/VM
-   asking Ben to text them. Record the consent capture in prospect notes.
+```ts
+const smsAllowedForThisProspect =
+  prospect.source === "inbound" &&
+  prospect.smsConsent === true;
+```
+
+- `source === "inbound"` proves the prospect submitted /get-started
+  themselves OR was manually flipped to inbound after a phone-confirmed
+  opt-in.
+- `smsConsent === true` proves they explicitly ticked the OPTIONAL
+  SMS consent checkbox on the form OR opted in via /opt-in-sms/[id]
+  post-submit OR Ben manually captured consent through another
+  channel.
+
+Both flags are needed. Source alone is insufficient because TCPA forbids
+required consent. SmsConsent alone is insufficient because we still
+want to keep cold-scouted prospects out of the SMS pool entirely.
+
+### What counts as a valid SMS opt-in capture
+1. **`/get-started` form, optional checkbox ticked** — `/api/leads/submit`
+   sets `source: "inbound"`, `smsConsent: true`, `smsConsentAt: now`,
+   `smsConsentSource: "get_started_form"`. Checkbox wording is locked —
+   must reference SMS specifically (NOT bundled with email), mention
+   frequency, "Msg & data rates may apply", "Reply STOP to opt out", AND
+   state explicitly that consent is NOT required to submit the form.
+2. **`/opt-in-sms/[id]` post-submit upsell** — when the prospect submits
+   `/get-started` WITHOUT ticking the SMS box, the form redirects to
+   /opt-in-sms/[id]. There they can confirm phone + tick the consent box.
+   `/api/leads/sms-opt-in/[id]` sets `smsConsent: true`,
+   `smsConsentAt: now`, `smsConsentSource: "opt_in_page"`.
+3. **Manual capture via another channel** — Ben captures consent
+   through a phone call, written reply, in-person etc. Update the
+   prospect row manually with `smsConsent: true`, `smsConsentAt: <ISO>`,
+   `smsConsentSource: "manual"`. Record the consent capture in
+   prospect notes for audit defense.
 
 ### What does NOT count
 - Scraping a number from Google Business Profile / Yelp / BBB
 - The number being "publicly available"
 - The business being "obviously commercial"
-- Any interpretation where the user didn't take an affirmative action
+- Submitting `/get-started` WITHOUT ticking the consent box (form
+  submission alone is NOT consent — `source='inbound'` flips but
+  `smsConsent` stays false)
+- Any interpretation where the user didn't affirmatively tick a
+  checkbox or send an explicit yes
 
-### Cold-outreach funnel shape (post-gate)
-| Day | Channels |
-|---|---|
-| 0 | email only (was email + SMS) |
-| 2 | voicemail |
-| 5 | email |
-| 12 | email only (was email + SMS) |
-| 18 | voicemail |
-| 21 | email |
-| 30 | email |
+### Form contract (TCPA-compliant, locked 2026-05-06)
+- The SMS consent checkbox on `/get-started` MUST be unchecked by default
+- The form MUST submit successfully without the checkbox ticked
+- Phone number is REQUIRED only when the box is ticked; otherwise optional
+- Email is REQUIRED (it's the only contact for non-SMS-consenters)
+- Checkbox label MUST start with an "Optional" badge AND state "Consent
+  is not required to submit this form or receive a website preview"
+- When unchecked → /api/leads/submit creates the prospect AND
+  redirects browser to `/opt-in-sms/[id]` for the optional upsell
+- When checked → /api/leads/submit creates the prospect AND shows
+  the success state immediately (no upsell needed)
 
-Inbound prospects still get the full email + SMS + voicemail mix on
-the same schedule.
+### Cold-outreach funnel shape (no SMS without opt-in)
+| Day | Channels (cold scouted) | Channels (inbound + smsConsent) |
+|---|---|---|
+| 0 | email only | email + SMS |
+| 2 | voicemail | voicemail |
+| 5 | email | email + SMS |
+| 12 | email | email + SMS |
+| 18 | voicemail | voicemail |
+| 21 | email | email + SMS |
+| 30 | email | email |
 
-### Fields TCR must validate (locked in the resubmission)
-- Privacy Policy URL: `https://bluejayportfolio.com/privacy` (must render)
-- Terms URL: `https://bluejayportfolio.com/terms` (must render)
+Inbound prospects who did NOT tick the SMS box get the same shape as
+cold-scouted (email-only).
+
+### Fields TCR must validate (locked in the May 2026 resubmission)
+- Privacy Policy URL: `https://bluejayportfolio.com/privacy` (must render
+  the new "consent is not a condition" wording)
+- Terms URL: `https://bluejayportfolio.com/terms` (must render the new
+  opt-in description with /get-started + /opt-in-sms/[id] paths)
+- End User Consent description: explicit "consent is NOT required to
+  submit the form, receive a preview, or purchase any product or service"
 - Sample messages: fully rendered, no `{placeholder}` tokens
 - STOP compliance: every SMS template ends with "Reply STOP to opt out"
 - HELP reply: "BlueJay Business Solutions: Custom website previews for
@@ -2694,10 +2736,14 @@ the same schedule.
   Reply STOP to unsubscribe."
 
 ### NEVER do (kills the campaign after approval)
-- Remove the `source === "inbound"` gate in funnel-manager
-- Send SMS to a prospect whose `source` is `"scouted"` or unknown
+- Remove EITHER half of the belt+suspenders gate in funnel-manager
+- Make the SMS consent checkbox `required` on the form again
+- Make phone field `required` regardless of SMS consent
+- Send SMS to a prospect whose `smsConsent !== true`
 - Describe opt-in sources to TCR that don't match what the code does
-- Skip the consent checkbox on `/get-started` — TCR can crawl it
+- Auto-flip `smsConsent` to true when a prospect submits the form
+  without ticking — capture must be affirmative-tick only
+- Pre-check the consent box on either `/get-started` or `/opt-in-sms/[id]`
 
 ---
 

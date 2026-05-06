@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createClientTask,
   createClientTasks,
+  listAllTasks,
   listClientTasks,
   listClientsWithTasks,
   type NewClientTask,
@@ -30,9 +31,17 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const client = searchParams.get("client");
+  const all = searchParams.get("all") === "1";
   const includeCompleted = searchParams.get("includeCompleted") === "1";
 
   try {
+    // /api/client-tasks?all=1 — every task across every client. Used
+    // by the master /dashboard/all-tasks page so Ben sees his whole
+    // pipeline in one shot without hopping between clients.
+    if (all) {
+      const tasks = await listAllTasks({ includeCompleted });
+      return NextResponse.json({ ok: true, tasks });
+    }
     if (!client) {
       const summary = await listClientsWithTasks();
       return NextResponse.json({ ok: true, clients: summary });

@@ -36,9 +36,16 @@ export default function ClientsIndexPage() {
           >
             ← Dash
           </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1">
             Client jobs
           </h1>
+          <Link
+            href="/dashboard/all-tasks"
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+            title="Master to-do across every client"
+          >
+            Master to-do →
+          </Link>
         </div>
       </header>
 

@@ -180,6 +180,25 @@ export async function deleteClientTask(id: string): Promise<void> {
 }
 
 /** Helper for routes that need to know which clients have any open work. */
+/** List EVERY task across every client. Used by the master to-do board
+ *  at /dashboard/all-tasks so Ben can see his entire pipeline in one
+ *  place. By default hides done + wont-do; pass includeCompleted to
+ *  see the full archive. */
+export async function listAllTasks(opts: {
+  includeCompleted?: boolean;
+} = {}): Promise<ClientTask[]> {
+  const sb = getSupabase();
+  let q = sb.from("client_tasks").select("*").order("created_at", {
+    ascending: false,
+  });
+  if (!opts.includeCompleted) {
+    q = q.not("status", "in", "(done,wont-do)");
+  }
+  const { data, error } = await q;
+  if (error) throw new Error(`listAllTasks: ${error.message}`);
+  return (data ?? []) as ClientTask[];
+}
+
 export async function listClientsWithTasks(): Promise<
   { client_slug: string; open_count: number }[]
 > {
