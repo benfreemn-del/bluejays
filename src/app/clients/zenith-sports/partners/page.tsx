@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PartnerApplyForm from "./PartnerApplyForm";
 
 export const metadata = {
   title: "Zenith Sports / TEKKY Partner Program — coaches, clubs, camps",
@@ -30,12 +31,10 @@ export default function ZenithPartnersPage() {
             >
               View script library
             </Link>
-            <a
-              href="mailto:partners@zenithsports.org?subject=Zenith Partner Application"
+            <PartnerApplyForm
+              trigger="Apply →"
               className="text-sm font-semibold rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-3 py-1.5 transition-colors"
-            >
-              Apply →
-            </a>
+            />
           </div>
         </div>
       </header>
@@ -63,12 +62,10 @@ export default function ZenithPartnersPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href="mailto:partners@zenithsports.org?subject=Zenith Partner Application"
+            <PartnerApplyForm
+              trigger="Apply to be a partner →"
               className="inline-flex items-center justify-center rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
-            >
-              Apply to be a partner →
-            </a>
+            />
             <Link
               href="/clients/zenith-sports/partners/script"
               className="inline-flex items-center justify-center rounded-md border border-lime-500/30 hover:border-lime-500/60 bg-slate-900/50 hover:bg-slate-800 px-6 py-4 text-sm text-lime-200 hover:text-white transition-colors"
@@ -294,15 +291,13 @@ export default function ZenithPartnersPage() {
         <div className="mx-auto max-w-2xl px-6 py-14 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready?</h2>
           <p className="text-slate-400 mb-8">
-            Email a one-paragraph application — name, role (coach / club / camp / parent),
-            org name, why Zenith.
+            Quick form — your name, role, org, and why Zenith. Philip
+            replies personally, usually same day.
           </p>
-          <a
-            href="mailto:partners@zenithsports.org?subject=Zenith Partner Application"
+          <PartnerApplyForm
+            trigger="Apply now →"
             className="inline-flex items-center justify-center rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
-          >
-            Apply now →
-          </a>
+          />
         </div>
       </section>
 
