@@ -488,6 +488,36 @@ export function getRegistrar(name?: RegistrarName): RegistrarClient {
   return mockClient;
 }
 
+/**
+ * Kill-switch helper — mirrors Rule 52 (Stripe). Returns false ONLY when
+ * NAMECHEAP_LIVE_ENABLED is set to the literal string "false". Default
+ * unset OR any other value = LIVE operation (fail-OPEN by design — a
+ * missing env var doesn't accidentally disable the registrar on a fresh
+ * Vercel project).
+ *
+ * When false, every mutating endpoint (/api/domains/register, the
+ * renewal cron, /api/domains/[id]/retry-renewal) MUST short-circuit
+ * BEFORE any registrar API call. Read-only paths (checkAvailability,
+ * getExpiry, getDomain) are NOT gated — they don't cost money and
+ * blocking them would freeze the operator dashboard.
+ *
+ * Recovery: set NAMECHEAP_LIVE_ENABLED=true (or remove the env var) on
+ * Vercel + redeploy. New registrations + renewals resume immediately.
+ * Existing in-flight registrations are unaffected (the kill-switch only
+ * gates NEW starts).
+ */
+export function isNamecheapLiveEnabled(): boolean {
+  return process.env.NAMECHEAP_LIVE_ENABLED !== "false";
+}
+
+/** Friendly 503 payload returned by every gated endpoint. */
+export const NAMECHEAP_KILL_SWITCH_RESPONSE = {
+  error: "Domain registration temporarily disabled",
+  reason:
+    "NAMECHEAP_LIVE_ENABLED kill-switch engaged. Set the env var back to true (or remove it) on Vercel and redeploy to resume.",
+  killSwitchEngaged: true,
+};
+
 /** Lowercase + trim a domain string. Strips a leading "www." for storage. */
 export function normalizeDomain(domain: string): string {
   let d = (domain || "").trim().toLowerCase();

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { getDomain } from "@/lib/domain-store";
 import { processDomainRenewal } from "@/app/api/billing/check-domain-renewals/route";
+import {
+  isNamecheapLiveEnabled,
+  NAMECHEAP_KILL_SWITCH_RESPONSE,
+} from "@/lib/domain-registrar";
 
 /**
  * Failure-recovery endpoint — re-runs the renewal logic for a single
@@ -22,6 +26,13 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  // Rule 52/67 kill-switch — fail-OPEN. Manual retries are operator-
+  // initiated, but we still gate them so the same env-var flip stops
+  // both the cron AND ad-hoc retries.
+  if (!isNamecheapLiveEnabled()) {
+    return NextResponse.json(NAMECHEAP_KILL_SWITCH_RESPONSE, { status: 503 });
+  }
+
   const { id } = await params;
 
   const stripeOk = isStripeConfigured();

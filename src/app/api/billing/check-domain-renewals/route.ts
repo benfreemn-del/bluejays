@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
-import { getRegistrar, RegistrarError } from "@/lib/domain-registrar";
+import {
+  getRegistrar,
+  RegistrarError,
+  isNamecheapLiveEnabled,
+} from "@/lib/domain-registrar";
 import {
   getDomainsExpiringWithin,
   updateDomain,
@@ -88,6 +92,32 @@ export async function POST(request: NextRequest) {
     if (!userAgent.toLowerCase().includes("vercel")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+  }
+
+  // Rule 52/67 kill-switch — fail-OPEN. When the env var is set to
+  // "false" we still log a heartbeat (so the watchdog Rule 66 doesn't
+  // SMS Ben about a stale cron) but skip every Stripe + registrar call.
+  // Recovery: flip NAMECHEAP_LIVE_ENABLED back to true and the next
+  // tick processes the backlog of due-for-renewal domains.
+  if (!isNamecheapLiveEnabled()) {
+    console.log(
+      "[DomainRenewals] NAMECHEAP_LIVE_ENABLED=false — kill-switch engaged. No-op.",
+    );
+    await logHeartbeat(
+      "billing_check_domains",
+      { reason: "kill_switch_engaged" },
+      "skipped",
+    );
+    return NextResponse.json({
+      ok: true,
+      mockMode: true,
+      reason: "kill_switch_engaged",
+      checked: 0,
+      renewed: 0,
+      paused: 0,
+      failed: 0,
+      errors: [],
+    });
   }
 
   const stripeOk = isStripeConfigured();

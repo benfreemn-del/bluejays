@@ -6144,6 +6144,79 @@ INSERT is a silent-failure risk.
 
 ---
 
+### Locked-In Rule 67 — Namecheap Live Kill-Switch (NON-NEGOTIABLE)
+
+Established 2026-05-06 by Ben as part of the Namecheap LIVE flip,
+mirroring Rule 52 (Stripe). Every customer-touching mutation that
+hits the Namecheap API MUST honor a single env-var kill-switch so
+any incident can stop new registrations + renewals in <2 minutes
+without code changes.
+
+**The contract:**
+- When `NAMECHEAP_LIVE_ENABLED=false`, every gated endpoint short-
+  circuits BEFORE any prospect lookup, DB write, or registrar API
+  call. Returns HTTP 503 with `{ killSwitchEngaged: true, ... }`.
+- Default unset OR `NAMECHEAP_LIVE_ENABLED=true` (or any value
+  !== "false") = LIVE operation. The check is fail-OPEN by design —
+  a missing env var doesn't accidentally disable the registrar on
+  a fresh Vercel project.
+- Helper: `isNamecheapLiveEnabled()` exported from
+  `src/lib/domain-registrar.ts`. Friendly 503 payload constant:
+  `NAMECHEAP_KILL_SWITCH_RESPONSE`.
+
+**Endpoints that MUST honor the kill-switch:**
+- `POST /api/domains/register` — initial $11 registration
+- `POST /api/domains/[id]/retry-renewal` — manual retry after
+  card update
+- `POST/GET /api/billing/check-domain-renewals` — daily renewal
+  cron (logs `kill_switch_engaged` heartbeat so Rule 66 watchdog
+  doesn't alert about a stale cron)
+
+**NOT gated (read-only / no spend):**
+- `POST /api/domains/check` — availability lookup, $0 cost
+- `GET /api/domains/[id]` — single-row read
+- `GET /api/domains/list` — list operator's domains
+- `GET /api/domains/[id]/vercel-status` — read-only Vercel state
+- `getExpiry()` — read-only registrar lookup, $0 cost
+
+**When to flip:**
+- Namecheap account suspension or API rate-limit lockout
+- Bad customer email / contact data flowing into registrant fields
+- Any chargeback spike on the deferred mgmt sub (don't pay $11
+  for a customer who'll dispute the $100 renewal)
+- Maintenance windows where an incompatible code change is deploying
+- Suspected bug in the renewal cron's Stripe-first ordering
+
+**Recovery:**
+1. Set `NAMECHEAP_LIVE_ENABLED=true` (or remove the env var) on
+   Vercel
+2. Redeploy (~60-90 sec)
+3. Next cron tick (or next manual register call) processes the
+   queue normally
+4. In-flight registrations from before the flip were unaffected
+   — the kill-switch only gates NEW starts, NOT operations
+   already in progress at the registrar API
+
+**Forbidden:**
+- Don't add a UI surface that bypasses this gate
+- Don't add a different env var for the same purpose — this is
+  the single canonical kill-switch for Namecheap
+- Don't make the kill-switch fail-CLOSED (default off when env
+  var missing) — that bricks new Vercel projects on first deploy
+- Don't gate read-only endpoints (availability, getExpiry) — they
+  cost $0 and gating them freezes the operator dashboard
+
+**Pre-flip checklist (Rule 54 ordering):**
+1. ✓ Code-level kill-switch shipped + deployed (this rule)
+2. → Get Namecheap API key + whitelist Vercel function IPs
+3. → Set `NAMECHEAP_API_USER`, `NAMECHEAP_API_KEY`,
+     `NAMECHEAP_USERNAME`, `NAMECHEAP_CLIENT_IP` on Vercel
+4. → REMOVE `NAMECHEAP_SANDBOX=true` (delete the row, don't set
+     to false)
+5. → Smoke-test via `/api/domains/check` for a known-available
+     `.com` — should return `{ available: true, price: ~11 }`
+6. → Verify cost logging by checking `system_costs` for a
+     `service='domain_registrar'` row
 
 ---
 

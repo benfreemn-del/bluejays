@@ -32,6 +32,8 @@ import {
   normalizeDomain,
   computeNextRenewal,
   RegistrarError,
+  isNamecheapLiveEnabled,
+  NAMECHEAP_KILL_SWITCH_RESPONSE,
 } from "@/lib/domain-registrar";
 import {
   createDomain,
@@ -52,6 +54,13 @@ interface Body {
 }
 
 export async function POST(request: NextRequest) {
+  // Rule 52/67 kill-switch — fail-OPEN. Short-circuit BEFORE any
+  // prospect lookup / DB write / registrar call so a misconfigured
+  // env var is the cheapest possible failure mode.
+  if (!isNamecheapLiveEnabled()) {
+    return NextResponse.json(NAMECHEAP_KILL_SWITCH_RESPONSE, { status: 503 });
+  }
+
   let body: Body;
   try {
     body = (await request.json()) as Body;
