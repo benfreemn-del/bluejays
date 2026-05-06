@@ -20,6 +20,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SLUG = "olympic-inspections";
+// OIT's prospect UUID — bookings double-write to contact_form_submissions
+// so they show up in the BlueJays dashboard prospect detail view.
+const OIT_PROSPECT_ID = "9de1d213-e0d0-492e-ba34-b0c874056b66";
+const OIT_BUSINESS_NAME = "Olympic Inspections & Testing";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -158,6 +162,45 @@ export async function POST(req: NextRequest) {
       { ok: false, error: "save_failed" },
       { status: 500, headers: CORS },
     );
+  }
+
+  // ── Bridge: also write to contact_form_submissions so the BlueJays
+  // dashboard prospect detail view shows this booking as lead activity.
+  // Wrap in try/catch — bridge failure must NOT block the booking.
+  try {
+    const messageParts: string[] = [];
+    if (body.propertySize) messageParts.push(`Property size: ${body.propertySize}`);
+    if (typeof body.estimateLow === "number" && typeof body.estimateHigh === "number") {
+      messageParts.push(`Estimate: $${body.estimateLow}–$${body.estimateHigh}`);
+    }
+    if (body.addons && body.addons !== "none") messageParts.push(`Add-ons: ${body.addons}`);
+    if (body.address) messageParts.push(`Property: ${body.address}`);
+    if (slotId && claimed) {
+      // Resolve slot time for the bridge message
+      const { data: slotRow } = await supa
+        .from("client_booking_slots")
+        .select("start_at, end_at")
+        .eq("id", slotId)
+        .maybeSingle();
+      if (slotRow) {
+        messageParts.push(`Slot: ${slotRow.start_at} → ${slotRow.end_at}`);
+      }
+    }
+    if (body.notes) messageParts.push(`\nCustomer notes:\n${body.notes}`);
+
+    await supa.from("contact_form_submissions").insert({
+      prospect_id: OIT_PROSPECT_ID,
+      business_name: OIT_BUSINESS_NAME,
+      customer_name: name,
+      customer_phone: phone || null,
+      customer_email: email || null,
+      message: messageParts.join("\n") || "Mold inspection booking request",
+      service_requested: "mold-inspection-booking",
+      sms_sent: false,
+      email_sent: false,
+    });
+  } catch (e) {
+    console.error("[oit-bookings] bridge to contact_form_submissions failed (non-blocking):", e);
   }
 
   return NextResponse.json(
