@@ -145,6 +145,13 @@ export default function ClientTasksPage({
           >
             ← Dash
           </Link>
+          <Link
+            href="/dashboard/all-tasks"
+            className="text-emerald-300 hover:text-white text-[11px] tracking-wider uppercase font-bold border border-emerald-700/50 px-2 py-1 rounded"
+            title="Master to-do across every client"
+          >
+            All
+          </Link>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
               {slug}

@@ -222,6 +222,18 @@ export default function DashboardPage() {
             >
               Client Jobs
             </Link>
+            {/* MASTER TO-DO — always one click away from anywhere in the
+                dashboard, per the client-tasks scoping rule (see CLAUDE.md
+                / src/lib/client-tasks.ts header comment). Aggregates
+                client_tasks across every client into a single filterable
+                board. */}
+            <Link
+              href="/dashboard/all-tasks"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-300 transition-colors hover:bg-background hover:text-emerald-200"
+              title="Master to-do across every client + Ben"
+            >
+              Master To-Do
+            </Link>
 
             {/* Reports dropdown — all the stats/analytics/tracking pages */}
             <details className="relative group">

@@ -2,6 +2,37 @@
 
 # BlueJays Project — The Money Printer
 
+## To-Do Scoping Rules (NON-NEGOTIABLE)
+
+The to-do system has THREE distinct surfaces. Don't mix them. When
+adding any task-related feature, pick the right surface up front.
+
+1. **`/dashboard` home overview** — BlueJay Business Solutions LLC
+   ONLY. Tax / legal / ops compliance for the BlueJays company itself.
+   Surface: `<BusinessSetupChecklist />` (localStorage, no DB). Never
+   render `client_tasks` rows here. The home overview is for Ben's
+   own business, not for client work.
+
+2. **`/dashboard/clients/[slug]`** — per-client task list. One client
+   per page. Backed by `client_tasks` filtered by `client_slug`. Each
+   business gets its own list connected to its own back end. New
+   client features land on THIS surface, not the home overview.
+
+3. **`/dashboard/all-tasks`** — master cross-client board. Aggregates
+   every `client_tasks` row across every client into one filterable
+   view. **Always accessible** via the persistent "Master To-Do"
+   button in the dashboard header (and the "All" button on each
+   per-client task page). Never bury this link.
+
+When asked "where do I see X tasks":
+- BlueJays internal tax/legal → home overview checklist
+- One client's tasks → /dashboard/clients/[slug]
+- Everything Ben + every client owe right now → /dashboard/all-tasks
+
+Per-client portal at `/clients/[slug]/portal` is a SEPARATE customer-
+facing surface, not part of the dashboard. Same `client_tasks` table,
+filtered by `owner='client'`.
+
 ## Output Formatting Rules (NON-NEGOTIABLE)
 - **Never wrap URLs in bold (`**`).** Write links as plain text or plain markdown `[text](url)`. Bold markers around a URL break it when copied — the `**` gets included in the copied string. This applies everywhere: chat responses, code comments, commit messages, HTML, anywhere a URL appears.
 - **Outreach emails MUST use three separate fenced code blocks** — one for TO, one for SUBJECT, one for BODY. Never combine them. Never put the signature in the body (Ben has an auto-signature). This format lets Ben copy each field independently and forward without editing. Every single email Claude writes, no exceptions.
