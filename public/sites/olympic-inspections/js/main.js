@@ -12,6 +12,7 @@
     initRevealObserver();
     initFaqToggle();
     initCalculator();
+    initSlotPicker();
     initBookingForm();
     initYearStamp();
   });
@@ -275,16 +276,115 @@
     render();
   }
 
+  // ---- SLOT PICKER (fetches real available slots from API) ----
+  function initSlotPicker() {
+    var picker = document.getElementById("slotPicker");
+    var hiddenInput = document.getElementById("bookSlotId");
+    if (!picker) return;
+
+    function setStatus(msg, kind) {
+      picker.innerHTML = '<div class="slot-picker-status">' + msg + "</div>";
+      picker.setAttribute("data-state", kind || "loading");
+    }
+
+    function setEmpty() {
+      picker.innerHTML =
+        '<div class="slot-picker-empty">' +
+          '<strong>No open slots showing right now.</strong>' +
+          'Submit your details below and we will reach out with the next available time.' +
+        "</div>";
+      picker.setAttribute("data-state", "empty");
+    }
+
+    function groupByDay(slots) {
+      var groups = {};
+      var order = [];
+      slots.forEach(function (s) {
+        var d = new Date(s.start_at);
+        var key = d.toISOString().slice(0, 10);
+        if (!groups[key]) {
+          groups[key] = { date: d, slots: [] };
+          order.push(key);
+        }
+        groups[key].slots.push(s);
+      });
+      return order.map(function (k) { return groups[k]; });
+    }
+
+    function fmtTime(d) {
+      return d.toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    }
+
+    function fmtDay(d) {
+      return d.toLocaleDateString(undefined, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
+    }
+
+    function render(slots) {
+      if (!slots || slots.length === 0) {
+        setEmpty();
+        return;
+      }
+      picker.setAttribute("data-state", "ready");
+      var days = groupByDay(slots);
+      var html = "";
+      days.forEach(function (g) {
+        html += '<div class="slot-picker-day">';
+        html += '<span class="slot-picker-day-label">' + fmtDay(g.date) + "</span>";
+        html += '<div class="slot-picker-times">';
+        g.slots.forEach(function (s) {
+          var start = new Date(s.start_at);
+          var end = new Date(s.end_at);
+          html +=
+            '<button type="button" class="slot-pill" data-slot-id="' + s.id + '">' +
+              fmtTime(start) + " – " + fmtTime(end) +
+            "</button>";
+        });
+        html += "</div></div>";
+      });
+      picker.innerHTML = html;
+
+      // Wire selection
+      var pills = picker.querySelectorAll(".slot-pill");
+      for (var i = 0; i < pills.length; i++) {
+        pills[i].addEventListener("click", function () {
+          for (var k = 0; k < pills.length; k++) pills[k].classList.remove("is-selected");
+          this.classList.add("is-selected");
+          if (hiddenInput) hiddenInput.value = this.getAttribute("data-slot-id") || "";
+        });
+      }
+    }
+
+    setStatus("Loading available slots…", "loading");
+
+    fetch("/api/clients/olympic-inspections/slots/public", { cache: "no-cache" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("api_" + r.status);
+        return r.json();
+      })
+      .then(function (j) {
+        if (j && j.ok) render(j.slots || []);
+        else setEmpty();
+      })
+      .catch(function () {
+        setEmpty();
+      });
+  }
+
   // ---- BOOKING FORM ----
   function initBookingForm() {
     var form = document.getElementById("bookForm");
     var success = document.getElementById("bookSuccess");
     if (!form) return;
 
-    // Pine & Particle / OIT prospect ID — used to route inquiry to KR Ranches
-    // contact-form endpoint until we wire up a dedicated booking system.
-    // TODO Phase 2: replace with native /api/clients/olympic-inspections/booking
-    var endpoint = "https://bluejayportfolio.com/api/contact-form/9de1d213-e0d0-492e-ba34-b0c874056b66";
+    // Native OIT booking endpoint — atomically claims the slot + creates booking
+    var endpoint = "/api/clients/olympic-inspections/bookings";
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -296,29 +396,31 @@
       }
 
       var fd = new FormData(form);
-      var notesParts = [];
-      var dateVal = fd.get("date") || "";
-      var timeVal = fd.get("time") || "";
-      var addressVal = fd.get("address") || "";
-      var sizeVal = fd.get("propertySize") || "";
-      var estimateVal = fd.get("estimate") || "";
-      var addonsVal = fd.get("addons") || "";
-      var userNotes = fd.get("notes") || "";
-
-      if (sizeVal) notesParts.push("Property size: " + sizeVal);
-      if (estimateVal) notesParts.push("Live estimate: $" + estimateVal);
-      if (addonsVal && addonsVal !== "none") notesParts.push("Add-ons: " + addonsVal);
-      if (dateVal) notesParts.push("Preferred date: " + dateVal);
-      if (timeVal && timeVal !== "any") notesParts.push("Preferred time: " + timeVal);
-      if (addressVal) notesParts.push("Property: " + addressVal);
-      if (userNotes) notesParts.push("\nCustomer notes:\n" + userNotes);
+      var slotId = fd.get("slotId") || null;
+      var estimateVal = (fd.get("estimate") || "").toString();
+      // estimateVal is "low-high" string from calculator; split for API
+      var estimateLow = null, estimateHigh = null;
+      if (estimateVal && estimateVal !== "custom") {
+        var parts = estimateVal.split("-");
+        if (parts.length === 2) {
+          estimateLow = parseInt(parts[0], 10);
+          estimateHigh = parseInt(parts[1], 10);
+          if (isNaN(estimateLow)) estimateLow = null;
+          if (isNaN(estimateHigh)) estimateHigh = null;
+        }
+      }
 
       var payload = {
-        name: fd.get("name") || "",
-        phone: fd.get("phone") || "",
-        email: fd.get("email") || "",
-        service: "mold-inspection-booking",
-        message: notesParts.join("\n"),
+        slotId: slotId || null,
+        name: (fd.get("name") || "").toString(),
+        phone: (fd.get("phone") || "").toString(),
+        email: (fd.get("email") || "").toString(),
+        address: (fd.get("address") || "").toString(),
+        propertySize: (fd.get("propertySize") || "").toString(),
+        addons: (fd.get("addons") || "").toString(),
+        estimateLow: estimateLow,
+        estimateHigh: estimateHigh,
+        notes: (fd.get("notes") || "").toString(),
       };
 
       fetch(endpoint, {
@@ -326,10 +428,27 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-        .then(function (r) { if (!r.ok) throw new Error("send_failed"); return r.json().catch(function () { return {}; }); })
-        .then(function () {
-          form.style.display = "none";
-          if (success) success.classList.add("show");
+        .then(function (r) {
+          return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; });
+        })
+        .then(function (res) {
+          if (res.ok && res.body && res.body.ok) {
+            form.style.display = "none";
+            if (success) success.classList.add("show");
+          } else if (res.status === 409) {
+            // Slot got claimed by someone else — refresh picker
+            if (btn) {
+              btn.disabled = false;
+              btn.textContent = "Request my inspection";
+            }
+            alert(
+              (res.body && res.body.message) ||
+                "That slot was just booked by someone else. Please pick another time."
+            );
+            initSlotPicker();
+          } else {
+            throw new Error("save_failed");
+          }
         })
         .catch(function () {
           if (btn) {

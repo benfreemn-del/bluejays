@@ -465,19 +465,12 @@
                         <input type="email" id="bookEmail" name="email" placeholder="you@email.com" required>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bookDate">Preferred date</label>
-                            <input type="date" id="bookDate" name="date">
+                    <div class="form-group">
+                        <label>Pick a time slot</label>
+                        <div id="slotPicker" class="slot-picker" data-state="loading">
+                            <div class="slot-picker-status">Loading available slots&hellip;</div>
                         </div>
-                        <div class="form-group">
-                            <label for="bookTime">Preferred time</label>
-                            <select id="bookTime" name="time">
-                                <option value="any">Any time</option>
-                                <option value="morning">Morning (8am-noon)</option>
-                                <option value="afternoon">Afternoon (noon-5pm)</option>
-                            </select>
-                        </div>
+                        <input type="hidden" id="bookSlotId" name="slotId" value="">
                     </div>
 
                     <div class="form-group">
