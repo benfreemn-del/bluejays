@@ -16,6 +16,45 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+// Google Ads conversion event config — fires on successful form submit so
+// the Google Ads campaign learns which clicks turned into leads (smart
+// bidding optimizes faster). Both env vars must be set + validate as real
+// IDs before the gtag call fires; otherwise we silently no-op so dev/CI
+// don't pollute the conversion stream.
+//
+// Env vars (set on Vercel):
+//   NEXT_PUBLIC_GOOGLE_ADS_ID                       e.g. "AW-11223344556"
+//   NEXT_PUBLIC_GOOGLE_ADS_CONV_LABEL_CMA           e.g. "abcDEFghi-1AB"
+//
+// The conversion label is the slug AFTER the slash in Google Ads' send_to
+// snippet: e.g. for "AW-11223344556/abcDEFghi-1AB" the label is
+// "abcDEFghi-1AB". Get it from Google Ads → Tools → Conversions → click
+// the conversion → View Tag → "Use Google Tag" snippet.
+const RAW_GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+const RAW_CONV_LABEL_CMA = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONV_LABEL_CMA;
+function isValidGoogleAdsId(v: string | undefined): v is string {
+  if (!v) return false;
+  return /^AW-\d{9,11}$/.test(v.trim());
+}
+function isValidConvLabel(v: string | undefined): v is string {
+  if (!v) return false;
+  const trimmed = v.trim();
+  // Real Google Ads conversion labels are alphanumeric with dashes/underscores,
+  // typically 11-14 chars. Reject docs-example placeholders.
+  if (!/^[A-Za-z0-9_-]{6,32}$/.test(trimmed)) return false;
+  if (trimmed === "XXXXXXXXX" || trimmed === "abcdef" || trimmed === "label") return false;
+  return true;
+}
+const GOOGLE_ADS_ID = isValidGoogleAdsId(RAW_GOOGLE_ADS_ID) ? RAW_GOOGLE_ADS_ID : undefined;
+const CONV_LABEL_CMA = isValidConvLabel(RAW_CONV_LABEL_CMA) ? RAW_CONV_LABEL_CMA : undefined;
+const CMA_SEND_TO = GOOGLE_ADS_ID && CONV_LABEL_CMA ? `${GOOGLE_ADS_ID}/${CONV_LABEL_CMA}` : undefined;
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 // ────────────────────────────────────────────────────────────────────
 // Math constants (deterministic — never AI-generated)
 // ────────────────────────────────────────────────────────────────────
@@ -255,11 +294,30 @@ export default function CutMyAgencyPage() {
       const j = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         error?: string;
+        prospectId?: string;
       };
       if (!res.ok || !j.ok) {
         setErrorMsg(j.error || "Couldn't save. Try again in a minute.");
         setStage("results");
         return;
+      }
+      // Google Ads conversion fire — best-effort, gated on env-var validation
+      // above. Uses the prospectId Stripe-style as the transaction_id so
+      // duplicate fires for the same lead get deduped by Google. The value
+      // is the 3-year savings (in USD) — gives Google's smart bidding
+      // signal on lead quality (a $200K-savings lead is worth more than
+      // a $20K-savings lead).
+      try {
+        if (CMA_SEND_TO && typeof window !== "undefined" && typeof window.gtag === "function") {
+          window.gtag("event", "conversion", {
+            send_to: CMA_SEND_TO,
+            value: math?.savings || 0,
+            currency: "USD",
+            transaction_id: j.prospectId || `cma-${Date.now()}`,
+          });
+        }
+      } catch {
+        // never fail the submit because the gtag call blew up
       }
       setStage("submitted");
     } catch {

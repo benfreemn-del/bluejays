@@ -67,6 +67,10 @@ const ENV_KEYS = [
   // Supabase
   "NEXT_PUBLIC_SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
+  // Retargeting + ad-conversion tracking
+  "NEXT_PUBLIC_META_PIXEL_ID",
+  "NEXT_PUBLIC_GOOGLE_ADS_ID",
+  "NEXT_PUBLIC_GOOGLE_ADS_CONV_LABEL_CMA",
 ];
 
 export async function GET() {
