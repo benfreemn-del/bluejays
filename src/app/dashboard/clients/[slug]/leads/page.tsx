@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type {
   ClientLead,
@@ -96,6 +96,15 @@ export default function ClientLeadsPage({
   const [statusFilter, setStatusFilter] = useState<"" | ClientLeadFunnelStatus>(
     "",
   );
+  // Faceted filters layered on top of the server-side audience+status
+  // filters. These narrow the *already-loaded* leads client-side using
+  // the lead-context columns populated by /api/clients/inquire (gender,
+  // age_group, competition_tier, state_override). The dashboard-side
+  // filtering is fast even on the 200-row default list.
+  const [genderFacet, setGenderFacet] = useState<"" | "male" | "female">("");
+  const [ageFacet, setAgeFacet] = useState<string>("");
+  const [tierFacet, setTierFacet] = useState<string>("");
+  const [stateFacet, setStateFacet] = useState<string>("");
   const [openLead, setOpenLead] = useState<ClientLead | null>(null);
   const [runningFunnel, setRunningFunnel] = useState(false);
   const [runResult, setRunResult] = useState<string | null>(null);
@@ -156,6 +165,71 @@ export default function ClientLeadsPage({
   useEffect(() => {
     load();
   }, [load]);
+
+  // Apply the 4 client-side facets on top of the loaded `leads`. Each
+  // facet matches a substring (case-insensitive) — handles Camp Finder's
+  // multi-pick fields where age_group can be "U9-U10 + U11-U12" and a
+  // facet of "U11-U12" should still match.
+  const filteredLeads = useMemo(() => {
+    return leads.filter((l) => {
+      if (genderFacet && l.gender !== genderFacet) return false;
+      if (
+        ageFacet &&
+        !(l.age_group ?? "").toLowerCase().includes(ageFacet.toLowerCase())
+      )
+        return false;
+      if (
+        tierFacet &&
+        !(l.competition_tier ?? "")
+          .toLowerCase()
+          .includes(tierFacet.toLowerCase())
+      )
+        return false;
+      if (stateFacet && l.state_override !== stateFacet) return false;
+      return true;
+    });
+  }, [leads, genderFacet, ageFacet, tierFacet, stateFacet]);
+
+  // Per-facet value pools — built from the loaded leads (post-server
+  // audience+status filter). Lets the dropdowns show only values the
+  // user could meaningfully pick.
+  const facetPool = useMemo(() => {
+    const ages = new Map<string, number>();
+    const tiers = new Map<string, number>();
+    const states = new Map<string, number>();
+    for (const l of leads) {
+      // Camp Finder writes joined labels like "U9-U10 + U11-U12" — split
+      // them so each band gets counted on its own.
+      if (l.age_group) {
+        for (const a of l.age_group.split(/\s*\+\s*/)) {
+          if (a) ages.set(a, (ages.get(a) ?? 0) + 1);
+        }
+      }
+      if (l.competition_tier) {
+        for (const t of l.competition_tier.split(/\s*\+\s*/)) {
+          if (t) tiers.set(t, (tiers.get(t) ?? 0) + 1);
+        }
+      }
+      if (l.state_override) {
+        states.set(l.state_override, (states.get(l.state_override) ?? 0) + 1);
+      }
+    }
+    const sortByCount = (a: [string, number], b: [string, number]) =>
+      b[1] - a[1] || a[0].localeCompare(b[0]);
+    return {
+      ages: Array.from(ages.entries()).sort(sortByCount),
+      tiers: Array.from(tiers.entries()).sort(sortByCount),
+      states: Array.from(states.entries()).sort(sortByCount),
+    };
+  }, [leads]);
+
+  const anyFacetActive = genderFacet || ageFacet || tierFacet || stateFacet;
+  const clearFacets = () => {
+    setGenderFacet("");
+    setAgeFacet("");
+    setTierFacet("");
+    setStateFacet("");
+  };
 
   const updateLead = async (id: string, patch: Partial<ClientLead>) => {
     setLeads((prev) =>
@@ -379,7 +453,7 @@ export default function ClientLeadsPage({
         )}
 
         {/* Status filter */}
-        <div className="flex items-center gap-2 mb-4 text-xs">
+        <div className="flex items-center gap-2 mb-3 text-xs">
           <span className="text-slate-500">Status:</span>
           <select
             value={statusFilter}
@@ -399,6 +473,90 @@ export default function ClientLeadsPage({
           </select>
         </div>
 
+        {/* Faceted filters · gender × age × tier × state.
+            Powered by the lead-context columns the inquire route
+            extracts from Build Your Player + Camp Finder payloads.
+            Empty pools (no leads have an age_group yet) hide the
+            corresponding dropdown so the UI doesn't show useless
+            "All —" controls. */}
+        {(facetPool.ages.length > 0 ||
+          facetPool.tiers.length > 0 ||
+          facetPool.states.length > 0 ||
+          leads.some((l) => l.gender)) && (
+          <div className="mb-4 rounded-lg border border-slate-800 bg-slate-900/30 p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-400">
+                Filter by player context
+              </span>
+              {anyFacetActive ? (
+                <button
+                  onClick={clearFacets}
+                  className="ml-auto text-[11px] text-slate-400 hover:text-white"
+                >
+                  Clear filters ✕
+                </button>
+              ) : (
+                <span className="ml-auto text-[10px] text-slate-600">
+                  Showing {filteredLeads.length} of {leads.length}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {leads.some((l) => l.gender) && (
+                <FacetSelect
+                  label="Gender"
+                  value={genderFacet}
+                  onChange={(v) =>
+                    setGenderFacet(v as "" | "male" | "female")
+                  }
+                  options={[
+                    { value: "male", label: "Boy / Man" },
+                    { value: "female", label: "Girl / Woman" },
+                  ]}
+                />
+              )}
+              {facetPool.ages.length > 0 && (
+                <FacetSelect
+                  label="Age"
+                  value={ageFacet}
+                  onChange={setAgeFacet}
+                  options={facetPool.ages.map(([v, n]) => ({
+                    value: v,
+                    label: `${v} (${n})`,
+                  }))}
+                />
+              )}
+              {facetPool.tiers.length > 0 && (
+                <FacetSelect
+                  label="Tier"
+                  value={tierFacet}
+                  onChange={setTierFacet}
+                  options={facetPool.tiers.map(([v, n]) => ({
+                    value: v,
+                    label: `${v} (${n})`,
+                  }))}
+                />
+              )}
+              {facetPool.states.length > 0 && (
+                <FacetSelect
+                  label="State"
+                  value={stateFacet}
+                  onChange={setStateFacet}
+                  options={facetPool.states.map(([v, n]) => ({
+                    value: v,
+                    label: `${v} (${n})`,
+                  }))}
+                />
+              )}
+            </div>
+            {anyFacetActive && (
+              <div className="mt-2 text-[11px] text-emerald-300">
+                {filteredLeads.length} of {leads.length} leads match
+              </div>
+            )}
+          </div>
+        )}
+
         {loading && leads.length === 0 && (
           <div className="text-center text-slate-500 py-10">Loading…</div>
         )}
@@ -413,9 +571,22 @@ export default function ClientLeadsPage({
           </div>
         )}
 
+        {!loading && leads.length > 0 && filteredLeads.length === 0 && (
+          <div className="text-center text-slate-500 py-10 border border-dashed border-slate-800 rounded-lg">
+            <div className="text-4xl mb-2">🔍</div>
+            <p>No leads match these filters.</p>
+            <button
+              onClick={clearFacets}
+              className="text-xs mt-2 text-blue-300 hover:text-blue-200"
+            >
+              Clear filters →
+            </button>
+          </div>
+        )}
+
         {/* Lead list */}
         <div className="space-y-2">
-          {leads.map((lead) => (
+          {filteredLeads.map((lead) => (
             <div
               key={lead.id}
               className={`flex items-stretch gap-2 rounded-lg border transition ${
@@ -832,6 +1003,51 @@ function LeadDetailDrawer({
         </div>
       </div>
     </div>
+  );
+}
+
+/** Small labeled select used by the player-context facet row. Keeps each
+ *  facet visually compact + consistent with the existing Status filter. */
+function FacetSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  const active = value !== "";
+  return (
+    <label
+      className={`flex items-center gap-1.5 rounded-md border px-2 py-1 transition ${
+        active
+          ? "border-emerald-500/50 bg-emerald-500/10"
+          : "border-slate-700 bg-slate-900/40"
+      }`}
+    >
+      <span
+        className={`text-[10px] tracking-wider uppercase font-bold ${
+          active ? "text-emerald-200" : "text-slate-500"
+        }`}
+      >
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="bg-transparent text-[12px] text-slate-200 outline-none"
+      >
+        <option value="">All</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
