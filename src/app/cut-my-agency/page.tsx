@@ -296,15 +296,31 @@ export default function CutMyAgencyPage() {
           background: transparent;
           cursor: pointer;
           touch-action: pan-y;
+          --fill-pct: 0%;
         }
+        /* Track shows filled portion (amber) up to the thumb position
+           and the unfilled portion (subtle white) after. Tier 1 fix
+           2026-05-06 — was a flat gray track that read as dead. */
         input[type="range"]::-webkit-slider-runnable-track {
           height: 6px;
-          background: rgba(255, 255, 255, 0.08);
+          background: linear-gradient(
+            to right,
+            #fbbf24 0%,
+            #f59e0b var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) 100%
+          );
           border-radius: 9999px;
         }
         input[type="range"]::-moz-range-track {
           height: 6px;
-          background: rgba(255, 255, 255, 0.08);
+          background: linear-gradient(
+            to right,
+            #fbbf24 0%,
+            #f59e0b var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) 100%
+          );
           border-radius: 9999px;
         }
         input[type="range"]::-webkit-slider-thumb {
@@ -419,7 +435,18 @@ export default function CutMyAgencyPage() {
                 step={250}
                 value={Math.min(monthlyRetainer, 15000)}
                 onChange={(e) => setMonthlyRetainer(parseInt(e.target.value, 10))}
-                className="w-full accent-amber-400"
+                className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      ((Math.min(monthlyRetainer, 15000) - 500) /
+                        (15000 - 500)) *
+                        100,
+                    ),
+                  )}%`,
+                }}
               />
               <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
                 <span>$500</span>
@@ -493,6 +520,12 @@ export default function CutMyAgencyPage() {
                 value={Math.min(monthsAsClient, 60)}
                 onChange={(e) => setMonthsAsClient(parseInt(e.target.value, 10))}
                 className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(0, ((Math.min(monthsAsClient, 60) - 1) / (60 - 1)) * 100),
+                  )}%`,
+                }}
               />
 
               {/* Visual lifespan bar — answers Ben's request 2026-05-06.
@@ -725,6 +758,12 @@ export default function CutMyAgencyPage() {
                   setMonthlyAdSpend(parseInt(e.target.value, 10))
                 }
                 className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(0, (Math.min(monthlyAdSpend, 10000) / 10000) * 100),
+                  )}%`,
+                }}
               />
               <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
                 <span>$0</span>
@@ -846,17 +885,24 @@ export default function CutMyAgencyPage() {
                   </p>
                 </div>
 
-                {/* Equals → savings */}
-                <div className="flex items-center justify-between gap-3 rounded-xl border-2 border-emerald-400/50 bg-emerald-500/[0.10] p-4">
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wider text-emerald-300/90 font-semibold mb-0.5">
-                      You save
-                    </p>
-                    <p className="text-sm text-slate-300">
-                      Same ad spend either way. Just no agency fee.
-                    </p>
+                {/* Equals → savings — Tier 1 #2 fix 2026-05-06.
+                    Visually dominant vs the agency + BlueJays rows
+                    above. Bigger padding, bigger font, trophy emoji,
+                    brighter emerald glow. This is the punchline of
+                    the whole calculator — should feel like winning. */}
+                <div className="flex items-center justify-between gap-3 rounded-xl border-2 border-emerald-400/60 bg-gradient-to-r from-emerald-500/[0.18] to-emerald-500/[0.08] p-5 sm:p-6 shadow-[0_0_24px_rgba(16,185,129,0.20)]">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl sm:text-4xl shrink-0 leading-none">🏆</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-widest text-emerald-300 font-bold mb-0.5">
+                        You save
+                      </p>
+                      <p className="text-sm text-slate-200">
+                        Same ad spend either way. Just no agency fee.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-2xl sm:text-3xl font-black text-emerald-300 tabular-nums">
+                  <p className="text-3xl sm:text-5xl font-black text-emerald-300 tabular-nums leading-none">
                     {fmtMoney(math.savings)}
                   </p>
                 </div>
@@ -917,6 +963,21 @@ export default function CutMyAgencyPage() {
                 >
                   {stage === "submitting" ? "Sending…" : "Send me my custom plan →"}
                 </button>
+                {/* Helper hint when the button is disabled — tells
+                    users WHY they can't click. Tier 1 #4 fix
+                    2026-05-06; gray-disabled state was reading as
+                    "broken" to cold prospects. */}
+                {!canSubmit && stage !== "submitting" && (
+                  <p className="text-[11px] text-amber-300/80 text-center font-semibold">
+                    {!name.trim() && !email.trim()
+                      ? "Add your name + email to enable"
+                      : !name.trim()
+                        ? "Add your name to enable"
+                        : !isValidEmail(email)
+                          ? "Add a valid email to enable"
+                          : "Almost there…"}
+                  </p>
+                )}
                 <p className="text-[11px] text-slate-500 text-center">
                   No spam. No auto-call. Ben replies personally — usually within
                   24 hours.
@@ -934,6 +995,12 @@ export default function CutMyAgencyPage() {
               <p className="text-xs uppercase tracking-widest text-violet-300 font-bold mb-3 text-center">
                 Bonus: more profit, not just less cost
               </p>
+              {/* Restructured dual stats — Tier 1 #5 fix 2026-05-06.
+                  Big numbers ("+35%" / "+40%") visually align across
+                  both cards because the noun ("ROI lift" / "more
+                  revenue") moved to a subtitle. Previously "+40% revenue"
+                  wrapped to 2 lines while "+35% ROI" fit on 1, creating
+                  asymmetry. Now both cards share the same rhythm. */}
               <div className="grid sm:grid-cols-2 gap-3">
                 {/* AI efficiency stat */}
                 <div className="rounded-2xl border border-violet-500/30 bg-violet-500/[0.06] p-5">
@@ -943,13 +1010,15 @@ export default function CutMyAgencyPage() {
                       <p className="text-xs uppercase tracking-wider text-violet-300/80 font-semibold mb-1">
                         AI vs manual
                       </p>
-                      <p className="text-2xl sm:text-3xl font-black text-violet-200 mb-1">
-                        +35% ROI
+                      <p className="text-3xl sm:text-4xl font-black text-violet-200 leading-none mb-1">
+                        +35%
+                      </p>
+                      <p className="text-sm text-violet-300/90 font-semibold mb-2">
+                        ROI lift
                       </p>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        AI-driven marketing systems beat manual agency
-                        campaigns by ~35% on average. Same ad spend, more
-                        leads.
+                        AI-driven systems beat manual agency campaigns by
+                        ~35% on average. Same ad spend, more leads.
                       </p>
                     </div>
                   </div>
@@ -963,12 +1032,15 @@ export default function CutMyAgencyPage() {
                       <p className="text-xs uppercase tracking-wider text-fuchsia-300/80 font-semibold mb-1">
                         Custom vs templated
                       </p>
-                      <p className="text-2xl sm:text-3xl font-black text-fuchsia-200 mb-1">
-                        +40% revenue
+                      <p className="text-3xl sm:text-4xl font-black text-fuchsia-200 leading-none mb-1">
+                        +40%
+                      </p>
+                      <p className="text-sm text-fuchsia-300/90 font-semibold mb-2">
+                        more revenue
                       </p>
                       <p className="text-xs text-slate-300 leading-relaxed">
                         Companies that personalize at scale earn 40% more
-                        revenue than those running cookie-cutter playbooks.
+                        than those running cookie-cutter playbooks.
                       </p>
                     </div>
                   </div>
@@ -983,12 +1055,23 @@ export default function CutMyAgencyPage() {
 
             {/* 5. Side-by-side comparison — full-cost view incl. ad
                 spend on both sides so prospects see the apples-to-apples
-                total. The savings come from the retainer line, not ads. */}
-            <div className="grid sm:grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-5">
-                <p className="text-xs uppercase tracking-wider text-rose-300 font-semibold mb-2">
-                  Stay with agency · 3 years
-                </p>
+                total. The savings come from the retainer line, not ads.
+
+                Caption above bridges the math-card → side-by-side
+                discontinuity (Tier 1 #3 fix 2026-05-06). The math card
+                shows agency = $72K (retainer only); the side-by-side
+                shows agency = $108K (retainer + ad spend). Without this
+                caption prospects wonder why two different agency totals.
+            */}
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-3 text-center">
+                The full picture · with ad spend on both sides
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-5">
+                  <p className="text-xs uppercase tracking-wider text-rose-300 font-semibold mb-2">
+                    Stay with agency · 3 years
+                  </p>
                 <p className="text-3xl font-black text-white tabular-nums mb-3">
                   {fmtMoney(math.threeYearAgencyCost)}
                 </p>
@@ -1013,6 +1096,7 @@ export default function CutMyAgencyPage() {
                   <li>• Pay in full or 3 splits ($3,500 + $3,500 + $3,000)</li>
                   <li>• You own the system forever</li>
                 </ul>
+              </div>
               </div>
             </div>
 
