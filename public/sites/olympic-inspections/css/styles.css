@@ -84,8 +84,8 @@ h1, h2, h3, h4, .section-title {
   position: relative;
   display: inline-block;
   padding-bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centered by parent .section-titlewrap text-align: center.
+     DO NOT add left:50% or translateX — that double-shifts the title right. */
 }
 .section-title::after {
   content: "";
