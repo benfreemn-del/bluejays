@@ -1219,14 +1219,39 @@ section {
   .calc-addon-qty button { width: 36px !important; height: 36px !important; font-size: 16px !important; }
   .slot-pill { padding: 12px 16px !important; font-size: 0.92rem !important; }
 
+  /* MOBILE addon grid:
+     Row 1: [checkbox] [info text spans full width]
+     Row 2: [empty]    [price]                [qty]
+     This puts the description on its own line so price doesn't
+     overlap the descriptor text. */
   .calc-addon {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto;
     gap: 8px 12px;
+    padding: 14px 14px !important;
+    align-items: start;
   }
-  .calc-addon-qty { grid-column: 1 / -1; justify-self: end; }
-  .calc-addon-price { grid-column: 2 / 3; grid-row: 1; justify-self: end; }
-  .calc-addon-info { grid-column: 2 / 3; grid-row: 1; }
+  .calc-addon input[type="checkbox"] {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    margin-top: 3px;
+  }
+  .calc-addon-info {
+    grid-row: 1;
+    grid-column: 2 / 4;
+  }
+  .calc-addon-price {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: start;
+    align-self: center;
+  }
+  .calc-addon-qty {
+    grid-row: 2;
+    grid-column: 3;
+    justify-self: end;
+  }
 
   /* Hero CTAs: full-width stacked instead of awkward wrap */
   .hero-ctas { flex-direction: column; }
