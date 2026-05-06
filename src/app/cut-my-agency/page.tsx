@@ -360,8 +360,12 @@ export default function CutMyAgencyPage() {
             ← BlueJays
           </Link>
           {stage !== "submitted" && (
-            <span className="text-xs text-slate-500 font-mono">
-              {stage === "results" ? "Step 5 of 5" : `Step ${stage.slice(-1)} of 5`}
+            <span className="text-xs font-mono">
+              {stage === "results" ? (
+                <span className="text-emerald-300 font-bold">✓ Done</span>
+              ) : (
+                <span className="text-slate-500">{`Step ${stage.slice(-1)} of 5`}</span>
+              )}
             </span>
           )}
         </div>
@@ -933,8 +937,11 @@ export default function CutMyAgencyPage() {
             {/* 3. CAPTURE FORM — promoted from bottom 2026-05-06 per Ben.
                 Captures at peak emotion (right after they see the math).
                 People who scroll past still get the proof + bullets +
-                social proof below. */}
-            <div className="rounded-3xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-transparent p-6 sm:p-8">
+                social proof below. Tier 2 #11 fix 2026-05-06: -mt-2
+                pulls the form ~8px closer to the math card so the savings
+                punchline reads as the SAME visual unit as the form CTA
+                (instead of two separated blocks). */}
+            <div className="-mt-2 sm:-mt-3 rounded-3xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-transparent p-6 sm:p-8">
               <p className="text-xs uppercase tracking-widest text-amber-300 font-bold mb-3 text-center">
                 Want a custom plan based on your numbers?
               </p>

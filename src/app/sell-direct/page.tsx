@@ -328,10 +328,12 @@ export default function SellDirectPage() {
             ← BlueJays
           </Link>
           {stage !== "submitted" && (
-            <span className="text-xs text-slate-500 font-mono">
-              {stage === "results"
-                ? "Step 4 of 4"
-                : `Step ${stage.slice(-1)} of 4`}
+            <span className="text-xs font-mono">
+              {stage === "results" ? (
+                <span className="text-emerald-300 font-bold">✓ Done</span>
+              ) : (
+                <span className="text-slate-500">{`Step ${stage.slice(-1)} of 4`}</span>
+              )}
             </span>
           )}
         </div>
@@ -815,8 +817,11 @@ export default function SellDirectPage() {
               </ul>
             </div>
 
-            {/* CTA — capture form */}
-            <div className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/10 to-transparent p-6 sm:p-8">
+            {/* CTA — capture form. Tier 2 #11 parity 2026-05-06: -mt-2
+                pulls the form ~8px closer to the "What you get" block
+                so the benefits-list reads as a continuous lead-in to
+                the form CTA (instead of two separated blocks). */}
+            <div className="-mt-2 sm:-mt-3 rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/10 to-transparent p-6 sm:p-8">
               <p className="text-xs uppercase tracking-widest text-emerald-300 font-bold mb-3 text-center">
                 Want a custom plan based on your numbers?
               </p>
