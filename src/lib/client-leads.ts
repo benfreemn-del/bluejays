@@ -63,6 +63,11 @@ export type ClientLead = {
   gender: string | null;
   state_override: string | null;
   in_season_override: string | null;
+  /** Manually-recorded revenue for this conversion (cents). Populated
+   *  by the dashboard's "Mark converted" flow today; will also be
+   *  written by the Shopify webhook once that's wired. Null when the
+   *  lead hasn't converted or wasn't tagged with a value. */
+  conversion_value_cents: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -274,6 +279,7 @@ export async function updateClientLead(
       | "gender"
       | "state_override"
       | "in_season_override"
+      | "conversion_value_cents"
     >
   >,
 ): Promise<ClientLead> {

@@ -223,6 +223,31 @@ export default function ClientLeadsPage({
     };
   }, [leads]);
 
+  // Revenue rollups — sum conversion_value_cents across loaded leads.
+  // Note: this only sees the LOADED window (last 200 by default). For
+  // long-running clients we'd swap to a server-side aggregate, but at
+  // current Zenith volume the in-memory roll-up is fine + responsive.
+  const { revenueTotalCents, revenueByAudience } = useMemo(() => {
+    let total = 0;
+    const byAud = new Map<string, { cents: number; count: number }>();
+    for (const l of leads) {
+      const v = l.conversion_value_cents;
+      if (v === null || v === undefined) continue;
+      total += v;
+      const key = l.audience_segment ?? "unknown";
+      const cur = byAud.get(key) ?? { cents: 0, count: 0 };
+      cur.cents += v;
+      cur.count += 1;
+      byAud.set(key, cur);
+    }
+    return {
+      revenueTotalCents: total,
+      revenueByAudience: Array.from(byAud.entries()).sort(
+        (a, b) => b[1].cents - a[1].cents,
+      ),
+    };
+  }, [leads]);
+
   const anyFacetActive = genderFacet || ageFacet || tierFacet || stateFacet;
   const clearFacets = () => {
     setGenderFacet("");
@@ -260,6 +285,28 @@ export default function ClientLeadsPage({
     );
     setSelected(new Set());
     load();
+  };
+
+  /** Mark selected leads converted with an optional $ value applied to
+   *  EACH. We prompt rather than splitting the value because most bulk
+   *  conversions in practice are "all 4 of these bought one $90 ball." */
+  const bulkMarkConverted = () => {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    const raw = window.prompt(
+      `$ value of EACH conversion? (e.g. 90 for one TEKKY ball, leave blank to skip)\n\nApplied to ${ids.length} lead${ids.length === 1 ? "" : "s"}.`,
+      "",
+    );
+    if (raw === null) return; // cancelled
+    const cents = dollarsInputToCents(raw);
+    if (raw.trim() !== "" && cents === null) {
+      alert("Couldn't parse that as a dollar amount. Try '90' or '89.99'.");
+      return;
+    }
+    bulkUpdate({
+      funnel_status: "converted",
+      ...(cents !== null ? { conversion_value_cents: cents } : {}),
+    });
   };
 
   const toggleSelect = (id: string) =>
@@ -382,10 +429,11 @@ export default function ClientLeadsPage({
               Mark responded
             </button>
             <button
-              onClick={() => bulkUpdate({ funnel_status: "converted" })}
+              onClick={bulkMarkConverted}
               className="bg-emerald-500 hover:bg-emerald-400 text-white px-2.5 py-1 rounded font-bold"
+              title="Mark converted + record revenue"
             >
-              Mark converted
+              Mark converted 💰
             </button>
             <button
               onClick={() => setSelected(new Set())}
@@ -398,7 +446,7 @@ export default function ClientLeadsPage({
 
         {/* Stats cards */}
         {counts && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-5">
             <StatCard label="Total" value={counts.total} accent="slate" />
             <StatCard
               label="In funnel"
@@ -415,6 +463,41 @@ export default function ClientLeadsPage({
               value={counts.byStatus["converted"] ?? 0}
               accent="amber"
             />
+            <StatCard
+              label="Revenue"
+              value={centsToDollars(revenueTotalCents)}
+              accent="emerald"
+            />
+          </div>
+        )}
+
+        {/* Revenue by audience — only shows when we have at least one
+            tagged conversion with a $ value. Tells Philip "the parent
+            funnel made $X, the coach funnel made $Y" so he can see
+            which channel is actually paying for itself. */}
+        {revenueByAudience.length > 0 && (
+          <div className="mb-5 rounded-lg border border-emerald-700/30 bg-emerald-950/20 p-3">
+            <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-emerald-300 mb-2">
+              💰 Revenue by funnel
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {revenueByAudience.map(([aud, info]) => (
+                <div
+                  key={aud}
+                  className="rounded-md border border-emerald-800/40 bg-slate-900/50 px-3 py-1.5"
+                >
+                  <span className="text-slate-400 mr-1.5">
+                    {AUDIENCE_LABEL[aud as ClientLeadAudience] ?? aud}
+                  </span>
+                  <span className="font-bold text-emerald-300">
+                    {centsToDollars(info.cents)}
+                  </span>
+                  <span className="text-slate-500 ml-1.5 text-[10px]">
+                    {info.count} conv · avg {centsToDollars(Math.round(info.cents / info.count))}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -634,6 +717,11 @@ export default function ClientLeadsPage({
                     >
                       {STATUS_LABEL[lead.funnel_status]}
                     </span>
+                    {lead.conversion_value_cents !== null && (
+                      <span className="text-[9px] tracking-wider uppercase font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                        💰 {centsToDollars(lead.conversion_value_cents)}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
                     {lead.email && <span className="truncate">{lead.email}</span>}
@@ -678,7 +766,7 @@ function StatCard({
   accent,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   accent: "slate" | "blue" | "emerald" | "amber";
 }) {
   const colors: Record<typeof accent, string> = {
@@ -830,7 +918,35 @@ function LeadDetailDrawer({
                 (s) => (
                   <button
                     key={s}
-                    onClick={() => onUpdate(lead.id, { funnel_status: s })}
+                    onClick={() => {
+                      // Mark-converted: prompt for the $ amount inline so
+                      // every conversion gets a value attached. Cancel
+                      // skips the status flip; blank = flip without $.
+                      if (s === "converted") {
+                        const raw = window.prompt(
+                          `$ value of this conversion? (e.g. 90 for one TEKKY ball)\n\nLeave blank to mark converted without recording revenue.`,
+                          lead.conversion_value_cents !== null
+                            ? String(lead.conversion_value_cents / 100)
+                            : "",
+                        );
+                        if (raw === null) return; // cancelled
+                        const cents = dollarsInputToCents(raw);
+                        if (raw.trim() !== "" && cents === null) {
+                          alert(
+                            "Couldn't parse that as a dollar amount. Try '90' or '89.99'.",
+                          );
+                          return;
+                        }
+                        onUpdate(lead.id, {
+                          funnel_status: "converted",
+                          ...(cents !== null
+                            ? { conversion_value_cents: cents }
+                            : {}),
+                        });
+                        return;
+                      }
+                      onUpdate(lead.id, { funnel_status: s });
+                    }}
                     className={`text-[11px] font-bold px-2.5 py-1 rounded transition ${
                       lead.funnel_status === s
                         ? STATUS_COLOR[s] + " ring-2 ring-white/40"
@@ -847,6 +963,47 @@ function LeadDetailDrawer({
                 Step {lead.funnel_step}
                 {lead.last_contact_at &&
                   ` · last contact ${timeAgo(lead.last_contact_at)}`}
+              </div>
+            )}
+            {/* Revenue line — visible whenever converted, with an
+                edit affordance so corrections + retroactive $ entry
+                are one click. */}
+            {(lead.funnel_status === "converted" ||
+              lead.conversion_value_cents !== null) && (
+              <div className="mt-3 flex items-center gap-2 text-sm">
+                <span className="text-[10px] tracking-wider uppercase font-bold text-emerald-400">
+                  Revenue
+                </span>
+                <span className="font-bold text-emerald-300">
+                  {centsToDollars(lead.conversion_value_cents)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const raw = window.prompt(
+                      "Update conversion value in $ (blank to clear):",
+                      lead.conversion_value_cents !== null
+                        ? String(lead.conversion_value_cents / 100)
+                        : "",
+                    );
+                    if (raw === null) return;
+                    if (raw.trim() === "") {
+                      onUpdate(lead.id, { conversion_value_cents: null });
+                      return;
+                    }
+                    const cents = dollarsInputToCents(raw);
+                    if (cents === null) {
+                      alert(
+                        "Couldn't parse that as a dollar amount. Try '90' or '89.99'.",
+                      );
+                      return;
+                    }
+                    onUpdate(lead.id, { conversion_value_cents: cents });
+                  }}
+                  className="text-[11px] text-blue-300 hover:text-blue-200 underline"
+                >
+                  Edit
+                </button>
               </div>
             )}
           </section>
@@ -1049,6 +1206,26 @@ function FacetSelect({
       </select>
     </label>
   );
+}
+
+/** Parse a free-typed "$90", "89.99", "1,250" into integer cents.
+ *  Returns null on garbage. Empty string returns null too — callers
+ *  decide whether that means "skip the field" or "error". */
+function dollarsInputToCents(raw: string): number | null {
+  const s = raw.replace(/[$,\s]/g, "").trim();
+  if (!s) return null;
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) return null;
+  return Math.round(parseFloat(s) * 100);
+}
+
+/** Pretty-print cents as "$X" or "$X.XX" depending on whether the
+ *  value lands on whole dollars. */
+function centsToDollars(cents: number | null | undefined): string {
+  if (cents === null || cents === undefined) return "—";
+  const d = cents / 100;
+  return d % 1 === 0
+    ? `$${d.toLocaleString()}`
+    : `$${d.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function timeAgo(iso: string): string {

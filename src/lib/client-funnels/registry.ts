@@ -20,6 +20,7 @@
 
 import type { AudienceFunnel } from "./zenith-sports";
 import { getZenithFunnel, listZenithFunnels } from "./zenith-sports";
+import { getOITFunnel, listOITFunnels } from "./olympic-inspections";
 import type { ClientLeadAudience } from "../client-leads";
 
 export type ClientFunnelConfig = {
@@ -93,6 +94,31 @@ export const CLIENT_FUNNELS: Record<string, ClientFunnelConfig> = {
     },
     getFunnel: getZenithFunnel,
     listFunnels: listZenithFunnels,
+  },
+
+  "olympic-inspections": {
+    label: "Olympic Inspections & Testing",
+    sender: {
+      // Until DKIM is wired on olympicinspections.com (post domain
+      // transfer), send from a verified BlueJay-managed address with
+      // an OIT display name. Replies route to the actual OIT inbox.
+      email: "ben@bluejayportfolio.com",
+      name: "Olympic Inspections & Testing",
+      replyTo: "hello@olympicinspections.com",
+    },
+    missedCall: {
+      mode: "always",
+      text:
+        "Hi, this is Olympic Inspections — sorry I missed your call. Quickest reply is text. Looking for mold inspection, real-estate report, or insurance claim help?",
+    },
+    sms: {
+      // Until OIT provisions a Twilio number, SMS sends are logged
+      // but not attempted. The runner records each skipped send so
+      // reporting still shows what *would* have fired.
+      from: process.env.OIT_TWILIO_NUMBER || null,
+    },
+    getFunnel: getOITFunnel,
+    listFunnels: listOITFunnels,
   },
 };
 

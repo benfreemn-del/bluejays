@@ -15,12 +15,18 @@ export type AffiliateStatus =
   | "do-not-contact";
 
 export type AffiliateChannel =
+  // Zenith Sports / soccer channels
   | "club"
   | "coach"
   | "influencer"
   | "podcast"
   | "media"
-  | "parent-group";
+  | "parent-group"
+  // Olympic Inspections / inspector-business channels
+  | "realtor"
+  | "insurance"
+  | "remediation"
+  | "restoration";
 
 export type ClientAffiliate = {
   id: string;

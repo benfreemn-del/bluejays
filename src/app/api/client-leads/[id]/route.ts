@@ -50,6 +50,12 @@ export async function PATCH(
     "funnel_step",
     "notes",
     "last_contact_at",
+    "competition_tier",
+    "age_group",
+    "gender",
+    "state_override",
+    "in_season_override",
+    "conversion_value_cents",
   ];
   const patch: Record<string, unknown> = {};
   for (const k of allowed) {
