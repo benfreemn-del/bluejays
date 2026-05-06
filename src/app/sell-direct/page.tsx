@@ -302,14 +302,10 @@ export default function SellDirectPage() {
               Built for: tractor parts · sports equipment · custom auto · hunting gear · specialty food
             </p>
 
-            {/* Trust strip — answers "who built this?" with anchor proofs.
-                Both ITC + Zenith are real closed clients in the
-                manufacturer ICP — exactly the buyer this calc targets. */}
+            {/* Trust strip — answers "who built this?" before they engage.
+                Cold paid traffic has zero context on BlueJays. */}
             <div className="mt-4 sm:mt-6 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Built for manufacturers like
-              {" "}<span className="text-emerald-300 font-semibold">ITC Quick Attach</span>
-              {" "}+ <span className="text-emerald-300 font-semibold">Zenith / TEKKY®</span>.
-              {" "}WA-based. Real direct-sales systems in the wild.
+              WA-based. <span className="text-emerald-300 font-semibold">100+ businesses online across the USA.</span>
             </div>
           </div>
         )}

@@ -295,8 +295,7 @@ export default function CutMyAgencyPage() {
                 searches has zero context on BlueJays — this gives them the
                 3-second credibility they need to engage. */}
             <div className="mt-4 sm:mt-6 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Built TEKKY&apos;s + ITC Quick Attach&apos;s marketing systems.
-              {" "}WA-based. <span className="text-amber-300 font-semibold">50+ local businesses online.</span>
+              WA-based. <span className="text-amber-300 font-semibold">100+ businesses online across the USA.</span>
             </div>
           </div>
         )}
