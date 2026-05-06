@@ -53,6 +53,7 @@ import TrainingDrills from "./training-drills";
 import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
 import ClientTrackingScripts from "@/components/ClientTrackingScripts";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 import BluejayLogo from "@/components/BluejayLogo";
 import Image from "next/image";
 
@@ -1189,6 +1190,21 @@ export default function ZenithSportsPage() {
           </div>
         </div>
       </section>
+
+      {/* ─────────────── DYNAMIC TESTIMONIAL CAROUSEL ───────────────
+          Pulls live quotes from /api/client-testimonials. Renders
+          nothing until at least one is published from the dashboard
+          at /dashboard/clients/zenith-sports/testimonials, so this
+          section silently disappears in the "we just launched"
+          window. No hardcoded quotes here on purpose — the source
+          of truth is the DB. */}
+      <TestimonialCarousel
+        clientSlug="zenith-sports"
+        accentColor={LIME}
+        bgClass="bg-[#0a1832]"
+        heading="Coaches + parents · in their words"
+        subheading="Real names. Real clubs."
+      />
 
       {/* ─────────────── FOUNDER DUO ─────────────── */}
       <section

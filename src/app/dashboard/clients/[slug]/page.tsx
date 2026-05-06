@@ -172,6 +172,12 @@ export default function ClientTasksPage({
             Leads
           </Link>
           <Link
+            href={`/dashboard/clients/${slug}/testimonials`}
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+          >
+            Testimonials
+          </Link>
+          <Link
             href={`/dashboard/clients/${slug}/ads`}
             className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded"
           >
