@@ -33,18 +33,37 @@ const nextConfig: NextConfig = {
       // Asset paths (/sites/*/css/ and /sites/*/js/) are in public/ and get
       // served directly without hitting these rules.
       beforeFiles: [
+        // Pine & Particle Co. rebranded to Olympic Inspections & Testing
+        // 2026-05-05. The pineparticle.com domain is being transferred and
+        // serves the new OIT site. Old static path is redirected too (below).
         {
           has: [{ type: 'host', value: 'pineparticle.com' }],
           source: '/',
-          destination: '/sites/pine-and-particle/index.html',
+          destination: '/sites/olympic-inspections/index.html',
         },
         {
           has: [{ type: 'host', value: 'www.pineparticle.com' }],
           source: '/',
-          destination: '/sites/pine-and-particle/index.html',
+          destination: '/sites/olympic-inspections/index.html',
         },
       ],
     };
+  },
+  async redirects() {
+    return [
+      // Anyone with the legacy /sites/pine-and-particle/ link gets redirected
+      // to the rebranded OIT site.
+      {
+        source: '/sites/pine-and-particle',
+        destination: '/sites/olympic-inspections/',
+        permanent: true,
+      },
+      {
+        source: '/sites/pine-and-particle/:path*',
+        destination: '/sites/olympic-inspections/:path*',
+        permanent: true,
+      },
+    ];
   },
   images: {
     remotePatterns: [

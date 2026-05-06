@@ -38,7 +38,7 @@ A custom $997 website, designed and shipped before you pay anything, with a 100%
 ### Custom tier ($100/year)
 - Hand-built bespoke websites for nonprofits, complex businesses, established relationships
 - No setup fee — just $100/year recurring
-- Examples: Lewis County Autism Coalition, Hector Landscaping, Olympic Inspections & Testing, Pine & Particle Co., Master's Window Tinting, KR Ranches
+- Examples: Lewis County Autism Coalition, Hector Landscaping, Olympic Inspections & Testing, Master's Window Tinting, KR Ranches
 
 ### Full System tier ($9,700 + $500–$1,000/month)
 - Complete AI Marketing System replacing a traditional agency

@@ -21,7 +21,7 @@ every slug.
 | `itc-quick-attach` | ✓ | ✓ (queued) | ✓ | Jake · $9.7K AI System · tractor accessories · signing later |
 | `laser-lakes` | ✓ | ✗ | ✗ | Nate · custom site + Customers/Email tab ONLY · explicitly NO AI features |
 | `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |
-| `pine-and-particle` | ✗ | ✗ | ✗ | Inquire-only routing |
+| `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) |
 | `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
