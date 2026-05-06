@@ -3,6 +3,7 @@ import { sendOwnerAlert, sendOwnerEmail, sendEmailTo } from "@/lib/alerts";
 import {
   createClientLead,
   detectAudience,
+  updateClientLead,
   type NewClientLead,
 } from "@/lib/client-leads";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
@@ -119,6 +120,80 @@ const SLUG_CONFIG: Record<
   },
 };
 
+// ── zenith-sports lead-context extraction ───────────────────────────────
+//
+// Pulls the structured player-context fields out of the form payload and
+// into top-level columns on `client_leads` (gender, age_group,
+// competition_tier, state_override). Without this, a parent's gender +
+// age + skill picks live buried inside `raw_payload` JSON and the
+// dashboard can't filter or report on them.
+//
+// Used by Build Your Player (numeric age + skillLevel 1-5 + gender
+// male/female) and the Camp Finder quiz (string age band(s) +
+// skill tag(s) + 2-letter state).
+function extractZenithContext(body: Record<string, unknown>): {
+  gender?: string;
+  age_group?: string;
+  competition_tier?: string;
+  state_override?: string;
+} {
+  const out: {
+    gender?: string;
+    age_group?: string;
+    competition_tier?: string;
+    state_override?: string;
+  } = {};
+
+  // Gender — Build Your Player explicitly captures "male" | "female".
+  const g = String(body.gender ?? "").trim().toLowerCase();
+  if (g === "male" || g === "female") out.gender = g;
+
+  // Age — BYP sends numeric `age` (5-35). Camp Finder sends `ageGroups`
+  // (string[] of "U6-U8" etc.) — store the joined label so multi-picks
+  // survive intact.
+  if (Array.isArray(body.ageGroups) && body.ageGroups.length > 0) {
+    out.age_group = body.ageGroups.map(String).join(" + ");
+  } else if (typeof body.age === "number") {
+    const a = body.age;
+    out.age_group =
+      a < 8
+        ? "U6-U8"
+        : a < 11
+          ? "U9-U10"
+          : a < 13
+            ? "U11-U12"
+            : a < 15
+              ? "U13-U14"
+              : a < 17
+                ? "U15-U16"
+                : a < 20
+                  ? "U17-U19"
+                  : `Adult ${a}`;
+  }
+
+  // Competition tier — BYP sends 1-5 numeric skillLevel. Camp Finder
+  // sends `skillLevels` (string[] of "rec" / "select" / etc).
+  const TIER_LABELS = [
+    "Rec",
+    "Travel",
+    "Club",
+    "ECNL / MLS Next",
+    "Elite",
+  ];
+  if (Array.isArray(body.skillLevels) && body.skillLevels.length > 0) {
+    out.competition_tier = body.skillLevels.map(String).join(" + ");
+  } else if (typeof body.skillLevel === "number") {
+    const idx = Math.min(Math.max(Math.round(body.skillLevel) - 1, 0), 4);
+    out.competition_tier = TIER_LABELS[idx]!;
+  }
+
+  // State — Camp Finder sends 2-letter postal code.
+  const s = String(body.state ?? "").trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(s)) out.state_override = s;
+
+  return out;
+}
+
 // in-memory rate-limit bucket — resets on deploy, sufficient for MVP
 const recentByIp = new Map<string, number[]>();
 const LIMIT_WINDOW_MS = 60_000;
@@ -226,6 +301,24 @@ export async function POST(request: NextRequest) {
       };
       const created = await createClientLead(newLead);
       leadId = created.id;
+
+      // Pull zenith-sports player-context fields into top-level columns
+      // so the dashboard can filter by gender / age / tier / state
+      // without parsing raw_payload JSON. Best-effort — failure here
+      // shouldn't kill the lead capture.
+      if (slug === "zenith-sports") {
+        const ctx = extractZenithContext(body);
+        if (Object.keys(ctx).length > 0) {
+          try {
+            await updateClientLead(created.id, ctx);
+          } catch (err) {
+            console.error(
+              "[clients/inquire] zenith-sports context update failed:",
+              err,
+            );
+          }
+        }
+      }
     } catch (err) {
       // Don't fail the form submit if the DB write fails — the owner
       // alert below still surfaces the lead.

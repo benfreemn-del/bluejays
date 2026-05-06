@@ -32,11 +32,11 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "Luke Wright",
     title: "Owner",
-    business: "Pine & Particle Co.",
+    business: "Olympic Inspections & Testing",
     quote:
       "I make custom furniture. I didn't think a website would change what I charge or who comes through the door. The audit flagged three specific things I'd never thought about — and after the new site went up, the people reaching out were a completely different caliber. Better projects, better budgets.",
     videoUrl: null, // TODO: get 20s iPhone video from Luke
-    siteUrl: "https://bluejayportfolio.com/sites/pine-and-particle/",
+    siteUrl: "https://bluejayportfolio.com/sites/olympic-inspections/",
   },
   {
     name: "Michelle Whitlow",

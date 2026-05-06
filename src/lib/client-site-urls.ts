@@ -49,7 +49,11 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   // confirm each client's actual public URL.
   "lewis-county-autism": { kind: "none" },
   "mountain-view-landscape": { kind: "none" },
-  "pine-and-particle": { kind: "none" },
+  // Olympic Inspections & Testing (formerly Pine & Particle Co.)
+  "olympic-inspections": {
+    kind: "external",
+    href: "https://bluejayportfolio.com/sites/olympic-inspections/",
+  },
 };
 
 export function clientSiteFor(slug: string): ClientSite {

@@ -356,19 +356,60 @@ h1, h2, h3, h4, .section-title {
 .hero-trust {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
-  font-size: 0.86rem;
-  color: var(--ink-mute);
+  gap: 10px;
+  margin-top: 4px;
 }
-.hero-trust span {
+.hero-trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 100px;
+  border: 1.5px solid transparent;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.hero-trust span::before {
-  content: "✓";
-  color: var(--forest);
-  font-weight: 700;
+.hero-trust-item:hover {
+  transform: translateY(-1px);
+}
+
+/* Checkmark-emoji items (lab-certified, 3-5 day) */
+.hero-trust-item.check {
+  background: rgba(45, 74, 45, 0.08);
+  border-color: rgba(45, 74, 45, 0.20);
+  color: var(--ink);
+}
+.hero-trust-item.check:hover {
+  background: rgba(45, 74, 45, 0.13);
+  border-color: rgba(45, 74, 45, 0.35);
+  box-shadow: 0 4px 10px -3px rgba(45, 74, 45, 0.20);
+}
+.hero-trust-emoji {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* "Fully insured" — distinct blue badge */
+.hero-trust-item.insured {
+  background: linear-gradient(135deg, #1e4d8c 0%, #14366a 100%);
+  border-color: #14366a;
+  color: #ffffff;
+  box-shadow: 0 4px 12px -3px rgba(30, 77, 140, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.hero-trust-item.insured:hover {
+  background: linear-gradient(135deg, #2658a0 0%, #1a417a 100%);
+  box-shadow: 0 8px 18px -4px rgba(30, 77, 140, 0.50),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+.hero-trust-shield {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #cfe1f7;
+  filter: drop-shadow(0 0 4px rgba(207, 225, 247, 0.40));
 }
 
 .hero-card {
@@ -1044,10 +1085,10 @@ section {
 }
 .book-form textarea { resize: vertical; min-height: 88px; }
 .book-form-summary {
-  background: rgba(212, 168, 58, 0.15);
-  border: 1px solid rgba(212, 168, 58, 0.40);
+  background: rgba(212, 168, 58, 0.10);
+  border: 1px solid rgba(212, 168, 58, 0.30);
   border-radius: 10px;
-  padding: 14px 18px;
+  padding: 16px 20px;
   margin-bottom: 18px;
   font-size: 0.94rem;
   color: var(--cream);
@@ -1059,12 +1100,178 @@ section {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--wheat);
-  margin-bottom: 4px;
+  margin-bottom: 10px;
 }
+/* Top "size + total price" line — bigger, prominent */
 .book-form-summary .booking-line {
   display: flex;
   justify-content: space-between;
-  padding: 2px 0;
+  align-items: baseline;
+  gap: 12px;
+  padding: 0;
+  font-size: 1rem;
+}
+.book-form-summary .booking-line :first-child {
+  color: var(--cream);
+  font-weight: 500;
+}
+.book-form-summary .booking-line :last-child {
+  font-family: var(--serif);
+  font-weight: 700;
+  color: var(--wheat);
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+/* Hairline divider between size and addon line items */
+.book-form-summary .summary-divider {
+  height: 1px;
+  background: rgba(212, 168, 58, 0.25);
+  margin: 10px 0 8px;
+}
+/* Each addon row */
+.book-form-summary .summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 3px 0;
+  font-size: 0.84rem;
+  color: rgba(250, 246, 238, 0.78);
+}
+.book-form-summary .summary-line .summary-label {
+  font-weight: 500;
+}
+.book-form-summary .summary-line .summary-price {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: rgba(250, 246, 238, 0.92);
+  white-space: nowrap;
+}
+
+/* ---------- CUSTOM SCROLLBAR (green → cream gradient) ---------- */
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--forest) var(--cream-warm);
+}
+/* Chromium / Safari / mobile */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--cream-warm);
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--forest) 0%, var(--forest-dark) 50%, var(--cream-warm) 100%);
+  border-radius: 100px;
+  border: 2px solid var(--cream-warm);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--forest-dark) 0%, var(--forest) 50%, var(--wheat) 100%);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-corner { background: var(--cream-warm); }
+
+/* On the slot picker (which has a dark bg) — invert track to dark */
+.slot-picker::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.20);
+}
+.slot-picker::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--wheat) 0%, var(--amber) 50%, var(--cream-warm) 100%);
+  border-color: rgba(0, 0, 0, 0.20);
+}
+
+/* ---------- CUSTOM TIME SLOT (under the 4 preset slots) ---------- */
+.slot-custom-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  width: 100%;
+  background: rgba(212, 168, 58, 0.08);
+  border: 1.5px dashed rgba(212, 168, 58, 0.40);
+  border-radius: 8px;
+  color: var(--wheat);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  text-align: left;
+}
+.slot-custom-toggle:hover {
+  background: rgba(212, 168, 58, 0.14);
+  border-color: rgba(212, 168, 58, 0.60);
+}
+.slot-custom-toggle.is-open {
+  border-style: solid;
+  background: rgba(212, 168, 58, 0.18);
+}
+.slot-custom-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--wheat);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+.slot-custom-toggle.is-open .slot-custom-toggle-icon {
+  transform: rotate(45deg);
+}
+
+.slot-custom {
+  margin-top: 12px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.20);
+  border: 1px solid rgba(250, 246, 238, 0.14);
+  border-radius: 10px;
+}
+.slot-custom[hidden] { display: none; }
+.slot-custom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.slot-custom-row label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  margin-bottom: 5px;
+}
+.slot-custom-row input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1.5px solid rgba(250, 246, 238, 0.20);
+  border-radius: 6px;
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+.slot-custom-row input:focus {
+  border-color: var(--wheat);
+  background: rgba(0, 0, 0, 0.40);
+}
+.slot-custom-note {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: rgba(250, 246, 238, 0.55);
+  font-style: italic;
+}
+@media (max-width: 540px) {
+  .slot-custom-row { grid-template-columns: 1fr; gap: 8px; }
 }
 .book-submit {
   display: block;

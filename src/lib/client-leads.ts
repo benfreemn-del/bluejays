@@ -160,6 +160,13 @@ export function detectAudience(
     return "player";
   if (source === "email-capture" && intent === "camp finder") return "parent";
 
+  // Camp Finder quiz — every submission is a parent (the quiz is parent-
+  // facing by design, asks "your player's age" / "where do you live"). The
+  // intent string is "Camp Finder · {age} · {state} {county}" and source
+  // is "camp-finder-quiz".
+  if (source === "camp-finder-quiz") return "parent";
+  if (intent.startsWith("camp finder")) return "parent";
+
   // Build Your Player lead-gen — role field is the source of truth.
   if (source === "lead-gen-builder") {
     const builderRole = str("role");

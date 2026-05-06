@@ -70,9 +70,20 @@
                         <a href="#calculator" class="btn-outline">Get an Estimate</a>
                     </div>
                     <div class="hero-trust">
-                        <span>Lab-certified results</span>
-                        <span>3-5 day reports</span>
-                        <span>Fully insured</span>
+                        <span class="hero-trust-item check">
+                            <span class="hero-trust-emoji" aria-hidden="true">✅</span>
+                            Lab-certified results
+                        </span>
+                        <span class="hero-trust-item check">
+                            <span class="hero-trust-emoji" aria-hidden="true">✅</span>
+                            3-5 day reports
+                        </span>
+                        <span class="hero-trust-item insured">
+                            <span class="hero-trust-shield" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg>
+                            </span>
+                            Fully insured
+                        </span>
                     </div>
                 </div>
                 <div class="hero-card reveal">
@@ -467,6 +478,24 @@
                             <div class="slot-picker-status">Loading available slots&hellip;</div>
                         </div>
                         <input type="hidden" id="bookSlotId" name="slotId" value="">
+
+                        <button type="button" id="slotCustomToggle" class="slot-custom-toggle">
+                            <span class="slot-custom-toggle-icon">+</span>
+                            <span>None of these work? Suggest a different time</span>
+                        </button>
+                        <div id="slotCustom" class="slot-custom" hidden>
+                            <div class="slot-custom-row">
+                                <div>
+                                    <label for="customDate">Date</label>
+                                    <input type="date" id="customDate" name="customDate">
+                                </div>
+                                <div>
+                                    <label for="customTime">Time</label>
+                                    <input type="time" id="customTime" name="customTime">
+                                </div>
+                            </div>
+                            <p class="slot-custom-note">We&rsquo;ll confirm or suggest the closest available slot within one business day.</p>
+                        </div>
                     </div>
 
                     <div class="form-group">

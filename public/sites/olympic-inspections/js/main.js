@@ -126,11 +126,16 @@
       }
     }
 
+    function escHtml(s) {
+      return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
     function render() {
       var base = BASE_PRICES[state.size];
       var addonTotalLow = 0, addonTotalHigh = 0;
       var breakdownParts = [];
-      var summaryAddonParts = [];
+      // Each summary row = { label, price } — rendered as receipt-style line items
+      var summaryRows = [];
 
       // sample-based add-ons (per quantity)
       var samples = ["airSample", "surfaceSample"];
@@ -143,7 +148,7 @@
           addonTotalHigh += sub;
           var label = key === "airSample" ? "air sample" : "surface sample";
           breakdownParts.push(qty + "× " + label);
-          summaryAddonParts.push(qty + "× " + label + " " + fmtMoney(sub));
+          summaryRows.push({ label: qty + "× " + label, price: "+" + fmtMoney(sub) });
         }
       });
 
@@ -151,12 +156,12 @@
       if (state.addonChecked.rush) {
         addonTotalLow += 150; addonTotalHigh += 150;
         breakdownParts.push("24-hr rush");
-        summaryAddonParts.push("Rush 24-hr +$150");
+        summaryRows.push({ label: "24-hr rush", price: "+$150" });
       }
       if (state.addonChecked.thermal) {
         addonTotalLow += 95; addonTotalHigh += 95;
         breakdownParts.push("thermal scan");
-        summaryAddonParts.push("Thermal scan +$95");
+        summaryRows.push({ label: "Thermal scan", price: "+$95" });
       }
 
       // Render total
@@ -191,9 +196,16 @@
           : fmtMoney(base.low + addonTotalLow) + "–" + fmtMoney(base.high + addonTotalHigh);
       }
       if (bookSummaryAddons) {
-        if (summaryAddonParts.length > 0) {
-          bookSummaryAddons.style.display = "flex";
-          bookSummaryAddons.innerHTML = "<span>" + summaryAddonParts.join(" · ") + "</span>";
+        if (summaryRows.length > 0) {
+          bookSummaryAddons.style.display = "block";
+          var html = '<div class="summary-divider"></div>';
+          summaryRows.forEach(function (r) {
+            html += '<div class="summary-line">' +
+                      '<span class="summary-label">' + escHtml(r.label) + '</span>' +
+                      '<span class="summary-price">' + escHtml(r.price) + '</span>' +
+                    '</div>';
+          });
+          bookSummaryAddons.innerHTML = html;
         } else {
           bookSummaryAddons.style.display = "none";
         }
@@ -375,6 +387,41 @@
       .catch(function () {
         setEmpty();
       });
+
+    // Wire the "Suggest a different time" toggle (custom slot input)
+    var toggle = document.getElementById("slotCustomToggle");
+    var custom = document.getElementById("slotCustom");
+    if (toggle && custom) {
+      toggle.addEventListener("click", function () {
+        var willOpen = custom.hasAttribute("hidden");
+        if (willOpen) {
+          custom.removeAttribute("hidden");
+          toggle.classList.add("is-open");
+          // Clear any selected preset slot since user is suggesting custom
+          if (hiddenInput) hiddenInput.value = "";
+          var sel = picker.querySelectorAll(".slot-pill.is-selected");
+          for (var i = 0; i < sel.length; i++) sel[i].classList.remove("is-selected");
+        } else {
+          custom.setAttribute("hidden", "");
+          toggle.classList.remove("is-open");
+        }
+      });
+      // If user clicks a preset slot pill while custom is open, auto-collapse
+      picker.addEventListener("click", function (e) {
+        var t = e.target;
+        if (t && t.classList && t.classList.contains("slot-pill")) {
+          if (!custom.hasAttribute("hidden")) {
+            custom.setAttribute("hidden", "");
+            toggle.classList.remove("is-open");
+            // Clear custom inputs
+            var cd = document.getElementById("customDate");
+            var ct = document.getElementById("customTime");
+            if (cd) cd.value = "";
+            if (ct) ct.value = "";
+          }
+        }
+      });
+    }
   }
 
   // ---- BOOKING FORM ----
@@ -410,6 +457,19 @@
         }
       }
 
+      // If customer used the "Suggest a different time" path, prepend that
+      // request to their notes field so it lands in the admin booking detail.
+      var userNotes = (fd.get("notes") || "").toString();
+      var customDate = (fd.get("customDate") || "").toString();
+      var customTime = (fd.get("customTime") || "").toString();
+      var combinedNotes = userNotes;
+      if (!slotId && (customDate || customTime)) {
+        var requested = "Requested time: " +
+          (customDate || "(no date)") +
+          (customTime ? " at " + customTime : "");
+        combinedNotes = requested + (userNotes ? "\n\n" + userNotes : "");
+      }
+
       var payload = {
         slotId: slotId || null,
         name: (fd.get("name") || "").toString(),
@@ -420,7 +480,7 @@
         addons: (fd.get("addons") || "").toString(),
         estimateLow: estimateLow,
         estimateHigh: estimateHigh,
-        notes: (fd.get("notes") || "").toString(),
+        notes: combinedNotes,
       };
 
       fetch(endpoint, {
