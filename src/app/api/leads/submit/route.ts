@@ -132,20 +132,39 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { businessName, ownerName, phone, email, website, category, city, state } = body;
+  const { businessName, ownerName, phone, email, website, category, city, state, smsConsent } = body;
+
+  // TCPA 47 CFR 64.1200(a)(7)(i): SMS consent CANNOT be required as a
+  // condition of submitting this form or receiving the preview. SMS only
+  // fires when the prospect explicitly ticked the checkbox AND a phone is
+  // provided (CLAUDE.md Rule 35 belt+suspenders gate). Default false.
+  const smsConsentBool = smsConsent === true;
 
   /* ── Validation ── */
   if (!businessName || typeof businessName !== "string" || !businessName.trim()) {
     return NextResponse.json({ error: "Business name is required" }, { status: 400 });
   }
-  if (!phone || typeof phone !== "string") {
-    return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
+  // Phone is REQUIRED only when SMS consent is ticked. Otherwise it's optional
+  // — email alone is enough for the email-only outreach funnel.
+  const phoneStr = typeof phone === "string" ? phone.trim() : "";
+  if (smsConsentBool) {
+    if (!phoneStr) {
+      return NextResponse.json({ error: "Phone number is required when opting in to SMS" }, { status: 400 });
+    }
+    if (phoneStr.replace(/\D/g, "").length < 10) {
+      return NextResponse.json({ error: "Please enter a valid phone number" }, { status: 400 });
+    }
+  } else if (phoneStr && phoneStr.replace(/\D/g, "").length < 10) {
+    // Phone provided but malformed — reject so we don't store junk.
+    return NextResponse.json({ error: "Please enter a valid phone number, or leave it blank" }, { status: 400 });
   }
-  const phoneDigits = phone.replace(/\D/g, "");
-  if (phoneDigits.length < 10) {
-    return NextResponse.json({ error: "Please enter a valid phone number" }, { status: 400 });
+  // Email is now REQUIRED (was optional before — it's the only contact method
+  // for prospects who don't opt in to SMS, so we can't ship them a preview
+  // without it).
+  if (!email || typeof email !== "string" || !email.trim()) {
+    return NextResponse.json({ error: "Email address is required" }, { status: 400 });
   }
-  if (email && typeof email === "string" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
   }
 
@@ -162,8 +181,8 @@ export async function POST(request: NextRequest) {
     id,
     businessName: businessName.trim(),
     ownerName: ownerName?.trim() || undefined,
-    phone: normalizePhone(phone),
-    email: email?.trim() || undefined,
+    phone: phoneStr ? normalizePhone(phoneStr) : "",
+    email: email.trim(),
     address: "",
     city: canonicalizeCity(city?.trim()) || city?.trim() || "Unknown",
     state: state?.trim() || "",
@@ -172,6 +191,12 @@ export async function POST(request: NextRequest) {
     estimatedRevenueTier: "medium",
     status: "scouted",        // starts in scouted, will advance through pipeline
     source: "inbound",        // KEY: marks this as a self-submitted inbound lead
+    // SMS consent — Rule 35. Only set true when the prospect ticked the box.
+    // Audit-trail fields populated on the same write so TCR/TCPA defense has
+    // a single coherent record.
+    smsConsent: smsConsentBool,
+    smsConsentAt: smsConsentBool ? now : undefined,
+    smsConsentSource: smsConsentBool ? "get_started_form" : undefined,
     createdAt: now,
     updatedAt: now,
   };

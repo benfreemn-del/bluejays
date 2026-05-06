@@ -67,7 +67,9 @@ export default function AuditForm() {
         body: JSON.stringify({
           url: url.trim(),
           email: email.trim(),
-          phone: phone.trim() || undefined,
+          // Phone is required — server enforces too, but pass the
+          // trimmed value through so the server can normalize it.
+          phone: phone.trim(),
           businessCategory,
           businessName: businessName.trim() || undefined,
           biggestFrustration: biggestFrustration.trim() || undefined,
@@ -187,7 +189,7 @@ export default function AuditForm() {
 
       <div className="text-left">
         <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-          Your phone <span className="normal-case text-emerald-400 font-medium">(optional — get a personal text from Ben with your top 3 fixes within 1 hour)</span>
+          Your phone <span className="normal-case text-emerald-400 font-medium">— Ben texts you the top 3 fixes within 1 hour</span>
         </label>
         <input
           id="phone"
@@ -196,6 +198,14 @@ export default function AuditForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           disabled={state === "submitting"}
+          required
+          inputMode="tel"
+          autoComplete="tel"
+          // Permissive but real-phone-shaped: 10+ digits after stripping
+          // formatting punctuation. Prevents joke entries while still
+          // accepting "(555) 555-5555", "555.555.5555", "+1 555 ...", etc.
+          pattern="[\d\s\-\.\(\)\+]{10,}"
+          title="Enter a real phone number — 10+ digits, formatting OK."
           className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
         />
       </div>

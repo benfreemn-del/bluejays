@@ -116,6 +116,8 @@ const PUBLIC_API_PATHS = [
   "/api/unsubscribe", // Prospects click unsubscribe link from email — no auth needed
   "/api/auth/login",
   "/api/leads/submit",
+  "/api/leads/sms-opt-in/",            // Public SMS opt-in upsell from /opt-in-sms/[id] (Rule 35 update — TCPA-compliant)
+  "/opt-in-sms/",                      // Public post-submit SMS opt-in page
   "/api/portfolio",
   "/api/social-proof",
   "/api/track/",

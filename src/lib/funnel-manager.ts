@@ -283,18 +283,26 @@ async function getNextSmsSequence(prospectId: string): Promise<number> {
 async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
   const step = FUNNEL_STEPS[stepIndex];
 
-  // A2P 10DLC COMPLIANCE: only send SMS to prospects who explicitly opted in.
-  // `source: "inbound"` means the prospect submitted the /get-started form and
-  // ticked the SMS consent checkbox — that's a verifiable CTA per TCR rules.
-  // `source: "scouted"` (auto-scout cold outreach) has NOT opted in and must
-  // NOT receive SMS, or the campaign can get yanked and the number flagged.
-  // Cold-outreach prospects still get email + voicemail (both have their own
-  // compliance frameworks that permit contacting publicly-listed business
-  // numbers/emails). Lock this in before A2P approval — TCR revokes campaigns
-  // that send to scraped numbers post-approval. Undo only with written
-  // consent captured through another channel (manual phone confirmation, etc).
+  // CLAUDE.md Rule 35 — A2P 10DLC + TCPA compliance, BELT + SUSPENDERS gate.
+  // Two flags must BOTH be true before any SMS fires for a prospect:
+  //   1. source === "inbound"  — prospect submitted /get-started themselves
+  //      (or was manually flipped to inbound after a phone-confirmed opt-in)
+  //   2. smsConsent === true   — prospect explicitly ticked the OPTIONAL SMS
+  //      consent checkbox on the form, OR opted in via /opt-in-sms/[id]
+  //      post-submit. TCPA 47 CFR 64.1200(a)(7)(i) — consent CANNOT be
+  //      required as a condition of service, so source alone is no longer
+  //      sufficient. We need the explicit consent flag too.
+  //
+  // TCR rejected the BlueJays campaign in May 2026 for exactly this reason
+  // (the form previously REQUIRED the checkbox to submit). Loosening either
+  // half of this gate without TCR re-approval = campaign yank.
+  //
+  // Cold-outreach prospects (source='scouted') still get email + voicemail
+  // (both have their own compliance frameworks that permit contacting
+  // publicly-listed business numbers/emails).
   const isInboundOptIn = prospect.source === "inbound";
-  const smsAllowedForThisProspect = isInboundOptIn;
+  const hasSmsConsent = prospect.smsConsent === true;
+  const smsAllowedForThisProspect = isInboundOptIn && hasSmsConsent;
 
   const emailTemplate = step.channels.includes("email") ? await getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
   const smsBody = step.channels.includes("sms") && smsAllowedForThisProspect
@@ -336,11 +344,12 @@ async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUr
 }
 
 async function buildVoicemailFollowUpPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
-  // Same A2P 10DLC rule as buildStepPayload — only inbound opt-ins receive SMS.
-  // Voicemail goes to everyone (carriers treat ringless VM under different
-  // compliance framework), but the SMS that would follow the VM is gated to
-  // prospects who filled out the /get-started form with consent ticked.
-  const smsAllowedForThisProspect = prospect.source === "inbound";
+  // Same Rule 35 belt+suspenders gate as buildStepPayload — only inbound
+  // prospects who ALSO ticked smsConsent receive the post-VM SMS. Voicemail
+  // itself goes to everyone (ringless VM operates under a different
+  // compliance framework), but the SMS that follows it must clear both
+  // flags.
+  const smsAllowedForThisProspect = prospect.source === "inbound" && prospect.smsConsent === true;
 
   const sms = prospect.phone && smsAllowedForThisProspect
     ? {

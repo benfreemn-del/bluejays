@@ -122,6 +122,22 @@ export interface Prospect {
   funnelPaused?: boolean;
   /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
   source?: "inbound" | "scouted";
+  /** Express written SMS consent. NON-NEGOTIABLE for any outbound SMS to fire
+   *  (CLAUDE.md Rule 35 + TCPA 47 CFR 64.1200(a)(7)(i)). Set true ONLY when the
+   *  prospect ticks the optional SMS consent checkbox on /get-started OR opts
+   *  in via /opt-in-sms/[id] OR Ben manually captures consent through another
+   *  channel and updates the row. Defaults to false. The funnel-manager SMS
+   *  gate is `source === "inbound" && smsConsent === true` (belt + suspenders).
+   *  TCR rejected the campaign once because the form REQUIRED the checkbox to
+   *  submit — that's a TCPA violation. Consent is now optional, and SMS only
+   *  fires for the subset who explicitly opted in. */
+  smsConsent?: boolean;
+  /** ISO timestamp of when smsConsent was first set to true. Audit trail for
+   *  TCR / TCPA compliance. */
+  smsConsentAt?: string;
+  /** Source of the SMS consent capture: "get_started_form" | "opt_in_page"
+   *  | "manual" — used to defend the consent record if challenged. */
+  smsConsentSource?: "get_started_form" | "opt_in_page" | "manual";
   /** Pricing tier:
    *   "standard" = $997 one-time + $100/yr mgmt sub (1-year trial)
    *   "free"     = $30 one-time + $100/yr mgmt sub (1-year trial, friends/family)

@@ -116,6 +116,23 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
+  // Phone is now required — Ben texts the top-3 fixes within the hour
+  // and SMS engagement is the highest-converting channel for hot leads.
+  // Validate that 10+ digits remain after stripping all formatting.
+  const phoneRaw = (body.phone || "").trim();
+  const phoneDigits = phoneRaw.replace(/\D/g, "");
+  if (phoneDigits.length < 10) {
+    return NextResponse.json(
+      {
+        error:
+          "A phone number is required so Ben can text your top 3 fixes within the hour.",
+      },
+      { status: 400 },
+    );
+  }
+  const phone = phoneRaw;
+
   const businessCategory = (body.businessCategory || "general").toLowerCase().trim();
   if (!ALLOWED_CATEGORIES.has(businessCategory)) {
     return NextResponse.json(
@@ -125,7 +142,6 @@ export async function POST(request: NextRequest) {
   }
 
   const email = body.email!.toLowerCase().trim();
-  const phone = (body.phone || "").trim() || null;
   const businessName =
     (body.businessName || "").trim() ||
     (() => {

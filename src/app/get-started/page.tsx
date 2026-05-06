@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CATEGORY_CONFIG, type Category } from "@/lib/types";
 
 const categoryOptions: { value: Category; label: string }[] = (
@@ -10,9 +11,17 @@ const categoryOptions: { value: Category; label: string }[] = (
 ).map((key) => ({ value: key, label: CATEGORY_CONFIG[key].label }));
 
 export default function GetStartedPage() {
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
+  const [submittedProspectId, setSubmittedProspectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // SMS consent is OPTIONAL — TCPA 47 CFR 64.1200(a)(7)(i) prohibits requiring
+  // consent as a condition of service. The form submits with or without this
+  // ticked. If unticked, the prospect goes to /opt-in-sms/[id] where they can
+  // optionally opt in afterward. SMS only fires when smsConsent === true on
+  // the prospect record (CLAUDE.md Rule 35).
+  const [smsConsent, setSmsConsent] = useState(false);
   const [form, setForm] = useState({
     businessName: "",
     ownerName: "",
@@ -32,21 +41,40 @@ export default function GetStartedPage() {
     setError("");
 
     if (!form.businessName.trim()) { setError("Please enter your business name."); return; }
-    if (!form.phone.trim()) { setError("Please enter your phone number."); return; }
-    if (form.phone.replace(/\D/g, "").length < 10) { setError("Please enter a valid phone number."); return; }
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError("Please enter a valid email address."); return; }
+    // Phone is REQUIRED only when the prospect ticks the SMS consent box. If
+    // they don't want SMS, we don't need their phone — email is enough.
+    if (smsConsent) {
+      if (!form.phone.trim()) { setError("Phone number is required when you opt in to SMS."); return; }
+      if (form.phone.replace(/\D/g, "").length < 10) { setError("Please enter a valid phone number."); return; }
+    } else if (form.phone.trim() && form.phone.replace(/\D/g, "").length < 10) {
+      setError("Please enter a valid phone number, or leave it blank.");
+      return;
+    }
+    if (!form.email.trim()) { setError("Please enter your email address."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { setError("Please enter a valid email address."); return; }
 
     setLoading(true);
     try {
       const res = await fetch("/api/leads/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, smsConsent }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Something went wrong");
       }
+      const data = await res.json().catch(() => ({}));
+      const id: string | null = (data?.prospectId as string) || null;
+      // Q11=B per CLAUDE.md Rule 35 update — if the prospect didn't tick the
+      // SMS box on the form, route them to the post-submit opt-in upsell
+      // (/opt-in-sms/[id]) so we have a second chance to capture express
+      // written consent without making it a condition of submission.
+      if (!smsConsent && id) {
+        router.push(`/opt-in-sms/${id}`);
+        return;
+      }
+      setSubmittedProspectId(id);
       setSubmitted(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -73,8 +101,14 @@ export default function GetStartedPage() {
             We&apos;re building your custom website right now. You&apos;ll receive a preview link within <span className="text-white font-semibold">48 hours</span> — yours to look at, free.
           </p>
           <p className="text-white/30 text-sm">
-            We&apos;ll text you at <span className="text-white/50 font-medium">{form.phone}</span> when it&apos;s ready.
+            We&apos;ll email you at <span className="text-white/50 font-medium">{form.email}</span> when it&apos;s ready.
+            {smsConsent && form.phone ? (
+              <> You also opted in to SMS at <span className="text-white/50 font-medium">{form.phone}</span>.</>
+            ) : null}
           </p>
+          {submittedProspectId ? (
+            <p className="mt-2 text-[11px] text-white/20">Reference: {submittedProspectId.slice(0, 8)}</p>
+          ) : null}
           <Link href="/" className="inline-flex items-center gap-2 mt-8 text-sky-400 text-sm hover:underline transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
@@ -165,10 +199,17 @@ export default function GetStartedPage() {
               />
             </div>
             <div>
-              <label className={labelCls}>Phone Number <span className="text-sky-400">*</span></label>
+              <label className={labelCls}>
+                Phone Number{" "}
+                {smsConsent ? (
+                  <span className="text-sky-400">*</span>
+                ) : (
+                  <span className="text-white/30">(only needed if you opt in to SMS)</span>
+                )}
+              </label>
               <input
                 type="tel"
-                required
+                required={smsConsent}
                 value={form.phone}
                 onChange={set("phone")}
                 placeholder="(206) 555-1234"
@@ -179,9 +220,10 @@ export default function GetStartedPage() {
 
           {/* Email */}
           <div>
-            <label className={labelCls}>Email <span className="text-white/30">(optional)</span></label>
+            <label className={labelCls}>Email <span className="text-sky-400">*</span></label>
             <input
               type="email"
+              required
               value={form.email}
               onChange={set("email")}
               placeholder="you@business.com"
@@ -253,20 +295,24 @@ export default function GetStartedPage() {
             />
           </div>
 
-          {/* SMS + email consent — required for A2P 10DLC / TCR approval.
-              TCR rejected our first campaign submission because they couldn't
-              verify an explicit Call-to-Action granting SMS consent. This
-              checkbox is the CTA: the user must tick it before submitting
-              the form, and submission = written opt-in. Never pre-check. */}
+          {/* SMS consent — OPTIONAL per TCPA 47 CFR 64.1200(a)(7)(i).
+              Cannot be required as a condition of service. The form submits
+              with or without it ticked. When unticked, the prospect routes to
+              /opt-in-sms/[id] post-submit (Q11=B). When ticked, smsConsent
+              flows through /api/leads/submit -> prospects.sms_consent=true
+              and the funnel-manager SMS gate fires (Rule 35 belt+suspenders:
+              source==='inbound' && smsConsent===true). Never pre-check. */}
           <label className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors cursor-pointer">
             <input
               type="checkbox"
-              required
               name="smsConsent"
+              checked={smsConsent}
+              onChange={(e) => setSmsConsent(e.target.checked)}
               className="mt-1 w-5 h-5 rounded border-white/20 bg-white/5 text-sky-500 focus:ring-sky-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
             />
             <span className="text-sm text-white/70 leading-relaxed">
-              I agree to receive communication from BlueJay Business Solutions about my website preview, including email and SMS text messages at the phone number I provided. Message frequency varies (up to 4 messages per week). Message and data rates may apply. Reply STOP to opt out, HELP for help. See our{" "}
+              <span className="block text-white/40 text-[11px] uppercase tracking-wide mb-1">Optional</span>
+              I agree to receive SMS text messages from BlueJay Business Solutions about my website preview at the phone number I provided. Consent is not required to submit this form or receive a website preview. Message frequency varies (up to 4 messages per week). Message and data rates may apply. Reply STOP to opt out, HELP for help. See our{" "}
               <a href="/privacy" className="text-sky-400 hover:text-sky-300 underline">Privacy Policy</a>
               {" "}and{" "}
               <a href="/terms" className="text-sky-400 hover:text-sky-300 underline">Terms</a>.

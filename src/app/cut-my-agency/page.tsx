@@ -401,7 +401,7 @@ export default function CutMyAgencyPage() {
                 searches has zero context on BlueJays — this gives them the
                 3-second credibility they need to engage. */}
             <div className="mt-4 sm:mt-6 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              WA-based. <span className="text-amber-300 font-semibold">100+ businesses online across the USA.</span>
+              <span className="text-amber-300 font-semibold">100+ businesses online across the USA.</span>{" "}WA-based.
             </div>
           </div>
         )}
@@ -536,11 +536,17 @@ export default function CutMyAgencyPage() {
                   and snap to a zone midpoint. The white marker shows
                   where they currently sit. */}
               <div className="mt-5">
+                {/* Tier 2 #7 fix 2026-05-06 — added cursor-pointer +
+                    hover:brightness-125 + active:scale to zones so the
+                    tap-affordance is obvious. Was reading as static. */}
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-1.5 text-center">
+                  ↓ Tap a zone or drag above ↓
+                </p>
                 <div className="relative h-9 rounded-full overflow-hidden bg-slate-900/60 flex">
                   <button
                     type="button"
                     onClick={() => setMonthsAsClient(3)}
-                    className="flex-[6] bg-emerald-500/30 hover:bg-emerald-500/45 transition-colors text-[10px] font-bold text-emerald-100/80 flex items-center justify-center"
+                    className="flex-[6] bg-emerald-500/30 hover:bg-emerald-500/55 hover:brightness-110 active:scale-95 transition-all text-[10px] font-bold text-emerald-100/80 flex items-center justify-center cursor-pointer"
                     title="0–6 months — Honeymoon phase"
                   >
                     Honeymoon
@@ -548,7 +554,7 @@ export default function CutMyAgencyPage() {
                   <button
                     type="button"
                     onClick={() => setMonthsAsClient(12)}
-                    className="flex-[12] bg-amber-500/30 hover:bg-amber-500/45 transition-colors text-[10px] font-bold text-amber-100/80 flex items-center justify-center"
+                    className="flex-[12] bg-amber-500/30 hover:bg-amber-500/55 hover:brightness-110 active:scale-95 transition-all text-[10px] font-bold text-amber-100/80 flex items-center justify-center cursor-pointer"
                     title="6–18 months — Typical agency tenure"
                   >
                     Typical
@@ -556,7 +562,7 @@ export default function CutMyAgencyPage() {
                   <button
                     type="button"
                     onClick={() => setMonthsAsClient(27)}
-                    className="flex-[18] bg-orange-500/30 hover:bg-orange-500/45 transition-colors text-[10px] font-bold text-orange-100/80 flex items-center justify-center"
+                    className="flex-[18] bg-orange-500/30 hover:bg-orange-500/55 hover:brightness-110 active:scale-95 transition-all text-[10px] font-bold text-orange-100/80 flex items-center justify-center cursor-pointer"
                     title="18–36 months — Above average"
                   >
                     Above avg
@@ -564,7 +570,7 @@ export default function CutMyAgencyPage() {
                   <button
                     type="button"
                     onClick={() => setMonthsAsClient(48)}
-                    className="flex-[24] bg-rose-500/30 hover:bg-rose-500/45 transition-colors text-[10px] font-bold text-rose-100/80 flex items-center justify-center"
+                    className="flex-[24] bg-rose-500/30 hover:bg-rose-500/55 hover:brightness-110 active:scale-95 transition-all text-[10px] font-bold text-rose-100/80 flex items-center justify-center cursor-pointer"
                     title="36+ months — Long-term, well past industry average"
                   >
                     Overdue
@@ -684,20 +690,35 @@ export default function CutMyAgencyPage() {
             {/* Running tally — anchors the prospect to "my agency does
                 a LOT for one fee" framing. The more services they
                 check, the more it primes the next step (where they
-                realize they're paying ad spend ON TOP of all this). */}
+                realize they're paying ad spend ON TOP of all this).
+
+                Tier 2 #8 fix 2026-05-06 — added a per-service-cost
+                line so Step 3 has its own number tease (Steps 1, 2, 4
+                all have live numbers; Step 3 was the only one feeling
+                static after the others). */}
             {services.size > 0 && (
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] px-4 py-3 mb-6 flex items-center gap-3">
-                <span className="text-2xl">📦</span>
-                <p className="text-sm text-slate-200 leading-relaxed">
-                  <span className="font-bold text-amber-200">
-                    {services.size} of {SERVICE_OPTIONS.length}
-                  </span>
-                  {" "}services bundled into{" "}
-                  <span className="font-bold text-white">
-                    {fmtMoney(monthlyRetainer)}/mo
-                  </span>
-                  {" "}— and you still pay the ads on top.
-                </p>
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] px-4 py-3 mb-6">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0 leading-none">📦</span>
+                  <div>
+                    <p className="text-sm text-slate-200 leading-relaxed">
+                      <span className="font-bold text-amber-200">
+                        {services.size} of {SERVICE_OPTIONS.length}
+                      </span>
+                      {" "}services bundled into{" "}
+                      <span className="font-bold text-white">
+                        {fmtMoney(monthlyRetainer)}/mo
+                      </span>
+                      {" "}— and you still pay the ads on top.
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1.5">
+                      ≈ {fmtMoney(monthlyRetainer / services.size)}/mo per service ·{" "}
+                      <span className="text-amber-300">
+                        BlueJays does all of them for $10K once
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 

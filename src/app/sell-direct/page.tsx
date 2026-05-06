@@ -264,15 +264,31 @@ export default function SellDirectPage() {
           background: transparent;
           cursor: pointer;
           touch-action: pan-y;
+          --fill-pct: 0%;
         }
+        /* Track shows filled portion (emerald) up to thumb position
+           and the unfilled portion (subtle white) after. Tier 1 parity
+           with /cut-my-agency 2026-05-06 — was a flat gray track. */
         input[type="range"]::-webkit-slider-runnable-track {
           height: 6px;
-          background: rgba(255, 255, 255, 0.08);
+          background: linear-gradient(
+            to right,
+            #34d399 0%,
+            #10b981 var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) 100%
+          );
           border-radius: 9999px;
         }
         input[type="range"]::-moz-range-track {
           height: 6px;
-          background: rgba(255, 255, 255, 0.08);
+          background: linear-gradient(
+            to right,
+            #34d399 0%,
+            #10b981 var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) var(--fill-pct, 0%),
+            rgba(255, 255, 255, 0.10) 100%
+          );
           border-radius: 9999px;
         }
         input[type="range"]::-webkit-slider-thumb {
@@ -355,7 +371,7 @@ export default function SellDirectPage() {
             {/* Trust strip — answers "who built this?" before they engage.
                 Cold paid traffic has zero context on BlueJays. */}
             <div className="mt-4 sm:mt-6 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              WA-based. <span className="text-emerald-300 font-semibold">100+ businesses online across the USA.</span>
+              <span className="text-emerald-300 font-semibold">100+ businesses online across the USA.</span>{" "}WA-based.
             </div>
           </div>
         )}
@@ -391,7 +407,16 @@ export default function SellDirectPage() {
                 step={5}
                 value={Math.min(avgPrice, 500)}
                 onChange={(e) => setAvgPrice(parseInt(e.target.value, 10))}
-                className="w-full accent-emerald-400"
+                className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      ((Math.min(avgPrice, 500) - 10) / (500 - 10)) * 100,
+                    ),
+                  )}%`,
+                }}
               />
               <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
                 <span>$10</span>
@@ -443,7 +468,16 @@ export default function SellDirectPage() {
                 onChange={(e) =>
                   setUnitsPerMonth(parseInt(e.target.value, 10))
                 }
-                className="w-full accent-emerald-400"
+                className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      ((Math.min(unitsPerMonth, 2000) - 10) / (2000 - 10)) * 100,
+                    ),
+                  )}%`,
+                }}
               />
               <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
                 <span>10</span>
@@ -515,7 +549,16 @@ export default function SellDirectPage() {
                 onChange={(e) =>
                   setDistributorMargin(parseInt(e.target.value, 10))
                 }
-                className="w-full accent-emerald-400"
+                className="w-full"
+                style={{
+                  ["--fill-pct" as string]: `${Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      ((Math.min(distributorMargin, 60) - 10) / (60 - 10)) * 100,
+                    ),
+                  )}%`,
+                }}
               />
               <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
                 <span>10%</span>
@@ -595,7 +638,13 @@ export default function SellDirectPage() {
                   onChange={(e) =>
                     setCaptureRatePct(parseInt(e.target.value, 10))
                   }
-                  className="w-full accent-emerald-400"
+                  className="w-full"
+                  style={{
+                    ["--fill-pct" as string]: `${Math.min(
+                      100,
+                      Math.max(0, ((captureRatePct - 10) / (70 - 10)) * 100),
+                    )}%`,
+                  }}
                 />
                 <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
                   <span>10% (cautious)</span>
@@ -640,16 +689,22 @@ export default function SellDirectPage() {
               </div>
             </div>
 
-            {/* Net 3-year profit + payback */}
+            {/* Net 3-year profit + payback — Tier 1 #2 parity 2026-05-06.
+                Dominates the page visually (trophy emoji, bigger
+                number, glow) so the punchline of the calculator wins
+                the eye. */}
             {math.threeYearProfit > 0 && (
-              <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-transparent p-6 text-center">
-                <p className="text-xs uppercase tracking-widest text-amber-300 font-bold mb-2">
-                  Your 3-year net profit
-                </p>
-                <p className="text-4xl sm:text-5xl font-black text-amber-200 tabular-nums mb-2">
+              <div className="rounded-2xl border-2 border-amber-400/60 bg-gradient-to-b from-amber-500/[0.18] to-amber-500/[0.06] p-6 sm:p-7 text-center shadow-[0_0_28px_rgba(251,191,36,0.25)]">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-3xl sm:text-4xl leading-none">🏆</span>
+                  <p className="text-xs uppercase tracking-widest text-amber-300 font-bold">
+                    Your 3-year net profit
+                  </p>
+                </div>
+                <p className="text-5xl sm:text-6xl font-black text-amber-200 tabular-nums mb-3 leading-none">
                   {fmtMoney(math.threeYearProfit)}
                 </p>
-                <p className="text-sm text-slate-300">
+                <p className="text-sm text-slate-200">
                   Pays for itself in about{" "}
                   <span className="text-white font-bold">
                     {Number.isFinite(math.paybackMonths)
@@ -660,6 +715,68 @@ export default function SellDirectPage() {
                 </p>
               </div>
             )}
+
+            {/* Dual stat cards — Tier 1 parity 2026-05-06.
+                Same +35% / +40% research stats from /cut-my-agency
+                (McKinsey/Salesforce). Reinforces the BlueJays
+                advantage on TWO axes: AI vs manual + custom vs
+                templated. Both research-backed; conservative within
+                cited ranges. */}
+            <div>
+              <p className="text-xs uppercase tracking-widest text-violet-300 font-bold mb-3 text-center">
+                Bonus: more profit, not just less margin loss
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {/* AI efficiency stat */}
+                <div className="rounded-2xl border border-violet-500/30 bg-violet-500/[0.06] p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl shrink-0 leading-none">⚡</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-violet-300/80 font-semibold mb-1">
+                        AI vs manual
+                      </p>
+                      <p className="text-3xl sm:text-4xl font-black text-violet-200 leading-none mb-1">
+                        +35%
+                      </p>
+                      <p className="text-sm text-violet-300/90 font-semibold mb-2">
+                        ROI lift
+                      </p>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        AI-driven systems beat manual marketing by ~35%.
+                        Same ad spend, more direct buyers reaching you.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Custom-build / personalization stat */}
+                <div className="rounded-2xl border border-fuchsia-500/30 bg-fuchsia-500/[0.06] p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl shrink-0 leading-none">🎯</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-fuchsia-300/80 font-semibold mb-1">
+                        Custom vs templated
+                      </p>
+                      <p className="text-3xl sm:text-4xl font-black text-fuchsia-200 leading-none mb-1">
+                        +40%
+                      </p>
+                      <p className="text-sm text-fuchsia-300/90 font-semibold mb-2">
+                        more revenue
+                      </p>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        Manufacturers who personalize at scale earn 40%
+                        more than those running cookie-cutter funnels.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed mt-3 text-center">
+                Sources: McKinsey &quot;Next in Personalization&quot;,
+                Salesforce marketing-AI research. Ad-optimization alone
+                cuts cost-per-acquisition by ~41% vs manual.
+              </p>
+            </div>
 
             {/* Real proof — anchor closes */}
             <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-6">
@@ -758,6 +875,20 @@ export default function SellDirectPage() {
                     ? "Sending…"
                     : "Send me my custom plan →"}
                 </button>
+                {/* Helper hint — Tier 1 #4 parity 2026-05-06. Tells
+                    users why the button is disabled instead of letting
+                    the gray state read as "broken". */}
+                {!canSubmit && stage !== "submitting" && (
+                  <p className="text-[11px] text-emerald-300/80 text-center font-semibold">
+                    {!name.trim() && !email.trim()
+                      ? "Add your name + email to enable"
+                      : !name.trim()
+                        ? "Add your name to enable"
+                        : !isValidEmail(email)
+                          ? "Add a valid email to enable"
+                          : "Almost there…"}
+                  </p>
+                )}
                 <p className="text-[11px] text-slate-500 text-center">
                   No spam. No auto-call. Ben replies personally — usually within
                   24 hours.
