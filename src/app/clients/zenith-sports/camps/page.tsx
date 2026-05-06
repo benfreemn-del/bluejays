@@ -67,12 +67,14 @@ type Step =
   | "results";
 
 type QuizState = {
-  ageGroup: string;
+  /** Up to 2 age bands so an in-between player isn't forced into one. */
+  ageGroups: string[];
   state: string;
   county: string;
   /** How far the parent will travel to a camp (one-way miles). */
   travelMiles: number;
-  skillLevel: string;
+  /** Up to 2 skill tiers so a player straddling levels gets both pools. */
+  skillLevels: string[];
   formats: string[];
   timing: string;
   parentName: string;
@@ -83,11 +85,11 @@ type QuizState = {
 };
 
 const INITIAL: QuizState = {
-  ageGroup: "",
+  ageGroups: [],
   state: "",
   county: "",
   travelMiles: 50, // sensible default — most parents drive ~30-60mi to a camp
-  skillLevel: "",
+  skillLevels: [],
   formats: [],
   timing: "",
   parentName: "",
@@ -191,8 +193,23 @@ function estimateAvailability(s: QuizState): number {
     count = stateCount * radiusFrac;
   }
 
-  if (s.ageGroup) count *= AGE_MULTIPLIER[s.ageGroup] ?? 0.2;
-  if (s.skillLevel) count *= SKILL_MULTIPLIER[s.skillLevel] ?? 0.3;
+  // Age + skill now multi-select (up to 2). Sum the band fractions so an
+  // in-between player who picks two adjacent age bands sees the union of
+  // both camp pools, not the intersection.
+  if (s.ageGroups.length > 0) {
+    const sum = s.ageGroups.reduce(
+      (acc, id) => acc + (AGE_MULTIPLIER[id] ?? 0.18),
+      0,
+    );
+    count *= Math.min(1, sum);
+  }
+  if (s.skillLevels.length > 0) {
+    const sum = s.skillLevels.reduce(
+      (acc, id) => acc + (SKILL_MULTIPLIER[id] ?? 0.3),
+      0,
+    );
+    count *= Math.min(1, sum);
+  }
   if (s.formats.length > 0) {
     const sum = s.formats.reduce(
       (acc, id) => acc + (FORMAT_MULTIPLIER[id] ?? 0),
@@ -229,6 +246,20 @@ export default function CampFinderPage() {
       };
     });
 
+  // Toggle helper for age + skill — both capped at 2 picks. Tapping a
+  // selected option deselects; tapping a 3rd at-cap is a no-op.
+  const toggleCapped =
+    <K extends "ageGroups" | "skillLevels">(key: K) =>
+    (id: string) =>
+      setState((s) => {
+        const arr = s[key];
+        if (arr.includes(id)) {
+          return { ...s, [key]: arr.filter((x) => x !== id) };
+        }
+        if (arr.length >= 2) return s;
+        return { ...s, [key]: [...arr, id] };
+      });
+
   const stepIndex = STEPS.indexOf(step);
 
   // County must validate against the known list for the picked state.
@@ -243,10 +274,10 @@ export default function CampFinderPage() {
   })();
 
   const canAdvance = (() => {
-    if (step === "age") return state.ageGroup !== "";
+    if (step === "age") return state.ageGroups.length >= 1;
     if (step === "location") return state.state !== "" && validCounty;
     if (step === "travel") return state.travelMiles > 0;
-    if (step === "skill") return state.skillLevel !== "";
+    if (step === "skill") return state.skillLevels.length >= 1;
     if (step === "format") return state.formats.length >= 1;
     if (step === "timing") return state.timing !== "";
     if (step === "notify")
@@ -269,13 +300,13 @@ export default function CampFinderPage() {
           name: state.parentName,
           email: state.email,
           phone: state.phone || null,
-          intent: `Camp Finder · ${state.ageGroup} · ${state.state} ${state.county}`,
+          intent: `Camp Finder · ${state.ageGroups.join("/")} · ${state.state} ${state.county}`,
           source: "camp-finder-quiz",
-          ageGroup: state.ageGroup,
+          ageGroups: state.ageGroups,
           state: state.state,
           county: state.county,
           travelMiles: state.travelMiles,
-          skillLevel: state.skillLevel,
+          skillLevels: state.skillLevels,
           formats: state.formats,
           timing: state.timing,
           playerName: state.playerName || null,
@@ -393,8 +424,8 @@ export default function CampFinderPage() {
           <div>
         {step === "age" && (
           <AgeStep
-            value={state.ageGroup}
-            onChange={(v) => update("ageGroup", v)}
+            values={state.ageGroups}
+            onToggle={toggleCapped("ageGroups")}
           />
         )}
         {step === "location" && (
@@ -413,8 +444,8 @@ export default function CampFinderPage() {
         )}
         {step === "skill" && (
           <SkillStep
-            value={state.skillLevel}
-            onChange={(v) => update("skillLevel", v)}
+            values={state.skillLevels}
+            onToggle={toggleCapped("skillLevels")}
           />
         )}
         {step === "format" && (
@@ -481,11 +512,11 @@ export default function CampFinderPage() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function AgeStep({
-  value,
-  onChange,
+  values,
+  onToggle,
 }: {
-  value: string;
-  onChange: (v: string) => void;
+  values: string[];
+  onToggle: (id: string) => void;
 }) {
   return (
     <div>
@@ -495,24 +526,37 @@ function AgeStep({
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         How old is your player?
       </h1>
-      <p className="text-base text-white/60 mb-8 leading-relaxed">
-        This is the most important match — camp programming is built around the
-        age group, not the skill level.
+      <p className="text-base text-white/60 mb-2 leading-relaxed">
+        Pick the closest band — or two if your player is in between. Camp
+        programming is built around the age group, so picking both unlocks
+        more matches.
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-white/40 mb-6">
+        {values.length} / 2 selected
       </p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {AGE_GROUPS.map((opt) => {
-          const active = value === opt.id;
+          const active = values.includes(opt.id);
+          const atCap = !active && values.length >= 2;
           return (
             <button
               key={opt.id}
-              onClick={() => onChange(opt.id)}
-              className={`text-left rounded-xl p-4 border-2 transition-all hover:scale-[1.02] ${
+              onClick={() => onToggle(opt.id)}
+              disabled={atCap}
+              className={`relative text-left rounded-xl p-4 border-2 transition-all ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950"
-                  : "bg-white/5 border-white/10 hover:border-lime-300/40"
+                  ? "bg-lime-300 border-lime-300 text-slate-950 hover:scale-[1.02]"
+                  : atCap
+                    ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed"
+                    : "bg-white/5 border-white/10 hover:border-lime-300/40 hover:scale-[1.02]"
               }`}
             >
+              {active && (
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                  ✓
+                </span>
+              )}
               <div className="text-2xl mb-1.5">{opt.emoji}</div>
               <div className={`text-base font-bold ${active ? "text-slate-950" : "text-white"}`}>
                 {opt.label}
@@ -953,7 +997,11 @@ function AvailabilityRail({
 
         {/* Per-filter breakdown so the parent sees what's been applied. */}
         <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5 text-[11px]">
-          <RailRow on={!!state.ageGroup} label="Age" value={state.ageGroup} />
+          <RailRow
+            on={state.ageGroups.length > 0}
+            label="Age"
+            value={state.ageGroups.join(" + ")}
+          />
           <RailRow
             on={!!state.state}
             label="State"
@@ -970,9 +1018,9 @@ function AvailabilityRail({
             value={state.travelMiles ? `${state.travelMiles} mi` : ""}
           />
           <RailRow
-            on={!!state.skillLevel}
+            on={state.skillLevels.length > 0}
             label="Skill"
-            value={state.skillLevel}
+            value={state.skillLevels.join(" + ")}
           />
           <RailRow
             on={state.formats.length > 0}
@@ -1021,11 +1069,11 @@ function RailRow({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SkillStep({
-  value,
-  onChange,
+  values,
+  onToggle,
 }: {
-  value: string;
-  onChange: (v: string) => void;
+  values: string[];
+  onToggle: (id: string) => void;
 }) {
   return (
     <div>
@@ -1035,24 +1083,37 @@ function SkillStep({
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         Where are they at?
       </h1>
-      <p className="text-base text-white/60 mb-8 leading-relaxed">
-        Skill level helps us point you at the right intensity — beginner camps
-        feel different from elite tryout-prep camps.
+      <p className="text-base text-white/60 mb-2 leading-relaxed">
+        Pick the closest level — or two if they straddle. Beginner camps feel
+        different from elite tryout-prep camps; picking two adjacent tiers
+        opens more matches.
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-white/40 mb-6">
+        {values.length} / 2 selected
       </p>
 
       <div className="grid grid-cols-2 gap-2">
         {SKILL_LEVELS.map((opt) => {
-          const active = value === opt.id;
+          const active = values.includes(opt.id);
+          const atCap = !active && values.length >= 2;
           return (
             <button
               key={opt.id}
-              onClick={() => onChange(opt.id)}
-              className={`text-left rounded-xl p-5 border-2 transition-all hover:scale-[1.02] ${
+              onClick={() => onToggle(opt.id)}
+              disabled={atCap}
+              className={`relative text-left rounded-xl p-5 border-2 transition-all ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950"
-                  : "bg-white/5 border-white/10 hover:border-lime-300/40"
+                  ? "bg-lime-300 border-lime-300 text-slate-950 hover:scale-[1.02]"
+                  : atCap
+                    ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed"
+                    : "bg-white/5 border-white/10 hover:border-lime-300/40 hover:scale-[1.02]"
               }`}
             >
+              {active && (
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                  ✓
+                </span>
+              )}
               <div className="text-3xl mb-2">{opt.emoji}</div>
               <div className={`text-base font-bold ${active ? "text-slate-950" : "text-white"}`}>
                 {opt.label}
@@ -1305,8 +1366,8 @@ function ResultsStep({
         </h1>
         <p className="text-base text-white/60 max-w-md mx-auto leading-relaxed">
           {hasMatches
-            ? `Thanks ${state.parentName}. Here are camps that fit your ${state.ageGroup} player in ${state.county}, ${state.state}.`
-            : `Thanks ${state.parentName}. We'll email ${state.email} the moment a camp opens for ${state.ageGroup} players in ${state.county}, ${state.state}.`}
+            ? `Thanks ${state.parentName}. Here are camps that fit your ${state.ageGroups.join(" + ")} player in ${state.county}, ${state.state}.`
+            : `Thanks ${state.parentName}. We'll email ${state.email} the moment a camp opens for ${state.ageGroups.join(" + ")} players in ${state.county}, ${state.state}.`}
         </p>
       </div>
 
@@ -1329,7 +1390,7 @@ function ResultsStep({
           </p>
           <ul className="space-y-2 text-sm text-white/70 text-left">
             <li>· You&apos;ll get one welcome email today (drill of the week)</li>
-            <li>· When a camp opens for {state.ageGroup} in {state.county}, you get FIRST-look access</li>
+            <li>· When a camp opens for {state.ageGroups.join(" + ")} in {state.county}, you get FIRST-look access</li>
             <li>· Maximum 1-2 emails per month, ever</li>
             <li>· Unsubscribe anytime, no friction</li>
           </ul>
