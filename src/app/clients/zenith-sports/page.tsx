@@ -1052,22 +1052,24 @@ export default function ZenithSportsPage() {
                 </a>
               </div>
 
-              {/* Training Guide email capture (gated PDF). Per brand
-                  voice guide PRIORITY 3 — coaches leave with the guide,
-                  we get the list. Routes through inquire endpoint with
-                  intent="Training Guide" so Ben can triage. */}
+              {/* Training Guide email capture. Per brand voice guide
+                  PRIORITY 3 — coaches leave with the plan, we get the
+                  list. Routes through inquire endpoint with
+                  intent="Training Guide" so Ben can triage. The plan is
+                  a hosted page that prints to PDF in two clicks; we'll
+                  add a real PDF download later when warranted. */}
               <div className="mt-10 max-w-xl">
                 <EmailCapture
                   variant="lime"
-                  intent="Training Guide PDF"
-                  badge="Free coach PDF"
-                  headline="Get the TEKKY® coaching guide."
+                  intent="Training Guide"
+                  badge="Free coaching plan"
+                  headline="Get the TEKKY® coaching plan."
                   body="Drill progressions, session plans, and the European-style technical curriculum we use with ECNL and MLS Next clubs — open it now or save it for later."
-                  cta="Send me the guide"
-                  successHeadline="Guide is ready."
+                  cta="Send me the plan"
+                  successHeadline="Plan is ready."
                   successBody="We've also queued a follow-up so you can save it. Open it now ↓"
                   successCta={{
-                    label: "Open the guide",
+                    label: "Open the plan",
                     href: "/clients/zenith-sports/training-guide",
                   }}
                 />
@@ -1443,7 +1445,7 @@ export default function ZenithSportsPage() {
       </section>
 
       {/* ─────────────── BUILD YOUR PLAYER PROMO STRIP ───────────────
-          Player + parent parallel to the COACH-07 free PDF. Soft-
+          Player + parent parallel to the COACH-07 free plan. Soft-
           conversion lead magnet for visitors who aren't ready to buy
           yet — captures them via a personalized training plan that
           itself recommends the right TEKKY product mix, so the lead

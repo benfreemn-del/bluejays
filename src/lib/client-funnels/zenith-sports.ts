@@ -190,10 +190,10 @@ const COACHES: AudienceFunnel = {
         {
           channel: "email",
           templateId: "coaches.d0.welcome",
-          subject: "Your TEKKY® Coaching Guide, {{firstName}} — open inside",
+          subject: "Your TEKKY® Coaching Plan, {{firstName}} — open inside",
           body: `Hi {{firstName}},
 
-Thanks for grabbing the TEKKY® Coaching Guide. I'm Philip — Zenith Sports co-founder, ex-academy coach. The full curriculum is linked at the bottom of this email; here's the snack version so you can use it tomorrow.
+Thanks for grabbing the TEKKY® Coaching Plan. I'm Philip — Zenith Sports co-founder, ex-academy coach. The full curriculum is linked at the bottom of this email; here's the snack version so you can use it tomorrow.
 
 ──────────────────
 WARM-UP · 3 DRILLS YOU CAN RUN AT YOUR NEXT SESSION
@@ -212,12 +212,12 @@ WARM-UP · 3 DRILLS YOU CAN RUN AT YOUR NEXT SESSION
    Cue: "Sole on top, then the other sole. No air."
 
 ──────────────────
-THE FULL GUIDE
+THE FULL PLAN
 ──────────────────
 
 Open here: {{coachGuideUrl}}
 
-It's a hosted page — works on any device, always the latest version, and prints clean as a PDF: hit Cmd+P (Mac) or Ctrl+P (Windows) → "Save as PDF" if you want to drop it in your team's Drive folder.
+Web version for now — works on any device, always the latest version. If you want a hard copy, hit Cmd+P (Mac) or Ctrl+P (Windows) → "Save as PDF" and drop it in your team's Drive folder. (Real PDF download coming soon.)
 
 What's inside:
   • All 26 drills with the why + cue (so an assistant coach can run them cold)

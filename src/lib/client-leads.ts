@@ -154,7 +154,14 @@ export function detectAudience(
   const message = str("message");
 
   // Hard signals — explicit form mappings.
-  if (source === "email-capture" && intent === "training guide pdf")
+  // Coach drip — Training Guide capture. We renamed the intent from
+  // "Training Guide PDF" → "Training Guide" once we stopped promising
+  // a PDF (the plan is a hosted page that prints to PDF). Match both
+  // so historical leads stay tagged correctly.
+  if (
+    source === "email-capture" &&
+    (intent === "training guide" || intent === "training guide pdf")
+  )
     return "coach";
   if (source === "email-capture" && intent === "player challenge")
     return "player";
