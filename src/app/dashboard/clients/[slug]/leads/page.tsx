@@ -105,6 +105,9 @@ export default function ClientLeadsPage({
   const [ageFacet, setAgeFacet] = useState<string>("");
   const [tierFacet, setTierFacet] = useState<string>("");
   const [stateFacet, setStateFacet] = useState<string>("");
+  // Revenue toggle: "" = no filter, "yes" = only leads with $ recorded,
+  // "no" = only leads without $ recorded.
+  const [revenueFacet, setRevenueFacet] = useState<"" | "yes" | "no">("");
   const [openLead, setOpenLead] = useState<ClientLead | null>(null);
   const [runningFunnel, setRunningFunnel] = useState(false);
   const [runResult, setRunResult] = useState<string | null>(null);
@@ -186,9 +189,11 @@ export default function ClientLeadsPage({
       )
         return false;
       if (stateFacet && l.state_override !== stateFacet) return false;
+      if (revenueFacet === "yes" && l.conversion_value_cents === null) return false;
+      if (revenueFacet === "no" && l.conversion_value_cents !== null) return false;
       return true;
     });
-  }, [leads, genderFacet, ageFacet, tierFacet, stateFacet]);
+  }, [leads, genderFacet, ageFacet, tierFacet, stateFacet, revenueFacet]);
 
   // Per-facet value pools — built from the loaded leads (post-server
   // audience+status filter). Lets the dropdowns show only values the
@@ -223,38 +228,62 @@ export default function ClientLeadsPage({
     };
   }, [leads]);
 
-  // Revenue rollups — sum conversion_value_cents across loaded leads.
+  // Per-funnel ROI rollups — compute revenue, conversions, and full
+  // funnel context (lead count, conversion rate, $ per lead, avg deal
+  // size) per audience segment. Surfaces "is this funnel paying off?"
+  // at a glance without drilling in.
+  //
   // Note: this only sees the LOADED window (last 200 by default). For
   // long-running clients we'd swap to a server-side aggregate, but at
   // current Zenith volume the in-memory roll-up is fine + responsive.
-  const { revenueTotalCents, revenueByAudience } = useMemo(() => {
+  type FunnelPerf = {
+    cents: number;
+    convCount: number;
+    leadCount: number;
+  };
+  const { revenueTotalCents, funnelPerf } = useMemo(() => {
     let total = 0;
-    const byAud = new Map<string, { cents: number; count: number }>();
+    const byAud = new Map<string, FunnelPerf>();
     for (const l of leads) {
-      const v = l.conversion_value_cents;
-      if (v === null || v === undefined) continue;
-      total += v;
       const key = l.audience_segment ?? "unknown";
-      const cur = byAud.get(key) ?? { cents: 0, count: 0 };
-      cur.cents += v;
-      cur.count += 1;
+      const cur = byAud.get(key) ?? { cents: 0, convCount: 0, leadCount: 0 };
+      cur.leadCount += 1;
+      const v = l.conversion_value_cents;
+      if (v !== null && v !== undefined) {
+        cur.cents += v;
+        cur.convCount += 1;
+        total += v;
+      } else if (l.funnel_status === "converted") {
+        // Counted as a conversion even without a $ value attached
+        cur.convCount += 1;
+      }
       byAud.set(key, cur);
     }
     return {
       revenueTotalCents: total,
-      revenueByAudience: Array.from(byAud.entries()).sort(
-        (a, b) => b[1].cents - a[1].cents,
+      // Sort by revenue desc; tie-break on conversion count then lead
+      // count so an empty funnel doesn't shove a paying one down.
+      funnelPerf: Array.from(byAud.entries()).sort(
+        (a, b) =>
+          b[1].cents - a[1].cents ||
+          b[1].convCount - a[1].convCount ||
+          b[1].leadCount - a[1].leadCount,
       ),
     };
   }, [leads]);
 
-  const anyFacetActive = genderFacet || ageFacet || tierFacet || stateFacet;
+  const anyFacetActive =
+    genderFacet || ageFacet || tierFacet || stateFacet || revenueFacet;
   const clearFacets = () => {
     setGenderFacet("");
     setAgeFacet("");
     setTierFacet("");
     setStateFacet("");
+    setRevenueFacet("");
   };
+  const leadsWithRevenue = leads.filter(
+    (l) => l.conversion_value_cents !== null,
+  ).length;
 
   const updateLead = async (id: string, patch: Partial<ClientLead>) => {
     setLeads((prev) =>
@@ -471,33 +500,113 @@ export default function ClientLeadsPage({
           </div>
         )}
 
-        {/* Revenue by audience — only shows when we have at least one
-            tagged conversion with a $ value. Tells Philip "the parent
-            funnel made $X, the coach funnel made $Y" so he can see
-            which channel is actually paying for itself. */}
-        {revenueByAudience.length > 0 && (
-          <div className="mb-5 rounded-lg border border-emerald-700/30 bg-emerald-950/20 p-3">
-            <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-emerald-300 mb-2">
-              💰 Revenue by funnel
+        {/* Per-funnel ROI cards — full "is this funnel paying off?"
+            view for every audience segment with at least one lead.
+            Each card shows: lead count, conversion rate, revenue,
+            $/lead, avg deal size. Sorted by revenue desc so the
+            best-paying funnel surfaces first.
+            Filter by clicking the audience header to scope the rest
+            of the dashboard to that funnel. */}
+        {funnelPerf.length > 0 && (
+          <div className="mb-5 rounded-lg border border-emerald-700/30 bg-gradient-to-br from-emerald-950/30 to-slate-900/30 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-emerald-300">
+                💰 Funnel performance
+              </div>
+              <div className="text-[10px] text-slate-500">
+                Total revenue:{" "}
+                <span className="text-emerald-300 font-bold">
+                  {centsToDollars(revenueTotalCents)}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2 text-xs">
-              {revenueByAudience.map(([aud, info]) => (
-                <div
-                  key={aud}
-                  className="rounded-md border border-emerald-800/40 bg-slate-900/50 px-3 py-1.5"
-                >
-                  <span className="text-slate-400 mr-1.5">
-                    {AUDIENCE_LABEL[aud as ClientLeadAudience] ?? aud}
-                  </span>
-                  <span className="font-bold text-emerald-300">
-                    {centsToDollars(info.cents)}
-                  </span>
-                  <span className="text-slate-500 ml-1.5 text-[10px]">
-                    {info.count} conv · avg {centsToDollars(Math.round(info.cents / info.count))}
-                  </span>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {funnelPerf.map(([aud, info]) => {
+                const convRatePct =
+                  info.leadCount > 0
+                    ? (info.convCount / info.leadCount) * 100
+                    : 0;
+                const revPerLeadCents =
+                  info.leadCount > 0
+                    ? Math.round(info.cents / info.leadCount)
+                    : 0;
+                const avgDealCents =
+                  info.convCount > 0
+                    ? Math.round(info.cents / info.convCount)
+                    : 0;
+                const isFiltered = audienceFilter === aud;
+                return (
+                  <button
+                    key={aud}
+                    type="button"
+                    onClick={() =>
+                      setAudienceFilter(
+                        isFiltered ? "" : (aud as ClientLeadAudience),
+                      )
+                    }
+                    className={`text-left rounded-md border px-3 py-2.5 transition ${
+                      isFiltered
+                        ? "border-emerald-400/60 bg-emerald-500/10 ring-2 ring-emerald-400/30"
+                        : "border-emerald-800/40 bg-slate-900/50 hover:border-emerald-700/60"
+                    }`}
+                    title={`Click to filter to ${aud} leads`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-bold text-slate-100 text-sm">
+                        {AUDIENCE_LABEL[aud as ClientLeadAudience] ?? aud}
+                      </span>
+                      <span className="text-[10px] text-slate-500 tabular-nums">
+                        {info.leadCount} lead{info.leadCount === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                    <div className="text-xl font-black tracking-tight text-emerald-300 leading-none mb-1.5">
+                      {centsToDollars(info.cents)}
+                    </div>
+                    <div className="grid grid-cols-3 gap-1 text-[10px] text-slate-400">
+                      <div>
+                        <div className="text-slate-500 uppercase tracking-wider text-[9px]">
+                          Conv rate
+                        </div>
+                        <div
+                          className={
+                            convRatePct >= 10
+                              ? "text-emerald-300 font-bold"
+                              : convRatePct >= 3
+                                ? "text-amber-300 font-bold"
+                                : "text-slate-300"
+                          }
+                        >
+                          {convRatePct.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-slate-500 uppercase tracking-wider text-[9px]">
+                          $ / lead
+                        </div>
+                        <div className="text-slate-200 font-bold">
+                          {centsToDollars(revPerLeadCents)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-slate-500 uppercase tracking-wider text-[9px]">
+                          Avg deal
+                        </div>
+                        <div className="text-slate-200 font-bold">
+                          {info.convCount > 0
+                            ? centsToDollars(avgDealCents)
+                            : "—"}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+            <p className="text-[10px] text-slate-600 mt-2 italic">
+              Click a funnel to filter the lead list. Conv rate counts every
+              lead marked "converted"; $ figures only count conversions with
+              a recorded value.
+            </p>
           </div>
         )}
 
@@ -585,6 +694,44 @@ export default function ClientLeadsPage({
               )}
             </div>
             <div className="flex flex-wrap gap-2 text-xs">
+              {leadsWithRevenue > 0 && (
+                <div
+                  className={`flex items-center gap-1 rounded-md border px-2 py-1 ${
+                    revenueFacet
+                      ? "border-emerald-500/50 bg-emerald-500/10"
+                      : "border-slate-700 bg-slate-900/40"
+                  }`}
+                >
+                  <span
+                    className={`text-[10px] tracking-wider uppercase font-bold ${
+                      revenueFacet ? "text-emerald-200" : "text-slate-500"
+                    }`}
+                  >
+                    💰 $
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setRevenueFacet("")}
+                    className={`text-[11px] px-1.5 rounded ${revenueFacet === "" ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRevenueFacet("yes")}
+                    className={`text-[11px] px-1.5 rounded ${revenueFacet === "yes" ? "bg-emerald-500/40 text-white" : "text-slate-400 hover:text-white"}`}
+                  >
+                    Has ({leadsWithRevenue})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRevenueFacet("no")}
+                    className={`text-[11px] px-1.5 rounded ${revenueFacet === "no" ? "bg-amber-500/40 text-white" : "text-slate-400 hover:text-white"}`}
+                  >
+                    None ({leads.length - leadsWithRevenue})
+                  </button>
+                </div>
+              )}
               {leads.some((l) => l.gender) && (
                 <FacetSelect
                   label="Gender"

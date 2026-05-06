@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import type { Partner } from "./partners";
+import { DEFAULT_PARTNER_CLIENT_SLUG } from "./partners";
 
 /**
  * Partner workspace session (no Supabase Auth — too heavy for sister-team
@@ -20,6 +21,18 @@ import type { Partner } from "./partners";
  */
 export const PARTNER_SESSION_COOKIE = "bj_partner_session";
 const SESSION_DAYS = 30;
+
+/** Per-client cookie name. Each tenant gets its own cookie so a partner
+ *  who's signed into BlueJays + Zenith doesn't get bounced between
+ *  workspaces by a single shared cookie. */
+export function partnerSessionCookieName(
+  clientSlug: string = DEFAULT_PARTNER_CLIENT_SLUG,
+): string {
+  if (clientSlug === DEFAULT_PARTNER_CLIENT_SLUG) return PARTNER_SESSION_COOKIE;
+  // Lowercase + alphanumeric-only suffix so cookie names stay legal.
+  const safe = clientSlug.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  return `bj_partner_session_${safe}`;
+}
 
 function getSecret(): string {
   return (
@@ -72,17 +85,23 @@ export function verifyPartnerSession(
 }
 
 /** Server-component / route-handler helper — pull the partner from
- *  the session cookie. Returns null if not logged in OR not approved. */
-export async function getCurrentPartner(): Promise<Partner | null> {
+ *  the session cookie. Returns null if not logged in OR not approved.
+ *
+ *  Optional clientSlug filter — when set, only matches partners scoped
+ *  to that tenant. Reads from the per-tenant cookie automatically. */
+export async function getCurrentPartner(
+  clientSlug: string = DEFAULT_PARTNER_CLIENT_SLUG,
+): Promise<Partner | null> {
   if (!isSupabaseConfigured()) return null;
   const store = await cookies();
-  const raw = store.get(PARTNER_SESSION_COOKIE)?.value;
+  const raw = store.get(partnerSessionCookieName(clientSlug))?.value;
   const session = verifyPartnerSession(raw);
   if (!session) return null;
   const { data } = await supabase
     .from("partners")
     .select("*")
     .eq("id", session.partnerId)
+    .eq("client_slug", clientSlug)
     .maybeSingle();
   if (!data) return null;
   const p = data as unknown as Partner;
@@ -94,15 +113,17 @@ export async function getCurrentPartner(): Promise<Partner | null> {
  *  where cookies() isn't available — pulls from the request directly. */
 export async function getCurrentPartnerFromRequest(
   req: NextRequest,
+  clientSlug: string = DEFAULT_PARTNER_CLIENT_SLUG,
 ): Promise<Partner | null> {
   if (!isSupabaseConfigured()) return null;
-  const raw = req.cookies.get(PARTNER_SESSION_COOKIE)?.value;
+  const raw = req.cookies.get(partnerSessionCookieName(clientSlug))?.value;
   const session = verifyPartnerSession(raw);
   if (!session) return null;
   const { data } = await supabase
     .from("partners")
     .select("*")
     .eq("id", session.partnerId)
+    .eq("client_slug", clientSlug)
     .maybeSingle();
   if (!data) return null;
   const p = data as unknown as Partner;

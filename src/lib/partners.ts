@@ -29,7 +29,14 @@ export type Partner = {
   agreement_accepted_at?: string | null;
   last_login_at?: string | null;
   daily_call_goal?: number | null;
+  // Added by 20260516_partners_client_slug.sql — multi-tenant fields
+  client_slug?: string;
+  default_payout_cents?: number | null;
 };
+
+/** Default partner client_slug — preserves "no slug" → BlueJays semantics
+ *  for legacy code paths that don't pass an explicit slug. */
+export const DEFAULT_PARTNER_CLIENT_SLUG = "bluejays";
 
 export type PartnerReferral = {
   id: string;
@@ -44,6 +51,10 @@ export type PartnerReferral = {
   payout_method: string | null;
   payout_note: string | null;
   created_at: string;
+  // Added by 20260516_partners_client_slug.sql
+  client_slug?: string;
+  /** "ball" | "coaching-package" | "parent-referral" | "website" | etc. */
+  kind?: string | null;
 };
 
 /**
@@ -74,8 +85,15 @@ export function randomSuffix(len = 4): string {
  * Look up an APPROVED partner by code. Returns null for missing or
  * non-approved (pending/paused/declined) — those shouldn't attribute
  * closes. Returns null on Supabase error so callers degrade gracefully.
+ *
+ * Optional clientSlug filter — when set, only matches partners scoped
+ * to that tenant (e.g. "zenith-sports"). When omitted, matches the
+ * BlueJays default tenant ("bluejays").
  */
-export async function getApprovedPartnerByCode(code: string): Promise<Partner | null> {
+export async function getApprovedPartnerByCode(
+  code: string,
+  clientSlug: string = DEFAULT_PARTNER_CLIENT_SLUG,
+): Promise<Partner | null> {
   if (!isSupabaseConfigured()) return null;
   const cleaned = (code || "").toLowerCase().trim();
   if (!cleaned) return null;
@@ -84,6 +102,7 @@ export async function getApprovedPartnerByCode(code: string): Promise<Partner | 
     .select("*")
     .eq("code", cleaned)
     .eq("status", "approved")
+    .eq("client_slug", clientSlug)
     .maybeSingle();
   if (error) {
     console.warn("[partners] lookup error:", error.message);
@@ -103,18 +122,28 @@ export async function recordPartnerReferral(args: {
   auditId?: string | null;
   businessName?: string | null;
   amountCents?: number;
+  clientSlug?: string;
+  kind?: string;
 }): Promise<{ ok: boolean; alreadyExists?: boolean; error?: string }> {
   if (!isSupabaseConfigured()) return { ok: false, error: "supabase not configured" };
-  const partner = await getApprovedPartnerByCode(args.partnerCode);
+  const slug = args.clientSlug ?? DEFAULT_PARTNER_CLIENT_SLUG;
+  const partner = await getApprovedPartnerByCode(args.partnerCode, slug);
   if (!partner) return { ok: false, error: "partner not found or not approved" };
+
+  const amount =
+    args.amountCents ??
+    partner.default_payout_cents ??
+    (slug === DEFAULT_PARTNER_CLIENT_SLUG ? 20000 : 2500);
 
   const { error } = await supabase.from("partner_referrals").insert({
     partner_id: partner.id,
     prospect_id: args.prospectId,
     audit_id: args.auditId ?? null,
     business_name: args.businessName ?? null,
-    amount_cents: args.amountCents ?? 20000,
+    amount_cents: amount,
     payout_status: "owed",
+    client_slug: slug,
+    kind: args.kind ?? null,
   });
 
   if (error) {

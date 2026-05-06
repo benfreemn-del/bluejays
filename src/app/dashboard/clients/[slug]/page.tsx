@@ -177,6 +177,14 @@ export default function ClientTasksPage({
           >
             Testimonials
           </Link>
+          {slug === "zenith-sports" && (
+            <Link
+              href={`/dashboard/clients/${slug}/camps`}
+              className="text-[11px] tracking-wider uppercase font-bold text-lime-300 hover:text-white border border-lime-700/50 px-2.5 py-1 rounded"
+            >
+              Camps
+            </Link>
+          )}
           <Link
             href={`/dashboard/clients/${slug}/ads`}
             className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded"

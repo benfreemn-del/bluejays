@@ -21,7 +21,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import StickyNav from "../sticky-nav";
-import { CAMPS, type Camp } from "./camps-data";
+import { type Camp } from "./camps-data";
 import USStatesMap from "@/components/USStatesMap";
 import { COUNTIES_BY_STATE } from "@/data/us-counties";
 import {
@@ -348,18 +348,73 @@ export default function CampFinderPage() {
     setStep(STEPS[stepIndex - 1] as Step);
   };
 
-  // Match camps from the catalog using the quiz answers (mostly state +
-  // age range parsing). When the catalog is empty, the results step
-  // shows the notify-confirmation flow.
+  // Live camps catalog — pulled from the DB via /api/client-camps so
+  // adds in /dashboard/clients/zenith-sports/camps go live without a
+  // redeploy. We fetch lazily once the user reaches the results step.
+  const [allCamps, setAllCamps] = useState<Camp[]>([]);
+  useEffect(() => {
+    if (step !== "results") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/client-camps?client=zenith-sports");
+        const j = (await r.json()) as {
+          ok: boolean;
+          camps?: Array<{
+            id: string;
+            name: string;
+            org: string | null;
+            city: string | null;
+            state: string | null;
+            region: string | null;
+            start_date: string | null;
+            age_range: string | null;
+            format: string | null;
+            ball_included: boolean;
+            url: string | null;
+            blurb: string | null;
+          }>;
+        };
+        if (cancelled || !j.ok || !j.camps) return;
+        // Map DB shape → existing Camp type the results UI expects.
+        // Tight coupling to the dashboard side is fine; both ship from
+        // the same repo.
+        setAllCamps(
+          j.camps.map((c) => ({
+            id: c.id,
+            name: c.name,
+            org: c.org ?? "",
+            city: c.city ?? "",
+            state: c.state ?? "",
+            region: (c.region ?? "Pacific NW") as Camp["region"],
+            startDate: c.start_date,
+            ageRange: c.age_range ?? "",
+            format: (c.format ?? "Day camp") as Camp["format"],
+            ballIncluded: c.ball_included,
+            url: c.url ?? undefined,
+            blurb: c.blurb ?? undefined,
+          })),
+        );
+      } catch {
+        /* silent — empty catalog renders the notify flow */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [step]);
+
   const matchedCamps = useMemo(() => {
-    if (CAMPS.length === 0) return [];
-    return CAMPS.filter((c) => {
+    if (allCamps.length === 0) return [];
+    return allCamps.filter((c) => {
       const stateMatch = state.state ? c.state === state.state : true;
       const formatMatch =
-        state.formats.length === 0 ? true : state.formats.includes(c.format.toLowerCase().replace(/\s+/g, "-"));
+        state.formats.length === 0
+          ? true
+          : state.formats.includes(c.format.toLowerCase().replace(/\s+/g, "-"));
       return stateMatch && formatMatch;
     });
-  }, [state.state, state.formats]);
+  }, [allCamps, state.state, state.formats]);
 
   return (
     <main
