@@ -839,7 +839,9 @@ function TravelStep({
             className="absolute top-1/2 transition-all duration-200 pointer-events-none"
             style={{
               left: `calc(${pct}% - 16px)`,
-              transform: `translateY(-50%) scale(${carScale})`,
+              // 🚗 emoji faces left by default — flip horizontally so the
+              // car drives rightward as miles increase.
+              transform: `translateY(-50%) scale(${carScale}) scaleX(-1)`,
               filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
               fontSize: 28,
               lineHeight: 1,
