@@ -244,6 +244,57 @@ export default function CutMyAgencyPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Slider thumb upgrade — default range thumb is 12-14px which
+          is hard to grab on touch. Bumping to 24px + bigger hit area
+          fixes the "can't drag the slider" issue Ben reported on
+          mobile (2026-05-06). Targets all range inputs on the page so
+          we don't have to remember per-slider styling. */}
+      <style jsx global>{`
+        input[type="range"] {
+          -webkit-appearance: none;
+          appearance: none;
+          height: 24px;
+          background: transparent;
+          cursor: pointer;
+          touch-action: pan-y;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: 6px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 9999px;
+        }
+        input[type="range"]::-moz-range-track {
+          height: 6px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 9999px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 28px;
+          height: 28px;
+          border-radius: 9999px;
+          background: #fbbf24;
+          border: 2px solid #fff;
+          margin-top: -11px;
+          cursor: grab;
+          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+          cursor: grabbing;
+          transform: scale(1.1);
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 28px;
+          height: 28px;
+          border-radius: 9999px;
+          background: #fbbf24;
+          border: 2px solid #fff;
+          cursor: grab;
+          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
+        }
+      `}</style>
+
       {/* Header */}
       <header className="border-b border-white/5">
         <div className="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
@@ -372,12 +423,12 @@ export default function CutMyAgencyPage() {
         {/* Step 2 — months as client */}
         {stage === "step2" && (
           <StepCard title="How long have you been with them?">
-            <p className="text-sm text-slate-400 mb-6">
-              Just a rough estimate. We&apos;ll show you what you&apos;ve
-              already spent.
+            <p className="hidden sm:block text-sm text-slate-400 mb-6">
+              Drag the slider OR tap a zone below to set your tenure.
+              We&apos;ll show you what you&apos;ve already spent.
             </p>
 
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 mb-6">
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 sm:p-6 mb-4 sm:mb-6">
               <div className="flex items-baseline gap-2 mb-4">
                 <input
                   type="number"
@@ -390,6 +441,11 @@ export default function CutMyAgencyPage() {
                 />
                 <span className="text-sm text-slate-400">months</span>
               </div>
+
+              {/* Slider — now using the global range upgrade (28px thumb,
+                  bigger hit area, touch-action: pan-y for clean mobile
+                  drag). Previously had a 12px default thumb that was
+                  unusable on phones. */}
               <input
                 type="range"
                 min={1}
@@ -397,16 +453,99 @@ export default function CutMyAgencyPage() {
                 step={1}
                 value={Math.min(monthsAsClient, 60)}
                 onChange={(e) => setMonthsAsClient(parseInt(e.target.value, 10))}
-                className="w-full accent-amber-400"
+                className="w-full"
               />
-              <div className="flex justify-between text-xs text-slate-500 mt-2 font-mono">
-                <span>1 mo</span>
-                <span>30 mo</span>
-                <span>5+ yrs</span>
+
+              {/* Visual lifespan bar — answers Ben's request 2026-05-06.
+                  Four color-coded zones based on industry-typical
+                  agency-client tenure data (50% leave by month 18, only
+                  20% reach 36+, 5+ years is rare). Each zone is also a
+                  tap target so users on touch can skip the slider entirely
+                  and snap to a zone midpoint. The white marker shows
+                  where they currently sit. */}
+              <div className="mt-5">
+                <div className="relative h-9 rounded-full overflow-hidden bg-slate-900/60 flex">
+                  <button
+                    type="button"
+                    onClick={() => setMonthsAsClient(3)}
+                    className="flex-[6] bg-emerald-500/30 hover:bg-emerald-500/45 transition-colors text-[10px] font-bold text-emerald-100/80 flex items-center justify-center"
+                    title="0–6 months — Honeymoon phase"
+                  >
+                    Honeymoon
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMonthsAsClient(12)}
+                    className="flex-[12] bg-amber-500/30 hover:bg-amber-500/45 transition-colors text-[10px] font-bold text-amber-100/80 flex items-center justify-center"
+                    title="6–18 months — Typical agency tenure"
+                  >
+                    Typical
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMonthsAsClient(27)}
+                    className="flex-[18] bg-orange-500/30 hover:bg-orange-500/45 transition-colors text-[10px] font-bold text-orange-100/80 flex items-center justify-center"
+                    title="18–36 months — Above average"
+                  >
+                    Above avg
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMonthsAsClient(48)}
+                    className="flex-[24] bg-rose-500/30 hover:bg-rose-500/45 transition-colors text-[10px] font-bold text-rose-100/80 flex items-center justify-center"
+                    title="36+ months — Long-term, well past industry average"
+                  >
+                    Overdue
+                  </button>
+                  {/* Position marker */}
+                  <div
+                    className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] pointer-events-none transition-all duration-200"
+                    style={{
+                      left: `${Math.min((monthsAsClient / 60) * 100, 100)}%`,
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-slate-500 mt-1.5 font-mono">
+                  <span>0 mo</span>
+                  <span>6 mo</span>
+                  <span>18 mo</span>
+                  <span>36 mo</span>
+                  <span>60+ mo</span>
+                </div>
+
+                {/* Tenure context — what their position MEANS */}
+                {monthsAsClient >= 1 && (
+                  <p className="text-xs text-slate-300 mt-3 leading-relaxed">
+                    {monthsAsClient <= 6 && (
+                      <>
+                        <span className="text-emerald-300 font-semibold">Just starting.</span>
+                        {" "}Most agency relationships still feel new at this point.
+                      </>
+                    )}
+                    {monthsAsClient > 6 && monthsAsClient <= 18 && (
+                      <>
+                        <span className="text-amber-300 font-semibold">Within the typical range.</span>
+                        {" "}About half of agency clients leave by month 18.
+                      </>
+                    )}
+                    {monthsAsClient > 18 && monthsAsClient <= 36 && (
+                      <>
+                        <span className="text-orange-300 font-semibold">Above average.</span>
+                        {" "}You&apos;ve outlasted most agency-client pairings — worth asking if the value still adds up.
+                      </>
+                    )}
+                    {monthsAsClient > 36 && (
+                      <>
+                        <span className="text-rose-300 font-semibold">Long-term.</span>
+                        {" "}Only ~20% of agency-client relationships make it this far. That&apos;s a lot of money paid out.
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
 
               {monthsAsClient >= 1 && monthlyRetainer >= 500 && (
-                <div className="mt-6 pt-6 border-t border-white/10">
+                <div className="mt-5 pt-5 border-t border-white/10">
                   <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
                     You&apos;ve already paid them
                   </p>

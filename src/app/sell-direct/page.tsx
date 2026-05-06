@@ -252,6 +252,56 @@ export default function SellDirectPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Slider thumb upgrade — see /cut-my-agency for the same pattern.
+          Emerald-tinted thumb to match this calc's theme. Fixes the
+          "can't drag the slider" issue Ben reported on mobile (the
+          default range thumb is 12-14px which is unusable on touch). */}
+      <style jsx global>{`
+        input[type="range"] {
+          -webkit-appearance: none;
+          appearance: none;
+          height: 24px;
+          background: transparent;
+          cursor: pointer;
+          touch-action: pan-y;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: 6px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 9999px;
+        }
+        input[type="range"]::-moz-range-track {
+          height: 6px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 9999px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 28px;
+          height: 28px;
+          border-radius: 9999px;
+          background: #34d399;
+          border: 2px solid #fff;
+          margin-top: -11px;
+          cursor: grab;
+          box-shadow: 0 2px 8px rgba(52, 211, 153, 0.5);
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+          cursor: grabbing;
+          transform: scale(1.1);
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 28px;
+          height: 28px;
+          border-radius: 9999px;
+          background: #34d399;
+          border: 2px solid #fff;
+          cursor: grab;
+          box-shadow: 0 2px 8px rgba(52, 211, 153, 0.5);
+        }
+      `}</style>
+
       {/* Header */}
       <header className="border-b border-white/5">
         <div className="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
