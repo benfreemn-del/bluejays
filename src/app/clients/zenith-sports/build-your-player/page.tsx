@@ -37,6 +37,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { AnimatePresence, motion } from "framer-motion";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { TenKHourMeter } from "./ten-k-hour-meter";
 import {
   GOAL_OPTIONS,
   generatePlan,
@@ -209,6 +210,18 @@ export default function BuildYourPlayerPage() {
           )}
           {(step === "plan" || step === "role") && <span className="w-12" />}
         </div>
+        {/* Top-of-page 10K-hour meter — visible across the builder + goals
+            steps so the parent watches it react as they adjust hours.
+            Hidden on role / identity / plan (no slider in those screens). */}
+        {(step === "builder" || step === "goals") && (
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 pb-2.5">
+            <TenKHourMeter
+              currentWeeklyHours={state.currentWeeklyHours}
+              skillLevel={state.skillLevel}
+              size="compact"
+            />
+          </div>
+        )}
       </header>
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8 py-10 sm:py-16">
@@ -643,6 +656,18 @@ function BuilderStep({
                     step={1}
                     display={`${state.currentWeeklyHours} hrs / wk`}
                   />
+                  {/* Big 10K-hour meter — wired to currentWeeklyHours
+                      so the parent watches "X years to mastery" tick
+                      down live as they drag the slider. This IS the
+                      conversion hook: at 5 hrs/wk the bar barely
+                      moves; at 25 hrs/wk it fills. */}
+                  <div className="mt-6">
+                    <TenKHourMeter
+                      currentWeeklyHours={state.currentWeeklyHours}
+                      skillLevel={state.skillLevel}
+                      size="hero"
+                    />
+                  </div>
                 </SubQuestion>
               )}
             </motion.div>

@@ -20,6 +20,16 @@ import {
   type Gender,
 } from "@/lib/tekky-avatars";
 
+/** Source images that ship with a baked-in border around the artwork.
+ *  We scale these slightly above 1.0 so the border falls outside the
+ *  3:4 viewport. Add new entries as we discover them; the underlying
+ *  fix is "regenerate without the border" — this is a CSS-side
+ *  workaround until we have replacements. */
+const HAS_BAKED_BORDER = new Set([
+  "/avatars/tekky/female/06_travel_age_25-35.png",
+  "/avatars/tekky/female/14_elite_age_13-25.png",
+]);
+
 interface PlayerAvatarProps {
   gender?: Gender | null;
   age?: number | null;
@@ -63,10 +73,17 @@ export function PlayerAvatar({
         alt={alt}
         fill
         sizes="(min-width: 1024px) 420px, 100vw"
-        // object-cover (not contain) so a 3:4 source fits a 3:4 box with
-        // zero letterbox + zero white seam at the corners. Source is
-        // exactly 3:4, so cover == 1:1 — no crop happens in practice.
+        // object-cover so a 3:4 source fits a 3:4 box with zero letterbox.
+        // Two source files (female travel 25-35 + female elite 13-25)
+        // ship with a baked-in light-gray / gold rounded border that the
+        // others don't have — we crop those out by scaling the image up
+        // ~8-10% so the border falls outside the visible frame. All other
+        // cards get the default 1:1 fit.
         className="object-cover"
+        style={{
+          transform: HAS_BAKED_BORDER.has(src) ? "scale(1.10)" : undefined,
+          transformOrigin: "center",
+        }}
         priority={priority}
       />
     </motion.div>
