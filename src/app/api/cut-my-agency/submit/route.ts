@@ -28,10 +28,17 @@ type SubmitBody = {
   phone?: string;
   monthlyRetainer?: number;
   monthsAsClient?: number;
+  /** Monthly ad spend (separate from retainer fee) — added 2026-05-06.
+   *  Lets Ben see what they're spending on Google/Meta on top of the
+   *  agency fee when crafting the followup. */
+  monthlyAdSpend?: number;
   services?: string[];
   math?: {
     alreadySpent?: number;
+    threeYearRetainer?: number;
+    threeYearAdSpend?: number;
     threeYearAgencyCost?: number;
+    bluejaysFullCost?: number;
     savings?: number;
     monthlySavings?: number;
     yearlyAgencyCost?: number;
@@ -137,17 +144,28 @@ export async function POST(request: NextRequest) {
     0,
     Math.min(120, Number(body.monthsAsClient) || 0),
   );
+  const monthlyAdSpend = Math.max(
+    0,
+    Math.min(50000, Number(body.monthlyAdSpend) || 0),
+  );
   const services = Array.isArray(body.services)
     ? body.services.filter((s) => typeof s === "string").slice(0, 20)
     : [];
 
-  // Trust-sensitive math is recomputed server-side AND we keep the
-  // client values for the email body. Client math could be tampered
-  // with so the recompute is the source-of-truth for any decisions.
+  // Trust-sensitive math recomputed server-side per Rule 59. Post 2026-05-06
+  // ad-spend split: savings = retainer × 36 − $10K (ad spend cancels both
+  // sides). See client math useMemo for the full contract.
   const PROJECTION_MONTHS = 36;
-  const BLUEJAYS_3YR_TOTAL = 10000 + 200 * PROJECTION_MONTHS;
-  const serverThreeYearAgencyCost = monthlyRetainer * PROJECTION_MONTHS;
-  const serverSavings = Math.max(0, serverThreeYearAgencyCost - BLUEJAYS_3YR_TOTAL);
+  const BLUEJAYS_SETUP_COST = 10000;
+  const serverThreeYearRetainer = monthlyRetainer * PROJECTION_MONTHS;
+  const serverThreeYearAdSpend = monthlyAdSpend * PROJECTION_MONTHS;
+  const serverThreeYearAgencyCost =
+    serverThreeYearRetainer + serverThreeYearAdSpend;
+  const serverBluejaysFullCost = BLUEJAYS_SETUP_COST + serverThreeYearAdSpend;
+  const serverSavings = Math.max(
+    0,
+    serverThreeYearRetainer - BLUEJAYS_SETUP_COST,
+  );
 
   const utm =
     body.utm && typeof body.utm === "object"
@@ -182,12 +200,16 @@ export async function POST(request: NextRequest) {
     inputs: {
       monthlyRetainer,
       monthsAsClient,
+      monthlyAdSpend,
       services,
     },
     math: {
       alreadySpent: monthlyRetainer * monthsAsClient,
+      threeYearRetainer: serverThreeYearRetainer,
+      threeYearAdSpend: serverThreeYearAdSpend,
       threeYearAgencyCost: serverThreeYearAgencyCost,
-      bluejaysThreeYearCost: BLUEJAYS_3YR_TOTAL,
+      bluejaysSetupCost: BLUEJAYS_SETUP_COST,
+      bluejaysFullCost: serverBluejaysFullCost,
       savings: serverSavings,
       monthlySavings: serverSavings / PROJECTION_MONTHS,
     },
@@ -292,7 +314,10 @@ export async function POST(request: NextRequest) {
       `🎯 Cut-My-Agency lead: ${name}`,
       `📧 ${email}`,
       phone ? `📱 ${phone}` : null,
-      `💰 ${fmtMoney(monthlyRetainer)}/mo agency × ${monthsAsClient} mo`,
+      `💰 ${fmtMoney(monthlyRetainer)}/mo agency fee × ${monthsAsClient} mo`,
+      monthlyAdSpend > 0
+        ? `   + ${fmtMoney(monthlyAdSpend)}/mo ad spend (Google/Meta)`
+        : null,
       `   = ${fmtMoney(serverSavings)} 3-yr savings`,
       `🔗 ${adminUrl}`,
       utm.utm_campaign ? `📊 utm: ${utm.utm_campaign}` : null,
