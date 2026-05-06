@@ -33,16 +33,17 @@ import Link from "next/link";
 import PrintButton from "./print-button";
 
 /* ────────────────────────── DRILL LIBRARY ──────────────────────────
- * Mirror of training-drills.tsx, kept in sync manually. Each drill has
- * a 'why' and a 'cue' that the public site doesn't show — coaches need
- * the technical reasoning, players just need the YouTube link.
+ * NOTE: this array is duplicated in src/data/zenith-drills.ts which
+ * powers the Drill of the Week email broadcast. Keep them in sync
+ * when adding a new drill — TODO: unify once the page is converted
+ * to render from the shared data file.
  */
 
 type CurriculumDrill = {
   id: string; // YouTube id
   name: string;
-  why: string; // What this trains, in coach language
-  cue: string; // Coaching cue to repeat at the player
+  why: string;
+  cue: string;
 };
 
 type CurriculumTier = {

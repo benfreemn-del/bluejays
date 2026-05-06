@@ -113,6 +113,9 @@ export default function ClientLeadsPage({
   const [runResult, setRunResult] = useState<string | null>(null);
   const [runs, setRuns] = useState<FunnelRun[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  // Per-audience cost totals from /api/client-funnel-costs?group=audience.
+  // Keys are audience codes (parent / coach / ...) and "" for unattributed.
+  const [costsByAud, setCostsByAud] = useState<Record<string, number>>({});
 
   const runFunnelNow = async () => {
     setRunningFunnel(true);
@@ -148,10 +151,13 @@ export default function ClientLeadsPage({
     if (audienceFilter) params.set("audience", audienceFilter);
     if (statusFilter) params.set("status", statusFilter);
 
-    const [leadsRes, countsRes, runsRes] = await Promise.all([
+    const [leadsRes, countsRes, runsRes, costsRes] = await Promise.all([
       fetch(`/api/client-leads?${params}`),
       fetch(`/api/client-leads?client=${encodeURIComponent(slug)}&counts=1`),
       fetch(`/api/client-funnels/runs?client=${encodeURIComponent(slug)}&limit=10`),
+      fetch(
+        `/api/client-funnel-costs?client=${encodeURIComponent(slug)}&group=audience`,
+      ),
     ]);
     const leadsJson = (await leadsRes.json()) as {
       ok: boolean;
@@ -159,9 +165,14 @@ export default function ClientLeadsPage({
     };
     const countsJson = (await countsRes.json()) as Counts & { ok: boolean };
     const runsJson = (await runsRes.json()) as { ok: boolean; runs?: FunnelRun[] };
+    const costsJson = (await costsRes.json()) as {
+      ok: boolean;
+      totals?: Record<string, number>;
+    };
     if (leadsJson.ok && leadsJson.leads) setLeads(leadsJson.leads);
     if (countsJson.ok) setCounts(countsJson);
     if (runsJson.ok && runsJson.runs) setRuns(runsJson.runs);
+    if (costsJson.ok && costsJson.totals) setCostsByAud(costsJson.totals);
     setLoading(false);
   }, [slug, audienceFilter, statusFilter]);
 
@@ -284,6 +295,10 @@ export default function ClientLeadsPage({
   const leadsWithRevenue = leads.filter(
     (l) => l.conversion_value_cents !== null,
   ).length;
+
+  // Funnel-cost manager modal state. Defined here so we can compute the
+  // current per-audience cost totals for display + edit.
+  const [costsModalOpen, setCostsModalOpen] = useState(false);
 
   const updateLead = async (id: string, patch: Partial<ClientLead>) => {
     setLeads((prev) =>
@@ -509,15 +524,25 @@ export default function ClientLeadsPage({
             of the dashboard to that funnel. */}
         {funnelPerf.length > 0 && (
           <div className="mb-5 rounded-lg border border-emerald-700/30 bg-gradient-to-br from-emerald-950/30 to-slate-900/30 p-3">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
               <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-emerald-300">
                 💰 Funnel performance
               </div>
-              <div className="text-[10px] text-slate-500">
-                Total revenue:{" "}
-                <span className="text-emerald-300 font-bold">
-                  {centsToDollars(revenueTotalCents)}
+              <div className="flex items-center gap-3 text-[10px]">
+                <span className="text-slate-500">
+                  Revenue:{" "}
+                  <span className="text-emerald-300 font-bold">
+                    {centsToDollars(revenueTotalCents)}
+                  </span>
                 </span>
+                <button
+                  type="button"
+                  onClick={() => setCostsModalOpen(true)}
+                  className="text-rose-300 hover:text-rose-200 underline decoration-rose-500/40 underline-offset-2"
+                  title="Add or edit funnel costs"
+                >
+                  Manage costs →
+                </button>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -534,6 +559,10 @@ export default function ClientLeadsPage({
                   info.convCount > 0
                     ? Math.round(info.cents / info.convCount)
                     : 0;
+                const costCents = costsByAud[aud] ?? 0;
+                const netCents = info.cents - costCents;
+                const roiPct =
+                  costCents > 0 ? (netCents / costCents) * 100 : null;
                 const isFiltered = audienceFilter === aud;
                 return (
                   <button
@@ -559,9 +588,59 @@ export default function ClientLeadsPage({
                         {info.leadCount} lead{info.leadCount === 1 ? "" : "s"}
                       </span>
                     </div>
-                    <div className="text-xl font-black tracking-tight text-emerald-300 leading-none mb-1.5">
-                      {centsToDollars(info.cents)}
+                    <div className="flex items-baseline gap-2 mb-1.5">
+                      <span className="text-xl font-black tracking-tight text-emerald-300 leading-none">
+                        {centsToDollars(info.cents)}
+                      </span>
+                      <span className="text-[10px] text-slate-500">rev</span>
                     </div>
+                    {/* Cost / net / ROI line — only renders when a
+                        cost has been logged for this audience. */}
+                    {costCents > 0 && (
+                      <div className="mb-1.5 grid grid-cols-3 gap-2 text-[10px] rounded bg-slate-950/50 border border-slate-800 px-2 py-1">
+                        <div>
+                          <div className="text-rose-400/70 uppercase tracking-wider text-[9px]">
+                            Cost
+                          </div>
+                          <div className="text-rose-300 font-bold">
+                            -{centsToDollars(costCents)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-slate-500 uppercase tracking-wider text-[9px]">
+                            Net
+                          </div>
+                          <div
+                            className={`font-bold ${
+                              netCents >= 0
+                                ? "text-emerald-300"
+                                : "text-rose-300"
+                            }`}
+                          >
+                            {netCents >= 0 ? "" : "-"}
+                            {centsToDollars(Math.abs(netCents))}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-slate-500 uppercase tracking-wider text-[9px]">
+                            ROI
+                          </div>
+                          <div
+                            className={`font-bold ${
+                              roiPct === null
+                                ? "text-slate-500"
+                                : roiPct > 0
+                                  ? "text-emerald-300"
+                                  : "text-rose-300"
+                            }`}
+                          >
+                            {roiPct === null
+                              ? "—"
+                              : `${roiPct >= 0 ? "+" : ""}${roiPct.toFixed(0)}%`}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="grid grid-cols-3 gap-1 text-[10px] text-slate-400">
                       <div>
                         <div className="text-slate-500 uppercase tracking-wider text-[9px]">
@@ -901,6 +980,17 @@ export default function ClientLeadsPage({
           lead={openLead}
           onClose={() => setOpenLead(null)}
           onUpdate={updateLead}
+        />
+      )}
+
+      {/* Funnel-costs manager — opens from the ROI panel header */}
+      {costsModalOpen && (
+        <FunnelCostsModal
+          slug={slug}
+          onClose={() => {
+            setCostsModalOpen(false);
+            load();
+          }}
         />
       )}
     </div>
@@ -1303,6 +1393,279 @@ function LeadDetailDrawer({
 
           <div className="text-[10px] text-slate-600 pt-2 border-t border-slate-800">
             Created {new Date(lead.created_at).toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Funnel-costs manager modal. Lists every cost row, supports add +
+ *  delete, and pipes back to the leads page so the ROI cards refresh
+ *  the moment you save. Edits are intentionally minimal here — drop
+ *  + re-add for tweaks at this volume. */
+function FunnelCostsModal({
+  slug,
+  onClose,
+}: {
+  slug: string;
+  onClose: () => void;
+}) {
+  type CostRow = {
+    id: string;
+    audience_segment: string | null;
+    cost_cents: number;
+    period_label: string | null;
+    notes: string | null;
+    created_at: string;
+  };
+  const [rows, setRows] = useState<CostRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [audience, setAudience] = useState<string>("");
+  const [costInput, setCostInput] = useState("");
+  const [period, setPeriod] = useState("");
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const r = await fetch(
+      `/api/client-funnel-costs?client=${encodeURIComponent(slug)}`,
+    );
+    const j = (await r.json()) as { ok: boolean; costs?: CostRow[] };
+    if (j.ok && j.costs) setRows(j.costs);
+    setLoading(false);
+  }, [slug]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cents = dollarsInputToCents(costInput);
+    if (cents === null) {
+      alert("Couldn't parse $ amount. Try '200' or '199.99'.");
+      return;
+    }
+    setSaving(true);
+    await fetch("/api/client-funnel-costs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        client_slug: slug,
+        cost_cents: cents,
+        audience_segment: audience || null,
+        period_label: period || null,
+        notes: notes || null,
+      }),
+    });
+    setSaving(false);
+    setCostInput("");
+    setPeriod("");
+    setNotes("");
+    setAudience("");
+    load();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this cost row?")) return;
+    await fetch(`/api/client-funnel-costs/${id}`, { method: "DELETE" });
+    load();
+  };
+
+  // Roll up totals for display under the form so the user sees the
+  // current per-funnel cost summary at a glance.
+  const totals = rows.reduce<Record<string, number>>((acc, r) => {
+    const k = r.audience_segment ?? "(unattributed)";
+    acc[k] = (acc[k] ?? 0) + r.cost_cents;
+    return acc;
+  }, {});
+  const grandTotal = rows.reduce((acc, r) => acc + r.cost_cents, 0);
+
+  return (
+    <div
+      className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-slate-900 border border-slate-700 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-5 py-3 flex items-center justify-between">
+          <div className="font-semibold">Funnel costs · {slug}</div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Log what each funnel cost you (ad spend, partner fees, retainers)
+            so the dashboard can compute Net + ROI per audience. Add a row
+            per period — the dashboard sums them all per funnel. Use a blank
+            audience for general overhead.
+          </p>
+
+          {/* Add form */}
+          <form
+            onSubmit={add}
+            className="rounded-lg border border-slate-700 bg-slate-950/40 p-3 space-y-2"
+          >
+            <div className="grid sm:grid-cols-2 gap-2">
+              <label className="block">
+                <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                  Funnel
+                </span>
+                <select
+                  value={audience}
+                  onChange={(e) => setAudience(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-sm"
+                >
+                  <option value="">— overhead / unattributed</option>
+                  <option value="parent">Parent</option>
+                  <option value="coach">Coach</option>
+                  <option value="player">Player</option>
+                  <option value="club">Club</option>
+                  <option value="hobbyist">Hobbyist</option>
+                  <option value="forester">Forester</option>
+                  <option value="tym">TYM</option>
+                  <option value="hunter">Hunter</option>
+                  <option value="dealer">Dealer</option>
+                  <option value="community">Community</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                  Cost ($)
+                </span>
+                <input
+                  type="text"
+                  value={costInput}
+                  onChange={(e) => setCostInput(e.target.value)}
+                  placeholder="200"
+                  required
+                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-sm"
+                />
+              </label>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <label className="block">
+                <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                  Period
+                </span>
+                <input
+                  type="text"
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                  placeholder="Apr 2026 / Q2 2026 / ongoing"
+                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                  Notes
+                </span>
+                <input
+                  type="text"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Meta ads, parent campaign 4/1-30"
+                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-sm"
+                />
+              </label>
+            </div>
+            <div className="flex justify-end pt-1">
+              <button
+                type="submit"
+                disabled={saving || !costInput.trim()}
+                className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 text-white px-4 py-1.5 rounded text-sm font-bold"
+              >
+                {saving ? "Saving…" : "Add cost"}
+              </button>
+            </div>
+          </form>
+
+          {/* Totals */}
+          {Object.keys(totals).length > 0 && (
+            <div className="rounded-lg border border-slate-800 bg-slate-950/30 p-3 text-xs">
+              <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+                Totals (sum of every row)
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(totals).map(([aud, cents]) => (
+                  <div
+                    key={aud}
+                    className="rounded bg-slate-900 border border-slate-800 px-2.5 py-1"
+                  >
+                    <span className="text-slate-400 mr-1.5">
+                      {aud === "(unattributed)"
+                        ? "Overhead"
+                        : (AUDIENCE_LABEL[aud as ClientLeadAudience] ?? aud)}
+                    </span>
+                    <span className="font-bold text-rose-300">
+                      {centsToDollars(cents)}
+                    </span>
+                  </div>
+                ))}
+                <div className="rounded bg-slate-900 border border-slate-700 px-2.5 py-1 ml-auto">
+                  <span className="text-slate-400 mr-1.5">All funnels</span>
+                  <span className="font-bold text-rose-300">
+                    {centsToDollars(grandTotal)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Rows list */}
+          <div>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
+              Logged rows ({rows.length})
+            </div>
+            {loading ? (
+              <div className="text-sm text-slate-500">Loading…</div>
+            ) : rows.length === 0 ? (
+              <div className="text-xs text-slate-500 border border-dashed border-slate-800 rounded p-3 text-center">
+                No costs logged yet. Add one above to start tracking ROI.
+              </div>
+            ) : (
+              <ul className="space-y-1.5">
+                {rows.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex items-center gap-2 text-xs bg-slate-950/40 border border-slate-800 rounded px-2.5 py-1.5"
+                  >
+                    <span className="font-bold text-rose-300 tabular-nums w-20">
+                      {centsToDollars(r.cost_cents)}
+                    </span>
+                    <span className="text-slate-300 w-24 truncate">
+                      {r.audience_segment
+                        ? (AUDIENCE_LABEL[
+                            r.audience_segment as ClientLeadAudience
+                          ] ?? r.audience_segment)
+                        : "Overhead"}
+                    </span>
+                    <span className="text-slate-500 truncate flex-1">
+                      {r.period_label ?? ""}
+                      {r.period_label && r.notes ? " · " : ""}
+                      {r.notes ?? ""}
+                    </span>
+                    <button
+                      onClick={() => remove(r.id)}
+                      className="text-rose-400 hover:text-rose-200 px-1.5"
+                      title="Delete"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
