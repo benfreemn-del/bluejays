@@ -19,9 +19,29 @@
  */
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StickyNav from "../sticky-nav";
 import { CAMPS, type Camp } from "./camps-data";
+import USStatesMap from "@/components/USStatesMap";
+import { COUNTIES_BY_STATE } from "@/data/us-counties";
+import {
+  TOTAL_US_CAMPS_ESTIMATE,
+  CAMPS_BY_STATE,
+  AGE_MULTIPLIER,
+  SKILL_MULTIPLIER,
+  FORMAT_MULTIPLIER,
+} from "@/data/camp-estimates";
+
+// Page-local timing multipliers — the question's option ids are
+// season-keyed (summer-2026, etc.) and don't match the data file's
+// generic season keys. Single source of truth lives here.
+const TIMING_FRAC: Record<string, number> = {
+  "summer-2026": 0.55,
+  "fall-2026": 0.12,
+  "winter-2026": 0.08,
+  "spring-2027": 0.1,
+  any: 1.0,
+};
 
 const NAVY = "#0a1832";
 const NAVY_DEEP = "#050d1f";
@@ -36,12 +56,22 @@ const LOGO =
 // Quiz state machine
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Step = "age" | "location" | "skill" | "format" | "timing" | "notify" | "results";
+type Step =
+  | "age"
+  | "location"
+  | "travel"
+  | "skill"
+  | "format"
+  | "timing"
+  | "notify"
+  | "results";
 
 type QuizState = {
   ageGroup: string;
   state: string;
   county: string;
+  /** How far the parent will travel to a camp (one-way miles). */
+  travelMiles: number;
   skillLevel: string;
   formats: string[];
   timing: string;
@@ -56,6 +86,7 @@ const INITIAL: QuizState = {
   ageGroup: "",
   state: "",
   county: "",
+  travelMiles: 50, // sensible default — most parents drive ~30-60mi to a camp
   skillLevel: "",
   formats: [],
   timing: "",
@@ -101,46 +132,6 @@ const TIMING = [
   { id: "any", label: "Any time · keep me posted", emoji: "📅" },
 ];
 
-// 50-state geographic grid. Each cell = state OR null (empty).
-// Layout follows actual US geography to feel like a map.
-const STATE_GRID: (string | null)[][] = [
-  // Row 1
-  [null, null, null, null, null, null, null, null, null, null, "ME"],
-  // Row 2
-  ["WA", null, null, null, null, null, null, null, null, "VT", "NH"],
-  // Row 3
-  ["WA", "ID", "MT", "ND", "MN", null, "WI", "MI", null, "NY", "MA"],
-  // Row 4
-  ["OR", "ID", "WY", "SD", "MN", "IA", "WI", "MI", "PA", "NY", "RI"],
-  // Row 5
-  ["OR", "NV", "WY", "SD", "NE", "IA", "IL", "IN", "OH", "PA", "CT"],
-  // Row 6
-  ["CA", "NV", "UT", "CO", "NE", "MO", "IL", "IN", "OH", "WV", "NJ"],
-  // Row 7
-  ["CA", "NV", "UT", "CO", "KS", "MO", "KY", "TN", "VA", "MD", "DE"],
-  // Row 8
-  ["CA", "AZ", "NM", "OK", "AR", "TN", "NC", "SC", "VA", null, null],
-  // Row 9
-  [null, "AZ", "NM", "TX", "LA", "MS", "AL", "GA", null, null, null],
-  // Row 10
-  ["HI", null, null, "TX", "LA", null, null, "FL", null, null, null],
-  // Row 11
-  [null, null, null, null, null, null, null, "FL", null, null, "AK"],
-];
-
-// Dedupe the grid so each state has ONE clickable cell across its
-// physical-extent footprint. We use a Set to avoid the same button
-// rendering multiple times.
-const STATE_FIRST_OCCURRENCE: Record<string, [number, number]> = {};
-for (let r = 0; r < STATE_GRID.length; r++) {
-  for (let c = 0; c < STATE_GRID[r]!.length; c++) {
-    const s = STATE_GRID[r]![c];
-    if (s && !STATE_FIRST_OCCURRENCE[s]) {
-      STATE_FIRST_OCCURRENCE[s] = [r, c];
-    }
-  }
-}
-
 const STATE_NAMES: Record<string, string> = {
   AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
   CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
@@ -155,26 +146,66 @@ const STATE_NAMES: Record<string, string> = {
   WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
 };
 
-// Per-state county hint placeholder for the county input. For WA we
-// show real county examples to nudge the parent. Other states just get
-// generic "type your county" prompts.
-const COUNTY_HINTS: Record<string, string> = {
-  WA: "King · Pierce · Snohomish · Spokane · Clark · Thurston…",
-  OR: "Multnomah · Washington · Clackamas · Lane…",
-  CA: "Los Angeles · Orange · San Diego · Alameda…",
-  TX: "Harris · Dallas · Tarrant · Bexar · Travis…",
-  FL: "Miami-Dade · Broward · Orange · Hillsborough…",
-};
-
 const STEPS: Step[] = [
   "age",
   "location",
+  "travel",
   "skill",
   "format",
   "timing",
   "notify",
   "results",
 ];
+
+// Total quiz steps shown to the user (excluding the results page).
+const TOTAL_QUESTION_STEPS = STEPS.length - 1;
+
+// ── Camp-availability estimator ────────────────────────────────────────────
+//
+// Returns an estimated count of US youth-soccer camps still in the funnel
+// after the parent's filters are applied. Used for the right-rail % bar
+// so the parent watches the pool narrow as they answer.
+//
+// Methodology:
+//   · Start at TOTAL_US_CAMPS_ESTIMATE (~22,000)
+//   · State pick: collapse to that state's slice (CAMPS_BY_STATE)
+//   · Travel radius INSIDE a state: 0-30mi ≈ 25% of state, 30-100mi ≈ 60%,
+//     100-200mi ≈ 100%, 200+ mi spills into neighbors (cap at 1.4x)
+//   · Age / skill / format / timing multipliers pulled from camp-estimates
+function estimateAvailability(s: QuizState): number {
+  let count = TOTAL_US_CAMPS_ESTIMATE;
+
+  // State narrows hardest. Before a state is picked we keep the full pool.
+  if (s.state) {
+    const stateCount = CAMPS_BY_STATE[s.state] ?? 0;
+    // Travel radius gates how much of the state's pool the parent can reach,
+    // and lightly spills across borders at the high end.
+    const m = s.travelMiles;
+    let radiusFrac: number;
+    if (m <= 30) radiusFrac = 0.25;
+    else if (m <= 60) radiusFrac = 0.45;
+    else if (m <= 100) radiusFrac = 0.7;
+    else if (m <= 150) radiusFrac = 0.9;
+    else if (m <= 200) radiusFrac = 1.0;
+    else radiusFrac = Math.min(1.4, 1.0 + (m - 200) / 250);
+    count = stateCount * radiusFrac;
+  }
+
+  if (s.ageGroup) count *= AGE_MULTIPLIER[s.ageGroup] ?? 0.2;
+  if (s.skillLevel) count *= SKILL_MULTIPLIER[s.skillLevel] ?? 0.3;
+  if (s.formats.length > 0) {
+    const sum = s.formats.reduce(
+      (acc, id) => acc + (FORMAT_MULTIPLIER[id] ?? 0),
+      0,
+    );
+    count *= Math.min(1, sum);
+  }
+  if (s.timing && s.timing !== "any") {
+    count *= TIMING_FRAC[s.timing] ?? 0.3;
+  }
+
+  return Math.max(1, Math.round(count));
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
@@ -200,9 +231,21 @@ export default function CampFinderPage() {
 
   const stepIndex = STEPS.indexOf(step);
 
+  // County must validate against the known list for the picked state.
+  // The autocomplete UI nudges the parent to pick a real one, but we
+  // also enforce here so a free-typed mismatch can't sneak past.
+  const validCounty = (() => {
+    if (!state.state || !state.county.trim()) return false;
+    const list = COUNTIES_BY_STATE[state.state] ?? [];
+    return list.some(
+      (c) => c.toLowerCase() === state.county.trim().toLowerCase(),
+    );
+  })();
+
   const canAdvance = (() => {
     if (step === "age") return state.ageGroup !== "";
-    if (step === "location") return state.state !== "" && state.county.trim().length >= 2;
+    if (step === "location") return state.state !== "" && validCounty;
+    if (step === "travel") return state.travelMiles > 0;
     if (step === "skill") return state.skillLevel !== "";
     if (step === "format") return state.formats.length >= 1;
     if (step === "timing") return state.timing !== "";
@@ -231,6 +274,7 @@ export default function CampFinderPage() {
           ageGroup: state.ageGroup,
           state: state.state,
           county: state.county,
+          travelMiles: state.travelMiles,
           skillLevel: state.skillLevel,
           formats: state.formats,
           timing: state.timing,
@@ -313,20 +357,20 @@ export default function CampFinderPage() {
 
       {/* PROGRESS BAR */}
       {step !== "results" && (
-        <div className="mx-auto max-w-3xl px-5 sm:px-8 mt-4">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8 mt-4">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-white/60">
-              Step {stepIndex + 1} of 6
+              Step {stepIndex + 1} of {TOTAL_QUESTION_STEPS}
             </span>
             <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-white/40">
-              {Math.round(((stepIndex + 1) / 6) * 100)}%
+              {Math.round(((stepIndex + 1) / TOTAL_QUESTION_STEPS) * 100)}%
             </span>
           </div>
           <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{
-                width: `${((stepIndex + 1) / 6) * 100}%`,
+                width: `${((stepIndex + 1) / TOTAL_QUESTION_STEPS) * 100}%`,
                 background: LIME,
               }}
             />
@@ -334,8 +378,19 @@ export default function CampFinderPage() {
         </div>
       )}
 
-      {/* STEP CONTENT */}
-      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-8 sm:py-12 pb-24">
+      {/* STEP CONTENT — split layout: question on the left, live
+          camp-availability rail on the right that narrows as the
+          parent answers. Right rail collapses below the question on
+          small screens. */}
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 pb-24">
+        <div
+          className={`grid gap-8 ${
+            step === "results" || step === "notify"
+              ? "grid-cols-1"
+              : "grid-cols-1 lg:grid-cols-[1fr_280px]"
+          }`}
+        >
+          <div>
         {step === "age" && (
           <AgeStep
             value={state.ageGroup}
@@ -348,6 +403,12 @@ export default function CampFinderPage() {
             county={state.county}
             onState={(v) => update("state", v)}
             onCounty={(v) => update("county", v)}
+          />
+        )}
+        {step === "travel" && (
+          <TravelStep
+            miles={state.travelMiles}
+            onChange={(v) => update("travelMiles", v)}
           />
         )}
         {step === "skill" && (
@@ -402,6 +463,14 @@ export default function CampFinderPage() {
             </button>
           </div>
         )}
+          </div>
+
+          {/* Right rail · live camp-availability tracker. Hidden on
+              the lead-capture + results steps (no more filtering to do). */}
+          {step !== "results" && step !== "notify" && (
+            <AvailabilityRail state={state} step={step} />
+          )}
+        </div>
       </div>
     </main>
   );
@@ -421,7 +490,7 @@ function AgeStep({
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
-        Question 1 of 6
+        Question 1 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         How old is your player?
@@ -479,7 +548,7 @@ function LocationStep({
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
-        Question 2 of 6
+        Question 2 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         Where do you live?
@@ -489,79 +558,459 @@ function LocationStep({
         distance.
       </p>
 
-      {/* US states map · geographic-grid layout */}
+      {/* Real US map · Albers projection. SVG path data per state means
+          the shape is recognizable, not a square grid. Active state is
+          highlighted in lime. */}
       <div className="rounded-2xl border border-white/10 bg-black/30 p-3 sm:p-4 mb-5">
-        <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(11, minmax(0, 1fr))" }}>
-          {STATE_GRID.flatMap((row, r) =>
-            row.map((s, c) => {
-              const isFirstOccurrence = s ? STATE_FIRST_OCCURRENCE[s]?.[0] === r && STATE_FIRST_OCCURRENCE[s]?.[1] === c : false;
-              if (!s) return <div key={`${r}-${c}`} />;
-              if (!isFirstOccurrence) {
-                // Render an invisible filler so the grid stays aligned but
-                // we don't repeat the button.
-                return (
-                  <div
-                    key={`${r}-${c}`}
-                    className={`aspect-square rounded ${
-                      stateCode === s ? "bg-lime-300/40" : "bg-white/[0.03]"
-                    }`}
-                  />
-                );
-              }
-              const active = stateCode === s;
-              return (
-                <button
-                  key={`${r}-${c}`}
-                  onClick={() => onState(s)}
-                  className={`aspect-square rounded text-[10px] sm:text-xs font-bold transition-all ${
-                    active
-                      ? "bg-lime-300 text-slate-950 scale-110 shadow-lg shadow-lime-300/30 z-10 relative"
-                      : "bg-white/5 text-white/70 hover:bg-white/15 hover:text-white"
-                  }`}
-                  title={STATE_NAMES[s]}
-                >
-                  {s}
-                </button>
-              );
-            }),
-          )}
-        </div>
+        <USStatesMap
+          selected={stateCode || undefined}
+          onSelect={(code) => {
+            onState(code);
+            // Clear county whenever the state changes — different list.
+            onCounty("");
+          }}
+        />
         {stateCode && (
           <p className="text-center text-xs text-white/60 mt-3">
             <span className="font-bold" style={{ color: LIME }}>
-              {STATE_NAMES[stateCode]}
+              {STATE_NAMES[stateCode] ?? stateCode}
             </span>{" "}
-            selected. Type your county below.
+            selected. Pick your county below.
           </p>
         )}
       </div>
 
-      {/* County input */}
+      {/* County autocomplete — must be a real US county */}
       {stateCode && (
-        <div>
-          <label className="block text-[10px] tracking-[0.22em] uppercase font-bold text-white/60 mb-2">
-            What county?
-          </label>
-          <input
-            type="text"
-            value={county}
-            onChange={(e) => onCounty(e.target.value)}
-            placeholder={
-              COUNTY_HINTS[stateCode]
-                ? `e.g. ${COUNTY_HINTS[stateCode]?.split(" ·")[0]}`
-                : "Type your county name"
-            }
-            className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-lime-300/60"
-            autoFocus
-          />
-          {COUNTY_HINTS[stateCode] && (
-            <p className="text-[11px] text-white/40 italic mt-1.5">
-              Common in {STATE_NAMES[stateCode]}: {COUNTY_HINTS[stateCode]}
-            </p>
-          )}
-        </div>
+        <CountyAutocomplete
+          stateCode={stateCode}
+          value={county}
+          onChange={onCounty}
+        />
       )}
     </div>
+  );
+}
+
+// County autocomplete · the full US-counties list is the source of truth.
+// Free-typed values that don't match are rejected by canAdvance (the parent
+// stepper) so we always end up with a real, matchable county.
+function CountyAutocomplete({
+  stateCode,
+  value,
+  onChange,
+}: {
+  stateCode: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  const counties = useMemo<string[]>(
+    () => COUNTIES_BY_STATE[stateCode] ?? [],
+    [stateCode],
+  );
+
+  const matches = useMemo(() => {
+    const q = value.trim().toLowerCase();
+    if (!q) return counties.slice(0, 8);
+    return counties
+      .filter((c) => c.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [value, counties]);
+
+  const isExactMatch = counties.some(
+    (c) => c.toLowerCase() === value.trim().toLowerCase(),
+  );
+
+  // Close the dropdown on outside click — keeps the keyboard tidy on
+  // mobile and stops the list from hovering over the Next button.
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <label className="block text-[10px] tracking-[0.22em] uppercase font-bold text-white/60 mb-2">
+        What county?
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+          setHighlight(0);
+        }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={(e) => {
+          if (!open && (e.key === "ArrowDown" || e.key === "Enter")) {
+            setOpen(true);
+            return;
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setHighlight((h) => Math.min(matches.length - 1, h + 1));
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setHighlight((h) => Math.max(0, h - 1));
+          } else if (e.key === "Enter" && matches[highlight]) {
+            e.preventDefault();
+            onChange(matches[highlight]!);
+            setOpen(false);
+          } else if (e.key === "Escape") {
+            setOpen(false);
+          }
+        }}
+        placeholder="Start typing — pick from the list"
+        className={`w-full rounded-xl bg-white/5 border-2 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none transition ${
+          isExactMatch
+            ? "border-lime-300/60"
+            : value
+              ? "border-amber-400/40"
+              : "border-white/10 focus:border-lime-300/60"
+        }`}
+        autoFocus
+        autoComplete="off"
+      />
+      {open && matches.length > 0 && (
+        <ul
+          className="absolute z-10 mt-1 left-0 right-0 max-h-60 overflow-auto rounded-xl border border-white/10 bg-[#0a1628] shadow-xl shadow-black/60"
+          role="listbox"
+        >
+          {matches.map((c, i) => (
+            <li
+              key={c}
+              role="option"
+              aria-selected={i === highlight}
+              onMouseDown={(e) => {
+                // mousedown not click — beats the input's blur race.
+                e.preventDefault();
+                onChange(c);
+                setOpen(false);
+              }}
+              onMouseEnter={() => setHighlight(i)}
+              className={`px-4 py-2.5 text-sm cursor-pointer transition ${
+                i === highlight
+                  ? "bg-lime-300/15 text-lime-200"
+                  : "text-white/85 hover:bg-white/5"
+              }`}
+            >
+              {c}
+              <span className="text-white/30 text-xs ml-1">
+                {STATE_NAMES[stateCode] ? "" : ""}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {value && !isExactMatch && !open && (
+        <p className="text-[11px] text-amber-300/80 mt-1.5">
+          Pick a county from the list to continue.
+        </p>
+      )}
+      {!value && (
+        <p className="text-[11px] text-white/40 italic mt-1.5">
+          {counties.length} counties in {STATE_NAMES[stateCode] ?? stateCode}.
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Q · Travel · slider with a car icon that drives along the bar
+// ─────────────────────────────────────────────────────────────────────────────
+
+function TravelStep({
+  miles,
+  onChange,
+}: {
+  miles: number;
+  onChange: (v: number) => void;
+}) {
+  const MIN = 5;
+  const MAX = 300;
+  const pct = Math.min(100, Math.max(0, ((miles - MIN) / (MAX - MIN)) * 100));
+  const approxHours = Math.max(0.1, miles / 55);
+  const carScale = 0.9 + (pct / 100) * 0.6; // grows from 0.9x → 1.5x as miles climb
+
+  // Tier labels keep the answer feeling concrete.
+  const tier =
+    miles <= 30
+      ? { label: "Right around the corner", emoji: "🏠" }
+      : miles <= 75
+        ? { label: "Easy weekday drive", emoji: "🚗" }
+        : miles <= 150
+          ? { label: "Weekend road trip", emoji: "🛣️" }
+          : miles <= 250
+            ? { label: "Big day out", emoji: "🗺️" }
+            : { label: "Anywhere in driving range", emoji: "🌎" };
+
+  return (
+    <div>
+      <p
+        className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3"
+        style={{ color: LIME }}
+      >
+        Question 3 of 7
+      </p>
+      <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
+        How far can you travel?
+      </h1>
+      <p className="text-base text-white/60 mb-8 leading-relaxed">
+        Drag the slider — the car shows your reach. Wider radius = more camps
+        on the table.
+      </p>
+
+      {/* Read-out card */}
+      <div
+        className="rounded-2xl border-2 p-5 mb-6"
+        style={{
+          borderColor: `${LIME}40`,
+          background:
+            "linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(29,78,216,0.05) 100%)",
+        }}
+      >
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] font-bold text-white/50 mb-1">
+              {tier.emoji} {tier.label}
+            </div>
+            <div className="text-4xl sm:text-5xl font-black tabular-nums leading-none">
+              {miles}
+              <span className="text-xl text-white/50 font-normal ml-2">
+                miles
+              </span>
+            </div>
+            <div className="text-[11px] text-white/45 mt-1.5">
+              ≈ {approxHours.toFixed(1)} hour{approxHours >= 1.5 ? "s" : ""} each way
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Highway · car drives along the bar as miles increase */}
+      <div className="relative pt-6 pb-3">
+        {/* Distance markers */}
+        <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/35 mb-2 px-1">
+          <span>5 mi</span>
+          <span>50</span>
+          <span>100</span>
+          <span>200</span>
+          <span>300+</span>
+        </div>
+
+        {/* Highway road */}
+        <div className="relative h-12 rounded-full overflow-hidden border border-white/10"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%)",
+          }}
+        >
+          {/* Filled progress (lime gradient) */}
+          <div
+            className="absolute inset-y-0 left-0 transition-all duration-200"
+            style={{
+              width: `${pct}%`,
+              background:
+                "linear-gradient(90deg, rgba(163,230,53,0.55) 0%, rgba(163,230,53,0.85) 100%)",
+            }}
+          />
+          {/* Dashed lane stripes */}
+          <div
+            className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[3px]"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 14px, transparent 14px, transparent 28px)",
+            }}
+          />
+          {/* Car emoji marker — slides + grows with miles */}
+          <div
+            className="absolute top-1/2 transition-all duration-200 pointer-events-none"
+            style={{
+              left: `calc(${pct}% - 16px)`,
+              transform: `translateY(-50%) scale(${carScale})`,
+              filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
+              fontSize: 28,
+              lineHeight: 1,
+            }}
+            aria-hidden
+          >
+            🚗
+          </div>
+        </div>
+
+        {/* Slider input — overlaid invisibly so the styled bar above
+            renders the visual + the native input handles touch / a11y. */}
+        <input
+          type="range"
+          min={MIN}
+          max={MAX}
+          step={5}
+          value={miles}
+          onChange={(e) => onChange(parseInt(e.target.value, 10))}
+          aria-label="Travel distance in miles"
+          className="absolute inset-x-0 top-6 h-12 w-full opacity-0 cursor-pointer"
+        />
+      </div>
+
+      <p className="text-[11px] text-white/40 italic mt-4">
+        Most parents drive 30-60 miles for a great camp. Big-name residential
+        camps pull from 200+ mile radii.
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Right-rail · live camp-availability tracker
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Shows the user a percentage of US camps remaining as their answers
+// narrow the pool. Designed so each answer visibly moves the needle —
+// makes the experience feel responsive + invests them in finishing.
+function AvailabilityRail({
+  state,
+  step,
+}: {
+  state: QuizState;
+  step: Step;
+}) {
+  const count = useMemo(() => estimateAvailability(state), [state]);
+  const pct = Math.min(100, (count / TOTAL_US_CAMPS_ESTIMATE) * 100);
+  // Bar color: green (lots of camps) → amber (narrowing) → blue (focused).
+  const barColor =
+    pct > 25 ? LIME : pct > 5 ? "#fbbf24" : ELECTRIC;
+
+  // Step-specific commentary so the rail teaches as it updates.
+  const note =
+    step === "age"
+      ? "Pick an age band → narrows by participation share"
+      : step === "location"
+        ? "Pick your state → collapses to local catalog"
+        : step === "travel"
+          ? "Wider radius = more camps on the table"
+          : step === "skill"
+            ? "Skill picks tier of programming"
+            : step === "format"
+              ? "Format trims to day / residential / clinic"
+              : step === "timing"
+                ? "Season slices the calendar"
+                : "";
+
+  return (
+    <aside className="lg:sticky lg:top-6 lg:self-start">
+      <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+        <div className="text-[10px] tracking-[0.28em] uppercase font-bold text-white/55 mb-1">
+          Camps in your funnel
+        </div>
+        <div className="flex items-baseline gap-2 mb-4">
+          <span
+            className="text-4xl font-black tabular-nums tracking-tighter transition-all duration-300"
+            style={{ color: barColor }}
+          >
+            {count.toLocaleString()}
+          </span>
+          <span className="text-[11px] text-white/45">
+            of {TOTAL_US_CAMPS_ESTIMATE.toLocaleString()}
+          </span>
+        </div>
+
+        {/* Vertical bar — fills bottom-up so narrowing visibly drains it */}
+        <div className="flex gap-3 items-stretch">
+          <div className="relative w-3 h-40 rounded-full bg-white/[0.06] overflow-hidden">
+            <div
+              className="absolute bottom-0 left-0 right-0 transition-all duration-500"
+              style={{
+                height: `${pct}%`,
+                background: `linear-gradient(180deg, ${barColor} 0%, ${barColor}99 100%)`,
+              }}
+            />
+          </div>
+          <div className="flex-1 flex flex-col justify-between text-[10px] uppercase tracking-wider text-white/35 py-0.5">
+            <span>100%</span>
+            <span>50%</span>
+            <span>0%</span>
+          </div>
+        </div>
+
+        <div className="mt-4 text-[11px] leading-relaxed text-white/55">
+          {pct.toFixed(pct < 1 ? 2 : 1)}% of US camps still match.
+          {note && <span className="block mt-1.5 text-white/40">{note}</span>}
+        </div>
+
+        {/* Per-filter breakdown so the parent sees what's been applied. */}
+        <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5 text-[11px]">
+          <RailRow on={!!state.ageGroup} label="Age" value={state.ageGroup} />
+          <RailRow
+            on={!!state.state}
+            label="State"
+            value={STATE_NAMES[state.state] ?? state.state}
+          />
+          <RailRow
+            on={!!state.county}
+            label="County"
+            value={state.county}
+          />
+          <RailRow
+            on={state.travelMiles !== INITIAL.travelMiles}
+            label="Travel"
+            value={state.travelMiles ? `${state.travelMiles} mi` : ""}
+          />
+          <RailRow
+            on={!!state.skillLevel}
+            label="Skill"
+            value={state.skillLevel}
+          />
+          <RailRow
+            on={state.formats.length > 0}
+            label="Format"
+            value={state.formats.join(", ")}
+          />
+          <RailRow on={!!state.timing} label="When" value={state.timing} />
+        </ul>
+      </div>
+    </aside>
+  );
+}
+
+function RailRow({
+  on,
+  label,
+  value,
+}: {
+  on: boolean;
+  label: string;
+  value: string;
+}) {
+  return (
+    <li className="flex items-center justify-between gap-2">
+      <span
+        className={`uppercase tracking-wider ${
+          on ? "text-white/65" : "text-white/25"
+        }`}
+      >
+        {label}
+      </span>
+      <span
+        className={`tabular-nums truncate ml-2 ${
+          on ? "text-lime-300" : "text-white/30"
+        }`}
+        style={{ maxWidth: 130 }}
+      >
+        {on ? (value || "—") : "—"}
+      </span>
+    </li>
   );
 }
 
@@ -579,7 +1028,7 @@ function SkillStep({
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
-        Question 3 of 6
+        Question 4 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         Where are they at?
@@ -628,7 +1077,7 @@ function FormatStep({
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
-        Question 4 of 6
+        Question 5 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         What format works for your family?
@@ -686,7 +1135,7 @@ function TimingStep({
   return (
     <div>
       <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
-        Question 5 of 6
+        Question 6 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
         When are you looking?
