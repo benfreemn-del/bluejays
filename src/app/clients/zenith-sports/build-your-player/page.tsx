@@ -48,7 +48,10 @@ const NAVY_DEEP = "#050d1f";
 const LIME = "#a3e635";
 const ELECTRIC = "#1d4ed8";
 
-type Step = "role" | "identity" | "builder" | "goals" | "plan";
+// Per Philip+Paul's notes: email capture moves AFTER goals (so the
+// parent has invested in customization) but BEFORE the plan reveal
+// (so the email is the gate to the personalized output).
+type Step = "role" | "builder" | "goals" | "identity" | "plan";
 
 type State = Omit<BuilderInputs, "role"> & {
   role: BuilderInputs["role"] | null;
@@ -146,26 +149,27 @@ export default function BuildYourPlayerPage() {
     return false;
   })();
 
+  // New order: role → builder → goals → identity (email gate) → plan
   const next = () => {
     if (!canAdvance) return;
     setStep((s) =>
       s === "role"
-        ? "identity"
-        : s === "identity"
-          ? "builder"
-          : s === "builder"
-            ? "goals"
+        ? "builder"
+        : s === "builder"
+          ? "goals"
+          : s === "goals"
+            ? "identity"
             : "plan",
     );
   };
   const back = () => {
     setStep((s) =>
       s === "plan"
-        ? "goals"
-        : s === "goals"
-          ? "builder"
-          : s === "builder"
-            ? "identity"
+        ? "identity"
+        : s === "identity"
+          ? "goals"
+          : s === "goals"
+            ? "builder"
             : "role",
     );
   };
@@ -247,7 +251,8 @@ export default function BuildYourPlayerPage() {
 /* ─────────────────────────── PROGRESS DOTS ─────────────────────────── */
 
 function ProgressDots({ step }: { step: Step }) {
-  const order: Step[] = ["role", "identity", "builder", "goals", "plan"];
+  // Order matches the new flow (email is the gate before plan).
+  const order: Step[] = ["role", "builder", "goals", "identity", "plan"];
   const idx = order.indexOf(step);
   return (
     <div className="flex items-center gap-1.5">
@@ -348,27 +353,50 @@ function IdentityStep({
   onNext: () => void;
   canAdvance: boolean;
 }) {
+  // Email-gate framing per Philip+Paul's notes — the parent has invested
+  // in customizing (slider + goals), so framing the email as the bridge
+  // to "your custom training plan" lifts capture rate vs asking up-front.
   return (
     <div className="max-w-md mx-auto">
       <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
-        Step 2 of 5
+        Last step before your plan
       </div>
       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
-        Who&apos;s this for?
+        Where should we send it?
       </h2>
-      <p className="mt-3 text-white/55 text-sm leading-relaxed">
-        We&apos;ll email you the plan + a quick reply from Philip with any
-        next-step recommendations.
+      <p className="mt-3 text-white/70 text-base leading-relaxed">
+        Your custom training plan is ready — drills, weekly cadence, kit fit,
+        all matched to {state.firstName ? "your" : "the"} build. Drop your email
+        and we&apos;ll send it now plus a follow-up from Philip.
       </p>
+
+      {/* What they'll get card — invests them harder before the field */}
+      <div className="mt-5 rounded-xl border border-[#a3e635]/30 bg-[#a3e635]/5 p-4">
+        <p className="text-[10px] tracking-[0.22em] uppercase font-bold text-[#a3e635] mb-2">
+          You&apos;ll get
+        </p>
+        <ul className="space-y-1.5 text-sm text-white/85">
+          <li>· Personalized weekly cadence (sessions × duration)</li>
+          <li>· 3 starter drills matched to current skill</li>
+          <li>· Recommended TEKKY kit fit</li>
+          <li>
+            · A quick reply from Philip with{" "}
+            <strong className="text-[#a3e635]">
+              one specific next-step recommendation
+            </strong>{" "}
+            for {state.firstName || "your player"}
+          </li>
+        </ul>
+      </div>
 
       <form
         onSubmit={(e) => {
           e.preventDefault();
           if (canAdvance) onNext();
         }}
-        className="mt-7 space-y-4"
+        className="mt-6 space-y-4"
       >
-        <Field label="First name">
+        <Field label="First name *">
           <input
             type="text"
             value={state.firstName}
@@ -376,11 +404,11 @@ function IdentityStep({
             autoComplete="given-name"
             required
             className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 outline-none transition"
-            placeholder={state.role === "parent" ? "Your name" : "Your name"}
+            placeholder="Your name"
             autoFocus
           />
         </Field>
-        <Field label="Email">
+        <Field label="Email *">
           <input
             type="email"
             value={state.email}
@@ -391,7 +419,7 @@ function IdentityStep({
             placeholder="you@example.com"
           />
         </Field>
-        <Field label="Phone (optional, for SMS updates)">
+        <Field label="Phone (optional · we only text if you ask)">
           <input
             type="tel"
             value={state.phone}
@@ -403,7 +431,11 @@ function IdentityStep({
         </Field>
 
         <div className="pt-3">
-          <NextButton disabled={!canAdvance} onClick={onNext} label="Build the player →" />
+          <NextButton
+            disabled={!canAdvance}
+            onClick={onNext}
+            label="Show me my plan →"
+          />
         </div>
         <p className="text-[10px] text-white/35 text-center pt-2">
           We never share your info. Unsubscribe anytime.
@@ -429,7 +461,7 @@ function BuilderStep({
       {/* Left — sliders */}
       <div>
         <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
-          Step 3 of 5
+          Step 2 of 5
         </div>
         <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
           Build the player.
@@ -524,7 +556,7 @@ function GoalsStep({
     <div className="max-w-3xl mx-auto">
       <div className="text-center">
         <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
-          Step 4 of 5
+          Step 3 of 5
         </div>
         <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
           What&apos;s the goal?
@@ -710,6 +742,81 @@ function PlanStep({
           Shop the kit
           <ArrowRight size={14} weight="bold" />
         </a>
+      </div>
+
+      {/* HARD UPSELL — full custom coaching plan (the paid product).
+          Per Philip+Paul's notes: push this hard so the parent who just
+          got a free starter plan sees the upgrade clearly, with concrete
+          deliverables + scarcity (1:1 cadence with Philip). */}
+      <div
+        className="mt-10 rounded-2xl border-2 p-6 sm:p-8 relative overflow-hidden"
+        style={{
+          borderColor: LIME,
+          background:
+            "linear-gradient(135deg, rgba(163,230,53,0.18) 0%, rgba(29,78,216,0.12) 100%)",
+        }}
+      >
+        <div className="absolute top-3 right-3 text-[10px] uppercase tracking-widest font-black px-2.5 py-1 rounded-full" style={{ background: LIME, color: NAVY_DEEP }}>
+          🔥 Best fit for {state.firstName}
+        </div>
+
+        <div className="text-[11px] tracking-[0.28em] uppercase font-bold mb-3" style={{ color: LIME }}>
+          The next level · 1-on-1 coaching plan
+        </div>
+        <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-tight mb-3">
+          Want Philip building the full {plan.level} plan with you?
+        </h3>
+        <p className="text-base text-white/85 leading-relaxed mb-5">
+          Your starter plan is 3 drills + a weekly cadence. The{" "}
+          <strong style={{ color: LIME }}>Custom Coaching Plan</strong> is what
+          ECNL parents actually pay for — Philip personally builds a 12-week
+          progression for {state.firstName}, monthly check-in video review,
+          drill-pack updates as they level up, and direct text access to him.
+        </p>
+
+        <div className="grid sm:grid-cols-2 gap-3 mb-5">
+          <ul className="space-y-1.5 text-sm text-white/85">
+            <li>· 12-week progression (vs 3 drills)</li>
+            <li>· Monthly video review of {state.firstName}&apos;s footage</li>
+            <li>· Drill-pack updates as skill grows</li>
+          </ul>
+          <ul className="space-y-1.5 text-sm text-white/85">
+            <li>· Direct text access to Philip</li>
+            <li>· Tryout / showcase prep guidance</li>
+            <li>· Cancel anytime · 30-day money back</li>
+          </ul>
+        </div>
+
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-white/50 mb-0.5">
+              Starting at
+            </div>
+            <div className="text-3xl font-black tracking-tighter">
+              $97
+              <span className="text-base text-white/60 font-normal">/month</span>
+            </div>
+            <div className="text-[10px] text-white/50 mt-0.5">
+              Less than one club training session per week
+            </div>
+          </div>
+          <a
+            href={`mailto:philip@zenithsports.org?subject=${encodeURIComponent(
+              `Custom Coaching Plan for ${state.firstName} (${plan.level})`,
+            )}&body=${encodeURIComponent(
+              `Hey Philip — saw the Build Your Player plan for ${state.firstName} and want to talk about the full Custom Coaching Plan. Their level: ${plan.level}. Goals: ${state.goals.join(", ")}.\n\nWhat's the next step?`,
+            )}`}
+            className="inline-flex items-center gap-2 px-6 py-4 text-sm font-extrabold tracking-[0.2em] uppercase rounded-md transition hover:scale-[1.02]"
+            style={{ background: LIME, color: NAVY_DEEP }}
+          >
+            Talk to Philip
+            <ArrowRight size={14} weight="bold" />
+          </a>
+        </div>
+        <p className="text-[10px] text-white/45 italic mt-3">
+          Limited cohort — Philip caps at 20 active players for personalized
+          coaching at any time.
+        </p>
       </div>
 
       {/* Next step */}
