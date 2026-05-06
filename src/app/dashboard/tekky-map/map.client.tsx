@@ -20,6 +20,7 @@ import mlsNextClubsData from "@/data/us-mls-next-clubs.json";
 import uslClubsData from "@/data/us-usl-clubs.json";
 import ecnlClubsData from "@/data/us-ecnl-clubs.json";
 import ncaaSoccerData from "@/data/us-ncaa-soccer.json";
+import rclClubsData from "@/data/us-rcl-clubs.json";
 
 /**
  * Tekky lead-scrape map.
@@ -70,7 +71,12 @@ type NcaaSchool = MlsNextClub & {
   divisions: Array<"mens" | "womens">;
 };
 
-type MapLayer = "all" | "mls" | "next" | "usl" | "ecnl" | "ncaa" | "cities";
+type RclClub = MlsNextClub & {
+  /** "full" RCL members vs "provisional" — different visual weight */
+  membership: "full" | "provisional";
+};
+
+type MapLayer = "all" | "mls" | "next" | "usl" | "ecnl" | "ncaa" | "rcl" | "cities";
 
 type TekkyAudience = "parent" | "coach" | "player";
 
@@ -150,6 +156,7 @@ const LAYER_OPTIONS: Array<{ id: MapLayer; label: string; emoji: string }> = [
   { id: "usl", label: "USL Champ + League One", emoji: "🥈" },
   { id: "ecnl", label: "ECNL clubs (youth)", emoji: "🥇" },
   { id: "ncaa", label: "NCAA D1 soccer", emoji: "🎓" },
+  { id: "rcl", label: "RCL Select (WA)", emoji: "🌲" },
   { id: "cities", label: "Cities only", emoji: "🏙️" },
 ];
 
@@ -499,6 +506,7 @@ export default function TekkyMapClient() {
   ];
   const ecnlClubs = (ecnlClubsData.clubs as EcnlClub[]) ?? [];
   const ncaaSchools = (ncaaSoccerData.schools as NcaaSchool[]) ?? [];
+  const rclClubs = (rclClubsData.clubs as RclClub[]) ?? [];
 
   const mlsKeys = useMemo(
     () => new Set(mlsMarkets.map((t) => `${t.name}|${t.state}`)),
@@ -517,6 +525,7 @@ export default function TekkyMapClient() {
   const showUsl = layer === "all" || layer === "usl";
   const showEcnl = layer === "all" || layer === "ecnl";
   const showNcaa = layer === "all" || layer === "ncaa";
+  const showRcl = layer === "all" || layer === "rcl";
 
   // Sidebar list — focus state filters; otherwise national
   const focusState = lockedState ?? hoveredState;
@@ -1042,6 +1051,42 @@ export default function TekkyMapClient() {
                             ? "Men's only"
                             : "Women's only"}{" "}
                         · Source: ncaa.com / Wikipedia
+                      </div>
+                    </div>
+                  </Tooltip>
+                </CircleMarker>
+              );
+            })}
+
+          {/* RCL Select (Washington Youth Soccer · Regional Club League)
+               — competitive Select-tier youth clubs, below MLS NEXT and
+               ECNL but above rec. WA-only currently. Teal pins to keep
+               distinct from emerald (NEXT) / pink (ECNL) / indigo (NCAA). */}
+          {showRcl &&
+            rclClubs.map((c, i) => {
+              const isFull = c.membership === "full";
+              return (
+                <CircleMarker
+                  key={`rcl-${c.name}-${i}`}
+                  center={[c.lat, c.lng]}
+                  radius={isFull ? 5 : 4}
+                  pathOptions={{
+                    color: "#14b8a6",
+                    weight: isFull ? 1.2 : 1,
+                    fillColor: isFull ? "#14b8a6" : "#5eead4",
+                    fillOpacity: isFull ? 0.85 : 0.65,
+                  }}
+                >
+                  <Tooltip direction="top" offset={[0, -4]} opacity={0.95}>
+                    <div className="text-xs max-w-[260px]">
+                      <div className="font-bold text-teal-300">🌲 {c.name}</div>
+                      <div className="text-slate-300 mb-0.5">
+                        {c.city}, {c.state}
+                      </div>
+                      <div className="text-[10px] text-slate-500 italic">
+                        RCL Select ·{" "}
+                        {isFull ? "Full member" : "Provisional"} · Source:
+                        washingtonyouthsoccer.org
                       </div>
                     </div>
                   </Tooltip>

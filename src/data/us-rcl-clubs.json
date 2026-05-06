@@ -1,0 +1,25 @@
+{
+  "_README": "RCL (Regional Club League) — Washington Youth Soccer's competitive Select-level league. Below MLS NEXT and ECNL but above rec. 16 clubs total: 10 full members + 6 provisional. Verified from washingtonyouthsoccer.org/rcl 2026-05-09.",
+  "_LAST_UPDATED": "2026-05-09",
+  "_SOURCE": "washingtonyouthsoccer.org/rcl · static club roster page",
+  "_TIER_NOTE": "RCL is the WA-specific name. Equivalent leagues exist in other states under different names (CalSouth, GA Soccer, etc.). When tenant expands beyond WA, add per-state club-tier roster files like us-cal-soccer-clubs.json.",
+  "_NEXT_BUILD_NOTE": "Per-club team-count by age group (U10-U19) requires scraping each club's roster page individually — queue for a Puppeteer run. Until then, lead-side competition_tier field is the per-lead source of truth.",
+  "clubs": [
+    { "name": "Harbor Soccer Club", "city": "Gig Harbor", "state": "WA", "lat": 47.3293, "lng": -122.5826, "membership": "full" },
+    { "name": "Kitsap Alliance FC", "city": "Bremerton", "state": "WA", "lat": 47.5673, "lng": -122.6329, "membership": "full" },
+    { "name": "Northwest United FC", "city": "Lynnwood", "state": "WA", "lat": 47.8209, "lng": -122.3151, "membership": "full" },
+    { "name": "Seattle United", "city": "Seattle", "state": "WA", "lat": 47.6062, "lng": -122.3321, "membership": "full" },
+    { "name": "Snohomish Youth Soccer Club", "city": "Snohomish", "state": "WA", "lat": 47.9128, "lng": -122.0982, "membership": "full" },
+    { "name": "Sound Football Club", "city": "Mill Creek", "state": "WA", "lat": 47.8601, "lng": -122.2043, "membership": "full" },
+    { "name": "Valor", "city": "Edmonds", "state": "WA", "lat": 47.8107, "lng": -122.3774, "membership": "full" },
+    { "name": "Washington Rush", "city": "Tacoma", "state": "WA", "lat": 47.2529, "lng": -122.4443, "membership": "full" },
+    { "name": "Washington Premier FC", "city": "Puyallup", "state": "WA", "lat": 47.1854, "lng": -122.2929, "membership": "full" },
+    { "name": "Whatcom FC Rangers", "city": "Bellingham", "state": "WA", "lat": 48.7519, "lng": -122.4787, "membership": "full" },
+    { "name": "Crossfire Yakima", "city": "Yakima", "state": "WA", "lat": 46.6021, "lng": -120.5059, "membership": "provisional" },
+    { "name": "PacNW SC", "city": "Bellevue", "state": "WA", "lat": 47.6101, "lng": -122.2015, "membership": "provisional" },
+    { "name": "Spokane Sounders", "city": "Spokane", "state": "WA", "lat": 47.6588, "lng": -117.4260, "membership": "provisional" },
+    { "name": "Three Rivers Soccer Club", "city": "Kennewick", "state": "WA", "lat": 46.2112, "lng": -119.1372, "membership": "provisional" },
+    { "name": "Washington Timbers FC", "city": "Vancouver", "state": "WA", "lat": 45.6387, "lng": -122.6615, "membership": "provisional" },
+    { "name": "Club SOZO Santos FC", "city": "Tukwila", "state": "WA", "lat": 47.4738, "lng": -122.2606, "membership": "provisional" }
+  ]
+}
