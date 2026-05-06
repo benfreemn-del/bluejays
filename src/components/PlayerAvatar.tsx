@@ -47,18 +47,26 @@ export function PlayerAvatar({
   return (
     <motion.div
       key={src}
-      initial={{ opacity: 0, scale: 0.96 }}
+      initial={{ opacity: 0, scale: 1.04 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.32, ease: "easeOut" }}
-      className={`relative aspect-[3/4] w-full ${className}`}
+      className={`relative aspect-[3/4] w-full overflow-hidden ${className}`}
+      style={{
+        // Navy fallback so any sub-pixel seam matches the card's baked-in
+        // gradient — no white frame around the artwork.
+        background: "linear-gradient(180deg, #0a1628 0%, #1e3a5f 100%)",
+      }}
     >
       <Image
         src={src}
         alt={alt}
         fill
         sizes="(min-width: 1024px) 420px, 100vw"
-        className="object-contain"
+        // object-cover (not contain) so a 3:4 source fits a 3:4 box with
+        // zero letterbox + zero white seam at the corners. Source is
+        // exactly 3:4, so cover == 1:1 — no crop happens in practice.
+        className="object-cover"
         priority={priority}
       />
     </motion.div>

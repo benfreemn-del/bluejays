@@ -35,7 +35,7 @@ import {
   Lightning,
   PlayCircle,
 } from "@phosphor-icons/react/dist/ssr";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import {
   GOAL_OPTIONS,
@@ -456,6 +456,20 @@ function IdentityStep({
 
 /* ─────────────────────────── STEP: BUILDER ─────────────────────────── */
 
+// Builder sub-steps — questions answered one at a time on the left while
+// the avatar stays mounted on the right. As the parent answers gender →
+// age → skill, the avatar card on the right swaps live (those are the 3
+// inputs that drive the Pixar card lookup). Height + hours follow but
+// don't change the card; they feed the training-plan generator.
+type BuilderSubStep = "gender" | "age" | "skill" | "height" | "hours";
+const BUILDER_SUBSTEPS: BuilderSubStep[] = [
+  "gender",
+  "age",
+  "skill",
+  "height",
+  "hours",
+];
+
 function BuilderStep({
   state,
   update,
@@ -467,119 +481,212 @@ function BuilderStep({
   onNext: () => void;
   canAdvance: boolean;
 }) {
+  const [sub, setSub] = useState<BuilderSubStep>("gender");
+  const subIdx = BUILDER_SUBSTEPS.indexOf(sub);
+  const isLast = subIdx === BUILDER_SUBSTEPS.length - 1;
+
+  // Per-substep gate. Sliders default to a value so they're always
+  // advanceable; gender requires a pick.
+  const canSubAdvance =
+    sub === "gender" ? state.gender !== null : true;
+
+  const advanceSub = () => {
+    if (!canSubAdvance) return;
+    if (isLast) {
+      // Final substep handed off to the parent stepper.
+      if (canAdvance) onNext();
+      return;
+    }
+    setSub(BUILDER_SUBSTEPS[subIdx + 1]!);
+  };
+  const backSub = () => {
+    if (subIdx === 0) return;
+    setSub(BUILDER_SUBSTEPS[subIdx - 1]!);
+  };
+
   return (
-    <div className="grid lg:grid-cols-2 gap-10 items-center">
-      {/* Left — sliders */}
-      <div>
+    <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+      {/* Left — one question at a time */}
+      <div className="flex flex-col">
         <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
-          Step 2 of 5
+          Step 2 of 5 · {subIdx + 1} / {BUILDER_SUBSTEPS.length}
         </div>
         <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
           Build the player.
         </h2>
         <p className="mt-3 text-white/55 text-sm leading-relaxed">
-          Move the sliders. Watch the player on the right shift in real time.
+          Answer one quick question at a time. Watch the player on the right
+          shift as you go.
         </p>
 
-        {/* Gender toggle — drives the Pixar-style 3D avatar swap. Required
-            before advancing so the avatar locks to a real card vs the
-            neutral default. */}
-        <div className="mt-8">
-          <label className="text-[11px] tracking-[0.22em] uppercase font-bold text-white/55 block mb-2">
-            Player
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {(
-              [
-                { v: "male", label: "Boy / Man" },
-                { v: "female", label: "Girl / Woman" },
-              ] as const
-            ).map((opt) => {
-              const selected = state.gender === opt.v;
-              return (
-                <button
-                  key={opt.v}
-                  type="button"
-                  onClick={() => update("gender", opt.v)}
-                  className={`p-3 rounded-xl border-2 transition text-sm font-black uppercase tracking-tight ${
-                    selected
-                      ? "border-[#a3e635] bg-[#a3e635]/8 text-white"
-                      : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/30"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
+        {/* Sub-step tracker — slim dot row */}
+        <div className="mt-5 flex items-center gap-1.5">
+          {BUILDER_SUBSTEPS.map((s, i) => (
+            <span
+              key={s}
+              className={`block h-1 rounded-full transition-all ${
+                i === subIdx
+                  ? "w-6 bg-[#a3e635]"
+                  : i < subIdx
+                    ? "w-3 bg-[#a3e635]/60"
+                    : "w-3 bg-white/15"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* The active question */}
+        <div className="mt-8 flex-1">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={sub}
+              initial={{ opacity: 0, x: 14 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -14 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              {sub === "gender" && (
+                <SubQuestion title="Who is the player?">
+                  <div className="grid grid-cols-2 gap-3">
+                    {(
+                      [
+                        { v: "male", emoji: "👦", label: "Boy / Man" },
+                        { v: "female", emoji: "👧", label: "Girl / Woman" },
+                      ] as const
+                    ).map((opt) => {
+                      const selected = state.gender === opt.v;
+                      return (
+                        <button
+                          key={opt.v}
+                          type="button"
+                          onClick={() => update("gender", opt.v)}
+                          className={`p-5 rounded-2xl border-2 transition text-left ${
+                            selected
+                              ? "border-[#a3e635] bg-[#a3e635]/8"
+                              : "border-white/10 bg-white/[0.03] hover:border-white/30"
+                          }`}
+                        >
+                          <div className="text-3xl mb-2">{opt.emoji}</div>
+                          <div className="text-base font-black uppercase tracking-tight">
+                            {opt.label}
+                          </div>
+                          {selected && (
+                            <CheckCircle
+                              size={16}
+                              weight="fill"
+                              className="text-[#a3e635] mt-3"
+                            />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </SubQuestion>
+              )}
+
+              {sub === "age" && (
+                <SubQuestion title="How old are they?">
+                  <Slider
+                    label="Age"
+                    value={state.age}
+                    onChange={(v) => update("age", v)}
+                    min={5}
+                    max={35}
+                    step={1}
+                    display={
+                      state.age >= 24 ? `Adult · ${state.age}` : `U-${state.age}`
+                    }
+                  />
+                </SubQuestion>
+              )}
+
+              {sub === "skill" && (
+                <SubQuestion title="What level do they play at?">
+                  <Slider
+                    label="Skill level"
+                    value={state.skillLevel}
+                    onChange={(v) => update("skillLevel", v)}
+                    min={1}
+                    max={5}
+                    step={1}
+                    display={
+                      ["Rec", "Travel", "Club", "ECNL / MLS Next", "Elite"][
+                        state.skillLevel - 1
+                      ] ?? "—"
+                    }
+                  />
+                </SubQuestion>
+              )}
+
+              {sub === "height" && (
+                <SubQuestion title="How tall are they?">
+                  <Slider
+                    label="Height"
+                    value={state.heightInches}
+                    onChange={(v) => update("heightInches", v)}
+                    min={36}
+                    max={84}
+                    step={1}
+                    display={`${Math.floor(state.heightInches / 12)}'${state.heightInches % 12}"`}
+                  />
+                </SubQuestion>
+              )}
+
+              {sub === "hours" && (
+                <SubQuestion title="How much do they train each week?">
+                  <Slider
+                    label="Current weekly training (hrs)"
+                    value={state.currentWeeklyHours}
+                    onChange={(v) => update("currentWeeklyHours", v)}
+                    min={0}
+                    max={30}
+                    step={1}
+                    display={`${state.currentWeeklyHours} hrs / wk`}
+                  />
+                </SubQuestion>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Per-substep nav */}
+        <div className="mt-8 flex items-center gap-3">
+          {subIdx > 0 && (
+            <button
+              type="button"
+              onClick={backSub}
+              className="text-[11px] tracking-[0.22em] uppercase font-bold text-white/60 hover:text-white flex items-center gap-1"
+            >
+              <ArrowLeft size={12} weight="bold" /> Back
+            </button>
+          )}
+          <div className="ml-auto">
+            <NextButton
+              disabled={!canSubAdvance}
+              onClick={advanceSub}
+              label={
+                isLast
+                  ? "Pick goals →"
+                  : sub === "gender" && !state.gender
+                    ? "Pick a player first"
+                    : "Continue →"
+              }
+            />
           </div>
-        </div>
-
-        <div className="mt-7 space-y-7">
-          <Slider
-            label="Age"
-            value={state.age}
-            onChange={(v) => update("age", v)}
-            min={5}
-            max={35}
-            step={1}
-            // U-{N} bracket through 23 (covers youth → academy/college
-            // pathway). 24+ becomes the "Adult" senior bracket so
-            // current/returning players + adult-league users can
-            // generate a plan too.
-            display={state.age >= 24 ? `Adult · ${state.age}` : `U-${state.age}`}
-          />
-          <Slider
-            label="Height"
-            value={state.heightInches}
-            onChange={(v) => update("heightInches", v)}
-            min={36}
-            max={84}
-            step={1}
-            display={`${Math.floor(state.heightInches / 12)}'${state.heightInches % 12}"`}
-          />
-          <Slider
-            label="Skill level"
-            value={state.skillLevel}
-            onChange={(v) => update("skillLevel", v)}
-            min={1}
-            max={5}
-            step={1}
-            display={
-              ["Rec", "Travel", "Club", "ECNL / MLS Next", "Elite"][
-                state.skillLevel - 1
-              ] ?? "—"
-            }
-          />
-          <Slider
-            label="Current weekly training (hrs)"
-            value={state.currentWeeklyHours}
-            onChange={(v) => update("currentWeeklyHours", v)}
-            min={0}
-            max={30}
-            step={1}
-            display={`${state.currentWeeklyHours} hrs / wk`}
-          />
-        </div>
-
-        <div className="mt-8">
-          <NextButton
-            disabled={!canAdvance}
-            onClick={onNext}
-            label={state.gender ? "Pick goals →" : "Pick a player first"}
-          />
         </div>
       </div>
 
-      {/* Right — Pixar-style 3D avatar card. Lookup keys off
-          gender + age + skillLevel; falls back to the neutral default
-          until all three are picked. AnimatePresence + the `key={src}`
-          on PlayerAvatar makes each swap fade + scale in. */}
-      <div className="w-full max-w-[420px] mx-auto">
+      {/* Right — Pixar-style 3D avatar card. Stays mounted across all
+          builder sub-steps so the parent watches the player update live
+          as they answer. Lookup keys off gender + age + skillLevel.
+          Until gender is picked the neutral DEFAULT_AVATAR shows so the
+          slot is never empty. Sticky so it stays in view as the parent
+          scrolls through tall sliders on smaller viewports. */}
+      <div className="w-full max-w-[420px] mx-auto lg:sticky lg:top-24 lg:self-start">
         <div
-          className="relative rounded-2xl border border-white/10 overflow-hidden p-4"
+          className="relative rounded-2xl border border-white/10 overflow-hidden"
           style={{
-            background:
-              "radial-gradient(ellipse at top, rgba(163,230,53,0.08) 0%, #0a1628 60%)",
+            background: "linear-gradient(180deg, #0a1628 0%, #1e3a5f 100%)",
           }}
         >
           <AnimatePresence mode="wait">
@@ -595,15 +702,34 @@ function BuilderStep({
         {/* Tier + age caption for context */}
         <div className="mt-3 flex items-center justify-between text-[10px] tracking-[0.22em] uppercase font-bold text-white/45">
           <span>
-            {["Rec", "Travel", "Club", "ECNL / MLS Next", "Elite"][
-              state.skillLevel - 1
-            ] ?? "—"}
+            {state.gender
+              ? ["Rec", "Travel", "Club", "ECNL / MLS Next", "Elite"][
+                  state.skillLevel - 1
+                ] ?? "—"
+              : "Pick a player to start"}
           </span>
           <span>
             {state.age >= 24 ? `Adult · ${state.age}` : `U-${state.age}`}
           </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SubQuestion({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight mb-5">
+        {title}
+      </h3>
+      {children}
     </div>
   );
 }
