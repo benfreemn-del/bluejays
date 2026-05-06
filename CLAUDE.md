@@ -6800,6 +6800,98 @@ the end of the funnel). Conflating with dismiss makes reports lie.
 
 ---
 
+### 10. Inline Leads-Search Bar (NON-NEGOTIABLE — added 2026-05-05)
+
+Every leads-style table — BlueJays main dashboard, every AI System
+client owner-portal Leads tab, any future "list of people we have
+records for" surface — MUST mount the shared `LeadsSearchBar`
+component at the top of the list, ABOVE all filter chips.
+
+**The shared assets:**
+- `src/components/shared/LeadsSearchBar.tsx` — UI component
+- `src/lib/leads-search.ts` — pure filter helpers (`filterBySearch`,
+  `extractIdLookup`, `extractProspectSearchText`,
+  `extractClientLeadSearchText`)
+
+**Behavior contract:**
+- Reads/writes `?q=` from the URL — sharable + back-button works
+- Debounced 150ms before pushing to URL/onChange
+- Cmd/Ctrl+K from anywhere on the page focuses the input
+- "/" key (when not typing in another input) also focuses
+- Esc key clears the search
+- Clear button (✕) appears when there's text, also visible inside
+  the no-results banner
+- ID-lookup short-circuit: if the query exactly matches a UUID or
+  8-char short code, the result narrows to that one row only —
+  use this to make "paste an ID, see the row" work as a debug aid
+
+**Composition rule (AND, never OR):**
+- Search composes AND with existing filter chips (status, audience,
+  tier, etc.) — search narrows the already-chip-filtered subset
+- Filter-chip counts MUST be computed against the pre-search
+  totals (so a count of "12 enrolled" doesn't collapse to "0
+  enrolled" when the user is typing) — apply search LAST
+
+**Pattern (mirror this in every new portal):**
+
+```tsx
+import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
+import {
+  filterBySearch,
+  extractClientLeadSearchText,
+  extractIdLookup,
+} from "@/lib/leads-search";
+
+const [searchQuery, setSearchQuery] = useState<string>("");
+
+// existing chip filters → tierFiltered
+const tierFiltered = /* result of stage + audience + tier filters */;
+
+// search is the LAST axis
+const idLookup = extractIdLookup(searchQuery);
+const filtered = idLookup
+  ? tierFiltered.filter((l) => l.id === idLookup.value)
+  : filterBySearch(tierFiltered, searchQuery, extractClientLeadSearchText);
+const searchHasNoResults =
+  !!searchQuery && tierFiltered.length > 0 && filtered.length === 0;
+
+return (
+  <div>
+    <div className="mb-3">
+      <LeadsSearchBar
+        onChange={setSearchQuery}
+        placeholder="Search leads — name, email, phone, ID…"
+        totalCount={tierFiltered.length}
+        showNoResults={searchHasNoResults}
+        onClear={() => setSearchQuery("")}
+      />
+    </div>
+
+    {/* existing filter chip rows… */}
+    {/* lead cards rendered from `filtered` */}
+  </div>
+);
+```
+
+**Banned patterns:**
+- Don't reinvent the search input — always use `<LeadsSearchBar>`.
+  Custom inputs drift in styling, break the Cmd-K shortcut, and
+  forget URL sync
+- Don't filter PRESENT items via search and HIDE filter chips that
+  no longer match — keep the chips' counts honest (compute counts
+  pre-search, render visibility post-search)
+- Don't put the search bar BELOW the filter chips — the chips are
+  contextual narrowing; search is the fastest path. Search-first
+  saves a tap on mobile every single time
+
+**When onboarding a new AI System client portal:** the
+`<LeadsSearchBar>` mount is part of the Phase 5 "Leads tab" build
+checklist in `docs/AI_PACKAGE_PLAYBOOK.md` — never skip it. The
+shared component means new clients get search for free with zero
+extra wiring.
+
+---
+
 ## Custom-Domain Rewrite Pattern (NON-NEGOTIABLE — added 2026-05-04)
 
 When a client transfers their custom domain to Namecheap and points

@@ -10,6 +10,12 @@ import AISkillsTab from "@/components/portal/AISkillsTab";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
+import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
+import {
+  filterBySearch,
+  extractClientLeadSearchText,
+  extractIdLookup,
+} from "@/lib/leads-search";
 import { leadInSeason } from "@/lib/season-calculator";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
@@ -1610,6 +1616,10 @@ function LeadsTab({
   const [tierFilter, setTierFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
+  // Inline leads search — see CLAUDE.md "Owner Portal Rules". Composes
+  // AND with the stage / audience / tier filters; applied LAST so the
+  // counts on the filter chips reflect the pre-search totals.
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const toggleSelect = (id: string) =>
     setSelected((prev) => {
@@ -1674,12 +1684,23 @@ function LeadsTab({
   // Third filter axis — competition tier. Cuts across audiences so an
   // owner can pull "all RCL Select leads regardless of role" or "all
   // ECNL leads who are Coaches" etc.
-  const filtered =
+  const tierFiltered =
     tierFilter === "all"
       ? audienceFiltered
       : tierFilter === "untagged"
         ? audienceFiltered.filter((l) => !l.competition_tier)
         : audienceFiltered.filter((l) => l.competition_tier === tierFilter);
+
+  // Fourth axis — inline search bar. Composes AND with the chips above.
+  // ID-lookup short-circuit: if the query is an exact UUID, jump straight
+  // to that lead. Otherwise multi-token substring match across name +
+  // email + phone + notes + audience + tier + status + city/state + id.
+  const idLookup = extractIdLookup(searchQuery);
+  const filtered = idLookup
+    ? tierFiltered.filter((l) => l.id === idLookup.value)
+    : filterBySearch(tierFiltered, searchQuery, extractClientLeadSearchText);
+  const searchHasNoResults =
+    !!searchQuery && tierFiltered.length > 0 && filtered.length === 0;
 
   // Audiences present in the data — drives the filter pill row. Only
   // surfaces this row if 2+ audience tags exist (otherwise the filter
@@ -1722,6 +1743,20 @@ function LeadsTab({
 
   return (
     <div>
+      {/* Inline leads search — see CLAUDE.md "Owner Portal Rules" §
+          "LeadsSearchBar pattern". Composes AND with the chips below.
+          On mobile the bar is full-width and always visible (no expand-
+          on-tap nonsense — search must be one tap away). */}
+      <div className="mb-3">
+        <LeadsSearchBar
+          onChange={setSearchQuery}
+          placeholder="Search leads — name, email, phone, audience, ID…"
+          totalCount={tierFiltered.length}
+          showNoResults={searchHasNoResults}
+          onClear={() => setSearchQuery("")}
+        />
+      </div>
+
       {/* Funnel-stage filter (where they are in the journey) */}
       <div className="flex items-center gap-2 mb-2">
         <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">

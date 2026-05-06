@@ -13,6 +13,12 @@ import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklis
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
 import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
+import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
+import {
+  filterBySearch,
+  extractProspectSearchText,
+  extractIdLookup,
+} from "@/lib/leads-search";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
 import MapView from "@/components/dashboard/MapView";
@@ -28,6 +34,7 @@ export default function DashboardPage() {
   );
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState<"table" | "map">("table");
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
@@ -410,16 +417,57 @@ export default function DashboardPage() {
             </div>
 
             {view === "table" ? (
-              <ProspectTable
-                prospects={prospects}
-                categoryFilter={categoryFilter}
-                statusFilter={statusFilter}
-                onCategoryChange={setCategoryFilter}
-                onStatusChange={setStatusFilter}
-                onSelectProspect={setSelectedProspect}
-                onSendEmail={handleSendEmail}
-                onRefresh={fetchProspects}
-              />
+              <>
+                {/*
+                 * Inline leads search bar — see CLAUDE.md "Owner Portal Rules"
+                 * + the BlueJays main-dashboard pattern. Filters by name +
+                 * city + state + email + phone + address + admin notes +
+                 * status + tier + short code + UUID. Composes AND with the
+                 * status/category chips inside ProspectTable.
+                 */}
+                {(() => {
+                  // Build filtered prospects from the search query.
+                  // ID-shaped query (UUID / 8-char short code) jumps to the
+                  // exact match — keeps Ben's "paste an ID, see the row" flow.
+                  const idLookup = extractIdLookup(searchQuery);
+                  const searched = idLookup
+                    ? prospects.filter((p) => {
+                        if (idLookup.kind === "uuid") return p.id === idLookup.value;
+                        // Prospect type uses snake_case — also fall back to
+                        // any camelCase field if the API ever returns it.
+                        const sc =
+                          (p as unknown as { shortCode?: string; short_code?: string }).shortCode ??
+                          (p as unknown as { shortCode?: string; short_code?: string }).short_code;
+                        return sc === idLookup.value;
+                      })
+                    : filterBySearch(prospects, searchQuery, extractProspectSearchText);
+                  const noResults =
+                    !!searchQuery && prospects.length > 0 && searched.length === 0;
+                  return (
+                    <>
+                      <div className="mb-3">
+                        <LeadsSearchBar
+                          onChange={setSearchQuery}
+                          placeholder="Search leads — name, city, email, phone, ID, short code…"
+                          totalCount={prospects.length}
+                          showNoResults={noResults}
+                          onClear={() => setSearchQuery("")}
+                        />
+                      </div>
+                      <ProspectTable
+                        prospects={searched}
+                        categoryFilter={categoryFilter}
+                        statusFilter={statusFilter}
+                        onCategoryChange={setCategoryFilter}
+                        onStatusChange={setStatusFilter}
+                        onSelectProspect={setSelectedProspect}
+                        onSendEmail={handleSendEmail}
+                        onRefresh={fetchProspects}
+                      />
+                    </>
+                  );
+                })()}
+              </>
             ) : (
               <MapView
                 prospects={prospects}
