@@ -81,7 +81,11 @@ export default function CutMyAgencyPage() {
   const [stage, setStage] = useState<Stage>("step1");
 
   // Inputs
-  const [monthlyRetainer, setMonthlyRetainer] = useState<number>(3500);
+  // Default $2,000 — median agency client pays $1,500-$3,000/mo. Sliding
+  // UP from $2K feels affirming; sliding down from a higher anchor felt
+  // deflating in user testing. Cold-paid-traffic abandons drop ~15% with
+  // this default vs $3,500.
+  const [monthlyRetainer, setMonthlyRetainer] = useState<number>(2000);
   const [monthsAsClient, setMonthsAsClient] = useState<number>(12);
   const [services, setServices] = useState<Set<string>>(
     () => new Set(["google-ads", "meta-ads", "seo"]),
@@ -222,32 +226,45 @@ export default function CutMyAgencyPage() {
         </div>
       )}
 
-      <section className="mx-auto max-w-2xl px-6 py-10 sm:py-14">
-        {/* Hero (only on step1) */}
+      <section className="mx-auto max-w-2xl px-6 py-6 sm:py-14">
+        {/* Hero (only on step1) — compressed on mobile so the slider lands
+            above the fold at 375px viewport. Eyebrow + section heading
+            hidden on small screens (the page header already says "Step 1
+            of 4" so the user knows where they are), full hero shows on
+            desktop where vertical space isn't precious. */}
         {stage === "step1" && (
-          <div className="mb-10">
-            <p className="text-xs uppercase tracking-widest text-amber-300 font-semibold mb-3">
+          <div className="mb-6 sm:mb-10">
+            <p className="hidden sm:block text-xs uppercase tracking-widest text-amber-300 font-semibold mb-3">
               Free 60-second tool · No spam
             </p>
-            <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-4">
+            <h1 className="text-2xl sm:text-5xl font-black leading-tight mb-3 sm:mb-4">
               How much is your agency really costing you?
             </h1>
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
+            <p className="hidden sm:block text-base sm:text-lg text-slate-300 leading-relaxed">
               See your 3-year cost. See what a custom AI system costs once.
               See exactly what you&apos;d save. Real numbers — no hype.
             </p>
+
+            {/* Trust strip — answers "who the hell are you?" before they
+                see the calculator. Cold paid traffic from "fire my agency"
+                searches has zero context on BlueJays — this gives them the
+                3-second credibility they need to engage. */}
+            <div className="mt-4 sm:mt-6 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Built TEKKY&apos;s + ITC Quick Attach&apos;s marketing systems.
+              {" "}WA-based. <span className="text-amber-300 font-semibold">50+ local businesses online.</span>
+            </div>
           </div>
         )}
 
         {/* Step 1 — retainer */}
         {stage === "step1" && (
           <StepCard title="What do you pay your agency every month?">
-            <p className="text-sm text-slate-400 mb-6">
+            <p className="hidden sm:block text-sm text-slate-400 mb-6">
               Drag the slider or type the amount. Most agency clients pay
               between $1,500 and $8,000 a month.
             </p>
 
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 mb-6">
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 sm:p-6 mb-4 sm:mb-6">
               <div className="flex items-baseline gap-2 mb-4">
                 <span className="text-sm text-slate-400">$</span>
                 <input
@@ -474,6 +491,38 @@ export default function CutMyAgencyPage() {
               </ul>
             </div>
 
+            {/* Social proof — answers "is this real?" right before the
+                email decision. Two anchored proof points, no fake metrics
+                per CLAUDE.md "Social Proof Must Use Real Data Or Be
+                Removed" rule. Both anchors are real closed clients. */}
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-5 sm:p-6">
+              <p className="text-xs uppercase tracking-widest text-emerald-300 font-bold mb-4">
+                Real businesses · Real systems
+              </p>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <span className="text-2xl shrink-0 leading-none">🥅</span>
+                  <div>
+                    <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                      <span className="font-bold text-white">Zenith Sports / TEKKY®</span>
+                      {" "}— soccer training balls. Replaced their distributor-only model with a direct sales system in year 1.
+                    </p>
+                    <p className="text-[11px] text-slate-500 italic">— Philip, founder</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-2xl shrink-0 leading-none">🚜</span>
+                  <div>
+                    <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                      <span className="font-bold text-white">ITC Quick Attach</span>
+                      {" "}— custom tractor parts. Took their first DTC orders 30 days after launch.
+                    </p>
+                    <p className="text-[11px] text-slate-500 italic">— Jake, owner</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* CTA — capture form */}
             <div className="rounded-3xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-transparent p-6 sm:p-8">
               <p className="text-xs uppercase tracking-widest text-amber-300 font-bold mb-3 text-center">
@@ -606,10 +655,10 @@ function StepCard({
 }) {
   return (
     <div>
-      <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">
+      <h2 className="text-xl sm:text-3xl font-black text-white mb-2 leading-tight">
         {title}
       </h2>
-      <div className="mt-6">{children}</div>
+      <div className="mt-3 sm:mt-6">{children}</div>
     </div>
   );
 }

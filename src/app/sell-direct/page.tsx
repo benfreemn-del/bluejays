@@ -243,24 +243,36 @@ export default function SellDirectPage() {
         </div>
       )}
 
-      <section className="mx-auto max-w-2xl px-6 py-10 sm:py-14">
-        {/* Hero (only on step1) */}
+      <section className="mx-auto max-w-2xl px-6 py-6 sm:py-14">
+        {/* Hero (only on step1) — compressed on mobile so the slider lands
+            above the fold. Eyebrow + subhead hidden on small screens
+            (the page header already says "Step 1 of 4"). */}
         {stage === "step1" && (
-          <div className="mb-10">
-            <p className="text-xs uppercase tracking-widest text-emerald-300 font-semibold mb-3">
+          <div className="mb-6 sm:mb-10">
+            <p className="hidden sm:block text-xs uppercase tracking-widest text-emerald-300 font-semibold mb-3">
               Free 60-second tool · No spam
             </p>
-            <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-4">
+            <h1 className="text-2xl sm:text-5xl font-black leading-tight mb-3 sm:mb-4">
               How much margin are you losing to your distributor?
             </h1>
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
+            <p className="hidden sm:block text-base sm:text-lg text-slate-300 leading-relaxed">
               Drop in your numbers. See what you&apos;re giving up every
               month. See exactly what you&apos;d earn back by selling direct
               — built into a real sales system you own.
             </p>
-            <p className="text-xs text-slate-500 mt-4">
+            <p className="hidden sm:block text-xs text-slate-500 mt-4">
               Built for: tractor parts · sports equipment · custom auto · hunting gear · specialty food
             </p>
+
+            {/* Trust strip — answers "who built this?" with anchor proofs.
+                Both ITC + Zenith are real closed clients in the
+                manufacturer ICP — exactly the buyer this calc targets. */}
+            <div className="mt-4 sm:mt-6 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Built for manufacturers like
+              {" "}<span className="text-emerald-300 font-semibold">ITC Quick Attach</span>
+              {" "}+ <span className="text-emerald-300 font-semibold">Zenith / TEKKY®</span>.
+              {" "}WA-based. Real direct-sales systems in the wild.
+            </div>
           </div>
         )}
 
@@ -745,10 +757,10 @@ function StepCard({
 }) {
   return (
     <div>
-      <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">
+      <h2 className="text-xl sm:text-3xl font-black text-white mb-2 leading-tight">
         {title}
       </h2>
-      <div className="mt-6">{children}</div>
+      <div className="mt-3 sm:mt-6">{children}</div>
     </div>
   );
 }

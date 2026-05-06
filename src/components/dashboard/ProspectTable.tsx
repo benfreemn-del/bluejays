@@ -723,22 +723,47 @@ export default function ProspectTable({
               const mergedProspect = getMergedProspect(prospect);
               const hasPendingNotes = hasPendingAdminUpdates(mergedProspect);
 
+              // High-value calculator funnel detector — leads that came
+              // in via /cut-my-agency or /sell-direct dropped real
+              // numbers into a Hormozi calculator before submitting,
+              // which is ~10x higher buying intent than a generic
+              // audit-form submission. They get purple visual priority
+              // — top of the cascade, even ahead of the gold fullsystem
+              // row treatment, so Ben spots them instantly when
+              // scanning the table. The "Inbound" badge still renders
+              // so the inbound filter button still works.
+              const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
+              const calcType =
+                sd.cutMyAgencyCalculator
+                  ? "agency"
+                  : sd.sellDirectCalculator
+                    ? "sell-direct"
+                    : null;
+              const isHighValueCalcLead =
+                calcType !== null && prospect.source === "inbound";
+
               return (
                 <tr
                   key={prospect.id}
                   className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
                     isSelected(prospect.id) ? "bg-blue-electric/5" : ""
                   } ${
-                    prospect.pricingTier === "fullsystem"
-                      ? // Gold treatment for AI-Package buyers — the
-                        // top-tier offering ($9,700 + $500-1k/mo). Bigger
-                        // visual weight than every other row.
-                        "border-l-4 border-l-amber-300 bg-gradient-to-r from-amber-500/[0.08] via-yellow-500/[0.04] to-transparent shadow-[inset_0_0_28px_rgba(251,191,36,0.07)]"
-                      : prospect.pricingTier === "free"
-                        ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
-                        : prospect.source === "inbound"
-                          ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
-                          : ""
+                    isHighValueCalcLead
+                      ? // Purple treatment for calculator-sourced inbound
+                        // leads. Highest priority in the cascade — these
+                        // are the most valuable lead source we have.
+                        // Locked-in 2026-05-06 by Ben.
+                        "border-l-4 border-l-purple-400 bg-gradient-to-r from-purple-500/[0.10] via-fuchsia-500/[0.05] to-transparent shadow-[inset_0_0_28px_rgba(168,85,247,0.10)]"
+                      : prospect.pricingTier === "fullsystem"
+                        ? // Gold treatment for AI-Package buyers — the
+                          // top-tier offering ($9,700 + $500-1k/mo). Bigger
+                          // visual weight than every other row.
+                          "border-l-4 border-l-amber-300 bg-gradient-to-r from-amber-500/[0.08] via-yellow-500/[0.04] to-transparent shadow-[inset_0_0_28px_rgba(251,191,36,0.07)]"
+                        : prospect.pricingTier === "free"
+                          ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
+                          : prospect.source === "inbound"
+                            ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
+                            : ""
                   }`}
                 >
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
@@ -832,6 +857,24 @@ export default function ProspectTable({
                       })()}
                       {prospect.createdAt !== prospect.updatedAt && prospect.status === "scouted" && prospect.source !== "inbound" && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-medium">Re-scouted</span>
+                      )}
+                      {/* Calculator-type chip — shows WHICH calculator
+                          the inbound came through. Pairs with the purple
+                          row treatment so an at-a-glance scan tells Ben:
+                          high-value lead AND which message they responded
+                          to. Only renders for calculator-sourced inbound
+                          (the row already has purple styling in that case). */}
+                      {isHighValueCalcLead && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold tracking-wide border border-purple-400/40 shadow-[0_0_6px_rgba(168,85,247,0.35)]"
+                          title={
+                            calcType === "agency"
+                              ? "Submitted /cut-my-agency calculator — high-intent agency-replacement lead"
+                              : "Submitted /sell-direct calculator — high-intent manufacturer DTC lead"
+                          }
+                        >
+                          {calcType === "agency" ? "💰 Agency Calc" : "🏭 Sell-Direct Calc"}
+                        </span>
                       )}
                     </div>
                     {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
