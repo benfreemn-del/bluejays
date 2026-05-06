@@ -37,6 +37,15 @@ type SubmitBody = {
     yearlyAgencyCost?: number;
   };
   utm?: Record<string, string>;
+  /**
+   * `true` when this is a partial-save fired on email-blur (Fix #5 —
+   * exit recovery). Skips name validation, skips owner-alert SMS, and
+   * stamps `partial_at` on the calculator payload so Ben knows the
+   * lead might still complete the form. If a full submit follows for
+   * the same email, prospect lookup merges into the same record so
+   * Ben sees only one prospect with both partial + full math.
+   */
+  partial?: boolean;
 };
 
 function isValidEmail(email: string): boolean {
@@ -100,19 +109,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const isPartial = body.partial === true;
   const name = (body.name || "").trim();
   const email = (body.email || "").trim().toLowerCase();
   const phone = (body.phone || "").trim() || null;
 
-  if (name.length < 2) {
-    return NextResponse.json(
-      { ok: false, error: "Name is required." },
-      { status: 400 },
-    );
-  }
+  // Email is ALWAYS required — for partials it's the only thing we
+  // capture. For full submits, name + email both required.
   if (!isValidEmail(email)) {
     return NextResponse.json(
       { ok: false, error: "Please enter a valid email." },
+      { status: 400 },
+    );
+  }
+  if (!isPartial && name.length < 2) {
+    return NextResponse.json(
+      { ok: false, error: "Name is required." },
       { status: 400 },
     );
   }
@@ -161,6 +173,9 @@ export async function POST(request: NextRequest) {
 
   // Build the calculator payload that lives on scraped_data so the
   // admin dashboard + Ben's manual reply have everything in one place.
+  // For partial saves (Fix #5 — exit recovery on email blur), stamp
+  // `partial: true` + `partialAt` so Ben knows this lead might still
+  // complete the form. Full submits clear the partial flag via merge.
   const calculatorPayload = {
     source: "cut_my_agency_calculator",
     submittedAt: new Date().toISOString(),
@@ -176,6 +191,9 @@ export async function POST(request: NextRequest) {
       savings: serverSavings,
       monthlySavings: serverSavings / PROJECTION_MONTHS,
     },
+    ...(isPartial
+      ? { partial: true, partialAt: new Date().toISOString() }
+      : { partial: false }),
     ...utm,
   };
 
@@ -212,13 +230,21 @@ export async function POST(request: NextRequest) {
     // source='inbound' per CLAUDE.md SMS A2P 10DLC compliance rules
     // (the form does not capture SMS consent, so phone is logged but
     // the funnel will only email this prospect, not SMS).
+    //
+    // Partial saves (Fix #5) create the prospect with a placeholder
+    // name. If the user later completes the full submit, the existing-
+    // prospect-by-email lookup at the top of this handler matches and
+    // updates the same row with the real name + cleared partial flag.
     const newId = uuidv4();
-    const businessName = name.split(/\s+/).slice(0, 3).join(" ") + "'s Business";
+    const ownerName = name || "(calculator visitor — partial)";
+    const businessName = name
+      ? name.split(/\s+/).slice(0, 3).join(" ") + "'s Business"
+      : `Calculator visitor · ${email}`;
 
     const { error: insertErr } = await supabase.from("prospects").insert({
       id: newId,
       business_name: businessName,
-      owner_name: name,
+      owner_name: ownerName,
       email,
       phone,
       address: "Unknown — submitted via /cut-my-agency",
@@ -251,6 +277,14 @@ export async function POST(request: NextRequest) {
   // Owner alert — manual followup within 24h is the SLA we promised.
   // Includes the savings number so Ben can lead with their math when
   // he replies. Best-effort; never fail the submit because of an alert.
+  //
+  // Skip on partial saves (Fix #5 — exit recovery on email blur). The
+  // user may still complete the form; if they do, the FULL submit
+  // fires this SMS. Sending an SMS for every email-blur would spam
+  // Ben for the same prospect 2x.
+  if (isPartial) {
+    return NextResponse.json({ ok: true, prospectId, partial: true });
+  }
   try {
     const baseUrl = "https://bluejayportfolio.com";
     const adminUrl = `${baseUrl}/lead/${prospectId}`;

@@ -42,6 +42,12 @@ type SubmitBody = {
     paybackMonths?: number;
   };
   utm?: Record<string, string>;
+  /**
+   * `true` when this is a partial-save fired on email-blur (Fix #5 —
+   * exit recovery). Skips name validation, skips owner-alert SMS, and
+   * stamps `partial: true` on the calculator payload.
+   */
+  partial?: boolean;
 };
 
 function isValidEmail(email: string): boolean {
@@ -105,20 +111,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const isPartial = body.partial === true;
   const name = (body.name || "").trim();
   const email = (body.email || "").trim().toLowerCase();
   const phone = (body.phone || "").trim() || null;
   const productName = (body.productName || "").trim() || null;
 
-  if (name.length < 2) {
-    return NextResponse.json(
-      { ok: false, error: "Name is required." },
-      { status: 400 },
-    );
-  }
+  // Email always required. Name only required on full submits.
   if (!isValidEmail(email)) {
     return NextResponse.json(
       { ok: false, error: "Please enter a valid email." },
+      { status: 400 },
+    );
+  }
+  if (!isPartial && name.length < 2) {
+    return NextResponse.json(
+      { ok: false, error: "Name is required." },
       { status: 400 },
     );
   }
@@ -175,7 +183,9 @@ export async function POST(request: NextRequest) {
     .eq("email", email)
     .maybeSingle();
 
-  // Calculator payload — single source of truth on the prospect record
+  // Calculator payload — single source of truth on the prospect record.
+  // Partial saves (Fix #5) stamp `partial: true` so Ben knows the lead
+  // might still complete the form. Full submits clear the flag via merge.
   const calculatorPayload = {
     source: "sell_direct_calculator",
     submittedAt: new Date().toISOString(),
@@ -195,6 +205,9 @@ export async function POST(request: NextRequest) {
       threeYearProfit,
       paybackMonths,
     },
+    ...(isPartial
+      ? { partial: true, partialAt: new Date().toISOString() }
+      : { partial: false }),
     ...utm,
   };
 
@@ -224,16 +237,21 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", prospectId);
   } else {
-    // New prospect — express opt-in via email + product info
+    // New prospect — express opt-in via email + product info.
+    // Partial saves (Fix #5) use placeholder name; full submit later
+    // updates the same prospect via email lookup at the top.
     const newId = uuidv4();
-    const businessName = productName
-      ? `${name.split(/\s+/)[0]} (${productName})`
-      : name.split(/\s+/).slice(0, 3).join(" ") + "'s Business";
+    const ownerName = name || "(calculator visitor — partial)";
+    const businessName = name
+      ? productName
+        ? `${name.split(/\s+/)[0]} (${productName})`
+        : name.split(/\s+/).slice(0, 3).join(" ") + "'s Business"
+      : `Calculator visitor · ${email}`;
 
     const { error: insertErr } = await supabase.from("prospects").insert({
       id: newId,
       business_name: businessName,
-      owner_name: name,
+      owner_name: ownerName,
       email,
       phone,
       address: "Unknown — submitted via /sell-direct",
@@ -267,7 +285,11 @@ export async function POST(request: NextRequest) {
     prospectId = newId;
   }
 
-  // Owner alert SMS
+  // Owner alert SMS — skip on partial saves (Fix #5) to avoid 2x SMS
+  // for the same prospect when they later complete the full form.
+  if (isPartial) {
+    return NextResponse.json({ ok: true, prospectId, partial: true });
+  }
   try {
     const baseUrl = "https://bluejayportfolio.com";
     const adminUrl = `${baseUrl}/lead/${prospectId}`;

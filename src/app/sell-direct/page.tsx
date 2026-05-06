@@ -98,6 +98,10 @@ export default function SellDirectPage() {
   const [productName, setProductName] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Fix #5 — exit recovery. Per-email dedupe so re-blurring the same
+  // email doesn't double-fire.
+  const partialSavedEmailsRef = useRef<Set<string>>(new Set());
+
   // Captured UTMs from URL on mount
   const utmRef = useRef<Record<string, string>>({});
   useEffect(() => {
@@ -164,6 +168,40 @@ export default function SellDirectPage() {
   const canStep2 = unitsPerMonth >= 1;
   const canStep3 = distributorMargin >= 5;
   const canSubmit = name.trim().length >= 2 && isValidEmail(email);
+
+  /**
+   * Fix #5 — exit recovery on capture form. Fires when the email field
+   * blurs with a valid email. Sends a partial save to /api/sell-direct/submit
+   * with `partial: true`. Best-effort, fire-and-forget; never blocks UX.
+   */
+  async function handleEmailBlur() {
+    const cleaned = email.trim().toLowerCase();
+    if (!isValidEmail(cleaned)) return;
+    if (partialSavedEmailsRef.current.has(cleaned)) return;
+    if (avgPrice < 5 || unitsPerMonth < 1) return; // Need real math
+    partialSavedEmailsRef.current.add(cleaned);
+    try {
+      await fetch("/api/sell-direct/submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email: cleaned,
+          name: name.trim() || undefined,
+          phone: phone.trim() || undefined,
+          productName: productName.trim() || undefined,
+          avgPrice,
+          unitsPerMonth,
+          distributorMargin,
+          captureRatePct,
+          math,
+          utm: utmRef.current,
+          partial: true,
+        }),
+      });
+    } catch {
+      // Silent.
+    }
+  }
 
   async function handleSubmit() {
     if (!canSubmit || stage === "submitting") return;
@@ -640,6 +678,7 @@ export default function SellDirectPage() {
                   placeholder="you@yourbusiness.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={handleEmailBlur}
                   className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
                 />
                 <input

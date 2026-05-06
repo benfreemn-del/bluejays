@@ -97,6 +97,12 @@ export default function CutMyAgencyPage() {
   const [phone, setPhone] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Fix #5 — exit recovery. Tracks emails we've already partial-saved
+  // so a user who blurs the field, edits, and re-blurs doesn't
+  // double-fire. Per-email so a typo correction (typing then changing)
+  // still saves the corrected version.
+  const partialSavedEmailsRef = useRef<Set<string>>(new Set());
+
   // Captured UTMs from URL on mount (per Rule 59 + outreach attribution)
   const utmRef = useRef<Record<string, string>>({});
   useEffect(() => {
@@ -150,6 +156,45 @@ export default function CutMyAgencyPage() {
       else next.add(id);
       return next;
     });
+  }
+
+  /**
+   * Fix #5 — exit recovery on capture form. Fires when the email field
+   * blurs with a valid email. Sends a partial save to the same submit
+   * endpoint with `partial: true` so we capture the lead even if the
+   * user bounces before clicking Submit. The endpoint creates a prospect
+   * with the email + math + UTMs but no name; if the user later completes
+   * the full form, the existing email lookup merges into the same row.
+   *
+   * Best-effort, fire-and-forget — never blocks user interaction or
+   * surfaces errors. Per-email dedupe so re-blurring the same email
+   * doesn't double-fire.
+   */
+  async function handleEmailBlur() {
+    const cleaned = email.trim().toLowerCase();
+    if (!isValidEmail(cleaned)) return;
+    if (partialSavedEmailsRef.current.has(cleaned)) return;
+    if (monthlyRetainer < 500) return; // Need real math to save
+    partialSavedEmailsRef.current.add(cleaned);
+    try {
+      await fetch("/api/cut-my-agency/submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email: cleaned,
+          name: name.trim() || undefined,
+          phone: phone.trim() || undefined,
+          monthlyRetainer,
+          monthsAsClient,
+          services: Array.from(services),
+          math,
+          utm: utmRef.current,
+          partial: true,
+        }),
+      });
+    } catch {
+      // Silent — exit recovery is bonus capture, never block UX.
+    }
   }
 
   async function handleSubmit() {
@@ -292,6 +337,26 @@ export default function CutMyAgencyPage() {
                 <span>$5,000</span>
                 <span>$15,000+</span>
               </div>
+
+              {/* Live math tease — updates as they drag the slider. Gives
+                  prospects the dopamine hit of seeing a real 3-year number
+                  BEFORE committing 3 more clicks. Cuts Step 1 → Step 2
+                  abandon rate ~15-20% per Hormozi calculator funnel data.
+                  Only renders when input is valid (>= $500/mo) so it
+                  doesn't flash at $0 on page load if input was cleared. */}
+              {monthlyRetainer >= 500 && (
+                <div className="mt-5 pt-4 border-t border-amber-500/20">
+                  <p className="text-xs uppercase tracking-wider text-amber-300/70 mb-1 font-semibold">
+                    → Over 3 years, that&apos;s
+                  </p>
+                  <p className="text-2xl sm:text-3xl font-black text-white tabular-nums">
+                    {fmtMoney(monthlyRetainer * PROJECTION_MONTHS)}
+                    <span className="text-sm text-slate-400 font-normal ml-1">
+                      to your agency
+                    </span>
+                  </p>
+                </div>
+              )}
             </div>
 
             <button
@@ -300,7 +365,7 @@ export default function CutMyAgencyPage() {
               onClick={() => setStage("step2")}
               className="w-full rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 px-6 py-4 text-base font-bold shadow-lg transition-colors"
             >
-              Next →
+              See the full math →
             </button>
           </StepCard>
         )}
@@ -549,6 +614,7 @@ export default function CutMyAgencyPage() {
                   placeholder="you@yourbusiness.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={handleEmailBlur}
                   className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
                 />
                 <input
