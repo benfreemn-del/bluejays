@@ -44,6 +44,12 @@ export type ClientTask = {
   due_date: string | null;
   notes: string | null;
   display_order: number;
+  /** Free-text name of the specific person responsible (e.g. "Philip
+   *  Lund", "Ben (BlueJays)"). Coexists with `owner` — the enum field
+   *  above controls which surface (admin vs portal) the task shows up
+   *  on, while these capture WHO inside that surface owns it. */
+  assigned_to_name: string | null;
+  assigned_to_email: string | null;
   created_at: string;
   updated_at: string;
   completed_at: string | null;
@@ -62,6 +68,8 @@ export type NewClientTask = Pick<ClientTask, "client_slug" | "title"> &
       | "due_date"
       | "notes"
       | "display_order"
+      | "assigned_to_name"
+      | "assigned_to_email"
     >
   >;
 
@@ -78,6 +86,8 @@ export type ClientTaskUpdate = Partial<
     | "due_date"
     | "notes"
     | "display_order"
+    | "assigned_to_name"
+    | "assigned_to_email"
   >
 >;
 

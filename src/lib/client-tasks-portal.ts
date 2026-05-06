@@ -22,6 +22,11 @@ export type PortalTask = {
   due_date: string | null;
   notes: string | null;
   display_order: number;
+  /** Free-text assignee — surfaced as a chip on each task row so
+   *  Philip can see at a glance whether something's on him, Paul,
+   *  or Ben. */
+  assigned_to_name: string | null;
+  assigned_to_email: string | null;
   created_at: string;
   updated_at: string;
   completed_at: string | null;

@@ -287,6 +287,11 @@ type PortalTask = {
   blocked_on: string | null;
   due_date: string | null;
   notes: string | null;
+  /** Free-text assignee surfaced as a chip on each row. Lets the
+   *  portal show whether the task is on Philip / Paul / Ben at a
+   *  glance. */
+  assigned_to_name: string | null;
+  assigned_to_email: string | null;
   created_at: string;
   updated_at: string;
   completed_at: string | null;
@@ -784,6 +789,7 @@ export default function PortalPage({
             tasks={tasks}
             summary={tasksSummary}
             onMutate={loadTasks}
+            clientSlug={slug}
           />
         )}
         {tab === "budget" && (
@@ -2436,22 +2442,98 @@ function BudgetRow({
 
 /* ─────────────────────────── TO-DO TAB ─────────────────────────── */
 
+type TeamMember = {
+  id: string;
+  name: string;
+  email: string;
+  is_bluejays_team: boolean;
+  is_primary: boolean;
+};
+
 function TodoTab({
   tasks,
   summary,
   onMutate,
+  clientSlug,
 }: {
   tasks: PortalTask[];
   summary: TasksSummary | null;
   onMutate: () => void;
+  clientSlug: string;
 }) {
   const [filter, setFilter] = useState<"open" | "all" | "done">("open");
-  // Selection model — checkboxes select for bulk actions; they DO NOT
-  // mark done. This mirrors the bluejays admin dashboard pattern so
-  // owners can change many tasks at once and never accidentally
-  // complete one with a stray click.
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
+
+  // Add-task form state. Lives at the top of the tab so the owner can
+  // dump in a new to-do + pick the assignee in one shot.
+  const [addOpen, setAddOpen] = useState(false);
+  const [addTitle, setAddTitle] = useState("");
+  const [addDescription, setAddDescription] = useState("");
+  const [addPriority, setAddPriority] = useState<
+    "urgent" | "high" | "medium" | "low"
+  >("medium");
+  const [addAssigneeId, setAddAssigneeId] = useState<string>("");
+  const [addBusy, setAddBusy] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  // Team-member roster — drives the assignee dropdown. For Tekky this
+  // ships seeded with Ben, Philip, Paul. Future clients can add their
+  // own teammates via the dashboard.
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(
+          `/api/client-team-members?client=${encodeURIComponent(clientSlug)}`,
+        );
+        const j = (await r.json()) as { ok: boolean; members?: TeamMember[] };
+        if (!cancelled && j.ok && j.members) setTeam(j.members);
+      } catch {
+        /* roster optional — form falls back to a free-text-name input */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [clientSlug]);
+
+  const submitAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addTitle.trim()) return;
+    setAddBusy(true);
+    setAddError(null);
+    const assignee = team.find((t) => t.id === addAssigneeId);
+    try {
+      const r = await fetch("/api/client-portal/tasks", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: addTitle.trim(),
+          description: addDescription.trim() || null,
+          priority: addPriority,
+          assigned_to_name: assignee?.name ?? null,
+          assigned_to_email: assignee?.email ?? null,
+        }),
+      });
+      const j = (await r.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!j.ok) throw new Error(j.error ?? "Couldn't save");
+      setAddTitle("");
+      setAddDescription("");
+      setAddPriority("medium");
+      setAddAssigneeId("");
+      setAddOpen(false);
+      onMutate();
+    } catch (err) {
+      setAddError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setAddBusy(false);
+    }
+  };
 
   const filtered =
     filter === "all"
@@ -2495,15 +2577,109 @@ function TodoTab({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-bold tracking-tight mb-1">Your to-do list</h2>
-        <p className="text-[12px] text-slate-500 leading-relaxed">
-          Things we need from you to get the AI system fully turned on. Tap a
-          task to expand, check the box to select multiple, then use the
-          bulk-action bar to change them in one go. You and your co-founder
-          share this list.
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold tracking-tight mb-1">
+            Your to-do list
+          </h2>
+          <p className="text-[12px] text-slate-500 leading-relaxed">
+            Things to do to get the AI system fully turned on. Tap a task to
+            expand, check the box for bulk-actions. Add your own + assign it
+            to anyone on the team — Ben gets an email when a task lands on
+            BlueJays.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setAddOpen((v) => !v)}
+          className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded shrink-0"
+        >
+          {addOpen ? "Cancel" : "+ Add task"}
+        </button>
       </div>
+
+      {/* Add-task form — collapsible, lives above the filters so the
+          owner can dump a quick to-do + assignee without scrolling. */}
+      {addOpen && (
+        <form
+          onSubmit={submitAdd}
+          className="rounded-lg border border-emerald-700/40 bg-emerald-950/20 p-3 space-y-2"
+        >
+          <input
+            type="text"
+            value={addTitle}
+            onChange={(e) => setAddTitle(e.target.value)}
+            placeholder="What needs to happen?"
+            required
+            autoFocus
+            className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/60"
+          />
+          <textarea
+            value={addDescription}
+            onChange={(e) => setAddDescription(e.target.value)}
+            placeholder="Details (optional)"
+            rows={2}
+            className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/60 resize-none"
+          />
+          <div className="grid sm:grid-cols-2 gap-2">
+            <label className="block">
+              <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                Whose job?
+              </span>
+              <select
+                value={addAssigneeId}
+                onChange={(e) => setAddAssigneeId(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-2 text-sm"
+              >
+                <option value="">— pick someone</option>
+                {team.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                    {t.is_bluejays_team ? " · BlueJays" : ""}
+                    {t.is_primary ? " · primary" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-[10px] tracking-wider uppercase font-bold text-slate-500 block mb-1">
+                Priority
+              </span>
+              <select
+                value={addPriority}
+                onChange={(e) =>
+                  setAddPriority(
+                    e.target.value as "urgent" | "high" | "medium" | "low",
+                  )
+                }
+                className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-2 text-sm"
+              >
+                <option value="urgent">🔥 Urgent</option>
+                <option value="high">⚡ High</option>
+                <option value="medium">○ Medium</option>
+                <option value="low">· Low</option>
+              </select>
+            </label>
+          </div>
+          {addError && (
+            <p className="text-[12px] text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded px-2 py-1">
+              {addError}
+            </p>
+          )}
+          <div className="flex items-center gap-2 pt-1">
+            <button
+              type="submit"
+              disabled={addBusy || !addTitle.trim()}
+              className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 text-white px-4 py-1.5 rounded text-sm font-bold"
+            >
+              {addBusy ? "Saving…" : "Save task"}
+            </button>
+            <span className="text-[11px] text-slate-500">
+              Assigning to a BlueJays teammate emails Ben automatically.
+            </span>
+          </div>
+        </form>
+      )}
 
       {summary && summary.total > 0 && (
         <div className="grid grid-cols-4 gap-2">
@@ -2731,6 +2907,14 @@ function TaskCard({
                   className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${TASK_PRIORITY_COLOR[task.priority]}`}
                 >
                   {task.priority}
+                </span>
+              )}
+              {task.assigned_to_name && (
+                <span
+                  className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30"
+                  title={task.assigned_to_email ?? undefined}
+                >
+                  👤 {task.assigned_to_name}
                 </span>
               )}
             </div>
