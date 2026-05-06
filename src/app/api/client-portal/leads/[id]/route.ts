@@ -75,11 +75,26 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
-  // Owners can only update notes + status (not audience or step).
-  const allowed = ["funnel_status", "notes"];
+  // Owner-patchable fields. Status + notes are the existing pair;
+  // competition_tier / age_group / gender / state_override /
+  // in_season_override added 2026-05-09 per Philip+Paul's lead-context
+  // edit modal — they want one explicit save click to set these.
+  const allowed = [
+    "funnel_status",
+    "notes",
+    "competition_tier",
+    "age_group",
+    "gender",
+    "state_override",
+    "in_season_override",
+  ];
   const patch: Record<string, unknown> = {};
   for (const k of allowed) {
-    if (k in body) patch[k] = body[k];
+    if (k in body) {
+      // Empty string → null so the DB drops back to "computed" mode
+      const v = body[k];
+      patch[k] = v === "" ? null : v;
+    }
   }
   try {
     const updated = await updateClientLead(

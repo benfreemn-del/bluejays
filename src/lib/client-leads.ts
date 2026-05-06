@@ -57,6 +57,12 @@ export type ClientLead = {
   last_contact_at: string | null;
   converted_at: string | null;
   notes: string | null;
+  // ── Lead-context fields (added 2026-05-09 per Philip+Paul notes) ──
+  competition_tier: string | null;
+  age_group: string | null;
+  gender: string | null;
+  state_override: string | null;
+  in_season_override: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -249,6 +255,11 @@ export async function updateClientLead(
       | "funnel_step"
       | "notes"
       | "last_contact_at"
+      | "competition_tier"
+      | "age_group"
+      | "gender"
+      | "state_override"
+      | "in_season_override"
     >
   >,
 ): Promise<ClientLead> {

@@ -9,6 +9,8 @@ import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
+import LeadContextEditor from "@/components/portal/LeadContextEditor";
+import { leadInSeason } from "@/lib/season-calculator";
 
 // Lazy-load the Leaflet maps — heavy + SSR-incompatible. Each tenant
 // gets the map flavored to their business; we dynamic-import per slug.
@@ -75,6 +77,12 @@ type ClientLead = {
   created_at: string;
   touch_count?: number;
   touch_channels?: string[];
+  // Lead-context fields (added 2026-05-09 per Philip+Paul notes)
+  competition_tier?: string | null;
+  age_group?: string | null;
+  gender?: string | null;
+  state_override?: string | null;
+  in_season_override?: string | null;
 };
 
 type LeadsSummary = {
@@ -325,6 +333,27 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   hunter: "🦌",
   dealer: "🤝",
   community: "🏆",
+};
+
+/**
+ * Per-tier filter-pill metadata. Drives the Tier filter row in LeadsTab
+ * when any lead has a competition_tier set (per Philip+Paul soccer
+ * domain notes 2026-05-09).
+ */
+const TIER_FILTER_META: Record<
+  string,
+  { emoji: string; label: string }
+> = {
+  "mls-next": { emoji: "🏆", label: "MLS NEXT" },
+  ecnl: { emoji: "🥇", label: "ECNL" },
+  "rcl-select": { emoji: "🌲", label: "RCL Select" },
+  "rec-youth": { emoji: "🧒", label: "Rec · Youth" },
+  "rec-adult": { emoji: "🧑", label: "Rec · Adult" },
+  "high-school": { emoji: "🎓", label: "High School" },
+  college: { emoji: "🏫", label: "College" },
+  pro: { emoji: "💼", label: "Pro" },
+  unknown: { emoji: "?", label: "Unknown" },
+  untagged: { emoji: "•", label: "Untagged" },
 };
 
 /** Plain-text labels for audience IDs — pairs with AUDIENCE_EMOJI when
@@ -1578,6 +1607,7 @@ function LeadsTab({
 }) {
   const [filter, setFilter] = useState<string>("all");
   const [audienceFilter, setAudienceFilter] = useState<string>("all");
+  const [tierFilter, setTierFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
 
@@ -1634,12 +1664,22 @@ function LeadsTab({
   // Second filter axis — audience / category. Cuts across funnel stages
   // so an owner can see e.g. "all Coach leads regardless of stage" or
   // "all Won leads who came in as Players".
-  const filtered =
+  const audienceFiltered =
     audienceFilter === "all"
       ? stageFiltered
       : audienceFilter === "untagged"
         ? stageFiltered.filter((l) => !l.audience_segment)
         : stageFiltered.filter((l) => l.audience_segment === audienceFilter);
+
+  // Third filter axis — competition tier. Cuts across audiences so an
+  // owner can pull "all RCL Select leads regardless of role" or "all
+  // ECNL leads who are Coaches" etc.
+  const filtered =
+    tierFilter === "all"
+      ? audienceFiltered
+      : tierFilter === "untagged"
+        ? audienceFiltered.filter((l) => !l.competition_tier)
+        : audienceFiltered.filter((l) => l.competition_tier === tierFilter);
 
   // Audiences present in the data — drives the filter pill row. Only
   // surfaces this row if 2+ audience tags exist (otherwise the filter
@@ -1654,6 +1694,18 @@ function LeadsTab({
     .filter(([, n]) => n > 0)
     .sort((a, b) => b[1] - a[1]);
   const showAudienceRow = audienceOptions.length >= 2;
+
+  // Competition tiers present in the data — same pattern as audiences.
+  const tierCounts = new Map<string, number>();
+  for (const l of audienceFiltered) {
+    const key = l.competition_tier ?? "untagged";
+    tierCounts.set(key, (tierCounts.get(key) ?? 0) + 1);
+  }
+  const tierOptions = Array.from(tierCounts.entries())
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]);
+  // Show tier row when at least one lead has a tier set (encourages tagging).
+  const showTierRow = tierOptions.some(([k]) => k !== "untagged");
 
   const counts = {
     all: activeLeads.length,
@@ -1740,7 +1792,49 @@ function LeadsTab({
         </div>
       )}
 
-      {!showAudienceRow && <div className="mb-4" />}
+      {/* Competition-tier filter — third axis. Renders when any lead
+          in the current audience filter has a tier set. */}
+      {showTierRow && (
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0 hidden sm:inline">
+            Tier
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setTierFilter("all")}
+              className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${
+                tierFilter === "all"
+                  ? "bg-blue-500 border-blue-400 text-white"
+                  : "border-slate-700 text-slate-400 hover:text-white"
+              }`}
+            >
+              All tiers · {audienceFiltered.length}
+            </button>
+            {tierOptions.map(([t, n]) => {
+              const meta = TIER_FILTER_META[t] ?? TIER_FILTER_META.untagged;
+              const isActive = tierFilter === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setTierFilter(t)}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition inline-flex items-center gap-1 ${
+                    isActive
+                      ? "bg-violet-500 border-violet-400 text-white"
+                      : "border-violet-500/30 text-violet-200 hover:bg-violet-500/10"
+                  }`}
+                >
+                  <span>{meta.emoji}</span>
+                  <span>
+                    {meta.label} · {n}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {!showAudienceRow && !showTierRow && <div className="mb-4" />}
 
       {filtered.length === 0 ? (
         <div className="text-center text-slate-500 py-16 border border-dashed border-slate-800 rounded-lg">
@@ -2786,6 +2880,18 @@ function LeadCard({
   const [logMsg, setLogMsg] = useState<string | null>(null);
   const [enrolling, setEnrolling] = useState(false);
   const [timeline, setTimeline] = useState<LeadMessage[] | null>(null);
+  const [contextEditorOpen, setContextEditorOpen] = useState(false);
+
+  // In-season state computed live from lead's context fields. Updates
+  // automatically on parent re-render after a save.
+  const seasonState = leadInSeason({
+    competition_tier: lead.competition_tier,
+    age_group: lead.age_group,
+    gender: lead.gender,
+    state_override: lead.state_override,
+    in_season_override: lead.in_season_override,
+    raw_payload: lead.raw_payload as { state?: string },
+  });
 
   // Lazy-load the touchpoint timeline when the card expands.
   useEffect(() => {
@@ -2941,6 +3047,25 @@ function LeadCard({
                 {lead.audience_segment}
               </span>
             )}
+            {lead.competition_tier && (
+              <span
+                className="text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-200 border border-violet-500/30"
+                title={`Competition tier${lead.age_group ? ` · ${lead.age_group}` : ""}${lead.gender ? ` · ${lead.gender}` : ""}`}
+              >
+                {lead.competition_tier.replace("-", " ")}
+                {lead.age_group ? ` · ${lead.age_group}` : ""}
+              </span>
+            )}
+            <span
+              className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${
+                seasonState.inSeason
+                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                  : "bg-slate-500/15 text-slate-400 border border-slate-500/30"
+              }`}
+              title={`${seasonState.reason}${seasonState.override ? " (manual override)" : ""}`}
+            >
+              {seasonState.inSeason ? "🟢 in season" : "⚪ off season"}
+            </span>
             <span
               className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${STATUS_COLOR[lead.funnel_status] ?? STATUS_COLOR.not_enrolled}`}
             >
@@ -2985,6 +3110,41 @@ function LeadCard({
 
       {expanded && (
         <div className="border-t border-slate-800 p-4 space-y-4">
+          {/* Lead-context summary + edit. Per Philip+Paul's spec — explicit
+              "Edit context" button so the manual-override workflow is
+              discoverable, with the season reason visible when collapsed. */}
+          <div className="flex items-start justify-between gap-3 flex-wrap rounded-md border border-violet-500/15 bg-violet-500/[0.04] p-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] tracking-[0.22em] uppercase font-bold text-violet-300 mb-1">
+                Lead context
+              </p>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {[
+                  lead.competition_tier
+                    ? `Tier: ${lead.competition_tier.replace("-", " ")}`
+                    : null,
+                  lead.age_group ? `Age: ${lead.age_group}` : null,
+                  lead.gender ? `Gender: ${lead.gender}` : null,
+                  lead.state_override ? `State: ${lead.state_override}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ") || "No context tags yet — click Edit to set them."}
+              </p>
+              <p className="text-[10px] text-slate-500 italic mt-1.5 leading-tight">
+                {seasonState.reason}
+                {seasonState.override ? " · manual override" : ""} ·{" "}
+                {seasonState.confidence} confidence
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setContextEditorOpen(true)}
+              className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md bg-violet-500 hover:bg-violet-400 text-white transition-colors"
+            >
+              ⚙️ Edit context
+            </button>
+          </div>
+
           {/* Funnel-step timeline — every outbound + inbound message linked
               to this lead, in order. Loaded lazily on expand. Proves to
               the owner that every step is tracked. */}
@@ -3224,6 +3384,29 @@ function LeadCard({
           </div>
         </div>
       )}
+
+      {/* Lead context editor modal — opens from the "⚙️ Edit context"
+           button in the expanded card section. Saves via PATCH then
+           triggers parent onMutate so the list reflects new tags. */}
+      <LeadContextEditor
+        isOpen={contextEditorOpen}
+        onClose={() => setContextEditorOpen(false)}
+        leadId={lead.id}
+        initial={{
+          competition_tier: lead.competition_tier ?? "",
+          age_group: lead.age_group ?? "",
+          gender: lead.gender ?? "",
+          state_override: lead.state_override ?? "",
+          in_season_override: lead.in_season_override ?? "",
+        }}
+        rawPayloadState={
+          (lead.raw_payload as { state?: string } | null)?.state ?? null
+        }
+        onSaved={() => {
+          setContextEditorOpen(false);
+          onMutate();
+        }}
+      />
     </article>
   );
 }
