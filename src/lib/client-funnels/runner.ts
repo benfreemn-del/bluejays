@@ -64,6 +64,18 @@ function substitutions(lead: ClientLead): Record<string, string> {
   };
 }
 
+/** Stable per-lead variant assignment. Same lead.id always maps to the
+ *  same index — critical for analytics integrity (a lead retried after
+ *  a transient error must land on the same variant they would have
+ *  originally received). djb2-style hash → modulo. */
+function hashIndex(input: string, mod: number): number {
+  let h = 5381;
+  for (let i = 0; i < input.length; i++) {
+    h = ((h << 5) + h) ^ input.charCodeAt(i);
+  }
+  return Math.abs(h) % mod;
+}
+
 function fillTemplate(s: string, vars: Record<string, string>): string {
   return s.replace(/\{\{(\w+)\}\}/g, (_, k: string) => vars[k] ?? `{{${k}}}`);
 }
@@ -265,12 +277,20 @@ async function deliverTouch(
       await markSkipped(lead, stepIndex, "email", touch.templateId, "no email on file");
       return;
     }
+    // Pick A/B variant deterministically per lead. Hash on lead.id so
+    // every retry of the same step routes to the same variant — keeps
+    // the per-variant analytics clean.
+    const v =
+      touch.variants && touch.variants.length > 0
+        ? touch.variants[hashIndex(lead.id, touch.variants.length)]!
+        : null;
     await sendClientLeadEmail({
       lead,
       stepIndex,
       templateId: touch.templateId,
-      subject: fillTemplate(touch.subject, vars),
-      body: fillTemplate(touch.body, vars),
+      variantId: v?.id ?? null,
+      subject: fillTemplate(v?.subject ?? touch.subject, vars),
+      body: fillTemplate(v?.body ?? touch.body, vars),
       sender: cfg.sender,
     });
   } else if (touch.channel === "sms") {
@@ -288,11 +308,16 @@ async function deliverTouch(
       );
       return;
     }
+    const v =
+      touch.variants && touch.variants.length > 0
+        ? touch.variants[hashIndex(lead.id, touch.variants.length)]!
+        : null;
     await sendClientLeadSms({
       lead,
       stepIndex,
       templateId: touch.templateId,
-      body: fillTemplate(touch.body, vars),
+      variantId: v?.id ?? null,
+      body: fillTemplate(v?.body ?? touch.body, vars),
       fromNumber: cfg.sms.from,
     });
   } else {

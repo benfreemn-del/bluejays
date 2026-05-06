@@ -13,6 +13,11 @@
  */
 
 import { getSupabase } from "./supabase";
+import {
+  ALL_DRILLS,
+  isoWeekNumber,
+  pickDrillForWeek,
+} from "@/data/zenith-drills";
 
 export type WeeklyReport = {
   client_slug: string;
@@ -84,6 +89,33 @@ export type WeeklyReport = {
     days_since_response: number;
   }[];
 
+  /** Revenue + ROI rollup using the manual conversion_value_cents column
+   *  + client_funnel_costs entries. Lets the digest answer "did the
+   *  funnels make money this week?" in a single block. */
+  money: {
+    revenue_cents_this_week: number;
+    revenue_cents_total: number;
+    cost_cents_total: number;
+    net_cents: number;
+    roi_pct: number | null;
+    by_audience: Record<
+      string,
+      {
+        revenue_cents: number;
+        cost_cents: number;
+        leads: number;
+        conversions: number;
+      }
+    >;
+  };
+
+  /** Drill of the Week sent during this period (zenith-sports only). */
+  drill_of_week?: {
+    name: string;
+    tier: string;
+    week_num: number;
+  } | null;
+
   highlights: string[];                   // human-friendly bullets
   next_actions: string[];                 // suggested optimizations
 };
@@ -101,10 +133,13 @@ export async function generateWeeklyReport(
   const sb = getSupabase();
 
   /* Leads — full set including source/intent/responded_at for the new
-     business-owner metrics. */
+     business-owner metrics. Now also pulls conversion_value_cents +
+     converted_at for revenue + ROI rollups. */
   const { data: leadsAll } = await sb
     .from("client_leads")
-    .select("id, name, audience_segment, funnel_status, created_at, source, intent, responded_at")
+    .select(
+      "id, name, audience_segment, funnel_status, created_at, source, intent, responded_at, converted_at, conversion_value_cents",
+    )
     .eq("client_slug", clientSlug);
   const leads = (leadsAll ?? []) as {
     id: string;
@@ -115,6 +150,8 @@ export async function generateWeeklyReport(
     source: string | null;
     intent: string | null;
     responded_at: string | null;
+    converted_at: string | null;
+    conversion_value_cents: number | null;
   }[];
 
   const newThisWeek = leads.filter(
@@ -361,6 +398,82 @@ export async function generateWeeklyReport(
     // affiliates table missing is fine.
   }
 
+  /* Money — revenue from manual conversion_value_cents + costs from
+     client_funnel_costs. Lets us print "made $X net this week, $Y ROI".
+     If the funnel-costs table doesn't exist yet (migration unrun), the
+     try/catch keeps the report generating. */
+  let revenue_cents_total = 0;
+  let revenue_cents_this_week = 0;
+  const moneyByAud: Record<
+    string,
+    { revenue_cents: number; cost_cents: number; leads: number; conversions: number }
+  > = {};
+  for (const l of leads) {
+    const k = l.audience_segment ?? "unknown";
+    if (!moneyByAud[k]) {
+      moneyByAud[k] = {
+        revenue_cents: 0,
+        cost_cents: 0,
+        leads: 0,
+        conversions: 0,
+      };
+    }
+    moneyByAud[k].leads += 1;
+    if (l.conversion_value_cents !== null) {
+      revenue_cents_total += l.conversion_value_cents;
+      moneyByAud[k].revenue_cents += l.conversion_value_cents;
+      // Use converted_at if set, else updated_at semantics — but converted_at
+      // is on the row directly so we just check it.
+      const convAt = l.converted_at ? new Date(l.converted_at) : null;
+      if (convAt && convAt >= start) {
+        revenue_cents_this_week += l.conversion_value_cents;
+      }
+      moneyByAud[k].conversions += 1;
+    } else if (l.funnel_status === "converted") {
+      moneyByAud[k].conversions += 1;
+    }
+  }
+  let cost_cents_total = 0;
+  try {
+    const { data: costRows } = await sb
+      .from("client_funnel_costs")
+      .select("audience_segment, cost_cents")
+      .eq("client_slug", clientSlug);
+    if (costRows) {
+      for (const r of costRows as {
+        audience_segment: string | null;
+        cost_cents: number;
+      }[]) {
+        cost_cents_total += r.cost_cents;
+        const k = r.audience_segment ?? "unknown";
+        if (!moneyByAud[k]) {
+          moneyByAud[k] = {
+            revenue_cents: 0,
+            cost_cents: 0,
+            leads: 0,
+            conversions: 0,
+          };
+        }
+        moneyByAud[k].cost_cents += r.cost_cents;
+      }
+    }
+  } catch {
+    // costs table missing — ROI shows revenue-only
+  }
+  const net_cents = revenue_cents_total - cost_cents_total;
+  const roi_pct =
+    cost_cents_total > 0 ? (net_cents / cost_cents_total) * 100 : null;
+
+  /* Drill of the Week (zenith-sports only) — record what went out so the
+     digest reminds Philip what coaches received. Best-effort lookup of
+     the picker (no DB query needed; deterministic by week number). */
+  let drill_of_week: WeeklyReport["drill_of_week"] = null;
+  if (clientSlug === "zenith-sports") {
+    const wk = isoWeekNumber(end);
+    const drill = pickDrillForWeek(wk, ALL_DRILLS.length);
+    drill_of_week = { name: drill.name, tier: drill.tier, week_num: wk };
+  }
+
   /* Highlights + suggested actions */
   const highlights: string[] = [];
   const next_actions: string[] = [];
@@ -430,6 +543,30 @@ export async function generateWeeklyReport(
       `Top lead source: ${label} (${topSrc[1]} of ${leads.length} leads).`,
     );
   }
+  // Revenue + ROI highlights — only emit when there's actual money
+  // tracked, so the digest doesn't shout "$0 / 0% ROI" before any
+  // conversions are logged.
+  if (revenue_cents_this_week > 0) {
+    highlights.push(
+      `Revenue this week: $${(revenue_cents_this_week / 100).toLocaleString()}.`,
+    );
+  }
+  if (cost_cents_total > 0 && roi_pct !== null) {
+    const sign = net_cents >= 0 ? "+" : "";
+    highlights.push(
+      `Lifetime ROI: ${sign}${roi_pct.toFixed(0)}% ($${(revenue_cents_total / 100).toLocaleString()} rev − $${(cost_cents_total / 100).toLocaleString()} cost = $${(net_cents / 100).toLocaleString()} net).`,
+    );
+  } else if (revenue_cents_total > 0 && cost_cents_total === 0) {
+    highlights.push(
+      `Lifetime revenue: $${(revenue_cents_total / 100).toLocaleString()} (log costs at /dashboard/clients/${clientSlug}/leads to see ROI).`,
+    );
+  }
+  if (drill_of_week) {
+    highlights.push(
+      `Drill of the Week (W${drill_of_week.week_num}): ${drill_of_week.name} · ${drill_of_week.tier}.`,
+    );
+  }
+
   if (avg_response_time_hours !== null) {
     const h = avg_response_time_hours;
     const display = h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(1)} hrs`;
@@ -479,6 +616,15 @@ export async function generateWeeklyReport(
     ads,
     affiliates,
     action_required,
+    money: {
+      revenue_cents_this_week,
+      revenue_cents_total,
+      cost_cents_total,
+      net_cents,
+      roi_pct,
+      by_audience: moneyByAud,
+    },
+    drill_of_week,
     highlights,
     next_actions,
   };

@@ -87,28 +87,31 @@ async function analyzeFunnelTemplates(
   const sb = getSupabase();
   const { data: msgs } = await sb
     .from("client_lead_messages")
-    .select("template_id, lead_id, direction, status")
+    .select("template_id, variant_id, lead_id, direction, status")
     .eq("client_slug", clientSlug);
   if (!msgs || msgs.length === 0) return [];
 
-  // Group by template_id
+  // Group by `${template_id}::${variant_id}` so A/B variants get
+  // separate Wilson-CI buckets. Templates without variants land
+  // under `${template_id}::default`.
   type Stats = { sends: number; replies: number };
   const buckets = new Map<string, Stats>();
-  // Track which leads each template was sent to (for reply attribution).
   const templateLeads = new Map<string, Set<string>>();
 
   for (const m of msgs as {
     template_id: string | null;
+    variant_id: string | null;
     lead_id: string;
     direction: string;
     status: string;
   }[]) {
     if (m.direction !== "outbound" || !m.template_id) continue;
     if (m.status !== "sent" && m.status !== "delivered") continue;
-    if (!buckets.has(m.template_id)) buckets.set(m.template_id, { sends: 0, replies: 0 });
-    buckets.get(m.template_id)!.sends += 1;
-    if (!templateLeads.has(m.template_id)) templateLeads.set(m.template_id, new Set());
-    templateLeads.get(m.template_id)!.add(m.lead_id);
+    const key = `${m.template_id}::${m.variant_id ?? "default"}`;
+    if (!buckets.has(key)) buckets.set(key, { sends: 0, replies: 0 });
+    buckets.get(key)!.sends += 1;
+    if (!templateLeads.has(key)) templateLeads.set(key, new Set());
+    templateLeads.get(key)!.add(m.lead_id);
   }
 
   // Count replies per template by checking which leads replied AFTER receiving it

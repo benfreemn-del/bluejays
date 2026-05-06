@@ -30,6 +30,9 @@ export async function sendClientLeadEmail(args: {
   lead: ClientLead;
   stepIndex: number;
   templateId: string;
+  /** Optional A/B variant id. Persisted on the message row so the
+   *  hyperloop analyzer can break per-template stats out by variant. */
+  variantId?: string | null;
   subject: string;
   body: string;
   sender: EmailSender;
@@ -52,6 +55,7 @@ export async function sendClientLeadEmail(args: {
         subject: args.subject,
         body: args.body,
         template_id: args.templateId,
+        variant_id: args.variantId ?? null,
         status: "queued",
         provider: SENDGRID_API_KEY ? "sendgrid" : "mock",
       },
@@ -124,6 +128,7 @@ export async function sendClientLeadSms(args: {
   lead: ClientLead;
   stepIndex: number;
   templateId: string;
+  variantId?: string | null;
   body: string;
   fromNumber: string;
 }): Promise<void> {
@@ -143,6 +148,7 @@ export async function sendClientLeadSms(args: {
         from_address: args.fromNumber,
         body: args.body,
         template_id: args.templateId,
+        variant_id: args.variantId ?? null,
         status: "queued",
         provider: TWILIO_ACCOUNT_SID ? "twilio" : "mock",
       },

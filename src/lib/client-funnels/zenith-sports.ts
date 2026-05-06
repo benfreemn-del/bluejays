@@ -29,6 +29,20 @@ export type FunnelStep = {
   channels: FunnelChannelTouch[];
 };
 
+/** Optional A/B variant set for an email touch. When present, the
+ *  runner picks one variant per lead deterministically (hash on
+ *  lead.id) and stamps the variant_id on the persisted message row.
+ *  The hyperloop analyzer breaks template stats out by variant so
+ *  Wilson-CI math reveals the winning copy.
+ *
+ *  Templates without variants set the field to undefined and behave
+ *  exactly as before. */
+export type EmailVariant = {
+  id: string;
+  subject: string;
+  body: string;
+};
+
 export type FunnelChannelTouch =
   | {
       channel: "email";
@@ -36,11 +50,17 @@ export type FunnelChannelTouch =
       subject: string;
       /** Plain-text body. Newlines preserved as paragraph breaks. */
       body: string;
+      /** Optional A/B variants. When provided, runner picks one per
+       *  lead and uses its subject/body in place of the defaults
+       *  above. The non-variant fields stay as the "default" copy
+       *  and are also used when an array of length 1 is provided. */
+      variants?: EmailVariant[];
     }
   | {
       channel: "sms";
       templateId: string;
       body: string;
+      variants?: { id: string; body: string }[];
     }
   | {
       channel: "voicemail";
@@ -190,6 +210,86 @@ const COACHES: AudienceFunnel = {
         {
           channel: "email",
           templateId: "coaches.d0.welcome",
+          // A/B variants — runner picks one per lead deterministically.
+          // Variant A leads with the player's outcome, Variant B leads
+          // with the curriculum hand-off. After ~30 sends each, the
+          // hyperloop analyzer flags the winner.
+          variants: [
+            {
+              id: "outcome-led",
+              subject: "Your TEKKY® Coaching Plan, {{firstName}} — open inside",
+              body: `Hi {{firstName}},
+
+Thanks for grabbing the TEKKY® Coaching Plan. I'm Philip — Zenith Sports co-founder, ex-academy coach. The full curriculum is linked at the bottom of this email; here's the snack version so you can use it tomorrow.
+
+──────────────────
+WARM-UP · 3 DRILLS YOU CAN RUN AT YOUR NEXT SESSION
+──────────────────
+
+1. INSIDE-OUTSIDE FOOTWORK (2 min)
+   Why: Wakes up the ankle and re-trains the foot to the smaller TEKKY surface.
+   Cue: "Light touches. The ball stays under your hip."
+
+2. STATIONARY V-PULLBACK x 12 EACH FOOT (3 min)
+   Why: First-touch composure under pressure starts with knowing exactly where the ball is.
+   Cue: "Eyes up after the pull, not down."
+
+3. FIGURE-8 ROLLOVER (3 min)
+   Why: Both feet, both surfaces. Forces sole-of-foot control instead of the toe-poke default.
+   Cue: "Sole on top, then the other sole. No air."
+
+──────────────────
+THE FULL PLAN
+──────────────────
+
+Open here: {{coachGuideUrl}}
+
+Web version for now — works on any device, always the latest version. If you want a hard copy, hit Cmd+P (Mac) or Ctrl+P (Windows) → "Save as PDF" and drop it in your team's Drive folder. (Real PDF download coming soon.)
+
+What's inside:
+  • All 26 drills with the why + cue (so an assistant coach can run them cold)
+  • A 4-week starter session plan, age-banded
+  • The European-style technical curriculum we use at TEKKY academies
+  • A printable warm-up card you can clip to your training board
+
+──────────────────
+WANT ME TO WALK YOU THROUGH IT?
+──────────────────
+
+15-min club demo, in person if you're in WA, video call anywhere else: {{contactUrl}}
+
+— Philip
+Zenith Sports / TEKKY®
+Trusted by Rec, Travel, ECNL, MLS Next clubs + college programs.`,
+            },
+            {
+              id: "curriculum-led",
+              subject:
+                "{{firstName}} — the European technical curriculum, in your inbox",
+              body: `Hi {{firstName}},
+
+Philip here — TEKKY® co-founder. You requested the Coaching Plan; here's what's actually in it + the link at the bottom.
+
+THE CURRICULUM (in 60 seconds)
+26 drills across three tiers — Warm Up (10) → Beginner (10) → Intermediate (6). Every drill has a "why this trains X" + a one-line cue you can repeat at the player. We built this from the European academy method we coached under for 15 years.
+
+WHO USES IT
+Rec, Travel, ECNL, and MLS Next clubs. College programs. The drills work on a regulation ball; the TEKKY just amplifies the technical demand so coaching cues land faster.
+
+OPEN THE PLAN
+{{coachGuideUrl}}
+
+It's a hosted page (real PDF coming) — print it from your browser if you want a hard copy.
+
+I'M HAPPY TO WALK YOU THROUGH IT
+15-min club demo, in person if you're in WA, video call anywhere else: {{contactUrl}}
+
+— Philip
+Zenith Sports / TEKKY®`,
+            },
+          ],
+          // Default subject/body — used when the runner can't find variants
+          // (e.g. variant_id stamped from old send before we added them).
           subject: "Your TEKKY® Coaching Plan, {{firstName}} — open inside",
           body: `Hi {{firstName}},
 

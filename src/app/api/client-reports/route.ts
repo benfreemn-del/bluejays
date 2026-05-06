@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateWeeklyReport } from "@/lib/client-reports";
-import { sendOwnerEmail } from "@/lib/alerts";
+import { sendOwnerEmail, sendEmailTo } from "@/lib/alerts";
+import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 
 /**
  * GET  /api/client-reports?client=zenith-sports
@@ -78,6 +79,34 @@ export async function POST(req: NextRequest) {
         `  By channel: ${Object.entries(report.messages.by_channel).map(([k, v]) => `${k}=${v}`).join(", ") || "—"}`,
         "",
       ];
+      // Money block — only included when there's something to say.
+      // Lifetime revenue + costs + net + ROI%, plus this-week revenue.
+      if (
+        report.money.revenue_cents_total > 0 ||
+        report.money.cost_cents_total > 0
+      ) {
+        const m = report.money;
+        const fmt = (c: number) => `$${(c / 100).toLocaleString()}`;
+        lines.push(
+          `MONEY`,
+          `  Revenue this week: ${fmt(m.revenue_cents_this_week)}`,
+          `  Revenue lifetime: ${fmt(m.revenue_cents_total)} | Cost: ${fmt(m.cost_cents_total)}`,
+          `  Net: ${m.net_cents >= 0 ? "" : "-"}${fmt(Math.abs(m.net_cents))}${
+            m.roi_pct !== null
+              ? ` (ROI ${m.roi_pct >= 0 ? "+" : ""}${m.roi_pct.toFixed(0)}%)`
+              : ""
+          }`,
+          "",
+        );
+      }
+      // Drill of the Week reminder for zenith-sports
+      if (report.drill_of_week) {
+        lines.push(
+          `DRILL OF THE WEEK (W${report.drill_of_week.week_num})`,
+          `  ${report.drill_of_week.name} · ${report.drill_of_week.tier}`,
+          "",
+        );
+      }
       if (report.ads) {
         lines.push(
           `ADS`,
@@ -109,10 +138,37 @@ export async function POST(req: NextRequest) {
       lines.push(
         `View live: https://bluejayportfolio.com/dashboard/clients/${client}/reports`,
       );
-      await sendOwnerEmail({
-        subject,
-        body: lines.join("\n"),
-      });
+      const body = lines.join("\n");
+      // Always copy Ben (the owner-of-the-platform) on every digest.
+      await sendOwnerEmail({ subject, body, clientSlug: client });
+
+      // Also fan out to client owners who opted into digest emails.
+      // Per-client owners (Philip, etc.) are tracked in client_owners +
+      // their notification prefs default to instant for new-lead, but we
+      // use the same opt-in surface for the weekly digest. Anyone whose
+      // new_lead_email is NOT 'off' gets the weekly roll-up too.
+      try {
+        const owners = await listOwnersWithPrefsForClient(client);
+        for (const o of owners) {
+          if (o.prefs.new_lead_email === "off") continue;
+          try {
+            await sendEmailTo({
+              to: o.email,
+              subject,
+              body,
+              fromName: `${client} weekly digest`,
+              clientSlug: client,
+            });
+          } catch (err) {
+            console.error(
+              `[client-reports] digest send failed for ${o.email}:`,
+              err,
+            );
+          }
+        }
+      } catch (err) {
+        console.error("[client-reports] owner fan-out failed:", err);
+      }
     }
     return NextResponse.json({ ok: true, report });
   } catch (err) {

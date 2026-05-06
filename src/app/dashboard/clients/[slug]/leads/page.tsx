@@ -1123,8 +1123,11 @@ function LeadDetailDrawer({
 
           {/* Audience tagging */}
           <section>
-            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500 mb-2">
-              Audience
+            <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+              <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
+                Audience
+              </div>
+              <AISuggestButton lead={lead} onApply={onUpdate} />
             </div>
             <div className="flex flex-wrap gap-1.5">
               {(["parent", "coach", "player", "club", "unknown"] as ClientLeadAudience[]).map(
@@ -1396,6 +1399,113 @@ function LeadDetailDrawer({
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Tiny "🤖 Suggest" button next to the audience picker. Calls
+ *  /api/client-leads/[id]/classify which sends the lead's payload to
+ *  Claude Haiku and returns a suggested audience + reasoning. Renders
+ *  the suggestion inline with an Apply button.
+ *
+ *  Usage: only enabled when a lead is currently `unknown` or null —
+ *  for already-tagged leads the button still works but shows the
+ *  AI's confidence so Ben can sanity-check his manual tagging. */
+function AISuggestButton({
+  lead,
+  onApply,
+}: {
+  lead: ClientLead;
+  onApply: (id: string, patch: Partial<ClientLead>) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [suggestion, setSuggestion] = useState<{
+    audience: string;
+    confidence: number;
+    reasoning: string;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async () => {
+    setBusy(true);
+    setError(null);
+    setSuggestion(null);
+    try {
+      const r = await fetch(`/api/client-leads/${lead.id}/classify`, {
+        method: "POST",
+      });
+      const j = (await r.json()) as {
+        ok: boolean;
+        suggestion?: {
+          audience: string;
+          confidence: number;
+          reasoning: string;
+        };
+        error?: string;
+      };
+      if (j.ok && j.suggestion) {
+        setSuggestion(j.suggestion);
+      } else {
+        setError(j.error ?? "Classification failed");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      {suggestion ? (
+        <div className="flex items-center gap-2 text-[11px] bg-violet-500/10 border border-violet-500/30 rounded-md px-2 py-1">
+          <span className="text-violet-300 font-bold">
+            🤖 {suggestion.audience}
+          </span>
+          <span
+            className="text-violet-400/70"
+            title={`Reasoning: ${suggestion.reasoning}`}
+          >
+            ({Math.round(suggestion.confidence * 100)}%)
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              onApply(lead.id, {
+                audience_segment:
+                  suggestion.audience as ClientLeadAudience,
+              });
+              setSuggestion(null);
+            }}
+            className="bg-violet-500 hover:bg-violet-400 text-white px-2 py-0.5 rounded font-bold"
+          >
+            Apply
+          </button>
+          <button
+            type="button"
+            onClick={() => setSuggestion(null)}
+            className="text-violet-400/60 hover:text-white"
+            aria-label="Dismiss suggestion"
+          >
+            ✕
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={run}
+          disabled={busy}
+          className="text-[10px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2 py-0.5 rounded disabled:opacity-50"
+          title="Ask Claude to suggest an audience based on the form data"
+        >
+          {busy ? "🤖 thinking…" : "🤖 Suggest"}
+        </button>
+      )}
+      {error && (
+        <span className="text-[10px] text-rose-300" title={error}>
+          ⚠ failed
+        </span>
+      )}
     </div>
   );
 }

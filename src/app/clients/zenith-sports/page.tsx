@@ -54,6 +54,7 @@ import VideoCta from "./video-cta";
 import InquiryForm from "@/components/clients/InquiryForm";
 import ClientTrackingScripts from "@/components/ClientTrackingScripts";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
+import { CTAExperiment } from "@/components/CTAExperiment";
 import BluejayLogo from "@/components/BluejayLogo";
 import Image from "next/image";
 
@@ -407,6 +408,31 @@ export default function ZenithSportsPage() {
               {/* Was an anchor to #meet (just scrolled to product copy).
                   Now opens an actual TEKKY drill video in a modal. */}
               <VideoCta />
+            </div>
+            {/* A/B-tested secondary CTA. Two copy variants point at the
+                same Build Your Player flow so we can measure framing
+                ("Build a free training plan" vs "See your player's
+                personalized plan"). Per-variant impression+click counts
+                land in /api/client-cta-events; analyzer is the same
+                Wilson-CI loop the email-template hyperloop uses. */}
+            <div className="mt-4 text-[12px] tracking-[0.18em] uppercase font-bold text-white/65">
+              <CTAExperiment
+                clientSlug="zenith-sports"
+                experimentId="hero-secondary"
+                variants={[
+                  {
+                    id: "build-free-plan",
+                    label: "→ Build a free training plan (60 sec)",
+                    href: "/clients/zenith-sports/build-your-player",
+                  },
+                  {
+                    id: "see-personalized",
+                    label: "→ See your player's personalized plan",
+                    href: "/clients/zenith-sports/build-your-player",
+                  },
+                ]}
+                className="inline-block hover:text-white underline decoration-[#a3e635]/40 underline-offset-4 hover:decoration-[#a3e635] transition"
+              />
             </div>
           </div>
 

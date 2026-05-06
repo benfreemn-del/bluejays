@@ -25,7 +25,21 @@ type Stats = {
   owedCents: number;
   paidCents: number;
   totalReferrals: number;
+  /** Optional: this calendar month's earnings so far. Falls back to
+   *  weekCents × 4 if the back-end didn't compute it. */
+  monthCents?: number;
 };
+
+// Monthly goal milestones — partners climb the ladder, each rung
+// unlocks a real Zenith perk. Order matters; render the next-up
+// goal as the active target.
+const GOAL_LADDER = [
+  { cents: 10000, label: "First $100", perk: "First check / Venmo" },
+  { cents: 25000, label: "$250 / mo", perk: "Free TEKKY ball" },
+  { cents: 50000, label: "$500 / mo", perk: "Custom share kit + 1:1 with Philip" },
+  { cents: 100000, label: "$1,000 / mo", perk: "Co-branded camp opportunity" },
+  { cents: 250000, label: "$2,500 / mo", perk: "Equity-share conversation" },
+];
 
 type ZenithWorkspaceProps = {
   partner: {
@@ -92,6 +106,10 @@ export default function ZenithWorkspace({
             Script library →
           </Link>
         </div>
+
+        {/* Monthly progress meter — gives partners a concrete next-rung
+            target. Renders the next un-cleared milestone with a fill bar. */}
+        <GoalProgress monthCents={stats.monthCents ?? stats.weekCents * 4} />
       </section>
 
       {/* Share kit — pre-written copy for the channels Zenith partners
@@ -170,11 +188,51 @@ export default function ZenithWorkspace({
         </p>
 
         {recentReferrals.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-lime-500/15 bg-slate-900/30 p-8 text-center">
-            <p className="text-slate-300 mb-1 font-semibold">No referrals yet.</p>
-            <p className="text-xs text-slate-500">
-              Share your link or copy one of the messages above.
+          <div className="rounded-xl border border-dashed border-lime-500/30 bg-gradient-to-br from-lime-950/20 to-slate-900/30 p-6 sm:p-8">
+            <div className="text-2xl mb-2">🎯</div>
+            <p className="text-slate-100 font-bold mb-2">
+              Your first sale is the hardest. Then it gets easy.
             </p>
+            <p className="text-sm text-slate-400 mb-4 leading-relaxed">
+              Most active partners hit their first sale within 7 days. The
+              ones who don&apos;t are just sitting on the link. Pick the path
+              that matches you:
+            </p>
+            <div className="grid sm:grid-cols-3 gap-2 text-sm">
+              <a
+                href={`sms:&body=${encodeURIComponent(`The ball I use at trainings — TEKKY. ${partnerLink}`)}`}
+                className="rounded-lg border border-lime-500/30 bg-lime-500/5 hover:bg-lime-500/10 px-3 py-2.5 text-lime-200 transition-colors"
+              >
+                <div className="text-[11px] uppercase tracking-wider font-bold mb-0.5">
+                  📲 1-min play
+                </div>
+                <div className="text-[12px] text-slate-300">
+                  Text 3 parents on your roster
+                </div>
+              </a>
+              <Link
+                href="/clients/zenith-sports/partners/script?audience=coach"
+                className="rounded-lg border border-sky-500/30 bg-sky-500/5 hover:bg-sky-500/10 px-3 py-2.5 text-sky-200 transition-colors"
+              >
+                <div className="text-[11px] uppercase tracking-wider font-bold mb-0.5">
+                  📞 5-min play
+                </div>
+                <div className="text-[12px] text-slate-300">
+                  Call one fellow coach
+                </div>
+              </Link>
+              <Link
+                href="/clients/zenith-sports/partners/script?audience=club"
+                className="rounded-lg border border-violet-500/30 bg-violet-500/5 hover:bg-violet-500/10 px-3 py-2.5 text-violet-200 transition-colors"
+              >
+                <div className="text-[11px] uppercase tracking-wider font-bold mb-0.5">
+                  🎯 30-min play
+                </div>
+                <div className="text-[12px] text-slate-300">
+                  Pitch your DOC
+                </div>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="rounded-xl border border-lime-500/15 bg-slate-900/30 overflow-hidden">
@@ -407,6 +465,51 @@ function Stat({
         {value}
       </div>
       {sub && <div className="text-[11px] text-slate-500 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
+/** Monthly progress meter — finds the next un-cleared milestone in
+ *  GOAL_LADDER, renders a fill bar showing progress toward it, and
+ *  surfaces the perk that unlocks. Once a partner is past the top
+ *  rung, shows a "Pro tier — let's talk equity" message. */
+function GoalProgress({ monthCents }: { monthCents: number }) {
+  const next = GOAL_LADDER.find((g) => monthCents < g.cents);
+  if (!next) {
+    return (
+      <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-950/15 p-4">
+        <div className="text-[11px] uppercase tracking-wider font-bold text-amber-300 mb-1">
+          🏆 Top tier
+        </div>
+        <p className="text-sm text-slate-200">
+          You&apos;ve cleared every monthly milestone. Philip will reach out
+          about equity-share + co-branded camp opportunities.
+        </p>
+      </div>
+    );
+  }
+  const pct = Math.max(0, Math.min(100, (monthCents / next.cents) * 100));
+  const remaining = (next.cents - monthCents) / 100;
+  return (
+    <div className="mt-6 rounded-xl border border-lime-500/20 bg-slate-900/40 p-4">
+      <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <div className="text-[11px] uppercase tracking-wider font-bold text-lime-300">
+          This month · next goal: {next.label}
+        </div>
+        <div className="text-[10px] text-slate-500 tabular-nums">
+          ${(monthCents / 100).toFixed(0)} of ${(next.cents / 100).toFixed(0)}
+        </div>
+      </div>
+      <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-lime-500 to-lime-300 transition-all duration-500"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-[12px] text-slate-300 mt-2 leading-relaxed">
+        <strong className="text-lime-300">${remaining.toFixed(0)} more</strong>{" "}
+        unlocks: <span className="text-slate-100">{next.perk}</span>.
+      </p>
     </div>
   );
 }
