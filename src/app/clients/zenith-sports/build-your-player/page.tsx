@@ -35,7 +35,8 @@ import {
   Lightning,
   PlayCircle,
 } from "@phosphor-icons/react/dist/ssr";
-import CharacterBuilder from "./character";
+import { AnimatePresence } from "framer-motion";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import {
   GOAL_OPTIONS,
   generatePlan,
@@ -53,12 +54,14 @@ const ELECTRIC = "#1d4ed8";
 // (so the email is the gate to the personalized output).
 type Step = "role" | "builder" | "goals" | "identity" | "plan";
 
-type State = Omit<BuilderInputs, "role"> & {
+type State = Omit<BuilderInputs, "role" | "gender"> & {
   role: BuilderInputs["role"] | null;
+  gender: BuilderInputs["gender"] | null;
 };
 
 const INITIAL: State = {
   role: null,
+  gender: null,
   firstName: "",
   email: "",
   phone: "",
@@ -88,7 +91,11 @@ export default function BuildYourPlayerPage() {
 
   const plan: TrainingPlan | null = useMemo(() => {
     if (step !== "plan" || !state.role) return null;
-    return generatePlan({ ...state, role: state.role });
+    return generatePlan({
+      ...state,
+      role: state.role,
+      gender: state.gender ?? "male",
+    });
   }, [step, state]);
 
   // Auto-submit the lead when the plan reveal is shown.
@@ -112,6 +119,7 @@ export default function BuildYourPlayerPage() {
             // Stash the full builder snapshot + the generated plan so the
             // dashboard timeline can show what we promised the lead.
             role: state.role,
+            gender: state.gender,
             age: state.age,
             heightInches: state.heightInches,
             skillLevel: state.skillLevel,
@@ -144,7 +152,7 @@ export default function BuildYourPlayerPage() {
         state.firstName.trim().length >= 2 &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)
       );
-    if (step === "builder") return true;
+    if (step === "builder") return state.gender !== null;
     if (step === "goals") return state.goals.length >= 1;
     return false;
   })();
@@ -218,6 +226,7 @@ export default function BuildYourPlayerPage() {
             state={state}
             update={update}
             onNext={next}
+            canAdvance={canAdvance}
           />
         )}
         {step === "goals" && (
@@ -451,10 +460,12 @@ function BuilderStep({
   state,
   update,
   onNext,
+  canAdvance,
 }: {
   state: State;
   update: <K extends keyof State>(k: K, v: State[K]) => void;
   onNext: () => void;
+  canAdvance: boolean;
 }) {
   return (
     <div className="grid lg:grid-cols-2 gap-10 items-center">
@@ -470,7 +481,40 @@ function BuilderStep({
           Move the sliders. Watch the player on the right shift in real time.
         </p>
 
-        <div className="mt-8 space-y-7">
+        {/* Gender toggle — drives the Pixar-style 3D avatar swap. Required
+            before advancing so the avatar locks to a real card vs the
+            neutral default. */}
+        <div className="mt-8">
+          <label className="text-[11px] tracking-[0.22em] uppercase font-bold text-white/55 block mb-2">
+            Player
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {(
+              [
+                { v: "male", label: "Boy / Man" },
+                { v: "female", label: "Girl / Woman" },
+              ] as const
+            ).map((opt) => {
+              const selected = state.gender === opt.v;
+              return (
+                <button
+                  key={opt.v}
+                  type="button"
+                  onClick={() => update("gender", opt.v)}
+                  className={`p-3 rounded-xl border-2 transition text-sm font-black uppercase tracking-tight ${
+                    selected
+                      ? "border-[#a3e635] bg-[#a3e635]/8 text-white"
+                      : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/30"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-7 space-y-7">
           <Slider
             label="Age"
             value={state.age}
@@ -518,22 +562,47 @@ function BuilderStep({
         </div>
 
         <div className="mt-8">
-          <NextButton onClick={onNext} label="Pick goals →" />
+          <NextButton
+            disabled={!canAdvance}
+            onClick={onNext}
+            label={state.gender ? "Pick goals →" : "Pick a player first"}
+          />
         </div>
       </div>
 
-      {/* Right — character. Container is the avatar's natural 3:4
-          width × auto height; CharacterBuilder renders the 3:4 image
-          zone first, then the 10K-rule + Height-chip strip flows
-          below it as a sibling at natural height. No letterbox, no
-          crop, full text always visible. */}
-      <div className="w-full max-w-[420px] mx-auto rounded-2xl border border-white/10 overflow-hidden flex flex-col" style={{ background: "#0a1628" }}>
-        <CharacterBuilder
-          age={state.age}
-          heightInches={state.heightInches}
-          skillLevel={state.skillLevel}
-          currentWeeklyHours={state.currentWeeklyHours}
-        />
+      {/* Right — Pixar-style 3D avatar card. Lookup keys off
+          gender + age + skillLevel; falls back to the neutral default
+          until all three are picked. AnimatePresence + the `key={src}`
+          on PlayerAvatar makes each swap fade + scale in. */}
+      <div className="w-full max-w-[420px] mx-auto">
+        <div
+          className="relative rounded-2xl border border-white/10 overflow-hidden p-4"
+          style={{
+            background:
+              "radial-gradient(ellipse at top, rgba(163,230,53,0.08) 0%, #0a1628 60%)",
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <PlayerAvatar
+              gender={state.gender}
+              age={state.age}
+              skillLevel={state.skillLevel}
+              alt={`${state.firstName || "Your player"} avatar`}
+              priority
+            />
+          </AnimatePresence>
+        </div>
+        {/* Tier + age caption for context */}
+        <div className="mt-3 flex items-center justify-between text-[10px] tracking-[0.22em] uppercase font-bold text-white/45">
+          <span>
+            {["Rec", "Travel", "Club", "ECNL / MLS Next", "Elite"][
+              state.skillLevel - 1
+            ] ?? "—"}
+          </span>
+          <span>
+            {state.age >= 24 ? `Adult · ${state.age}` : `U-${state.age}`}
+          </span>
+        </div>
       </div>
     </div>
   );

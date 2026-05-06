@@ -9,6 +9,8 @@ export type BuilderInputs = {
   email: string;
   phone: string;
   // Player profile
+  /** Gender of the player — drives which Pixar-style avatar card renders. */
+  gender: "male" | "female";
   age: number; // 5–35 (5–23 = U-bracket, 24+ = Adult/Senior)
   heightInches: number; // 36–72
   /** 1 = beginner, 2 = recreational, 3 = travel, 4 = ECNL/MLS Next, 5 = elite */
