@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from "react";
 
+/** Mirror of `DeliverabilityAlert` in src/lib/email-deliverability.ts.
+ *  The backend type was upgraded from `string[]` to a richer object
+ *  shape — the widget previously rendered `{alert}` directly on a
+ *  string, which crashed the dashboard tree with React error #31
+ *  ("Objects are not valid as a React child") once the backend
+ *  started returning objects. Diagnosed 2026-05-07. */
+interface DeliverabilityAlert {
+  level: "critical" | "warning" | "info";
+  message: string;
+  metric?: string;
+  value?: number;
+  threshold?: number;
+  timestamp: string;
+}
+
 interface DeliverabilityData {
   domain: string;
   health: {
@@ -14,7 +29,7 @@ interface DeliverabilityData {
     warmupStatus: string;
     dailySendLimit: number;
     sentToday: number;
-    alerts: string[];
+    alerts: (DeliverabilityAlert | string)[];
   };
   sending: {
     allowed: boolean;
@@ -216,15 +231,40 @@ export default function DeliverabilityWidget() {
         </div>
       )}
 
-      {/* Alerts */}
+      {/* Alerts — handles both legacy string[] shape and new
+          DeliverabilityAlert object shape so the widget doesn't crash
+          if the API returns the older format from a stale deploy. */}
       {!collapsed && health.alerts.length > 0 && (
         <div className="border-t border-border px-4 py-3 space-y-1">
-          {health.alerts.map((alert, i) => (
-            <p key={i} className="text-xs text-yellow-400 flex items-start gap-1.5">
-              <span className="mt-0.5">⚠</span>
-              <span>{alert}</span>
-            </p>
-          ))}
+          {health.alerts.map((alert, i) => {
+            const isObject = typeof alert === "object" && alert !== null;
+            const message = isObject ? alert.message : String(alert);
+            const level = isObject ? alert.level : "warning";
+            const colorClass =
+              level === "critical"
+                ? "text-rose-400"
+                : level === "info"
+                  ? "text-sky-400"
+                  : "text-yellow-400";
+            const icon =
+              level === "critical" ? "🚨" : level === "info" ? "ℹ" : "⚠";
+            return (
+              <p
+                key={i}
+                className={`text-xs flex items-start gap-1.5 ${colorClass}`}
+              >
+                <span className="mt-0.5">{icon}</span>
+                <span>{message}</span>
+                {isObject && alert.metric && (
+                  <span className="ml-auto text-[10px] text-muted whitespace-nowrap">
+                    {alert.metric}
+                    {alert.value !== undefined && `: ${alert.value}`}
+                    {alert.threshold !== undefined && ` / ${alert.threshold}`}
+                  </span>
+                )}
+              </p>
+            );
+          })}
         </div>
       )}
     </div>
