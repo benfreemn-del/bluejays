@@ -24,13 +24,24 @@
  * docs/mock-backends/<industry>.md (this is the electrician config).
  */
 
+import "leaflet/dist/leaflet.css";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import {
+  Circle,
+  CircleMarker,
+  MapContainer,
+  TileLayer,
+  Tooltip as LeafletTooltip,
+  useMap,
+} from "react-leaflet";
+import L from "leaflet";
 import {
   MOCK_LEADS,
   MOCK_AFFILIATES,
   MOCK_REPEAT_CUSTOMERS,
   WA_COUNTIES,
+  PENINSULA_TOWNS,
   FUNNELS,
   type Lead,
   type LeadStatus,
@@ -685,113 +696,333 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ───────────────────────── MAP TAB (county heatmap) ─────────────────────── */
+/* ───────────────────────── MAP TAB — OLYMPIC PENINSULA (Leaflet) ─────
+   Real Leaflet basemap centered on Sequim HQ (per Ben 2026-05-06 —
+   "use the Tekky-style map when we show people how it works"). Same
+   data set (PENINSULA_TOWNS — real lat/lng), same focused-town panel
+   + town list as before, just rendered on a CartoDB dark tile layer
+   instead of the hand-drawn SVG illustration. Service rings (10/25/
+   50 mi) become real L.Circle layers with geographic accuracy. */
+
+function PeninsulaZoomController({ bounds, recenter }: { bounds: L.LatLngBounds | null; recenter: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) {
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 0.8 });
+    } else if (recenter) {
+      // Default: Sequim at center, peninsula in frame
+      map.flyTo([47.8, -123.4], 8, { duration: 0.8 });
+    }
+  }, [bounds, recenter, map]);
+  return null;
+}
 
 function MapTab() {
-  const [hoveredCounty, setHoveredCounty] = useState<string | null>(null);
-  const total = useMemo(() => WA_COUNTIES.reduce((s, c) => s + c.active_leads, 0), []);
-  const totalRevenue = useMemo(
-    () => WA_COUNTIES.reduce((s, c) => s + c.closed_jobs_ytd * c.avg_job_value, 0),
-    []
+  const [hoveredTown, setHoveredTown] = useState<string | null>(null);
+  const [focusedTown, setFocusedTown] = useState<string | null>(null);
+  const [zoomBounds, setZoomBounds] = useState<L.LatLngBounds | null>(null);
+
+  const totalActive = useMemo(() => PENINSULA_TOWNS.reduce((s, t) => s + t.active_leads, 0), []);
+  const totalClosed = useMemo(() => PENINSULA_TOWNS.reduce((s, t) => s + t.closed_jobs_ytd, 0), []);
+  const hotTowns = useMemo(() => PENINSULA_TOWNS.filter((t) => t.score >= 70).length, []);
+
+  // Click takes precedence over hover for the focused detail panel.
+  const focused =
+    PENINSULA_TOWNS.find((t) => t.name === focusedTown) ||
+    PENINSULA_TOWNS.find((t) => t.name === hoveredTown) ||
+    PENINSULA_TOWNS[0];
+
+  const sequimHQ = useMemo(
+    () => PENINSULA_TOWNS.find((t) => t.is_hq) ?? PENINSULA_TOWNS[0],
+    [],
   );
-  const focused = WA_COUNTIES.find((c) => c.name === hoveredCounty) || WA_COUNTIES[0];
+  // Service-ring radii in meters (1 mile = 1609.344 m).
+  const RING_10_MI = 10 * 1609.344;
+  const RING_25_MI = 25 * 1609.344;
+  const RING_50_MI = 50 * 1609.344;
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          🗺️ Service-area heatmap
+          🗺️ Olympic Peninsula service map
         </h2>
         <p className="text-sm text-slate-400 mt-1">
-          Lead density across {WA_COUNTIES.length} Washington counties · Olympic Peninsula focus
+          {PENINSULA_TOWNS.length} towns · Sequim HQ at center · service rings 10 / 25 / 50 mi
         </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Active Leads" value={String(total)} sub="Across WA" tone="yellow" />
-        <StatCard label="Closed (YTD)" value={String(WA_COUNTIES.reduce((s, c) => s + c.closed_jobs_ytd, 0))} sub="Jobs delivered" tone="emerald" />
-        <StatCard label="YTD Revenue" value={fmtMoney(totalRevenue)} sub="Closed jobs only" tone="orange" />
-        <StatCard label="Hot Counties" value={String(WA_COUNTIES.filter((c) => c.lead_score >= 70).length)} sub="Score ≥ 70" tone="slate" />
+        <StatCard label="Active Leads" value={String(totalActive)} sub="Across the peninsula" tone="yellow" />
+        <StatCard label="Closed (YTD)" value={String(totalClosed)} sub="Jobs delivered" tone="emerald" />
+        <StatCard label="Hot Towns" value={String(hotTowns)} sub="Score ≥ 70" tone="orange" />
+        <StatCard label="Service Radius" value="50 mi" sub="From Sequim HQ" tone="slate" />
       </div>
 
-      {/* Stylized WA map — county circles sized + colored by lead density */}
+      {/* THE MAP — Leaflet basemap (CartoDB dark) centered on Sequim
+          HQ. Town markers driven by PENINSULA_TOWNS (real lat/lng).
+          Service rings 10/25/50 mi rendered as L.Circle layers (real
+          geographic radii in meters). */}
       <div
-        className="relative rounded-2xl border border-white/8 bg-slate-900/40 p-4 sm:p-6 overflow-hidden"
-        style={{ minHeight: 360 }}
+        className="relative rounded-2xl border border-white/8 bg-slate-950 overflow-hidden"
+        style={{ height: 480 }}
       >
-        {/* Background grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" aria-hidden="true">
-          <defs>
-            <pattern id="map-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#fff" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#map-grid)" />
-        </svg>
-        {/* WA stylized outline as a faint backdrop */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
-          <path
-            d="M 4 14 L 8 8 L 60 6 L 96 8 L 96 28 L 92 38 L 86 44 L 78 48 L 60 50 L 40 52 L 26 50 L 14 44 L 6 36 L 4 24 Z"
-            fill="rgba(255,255,255,0.03)"
-            stroke="rgba(250, 204, 21, 0.15)"
-            strokeWidth="0.4"
+        <MapContainer
+          center={[sequimHQ.lat, sequimHQ.lng]}
+          zoom={9}
+          minZoom={7}
+          maxZoom={12}
+          scrollWheelZoom
+          className="h-full w-full"
+          style={{ background: "#020617" }}
+          worldCopyJump={false}
+        >
+          <TileLayer
+            attribution="&copy; OpenStreetMap"
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
-        </svg>
-        {/* County dots */}
-        <div className="relative" style={{ height: 320 }}>
-          {WA_COUNTIES.map((c) => {
-            const size = 18 + (c.lead_score / 100) * 56; // 18-74 px
-            const color = scoreColor(c.lead_score);
-            const isFocus = hoveredCounty === c.name;
+
+          <PeninsulaZoomController bounds={zoomBounds} recenter={!focusedTown && !zoomBounds} />
+
+          {/* Service rings — 50 / 25 / 10 mi from Sequim HQ */}
+          <Circle
+            center={[sequimHQ.lat, sequimHQ.lng]}
+            radius={RING_50_MI}
+            pathOptions={{
+              color: "#facc15",
+              weight: 0.8,
+              fillColor: "#facc15",
+              fillOpacity: 0.02,
+              dashArray: "4,6",
+            }}
+          />
+          <Circle
+            center={[sequimHQ.lat, sequimHQ.lng]}
+            radius={RING_25_MI}
+            pathOptions={{
+              color: "#facc15",
+              weight: 1,
+              fillColor: "#facc15",
+              fillOpacity: 0.04,
+              dashArray: "4,6",
+            }}
+          />
+          <Circle
+            center={[sequimHQ.lat, sequimHQ.lng]}
+            radius={RING_10_MI}
+            pathOptions={{
+              color: "#facc15",
+              weight: 1.2,
+              fillColor: "#facc15",
+              fillOpacity: 0.06,
+              dashArray: "4,6",
+            }}
+          />
+
+          {/* HQ pulse — outer halo + inner dot */}
+          <CircleMarker
+            center={[sequimHQ.lat, sequimHQ.lng]}
+            radius={14}
+            pathOptions={{
+              color: "#facc15",
+              weight: 0,
+              fillColor: "#facc15",
+              fillOpacity: 0.12,
+            }}
+          />
+          <CircleMarker
+            center={[sequimHQ.lat, sequimHQ.lng]}
+            radius={9}
+            pathOptions={{
+              color: "#fde047",
+              weight: 2,
+              fillColor: "#facc15",
+              fillOpacity: 0.85,
+            }}
+          >
+            <LeafletTooltip direction="top" offset={[0, -8]} opacity={0.95} sticky>
+              <div className="text-xs">
+                <div className="font-bold text-amber-700">★ Sequim HQ</div>
+                <div className="text-slate-700">{sequimHQ.notes}</div>
+              </div>
+            </LeafletTooltip>
+          </CircleMarker>
+
+          {/* Town markers — sized + colored by lead score */}
+          {PENINSULA_TOWNS.filter((t) => !t.is_hq).map((town) => {
+            const r = 4 + (town.score / 100) * 9; // 4-13 px radius
+            const fill = scoreColor(town.score);
+            const isHover = hoveredTown === town.name;
+            const isFocus = focusedTown === town.name;
             return (
-              <button
-                key={c.fips}
-                type="button"
-                onMouseEnter={() => setHoveredCounty(c.name)}
-                onFocus={() => setHoveredCounty(c.name)}
-                onMouseLeave={() => setHoveredCounty(null)}
-                className="absolute -translate-x-1/2 -translate-y-1/2 transition-transform hover:scale-110 focus:outline-none focus:scale-110"
-                style={{ left: `${c.cx}%`, top: `${c.cy}%`, width: size, height: size }}
+              <CircleMarker
+                key={town.name}
+                center={[town.lat, town.lng]}
+                radius={isFocus || isHover ? r + 2 : r}
+                pathOptions={{
+                  color: isFocus || isHover ? "#fff" : fill,
+                  weight: isFocus ? 2.5 : isHover ? 1.8 : 1,
+                  fillColor: fill,
+                  fillOpacity: isFocus ? 0.95 : isHover ? 0.85 : 0.7,
+                }}
+                eventHandlers={{
+                  mouseover: () => setHoveredTown(town.name),
+                  mouseout: () => setHoveredTown(null),
+                  click: (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    setFocusedTown((prev) => (prev === town.name ? null : town.name));
+                    // Fly to a small bounds around the town
+                    const lat = town.lat;
+                    const lng = town.lng;
+                    setZoomBounds(
+                      L.latLngBounds(
+                        [lat - 0.12, lng - 0.18],
+                        [lat + 0.12, lng + 0.18],
+                      ),
+                    );
+                  },
+                }}
               >
-                <span
-                  className="block w-full h-full rounded-full"
-                  style={{
-                    background: color,
-                    opacity: isFocus ? 0.9 : 0.55,
-                    boxShadow: isFocus ? `0 0 24px ${color}` : `0 0 12px ${color}40`,
-                  }}
-                />
-                <span
-                  className="absolute inset-0 flex items-center justify-center text-[10px] font-bold pointer-events-none"
-                  style={{ color: c.lead_score > 50 ? "#0a0a0a" : "#fff" }}
-                >
-                  {c.lead_score}
-                </span>
-                <span
-                  className="absolute left-1/2 -translate-x-1/2 mt-1 text-[10px] uppercase tracking-wider font-semibold whitespace-nowrap"
-                  style={{ top: "100%", color: isFocus ? "#fff" : "rgba(255,255,255,0.55)" }}
-                >
-                  {c.name}
-                </span>
-              </button>
+                <LeafletTooltip direction="top" offset={[0, -6]} opacity={0.95} sticky>
+                  <div className="text-xs">
+                    <div className="font-bold" style={{ color: fill }}>
+                      {town.name}
+                    </div>
+                    <div className="text-slate-700">
+                      Score{" "}
+                      <span className="font-bold tabular-nums">{town.score}</span>
+                      <span className="mx-1.5 text-slate-400">·</span>
+                      <span className="tabular-nums">{town.active_leads}</span>{" "}
+                      active leads
+                    </div>
+                  </div>
+                </LeafletTooltip>
+              </CircleMarker>
             );
           })}
+        </MapContainer>
+
+        {/* Heatmap legend — bottom-left overlay */}
+        <div className="absolute bottom-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-white/10 pointer-events-none z-[400]">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/75">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor(95) }} />
+              Hot · 80+
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor(70) }} />
+              Warm · 60-79
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor(50) }} />
+              Tepid · 40-59
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor(20) }} />
+              Cold · &lt;40
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ background: ACCENT, boxShadow: `0 0 0 1px ${ACCENT}` }} />
+              ★ HQ
+            </span>
+          </div>
+        </div>
+
+        {/* Service-ring caption — top-left overlay */}
+        <div className="absolute top-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-yellow-500/30 pointer-events-none z-[400]">
+          <div className="text-[10px] uppercase tracking-widest text-yellow-400 font-bold">
+            Sequim HQ · service rings
+          </div>
+          <div className="text-[11px] text-white/70">10 / 25 / 50 mi</div>
+        </div>
+
+      </div>
+
+      {/* Legend + focused-town detail */}
+      <div className="grid lg:grid-cols-[1fr_1.4fr] gap-4">
+        {/* Legend */}
+        <div className="rounded-xl border border-white/8 bg-white/[0.02] p-5">
+          <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-slate-500 mb-3">
+            Lead-density legend
+          </div>
+          <div className="space-y-2">
+            <LegendRow color={scoreColor(95)} label="Hot (80-100)" desc="Multi-touch, fast follow-up" />
+            <LegendRow color={scoreColor(70)} label="Warm (60-79)" desc="Standard outreach cadence" />
+            <LegendRow color={scoreColor(50)} label="Tepid (40-59)" desc="Quarterly drip" />
+            <LegendRow color={scoreColor(20)} label="Cold (< 40)" desc="Affiliate-source only" />
+          </div>
+          <div className="mt-4 pt-4 border-t border-white/8 space-y-1.5 text-[11px] text-slate-500">
+            <div>★ = Sequim HQ (Meyer Electric)</div>
+            <div>Dashed circles = 10 / 25 / 50 mile service rings</div>
+            <div>Dot size + color = lead density</div>
+          </div>
+        </div>
+        {/* Focused town panel */}
+        <div className="rounded-xl border border-yellow-400/30 bg-yellow-400/[0.03] p-5">
+          <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-yellow-400">
+            Focused town {focused.is_hq && "· HQ"}
+          </div>
+          <h3 className="mt-1 text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            {focused.name}
+            <span className="ml-2 text-sm font-normal text-slate-500">
+              {focused.county} County · {focused.zip}
+            </span>
+          </h3>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <StatCard label="Lead Score" value={String(focused.score)} sub="0-100" tone="yellow" />
+            <StatCard label="Active Leads" value={String(focused.active_leads)} sub="In pipeline" tone="emerald" />
+            <StatCard label="YTD Jobs" value={String(focused.closed_jobs_ytd)} sub="Closed" tone="orange" />
+            <StatCard label="Coordinates" value={`${focused.lat.toFixed(3)}°N`} sub={`${focused.lng.toFixed(3)}°W`} tone="slate" />
+          </div>
+          {focused.notes && (
+            <p className="mt-4 text-sm text-slate-400 leading-relaxed">{focused.notes}</p>
+          )}
         </div>
       </div>
 
-      {/* Focused county detail */}
-      <div className="rounded-xl border border-yellow-400/30 bg-yellow-400/[0.03] p-5">
-        <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-yellow-400">Focused county</div>
-        <h3 className="mt-1 text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          {focused.name} County
-        </h3>
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard label="Lead Score" value={String(focused.lead_score)} sub="0-100" tone="yellow" />
-          <StatCard label="Active Leads" value={String(focused.active_leads)} sub="In pipeline" tone="emerald" />
-          <StatCard label="YTD Jobs" value={String(focused.closed_jobs_ytd)} sub="Closed" tone="orange" />
-          <StatCard label="Storms (30d)" value={String(focused.storms_30d)} sub="Outage signals" tone="slate" />
+      {/* Town list — scrollable, ranked by score */}
+      <div className="rounded-xl border border-white/8 overflow-hidden">
+        <div className="grid grid-cols-[60px_1fr_120px_80px_80px] gap-3 px-4 py-2.5 border-b border-white/8 bg-white/[0.02] text-[11px] uppercase tracking-wider font-semibold text-slate-500">
+          <div>Score</div>
+          <div>Town</div>
+          <div className="hidden sm:block">County</div>
+          <div className="text-right">Active</div>
+          <div className="text-right">YTD</div>
         </div>
-        <p className="mt-4 text-sm text-slate-400 leading-relaxed">{focused.notes}</p>
+        <div className="max-h-[400px] overflow-y-auto">
+          {[...PENINSULA_TOWNS].sort((a, b) => b.score - a.score).map((t) => (
+            <div key={t.name} className="grid grid-cols-[60px_1fr_120px_80px_80px] gap-3 px-4 py-2.5 border-b border-white/5 last:border-b-0 items-center hover:bg-white/[0.02] transition" onMouseEnter={() => setHoveredTown(t.name)}>
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
+                style={{ background: `${scoreColor(t.score)}15`, color: scoreColor(t.score), border: `1px solid ${scoreColor(t.score)}40` }}
+              >
+                {t.score}
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-white truncate">
+                  {t.is_hq && "★ "}
+                  {t.name}
+                </div>
+                <div className="text-[11px] text-slate-500 truncate">{t.notes}</div>
+              </div>
+              <div className="hidden sm:block text-xs text-slate-400">{t.county}</div>
+              <div className="text-sm font-semibold text-right tabular-nums">{t.active_leads}</div>
+              <div className="text-sm text-emerald-400 text-right tabular-nums">{t.closed_jobs_ytd}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LegendRow({ color, label, desc }: { color: string; label: string; desc: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="w-4 h-4 rounded-full shrink-0" style={{ background: color }} />
+      <div className="min-w-0">
+        <div className="text-sm font-semibold text-white">{label}</div>
+        <div className="text-[11px] text-slate-500 truncate">{desc}</div>
       </div>
     </div>
   );
@@ -888,53 +1119,169 @@ function FunnelsTab() {
   );
 }
 
-/* ───────────────────────── CUSTOMERS TAB ───────────────────────── */
+/* ───────────────────────── CUSTOMERS TAB ─────────────────────────
+   Save / star feature added 2026-05-06 — sessionStorage-backed so saves
+   survive page reload within the demo session but reset on tab close.
+   Small permissive override of Q8=A "pure mock, reload resets":
+   within-session saves OK, across-session still resets clean. See
+   MOCK_BACKEND_PLAYBOOK.md "Locked defaults" Q8 override note. */
+
+const SAVED_KEY = "bj_demo_meyer_saved_customers";
 
 function CustomersTab() {
-  const total = MOCK_REPEAT_CUSTOMERS.reduce((s, c) => s + c.lifetime_value, 0);
+  const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<"all" | "saved" | "expiring">("all");
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem(SAVED_KEY);
+      if (raw) setSaved(new Set(JSON.parse(raw) as string[]));
+    } catch { /* ignore corrupt sessionStorage */ }
+  }, []);
+
+  const toggleSaved = (id: string) => {
+    const next = new Set(saved);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSaved(next);
+    try {
+      window.sessionStorage.setItem(SAVED_KEY, JSON.stringify([...next]));
+    } catch { /* quota / private mode — ignore */ }
+  };
+
+  const totalLTV = MOCK_REPEAT_CUSTOMERS.reduce((s, c) => s + c.lifetime_value, 0);
+  const savedLTV = MOCK_REPEAT_CUSTOMERS.filter((c) => saved.has(c.id)).reduce((s, c) => s + c.lifetime_value, 0);
+
+  const filtered = MOCK_REPEAT_CUSTOMERS.filter((c) => {
+    if (filter === "saved" && !saved.has(c.id)) return false;
+    if (filter === "expiring" && c.contract_status !== "expiring_soon") return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return (
+        c.business_name.toLowerCase().includes(q) ||
+        c.primary_contact.toLowerCase().includes(q) ||
+        c.location.toLowerCase().includes(q) ||
+        c.industry.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          💼 Repeat customers
-        </h2>
-        <p className="text-sm text-slate-400 mt-1">
-          {MOCK_REPEAT_CUSTOMERS.length} commercial accounts · {fmtMoney(total)} lifetime value
-        </p>
+    <div className="space-y-5">
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            💼 Repeat customers
+          </h2>
+          <p className="text-sm text-slate-400 mt-1">
+            {MOCK_REPEAT_CUSTOMERS.length} commercial accounts · {fmtMoney(totalLTV)} lifetime value
+          </p>
+        </div>
+        {saved.size > 0 && (
+          <div className="rounded-lg border border-yellow-400/30 bg-yellow-400/[0.06] px-3 py-2">
+            <div className="text-[10px] uppercase tracking-wider font-semibold text-yellow-400">⭐ Saved</div>
+            <div className="text-sm font-bold text-white">{saved.size} customers · {fmtMoney(savedLTV)} LTV</div>
+          </div>
+        )}
       </div>
+
+      {/* Filters */}
+      <div className="flex gap-2 flex-wrap">
+        <input
+          type="search"
+          placeholder="Search business, contact, location…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 min-w-[220px] h-10 px-4 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:border-yellow-400 focus:outline-none"
+        />
+        <div className="flex gap-1.5 rounded-lg p-1 bg-slate-900 border border-slate-700">
+          <FilterChip on={filter === "all"} onClick={() => setFilter("all")} label={`All · ${MOCK_REPEAT_CUSTOMERS.length}`} />
+          <FilterChip on={filter === "saved"} onClick={() => setFilter("saved")} label={`⭐ Saved · ${saved.size}`} />
+          <FilterChip on={filter === "expiring"} onClick={() => setFilter("expiring")} label="Expiring" />
+        </div>
+      </div>
+
+      {/* Customer cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {MOCK_REPEAT_CUSTOMERS.map((c) => (
-          <div key={c.id} className="rounded-xl border border-white/8 bg-white/[0.02] p-4 hover:border-yellow-400/30 transition">
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="min-w-0">
+        {filtered.map((c) => {
+          const isSaved = saved.has(c.id);
+          return (
+            <div
+              key={c.id}
+              className="relative rounded-xl border bg-white/[0.02] p-4 hover:border-yellow-400/30 transition"
+              style={{
+                borderColor: isSaved ? "rgba(250, 204, 21, 0.3)" : "rgba(255, 255, 255, 0.08)",
+                background: isSaved ? "rgba(250, 204, 21, 0.04)" : undefined,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => toggleSaved(c.id)}
+                aria-label={isSaved ? "Remove from saved" : "Save customer"}
+                title={isSaved ? "Saved — click to unsave" : "Save customer"}
+                className={`absolute top-3 right-3 w-8 h-8 rounded-md flex items-center justify-center transition ${isSaved ? "bg-yellow-400/20 text-yellow-400 hover:bg-yellow-400/30" : "bg-white/[0.04] text-slate-500 hover:bg-white/[0.08] hover:text-yellow-400"}`}
+              >
+                <span className="text-base leading-none">{isSaved ? "★" : "☆"}</span>
+              </button>
+              <div className="pr-9 mb-3">
                 <h3 className="font-bold text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{c.business_name}</h3>
                 <p className="text-[11px] text-slate-500 mt-0.5 capitalize">{c.industry.replace("_", " ")} · {c.location}</p>
               </div>
-              <span
-                className="text-[10px] uppercase tracking-wider px-2 py-1 rounded shrink-0"
-                style={{
-                  background: c.contract_status === "active" ? "rgba(34,197,94,0.15)" : c.contract_status === "expiring_soon" ? "rgba(250,204,21,0.15)" : "rgba(239,68,68,0.15)",
-                  color: c.contract_status === "active" ? "rgb(74,222,128)" : c.contract_status === "expiring_soon" ? "rgb(250,204,21)" : "rgb(248,113,113)",
-                }}
-              >
-                {c.contract_status.replace("_", " ")}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <div className="text-xs">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500">LTV</div>
-                <div className="font-bold text-yellow-400">{fmtMoney(c.lifetime_value)}</div>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <div className="text-xs">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500">LTV</div>
+                  <div className="font-bold text-yellow-400">{fmtMoney(c.lifetime_value)}</div>
+                </div>
+                <div className="text-xs">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500">Jobs</div>
+                  <div className="font-bold">{c.jobs_completed}</div>
+                </div>
               </div>
-              <div className="text-xs">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500">Jobs</div>
-                <div className="font-bold">{c.jobs_completed}</div>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[11px] text-slate-500 truncate flex-1">{c.primary_contact}</p>
+                <span
+                  className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+                  style={{
+                    background: c.contract_status === "active" ? "rgba(34,197,94,0.15)" : c.contract_status === "expiring_soon" ? "rgba(250,204,21,0.15)" : "rgba(239,68,68,0.15)",
+                    color: c.contract_status === "active" ? "rgb(74,222,128)" : c.contract_status === "expiring_soon" ? "rgb(250,204,21)" : "rgb(248,113,113)",
+                  }}
+                >
+                  {c.contract_status.replace("_", " ")}
+                </span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-500 truncate">{c.primary_contact}</p>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="rounded-xl border border-white/8 bg-white/[0.02] p-12 text-center">
+          <p className="text-slate-400 text-sm">
+            {filter === "saved" ? "No saved customers yet — click the ☆ star on any customer to save them." : "No customers match these filters."}
+          </p>
+        </div>
+      )}
+
+      {/* Save-state explainer */}
+      <div className="rounded-lg border border-white/5 bg-white/[0.01] px-4 py-3 text-[11px] text-slate-500">
+        💡 Saved customers persist within this demo session (close the tab to reset). The real backend syncs across devices via your account.
       </div>
     </div>
+  );
+}
+
+function FilterChip({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`h-8 px-3 rounded-md text-xs font-semibold transition ${on ? "bg-yellow-400 text-black" : "text-slate-400 hover:text-white hover:bg-white/[0.04]"}`}
+    >
+      {label}
+    </button>
   );
 }
 
