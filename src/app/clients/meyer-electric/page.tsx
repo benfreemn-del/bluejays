@@ -44,6 +44,7 @@ import {
   WifiHigh,
   SpeakerHigh,
   Star,
+  SealCheck,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
@@ -90,6 +91,11 @@ const PHOTOS = {
   generator: "/images/meyer-electric/generator-install.jpg",
   underground: "/images/meyer-electric/gallery-tesla-charger.jpg",
   electrical: "/images/meyer-electric/about-twilight-home.jpg",
+  // Real Meyer crew photos Ben sourced 2026-05-06. Use sparingly + only
+  // where they earn their keep — these are the ONLY two photos with
+  // actual humans in them so they're the trust-signal heavy hitters.
+  teamCrewPanel: "/images/meyer-electric/team-crew-panel.jpg",   // 2 guys + electrical panel install (real Meyer hoodie + tools)
+  teamAwardWinning: "/images/meyer-electric/team-award-2022.jpg", // Full crew + trucks + Best of Olympic Peninsula 2022 award
 } as const;
 
 /* ───────────────────────── COLORS ───────────────────────── */
@@ -444,6 +450,102 @@ export default function MeyerElectricPage() {
               label="Licensed · Bonded · Insured"
               sublabel={`License ${BUSINESS.license}`}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────── AWARD / ACCOLADE ────────────────────── */}
+      {/* Voted #1 Best Electrician on the Olympic Peninsula · 2022.
+          Real award photo Ben sourced — Meyer crew + trucks + the actual
+          "Best of Olympic Peninsula · Clallam County · 1st Place 2022"
+          badge embedded in the image. Major trust signal, deserves a
+          dedicated section right after the trust strip so cold visitors
+          see it before they hit the services grid. */}
+      <section
+        id="award"
+        className="py-12 sm:py-14 lg:py-16 relative overflow-hidden"
+        style={{ background: BG }}
+      >
+        {/* Subtle yellow ambient glow behind */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full opacity-[0.10]"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(250, 204, 21, 0.55) 0%, transparent 70%)",
+              filter: "blur(20px)",
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-12 items-center">
+            {/* Copy side */}
+            <div className="order-2 lg:order-1">
+              <div
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold mb-4"
+                style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+              >
+                <Medal size={14} weight="fill" />
+                Recognized Locally
+              </div>
+              <h2
+                className="text-[30px] sm:text-[40px] lg:text-[48px] font-bold leading-[1.05] tracking-tight text-white"
+                style={{ fontFamily: FONT_HEAD }}
+              >
+                Voted{" "}
+                <span style={{ color: ACCENT }}>#1 Best Electrician</span>{" "}
+                on the Olympic Peninsula
+              </h2>
+              <p
+                className="mt-4 text-[15px] sm:text-[16px] leading-relaxed max-w-md"
+                style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+              >
+                Best of Olympic Peninsula · Clallam County · 1st Place 2022.
+                We earned this the way we earn every job — clean installs,
+                upfront pricing, and crews that show up on time.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
+                <AwardStat value={`${BUSINESS.yearsInBusiness}+`} label="Years Local" />
+                <AwardStat value="#1" label="Best of 2022" />
+                <AwardStat value={`${BUSINESS.serviceArea.length}`} label="Cities Served" />
+              </div>
+            </div>
+
+            {/* Image side — the actual award photo with embedded badge */}
+            <div className="order-1 lg:order-2 relative">
+              <div
+                className="relative rounded-2xl overflow-hidden"
+                style={{
+                  border: `1px solid rgba(250, 204, 21, 0.25)`,
+                  boxShadow:
+                    "0 24px 70px rgba(0, 0, 0, 0.5), 0 0 32px rgba(250, 204, 21, 0.08)",
+                }}
+              >
+                <img
+                  src={PHOTOS.teamAwardWinning}
+                  alt="Meyer Electric crew in front of company trucks holding the Best of Olympic Peninsula 2022 #1 Electrician award"
+                  className="block w-full h-auto"
+                  loading="lazy"
+                />
+              </div>
+              {/* Floating "Verified Local" stamp */}
+              <div
+                className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 px-3.5 py-2 rounded-full shadow-xl flex items-center gap-2"
+                style={{
+                  background: ACCENT,
+                  color: "#0a0a0a",
+                  fontFamily: FONT_HEAD,
+                  boxShadow: "0 8px 24px rgba(250, 204, 21, 0.45)",
+                }}
+              >
+                <SealCheck size={14} weight="fill" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">
+                  Verified Local · 2022
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1084,6 +1186,46 @@ export default function MeyerElectricPage() {
                   — The Meyer Electric Team
                 </div>
               </div>
+
+              {/* Real crew photo — Ben sourced 2026-05-06. Two of the
+                  Meyer guys on a real job, panel install on plywood
+                  framing, "Meyer Electric (360) 477-2202" hoodie + tool
+                  belts. The most authentic trust signal on the page —
+                  goes RIGHT under the quote per Ben's explicit ask. */}
+              <div
+                className="mt-4 relative rounded-xl overflow-hidden border"
+                style={{
+                  borderColor: "rgba(255, 255, 255, 0.08)",
+                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4)",
+                }}
+              >
+                <img
+                  src={PHOTOS.teamCrewPanel}
+                  alt="Meyer Electric crew on a real install — two Meyer technicians next to a freshly mounted electrical panel, wearing Meyer Electric work hoodies and tool belts"
+                  className="block w-full h-auto"
+                  loading="lazy"
+                />
+                {/* Caption overlay */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 px-4 py-3 flex items-center gap-2"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.85) 80%)",
+                  }}
+                >
+                  <Lightning
+                    size={14}
+                    weight="fill"
+                    style={{ color: ACCENT }}
+                  />
+                  <span
+                    className="text-[11px] uppercase tracking-[0.18em] font-bold text-white"
+                    style={{ fontFamily: FONT_HEAD }}
+                  >
+                    Real crew · Real install · Sequim, WA
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1502,6 +1644,25 @@ function WhyBullet({ text }: { text: string }) {
         {text}
       </span>
     </li>
+  );
+}
+
+function AwardStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex flex-col">
+      <div
+        className="text-[24px] sm:text-[28px] font-bold leading-none tracking-tight"
+        style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+      >
+        {value}
+      </div>
+      <div
+        className="mt-1 text-[10px] uppercase tracking-[0.2em] font-semibold"
+        style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+      >
+        {label}
+      </div>
+    </div>
   );
 }
 
