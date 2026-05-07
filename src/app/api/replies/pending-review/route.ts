@@ -59,7 +59,14 @@ export async function GET() {
     return NextResponse.json({ error: replyErr.message }, { status: 500 });
   }
 
-  const replies = (rawReplies as PendingReplyRow[] | null) ?? [];
+  // Drop rows with NULL/empty reply_body — those are draft-in-flight or
+  // generation-failed rows the AI Responder hasn't authored yet. Surfacing
+  // them to the panel crashes the dashboard's render tree because the row
+  // component calls .trim() / .split() on the body. Defensive filter at
+  // the API layer (frontend also null-guards) — diagnosed 2026-05-07.
+  const replies = ((rawReplies as PendingReplyRow[] | null) ?? []).filter(
+    (r) => typeof r.reply_body === "string" && r.reply_body.trim().length > 0,
+  );
 
   if (replies.length === 0) {
     return NextResponse.json({ replies: [], total: 0 });

@@ -255,20 +255,26 @@ interface RowProps {
 
 function PendingReplyRow({ reply, onApprove, onReject }: RowProps) {
   const [expanded, setExpanded] = useState(false);
-  const [editedBody, setEditedBody] = useState(reply.replyBody);
+  // Defensive ?? "" — DB rows queued before the AI finishes authoring
+  // can have reply_body NULL. Without this, .trim()/.split() below
+  // crash the entire dashboard tree (no error boundary on /dashboard).
+  // Diagnosed 2026-05-07: Overview-tab autopopulate crash.
+  const safeBody = reply.replyBody ?? "";
+  const [editedBody, setEditedBody] = useState(safeBody);
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [busy, setBusy] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Keep edited body in sync if upstream draft text changes (rare, but
-  // poll-driven refresh could update this row).
+  // poll-driven refresh could update this row). Coerce null→"" same
+  // reason as above.
   useEffect(() => {
-    setEditedBody(reply.replyBody);
+    setEditedBody(reply.replyBody ?? "");
   }, [reply.replyBody]);
 
   const isEdited = useMemo(
-    () => editedBody.trim() !== reply.replyBody.trim(),
+    () => editedBody.trim() !== (reply.replyBody ?? "").trim(),
     [editedBody, reply.replyBody]
   );
 
@@ -469,7 +475,7 @@ function PendingReplyRow({ reply, onApprove, onReject }: RowProps) {
             type="button"
             onClick={() => {
               setExpanded(false);
-              setEditedBody(reply.replyBody);
+              setEditedBody(reply.replyBody ?? "");
             }}
             disabled={busy}
             className="ml-auto text-[11px] text-muted underline-offset-2 hover:text-foreground hover:underline"
