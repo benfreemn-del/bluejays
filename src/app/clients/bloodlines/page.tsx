@@ -2834,8 +2834,19 @@ function ParchmentSynopsisModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4 sm:px-8"
-      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
+      // On mobile the two parchment "pages" stack vertically (>1000px tall
+      // total) but the viewport is ~700px — without overflow-y-auto the
+      // content was clipped above + below the screen and Mobile Safari
+      // pinch-zoomed trying to fit it ("zooms in too much" on Book click).
+      // Switched the outer to overflow-y-auto + items-start (so content
+      // begins at the top of viewport) + py-6 for breathing room. Each
+      // inner page also drops its desktop min-height on mobile (see below).
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 py-6 sm:px-8 sm:items-center"
+      style={{
+        background: "rgba(0,0,0,0.85)",
+        backdropFilter: "blur(8px)",
+        WebkitOverflowScrolling: "touch",
+      }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -2922,7 +2933,7 @@ function ParchmentSynopsisModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-0">
           {/* LEFT PAGE — Synopsis */}
           <div
-            className="bl-page-left relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 min-h-[520px]"
+            className="bl-page-left relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 md:min-h-[520px]"
             style={{
               background:
                 "linear-gradient(135deg, #f0e3c7 0%, #e8dcc4 40%, #d4c5a0 100%)",
@@ -2990,7 +3001,7 @@ function ParchmentSynopsisModal({
 
           {/* RIGHT PAGE — CTAs + lore badge */}
           <div
-            className="bl-page-right relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 min-h-[520px] flex flex-col justify-between"
+            className="bl-page-right relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 md:min-h-[520px] flex flex-col justify-between"
             style={{
               background:
                 "linear-gradient(225deg, #f0e3c7 0%, #e8dcc4 40%, #d4c5a0 100%)",
