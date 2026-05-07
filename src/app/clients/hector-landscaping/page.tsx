@@ -406,7 +406,7 @@ const processSteps = [
   { step: "01", title: "Site Visit", desc: "Hector walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the two-county service area. ", icon: Eye },
   { step: "02", title: "Concept & Design", desc: "A concept drawing with materials, planting plan, and a clear scope. You see the install on paper before we break ground — phased to your budget if it needs to be.", icon: Ruler },
   { step: "03", title: "Plant Selection", desc: "Plants picked for your site — natives and climate-adapted species first. Forty-nine seasons of installs in this region tells you which ones make it past their second winter.", icon: Plant },
-  { step: "04", title: "Installation", desc: "One crew, run by Hector, from the first cleared lot to the last lit pathway. Every discipline in-house — design, hardscape, irrigation, planting, lighting. When it's done, Hector's crew's maintenance team takes the keys.", icon: Shovel },
+  { step: "04", title: "Installation", desc: "One crew, run by Hector, from the first cleared lot to the last finished bed. Every discipline in-house — design, hardscape, irrigation, planting, sod. When it's done, Hector's crew's maintenance team takes the keys.", icon: Shovel },
   { step: "05", title: "Aftercare", desc: "Hector's crew's maintenance route picks up where the install ends. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands. Most of our work is repeat clients.", icon: Heart },
 ];
 
@@ -453,7 +453,7 @@ const seasonalData = [
     accent: "#6b8a96",        // cool slate-blue
     bg: "#dde6ea",            // frost-gray
     icon: Snowflake,
-    tasks: ["Structural pruning", "Wall & hardscape repairs", "Concept design for spring", "Lighting installs"],
+    tasks: ["Structural pruning", "Wall & hardscape repairs", "Concept design for spring", "Drainage & grading"],
   },
 ];
 
@@ -546,9 +546,9 @@ const reviews: Review[] = [
 const comparisonRows = [
   { feature: "In-house design, hardscape & planting", us: true, them: false },
   { feature: "Engineered retaining walls", us: true, them: "Sometimes" },
-  { feature: "Water feature design & install", us: true, them: false },
+  { feature: "Sod, grading & drainage on the same crew", us: true, them: "Sometimes" },
   { feature: "Native & climate-adapted plantings", us: true, them: "Limited" },
-  { feature: "Low-voltage LED lighting design", us: true, them: false },
+  { feature: "Irrigation design & install", us: true, them: false },
   { feature: "Same-owner continuity since 2018", us: true, them: false },
   { feature: "Aftercare on installs we built", us: true, them: "Varies" },
 ];
@@ -843,7 +843,7 @@ export default function HectorLandscapingLandscapingPage() {
                   "Everything in Full Care",
                   "On-call repairs & touch-ups",
                   "Seasonal redesign & replanting",
-                  "Lighting maintenance",
+                  "Drainage & irrigation tune-ups",
                   "Direct line to Hector",
                 ],
                 accent: EARTH_DARK,
@@ -920,7 +920,7 @@ export default function HectorLandscapingLandscapingPage() {
                 <WordReveal text="Every Discipline In-House" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md mb-8">
-                Hector Landscaping runs design, hardscape, planting, irrigation, and lighting under one crew. Nothing falls between trades, and nothing waits on a sub. Click any service to learn more.
+                Hector Landscaping runs design, hardscape, planting, irrigation, and sod work under one crew. Nothing falls between trades, and nothing waits on a sub. Click any service to learn more.
               </p>
               <div className="hidden lg:block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-white/8 bg-white/[0.07]">
@@ -1001,7 +1001,7 @@ export default function HectorLandscapingLandscapingPage() {
             {[
               { icon: Certificate, title: "Same Family Since 2018", desc: "Hector and Hector's wife — same standard, same crew style, the whole way through. Most of our work is repeat clients on their next phase." },
               { icon: PaintBrush, title: "Design You See First", desc: "A concept and planting plan with materials and scope, before we break ground. The install runs from the same drawing." },
-              { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and water features sized for a Pacific Northwest rainy season — not for a finish photograph." },
+              { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and stone work sized for a Pacific Northwest rainy season — not for a finish photograph." },
               { icon: Recycle, title: "Climate-Smart First", desc: "PNW natives and adapted species default. Lower water, lower maintenance, plants that make it past their second winter." },
             ].map((v, i) => (
               <motion.div key={i} variants={fadeUp}>
@@ -1119,15 +1119,23 @@ export default function HectorLandscapingLandscapingPage() {
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
               <WordReveal text="From the Archive" />
             </h2>
-            <p className="mt-6 max-w-2xl mx-auto text-slate-400 leading-relaxed">A representative slice of the archive — residential installations, hardscape, water features, and lighting — drawn from work delivered across the two-county footprint.</p>
+            <p className="mt-6 max-w-2xl mx-auto text-slate-400 leading-relaxed">A representative slice of the archive — residential installations, hardscape, retaining walls, and full-yard work — drawn across the two-county footprint.</p>
           </div>
-          <motion.div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+          {/* Layout was a 3-column CSS-columns masonry tuned for 6 cards;
+              after the Water Features + Night Lights cards came out
+              (no real Hector photos to back them), 4 cards in a 3-col
+              masonry left a visible gap on desktop. Switched to a clean
+              CSS grid: 1 col mobile / 2 cols tablet / 2 cols desktop —
+              4 cards fill a 2×2 grid evenly. Heights kept as a tasteful
+              row-rhythm (small / tall / tall / small) so the grid still
+              has the editorial feel without the masonry math. */}
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {projects.map((p, i) => {
-              const heights = ["h-[280px]", "h-[340px]", "h-[260px]", "h-[320px]", "h-[290px]", "h-[350px]"];
+              const heights = ["h-[300px]", "h-[380px]", "h-[380px]", "h-[300px]"];
               return (
-                <motion.div key={i} variants={fadeUp} className="break-inside-avoid">
+                <motion.div key={i} variants={fadeUp}>
                   <div className="group relative rounded-2xl overflow-hidden border border-white/15">
-                    <img src={p.image} alt={p.title} className={`w-full ${heights[i]} object-cover transition-transform duration-700 group-hover:scale-105`} />
+                    <img src={p.image} alt={p.title} className={`w-full ${heights[i] ?? "h-[320px]"} object-cover transition-transform duration-700 group-hover:scale-105`} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <h3 className="text-white font-semibold text-lg">{p.title}</h3>
@@ -1230,8 +1238,8 @@ export default function HectorLandscapingLandscapingPage() {
                 {[
                   { label: "Full-Yard Install", color: PRIMARY_LIGHT, desc: "Design, plant, hardscape — start to finish" },
                   { label: "Hardscape Project", color: EARTH, desc: "Patio, walkway, retaining wall" },
-                  { label: "Water Feature", color: PRIMARY, desc: "Pond, waterfall, naturalistic stream" },
-                  { label: "Lighting & Aftercare", color: EARTH_DARK, desc: "Night lighting or maintenance on existing" },
+                  { label: "Sod & New Lawn", color: PRIMARY, desc: "Grade, amend soil, lay clean-edge sod" },
+                  { label: "Plantings & Aftercare", color: EARTH_DARK, desc: "PNW natives, beds, ongoing maintenance" },
                 ].map((opt, i) => (
                   <button
                     key={i}
