@@ -32,6 +32,13 @@ export type FunnelStepLite = {
   // Optional voicemail transcript — when not present we synthesize from
   // the label so the read-only transcript block always renders something.
   transcript?: string;
+  /** Cumulative reach % for this step — % of the original 100% who
+   *  reach here. MUST be monotonically non-increasing across steps
+   *  per CLAUDE.md Rule 74. When omitted, the modal falls back to
+   *  REACH_BASELINE_BY_INDEX (industry-typical attrition curve, also
+   *  monotonic). The reach is rendered as a horizontal bar on every
+   *  step row — Ben's locked Funnels-tab requirement (2026-05-06). */
+  cumulativeReachPct?: number;
 };
 
 export type FunnelDefLite = {
@@ -345,35 +352,53 @@ export default function FunnelVisualModal({
           <div className="flex flex-col items-center">
             <FunnelEntryNode enrolled={enrolled} accentText={funnel.accentText} />
 
-            {mergedSteps.map((step, i) => {
-              const reachPct = Math.round(
-                (REACH_BASELINE_BY_INDEX[i] ?? 0.1) * 100,
+            {(() => {
+              // Compute the per-step reach sequence ONCE — prefer real
+              // per-step data when funnel.steps carry cumulativeReachPct,
+              // otherwise fall back to the industry-typical baseline curve.
+              // ALWAYS run through monotonizeReach() per Rule 74.
+              const rawReach = mergedSteps.map(
+                (s, i) =>
+                  s.cumulativeReachPct ??
+                  (REACH_BASELINE_BY_INDEX[i] ?? 0.1) * 100,
               );
-              const widthPct = 92 - i * 9; // taper visually
-              const reachCount = Math.round(
-                enrolled * (REACH_BASELINE_BY_INDEX[i] ?? 0.1),
+              const reachSeq = monotonizeReach(rawReach);
+              const hasMeasuredData = mergedSteps.some(
+                (s) => s.cumulativeReachPct !== undefined,
               );
-              const isOpen = openStep === i;
-              const isEdited = !!edits[i];
-              return (
-                <FunnelStepRow
-                  key={i}
-                  index={i}
-                  step={step}
-                  widthPct={widthPct}
-                  reachPct={reachPct}
-                  reachCount={reachCount}
-                  enrolled={enrolled}
-                  accentText={funnel.accentText}
-                  editable={editable}
-                  isOpen={isOpen}
-                  isEdited={isEdited}
-                  onToggleOpen={() => setOpenStep(isOpen ? null : i)}
-                  onUpdate={(patch) => updateStep(i, patch)}
-                  onReset={() => resetStep(i)}
-                />
-              );
-            })}
+              return mergedSteps.map((step, i) => {
+                const reachPct = Math.round(reachSeq[i] ?? 0);
+                const widthPct = 92 - i * 9; // taper visually
+                const reachCount = Math.round(enrolled * (reachSeq[i] ?? 0) / 100);
+                // Drop-off from previous step (positive number = pp dropped).
+                const dropPct =
+                  i === 0
+                    ? 0
+                    : Math.max(0, Math.round((reachSeq[i - 1] ?? 0) - (reachSeq[i] ?? 0)));
+                const isOpen = openStep === i;
+                const isEdited = !!edits[i];
+                return (
+                  <FunnelStepRow
+                    key={i}
+                    index={i}
+                    step={step}
+                    widthPct={widthPct}
+                    reachPct={reachPct}
+                    reachCount={reachCount}
+                    dropPct={dropPct}
+                    isMeasured={hasMeasuredData}
+                    enrolled={enrolled}
+                    accentText={funnel.accentText}
+                    editable={editable}
+                    isOpen={isOpen}
+                    isEdited={isEdited}
+                    onToggleOpen={() => setOpenStep(isOpen ? null : i)}
+                    onUpdate={(patch) => updateStep(i, patch)}
+                    onReset={() => resetStep(i)}
+                  />
+                );
+              });
+            })()}
 
             {/* Conversion exit */}
             <div className="mt-2 mb-1 text-slate-600 text-xl">↓</div>
@@ -388,13 +413,17 @@ export default function FunnelVisualModal({
           </div>
         </div>
 
-        {/* Footnote on reach math */}
+        {/* Footnote on reach math — every funnel surface SHIPS the
+            per-step bars per Rule 74. When real measurements aren't
+            wired yet we render the baseline curve and label it as
+            estimate so prospects can tell what's measured. */}
         <div className="px-6 pb-4">
           <p className="text-[11px] text-slate-500 leading-relaxed italic">
-            Reach percentages at each step are industry-typical baselines
-            (email open + SMS read curves), not measured per-client numbers.
-            Real send-by-send reach lands in the Activity tab once the funnel
-            is running.
+            Each step's bar shows cumulative reach — % of the original 100%
+            who make it that far. Bars only scale down. Numbers tagged
+            <span className="not-italic font-mono mx-1 px-1 rounded bg-slate-800/60 text-slate-400">est. baseline</span>
+            use industry-typical attrition; once your funnel has real
+            send-by-send data, those flip to measured.
           </p>
         </div>
 
@@ -472,6 +501,8 @@ function FunnelStepRow({
   widthPct,
   reachPct,
   reachCount,
+  dropPct,
+  isMeasured,
   accentText,
   editable,
   isOpen,
@@ -485,6 +516,13 @@ function FunnelStepRow({
   widthPct: number;
   reachPct: number;
   reachCount: number;
+  /** Percentage-points dropped from previous step (0 for step 1). */
+  dropPct: number;
+  /** True when reach data came from real per-step measurements
+   *  (cumulativeReachPct on funnel.steps), false when falling back
+   *  to the industry-typical baseline curve. Drives the footer label
+   *  on the bar so prospects can tell what's measured vs estimated. */
+  isMeasured: boolean;
   enrolled: number;
   accentText: string;
   editable: boolean;
@@ -568,10 +606,49 @@ function FunnelStepRow({
               <span className="text-white font-bold tabular-nums">
                 ~{reachCount}
               </span>{" "}
-              reach · {reachPct}%
+              leads
             </div>
           </div>
           <p className="text-xs text-slate-300 leading-snug">{step.label}</p>
+
+          {/* Cumulative-reach bar — REQUIRED on every step row per
+              CLAUDE.md Rule 74. Shows what % of the original 100%
+              reaches this step, with a yellow→orange gradient fill.
+              Bars are guaranteed monotonic (data went through
+              monotonizeReach upstream) so they only ever scale down.
+              Drop-off pill on the right shows pp lost from previous
+              step — the visual answer to "where am I losing people?". */}
+          <div className="mt-2.5">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="text-[9px] uppercase tracking-[0.16em] text-slate-500 font-semibold">
+                {index === 0 ? "Cumulative reach" : "Reach"}
+                {!isMeasured && (
+                  <span className="ml-1 normal-case tracking-normal text-slate-600 italic font-normal">
+                    · est. baseline
+                  </span>
+                )}
+              </span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {dropPct > 0 && (
+                  <span className="text-[10px] tabular-nums font-bold text-rose-300/90 bg-rose-500/[0.08] border border-rose-500/20 px-1.5 py-0.5 rounded">
+                    −{dropPct} pp
+                  </span>
+                )}
+                <span className="text-xs font-black tabular-nums text-white">
+                  {reachPct}%
+                </span>
+              </div>
+            </div>
+            <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+              <div
+                className="h-full rounded-full transition-[width] duration-300"
+                style={{
+                  width: `${Math.max(0, Math.min(100, reachPct))}%`,
+                  background: "linear-gradient(90deg, #facc15 0%, #f97316 100%)",
+                }}
+              />
+            </div>
+          </div>
         </button>
 
         {/* Inline editor — opens on click when editable */}

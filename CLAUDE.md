@@ -7664,7 +7664,7 @@ frozen — they evolve in lockstep with Ben's evolving operating taste.
 
 ---
 
-### Locked-In Rule 74 — Funnel Stages Are Monotonic (NON-NEGOTIABLE)
+### Locked-In Rule 74 — Funnel Stages Are Monotonic + Bar Visualization REQUIRED (NON-NEGOTIABLE)
 
 Established 2026-05-06 by Ben after the Meyer mock-backend Funnels tab
 shipped a per-step conversion bar that visually went 100 → 38 → 81 →
@@ -7764,3 +7764,62 @@ a separately-named field. Never let one field carry both meanings.
 - Reference this rule in code comments where cumulative-reach data
   is defined or rendered, so the next agent sees the constraint
   inline
+
+**Bar visualization is REQUIRED on every funnel surface (locked
+2026-05-06).** Beyond the monotonic-data constraint above, every
+funnel rendering MUST display the per-step cumulative reach as a
+horizontal bar — not optional. Ben's catch: the tapering vertical
+funnel boxes alone aren't dense enough; prospects need to see at a
+glance "where am I losing people, and how much?" The bars answer
+that.
+
+**Required UI on every step row:**
+
+1. **Cumulative-reach bar** — full-width below the step label,
+   yellow→orange gradient fill (`linear-gradient(90deg, #facc15 0%,
+   #f97316 100%)`), height ≈ 6px (`h-1.5`), track in `bg-white/[0.06]`.
+   Width = the step's cumulative reach %. Bars must monotonically
+   shrink left-to-right across steps (data is already monotonic per
+   the rule above; defensive `monotonizeReach()` is the backstop).
+2. **Reach % number** — bold, tabular-nums, white text, right-aligned
+   above the bar (e.g. `25%`).
+3. **Drop-off pill** — when step N's reach is less than step N-1's,
+   show a `−{X} pp` pill in rose
+   (`text-rose-300/90 bg-rose-500/[0.08] border-rose-500/20`) next to
+   the % number. Step 1 has no drop-off pill (it's the entry point).
+4. **Measured-vs-baseline label** — small italic note below the bar.
+   `Cumulative reach` when `step.cumulativeReachPct` came from
+   measurement; `Cumulative reach · est. baseline` when the surface
+   fell back to `REACH_BASELINE_BY_INDEX`. Lets prospects tell what's
+   real per-client data vs industry-typical estimate.
+
+**Reference implementation:** `FunnelStepRow` inside
+`src/components/portal/FunnelVisualModal.tsx`. The reach math (prefer
+real `cumulativeReachPct`, else baseline curve, ALWAYS via
+`monotonizeReach()`) lives in the IIFE wrapping the steps map in the
+parent component. Don't duplicate this logic — reuse the modal.
+
+**Forbidden:**
+
+- Shipping a funnel-surface step row WITHOUT the cumulative-reach bar
+- Showing reach % only as text without the visual bar
+- Inverting the bar (filling from the right, growing instead of
+  shrinking) for any "creative" reason
+- Using a non-monotonic gradient that visually implies an upward
+  bump between steps
+- Omitting the drop-off pill on steps where reach actually dropped
+  (it's the highest-signal element on the row — that's where the
+  business problem is)
+
+**Cascades:**
+
+- Per-client owner portal Funnels tab (already shipped via
+  `FunnelVisualModal` — Zenith + Meyer mock both inherit)
+- Future BlueJays admin funnel surfaces (e.g.
+  `/dashboard/clients/[slug]/funnels` if/when it ships) MUST use the
+  shared modal, not roll their own renderer
+- Mock-backend installs (any new industry config) inherit
+  automatically because they go through the shared modal
+- AI Package Playbook + Mock Backend Playbook updated in lockstep
+
+

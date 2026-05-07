@@ -1297,6 +1297,16 @@ edge runtime. Lockout: 5 failed attempts → 15-min lock.
     (human-in-the-loop) — Ben implements the change in code + redeploys
     after eyeballing the request, mirroring the rest of the portal's
     "every owner-driven mutation goes through Ben" pattern
+  - **Per-step cumulative-reach bar REQUIRED** on every step row
+    (CLAUDE.md Rule 74). Yellow→orange gradient fill, h-1.5 height,
+    width = step's cumulative reach %. Bars only ever scale DOWN
+    across steps — defensive `monotonizeReach()` is the backstop.
+    Drop-off pill (`−{X} pp`, rose) shows pp lost from the previous
+    step. Reach % is bold tabular-nums in white text above the bar.
+  - **`cumulativeReachPct` on `FunnelStepLite`** is the field clients
+    populate when they have measured per-step reach. Until then the
+    modal falls back to the industry-typical baseline curve and
+    labels it "est. baseline" so prospects can tell what's measured.
   - **The shared modal is the standard.** Don't inline a custom
     funnel editor per client. Every new client funnels-tab uses
     `FunnelVisualModal` + `FUNNELS_BY_SLUG` (same path Zenith + Meyer

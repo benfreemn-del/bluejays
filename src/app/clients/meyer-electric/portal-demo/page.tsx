@@ -2097,6 +2097,10 @@ function FunnelsTab() {
           day: s.day_offset,
           channel: mapChannel(s.channel),
           label: s.label,
+          // Mock-data conversion_pct is already cumulative-monotonic
+          // (Rule 74). Pass through so the modal renders measured bars
+          // instead of the industry-typical baseline curve.
+          cumulativeReachPct: s.conversion_pct,
         })),
       }
     : null;
