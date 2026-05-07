@@ -1417,9 +1417,58 @@ function MapTab() {
   const [focusedTown, setFocusedTown] = useState<string | null>(null);
   const [zoomBounds, setZoomBounds] = useState<L.LatLngBounds | null>(null);
 
+  // Category dot-layer toggles. Default: leads + customers + dealers
+  // all ON so the map opens busy and Ben can toggle off categories
+  // to highlight one segment during the sales walkthrough.
+  const [showLeads, setShowLeads] = useState(true);
+  const [showCustomers, setShowCustomers] = useState(true);
+  const [showDealers, setShowDealers] = useState(true);
+
   const totalActive = useMemo(() => PENINSULA_TOWNS.reduce((s, t) => s + t.active_leads, 0), []);
   const totalClosed = useMemo(() => PENINSULA_TOWNS.reduce((s, t) => s + t.closed_jobs_ytd, 0), []);
   const hotTowns = useMemo(() => PENINSULA_TOWNS.filter((t) => t.score >= 70).length, []);
+
+  // Place each lead/customer/affiliate at its resolved peninsula
+  // town with stable per-record jitter. Computed once per mount —
+  // datasets are deterministic + already sorted upstream.
+  const placedLeads = useMemo(
+    () =>
+      MOCK_LEADS.flatMap((l) => {
+        const town = CITY_TO_TOWN.get(l.city.toLowerCase());
+        if (!town) return [];
+        const [lat, lng] = jitterLL(town, l.id, 0.85);
+        return [{ id: l.id, lat, lng, lead: l, town }];
+      }),
+    [],
+  );
+
+  const placedCustomers = useMemo(
+    () =>
+      MOCK_REPEAT_CUSTOMERS.flatMap((c) => {
+        const cityRaw = (c.location.split(",")[0] || "").trim();
+        const town = CITY_TO_TOWN.get(cityRaw.toLowerCase()) || findTownInString(c.location);
+        if (!town) return [];
+        const [lat, lng] = jitterLL(town, c.id, 0.6);
+        return [{ id: c.id, lat, lng, customer: c, town }];
+      }),
+    [],
+  );
+
+  const placedDealers = useMemo(
+    () =>
+      MOCK_AFFILIATES.flatMap((a) => {
+        // Affiliates have no city field — scan their company string
+        // for any peninsula town. Off-peninsula partners (Bellevue
+        // Tesla, etc.) get placed near Sequim HQ with a wide jitter
+        // to represent "reaches into the territory".
+        const town = findTownInString(a.company);
+        const isOffPeninsula = !town;
+        const anchor = town ?? PENINSULA_TOWNS[0];
+        const [lat, lng] = jitterLL(anchor, a.id, isOffPeninsula ? 1.6 : 0.7);
+        return [{ id: a.id, lat, lng, affiliate: a, town: anchor, offPeninsula: isOffPeninsula }];
+      }),
+    [],
+  );
 
   // Click takes precedence over hover for the focused detail panel.
   const focused =
@@ -1452,6 +1501,33 @@ function MapTab() {
         <StatCard label="Closed (YTD)" value={String(totalClosed)} sub="Jobs delivered" tone="emerald" />
         <StatCard label="Hot Towns" value={String(hotTowns)} sub="Score ≥ 70" tone="orange" />
         <StatCard label="Service Radius" value="50 mi" sub="From Sequim HQ" tone="slate" />
+      </div>
+
+      {/* Layer toggles — show/hide leads, customers, dealers. Counts in
+          parentheses reflect the placed dataset (records that resolved
+          to a peninsula town). Towns + service rings always on. */}
+      <div className="flex flex-wrap items-center gap-2 text-[12px]">
+        <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-500 mr-1">
+          Map layers
+        </span>
+        <LayerPill
+          on={showLeads}
+          onClick={() => setShowLeads((v) => !v)}
+          color="#60a5fa"
+          label={`Leads · ${placedLeads.length}`}
+        />
+        <LayerPill
+          on={showCustomers}
+          onClick={() => setShowCustomers((v) => !v)}
+          color={CUSTOMER_COLOR}
+          label={`Customers · ${placedCustomers.length}`}
+        />
+        <LayerPill
+          on={showDealers}
+          onClick={() => setShowDealers((v) => !v)}
+          color={AFFILIATE_COLOR}
+          label={`Dealers · ${placedDealers.length}`}
+        />
       </div>
 
       {/* THE MAP — Leaflet basemap (CartoDB dark) centered on Sequim
@@ -1543,6 +1619,109 @@ function MapTab() {
             </LeafletTooltip>
           </CircleMarker>
 
+          {/* Lead dots — colored by type, sized small (3px). Rendered
+              BEFORE town markers so towns layer on top + remain clickable. */}
+          {showLeads && placedLeads.map(({ id, lat, lng, lead }) => {
+            const color = LEAD_TYPE_COLOR[lead.type] || "#94a3b8";
+            return (
+              <CircleMarker
+                key={`lead-${id}`}
+                center={[lat, lng]}
+                radius={3}
+                pathOptions={{
+                  color,
+                  weight: 0.5,
+                  fillColor: color,
+                  fillOpacity: 0.7,
+                }}
+              >
+                <LeafletTooltip direction="top" offset={[0, -3]} opacity={0.95}>
+                  <div className="text-xs">
+                    <div className="font-bold" style={{ color }}>
+                      {lead.business_name || lead.contact_name}
+                    </div>
+                    <div className="text-slate-700">
+                      {LEAD_TYPE_LABEL[lead.type] || lead.type}
+                      <span className="mx-1.5 text-slate-400">·</span>
+                      <span>{lead.city}</span>
+                      <span className="mx-1.5 text-slate-400">·</span>
+                      <span className="font-bold">Score {lead.lead_score}</span>
+                    </div>
+                  </div>
+                </LeafletTooltip>
+              </CircleMarker>
+            );
+          })}
+
+          {/* Customer dots — emerald, slightly larger (5px) with white
+              border, ranks above leads but below towns. */}
+          {showCustomers && placedCustomers.map(({ id, lat, lng, customer }) => (
+            <CircleMarker
+              key={`cust-${id}`}
+              center={[lat, lng]}
+              radius={5}
+              pathOptions={{
+                color: "#fff",
+                weight: 1.2,
+                fillColor: CUSTOMER_COLOR,
+                fillOpacity: 0.9,
+              }}
+            >
+              <LeafletTooltip direction="top" offset={[0, -5]} opacity={0.95}>
+                <div className="text-xs">
+                  <div className="font-bold" style={{ color: CUSTOMER_COLOR }}>
+                    💼 {customer.business_name}
+                  </div>
+                  <div className="text-slate-700">
+                    {customer.industry.replace("_", " ")}
+                    <span className="mx-1.5 text-slate-400">·</span>
+                    <span>{customer.location}</span>
+                  </div>
+                  <div className="text-slate-500 mt-0.5">
+                    {customer.jobs_completed} jobs · {fmtMoney(customer.lifetime_value)} LTV
+                  </div>
+                </div>
+              </LeafletTooltip>
+            </CircleMarker>
+          ))}
+
+          {/* Dealer / affiliate dots — pink, square-ish via outlined ring,
+              4px. Off-peninsula partners get a dashed outline so the
+              eye reads them as "reaches in" rather than "based here". */}
+          {showDealers && placedDealers.map(({ id, lat, lng, affiliate, offPeninsula }) => (
+            <CircleMarker
+              key={`aff-${id}`}
+              center={[lat, lng]}
+              radius={4}
+              pathOptions={{
+                color: AFFILIATE_COLOR,
+                weight: offPeninsula ? 1 : 1.6,
+                fillColor: AFFILIATE_COLOR,
+                fillOpacity: offPeninsula ? 0.35 : 0.75,
+                dashArray: offPeninsula ? "2,2" : undefined,
+              }}
+            >
+              <LeafletTooltip direction="top" offset={[0, -4]} opacity={0.95}>
+                <div className="text-xs">
+                  <div className="font-bold" style={{ color: AFFILIATE_COLOR }}>
+                    🤝 {affiliate.name}
+                  </div>
+                  <div className="text-slate-700">
+                    {affiliate.company}
+                  </div>
+                  <div className="text-slate-500 mt-0.5">
+                    {affiliate.category.replace(/_/g, " ")}
+                    <span className="mx-1.5 text-slate-400">·</span>
+                    <span className="font-bold">{affiliate.referrals_lifetime}</span> referrals
+                    {offPeninsula && (
+                      <span className="ml-1.5 text-amber-700">· off-peninsula</span>
+                    )}
+                  </div>
+                </div>
+              </LeafletTooltip>
+            </CircleMarker>
+          ))}
+
           {/* Town markers — sized + colored by lead score */}
           {PENINSULA_TOWNS.filter((t) => !t.is_hq).map((town) => {
             const r = 4 + (town.score / 100) * 9; // 4-13 px radius
@@ -1620,6 +1799,25 @@ function MapTab() {
               <span className="w-2.5 h-2.5 rounded-full" style={{ background: ACCENT, boxShadow: `0 0 0 1px ${ACCENT}` }} />
               ★ HQ
             </span>
+            <span className="w-px h-3 bg-white/15 mx-0.5" />
+            {showLeads && (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full" style={{ background: "#60a5fa" }} />
+                Lead
+              </span>
+            )}
+            {showCustomers && (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white" style={{ background: CUSTOMER_COLOR }} />
+                Customer
+              </span>
+            )}
+            {showDealers && (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: AFFILIATE_COLOR }} />
+                Dealer
+              </span>
+            )}
           </div>
         </div>
 
@@ -1646,10 +1844,44 @@ function MapTab() {
             <LegendRow color={scoreColor(50)} label="Tepid (40-59)" desc="Quarterly drip" />
             <LegendRow color={scoreColor(20)} label="Cold (< 40)" desc="Affiliate-source only" />
           </div>
+          <div className="mt-4 pt-4 border-t border-white/8">
+            <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-slate-500 mb-3">
+              Categories
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-4 rounded-full ring-1 ring-white shrink-0" style={{ background: CUSTOMER_COLOR }} />
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-white">Repeat Customer ({placedCustomers.length})</div>
+                  <div className="text-[11px] text-slate-500 truncate">Active commercial accounts · multi-job LTV</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-4 rounded-full shrink-0" style={{ background: AFFILIATE_COLOR }} />
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-white">Dealer / Referral Partner ({placedDealers.length})</div>
+                  <div className="text-[11px] text-slate-500 truncate">Solar, Tesla, HVAC, GC, real-estate sources</div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-white/8">
+              <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-slate-500 mb-2">
+                Lead types ({placedLeads.length})
+              </div>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px]">
+                {(["residential", "commercial", "property_mgmt", "general_contractor", "industrial"] as const).map((t) => (
+                  <div key={t} className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: LEAD_TYPE_COLOR[t] }} />
+                    <span className="text-slate-300">{LEAD_TYPE_LABEL[t]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           <div className="mt-4 pt-4 border-t border-white/8 space-y-1.5 text-[11px] text-slate-500">
             <div>★ = Sequim HQ (Meyer Electric)</div>
             <div>Dashed circles = 10 / 25 / 50 mile service rings</div>
-            <div>Dot size + color = lead density</div>
+            <div>Dot size + color = lead density / category</div>
           </div>
         </div>
         {/* Focused town panel */}
@@ -1720,6 +1952,38 @@ function LegendRow({ color, label, desc }: { color: string; label: string; desc:
         <div className="text-[11px] text-slate-500 truncate">{desc}</div>
       </div>
     </div>
+  );
+}
+
+function LayerPill({
+  on,
+  onClick,
+  color,
+  label,
+}: {
+  on: boolean;
+  onClick: () => void;
+  color: string;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-2.5 py-1 rounded-full border text-[12px] font-semibold transition flex items-center gap-1.5 ${
+        on
+          ? "bg-white/[0.06] text-white border-white/15"
+          : "bg-transparent text-slate-500 border-white/8 line-through"
+      }`}
+    >
+      <span
+        className="w-2 h-2 rounded-full shrink-0"
+        style={{
+          background: on ? color : "transparent",
+          border: `1.5px solid ${color}`,
+        }}
+      />
+      {label}
+    </button>
   );
 }
 
