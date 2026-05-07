@@ -1,5 +1,7 @@
 "use client";
 
+import AIBotFlowChart from "./AIBotFlowChart";
+
 /**
  * AISkillsTab — universal owner-portal panel showing every AI capability
  * the BlueJays AI Marketing System runs on the tenant's behalf.
@@ -21,9 +23,9 @@
  * a future sprint).
  */
 
-type Status = "active" | "available" | "coming" | "trainable";
+export type Status = "active" | "available" | "coming" | "trainable";
 
-type Capability = {
+export type Capability = {
   emoji: string;
   title: string;
   detail: string;
@@ -35,7 +37,15 @@ type Capability = {
   trap?: string;
 };
 
-const CATEGORIES: { id: string; label: string; emoji: string; subtitle: string; capabilities: Capability[] }[] = [
+export type Category = {
+  id: string;
+  label: string;
+  emoji: string;
+  subtitle: string;
+  capabilities: Capability[];
+};
+
+export const CATEGORIES: Category[] = [
   {
     id: "lead-acquisition",
     label: "Lead acquisition",
@@ -356,6 +366,14 @@ export default function AISkillsTab({
 
   return (
     <div className="space-y-6">
+      {/* VISUAL FLOW CHART — added 2026-05-07. Brain → 5 branches →
+          per-bot leaves with live/locked status. Mirrors the internal
+          /dashboard/ai-bots layout but tightened for owner use; click
+          any node to surface the full description in an inline drawer.
+          Reads from the same CATEGORIES + statusFor() this file already
+          exports, so the visual + the detailed list never drift. */}
+      <AIBotFlowChart slug={slug} />
+
       {/* HEADER */}
       <div className="rounded-2xl bg-gradient-to-br from-violet-950/40 via-violet-900/15 to-slate-900/60 border border-violet-500/20 p-6">
         <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -514,7 +532,7 @@ export default function AISkillsTab({
   );
 }
 
-function statusFor(cap: Capability, slug: string): Status {
+export function statusFor(cap: Capability, slug: string): Status {
   const s = cap.status as Record<string, Status>;
   return s[slug] ?? s.default ?? "available";
 }
