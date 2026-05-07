@@ -35,6 +35,7 @@ import { getShortPreviewUrl } from "./short-urls";
 import { getEmailHistory } from "./email-sender";
 import { getSmsHistory } from "./sms";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { loadVoiceCorpus } from "./voice-corpus";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
@@ -123,8 +124,22 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
     // The system prompt (agent personality, objection scripts, rules) is identical
     // across all prospects — caching saves ~90% on input tokens
     const systemPromptEnd = prompt.indexOf("PROSPECT CONTEXT:");
-    const systemPart = systemPromptEnd > 0 ? prompt.substring(0, systemPromptEnd).trim() : "";
+    let systemPart = systemPromptEnd > 0 ? prompt.substring(0, systemPromptEnd).trim() : "";
     const userPart = systemPromptEnd > 0 ? prompt.substring(systemPromptEnd).trim() : prompt;
+
+    // Rule 76 — inject Ben-voice corpus excerpts at the TOP of the
+    // cached system segment. Reply drafter pulls `replies` (paired
+    // turns) + `sales-call-snippets` (spoken voice) + `voice-rules`
+    // (distilled style guide). When the corpus files are still
+    // placeholders (today's state), `hasContent` is false and we skip
+    // injection entirely — zero cache-key drift, zero behavior change
+    // until Ben pastes real content.
+    const corpus = loadVoiceCorpus({
+      types: ["replies", "sales-call-snippets", "voice-rules"],
+    });
+    if (corpus.hasContent) {
+      systemPart = `${corpus.excerpts}\n\n---\n\n${systemPart}`;
+    }
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
