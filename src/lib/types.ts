@@ -165,6 +165,27 @@ export interface Prospect {
    *                See src/app/p/[code]/page.tsx for the short-URL redirect behaviour
    *                and CLAUDE.md "Custom Pricing Tier Rules" for the full spec. */
   pricingTier?: "standard" | "free" | "custom" | "fullsystem";
+  /** Pipeline-stage tracker for /dashboard/pipeline kanban.
+   *
+   *  Two tracks (track inferred from pricingTier):
+   *    Website ($997, pricingTier !== 'fullsystem')
+   *      1 = preview site created
+   *      2 = meeting scheduled
+   *      3 = bought + paid
+   *      4 = product delivered
+   *
+   *    $10K AI System (pricingTier === 'fullsystem')
+   *      1 = needs mockup
+   *      2 = mockup done
+   *      3 = meeting completed
+   *      4 = purchased — needs delivery
+   *      5 = delivered, hands off
+   *      6 = delivered + still managing $500/mo
+   *
+   *  NULL/undefined = not on the pipeline board yet (inbound triage).
+   *  /dashboard/pipeline only renders prospects where this is set. */
+  pipelineStage?: number;
+  pipelineStageUpdatedAt?: string;
   /** For pricing_tier=custom prospects only: absolute URL of the real live site
    *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
    *  rendering the template preview. Ignored for non-custom tiers. */

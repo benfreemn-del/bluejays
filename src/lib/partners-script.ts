@@ -571,6 +571,7 @@ export type MadieCallScript = {
   previewFrame: ScriptSection;
   discovery: ScriptSection;
   websitePitch: ScriptSection;
+  agencyReplacementHook: ScriptSection;
   backendPivot: ScriptSection;
   backendPitch: ScriptSection;
   scarcityClose: ScriptSection;
@@ -753,6 +754,24 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       "If they say HOW MUCH → howMuch objection (don't quote during the pitch).",
       "If they YES on a time → BOOK THE CALL tab.",
       "If they hesitate → BACKEND PIVOT tab (try the backend angle as the second hook).",
+    ],
+  },
+
+  agencyReplacementHook: {
+    id: "agencyReplacementHook",
+    title: "Agency-replacement hook (high-margin categories)",
+    goal: "Two short qualifying questions to drop in mid-discovery when the prospect's category is one that typically PAYS for a marketing agency (chiropractic, dental, law-firm, real-estate, accounting, insurance, medical, fitness, physical-therapy, interior-design, photography). Both questions are kill-shots — if they say YES to either, pivot straight to backendPitch ($9,700 + $500-1k/mo, $1k commission).",
+    lines: [
+      "Have you ever thought about replacing your marketing agency permanently with AI?",
+      "[pause four counts]",
+      "Getting rid of that monthly payment?",
+    ],
+    callerNotes: [
+      "★ TWO QUESTIONS, FOUR-COUNT PAUSE BETWEEN. Don't run them together. The first is a thought-experiment — opens the door. The second is the gut-punch — names the pain (the bill that arrives every single month).",
+      "★ ONLY use this hook on categories that actually pay agencies — see the goal field. For trades (plumber, electrician, locksmith, towing) the hook falls flat because they don't have an agency to replace.",
+      "★ If they say 'yes' / 'I've thought about it' / 'tell me more' → straight to backendPitch tab.",
+      "★ If they say 'we don't have an agency' → fall through to websitePitch + the standard discovery flow. They're a $997 lead, not a $9,700 lead.",
+      "★ If they say 'no, I love my agency' → don't push. 'Cool, just had to ask. Let's keep going.' Move on. Hard-pushing here burns the call.",
     ],
   },
 
