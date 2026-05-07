@@ -426,6 +426,41 @@ const CATEGORY_VOICE: Record<Category, CategoryVoice> = {
     tagline: (b) => `${b} — energy healing for mind, body & soul.`,
     aboutFill: (a) => `We guide ${a} clients back to their true being through Usui Reiki, sound therapy, and crystal healing — gentle, grounded, deeply personal sessions.`,
   },
+  // Manufacturer slugs — generic per-vertical fills until each mfg category
+  // gets its own bespoke template. Pre-existing tech debt addressed alongside
+  // the indie-author addition (2026-05-07) since the same Record-completeness
+  // check covers them.
+  "mfg-ag-equipment": {
+    tagline: (b) => `${b} builds the parts farmers actually trust on the job.`,
+    aboutFill: () => `We design, build, and stand behind ag-equipment parts for the operators who put them to work every season.`,
+  },
+  "mfg-sports-equipment": {
+    tagline: (b) => `${b} makes the gear serious athletes train with.`,
+    aboutFill: () => `We build sports equipment for the players, coaches, and clubs who can't afford a missed rep.`,
+  },
+  "mfg-apparel-kids": {
+    tagline: (b) => `${b} dresses kids in pieces parents are proud to put them in.`,
+    aboutFill: () => `We design and ship kids' apparel that holds up to actual childhood — playgrounds, paint, growth spurts, and all.`,
+  },
+  "mfg-auto-parts": {
+    tagline: (b) => `${b} builds aftermarket parts that fit, last, and don't lie about it.`,
+    aboutFill: () => `We engineer auto and moto parts for the builders who measure twice, fit once, and never warranty a part they wouldn't run themselves.`,
+  },
+  "mfg-outdoor-gear": {
+    tagline: (b) => `${b} makes outdoor gear for the people who actually go.`,
+    aboutFill: () => `We build outdoor and hunting gear for the people who use it past the parking lot — and tell us what to fix when it doesn't work.`,
+  },
+  "mfg-food-bev": {
+    tagline: (b) => `${b} crafts food and drink the way it should still be made.`,
+    aboutFill: () => `We make food and beverage products with sourcing, methods, and ingredients we'd serve at our own table.`,
+  },
+  // Indie-author / book-series sites — bespoke per author. Tagline + about
+  // fall back here if the specific author hasn't written their own (the
+  // bespoke /clients/[slug] page always does).
+  "indie-author": {
+    tagline: (b) => `${b} — a fantasy saga drawn from a kingdom that is still telling you who it is.`,
+    aboutFill: () => `An indie author writing the kind of fantasy that respects its readers — young, old, and everyone in between.`,
+  },
 };
 
 function getCategoryVoice(category: Category): CategoryVoice {

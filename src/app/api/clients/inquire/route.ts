@@ -118,6 +118,14 @@ const SLUG_CONFIG: Record<
     clientEmail: "hello@laserlakes.com",
     emoji: "🪵",
   },
+  bloodlines: {
+    // Bespoke author site for the Bloodlines fantasy series.
+    // Author email TBD — Ben to confirm Preston's preferred address;
+    // until then, leads route to the BlueJays inbox so nothing is lost.
+    businessLabel: "Bloodlines — Preston James Hunsaker",
+    clientEmail: "bluejaycontactme@gmail.com",
+    emoji: "🗡️",
+  },
 };
 
 // ── zenith-sports lead-context extraction ───────────────────────────────

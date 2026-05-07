@@ -60,7 +60,13 @@ export type Category =
   | "mfg-apparel-kids"
   | "mfg-auto-parts"
   | "mfg-outdoor-gear"
-  | "mfg-food-bev";
+  | "mfg-food-bev"
+  // Indie author / book-series ICP — first anchor: Preston James Hunsaker's
+  // Bloodlines fantasy series (Lineage of Fire + House of the Rose, 2026-05-07).
+  // Bespoke per author — auto-tagged manually_managed=true at scout intake until
+  // V2 templates exist for the slug, since each author site is a custom hand-built
+  // showcase (parchment reader, character roster, world map, magic-system explorer).
+  | "indie-author";
 
 export type SmsMethod = "twilio" | "vonage" | "mock";
 
@@ -411,4 +417,7 @@ export const CATEGORY_CONFIG: Record<
   "mfg-auto-parts":       { label: "Auto / Moto Parts Manufacturer",    accentColor: "#3b82f6", heroGradient: "linear-gradient(135deg, #0c1525 0%, #080f1a 100%)" },
   "mfg-outdoor-gear":     { label: "Outdoor / Hunting Gear Manufacturer", accentColor: "#65a30d", heroGradient: "linear-gradient(135deg, #131a0e 0%, #0c1209 100%)" },
   "mfg-food-bev":         { label: "Specialty Food / Bev Manufacturer", accentColor: "#c2703e", heroGradient: "linear-gradient(135deg, #1c1612 0%, #14100c 100%)" },
+  // Indie-author bespoke author/book-series sites — gold + crimson over
+  // near-black for the dark luxury fantasy/literary vibe.
+  "indie-author":         { label: "Indie Author / Book Series",       accentColor: "#d4a853", heroGradient: "linear-gradient(135deg, #1a1310 0%, #09090b 70%)" },
 };

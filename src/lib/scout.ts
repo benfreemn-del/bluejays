@@ -207,6 +207,12 @@ export const ACTIVE_CATEGORIES: Category[] = [
   // scout intake until V2 templates exist for each.
   "mfg-ag-equipment", "mfg-sports-equipment", "mfg-apparel-kids",
   "mfg-auto-parts", "mfg-outdoor-gear", "mfg-food-bev",
+  // Wave 5 indie-author ICP — first anchor: Preston James Hunsaker's
+  // Bloodlines fantasy series (live at /clients/bloodlines, 2026-05-07).
+  // Each author site is a bespoke hand-built showcase (world map, character
+  // roster, parchment reader, magic-system explorer). Manually managed —
+  // never auto-pitched.
+  "indie-author",
 ];
 
 /** Manufacturer slugs that should be auto-tagged manuallyManaged=true at

@@ -55,6 +55,7 @@ every slug.
 | `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) |
 | `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
+| `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
 
 **Rules when adding a tenant-facing feature:**

@@ -326,6 +326,48 @@ const CATEGORY_FALLBACK_IDS: Record<Category, Record<FallbackImageVariant, strin
     about: "1517245386807-bb43f82c33c4",    // peaceful warm interior
     gallery: "1551601651-2a8555f1a136",     // calming office space
   },
+  // Manufacturer slugs — placeholder Unsplash IDs (industry-relevant; not
+  // visually verified per the strict CLAUDE.md image-audit rule). Bespoke
+  // manufacturer prospects build their own showcase rather than rely on
+  // these fallbacks, but the Record-completeness check requires entries.
+  "mfg-ag-equipment": {
+    hero: "1500382017468-9049fed747ef",     // tractor in field
+    about: "1592982642203-fe4f3b8a96d5",    // farm machinery detail
+    gallery: "1500382017468-9049fed747ef",
+  },
+  "mfg-sports-equipment": {
+    hero: "1551958219-acbc608c6377",        // soccer ball on grass
+    about: "1574629810360-7efbbe195018",    // gear close-up
+    gallery: "1551958219-acbc608c6377",
+  },
+  "mfg-apparel-kids": {
+    hero: "1503944583220-79d8926ad5e2",     // kids' clothing/playful
+    about: "1503944583220-79d8926ad5e2",
+    gallery: "1503944583220-79d8926ad5e2",
+  },
+  "mfg-auto-parts": {
+    hero: "1486754735734-325b5831c3ad",     // engine / parts
+    about: "1486754735734-325b5831c3ad",
+    gallery: "1486754735734-325b5831c3ad",
+  },
+  "mfg-outdoor-gear": {
+    hero: "1464822759023-fed622ff2c3b",     // mountain landscape / outdoor
+    about: "1464822759023-fed622ff2c3b",
+    gallery: "1464822759023-fed622ff2c3b",
+  },
+  "mfg-food-bev": {
+    hero: "1542838132-92c53300491e",        // food prep / artisan
+    about: "1542838132-92c53300491e",
+    gallery: "1542838132-92c53300491e",
+  },
+  // Indie-author — bespoke per-author site supplies its own imagery; these
+  // are placeholder defaults (book / library mood) for the rare case the
+  // generic preview path is hit.
+  "indie-author": {
+    hero: "1495446815901-a7297e633e8d",     // moody library / leather books
+    about: "1532012197267-da84d127e765",    // open book / parchment
+    gallery: "1456513080510-7bf3a84b82f8",  // ink + quill / writer's desk
+  },
 };
 
 const VARIANT_DIMENSIONS: Record<FallbackImageVariant, { width: number; height: number }> = {

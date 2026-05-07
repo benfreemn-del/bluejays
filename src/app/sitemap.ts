@@ -45,6 +45,7 @@ const ACTIVE_CLIENT_SHOWCASES = [
   "zenith-sports",           // Soccer training balls · TEKKY brand ($10K AI System)
   "laser-lakes",             // Custom lake-map wood art
   "lcac",                    // Lewis County Autism Coalition
+  "bloodlines",              // Preston James Hunsaker · indie-author · Bloodlines fantasy series
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
