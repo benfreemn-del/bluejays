@@ -149,6 +149,72 @@ const LOCATIONS: Location[] = [
     y: 22,
     accent: "crimson",
   },
+  {
+    id: "stonewake-halls",
+    name: "Stonewake Halls",
+    region: "Masonry Quarter",
+    blurb:
+      "Beneath Annarose's east curtain, the masonry guilds keep their stonewake bonds in trust. The walls here remember every footstep that has ever crossed them — and a few that haven't, yet.",
+    emoji: "🪨",
+    x: 44,
+    y: 55,
+    accent: "gold",
+  },
+  {
+    id: "tideborn-wells",
+    name: "Tideborn Wells",
+    region: "Healers' Grove",
+    blurb:
+      "Spring-fed pools where the kingdom's tideborn-bonded healers train. Alice was nine when the water answered her here. The wells have been quieter ever since the Royal Guard started posting watchers.",
+    emoji: "💧",
+    x: 53,
+    y: 47,
+    accent: "blue",
+  },
+  {
+    id: "skyveil-crags",
+    name: "Skyveil Crags",
+    region: "Scout Outposts",
+    blurb:
+      "A wind-scoured shelf high above the Far Peaks where skyveil-bonded scouts train to hear without listening. Cadets who can't learn to stop hearing the world don't come back down.",
+    emoji: "🌬️",
+    x: 10,
+    y: 7,
+    accent: "blue",
+  },
+  {
+    id: "lumengarde-vault",
+    name: "Lumengarde Vault",
+    region: "Hidden Light",
+    blurb:
+      "Whispered to exist somewhere between the Wilted Rose's safe houses. A locked stone where a light-elleta is kept that illuminates the truth of any thing it shines on. Nobody alive admits to having seen it open.",
+    emoji: "🔆",
+    x: 32,
+    y: 52,
+    accent: "gold",
+  },
+  {
+    id: "pyrelle-reach",
+    name: "Pyrelle Reach",
+    region: "Sarv-e's Vigil",
+    blurb:
+      "A scorched basin in the deep west where the eldest pyrelle keeps a contract older than the kingdom. Sarv-e is said to walk the ridge at dusk. The contract is fraying.",
+    emoji: "🔥",
+    x: 6,
+    y: 42,
+    accent: "crimson",
+  },
+  {
+    id: "the-archives",
+    name: "The Archives",
+    region: "Scholar's Tower",
+    blurb:
+      "Rea's domain. A four-story tower at the edge of the palace grounds where every official history of Annarose is shelved — and where Rea quietly maps which parts of those histories are true.",
+    emoji: "📜",
+    x: 56,
+    y: 50,
+    accent: "gold",
+  },
 ];
 
 // ── Characters (interactive roster) ─────────────────────────────────
@@ -3887,6 +3953,149 @@ function WorldMapBlock() {
   const [active, setActive] = useState<string>("annarose");
   const activeLoc = LOCATIONS.find((l) => l.id === active) || LOCATIONS[0];
 
+  // ── Pan + zoom state ─────────────────────────────────────────
+  // The pan-area is the masked viewport; pan-content is the
+  // transformed inner div carrying the SVG + pin overlay together
+  // so they stay in lockstep through any drag/zoom.
+  const panAreaRef = useRef<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState(1);
+  const [tx, setTx] = useState(0);
+  const [ty, setTy] = useState(0);
+  const [isPanning, setIsPanning] = useState(false);
+  const dragRef = useRef<
+    | { startX: number; startY: number; baseTx: number; baseTy: number; pointerId: number; moved: boolean }
+    | null
+  >(null);
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchRef = useRef<{ startDist: number; startScale: number } | null>(null);
+
+  const SCALE_MIN = 1;
+  const SCALE_MAX = 4;
+
+  const clamp = useCallback((v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi), []);
+
+  const resetView = useCallback(() => {
+    setScale(1);
+    setTx(0);
+    setTy(0);
+  }, []);
+
+  // Wheel zoom — must register via addEventListener with passive:false
+  // so we can preventDefault and stop the page from scrolling under us.
+  useEffect(() => {
+    const el = panAreaRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setScale((prev) => {
+        const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+        const next = clamp(prev * factor, SCALE_MIN, SCALE_MAX);
+        if (next === SCALE_MIN) {
+          // Settle back to origin when fully zoomed out.
+          setTx(0);
+          setTy(0);
+        }
+        return next;
+      });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [clamp]);
+
+  // Auto-clear stale pan flag if the pointer is released outside the area.
+  useEffect(() => {
+    if (!isPanning) return;
+    const onUp = () => {
+      setIsPanning(false);
+      dragRef.current = null;
+      pointersRef.current.clear();
+      pinchRef.current = null;
+    };
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    return () => {
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+  }, [isPanning]);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Don't intercept clicks on the pin buttons — let them bubble
+    // through to the LOCATION onClick.
+    const target = e.target as HTMLElement;
+    if (target.closest("button")) return;
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointersRef.current.size === 2) {
+      const pts = Array.from(pointersRef.current.values());
+      const dx = pts[0].x - pts[1].x;
+      const dy = pts[0].y - pts[1].y;
+      pinchRef.current = { startDist: Math.hypot(dx, dy), startScale: scale };
+      dragRef.current = null;
+      return;
+    }
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseTx: tx,
+      baseTy: ty,
+      pointerId: e.pointerId,
+      moved: false,
+    };
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (pointersRef.current.has(e.pointerId)) {
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    // Pinch-to-zoom path
+    if (pointersRef.current.size === 2 && pinchRef.current) {
+      const pts = Array.from(pointersRef.current.values());
+      const dx = pts[0].x - pts[1].x;
+      const dy = pts[0].y - pts[1].y;
+      const dist = Math.hypot(dx, dy);
+      const next = clamp(
+        pinchRef.current.startScale * (dist / pinchRef.current.startDist),
+        SCALE_MIN,
+        SCALE_MAX,
+      );
+      setScale(next);
+      setIsPanning(true);
+      return;
+    }
+    // Drag-to-pan path
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== e.pointerId) return;
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+    drag.moved = true;
+    setIsPanning(true);
+    setTx(drag.baseTx + dx);
+    setTy(drag.baseTy + dy);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(e.pointerId);
+    if (pointersRef.current.size < 2) pinchRef.current = null;
+    if (pointersRef.current.size === 0) {
+      dragRef.current = null;
+      setIsPanning(false);
+    }
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("button")) return;
+    e.preventDefault();
+    if (scale > 1.01) {
+      resetView();
+    } else {
+      setScale(2);
+    }
+  };
+
+  const isZoomed = scale > 1.01 || Math.abs(tx) > 1 || Math.abs(ty) > 1;
+
   return (
     <section
       id="world"
@@ -3918,12 +4127,37 @@ function WorldMapBlock() {
               border: `2px solid #8b6914`,
             }}
           >
-            <svg
-              viewBox="0 0 100 75"
-              preserveAspectRatio="xMidYMid meet"
-              className="absolute inset-0 w-full h-full"
-              aria-hidden="true"
+            {/* Pan/zoom viewport — handles mouse drag + wheel zoom +
+                touch pinch. The pan-content child carries the SVG art
+                + pin overlay together so they translate/scale as one. */}
+            <div
+              ref={panAreaRef}
+              className={`bl-map-pan-area absolute inset-0 select-none ${isZoomed ? "bl-map-zoomed" : ""} ${isPanning ? "bl-map-panning" : ""}`}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onDoubleClick={handleDoubleClick}
+              style={{
+                touchAction: "none",
+                cursor: isPanning ? "grabbing" : "grab",
+              }}
             >
+              <div
+                className="bl-map-pan-content absolute inset-0"
+                style={{
+                  transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
+                  transformOrigin: "center center",
+                  transition: isPanning ? "none" : "transform 0.28s ease-out",
+                  willChange: "transform",
+                }}
+              >
+                <svg
+                  viewBox="0 0 100 75"
+                  preserveAspectRatio="xMidYMid meet"
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  aria-hidden="true"
+                >
               <defs>
                 {/* Reusable mountain peak symbol — single jagged
                     triangle with snow cap + hatched shading. */}
@@ -3950,6 +4184,94 @@ function WorldMapBlock() {
                 {/* Wave hatch — sea/edges suggestion. */}
                 <symbol id="bl-wave" viewBox="0 0 4 1" overflow="visible">
                   <path d="M 0 0.5 Q 1 0, 2 0.5 T 4 0.5" fill="none" stroke="#3a2817" strokeWidth="0.12" />
+                </symbol>
+
+                {/* Painted peak — denser Tolkien shading. Layered
+                    silhouette + sun-side highlight + shadow ravine
+                    + snow cap with flecks of moraine. */}
+                <symbol id="bl-peak-painted" viewBox="-3 -4 6 5" overflow="visible">
+                  <polygon points="-3 1 0 -4 3 1" fill="#241608" />
+                  <polygon points="-1.6 -0.6 0 -4 1.4 -1.4" fill="#3a2817" />
+                  <polygon points="-3 1 -1.4 -1.4 0 -2 0 1" fill="#1a0e08" opacity="0.55" />
+                  <polygon points="-1.4 -1.2 0 -4 1.4 -1.2 0.6 -1.5 0.2 -2.6 0 -2.4 -0.2 -2.6 -0.6 -1.5" fill="#fdfaf3" opacity="0.92" />
+                  <polygon points="0.4 -2.6 0.7 -3 0.5 -2.55" fill="#a89976" opacity="0.6" />
+                  <path d="M -2.2 0 L -1.4 0.6 M 1.4 0 L 2.2 0.6 M -0.6 -1 L 0 -0.4 M 1 -1.2 L 1.6 -0.5 M -1.8 0.4 L -1 0.9" stroke="#0d0703" strokeWidth="0.12" fill="none" />
+                </symbol>
+
+                {/* Painted tree — multi-layered pine with deep
+                    underbrush tone, midtone, light-side flecks. */}
+                <symbol id="bl-tree-painted" viewBox="-1 -2 2 2.5" overflow="visible">
+                  <polygon points="-0.7 0.2 0 -2 0.7 0.2" fill="#15240e" />
+                  <polygon points="-0.55 -0.2 0 -1.8 0.55 -0.2" fill="#22381a" />
+                  <polygon points="-0.4 -0.5 0 -1.5 0.4 -0.5" fill="#2f4a25" />
+                  <path d="M -0.18 -1 L 0.05 -1.5" stroke="#4d6b3e" strokeWidth="0.06" />
+                  <rect x="-0.1" y="0.2" width="0.2" height="0.3" fill="#2a1810" />
+                </symbol>
+
+                {/* Stone pillar — Stonewake Halls glyph. Rune-cut
+                    column with carved bands. */}
+                <symbol id="bl-pillar" viewBox="-1 -2 2 2.5" overflow="visible">
+                  <rect x="-0.5" y="-1.4" width="1" height="1.6" fill="#3a2817" />
+                  <rect x="-0.7" y="-1.6" width="1.4" height="0.25" fill="#3a2817" />
+                  <rect x="-0.7" y="0.2" width="1.4" height="0.25" fill="#3a2817" />
+                  <line x1="-0.5" y1="-1.05" x2="0.5" y2="-1.05" stroke="#1a0e08" strokeWidth="0.06" />
+                  <line x1="-0.5" y1="-0.55" x2="0.5" y2="-0.55" stroke="#1a0e08" strokeWidth="0.06" />
+                  <circle cx="0" cy="-0.8" r="0.13" fill="#7f1d1d" opacity="0.7" />
+                </symbol>
+
+                {/* Tideborn Wells — concentric ripples around a
+                    spring. Gold filament hints at elleta-bond. */}
+                <symbol id="bl-wells" viewBox="-1.4 -1.4 2.8 2.8" overflow="visible">
+                  <circle r="1.2" fill="#3a6586" opacity="0.18" />
+                  <circle r="1" fill="none" stroke="#3a6586" strokeWidth="0.08" />
+                  <circle r="0.7" fill="none" stroke="#3a6586" strokeWidth="0.08" />
+                  <circle r="0.4" fill="#5a8aab" />
+                  <circle r="0.18" fill="#fdfaf3" opacity="0.85" />
+                  <line x1="0.5" y1="-0.5" x2="1.1" y2="-1.1" stroke="#d4a853" strokeWidth="0.07" opacity="0.7" />
+                </symbol>
+
+                {/* Skyveil Crags — jagged shelf with curving wind
+                    streamers running across the face. */}
+                <symbol id="bl-crags" viewBox="-2 -2 4 3" overflow="visible">
+                  <polygon points="-1.8 0.6 -1 -1.4 -0.4 -0.4 0.2 -1.8 1 -0.6 1.8 0.6" fill="#241608" />
+                  <polygon points="-1 -1.4 -0.7 -0.6 -0.4 -0.4" fill="#fdfaf3" opacity="0.85" />
+                  <polygon points="0.2 -1.8 0.6 -1 1 -0.6" fill="#fdfaf3" opacity="0.9" />
+                  <path d="M -1.8 -0.4 Q -0.5 -0.6, 0.2 -0.2 Q 1 0.1, 1.8 -0.3" fill="none" stroke="#5a8aab" strokeWidth="0.09" opacity="0.75" />
+                  <path d="M -1.6 0.1 Q -0.3 -0.1, 0.4 0.2 Q 1.2 0.5, 1.6 0.2" fill="none" stroke="#5a8aab" strokeWidth="0.07" opacity="0.55" />
+                </symbol>
+
+                {/* Lumengarde Vault — locked rune stone with
+                    rays of light leaking from the seal. */}
+                <symbol id="bl-vault" viewBox="-1.4 -1.4 2.8 2.8" overflow="visible">
+                  <rect x="-0.9" y="-1" width="1.8" height="2" fill="#3a2817" rx="0.18" />
+                  <rect x="-0.7" y="-0.85" width="1.4" height="1.7" fill="none" stroke="#7c5e2c" strokeWidth="0.07" rx="0.12" />
+                  <circle cx="0" cy="-0.05" r="0.32" fill="#facc15" />
+                  <circle cx="0" cy="-0.05" r="0.55" fill="none" stroke="#facc15" strokeWidth="0.05" opacity="0.5" />
+                  <path d="M 0 -0.05 L 0 -1.3 M 0 -0.05 L 0 0.95 M 0 -0.05 L -1.2 -0.05 M 0 -0.05 L 1.2 -0.05" stroke="#facc15" strokeWidth="0.05" opacity="0.45" />
+                  <rect x="-0.2" y="0.25" width="0.4" height="0.55" fill="#1a0e08" />
+                  <circle cx="0" cy="0.45" r="0.08" fill="#facc15" />
+                </symbol>
+
+                {/* Pyrelle Reach — flame rising from a scorched
+                    basin. Sarv-e's vigil. */}
+                <symbol id="bl-flame" viewBox="-1.4 -2 2.8 3" overflow="visible">
+                  <ellipse cx="0" cy="0.85" rx="1.2" ry="0.18" fill="#3a2817" opacity="0.45" />
+                  <path d="M -0.7 0.7 Q -0.85 -0.1, -0.35 -0.65 Q -0.1 -1, 0 -1.7 Q 0.1 -1, 0.35 -0.65 Q 0.85 -0.1, 0.7 0.7 Z" fill="#7f1d1d" />
+                  <path d="M -0.45 0.55 Q -0.55 -0.05, -0.15 -0.5 Q 0 -0.85, 0 -1.4 Q 0 -0.85, 0.15 -0.5 Q 0.55 -0.05, 0.45 0.55 Z" fill="#dc2626" />
+                  <path d="M -0.22 0.4 Q -0.3 -0.1, 0 -0.5 Q 0.05 -0.85, 0 -1.1 Q -0.05 -0.85, 0 -0.5 Q 0.3 -0.1, 0.22 0.4 Z" fill="#facc15" />
+                  <circle cx="0" cy="-0.05" r="0.12" fill="#fdfaf3" opacity="0.85" />
+                </symbol>
+
+                {/* Tall tower — Archives / Skyveil cadet roost.
+                    Slim spire with three windows + flag. */}
+                <symbol id="bl-tower" viewBox="-1 -3 2 3.5" overflow="visible">
+                  <rect x="-0.45" y="-2.2" width="0.9" height="2.5" fill="#3a2817" />
+                  <polygon points="-0.55 -2.2 0.55 -2.2 0 -2.95" fill="#3a2817" />
+                  <line x1="0" y1="-2.95" x2="0" y2="-3.4" stroke="#3a2817" strokeWidth="0.08" />
+                  <polygon points="0 -3.4 0.5 -3.25 0 -3.1" fill="#7f1d1d" />
+                  <rect x="-0.12" y="-1.7" width="0.24" height="0.32" fill="#fdfaf3" opacity="0.7" />
+                  <rect x="-0.12" y="-1.1" width="0.24" height="0.32" fill="#fdfaf3" opacity="0.55" />
+                  <rect x="-0.12" y="-0.5" width="0.24" height="0.32" fill="#fdfaf3" opacity="0.45" />
                 </symbol>
               </defs>
 
@@ -4044,23 +4366,44 @@ function WorldMapBlock() {
                 <circle cx="0" cy="3.6" r="0.42" fill="none" stroke="#3a2817" strokeWidth="0.1" />
               </g>
 
-              {/* ───── THE FAR PEAKS (Mt. Raylia, NW corner) ───── */}
+              {/* ───── THE FAR PEAKS (Mt. Raylia, NW corner) ─────
+                  Layered painted range: ridge shadow first, then the
+                  sun-faced peaks layered on top so the chain reads as
+                  Tolkien-painted cartography rather than uniform ink
+                  triangles. */}
               <g>
-                <use href="#bl-peak" x="8" y="11" width="6" height="5" />
-                <use href="#bl-peak" x="14" y="9" width="7" height="6" />
-                <use href="#bl-peak" x="20" y="11" width="6" height="5" />
-                <use href="#bl-peak" x="11" y="14" width="5" height="4" />
-                <use href="#bl-peak" x="18" y="13" width="4.5" height="4" />
+                {/* Distant ridge silhouette behind the peaks */}
+                <path d="M 4 16 Q 9 9, 13 11 Q 17 6, 22 9 Q 27 12, 31 11 L 33 17 Z" fill="#241608" opacity="0.75" />
+                {/* Foreground sun-faced range */}
+                <use href="#bl-peak-painted" x="8" y="11" width="6" height="5" />
+                <use href="#bl-peak-painted" x="14" y="9" width="7" height="6" />
+                <use href="#bl-peak-painted" x="20" y="11" width="6" height="5" />
+                <use href="#bl-peak-painted" x="11" y="14" width="5" height="4" />
+                <use href="#bl-peak-painted" x="18" y="13" width="4.5" height="4" />
                 {/* Chain of smaller peaks tailing east */}
-                <use href="#bl-peak" x="26" y="13" width="3.5" height="3" />
-                <use href="#bl-peak" x="30" y="14" width="3" height="2.5" />
+                <use href="#bl-peak-painted" x="26" y="13" width="3.5" height="3" />
+                <use href="#bl-peak-painted" x="30" y="14" width="3" height="2.5" />
+                {/* Skyveil cadet roost peaks — far-NW corner */}
+                <use href="#bl-peak-painted" x="4" y="9" width="4.5" height="4" />
+                <use href="#bl-peak-painted" x="2" y="13" width="3.5" height="3" />
               </g>
               {/* Small range near Wyldhelm border */}
               <g>
-                <use href="#bl-peak" x="80" y="15" width="5" height="4" />
-                <use href="#bl-peak" x="85" y="12" width="6" height="5" />
-                <use href="#bl-peak" x="91" y="15" width="5" height="4" />
-                <use href="#bl-peak" x="84" y="18" width="4" height="3" />
+                <path d="M 78 19 Q 82 13, 86 14 Q 90 11, 94 14 L 95 20 Z" fill="#241608" opacity="0.75" />
+                <use href="#bl-peak-painted" x="80" y="15" width="5" height="4" />
+                <use href="#bl-peak-painted" x="85" y="12" width="6" height="5" />
+                <use href="#bl-peak-painted" x="91" y="15" width="5" height="4" />
+                <use href="#bl-peak-painted" x="84" y="18" width="4" height="3" />
+                <use href="#bl-peak-painted" x="89" y="18" width="3.5" height="2.8" />
+              </g>
+              {/* Western foothills — Pyrelle Reach + scorched basin
+                  approaches. A few low painted peaks separate the
+                  western coast from the lowlands. */}
+              <g>
+                <use href="#bl-peak-painted" x="4" y="38" width="4" height="3.2" />
+                <use href="#bl-peak-painted" x="9" y="40" width="3.5" height="2.8" />
+                <use href="#bl-peak-painted" x="13" y="42" width="3" height="2.5" />
+                <ellipse cx="6" cy="44" rx="6" ry="1.5" fill="#3a2817" opacity="0.18" />
               </g>
 
               {/* Mountain base shadows — soft elliptical patches under
@@ -4083,20 +4426,27 @@ function WorldMapBlock() {
               {/* ───── FOREST PATCHES ───── */}
               {/* Uplands woods */}
               <g>
-                {[[14,28],[16,30],[19,29],[21,30.5],[24,29.5],[27,30],[30,29],[15,32],[18,32.5],[22,32],[26,32],[29,32.5],[33,31]].map(([x,y],i) => (
-                  <use key={`uw-${i}`} href="#bl-tree" x={x} y={y} width="1.6" height="2" />
+                {[[14,28],[16,30],[19,29],[21,30.5],[24,29.5],[27,30],[30,29],[15,32],[18,32.5],[22,32],[26,32],[29,32.5],[33,31],[12,30.5],[16,33.5],[20,34],[25,33.5],[30,33.5],[34,32.5]].map(([x,y],i) => (
+                  <use key={`uw-${i}`} href="#bl-tree-painted" x={x} y={y} width="1.6" height="2" />
                 ))}
               </g>
               {/* Lowlands forest near the Tags */}
               <g>
-                {[[58,55],[60,56],[63,55],[66,56.5],[69,55.5],[72,56],[75,55],[60,58],[64,58.5],[68,58],[72,58.5],[76,57.5],[79,58]].map(([x,y],i) => (
-                  <use key={`lw-${i}`} href="#bl-tree" x={x} y={y} width="1.5" height="1.9" />
+                {[[58,55],[60,56],[63,55],[66,56.5],[69,55.5],[72,56],[75,55],[60,58],[64,58.5],[68,58],[72,58.5],[76,57.5],[79,58],[58,59],[63,60],[68,60.5],[73,60],[77,60.5]].map(([x,y],i) => (
+                  <use key={`lw-${i}`} href="#bl-tree-painted" x={x} y={y} width="1.5" height="1.9" />
                 ))}
               </g>
               {/* Sparse trees south of Annarose */}
               <g>
-                {[[42,60],[46,61],[40,62.5],[44,63]].map(([x,y],i) => (
-                  <use key={`sw-${i}`} href="#bl-tree" x={x} y={y} width="1.3" height="1.7" />
+                {[[42,60],[46,61],[40,62.5],[44,63],[48,62.5]].map(([x,y],i) => (
+                  <use key={`sw-${i}`} href="#bl-tree-painted" x={x} y={y} width="1.3" height="1.7" />
+                ))}
+              </g>
+              {/* Skyveil pine ridge — sparse alpine treeline below
+                  the Crags. */}
+              <g>
+                {[[6,15],[10,16],[14,17],[18,18],[22,18.5],[26,18]].map(([x,y],i) => (
+                  <use key={`sky-${i}`} href="#bl-tree-painted" x={x} y={y} width="1.1" height="1.4" />
                 ))}
               </g>
 
@@ -4246,6 +4596,47 @@ function WorldMapBlock() {
                 <use href="#bl-wave" x="91" y="3.5" width="3" height="1" />
               </g>
 
+              {/* ───── NEW LOCATION GLYPHS ───── */}
+
+              {/* Stonewake Halls — masonry pillar east of the castle */}
+              <g transform="translate(44, 55)">
+                <use href="#bl-pillar" x="-1" y="-2" width="2" height="2.5" />
+                <text x="0" y="1.2" fontSize="0.85" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.85">Stonewake</text>
+              </g>
+
+              {/* Tideborn Wells — sacred springs north of Annarose */}
+              <g transform="translate(53, 47)">
+                <use href="#bl-wells" x="-1.4" y="-1.4" width="2.8" height="2.8" />
+                <text x="0" y="2.1" fontSize="0.8" fill="#3a6586" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.9">Tideborn</text>
+              </g>
+
+              {/* Skyveil Crags — high-NW alpine training shelf */}
+              <g transform="translate(10, 7)">
+                <use href="#bl-crags" x="-2" y="-2" width="4" height="3" />
+                <text x="0" y="2.2" fontSize="0.85" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.85">Skyveil Crags</text>
+              </g>
+
+              {/* Lumengarde Vault — hidden light-elleta stone */}
+              <g transform="translate(32, 52)">
+                <use href="#bl-vault" x="-1.4" y="-1.4" width="2.8" height="2.8" />
+                <text x="0" y="2.4" fontSize="0.78" fill="#7c5e2c" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.9">Lumengarde</text>
+              </g>
+
+              {/* Pyrelle Reach — Sarv-e's vigil, scorched basin west */}
+              <g transform="translate(6, 42)">
+                <use href="#bl-flame" x="-1.4" y="-2" width="2.8" height="3" />
+                {/* Charred ground rays */}
+                <path d="M -2.6 1.4 L -1.6 0.6 M 2.6 1.4 L 1.6 0.6 M -2.4 0 L -1.4 0.2 M 2.4 0 L 1.4 0.2" stroke="#7f1d1d" strokeWidth="0.07" opacity="0.5" />
+                <text x="0" y="2.3" fontSize="0.85" fill="#7f1d1d" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.92">Pyrelle Reach</text>
+                <text x="0" y="3.1" fontSize="0.6" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.6">— Sarv-e's Vigil —</text>
+              </g>
+
+              {/* The Archives — scholar's tower at edge of palace */}
+              <g transform="translate(56, 50)">
+                <use href="#bl-tower" x="-1" y="-3" width="2" height="3.5" />
+                <text x="0" y="1.4" fontSize="0.78" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic" opacity="0.85">Archives</text>
+              </g>
+
               {/* ───── REGION LABELS (italic serif) ───── */}
               <text x="22" y="22" fontSize="1.7" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.3" opacity="0.78">THE UPLANDS</text>
               <text x="74" y="35" fontSize="1.7" fill="#7f1d1d" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.3" opacity="0.85">WYLDHELM</text>
@@ -4254,29 +4645,85 @@ function WorldMapBlock() {
               {/* Warning text near Wyldhelm */}
               <text x="83" y="27" fontSize="0.9" fill="#7f1d1d" fontFamily="Cinzel" fontStyle="italic" textAnchor="middle" opacity="0.8">— Here be twisted ones —</text>
 
-              {/* ───── COMPASS ROSE (bottom-right corner, ornate) ───── */}
+              {/* ───── OUROBOROS-ROSE COMPASS (bottom-right) ─────
+                  Replaces the standard compass rose. A serpent
+                  coiled into a circle (mouth biting tail) with an
+                  inner Wilted-Rose bloom and 8 cardinal/diagonal
+                  rays. The outer serpent ring + the inner bloom
+                  rotate in opposite directions; rotation
+                  accelerates when the user is actively panning. */}
               <g transform="translate(91, 65)">
-                {/* Outer ring */}
-                <circle r="3.2" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.2" />
-                <circle r="2.8" fill="none" stroke="#3a2817" strokeWidth="0.1" strokeDasharray="0.3 0.3" />
-                <circle r="1.6" fill="none" stroke="#3a2817" strokeWidth="0.1" />
-                {/* 8-point star */}
-                <path d="M 0 -2.6 L 0.4 -0.3 L 0 0 L -0.4 -0.3 Z" fill="#3a2817" />
-                <path d="M 2.6 0 L 0.3 0.4 L 0 0 L 0.3 -0.4 Z" fill="#3a2817" opacity="0.85" />
-                <path d="M 0 2.6 L -0.4 0.3 L 0 0 L 0.4 0.3 Z" fill="#3a2817" />
-                <path d="M -2.6 0 L -0.3 -0.4 L 0 0 L -0.3 0.4 Z" fill="#3a2817" opacity="0.85" />
-                {/* Diagonal points (smaller) */}
-                <path d="M 1.84 -1.84 L 0.3 -0.3 L 0 0 L -0.3 0.3 Z" fill="#3a2817" opacity="0.55" />
-                <path d="M -1.84 -1.84 L -0.3 -0.3 L 0 0 L 0.3 0.3 Z" fill="#3a2817" opacity="0.55" />
-                <path d="M 1.84 1.84 L 0.3 0.3 L 0 0 L -0.3 -0.3 Z" fill="#3a2817" opacity="0.55" />
-                <path d="M -1.84 1.84 L -0.3 0.3 L 0 0 L 0.3 -0.3 Z" fill="#3a2817" opacity="0.55" />
-                {/* Cardinal letters */}
-                <text x="0" y="-3.45" fontSize="0.85" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700">N</text>
-                <text x="3.5" y="0.3" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">E</text>
-                <text x="0" y="3.95" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">S</text>
-                <text x="-3.5" y="0.3" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">W</text>
-                {/* Center pin */}
-                <circle r="0.18" fill="#7f1d1d" />
+                {/* Static base disc — stays put so the spinning
+                    rings have something to rotate AGAINST visually. */}
+                <circle r="3.4" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.22" />
+                <circle r="3" fill="none" stroke="#3a2817" strokeWidth="0.08" strokeDasharray="0.22 0.32" opacity="0.7" />
+                {/* Cardinal letters — these stay aligned to north */}
+                <text x="0" y="-3.65" fontSize="0.8" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700">N</text>
+                <text x="3.65" y="0.3" fontSize="0.65" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">E</text>
+                <text x="0" y="4.15" fontSize="0.65" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">S</text>
+                <text x="-3.65" y="0.3" fontSize="0.65" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">W</text>
+
+                {/* Outer serpent ring — spins clockwise. The body is
+                    a tapered dashed arc; the head + jaws bite the
+                    tip of the tail to close the ouroboros. */}
+                <g className="bl-map-compass-outer">
+                  {/* Serpent body — full ring with scale dashes */}
+                  <circle r="2.7" fill="none" stroke="#3a2817" strokeWidth="0.32" />
+                  <circle r="2.7" fill="none" stroke="#7c5e2c" strokeWidth="0.18" strokeDasharray="0.35 0.18" opacity="0.85" />
+                  <circle r="2.55" fill="none" stroke="#5a3d1c" strokeWidth="0.06" opacity="0.5" />
+                  {/* Serpent head — biting position at the top-right */}
+                  <g transform="rotate(-30) translate(2.7, 0)">
+                    <ellipse cx="0" cy="0" rx="0.42" ry="0.3" fill="#3a2817" />
+                    <path d="M 0.42 0 Q 0.55 -0.18, 0.7 -0.05 L 0.7 0.05 Q 0.55 0.18, 0.42 0 Z" fill="#7f1d1d" />
+                    {/* Tiny eye pip */}
+                    <circle cx="-0.1" cy="-0.1" r="0.07" fill="#facc15" />
+                    {/* Forked tongue */}
+                    <path d="M 0.6 0 L 0.85 -0.06 M 0.6 0 L 0.85 0.06" stroke="#7f1d1d" strokeWidth="0.05" />
+                  </g>
+                  {/* Serpent tail tip — narrows into the bite */}
+                  <g transform="rotate(-30) translate(2.55, 0)">
+                    <path d="M 0 -0.1 L 0.2 -0.04 L 0.2 0.04 L 0 0.1 Z" fill="#3a2817" />
+                  </g>
+                </g>
+
+                {/* Inner Wilted-Rose bloom — counter-rotates. 8
+                    layered petals in crimson + gold filaments. */}
+                <g className="bl-map-compass-inner">
+                  {/* Petal layer — outer */}
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((rot) => (
+                    <g key={`pet-${rot}`} transform={`rotate(${rot})`}>
+                      <path d="M 0 -1.55 Q -0.55 -1.05, 0 -0.3 Q 0.55 -1.05, 0 -1.55 Z" fill="#7f1d1d" stroke="#3a2817" strokeWidth="0.06" />
+                    </g>
+                  ))}
+                  {/* Petal layer — inner (rotated 22.5°) */}
+                  {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map((rot) => (
+                    <g key={`pet2-${rot}`} transform={`rotate(${rot})`}>
+                      <path d="M 0 -1.05 Q -0.32 -0.7, 0 -0.18 Q 0.32 -0.7, 0 -1.05 Z" fill="#b91c1c" stroke="#3a2817" strokeWidth="0.05" />
+                    </g>
+                  ))}
+                  {/* Center heart */}
+                  <circle r="0.42" fill="#3a2817" />
+                  <circle r="0.28" fill="#7f1d1d" />
+                  <circle r="0.13" fill="#facc15" />
+                  {/* Gold filaments radiating from heart */}
+                  {[0, 45, 90, 135, 180, 225, 270, 315].map((rot) => (
+                    <line
+                      key={`fil-${rot}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="-1.4"
+                      transform={`rotate(${rot + 22.5})`}
+                      stroke="#d4a853"
+                      strokeWidth="0.04"
+                      opacity="0.55"
+                    />
+                  ))}
+                </g>
+
+                {/* Tiny inner pip — ALWAYS at center, anchors the
+                    whole device. */}
+                <circle r="0.16" fill="#3a2817" />
               </g>
 
               {/* Scale bar — bottom-center, ruler with league markers
@@ -4421,6 +4868,47 @@ function WorldMapBlock() {
                 </button>
               );
             })}
+              </div>
+            </div>
+
+            {/* Reset zoom — fades in only when the map is no longer
+                at default view. Wax-seal CTA pressed into the
+                parchment frame. */}
+            {isZoomed && (
+              <button
+                type="button"
+                onClick={resetView}
+                className="absolute top-3 right-3 z-10 px-3 py-1.5 text-[10px] uppercase rounded-sm inline-flex items-center gap-1.5 transition-opacity duration-300"
+                style={{
+                  background: "#3a2817",
+                  color: "#ecdcb8",
+                  border: `1px solid ${GOLD}`,
+                  fontFamily: "'Cinzel', serif",
+                  letterSpacing: "0.22em",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                }}
+                aria-label="Reset map view"
+              >
+                <span aria-hidden="true">⟲</span>
+                <span>Reset</span>
+              </button>
+            )}
+
+            {/* Pan-zoom hint — fades out the moment the user starts
+                interacting so it doesn't crowd the cartography. */}
+            <div
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none px-2.5 py-1 text-[9px] uppercase rounded-sm transition-opacity duration-500"
+              style={{
+                background: "rgba(58, 40, 23, 0.85)",
+                color: "rgba(232, 220, 196, 0.78)",
+                border: `1px solid ${GOLD_DEEP}66`,
+                fontFamily: "'Cinzel', serif",
+                letterSpacing: "0.22em",
+                opacity: isZoomed ? 0 : 0.85,
+              }}
+            >
+              drag · scroll to zoom · double-click
+            </div>
           </div>
 
           {/* Active location detail */}
@@ -4450,8 +4938,90 @@ function WorldMapBlock() {
             </p>
 
             <div className="mt-8 pt-6 border-t" style={{ borderColor: `${GOLD_DEEP}33` }}>
-              <p className="text-xs uppercase tracking-[0.3em] mb-3" style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}>Other Places</p>
-              <div className="flex flex-wrap gap-2">
+              <p
+                className="text-xs uppercase tracking-[0.3em] mb-3"
+                style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
+              >
+                <span className="hidden lg:inline">Other Places</span>
+                <span className="lg:hidden">All Locations</span>
+              </p>
+
+              {/* Mobile — vertical stacked list (full-width rows with
+                  region subtitle). Per spec: locations stack as a list
+                  below the map. Includes the active row so phone users
+                  can re-tap to refresh state. */}
+              <div className="flex flex-col gap-2 lg:hidden">
+                {LOCATIONS.map((loc) => {
+                  const isActive = loc.id === active;
+                  const accentHex =
+                    loc.accent === "gold"
+                      ? GOLD
+                      : loc.accent === "crimson"
+                      ? CRIMSON_BRIGHT
+                      : "#0ea5e9";
+                  return (
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => setActive(loc.id)}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-colors text-left"
+                      style={{
+                        background: isActive
+                          ? "rgba(212, 168, 83, 0.10)"
+                          : "rgba(212, 168, 83, 0.03)",
+                        border: `1px solid ${
+                          isActive ? GOLD : `${GOLD_DEEP}55`
+                        }`,
+                      }}
+                      aria-pressed={isActive}
+                    >
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{
+                          width: 36,
+                          height: 36,
+                          background: `${accentHex}22`,
+                          border: `1.5px solid ${accentHex}`,
+                          fontSize: 18,
+                          lineHeight: 1,
+                        }}
+                        aria-hidden="true"
+                      >
+                        {loc.emoji}
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span
+                          className="block text-sm font-bold tracking-wide"
+                          style={{
+                            color: isActive ? GOLD : "rgba(232, 220, 196, 0.92)",
+                            fontFamily: "'Cinzel', serif",
+                          }}
+                        >
+                          {loc.name}
+                        </span>
+                        <span
+                          className="block text-[10px] uppercase tracking-[0.2em] mt-0.5"
+                          style={{ color: "rgba(232, 220, 196, 0.5)" }}
+                        >
+                          {loc.region}
+                        </span>
+                      </span>
+                      {isActive && (
+                        <span
+                          className="text-xs"
+                          style={{ color: GOLD }}
+                          aria-hidden="true"
+                        >
+                          ●
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Desktop — original chip pill row */}
+              <div className="hidden lg:flex flex-wrap gap-2">
                 {LOCATIONS.filter((l) => l.id !== active).map((loc) => (
                   <button
                     key={loc.id}
@@ -4475,6 +5045,44 @@ function WorldMapBlock() {
           </div>
         </div>
       </div>
+
+      {/* ── bl-map-* keyframes ── ouroboros compass rotates slowly
+          all the time, accelerates while panning. Gated behind
+          prefers-reduced-motion per CLAUDE.md Rule 70. */}
+      <style jsx>{`
+        :global(.bl-map-compass-outer) {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: bl-map-rotate-cw 28s linear infinite;
+        }
+        :global(.bl-map-compass-inner) {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: bl-map-rotate-ccw 22s linear infinite;
+        }
+        :global(.bl-map-panning .bl-map-compass-outer) {
+          animation-duration: 4s;
+        }
+        :global(.bl-map-panning .bl-map-compass-inner) {
+          animation-duration: 3s;
+        }
+        @keyframes bl-map-rotate-cw {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes bl-map-rotate-ccw {
+          to {
+            transform: rotate(-360deg);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          :global(.bl-map-compass-outer),
+          :global(.bl-map-compass-inner) {
+            animation: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
