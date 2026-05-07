@@ -240,18 +240,35 @@ export default function MeyerElectricLayout({
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            html { scrollbar-color: #facc15 #0a0a0a; scrollbar-width: thin; }
-            ::-webkit-scrollbar { width: 12px; height: 12px; }
-            ::-webkit-scrollbar-track { background: #0a0a0a; }
+            html, body {
+              scrollbar-color: #facc15 #0a0a0a !important;
+              scrollbar-width: thin !important;
+            }
+            html::-webkit-scrollbar,
+            body::-webkit-scrollbar,
+            ::-webkit-scrollbar {
+              width: 12px !important;
+              height: 12px !important;
+              background: #0a0a0a !important;
+            }
+            html::-webkit-scrollbar-track,
+            body::-webkit-scrollbar-track,
+            ::-webkit-scrollbar-track {
+              background: #0a0a0a !important;
+            }
+            html::-webkit-scrollbar-thumb,
+            body::-webkit-scrollbar-thumb,
             ::-webkit-scrollbar-thumb {
-              background: linear-gradient(180deg, #f97316 0%, #facc15 50%, #ffffff 100%);
-              border-radius: 6px;
-              border: 2px solid #0a0a0a;
+              background: linear-gradient(180deg, #f97316 0%, #facc15 50%, #ffffff 100%) !important;
+              border-radius: 6px !important;
+              border: 2px solid #0a0a0a !important;
             }
+            html::-webkit-scrollbar-thumb:hover,
+            body::-webkit-scrollbar-thumb:hover,
             ::-webkit-scrollbar-thumb:hover {
-              background: linear-gradient(180deg, #ea580c 0%, #eab308 50%, #f1f5f9 100%);
+              background: linear-gradient(180deg, #ea580c 0%, #eab308 50%, #f1f5f9 100%) !important;
             }
-            ::-webkit-scrollbar-corner { background: #0a0a0a; }
+            ::-webkit-scrollbar-corner { background: #0a0a0a !important; }
           `,
         }}
       />

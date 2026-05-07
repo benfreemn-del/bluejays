@@ -22,7 +22,7 @@
  */
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
   Phone,
   MapPin,
@@ -379,6 +379,17 @@ export default function MeyerElectricPage() {
   ];
 
   return (
+    <MotionConfig
+      // Force animations on regardless of OS accessibility prefs. iOS
+      // ships with `prefers-reduced-motion: reduce` enabled by default
+      // for some users, which silences every framer-motion `initial`
+      // animation across this page (hero fade-in, section reveals, the
+      // Powerwall + Generac diagram orchestrations). For a marketing
+      // showcase this is the right trade — none of these animations
+      // gate critical action; they're decorative branded motion. Set
+      // here so any future <motion.*> added to the page picks it up.
+      reducedMotion="never"
+    >
     <main
       id="top"
       className="min-h-screen"
@@ -1682,7 +1693,11 @@ export default function MeyerElectricPage() {
                   key={opt.label}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  // amount: 0.1 — fire as soon as 10% of the element
+                  // enters the viewport. Default (0.5) requires half
+                  // the element on-screen, which never triggered on
+                  // tall mobile cards.
+                  viewport={{ once: true, amount: 0.1 }}
                   transition={{ delay: i * 0.06, ...spring }}
                 >
                   <button
@@ -2110,6 +2125,7 @@ export default function MeyerElectricPage() {
         </div>
       </footer>
     </main>
+    </MotionConfig>
   );
 }
 
