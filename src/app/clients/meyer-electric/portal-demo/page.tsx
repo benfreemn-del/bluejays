@@ -78,6 +78,100 @@ export default function MeyerPortalDemo() {
   const [pwError, setPwError] = useState("");
   const [tab, setTab] = useState<Tab>("overview");
 
+  // Lead-mark state (added 2026-05-06 per Ben — bulk + one-at-a-time
+  // marking on Overview AND Leads tabs). Lives at the parent so marks
+  // made on the Overview tab persist when the user switches to Leads.
+  // Mock-data only (Q8=A); changes never hit any API.
+  const [statusOverrides, setStatusOverrides] = useState<
+    Record<string, LeadStatus>
+  >({});
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  // Persist marks to sessionStorage so a demo flow doesn't reset on
+  // tab clicks. Cleared on logout / window close, matching the existing
+  // unlock cookie behavior.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem("bj_demo_status_overrides");
+      if (raw) setStatusOverrides(JSON.parse(raw) as Record<string, LeadStatus>);
+      const rawDismissed = window.sessionStorage.getItem("bj_demo_dismissed");
+      if (rawDismissed) {
+        const arr = JSON.parse(rawDismissed) as string[];
+        if (Array.isArray(arr)) setDismissed(new Set(arr));
+      }
+    } catch {
+      // ignore — corrupted demo state shouldn't crash the page
+    }
+  }, []);
+
+  // Single-lead mark (status pill dropdown in row). Persists.
+  const setStatusOverride = (leadId: string, status: LeadStatus) => {
+    setStatusOverrides((prev) => {
+      const next = { ...prev, [leadId]: status };
+      try {
+        window.sessionStorage.setItem("bj_demo_status_overrides", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    // Marking a status removes the lead from "dismissed" if present.
+    setDismissed((prev) => {
+      if (!prev.has(leadId)) return prev;
+      const next = new Set(prev);
+      next.delete(leadId);
+      try {
+        window.sessionStorage.setItem("bj_demo_dismissed", JSON.stringify(Array.from(next)));
+      } catch {}
+      return next;
+    });
+  };
+
+  // Bulk mark — applies the same status to every selected lead. Persists.
+  const bulkSetStatus = (leadIds: string[], status: LeadStatus) => {
+    setStatusOverrides((prev) => {
+      const next = { ...prev };
+      for (const id of leadIds) next[id] = status;
+      try {
+        window.sessionStorage.setItem("bj_demo_status_overrides", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setDismissed((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+      for (const id of leadIds) {
+        if (next.delete(id)) changed = true;
+      }
+      if (!changed) return prev;
+      try {
+        window.sessionStorage.setItem("bj_demo_dismissed", JSON.stringify(Array.from(next)));
+      } catch {}
+      return next;
+    });
+  };
+
+  const setDismissedFor = (leadIds: string[], on: boolean) => {
+    setDismissed((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      for (const id of leadIds) {
+        if (on) {
+          if (!next.has(id)) {
+            next.add(id);
+            changed = true;
+          }
+        } else if (next.delete(id)) {
+          changed = true;
+        }
+      }
+      if (!changed) return prev;
+      try {
+        window.sessionStorage.setItem("bj_demo_dismissed", JSON.stringify(Array.from(next)));
+      } catch {}
+      return next;
+    });
+  };
+
   // Hydrate from sessionStorage on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -159,8 +253,24 @@ export default function MeyerPortalDemo() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
-        {tab === "overview" && <OverviewTab />}
-        {tab === "leads" && <LeadsTab />}
+        {tab === "overview" && (
+          <OverviewTab
+            statusOverrides={statusOverrides}
+            dismissed={dismissed}
+            setStatusOverride={setStatusOverride}
+            bulkSetStatus={bulkSetStatus}
+            setDismissedFor={setDismissedFor}
+          />
+        )}
+        {tab === "leads" && (
+          <LeadsTab
+            statusOverrides={statusOverrides}
+            dismissed={dismissed}
+            setStatusOverride={setStatusOverride}
+            bulkSetStatus={bulkSetStatus}
+            setDismissedFor={setDismissedFor}
+          />
+        )}
         {tab === "map" && <MapTab />}
         {tab === "funnels" && <FunnelsTab />}
         {tab === "customers" && <CustomersTab />}
@@ -289,27 +399,429 @@ function scoreColor(score: number): string {
   return "rgb(148, 163, 184)";                  // slate — cold
 }
 
+/* ─────────────── MAP DOT-OVERLAY HELPERS ───────────────
+   Place leads / customers / affiliates as deterministic
+   jittered dots around their resolved peninsula town.
+   Used by MapTab to render category layers on top of
+   the town heatmap. Jitter is seeded by record id so
+   positions are stable across renders/reloads. */
+
+const CITY_TO_TOWN = new Map<string, (typeof PENINSULA_TOWNS)[number]>(
+  PENINSULA_TOWNS.map((t) => [t.name.toLowerCase(), t]),
+);
+
+// Deterministic [-1, 1) hash from a string + salt — stable per record.
+function strHash01(s: string, salt = 0): number {
+  let h = salt >>> 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return ((h % 2000) / 1000) - 1;
+}
+
+// Spread ~1.5 mi (0.022° lat, 0.033° lng at 48°N).
+function jitterLL(
+  town: (typeof PENINSULA_TOWNS)[number],
+  salt: string,
+  scale = 1,
+): [number, number] {
+  const dLat = strHash01(salt, 17) * 0.022 * scale;
+  const dLng = strHash01(salt, 41) * 0.033 * scale;
+  return [town.lat + dLat, town.lng + dLng];
+}
+
+// Scan a free-form string for any peninsula-town name.
+function findTownInString(s: string): (typeof PENINSULA_TOWNS)[number] | null {
+  const lower = s.toLowerCase();
+  for (const t of PENINSULA_TOWNS) {
+    if (lower.includes(t.name.toLowerCase())) return t;
+  }
+  return null;
+}
+
+// Lead-type → dot color (5 buckets).
+const LEAD_TYPE_COLOR: Record<string, string> = {
+  residential: "#60a5fa",         // sky blue
+  commercial: "#22d3ee",          // cyan
+  property_mgmt: "#a78bfa",       // violet
+  general_contractor: "#fb923c",  // orange
+  industrial: "#f87171",          // red
+};
+
+const LEAD_TYPE_LABEL: Record<string, string> = {
+  residential: "Residential",
+  commercial: "Commercial",
+  property_mgmt: "Property Mgmt",
+  general_contractor: "GC",
+  industrial: "Industrial",
+};
+
+const CUSTOMER_COLOR = "#10b981";  // emerald — repeat $ customer
+const AFFILIATE_COLOR = "#ec4899"; // pink — referral / dealer partner
+
 /* ───────────────────────── OVERVIEW TAB ───────────────────────── */
 
-function OverviewTab() {
+// ─────────────────────────────────────────────────────────────────
+// Shared lead-list helpers (added 2026-05-06 — bulk + single mark
+// + sort by category/customer-type for Overview AND Leads tabs).
+// Mock-data only: state lives in sessionStorage at the parent level
+// so marks made in Overview persist when the user clicks Leads.
+// ─────────────────────────────────────────────────────────────────
+
+type LeadMarksProps = {
+  statusOverrides: Record<string, LeadStatus>;
+  dismissed: Set<string>;
+  setStatusOverride: (leadId: string, status: LeadStatus) => void;
+  bulkSetStatus: (leadIds: string[], status: LeadStatus) => void;
+  setDismissedFor: (leadIds: string[], on: boolean) => void;
+};
+
+type LeadSort = "score" | "type" | "last_touched" | "estimate" | "name";
+
+const LEAD_SORT_OPTIONS: Array<{ id: LeadSort; label: string }> = [
+  { id: "score", label: "Score · high → low" },
+  { id: "type", label: "Customer type · A → Z" },
+  { id: "last_touched", label: "Last touched · newest" },
+  { id: "estimate", label: "Job size · biggest" },
+  { id: "name", label: "Name · A → Z" },
+];
+
+const STATUS_MARK_CHOICES: Array<{ id: LeadStatus; label: string; emoji: string }> = [
+  { id: "new", label: "New", emoji: "🆕" },
+  { id: "contacted", label: "Contacted", emoji: "📞" },
+  { id: "follow_up", label: "Follow-up", emoji: "🔁" },
+  { id: "quote_sent", label: "Quote sent", emoji: "📄" },
+  { id: "won", label: "Won", emoji: "🏆" },
+  { id: "lost", label: "Lost", emoji: "❌" },
+];
+
+const TYPE_LABELS: Record<string, string> = {
+  residential: "Residential",
+  commercial: "Commercial",
+  property_mgmt: "Property Mgmt",
+  general_contractor: "GC / Contractor",
+  industrial: "Industrial",
+};
+
+/** Apply per-lead status overrides + dismiss flag on top of MOCK_LEADS. */
+function applyMarks(
+  leads: Lead[],
+  overrides: Record<string, LeadStatus>,
+  dismissedSet: Set<string>,
+): Array<Lead & { _dismissed: boolean }> {
+  return leads.map((l) => ({
+    ...l,
+    status: (overrides[l.id] ?? l.status) as LeadStatus,
+    _dismissed: dismissedSet.has(l.id),
+  }));
+}
+
+function sortLeads<T extends Lead>(leads: T[], sort: LeadSort): T[] {
+  const copy = [...leads];
+  switch (sort) {
+    case "score":
+      copy.sort((a, b) => b.lead_score - a.lead_score);
+      break;
+    case "type":
+      copy.sort((a, b) => a.type.localeCompare(b.type) || b.lead_score - a.lead_score);
+      break;
+    case "last_touched":
+      copy.sort(
+        (a, b) =>
+          new Date(b.last_touched_at).getTime() -
+          new Date(a.last_touched_at).getTime(),
+      );
+      break;
+    case "estimate":
+      copy.sort((a, b) => b.job_estimate - a.job_estimate);
+      break;
+    case "name":
+      copy.sort((a, b) =>
+        (a.business_name || a.contact_name).localeCompare(
+          b.business_name || b.contact_name,
+        ),
+      );
+      break;
+  }
+  return copy;
+}
+
+/** Sort dropdown for both tabs. */
+function SortDropdown({
+  value,
+  onChange,
+  className = "",
+}: {
+  value: LeadSort;
+  onChange: (next: LeadSort) => void;
+  className?: string;
+}) {
+  return (
+    <label className={`flex items-center gap-2 text-xs ${className}`}>
+      <span className="text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
+        Sort
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as LeadSort)}
+        className="h-9 px-2 rounded-md bg-slate-900 border border-slate-700 text-xs text-white focus:border-yellow-400 focus:outline-none"
+      >
+        {LEAD_SORT_OPTIONS.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+/** Sticky bulk-action toolbar. Only renders when ≥1 lead is selected. */
+function BulkLeadToolbar({
+  selectedIds,
+  onClear,
+  onMark,
+  onDismiss,
+}: {
+  selectedIds: Set<string>;
+  onClear: () => void;
+  onMark: (status: LeadStatus) => void;
+  onDismiss: () => void;
+}) {
+  if (selectedIds.size === 0) return null;
+  const count = selectedIds.size;
+  return (
+    <div className="sticky top-[112px] z-20 rounded-xl border border-yellow-400/50 bg-yellow-950/80 backdrop-blur p-3 flex flex-wrap items-center gap-2">
+      <span className="text-xs uppercase tracking-widest font-bold text-yellow-300 px-2">
+        {count} selected
+      </span>
+      <div className="flex flex-wrap gap-1.5">
+        {STATUS_MARK_CHOICES.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => onMark(s.id)}
+            className="h-8 px-2.5 rounded-md bg-slate-900/80 border border-white/10 hover:border-yellow-400/60 hover:bg-yellow-400/10 text-xs text-white font-semibold transition-colors flex items-center gap-1"
+          >
+            <span>{s.emoji}</span>
+            <span className="hidden sm:inline">{s.label}</span>
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="h-8 px-2.5 rounded-md bg-rose-950/40 border border-rose-500/40 hover:border-rose-400/70 hover:bg-rose-500/15 text-xs text-rose-200 font-semibold transition-colors flex items-center gap-1"
+        >
+          <span>🗑</span>
+          <span className="hidden sm:inline">Dismiss</span>
+        </button>
+      </div>
+      <button
+        type="button"
+        onClick={onClear}
+        className="ml-auto h-8 px-2.5 rounded-md text-xs text-slate-400 hover:text-white"
+      >
+        Clear ✕
+      </button>
+    </div>
+  );
+}
+
+/** Status pill that opens a dropdown for single-row mark.
+ *  Per CLAUDE.md Owner Portal Rule 1 — control is a sibling of the
+ *  row's main click target so click events don't proxy. */
+function StatusPillDropdown({
+  status,
+  leadId,
+  onMark,
+  onDismiss,
+  isDismissed,
+}: {
+  status: LeadStatus;
+  leadId: string;
+  onMark: (id: string, next: LeadStatus) => void;
+  onDismiss: (id: string) => void;
+  isDismissed: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const c = isDismissed ? { bg: "rgba(244,63,94,0.10)", text: "#fda4af", label: "Dismissed" } : statusColor(status);
+  return (
+    <div className="relative" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((p) => !p);
+        }}
+        className="text-[10px] uppercase tracking-wider px-2 py-1 rounded font-semibold flex items-center gap-1 hover:brightness-125 transition"
+        style={{ background: c.bg, color: c.text }}
+        title="Click to change status"
+      >
+        <span>{c.label}</span>
+        <span className="opacity-60">▾</span>
+      </button>
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-30"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="absolute right-0 mt-1 z-40 min-w-[180px] rounded-lg border border-white/15 bg-slate-900 shadow-xl p-1">
+            {STATUS_MARK_CHOICES.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => {
+                  onMark(leadId, s.id);
+                  setOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left text-xs text-white hover:bg-white/[0.06] transition"
+              >
+                <span>{s.emoji}</span>
+                <span>{s.label}</span>
+              </button>
+            ))}
+            <div className="my-1 border-t border-white/10" />
+            <button
+              type="button"
+              onClick={() => {
+                onDismiss(leadId);
+                setOpen(false);
+              }}
+              className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left text-xs text-rose-200 hover:bg-rose-500/15 transition"
+            >
+              <span>🗑</span>
+              <span>{isDismissed ? "Restore" : "Dismiss"}</span>
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Square checkbox — sibling of the row click target so it doesn't
+ *  proxy clicks (Owner Portal Rule 1). */
+function LeadSelectCheckbox({
+  checked,
+  onChange,
+  ariaLabel,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  ariaLabel: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center justify-center"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        onClick={(e) => e.stopPropagation()}
+        className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-yellow-400 focus:ring-1 focus:ring-yellow-400 cursor-pointer"
+        aria-label={ariaLabel}
+      />
+    </span>
+  );
+}
+
+function OverviewTab({
+  statusOverrides,
+  dismissed,
+  setStatusOverride,
+  bulkSetStatus,
+  setDismissedFor,
+}: LeadMarksProps) {
+  // Sort + selection state for the Overview hot-leads list. Lives in
+  // the tab so the user's "I sorted by customer type while looking
+  // at the dashboard" preference doesn't bleed into Leads tab (which
+  // has its own sort).
+  const [sort, setSort] = useState<LeadSort>("score");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // Apply marks + dismiss on top of MOCK_LEADS so the overview reflects
+  // any in-session changes (Leads tab marks show up here too).
+  const marked = useMemo(
+    () => applyMarks(MOCK_LEADS, statusOverrides, dismissed),
+    [statusOverrides, dismissed],
+  );
+
   const stats = useMemo(() => {
-    const totalLeads = MOCK_LEADS.length;
-    const won = MOCK_LEADS.filter((l) => l.status === "won").length;
-    const newLeads = MOCK_LEADS.filter((l) => l.status === "new").length;
-    const hotLeads = MOCK_LEADS.filter((l) => l.lead_score >= 75).length;
-    const pipelineValue = MOCK_LEADS
-      .filter((l) => ["new", "contacted", "follow_up", "quote_sent"].includes(l.status))
+    const totalLeads = marked.filter((l) => !l._dismissed).length;
+    const won = marked.filter((l) => l.status === "won" && !l._dismissed).length;
+    const newLeads = marked.filter((l) => l.status === "new" && !l._dismissed).length;
+    const hotLeads = marked.filter((l) => l.lead_score >= 75 && !l._dismissed).length;
+    const pipelineValue = marked
+      .filter(
+        (l) =>
+          !l._dismissed &&
+          ["new", "contacted", "follow_up", "quote_sent"].includes(l.status),
+      )
       .reduce((s, l) => s + l.job_estimate, 0);
-    const wonRevenue = MOCK_LEADS.filter((l) => l.status === "won")
+    const wonRevenue = marked
+      .filter((l) => l.status === "won" && !l._dismissed)
       .reduce((s, l) => s + l.job_estimate, 0);
     const conversion = totalLeads > 0 ? (won / totalLeads) * 100 : 0;
     return { totalLeads, won, newLeads, hotLeads, pipelineValue, wonRevenue, conversion };
-  }, []);
+  }, [marked]);
 
-  const recentHot = useMemo(
-    () => MOCK_LEADS.filter((l) => l.lead_score >= 75 && l.status !== "won" && l.status !== "lost").slice(0, 8),
-    []
-  );
+  // Hot-leads list — top 12 of (score ≥ 70 AND not won/lost AND not
+  // dismissed), then sorted by the chosen field. 12 instead of 8 so
+  // bulk-select feels worth using.
+  const overviewLeads = useMemo(() => {
+    const base = marked.filter(
+      (l) =>
+        !l._dismissed &&
+        l.lead_score >= 70 &&
+        l.status !== "won" &&
+        l.status !== "lost",
+    );
+    return sortLeads(base, sort).slice(0, 12);
+  }, [marked, sort]);
+
+  const visibleIds = useMemo(() => overviewLeads.map((l) => l.id), [overviewLeads]);
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        for (const id of visibleIds) next.delete(id);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const id of visibleIds) next.add(id);
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const handleBulkMark = (status: LeadStatus) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    bulkSetStatus(ids, status);
+    clearSelection();
+  };
+  const handleBulkDismiss = () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    setDismissedFor(ids, true);
+    clearSelection();
+  };
+  const handleSingleDismiss = (leadId: string) => {
+    setDismissedFor([leadId], !dismissed.has(leadId));
+  };
 
   return (
     <div className="space-y-8">
@@ -330,49 +842,102 @@ function OverviewTab() {
         <StatCard label="New (last 30 days)" value={String(stats.newLeads)} sub="Untouched" tone="slate" />
       </div>
 
-      {/* Hot leads list */}
+      {/* Hot leads list — sortable + bulk-markable + single-mark via pill */}
       <section>
-        <div className="flex items-end justify-between mb-3">
-          <h3 className="text-lg font-bold">🔥 Hot leads to call today</h3>
-          <span className="text-xs text-slate-500">Top 8 by score</span>
+        <div className="flex items-end justify-between gap-3 mb-3 flex-wrap">
+          <div>
+            <h3 className="text-lg font-bold">🔥 Hot leads to call today</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Top {overviewLeads.length} · score ≥ 70 · sortable · select to bulk-mark
+            </p>
+          </div>
+          <SortDropdown value={sort} onChange={setSort} />
         </div>
-        <div className="rounded-xl border border-white/8 overflow-hidden">
-          {recentHot.map((l, i) => (
-            <div
-              key={l.id}
-              className="flex items-center gap-3 sm:gap-4 px-4 py-3 border-b border-white/5 last:border-b-0 hover:bg-white/[0.02] transition"
-            >
-              <div
-                className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
-                style={{
-                  background: `${scoreColor(l.lead_score)}15`,
-                  color: scoreColor(l.lead_score),
-                  border: `1px solid ${scoreColor(l.lead_score)}40`,
-                }}
-              >
-                {l.lead_score}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-white truncate">
-                  {l.business_name || l.contact_name}
-                </div>
-                <div className="text-[12px] text-slate-500 truncate">
-                  {l.city}, {l.county} · {l.signals.powerwall_eligible && "⚡ Powerwall · "}
-                  {l.signals.generator_eligible && "🔌 Generac · "}
-                  {l.signals.repeat_customer && "🔁 Repeat · "}
-                  {l.signals.urgency === "high" && "🚨 Urgent · "}
-                  {fmtMoney(l.job_estimate)} est.
-                </div>
-              </div>
-              <div
-                className="hidden sm:block text-[11px] uppercase tracking-wider px-2 py-1 rounded"
-                style={{ background: statusColor(l.status).bg, color: statusColor(l.status).text }}
-              >
-                {statusColor(l.status).label}
-              </div>
-              <div className="text-[11px] text-slate-500 shrink-0">{fmtDate(l.last_touched_at)}</div>
+
+        <BulkLeadToolbar
+          selectedIds={selectedIds}
+          onClear={clearSelection}
+          onMark={handleBulkMark}
+          onDismiss={handleBulkDismiss}
+        />
+
+        <div className="rounded-xl border border-white/8 overflow-hidden mt-2">
+          {/* Header row with select-all */}
+          <div className="grid grid-cols-[28px_60px_1fr_120px_140px_90px] gap-3 px-4 py-2.5 border-b border-white/8 bg-white/[0.02] text-[11px] uppercase tracking-wider font-semibold text-slate-500 items-center">
+            <LeadSelectCheckbox
+              checked={allVisibleSelected}
+              onChange={toggleSelectAll}
+              ariaLabel="Select all visible hot leads"
+            />
+            <div>Score</div>
+            <div>Lead</div>
+            <div className="hidden sm:block">Type</div>
+            <div>Status</div>
+            <div className="text-right">Last</div>
+          </div>
+          {overviewLeads.length === 0 && (
+            <div className="px-4 py-10 text-center text-sm text-slate-500">
+              No hot leads match the current sort. Try Leads tab for the full list.
             </div>
-          ))}
+          )}
+          {overviewLeads.map((l) => {
+            const isSelected = selectedIds.has(l.id);
+            return (
+              <div
+                key={l.id}
+                className={`grid grid-cols-[28px_60px_1fr_120px_140px_90px] gap-3 px-4 py-3 border-b border-white/5 last:border-b-0 transition items-center ${
+                  isSelected
+                    ? "bg-yellow-400/[0.04] border-l-2 border-l-yellow-400"
+                    : "hover:bg-white/[0.02]"
+                }`}
+              >
+                <LeadSelectCheckbox
+                  checked={isSelected}
+                  onChange={() => toggleSelect(l.id)}
+                  ariaLabel={`Select ${l.business_name || l.contact_name}`}
+                />
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
+                  style={{
+                    background: `${scoreColor(l.lead_score)}15`,
+                    color: scoreColor(l.lead_score),
+                    border: `1px solid ${scoreColor(l.lead_score)}40`,
+                  }}
+                >
+                  {l.lead_score}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-white truncate">
+                    {l.business_name || l.contact_name}
+                  </div>
+                  <div className="text-[11px] text-slate-500 truncate">
+                    {l.city}, {l.county}
+                    {l.signals.powerwall_eligible && " · ⚡ Powerwall"}
+                    {l.signals.generator_eligible && " · 🔌 Generac"}
+                    {l.signals.repeat_customer && " · 🔁 Repeat"}
+                    {l.signals.urgency === "high" && " · 🚨 Urgent"}
+                    {" · "}
+                    {fmtMoney(l.job_estimate)} est.
+                  </div>
+                </div>
+                <div className="hidden sm:block text-xs text-slate-400 truncate">
+                  {TYPE_LABELS[l.type] ?? l.type.replace(/_/g, " ")}
+                </div>
+                <div>
+                  <StatusPillDropdown
+                    status={l.status}
+                    leadId={l.id}
+                    onMark={setStatusOverride}
+                    onDismiss={handleSingleDismiss}
+                    isDismissed={l._dismissed}
+                  />
+                </div>
+                <div className="text-[11px] text-slate-500 text-right">
+                  {fmtDate(l.last_touched_at)}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -424,15 +989,34 @@ function QuickAction({ emoji, label }: { emoji: string; label: string; tab: Tab 
 
 /* ───────────────────────── LEADS TAB ───────────────────────── */
 
-function LeadsTab() {
+function LeadsTab({
+  statusOverrides,
+  dismissed,
+  setStatusOverride,
+  bulkSetStatus,
+  setDismissedFor,
+}: LeadMarksProps) {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all" | "dismissed">("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [sort, setSort] = useState<LeadSort>("score");
   const [selected, setSelected] = useState<Lead | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const marked = useMemo(
+    () => applyMarks(MOCK_LEADS, statusOverrides, dismissed),
+    [statusOverrides, dismissed],
+  );
 
   const filtered = useMemo(() => {
-    return MOCK_LEADS.filter((l) => {
-      if (statusFilter !== "all" && l.status !== statusFilter) return false;
+    const base = marked.filter((l) => {
+      // Status filter — "dismissed" is a special view that ONLY shows dismissed leads
+      if (statusFilter === "dismissed") {
+        if (!l._dismissed) return false;
+      } else {
+        if (l._dismissed) return false; // hide dismissed by default
+        if (statusFilter !== "all" && l.status !== statusFilter) return false;
+      }
       if (typeFilter !== "all" && l.type !== typeFilter) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -441,12 +1025,57 @@ function LeadsTab() {
           l.contact_name.toLowerCase().includes(q) ||
           l.city.toLowerCase().includes(q) ||
           l.county.toLowerCase().includes(q) ||
-          l.email.toLowerCase().includes(q)
+          l.email.toLowerCase().includes(q) ||
+          (TYPE_LABELS[l.type] ?? l.type).toLowerCase().includes(q)
         );
       }
       return true;
     });
-  }, [search, statusFilter, typeFilter]);
+    return sortLeads(base, sort);
+  }, [marked, search, statusFilter, typeFilter, sort]);
+
+  const visibleIds = useMemo(() => filtered.map((l) => l.id), [filtered]);
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        for (const id of visibleIds) next.delete(id);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const id of visibleIds) next.add(id);
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const handleBulkMark = (status: LeadStatus) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    bulkSetStatus(ids, status);
+    clearSelection();
+  };
+  const handleBulkDismiss = () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    // If we're already on the "dismissed" filter, this restores them. Otherwise dismisses.
+    setDismissedFor(ids, statusFilter !== "dismissed");
+    clearSelection();
+  };
+  const handleSingleDismiss = (leadId: string) => {
+    setDismissedFor([leadId], !dismissed.has(leadId));
+  };
 
   return (
     <div className="space-y-5">
@@ -456,23 +1085,31 @@ function LeadsTab() {
             Leads
           </h2>
           <p className="text-sm text-slate-400 mt-1">
-            {filtered.length} of {MOCK_LEADS.length} · sorted by score
+            {filtered.length} of {MOCK_LEADS.length}
+            {dismissed.size > 0 && statusFilter !== "dismissed" && (
+              <span className="text-rose-400/70">
+                {" · "}
+                {dismissed.size} dismissed (hidden)
+              </span>
+            )}
           </p>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 flex-wrap">
+      {/* Filters + sort */}
+      <div className="flex gap-2 flex-wrap items-center">
         <input
           type="search"
-          placeholder="Search name, city, email…"
+          placeholder="Search name, city, email, type…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 min-w-[220px] h-10 px-4 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:border-yellow-400 focus:outline-none"
         />
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
+          onChange={(e) =>
+            setStatusFilter(e.target.value as LeadStatus | "all" | "dismissed")
+          }
           className="h-10 px-3 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white"
         >
           <option value="all">All status</option>
@@ -482,6 +1119,7 @@ function LeadsTab() {
           <option value="quote_sent">Quote sent</option>
           <option value="won">Won</option>
           <option value="lost">Lost</option>
+          <option value="dismissed">Dismissed (restore)</option>
         </select>
         <select
           value={typeFilter}
@@ -495,61 +1133,118 @@ function LeadsTab() {
           <option value="general_contractor">GC / Contractor</option>
           <option value="industrial">Industrial</option>
         </select>
+        <SortDropdown value={sort} onChange={setSort} />
       </div>
+
+      {/* Bulk-action toolbar — visible when ≥1 lead selected */}
+      <BulkLeadToolbar
+        selectedIds={selectedIds}
+        onClear={clearSelection}
+        onMark={handleBulkMark}
+        onDismiss={handleBulkDismiss}
+      />
 
       {/* Lead list */}
       <div className="rounded-xl border border-white/8 overflow-hidden">
-        <div className="grid grid-cols-[60px_1fr_120px_100px_110px] sm:grid-cols-[60px_1.6fr_1fr_120px_120px_110px] gap-3 px-4 py-2.5 border-b border-white/8 bg-white/[0.02] text-[11px] uppercase tracking-wider font-semibold text-slate-500">
+        <div className="grid grid-cols-[28px_60px_1fr_120px_140px_110px] sm:grid-cols-[28px_60px_1.6fr_1fr_120px_140px_120px_110px] gap-3 px-4 py-2.5 border-b border-white/8 bg-white/[0.02] text-[11px] uppercase tracking-wider font-semibold text-slate-500 items-center">
+          <LeadSelectCheckbox
+            checked={allVisibleSelected}
+            onChange={toggleSelectAll}
+            ariaLabel="Select all visible leads"
+          />
           <div>Score</div>
           <div>Name</div>
           <div className="hidden sm:block">Location</div>
+          <div>Type</div>
           <div>Status</div>
-          <div className="text-right">Est.</div>
+          <div className="hidden sm:block text-right">Est.</div>
           <div className="text-right">Last</div>
         </div>
         <div className="max-h-[640px] overflow-y-auto">
-          {filtered.map((l) => (
-            <button
-              key={l.id}
-              type="button"
-              onClick={() => setSelected(l)}
-              className="w-full grid grid-cols-[60px_1fr_120px_100px_110px] sm:grid-cols-[60px_1.6fr_1fr_120px_120px_110px] gap-3 px-4 py-3 border-b border-white/5 last:border-b-0 hover:bg-white/[0.03] transition text-left items-center"
-            >
+          {filtered.length === 0 && (
+            <div className="px-4 py-12 text-center text-sm text-slate-500">
+              No leads match these filters.
+            </div>
+          )}
+          {filtered.map((l) => {
+            const isSelected = selectedIds.has(l.id);
+            return (
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
-                style={{
-                  background: `${scoreColor(l.lead_score)}15`,
-                  color: scoreColor(l.lead_score),
-                  border: `1px solid ${scoreColor(l.lead_score)}40`,
-                }}
+                key={l.id}
+                className={`grid grid-cols-[28px_60px_1fr_120px_140px_110px] sm:grid-cols-[28px_60px_1.6fr_1fr_120px_140px_120px_110px] gap-3 px-4 py-3 border-b border-white/5 last:border-b-0 transition items-center ${
+                  isSelected
+                    ? "bg-yellow-400/[0.04] border-l-2 border-l-yellow-400"
+                    : l._dismissed
+                      ? "opacity-50"
+                      : "hover:bg-white/[0.03]"
+                }`}
               >
-                {l.lead_score}
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-white truncate">{l.business_name || l.contact_name}</div>
-                <div className="text-[11px] text-slate-500 truncate">
-                  {l.signals.powerwall_eligible && "⚡ "}
-                  {l.signals.generator_eligible && "🔌 "}
-                  {l.signals.repeat_customer && "🔁 "}
-                  {l.signals.urgency === "high" && "🚨 "}
-                  {l.signals.affiliate_source ? `via ${l.signals.affiliate_source}` : l.type.replace("_", " ")}
-                </div>
-              </div>
-              <div className="hidden sm:block text-xs text-slate-400 truncate">
-                {l.city}, {l.county}
-              </div>
-              <div>
-                <span
-                  className="text-[10px] uppercase tracking-wider px-2 py-1 rounded"
-                  style={{ background: statusColor(l.status).bg, color: statusColor(l.status).text }}
+                <LeadSelectCheckbox
+                  checked={isSelected}
+                  onChange={() => toggleSelect(l.id)}
+                  ariaLabel={`Select ${l.business_name || l.contact_name}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setSelected(l)}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm hover:brightness-125 transition"
+                  style={{
+                    background: `${scoreColor(l.lead_score)}15`,
+                    color: scoreColor(l.lead_score),
+                    border: `1px solid ${scoreColor(l.lead_score)}40`,
+                  }}
+                  title="Open lead detail"
                 >
-                  {statusColor(l.status).label}
-                </span>
+                  {l.lead_score}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelected(l)}
+                  className="min-w-0 text-left hover:text-yellow-200 transition"
+                >
+                  <div className="text-sm font-semibold text-white truncate">
+                    {l.business_name || l.contact_name}
+                  </div>
+                  <div className="text-[11px] text-slate-500 truncate">
+                    {l.signals.powerwall_eligible && "⚡ "}
+                    {l.signals.generator_eligible && "🔌 "}
+                    {l.signals.repeat_customer && "🔁 "}
+                    {l.signals.urgency === "high" && "🚨 "}
+                    {l.signals.affiliate_source
+                      ? `via ${l.signals.affiliate_source}`
+                      : (TYPE_LABELS[l.type] ?? l.type.replace(/_/g, " "))}
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelected(l)}
+                  className="hidden sm:block text-xs text-slate-400 truncate text-left hover:text-white transition"
+                >
+                  {l.city}, {l.county}
+                </button>
+                <div className="text-xs text-slate-300 truncate">
+                  {TYPE_LABELS[l.type] ?? l.type.replace(/_/g, " ")}
+                </div>
+                <div>
+                  <StatusPillDropdown
+                    status={l.status}
+                    leadId={l.id}
+                    onMark={setStatusOverride}
+                    onDismiss={handleSingleDismiss}
+                    isDismissed={l._dismissed}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelected(l)}
+                  className="hidden sm:block text-sm font-semibold text-right tabular-nums hover:text-yellow-200 transition"
+                >
+                  {fmtMoney(l.job_estimate)}
+                </button>
+                <div className="text-[11px] text-slate-500 text-right">{fmtDate(l.last_touched_at)}</div>
               </div>
-              <div className="text-sm font-semibold text-right tabular-nums">{fmtMoney(l.job_estimate)}</div>
-              <div className="text-[11px] text-slate-500 text-right">{fmtDate(l.last_touched_at)}</div>
-            </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
