@@ -39,32 +39,6 @@ const ITEMS: ChecklistItem[] = [
   // filings, or partner-payment-without-paperwork.
 
   {
-    id: "wa-ubi",
-    title: "Verify WA UBI / Master Business License is active",
-    detail:
-      "Stripe Tax requires a UBI number to register WA. Search 'BlueJay Business Solutions' in WA DOR. If no active UBI → file at bls.dor.wa.gov ($90 setup, 10 min).",
-    tier: "blocker",
-    time: "15 min",
-    cost: "$0–$90",
-    action: {
-      label: "WA DOR login",
-      href: "https://secure.dor.wa.gov/home/Login",
-    },
-  },
-  {
-    id: "wa-dor-call",
-    title: "Phone WA DOR · sales-tax classification on AI Marketing System",
-    detail:
-      "Ask: 'I sell a $9,700 marketing service that includes website design, ad management, and an AI software dashboard. Is this Retailing or Service & Other Activities for B&O? Is sales tax due?' Get a name + reference number. This decides whether Stripe Tax goes ON for these products.",
-    tier: "blocker",
-    time: "10 min",
-    cost: "$0",
-    action: {
-      label: "📞 1-800-647-7706",
-      href: "tel:18006477706",
-    },
-  },
-  {
     id: "annual-report-2026",
     title: "File 2026 WA Annual Report — due June 4 (29 days)",
     detail:
