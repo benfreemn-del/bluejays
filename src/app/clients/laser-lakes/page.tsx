@@ -1,6 +1,7 @@
 import Link from "next/link";
 import LakeInquiryForm from "./LakeInquiryForm.client";
 import EmailCaptureFooter from "./EmailCaptureFooter.client";
+import { BespokeExperience } from "./bespoke-experience.client";
 
 export const metadata = {
   title: "Laser Lakes — Custom Lake Maps + Wood Wildlife Art (Minnesota)",
@@ -48,11 +49,14 @@ export default function LaserLakesPage() {
             Laser Lakes
           </Link>
           <div className="hidden sm:flex items-center gap-7 text-sm font-medium">
-            <a href="#custom-maps" className="hover:opacity-70 transition-opacity">
-              Custom Maps
+            <a href="#lake-browser" className="hover:opacity-70 transition-opacity">
+              Find Your Lake
             </a>
-            <a href="#shop" className="hover:opacity-70 transition-opacity">
-              Shop
+            <a href="#catalog" className="hover:opacity-70 transition-opacity">
+              The Pieces
+            </a>
+            <a href="#configure" className="hover:opacity-70 transition-opacity">
+              Configure
             </a>
             <a href="#story" className="hover:opacity-70 transition-opacity">
               Our Story
@@ -118,39 +122,87 @@ export default function LaserLakesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href="#custom-maps"
+                href="#lake-browser"
                 className="inline-flex items-center justify-center px-7 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-transform hover:scale-[1.02]"
                 style={{
                   backgroundColor: "#d99f58",
                   color: "#1f1a14",
                 }}
               >
-                Start Your Custom Map →
+                Find Your Lake →
               </a>
               <a
-                href="#shop"
+                href="#catalog"
                 className="inline-flex items-center justify-center px-7 py-4 rounded-full text-sm font-bold uppercase tracking-widest border transition-colors"
                 style={{
                   borderColor: "rgba(246, 241, 232, 0.3)",
                   color: "#f6f1e8",
                 }}
               >
-                Shop Wall Art
+                Browse the Pieces
               </a>
             </div>
           </div>
 
-          {/* Hero piece showcase — placeholder swap point for Nate's photo */}
+          {/* Hero piece showcase — placeholder for Nate's photo. Beauty
+              pass: animated concentric "contour" rings simulating a lake
+              map being cut, plus a subtle water-shimmer overlay. Drops
+              away cleanly the moment a real photo replaces it. */}
           <div className="relative">
+            <style>{`
+              @keyframes lakes-shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+              }
+              @keyframes lakes-ring-pulse {
+                0%, 100% { opacity: 0.35; }
+                50% { opacity: 0.55; }
+              }
+            `}</style>
             <div
-              className="aspect-[4/5] rounded-md shadow-2xl overflow-hidden"
+              className="aspect-[4/5] rounded-md shadow-2xl overflow-hidden relative"
               style={{
                 background:
                   "linear-gradient(135deg, #c9a87a 0%, #8c6a3f 50%, #5d4225 100%)",
               }}
             >
+              {/* Concentric contour rings — three layered SVG circles. */}
+              <svg
+                viewBox="0 0 400 500"
+                className="absolute inset-0 w-full h-full"
+                style={{ animation: "lakes-ring-pulse 6s ease-in-out infinite" }}
+                aria-hidden
+              >
+                <defs>
+                  <radialGradient id="lakeGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="rgba(255, 240, 210, 0.15)" />
+                    <stop offset="100%" stopColor="transparent" />
+                  </radialGradient>
+                </defs>
+                <circle cx="200" cy="250" r="180" fill="url(#lakeGlow)" />
+                {[40, 70, 100, 130, 160, 185].map((r, i) => (
+                  <circle
+                    key={r}
+                    cx="200"
+                    cy="250"
+                    r={r}
+                    fill="none"
+                    stroke="rgba(255, 240, 210, 0.18)"
+                    strokeWidth={1.2 + i * 0.15}
+                  />
+                ))}
+              </svg>
+              {/* Water shimmer overlay — diagonal sweep */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(105deg, transparent 35%, rgba(255, 240, 210, 0.18) 50%, transparent 65%)",
+                  animation: "lakes-shimmer 8s ease-in-out infinite",
+                }}
+              />
               <div className="absolute inset-6 border-2 border-amber-100/20 rounded-sm flex items-center justify-center">
-                <div className="text-center">
+                <div className="text-center relative z-10">
                   <p
                     className="text-amber-100/80 text-xs uppercase tracking-[0.4em] mb-3"
                   >
@@ -179,6 +231,9 @@ export default function LaserLakesPage() {
           </div>
         </div>
       </section>
+
+      {/* ─── BESPOKE EXPERIENCE — lake browser + catalog + configurator ─── */}
+      <BespokeExperience />
 
       {/* ─── CUSTOM MAPS — flagship product ───────────────────────────── */}
       <section
