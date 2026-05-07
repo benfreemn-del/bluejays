@@ -46,6 +46,16 @@ const ACTIVE_CLIENT_SHOWCASES = [
   "laser-lakes",             // Custom lake-map wood art
   "lcac",                    // Lewis County Autism Coalition
   "bloodlines",              // Preston James Hunsaker · indie-author · Bloodlines fantasy series
+  "theoregonappraisers",     // Robert (Bob) Rochefort · Salem OR · estate/divorce/IRS appraisals
+];
+
+/**
+ * Sub-routes under client showcases that ship as their own indexable
+ * pages (lead-magnet articles, audience landing pages, etc.). Added
+ * separately so the sitemap surfaces every long-tail SEO entry.
+ */
+const CLIENT_SUB_ROUTES = [
+  "/clients/theoregonappraisers/executors-guide",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -139,6 +149,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     }));
 
+  // Per-client sub-routes (lead-magnet articles, etc.) — slightly
+  // lower priority than the showcase root but still indexable.
+  const clientSubRoutes: MetadataRoute.Sitemap =
+    CLIENT_SUB_ROUTES.map((path) => ({
+      url: `${BASE_URL}${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+
   // Public preview pages for paid/claimed prospects
   let previewRoutes: MetadataRoute.Sitemap = [];
   try {
@@ -194,6 +214,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes,
     ...portfolioRoutes,
     ...clientShowcaseRoutes,
+    ...clientSubRoutes,
     ...cityRoutes,
     ...guideRoutes,
     ...caseStudyRoutes,
