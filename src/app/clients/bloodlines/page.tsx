@@ -2943,47 +2943,303 @@ function WorldMapBlock() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-12 items-center">
-          {/* Map */}
+          {/* Map — LOTR-style parchment cartography. The hot-spot
+              percent coords (LOCATIONS x/y) are still in the viewBox
+              0-100/75 space; the underlying SVG art is hand-detailed
+              in ink on aged paper to evoke a real cartographer's
+              document pulled from a Bloodlines lorebook. */}
           <div
             className="relative aspect-[4/3] rounded-sm overflow-hidden"
             style={{
               background:
-                "radial-gradient(ellipse at 50% 50%, #2a1f15 0%, #15100a 60%, #09060b 100%)",
+                "radial-gradient(ellipse at 50% 40%, #ecdcb8 0%, #d8c39a 70%, #b89b6e 100%)",
               boxShadow:
-                "inset 0 0 80px rgba(0,0,0,0.8), 0 20px 60px rgba(0,0,0,0.5)",
-              border: `1px solid ${GOLD_DEEP}33`,
+                "inset 0 0 60px rgba(58, 40, 23, 0.35), 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(58,40,23,0.4)",
+              border: `2px solid #8b6914`,
             }}
           >
-            {/* Parchment-style map base — terrain SVG */}
             <svg
               viewBox="0 0 100 75"
-              preserveAspectRatio="none"
+              preserveAspectRatio="xMidYMid meet"
               className="absolute inset-0 w-full h-full"
               aria-hidden="true"
             >
-              {/* Mountain ranges */}
-              <path d="M 5 8 L 14 4 L 22 12 L 30 6 L 35 14 L 28 18 L 18 16 L 8 14 Z" fill="#2c1f12" stroke={GOLD_DEEP} strokeWidth="0.15" opacity="0.7" />
-              <path d="M 80 14 L 88 8 L 96 18 L 92 24 L 84 22 Z" fill="#2c1f12" stroke={GOLD_DEEP} strokeWidth="0.15" opacity="0.7" />
-              {/* Forests */}
-              <ellipse cx="22" cy="38" rx="14" ry="6" fill="#1a2418" opacity="0.6" />
-              <ellipse cx="68" cy="56" rx="16" ry="8" fill="#1a2418" opacity="0.6" />
-              {/* River */}
-              <path d="M 14 4 Q 30 30 45 50 Q 60 65 88 72" fill="none" stroke="#2a4a5a" strokeWidth="0.5" opacity="0.7" />
-              {/* Roads */}
-              <path d="M 28 28 Q 40 40 50 52" fill="none" stroke={GOLD_DEEP} strokeWidth="0.2" strokeDasharray="0.6 0.6" opacity="0.6" />
-              <path d="M 50 52 Q 62 60 72 70" fill="none" stroke={GOLD_DEEP} strokeWidth="0.2" strokeDasharray="0.6 0.6" opacity="0.6" />
-              <path d="M 56 44 L 50 52" fill="none" stroke={GOLD_DEEP} strokeWidth="0.2" strokeDasharray="0.6 0.6" opacity="0.6" />
-              {/* Compass rose */}
-              <g transform="translate(92, 68)">
-                <circle r="3" fill="none" stroke={GOLD} strokeWidth="0.2" opacity="0.8" />
-                <path d="M 0 -2.5 L 0.5 0 L 0 2.5 L -0.5 0 Z" fill={GOLD} opacity="0.9" />
-                <path d="M -2.5 0 L 0 0.5 L 2.5 0 L 0 -0.5 Z" fill={GOLD} opacity="0.7" />
-                <text x="0" y="-3.5" fill={GOLD} fontSize="1.2" textAnchor="middle" fontFamily="Cinzel">N</text>
+              <defs>
+                {/* Reusable mountain peak symbol — single jagged
+                    triangle with snow cap + hatched shading. */}
+                <symbol id="bl-peak" viewBox="-3 -4 6 5" overflow="visible">
+                  <polygon points="-3 1 0 -4 3 1" fill="#3a2817" />
+                  <polygon points="-1.4 -1.2 0 -4 1.4 -1.2 0.4 -1.5 0 -2.4 -0.4 -1.5" fill="#fdfaf3" opacity="0.85" />
+                  <path d="M -2.2 0 L -1.4 0.6 M 1.4 0 L 2.2 0.6 M -0.6 -1 L 0 -0.4 M 1 -1.2 L 1.6 -0.5" stroke="#1a0e08" strokeWidth="0.12" />
+                </symbol>
+
+                {/* Tree symbol — pine triangle on a tiny trunk. */}
+                <symbol id="bl-tree" viewBox="-1 -2 2 2.5" overflow="visible">
+                  <polygon points="-0.7 0.2 0 -2 0.7 0.2" fill="#1f3014" />
+                  <polygon points="-0.55 -0.4 0 -1.6 0.55 -0.4" fill="#2d4a1f" />
+                  <rect x="-0.1" y="0.2" width="0.2" height="0.3" fill="#2a1810" />
+                </symbol>
+
+                {/* Hut symbol — tiny gabled house. */}
+                <symbol id="bl-hut" viewBox="-1.2 -1.2 2.4 1.5" overflow="visible">
+                  <rect x="-0.9" y="-0.4" width="1.8" height="0.7" fill="#3a2817" />
+                  <polygon points="-1.05 -0.4 0 -1.2 1.05 -0.4" fill="#3a2817" />
+                  <rect x="-0.2" y="0" width="0.4" height="0.3" fill="#1a0e08" />
+                </symbol>
+
+                {/* Wave hatch — sea/edges suggestion. */}
+                <symbol id="bl-wave" viewBox="0 0 4 1" overflow="visible">
+                  <path d="M 0 0.5 Q 1 0, 2 0.5 T 4 0.5" fill="none" stroke="#3a2817" strokeWidth="0.12" />
+                </symbol>
+              </defs>
+
+              {/* Parchment base — already from container bg, but add
+                  subtle texture stains so it doesn't look digital. */}
+              <g opacity="0.18">
+                <ellipse cx="12" cy="9" rx="14" ry="5" fill="#8b6914" />
+                <ellipse cx="86" cy="62" rx="12" ry="6" fill="#7a5a35" />
+                <ellipse cx="48" cy="40" rx="22" ry="11" fill="#a0824f" opacity="0.5" />
+                <ellipse cx="20" cy="65" rx="9" ry="3" fill="#5a3d1c" opacity="0.7" />
+                <ellipse cx="78" cy="14" rx="7" ry="4" fill="#5a3d1c" />
               </g>
-              {/* Region labels */}
-              <text x="20" y="22" fill={GOLD_DEEP} fontSize="1.4" fontFamily="Cinzel" opacity="0.5" letterSpacing="0.2">THE UPLANDS</text>
-              <text x="74" y="36" fill={GOLD_DEEP} fontSize="1.4" fontFamily="Cinzel" opacity="0.5" letterSpacing="0.2">WYLDHELM</text>
-              <text x="60" y="68" fill={GOLD_DEEP} fontSize="1.4" fontFamily="Cinzel" opacity="0.5" letterSpacing="0.2">THE TAGS</text>
+
+              {/* Decorative double border in ink */}
+              <rect x="0.8" y="0.8" width="98.4" height="73.4" fill="none" stroke="#3a2817" strokeWidth="0.35" />
+              <rect x="2" y="2" width="96" height="71" fill="none" stroke="#3a2817" strokeWidth="0.15" />
+              {/* Corner flourishes */}
+              <path d="M 2 5 L 5 2 M 95 2 L 98 5 M 98 70 L 95 73 M 5 73 L 2 70" stroke="#3a2817" strokeWidth="0.2" />
+
+              {/* Title cartouche */}
+              <g transform="translate(50, 4.5)">
+                <rect x="-22" y="-2.4" width="44" height="4.5" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.18" rx="0.5" />
+                <rect x="-21" y="-1.7" width="42" height="3" fill="none" stroke="#3a2817" strokeWidth="0.08" rx="0.3" />
+                <text x="0" y="0.55" fontSize="2.2" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" letterSpacing="0.4">
+                  THE KINGDOM OF ANNAROSE
+                </text>
+              </g>
+
+              {/* ───── THE FAR PEAKS (Mt. Raylia, NW corner) ───── */}
+              <g>
+                <use href="#bl-peak" x="8" y="11" width="6" height="5" />
+                <use href="#bl-peak" x="14" y="9" width="7" height="6" />
+                <use href="#bl-peak" x="20" y="11" width="6" height="5" />
+                <use href="#bl-peak" x="11" y="14" width="5" height="4" />
+                <use href="#bl-peak" x="18" y="13" width="4.5" height="4" />
+                {/* Chain of smaller peaks tailing east */}
+                <use href="#bl-peak" x="26" y="13" width="3.5" height="3" />
+                <use href="#bl-peak" x="30" y="14" width="3" height="2.5" />
+              </g>
+              {/* Small range near Wyldhelm border */}
+              <g>
+                <use href="#bl-peak" x="80" y="15" width="5" height="4" />
+                <use href="#bl-peak" x="85" y="12" width="6" height="5" />
+                <use href="#bl-peak" x="91" y="15" width="5" height="4" />
+                <use href="#bl-peak" x="84" y="18" width="4" height="3" />
+              </g>
+
+              {/* ───── FOREST PATCHES ───── */}
+              {/* Uplands woods */}
+              <g>
+                {[[14,28],[16,30],[19,29],[21,30.5],[24,29.5],[27,30],[30,29],[15,32],[18,32.5],[22,32],[26,32],[29,32.5],[33,31]].map(([x,y],i) => (
+                  <use key={`uw-${i}`} href="#bl-tree" x={x} y={y} width="1.6" height="2" />
+                ))}
+              </g>
+              {/* Lowlands forest near the Tags */}
+              <g>
+                {[[58,55],[60,56],[63,55],[66,56.5],[69,55.5],[72,56],[75,55],[60,58],[64,58.5],[68,58],[72,58.5],[76,57.5],[79,58]].map(([x,y],i) => (
+                  <use key={`lw-${i}`} href="#bl-tree" x={x} y={y} width="1.5" height="1.9" />
+                ))}
+              </g>
+              {/* Sparse trees south of Annarose */}
+              <g>
+                {[[42,60],[46,61],[40,62.5],[44,63]].map(([x,y],i) => (
+                  <use key={`sw-${i}`} href="#bl-tree" x={x} y={y} width="1.3" height="1.7" />
+                ))}
+              </g>
+
+              {/* ───── RIVER (from Mt. Raylia south through Annarose then east to Tags) ───── */}
+              <path
+                d="M 14 8 Q 18 16, 24 24 Q 30 32, 38 40 Q 45 47, 50 51 Q 56 56, 64 60 Q 72 64, 86 70"
+                fill="none"
+                stroke="#3a6586"
+                strokeWidth="0.55"
+                strokeLinecap="round"
+                opacity="0.85"
+              />
+              <path
+                d="M 14 8 Q 18 16, 24 24 Q 30 32, 38 40 Q 45 47, 50 51 Q 56 56, 64 60 Q 72 64, 86 70"
+                fill="none"
+                stroke="#5a8aab"
+                strokeWidth="0.18"
+                strokeLinecap="round"
+                opacity="0.7"
+              />
+              {/* River label */}
+              <text x="32" y="38" fontSize="1.1" fill="#3a6586" fontFamily="Cinzel" fontStyle="italic" transform="rotate(35 32 38)" opacity="0.85">
+                Annarose River
+              </text>
+
+              {/* ───── ROADS (dashed) ───── */}
+              <g stroke="#5a3d1c" strokeWidth="0.22" strokeDasharray="0.6 0.5" fill="none" opacity="0.75">
+                {/* Annarose ↔ Uplands */}
+                <path d="M 49 50 Q 38 40, 30 30" />
+                {/* Annarose ↔ Tags */}
+                <path d="M 51 53 Q 60 62, 71 69" />
+                {/* Annarose ↔ RGA (Royal Guard Academy) */}
+                <path d="M 51 49 L 55 45" />
+                {/* RGA ↔ Wilted Rose hidden trail */}
+                <path d="M 55 45 Q 47 50, 39 56" strokeDasharray="0.3 0.6" opacity="0.5" />
+                {/* North road toward Far Peaks */}
+                <path d="M 30 30 Q 22 22, 17 14" />
+                {/* East road toward Wyldhelm border (warning) */}
+                <path d="M 51 50 Q 70 35, 84 22" strokeDasharray="0.3 0.8" opacity="0.5" />
+              </g>
+
+              {/* ───── TOWN/FEATURE ICONS ───── */}
+              {/* Annarose castle (large central icon) */}
+              <g transform="translate(50, 51.5)">
+                {/* Hill base shading */}
+                <ellipse cx="0" cy="3" rx="6.5" ry="0.7" fill="#5a3d1c" opacity="0.5" />
+                {/* Main wall */}
+                <rect x="-3.6" y="-0.6" width="7.2" height="3.2" fill="#3a2817" />
+                {/* Crenellations along wall */}
+                {[-3.4, -2.4, -1.4, -0.4, 0.6, 1.6, 2.6].map((cx, i) => (
+                  <rect key={`cn-${i}`} x={cx} y="-1.2" width="0.6" height="0.6" fill="#3a2817" />
+                ))}
+                {/* Central keep */}
+                <rect x="-1" y="-2.6" width="2" height="2" fill="#3a2817" />
+                <polygon points="-1 -2.6 1 -2.6 0 -3.6" fill="#3a2817" />
+                {/* Banner */}
+                <line x1="0" y1="-3.6" x2="0" y2="-4.5" stroke="#3a2817" strokeWidth="0.12" />
+                <polygon points="0 -4.5 1.2 -4.2 0 -3.9" fill="#7f1d1d" />
+                {/* Side towers */}
+                <rect x="-3.2" y="-1.8" width="1" height="1.4" fill="#3a2817" />
+                <polygon points="-3.2 -1.8 -2.2 -1.8 -2.7 -2.5" fill="#3a2817" />
+                <rect x="2.2" y="-1.8" width="1" height="1.4" fill="#3a2817" />
+                <polygon points="2.2 -1.8 3.2 -1.8 2.7 -2.5" fill="#3a2817" />
+                {/* Tiny windows */}
+                <rect x="-0.3" y="-1.8" width="0.25" height="0.4" fill="#fdfaf3" opacity="0.5" />
+                <rect x="0.05" y="-1.8" width="0.25" height="0.4" fill="#fdfaf3" opacity="0.5" />
+              </g>
+
+              {/* The Tags — cluster of huts */}
+              <g transform="translate(72, 70)">
+                <use href="#bl-hut" x="-2.5" y="-0.3" width="2" height="1.2" />
+                <use href="#bl-hut" x="-0.5" y="-0.5" width="2" height="1.3" />
+                <use href="#bl-hut" x="1.5" y="-0.2" width="2" height="1.2" />
+                <use href="#bl-hut" x="-1.5" y="0.6" width="2" height="1.2" />
+                <use href="#bl-hut" x="0.5" y="0.7" width="2" height="1.2" />
+                {/* Smoke wisps */}
+                <path d="M 0 -1.5 Q 0.4 -2, 0 -2.5 Q -0.4 -3, 0 -3.5" fill="none" stroke="#3a2817" strokeWidth="0.15" opacity="0.6" />
+                <path d="M -2 -1.3 Q -2.3 -1.8, -2 -2.3" fill="none" stroke="#3a2817" strokeWidth="0.12" opacity="0.5" />
+              </g>
+
+              {/* The Uplands — small village */}
+              <g transform="translate(28, 28)">
+                <use href="#bl-hut" x="-1.5" y="-0.4" width="1.8" height="1.2" />
+                <use href="#bl-hut" x="0" y="-0.6" width="1.8" height="1.2" />
+                <use href="#bl-hut" x="-0.5" y="0.5" width="1.8" height="1.2" />
+                {/* Path */}
+                <path d="M -2 1.5 Q 0 0.8, 2 1.5" fill="none" stroke="#5a3d1c" strokeWidth="0.15" opacity="0.6" />
+              </g>
+
+              {/* Royal Guard Academy — fortified building with crossed swords */}
+              <g transform="translate(56, 44)">
+                <rect x="-2" y="-1.2" width="4" height="2.4" fill="#3a2817" />
+                <polygon points="-2.2 -1.2 2.2 -1.2 0 -2.4" fill="#3a2817" />
+                {/* Banner */}
+                <line x1="0" y1="-2.4" x2="0" y2="-3.2" stroke="#3a2817" strokeWidth="0.1" />
+                <polygon points="0 -3.2 0.8 -3, 0 -2.8" fill="#3a2817" />
+                {/* Crossed swords below */}
+                <g transform="translate(0, 1.8)">
+                  <line x1="-1" y1="-0.4" x2="1" y2="0.4" stroke="#3a2817" strokeWidth="0.18" strokeLinecap="round" />
+                  <line x1="-1" y1="0.4" x2="1" y2="-0.4" stroke="#3a2817" strokeWidth="0.18" strokeLinecap="round" />
+                  <circle cx="0" cy="0" r="0.18" fill="#7f1d1d" />
+                </g>
+              </g>
+
+              {/* The Wilted Rose — hidden sigil */}
+              <g transform="translate(38, 58)">
+                {/* Crown */}
+                <path d="M -1 -0.8 L -0.6 -1.4 L -0.2 -0.8 L 0 -1.5 L 0.2 -0.8 L 0.6 -1.4 L 1 -0.8 L 1 -0.4 L -1 -0.4 Z" fill="#7f1d1d" stroke="#3a2817" strokeWidth="0.08" />
+                {/* Bloom */}
+                <path d="M 0 -0.2 Q -0.9 0, -0.7 0.8 Q 0 1.2, 0.7 0.8 Q 0.9 0, 0 -0.2 Z" fill="#7f1d1d" stroke="#3a2817" strokeWidth="0.08" />
+                {/* Drooping stem */}
+                <path d="M 0 1.2 Q -0.3 1.7, -0.6 2.2" fill="none" stroke="#3a2817" strokeWidth="0.18" strokeLinecap="round" />
+                <path d="M -0.4 1.7 Q -0.7 1.6, -0.85 1.9" fill="#3a2817" opacity="0.7" />
+              </g>
+
+              {/* Mt. Raylia marker — peak + cave entrance */}
+              <g transform="translate(17, 11)">
+                {/* Cave mouth */}
+                <path d="M -0.6 0 Q 0 -0.7, 0.6 0 L 0.6 0.4 L -0.6 0.4 Z" fill="#1a0e08" />
+                <text x="0" y="-1.2" fontSize="0.85" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontStyle="italic">Mt. Raylia</text>
+              </g>
+
+              {/* Wyldhelm — ominous tower + warning */}
+              <g transform="translate(86, 22)">
+                {/* Crooked tower silhouette */}
+                <rect x="-0.6" y="-0.5" width="1.2" height="2" fill="#3a2817" />
+                <polygon points="-0.6 -0.5 0.6 -0.5 0 -1.4" fill="#3a2817" />
+                <rect x="-0.15" y="0.2" width="0.3" height="0.5" fill="#fdfaf3" opacity="0.5" />
+                {/* Skull warning */}
+                <g transform="translate(2.5, 0.5)" opacity="0.85">
+                  <circle cx="0" cy="0" r="0.7" fill="#3a2817" />
+                  <circle cx="-0.2" cy="-0.1" r="0.15" fill="#ecdcb8" />
+                  <circle cx="0.2" cy="-0.1" r="0.15" fill="#ecdcb8" />
+                  <rect x="-0.3" y="0.3" width="0.15" height="0.25" fill="#3a2817" />
+                  <rect x="-0.05" y="0.3" width="0.15" height="0.25" fill="#3a2817" />
+                  <rect x="0.2" y="0.3" width="0.15" height="0.25" fill="#3a2817" />
+                </g>
+              </g>
+
+              {/* Sea waves at the very edges (E + S) */}
+              <g opacity="0.55">
+                <use href="#bl-wave" x="3" y="71" width="3" height="1" />
+                <use href="#bl-wave" x="6" y="72" width="3" height="1" />
+                <use href="#bl-wave" x="91" y="71" width="3" height="1" />
+                <use href="#bl-wave" x="94" y="72" width="3" height="1" />
+                <use href="#bl-wave" x="3" y="3.5" width="3" height="1" />
+                <use href="#bl-wave" x="91" y="3.5" width="3" height="1" />
+              </g>
+
+              {/* ───── REGION LABELS (italic serif) ───── */}
+              <text x="22" y="22" fontSize="1.7" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.3" opacity="0.78">THE UPLANDS</text>
+              <text x="74" y="35" fontSize="1.7" fill="#7f1d1d" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.3" opacity="0.85">WYLDHELM</text>
+              <text x="62" y="66" fontSize="1.7" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.3" opacity="0.78">THE TAGS</text>
+              <text x="9" y="6.5" fontSize="1.4" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" letterSpacing="0.2" opacity="0.7">THE FAR PEAKS</text>
+              {/* Warning text near Wyldhelm */}
+              <text x="83" y="27" fontSize="0.9" fill="#7f1d1d" fontFamily="Cinzel" fontStyle="italic" textAnchor="middle" opacity="0.8">— Here be twisted ones —</text>
+
+              {/* ───── COMPASS ROSE (bottom-right corner, ornate) ───── */}
+              <g transform="translate(91, 65)">
+                {/* Outer ring */}
+                <circle r="3.2" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.2" />
+                <circle r="2.8" fill="none" stroke="#3a2817" strokeWidth="0.1" strokeDasharray="0.3 0.3" />
+                <circle r="1.6" fill="none" stroke="#3a2817" strokeWidth="0.1" />
+                {/* 8-point star */}
+                <path d="M 0 -2.6 L 0.4 -0.3 L 0 0 L -0.4 -0.3 Z" fill="#3a2817" />
+                <path d="M 2.6 0 L 0.3 0.4 L 0 0 L 0.3 -0.4 Z" fill="#3a2817" opacity="0.85" />
+                <path d="M 0 2.6 L -0.4 0.3 L 0 0 L 0.4 0.3 Z" fill="#3a2817" />
+                <path d="M -2.6 0 L -0.3 -0.4 L 0 0 L -0.3 0.4 Z" fill="#3a2817" opacity="0.85" />
+                {/* Diagonal points (smaller) */}
+                <path d="M 1.84 -1.84 L 0.3 -0.3 L 0 0 L -0.3 0.3 Z" fill="#3a2817" opacity="0.55" />
+                <path d="M -1.84 -1.84 L -0.3 -0.3 L 0 0 L 0.3 0.3 Z" fill="#3a2817" opacity="0.55" />
+                <path d="M 1.84 1.84 L 0.3 0.3 L 0 0 L -0.3 -0.3 Z" fill="#3a2817" opacity="0.55" />
+                <path d="M -1.84 1.84 L -0.3 0.3 L 0 0 L 0.3 -0.3 Z" fill="#3a2817" opacity="0.55" />
+                {/* Cardinal letters */}
+                <text x="0" y="-3.45" fontSize="0.85" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700">N</text>
+                <text x="3.5" y="0.3" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">E</text>
+                <text x="0" y="3.95" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">S</text>
+                <text x="-3.5" y="0.3" fontSize="0.7" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" opacity="0.85">W</text>
+                {/* Center pin */}
+                <circle r="0.18" fill="#7f1d1d" />
+              </g>
+
+              {/* "Drawn by" cartouche bottom-left */}
+              <g transform="translate(8, 70)">
+                <text fontSize="0.85" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" opacity="0.6">— After the cartographers of Annarose —</text>
+              </g>
             </svg>
 
             {/* Hot-spots */}
