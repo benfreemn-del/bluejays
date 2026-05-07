@@ -49,6 +49,7 @@ import {
 
 import StickyNav from "./sticky-nav";
 import MeyerElectricContactForm from "./contact-form";
+import MeyerMark from "./meyer-mark";
 import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS DATA ───────────────────────── */
@@ -106,9 +107,18 @@ const PHOTOS = {
 const BG = "#0a0a0a";
 const BG_ALT = "#111111";
 const BG_PANEL = "#161614";
-const ACCENT = "#facc15";       // primary yellow — buttons, headlines, accent
-const ACCENT_DARK = "#eab308";  // hover/gradient end
+const ACCENT = "#facc15";        // primary yellow — buttons, headlines, accent
+const ACCENT_DARK = "#eab308";   // darker yellow — gradient end on yellow-only fades
 const ACCENT_DIM = "rgba(250, 204, 21, 0.18)";
+// Orange secondary — augments the yellow, never replaces it. Used for:
+// "ember" gradients (buttons + badges), bolt-glow halo outer ring,
+// energy-orb variation in backgrounds, hero-CTA hover end-color.
+const ACCENT_ORANGE = "#f97316"; // orange-500 — hot ember
+const ACCENT_AMBER = "#fb923c";  // orange-400 — softer ember tone
+const ACCENT_ORANGE_DIM = "rgba(249, 115, 22, 0.16)";
+// Reusable yellow→orange gradient strings.
+const FIRE_GRAD = `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`;
+const FIRE_GRAD_RADIAL = `radial-gradient(circle, ${ACCENT} 0%, ${ACCENT_ORANGE} 75%)`;
 const INK = "#f8fafc";
 const INK_SOFT = "rgba(255, 255, 255, 0.78)";
 const INK_DIM = "rgba(255, 255, 255, 0.55)";
@@ -348,13 +358,18 @@ export default function MeyerElectricPage() {
               variants={fadeUp}
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
               style={{
-                background: "rgba(250, 204, 21, 0.10)",
+                background:
+                  "linear-gradient(90deg, rgba(250, 204, 21, 0.12) 0%, rgba(249, 115, 22, 0.10) 100%)",
                 border: `1px solid ${ACCENT_DIM}`,
                 color: ACCENT,
                 fontFamily: FONT_HEAD,
               }}
             >
-              <Lightning size={13} weight="fill" />
+              <Lightning
+                size={13}
+                weight="fill"
+                style={{ color: ACCENT_AMBER }}
+              />
               Tesla Powerwall Certified Installer
             </motion.div>
 
@@ -407,8 +422,8 @@ export default function MeyerElectricPage() {
             >
               <a
                 href="#powerwall"
-                className="inline-flex items-center justify-center gap-2 px-7 h-14 rounded-md font-bold uppercase tracking-wide text-[14px] text-black transition-all hover:brightness-110 active:scale-[0.97] shadow-[0_4px_24px_rgba(250,204,21,0.4)]"
-                style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+                className="inline-flex items-center justify-center gap-2 px-7 h-14 rounded-md font-bold uppercase tracking-wide text-[14px] text-black transition-all hover:brightness-110 active:scale-[0.97] shadow-[0_4px_24px_rgba(249,115,22,0.45)]"
+                style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
               >
                 Learn About Powerwall
                 <ArrowRight size={16} weight="bold" />
@@ -530,14 +545,14 @@ export default function MeyerElectricPage() {
                   loading="lazy"
                 />
               </div>
-              {/* Floating "Verified Local" stamp */}
+              {/* Floating "Verified Local" stamp — fire gradient */}
               <div
                 className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 px-3.5 py-2 rounded-full shadow-xl flex items-center gap-2"
                 style={{
-                  background: ACCENT,
+                  background: FIRE_GRAD,
                   color: "#0a0a0a",
                   fontFamily: FONT_HEAD,
-                  boxShadow: "0 8px 24px rgba(250, 204, 21, 0.45)",
+                  boxShadow: "0 8px 24px rgba(249, 115, 22, 0.45)",
                 }}
               >
                 <SealCheck size={14} weight="fill" />
@@ -839,12 +854,13 @@ export default function MeyerElectricPage() {
               filter: "blur(8px)",
             }}
           />
-          {/* Soft energy orb bottom-left */}
+          {/* Soft energy orb bottom-left — orange ember instead of
+              yellow for color variation across the section. */}
           <div
-            className="absolute -bottom-40 -left-32 w-[380px] h-[380px] rounded-full opacity-[0.12]"
+            className="absolute -bottom-40 -left-32 w-[380px] h-[380px] rounded-full opacity-[0.14]"
             style={{
               background:
-                "radial-gradient(circle, rgba(250, 204, 21, 0.5) 0%, transparent 70%)",
+                "radial-gradient(circle, rgba(249, 115, 22, 0.55) 0%, transparent 70%)",
               filter: "blur(10px)",
             }}
           />
@@ -857,9 +873,9 @@ export default function MeyerElectricPage() {
             <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
           </svg>
           <svg
-            className="absolute top-[18%] right-[12%] w-8 h-8 sm:w-10 sm:h-10 opacity-[0.06]"
+            className="absolute top-[18%] right-[12%] w-8 h-8 sm:w-10 sm:h-10 opacity-[0.08]"
             viewBox="0 0 24 32"
-            fill={ACCENT}
+            fill={ACCENT_ORANGE}
             style={{ transform: "rotate(15deg)" }}
           >
             <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
@@ -873,9 +889,9 @@ export default function MeyerElectricPage() {
             <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
           </svg>
           <svg
-            className="absolute bottom-[12%] left-[18%] w-10 h-10 sm:w-12 sm:h-12 opacity-[0.06]"
+            className="absolute bottom-[12%] left-[18%] w-10 h-10 sm:w-12 sm:h-12 opacity-[0.08]"
             viewBox="0 0 24 32"
-            fill={ACCENT}
+            fill={ACCENT_ORANGE}
             style={{ transform: "rotate(8deg)" }}
           >
             <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
@@ -1161,8 +1177,8 @@ export default function MeyerElectricPage() {
               <div className="mt-8 max-w-xl flex flex-col sm:flex-row items-stretch gap-3">
                 <a
                   href="#contact"
-                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97] shadow-[0_4px_18px_rgba(250,204,21,0.32)]"
-                  style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97] shadow-[0_4px_18px_rgba(249,115,22,0.4)]"
+                  style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
                 >
                   Get a Free Estimate
                   <ArrowRight size={14} weight="bold" />
@@ -1481,17 +1497,7 @@ export default function MeyerElectricPage() {
                 className="flex items-center gap-3 mb-5"
                 style={{ fontFamily: FONT_HEAD }}
               >
-                <span style={{ color: ACCENT }}>
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="32"
-                    height="32"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" />
-                  </svg>
-                </span>
+                <MeyerMark size={36} />
                 <div className="flex flex-col leading-tight text-white">
                   <span className="text-[16px] font-bold tracking-wide">
                     MEYER ELECTRIC

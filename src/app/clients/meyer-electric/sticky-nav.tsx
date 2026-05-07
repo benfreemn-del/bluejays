@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Phone, ArrowRight, List, X } from "@phosphor-icons/react/dist/ssr";
+import MeyerMark from "./meyer-mark";
 
 /**
  * StickyNav — Meyer Electric LLC site header with mobile hamburger.
@@ -52,29 +53,14 @@ export default function StickyNav() {
       }}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
-        {/* Logo lockup — lightning bolt + MEYER ELECTRIC */}
+        {/* Logo lockup — Meyer plug-in-circle mark (recolored
+            yellow→orange) + MEYER ELECTRIC wordmark. */}
         <a
           href="#top"
           className="flex items-center gap-3 min-w-0"
           aria-label="Meyer Electric LLC"
         >
-          <span
-            className="flex items-center justify-center shrink-0"
-            style={{ color: ACCENT }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="32"
-              height="32"
-              fill="currentColor"
-              aria-hidden="true"
-              style={{
-                filter: "drop-shadow(0 0 12px rgba(250, 204, 21, 0.45))",
-              }}
-            >
-              <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" />
-            </svg>
-          </span>
+          <MeyerMark size={36} className="shrink-0" />
           <span
             className="flex flex-col leading-tight text-white"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
@@ -147,17 +133,7 @@ export default function StickyNav() {
               className="flex items-center gap-3 text-white"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              <span style={{ color: ACCENT }}>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="28"
-                  height="28"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" />
-                </svg>
-              </span>
+              <MeyerMark size={32} flat />
               <span className="text-[15px] font-bold tracking-wide">
                 MEYER ELECTRIC
               </span>
