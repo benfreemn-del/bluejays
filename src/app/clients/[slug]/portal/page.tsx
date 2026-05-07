@@ -105,11 +105,13 @@ type ReplyDraft = {
 };
 
 type NotificationMode = "instant" | "digest" | "off";
+type TodoNudgeFrequency = "every_login" | "daily" | "weekly" | "off";
 type OwnerPrefs = {
   new_lead_email: NotificationMode;
   new_lead_sms: NotificationMode;
   digest_hour: number;
   digest_timezone: string;
+  todo_nudge_frequency: TodoNudgeFrequency;
 };
 
 type ShopifyState = {
@@ -3875,6 +3877,14 @@ function AccountTab({
                 </select>
               </div>
             )}
+            <div className="pt-3 border-t border-slate-800">
+              <TodoNudgeRow
+                label="AI to-do nudges"
+                hint="How often the AI Operator nudges you to work through your task list. Set to Off if you self-drive your day."
+                value={prefs.todo_nudge_frequency ?? "every_login"}
+                onChange={(v) => updatePrefs({ todo_nudge_frequency: v })}
+              />
+            </div>
           </div>
         )}
       </section>
@@ -4181,6 +4191,51 @@ function PrefRow({
   const opts: { id: NotificationMode; label: string }[] = [
     { id: "instant", label: "Instant" },
     { id: "digest", label: "Daily digest" },
+    { id: "off", label: "Off" },
+  ];
+  return (
+    <div>
+      <div className="text-sm font-semibold">{label}</div>
+      {hint && <div className="text-[11px] text-slate-500 mb-2">{hint}</div>}
+      <div className="flex gap-1">
+        {opts.map((o) => (
+          <button
+            key={o.id}
+            onClick={() => onChange(o.id)}
+            className={`flex-1 text-[11px] font-bold py-1.5 rounded border transition ${
+              value === o.id
+                ? "bg-blue-500 border-blue-400 text-white"
+                : "border-slate-700 text-slate-400 hover:text-white"
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 4-option toggle for AI to-do nudge frequency. Same visual rhythm as
+ * PrefRow but with a wider option set (every login / daily / weekly /
+ * off). Wiring lands with AI Operator Wave 1; the setting persists now.
+ */
+function TodoNudgeRow({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: TodoNudgeFrequency;
+  onChange: (v: TodoNudgeFrequency) => void;
+}) {
+  const opts: { id: TodoNudgeFrequency; label: string }[] = [
+    { id: "every_login", label: "Every login" },
+    { id: "daily", label: "Daily" },
+    { id: "weekly", label: "Weekly" },
     { id: "off", label: "Off" },
   ];
   return (

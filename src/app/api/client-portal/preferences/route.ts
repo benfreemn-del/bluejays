@@ -4,6 +4,7 @@ import {
   getOwnerPreferences,
   updateOwnerPreferences,
   type NotificationMode,
+  type TodoNudgeFrequency,
 } from "@/lib/client-owner-preferences";
 
 /**
@@ -35,6 +36,12 @@ export async function GET(req: NextRequest) {
 }
 
 const VALID_MODES: NotificationMode[] = ["instant", "digest", "off"];
+const VALID_TODO_NUDGE: TodoNudgeFrequency[] = [
+  "every_login",
+  "daily",
+  "weekly",
+  "off",
+];
 
 export async function PATCH(req: NextRequest) {
   const cookie = req.cookies.get(CLIENT_PORTAL_COOKIE)?.value;
@@ -70,6 +77,15 @@ export async function PATCH(req: NextRequest) {
   }
   if (typeof body.digest_timezone === "string" && body.digest_timezone.length < 64) {
     patch.digest_timezone = body.digest_timezone;
+  }
+  if (typeof body.todo_nudge_frequency === "string") {
+    if (!VALID_TODO_NUDGE.includes(body.todo_nudge_frequency as TodoNudgeFrequency)) {
+      return NextResponse.json(
+        { ok: false, error: "Invalid todo_nudge_frequency" },
+        { status: 400 },
+      );
+    }
+    patch.todo_nudge_frequency = body.todo_nudge_frequency as TodoNudgeFrequency;
   }
   try {
     const prefs = await updateOwnerPreferences(owner.id, patch);

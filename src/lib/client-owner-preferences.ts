@@ -10,6 +10,14 @@ import { getSupabase } from "./supabase";
 
 export type NotificationMode = "instant" | "digest" | "off";
 
+/**
+ * AI to-do nudge frequency — how often the per-client AI Operator
+ * surfaces the owner's `client_tasks` list. Wiring lands with AI
+ * Operator Wave 1 (see bluejays/docs/AI_PACKAGE_PLAYBOOK.md Phase 9);
+ * the setting is captured now so the portal exposes the choice.
+ */
+export type TodoNudgeFrequency = "every_login" | "daily" | "weekly" | "off";
+
 export type OwnerPreferences = {
   owner_id: string;
   new_lead_email: NotificationMode;
@@ -17,6 +25,7 @@ export type OwnerPreferences = {
   instant_audience_filter: string[];
   digest_hour: number;
   digest_timezone: string;
+  todo_nudge_frequency: TodoNudgeFrequency;
   last_digest_sent_at: string | null;
   created_at: string;
   updated_at: string;
@@ -28,6 +37,7 @@ const DEFAULT_PREFS: Omit<OwnerPreferences, "owner_id" | "created_at" | "updated
   instant_audience_filter: [],
   digest_hour: 9,
   digest_timezone: "America/Los_Angeles",
+  todo_nudge_frequency: "every_login",
 };
 
 export async function getOwnerPreferences(ownerId: string): Promise<OwnerPreferences> {
@@ -54,7 +64,12 @@ export async function updateOwnerPreferences(
   patch: Partial<
     Pick<
       OwnerPreferences,
-      "new_lead_email" | "new_lead_sms" | "instant_audience_filter" | "digest_hour" | "digest_timezone"
+      | "new_lead_email"
+      | "new_lead_sms"
+      | "instant_audience_filter"
+      | "digest_hour"
+      | "digest_timezone"
+      | "todo_nudge_frequency"
     >
   >,
 ): Promise<OwnerPreferences> {
