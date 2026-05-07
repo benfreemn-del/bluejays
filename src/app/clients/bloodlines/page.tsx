@@ -2637,17 +2637,228 @@ function HeroBlock() {
           A Fantasy Saga by Preston James Hunsaker
         </p>
 
-        {/* Monogram */}
-        <div className="mx-auto mb-8 relative" style={{ width: 220, height: 280 }}>
-          <Image
-            src="/images/clients/bloodlines/bloodlines-monogram.jpg"
-            alt="Bloodlines monogram — gold serif N entwined with a wilted rose on weathered leather"
-            width={512}
-            height={640}
-            className="w-full h-full object-contain"
-            priority
-            style={{ filter: "drop-shadow(0 8px 32px rgba(212, 168, 83, 0.3))" }}
+        {/* Monogram rendered as a real leather-bound book — visible
+            page edges on right + bottom, dark binding spine on the
+            left, gold inner-edge embossing, plus a periodic tremor
+            cycle that suggests pressure building behind the cover.
+            Motion-safe per Rule 70. */}
+        <style jsx>{`
+          .bl-book {
+            animation: bl-book-tremor 4.5s ease-in-out infinite;
+            transform-origin: center 70%;
+            will-change: transform;
+          }
+          .bl-book-aura {
+            animation: bl-book-aura-pulse 3.2s ease-in-out infinite;
+          }
+          @keyframes bl-book-tremor {
+            /* Idle most of the cycle, then a quick shudder near the end
+               like the book is about to burst open + settles back. */
+            0%,
+            55%,
+            100% {
+              transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            58% {
+              transform: translate(-1.4px, 0.6px) rotate(-0.45deg) scale(1.005);
+            }
+            61% {
+              transform: translate(1.6px, -0.4px) rotate(0.55deg) scale(1.005);
+            }
+            64% {
+              transform: translate(-1.2px, 0.5px) rotate(-0.4deg) scale(1.005);
+            }
+            67% {
+              transform: translate(1.1px, -0.3px) rotate(0.35deg) scale(1.008);
+            }
+            70% {
+              transform: translate(-0.7px, 0.3px) rotate(-0.25deg) scale(1.012);
+            }
+            73% {
+              transform: translate(0.5px, -0.2px) rotate(0.18deg) scale(1.014);
+            }
+            76% {
+              transform: translate(0, -1.2px) rotate(0deg) scale(1.018);
+            }
+            80% {
+              transform: translate(0, -0.6px) rotate(0deg) scale(1.008);
+            }
+            85% {
+              transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+          }
+          @keyframes bl-book-aura-pulse {
+            0%,
+            100% {
+              opacity: 0.45;
+              transform: scale(1);
+            }
+            50% {
+              opacity: 0.9;
+              transform: scale(1.1);
+            }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .bl-book,
+            .bl-book-aura {
+              animation: none;
+            }
+          }
+        `}</style>
+
+        <div
+          className="bl-book mx-auto mb-8 relative"
+          style={{ width: 240, height: 304 }}
+        >
+          {/* Outer aura — pulses continuously, looks like the leather
+              is leaking light from behind the cover. */}
+          <div
+            aria-hidden="true"
+            className="bl-book-aura absolute pointer-events-none"
+            style={{
+              top: -28,
+              left: -28,
+              right: -28,
+              bottom: -28,
+              background: `radial-gradient(circle, ${GOLD}66 0%, ${GOLD_DEEP}33 35%, transparent 70%)`,
+              filter: "blur(24px)",
+            }}
           />
+
+          {/* Page-edge stack — RIGHT side. Repeating gradient simulates
+              dozens of stacked pages with subtle ink-darkened gutters. */}
+          <div
+            aria-hidden="true"
+            className="absolute"
+            style={{
+              top: 5,
+              right: -4,
+              bottom: 5,
+              width: 7,
+              background:
+                "repeating-linear-gradient(to bottom, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
+              borderRight: "1px solid #3a2817",
+              borderRadius: "0 2px 2px 0",
+              boxShadow:
+                "1px 0 3px rgba(0, 0, 0, 0.5), inset 1px 0 0 rgba(58, 40, 23, 0.4)",
+            }}
+          />
+          {/* Page-edge stack — BOTTOM side. Same pattern rotated. */}
+          <div
+            aria-hidden="true"
+            className="absolute"
+            style={{
+              left: 5,
+              right: 0,
+              bottom: -4,
+              height: 7,
+              background:
+                "repeating-linear-gradient(to right, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
+              borderBottom: "1px solid #3a2817",
+              borderRadius: "0 0 2px 2px",
+              boxShadow:
+                "0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(58, 40, 23, 0.4)",
+            }}
+          />
+
+          {/* Book cover — leather face with the monogram artwork */}
+          <div
+            className="absolute inset-0 rounded-sm overflow-hidden"
+            style={{
+              boxShadow:
+                "0 18px 48px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(58, 40, 23, 0.7)",
+            }}
+          >
+            <Image
+              src="/images/clients/bloodlines/bloodlines-monogram.jpg"
+              alt="Bloodlines — leather-bound monogram, a gold serif N entwined with a wilted rose"
+              width={512}
+              height={640}
+              className="w-full h-full object-cover"
+              priority
+            />
+
+            {/* Inner gold-embossed border — the kind of thin gilt
+                rectangle stamped just inside the leather edge. */}
+            <div
+              aria-hidden="true"
+              className="absolute pointer-events-none"
+              style={{
+                top: 8,
+                left: 14,
+                right: 8,
+                bottom: 8,
+                border: `1px solid ${GOLD_DEEP}`,
+                opacity: 0.55,
+                borderRadius: 1,
+                boxShadow: `inset 0 0 6px ${GOLD_DEEP}33`,
+              }}
+            />
+
+            {/* Spine binding on the LEFT — dark gradient that fakes the
+                rolled leather binding, plus 4 horizontal gilt bands
+                like a real antique book. */}
+            <div
+              aria-hidden="true"
+              className="absolute left-0 top-0 bottom-0"
+              style={{
+                width: 12,
+                background:
+                  "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.15) 100%)",
+                borderRight: "1px solid rgba(58, 40, 23, 0.7)",
+              }}
+            />
+            {/* Gilt bands across the spine */}
+            {[55, 110, 175, 240].map((y, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className="absolute left-0 pointer-events-none"
+                style={{
+                  top: y,
+                  width: 12,
+                  height: 2,
+                  background: GOLD_DEEP,
+                  opacity: 0.5,
+                  boxShadow: `0 0 4px ${GOLD}`,
+                }}
+              />
+            ))}
+
+            {/* Top edge highlight + bottom edge shadow — fakes the
+                3D thickness of the cover material. */}
+            <div
+              aria-hidden="true"
+              className="absolute top-0 left-0 right-0 h-1 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(212, 168, 83, 0.4), transparent)",
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute bottom-0 left-0 right-0 h-1.5 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent)",
+              }}
+            />
+
+            {/* Subtle hairline crack of light along the right edge —
+                hints that the cover is ALMOST open. Faint gold seam. */}
+            <div
+              aria-hidden="true"
+              className="absolute pointer-events-none"
+              style={{
+                right: 0,
+                top: "20%",
+                bottom: "20%",
+                width: 1,
+                background: `linear-gradient(to bottom, transparent, ${GOLD}66 30%, ${GOLD}99 50%, ${GOLD}66 70%, transparent)`,
+                boxShadow: `0 0 4px ${GOLD}, 0 0 8px ${GOLD}66`,
+              }}
+            />
+          </div>
         </div>
 
         <h1
