@@ -134,7 +134,7 @@ function SectionHeader({
 }) {
   const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
   return (
-    <div className={`max-w-3xl ${alignClass} mb-12 sm:mb-14`}>
+    <div className={`max-w-3xl ${alignClass} mb-8 sm:mb-10`}>
       {eyebrow && (
         <div
           className="inline-flex items-center gap-3 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
@@ -334,13 +334,13 @@ export default function MeyerElectricPage() {
           />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-14 sm:py-20 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-10 sm:py-14 lg:py-20">
           <div className="max-w-2xl">
             <motion.div
               initial="hidden"
               animate="show"
               variants={fadeUp}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-7"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
               style={{
                 background: "rgba(250, 204, 21, 0.10)",
                 border: `1px solid ${ACCENT_DIM}`,
@@ -368,7 +368,7 @@ export default function MeyerElectricPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.15 }}
-              className="mt-6 sm:mt-7 text-[17px] sm:text-[19px] leading-relaxed max-w-xl"
+              className="mt-5 sm:mt-6 text-[17px] sm:text-[19px] leading-relaxed max-w-xl"
               style={{
                 color: INK_SOFT,
                 fontFamily: FONT_BODY,
@@ -385,7 +385,7 @@ export default function MeyerElectricPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.25 }}
-              className="mt-7 flex flex-wrap gap-x-7 gap-y-4"
+              className="mt-6 flex flex-wrap gap-x-6 gap-y-3"
             >
               <HeroPill icon={<Shield size={16} weight="fill" />} label="Whole Home Backup" />
               <HeroPill icon={<SpeakerHigh size={16} weight="fill" />} label="Quiet & Silent" />
@@ -397,7 +397,7 @@ export default function MeyerElectricPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.35 }}
-              className="mt-9 flex flex-col sm:flex-row gap-3"
+              className="mt-7 flex flex-col sm:flex-row gap-3"
             >
               <a
                 href="#powerwall"
@@ -427,7 +427,7 @@ export default function MeyerElectricPage() {
           borderColor: "rgba(255,255,255,0.06)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-7 sm:py-9">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-5 sm:py-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-10 items-center">
             <TrustBadge
               icon={<Lightning size={22} weight="fill" />}
@@ -451,7 +451,7 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── SERVICES ────────────────────── */}
       <section
         id="services"
-        className="py-20 sm:py-24 lg:py-28"
+        className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -502,14 +502,14 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── POWERWALL DEEP-DIVE ────────────────────── */}
       <section
         id="powerwall"
-        className="py-20 sm:py-24 lg:py-28"
+        className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG_ALT }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="order-2 lg:order-1">
               <div
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
                 style={{
                   background: ACCENT_DIM,
                   color: ACCENT,
@@ -527,7 +527,7 @@ export default function MeyerElectricPage() {
                 <span style={{ color: ACCENT }}>Tesla Powerwall</span>
               </h2>
               <p
-                className="mt-5 text-[16px] sm:text-[17px] leading-relaxed"
+                className="mt-4 text-[16px] sm:text-[17px] leading-relaxed"
                 style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
               >
                 Tesla Powerwall is a rechargeable home battery system that stores
@@ -535,7 +535,7 @@ export default function MeyerElectricPage() {
                 ride out outages, and monitor everything from your phone.
               </p>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-6 space-y-3">
                 <PowerwallFeature
                   title="Whole Home Backup"
                   body="Keep lights, refrigerator, HVAC, and outlets running automatically when the grid goes down. No flashlights. No spoiled food."
@@ -554,7 +554,7 @@ export default function MeyerElectricPage() {
                 />
               </ul>
 
-              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+              <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <a
                   href="#contact"
                   className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97]"
@@ -719,11 +719,11 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── GENERATORS ────────────────────── */}
       <section
         id="generators"
-        className="py-20 sm:py-24 lg:py-28"
+        className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Visual side: stylized "Outage → Auto Restore" diagram.
                 Icon-led to keep our 5 unique real photos for the
                 services grid + hero — no duplicates per CLAUDE.md
@@ -839,7 +839,7 @@ export default function MeyerElectricPage() {
             </div>
             <div className="order-1 lg:order-2">
               <div
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
                 style={{
                   background: ACCENT_DIM,
                   color: ACCENT,
@@ -857,7 +857,7 @@ export default function MeyerElectricPage() {
                 <span style={{ color: ACCENT }}>turns itself on</span>
               </h2>
               <p
-                className="mt-5 text-[16px] sm:text-[17px] leading-relaxed"
+                className="mt-4 text-[16px] sm:text-[17px] leading-relaxed"
                 style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
               >
                 When the grid drops, your Generac standby generator kicks on
@@ -865,7 +865,7 @@ export default function MeyerElectricPage() {
                 gas. Tested weekly without you lifting a finger.
               </p>
 
-              <div className="mt-8 grid sm:grid-cols-2 gap-4">
+              <div className="mt-6 grid sm:grid-cols-2 gap-3">
                 <FeatureBullet
                   icon={<Lifebuoy size={18} weight="fill" />}
                   text="Auto-start when grid fails"
@@ -884,7 +884,7 @@ export default function MeyerElectricPage() {
                 />
               </div>
 
-              <div className="mt-8">
+              <div className="mt-6">
                 <a
                   href="#contact"
                   className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97]"
@@ -902,7 +902,7 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── WHY US ────────────────────── */}
       <section
         id="why-us"
-        className="py-20 sm:py-24 lg:py-28 relative overflow-hidden"
+        className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
         style={{ background: BG_ALT }}
       >
         {/* Decorative gradient + grid (no photo — Rule 1.5 dedup;
@@ -944,10 +944,10 @@ export default function MeyerElectricPage() {
         </div>
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             <div>
               <div
-                className="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold mb-4"
                 style={{ color: ACCENT, fontFamily: FONT_HEAD }}
               >
                 <span className="inline-block w-8 h-px" style={{ background: ACCENT }} />
@@ -962,7 +962,7 @@ export default function MeyerElectricPage() {
                 electrical work.
               </h2>
               <p
-                className="mt-5 text-[16px] sm:text-[17px] leading-relaxed max-w-xl"
+                className="mt-4 text-[16px] sm:text-[17px] leading-relaxed max-w-xl"
                 style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
               >
                 We take great pride in installing a quality electrical
@@ -971,7 +971,7 @@ export default function MeyerElectricPage() {
                 on their electrical jobs.
               </p>
 
-              <ul className="mt-9 space-y-4 max-w-xl">
+              <ul className="mt-6 space-y-3 max-w-xl">
                 <WhyBullet text={`${BUSINESS.yearsInBusiness}+ years on the Olympic Peninsula`} />
                 <WhyBullet text="Licensed, bonded, and insured" />
                 <WhyBullet text="Tesla Powerwall Certified Installer" />
@@ -983,7 +983,7 @@ export default function MeyerElectricPage() {
 
             {/* Stats */}
             <div className="lg:pl-8">
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <StatCard value={`${BUSINESS.yearsInBusiness}+`} label="Years in Business" />
                 <StatCard value="10" label="Cities Served" />
                 <StatCard value="A+" label="Workmanship Standard" />
@@ -991,7 +991,7 @@ export default function MeyerElectricPage() {
               </div>
 
               <div
-                className="mt-6 p-6 sm:p-7 rounded-xl border"
+                className="mt-4 p-5 sm:p-6 rounded-xl border"
                 style={{
                   background: "rgba(250, 204, 21, 0.06)",
                   borderColor: ACCENT_DIM,
@@ -1020,7 +1020,7 @@ export default function MeyerElectricPage() {
 
       {/* ────────────────────── SERVICE AREA ────────────────────── */}
       <section
-        className="py-20 sm:py-24 lg:py-28"
+        className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -1032,13 +1032,13 @@ export default function MeyerElectricPage() {
           />
 
           <div
-            className="mx-auto max-w-4xl rounded-2xl border p-7 sm:p-10"
+            className="mx-auto max-w-4xl rounded-2xl border p-6 sm:p-8"
             style={{
               background: BG_PANEL,
               borderColor: "rgba(255, 255, 255, 0.08)",
             }}
           >
-            <div className="flex items-start gap-4 mb-7">
+            <div className="flex items-start gap-4 mb-5">
               <span
                 className="shrink-0 w-12 h-12 rounded-md flex items-center justify-center"
                 style={{
@@ -1097,7 +1097,7 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── CONTACT / CTA ────────────────────── */}
       <section
         id="contact"
-        className="py-20 sm:py-24 lg:py-28 relative overflow-hidden"
+        className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
         style={{ background: BG_ALT }}
       >
         {/* Subtle yellow glow accent */}
@@ -1110,10 +1110,10 @@ export default function MeyerElectricPage() {
         />
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             <div>
               <div
-                className="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase font-semibold mb-4"
                 style={{ color: ACCENT, fontFamily: FONT_HEAD }}
               >
                 <span className="inline-block w-8 h-px" style={{ background: ACCENT }} />
@@ -1127,14 +1127,14 @@ export default function MeyerElectricPage() {
                 <span style={{ color: ACCENT }}>reliable power?</span>
               </h2>
               <p
-                className="mt-5 text-[16px] sm:text-[18px] leading-relaxed max-w-md"
+                className="mt-4 text-[16px] sm:text-[18px] leading-relaxed max-w-md"
                 style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
               >
                 Tell us about your project. We&rsquo;ll respond within the hour
                 during business hours with a free estimate, no obligation.
               </p>
 
-              <div className="mt-9 space-y-5 max-w-md">
+              <div className="mt-6 space-y-4 max-w-md">
                 <ContactRow
                   icon={<Phone size={18} weight="fill" />}
                   label="Call us"
@@ -1188,7 +1188,7 @@ export default function MeyerElectricPage() {
           borderColor: "rgba(255, 255, 255, 0.05)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-14">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-10">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
             {/* Logo column */}
             <div>
@@ -1308,7 +1308,7 @@ export default function MeyerElectricPage() {
 
           {/* Bottom bar */}
           <div
-            className="mt-12 pt-7 border-t flex flex-col sm:flex-row gap-4 items-center justify-between"
+            className="mt-8 pt-5 border-t flex flex-col sm:flex-row gap-4 items-center justify-between"
             style={{ borderColor: "rgba(255, 255, 255, 0.05)" }}
           >
             <div
