@@ -1698,59 +1698,191 @@ function AuthorBlock() {
           "linear-gradient(180deg, #08070a 0%, #100b0b 50%, #08070a 100%)",
       }}
     >
+      {/* Pulsing-seal glow + corner-flourish keyframes. Motion-safe per
+          Rule 70 — the @media block kills both animations on
+          prefers-reduced-motion. */}
+      <style jsx>{`
+        .bl-author-seal {
+          animation: bl-seal-pulse 6s ease-in-out infinite;
+        }
+        .bl-author-seal-rim {
+          animation: bl-seal-rotate 60s linear infinite;
+        }
+        @keyframes bl-seal-pulse {
+          0%,
+          100% {
+            box-shadow:
+              0 0 80px rgba(212, 168, 83, 0.18),
+              inset 0 0 40px rgba(0, 0, 0, 0.4);
+          }
+          50% {
+            box-shadow:
+              0 0 110px rgba(212, 168, 83, 0.32),
+              inset 0 0 40px rgba(0, 0, 0, 0.4);
+          }
+        }
+        @keyframes bl-seal-rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-author-seal,
+          .bl-author-seal-rim {
+            animation: none;
+          }
+        }
+      `}</style>
+
       <div className="max-w-4xl mx-auto">
         <SectionHeading eyebrow="The Author" title="Preston James Hunsaker" />
 
-        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-10 lg:gap-14 items-start">
-          {/* Author imprint */}
-          <div className="flex flex-col items-center text-center">
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-10 lg:gap-14 items-center md:items-start">
+          {/* Author seal — publisher's-mark style. Mobile centers; md+
+              left-aligns into the bio column. */}
+          <div className="flex flex-col items-center text-center mx-auto md:mx-0">
             <div
-              className="relative rounded-full mb-4"
+              className="bl-author-seal relative rounded-full flex items-center justify-center w-[220px] h-[220px] sm:w-[240px] sm:h-[240px] md:w-[260px] md:h-[260px]"
               style={{
-                width: 220,
-                height: 220,
                 background:
-                  "radial-gradient(circle, rgba(212, 168, 83, 0.12) 0%, rgba(9, 9, 11, 0.9) 70%)",
-                border: `1px solid ${GOLD_DEEP}88`,
-                boxShadow: `0 0 60px rgba(212, 168, 83, 0.15)`,
+                  "radial-gradient(circle, rgba(212, 168, 83, 0.20) 0%, rgba(9, 9, 11, 0.96) 80%)",
+                border: `1px solid ${GOLD_DEEP}aa`,
               }}
             >
+              {/* Slowly-rotating ornamental rim — 4 evenly-spaced gold
+                  pips around the circumference. SVG so the strokes scale
+                  cleanly with the seal at every breakpoint. */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 100 100"
+                className="bl-author-seal-rim absolute inset-0 w-full h-full pointer-events-none"
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="48"
+                  fill="none"
+                  stroke={GOLD_DEEP}
+                  strokeOpacity="0.5"
+                  strokeWidth="0.3"
+                  strokeDasharray="0.8 2.4"
+                />
+                {[0, 90, 180, 270].map((deg) => (
+                  <circle
+                    key={deg}
+                    cx="50"
+                    cy="2"
+                    r="1.1"
+                    fill={GOLD}
+                    transform={`rotate(${deg} 50 50)`}
+                  />
+                ))}
+              </svg>
+
+              {/* Concentric solid ring — anchors the imprint visually so
+                  it doesn't float on the gradient. */}
+              <span
+                aria-hidden="true"
+                className="absolute rounded-full pointer-events-none"
+                style={{ inset: 12, border: `1px solid ${GOLD_DEEP}77` }}
+              />
+              {/* Concentric dashed inner ring — adds the "publisher's
+                  seal" texture without crowding the imprint. */}
+              <span
+                aria-hidden="true"
+                className="absolute rounded-full pointer-events-none"
+                style={{ inset: 24, border: `1px dashed ${GOLD_DEEP}44` }}
+              />
+
+              {/* The imprint itself.
+                  - mix-blend-mode: screen drops the white background of
+                    the source PNG against the dark circle so the gold
+                    filigree pops and the white square disappears.
+                  - drop-shadow gives the gold real depth.
+                  - sized to 80% of the inner area so the rings frame it
+                    intentionally instead of leaving a halo. */}
               <Image
                 src="/images/clients/bloodlines/author-imprint.png"
-                alt="Preston James Hunsaker — gold filigree author imprint"
+                alt="Preston James Hunsaker author imprint"
                 width={500}
                 height={500}
-                className="absolute inset-0 m-auto w-3/4 h-3/4 object-contain"
+                className="relative w-[80%] h-[80%] object-contain"
+                style={{
+                  mixBlendMode: "screen",
+                  filter:
+                    "drop-shadow(0 0 18px rgba(212, 168, 83, 0.55)) drop-shadow(0 0 4px rgba(212, 168, 83, 0.35))",
+                }}
               />
             </div>
             <p
-              className="uppercase tracking-[0.4em] text-xs"
+              className="uppercase tracking-[0.4em] text-[10px] mt-5"
               style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
             >
-              Author Imprint
+              Author's Mark · Est. 2023
             </p>
           </div>
 
-          {/* Bio — J.K. Rowling preface voice */}
-          <div className="space-y-5 text-base sm:text-lg leading-relaxed" style={{ color: "rgba(232, 220, 196, 0.88)", fontFamily: "'EB Garamond', serif" }}>
-            <p className="text-xl sm:text-2xl italic" style={{ color: GOLD }}>
-              Some writers build worlds. Preston builds the question those worlds are quietly asking.
-            </p>
-            <p>
-              The first time I heard the phrase <em>Bloodlines</em>, it was a working title scribbled at the corner of a notebook page, surrounded by sketches of a kingdom that didn't have a name yet. The kingdom now has a name. The notebook is somewhere on a shelf above a desk lamp that's still on at two in the morning, the way these things are.
-            </p>
-            <p>
-              Preston James Hunsaker writes the kind of fantasy that respects its readers — young, old, and the ones in between. <em>Lineage of Fire</em> doesn't talk down to its audience and doesn't pretend the world is simpler than they already know it to be. The elletas, the wilted rose, the friends at the kitchen table the night everything turns over — these are not metaphors handed to you in a tidy box. They are doors. He trusts you to open them.
-            </p>
-            <p>
-              That is the rarest gift a writer can give. He gives it on the first page.
-            </p>
+          {/* Bio — J.K. Rowling preface voice. */}
+          <div className="space-y-5">
+            {/* Pull-quote — gold border-left + larger italic so it reads
+                as the foreword's headline rather than just paragraph 1. */}
             <p
-              className="text-sm italic pt-2"
-              style={{ color: "rgba(232, 220, 196, 0.55)" }}
+              className="text-xl sm:text-2xl italic leading-relaxed pl-5"
+              style={{
+                color: GOLD,
+                borderLeft: `2px solid ${GOLD_DEEP}`,
+                fontFamily: "'EB Garamond', serif",
+              }}
             >
-              — A foreword in the Bloodlines tradition.
+              Some writers build worlds. Preston builds the question those
+              worlds are quietly asking.
             </p>
+
+            <div
+              className="space-y-5 text-base sm:text-lg leading-relaxed"
+              style={{
+                color: "rgba(232, 220, 196, 0.88)",
+                fontFamily: "'EB Garamond', serif",
+              }}
+            >
+              {/* Drop-cap T — first letter set in Cinzel + gold to give
+                  the foreword the literary "opening of a real book" feel. */}
+              <p>
+                <span
+                  className="float-left text-5xl sm:text-6xl leading-[0.85] mr-3 mt-1 font-bold"
+                  style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
+                >
+                  T
+                </span>
+                he first time I heard the phrase <em>Bloodlines</em>, it was a working title scribbled at the corner of a notebook page, surrounded by sketches of a kingdom that didn't have a name yet. The kingdom now has a name. The notebook is somewhere on a shelf above a desk lamp that's still on at two in the morning, the way these things are.
+              </p>
+              <p>
+                Preston James Hunsaker writes the kind of fantasy that respects its readers — young, old, and the ones in between. <em>Lineage of Fire</em> doesn't talk down to its audience and doesn't pretend the world is simpler than they already know it to be. The elletas, the wilted rose, the friends at the kitchen table the night everything turns over — these are not metaphors handed to you in a tidy box. They are doors. He trusts you to open them.
+              </p>
+              <p>
+                That is the rarest gift a writer can give. He gives it on the first page.
+              </p>
+
+              {/* Foreword sign-off — flanked by gold rules so it reads as
+                  a real signature line instead of a stray italic. */}
+              <p
+                className="text-xs sm:text-sm italic pt-2 flex items-center gap-3 justify-center md:justify-start"
+                style={{ color: "rgba(232, 220, 196, 0.55)" }}
+              >
+                <span
+                  className="h-px flex-shrink-0 w-8 sm:w-12"
+                  style={{ background: `${GOLD_DEEP}88` }}
+                />
+                A foreword in the Bloodlines tradition
+                <span
+                  className="h-px flex-1"
+                  style={{ background: `${GOLD_DEEP}33` }}
+                />
+              </p>
+            </div>
 
             <div className="pt-4">
               <a
