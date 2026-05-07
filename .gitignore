@@ -36,8 +36,16 @@ yarn-error.log*
 # vercel
 .vercel
 
-# pipeline data
-/data/
+# pipeline data — runtime caches, NOT curated content
+/data/emails/
+/data/scraped/
+/data/sms/
+/data/prospects.json
+/data/prospects_audit.json
+/data/regen_em.json
+/data/*.json
+# (the voice-corpus subfolder under /data/ IS curated content and ships in
+# git so loadVoiceCorpus() can bundle it on Vercel deploys per Rule 76)
 
 # typescript
 *.tsbuildinfo

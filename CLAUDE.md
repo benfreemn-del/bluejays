@@ -7878,3 +7878,123 @@ that should be self-surfaced. End-of-batch footer line "🔄 Cross-project
 ripples" is non-negotiable on customer-impacting commits.
 
 
+
+---
+
+### Locked-In Rule 76 — Customer-facing AI features ground in a Ben-voice corpus (NON-NEGOTIABLE)
+
+Established 2026-05-07 after the Hormozi training synthesis (see
+`aios/references/hormozi_ai_principles.md`). The talk's load-bearing
+insight: AI sounds like the internet ONLY when given no anchors.
+With a curated corpus of YOUR work as a data source, it sounds like
+YOU. BlueJays today has the prompts (cached, banned-phrases-filtered,
+psychology-stack-encoded) but does NOT have the corpus. That's the
+single highest-leverage missing layer in every customer-facing AI
+feature.
+
+**The rule:** every BlueJays AI feature that generates
+customer-facing copy MUST reference a real Ben-voice corpus as
+part of its prompt context. Banned-phrases lists + structured
+prompts are necessary but not sufficient — they encode what NOT
+to do, not what TO do. The corpus encodes what TO do.
+
+### Where the corpus lives
+
+`bluejays/data/voice-corpus/` — markdown files, version-controlled.
+Each file is a curated set of REAL Ben-written work tagged by use
+case:
+
+| File | Contents | Source |
+|---|---|---|
+| `cold-pitches.md` | 10-20 highest-performing cold-outreach emails Ben personally wrote that got replies. Anonymized recipient (e.g. "Hi {name}"). | Ben's sent folder, top performers per `emails` table |
+| `replies.md` | 10-20 Ben-written replies to engaged prospects (objection handling, discovery questions, soft closes). | Sent folder, manual curation |
+| `tweets.md` | 50-100 highest-engagement tweets Ben has personally posted. Style fingerprint, not topic catalog. | X export (one-button) |
+| `linkedin-posts.md` | 20-30 highest-engagement LinkedIn posts Ben has personally written. | LinkedIn export |
+| `sales-call-snippets.md` | 5-10 anonymized snippets from top-closed sales calls — opener / discovery / objection-overcome / close. | Sales-call recordings, transcribed |
+| `vsl-scripts.md` | The actual scripts behind the 1-2 best VSLs Ben has shipped. | His own video assets |
+| `voice-rules.md` | Distilled style guide derived from the above — sentence-length tendencies, banned phrases, preferred openers, signature transitions, "what makes this Ben and not GPT." | Generated from the corpus, manually curated by Ben |
+
+The corpus is **CURATED, not exhaustive.** 10 great pitches beat
+1,000 average ones — quality of the corpus directly determines
+quality of the output. Don't paste every email Ben ever sent;
+paste the ones that converted or that Ben himself reads back and
+nods at.
+
+### Which AI features are gated
+
+**MUST reference the corpus** (customer-facing copy generation):
+
+- `getPitchEmail()` and the rest of `src/lib/email-templates.ts`
+  — every cold-pitch / follow-up / nurture / dunning email
+- `src/lib/sms.ts` — every SMS template
+- `src/lib/ai-responder.ts` — AI auto-reply / draft-reply (the
+  pending-review queue surface from Rule 38)
+- `src/lib/site-audit.ts` — the human-facing copy on the audit
+  page (NOT the deterministic numbers per Rule 59 — those stay
+  formula-derived; the surrounding paragraphs ground in voice)
+- Any future AI feature that produces text the prospect reads
+  with Ben's name at the bottom
+
+**Don't need to reference the corpus** (internal scoring /
+classification — not customer-facing):
+
+- QC scoring (`src/lib/color-review.ts`, image-quality agents,
+  etc.) — these grade outputs, they don't generate them
+- Intent classifier inside the AI responder (the classification
+  happens upstream of the draft step; only the draft needs voice
+  grounding)
+- Loss-reasons classifier, engagement scoring — internal
+- Scout / data-extraction pipelines — extracting facts, not
+  writing voice
+
+### How features reference the corpus (implementation contract)
+
+1. **Read at startup, not per-request.** Voice corpus is loaded
+   once at module init via `loadVoiceCorpus()` (helper to be
+   added at `src/lib/voice-corpus.ts`) — caches in memory.
+2. **Inject as a CACHED system-prompt segment.** Per the
+   existing AI Cost Optimization Rules, voice corpus is exactly
+   the kind of stable, high-token, repeated-across-calls content
+   that pays for itself instantly with prompt caching
+   (90% savings on cache reads). MUST be sent with
+   `cache_control: { type: "ephemeral" }`.
+3. **Subset by use case.** A cold-pitch generator loads
+   `cold-pitches.md` + `voice-rules.md`. A reply drafter loads
+   `replies.md` + `voice-rules.md`. Don't dump everything into
+   every call — token budget matters even with caching.
+4. **Verbatim, not paraphrased.** Ship the actual emails as
+   reference samples. Never let an agent rewrite the corpus
+   "for clarity" — the messy cadence and personality IS the
+   signal.
+
+### Maintenance triggers
+
+- **When a sent email gets a reply that converts** → consider
+  adding it to `cold-pitches.md` (or `replies.md` if it was a
+  follow-up turn).
+- **When output quality of any feature degrades** → first audit
+  the corpus (stale entries? missing patterns?) before tweaking
+  the prompt. Hormozi's maintenance trigger: update prompts
+  when outputs stop being good. Same logic for the corpus.
+- **Quarterly review** — drop entries that read stale (Ben's
+  voice has evolved), add new high-performers from the past 3
+  months.
+
+### Forbidden
+
+- Shipping a NEW customer-facing AI feature without wiring it to
+  the corpus. The PR / commit gets blocked at review.
+- "Improving" the corpus by sending it through GPT for cleanup
+  — defeats the entire point; the human cadence is the asset.
+- Storing the corpus outside `bluejays/data/voice-corpus/` —
+  single source of truth so Ben can find + edit fast.
+- Letting the corpus go stale (>6 months without review) — set
+  a calendar reminder if needed.
+
+### Cascade
+
+This rule mirrors AIOS principle 13 (three-folder architecture).
+The corpus IS the "data sources" folder for BlueJays-the-business.
+When BlueJays Pro launches the "AI Setup Day" deliverable
+(PRO_SYNTHESIS 2026-05-07 row), the per-client corpus is what
+each client receives — same architecture, different filings.
