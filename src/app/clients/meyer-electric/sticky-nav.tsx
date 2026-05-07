@@ -44,6 +44,7 @@ export default function StickyNav() {
   }, [open]);
 
   return (
+    <>
     <header
       className="sticky top-0 z-50 backdrop-blur-md border-b"
       style={{
@@ -121,11 +122,19 @@ export default function StickyNav() {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile menu overlay — MUST be a SIBLING of <header>, not a
+          descendant. The header uses `backdrop-blur-md` which creates
+          a CSS containing block via the implicit `filter` property.
+          A `position: fixed` child of a filtered element is positioned
+          relative to that element's box (the 16–20px tall header bar),
+          NOT the viewport — so the menu rendered cropped inside the
+          tiny header bar instead of fullscreen. Hoisting it up one
+          level fixes the "bug out." */}
       {open && (
         <div
-          className="lg:hidden fixed inset-0 z-50 backdrop-blur-md flex flex-col"
+          className="lg:hidden fixed inset-0 z-[60] backdrop-blur-md flex flex-col"
           style={{ background: "rgba(5, 5, 5, 0.97)" }}
         >
           <div className="flex items-center justify-between px-5 sm:px-8 h-16 sm:h-20 border-b border-white/10">
@@ -183,6 +192,6 @@ export default function StickyNav() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
