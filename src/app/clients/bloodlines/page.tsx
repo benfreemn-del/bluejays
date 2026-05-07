@@ -3816,6 +3816,7 @@ function SynopsisBlock() {
 function BooksBlock() {
   return (
     <section id="books" className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden" style={{ background: "linear-gradient(180deg, #09090b 0%, #100b0b 50%, #09090b 100%)" }}>
+      <KingdomSilhouette />
       <FloatingDust count={12} tint={GOLD} />
       <DriftingFog tint={CRIMSON} count={2} />
       <div className="relative max-w-6xl mx-auto">
@@ -6376,7 +6377,6 @@ export default function BloodlinesPage() {
   return (
     <main style={BASE_STYLE}>
       <HeroBlock />
-      <SynopsisBlock />
       <BooksBlock />
       <WorldMapBlock />
       <CharacterRosterBlock />
