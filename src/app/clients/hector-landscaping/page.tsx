@@ -165,9 +165,9 @@ const BG = "#0f1a0f";
 // scroll that was making the page feel monochromatic. Cream and sage
 // bands punctuate the dark editorial base at maintenance + seasonal
 // sections so the eye gets visual rest between long dark stretches.
-const BG_CREAM = "#f4ede1";        // warm parchment — for the maintenance band
-const BG_CREAM_INK = "#1a2412";    // dark forest type for cream band
-const BG_CREAM_INK_SOFT = "#3d4a35"; // muted dark sage for body type on cream
+// BG_CREAM/BG_CREAM_INK/BG_CREAM_INK_SOFT removed 2026-05-06 — only
+// referenced by the maintenance-plans section which is gone. Reinstate
+// from git history if/when the maintenance band comes back.
 const BG_SAGE = "#dde2d3";         // desaturated sage — for seasonal calendar band
 const BG_SAGE_INK = "#1f2c1c";     // forest type for sage band
 const PRIMARY = "#16a34a";
@@ -406,8 +406,8 @@ const processSteps = [
   { step: "01", title: "Site Visit", desc: "Hector walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the two-county service area. ", icon: Eye },
   { step: "02", title: "Concept & Design", desc: "A concept drawing with materials, planting plan, and a clear scope. You see the install on paper before we break ground — phased to your budget if it needs to be.", icon: Ruler },
   { step: "03", title: "Plant Selection", desc: "Plants picked for your site — natives and climate-adapted species first. Forty-nine seasons of installs in this region tells you which ones make it past their second winter.", icon: Plant },
-  { step: "04", title: "Installation", desc: "One crew, run by Hector, from the first cleared lot to the last finished bed. Every discipline in-house — design, hardscape, irrigation, planting, sod. When it's done, Hector's crew's maintenance team takes the keys.", icon: Shovel },
-  { step: "05", title: "Aftercare", desc: "Hector's crew's maintenance route picks up where the install ends. Pruning, bed maintenance, seasonal cleanup — and we're around for the next phase whenever it lands. Most of our work is repeat clients.", icon: Heart },
+  { step: "04", title: "Installation", desc: "One crew, run by Hector, from the first cleared lot to the last finished bed. Every discipline in-house — design, hardscape, irrigation, planting, sod. When it's done, you walk the yard with Hector for a final pass.", icon: Shovel },
+  { step: "05", title: "Hand-Off", desc: "Final walk-through, plant care notes, and your direct line to Hector for any post-install questions. We're around for the next phase whenever it lands — most of our work is repeat clients calling back for the next yard or a friend's.", icon: Heart },
 ];
 
 // 5 named Hector Landscaping projects, mapped from the existing PROJECTS array. Each
@@ -550,7 +550,7 @@ const comparisonRows = [
   { feature: "Native & climate-adapted plantings", us: true, them: "Limited" },
   { feature: "Irrigation design & install", us: true, them: false },
   { feature: "Same-owner continuity since 2018", us: true, them: false },
-  { feature: "Aftercare on installs we built", us: true, them: "Varies" },
+  { feature: "Free design before you commit", us: true, them: "Rare" },
 ];
 
 const ecoFeatures = [
@@ -564,9 +564,8 @@ const faqs = [
   { q: "How long does a project take?", a: "It depends on scope. A focused install — say a patio with surrounding beds and irrigation — is typically 1–3 weeks of build time after the design is signed off. A multi-phase, full-yard transformation can run a season. We'll give you a realistic timeline at concept stage, not a hopeful one." },
   { q: "Do you handle permits and engineering?", a: "Yes — for retaining walls that need engineering, drainage work, and any hardscape that triggers a permit, we coordinate with the engineer and the permitting jurisdiction. You're not chasing offices on weekends." },
   { q: "What's your service area?", a: "King and Pierce counties — based out of Renton, WA. Site visits across the two-county footprint are free. If you're close to the edge of that footprint and not sure, call. We'll tell you straight." },
-  { q: "Can you maintain a landscape someone else installed?", a: "We can — pruning, bed work, seasonal cleanup, and re-grading or re-planting where it's needed. We won't take over a maintenance contract on a brand-new install we don't know the bones of, but for established yards, yes." },
   { q: "Do you do residential and commercial?", a: "Both, though our archive leans residential. Property managers, HOAs, and commercial sites have hired us for hardscape and planting work — same in-house crew, same standard." },
-  { q: "How long has Hector Landscaping been around?", a: "Hector has been landscaping in the Renton area since 2018 — Hector's wife runs the maintenance side. Same family, same standard the whole way through." },
+  { q: "How long has Hector Landscaping been around?", a: "Hector has been landscaping in the Renton area since 2018. Family-run from day one — same standard, same crew style, the whole way through." },
 ];
 
 // Hero floating cards — three feature views from Hector Landscaping's archive.
@@ -688,26 +687,16 @@ export default function HectorLandscapingLandscapingPage() {
                     </a>
                   </motion.div>
 
-                  {/* Badges below CTAs — recurring-maintenance + family-owned signal */}
+                  {/* Badge below CTAs — family-owned signal. Recurring-
+                      maintenance badge removed 2026-05-06 since Hector
+                      doesn't sell maintenance plans as a structured
+                      service. Reinstate when/if that changes. */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ ...spring, delay: 1.0 }}
                     className="flex flex-wrap gap-3 pt-2"
                   >
-                    {/* Maintenance-route badge — pulses to draw attention because
-                        recurring service is the highest-LTV product Hector Landscaping sells */}
-                    <a
-                      href="#maintenance"
-                      className="relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white hover:opacity-90 transition"
-                      style={{ background: `${PRIMARY}33`, border: `1px solid ${PRIMARY}66` }}
-                    >
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: PRIMARY_LIGHT }} />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: PRIMARY_LIGHT }} />
-                      </span>
-                      Maintenance plans available
-                    </a>
                     <span
                       className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white"
                       style={{ background: EARTH_GLOW, border: `1px solid ${EARTH}44` }}
@@ -767,148 +756,14 @@ export default function HectorLandscapingLandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ 2.5 · MAINTENANCE PLANS — RECURRING-REVENUE PRODUCT ═══════════════
-           This section is intentionally placed BEFORE the design-build services
-           section. Recurring maintenance is the highest-LTV product Hector Landscaping sells
-           — capturing a maintenance customer for $200/mo is worth more over five
-           years than a one-time $20k install. The hero badge "Maintenance plans
-           available" anchors here. */}
-      <SectionReveal id="maintenance" className="relative z-10 py-20 md:py-32 overflow-hidden" style={{ background: BG_CREAM }}>
-        {/* Soft fade-in from the dark Trust Bar above so the cream
-            doesn't slam in as a hard horizontal stripe. */}
-        <div
-          className="absolute inset-x-0 top-0 h-20 pointer-events-none"
-          style={{ background: `linear-gradient(to bottom, ${BG}, transparent)` }}
-        />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: PRIMARY }}>
-              Already have a beautiful yard?
-            </p>
-            <h2 className="text-3xl md:text-5xl tracking-tighter leading-[1.05] font-bold mb-5" style={{ color: BG_CREAM_INK }}>
-              <WordReveal text="We'll keep it that way." />
-            </h2>
-            <p className="leading-relaxed" style={{ color: BG_CREAM_INK_SOFT }}>
-              Ongoing care is what keeps a $30,000 install looking like one a decade
-              later. Hector's wife runs Hector Landscaping&rsquo;s year-round maintenance route across
-              King, Pierce, and the surrounding Eastside — three plans, all built around
-              your property, all serviced by the same family crew that&rsquo;s been doing this
-              since 2018.
-            </p>
-          </div>
+      {/* ═══════════════ 2.5 · MAINTENANCE PLANS · REMOVED 2026-05-06 ═══════════════
+           Hector doesn't sell structured maintenance plans (Essentials
+           / Full Care / Estate). Full ~140-line section (cream/parchment
+           band with three pricing tiers) deleted from JSX entirely.
+           Reinstate from git history if/when Hector formalizes a
+           maintenance offering. */}
 
-          {/* Three-tier maintenance plans — Essentials / Full Care / Estate.
-              Restyled for the cream band: solid white cards with forest-ink
-              type instead of glass-on-dark. Featured tier (Full Care) gets
-              a real visible ring + slightly elevated shadow + green wash. */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-5"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {[
-              {
-                name: "Essentials",
-                cadence: "Weekly or bi-weekly",
-                ideal: "Front-yard homeowners, small lots",
-                features: [
-                  "Mowing, edging, line-trim",
-                  "Blower clean-up of walks & drives",
-                  "Seasonal debris removal",
-                  "Curbside-bag disposal",
-                ],
-                accent: PRIMARY,
-              },
-              {
-                name: "Full Care",
-                cadence: "Weekly · year-round",
-                ideal: "Most clients we install for",
-                features: [
-                  "Everything in Essentials",
-                  "Bed weeding, mulch refresh",
-                  "Pruning & deadheading",
-                  "Spring & fall fertilization",
-                  "Irrigation start-up & winterize",
-                ],
-                accent: PRIMARY,
-                featured: true,
-              },
-              {
-                name: "Estate",
-                cadence: "Custom schedule · 1+ acre",
-                ideal: "Larger properties, custom landscapes",
-                features: [
-                  "Everything in Full Care",
-                  "On-call repairs & touch-ups",
-                  "Seasonal redesign & replanting",
-                  "Drainage & irrigation tune-ups",
-                  "Direct line to Hector",
-                ],
-                accent: EARTH_DARK,
-              },
-            ].map((plan, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                className={`h-full ${plan.featured ? "md:-translate-y-3" : ""}`}
-              >
-                <div
-                  className="h-full p-7 md:p-8 flex flex-col rounded-2xl bg-white transition-shadow"
-                  style={{
-                    // Featured tier: 2px ring + 6px halo + tall green-tinted shadow
-                    // for genuine "elevated" feel. Non-featured: hairline + soft shadow.
-                    boxShadow: plan.featured
-                      ? `0 0 0 2px ${PRIMARY}, 0 0 0 8px ${PRIMARY}1f, 0 28px 80px -20px ${PRIMARY}55`
-                      : "0 4px 20px -8px rgba(26, 36, 18, 0.12)",
-                    border: plan.featured ? "none" : "1px solid rgba(26, 36, 18, 0.08)",
-                  }}
-                >
-                  <div className="flex items-baseline justify-between mb-1 gap-2">
-                    <span className="text-xs uppercase tracking-[0.2em] font-bold" style={{ color: plan.accent }}>
-                      {plan.name}
-                    </span>
-                    {plan.featured && (
-                      <span className="text-[10px] uppercase tracking-[0.18em] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: PRIMARY }}>
-                        Most popular
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-2xl md:text-3xl font-bold mb-1" style={{ color: BG_CREAM_INK }}>{plan.cadence}</p>
-                  <p className="text-sm mb-6" style={{ color: BG_CREAM_INK_SOFT }}>{plan.ideal}</p>
-                  <ul className="space-y-2.5 mb-7 flex-1">
-                    {plan.features.map((f, fi) => (
-                      <li key={fi} className="flex items-start gap-2.5 text-sm" style={{ color: BG_CREAM_INK }}>
-                        <CheckCircle size={16} weight="fill" style={{ color: plan.accent }} className="shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    href="#contact"
-                    className="block w-full text-center px-5 py-3 rounded-full text-sm font-semibold transition-colors"
-                    style={{
-                      background: plan.featured ? PRIMARY : "transparent",
-                      color: plan.featured ? "#ffffff" : BG_CREAM_INK,
-                      border: plan.featured ? "none" : `1.5px solid ${BG_CREAM_INK}`,
-                    }}
-                  >
-                    {plan.featured ? "Join the route" : "Get a quote"}
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <p className="text-center text-xs mt-8 max-w-2xl mx-auto leading-relaxed" style={{ color: BG_CREAM_INK_SOFT }}>
-            Pricing is per-property — quoted after a free walk-through so we can see
-            the lot before we put numbers on it. Most clients sit at $180&ndash;$420/mo.
-          </p>
-        </div>
-      </SectionReveal>
-
-      {/* ═══════════════ 3. SERVICES — 8 ACCORDION CARDS ═══════════════ */}
+      {/* ═══════════════ 3. SERVICES — 6 ACCORDION CARDS ═══════════════ */}
       <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
         <LeafPattern opacity={0.025} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
@@ -999,7 +854,7 @@ export default function HectorLandscapingLandscapingPage() {
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
-              { icon: Certificate, title: "Same Family Since 2018", desc: "Hector and Hector's wife — same standard, same crew style, the whole way through. Most of our work is repeat clients on their next phase." },
+              { icon: Certificate, title: "Same Family Since 2018", desc: "Owner-operated by Hector — same standard, same crew style, the whole way through. Most of our work is repeat clients calling back for the next phase." },
               { icon: PaintBrush, title: "Design You See First", desc: "A concept and planting plan with materials and scope, before we break ground. The install runs from the same drawing." },
               { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and stone work sized for a Pacific Northwest rainy season — not for a finish photograph." },
               { icon: Recycle, title: "Climate-Smart First", desc: "PNW natives and adapted species default. Lower water, lower maintenance, plants that make it past their second winter." },
@@ -1239,7 +1094,7 @@ export default function HectorLandscapingLandscapingPage() {
                   { label: "Full-Yard Install", color: PRIMARY_LIGHT, desc: "Design, plant, hardscape — start to finish" },
                   { label: "Hardscape Project", color: EARTH, desc: "Patio, walkway, retaining wall" },
                   { label: "Sod & New Lawn", color: PRIMARY, desc: "Grade, amend soil, lay clean-edge sod" },
-                  { label: "Plantings & Aftercare", color: EARTH_DARK, desc: "PNW natives, beds, ongoing maintenance" },
+                  { label: "Plantings & Beds", color: EARTH_DARK, desc: "PNW natives, layered planting plans" },
                 ].map((opt, i) => (
                   <button
                     key={i}
