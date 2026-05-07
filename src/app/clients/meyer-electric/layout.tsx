@@ -231,6 +231,30 @@ export default function MeyerElectricLayout({
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet"
       />
+      {/* Meyer-specific scrollbar — vertical gradient orange → yellow →
+          white over a near-black track. Mirrors the lightning-bolt
+          accent palette used throughout the page. Targets the document
+          scrollbar globally, but Next only injects this style block
+          while the visitor is inside the /clients/meyer-electric
+          subtree, so it doesn't leak to other tenant pages. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            html { scrollbar-color: #facc15 #0a0a0a; scrollbar-width: thin; }
+            ::-webkit-scrollbar { width: 12px; height: 12px; }
+            ::-webkit-scrollbar-track { background: #0a0a0a; }
+            ::-webkit-scrollbar-thumb {
+              background: linear-gradient(180deg, #f97316 0%, #facc15 50%, #ffffff 100%);
+              border-radius: 6px;
+              border: 2px solid #0a0a0a;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+              background: linear-gradient(180deg, #ea580c 0%, #eab308 50%, #f1f5f9 100%);
+            }
+            ::-webkit-scrollbar-corner { background: #0a0a0a; }
+          `,
+        }}
+      />
       {/* Meyer-specific structured data — Electrician/LocalBusiness
           schema for Google rich results. */}
       <script
