@@ -21,7 +21,8 @@
  * structure) + hector-landscaping/page.tsx (custom-tier feel).
  */
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Phone,
   MapPin,
@@ -43,6 +44,8 @@ import {
   WifiHigh,
   SpeakerHigh,
   Star,
+  CaretDown,
+  XCircle,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
@@ -302,9 +305,79 @@ function ServiceCard({
   );
 }
 
+/* ───────────────────────── QUIZ DATA ───────────────────────── */
+// "What's your power problem?" — 4 expandable cards. Each maps a real
+// SMB pain point to one of Meyer's actual services + drives to either
+// a section anchor or the contact form. Click → reveals recommendation
+// + targeted CTA. Highest-intent qualifier on the page.
+type QuizOption = {
+  label: string;
+  icon: React.ReactNode;
+  rec: string;
+  ctaHref: string;
+  ctaText: string;
+  color: string;
+};
+
+/* ───────────────────────── COMPARISON DATA ───────────────────────── */
+// 8-row "Meyer Electric vs the average electrician" table. Each row
+// leans into a real Meyer differentiator: Tesla cert, Generac cert,
+// upfront pricing, 15+ yr local, owner-operated, peninsula-wide.
+const COMPARISON_ROWS: Array<{ label: string; meyer: string; avg: string }> = [
+  { label: "Tesla Powerwall Certified Installer", meyer: "yes", avg: "Sometimes" },
+  { label: "Generac Authorized Dealer", meyer: "yes", avg: "Rarely" },
+  { label: "Licensed, bonded & insured", meyer: "yes", avg: "Usually" },
+  { label: "15+ years on the Olympic Peninsula", meyer: "yes", avg: "Varies" },
+  { label: "Upfront pricing — no surprise change orders", meyer: "yes", avg: "Time + materials" },
+  { label: "Same-day estimates", meyer: "yes", avg: "3-5 days" },
+  { label: "Owner-operated, code-first crew", meyer: "yes", avg: "Subcontracted" },
+  { label: "Service across all 10 Peninsula cities", meyer: "yes", avg: "Sequim only" },
+];
+
 /* ───────────────────────── PAGE ───────────────────────── */
 
 export default function MeyerElectricPage() {
+  const [quizActive, setQuizActive] = useState<number | null>(null);
+
+  const QUIZ_OPTIONS: QuizOption[] = [
+    {
+      label: "Power outages keep knocking us out",
+      icon: <Lightning size={24} weight="fill" />,
+      rec:
+        "You want a Powerwall + Generac combo. Powerwall handles the short blips automatically — you'll never notice. Generac kicks on for the long ones, sized to your whole home.",
+      ctaHref: "#contact",
+      ctaText: "Get a Quote",
+      color: ACCENT,
+    },
+    {
+      label: "I want solar + storage",
+      icon: <Sun size={24} weight="fill" />,
+      rec:
+        "Tesla Powerwall + solar tie-in. Store the sunshine you generate, use it after dark, sell back the rest. We're certified to design + install the whole system.",
+      ctaHref: "#powerwall",
+      ctaText: "See Powerwall Details",
+      color: ACCENT_AMBER,
+    },
+    {
+      label: "Need a backup generator",
+      icon: <Plug size={24} weight="fill" />,
+      rec:
+        "Generac standby. Sized to your real load (not oversold), fueled by propane or natural gas, tested weekly without you lifting a finger. 5-year warranty.",
+      ctaHref: "#generators",
+      ctaText: "See Generator Details",
+      color: ACCENT_ORANGE,
+    },
+    {
+      label: "Service upgrade or panel issue",
+      icon: <Wrench size={24} weight="fill" />,
+      rec:
+        "Panel replacements, service upgrades, sub-panels, EV chargers, troubleshooting. Code-compliant work, upfront pricing, no surprise change orders.",
+      ctaHref: BUSINESS.phoneHref,
+      ctaText: `Call ${BUSINESS.phoneDisplay}`,
+      color: ACCENT,
+    },
+  ];
+
   return (
     <main
       id="top"
@@ -465,6 +538,78 @@ export default function MeyerElectricPage() {
             />
           </div>
         </div>
+      </section>
+
+      {/* ────────────────────── EMERGENCY RESPONSE STRIP ────────────────────── */}
+      {/* Sits between trust strip + services. Targets the high-intent
+          visitor type ("freezer warming, no power, generator down").
+          Pulsing yellow dot for urgency without breaking the brand
+          palette (red would clash with yellow/orange). */}
+      <section
+        className="border-b"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(250, 204, 21, 0.08) 0%, rgba(249, 115, 22, 0.05) 100%)",
+          borderTopColor: "rgba(255, 255, 255, 0.04)",
+          borderBottomColor: "rgba(255, 255, 255, 0.06)",
+          borderTopWidth: 1,
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-3.5 sm:py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 text-center sm:text-left">
+            {/* Pulsing dot */}
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2.5 w-2.5">
+                <span
+                  className="me-emrg-pulse absolute inline-flex h-full w-full rounded-full opacity-75"
+                  style={{ background: ACCENT_ORANGE }}
+                />
+                <span
+                  className="relative inline-flex h-2.5 w-2.5 rounded-full"
+                  style={{
+                    background: ACCENT,
+                    boxShadow: `0 0 10px ${ACCENT}`,
+                  }}
+                />
+              </span>
+              <span
+                className="text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.18em]"
+                style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+              >
+                No power? Generator down?
+              </span>
+            </div>
+
+            <span
+              className="hidden sm:inline-block text-[12px] uppercase tracking-[0.14em] text-white/60 font-medium"
+              style={{ fontFamily: FONT_HEAD }}
+            >
+              Same-day service across the Olympic Peninsula
+            </span>
+
+            <a
+              href={BUSINESS.phoneHref}
+              className="inline-flex items-center gap-2 px-4 h-9 rounded-md font-bold uppercase tracking-wide text-[12px] text-black transition-all hover:brightness-110 active:scale-95"
+              style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
+            >
+              <Phone size={13} weight="fill" />
+              {BUSINESS.phoneDisplay}
+            </a>
+          </div>
+        </div>
+
+        <style jsx>{`
+          .me-emrg-pulse {
+            animation: meEmrgPulse 1.6s ease-out infinite;
+          }
+          @keyframes meEmrgPulse {
+            0%   { transform: scale(1);   opacity: 0.8; }
+            100% { transform: scale(2.6); opacity: 0; }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .me-emrg-pulse { animation: none; opacity: 0.4; }
+          }
+        `}</style>
       </section>
 
       {/* ────────────────────── SERVICES ────────────────────── */}
@@ -1386,6 +1531,273 @@ export default function MeyerElectricPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ────────────────────── COMPARISON TABLE ────────────────────── */}
+      {/* Meyer Electric vs the average electrician — 8-row checkmark
+          comparison. Concrete, defensible proof rows leaning into Tesla
+          + Generac certs, upfront pricing, owner-operated, peninsula
+          coverage. Sits after Why-Us (extending the trust narrative)
+          and before the quiz (which qualifies the visitor's intent). */}
+      <section
+        className="py-14 sm:py-16 lg:py-20"
+        style={{ background: BG }}
+      >
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <SectionHeader
+            eyebrow="Honest Comparison"
+            title="Meyer Electric vs"
+            highlight="the average electrician"
+            subtitle="No buzzwords. No 'industry-leading' fluff. Just what you actually get when you hire us."
+          />
+
+          <div
+            className="mx-auto max-w-4xl rounded-2xl border overflow-hidden"
+            style={{
+              background: BG_PANEL,
+              borderColor: "rgba(255, 255, 255, 0.08)",
+            }}
+          >
+            {/* Header row */}
+            <div
+              className="grid grid-cols-[1.4fr_1fr_1fr] gap-2 sm:gap-4 px-4 sm:px-6 py-4 border-b text-[11px] sm:text-[12px] uppercase tracking-[0.18em] font-bold"
+              style={{
+                borderBottomColor: "rgba(255, 255, 255, 0.08)",
+                fontFamily: FONT_HEAD,
+                background:
+                  "linear-gradient(180deg, rgba(250, 204, 21, 0.04) 0%, transparent 100%)",
+              }}
+            >
+              <div className="text-white/40">What you should expect</div>
+              <div className="text-center" style={{ color: ACCENT }}>
+                Meyer Electric
+              </div>
+              <div className="text-center text-white/40">Average</div>
+            </div>
+
+            {/* Rows */}
+            {COMPARISON_ROWS.map((row, i) => (
+              <div
+                key={row.label}
+                className="grid grid-cols-[1.4fr_1fr_1fr] gap-2 sm:gap-4 px-4 sm:px-6 py-3.5 sm:py-4 border-b items-center"
+                style={{
+                  borderBottomColor:
+                    i === COMPARISON_ROWS.length - 1
+                      ? "transparent"
+                      : "rgba(255, 255, 255, 0.05)",
+                  background:
+                    i % 2 === 0 ? "transparent" : "rgba(255, 255, 255, 0.015)",
+                }}
+              >
+                <div
+                  className="text-[13px] sm:text-[14px] text-white leading-snug"
+                  style={{ fontFamily: FONT_BODY }}
+                >
+                  {row.label}
+                </div>
+                {/* Meyer column — always green check */}
+                <div className="flex justify-center">
+                  <span
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-full"
+                    style={{
+                      background: FIRE_GRAD,
+                      color: "#0a0a0a",
+                      boxShadow: `0 4px 12px rgba(250, 204, 21, 0.2)`,
+                    }}
+                  >
+                    <CheckCircle size={16} weight="fill" />
+                  </span>
+                </div>
+                {/* Average column — text or X */}
+                <div className="flex justify-center text-center">
+                  {row.avg === "X" ? (
+                    <span
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full"
+                      style={{
+                        background: "rgba(127, 29, 29, 0.4)",
+                        color: "#fca5a5",
+                      }}
+                    >
+                      <XCircle size={16} weight="fill" />
+                    </span>
+                  ) : (
+                    <span
+                      className="text-[12px] sm:text-[13px] text-white/45 italic"
+                      style={{ fontFamily: FONT_BODY }}
+                    >
+                      {row.avg}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p
+            className="text-center text-[12px] mt-5 max-w-2xl mx-auto"
+            style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+          >
+            Most prospects don&rsquo;t know which questions to ask. That&rsquo;s
+            our advantage — we earn the work by being the obvious choice on the
+            stuff that actually matters.
+          </p>
+        </div>
+      </section>
+
+      {/* ────────────────────── QUIZ ────────────────────── */}
+      {/* "What's your power problem?" — 4 expandable cards. Click reveals
+          recommendation + targeted CTA (matching service anchor or
+          phone). Highest-intent qualifier on the page; the click itself
+          is a strong buying-signal we can act on. */}
+      <section
+        className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
+        style={{ background: BG_ALT }}
+      >
+        {/* Subtle ambient glow */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.08]"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(250, 204, 21, 0.55) 0%, transparent 70%)",
+              filter: "blur(20px)",
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-5 sm:px-8">
+          <SectionHeader
+            eyebrow="60-Second Quiz"
+            title="What's your"
+            highlight="power problem?"
+            subtitle="Pick the one that sounds most like you. We'll show you what we'd actually recommend — no calls required."
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+            {QUIZ_OPTIONS.map((opt, i) => {
+              const isActive = quizActive === i;
+              return (
+                <motion.div
+                  key={opt.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06, ...spring }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setQuizActive(isActive ? null : i)}
+                    className="w-full text-left rounded-2xl border transition-all duration-300 overflow-hidden"
+                    style={{
+                      borderColor: isActive
+                        ? opt.color
+                        : "rgba(255, 255, 255, 0.08)",
+                      background: isActive
+                        ? `${opt.color}10`
+                        : "rgba(255, 255, 255, 0.03)",
+                    }}
+                  >
+                    <div className="p-5 sm:p-6 flex items-center gap-4">
+                      <span
+                        className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center"
+                        style={{
+                          background: isActive
+                            ? `${opt.color}25`
+                            : "rgba(250, 204, 21, 0.10)",
+                          color: opt.color,
+                          border: `1px solid ${isActive ? opt.color + "55" : ACCENT_DIM}`,
+                          transition: "all 0.3s",
+                        }}
+                      >
+                        {opt.icon}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h3
+                          className="text-[15px] sm:text-[16px] font-bold text-white leading-snug"
+                          style={{ fontFamily: FONT_HEAD }}
+                        >
+                          {opt.label}
+                        </h3>
+                        <div
+                          className="text-[11px] mt-0.5 uppercase tracking-[0.16em] font-semibold"
+                          style={{
+                            color: isActive ? opt.color : INK_DIM,
+                            fontFamily: FONT_HEAD,
+                          }}
+                        >
+                          {isActive ? "Tap to close" : "Tap for our pick"}
+                        </div>
+                      </div>
+                      <CaretDown
+                        size={20}
+                        weight="bold"
+                        className="ml-auto shrink-0 transition-transform duration-300"
+                        style={{
+                          color: opt.color,
+                          transform: isActive ? "rotate(180deg)" : "rotate(0)",
+                        }}
+                      />
+                    </div>
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className="px-5 sm:px-6 pb-5 sm:pb-6">
+                            <div
+                              className="h-px mb-4"
+                              style={{ background: `${opt.color}30` }}
+                            />
+                            <p
+                              className="text-[14px] sm:text-[15px] leading-relaxed mb-4"
+                              style={{
+                                color: INK_SOFT,
+                                fontFamily: FONT_BODY,
+                              }}
+                            >
+                              {opt.rec}
+                            </p>
+                            <a
+                              href={opt.ctaHref}
+                              className="inline-flex items-center gap-2 px-5 h-10 rounded-md text-[12px] font-bold uppercase tracking-wide transition-all hover:brightness-110 active:scale-95 shadow-[0_4px_14px_rgba(250,204,21,0.3)]"
+                              style={{
+                                background: FIRE_GRAD,
+                                color: "#0a0a0a",
+                                fontFamily: FONT_HEAD,
+                              }}
+                            >
+                              {opt.ctaText}
+                              <ArrowRight size={13} weight="bold" />
+                            </a>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <p
+            className="text-center text-[12px] mt-7 max-w-2xl mx-auto"
+            style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+          >
+            Not sure? Call{" "}
+            <a
+              href={BUSINESS.phoneHref}
+              className="text-white hover:underline"
+              style={{ color: ACCENT }}
+            >
+              {BUSINESS.phoneDisplay}
+            </a>
+            . We&rsquo;ll figure it out together — no pressure, no upsell.
+          </p>
         </div>
       </section>
 
