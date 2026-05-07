@@ -719,10 +719,81 @@ export default function MeyerElectricPage() {
       {/* ────────────────────── GENERATORS ────────────────────── */}
       <section
         id="generators"
-        className="py-14 sm:py-16 lg:py-20"
+        className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
         style={{ background: BG }}
       >
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        {/* Faint yellow energy flourishes — soft radial orbs + scattered
+            lightning bolts. Pure decoration, very low opacity so the
+            section reads "powered" without competing with the headline.
+            All elements are aria-hidden + pointer-events-none so they
+            never break interaction or accessibility. */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          {/* Soft energy orb top-right */}
+          <div
+            className="absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full opacity-[0.18]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(250, 204, 21, 0.55) 0%, transparent 70%)",
+              filter: "blur(8px)",
+            }}
+          />
+          {/* Soft energy orb bottom-left */}
+          <div
+            className="absolute -bottom-40 -left-32 w-[380px] h-[380px] rounded-full opacity-[0.12]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(250, 204, 21, 0.5) 0%, transparent 70%)",
+              filter: "blur(10px)",
+            }}
+          />
+          {/* Floating lightning bolt accents */}
+          <svg
+            className="absolute top-[8%] left-[6%] w-12 h-12 sm:w-14 sm:h-14 opacity-[0.08]"
+            viewBox="0 0 24 32"
+            fill={ACCENT}
+          >
+            <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+          </svg>
+          <svg
+            className="absolute top-[18%] right-[12%] w-8 h-8 sm:w-10 sm:h-10 opacity-[0.06]"
+            viewBox="0 0 24 32"
+            fill={ACCENT}
+            style={{ transform: "rotate(15deg)" }}
+          >
+            <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+          </svg>
+          <svg
+            className="absolute bottom-[20%] right-[6%] w-16 h-16 sm:w-20 sm:h-20 opacity-[0.07]"
+            viewBox="0 0 24 32"
+            fill={ACCENT}
+            style={{ transform: "rotate(-12deg)" }}
+          >
+            <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+          </svg>
+          <svg
+            className="absolute bottom-[12%] left-[18%] w-10 h-10 sm:w-12 sm:h-12 opacity-[0.06]"
+            viewBox="0 0 24 32"
+            fill={ACCENT}
+            style={{ transform: "rotate(8deg)" }}
+          >
+            <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+          </svg>
+          {/* Small twinkle dots */}
+          <div
+            className="absolute top-[28%] left-[22%] w-1.5 h-1.5 rounded-full opacity-30"
+            style={{ background: ACCENT, boxShadow: `0 0 12px ${ACCENT}` }}
+          />
+          <div
+            className="absolute top-[60%] right-[28%] w-2 h-2 rounded-full opacity-25"
+            style={{ background: ACCENT, boxShadow: `0 0 14px ${ACCENT}` }}
+          />
+          <div
+            className="absolute bottom-[35%] left-[8%] w-1 h-1 rounded-full opacity-35"
+            style={{ background: ACCENT, boxShadow: `0 0 10px ${ACCENT}` }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Visual side: stylized "Outage → Auto Restore" diagram.
                 Icon-led to keep our 5 unique real photos for the

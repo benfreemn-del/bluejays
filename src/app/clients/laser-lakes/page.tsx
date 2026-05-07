@@ -66,8 +66,8 @@ export default function LaserLakesPage() {
             </a>
           </div>
           <a
-            href="#custom-maps"
-            className="text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full transition-colors"
+            href="#configure"
+            className="text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full transition-colors hover:bg-[#5b3d1f]"
             style={{
               backgroundColor: "#2b241c",
               color: "#f6f1e8",
