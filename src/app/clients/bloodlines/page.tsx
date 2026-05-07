@@ -35,6 +35,7 @@ import Image from "next/image";
 // ── Palette ──────────────────────────────────────────────────────────
 const GOLD = "#d4a853";
 const GOLD_DEEP = "#b8860b";
+const GOLD_LIGHT = "#f5deb3";
 const CRIMSON = "#7f1d1d";
 const CRIMSON_BRIGHT = "#b91c1c";
 const PARCHMENT = "#e8dcc4";
@@ -792,6 +793,221 @@ function FloatingDust({ count = 14, tint = GOLD }: { count?: number; tint?: stri
   );
 }
 
+/** Three character silhouettes for CharacterRosterBlock — placed at
+ *  the section edges so they frame the cast grid without competing
+ *  with it. Left: cloaked figure leaning against a wall with a knife
+ *  (Phage / Wilted Rose energy). Right: small hooded figure curled up
+ *  with a tiny lantern (Talia / kitchen-table-Talia warmth). Top-right
+ *  corner: tall caped figure with a sworded canister at the hip
+ *  (Sopher / Royal Guard cadet). All low-opacity ghosted silhouettes,
+ *  desktop-only (`hidden lg:block`) so the mobile roster grid is the
+ *  whole show on phones. */
+function CharacterSilhouettes() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 hidden lg:block"
+    >
+      <style jsx>{`
+        .bl-char-flicker {
+          animation: bl-char-flicker-pulse 3.5s ease-in-out infinite;
+        }
+        @keyframes bl-char-flicker-pulse {
+          0%,
+          100% {
+            opacity: 0.6;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-char-flicker {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      {/* LEFT — leaning operative with knife (Phage / Wilted Rose) */}
+      <svg
+        viewBox="0 0 200 400"
+        className="absolute left-0 bottom-0 h-[70%] max-h-[600px] w-auto"
+        style={{ opacity: 0.16 }}
+      >
+        {/* Wall behind */}
+        <rect x="0" y="0" width="14" height="400" fill="#000" opacity="0.6" />
+        {/* Cloaked body — leaning right shoulder against wall */}
+        <path
+          d="M 50 100 Q 30 150, 32 220 L 28 320 Q 25 360, 40 390 L 90 390 Q 105 380, 105 350 L 110 230 Q 115 170, 100 130 Z"
+          fill="#000"
+          opacity="0.85"
+        />
+        {/* Hood */}
+        <path
+          d="M 50 100 Q 40 70, 60 50 Q 80 30, 100 50 Q 115 70, 105 100 Q 95 110, 80 110 Q 65 110, 50 100 Z"
+          fill="#000"
+          opacity="0.95"
+        />
+        {/* Hood interior shadow / face void */}
+        <ellipse cx="78" cy="80" rx="12" ry="14" fill="#000" />
+        {/* Right shoulder pressed to wall (left side of svg) */}
+        <path
+          d="M 14 130 Q 30 135, 35 160 L 30 200 Q 18 195, 14 180 Z"
+          fill="#000"
+          opacity="0.7"
+        />
+        {/* Right arm hanging */}
+        <path
+          d="M 105 160 Q 130 200, 135 250 L 130 270 Q 115 270, 110 250 Z"
+          fill="#000"
+          opacity="0.8"
+        />
+        {/* Knife in right hand */}
+        <g transform="translate(125, 265)">
+          <rect x="-1" y="0" width="2" height="6" fill="#0a0a0a" />
+          <polygon
+            points="-3,6 3,6 1,28 -1,28"
+            fill={GOLD_DEEP}
+            opacity="0.7"
+          />
+          {/* Glint on blade */}
+          <line
+            className="bl-char-flicker"
+            x1="0"
+            y1="10"
+            x2="0"
+            y2="22"
+            stroke={GOLD_LIGHT}
+            strokeWidth="0.6"
+          />
+        </g>
+        {/* Left arm tucked */}
+        <path
+          d="M 55 170 Q 45 210, 50 250 L 60 250 Q 70 220, 70 180 Z"
+          fill="#000"
+          opacity="0.8"
+        />
+      </svg>
+
+      {/* RIGHT — small hooded figure with a tiny lantern (Talia warmth) */}
+      <svg
+        viewBox="0 0 160 280"
+        className="absolute right-2 bottom-0 h-[50%] max-h-[420px] w-auto"
+        style={{ opacity: 0.18 }}
+      >
+        {/* Ground shadow */}
+        <ellipse cx="80" cy="270" rx="50" ry="6" fill="#000" opacity="0.4" />
+        {/* Body — kneeling/curled */}
+        <path
+          d="M 50 130 Q 40 170, 45 220 L 40 265 Q 42 275, 50 275 L 110 275 Q 120 275, 122 265 L 120 220 Q 125 175, 115 135 Z"
+          fill="#000"
+          opacity="0.85"
+        />
+        {/* Hood pulled forward */}
+        <path
+          d="M 50 130 Q 45 95, 65 80 Q 85 65, 105 80 Q 122 95, 115 130 Q 100 138, 85 138 Q 65 138, 50 130 Z"
+          fill="#000"
+          opacity="0.95"
+        />
+        {/* Face void */}
+        <ellipse cx="84" cy="108" rx="10" ry="12" fill="#000" />
+        {/* Cradled arm */}
+        <path
+          d="M 65 165 Q 55 200, 60 230 Q 75 235, 90 225 Q 95 200, 90 175 Z"
+          fill="#000"
+          opacity="0.85"
+        />
+        {/* Lantern in cupped hands — warm gold glow */}
+        <g transform="translate(78, 210)">
+          <ellipse
+            className="bl-char-flicker"
+            cx="0"
+            cy="0"
+            rx="14"
+            ry="10"
+            fill={GOLD}
+            opacity="0.8"
+            style={{ filter: "blur(3px)" }}
+          />
+          <rect x="-3" y="-6" width="6" height="10" fill={GOLD_DEEP} />
+          <rect x="-4" y="-7" width="8" height="2" fill="#0a0a0a" />
+          <line
+            x1="0"
+            y1="-7"
+            x2="0"
+            y2="-12"
+            stroke="#0a0a0a"
+            strokeWidth="0.8"
+          />
+        </g>
+      </svg>
+
+      {/* TOP-RIGHT — tall caped figure with sworded canister at hip
+          (Sopher / Royal Guard cadet). Small + high so it doesn't fight
+          with the section heading. */}
+      <svg
+        viewBox="0 0 140 320"
+        className="absolute right-[8%] top-[8%] h-[40%] max-h-[340px] w-auto"
+        style={{ opacity: 0.13 }}
+      >
+        {/* Cape behind body */}
+        <path
+          d="M 30 90 Q 10 180, 25 290 Q 40 300, 55 290 L 60 110 Z"
+          fill="#000"
+          opacity="0.7"
+        />
+        <path
+          d="M 110 90 Q 130 180, 115 290 Q 100 300, 85 290 L 80 110 Z"
+          fill="#000"
+          opacity="0.7"
+        />
+        {/* Body */}
+        <path
+          d="M 55 80 Q 50 130, 55 200 L 50 295 Q 55 305, 70 305 L 70 305 Q 85 305, 90 295 L 85 200 Q 90 130, 85 80 Z"
+          fill="#000"
+          opacity="0.92"
+        />
+        {/* Head — slight cowl, no hood pulled fully */}
+        <ellipse cx="70" cy="55" rx="18" ry="22" fill="#000" />
+        <path
+          d="M 50 60 Q 45 35, 70 32 Q 95 35, 90 60 Q 70 65, 50 60 Z"
+          fill="#000"
+        />
+        {/* Right arm at side */}
+        <path
+          d="M 88 105 Q 102 150, 100 220 L 95 230 Q 88 215, 88 180 Z"
+          fill="#000"
+          opacity="0.85"
+        />
+        {/* Sword canister at hip */}
+        <g transform="translate(95, 200)">
+          <rect x="0" y="0" width="6" height="40" fill="#0a0a0a" />
+          <rect x="-1" y="-3" width="8" height="3" fill={GOLD_DEEP} opacity="0.6" />
+          {/* Sword grip just visible */}
+          <rect x="2" y="-12" width="2" height="8" fill={GOLD_DEEP} opacity="0.7" />
+          {/* Slight glint */}
+          <line
+            className="bl-char-flicker"
+            x1="3"
+            y1="0"
+            x2="3"
+            y2="35"
+            stroke={GOLD_LIGHT}
+            strokeWidth="0.4"
+            opacity="0.5"
+          />
+        </g>
+        {/* Left arm */}
+        <path
+          d="M 52 105 Q 38 150, 40 220 L 45 230 Q 52 215, 52 180 Z"
+          fill="#000"
+          opacity="0.85"
+        />
+      </svg>
+    </div>
+  );
+}
+
 /** Floating gold runes — Cinzel-style letterforms drifting through the
  *  scene as ghosted background. Used in CharacterRosterBlock. */
 function FloatingRunes({ count = 9 }: { count?: number }) {
@@ -857,8 +1073,266 @@ function FloatingRunes({ count = 9 }: { count?: number }) {
   );
 }
 
-/** Compass-rose watermark fixed at center of the section. Used in
- *  WorldMapBlock as a faint cartographer's mark behind the live map. */
+/** Full landscape backdrop for the World of Annarose section. Star
+ *  field + receding mountain layers + castle silhouette with lit
+ *  windows + forest patches + river. A small ornate compass-rose
+ *  overlay sits in the top-right corner OVER the landscape (not behind
+ *  it, per Ben's 2026-05-07 review). Slow ambient motion on stars +
+ *  compass — motion-safe. */
+function LandscapeBackdrop() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-star {
+          animation: bl-star-twinkle ease-in-out infinite;
+        }
+        .bl-castle-glow {
+          animation: bl-castle-glow-pulse 5s ease-in-out infinite;
+        }
+        .bl-river {
+          animation: bl-river-shimmer 8s ease-in-out infinite;
+        }
+        .bl-compass-rose {
+          animation: bl-compass-spin 90s linear infinite;
+          transform-origin: center;
+        }
+        @keyframes bl-star-twinkle {
+          0%,
+          100% {
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 0.95;
+          }
+        }
+        @keyframes bl-castle-glow-pulse {
+          0%,
+          100% {
+            opacity: 0.5;
+          }
+          50% {
+            opacity: 0.85;
+          }
+        }
+        @keyframes bl-river-shimmer {
+          0%,
+          100% {
+            opacity: 0.45;
+          }
+          50% {
+            opacity: 0.75;
+          }
+        }
+        @keyframes bl-compass-spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-star,
+          .bl-castle-glow,
+          .bl-river,
+          .bl-compass-rose {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      {/* Sky-to-ground gradient — slightly warmer than the section's
+          near-black so the landscape has tonal depth. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, #0a0a14 0%, #100b08 45%, #0c0806 75%, #060403 100%)",
+        }}
+      />
+
+      <svg
+        viewBox="0 0 1200 700"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 w-full h-full"
+      >
+        {/* ─── STARS (upper third) ─────────────────────────────── */}
+        {Array.from({ length: 60 }).map((_, i) => {
+          const x = (i * 47) % 1200;
+          const y = ((i * 23) % 220) + 10;
+          const r = (i % 3 === 0 ? 1.4 : 0.7) + ((i * 13) % 5) / 10;
+          const dur = 3 + (i % 5);
+          const delay = (i * 0.4) % 4;
+          return (
+            <circle
+              key={i}
+              className="bl-star"
+              cx={x}
+              cy={y}
+              r={r}
+              fill={GOLD_LIGHT}
+              opacity="0.5"
+              style={{
+                animationDuration: `${dur}s`,
+                animationDelay: `${delay}s`,
+              }}
+            />
+          );
+        })}
+
+        {/* ─── DISTANT MOUNTAINS (atmospheric haze) ─────────────── */}
+        <path
+          d="M 0 700 L 0 280 L 60 220 L 130 250 L 200 200 L 280 240 L 360 210 L 440 245 L 520 215 L 600 185 L 680 220 L 760 195 L 840 230 L 920 200 L 1000 240 L 1080 210 L 1160 235 L 1200 220 L 1200 700 Z"
+          fill="#15110d"
+          opacity="0.55"
+        />
+
+        {/* ─── MID MOUNTAINS ───────────────────────────────────── */}
+        <path
+          d="M 0 700 L 0 360 L 80 290 L 160 330 L 240 270 L 330 320 L 420 280 L 510 330 L 600 260 L 700 310 L 800 270 L 900 320 L 1000 285 L 1100 330 L 1200 305 L 1200 700 Z"
+          fill="#0c0a08"
+          opacity="0.85"
+        />
+
+        {/* ─── FOREST PATCHES (left + right of castle) ──────────── */}
+        <g opacity="0.7">
+          {/* Left forest cluster */}
+          {[
+            [80, 460], [100, 470], [120, 455], [140, 470], [160, 462],
+            [180, 475], [200, 460], [60, 475], [220, 470],
+          ].map(([cx, cy], i) => (
+            <polygon
+              key={`tl-${i}`}
+              points={`${cx},${cy - 18} ${cx - 7},${cy} ${cx + 7},${cy}`}
+              fill="#0a0e08"
+            />
+          ))}
+          {/* Right forest cluster */}
+          {[
+            [820, 470], [840, 460], [860, 475], [880, 462], [900, 470],
+            [920, 458], [940, 470], [960, 463], [980, 472], [1000, 460],
+            [1020, 470], [1040, 462],
+          ].map(([cx, cy], i) => (
+            <polygon
+              key={`tr-${i}`}
+              points={`${cx},${cy - 18} ${cx - 7},${cy} ${cx + 7},${cy}`}
+              fill="#0a0e08"
+            />
+          ))}
+        </g>
+
+        {/* ─── RIVER (curving across mid-section) ──────────────── */}
+        <path
+          className="bl-river"
+          d="M 0 540 Q 200 510, 380 530 Q 560 555, 740 525 Q 920 495, 1200 520 L 1200 555 Q 920 530, 740 560 Q 560 590, 380 565 Q 200 545, 0 575 Z"
+          fill="#1e3a52"
+          opacity="0.55"
+        />
+        <path
+          className="bl-river"
+          d="M 0 545 Q 200 515, 380 535 Q 560 560, 740 530 Q 920 500, 1200 525"
+          fill="none"
+          stroke="#3a6586"
+          strokeWidth="1.2"
+          opacity="0.6"
+          style={{ animationDelay: "2s" }}
+        />
+
+        {/* ─── CASTLE SILHOUETTE (Annarose, on central hill) ────── */}
+        <g transform="translate(540, 380)">
+          {/* Hill base */}
+          <ellipse cx="65" cy="120" rx="180" ry="20" fill="#08070a" />
+          {/* Castle wall */}
+          <rect x="20" y="60" width="140" height="60" fill="#06060a" />
+          {/* Wall crenellations */}
+          {[20, 36, 52, 68, 84, 100, 116, 132, 148].map((x) => (
+            <rect key={x} x={x} y="54" width="8" height="6" fill="#06060a" />
+          ))}
+          {/* Main keep — center, tallest */}
+          <rect x="70" y="20" width="40" height="65" fill="#06060a" />
+          <rect x="70" y="14" width="6" height="6" fill="#06060a" />
+          <rect x="80" y="14" width="6" height="6" fill="#06060a" />
+          <rect x="90" y="14" width="6" height="6" fill="#06060a" />
+          <rect x="100" y="14" width="6" height="6" fill="#06060a" />
+          {/* Center spire */}
+          <polygon points="70,14 110,14 90,-2" fill="#06060a" />
+          {/* Left tower */}
+          <rect x="36" y="35" width="22" height="50" fill="#06060a" />
+          <polygon points="36,35 58,35 47,18" fill="#06060a" />
+          {/* Right tower */}
+          <rect x="124" y="40" width="20" height="45" fill="#06060a" />
+          <polygon points="124,40 144,40 134,24" fill="#06060a" />
+          {/* Banner on right tower */}
+          <rect x="133" y="22" width="1" height="6" fill={GOLD_DEEP} />
+          <polygon points="134,22 140,24 134,26" fill={CRIMSON} />
+
+          {/* Lit windows — gold glints */}
+          <g className="bl-castle-glow">
+            <rect x="84" y="40" width="3" height="5" fill={GOLD} />
+            <rect x="92" y="40" width="3" height="5" fill={GOLD} opacity="0.85" />
+            <rect x="100" y="40" width="3" height="5" fill={GOLD} opacity="0.7" />
+            <rect x="44" y="52" width="3" height="4" fill={GOLD_DEEP} />
+            <rect x="50" y="62" width="3" height="4" fill={GOLD_DEEP} opacity="0.8" />
+            <rect x="130" y="58" width="3" height="4" fill={GOLD_DEEP} opacity="0.85" />
+            <rect x="40" y="78" width="2" height="3" fill={GOLD_DEEP} opacity="0.6" />
+            <rect x="60" y="80" width="2" height="3" fill={GOLD_DEEP} opacity="0.6" />
+            <rect x="80" y="80" width="2" height="3" fill={GOLD_DEEP} opacity="0.7" />
+            <rect x="100" y="80" width="2" height="3" fill={GOLD_DEEP} opacity="0.7" />
+            <rect x="125" y="78" width="2" height="3" fill={GOLD_DEEP} opacity="0.6" />
+          </g>
+          {/* Atmospheric glow halo around castle */}
+          <ellipse
+            cx="90"
+            cy="50"
+            rx="80"
+            ry="40"
+            fill={GOLD_DEEP}
+            opacity="0.06"
+            style={{ filter: "blur(8px)" }}
+          />
+        </g>
+
+        {/* ─── FOREGROUND HILLS ─────────────────────────────────── */}
+        <path
+          d="M 0 700 L 0 620 Q 200 590, 400 615 T 800 605 T 1200 615 L 1200 700 Z"
+          fill="#040305"
+        />
+      </svg>
+
+      {/* Compass-rose overlay — sits visibly OVER the landscape in the
+          top-right (top-left on small screens flips). Subtle slow spin.
+          Sized smaller than the prior watermark so it reads as a
+          cartographer's mark, not a competing focal point. */}
+      <div className="absolute top-6 right-6 sm:top-10 sm:right-12 w-20 h-20 sm:w-28 sm:h-28 opacity-55">
+        <svg viewBox="0 0 100 100" className="bl-compass-rose w-full h-full">
+          {/* Outer + inner rings */}
+          <circle cx="50" cy="50" r="48" fill="none" stroke={GOLD} strokeWidth="0.6" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke={GOLD} strokeWidth="0.4" strokeDasharray="2 2" />
+          <circle cx="50" cy="50" r="28" fill="none" stroke={GOLD} strokeWidth="0.3" />
+          {/* 8-point compass star */}
+          <path d="M 50 4 L 55 50 L 50 96 L 45 50 Z" fill={GOLD} />
+          <path d="M 4 50 L 50 45 L 96 50 L 50 55 Z" fill={GOLD} opacity="0.75" />
+          <path d="M 18 18 L 50 47 L 82 82 L 53 50 Z" fill={GOLD} opacity="0.55" />
+          <path d="M 82 18 L 53 47 L 18 82 L 47 50 Z" fill={GOLD} opacity="0.55" />
+          {/* Cardinal letters */}
+          <text x="50" y="14" fontSize="7" fill={GOLD} textAnchor="middle" fontFamily="Cinzel">N</text>
+          <text x="89" y="53" fontSize="6" fill={GOLD} textAnchor="middle" fontFamily="Cinzel" opacity="0.85">E</text>
+          <text x="50" y="92" fontSize="6" fill={GOLD} textAnchor="middle" fontFamily="Cinzel" opacity="0.85">S</text>
+          <text x="11" y="53" fontSize="6" fill={GOLD} textAnchor="middle" fontFamily="Cinzel" opacity="0.85">W</text>
+          {/* Center dot */}
+          <circle cx="50" cy="50" r="1.5" fill={GOLD} />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/** Compass-rose watermark — kept in the file but no longer used after
+ *  the LandscapeBackdrop refactor (2026-05-07). Retained for any future
+ *  surface that wants the original behind-content treatment. */
 function CompassWatermark() {
   return (
     <div
@@ -909,9 +1383,611 @@ function CompassWatermark() {
   );
 }
 
+/** Full reactive backdrop for the Magic System section. One immersive
+ *  scene per elleta — fire / earth / water / air / light — that fades
+ *  in when the section enters the viewport AND when the user picks a
+ *  new element tab. Per-element scenes share a common shell:
+ *    - Element-tinted radial gradient over the section
+ *    - 1-2 large animated SVG features (waves / flames / wind / etc.)
+ *    - 12-14 floating particles in the element's signature shape
+ *
+ *  React key={id} on the parent forces full remount on tab change, so
+ *  the new element fades in clean instead of cross-fading from the prior.
+ *
+ *  `playing` prop drives section-in-view fade — when MagicSystemBlock is
+ *  out of viewport, the whole backdrop fades to opacity 0 to free the
+ *  GPU. CSS animations stay running but invisible. */
+function ElementBackdrop({
+  id,
+  color,
+  playing,
+}: {
+  id: string;
+  color: string;
+  playing: boolean;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-1000"
+      style={{ opacity: playing ? 1 : 0 }}
+    >
+      <style jsx>{`
+        /* Shared particle drift */
+        .bl-elem-particle {
+          position: absolute;
+          opacity: 0;
+          animation: bl-elem-float ease-in-out infinite;
+        }
+        @keyframes bl-elem-float {
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-30px) translateX(15px);
+            opacity: 0.7;
+          }
+        }
+
+        /* FIRE — flames lick up from bottom */
+        .bl-fire-flame {
+          animation: bl-fire-dance ease-in-out infinite;
+          transform-origin: 50% 100%;
+        }
+        @keyframes bl-fire-dance {
+          0%,
+          100% {
+            transform: scaleY(1) scaleX(1) translateX(0);
+          }
+          25% {
+            transform: scaleY(1.15) scaleX(0.9) translateX(-4px);
+          }
+          50% {
+            transform: scaleY(0.92) scaleX(1.08) translateX(3px);
+          }
+          75% {
+            transform: scaleY(1.1) scaleX(0.95) translateX(-2px);
+          }
+        }
+        .bl-fire-glow {
+          animation: bl-fire-glow-pulse 3s ease-in-out infinite;
+        }
+        @keyframes bl-fire-glow-pulse {
+          0%,
+          100% {
+            opacity: 0.6;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+
+        /* EARTH — slow rotating fragments + crack shimmer */
+        .bl-earth-frag {
+          animation: bl-earth-tumble linear infinite;
+        }
+        @keyframes bl-earth-tumble {
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+          }
+          15%,
+          80% {
+            opacity: 0.55;
+          }
+          100% {
+            transform: translateY(-100vh) rotate(540deg);
+            opacity: 0;
+          }
+        }
+        .bl-earth-crack {
+          animation: bl-earth-crack-pulse 4s ease-in-out infinite;
+        }
+        @keyframes bl-earth-crack-pulse {
+          0%,
+          100% {
+            opacity: 0.25;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+
+        /* WATER — wave shift + ripple expand */
+        .bl-water-wave {
+          animation: bl-water-roll 8s ease-in-out infinite;
+        }
+        @keyframes bl-water-roll {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(-40px);
+          }
+        }
+        .bl-water-ripple {
+          animation: bl-water-ripple-out ease-out infinite;
+          transform-origin: center;
+        }
+        @keyframes bl-water-ripple-out {
+          0% {
+            transform: scale(0.3);
+            opacity: 0.7;
+          }
+          100% {
+            transform: scale(2.5);
+            opacity: 0;
+          }
+        }
+
+        /* AIR — streaks moving across, swirling currents */
+        .bl-air-streak {
+          animation: bl-air-sweep linear infinite;
+        }
+        @keyframes bl-air-sweep {
+          0% {
+            transform: translateX(-30vw);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.55;
+          }
+          85% {
+            opacity: 0.55;
+          }
+          100% {
+            transform: translateX(130vw);
+            opacity: 0;
+          }
+        }
+        .bl-air-swirl {
+          animation: bl-air-rotate 18s linear infinite;
+          transform-origin: center;
+        }
+        @keyframes bl-air-rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        /* LIGHT — beams pulse, halo breathes */
+        .bl-light-beam {
+          animation: bl-light-beam-pulse ease-in-out infinite;
+          transform-origin: 50% 50%;
+        }
+        @keyframes bl-light-beam-pulse {
+          0%,
+          100% {
+            opacity: 0.25;
+          }
+          50% {
+            opacity: 0.8;
+          }
+        }
+        .bl-light-halo {
+          animation: bl-light-halo-breathe 5s ease-in-out infinite;
+        }
+        @keyframes bl-light-halo-breathe {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.4;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.75;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .bl-elem-particle,
+          .bl-fire-flame,
+          .bl-fire-glow,
+          .bl-earth-frag,
+          .bl-earth-crack,
+          .bl-water-wave,
+          .bl-water-ripple,
+          .bl-air-streak,
+          .bl-air-swirl,
+          .bl-light-beam,
+          .bl-light-halo {
+            animation: none;
+          }
+          .bl-elem-particle {
+            opacity: 0.3;
+          }
+        }
+      `}</style>
+
+      {/* Element-tinted radial wash — spreads the active color across
+          the section before the foreground scene paints. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse at 50% 60%, ${color}22 0%, ${color}0d 35%, transparent 70%)`,
+        }}
+      />
+
+      {/* ─── FIRE ─── */}
+      {id === "fire" && (
+        <>
+          {/* Heat haze gradient at bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-2/3"
+            style={{
+              background: `linear-gradient(180deg, transparent 0%, ${color}11 60%, ${color}33 100%)`,
+            }}
+          />
+          {/* Stylized flames rising from bottom */}
+          <svg
+            viewBox="0 0 1200 700"
+            preserveAspectRatio="xMidYEnd slice"
+            className="absolute inset-x-0 bottom-0 w-full h-full"
+          >
+            {[100, 280, 460, 640, 820, 1000, 1140].map((cx, i) => {
+              const w = 70 + (i % 3) * 16;
+              const h = 130 + (i % 4) * 35;
+              const dur = 2.2 + (i % 4) * 0.4;
+              return (
+                <path
+                  key={cx}
+                  className="bl-fire-flame"
+                  d={`M ${cx} 700 Q ${cx - w / 2} ${700 - h * 0.6}, ${cx - w * 0.2} ${700 - h * 0.85} Q ${cx} ${700 - h}, ${cx + w * 0.2} ${700 - h * 0.85} Q ${cx + w / 2} ${700 - h * 0.6}, ${cx} 700 Z`}
+                  fill={`url(#bl-flame-grad-${i})`}
+                  style={{
+                    animationDuration: `${dur}s`,
+                    animationDelay: `${(i * 0.3) % 2}s`,
+                  }}
+                />
+              );
+            })}
+            <defs>
+              {[100, 280, 460, 640, 820, 1000, 1140].map((_, i) => (
+                <linearGradient key={i} id={`bl-flame-grad-${i}`} x1="0" y1="100%" x2="0" y2="0%">
+                  <stop offset="0%" stopColor={color} stopOpacity="0.7" />
+                  <stop offset="50%" stopColor={GOLD} stopOpacity="0.5" />
+                  <stop offset="100%" stopColor={GOLD_LIGHT} stopOpacity="0" />
+                </linearGradient>
+              ))}
+            </defs>
+          </svg>
+          {/* Floating embers */}
+          {Array.from({ length: 14 }).map((_, i) => {
+            const left = (i * 7.9 + 5) % 100;
+            const dur = 6 + (i % 5);
+            const delay = (i * 0.7) % 6;
+            const size = 4 + (i % 4) * 2;
+            return (
+              <span
+                key={i}
+                className="bl-elem-particle"
+                style={{
+                  left: `${left}%`,
+                  bottom: "-10px",
+                  width: size,
+                  height: size,
+                  borderRadius: "50%",
+                  background: i % 2 === 0 ? color : GOLD,
+                  boxShadow: `0 0 ${size * 2}px ${color}, 0 0 ${size * 4}px ${color}99`,
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${delay}s`,
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+
+      {/* ─── EARTH ─── */}
+      {id === "earth" && (
+        <>
+          {/* Stone texture base */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "repeating-linear-gradient(45deg, rgba(146, 64, 14, 0.04) 0 8px, transparent 8px 24px), repeating-linear-gradient(-45deg, rgba(58, 40, 23, 0.05) 0 12px, transparent 12px 36px)",
+            }}
+          />
+          {/* Rocky ground */}
+          <svg
+            viewBox="0 0 1200 700"
+            preserveAspectRatio="xMidYEnd slice"
+            className="absolute inset-x-0 bottom-0 w-full h-2/3"
+          >
+            <path
+              d="M 0 700 L 0 540 L 80 510 L 180 530 L 280 500 L 380 525 L 480 495 L 580 520 L 680 490 L 780 515 L 880 485 L 980 510 L 1080 480 L 1200 505 L 1200 700 Z"
+              fill={color}
+              opacity="0.18"
+            />
+            {/* Cracks revealing gold beneath */}
+            <path
+              className="bl-earth-crack"
+              d="M 200 530 L 250 580 L 230 640 M 350 520 L 380 590 L 360 660"
+              stroke={GOLD}
+              strokeWidth="1.5"
+              fill="none"
+            />
+            <path
+              className="bl-earth-crack"
+              d="M 700 510 L 730 570 L 720 640 M 850 510 L 890 580 L 880 660"
+              stroke={GOLD}
+              strokeWidth="1.5"
+              fill="none"
+              style={{ animationDelay: "1.5s" }}
+            />
+          </svg>
+          {/* Tumbling stone fragments */}
+          {Array.from({ length: 14 }).map((_, i) => {
+            const left = (i * 11.3 + 3) % 100;
+            const dur = 14 + (i % 7) * 2;
+            const delay = (i * 1.1) % 12;
+            const size = 6 + (i % 4) * 3;
+            return (
+              <span
+                key={i}
+                className="bl-earth-frag"
+                style={{
+                  position: "absolute",
+                  left: `${left}%`,
+                  bottom: "-30px",
+                  width: size,
+                  height: size,
+                  background: i % 2 === 0 ? color : "#3a2817",
+                  clipPath:
+                    "polygon(20% 0, 80% 10%, 100% 50%, 80% 95%, 25% 100%, 0 60%)",
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${delay}s`,
+                  opacity: 0,
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+
+      {/* ─── WATER ─── */}
+      {id === "water" && (
+        <>
+          {/* Deep gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(180deg, transparent 0%, ${color}11 50%, ${color}33 100%)`,
+            }}
+          />
+          {/* Wave at bottom */}
+          <svg
+            viewBox="0 0 1200 200"
+            preserveAspectRatio="xMidYEnd slice"
+            className="bl-water-wave absolute inset-x-0 bottom-0 w-[140%] h-[30%]"
+            style={{ left: "-20%" }}
+          >
+            <path
+              d="M 0 200 L 0 100 Q 100 70, 200 100 T 400 100 T 600 100 T 800 100 T 1000 100 T 1200 100 L 1200 200 Z"
+              fill={color}
+              opacity="0.4"
+            />
+            <path
+              d="M 0 200 L 0 130 Q 100 100, 200 130 T 400 130 T 600 130 T 800 130 T 1000 130 T 1200 130 L 1200 200 Z"
+              fill={color}
+              opacity="0.5"
+            />
+          </svg>
+          {/* Expanding ripples */}
+          {[
+            [25, 45, 0],
+            [70, 35, 1.5],
+            [50, 65, 3],
+            [85, 55, 4.5],
+          ].map(([left, top, delay], i) => (
+            <div
+              key={i}
+              className="bl-water-ripple absolute rounded-full"
+              style={{
+                left: `${left}%`,
+                top: `${top}%`,
+                width: 80,
+                height: 80,
+                marginLeft: -40,
+                marginTop: -40,
+                border: `1.5px solid ${color}`,
+                animationDuration: "5s",
+                animationDelay: `${delay}s`,
+              }}
+            />
+          ))}
+          {/* Falling droplets */}
+          {Array.from({ length: 10 }).map((_, i) => {
+            const left = (i * 13 + 7) % 100;
+            const dur = 4 + (i % 4);
+            const delay = (i * 0.8) % 5;
+            return (
+              <span
+                key={i}
+                className="bl-elem-particle"
+                style={{
+                  left: `${left}%`,
+                  top: 0,
+                  width: 4,
+                  height: 8,
+                  borderRadius: "50% 50% 50% 0",
+                  transform: "rotate(-45deg)",
+                  background: `linear-gradient(135deg, ${color}, ${color}66)`,
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${delay}s`,
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+
+      {/* ─── AIR ─── */}
+      {id === "air" && (
+        <>
+          {/* Soft cloud gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at 30% 40%, rgba(8, 145, 178, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(8, 145, 178, 0.06) 0%, transparent 50%)",
+            }}
+          />
+          {/* Wind streaks */}
+          {Array.from({ length: 12 }).map((_, i) => {
+            const top = (i * 8.7 + 5) % 90;
+            const dur = 4 + (i % 5);
+            const delay = (i * 0.6) % 5;
+            const w = 80 + (i % 4) * 40;
+            return (
+              <span
+                key={i}
+                className="bl-air-streak absolute"
+                style={{
+                  top: `${top}%`,
+                  left: 0,
+                  width: w,
+                  height: 1.5,
+                  background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${delay}s`,
+                  transform: "rotate(-3deg)",
+                }}
+              />
+            );
+          })}
+          {/* Swirling current — large rotating shape */}
+          <svg
+            className="bl-air-swirl absolute"
+            style={{
+              top: "30%",
+              right: "10%",
+              width: "40%",
+              maxWidth: 500,
+              height: "auto",
+              opacity: 0.18,
+            }}
+            viewBox="0 0 200 200"
+          >
+            <path
+              d="M 100 30 Q 160 60, 150 110 Q 140 150, 100 160 Q 60 150, 50 110 Q 40 60, 100 30 Z"
+              fill="none"
+              stroke={color}
+              strokeWidth="1.5"
+              strokeDasharray="3 6"
+            />
+            <path
+              d="M 100 50 Q 140 70, 135 105 Q 130 135, 100 140 Q 70 135, 65 105 Q 60 70, 100 50 Z"
+              fill="none"
+              stroke={color}
+              strokeWidth="1"
+              strokeDasharray="2 4"
+            />
+          </svg>
+        </>
+      )}
+
+      {/* ─── LIGHT ─── */}
+      {id === "light" && (
+        <>
+          {/* Center halo gradient */}
+          <div
+            className="absolute"
+            style={{
+              left: "50%",
+              top: "50%",
+              width: "80%",
+              maxWidth: 800,
+              aspectRatio: "1",
+              transform: "translate(-50%, -50%)",
+              background: `radial-gradient(circle, ${color}33 0%, ${color}11 40%, transparent 70%)`,
+            }}
+          />
+          {/* Radial beams from center */}
+          <svg
+            viewBox="0 0 800 800"
+            preserveAspectRatio="xMidYMid slice"
+            className="absolute inset-0 w-full h-full"
+            style={{ filter: "blur(0.5px)" }}
+          >
+            {Array.from({ length: 12 }).map((_, i) => {
+              const angle = (i * 30 * Math.PI) / 180;
+              const x2 = 400 + Math.cos(angle) * 600;
+              const y2 = 400 + Math.sin(angle) * 600;
+              return (
+                <line
+                  key={i}
+                  className="bl-light-beam"
+                  x1="400"
+                  y1="400"
+                  x2={x2}
+                  y2={y2}
+                  stroke={color}
+                  strokeWidth="2"
+                  style={{
+                    animationDuration: `${3 + (i % 4)}s`,
+                    animationDelay: `${(i * 0.25) % 3}s`,
+                  }}
+                />
+              );
+            })}
+          </svg>
+          {/* Pulsing halo at center */}
+          <div
+            className="bl-light-halo absolute rounded-full"
+            style={{
+              left: "50%",
+              top: "50%",
+              width: 240,
+              height: 240,
+              marginLeft: -120,
+              marginTop: -120,
+              background: `radial-gradient(circle, ${color}66 0%, transparent 70%)`,
+              filter: "blur(20px)",
+            }}
+          />
+          {/* Light particles drifting */}
+          {Array.from({ length: 14 }).map((_, i) => {
+            const left = (i * 7.1 + 3) % 100;
+            const top = (i * 11.7) % 90;
+            const dur = 5 + (i % 6);
+            const delay = (i * 0.5) % 6;
+            const size = 3 + (i % 4) * 2;
+            return (
+              <span
+                key={i}
+                className="bl-elem-particle"
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  width: size,
+                  height: size,
+                  borderRadius: "50%",
+                  background: color,
+                  boxShadow: `0 0 ${size * 4}px ${color}, 0 0 ${size * 8}px ${color}aa`,
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${delay}s`,
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+    </div>
+  );
+}
+
 /** Element-specific ambient particles — fire embers, water droplets,
  *  earth fragments, air streaks, light beams. Driven by the active
- *  Magic System tab (MagicSystemBlock). */
+ *  Magic System tab (MagicSystemBlock). LEGACY: superseded by
+ *  ElementBackdrop (2026-05-07); retained until callers swap. */
 function ElementParticles({ id, color }: { id: string; color: string }) {
   // Different shapes per element, all sharing the same drift rhythm.
   const renderParticle = (i: number) => {
@@ -1038,6 +2114,210 @@ function ElementParticles({ id, color }: { id: string; color: string }) {
         }
       `}</style>
       {Array.from({ length: 14 }).map((_, i) => renderParticle(i))}
+    </div>
+  );
+}
+
+/** Library backdrop for ParchmentReaderBlock — bookshelves on both
+ *  edges (stacks of spine silhouettes with gold lettering glints) +
+ *  a soft candle glow at the bottom-right. Ink wisps still drift on
+ *  top of this layer. Bookshelves are desktop-only — on mobile the
+ *  parchment scroll is wide enough that flanking shelves crowd it. */
+function LibraryBackdrop() {
+  // Pre-computed book stack — each entry: [yOffset, height, color, hasGlint]
+  const leftStack: Array<[number, number, string, boolean]> = [
+    [0, 90, "#1a0e0a", true],
+    [92, 70, "#0e0907", false],
+    [164, 100, "#1f1108", true],
+    [266, 60, "#0a0707", false],
+    [328, 85, "#1a0e0a", true],
+    [415, 70, "#0e0907", true],
+    [487, 95, "#1f1108", false],
+    [584, 65, "#0a0707", true],
+  ];
+  const rightStack: Array<[number, number, string, boolean]> = [
+    [10, 80, "#1a0a08", true],
+    [92, 95, "#0e0907", true],
+    [189, 65, "#1f0e0a", false],
+    [256, 90, "#0a0707", true],
+    [348, 75, "#1a0e0a", true],
+    [425, 70, "#0e0907", false],
+    [497, 90, "#1f1108", true],
+    [589, 60, "#0a0707", false],
+  ];
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 hidden md:block"
+    >
+      <style jsx>{`
+        .bl-candle-flicker {
+          animation: bl-candle-pulse 2.4s ease-in-out infinite;
+          transform-origin: center bottom;
+        }
+        @keyframes bl-candle-pulse {
+          0%,
+          100% {
+            opacity: 0.55;
+            transform: scaleY(1) scaleX(1);
+          }
+          30% {
+            opacity: 0.85;
+            transform: scaleY(1.08) scaleX(0.96);
+          }
+          60% {
+            opacity: 0.7;
+            transform: scaleY(0.96) scaleX(1.04);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-candle-flicker {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      {/* LEFT BOOKSHELF */}
+      <div
+        className="absolute left-0 top-0 bottom-0"
+        style={{ width: "min(8%, 110px)" }}
+      >
+        <div className="relative w-full h-full" style={{ opacity: 0.55 }}>
+          {/* Shelf back panel */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(90deg, #050304 0%, #0a0606 100%)",
+            }}
+          />
+          {/* Spines */}
+          <svg
+            viewBox="0 0 100 700"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
+          >
+            {leftStack.map(([y, h, color, glint], i) => (
+              <g key={`l-${i}`}>
+                <rect
+                  x="15"
+                  y={y}
+                  width="70"
+                  height={h - 4}
+                  fill={color}
+                  stroke="#000"
+                  strokeWidth="0.4"
+                />
+                {/* Gold band near top */}
+                <rect x="15" y={y + 12} width="70" height="2" fill={GOLD_DEEP} opacity="0.5" />
+                {/* Gold lettering glint (vertical title) */}
+                {glint && (
+                  <rect
+                    x="46"
+                    y={y + 22}
+                    width="8"
+                    height={Math.max(20, h - 34)}
+                    fill={GOLD}
+                    opacity="0.35"
+                  />
+                )}
+              </g>
+            ))}
+            {/* Edge of shelf */}
+            <rect x="0" y="0" width="2" height="700" fill="#000" opacity="0.6" />
+            <rect x="98" y="0" width="2" height="700" fill="#1a0e08" opacity="0.4" />
+          </svg>
+        </div>
+      </div>
+
+      {/* RIGHT BOOKSHELF */}
+      <div
+        className="absolute right-0 top-0 bottom-0"
+        style={{ width: "min(8%, 110px)" }}
+      >
+        <div className="relative w-full h-full" style={{ opacity: 0.55 }}>
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(270deg, #050304 0%, #0a0606 100%)",
+            }}
+          />
+          <svg
+            viewBox="0 0 100 700"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
+          >
+            {rightStack.map(([y, h, color, glint], i) => (
+              <g key={`r-${i}`}>
+                <rect
+                  x="15"
+                  y={y}
+                  width="70"
+                  height={h - 4}
+                  fill={color}
+                  stroke="#000"
+                  strokeWidth="0.4"
+                />
+                <rect x="15" y={y + 12} width="70" height="2" fill={GOLD_DEEP} opacity="0.5" />
+                {glint && (
+                  <rect
+                    x="46"
+                    y={y + 22}
+                    width="8"
+                    height={Math.max(20, h - 34)}
+                    fill={GOLD}
+                    opacity="0.35"
+                  />
+                )}
+              </g>
+            ))}
+            <rect x="0" y="0" width="2" height="700" fill="#1a0e08" opacity="0.4" />
+            <rect x="98" y="0" width="2" height="700" fill="#000" opacity="0.6" />
+          </svg>
+        </div>
+      </div>
+
+      {/* CANDLE GLOW — bottom-right, casting warm light onto the parchment */}
+      <div className="absolute bottom-[8%] right-[12%]">
+        <div className="relative">
+          {/* Halo */}
+          <div
+            className="absolute"
+            style={{
+              left: -90,
+              top: -90,
+              width: 180,
+              height: 180,
+              background: `radial-gradient(circle, ${GOLD}33 0%, transparent 70%)`,
+              filter: "blur(20px)",
+            }}
+          />
+          {/* Candle stick */}
+          <div
+            className="relative"
+            style={{
+              width: 8,
+              height: 30,
+              background: "#0a0807",
+              border: `1px solid ${GOLD_DEEP}55`,
+              marginLeft: -4,
+            }}
+          />
+          {/* Flame */}
+          <div
+            className="bl-candle-flicker absolute"
+            style={{
+              left: -6,
+              top: -16,
+              width: 12,
+              height: 18,
+              borderRadius: "50% 50% 50% 50% / 70% 70% 30% 30%",
+              background: `radial-gradient(ellipse at center bottom, ${GOLD_LIGHT} 0%, ${GOLD} 40%, ${CRIMSON_BRIGHT} 90%, transparent 100%)`,
+              boxShadow: `0 0 16px ${GOLD}, 0 0 32px ${GOLD_DEEP}`,
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -1609,7 +2889,7 @@ function WorldMapBlock() {
       className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{ background: "#0b0907" }}
     >
-      <CompassWatermark />
+      <LandscapeBackdrop />
       <DriftingFog tint={GOLD_DEEP} count={3} />
       <div className="relative max-w-6xl mx-auto">
         <SectionHeading
@@ -1769,6 +3049,7 @@ function CharacterRosterBlock() {
   return (
     <section className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden">
       <FloatingRunes count={9} />
+      <CharacterSilhouettes />
       <div className="relative max-w-6xl mx-auto">
         <SectionHeading
           eyebrow="The Cast"
@@ -1910,19 +3191,42 @@ function MagicSystemBlock() {
   const [active, setActive] = useState<string>("fire");
   const activeElleta = ELLETAS.find((e) => e.id === active) || ELLETAS[0];
 
+  // Intersection-observer gate — the immersive ElementBackdrop only
+  // animates while the section is in view. Per Ben's 2026-05-07
+  // direction: starts on scroll-into-view OR on tab-click, stops on
+  // tab-change OR scroll-out. The key={active} below handles the
+  // tab-change reset; this hook handles scroll behavior.
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{
         background:
           "radial-gradient(ellipse at 30% 20%, rgba(127, 29, 29, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(212, 168, 83, 0.08) 0%, transparent 50%), #0a0808",
       }}
     >
-      {/* Element-specific particle layer — keyed on active.id so React
-          fully unmounts/remounts when the user picks a new tab, giving
-          the new element a clean fade-in instead of cross-fading from
-          the prior one. */}
-      <ElementParticles key={activeElleta.id} id={activeElleta.id} color={activeElleta.color} />
+      {/* Reactive elemental backdrop — fades in on scroll-into-view AND
+          on tab-click. key={active} forces clean remount when the user
+          picks a new element so the new scene fades in fresh. */}
+      <ElementBackdrop
+        key={activeElleta.id}
+        id={activeElleta.id}
+        color={activeElleta.color}
+        playing={inView}
+      />
       <div className="relative max-w-5xl mx-auto">
         <SectionHeading
           eyebrow="The Old Powers"
@@ -2051,6 +3355,7 @@ function ParchmentReaderBlock() {
           "linear-gradient(180deg, #0a0808 0%, #100b0b 50%, #0a0808 100%)",
       }}
     >
+      <LibraryBackdrop />
       <InkWisps />
       <div className="relative max-w-3xl mx-auto">
         <SectionHeading
@@ -2164,6 +3469,185 @@ function ParchmentReaderBlock() {
 // ──────────────────────────────────────────────────────────────────────
 // 8. FACTION SELECTOR — 4-question quiz
 // ──────────────────────────────────────────────────────────────────────
+
+/** Per-faction symbol — each rendered as a tiny inline SVG so it can
+ *  animate via shared CSS classes. Color comes from the faction
+ *  registry; the symbol's shape is chosen to evoke the faction's role
+ *  in the saga (sword/rose/scroll/coin/sigil). */
+function FactionSymbol({ id }: { id: string }) {
+  if (id === "guard") {
+    // Crossed swords
+    return (
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        <g transform="rotate(45 16 16)">
+          <rect x="14" y="3" width="4" height="18" fill="currentColor" opacity="0.9" />
+          <polygon points="14,3 18,3 16,1" fill="currentColor" />
+          <rect x="11" y="20" width="10" height="2" fill="currentColor" />
+          <rect x="15" y="22" width="2" height="5" fill="currentColor" />
+        </g>
+        <g transform="rotate(-45 16 16)">
+          <rect x="14" y="3" width="4" height="18" fill="currentColor" opacity="0.7" />
+          <polygon points="14,3 18,3 16,1" fill="currentColor" opacity="0.7" />
+          <rect x="11" y="20" width="10" height="2" fill="currentColor" opacity="0.7" />
+          <rect x="15" y="22" width="2" height="5" fill="currentColor" opacity="0.7" />
+        </g>
+      </svg>
+    );
+  }
+  if (id === "rose") {
+    // Wilted rose with stem and crown
+    return (
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        {/* Crown */}
+        <path d="M 10 7 L 12 4 L 14 7 L 16 3 L 18 7 L 20 4 L 22 7 L 22 9 L 10 9 Z" fill="currentColor" opacity="0.85" />
+        {/* Bloom */}
+        <path d="M 16 11 Q 10 12, 11 18 Q 16 21, 21 18 Q 22 12, 16 11 Z" fill="currentColor" />
+        <path d="M 13 14 Q 16 11, 19 14" fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth="0.6" />
+        <path d="M 13.5 16.5 Q 16 13.5, 18.5 16.5" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5" />
+        {/* Drooping stem */}
+        <path d="M 16 21 Q 14 25, 12 28" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        {/* Leaf */}
+        <path d="M 14 24 Q 11 23, 10 26 Q 13 27, 14 25 Z" fill="currentColor" opacity="0.7" />
+      </svg>
+    );
+  }
+  if (id === "scholar") {
+    // Open book / scroll
+    return (
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        <path d="M 4 8 Q 16 5, 28 8 L 28 24 Q 16 21, 4 24 Z" fill="currentColor" opacity="0.85" />
+        <path d="M 16 7 L 16 23" stroke="rgba(0,0,0,0.4)" strokeWidth="0.6" />
+        <path d="M 7 12 L 14 11 M 7 15 L 14 14 M 7 18 L 14 17" stroke="rgba(0,0,0,0.4)" strokeWidth="0.4" />
+        <path d="M 18 11 L 25 12 M 18 14 L 25 15 M 18 17 L 25 18" stroke="rgba(0,0,0,0.4)" strokeWidth="0.4" />
+      </svg>
+    );
+  }
+  if (id === "trader") {
+    // Coin with chevron mark
+    return (
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        <circle cx="16" cy="16" r="12" fill="currentColor" opacity="0.9" />
+        <circle cx="16" cy="16" r="9" fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth="0.6" />
+        <path d="M 11 13 L 16 18 L 21 13" fill="none" stroke="rgba(0,0,0,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M 11 17 L 16 22 L 21 17" fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  // bonded — elleta sigil (triangle with inner dot + radiating spokes)
+  return (
+    <svg viewBox="0 0 32 32" className="w-full h-full">
+      <polygon points="16,3 28,26 4,26" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="16" cy="18" r="3" fill="currentColor" />
+      <path d="M 16 12 L 16 8 M 11 22 L 7 24 M 21 22 L 25 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+      <circle cx="16" cy="3" r="1.2" fill="currentColor" />
+      <circle cx="28" cy="26" r="1.2" fill="currentColor" />
+      <circle cx="4" cy="26" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** 5-up faction crest grid for the quiz intro. Each crest shows the
+ *  symbol + label, with a slow rotating outer ring and a soft pulsing
+ *  glow per faction color. Motion-safe per Rule 70. */
+function FactionPreviewGrid() {
+  return (
+    <>
+      <style jsx>{`
+        .bl-faction-crest-glow {
+          animation: bl-faction-crest-pulse 4s ease-in-out infinite;
+        }
+        .bl-faction-crest-ring {
+          animation: bl-faction-crest-spin 24s linear infinite;
+        }
+        @keyframes bl-faction-crest-pulse {
+          0%,
+          100% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.85;
+            transform: scale(1.08);
+          }
+        }
+        @keyframes bl-faction-crest-spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-faction-crest-glow,
+          .bl-faction-crest-ring {
+            animation: none;
+          }
+        }
+      `}</style>
+      <div className="grid grid-cols-5 gap-2 sm:gap-4 max-w-2xl mx-auto">
+        {Object.values(FACTIONS).map((f, i) => (
+          <div key={f.id} className="flex flex-col items-center">
+            <div
+              className="relative flex items-center justify-center rounded-full w-12 h-12 sm:w-16 sm:h-16"
+              style={{
+                background: `radial-gradient(circle, ${f.color}26 0%, transparent 70%)`,
+              }}
+            >
+              {/* Pulsing glow */}
+              <span
+                className="bl-faction-crest-glow absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle, ${f.color}55 0%, transparent 65%)`,
+                  filter: "blur(6px)",
+                  animationDelay: `${i * 0.6}s`,
+                }}
+              />
+              {/* Slowly-rotating ring with 3 dots — feels alive without
+                  being noisy. */}
+              <svg
+                viewBox="0 0 100 100"
+                className="bl-faction-crest-ring absolute inset-0 w-full h-full pointer-events-none"
+                style={{ animationDelay: `${-i * 3}s` }}
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="46"
+                  fill="none"
+                  stroke={f.color}
+                  strokeOpacity="0.4"
+                  strokeWidth="0.8"
+                  strokeDasharray="2 4"
+                />
+                <circle cx="50" cy="4" r="2" fill={f.color} />
+                <circle cx="93" cy="73" r="1.6" fill={f.color} opacity="0.7" />
+                <circle cx="7" cy="73" r="1.6" fill={f.color} opacity="0.7" />
+              </svg>
+              {/* Symbol */}
+              <span
+                className="relative w-6 h-6 sm:w-8 sm:h-8"
+                style={{ color: f.color }}
+              >
+                <FactionSymbol id={f.id} />
+              </span>
+            </div>
+            <p
+              className="mt-2 text-[9px] sm:text-[10px] uppercase tracking-[0.15em] leading-tight text-center"
+              style={{
+                color: "rgba(232, 220, 196, 0.7)",
+                fontFamily: "'Cinzel', serif",
+              }}
+            >
+              {f.name.replace(/^The /, "")}
+            </p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function FactionSelectorBlock() {
   const [step, setStep] = useState<number>(0); // 0 = intro, 1-4 = q's, 5 = result
   const [answers, setAnswers] = useState<string[]>([]);
@@ -2242,10 +3726,17 @@ function FactionSelectorBlock() {
               <p className="text-base sm:text-lg italic mb-8" style={{ color: "rgba(232, 220, 196, 0.85)" }}>
                 Annarose is choosing sides whether you've drawn a sword or not. Answer four questions. Find your faction.
               </p>
+
+              {/* 5-up faction preview — every available outcome is on
+                  screen before the user commits to the test. Each crest
+                  has a small motion-safe pulse around its symbol so the
+                  group reads as alive, not stamped. */}
+              <FactionPreviewGrid />
+
               <button
                 type="button"
                 onClick={start}
-                className="inline-flex items-center gap-2 px-8 py-4 font-semibold tracking-wide rounded-sm transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 px-8 py-4 mt-8 font-semibold tracking-wide rounded-sm transition-all duration-300 hover:scale-[1.02]"
                 style={{
                   background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD})`,
                   color: "#09090b",
@@ -2709,6 +4200,37 @@ function StickyAmazonCTA() {
   );
 }
 
+/** BluejayFeather — small inline SVG feather glyph for the footer
+ *  network-credit. Stylized blue-jay primary feather with center vane
+ *  + barbs. Currentcolor so the parent's text-color flows through. */
+function BluejayFeather({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      style={{ flexShrink: 0 }}
+    >
+      <path
+        d="M12 2 Q 6 8, 7 14 Q 8 19, 12 22 Q 16 19, 17 14 Q 18 8, 12 2 Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <path
+        d="M12 4 L 12 22"
+        stroke="rgba(0,0,0,0.35)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+      />
+      {/* Barbs */}
+      <path d="M 12 7 L 9 9 M 12 9 L 8.5 11 M 12 11 L 8.2 13 M 12 13 L 8.5 15 M 12 15 L 9 17 M 12 17 L 9.5 18.5" stroke="rgba(0,0,0,0.25)" strokeWidth="0.4" strokeLinecap="round" />
+      <path d="M 12 7 L 15 9 M 12 9 L 15.5 11 M 12 11 L 15.8 13 M 12 13 L 15.5 15 M 12 15 L 15 17 M 12 17 L 14.5 18.5" stroke="rgba(0,0,0,0.25)" strokeWidth="0.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function FooterBlock() {
   return (
     <footer
@@ -2730,10 +4252,10 @@ function FooterBlock() {
         >
           Bloodlines
         </p>
-        <p className="text-sm italic mb-6" style={{ color: "rgba(232, 220, 196, 0.6)" }}>
+        <p className="text-base italic mb-6" style={{ color: "rgba(232, 220, 196, 0.7)" }}>
           A fantasy saga by Preston James Hunsaker.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm mb-8" style={{ color: "rgba(232, 220, 196, 0.7)" }}>
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm sm:text-base mb-8" style={{ color: "rgba(232, 220, 196, 0.7)" }}>
           <a
             href={AMAZON_LINEAGE}
             target="_blank"
@@ -2764,18 +4286,36 @@ function FooterBlock() {
             All Books
           </a>
         </div>
-        <p className="text-xs flex items-center justify-center gap-1.5" style={{ color: "rgba(232, 220, 196, 0.4)" }}>
+        {/* Network-credit. The feather + "BlueJays" together link to the
+            BlueJays portfolio home (per Ben 2026-05-07) — separate hop
+            from the /audit landing page so the brand link stays clean. */}
+        <p
+          className="text-sm flex items-center justify-center gap-1.5 flex-wrap"
+          style={{ color: "rgba(232, 220, 196, 0.55)" }}
+        >
           <span>Built by</span>
+          <a
+            href="https://bluejayportfolio.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 hover:opacity-100 transition-opacity"
+            style={{ color: GOLD_DEEP }}
+          >
+            <BluejayFeather size={15} />
+            <span className="underline-offset-2 hover:underline font-semibold tracking-wide">
+              BlueJays
+            </span>
+          </a>
+          <span>—</span>
           <a
             href="https://bluejayportfolio.com/audit"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline"
-            style={{ color: GOLD_DEEP }}
+            className="hover:underline"
+            style={{ color: "rgba(232, 220, 196, 0.55)" }}
           >
-            BlueJays
+            get your free site audit
           </a>
-          <span>— get your free site audit</span>
         </p>
       </div>
     </footer>
