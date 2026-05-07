@@ -21,6 +21,7 @@
  * structure) + hector-landscaping/page.tsx (custom-tier feel).
  */
 
+import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
@@ -2105,22 +2106,36 @@ export default function MeyerElectricPage() {
             >
               © {new Date().getFullYear()} Meyer Electric LLC. All rights reserved.
             </div>
-            <a
-              href="https://bluejayportfolio.com/audit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-[12px] hover:text-white transition-colors"
-              style={{ color: INK_DIM, fontFamily: FONT_BODY }}
-            >
-              <BluejayLogo size={14} className="text-sky-500" />
-              <span>
-                Built by{" "}
-                <span className="underline decoration-dotted underline-offset-2">
-                  BlueJays
-                </span>{" "}
-                — get your free site audit
-              </span>
-            </a>
+            <div className="inline-flex items-center gap-3">
+              <a
+                href="https://bluejayportfolio.com/audit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-[12px] hover:text-white transition-colors"
+                style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+              >
+                <BluejayLogo size={14} className="text-sky-500" />
+                <span>
+                  Built by{" "}
+                  <span className="underline decoration-dotted underline-offset-2">
+                    BlueJays
+                  </span>{" "}
+                  — get your free site audit
+                </span>
+              </a>
+              {/* Small secondary feather — entry point to the password-
+                  gated demo backend (MOCK BACKEND playbook). No visible
+                  label per Q3=A. Only people who know to click it can
+                  find it. Subtle hover hint surfaces on focus/hover. */}
+              <Link
+                href="/clients/meyer-electric/portal-demo"
+                aria-label="Backend demo"
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full opacity-30 hover:opacity-100 transition-opacity"
+                title="Backend demo"
+              >
+                <BluejayLogo size={12} className="text-sky-500" />
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
