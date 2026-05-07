@@ -7476,3 +7476,98 @@ The companion-doc checklist lives at the bottom of
 `docs/contracts/<name> - Independent Contractor Agreement.md` in the
 template — never skip it when onboarding a partner.
 
+
+---
+
+## Locked-In Rules — Session 2026-05-06 evening (manufacturer ICP buildout + Madie's portal)
+
+These came out of the manufacturer-ICP deep-dive day. Each captures a pattern that's now non-negotiable for future agents.
+
+### Locked-In Rule 67 — Multi-anchor ICP validation (NON-NEGOTIABLE)
+
+Don't lock a customer-profile pattern on 1-2 anchors. **Need ≥3 anchor data points across radically different verticals before treating a shape as "the ICP."** One close = anecdote. Two closes = correlation. Three closes across radically different verticals = the pattern is real, vertical-agnostic, and worth coding against.
+
+**Why this rule exists:** It's tempting to lock the ICP on the first big close. Two closes in the same niche feel like a pattern but they're often selection bias. Three closes across different verticals (today: ITC steel ag-equipment + Zenith sports gear + Nevarland kids' apparel) prove the shape is structural, not vertical-specific.
+
+**Apply to:**
+- New customer-profile decisions (e.g. "is this our Pro tier ICP?")
+- Scout-category buildouts (don't add a category until 3 anchors confirm the shape works there)
+- Pitch-asset decisions (don't productize a lead-magnet pair until 3 different verticals adopted it)
+
+**The 2026-05-06 reference run:** 3-segment audience taxonomy (end-buyer + influencer + channel-partner) locked across ITC + Zenith + Nevarland. See `aios/decisions/2026-05-06_manufacturer_icp_3anchor_lock.md`.
+
+### Locked-In Rule 68 — Color-coded high-ticket cold leads (pink/purple/layered)
+
+Every BlueJays admin surface that lists prospects MUST visually distinguish high-ticket cold leads with a 3-element treatment (left-strip + bg tint + chip):
+
+- **Pink** = manufacturer-lookalike (`lookalikeCategory IS NOT NULL` — any of the 6 mfg-* slugs)
+- **Purple** = Full System / agency-replacement (`pricingTier === 'fullsystem'` — covers Cut-My-Agency calc submitters + agency landing-page bookers + manual fullsystem flips)
+- **Layered** when both apply: pink strip + purple chip both render
+
+**Surfaces that MUST honor this** (any new admin/sales view added later inherits the requirement):
+- `bluejays/src/components/dashboard/ProspectTable.tsx` (admin /dashboard)
+- `bluejays/src/app/dashboard/script/LeadPicker.client.tsx` (Madie's sales portal)
+- Any future operator dashboard that renders BlueJays prospects
+
+The chip text is locked: `MFG · {lookalikeCategory.replace("mfg-", "").toUpperCase()}` for pink, `AGENCY $10K` for purple. Don't rename without updating both surfaces atomically.
+
+### Locked-In Rule 69 — Active customers filtered out of cold sales selection
+
+Any sales-portal / cold-outreach selection mechanism MUST exclude paying customers and clients-with-built-sites. **Hard exclusion** (filter the row out entirely), NOT dim/strikethrough.
+
+**The conditions that mark a prospect as "already a client":**
+- `status === 'paid'`
+- `status === 'live'`
+- `status === 'deployed'`
+- `status === 'dns_transfer'`
+- `siteLiveAt` is set
+- `customSiteUrl` is set
+
+**Why hard exclusion:** cold-calling an existing customer kills the relationship. Madie / Ben should never see a customer in their cold-call queue, even dimmed.
+
+**Surfaces enforcing this** (don't add a new cold-call selection surface without inheriting the filter):
+- `bluejays/src/app/dashboard/script/LeadPicker.client.tsx` (Madie's portal)
+- Any future "build a call list" / "build a cold-email batch" selection UI
+
+### Locked-In Rule 70 — Manufacturer-lookalike scout auto-tags `manuallyManaged=true`
+
+Every `mfg-*` category prospect created by the auto-scout MUST be auto-tagged with `manuallyManaged=true` at intake (before reaching the auto-pitch funnel). Per Rule 49, the daily auto-enroll cron skips manually-managed prospects.
+
+**Why:** the 6 mfg-* slugs are in `ACTIVE_CATEGORIES` so the scout pulls them, BUT they don't have V2 templates yet. Auto-pitching with a generic-template preview burns the highest-leverage cold-lead segment we have. Hard rule: until a V2 template exists for a manufacturer slug, every prospect in that slug gets the manual-review gate.
+
+**Where enforced:** `bluejays/src/lib/scout.ts` — the `MANUFACTURER_LOOKALIKE_CATEGORIES` Set + the `isMfgLookalike` check at prospect-construction time (line ~84). DON'T remove this gate without first shipping a V2 template for the affected slug AND updating the rule.
+
+**Removal trigger** (when this rule expires for a specific slug): when V2 template ships at `/v2/<slug>`, the slug graduates from manufacturer-lookalike (`manuallyManaged=true`) to standard-tier auto-pitch. At that point: drop the slug from `MANUFACTURER_LOOKALIKE_CATEGORIES` Set, ship a follow-up commit, update the `MANUFACTURER_BACKLOG.md` Status column to ✅.
+
+### Locked-In Rule 71 — Defensibility score for product-business prospects (concept locked, scoring logic pending)
+
+Every product-business prospect (manufacturer / brand / niche-DTC) gets a `defensibilityScore` 0-100 computed at extraction time, scoring 3 signals:
+
+1. **Place-of-origin specificity** — does the prospect's copy name a specific manufacturing location, region, or hometown?
+2. **Patent / IP / trademark / fitment data** — does the copy claim defensible product engineering (patent-pending, trademark, machine-fitment specs, lab-certified)?
+3. **Named-channel relationship** — does the copy name specific dealers / clubs / camps / influencers / retailers carrying the product?
+
+A prospect needs at least 2 of 3 to be worth pitching. Sub-30 scores get flagged for manual review BEFORE any preview build / cold pitch is sent.
+
+**Why:** Both validated $10K closes (ITC + Zenith) win on hyper-specific identity copy. Generic manufacturers ("Quality wholesale jewelry — call us today") die in cold paid. Cheaper to filter at scout than burn pitch cycles.
+
+**Status:** field exists on `Prospect.defensibilityScore` (added in commit `f70cc59`). Auto-compute logic in `data-extractor.ts` is pending — open task in `Bluejay Business/TASKS.md`.
+
+**When the scoring logic ships:** wire a `defensibilityScore < 30` filter into the auto-enroll cron's candidates query so weak prospects never enter the pitch funnel automatically. Manual override available via dashboard.
+
+### Locked-In Rule 72 — Content fidelity when porting a real source's copy (NON-NEGOTIABLE)
+
+When the directive is "use the real source content" (e.g. porting a client's existing site to a new build, rebuilding a prospect's site under a new brand name, migrating between platforms), every claim on the new build MUST be grounded in the source. Claims not in the source are fabrications.
+
+**Default behavior:**
+1. Scrape the source-of-truth URL
+2. Diff its claims against the derivative
+3. Surface fabrications (P0 specifics like dollar amounts / certifications / page counts; P1 softer like service offerings / geographic claims)
+4. Soften (rephrase to source-grounded alternative) OR remove (delete the section entirely if source has nothing comparable)
+5. NEVER invent specifics — pricing, certifications, page counts, time-frames, staff names, customer counts
+
+**Why:** Specificity gaps are TBD-able. Invented claims poison trust forever — and are libel-adjacent for healthcare / financial / legal verticals.
+
+**The 2026-05-06 reference run:** Olympic Inspections rebuild from `pineparticle.com`. Stripped fabricated "AIHA-LAP labs" / "10-25 page PDF" / "homes over 30 years old" / 3 fake "Coming soon" services. Replaced with source-grounded language ("ISO/IEC 17025-accredited laboratory" / "fast turnaround" / Pine & Particle's actual founder origin story).
+
+**Skill that runs this audit:** `aios/.claude/skills/content_fidelity_audit/SKILL.md` (added 2026-05-06).
