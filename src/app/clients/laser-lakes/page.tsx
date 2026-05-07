@@ -2,6 +2,7 @@ import Link from "next/link";
 import LakeInquiryForm from "./LakeInquiryForm.client";
 import EmailCaptureFooter from "./EmailCaptureFooter.client";
 import { BespokeExperience } from "./bespoke-experience.client";
+import { LakeMapArt } from "./lake-map-art";
 
 export const metadata = {
   title: "Laser Lakes — Custom Lake Maps + Wood Wildlife Art (Minnesota)",
@@ -160,66 +161,39 @@ export default function LaserLakesPage() {
               }
             `}</style>
             <div
-              className="aspect-[4/5] rounded-md shadow-2xl overflow-hidden relative"
+              className="aspect-[4/5] rounded-md shadow-2xl overflow-hidden relative ring-1 ring-amber-100/15"
               style={{
-                background:
-                  "linear-gradient(135deg, #c9a87a 0%, #8c6a3f 50%, #5d4225 100%)",
+                boxShadow:
+                  "0 25px 70px -15px rgba(0,0,0,0.6), 0 8px 25px -8px rgba(217, 159, 88, 0.25)",
               }}
             >
-              {/* Concentric contour rings — three layered SVG circles. */}
-              <svg
-                viewBox="0 0 400 500"
-                className="absolute inset-0 w-full h-full"
-                style={{ animation: "lakes-ring-pulse 6s ease-in-out infinite" }}
-                aria-hidden
-              >
-                <defs>
-                  <radialGradient id="lakeGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="rgba(255, 240, 210, 0.15)" />
-                    <stop offset="100%" stopColor="transparent" />
-                  </radialGradient>
-                </defs>
-                <circle cx="200" cy="250" r="180" fill="url(#lakeGlow)" />
-                {[40, 70, 100, 130, 160, 185].map((r, i) => (
-                  <circle
-                    key={r}
-                    cx="200"
-                    cy="250"
-                    r={r}
-                    fill="none"
-                    stroke="rgba(255, 240, 210, 0.18)"
-                    strokeWidth={1.2 + i * 0.15}
-                  />
-                ))}
-              </svg>
-              {/* Water shimmer overlay — diagonal sweep */}
+              {/* Real-feeling lake-map illustration — rendered from SVG
+                  so it scales infinitely + drops the moment Nate sends
+                  a real photo (just swap with <Image>). */}
+              <LakeMapArt
+                label="Lake Burntside"
+                state="MN"
+                variant="warm"
+                className="w-full h-full"
+              />
+              {/* Subtle water shimmer sweep over the whole piece — sells
+                  the "this is alive, not paint" effect. */}
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(105deg, transparent 35%, rgba(255, 240, 210, 0.18) 50%, transparent 65%)",
+                    "linear-gradient(105deg, transparent 35%, rgba(255, 240, 210, 0.12) 50%, transparent 65%)",
                   animation: "lakes-shimmer 8s ease-in-out infinite",
                 }}
               />
-              <div className="absolute inset-6 border-2 border-amber-100/20 rounded-sm flex items-center justify-center">
-                <div className="text-center relative z-10">
-                  <p
-                    className="text-amber-100/80 text-xs uppercase tracking-[0.4em] mb-3"
-                  >
-                    Featured piece
-                  </p>
-                  <p
-                    className="text-amber-50 text-3xl"
-                    style={{
-                      fontFamily: "'Playfair Display', Georgia, serif",
-                    }}
-                  >
-                    Lake Burntside
-                  </p>
-                  <p className="text-amber-100/60 text-sm mt-2">
-                    Custom · 18&quot; × 24&quot; · 3-layer Baltic birch
-                  </p>
-                </div>
+              {/* Dimensions caption — overlaid bottom corner so the
+                  art reads as the headline, not the chrome. */}
+              <div
+                className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-[10px] tracking-[0.32em] uppercase"
+                style={{ color: "rgba(43, 26, 8, 0.65)" }}
+              >
+                <span>Custom · 18&quot; × 24&quot;</span>
+                <span>3-layer Baltic birch</span>
               </div>
             </div>
             <div

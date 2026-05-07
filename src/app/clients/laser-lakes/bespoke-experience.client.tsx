@@ -17,11 +17,13 @@
 import { useRef, useState } from "react";
 import { LakeBrowser } from "./lake-browser.client";
 import { OrderConfigurator } from "./order-configurator.client";
+import { LakeMapArt } from "./lake-map-art";
 import {
   PRODUCTS,
   formatPrice,
   SHOPIFY_SHOP_URL,
   type Lake,
+  type Product,
 } from "@/data/laser-lakes-catalog";
 
 const PALETTE = {
@@ -50,13 +52,35 @@ export function BespokeExperience() {
       {/* ─── LAKE BROWSER ─── */}
       <section
         id="lake-browser"
-        className="border-y"
+        className="border-y relative overflow-hidden"
         style={{
           backgroundColor: PALETTE.cream,
           borderColor: PALETTE.border,
         }}
       >
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+        {/* Ambient lake-at-dusk photo behind the search — sets the
+            mood without competing with the foreground. */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2000&q=80&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.07,
+            filter: "saturate(0.6)",
+          }}
+          aria-hidden
+        />
+        {/* Top-fade so the photo never competes with the headline */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `linear-gradient(180deg, ${PALETTE.cream} 0%, transparent 30%, transparent 70%, ${PALETTE.cream} 100%)`,
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="max-w-3xl mx-auto text-center mb-10">
             <div
               className="text-[10px] tracking-[0.32em] uppercase font-extrabold mb-3"
@@ -92,13 +116,27 @@ export function BespokeExperience() {
       {/* ─── PRODUCT CATALOG GRID ─── */}
       <section
         id="catalog"
-        className="border-b"
+        className="border-b relative overflow-hidden"
         style={{
           backgroundColor: "#efe6d3",
           borderColor: PALETTE.border,
         }}
       >
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+        {/* Ambient wood-grain texture so the section reads as a
+            workshop wall, not a flat color field. */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1473445730015-841f29a9490b?w=2000&q=80&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.08,
+            mixBlendMode: "multiply",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="max-w-3xl mb-12">
             <div
               className="text-[10px] tracking-[0.32em] uppercase font-extrabold mb-3"
@@ -156,33 +194,19 @@ export function BespokeExperience() {
                   e.currentTarget.style.borderColor = PALETTE.border;
                 }}
               >
-                {/* Image area — placeholder gradient until Nate sends real photos */}
-                <div
-                  className="aspect-[4/3] relative overflow-hidden"
-                  style={{
-                    background:
-                      p.category === "lake-map"
-                        ? "linear-gradient(135deg, #2c4a5a 0%, #1a2e3a 100%)"
-                        : p.category === "wildlife"
-                          ? "linear-gradient(135deg, #4a3a2a 0%, #2a1f15 100%)"
-                          : p.category === "ornament"
-                            ? "linear-gradient(135deg, #6b5436 0%, #3a2811 100%)"
-                            : "linear-gradient(135deg, #5e4a36 0%, #2e1f13 100%)",
-                  }}
-                >
-                  {/* Concentric ring overlay simulating lake contours */}
-                  {p.category === "lake-map" && (
-                    <div
-                      className="absolute inset-0 opacity-30"
-                      style={{
-                        background:
-                          "radial-gradient(circle at 50% 50%, transparent 20%, rgba(255,255,255,0.08) 21%, transparent 24%, rgba(255,255,255,0.08) 35%, transparent 38%, rgba(255,255,255,0.06) 50%, transparent 53%, rgba(255,255,255,0.06) 65%, transparent 68%, rgba(255,255,255,0.04) 80%, transparent 83%)",
-                      }}
-                    />
-                  )}
+                {/* Image area — beautiful product art per category.
+                    Lake-map products render the SVG LakeMapArt with
+                    a different label per card so the catalog grid
+                    looks like a wall of varied finished pieces.
+                    Other categories get the matching themed scene. */}
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <ProductArt product={p} />
                   <div
-                    className="absolute inset-0 flex items-end p-4"
-                    style={{ background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4) 100%)" }}
+                    className="absolute inset-0 flex items-end p-4 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.45) 100%)",
+                    }}
                   >
                     {p.isFeatured && (
                       <span
@@ -303,6 +327,118 @@ export function BespokeExperience() {
         </div>
       </section>
     </>
+  );
+}
+
+/** ProductArt — picks the right placeholder visual per product
+ *  category. Lake-map products get the SVG lake illustration with
+ *  a unique label per card so the catalog wall looks varied.
+ *  Wildlife / ornament / sign get themed SVG scenes. All swap to
+ *  Nate's real photos once they land — just check p.imageUrl
+ *  and render <Image src={p.imageUrl} /> instead.
+ */
+function ProductArt({ product }: { product: Product }) {
+  // Each lake-map product gets a different label so the grid feels
+  // like a real catalog of varied pieces, not "the same map x6".
+  const lakeMapLabels: Record<string, { label: string; state: string; variant: "warm" | "walnut" | "ebony" }> = {
+    "lake-map-classic": { label: "Mille Lacs", state: "MN", variant: "warm" },
+    "lake-map-shadowbox": { label: "Lake Tahoe", state: "CA", variant: "walnut" },
+    "lake-map-coaster-set": { label: "Burntside", state: "MN", variant: "warm" },
+  };
+
+  if (product.category === "lake-map") {
+    const cfg = lakeMapLabels[product.id] ?? { label: "Mille Lacs", state: "MN", variant: "warm" as const };
+    return (
+      <LakeMapArt
+        label={cfg.label}
+        state={cfg.state}
+        variant={cfg.variant}
+        className="w-full h-full"
+      />
+    );
+  }
+
+  if (product.category === "ornament") {
+    // Ornament — small lake-map roundel on a darker background
+    return (
+      <div className="w-full h-full relative" style={{ background: "linear-gradient(135deg, #2a1f15 0%, #100b07 100%)" }}>
+        <div
+          className="absolute inset-[18%] rounded-full overflow-hidden"
+          style={{
+            boxShadow: "0 8px 30px rgba(217, 159, 88, 0.25), inset 0 0 0 3px rgba(217, 159, 88, 0.4)",
+          }}
+        >
+          <LakeMapArt label="Squam" state="NH" variant="warm" className="w-full h-full" />
+        </div>
+        {/* Twine hanger */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[18%]"
+          style={{ background: "linear-gradient(180deg, transparent 0%, #d99f58 100%)" }}
+        />
+      </div>
+    );
+  }
+
+  if (product.category === "wildlife") {
+    // Wildlife — silhouette on stained wood
+    const isLoon = product.id.includes("loon");
+    return (
+      <div
+        className="w-full h-full relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #4a3a2a 0%, #2a1f15 100%)" }}
+      >
+        <svg viewBox="0 0 600 450" className="absolute inset-0 w-full h-full">
+          <defs>
+            <linearGradient id={`wl-bg-${product.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#1f2e3a" />
+              <stop offset="100%" stopColor="#0c1820" />
+            </linearGradient>
+          </defs>
+          <rect width="600" height="450" fill={`url(#wl-bg-${product.id})`} />
+          {/* Faux water reflection lines */}
+          {[300, 320, 340, 360, 385, 410].map((y, i) => (
+            <line
+              key={y}
+              x1="0"
+              x2="600"
+              y1={y}
+              y2={y}
+              stroke="rgba(217, 159, 88, 0.18)"
+              strokeWidth={1.2 + i * 0.1}
+            />
+          ))}
+          {isLoon ? (
+            // Loon silhouette
+            <g transform="translate(300 230)" fill="#0a0e10" stroke="#d99f58" strokeWidth="1.2">
+              <path d="M -90 0 C -85 -40, -40 -55, 10 -50 C 60 -50, 90 -30, 100 -10 C 95 5, 60 15, 0 18 C -50 18, -85 12, -90 0 Z" />
+              <path d="M 80 -15 C 100 -25, 120 -45, 130 -75 C 132 -85, 125 -90, 115 -85 C 100 -78, 90 -55, 85 -30 Z" />
+              <line x1="120" y1="-78" x2="155" y2="-90" strokeWidth="2.5" />
+              <circle cx="118" cy="-65" r="2" fill="#d99f58" />
+            </g>
+          ) : (
+            // Pine trio silhouette
+            <g transform="translate(300 280)" fill="#0a0e10" stroke="#d99f58" strokeWidth="1.2">
+              {[-110, 0, 110].map((x, i) => {
+                const h = i === 1 ? 180 : 140;
+                return (
+                  <g key={x} transform={`translate(${x} 0)`}>
+                    <polygon points={`0,${-h} -35,${-h * 0.55} -22,${-h * 0.55} -50,${-h * 0.25} -32,${-h * 0.25} -65,0 65,0 32,${-h * 0.25} 50,${-h * 0.25} 22,${-h * 0.55} 35,${-h * 0.55}`} />
+                    <rect x="-7" y="-5" width="14" height="20" fill="#3a2811" />
+                  </g>
+                );
+              })}
+            </g>
+          )}
+        </svg>
+      </div>
+    );
+  }
+
+  // Sign — engraved cabin name plate look
+  return (
+    <div className="w-full h-full relative">
+      <LakeMapArt label="The Williams" state="EST · 2008" variant="warm" className="w-full h-full" />
+    </div>
   );
 }
 
