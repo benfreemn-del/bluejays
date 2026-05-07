@@ -1374,3 +1374,185 @@ Reply here whenever you have something new for the site.
 
   return { subject, body, sequence: 223 };
 }
+
+// ────────────────────────────────────────────────────────────────────
+// Cut-My-Agency calculator — instant deterministic auto-email (Q9C)
+// ────────────────────────────────────────────────────────────────────
+
+/**
+ * Pick the case-study line for the calculator auto-email based on the
+ * industry slug captured in the lead-gate. Manufacturer / industrial /
+ * trade slugs map to ITC. Sports / consumer / brand slugs map to Zenith.
+ * Service / professional / unknown slugs get a neutral line that doesn't
+ * fake a case-study fit.
+ *
+ * Deterministic per Rule 59 — no AI inference, just a hash table.
+ */
+function pickCaseStudyForIndustry(industry: string | undefined | null): string {
+  const slug = (industry || "").toLowerCase().trim();
+  const industrial = new Set([
+    "manufacturer",
+    "industrial",
+    "construction",
+    "trade",
+    "auto",
+    "agriculture",
+    "hvac",
+    "electrician",
+    "plumber",
+    "roofing",
+  ]);
+  const consumer = new Set([
+    "sports",
+    "consumer",
+    "retail",
+    "ecommerce",
+    "apparel",
+    "kids",
+    "fitness",
+    "food",
+    "beverage",
+    "beauty",
+    "salon",
+  ]);
+  if (industrial.has(slug)) {
+    return "ITC Quick Attach (custom tractor parts in Blossvale, NY) shipped their first DTC order 30 days after we launched their system. Same shape as you — patent-protected product, real shop floor, dealer + end-buyer audiences.";
+  }
+  if (consumer.has(slug)) {
+    return "Zenith Sports / TEKKY (patent-pending soccer training ball) replaced their distributor-only model with a direct-to-coach + parent + player system in their first year. Same shape as you — branded product, multi-audience funnel.";
+  }
+  return "We've shipped this same system across manufacturers, sports brands, and service businesses — every build is custom, the engine is the same.";
+}
+
+/** Pick the post-submit timeline message based on urgency answer. */
+function pickTimelineMessageForCmaEmail(timeline: string | undefined | null): {
+  headline: string;
+  nextStep: string;
+} {
+  const slug = (timeline || "").toLowerCase().trim();
+  if (slug === "this_month") {
+    return {
+      headline: "You said you're ready this month — let's not lose the window.",
+      nextStep:
+        "I'll text you within an hour to set a 15-minute walk-through. Reply with the best time for you today or tomorrow.",
+    };
+  }
+  if (slug === "60_90_days") {
+    return {
+      headline: "60–90 days is the perfect runway for this.",
+      nextStep:
+        "I'll send a one-page plan in 24 hours showing exactly what we'd build in your first 30 days, then you can pick a kickoff date.",
+    };
+  }
+  return {
+    headline: "No rush — this is a research email, not a pitch.",
+    nextStep:
+      "I'll keep this short. Read the plan, take screenshots, share with your partner. When you're ready to talk, just reply.",
+  };
+}
+
+/** Pick the goal-line wording for the email's middle section. */
+function pickGoalLineForCmaEmail(goal: string | undefined | null): string {
+  const slug = (goal || "").toLowerCase().trim();
+  if (slug === "more_leads") {
+    return "Your #1 goal is more leads. The system is built around that — every component (ads, funnels, voicemail, postcards) feeds the same lead engine.";
+  }
+  if (slug === "lower_cost") {
+    return "Your #1 goal is lower cost. The math above is the answer — same ad spend, no agency fee on top, the difference is yours.";
+  }
+  if (slug === "better_tracking") {
+    return "Your #1 goal is better tracking. You'll get a single dashboard with every lead, every cost, every conversion — no agency black-box reporting.";
+  }
+  if (slug === "own_system") {
+    return "Your #1 goal is owning the system. That's what BlueJays does differently — when you stop the monthly support, the website + ads + funnels + AI all stay yours.";
+  }
+  return "Whatever your #1 goal is, this system is built to compound on it month over month.";
+}
+
+/**
+ * `getCutMyAgencyPlanEmail` — instant transactional auto-email fired
+ * the moment a lead submits the calculator gate (POST
+ * /api/cut-my-agency/submit, full submit only — partial saves don't
+ * fire emails).
+ *
+ * Deterministic per Rule 59 — every variable interpolated comes from
+ * the prospect's own answers + the math object. No AI generation.
+ *
+ * Reading level: 3rd-grade per Rule 61. No "leverage", "optimize",
+ * "synergy", or any agency-speak. Short sentences (≤16 words).
+ *
+ * Body length kept under ~250 words — calculator leads expect a
+ * "your plan" email, not a 1,500-word marketing newsletter. Ben's
+ * personal walk-through follow-up handles the depth.
+ */
+export function getCutMyAgencyPlanEmail(args: {
+  name: string;
+  email: string;
+  prospectId: string;
+  monthlyRetainer: number;
+  monthsAsClient: number;
+  monthlyAdSpend: number;
+  savings: number;
+  monthlySavings: number;
+  threeYearAgencyCost: number;
+  industry?: string;
+  timeline?: string;
+  goal?: string;
+}): EmailTemplate {
+  const firstName = args.name.split(" ")[0] || "there";
+  const baseUrl = "https://bluejayportfolio.com";
+  const calendarUrl = `${baseUrl}/schedule?type=fullsystem`;
+  const agencyPageUrl = `${baseUrl}/agency`;
+
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(Math.round(n / 50) * 50);
+
+  const caseStudy = pickCaseStudyForIndustry(args.industry);
+  const tl = pickTimelineMessageForCmaEmail(args.timeline);
+  const goalLine = pickGoalLineForCmaEmail(args.goal);
+
+  const subject = `Your ${fmt(args.savings)} savings plan, ${firstName}`;
+
+  const body = `Hi ${firstName},
+
+You ran the math. Here's what it said.
+
+YOUR NUMBERS
+• Agency fee: ${fmt(args.monthlyRetainer)}/mo for ${args.monthsAsClient} months so far.
+• 3-year agency cost: ${fmt(args.threeYearAgencyCost)} (fee + ad spend).
+• BlueJays cost: $10,000 once, plus your same ad spend.
+• You save: ${fmt(args.savings)} over 3 years (${fmt(args.monthlySavings)}/month).
+• Your ad budget stays the same. We just cut the fee on top.
+
+YOUR GOAL
+${goalLine}
+
+A REAL EXAMPLE
+${caseStudy}
+
+WHAT'S NEXT
+${tl.headline}
+${tl.nextStep}
+
+Want to skip the wait and book the walk-through right now?
+${calendarUrl}
+
+If you want to share this with a partner, the full breakdown is here:
+${agencyPageUrl}
+
+— Ben @ BlueJays
+ben@bluejayportfolio.com
+(253) 886-3753
+
+—
+You got this email because you ran the calculator at bluejayportfolio.com/cut-my-agency. Reply STOP to unsubscribe.`;
+
+  // sequence 230 reserved for cma_calculator_plan — outside the 100s
+  // range used by paid-customer welcome flows + 200s used by upsell
+  // welcomes. Keep it grouped with cold-lead-magnet auto-replies.
+  return { subject, body, sequence: 230 };
+}

@@ -5,9 +5,23 @@
  * Google Ads campaign (Action 2 of the 2026-05-05 $10k validation play).
  *
  * Lands cold paid traffic searching "fire my marketing agency", walks
- * them through 3 simple inputs, shows a personalized 3-year savings
- * comparison side-by-side with our $10k AI System pricing, captures
- * email at the END (Q1=A, Q2=A, Q3=C, Q4=C, Q5=A — locked 2026-05-05).
+ * them through 4 calculator inputs (retainer / months / services / ad
+ * spend) + 3 visual lead-gate questions (industry / timeline / goal),
+ * shows a personalized 3-year savings comparison side-by-side with our
+ * $10K AI System pricing, captures name+email+phone with a SOFT GATE on
+ * the proof sections (Q1B locked 2026-05-06).
+ *
+ * Lead-gate spec (locked 2026-05-06):
+ *   - Q1B soft gate: savings + 3-line math always visible, deeper proof
+ *     gated behind capture
+ *   - Q2A phone REQUIRED for callback only (no SMS without explicit
+ *     consent — Rule 35)
+ *   - Q3A industry tile grid + Q4A timeline + Q4B goal — 3 visual taps
+ *   - Q6D personalize visible case study by industry + thank-you by
+ *     timeline urgency
+ *   - Q8C calculator leads auto-flip manuallyManaged=true so the cold-
+ *     auto-pitch funnel skips them (Ben handles personally)
+ *   - Q9C instant deterministic auto-email + Ben SMS on submit
  *
  * Math is deterministic per CLAUDE.md Rule 59 — no AI numbers for
  * trust-sensitive output. Reading level 3rd-grade per Rule 61.
@@ -119,9 +133,50 @@ type Stage =
   | "step2"
   | "step3"
   | "step4"
+  | "step5"   // industry tile grid (gate Q1)
+  | "step6"   // timeline tile grid (gate Q2)
+  | "step7"   // goal tile grid (gate Q3)
   | "results"
   | "submitting"
   | "submitted";
+
+// ────────────────────────────────────────────────────────────────────
+// Lead-gate visual options (locked 2026-05-06 per Q3A + Q4A + Q4B)
+// ────────────────────────────────────────────────────────────────────
+
+/** Industry tiles — slug values must match ALLOWED_INDUSTRIES on the
+ *  server. Order shaped by priority for the manufacturer-ICP focus
+ *  (Q3A) — manufacturer/industrial first, then service-business
+ *  fallbacks. Eight tiles fit a 2x4 grid on mobile + a 4x2 on desktop. */
+const INDUSTRY_TILES = [
+  { id: "manufacturer", label: "Manufacturer", emoji: "🏭" },
+  { id: "trade", label: "Trade / Service", emoji: "🔧" },
+  { id: "ecommerce", label: "E-commerce", emoji: "🛒" },
+  { id: "sports", label: "Sports / Fitness", emoji: "🏀" },
+  { id: "professional", label: "Professional Svc", emoji: "💼" },
+  { id: "medical", label: "Medical / Dental", emoji: "🩺" },
+  { id: "restaurant", label: "Food / Restaurant", emoji: "🍽" },
+  { id: "other", label: "Something else", emoji: "✨" },
+];
+
+/** Timeline tiles — three options keep the decision easy.
+ *  Maps directly to the urgency dispatch on the thank-you page +
+ *  the auto-email's "what's next" line. */
+const TIMELINE_TILES = [
+  { id: "this_month", label: "This month", emoji: "🚀", sub: "Ready to move now" },
+  { id: "60_90_days", label: "60–90 days", emoji: "📅", sub: "Planning a change" },
+  { id: "just_looking", label: "Just researching", emoji: "🔍", sub: "No rush" },
+];
+
+/** Goal tiles — Hormozi's "$100M Leads" four-corner answer set.
+ *  Drives the auto-email's middle paragraph + lets Ben open his
+ *  manual followup with the prospect's stated goal. */
+const GOAL_TILES = [
+  { id: "more_leads", label: "More leads", emoji: "📈" },
+  { id: "lower_cost", label: "Lower cost", emoji: "💰" },
+  { id: "better_tracking", label: "Better tracking", emoji: "📊" },
+  { id: "own_system", label: "Own the system", emoji: "🔓" },
+];
 
 export default function CutMyAgencyPage() {
   const [stage, setStage] = useState<Stage>("step1");
@@ -144,11 +199,22 @@ export default function CutMyAgencyPage() {
   // Default $1,000 — typical SMB ad budget.
   const [monthlyAdSpend, setMonthlyAdSpend] = useState<number>(1000);
 
+  // Lead-gate visual answers (Q3A + Q4A + Q4B locked 2026-05-06)
+  const [industry, setIndustry] = useState<string | null>(null);
+  const [timeline, setTimeline] = useState<string | null>(null);
+  const [goal, setGoal] = useState<string | null>(null);
+
   // Capture
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Soft gate (Q1B 2026-05-06) — savings + 3-line math always visible.
+  // Side-by-side cards + "what you'd own" + social proof reveal AFTER
+  // the prospect submits the form. WWHD: punchline visible (dopamine
+  // hit), proof gated (the trade for the email).
+  const [gateUnlocked, setGateUnlocked] = useState(false);
 
   // Fix #5 — exit recovery. Tracks emails we've already partial-saved
   // so a user who blurs the field, edits, and re-blurs doesn't
@@ -220,7 +286,17 @@ export default function CutMyAgencyPage() {
   const canStep2 = monthsAsClient >= 1;
   const canStep3 = services.size >= 1;
   const canStep4 = monthlyAdSpend >= 0; // $0 ad spend is valid (some clients only pay retainer)
-  const canSubmit = name.trim().length >= 2 && isValidEmail(email);
+  const canStep5 = !!industry;
+  const canStep6 = !!timeline;
+  const canStep7 = !!goal;
+  // Phone now REQUIRED (Q2A 2026-05-06) — at least 7 chars (loose check;
+  // server hardens). Strips non-digit chars before counting so "(206)
+  // 555-1234" passes.
+  const phoneDigits = phone.replace(/\D/g, "");
+  const canSubmit =
+    name.trim().length >= 2 &&
+    isValidEmail(email) &&
+    phoneDigits.length >= 7;
 
   function toggleService(id: string) {
     setServices((prev) => {
@@ -287,6 +363,9 @@ export default function CutMyAgencyPage() {
           monthsAsClient,
           monthlyAdSpend,
           services: Array.from(services),
+          industry,
+          timeline,
+          goal,
           math,
           utm: utmRef.current,
         }),
@@ -319,6 +398,11 @@ export default function CutMyAgencyPage() {
       } catch {
         // never fail the submit because the gtag call blew up
       }
+      // Soft gate unlock — proof + side-by-side + social proof reveal
+      // BELOW the form. Most leads submit + jump to thank-you (the
+      // book-a-call upsell). The unlock matters for the small fraction
+      // that scrolls back up to share with a partner.
+      setGateUnlocked(true);
       setStage("submitted");
     } catch {
       setErrorMsg("Network blip. Please try again.");
@@ -326,18 +410,33 @@ export default function CutMyAgencyPage() {
     }
   }
 
-  // Progress bar fills 5 steps. Results = step 5 visually so the bar
-  // hits 100% when they see their savings.
-  const progress =
-    stage === "step1"
-      ? 20
-      : stage === "step2"
-        ? 40
-        : stage === "step3"
-          ? 60
-          : stage === "step4"
-            ? 80
-            : 100;
+  // Progress bar fills 8 steps (4 input + 3 lead-gate visual + results).
+  // Results = step 8 visually so the bar hits 100% when they see their
+  // savings number — the dopamine moment that earns the form fill.
+  const STEP_PCT: Record<Stage, number> = {
+    step1: 12,
+    step2: 25,
+    step3: 37,
+    step4: 50,
+    step5: 62,
+    step6: 75,
+    step7: 87,
+    results: 100,
+    submitting: 100,
+    submitted: 100,
+  };
+  const progress = STEP_PCT[stage] ?? 100;
+  // Header label for current step — replaces the brittle stage.slice(-1)
+  // numeric grab that broke when we added 3 new steps.
+  const STEP_LABEL: Partial<Record<Stage, string>> = {
+    step1: "Step 1 of 7",
+    step2: "Step 2 of 7",
+    step3: "Step 3 of 7",
+    step4: "Step 4 of 7",
+    step5: "Step 5 of 7",
+    step6: "Step 6 of 7",
+    step7: "Step 7 of 7",
+  };
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -419,10 +518,10 @@ export default function CutMyAgencyPage() {
           </Link>
           {stage !== "submitted" && (
             <span className="text-xs font-mono">
-              {stage === "results" ? (
-                <span className="text-emerald-300 font-bold">✓ Done</span>
+              {stage === "results" || stage === "submitting" ? (
+                <span className="text-emerald-300 font-bold">✓ Your savings</span>
               ) : (
-                <span className="text-slate-500">{`Step ${stage.slice(-1)} of 5`}</span>
+                <span className="text-slate-500">{STEP_LABEL[stage] || ""}</span>
               )}
             </span>
           )}
@@ -887,6 +986,178 @@ export default function CutMyAgencyPage() {
               <button
                 type="button"
                 disabled={!canStep4}
+                onClick={() => setStage("step5")}
+                className="flex-1 rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 px-6 py-4 text-base font-bold shadow-lg transition-colors"
+              >
+                Almost there → 3 quick taps left
+              </button>
+            </div>
+          </StepCard>
+        )}
+
+        {/* Step 5 — industry tile grid (gate Q1, locked 2026-05-06).
+            Two-tap question: pick one tile, advance. Drives the
+            personalized case study in the auto-email + opens the right
+            angle for Ben's manual followup. */}
+        {stage === "step5" && (
+          <StepCard title="What kind of business do you run?">
+            <p className="hidden sm:block text-sm text-slate-400 mb-6">
+              Tap the closest match. We&apos;ll send you a real example
+              from someone in your space.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {INDUSTRY_TILES.map((tile) => {
+                const active = industry === tile.id;
+                return (
+                  <button
+                    key={tile.id}
+                    type="button"
+                    onClick={() => setIndustry(tile.id)}
+                    className={`rounded-xl border-2 px-4 py-4 text-left transition-all ${
+                      active
+                        ? "border-amber-400 bg-amber-500/15 text-white"
+                        : "border-white/10 bg-slate-900/50 text-slate-300 hover:border-white/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-2xl leading-none shrink-0">{tile.emoji}</span>
+                      <span className="text-sm font-semibold">{tile.label}</span>
+                      {active && (
+                        <span className="ml-auto text-amber-300 text-base">✓</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStage("step4")}
+                className="rounded-md border border-white/10 hover:border-white/30 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-sm text-slate-300 hover:text-white transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                disabled={!canStep5}
+                onClick={() => setStage("step6")}
+                className="flex-1 rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 px-6 py-4 text-base font-bold shadow-lg transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          </StepCard>
+        )}
+
+        {/* Step 6 — timeline tile grid (gate Q2). Three options keep
+            the choice simple. Drives the auto-email + thank-you page
+            urgency dispatch + tells Ben who to call FAST vs slow-warm. */}
+        {stage === "step6" && (
+          <StepCard title="When would you make the move?">
+            <p className="hidden sm:block text-sm text-slate-400 mb-6">
+              Pick what fits — there&apos;s no wrong answer. We&apos;ll match
+              the next-step pace to your timeline.
+            </p>
+
+            <div className="space-y-2 mb-6">
+              {TIMELINE_TILES.map((tile) => {
+                const active = timeline === tile.id;
+                return (
+                  <button
+                    key={tile.id}
+                    type="button"
+                    onClick={() => setTimeline(tile.id)}
+                    className={`w-full rounded-xl border-2 px-4 py-4 text-left transition-all ${
+                      active
+                        ? "border-amber-400 bg-amber-500/15 text-white"
+                        : "border-white/10 bg-slate-900/50 text-slate-300 hover:border-white/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl leading-none shrink-0">{tile.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold">{tile.label}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{tile.sub}</p>
+                      </div>
+                      {active && (
+                        <span className="text-amber-300 text-base">✓</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStage("step5")}
+                className="rounded-md border border-white/10 hover:border-white/30 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-sm text-slate-300 hover:text-white transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                disabled={!canStep6}
+                onClick={() => setStage("step7")}
+                className="flex-1 rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 px-6 py-4 text-base font-bold shadow-lg transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          </StepCard>
+        )}
+
+        {/* Step 7 — goal tile grid (gate Q3). Hormozi 4-corner answer
+            set. Drives the auto-email's middle paragraph + tells Ben
+            which lever to pitch first on the manual followup. */}
+        {stage === "step7" && (
+          <StepCard title="What's your #1 goal?">
+            <p className="hidden sm:block text-sm text-slate-400 mb-6">
+              Pick the one that matters most. Last tap — then you&apos;ll
+              see your savings.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {GOAL_TILES.map((tile) => {
+                const active = goal === tile.id;
+                return (
+                  <button
+                    key={tile.id}
+                    type="button"
+                    onClick={() => setGoal(tile.id)}
+                    className={`rounded-xl border-2 px-4 py-5 text-left transition-all ${
+                      active
+                        ? "border-amber-400 bg-amber-500/15 text-white"
+                        : "border-white/10 bg-slate-900/50 text-slate-300 hover:border-white/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-2xl leading-none shrink-0">{tile.emoji}</span>
+                      <span className="text-sm font-semibold">{tile.label}</span>
+                      {active && (
+                        <span className="ml-auto text-amber-300 text-base">✓</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStage("step6")}
+                className="rounded-md border border-white/10 hover:border-white/30 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-sm text-slate-300 hover:text-white transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                disabled={!canStep7}
                 onClick={() => setStage("results")}
                 className="flex-1 rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 text-amber-950 px-6 py-4 text-base font-bold shadow-lg transition-colors"
               >
@@ -1029,7 +1300,7 @@ export default function CutMyAgencyPage() {
                 />
                 <input
                   type="tel"
-                  placeholder="Phone (optional)"
+                  placeholder="Phone (Ben will call — no auto-text)"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
@@ -1055,13 +1326,15 @@ export default function CutMyAgencyPage() {
                     "broken" to cold prospects. */}
                 {!canSubmit && stage !== "submitting" && (
                   <p className="text-[11px] text-amber-300/80 text-center font-semibold">
-                    {!name.trim() && !email.trim()
-                      ? "Add your name + email to enable"
+                    {!name.trim() && !email.trim() && !phone.trim()
+                      ? "Add your name, email, and phone to enable"
                       : !name.trim()
                         ? "Add your name to enable"
                         : !isValidEmail(email)
                           ? "Add a valid email to enable"
-                          : "Almost there…"}
+                          : phoneDigits.length < 7
+                            ? "Add your phone (so Ben can call back)"
+                            : "Almost there…"}
                   </p>
                 )}
                 <p className="text-[11px] text-slate-500 text-center">
@@ -1071,12 +1344,29 @@ export default function CutMyAgencyPage() {
               </div>
             </div>
 
-            {/* 4. Bonus stats — savings is one half; profit lift is the
-                other. Two anchored research stats side-by-side: AI
-                efficiency (McKinsey/Salesforce) and custom-personalization
-                revenue lift (McKinsey "Next in Personalization 2021").
-                Both reinforce the BlueJays advantage over agencies:
-                custom-built + AI-driven > cookie-cutter + manual. */}
+            {/* 4-7 GATED BLOCK — soft gate (Q1B 2026-05-06).
+                Bonus stats + side-by-side + what-you'd-own + social
+                proof reveal AFTER the prospect submits the form. The
+                punchline (savings + 3-line math + capture form) is
+                always visible above; this block trades for the email.
+                WWHD: punchline visible (dopamine hit), proof gated
+                (the trade for the email). */}
+            {!gateUnlocked && (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] p-5 sm:p-6 text-center">
+                <p className="text-2xl mb-2">🔒</p>
+                <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                  <span className="font-bold text-amber-200">Want the full breakdown?</span>{" "}
+                  Drop your name, email, and phone above. Side-by-side
+                  cost cards, what you&apos;d own, and real client examples
+                  unlock right below.
+                </p>
+                <p className="text-[11px] text-slate-500 mt-2">
+                  Free. No call required. No auto-spam.
+                </p>
+              </div>
+            )}
+            {gateUnlocked && (
+            <>
             <div>
               <p className="text-xs uppercase tracking-widest text-violet-300 font-bold mb-3 text-center">
                 Bonus: more profit, not just less cost
@@ -1200,38 +1490,101 @@ export default function CutMyAgencyPage() {
               </ul>
             </div>
 
-            {/* 7. Social proof — same as before, kept because real
-                anchored proof points carry weight at the deeper-scroll
-                consideration moment. Per CLAUDE.md "Social Proof Must
-                Use Real Data Or Be Removed" rule — both are real
-                closed clients. */}
+            {/* 7. Social proof — Q6D personalization 2026-05-06.
+                Industry-shape match drives which case study lands FIRST
+                (and bigger). Manufacturer / industrial / trade slugs →
+                ITC first. Sports / consumer / retail slugs → Zenith
+                first. Service / professional / unknown → both equal.
+                Per CLAUDE.md "Social Proof Must Use Real Data Or Be
+                Removed" — both are real closed clients. */}
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-5 sm:p-6">
               <p className="text-xs uppercase tracking-widest text-emerald-300 font-bold mb-4">
-                Real businesses · Real systems
+                {industry === "manufacturer" ||
+                industry === "trade" ||
+                industry === "construction" ||
+                industry === "auto" ||
+                industry === "agriculture" ||
+                industry === "hvac" ||
+                industry === "electrician" ||
+                industry === "plumber" ||
+                industry === "roofing"
+                  ? "From a builder like you"
+                  : industry === "sports" ||
+                      industry === "consumer" ||
+                      industry === "retail" ||
+                      industry === "ecommerce" ||
+                      industry === "apparel" ||
+                      industry === "kids" ||
+                      industry === "fitness" ||
+                      industry === "food" ||
+                      industry === "beverage"
+                    ? "From a brand like you"
+                    : "Real businesses · Real systems"}
               </p>
               <div className="space-y-4">
-                <div className="flex gap-3">
-                  <span className="text-2xl shrink-0 leading-none">🥅</span>
-                  <div>
-                    <p className="text-sm text-slate-200 leading-relaxed mb-1">
-                      <span className="font-bold text-white">Zenith Sports / TEKKY®</span>
-                      {" "}— soccer training balls. Replaced their distributor-only model with a direct sales system in year 1.
-                    </p>
-                    <p className="text-[11px] text-slate-500 italic">— Philip, founder</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <span className="text-2xl shrink-0 leading-none">🚜</span>
-                  <div>
-                    <p className="text-sm text-slate-200 leading-relaxed mb-1">
-                      <span className="font-bold text-white">ITC Quick Attach</span>
-                      {" "}— custom tractor parts. Took their first DTC orders 30 days after launch.
-                    </p>
-                    <p className="text-[11px] text-slate-500 italic">— Jake, owner</p>
-                  </div>
-                </div>
+                {/* Reorder anchors so the "your-shape" example lands
+                    first. Manufacturer-shape → ITC tile first. Brand-
+                    shape → Zenith tile first. Other → keep current
+                    order (Zenith first, ITC second). */}
+                {(industry === "manufacturer" ||
+                  industry === "trade" ||
+                  industry === "construction" ||
+                  industry === "auto" ||
+                  industry === "agriculture" ||
+                  industry === "hvac" ||
+                  industry === "electrician" ||
+                  industry === "plumber" ||
+                  industry === "roofing") ? (
+                  <>
+                    <div className="flex gap-3">
+                      <span className="text-2xl shrink-0 leading-none">🚜</span>
+                      <div>
+                        <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                          <span className="font-bold text-white">ITC Quick Attach</span>
+                          {" "}— custom tractor parts in Blossvale, NY. Patent-protected product, dealer + end-buyer audiences. Took their first DTC orders 30 days after launch.
+                        </p>
+                        <p className="text-[11px] text-slate-500 italic">— Jake, owner</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-2xl shrink-0 leading-none">🥅</span>
+                      <div>
+                        <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                          <span className="font-bold text-white">Zenith Sports / TEKKY®</span>
+                          {" "}— soccer training balls. Replaced their distributor-only model with a direct sales system in year 1.
+                        </p>
+                        <p className="text-[11px] text-slate-500 italic">— Philip, founder</p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex gap-3">
+                      <span className="text-2xl shrink-0 leading-none">🥅</span>
+                      <div>
+                        <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                          <span className="font-bold text-white">Zenith Sports / TEKKY®</span>
+                          {" "}— soccer training balls. Replaced their distributor-only model with a direct sales system in year 1.
+                        </p>
+                        <p className="text-[11px] text-slate-500 italic">— Philip, founder</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-2xl shrink-0 leading-none">🚜</span>
+                      <div>
+                        <p className="text-sm text-slate-200 leading-relaxed mb-1">
+                          <span className="font-bold text-white">ITC Quick Attach</span>
+                          {" "}— custom tractor parts. Took their first DTC orders 30 days after launch.
+                        </p>
+                        <p className="text-[11px] text-slate-500 italic">— Jake, owner</p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
+            </>
+            )}{/* end gateUnlocked block (Q1B soft gate) */}
 
             {/* 8. Re-edit */}
             <div className="text-center">
@@ -1246,34 +1599,65 @@ export default function CutMyAgencyPage() {
           </div>
         )}
 
-        {/* SUBMITTED — thank-you */}
+        {/* SUBMITTED — thank-you (Q6D personalization 2026-05-06).
+            The headline + body + CTA dispatch on the timeline answer.
+            Urgent prospects get a "Ben texts in 15 min" hook; patient
+            prospects get the slow-warm "we'll send you a plan" frame. */}
         {stage === "submitted" && (
           <div className="text-center space-y-8 py-8">
             <div>
               <div className="text-6xl mb-4">✅</div>
               <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">
-                You&apos;re on the list, {name.split(" ")[0]}.
+                {timeline === "this_month"
+                  ? `You're up next, ${name.split(" ")[0]}.`
+                  : timeline === "60_90_days"
+                    ? `Got it, ${name.split(" ")[0]}. Plan landing soon.`
+                    : `Thanks, ${name.split(" ")[0]}. No rush.`}
               </h1>
               <p className="text-base text-slate-300 max-w-md mx-auto leading-relaxed">
-                Ben will email a custom plan to{" "}
-                <span className="text-amber-300">{email}</span> within 24
-                hours. Real numbers, real strategy — no fluff.
+                {timeline === "this_month" ? (
+                  <>
+                    You said you&apos;re ready this month — Ben will text
+                    you within an hour to set up a 15-minute walkthrough.
+                    Your plan just landed in{" "}
+                    <span className="text-amber-300">{email}</span>.
+                  </>
+                ) : timeline === "60_90_days" ? (
+                  <>
+                    Your custom plan is in{" "}
+                    <span className="text-amber-300">{email}</span> right
+                    now. Ben will follow up personally within 24 hours
+                    with a one-page next-30-days outline.
+                  </>
+                ) : (
+                  <>
+                    Your savings breakdown just landed in{" "}
+                    <span className="text-amber-300">{email}</span>. No
+                    sales pressure — read it, share it, and reply when
+                    you&apos;re ready.
+                  </>
+                )}
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 max-w-md mx-auto">
               <p className="text-xs uppercase tracking-widest text-amber-300 font-bold mb-2">
-                Want to skip the wait?
+                {timeline === "this_month"
+                  ? "Want to lock a slot now?"
+                  : "Want to skip the wait?"}
               </p>
               <p className="text-sm text-slate-300 mb-4">
-                Book a free 15-minute walkthrough now and Ben will show you the
-                whole system live.
+                {timeline === "this_month"
+                  ? "Book a free 15-minute walkthrough — Ben shows you the system live."
+                  : "Book a free 15-minute walkthrough — Ben shows you the whole system live."}
               </p>
               <Link
                 href={BOOK_A_CALL_URL}
                 className="inline-flex items-center justify-center w-full rounded-md bg-amber-500 hover:bg-amber-400 text-amber-950 px-6 py-3.5 text-base font-bold shadow-lg transition-colors"
               >
-                Book my walkthrough →
+                {timeline === "this_month"
+                  ? "Book my walkthrough →"
+                  : "Book my walkthrough →"}
               </Link>
             </div>
 
