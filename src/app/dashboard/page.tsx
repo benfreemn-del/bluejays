@@ -75,7 +75,7 @@ const TABS: TabDef[] = [
   { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
   { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline" },
   { id: "case-studies", label: "Case Studies", emoji: "📈", href: "/dashboard/case-studies" },
-  { id: "ai-skills", label: "AI Skills", emoji: "🧠" },
+  { id: "ai-skills", label: "AI Skills", emoji: "🧠", href: "/dashboard/ai-bots" },
   { id: "images", label: "Images", emoji: "🖼️", href: "/image-mapper" },
   { id: "settings", label: "Settings", emoji: "⚙️" },
 ];
