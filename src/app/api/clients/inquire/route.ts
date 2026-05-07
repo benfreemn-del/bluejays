@@ -120,10 +120,12 @@ const SLUG_CONFIG: Record<
   },
   bloodlines: {
     // Bespoke author site for the Bloodlines fantasy series.
-    // Author email TBD — Ben to confirm Preston's preferred address;
-    // until then, leads route to the BlueJays inbox so nothing is lost.
+    // Primary: Preston (placeholder address until Ben confirms the real
+    // one — swap then redeploy). Ben is CC'd via the global owner-alert
+    // path in sendOwnerEmail() / sendOwnerAlert() below, so nothing is
+    // lost during the placeholder window.
     businessLabel: "Bloodlines — Preston James Hunsaker",
-    clientEmail: "bluejaycontactme@gmail.com",
+    clientEmail: "preston@prestonhunsaker.com",
     emoji: "🗡️",
   },
 };
