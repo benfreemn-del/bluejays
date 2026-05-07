@@ -25,6 +25,50 @@ import MapView from "@/components/dashboard/MapView";
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
 
+/* ───────────────────────── TAB SYSTEM ─────────────────────────
+   Refactored 2026-05-06 (Ben answers 1A/2C/3A/4D/5A/6A/7B/8A/9A/10A).
+   Modeled on the Zenith owner-portal pattern (horizontal scrolling
+   tab bar, border-blue-400 active state, slate text, emoji icons).
+   ────────────────────────────────────────────────────────────── */
+
+type Tab =
+  | "overview"
+  | "leads"
+  | "map"
+  | "funnels"
+  | "todo"
+  | "sales-portal"
+  | "client-jobs"
+  | "case-studies"
+  | "ai-skills"
+  | "images"
+  | "settings";
+
+type TabDef = {
+  id: Tab;
+  label: string;
+  emoji: string;
+  /** When set, clicking the tab navigates AWAY (link mode). When unset,
+      the tab swaps content in-place via setTab() (real tab mode). */
+  href?: string;
+};
+
+const TABS: TabDef[] = [
+  { id: "overview", label: "Overview", emoji: "🏠" },
+  { id: "leads", label: "Leads", emoji: "📥" },
+  { id: "map", label: "Map", emoji: "🗺️" },
+  { id: "funnels", label: "Funnels", emoji: "🎯", href: "/dashboard/funnel" },
+  { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks" },
+  { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script" },
+  { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
+  { id: "case-studies", label: "Case Studies", emoji: "📈", href: "/dashboard/case-studies" },
+  { id: "ai-skills", label: "AI Skills", emoji: "🧠" },
+  { id: "images", label: "Images", emoji: "🖼️", href: "/image-mapper" },
+  { id: "settings", label: "Settings", emoji: "⚙️" },
+];
+
+const VALID_TABS = new Set<Tab>(TABS.map((t) => t.id));
+
 export default function DashboardPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +79,36 @@ export default function DashboardPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [view, setView] = useState<"table" | "map">("table");
+  // NOTE: Table/Map toggle removed in 2026-05-06 refactor — Map is now its
+  // own tab in the new tab-bar UI. The setView state was deleted.
+  // Active tab — synced with URL ?tab=... for back-button + sharable links.
+  // In-place tabs only (overview / leads / map / ai-skills / settings).
+  // The "link" tabs navigate via <Link>, so they never set this.
+  const [tab, setTabState] = useState<Tab>("overview");
+
+  // Hydrate tab from URL on mount (avoids SSR mismatch — useSearchParams
+  // would require Suspense; this is simpler for a "use client" component).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("tab") as Tab;
+    if (t && VALID_TABS.has(t)) setTabState(t);
+  }, []);
+
+  const switchTab = useCallback((next: Tab) => {
+    setTabState(next);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (next === "overview") {
+      params.delete("tab");
+    } else {
+      params.set("tab", next);
+    }
+    const qs = params.toString();
+    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  }, []);
+
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
   const [addingLead, setAddingLead] = useState(false);
@@ -174,201 +247,51 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* HEADER — title row + horizontal scrolling tab bar (Zenith pattern) */}
       <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 items-center gap-3">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 sm:px-6 py-3">
+          <Link href="/" className="flex min-w-0 items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.18em] text-muted">BlueJays</p>
               <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
             </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 lg:justify-end lg:gap-3">
-            {/* Primary routes — the pages Ben visits most */}
-            <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Home
-            </Link>
-            <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Images
-            </Link>
-            {/* Sales Portal points DIRECTLY at the call workspace
-                (Madie's flow). The partner-approval admin page at
-                /dashboard/partners is parked until we have multiple
-                reps; until then "Sales Portal" = "the calling tool".
-                Reach the partner admin via /dashboard/partners URL. */}
-            <Link
-              href="/dashboard/script"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-pink-300 transition-colors hover:bg-background hover:text-pink-200"
-              title="Madie's Sales Portal — pick prospects + run the script"
-            >
-              🎯 Sales Portal
-            </Link>
-            <Link
-              href="/dashboard/case-studies"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-300 transition-colors hover:bg-background hover:text-emerald-200"
-              title="Publish audits as public SEO case studies"
-            >
-              Case Studies
-            </Link>
-            <Link
-              href="/dashboard/agency"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-violet-300 transition-colors hover:bg-background hover:text-violet-200"
-              title="Review $9,700 AI Marketing System applications"
-            >
-              Agency
-            </Link>
-            {/* Per-client task lists — open decisions / asset asks / build
-                items per custom-tier client (Zenith, Mt View, Wholme, etc).
-                Mobile-friendly so Ben can triage from his phone. */}
-            <Link
-              href="/dashboard/clients"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-cyan-300 transition-colors hover:bg-background hover:text-cyan-200"
-              title="Per-client job task lists (decisions, blockers, assets)"
-            >
-              Client Jobs
-            </Link>
-            {/* MASTER TO-DO — always one click away from anywhere in the
-                dashboard, per the client-tasks scoping rule (see CLAUDE.md
-                / src/lib/client-tasks.ts header comment). Aggregates
-                client_tasks across every client into a single filterable
-                board. */}
-            <Link
-              href="/dashboard/all-tasks"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-300 transition-colors hover:bg-background hover:text-emerald-200"
-              title="Master to-do across every client + Ben"
-            >
-              Master To-Do
-            </Link>
-
-            {/* Reports dropdown — all the stats/analytics/tracking pages */}
-            <details className="relative group">
-              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
-                Reports <span className="text-xs opacity-60">▾</span>
-              </summary>
-              <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
-                <a href="/analytics" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Stats</a>
-                <a href="/spending" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Spending</a>
-                <a href="/deliverability" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Email Deliverability</a>
-                <Link href="/funnel-tracker" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Funnel Tracker</Link>
-                <Link href="/scripts" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">AI Scripts</Link>
-              </div>
-            </details>
-
-            {/* Call Lists dropdown — CSV downloads for phone-dialing */}
-            <details className="relative group">
-              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
-                Call Lists <span className="text-xs opacity-60">▾</span>
-              </summary>
-              <div className="absolute right-0 mt-2 w-52 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
-                <a href="/api/call-lists?type=all&format=csv" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">All Phones (CSV)</a>
-                <a href="/api/call-lists?type=priority&format=csv" className="block px-3 py-2 text-sm text-orange-400 hover:bg-background">Priority (CSV)</a>
-              </div>
-            </details>
-
-            {/* Actions dropdown — low-frequency but useful ops */}
-            <details className="relative group">
-              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
-                Actions <span className="text-xs opacity-60">▾</span>
-              </summary>
-              <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
-                <button
-                  onClick={handleStartFunnelForSelected}
-                  disabled={!selectedProspect}
-                  className="w-full text-left px-3 py-2 text-sm text-sky-400 hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed"
-                  title={selectedProspect ? "Enroll the selected prospect in the outreach funnel" : "Select a prospect first"}
-                >
-                  Enroll Selected in Funnel
-                </button>
-                <button
-                  onClick={async () => {
-                    if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
-                    try {
-                      const res = await fetch("/api/test-funnel", { method: "POST", credentials: "include" });
-                      const data = await res.json();
-                      alert(data.message || data.error);
-                    } catch { alert("Error sending test funnel"); }
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm text-purple-400 hover:bg-background"
-                >
-                  Send Test Funnel
-                </button>
-              </div>
-            </details>
-
-            {/* Primary right-side actions — high-frequency + always visible */}
-            <button
-              onClick={() => setAddLeadOpen(true)}
-              className="h-9 rounded-lg border border-green-500/30 px-3 text-sm font-medium text-green-400 transition-colors hover:border-green-500/60"
-            >
-              + Lead
-            </button>
-            <button
-              onClick={() => setAutoScoutOpen(!autoScoutOpen)}
-              className={`h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${autoScoutData?.config?.enabled ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10" : "border-amber-500/30 text-amber-400"}`}
-            >
-              Auto-Scout {autoScoutData?.config?.enabled ? "●" : "○"}
-            </button>
-            <button
-              onClick={() => setScoutOpen(true)}
-              className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
-            >
-              Scout
-            </button>
-          </div>
+          </Link>
         </div>
-      </header>
 
-      {/* Auto-Scout Panel */}
-      {autoScoutOpen && (
-        <div className="border-b border-border bg-surface/95 backdrop-blur">
-          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-foreground">Auto-Scout</h3>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => toggleAutoScout(!autoScoutData?.config?.enabled)}
-                  className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${autoScoutData?.config?.enabled ? "bg-emerald-500" : "bg-white/20"}`}
-                >
-                  <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${autoScoutData?.config?.enabled ? "translate-x-6" : "translate-x-0.5"}`} />
-                </button>
-                <span className="text-xs text-muted">{autoScoutData?.config?.enabled ? "Active" : "Paused"}</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
-              <div className="rounded-lg border border-border bg-background p-3">
-                <p className="text-xs text-muted">State</p>
-                <p className="text-lg font-bold text-foreground">{autoScoutData?.config?.state || "WA"}</p>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-3">
-                <p className="text-xs text-muted">Counties Done</p>
-                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.countiesDone || 0}/{autoScoutData?.progress?.countiesTotal || 39}</p>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-3">
-                <p className="text-xs text-muted">Today</p>
-                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.todayLeads || 0}/{autoScoutData?.config?.dailyLimit || 100}</p>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-3">
-                <p className="text-xs text-muted">Total Leads</p>
-                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.totalLeads || 0}</p>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-3">
-                <p className="text-xs text-muted">Last Run</p>
-                <p className="text-sm font-medium text-foreground truncate">{autoScoutData?.progress?.lastRunAt ? new Date(autoScoutData.progress.lastRunAt).toLocaleString() : "Never"}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
+        {/* TAB BAR — horizontal scroll on mobile (overflow-x-auto). Mixed
+            mode: tabs without href use setTab() in-place; tabs with href
+            navigate (Link) — both share the same visual treatment. */}
+        <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
+          {TABS.map((t) => {
+            const active = tab === t.id;
+            const className = `py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
+              active
+                ? "border-blue-400 text-white"
+                : "border-transparent text-slate-500 hover:text-slate-300"
+            }`;
+            if (t.href) {
+              return (
+                <Link key={t.id} href={t.href} className={className}>
+                  <span className="text-base">{t.emoji}</span>
+                  {t.label}
+                </Link>
+              );
+            }
+            return (
               <button
-                onClick={runAutoScout}
-                disabled={autoScoutRunning}
-                className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium disabled:opacity-50 cursor-pointer"
+                key={t.id}
+                type="button"
+                onClick={() => switchTab(t.id)}
+                className={className}
               >
-                {autoScoutRunning ? "Running..." : "Run Now"}
+                <span className="text-base">{t.emoji}</span>
+                {t.label}
               </button>
-              {autoScoutMsg && <p className="text-xs text-muted">{autoScoutMsg}</p>}
-            </div>
-          </div>
-        </div>
-      )}
+            );
+          })}
+        </nav>
+      </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         {loading ? (
@@ -377,81 +300,116 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            {/* BlueJays compliance ledger — tax + legal + ops to-dos pulled
-                from the 2026-05-04 audit. Mounts at the top because the
-                blockers gate Jake's $9.7K close. */}
-            <BusinessSetupChecklist />
-
-            {/* Quick-paste Stripe Payment Link URLs — copy-to-clipboard for
-                live sales calls. One click → URL on clipboard, paste into
-                next text/email. */}
-            <PaymentLinksPanel />
-
-            {/* Needs Review — AI-drafted replies awaiting Ben's approval.
-                Mounts at the very top so Ben sees them before anything else;
-                renders an empty pill when the queue is clear. */}
-            <PendingRepliesPanel />
-
-            {/* Audit funnel — prospects who completed the 5-email sequence
-                without converting and have no preview site yet. Generate a
-                preview → followup-cron graduates them to the cold funnel. */}
-            <NeedsPreviewPanel />
-
-            <DashboardStats
-              prospects={prospects}
-              onFilterStatus={setStatusFilter}
-              activeFilter={statusFilter}
-            />
-
-            <StatusTransitionsToday />
-
-            {/* Loss Reasons — why prospects pass. Wave 5c win/loss feedback
-                loop. See Rule 45 in CLAUDE.md. Renders an empty state until
-                the AI starts capturing probe responses. */}
-            <LossReasonsPanel />
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => { setView("table"); fetchProspects(); }}
-                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
-                  view === "table"
-                    ? "bg-blue-electric text-white"
-                    : "bg-surface border border-border text-muted hover:text-foreground"
-                }`}
-              >
-                Table
-              </button>
-              <button
-                onClick={() => setView("map")}
-                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
-                  view === "map"
-                    ? "bg-blue-electric text-white"
-                    : "bg-surface border border-border text-muted hover:text-foreground"
-                }`}
-              >
-                Map
-              </button>
-            </div>
-
-            {view === "table" ? (
+            {/* ──────────────── OVERVIEW TAB ────────────────
+                All non-Leads panels collapse here per Q3=A. */}
+            {tab === "overview" && (
               <>
-                {/*
-                 * Inline leads search bar — see CLAUDE.md "Owner Portal Rules"
-                 * + the BlueJays main-dashboard pattern. Filters by name +
-                 * city + state + email + phone + address + admin notes +
-                 * status + tier + short code + UUID. Composes AND with the
-                 * status/category chips inside ProspectTable.
-                 */}
+                <BusinessSetupChecklist />
+                <PaymentLinksPanel />
+                <PendingRepliesPanel />
+                <NeedsPreviewPanel />
+                <DashboardStats
+                  prospects={prospects}
+                  onFilterStatus={setStatusFilter}
+                  activeFilter={statusFilter}
+                />
+                <StatusTransitionsToday />
+                <LossReasonsPanel />
+                <DeliverabilityWidget />
+              </>
+            )}
+
+            {/* ──────────────── LEADS TAB ────────────────
+                Auto-Scout + Scout + Add Lead live here per Q7=B + Q9=A.
+                These are the day-to-day prospect-management actions. */}
+            {tab === "leads" && (
+              <>
+                {/* Action row — Add Lead + Auto-Scout + Scout */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setAddLeadOpen(true)}
+                    className="h-9 rounded-lg border border-green-500/30 px-3 text-sm font-medium text-green-400 transition-colors hover:border-green-500/60"
+                  >
+                    + Add Lead
+                  </button>
+                  <button
+                    onClick={() => setAutoScoutOpen(!autoScoutOpen)}
+                    className={`h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${autoScoutData?.config?.enabled ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10" : "border-amber-500/30 text-amber-400"}`}
+                  >
+                    Auto-Scout {autoScoutData?.config?.enabled ? "●" : "○"}
+                  </button>
+                  <button
+                    onClick={() => setScoutOpen(true)}
+                    className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
+                  >
+                    Scout
+                  </button>
+                  <button
+                    onClick={handleStartFunnelForSelected}
+                    disabled={!selectedProspect}
+                    className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60 disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={selectedProspect ? "Enroll the selected prospect in the outreach funnel" : "Select a prospect first"}
+                  >
+                    Enroll Selected in Funnel
+                  </button>
+                </div>
+
+                {/* Auto-Scout panel — collapsed by default */}
+                {autoScoutOpen && (
+                  <div className="rounded-2xl border border-border bg-surface/40 p-4 sm:p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-foreground">Auto-Scout</h3>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => toggleAutoScout(!autoScoutData?.config?.enabled)}
+                          className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${autoScoutData?.config?.enabled ? "bg-emerald-500" : "bg-white/20"}`}
+                        >
+                          <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${autoScoutData?.config?.enabled ? "translate-x-6" : "translate-x-0.5"}`} />
+                        </button>
+                        <span className="text-xs text-muted">{autoScoutData?.config?.enabled ? "Active" : "Paused"}</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+                      <div className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs text-muted">State</p>
+                        <p className="text-lg font-bold text-foreground">{autoScoutData?.config?.state || "WA"}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs text-muted">Counties Done</p>
+                        <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.countiesDone || 0}/{autoScoutData?.progress?.countiesTotal || 39}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs text-muted">Today</p>
+                        <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.todayLeads || 0}/{autoScoutData?.config?.dailyLimit || 100}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs text-muted">Total Leads</p>
+                        <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.totalLeads || 0}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs text-muted">Last Run</p>
+                        <p className="text-sm font-medium text-foreground truncate">{autoScoutData?.progress?.lastRunAt ? new Date(autoScoutData.progress.lastRunAt).toLocaleString() : "Never"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={runAutoScout}
+                        disabled={autoScoutRunning}
+                        className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium disabled:opacity-50 cursor-pointer"
+                      >
+                        {autoScoutRunning ? "Running..." : "Run Now"}
+                      </button>
+                      {autoScoutMsg && <p className="text-xs text-muted">{autoScoutMsg}</p>}
+                    </div>
+                  </div>
+                )}
+
+                {/* Search bar + prospect table */}
                 {(() => {
-                  // Build filtered prospects from the search query.
-                  // ID-shaped query (UUID / 8-char short code) jumps to the
-                  // exact match — keeps Ben's "paste an ID, see the row" flow.
                   const idLookup = extractIdLookup(searchQuery);
                   const searched = idLookup
                     ? prospects.filter((p) => {
                         if (idLookup.kind === "uuid") return p.id === idLookup.value;
-                        // Prospect type uses snake_case — also fall back to
-                        // any camelCase field if the API ever returns it.
                         const sc =
                           (p as unknown as { shortCode?: string; short_code?: string }).shortCode ??
                           (p as unknown as { shortCode?: string; short_code?: string }).short_code;
@@ -485,18 +443,27 @@ export default function DashboardPage() {
                   );
                 })()}
               </>
-            ) : (
+            )}
+
+            {/* ──────────────── MAP TAB ──────────────── */}
+            {tab === "map" && (
               <MapView
                 prospects={prospects}
-                onStateClick={(state) => {
-                  const stateName =
-                    Object.entries({
-                      TX: "Texas", CA: "California", NY: "New York",
-                      FL: "Florida", IL: "Illinois", PA: "Pennsylvania",
-                    })[0]?.[1] || state;
-                  void stateName;
-                  setScoutOpen(true);
-                }}
+                onStateClick={() => setScoutOpen(true)}
+              />
+            )}
+
+            {/* ──────────────── AI SKILLS TAB ────────────────
+                Both AIOS skills + BlueJays-internal AI features per Q2=C. */}
+            {tab === "ai-skills" && <AISkillsTab />}
+
+            {/* ──────────────── SETTINGS TAB ────────────────
+                Q4=D — kitchen-sink config + ops + kill switches. */}
+            {tab === "settings" && (
+              <SettingsTab
+                autoScoutData={autoScoutData}
+                onLoadAutoScout={loadAutoScout}
+                onToggleAutoScout={toggleAutoScout}
               />
             )}
           </>
@@ -650,6 +617,388 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ───────────────────────── AI SKILLS TAB ─────────────────────────
+   Q2=C — both Ben's AIOS skills + BlueJays-internal AI features.
+   Two sections, each a card grid. Skills link to their respective
+   pages or trigger an action (mailto for AIOS skills since they're
+   client-side reasoning, no API endpoint needed).
+   ──────────────────────────────────────────────────────────────── */
+
+function AISkillsTab() {
+  const aiosSkills = [
+    {
+      emoji: "🌅",
+      name: "Morning Brief",
+      desc: "5-bullet daily summary — cash, pipeline, alerts, daily habits, single highest-leverage action.",
+      cmd: "/morning_brief",
+    },
+    {
+      emoji: "🔍",
+      name: "Audit Website SEO",
+      desc: "Curl-based scanner for any URL. Catches root-layout SEO leaks (canonical, OG, JSON-LD), sitemap gaps, alt text issues.",
+      cmd: "/audit_website_seo",
+    },
+    {
+      emoji: "🎨",
+      name: "Recolor Client Logo",
+      desc: "Recreate any client brand mark as inline SVG with new color palette. Pattern from MeyerMark.",
+      cmd: "/recolor_client_logo",
+    },
+    {
+      emoji: "📸",
+      name: "Find Chat-Attached Photos",
+      desc: "Locate photos dropped in chat (Temp/Downloads/Pictures). Optimize via sharp + save to /public/images/.",
+      cmd: "/find_chat_attached_photos",
+    },
+    {
+      emoji: "✉️",
+      name: "Outreach Drafter",
+      desc: "Draft cold outreach email in 3 fenced blocks (TO/SUBJECT/BODY). Encodes full BlueJays psychology stack.",
+      cmd: "/outreach_drafter",
+    },
+    {
+      emoji: "🔗",
+      name: "Preview Link Generator",
+      desc: "Fuzzy lookup any prospect by name/domain/UUID/short_code. Returns clean preview URL with safety guards.",
+      cmd: "/preview_link_generator",
+    },
+    {
+      emoji: "📊",
+      name: "AIOS Audit",
+      desc: "Score the AIOS against the 4 Cs (Context/Connections/Capabilities/Cadence). Run weekly.",
+      cmd: "/audit",
+    },
+    {
+      emoji: "⬆️",
+      name: "Level Up",
+      desc: "5-question conversation to find the next highest-leverage move.",
+      cmd: "/level-up",
+    },
+    {
+      emoji: "🎯",
+      name: "Onboard",
+      desc: "7-question intake to scaffold AIOS day-one file set.",
+      cmd: "/onboard",
+    },
+  ];
+
+  const internalAi = [
+    {
+      emoji: "💬",
+      name: "AI Auto-Reply Queue",
+      desc: "Drafts pending Ben's approval. Kill-switch via AI_AUTO_REPLY_ENABLED env var.",
+      href: "/dashboard?tab=overview",
+    },
+    {
+      emoji: "🧪",
+      name: "Intent Classifier",
+      desc: "Routes inbound replies to matching intent (interested / objection / question / loss).",
+      href: "/api/replies/classify-stats",
+    },
+    {
+      emoji: "✨",
+      name: "Site Supercharge Runs",
+      desc: "GPT-4.1-mini bulk-enrichment of generated previews. Tracks via /spending dashboard.",
+      href: "/spending",
+    },
+    {
+      emoji: "📉",
+      name: "Loss Reasons Classifier",
+      desc: "Probe-response intent classifier (price / timing / design / have_one / other). Wave 5c.",
+      href: "/dashboard?tab=overview",
+    },
+    {
+      emoji: "🔁",
+      name: "Hyperloop Optimization",
+      desc: "Per-week ad-variant analysis + auto-loser-retirement. Dormant until 100 audits + 5 sales.",
+      href: "/dashboard/hyperloop",
+    },
+    {
+      emoji: "📝",
+      name: "Generated Site Pipeline",
+      desc: "Scout → Scrape → Generate → QC. End-to-end AI-driven preview-site builder.",
+      href: "/dashboard?tab=leads",
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">My AIOS Skills</h2>
+            <p className="text-sm text-muted mt-1">
+              Run from your AIOS chat with the slash command. Each skill is a
+              self-contained reasoning workflow with its own context + outputs.
+            </p>
+          </div>
+          <Link
+            href="/api/admin/aios-skills"
+            className="text-xs text-blue-400 hover:text-blue-300"
+          >
+            View all →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {aiosSkills.map((skill) => (
+            <div
+              key={skill.cmd}
+              className="rounded-xl border border-border bg-surface/40 p-4 hover:border-blue-500/30 transition-colors"
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-2xl shrink-0">{skill.emoji}</span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {skill.name}
+                  </h3>
+                  <p className="text-xs text-muted mt-1 leading-relaxed">
+                    {skill.desc}
+                  </p>
+                  <code className="mt-2 inline-block text-[11px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 font-mono">
+                    {skill.cmd}
+                  </code>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-foreground">
+            BlueJays Internal AI
+          </h2>
+          <p className="text-sm text-muted mt-1">
+            Production AI features running across the BlueJays pipeline.
+            Click through to status / logs / kill-switch surfaces.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {internalAi.map((feat) => (
+            <Link
+              key={feat.name}
+              href={feat.href}
+              className="rounded-xl border border-border bg-surface/40 p-4 hover:border-blue-500/30 transition-colors"
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-2xl shrink-0">{feat.emoji}</span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {feat.name}
+                  </h3>
+                  <p className="text-xs text-muted mt-1 leading-relaxed">
+                    {feat.desc}
+                  </p>
+                  <span className="mt-2 inline-block text-[11px] text-blue-400 font-medium">
+                    Open →
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── SETTINGS TAB ─────────────────────────
+   Q4=D — kitchen-sink config + ops + kill switches.
+   Sections: Operational toggles · Kill switches · External services ·
+   Sign out / account.
+   ──────────────────────────────────────────────────────────────── */
+
+type SettingsProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  autoScoutData: any;
+  onLoadAutoScout: () => void;
+  onToggleAutoScout: (enabled: boolean) => void;
+};
+
+function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: SettingsProps) {
+  useEffect(() => {
+    onLoadAutoScout();
+  }, [onLoadAutoScout]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [envCheck, setEnvCheck] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/env-check", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setEnvCheck)
+      .catch(() => setEnvCheck(null));
+  }, []);
+
+  const killSwitches = [
+    {
+      key: "STRIPE_LIVE_ENABLED",
+      label: "Stripe LIVE Checkout",
+      desc: "When OFF, every public checkout returns 503. Existing in-flight transactions still finish.",
+      docsRule: "Rule 52",
+    },
+    {
+      key: "NAMECHEAP_LIVE_ENABLED",
+      label: "Namecheap LIVE Registrar",
+      desc: "When OFF, /api/domains/register + renewal cron return 503. Read-only paths still work.",
+      docsRule: "Rule 67",
+    },
+    {
+      key: "SMS_FUNNEL_DISABLED",
+      label: "SMS Funnel (inverted)",
+      desc: "When ON, blocks all outbound SMS. Belt+suspenders gate per Rule 35 (TCPA compliance).",
+      docsRule: "Rule 35",
+    },
+    {
+      key: "AI_AUTO_REPLY_ENABLED",
+      label: "AI Auto-Reply",
+      desc: "When OFF, drafts park in PendingRepliesPanel for manual approval instead of auto-sending.",
+      docsRule: "Rule 38",
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* Operational toggles */}
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-4">
+          Operational Toggles
+        </h2>
+        <div className="rounded-2xl border border-border bg-surface/40 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-semibold text-foreground">Auto-Scout</h3>
+              <p className="text-xs text-muted mt-0.5">
+                Runs Google Places scout daily, county-by-county.{" "}
+                {autoScoutData?.config?.dailyLimit || 100} leads/day cap.
+              </p>
+            </div>
+            <button
+              onClick={() => onToggleAutoScout(!autoScoutData?.config?.enabled)}
+              className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${autoScoutData?.config?.enabled ? "bg-emerald-500" : "bg-white/20"}`}
+            >
+              <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${autoScoutData?.config?.enabled ? "translate-x-6" : "translate-x-0.5"}`} />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="rounded-lg border border-border bg-background p-3">
+              <p className="text-xs text-muted">State</p>
+              <p className="text-lg font-bold">{autoScoutData?.config?.state || "WA"}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-background p-3">
+              <p className="text-xs text-muted">Counties Done</p>
+              <p className="text-lg font-bold">
+                {autoScoutData?.progress?.countiesDone || 0}/
+                {autoScoutData?.progress?.countiesTotal || 39}
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-background p-3">
+              <p className="text-xs text-muted">Today</p>
+              <p className="text-lg font-bold">
+                {autoScoutData?.progress?.todayLeads || 0}/
+                {autoScoutData?.config?.dailyLimit || 100}
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-background p-3">
+              <p className="text-xs text-muted">Total Leads</p>
+              <p className="text-lg font-bold">{autoScoutData?.progress?.totalLeads || 0}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Kill switches — Rule 52/54/67 */}
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-1">
+          Kill Switches
+        </h2>
+        <p className="text-xs text-muted mb-4">
+          Read-only env-var status. Flip on Vercel + redeploy to change.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {killSwitches.map((sw) => {
+            const value = envCheck?.envs?.[sw.key];
+            const isLive = sw.key === "SMS_FUNNEL_DISABLED"
+              ? value !== "true"
+              : value !== "false";
+            return (
+              <div
+                key={sw.key}
+                className={`rounded-xl border p-4 ${isLive ? "border-emerald-500/30 bg-emerald-500/[0.03]" : "border-rose-500/30 bg-rose-500/[0.03]"}`}
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-foreground">{sw.label}</h3>
+                    <code className="text-[11px] text-muted font-mono">{sw.key}</code>
+                  </div>
+                  <span
+                    className={`shrink-0 text-[11px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${isLive ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"}`}
+                  >
+                    {isLive ? "Live" : "Killed"}
+                  </span>
+                </div>
+                <p className="text-xs text-muted leading-relaxed">{sw.desc}</p>
+                <p className="text-[11px] text-muted/60 mt-2">CLAUDE.md {sw.docsRule}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* External services / quick links */}
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-4">
+          External Services
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[
+            { label: "Stats", href: "/analytics" },
+            { label: "Spending", href: "/spending" },
+            { label: "Email Deliverability", href: "/deliverability" },
+            { label: "Funnel Tracker", href: "/funnel-tracker" },
+            { label: "AI Scripts", href: "/scripts" },
+            { label: "All Phones (CSV)", href: "/api/call-lists?type=all&format=csv" },
+            { label: "Priority Phones (CSV)", href: "/api/call-lists?type=priority&format=csv" },
+            { label: "Env Check", href: "/api/admin/env-check" },
+            { label: "Hyperloop", href: "/dashboard/hyperloop" },
+            { label: "Partners (admin)", href: "/dashboard/partners" },
+            { label: "Tekky Map", href: "/dashboard/tekky-map" },
+            { label: "Test Group", href: "/dashboard/test-group" },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm text-muted hover:text-foreground hover:border-blue-500/30 transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Account / sign out */}
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-4">Account</h2>
+        <div className="rounded-2xl border border-border bg-surface/40 p-5 flex items-center justify-between">
+          <div>
+            <p className="font-medium text-foreground">Signed in as Ben</p>
+            <p className="text-xs text-muted mt-0.5">
+              Authentication via ADMIN_PASSWORD env. No multi-user yet.
+            </p>
+          </div>
+          <a
+            href="/api/auth/logout"
+            className="h-9 rounded-lg border border-rose-500/30 px-4 text-sm font-medium text-rose-400 transition-colors hover:border-rose-500/60 inline-flex items-center"
+          >
+            Sign Out
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
