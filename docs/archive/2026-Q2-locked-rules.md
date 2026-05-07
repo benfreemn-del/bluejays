@@ -2788,3 +2788,812 @@ At the start of every session, compare the progress log totals against the curre
 
 ---
 
+<!-- moved from CLAUDE.md: ## Today's Tasks — Day [N] ([date]) -->
+
+## Today's Tasks — Day [N] ([date])
+
+### GROWTH RAMP
+[day-specific tasks from the schedule below]
+
+### PERMANENT DAILY HABITS (every day, no exceptions)
+- [ ] Warm Outreach / Referral follow-ups (20 min)
+- [ ] 1 LinkedIn post (30 min) — see content ideas by week below
+- [ ] 1 Instagram post (15 min) — repurpose the LinkedIn post, vertical format
+- [ ] Affiliate check (10 min) — reply to any affiliate replies, follow up open conversations
+- [ ] Pipeline review: approve previews, reply to engaged leads (20 min)
+```
+
+Always show the GROWTH RAMP category first, then PERMANENT DAILY HABITS. Never merge them. Always include checkboxes.
+
+---
+
+### Permanent Daily Habits (115 min/day — run forever past Day 30)
+
+| Habit | Time | Target |
+|---|---|---|
+| Warm outreach / referral follow-ups | 20 min | Days 1-14: 10 new personal contacts/day. Days 15-21: follow up open conversations only. Day 22+: pure relationship mode — respond and nurture. |
+| LinkedIn post | 30 min | One post per day. Use content ideas by week below. Never skip. |
+| Instagram post | 15 min | Repurpose the LinkedIn post — same message, vertical format. Reels perform best. Never skip. |
+| Affiliate check | 10 min | Reply to any affiliate replies that came in. Follow up open affiliate conversations. Days 1-30: also track who hasn't replied yet and re-approach. |
+| Pipeline review | 20 min | Approve pending-review previews, review AI reply drafts, personally reply to any engaged lead (clicked preview or submitted /audit). |
+
+**Email volume targets (auto-send — just verify it's running):**
+- Days 1-7: 10/domain/day = 20 total
+- Days 8-14: ~50/domain/day = 100 total
+- Days 15+: 100/domain/day = 200 total (hold indefinitely)
+
+---
+
+### Week 1 Day-Specific Tasks (Days 1–7)
+
+**Day 1:**
+- Compile your full warm contact list (target 100+ names: friends, family, ex-coworkers, gym, church, neighbors, anyone who knows a business owner)
+- Publish origin post on LinkedIn: "I'm building websites for local businesses using AI. Here's why."
+- Add /audit link to every email signature
+- Approve 3–5 prospects in dashboard
+
+**Day 2:**
+- Send 10 personal warm messages (use script below — NOT the cold email)
+- Post LinkedIn: before/after screenshot of one V2 preview + one line of caption
+- Review any overnight email replies
+
+**Day 3:**
+- Send 10 more warm messages
+- Post LinkedIn: "The local business website problem" — describe the gap you're solving in one paragraph
+- Approve pipeline batch
+- Draft your referral program one-pager ($150 cash per closed referral)
+
+**Day 4:**
+- Follow up any Day 2 warm contacts who replied
+- Post LinkedIn: one real pipeline stat (e.g. "Sent 60 emails this week. 3 people clicked their preview.")
+- Identify 5 potential affiliate partners: local SEO agency, Google/Meta ad freelancer, business coach, accountant, print shop
+
+**Day 5:**
+- Send 10 more warm messages
+- Post LinkedIn: "Here's how I find businesses with outdated websites" — describe the Google Places scout process plainly
+- Check email open rates — is subject line hitting >25%?
+
+**Day 6:**
+- Send 10 more warm messages
+- Post LinkedIn: category story — "I built a site for a [dental/electrician/salon] in [city] before they knew I existed."
+- Approve pipeline batch
+
+**Day 7 (weekly review):**
+- Send 10 more warm messages
+- Post LinkedIn: Week 1 numbers post — emails sent, open rate, preview clicks, conversations started
+- Weekly review checklist: email open rate >30%? Pipeline healthy? 50 warm messages sent this week?
+
+---
+
+### Week 2 Day-Specific Tasks (Days 8–14)
+
+**Day 8:**
+- Send 10 warm messages + follow up any Week 1 non-responders
+- Post LinkedIn: "What makes a $997 website worth it" — show the 10 sections the V2 templates include
+- Check domain warming stats — both domains healthy?
+- Personally text Steadfast Plumbing (360) 797-2979 — warm human call, not the cold email script
+
+**Day 9:**
+- Send 10 warm messages
+- Post LinkedIn: screenshot your dashboard stats (sites built, pipeline count) — transparency builds trust
+- Reach out to the first affiliate target from Day 4 (personal email, not cold)
+
+**Day 10:**
+- Send 10 warm messages
+- Post LinkedIn: "One thing every local business website is missing" — give real actionable value, no pitch
+- Add the $100 referral incentive to the NPS promoter email (Rule 44 in codebase)
+
+**Day 11:**
+- Follow up any Day 2-3 warm contacts who showed interest
+- Post LinkedIn: address a real objection you've received ("I already have a website" → your reframe)
+- Text Sequim Valley Electric (360) 681-3330
+
+**Day 12:**
+- Send 10 warm messages
+- Post LinkedIn: "The hardest part about cold pitching local businesses" — honest and relatable
+- Follow up the 5 affiliate targets identified on Day 4
+
+**Day 13:**
+- Send 10 warm messages
+- Post LinkedIn: before/after (different category than Week 1)
+- Weekly email performance review
+
+**Day 14 (warmup milestone):**
+- 100 warm messages sent total across 2 weeks — relationship mode begins
+- Post LinkedIn: 14-day update — real numbers, real honesty
+- PRIMARY DOMAIN WARMUP COMPLETE — verify 100/day sending is active
+- Milestone check: open rate target hit? First reply conversations? LinkedIn getting traction?
+
+---
+
+### Week 3 Day-Specific Tasks (Days 15–21)
+
+Email volume now at 200/day. Focus shifts to optimizing the bottleneck.
+
+**Day 15:**
+- Shift warm outreach: stop cold personal messages, start following up everyone who showed interest in Weeks 1-2
+- Post LinkedIn: feature one specific V2 showcase with link — "This is what a [category] site should look like."
+- Identify the #1 funnel bottleneck (open rate → click rate → claim page → checkout — which step is weakest?)
+- Build the affiliate partner page at /partners: one paragraph, the $150 offer, a simple form
+
+**Day 16:**
+- 5 targeted warm follow-ups (quality over quantity)
+- Post LinkedIn: "I sent 200 cold emails yesterday. Here's what came back." — real data
+- Reach out to 3 more affiliate targets with the /partners link
+
+**Day 17:**
+- Follow up any referral intros received from warm outreach
+- Post LinkedIn: educational value post — teach something about local SEO or web design a business owner would use
+- Full reply queue review
+
+**Day 18:**
+- Post LinkedIn: social proof — if you have a paid client, share it (anonymized or with permission). If not, share a real preview reaction.
+- Implement one change at the identified bottleneck (subject line test, claim page headline test, email opener variant — ONE THING ONLY)
+
+**Day 19:**
+- Post LinkedIn: "The business category I'm most excited to build for" + showcase link
+- Start tracking the bottleneck change from Day 18 — open a note to record results daily
+
+**Day 20:**
+- Post LinkedIn: Week 3 numbers — impressions, emails sent, open conversations
+- Follow up all open affiliate conversations
+
+**Day 21 (first paid client target):**
+- Post LinkedIn: Month 1 halfway point — what's working, what isn't
+- Weekly review: if no paid client yet, audit the claim page flow in incognito — is there friction you're not seeing?
+- Confirm referral incentive is live in NPS emails
+
+---
+
+### Week 4 Day-Specific Tasks (Days 22–30)
+
+Lock in habits. Optimize. Let compound effects build.
+
+**Day 22:**
+- Follow up all open warm conversations
+- Post LinkedIn: "The affiliate program — if you know local business owners, here's how to make $150 per referral"
+- Check bottleneck test results from Day 18 — is the metric moving?
+
+**Day 23:**
+- Post LinkedIn: deep-dive on one premium feature (comparison table, interactive quiz, Google review header) — teach it like you're showing a business owner what they're getting
+
+**Day 24:**
+- Post LinkedIn: repurpose your best-performing Week 1 post with updated data
+- Walk any active affiliate partners through the referral process personally
+
+**Day 25:**
+- Post LinkedIn: "Month 1 of BlueJays. What I learned." — full transparency post. This one should be long.
+- Implement bottleneck test #2 (different variable from Day 18)
+
+**Day 26:**
+- Post LinkedIn: one category-specific post for the vertical you're pitching most this week
+
+**Day 27:**
+- Post LinkedIn: "How the AI pipeline works in 5 steps" — process transparency for marketers/builders in your audience
+
+**Days 28–30 (Month 1 close):**
+- Post LinkedIn: 30-day final numbers post — every metric, every lesson. This post will perform well.
+- Clear entire reply queue — respond to every engaged lead personally
+- Full month review against targets (see below)
+- Plan Month 2: which channel showed the most traction? Double it.
+
+---
+
+### Warm Outreach Script (Days 1–14, personal text/DM — NOT the cold email)
+
+> "Hey [name] — I started a company building premium websites for local businesses. I build the site first and show it to them before asking for anything. Do you know any business owner whose website looks outdated? I'll build theirs for free to show what I do. No pressure at all."
+
+When they reply with a name: ask for a three-way text introduction. "Could you intro us over text? That way I can follow up directly."
+
+---
+
+### LinkedIn Content Ideas by Week
+
+**Week 1 — Origin and Problem:**
+origin story, before/after visual, the local business website gap, pipeline stat, how I find businesses, category story, Week 1 numbers
+
+**Week 2 — Value and Process:**
+what makes the $997 worth it, dashboard stats transparency, one thing every website is missing, objection reframe, the hardest part of cold pitching, before/after (new category), 14-day update
+
+**Week 3 — Proof and Education:**
+V2 showcase feature, real email results data, local SEO teaching post, social proof / reaction, favourite category + link, Week 3 numbers, halfway point reflection
+
+**Week 4 — Scale and System:**
+the affiliate program, premium feature deep-dive, repurpose best Week 1 post, Month 1 full transparency, category-specific pitch week post, how the pipeline works, 30-day final numbers
+
+**Universal rules for every post:**
+- Specific numbers always beat vague claims ("3 out of 47 replied" beats "some people responded")
+- Before/after visuals are the highest-performing format — use them whenever possible
+- End every post with one question to drive comments
+- Never pitch in the post body — let the content pull people to your profile where the /audit link lives
+
+---
+
+### Day 30 Success Targets
+
+| Metric | Minimum | Strong |
+|---|---|---|
+| Total cold emails sent | 3,000 | 4,500+ |
+| Warm messages sent | 100 | 150+ |
+| LinkedIn posts | 30 | 30 |
+| LinkedIn impressions | 5,000 | 15,000+ |
+| Open prospect conversations | 15 | 40+ |
+| Affiliate partners active | 2 | 5+ |
+| Paid clients | 1 | 3–5 |
+| Revenue | $997 | $3,000+ |
+
+If Day 30 lands below minimum on paid clients: do NOT add new channels. Audit the claim page in incognito, personally call every prospect who clicked the preview link but didn't claim, and run one more week before expanding. The bottleneck is conversion, not volume.
+
+---
+
+### The Compounding Flywheel (reference when explaining progress to Ben)
+
+```
+Warm Outreach ──► First clients ──► Testimonials ──► Social proof
+                                                          │
+Cold Email ───► Preview clicks ──► Claim page ──► Revenue │
+                                                          │
+Content ──────► Inbound DMs ───► Warm leads ─────────────┘
+                     │
+                     └──► Affiliates find you ──► Passive lead flow
+```
+
+After Day 30, every channel feeds every other channel. The goal of Month 1 is to start all three flywheels spinning. Month 2 is where they start pulling each other.
+
+---
+
+
+---
+
+<!-- moved from CLAUDE.md: ## Locked-In Rules — Session 2026-05-06 evening (manufacturer ICP buildout + Madie's portal) -->
+
+## Locked-In Rules — Session 2026-05-06 evening (manufacturer ICP buildout + Madie's portal)
+
+These came out of the manufacturer-ICP deep-dive day. Each captures a pattern that's now non-negotiable for future agents.
+
+### Locked-In Rule 67 — Multi-anchor ICP validation (NON-NEGOTIABLE)
+
+Don't lock a customer-profile pattern on 1-2 anchors. **Need ≥3 anchor data points across radically different verticals before treating a shape as "the ICP."** One close = anecdote. Two closes = correlation. Three closes across radically different verticals = the pattern is real, vertical-agnostic, and worth coding against.
+
+**Why this rule exists:** It's tempting to lock the ICP on the first big close. Two closes in the same niche feel like a pattern but they're often selection bias. Three closes across different verticals (today: ITC steel ag-equipment + Zenith sports gear + Nevarland kids' apparel) prove the shape is structural, not vertical-specific.
+
+**Apply to:**
+- New customer-profile decisions (e.g. "is this our Pro tier ICP?")
+- Scout-category buildouts (don't add a category until 3 anchors confirm the shape works there)
+- Pitch-asset decisions (don't productize a lead-magnet pair until 3 different verticals adopted it)
+
+**The 2026-05-06 reference run:** 3-segment audience taxonomy (end-buyer + influencer + channel-partner) locked across ITC + Zenith + Nevarland. See `aios/decisions/2026-05-06_manufacturer_icp_3anchor_lock.md`.
+
+### Locked-In Rule 68 — Color-coded high-ticket cold leads (pink/purple/layered)
+
+Every BlueJays admin surface that lists prospects MUST visually distinguish high-ticket cold leads with a 3-element treatment (left-strip + bg tint + chip):
+
+- **Pink** = manufacturer-lookalike (`lookalikeCategory IS NOT NULL` — any of the 6 mfg-* slugs)
+- **Purple** = Full System / agency-replacement (`pricingTier === 'fullsystem'` — covers Cut-My-Agency calc submitters + agency landing-page bookers + manual fullsystem flips)
+- **Layered** when both apply: pink strip + purple chip both render
+
+**Surfaces that MUST honor this** (any new admin/sales view added later inherits the requirement):
+- `bluejays/src/components/dashboard/ProspectTable.tsx` (admin /dashboard)
+- `bluejays/src/app/dashboard/script/LeadPicker.client.tsx` (Madie's sales portal)
+- Any future operator dashboard that renders BlueJays prospects
+
+The chip text is locked: `MFG · {lookalikeCategory.replace("mfg-", "").toUpperCase()}` for pink, `AGENCY $10K` for purple. Don't rename without updating both surfaces atomically.
+
+### Locked-In Rule 69 — Active customers filtered out of cold sales selection
+
+Any sales-portal / cold-outreach selection mechanism MUST exclude paying customers and clients-with-built-sites. **Hard exclusion** (filter the row out entirely), NOT dim/strikethrough.
+
+**The conditions that mark a prospect as "already a client":**
+- `status === 'paid'`
+- `status === 'live'`
+- `status === 'deployed'`
+- `status === 'dns_transfer'`
+- `siteLiveAt` is set
+- `customSiteUrl` is set
+
+**Why hard exclusion:** cold-calling an existing customer kills the relationship. Madie / Ben should never see a customer in their cold-call queue, even dimmed.
+
+**Surfaces enforcing this** (don't add a new cold-call selection surface without inheriting the filter):
+- `bluejays/src/app/dashboard/script/LeadPicker.client.tsx` (Madie's portal)
+- Any future "build a call list" / "build a cold-email batch" selection UI
+
+### Locked-In Rule 70 — Manufacturer-lookalike scout auto-tags `manuallyManaged=true`
+
+Every `mfg-*` category prospect created by the auto-scout MUST be auto-tagged with `manuallyManaged=true` at intake (before reaching the auto-pitch funnel). Per Rule 49, the daily auto-enroll cron skips manually-managed prospects.
+
+**Why:** the 6 mfg-* slugs are in `ACTIVE_CATEGORIES` so the scout pulls them, BUT they don't have V2 templates yet. Auto-pitching with a generic-template preview burns the highest-leverage cold-lead segment we have. Hard rule: until a V2 template exists for a manufacturer slug, every prospect in that slug gets the manual-review gate.
+
+**Where enforced:** `bluejays/src/lib/scout.ts` — the `MANUFACTURER_LOOKALIKE_CATEGORIES` Set + the `isMfgLookalike` check at prospect-construction time (line ~84). DON'T remove this gate without first shipping a V2 template for the affected slug AND updating the rule.
+
+**Removal trigger** (when this rule expires for a specific slug): when V2 template ships at `/v2/<slug>`, the slug graduates from manufacturer-lookalike (`manuallyManaged=true`) to standard-tier auto-pitch. At that point: drop the slug from `MANUFACTURER_LOOKALIKE_CATEGORIES` Set, ship a follow-up commit, update the `MANUFACTURER_BACKLOG.md` Status column to ✅.
+
+### Locked-In Rule 71 — Defensibility score for product-business prospects (concept locked, scoring logic pending)
+
+Every product-business prospect (manufacturer / brand / niche-DTC) gets a `defensibilityScore` 0-100 computed at extraction time, scoring 3 signals:
+
+1. **Place-of-origin specificity** — does the prospect's copy name a specific manufacturing location, region, or hometown?
+2. **Patent / IP / trademark / fitment data** — does the copy claim defensible product engineering (patent-pending, trademark, machine-fitment specs, lab-certified)?
+3. **Named-channel relationship** — does the copy name specific dealers / clubs / camps / influencers / retailers carrying the product?
+
+A prospect needs at least 2 of 3 to be worth pitching. Sub-30 scores get flagged for manual review BEFORE any preview build / cold pitch is sent.
+
+**Why:** Both validated $10K closes (ITC + Zenith) win on hyper-specific identity copy. Generic manufacturers ("Quality wholesale jewelry — call us today") die in cold paid. Cheaper to filter at scout than burn pitch cycles.
+
+**Status:** field exists on `Prospect.defensibilityScore` (added in commit `f70cc59`). Auto-compute logic in `data-extractor.ts` is pending — open task in `Bluejay Business/TASKS.md`.
+
+**When the scoring logic ships:** wire a `defensibilityScore < 30` filter into the auto-enroll cron's candidates query so weak prospects never enter the pitch funnel automatically. Manual override available via dashboard.
+
+### Locked-In Rule 72 — Content fidelity when porting a real source's copy (NON-NEGOTIABLE)
+
+When the directive is "use the real source content" (e.g. porting a client's existing site to a new build, rebuilding a prospect's site under a new brand name, migrating between platforms), every claim on the new build MUST be grounded in the source. Claims not in the source are fabrications.
+
+**Default behavior:**
+1. Scrape the source-of-truth URL
+2. Diff its claims against the derivative
+3. Surface fabrications (P0 specifics like dollar amounts / certifications / page counts; P1 softer like service offerings / geographic claims)
+4. Soften (rephrase to source-grounded alternative) OR remove (delete the section entirely if source has nothing comparable)
+5. NEVER invent specifics — pricing, certifications, page counts, time-frames, staff names, customer counts
+
+**Why:** Specificity gaps are TBD-able. Invented claims poison trust forever — and are libel-adjacent for healthcare / financial / legal verticals.
+
+**The 2026-05-06 reference run:** Olympic Inspections rebuild from `pineparticle.com`. Stripped fabricated "AIHA-LAP labs" / "10-25 page PDF" / "homes over 30 years old" / 3 fake "Coming soon" services. Replaced with source-grounded language ("ISO/IEC 17025-accredited laboratory" / "fast turnaround" / Pine & Particle's actual founder origin story).
+
+**Skill that runs this audit:** `aios/.claude/skills/content_fidelity_audit/SKILL.md` (added 2026-05-06).
+
+---
+
+### Locked-In Rule 73 — Locked Decisions Cascade Forward As Defaults (NON-NEGOTIABLE)
+
+Established 2026-05-06 by Ben after the MOCK BACKEND build. Re-asking
+the same Rule 48 questions on every instance of a repeating-pattern
+build wastes Ben's time AND signals the agent didn't learn from the
+first round. Once Ben locks decisions on a pattern, those decisions
+become DEFAULTS for the next instance until he explicitly changes them.
+
+**The rule:**
+
+When a repeating-pattern build (MOCK BACKEND install, bespoke client
+showcase, V2 template, animated trade illustration, funnel sequence,
+etc.) gets done for the first time AND Ben locked specific decisions
+during the Rule 48 question gate, those decisions get captured into:
+
+1. **The relevant operational playbook** under a "Locked defaults — DO
+   NOT re-ask" section (e.g. `docs/MOCK_BACKEND_PLAYBOOK.md`)
+2. **The matching AIOS skill** under "Defaults — don't re-ask"
+   (e.g. `aios/.claude/skills/mock_backend/SKILL.md`)
+
+When a future instance of that pattern hits, the agent:
+1. **Reads the locked-defaults section first** — this is the new
+   baseline
+2. **Skips the locked questions entirely** — don't re-ask "what URL
+   pattern" / "what password" / "what tab list" / etc.
+3. **Asks only NEW questions** that focus on:
+   - What's UNIQUE to THIS instance (the prospect, the industry, the
+     specific data, the geography)
+   - Decisions the prior build didn't surface (genuinely new ground)
+   - Anything Ben explicitly flags as different from default
+4. **Confirms defaults at the end** — single-line "applying defaults
+   X / Y / Z unless you say otherwise" so Ben can override if needed
+   without burning 10 questions on it
+
+**The compounding payoff:**
+
+- First instance of a pattern: 10 questions, ~30 min of Q&A
+- Second instance: 3-5 questions on what's unique, ~5 min
+- Third+ instance: 1-2 confirmations, ~1 min
+
+The rule applies to ANY repeating-pattern build, not just MOCK BACKEND:
+
+| Pattern | Playbook | First instance | Locked defaults examples |
+|---|---|---|---|
+| MOCK BACKEND install | `docs/MOCK_BACKEND_PLAYBOOK.md` | Meyer Electric (2026-05-06) | URL pattern, password, scale, tab list, persistence, branding, doc location |
+| Bespoke client showcase | `docs/bespoke-client.md` (TBD) | Hector / Meyer / Masters / KR / OIT | metadata override pattern, sitemap entry, 1/3 padding default, photo dedup audit |
+| V2 template build | `docs/V2_UPGRADE_CHECKLIST.md` | Per CLAUDE.md V2 upgrade rules | section count, premium features list |
+| Animated trade illustration | (in CLAUDE.md Rule 70) | Powerwall + Generac (Meyer) | CSS keyframes only, namespace prefix, prefers-reduced-motion |
+| Funnel sequence | `src/lib/client-funnels/zenith-sports.ts` | Zenith | step shape, audience taxonomy, cadence rules |
+
+**Failure modes the rule prevents:**
+
+- Re-asking "what URL pattern should the demo use" when /portal-demo
+  is already locked → wastes Ben's time AND makes him distrust the agent
+- Defaulting to a different password than 1212 because the question
+  wasn't asked → breaks the demo on the sales call
+- Inventing a different scale (50 leads instead of 200) because the
+  prior decision wasn't carried forward → the demo feels light
+- Each agent run starting from zero — no compounding
+
+**The agent's responsibility:**
+
+When invoking a repeating-pattern build, the FIRST thing the agent
+does (BEFORE asking any questions) is check for the playbook + AIOS
+skill and read the "Locked defaults" section. The questions that come
+AFTER are what's not yet decided, what's unique to this instance, OR
+what Ben explicitly wants to deviate on.
+
+**Forbidden:**
+
+- Re-asking a locked question without explicit "I'm reconsidering X"
+  signal from Ben
+- Treating a default as soft / "well I'd ask anyway in case you
+  changed your mind" — defaults stand until Ben overrides
+- Adding new decisions to a pattern without writing them into the
+  playbook (otherwise the next agent doesn't know about them)
+
+**When Ben changes his mind on a previously-locked default:**
+
+He says "actually let's switch X to Y." The agent:
+1. Confirms the change in chat
+2. Updates the playbook locked-defaults section in the SAME commit
+3. Updates the AIOS skill if that pattern has one
+4. Notes the date of the override
+
+This way the system learns. Locked-decisions are durable but not
+frozen — they evolve in lockstep with Ben's evolving operating taste.
+
+---
+
+### Locked-In Rule 74 — Funnel Stages Are Monotonic + Bar Visualization REQUIRED (NON-NEGOTIABLE)
+
+Established 2026-05-06 by Ben after the Meyer mock-backend Funnels tab
+shipped a per-step conversion bar that visually went 100 → 38 → 81 →
+64 → 51. Per-step conversion RATE is fine domain data, but rendered as
+a funnel-shaped bar chart it reads as "we lost people, then got them
+back" — structurally impossible in a funnel and an instant realism
+killer for prospects on the sales call.
+
+**The rule:** any UI that visualizes a funnel — bar widths, vertical
+heights, tapering nodes, reach pills, dot sizes per stage, ANY visual
+rhythm that maps "step N" to a magnitude — MUST display **CUMULATIVE
+REACH** (% of the original 100% who reach this step) AND that sequence
+MUST be monotonically non-increasing across the steps.
+
+A funnel only scales down. Period.
+
+**What this means in practice:**
+
+1. **Data layer.** When a `FunnelStep` (or equivalent) exposes a
+   `conversion_pct` / `reachPct` / similar field, the documented
+   semantic is **cumulative reach**, not per-step rate.
+   - `conversion_pct[0] === 100` (entry point)
+   - `conversion_pct[i] <= conversion_pct[i-1]` for all i
+   - Last step's value should match the funnel's overall close-rate
+     (e.g. `conversion_rate = 25.5%` → final step's reach = 25.5)
+   - If a per-step conversion RATE is genuinely useful for the
+     business reader, surface it as a SEPARATE field
+     (`step_close_rate_pct` or similar) — never re-use the cumulative
+     field for it.
+
+2. **Reference type.** `FunnelStep` in
+   `src/app/clients/meyer-electric/portal-demo/mock-data.ts` documents
+   the cumulative-reach semantic. Future funnel types in other
+   surfaces (e.g. `FunnelStepLite` in
+   `src/components/portal/FunnelVisualModal.tsx`,
+   per-client `client-funnels/*.ts`) MUST follow the same convention.
+
+3. **Defensive rendering.** Any rendering surface that takes per-step
+   reach numbers from outside (props, API response, scraped data,
+   fixture) MUST run them through `monotonizeReach()` from
+   `src/components/portal/FunnelVisualModal.tsx` before using them
+   for visual sizing. This is the backstop — it can't fix bad upstream
+   data, but it guarantees the rendered visual still reads as a
+   monotonically narrowing funnel.
+
+4. **Industry-typical baselines** (e.g. `REACH_BASELINE_BY_INDEX` in
+   `FunnelVisualModal.tsx`) MUST also be monotonic by construction.
+   When adding new baselines, eyeball the array — if any value is
+   greater than its left neighbor, fix it before merging.
+
+5. **Mock data.** The 4 funnels in Meyer's `mock-data.ts FUNNELS`
+   array are the canonical reference. When seeding a new mock-backend
+   industry, copy that shape — every step's `conversion_pct` is
+   cumulative-monotonic, last step matches `conversion_rate`.
+
+**The trap to avoid (caught 2026-05-06):**
+
+Storing `conversion_pct` as the per-step conversion RATE
+(e.g. "81% of people who reached step 3 convert to step 4") IS
+domain-accurate. But the moment a UI renders that value as a bar
+width, the visual reads as a non-monotonic funnel — and prospects on
+the sales call notice immediately. The fix is to store cumulative
+reach in `conversion_pct` AND surface per-step rate (when needed) in
+a separately-named field. Never let one field carry both meanings.
+
+**What the rule covers:**
+
+- Per-step bar charts (Meyer mock-backend's old inline view —
+  removed 2026-05-06)
+- Tapering vertical funnel nodes (FunnelVisualModal)
+- Reach pills next to each step
+- Dot-size-by-step on map overlays
+- Any future "show me the funnel" visualization Ben builds
+
+**Forbidden:**
+
+- Hardcoding non-monotonic values into a fixture / mock dataset
+- Reading per-step conversion rate from a "rate" field and rendering
+  it as a bar width without cumulative-multiplying first
+- Adding a new baseline curve to any "reach by step index" array
+  without verifying it's monotonic
+- Skipping `monotonizeReach()` on the rendering side because "the
+  data is correct" — defensive guards exist precisely so a future
+  data bug can't silently bypass the rule
+- Inventing creative "curved" funnel shapes that scale up between
+  steps for any reason (engagement spike, viral re-share, etc.) —
+  if the business story genuinely is non-monotonic, that's a
+  separate visualization (re-engagement loop chart), NOT the
+  audience funnel
+
+**This rule cascades:**
+
+- Update the AIOS `mock_backend` skill so future mock-backend
+  installs apply this rule by default
+- Update the AI Package Playbook so every new client's Funnels tab
+  inherits the convention
+- Reference this rule in code comments where cumulative-reach data
+  is defined or rendered, so the next agent sees the constraint
+  inline
+
+**Bar visualization is REQUIRED on every funnel surface (locked
+2026-05-06).** Beyond the monotonic-data constraint above, every
+funnel rendering MUST display the per-step cumulative reach as a
+horizontal bar — not optional. Ben's catch: the tapering vertical
+funnel boxes alone aren't dense enough; prospects need to see at a
+glance "where am I losing people, and how much?" The bars answer
+that.
+
+**Required UI on every step row:**
+
+1. **Cumulative-reach bar** — full-width below the step label,
+   yellow→orange gradient fill (`linear-gradient(90deg, #facc15 0%,
+   #f97316 100%)`), height ≈ 6px (`h-1.5`), track in `bg-white/[0.06]`.
+   Width = the step's cumulative reach %. Bars must monotonically
+   shrink left-to-right across steps (data is already monotonic per
+   the rule above; defensive `monotonizeReach()` is the backstop).
+2. **Reach % number** — bold, tabular-nums, white text, right-aligned
+   above the bar (e.g. `25%`).
+3. **Drop-off pill** — when step N's reach is less than step N-1's,
+   show a `−{X} pp` pill in rose
+   (`text-rose-300/90 bg-rose-500/[0.08] border-rose-500/20`) next to
+   the % number. Step 1 has no drop-off pill (it's the entry point).
+4. **Close-rate pill (REQUIRED — added 2026-05-07)** — a green
+   `→ {X}% close` pill in the right cluster above the bar (between
+   the drop-off pill and the reach % number). Shows what % of the
+   people who reached THIS step eventually closed as a sale.
+   Mathematically derived: `closeRatePct = finalReach / cumulativeReach[i] × 100`.
+   Naturally monotonically NON-DECREASING across steps (people deeper
+   in the funnel are higher-quality leads; their close rate is higher).
+   Last step always 100% (those people ARE the closes — that's the
+   punchline of the funnel). Pill styling:
+   `text-emerald-300/90 bg-emerald-500/[0.08] border-emerald-500/25`
+   to match the existing "Won · converted" emerald theme. Required on
+   EVERY step including step 1 and the final step — the visual rhythm
+   compounds the realism. Never suppress on the last step ("100% close"
+   is the proof the math is consistent + lands the funnel's sales
+   story). The reasoning: the cumulative reach bar tells the prospect
+   "where am I losing people"; the close-rate pill tells them
+   "but the people who DO get here convert at X%" — together they
+   carry the full funnel story.
+5. **Measured-vs-baseline label** — small italic note below the bar.
+   `Cumulative reach` when `step.cumulativeReachPct` came from
+   measurement; `Cumulative reach · est. baseline` when the surface
+   fell back to `REACH_BASELINE_BY_INDEX`. Lets prospects tell what's
+   real per-client data vs industry-typical estimate.
+
+**Reference implementation:** `FunnelStepRow` inside
+`src/components/portal/FunnelVisualModal.tsx`. The reach math (prefer
+real `cumulativeReachPct`, else baseline curve, ALWAYS via
+`monotonizeReach()`) lives in the IIFE wrapping the steps map in the
+parent component. Don't duplicate this logic — reuse the modal.
+
+**Forbidden:**
+
+- Shipping a funnel-surface step row WITHOUT the cumulative-reach bar
+- Showing reach % only as text without the visual bar
+- Inverting the bar (filling from the right, growing instead of
+  shrinking) for any "creative" reason
+- Using a non-monotonic gradient that visually implies an upward
+  bump between steps
+- Omitting the drop-off pill on steps where reach actually dropped
+  (it's the highest-signal element on the row — that's where the
+  business problem is)
+- Omitting the close-rate pill on ANY step (including step 1 and the
+  final step). The pill is required on all rows for visual rhythm.
+  "100% close" on the final step is intentional — it's the punchline
+  that proves the funnel math is consistent
+- Showing the close-rate pill in any color OTHER than emerald
+  (must match the existing "Won · converted" green theme — color
+  carries the "this is the conversion signal" semantic)
+- Suppressing or hiding the close-rate pill when step 1's close rate
+  equals the funnel's overall close rate (it does — that's correct,
+  step 1 = whole funnel audience). Showing it is the proof the math
+  works end-to-end
+
+**Cascades:**
+
+- Per-client owner portal Funnels tab (already shipped via
+  `FunnelVisualModal` — Zenith + Meyer mock both inherit)
+- Future BlueJays admin funnel surfaces (e.g.
+  `/dashboard/clients/[slug]/funnels` if/when it ships) MUST use the
+  shared modal, not roll their own renderer
+- Mock-backend installs (any new industry config) inherit
+  automatically because they go through the shared modal
+- AI Package Playbook + Mock Backend Playbook updated in lockstep
+
+### Locked-In Rule 75 — Cross-project ripples (every commit checks for cascade)
+
+Locked 2026-05-06 by Ben. The bluejays / aios / LCAC codebases share a
+gravitational field — patterns shipped in one often need to ripple into
+the others. Today this happens hit-or-miss; this rule makes it
+mechanical.
+
+**Every bluejays/ commit MUST check for these cascade triggers and
+update the relevant aios/ artifact IN THE SAME COMMIT WAVE:**
+
+1. **New locked decision (anything Ben says "lock this in")** →
+   - Append entry to `~/.claude/projects/.../memory/recent_locked_decisions.md`
+   - If it's a repeating-pattern decision (Rule 11) → also write to relevant playbook's "Locked defaults" section
+
+2. **New productizable pattern (something a Pro client could use)** →
+   - Add row to `aios/PRO_SYNTHESIS.md` synthesis log (Rule 64)
+
+3. **New CLAUDE.md rule** →
+   - If it affects Ben's personal workflow → mirror in `aios/CLAUDE.md` working principles
+   - If it's project-specific (this codebase only) → no aios/ ripple needed
+
+4. **New skill scaffolded** →
+   - Add to `aios/.claude/skills/{name}/SKILL.md` if it's reusable across projects
+   - Reference in `aios/CLAUDE.md` skill index if applicable
+
+5. **New question template (5+ Q gate that would repeat)** →
+   - Capture at `aios/references/question_templates/{type}.md` for future cascade
+
+6. **Active client state change** (paid / live / churned / status flip) →
+   - Update `~/.claude/projects/.../memory/business_state_snapshot.md`
+   - Update `~/.claude/projects/.../memory/active_commitments.md` if it adds/removes a thread
+
+7. **Cost / MRR / financial event** (new SKU, price change, infra cost added) →
+   - Update `~/.claude/projects/.../memory/costs_dashboard.md` watchlist
+
+8. **Pricing language touched** →
+   - Run grep on `997` + `100/year` + new value across the codebase per
+     existing Rule 1 of End-to-End Pipeline Rules
+   - Update Service Agreement + PLAYBOOK + HANDOFF + public landing pages
+     in lockstep
+
+**The inverse** — `aios/` work that affects bluejays/ — also applies. New
+working principle in aios/CLAUDE.md that changes how I work on bluejays/?
+Ship the matching CLAUDE.md update in the same batch.
+
+**Audited weekly by `/sync-state`** — the Monday tick scans last 7 days
+of commits across all 3 codebases and surfaces ripples that should have
+fired but didn't. Per `aios/CLAUDE.md` Working Principle 17 (friction
+self-audit).
+
+**When AIOS forgets to ripple** — this is itself a friction pattern
+that should be self-surfaced. End-of-batch footer line "🔄 Cross-project
+ripples" is non-negotiable on customer-impacting commits.
+
+
+
+---
+
+### Locked-In Rule 76 — Customer-facing AI features ground in a Ben-voice corpus (NON-NEGOTIABLE)
+
+Established 2026-05-07 after the Hormozi training synthesis (see
+`aios/references/hormozi_ai_principles.md`). The talk's load-bearing
+insight: AI sounds like the internet ONLY when given no anchors.
+With a curated corpus of YOUR work as a data source, it sounds like
+YOU. BlueJays today has the prompts (cached, banned-phrases-filtered,
+psychology-stack-encoded) but does NOT have the corpus. That's the
+single highest-leverage missing layer in every customer-facing AI
+feature.
+
+**The rule:** every BlueJays AI feature that generates
+customer-facing copy MUST reference a real Ben-voice corpus as
+part of its prompt context. Banned-phrases lists + structured
+prompts are necessary but not sufficient — they encode what NOT
+to do, not what TO do. The corpus encodes what TO do.
+
+### Where the corpus lives
+
+`bluejays/data/voice-corpus/` — markdown files, version-controlled.
+Each file is a curated set of REAL Ben-written work tagged by use
+case:
+
+| File | Contents | Source |
+|---|---|---|
+| `cold-pitches.md` | 10-20 highest-performing cold-outreach emails Ben personally wrote that got replies. Anonymized recipient (e.g. "Hi {name}"). | Ben's sent folder, top performers per `emails` table |
+| `replies.md` | 10-20 Ben-written replies to engaged prospects (objection handling, discovery questions, soft closes). | Sent folder, manual curation |
+| `tweets.md` | 50-100 highest-engagement tweets Ben has personally posted. Style fingerprint, not topic catalog. | X export (one-button) |
+| `linkedin-posts.md` | 20-30 highest-engagement LinkedIn posts Ben has personally written. | LinkedIn export |
+| `sales-call-snippets.md` | 5-10 anonymized snippets from top-closed sales calls — opener / discovery / objection-overcome / close. | Sales-call recordings, transcribed |
+| `vsl-scripts.md` | The actual scripts behind the 1-2 best VSLs Ben has shipped. | His own video assets |
+| `voice-rules.md` | Distilled style guide derived from the above — sentence-length tendencies, banned phrases, preferred openers, signature transitions, "what makes this Ben and not GPT." | Generated from the corpus, manually curated by Ben |
+
+The corpus is **CURATED, not exhaustive.** 10 great pitches beat
+1,000 average ones — quality of the corpus directly determines
+quality of the output. Don't paste every email Ben ever sent;
+paste the ones that converted or that Ben himself reads back and
+nods at.
+
+### Which AI features are gated
+
+**MUST reference the corpus** (customer-facing copy generation):
+
+- `getPitchEmail()` and the rest of `src/lib/email-templates.ts`
+  — every cold-pitch / follow-up / nurture / dunning email
+- `src/lib/sms.ts` — every SMS template
+- `src/lib/ai-responder.ts` — AI auto-reply / draft-reply (the
+  pending-review queue surface from Rule 38)
+- `src/lib/site-audit.ts` — the human-facing copy on the audit
+  page (NOT the deterministic numbers per Rule 59 — those stay
+  formula-derived; the surrounding paragraphs ground in voice)
+- Any future AI feature that produces text the prospect reads
+  with Ben's name at the bottom
+
+**Don't need to reference the corpus** (internal scoring /
+classification — not customer-facing):
+
+- QC scoring (`src/lib/color-review.ts`, image-quality agents,
+  etc.) — these grade outputs, they don't generate them
+- Intent classifier inside the AI responder (the classification
+  happens upstream of the draft step; only the draft needs voice
+  grounding)
+- Loss-reasons classifier, engagement scoring — internal
+- Scout / data-extraction pipelines — extracting facts, not
+  writing voice
+
+### How features reference the corpus (implementation contract)
+
+1. **Read at startup, not per-request.** Voice corpus is loaded
+   once at module init via `loadVoiceCorpus()` (helper to be
+   added at `src/lib/voice-corpus.ts`) — caches in memory.
+2. **Inject as a CACHED system-prompt segment.** Per the
+   existing AI Cost Optimization Rules, voice corpus is exactly
+   the kind of stable, high-token, repeated-across-calls content
+   that pays for itself instantly with prompt caching
+   (90% savings on cache reads). MUST be sent with
+   `cache_control: { type: "ephemeral" }`.
+3. **Subset by use case.** A cold-pitch generator loads
+   `cold-pitches.md` + `voice-rules.md`. A reply drafter loads
+   `replies.md` + `voice-rules.md`. Don't dump everything into
+   every call — token budget matters even with caching.
+4. **Verbatim, not paraphrased.** Ship the actual emails as
+   reference samples. Never let an agent rewrite the corpus
+   "for clarity" — the messy cadence and personality IS the
+   signal.
+
+### Maintenance triggers
+
+- **When a sent email gets a reply that converts** → consider
+  adding it to `cold-pitches.md` (or `replies.md` if it was a
+  follow-up turn).
+- **When output quality of any feature degrades** → first audit
+  the corpus (stale entries? missing patterns?) before tweaking
+  the prompt. Hormozi's maintenance trigger: update prompts
+  when outputs stop being good. Same logic for the corpus.
+- **Quarterly review** — drop entries that read stale (Ben's
+  voice has evolved), add new high-performers from the past 3
+  months.
+
+### Forbidden
+
+- Shipping a NEW customer-facing AI feature without wiring it to
+  the corpus. The PR / commit gets blocked at review.
+- "Improving" the corpus by sending it through GPT for cleanup
+  — defeats the entire point; the human cadence is the asset.
+- Storing the corpus outside `bluejays/data/voice-corpus/` —
+  single source of truth so Ben can find + edit fast.
+- Letting the corpus go stale (>6 months without review) — set
+  a calendar reminder if needed.
+
+### Cascade
+
+This rule mirrors AIOS principle 13 (three-folder architecture).
+The corpus IS the "data sources" folder for BlueJays-the-business.
+When BlueJays Pro launches the "AI Setup Day" deliverable
+(PRO_SYNTHESIS 2026-05-07 row), the per-client corpus is what
+each client receives — same architecture, different filings.
+
+---
+
