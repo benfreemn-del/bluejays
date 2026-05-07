@@ -2482,25 +2482,102 @@ function AuthorBlock() {
                 style={{ inset: 24, border: `1px dashed ${GOLD_DEEP}44` }}
               />
 
-              {/* The imprint itself.
-                  - mix-blend-mode: screen drops the white background of
-                    the source PNG against the dark circle so the gold
-                    filigree pops and the white square disappears.
-                  - drop-shadow gives the gold real depth.
-                  - sized to 80% of the inner area so the rings frame it
-                    intentionally instead of leaving a halo. */}
-              <Image
-                src="/images/clients/bloodlines/author-imprint.png"
-                alt="Preston James Hunsaker author imprint"
-                width={500}
-                height={500}
-                className="relative w-[80%] h-[80%] object-contain"
+              {/* The imprint — rendered as inline SVG instead of the
+                  source PNG. The PNG ships with a solid white BG that
+                  mix-blend-mode can't cleanly drop; an SVG monogram
+                  renders as gold-on-transparent every time. The "PJH"
+                  letterform sits above a small wilted-rose ornament,
+                  echoing the central sigil of the saga. */}
+              <svg
+                viewBox="0 0 200 200"
+                className="relative w-[78%] h-[78%]"
+                role="img"
+                aria-label="Preston James Hunsaker author monogram"
                 style={{
-                  mixBlendMode: "screen",
                   filter:
-                    "drop-shadow(0 0 18px rgba(212, 168, 83, 0.55)) drop-shadow(0 0 4px rgba(212, 168, 83, 0.35))",
+                    "drop-shadow(0 0 16px rgba(212, 168, 83, 0.55)) drop-shadow(0 0 4px rgba(212, 168, 83, 0.4))",
                 }}
-              />
+              >
+                {/* Subtle decorative arc above the letters */}
+                <path
+                  d="M 50 75 Q 100 55, 150 75"
+                  fill="none"
+                  stroke={GOLD_DEEP}
+                  strokeWidth="0.8"
+                  opacity="0.55"
+                />
+                <circle cx="50" cy="75" r="1.4" fill={GOLD} />
+                <circle cx="100" cy="62" r="1.6" fill={GOLD} />
+                <circle cx="150" cy="75" r="1.4" fill={GOLD} />
+
+                {/* PJH monogram in Cinzel gold */}
+                <text
+                  x="100"
+                  y="128"
+                  textAnchor="middle"
+                  fill={GOLD}
+                  fontFamily="'Cinzel', serif"
+                  fontWeight="900"
+                  fontSize="64"
+                  letterSpacing="3"
+                >
+                  PJH
+                </text>
+
+                {/* Wilted rose ornament below — central saga sigil */}
+                <g transform="translate(100, 158)">
+                  {/* Stem */}
+                  <path
+                    d="M 0 0 L 0 14"
+                    stroke={CRIMSON_BRIGHT}
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    opacity="0.85"
+                  />
+                  {/* Leaf left */}
+                  <path
+                    d="M 0 7 Q -7 4, -10 9 Q -6 11, 0 9 Z"
+                    fill={CRIMSON}
+                    fillOpacity="0.7"
+                  />
+                  {/* Leaf right */}
+                  <path
+                    d="M 0 9 Q 7 6, 10 11 Q 6 13, 0 11 Z"
+                    fill={CRIMSON}
+                    fillOpacity="0.7"
+                  />
+                  {/* Bloom (drooping/wilted) */}
+                  <path
+                    d="M 0 -5 Q -8 -3, -6 4 Q 0 7, 6 4 Q 8 -3, 0 -5 Z"
+                    fill={CRIMSON}
+                    fillOpacity="0.92"
+                    stroke={CRIMSON_BRIGHT}
+                    strokeWidth="0.4"
+                  />
+                  <path
+                    d="M -3 -2 Q 0 -5, 3 -2"
+                    fill="none"
+                    stroke={GOLD_DEEP}
+                    strokeWidth="0.5"
+                    opacity="0.7"
+                  />
+                </g>
+
+                {/* Tiny "EST 2023" inscription beneath */}
+                <text
+                  x="100"
+                  y="186"
+                  textAnchor="middle"
+                  fill={GOLD_DEEP}
+                  fontFamily="'Cinzel', serif"
+                  fontWeight="600"
+                  fontSize="6"
+                  letterSpacing="3"
+                  opacity="0.7"
+                >
+                  ✦ ANNAROSE ✦
+                </text>
+              </svg>
             </div>
             <p
               className="uppercase tracking-[0.4em] text-[10px] mt-5"
