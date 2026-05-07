@@ -2866,43 +2866,17 @@ function BooksBlock() {
                 className="absolute -inset-6 rounded-sm opacity-75 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-10 group-hover:blur-[60px]"
                 style={{ background: `radial-gradient(circle, ${CRIMSON_BRIGHT} 0%, transparent 70%)` }}
               />
-              {/* Placeholder cover until Ben confirms ASIN — gold N+rose monogram on crimson texture */}
-              <div
-                className="relative w-full rounded-sm flex flex-col items-center justify-center"
+              <Image
+                src="/images/clients/bloodlines/cover-house-of-the-rose.jpg"
+                alt="House of the Rose — Book Two of the Bloodlines saga by Preston James Hunsaker"
+                width={648}
+                height={1000}
+                className="relative w-full h-auto rounded-sm"
                 style={{
-                  aspectRatio: "324 / 500",
-                  background: `linear-gradient(160deg, #2b0f0f 0%, #1a0808 50%, #0d0404 100%)`,
                   boxShadow:
-                    "0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(127,29,29,0.4)",
+                    "0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,168,83,0.25)",
                 }}
-              >
-                <p
-                  className="uppercase tracking-[0.5em] text-[10px] mb-4"
-                  style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
-                >
-                  Book Two
-                </p>
-                <Image
-                  src="/images/clients/bloodlines/wilted-rose-tattoo.jpg"
-                  alt="Wilted Rose tattoo — black rose and crown sigil"
-                  width={120}
-                  height={150}
-                  className="opacity-90 mb-4"
-                  style={{ filter: `drop-shadow(0 0 24px ${CRIMSON_BRIGHT})` }}
-                />
-                <h4
-                  className="text-2xl sm:text-3xl text-center px-4 font-bold"
-                  style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
-                >
-                  HOUSE OF<br />THE ROSE
-                </h4>
-                <p
-                  className="mt-6 text-xs uppercase tracking-[0.3em]"
-                  style={{ color: "rgba(232, 220, 196, 0.5)" }}
-                >
-                  Preston James Hunsaker
-                </p>
-              </div>
+              />
             </div>
             <div className="text-center mt-8">
               <p
@@ -2929,14 +2903,14 @@ function BooksBlock() {
                 href={AMAZON_HOUSE}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 font-semibold tracking-wide rounded-sm transition-all duration-300 hover:bg-white/5"
+                className="inline-flex items-center gap-2 px-6 py-3 font-semibold tracking-wide rounded-sm transition-all duration-300 hover:scale-[1.02]"
                 style={{
-                  border: `1px solid ${GOLD_DEEP}`,
-                  color: GOLD,
+                  background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD})`,
+                  color: "#09090b",
                   fontFamily: "'Cinzel', serif",
                 }}
               >
-                <BookIcon /> Find on Amazon
+                <BookIcon /> Buy on Amazon
               </a>
             </div>
           </article>
