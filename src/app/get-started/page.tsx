@@ -142,10 +142,10 @@ export default function GetStartedPage() {
           </Link>
 
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
-            Get a Free Custom <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Website Preview</span> for Your Business
+            See Your New <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Website</span> Free
           </h1>
           <p className="text-white/45 text-base md:text-lg leading-relaxed max-w-md mx-auto">
-            Tell us about your business and we&apos;ll design a stunning website — completely free. See it before you pay anything.
+            Tell us about your business. We&apos;ll build it. You see it free first. Only pay if you keep it.
           </p>
         </div>
 

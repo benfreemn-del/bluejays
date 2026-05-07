@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 const AGENCY_ITEMS = [
   { agency: "$3,000–$8,000 / month", blueJays: "$500–$1,000 / month (after setup)" },
-  { agency: "Same playbook for every client", blueJays: "Custom AI built for your business" },
+  { agency: "Same playbook for every client", blueJays: "Built for your business — no template" },
   { agency: "Junior reps rotate every 6 months", blueJays: "Ben — direct, no middlemen" },
   { agency: "You own nothing — cancel and it's gone", blueJays: "You own the system, always" },
   { agency: "12-month contracts, hard to exit", blueJays: "Month-to-month, cancel any time" },
@@ -32,26 +32,26 @@ const AGENCY_ITEMS = [
 ];
 
 const INCLUDED = [
-  { icon: "🌐", title: "Custom Website", detail: "Conversion-tracked — every click feeds the loop" },
-  { icon: "📈", title: "Google Ads — Self-Learning", detail: "Headlines that win get more budget automatically" },
-  { icon: "🎯", title: "Meta Ads — Self-Learning", detail: "Audiences that don't convert get cut without touching it" },
-  { icon: "🧭", title: "Audience-Segmented Funnels", detail: "Up to 6 separate funnel tracks per customer type, each using all 4 channels: email, SMS, ringless voicemail, AI postcards. Never a generic blast." },
-  { icon: "✉️", title: "AI Inbound Responder", detail: "Auto-classifies every reply into 6 intent classes; drafts in your voice for one-tap send" },
-  { icon: "📅", title: "Scheduled Campaigns", detail: "Pick a date — system queues + ships at the minute, no babysitting" },
-  { icon: "📱", title: "SMS Follow-Ups", detail: "Automated texts that improve based on reply data" },
-  { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. Captures the voicemail you'd lose." },
-  { icon: "📞", title: "Voicemail Drops", detail: "Ringless voicemail to every warm lead — hands-free" },
-  { icon: "📮", title: "AI Postcards (via Lob)", detail: "Physical mail step inside your funnel. AI generates the artwork + copy per lead — their tractor model, hunting season, kid's age — and Lob prints + ships it. Multi-channel funnels that step out of the inbox have 3-5× the response of email-only sequences." },
-  { icon: "🎁", title: "Interactive Lead Magnet", detail: "Industry-specific configurator quiz that builds personalized recommendations + auto-routes leads to the right funnel" },
-  { icon: "🗺️", title: "County-Level Lead Scout", detail: "Click any US county on a map → audience-scoped Google Places scrape pulls fresh leads to your inbox. Universal status colors: blue while scouting, green when completed, red ✕ if no results — so you always know where you've been." },
-  { icon: "🤝", title: "Partner / Sales-Team Program", detail: "Recruitment landing page + audience-branched script library so you (or your reps) can call leads with a different pitch per customer type. Per-audience objection handlers + payout structure, built for ITC-style $50-retail/$250-dealer commission models or any flat-fee program." },
-  { icon: "📊", title: "Owner Portal", detail: "Live cockpit: Leads · To-Do · Budget · Campaigns · Funnels · Map · Insights · Account. One login, everything in view." },
-  { icon: "🔬", title: "Hyperloop A/B Engine", detail: "Wilson-CI statistical testing on every email subject + ad creative. Winners auto-promoted." },
-  { icon: "🔍", title: "Long-Term SEO", detail: "Content + authority that compounds while the ads learn" },
-  { icon: "🖼️", title: "Logo Revision", detail: "Brand polish so your system looks as good as it runs" },
-  { icon: "📈", title: "Live Open/Click Tracking", detail: "SendGrid + pixel tracking flows back into your dashboard in real time" },
-  { icon: "🔥", title: "Microsoft Clarity Heatmaps", detail: "Session recordings + click/scroll heatmaps wired into your site so we see exactly where users drop off — and tighten the loop with proof" },
-  { icon: "📊", title: "Weekly + Monthly Reports", detail: "Auto-generated digests in your inbox. Real numbers showing the loop tightening." },
+  { icon: "🌐", title: "Custom Website", detail: "Built for your business. Every click feeds the system so it gets smarter." },
+  { icon: "📈", title: "Google Ads That Learn", detail: "Headlines that get clicks get more money. Headlines that flop get cut." },
+  { icon: "🎯", title: "Facebook + Instagram Ads That Learn", detail: "Customer types that buy get more ads. The ones that don't buy get dropped." },
+  { icon: "🧭", title: "Different Pitch For Each Customer Type", detail: "Up to 6 different sales tracks — one per customer type. Each one uses email, text, voicemail, and physical mail. Never the same blast to everyone." },
+  { icon: "✉️", title: "Auto-Reply To Every Email", detail: "Sorts every reply into one of 6 buckets and writes a draft in your voice. You hit send." },
+  { icon: "📅", title: "Set-It-And-Forget-It Campaigns", detail: "Pick a date. The system sends at the minute. You don't babysit it." },
+  { icon: "📱", title: "Text Follow-Ups", detail: "Auto-texts that get smarter based on who replies." },
+  { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. You stop losing the leads voicemail eats." },
+  { icon: "📞", title: "Voicemail Drops", detail: "Drop a voicemail straight into every warm lead's inbox — phone never rings, no awkward call." },
+  { icon: "📮", title: "Smart Postcards In The Mail", detail: "We send a real postcard to each lead with stuff they care about — their tractor brand, their hunting season, their kid's age. Mail steps work 3-5× better than email alone." },
+  { icon: "🎁", title: "A Free Gift That Catches Leads", detail: "A short quiz built for your business that gives the visitor a custom answer — and routes them to the right sales track." },
+  { icon: "🗺️", title: "Pick-Your-County Lead Finder", detail: "Click any US county on a map → fresh leads land in your inbox. Color-coded so you always know where you've already searched." },
+  { icon: "🤝", title: "Sales Team / Partner Program", detail: "A page where partners can sign up, plus a script library so each partner has the right pitch for each customer type. Built-in commission tracking — flat fee or split (like $50 retail / $250 dealer)." },
+  { icon: "📊", title: "Owner Dashboard", detail: "One screen for Leads · To-Do · Budget · Campaigns · Funnels · Map · Insights · Account. One login, everything in view." },
+  { icon: "🔬", title: "Auto A/B Test Engine", detail: "Tests every email subject and every ad. Winners get more traffic — automatically." },
+  { icon: "🔍", title: "Long-Term Google Rank Growth", detail: "Articles + backlinks that climb Google over months, while the ads do the heavy lifting now." },
+  { icon: "🖼️", title: "Logo Refresh", detail: "We polish your logo so the system looks as sharp as it runs." },
+  { icon: "📈", title: "Live Open/Click Tracking", detail: "See who opened, who clicked, who replied — in real time on your dashboard." },
+  { icon: "🔥", title: "Heatmap Recordings", detail: "Watch real visitors click around your site so we know exactly where they get stuck — and fix it fast." },
+  { icon: "📊", title: "Weekly + Monthly Reports", detail: "Auto-emailed. Real numbers showing the system getting better." },
 ];
 
 const FAQS = [
@@ -61,15 +61,15 @@ const FAQS = [
   },
   {
     q: "What's the $500–$1,000/month for?",
-    a: "Ad spend management, ongoing SEO, content updates, system tuning, and Ben's direct availability. The exact amount depends on your ad budget and how active you want the ongoing work to be.",
+    a: "Those are the bills that keep the system running — Twilio (texts + voicemails), SendGrid (email), Claude (the AI brain), and whatever you're spending on ads. Those bills go straight to the vendors, not to us. We are NOT a retainer agency. Versus an agency at $3-8K/mo, you're paying about a third for the same outcome — and you own the system.",
   },
   {
-    q: "How does the self-learning AI work?",
-    a: "The ad campaigns feed performance data back into the system automatically. Headlines that convert get used more. Audiences that don't convert get cut. Over time, the system gets smarter about your specific buyers without you touching anything.",
+    q: "How does the AI get smarter every week?",
+    a: "Your ads, emails, and texts feed their results back into the system. Headlines that win get more budget. Customers types that buy get more ads. Email subject lines that flop get replaced. No one pushes a button. It just keeps tuning itself.",
   },
   {
     q: "What's the pricing breakdown?",
-    a: "Pay $9,700 in full (save $300), or split into three milestones: $3,500 to start, $3,500 at 30 days, $3,000 at 60 days ($10,000 total either way). Nothing is due until you've seen real progress.",
+    a: "Three ways to pay: (1) $9,700 up front and save $300. (2) $3,500 to start, $3,500 at day 30, $3,000 at day 60 — $10,000 total. (3) $2,500 today and $2,500 every 90 days, four times — $10,000 total, then it stops on its own. Pick whichever fits your cash flow.",
   },
   {
     q: "Can I keep my existing website?",
@@ -85,7 +85,11 @@ const FAQS = [
   },
   {
     q: "What's an 'audience-segmented funnel'?",
-    a: "Most agencies blast the same email to every lead. We map your customer mix into segments (e.g. for a tractor-accessory shop: Dealer / TYM owner / Forester / Hunter / Sub-compact owner) and run a separate funnel for each — and each funnel uses ALL FOUR channels: email, SMS, ringless voicemail, and AI-generated physical postcards via Lob. The Dealer gets ROI math + a printed catalog mailed to their shop; the Hunter gets gun-mount install tips + a season-checklist postcard; the Forester gets chainsaw-rig content + an acreage-matched setup recap card. Same lead-magnet site, six conversion paths, four channels per path.",
+    a: "Most agencies blast the same email to every lead. We don't. Three kinds of people care about your product: the BUYER who uses it, the PRO who tells the buyer to get it (coach, dealer, contractor, vet), and the SHOP that resells it. Each one needs a different message. We build a separate path for each — and each path uses email, text, voicemail, and a real printed postcard. Example for a tractor-accessory shop: the Dealer gets margin math + a printed dealer catalog. The Hunter gets gun-mount install tips + a season-prep card. The Forester gets a chainsaw-rig setup card. Same lead-magnet site. Up to six paths. Four channels per path.",
+  },
+  {
+    q: "Is this for service businesses or product makers?",
+    a: "Both work, but the system shines for product makers and brands. Why: a product made in one place, with a patent or a tight fit, sold by trusted pros — that's a story the AI can learn. A service that's the same as ten others on the block has less to teach the system. If you make something only you make, this is the right fit. If you sell a commodity, your ad spend will burn fast and Ben will say so on the call.",
   },
   {
     q: "How do AI Postcards work?",
@@ -139,20 +143,25 @@ export default function AgencyPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-16 text-center max-w-4xl mx-auto">
         <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-          The self-learning AI marketing system
+          Built for makers, brands, and product shops
         </div>
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-          100 qualified leads in 90 days.{" "}
-          <span className="text-violet-400">Or we work free until you hit it.</span>
+          You make a real thing.{" "}
+          <span className="text-violet-400">We build the system that sells it.</span>
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4 leading-relaxed">
-          One self-improving funnel — Google Ads, Meta Ads, email, SMS, voicemail,
-          SEO — all sharing data, all learning from your customers, all
-          tightening every week without anyone touching it.
+          One system that runs your ads, emails, texts, voicemails, and SEO.
+          Every week it figures out what works for your buyers and does
+          more of it. You don&apos;t touch anything.
+        </p>
+        <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-4 leading-relaxed">
+          We build a path for the buyer who wants the thing, the pro who
+          tells them to buy it (the coach, the dealer, the contractor), and
+          the shop that sells it for you. Three jobs. One system.
         </p>
         <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">
-          We build it custom for your business in 30 days. You own every piece.
-          <strong className="text-white"> If we don&apos;t deliver 100 qualified leads in 90 days, we keep working — at no extra cost — until you hit the number.</strong>
+          We build it for you in 30 days. You own all of it.
+          <strong className="text-white"> 100 real leads in 90 days, or we keep working free until you hit it.</strong>
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
@@ -169,7 +178,10 @@ export default function AgencyPage() {
           </Link>
         </div>
         <p className="text-xs text-slate-500 mt-4">
-          8-question fit check · Ben answers personally · Most apps reviewed within 24h
+          Quick fit check · Ben answers in person · Most replies within a day
+        </p>
+        <p className="text-xs text-slate-500 mt-2">
+          Only 10 of these built per month. When the month is full, the next slot rolls to next month.
         </p>
         <p className="text-sm text-slate-400 mt-6">
           Thinking &quot;I could build this myself with Claude&quot;?{" "}
@@ -180,6 +192,37 @@ export default function AgencyPage() {
             See the full engineering teardown →
           </Link>
         </p>
+      </section>
+
+      {/* ── WHO THIS IS FOR ──────────────────────────────────────────────────── */}
+      <section className="px-6 py-12 md:py-16 max-w-4xl mx-auto">
+        <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.04] p-6 md:p-10">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
+            Who this works best for
+          </h2>
+          <p className="text-slate-300 text-center max-w-2xl mx-auto mb-6 leading-relaxed">
+            We built this for owners who make a real thing. A product. A
+            service with proof. Something only you do. If your work has any
+            of these, this fits:
+          </p>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">A place</p>
+              <p className="text-sm text-slate-300">You make it in your shop. Your town. Your country. Not &quot;drop-shipped from a warehouse.&quot;</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">A patent or a fit</p>
+              <p className="text-sm text-slate-300">You hold a patent. A trademark. A part that fits one specific machine. Something nobody else can copy fast.</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">A pro who sends you buyers</p>
+              <p className="text-sm text-slate-300">A coach, vet, dealer, contractor, mom-blogger — someone trusted who tells the buyer to come to you.</p>
+            </div>
+          </div>
+          <p className="text-xs text-slate-500 text-center mt-6 max-w-xl mx-auto">
+            Two of these three is plenty. All three and the system flies. None and your ad spend will burn fast — Ben will tell you on the call.
+          </p>
+        </div>
       </section>
 
       {/* ── THE MATH ─────────────────────────────────────────────────────────── */}
@@ -274,17 +317,17 @@ export default function AgencyPage() {
       <section className="px-6 py-16 bg-gradient-to-b from-slate-900/50 to-transparent">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-            The competitive advantage agencies can&apos;t match
+            What agencies can&apos;t match
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Agencies manage campaigns.<br />
-            <span className="text-violet-300">This system manages itself.</span>
+            Agencies babysit your ads.<br />
+            <span className="text-violet-300">This one runs itself.</span>
           </h2>
           <p className="text-slate-300 text-lg leading-relaxed mb-6">
-            Every component — ads, website, email, SMS, voicemail — feeds performance data back into a single loop. Headlines that convert get amplified. Audiences that don&apos;t convert get cut. Email subject lines that underperform get replaced. No human makes these calls. The AI does, continuously, in the background.
+            Your ads, website, emails, texts, and voicemails all share the same brain. When something works, the system does more of it. When something flops, the system drops it. No one has to push a button. It happens 24/7 in the background.
           </p>
           <p className="text-slate-400 leading-relaxed mb-10">
-            An agency team runs campaigns for 30+ clients simultaneously. They rotate junior reps every six months. They use the same playbook for your roofing company as they do for the dentist down the street. BlueJays builds one system, custom for your business, and the AI tightens it week after week. Month 3 is smarter than Month 1. Month 12 is smarter than Month 3. It compounds — the way real competitive advantages do.
+            An agency team runs ads for 30+ businesses at once. They use the same playbook on your roofing company that they use on the dentist down the street. BlueJays builds ONE system just for you. Month 3 is smarter than Month 1. Month 12 is smarter than Month 3. It keeps getting better — that&apos;s your real edge.
           </p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[

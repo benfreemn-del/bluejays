@@ -153,20 +153,20 @@ export default function AuditCTAHub({
           <div className="flex-shrink-0 text-center md:text-left">
             <div className="text-5xl mb-2">🚀</div>
             <h3 className="text-xl font-bold text-white">The Full System</h3>
-            <p className="text-violet-300 font-semibold text-sm mt-0.5">Custom AI Marketing Funnel</p>
+            <p className="text-violet-300 font-semibold text-sm mt-0.5">A robot that books your jobs for you</p>
           </div>
 
           {/* center: what&apos;s included */}
           <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-slate-300">
             {[
               "Custom website (included)",
-              "Google Ads — self-learning",
-              "Meta Ads — self-learning",
-              "Email + text + voicemail",
-              "Long-term SEO growth",
-              "Lead magnet (custom per biz)",
-              "Logo revision if needed",
-              "Monthly performance reports",
+              "Google Ads that learn what works",
+              "Facebook + Instagram ads that learn",
+              "Auto emails, texts, voicemails",
+              "SEO that grows your Google rank",
+              "A free gift that catches new leads",
+              "New logo if you need one",
+              "A simple report every month",
             ].map((item) => (
               <span key={item} className="flex items-center gap-1.5">
                 <span className="text-violet-400 flex-shrink-0">✓</span> {item}

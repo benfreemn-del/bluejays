@@ -15,24 +15,24 @@ const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 export const metadata: Metadata = {
-  title: "BlueJays | Premium Web Design for Local Businesses",
+  title: "BlueJays | We Build You A Better Website — See It Free First",
   description:
-    "We build stunning, high-converting websites for local businesses. See your new site before you pay. No obligation, no credit card required.",
+    "We build your business a brand-new website in 48 hours. You see it before you pay. Don't love it? You don't pay a cent. $997 one-time.",
   alternates: { canonical: BASE_URL },
   openGraph: {
     type: "website",
     siteName: "BlueJays",
-    title: "BlueJays | Premium Web Design for Local Businesses",
+    title: "BlueJays | We Build You A Better Website — See It Free First",
     description:
-      "We build stunning, high-converting websites for local businesses. See your new site before you pay.",
+      "We build your business a brand-new website in 48 hours. See it free before you pay.",
     url: BASE_URL,
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "BlueJays — Premium Web Design for Local Businesses" }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "BlueJays — see your new website free first, only pay if you love it" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BlueJays | Premium Web Design for Local Businesses",
+    title: "BlueJays | We Build You A Better Website — See It Free First",
     description:
-      "We build stunning, high-converting websites for local businesses. See your new site before you pay.",
+      "We build your business a brand-new website in 48 hours. See it free before you pay.",
     images: [OG_IMAGE],
   },
 };

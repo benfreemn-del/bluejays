@@ -15,12 +15,12 @@ const ArrowIcon = () => (
 );
 
 const INCLUDED = [
-  { label: "Self-Learning Ad Engine", desc: "Winners auto-scale. Losers auto-cut. No one touches it." },
-  { label: "Connected Funnel Loop", desc: "Ads → site → email → SMS → voicemail — all sharing data" },
-  { label: "AI-Powered Website", desc: "Tracks what converts, feeds results back to ads" },
-  { label: "Email + SMS Automation", desc: "Sequences that tighten based on what actually works" },
-  { label: "Lead Capture Funnels", desc: "Every form, click, and drop-off improves the next one" },
-  { label: "Monthly Reporting", desc: "Real numbers showing the loop getting smarter" },
+  { label: "Ads That Get Smarter", desc: "Winners get more money. Losers get cut. You don't touch it." },
+  { label: "Everything Talks To Everything", desc: "Ads → site → email → text → voicemail — all sharing the same brain" },
+  { label: "Smart Website", desc: "Tracks every click and feeds the results back to your ads" },
+  { label: "Auto Email + Text", desc: "Sequences that get sharper as more people reply" },
+  { label: "Lead-Catching Quizzes", desc: "Every form, click, and drop-off makes the next one better" },
+  { label: "Monthly Report", desc: "Plain numbers that show the system getting smarter" },
 ];
 
 export default function AgencySection() {
@@ -60,17 +60,17 @@ export default function AgencySection() {
             </span>
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-5">
-              100 qualified leads in 90 days.{" "}
+              100 real leads in 90 days.{" "}
               <span
                 className="bg-clip-text text-transparent"
                 style={{ backgroundImage: "linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #c4b5fd 100%)" }}
               >
-                Or we work free until you hit it.
+                Or we work free until you get them.
               </span>
             </h2>
 
             <p className="text-white/50 text-lg leading-relaxed mb-8 max-w-lg">
-              A self-learning AI marketing system — ads, site, email, SMS, voicemail — built custom for your business and tightening every week without anyone touching it. We bet the engagement on a number. Most agencies refuse to.
+              One system that runs your ads, website, emails, texts, and voicemails. Every week it figures out what works for your customers and does more of it. You don&apos;t touch a thing. We bet the deal on a number — most agencies won&apos;t.
             </p>
 
             {/* Price + guarantee callout */}
@@ -108,7 +108,7 @@ export default function AgencySection() {
                   className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.45)] active:scale-[0.97]"
                   style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)" }}
                 >
-                  See how the loop works
+                  See how the system works
                   <ArrowIcon />
                 </a>
                 <a
@@ -135,7 +135,7 @@ export default function AgencySection() {
             <div className="relative rounded-3xl border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm overflow-hidden">
               {/* Top bar */}
               <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
-                <span className="text-white/60 text-sm font-semibold">The self-learning loop</span>
+                <span className="text-white/60 text-sm font-semibold">The system that runs itself</span>
                 <span className="text-xs text-violet-400 font-bold px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20">
                   Gets smarter weekly
                 </span>

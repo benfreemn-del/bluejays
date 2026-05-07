@@ -102,15 +102,14 @@ export default function About() {
             </h2>
             <div className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mb-6" />
             <p className="text-white/50 text-lg leading-relaxed mb-4">
-              Most local businesses either have an outdated website or no site at
-              all. We change that. BlueJays builds premium, modern websites
-              tailored to your industry — and we show you the finished product
-              before you pay a dime.
+              Most local businesses have an old, ugly website — or no website
+              at all. We fix that. BlueJays builds you a modern site for your
+              kind of business and shows you the finished thing before you pay
+              a dollar.
             </p>
             <p className="text-white/50 text-lg leading-relaxed">
-              No templates that look like everyone else. No hidden fees. No
-              waiting months. Just a stunning website that brings in customers,
-              delivered fast.
+              No copycat templates. No hidden fees. No waiting months. Just a
+              great-looking site that brings you customers, delivered in days.
             </p>
           </div>
 
