@@ -18,18 +18,26 @@
  *   pricingTier === 'fullsystem' → $10K column
  *   anything else / undefined    → Website column
  *
- * Stage stored on prospects.pipeline_stage (smallint, NULL by default).
- * Only prospects with pipelineStage IS NOT NULL render here — keeps the
- * board focused. Move a lead onto the board by setting their stage
- * (default 1) the first time they hit a relevant status.
+ * SUB-CATEGORIES via lowercase letter suffix (added 2026-05-07):
+ *   '4'  = stage 4, no sub-state
+ *   '4a' = stage 4 sub-state a (e.g. awaiting first deliverable)
+ *   '4b' = stage 4 sub-state b (e.g. awaiting client photos)
+ *   '4c' = stage 4 sub-state c (e.g. blocked on client decision)
+ *   ...up to 4z, but in practice a/b/c is plenty.
+ *
+ * Stage stored on prospects.pipeline_stage (text, NULL by default,
+ * format-checked in Postgres). prospects.pipeline_stage is the SINGLE
+ * CANONICAL lead-stage column — every funnel + every dashboard view
+ * reads from it. No parallel stage on client_leads / partner_referrals
+ * / anywhere else.
  *
  * Editing UX:
- *   - Each card shows the current stage number with ▲ ▼ buttons to nudge
- *     it up or down (clamped to per-track ceiling).
+ *   - Each card has TWO steppers — a number stepper (1-N, clamped to
+ *     per-track ceiling) and a letter stepper (none/a/b/c/d/e).
  *   - Changes are LOCAL until the user hits Save on that card. Pending
  *     changes show as amber outline + "Unsaved" pill so it's obvious.
- *   - Save calls PATCH /api/prospects/[id] with { pipelineStage } and
- *     reflects success/failure in the card.
+ *   - Save calls PATCH /api/prospects/[id] with { pipelineStage: '4a' }
+ *     and reflects success/failure in the card.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -52,6 +60,10 @@ const FULLSYSTEM_STAGES = [
   { n: 6, label: "Delivered + managing $500/mo" },
 ] as const;
 
+// Available sub-letters in the stepper. Empty string = no letter.
+// Cycle order: '' → 'a' → 'b' → 'c' → 'd' → 'e' → '' (wraps).
+const LETTER_CYCLE = ["", "a", "b", "c", "d", "e"] as const;
+
 type Track = "website" | "fullsystem";
 
 function trackOf(p: Prospect): Track {
@@ -62,15 +74,29 @@ function ceilingFor(track: Track): number {
   return track === "fullsystem" ? 6 : 4;
 }
 
+/** Parse '4a' → { num: 4, letter: 'a' }. '4' → { num: 4, letter: '' }.
+ *  Falls back to { num: 1, letter: '' } on bad input. */
+function parseStage(raw: string | undefined | null): { num: number; letter: string } {
+  if (!raw) return { num: 1, letter: "" };
+  const m = raw.match(/^([1-6])([a-z])?$/);
+  if (!m) return { num: 1, letter: "" };
+  return { num: parseInt(m[1], 10), letter: m[2] ?? "" };
+}
+
+function formatStage(num: number, letter: string): string {
+  return letter ? `${num}${letter}` : `${num}`;
+}
+
 export default function SalesPipelinePage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
-  // Per-prospect local stage edits — keyed by prospect.id. When the
-  // value differs from the persisted one, we render an "Unsaved" pill
-  // and amber outline. Cleared on successful save.
-  const [pendingStages, setPendingStages] = useState<Record<string, number>>({});
+  // Per-prospect local stage edits — keyed by prospect.id. Value is
+  // the full stage string (e.g. '4a'). When this differs from the
+  // persisted prospect.pipelineStage, the card shows amber outline +
+  // "Unsaved" pill. Cleared on successful save.
+  const [pendingStages, setPendingStages] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const fetchProspects = async () => {
@@ -91,30 +117,54 @@ export default function SalesPipelinePage() {
     fetchProspects();
   }, []);
 
+  // Group prospects into Map<stageNumber, Prospect[]> per track. Sub-
+  // letter doesn't change which group bucket a prospect lives in — '4'
+  // and '4a' both render under stage 4, sorted by letter so 4 < 4a < 4b.
   const { websiteByStage, fullsystemByStage } = useMemo(() => {
     const website = new Map<number, Prospect[]>();
     const fullsystem = new Map<number, Prospect[]>();
     for (const p of prospects) {
-      const stage = p.pipelineStage ?? 0;
-      if (stage <= 0) continue;
+      const { num } = parseStage(p.pipelineStage);
+      if (num <= 0) continue;
       const map = trackOf(p) === "fullsystem" ? fullsystem : website;
-      if (!map.has(stage)) map.set(stage, []);
-      map.get(stage)!.push(p);
+      if (!map.has(num)) map.set(num, []);
+      map.get(num)!.push(p);
+    }
+    // Sort each bucket by letter (empty first, then a/b/c).
+    for (const list of [...website.values(), ...fullsystem.values()]) {
+      list.sort((a, b) => {
+        const la = parseStage(a.pipelineStage).letter;
+        const lb = parseStage(b.pipelineStage).letter;
+        return la.localeCompare(lb);
+      });
     }
     return { websiteByStage: website, fullsystemByStage: fullsystem };
   }, [prospects]);
 
-  const nudge = (id: string, currentPersisted: number, track: Track, delta: number) => {
+  const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
     const max = ceilingFor(track);
-    const current = pendingStages[id] ?? currentPersisted;
-    const next = Math.max(1, Math.min(max, current + delta));
+    const current = pendingStages[id] ?? persisted;
+    const { num, letter } = parseStage(current);
+    const nextNum = Math.max(1, Math.min(max, num + delta));
+    // When changing the major stage, drop the sub-letter (different
+    // stage = different sub-meanings).
+    const next = formatStage(nextNum, nextNum === num ? letter : "");
+    setPendingStages((prev) => ({ ...prev, [id]: next }));
+  };
+
+  const nudgeLetter = (id: string, persisted: string, delta: number) => {
+    const current = pendingStages[id] ?? persisted;
+    const { num, letter } = parseStage(current);
+    const idx = LETTER_CYCLE.indexOf(letter as (typeof LETTER_CYCLE)[number]);
+    const nextIdx = (idx + delta + LETTER_CYCLE.length) % LETTER_CYCLE.length;
+    const next = formatStage(num, LETTER_CYCLE[nextIdx]);
     setPendingStages((prev) => ({ ...prev, [id]: next }));
   };
 
   const saveStage = async (id: string) => {
     if (savingId) return;
     const next = pendingStages[id];
-    if (next == null) return;
+    if (!next) return;
     setSavingId(id);
     try {
       const res = await fetch(`/api/prospects/${id}`, {
@@ -124,7 +174,6 @@ export default function SalesPipelinePage() {
         body: JSON.stringify({ pipelineStage: next }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      // Optimistic local update + clear pending.
       setProspects((prev) =>
         prev.map((p) => (p.id === id ? { ...p, pipelineStage: next } : p)),
       );
@@ -135,7 +184,6 @@ export default function SalesPipelinePage() {
       });
     } catch (e) {
       console.error("[sales-pipeline] save failed:", e);
-      // Leave pending state in place so the user can retry.
     } finally {
       setSavingId(null);
     }
@@ -162,8 +210,9 @@ export default function SalesPipelinePage() {
           </Link>
         </div>
         <p className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 text-xs text-slate-500">
-          Active leads only — set a prospect&apos;s pipeline stage from
-          their detail page to put them on this board.
+          Single source of truth · every funnel reads from this stage. Use ▲▼
+          on the number to change major stage, ▲▼ on the letter to add a
+          sub-state (4a / 4b / 4c). Hit Save to persist.
         </p>
       </header>
 
@@ -199,8 +248,11 @@ export default function SalesPipelinePage() {
                     leads={websiteByStage.get(s.n) ?? []}
                     pendingStages={pendingStages}
                     savingId={savingId}
-                    onNudge={(id, persisted, delta) =>
-                      nudge(id, persisted, "website", delta)
+                    onNudgeNum={(id, persisted, delta) =>
+                      nudgeNum(id, persisted, "website", delta)
+                    }
+                    onNudgeLetter={(id, persisted, delta) =>
+                      nudgeLetter(id, persisted, delta)
                     }
                     onSave={saveStage}
                   />
@@ -228,8 +280,11 @@ export default function SalesPipelinePage() {
                     leads={fullsystemByStage.get(s.n) ?? []}
                     pendingStages={pendingStages}
                     savingId={savingId}
-                    onNudge={(id, persisted, delta) =>
-                      nudge(id, persisted, "fullsystem", delta)
+                    onNudgeNum={(id, persisted, delta) =>
+                      nudgeNum(id, persisted, "fullsystem", delta)
+                    }
+                    onNudgeLetter={(id, persisted, delta) =>
+                      nudgeLetter(id, persisted, delta)
                     }
                     onSave={saveStage}
                   />
@@ -252,22 +307,24 @@ function StageGroup({
   leads,
   pendingStages,
   savingId,
-  onNudge,
+  onNudgeNum,
+  onNudgeLetter,
   onSave,
 }: {
   stage: number;
   label: string;
   accent: "sky" | "violet";
   leads: Prospect[];
-  pendingStages: Record<string, number>;
+  pendingStages: Record<string, string>;
   savingId: string | null;
-  onNudge: (id: string, persisted: number, delta: number) => void;
+  onNudgeNum: (id: string, persisted: string, delta: number) => void;
+  onNudgeLetter: (id: string, persisted: string, delta: number) => void;
   onSave: (id: string) => void;
 }) {
   if (leads.length === 0) {
     return (
       <div className="px-4 py-2.5 flex items-center gap-3 text-[11px] text-slate-500">
-        <StageBadge n={stage} accent={accent} />
+        <StageBadge label={`${stage}`} accent={accent} dim />
         <span className="flex-1">{label}</span>
         <span className="opacity-60">empty</span>
       </div>
@@ -276,7 +333,7 @@ function StageGroup({
   return (
     <div className="px-4 py-3">
       <div className="flex items-center gap-3 mb-2">
-        <StageBadge n={stage} accent={accent} />
+        <StageBadge label={`${stage}`} accent={accent} />
         <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
           {label}
         </span>
@@ -289,7 +346,12 @@ function StageGroup({
             prospect={p}
             pending={pendingStages[p.id]}
             saving={savingId === p.id}
-            onNudge={(delta) => onNudge(p.id, p.pipelineStage ?? stage, delta)}
+            onNudgeNum={(delta) =>
+              onNudgeNum(p.id, p.pipelineStage ?? `${stage}`, delta)
+            }
+            onNudgeLetter={(delta) =>
+              onNudgeLetter(p.id, p.pipelineStage ?? `${stage}`, delta)
+            }
             onSave={() => onSave(p.id)}
           />
         ))}
@@ -298,16 +360,26 @@ function StageGroup({
   );
 }
 
-function StageBadge({ n, accent }: { n: number; accent: "sky" | "violet" }) {
+function StageBadge({
+  label,
+  accent,
+  dim,
+}: {
+  label: string;
+  accent: "sky" | "violet";
+  dim?: boolean;
+}) {
   const cls =
     accent === "sky"
       ? "bg-sky-500/15 text-sky-200 border-sky-500/30"
       : "bg-violet-500/15 text-violet-200 border-violet-500/30";
   return (
     <span
-      className={`inline-flex items-center justify-center w-6 h-6 rounded-md border text-xs font-black tabular-nums ${cls}`}
+      className={`inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1 rounded-md border text-xs font-black tabular-nums ${cls} ${
+        dim ? "opacity-50" : ""
+      }`}
     >
-      {n}
+      {label}
     </span>
   );
 }
@@ -316,18 +388,21 @@ function LeadCard({
   prospect,
   pending,
   saving,
-  onNudge,
+  onNudgeNum,
+  onNudgeLetter,
   onSave,
 }: {
   prospect: Prospect;
-  pending: number | undefined;
+  pending: string | undefined;
   saving: boolean;
-  onNudge: (delta: number) => void;
+  onNudgeNum: (delta: number) => void;
+  onNudgeLetter: (delta: number) => void;
   onSave: () => void;
 }) {
-  const persisted = prospect.pipelineStage ?? 0;
+  const persisted = prospect.pipelineStage ?? "1";
   const display = pending ?? persisted;
   const dirty = pending != null && pending !== persisted;
+  const { num, letter } = parseStage(display);
 
   return (
     <li
@@ -339,10 +414,6 @@ function LeadCard({
     >
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          {/* Click-through opens the prospect's generated preview in
-              a new tab. /dashboard/prospects/[id] detail route doesn't
-              exist yet, so we link directly at /preview/[id] which
-              always renders something for any prospect with site copy. */}
           <a
             href={`/preview/${prospect.id}`}
             target="_blank"
@@ -363,35 +434,71 @@ function LeadCard({
           )}
         </div>
 
-        {/* Stage stepper */}
-        <div className="flex items-center gap-1 shrink-0">
-          <div className="flex flex-col">
-            <button
-              type="button"
-              onClick={() => onNudge(1)}
-              className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
-              aria-label="increase stage"
+        {/* Stage steppers — number + optional letter */}
+        <div className="flex items-stretch gap-2 shrink-0">
+          {/* Number stepper */}
+          <div className="flex items-center gap-1">
+            <div className="flex flex-col">
+              <button
+                type="button"
+                onClick={() => onNudgeNum(1)}
+                className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
+                aria-label="increase major stage"
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                onClick={() => onNudgeNum(-1)}
+                className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
+                aria-label="decrease major stage"
+              >
+                ▼
+              </button>
+            </div>
+            <span
+              className={`inline-flex items-center justify-center w-7 h-8 rounded-md border text-base font-black tabular-nums ${
+                dirty
+                  ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
+                  : "border-slate-700 bg-slate-800 text-white"
+              }`}
             >
-              ▲
-            </button>
-            <button
-              type="button"
-              onClick={() => onNudge(-1)}
-              className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
-              aria-label="decrease stage"
-            >
-              ▼
-            </button>
+              {num}
+            </span>
           </div>
-          <span
-            className={`inline-flex items-center justify-center w-8 h-8 rounded-md border text-base font-black tabular-nums ${
-              dirty
-                ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
-                : "border-slate-700 bg-slate-800 text-white"
-            }`}
-          >
-            {display}
-          </span>
+          {/* Letter stepper — cycles '' / a / b / c / d / e */}
+          <div className="flex items-center gap-1">
+            <div className="flex flex-col">
+              <button
+                type="button"
+                onClick={() => onNudgeLetter(1)}
+                className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
+                aria-label="cycle sub-letter forward"
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                onClick={() => onNudgeLetter(-1)}
+                className="w-5 h-4 flex items-center justify-center text-slate-500 hover:text-white text-xs leading-none"
+                aria-label="cycle sub-letter backward"
+              >
+                ▼
+              </button>
+            </div>
+            <span
+              className={`inline-flex items-center justify-center w-7 h-8 rounded-md border text-base font-black tabular-nums ${
+                dirty
+                  ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
+                  : letter
+                    ? "border-slate-700 bg-slate-800 text-white"
+                    : "border-slate-800 bg-slate-900 text-slate-600"
+              }`}
+              title={letter ? `Sub-state ${letter}` : "No sub-state"}
+            >
+              {letter || "·"}
+            </span>
+          </div>
         </div>
       </div>
 

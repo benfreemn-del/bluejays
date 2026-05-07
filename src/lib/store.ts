@@ -163,7 +163,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
         | "custom"
         | "fullsystem"
         | undefined) || "standard",
-    pipelineStage: (row.pipeline_stage as number | null) ?? undefined,
+    pipelineStage: (row.pipeline_stage as string | null) ?? undefined,
     pipelineStageUpdatedAt:
       (row.pipeline_stage_updated_at as string | null) ?? undefined,
     customSiteUrl: (row.custom_site_url as string | null) || undefined,

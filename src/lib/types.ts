@@ -165,7 +165,15 @@ export interface Prospect {
    *                See src/app/p/[code]/page.tsx for the short-URL redirect behaviour
    *                and CLAUDE.md "Custom Pricing Tier Rules" for the full spec. */
   pricingTier?: "standard" | "free" | "custom" | "fullsystem";
-  /** Pipeline-stage tracker for /dashboard/pipeline kanban.
+  /** SINGLE CANONICAL lead-stage column. Every funnel, every dashboard
+   *  view, every report reads from this same field. Don't fork a parallel
+   *  stage onto client_leads / partner_referrals / anywhere else.
+   *
+   *  Format: digit 1-6 optionally followed by ONE lowercase letter a-z
+   *  (so '4' or '4a' or '6c' all valid). Letter is for sub-categorizing
+   *  within a stage when the same number means slightly different states
+   *  (4a = awaiting first deliverable, 4b = awaiting client photos,
+   *  4c = blocked on client decision, etc.).
    *
    *  Two tracks (track inferred from pricingTier):
    *    Website ($997, pricingTier !== 'fullsystem')
@@ -183,8 +191,8 @@ export interface Prospect {
    *      6 = delivered + still managing $500/mo
    *
    *  NULL/undefined = not on the pipeline board yet (inbound triage).
-   *  /dashboard/pipeline only renders prospects where this is set. */
-  pipelineStage?: number;
+   *  /dashboard/sales-pipeline only renders prospects where this is set. */
+  pipelineStage?: string;
   pipelineStageUpdatedAt?: string;
   /** For pricing_tier=custom prospects only: absolute URL of the real live site
    *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
