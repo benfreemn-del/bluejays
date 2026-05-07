@@ -1,7 +1,6 @@
 import Link from "next/link";
 import EmailCaptureFooter from "./EmailCaptureFooter.client";
 import { BespokeExperience } from "./bespoke-experience.client";
-import { LakeMapArt } from "./lake-map-art";
 
 export const metadata = {
   title: "Laser Lakes — Custom Lake Maps + Wood Wildlife Art (Minnesota)",
@@ -82,20 +81,47 @@ export default function LaserLakesPage() {
       <section
         className="relative overflow-hidden"
         style={{
-          backgroundColor: "#1f1a14",
+          backgroundColor: "#0c1820",
           color: "#f6f1e8",
         }}
       >
-        <div className="absolute inset-0 opacity-40">
-          {/* Cabin/lake atmosphere — soft duotone gradient */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse at 70% 30%, rgba(217, 159, 88, 0.32), transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(99, 70, 39, 0.4), transparent 70%)",
-            }}
-          />
-        </div>
+        {/* REAL LAKE PHOTO — moody Northwoods lake at dusk fills the
+            entire hero background. Provides the actual nature vibe
+            instead of flat brown. Image is from Unsplash CDN
+            (stable hot-link), darkened with overlays so the
+            foreground copy stays legible. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1431512284068-4c4002298068?w=2400&q=85&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.55,
+            filter: "saturate(1.05)",
+          }}
+          aria-hidden
+        />
+        {/* Dusk-warm gradient overlay — pulls the photo toward the
+            brand's amber + warm-walnut palette without losing the
+            water depth. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(12, 24, 32, 0.85) 0%, rgba(31, 26, 20, 0.65) 45%, rgba(12, 18, 24, 0.85) 100%)",
+          }}
+          aria-hidden
+        />
+        {/* Amber + walnut radial glows — keep the cabin warmth */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse at 75% 25%, rgba(217, 159, 88, 0.32), transparent 55%), radial-gradient(ellipse at 15% 85%, rgba(99, 70, 39, 0.45), transparent 65%)",
+          }}
+          aria-hidden
+        />
 
         <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28 grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
           <div>
@@ -166,32 +192,42 @@ export default function LaserLakesPage() {
                   "0 25px 70px -15px rgba(0,0,0,0.6), 0 8px 25px -8px rgba(217, 159, 88, 0.25)",
               }}
             >
-              {/* Real-feeling lake-map illustration — rendered from SVG
-                  so it scales infinitely + drops the moment Nate sends
-                  a real photo (just swap with <Image>). */}
-              <LakeMapArt
-                label="Lake Burntside"
-                state="MN"
-                variant="warm"
-                className="w-full h-full"
+              {/* Nate's actual Burntside Lake Map photo from his Shopify
+                  CDN. The real piece — varnished birch, hand-stained,
+                  layered shoreline — does the heavy lifting. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://laserlakes.com/cdn/shop/files/BurntsideLakeMap_Top3234_30db2ab9-8e5f-445f-b004-95f5c3166d03.jpg"
+                alt="Burntside Lake Map — hand-cut three-layer Baltic birch, signed by Nate"
+                className="absolute inset-0 w-full h-full object-cover"
               />
-              {/* Subtle water shimmer sweep over the whole piece — sells
-                  the "this is alive, not paint" effect. */}
+              {/* Subtle warm vignette for premium product-photo feel */}
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(105deg, transparent 35%, rgba(255, 240, 210, 0.12) 50%, transparent 65%)",
+                    "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35) 100%)",
+                }}
+              />
+              {/* Water shimmer sweep across the photo */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(105deg, transparent 35%, rgba(255, 240, 210, 0.16) 50%, transparent 65%)",
                   animation: "lakes-shimmer 8s ease-in-out infinite",
                 }}
               />
-              {/* Dimensions caption — overlaid bottom corner so the
-                  art reads as the headline, not the chrome. */}
+              {/* Caption strip overlaid bottom — the photo is the headline */}
               <div
-                className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-[10px] tracking-[0.32em] uppercase"
-                style={{ color: "rgba(43, 26, 8, 0.65)" }}
+                className="absolute bottom-0 left-0 right-0 px-4 py-3 flex items-center justify-between text-[10px] tracking-[0.32em] uppercase font-bold"
+                style={{
+                  color: "#f6f1e8",
+                  background:
+                    "linear-gradient(180deg, transparent, rgba(0,0,0,0.6))",
+                }}
               >
-                <span>Custom · 18&quot; × 24&quot;</span>
+                <span>Burntside Lake · MN</span>
                 <span>3-layer Baltic birch</span>
               </div>
             </div>
@@ -215,21 +251,41 @@ export default function LaserLakesPage() {
         className="relative overflow-hidden"
         style={{ backgroundColor: "#1f1a14", color: "#f6f1e8" }}
       >
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28 grid md:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
+        {/* Workshop / pine-forest ambient — adds the cabin-and-trees
+            mood under Nate's process story. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=2400&q=80&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.18,
+            filter: "saturate(1.1) hue-rotate(-5deg)",
+          }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(31, 26, 20, 0.92) 0%, rgba(31, 26, 20, 0.7) 50%, rgba(31, 26, 20, 0.92) 100%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28 grid md:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
           <div
-            className="aspect-square rounded-md shadow-2xl"
-            style={{
-              background:
-                "linear-gradient(135deg, #5d4225 0%, #2b241c 100%)",
-            }}
+            className="aspect-square rounded-md shadow-2xl overflow-hidden ring-1 ring-amber-200/15"
+            style={{ boxShadow: "0 25px 60px -15px rgba(0,0,0,0.7)" }}
           >
-            <div className="h-full flex items-center justify-center">
-              <p
-                className="text-amber-100/40 text-xs uppercase tracking-[0.32em]"
-              >
-                Workshop photo · place your shot here
-              </p>
-            </div>
+            {/* Real Ten Mile Lake detail shot — shows the layered
+                Baltic-birch construction up close. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://laserlakes.com/cdn/shop/files/TenMileIMG_3050.jpg"
+              alt="Ten Mile Lake Map · close-up showing the three-layer Baltic birch construction"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <p
@@ -271,8 +327,31 @@ export default function LaserLakesPage() {
       </section>
 
       {/* ─── TESTIMONIALS / STORIES ──────────────────────────────────── */}
-      <section id="stories" style={{ backgroundColor: "#f6f1e8" }}>
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+      <section id="stories" style={{ backgroundColor: "#f6f1e8" }} className="relative overflow-hidden">
+        {/* Misty Northwoods lake at sunrise — adds dimension behind
+            the testimonials so the section doesn't read as a flat
+            cream rectangle. Heavily faded so the white quote cards
+            still have contrast. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1500964757637-c85e8a162699?w=2400&q=80&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.1,
+          }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, #f6f1e8 0%, transparent 25%, transparent 75%, #f6f1e8 100%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-24">
           <div className="text-center mb-12">
             <p
               className="text-xs uppercase tracking-[0.32em] mb-4"
@@ -319,9 +398,31 @@ export default function LaserLakesPage() {
 
       {/* ─── EMAIL CAPTURE FOOTER ────────────────────────────────────── */}
       <section
+        className="relative overflow-hidden"
         style={{ backgroundColor: "#2b241c", color: "#f6f1e8" }}
       >
-        <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
+        {/* Dusk lake reflection photo — sets the close-of-page mood */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=80&auto=format&fit=crop')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.32,
+            filter: "saturate(0.85)",
+          }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(43, 36, 28, 0.6) 0%, rgba(43, 36, 28, 0.85) 60%, #2b241c 100%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
           <p
             className="text-xs uppercase tracking-[0.32em] mb-4"
             style={{ color: "#d99f58" }}

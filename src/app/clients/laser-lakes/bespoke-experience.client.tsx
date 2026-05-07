@@ -338,12 +338,30 @@ export function BespokeExperience() {
  *  and render <Image src={p.imageUrl} /> instead.
  */
 function ProductArt({ product }: { product: Product }) {
-  // Each lake-map product gets a different label so the grid feels
-  // like a real catalog of varied pieces, not "the same map x6".
+  // Real Shopify CDN photo wins. Renders <img> with object-cover so the
+  // photo fills the card. The SVG fallback below is only for products
+  // without a photo URL (the hero "custom order" placeholder).
+  if (product.imageUrl && product.imageUrl.startsWith("http")) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={product.imageUrl}
+        alt={product.name}
+        loading="lazy"
+        className="w-full h-full object-cover"
+      />
+    );
+  }
+
+  // SVG fallback — only used if the product doesn't have a real photo
+  // yet. Each lake-map product gets a different label so the grid
+  // feels like a real catalog of varied pieces.
   const lakeMapLabels: Record<string, { label: string; state: string; variant: "warm" | "walnut" | "ebony" }> = {
-    "lake-map-classic": { label: "Mille Lacs", state: "MN", variant: "warm" },
-    "lake-map-shadowbox": { label: "Lake Tahoe", state: "CA", variant: "walnut" },
-    "lake-map-coaster-set": { label: "Burntside", state: "MN", variant: "warm" },
+    "lake-map-burntside": { label: "Burntside", state: "MN", variant: "warm" },
+    "lake-map-tenmile": { label: "Ten Mile", state: "MN", variant: "walnut" },
+    "lake-map-minnetonka": { label: "Minnetonka", state: "MN", variant: "warm" },
+    "lake-map-roy": { label: "Roy Lake", state: "SD", variant: "walnut" },
+    "lake-map-custom": { label: "Your Lake", state: "USA", variant: "warm" },
   };
 
   if (product.category === "lake-map") {
