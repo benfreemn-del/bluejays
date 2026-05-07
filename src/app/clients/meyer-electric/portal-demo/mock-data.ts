@@ -118,6 +118,11 @@ export type FunnelStep = {
   label: string;
   channel: "email" | "sms" | "voicemail" | "call" | "site_visit";
   day_offset: number;
+  /** CUMULATIVE reach — % of original 100% who reach this step.
+   *  MUST monotonically decrease across the steps array
+   *  (step N+1 <= step N, always). The final step's value should
+   *  match the funnel's `conversion_rate`. See CLAUDE.md
+   *  Rule 74 — Funnel Stages Are Monotonic. */
   conversion_pct: number;
 };
 
@@ -666,12 +671,14 @@ export const FUNNELS: Funnel[] = [
     total_won: 47,
     conversion_rate: 25.5,
     avg_job_value: 13850,
+    // Cumulative reach (% of original 100% who reach this step) — MUST
+    // monotonically decrease. Last step matches conversion_rate (25.5%).
     steps: [
       { step: 1, label: "Cold email — Powerwall ROI calc link", channel: "email", day_offset: 0, conversion_pct: 100 },
-      { step: 2, label: "Calculator submit → site visit booking", channel: "site_visit", day_offset: 2, conversion_pct: 38 },
-      { step: 3, label: "On-site quote (Powerwall + electrical eval)", channel: "site_visit", day_offset: 5, conversion_pct: 81 },
-      { step: 4, label: "Follow-up — financing options + permits", channel: "email", day_offset: 8, conversion_pct: 64 },
-      { step: 5, label: "Phone close + deposit", channel: "call", day_offset: 12, conversion_pct: 51 },
+      { step: 2, label: "Calculator submit → site visit booking", channel: "site_visit", day_offset: 2, conversion_pct: 62 },
+      { step: 3, label: "On-site quote (Powerwall + electrical eval)", channel: "site_visit", day_offset: 5, conversion_pct: 44 },
+      { step: 4, label: "Follow-up — financing options + permits", channel: "email", day_offset: 8, conversion_pct: 34 },
+      { step: 5, label: "Phone close + deposit", channel: "call", day_offset: 12, conversion_pct: 25.5 },
     ],
   },
   {
@@ -684,12 +691,13 @@ export const FUNNELS: Funnel[] = [
     total_won: 68,
     conversion_rate: 31.9,
     avg_job_value: 8400,
+    // Cumulative reach — monotonic. Last step matches conversion_rate (31.9%).
     steps: [
       { step: 1, label: "Storm-trigger SMS — Generator readiness quiz", channel: "sms", day_offset: 0, conversion_pct: 100 },
       { step: 2, label: "Quiz submit → generator-size recommendation", channel: "email", day_offset: 0, conversion_pct: 71 },
-      { step: 3, label: "Voicemail drop — 'Beat the next outage'", channel: "voicemail", day_offset: 2, conversion_pct: 48 },
-      { step: 4, label: "Site visit + propane assessment", channel: "site_visit", day_offset: 5, conversion_pct: 67 },
-      { step: 5, label: "Quote + install scheduled", channel: "call", day_offset: 9, conversion_pct: 55 },
+      { step: 3, label: "Voicemail drop — 'Beat the next outage'", channel: "voicemail", day_offset: 2, conversion_pct: 54 },
+      { step: 4, label: "Site visit + propane assessment", channel: "site_visit", day_offset: 5, conversion_pct: 42 },
+      { step: 5, label: "Quote + install scheduled", channel: "call", day_offset: 9, conversion_pct: 31.9 },
     ],
   },
   {
@@ -702,11 +710,12 @@ export const FUNNELS: Funnel[] = [
     total_won: 32,
     conversion_rate: 62.7,
     avg_job_value: 12400,
+    // Cumulative reach — monotonic. Last step matches conversion_rate (62.7%).
     steps: [
       { step: 1, label: "Quarterly check-in email — facilities review", channel: "email", day_offset: 0, conversion_pct: 100 },
       { step: 2, label: "On-site walk-through + report", channel: "site_visit", day_offset: 7, conversion_pct: 88 },
-      { step: 3, label: "Maintenance proposal + upsell options", channel: "email", day_offset: 10, conversion_pct: 76 },
-      { step: 4, label: "Phone close + contract sign", channel: "call", day_offset: 14, conversion_pct: 78 },
+      { step: 3, label: "Maintenance proposal + upsell options", channel: "email", day_offset: 10, conversion_pct: 75 },
+      { step: 4, label: "Phone close + contract sign", channel: "call", day_offset: 14, conversion_pct: 62.7 },
     ],
   },
   {
@@ -719,12 +728,13 @@ export const FUNNELS: Funnel[] = [
     total_won: 22,
     conversion_rate: 73.3,
     avg_job_value: 9100,
+    // Cumulative reach — monotonic. Last step matches conversion_rate (73.3%).
     steps: [
       { step: 1, label: "Welcome email — affiliate portal access", channel: "email", day_offset: 0, conversion_pct: 100 },
-      { step: 2, label: "Phone call — referral process walkthrough", channel: "call", day_offset: 2, conversion_pct: 86 },
-      { step: 3, label: "First-referral nudge", channel: "email", day_offset: 14, conversion_pct: 72 },
-      { step: 4, label: "First-close commission payout", channel: "email", day_offset: 30, conversion_pct: 91 },
-      { step: 5, label: "Quarterly partner review + revenue share", channel: "call", day_offset: 90, conversion_pct: 88 },
+      { step: 2, label: "Phone call — referral process walkthrough", channel: "call", day_offset: 2, conversion_pct: 92 },
+      { step: 3, label: "First-referral nudge", channel: "email", day_offset: 14, conversion_pct: 85 },
+      { step: 4, label: "First-close commission payout", channel: "email", day_offset: 30, conversion_pct: 79 },
+      { step: 5, label: "Quarterly partner review + revenue share", channel: "call", day_offset: 90, conversion_pct: 73.3 },
     ],
   },
 ];

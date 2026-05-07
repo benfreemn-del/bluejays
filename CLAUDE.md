@@ -7661,3 +7661,106 @@ He says "actually let's switch X to Y." The agent:
 
 This way the system learns. Locked-decisions are durable but not
 frozen — they evolve in lockstep with Ben's evolving operating taste.
+
+---
+
+### Locked-In Rule 74 — Funnel Stages Are Monotonic (NON-NEGOTIABLE)
+
+Established 2026-05-06 by Ben after the Meyer mock-backend Funnels tab
+shipped a per-step conversion bar that visually went 100 → 38 → 81 →
+64 → 51. Per-step conversion RATE is fine domain data, but rendered as
+a funnel-shaped bar chart it reads as "we lost people, then got them
+back" — structurally impossible in a funnel and an instant realism
+killer for prospects on the sales call.
+
+**The rule:** any UI that visualizes a funnel — bar widths, vertical
+heights, tapering nodes, reach pills, dot sizes per stage, ANY visual
+rhythm that maps "step N" to a magnitude — MUST display **CUMULATIVE
+REACH** (% of the original 100% who reach this step) AND that sequence
+MUST be monotonically non-increasing across the steps.
+
+A funnel only scales down. Period.
+
+**What this means in practice:**
+
+1. **Data layer.** When a `FunnelStep` (or equivalent) exposes a
+   `conversion_pct` / `reachPct` / similar field, the documented
+   semantic is **cumulative reach**, not per-step rate.
+   - `conversion_pct[0] === 100` (entry point)
+   - `conversion_pct[i] <= conversion_pct[i-1]` for all i
+   - Last step's value should match the funnel's overall close-rate
+     (e.g. `conversion_rate = 25.5%` → final step's reach = 25.5)
+   - If a per-step conversion RATE is genuinely useful for the
+     business reader, surface it as a SEPARATE field
+     (`step_close_rate_pct` or similar) — never re-use the cumulative
+     field for it.
+
+2. **Reference type.** `FunnelStep` in
+   `src/app/clients/meyer-electric/portal-demo/mock-data.ts` documents
+   the cumulative-reach semantic. Future funnel types in other
+   surfaces (e.g. `FunnelStepLite` in
+   `src/components/portal/FunnelVisualModal.tsx`,
+   per-client `client-funnels/*.ts`) MUST follow the same convention.
+
+3. **Defensive rendering.** Any rendering surface that takes per-step
+   reach numbers from outside (props, API response, scraped data,
+   fixture) MUST run them through `monotonizeReach()` from
+   `src/components/portal/FunnelVisualModal.tsx` before using them
+   for visual sizing. This is the backstop — it can't fix bad upstream
+   data, but it guarantees the rendered visual still reads as a
+   monotonically narrowing funnel.
+
+4. **Industry-typical baselines** (e.g. `REACH_BASELINE_BY_INDEX` in
+   `FunnelVisualModal.tsx`) MUST also be monotonic by construction.
+   When adding new baselines, eyeball the array — if any value is
+   greater than its left neighbor, fix it before merging.
+
+5. **Mock data.** The 4 funnels in Meyer's `mock-data.ts FUNNELS`
+   array are the canonical reference. When seeding a new mock-backend
+   industry, copy that shape — every step's `conversion_pct` is
+   cumulative-monotonic, last step matches `conversion_rate`.
+
+**The trap to avoid (caught 2026-05-06):**
+
+Storing `conversion_pct` as the per-step conversion RATE
+(e.g. "81% of people who reached step 3 convert to step 4") IS
+domain-accurate. But the moment a UI renders that value as a bar
+width, the visual reads as a non-monotonic funnel — and prospects on
+the sales call notice immediately. The fix is to store cumulative
+reach in `conversion_pct` AND surface per-step rate (when needed) in
+a separately-named field. Never let one field carry both meanings.
+
+**What the rule covers:**
+
+- Per-step bar charts (Meyer mock-backend's old inline view —
+  removed 2026-05-06)
+- Tapering vertical funnel nodes (FunnelVisualModal)
+- Reach pills next to each step
+- Dot-size-by-step on map overlays
+- Any future "show me the funnel" visualization Ben builds
+
+**Forbidden:**
+
+- Hardcoding non-monotonic values into a fixture / mock dataset
+- Reading per-step conversion rate from a "rate" field and rendering
+  it as a bar width without cumulative-multiplying first
+- Adding a new baseline curve to any "reach by step index" array
+  without verifying it's monotonic
+- Skipping `monotonizeReach()` on the rendering side because "the
+  data is correct" — defensive guards exist precisely so a future
+  data bug can't silently bypass the rule
+- Inventing creative "curved" funnel shapes that scale up between
+  steps for any reason (engagement spike, viral re-share, etc.) —
+  if the business story genuinely is non-monotonic, that's a
+  separate visualization (re-engagement loop chart), NOT the
+  audience funnel
+
+**This rule cascades:**
+
+- Update the AIOS `mock_backend` skill so future mock-backend
+  installs apply this rule by default
+- Update the AI Package Playbook so every new client's Funnels tab
+  inherits the convention
+- Reference this rule in code comments where cumulative-reach data
+  is defined or rendered, so the next agent sees the constraint
+  inline

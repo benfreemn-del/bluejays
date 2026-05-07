@@ -53,7 +53,36 @@ export type FunnelStageCounts = {
 
 // Industry-typical reach attrition per email/SMS step. These are
 // baselines, not invented per-client stats — clearly labeled in the UI.
+// MUST be monotonically decreasing per CLAUDE.md Rule 74 (funnels only
+// scale down, never back up).
 const REACH_BASELINE_BY_INDEX = [1.0, 0.85, 0.65, 0.48, 0.34, 0.24, 0.17, 0.12];
+
+/**
+ * Coerce a sequence of reach percentages to be monotonically non-increasing
+ * (each value <= previous). Returns a NEW array — input is not mutated.
+ *
+ * This is the defensive backstop for CLAUDE.md Rule 74. Any surface that
+ * renders per-step funnel reach as bars / nodes / heights MUST run the
+ * incoming numbers through this helper so a data error upstream can never
+ * produce a non-monotonic visualization on screen.
+ *
+ * Behavior: walks left-to-right. If reach[i] > reach[i-1], clamps it to
+ * reach[i-1]. So [100, 38, 81, 64, 51] → [100, 38, 38, 38, 38]. That's
+ * intentionally aggressive — it makes the data error VISIBLE (a flat
+ * tail) so the agent who introduced the bad data sees something is off,
+ * rather than silently averaging the values into a plausible-looking
+ * curve. The fix is upstream (correct the data), not in this helper.
+ */
+export function monotonizeReach(reach: readonly number[]): number[] {
+  const out: number[] = [];
+  let cap = Number.POSITIVE_INFINITY;
+  for (const v of reach) {
+    const next = Math.min(v, cap);
+    out.push(next);
+    cap = next;
+  }
+  return out;
+}
 
 const CHANNEL_OPTIONS: FunnelStepLite["channel"][] = [
   "email",
