@@ -1,9 +1,17 @@
 # Manufacturer Lookalike Backlog
 
-**Why this exists:** Both validated $10k AI System closes (ITC Quick
-Attach + Zenith Sports / TEKKY) are **niche product manufacturers**.
-This is the BlueJays $10k ICP. Cold outreach + Google Ads + bespoke
-preview previews all target prospects matching this shape.
+**Why this exists:** All validated $10k AI System closes + warm inbounds
+to date (ITC Quick Attach, Zenith Sports / TEKKY, Nevarland Outpost)
+are **niche product manufacturers**. This is the BlueJays $10k ICP.
+Cold outreach + Google Ads + bespoke previews all target prospects
+matching this shape.
+
+**3-anchor data point lock (post-2026-05-06 deep dive):** the audience
+taxonomy holds across radically different verticals — steel ag/farm
+equipment (ITC), sports gear (Zenith), kids' apparel (Nevarland).
+Pattern is vertical-agnostic. Every match has an end-buyer + influencer/
+decision-maker + channel partner. See the deep-dive synthesis report
+for evidence.
 
 **Source of truth:**
 - Sales motion: `memory/project_10k_sales_motion.md`
@@ -137,7 +145,39 @@ custom treestand maker
 
 ---
 
-### 5. Specialty food + bev — `mfg-food-bev`
+### 5. Kids' apparel — `mfg-apparel-kids`
+
+| Field | Value |
+|---|---|
+| Status | ⏳ backlog (no V2 template yet) |
+| Anchor proof | Nevarland Outpost (inbound, prospect id `2948ccc0-cb20-4a6d-a9aa-822291845ea2`, status=contacted, email `maxwell.five@outlook.com` — needs enrichment for real website / city / state / product line) |
+| Showcase URL when built | `/v2/mfg-apparel-kids` |
+| Priority | **#3** (warm inbound — Nevarland already engaged) |
+
+**Sub-niches:**
+- Made-in-USA kids' clothing brands
+- Children's outdoor / hiking apparel makers
+- Organic / natural-fiber kids' brands (cottagecore, vintage Americana, neutrals aesthetic)
+- Kids' uniform / costume / matching-family-set makers
+- Specialty children's footwear
+
+**Audience segments per the deep-dive 3-segment template:**
+- **End-buyer:** parents (warm-buy, like Zenith parents — emotional, multi-touch nurture, lead magnet = look-book / size-fit guide / sustainable-source story)
+- **Influencer / decision-maker:** parenting bloggers / mom-influencers / kids' boutique buyers (B2B retail buyers similar to Zenith coaches — lead magnet = wholesale catalog with margin math)
+- **Channel partner:** kids' boutiques, daycares, gift shops, Instagram/Etsy resellers (commission tier 25-40%)
+
+**Google Places search queries** (also in `scout-optimizer.ts` SMART_QUERIES):
+```
+kids clothing manufacturer USA
+children apparel brand made in usa
+small batch kids clothing maker
+kids boutique clothing brand
+children outdoor apparel manufacturer
+```
+
+---
+
+### 6. Specialty food + bev — `mfg-food-bev`
 
 | Field | Value |
 |---|---|

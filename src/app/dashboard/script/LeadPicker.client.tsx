@@ -23,7 +23,33 @@ export default function LeadPicker() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "called-recently" | "no-calls" | "interested">("all");
+  // Filter chips along the top of the picker. Madie controls these to
+  // narrow the list of prospects she calls today.
+  //   "all"             — every prospect, no filter
+  //   "no-calls"        — never been contacted (good for cold-call queues)
+  //   "called-recently" — already in some kind of contact loop
+  //   "interested"      — high-intent statuses (responded / engaged / interested)
+  //   "inbound"         — submitted /get-started or /audit themselves
+  //   "cold"            — source='scouted' (from auto-scout, NOT inbound)
+  //   "fullsystem"      — pricingTier='fullsystem' (Full System / agency-replacement)
+  //   "mfg"             — lookalikeCategory IS NOT NULL (manufacturer cold lookalike)
+  const [filter, setFilter] = useState<
+    | "all"
+    | "called-recently"
+    | "no-calls"
+    | "interested"
+    | "inbound"
+    | "cold"
+    | "fullsystem"
+    | "mfg"
+  >("all");
+  // Industry / category drop-down — auto-populated from the distinct
+  // category values present in the loaded prospects.
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  // Sort dropdown — Madie picks how the picker is ordered.
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "category" | "source" | "status"
+  >("newest");
   // Sales portal is Madie's tool now. Ben can override with
   // ?mode=ben on the URL if he ever wants to use his original
   // cold-call Hormozi script — the toggle UI was removed since
@@ -85,15 +111,36 @@ export default function LeadPicker() {
     router.push(`/dashboard/script?${qs}`);
   };
 
+  // Distinct categories present in the loaded prospects — feeds the
+  // category drop-down. Memoized so picker stays cheap as queue grows.
+  const distinctCategories = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of prospects) {
+      if (p.category) set.add(String(p.category));
+    }
+    return Array.from(set).sort();
+  }, [prospects]);
+
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return prospects.filter((p) => {
+    const filtered = prospects.filter((p) => {
       const s = String(p.status ?? "").toLowerCase();
-      if (filter === "interested" && !s.includes("interest")) return false;
+
+      // Lead-type / status filter chips
+      if (filter === "interested" && !s.includes("interest") && !s.includes("respond") && !s.includes("engage")) return false;
       // "called-recently" / "no-calls" filters are status-substring proxies
       // until we wire actual partner_calls history into the prospect list.
       if (filter === "called-recently" && !s.includes("contact")) return false;
       if (filter === "no-calls" && (s.includes("contact") || s.includes("interest"))) return false;
+      // Source-based + tier-based filters (Madie 2026-05-06):
+      if (filter === "inbound" && p.source !== "inbound") return false;
+      if (filter === "cold" && p.source !== "scouted") return false;
+      if (filter === "fullsystem" && p.pricingTier !== "fullsystem") return false;
+      if (filter === "mfg" && !p.lookalikeCategory) return false;
+
+      // Category dropdown filter (industry)
+      if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
+
       if (!q) return true;
       return (
         p.businessName?.toLowerCase().includes(q) ||
@@ -105,7 +152,28 @@ export default function LeadPicker() {
         false
       );
     });
-  }, [prospects, search, filter]);
+
+    // Sort
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case "newest":
+        sorted.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+        break;
+      case "oldest":
+        sorted.sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
+        break;
+      case "category":
+        sorted.sort((a, b) => String(a.category || "").localeCompare(String(b.category || "")));
+        break;
+      case "source":
+        sorted.sort((a, b) => String(a.source || "scouted").localeCompare(String(b.source || "scouted")));
+        break;
+      case "status":
+        sorted.sort((a, b) => String(a.status || "").localeCompare(String(b.status || "")));
+        break;
+    }
+    return sorted;
+  }, [prospects, search, filter, categoryFilter, sortBy]);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -159,37 +227,91 @@ export default function LeadPicker() {
       </header>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
-        {/* Filters */}
-        <div className="rounded-xl border border-border bg-surface/40 p-3 mb-4 flex flex-wrap items-center gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search business / owner / phone / city…"
-            className="flex-1 min-w-[240px] h-9 px-3 rounded-lg bg-background border border-border text-sm placeholder:text-muted focus:outline-none focus:border-violet-500/50"
-          />
+        {/* Filters — search + lead-type chips + category dropdown + sort */}
+        <div className="rounded-xl border border-border bg-surface/40 p-3 mb-4 space-y-2">
+          {/* Top row: search + sort */}
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search business / owner / phone / city…"
+              className="flex-1 min-w-[240px] h-9 px-3 rounded-lg bg-background border border-border text-sm placeholder:text-muted focus:outline-none focus:border-pink-500/50"
+            />
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="h-9 px-2 rounded-lg bg-background border border-border text-xs text-foreground focus:outline-none focus:border-pink-500/50"
+              title="Filter by industry"
+            >
+              <option value="all">All industries</option>
+              {distinctCategories.map((c) => (
+                <option key={c} value={c}>
+                  {c.replace(/-/g, " ")}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="h-9 px-2 rounded-lg bg-background border border-border text-xs text-foreground focus:outline-none focus:border-pink-500/50"
+              title="Sort the list"
+            >
+              <option value="newest">Sort: Newest</option>
+              <option value="oldest">Sort: Oldest</option>
+              <option value="category">Sort: Category</option>
+              <option value="source">Sort: Source</option>
+              <option value="status">Sort: Status</option>
+            </select>
+          </div>
+          {/* Bottom row: lead-type filter chips. Pink/purple chips visually
+              match the row treatment so Madie can connect "show me MFG"
+              with "the pink rows". */}
           <div className="flex gap-1 flex-wrap">
             {(
               [
-                { id: "all", label: "All" },
-                { id: "no-calls", label: "Not contacted" },
-                { id: "called-recently", label: "Recently called" },
-                { id: "interested", label: "Interested" },
-              ] as { id: typeof filter; label: string }[]
-            ).map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setFilter(f.id)}
-                className={`text-[11px] font-bold uppercase tracking-wider rounded-md px-2.5 py-1.5 border transition-colors ${
-                  filter === f.id
-                    ? "border-violet-400 bg-violet-500/15 text-violet-200"
-                    : "border-border bg-background text-muted hover:text-foreground"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+                { id: "all", label: "All", color: "violet" },
+                { id: "inbound", label: "Inbound", color: "amber" },
+                { id: "cold", label: "Cold scout", color: "slate" },
+                { id: "mfg", label: "MFG", color: "pink" },
+                { id: "fullsystem", label: "Agency $10K", color: "purple" },
+                { id: "no-calls", label: "Not contacted", color: "slate" },
+                { id: "called-recently", label: "Recently called", color: "slate" },
+                { id: "interested", label: "Interested", color: "emerald" },
+              ] as { id: typeof filter; label: string; color: string }[]
+            ).map((f) => {
+              const active = filter === f.id;
+              const colorMap: Record<string, string> = {
+                violet: active
+                  ? "border-violet-400 bg-violet-500/15 text-violet-200"
+                  : "border-border bg-background text-muted hover:text-foreground",
+                amber: active
+                  ? "border-amber-400 bg-amber-500/15 text-amber-200"
+                  : "border-border bg-background text-muted hover:text-foreground",
+                slate: active
+                  ? "border-slate-400 bg-slate-500/15 text-slate-200"
+                  : "border-border bg-background text-muted hover:text-foreground",
+                pink: active
+                  ? "border-pink-400 bg-pink-500/15 text-pink-200"
+                  : "border-pink-500/25 bg-pink-500/[0.04] text-pink-300/80 hover:text-pink-200",
+                purple: active
+                  ? "border-purple-400 bg-purple-500/15 text-purple-200"
+                  : "border-purple-500/25 bg-purple-500/[0.04] text-purple-300/80 hover:text-purple-200",
+                emerald: active
+                  ? "border-emerald-400 bg-emerald-500/15 text-emerald-200"
+                  : "border-border bg-background text-muted hover:text-foreground",
+              };
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFilter(f.id)}
+                  className={`text-[11px] font-bold uppercase tracking-wider rounded-md px-2.5 py-1.5 border transition-colors ${colorMap[f.color]}`}
+                >
+                  {f.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -207,13 +329,61 @@ export default function LeadPicker() {
             {visible.map((p) => {
               const isSel = selected.includes(p.id);
               const queuePos = isSel ? selected.indexOf(p.id) + 1 : null;
+
+              // Madie's call-priority signals — locked-in 2026-05-06.
+              // Pink = manufacturer cold lookalike (high ticket, hand-built
+              //        funnel, $10K target). Top-of-cascade row treatment.
+              // Purple = Full System / agency-replacement inbound. Already
+              //          opted in for $10K-class fit, paid-traffic warm.
+              // Green/red likely-to-close dot derives from a simple
+              // heuristic Madie can tune over time:
+              //   GREEN: any positive intent — inbound source, fullsystem
+              //          tier, lookalikeCategory present, or status in the
+              //          (interested, responded, claimed) cluster.
+              //   RED:   negative — status in (dismissed, bounced,
+              //          unsubscribed) cluster.
+              //   none:  neutral / cold scout with no signal yet.
+              const isMfgLookalike = !!p.lookalikeCategory;
+              const isFullSystem = p.pricingTier === "fullsystem";
+              const isInbound = p.source === "inbound";
+              const positiveStatuses = new Set([
+                "interested",
+                "responded",
+                "claimed",
+                "engaged",
+                "link_clicked",
+                "email_opened",
+              ]);
+              const negativeStatuses = new Set([
+                "dismissed",
+                "bounced",
+                "unsubscribed",
+              ]);
+              const likely: "green" | "red" | "neutral" =
+                negativeStatuses.has(p.status as string)
+                  ? "red"
+                  : isInbound ||
+                      isFullSystem ||
+                      isMfgLookalike ||
+                      positiveStatuses.has(p.status as string)
+                    ? "green"
+                    : "neutral";
+
+              const rowAccent = isMfgLookalike
+                ? "border-l-4 border-l-pink-400 bg-pink-500/[0.06]"
+                : isFullSystem
+                  ? "border-l-4 border-l-purple-400 bg-purple-500/[0.06]"
+                  : isInbound
+                    ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
+                    : "";
+
               return (
                 <li
                   key={p.id}
                   className={`rounded-xl border px-3 py-2.5 transition-colors cursor-pointer ${
                     isSel
-                      ? "border-violet-500/40 bg-violet-500/[0.07]"
-                      : "border-border bg-surface/40 hover:border-white/15"
+                      ? "border-pink-500/40 bg-pink-500/[0.07]"
+                      : `border-border bg-surface/40 hover:border-white/15 ${rowAccent}`
                   }`}
                   onClick={() => toggle(p.id)}
                 >
@@ -221,7 +391,7 @@ export default function LeadPicker() {
                     <div
                       className={`shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                         isSel
-                          ? "bg-violet-500 border-violet-500"
+                          ? "bg-pink-500 border-pink-500"
                           : "border-slate-500"
                       }`}
                     >
@@ -231,11 +401,61 @@ export default function LeadPicker() {
                         </span>
                       )}
                     </div>
+                    {/* Likely-close dot — green = call FIRST, red = skip, no
+                        dot = neutral. Sized big enough to scan the column
+                        in 1 second without reading any text. */}
+                    {likely !== "neutral" && (
+                      <span
+                        className={`shrink-0 w-3 h-3 rounded-full ${
+                          likely === "green"
+                            ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.55)]"
+                            : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.55)]"
+                        }`}
+                        title={
+                          likely === "green"
+                            ? "Likely to close — high-intent signal (inbound / fullsystem / mfg-lookalike / positive status)"
+                            : "Unlikely to close — negative status (dismissed / bounced / unsubscribed)"
+                        }
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-bold text-foreground truncate">
                           {p.businessName ?? "(no name)"}
                         </p>
+                        {/* Pink MFG chip — manufacturer cold lookalike */}
+                        {isMfgLookalike && (
+                          <span
+                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 font-extrabold tracking-wider border border-pink-400/40 uppercase"
+                            title={`Manufacturer-lookalike cold lead · ${p.lookalikeCategory}`}
+                          >
+                            MFG · {p.lookalikeCategory!.replace("mfg-", "").replace(/-/g, " ")}
+                          </span>
+                        )}
+                        {/* Purple AGENCY chip — Full System inbound */}
+                        {isFullSystem && (
+                          <span
+                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-extrabold tracking-wider border border-purple-400/40 uppercase"
+                            title="Full System / Agency-Replacement inbound — $10K target"
+                          >
+                            AGENCY $10K
+                          </span>
+                        )}
+                        {/* Inbound chip (amber) — reached out themselves */}
+                        {isInbound && !isFullSystem && !isMfgLookalike && (
+                          <span
+                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-300 font-bold tracking-wider border border-amber-400/30 uppercase"
+                            title="Inbound — submitted /get-started form"
+                          >
+                            INBOUND
+                          </span>
+                        )}
+                        {/* Category chip — gives Madie the vertical at a glance */}
+                        {p.category && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-500/15 text-slate-300 font-bold tracking-wider border border-slate-500/25 uppercase">
+                            {String(p.category).replace(/-/g, " ")}
+                          </span>
+                        )}
                         {p.ownerName && (
                           <span className="text-[11px] text-muted">· {p.ownerName}</span>
                         )}
@@ -248,6 +468,9 @@ export default function LeadPicker() {
                           p.phone,
                           p.email,
                           p.city && p.state ? `${p.city}, ${p.state}` : null,
+                          p.googleRating
+                            ? `${p.googleRating}★ (${p.reviewCount ?? 0})`
+                            : null,
                         ]
                           .filter(Boolean)
                           .join(" · ") || "no contact info"}

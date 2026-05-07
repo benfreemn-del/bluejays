@@ -7178,3 +7178,119 @@ If a client's design feels "tight" after this, the fix is more
 internal section spacing (`space-y-*` between elements WITHIN a
 section), NOT wider top/bottom gaps.
 
+## Autonomous-Batch Execution Mode (NON-NEGOTIABLE — added 2026-05-06)
+
+When Ben says some variant of *"tackle everything you can without my
+help"* / *"do all of those"* / *"keep going"*, the working mode flips
+to autonomous-batch:
+
+1. **Don't ask permission per step.** Plan the batch up front
+   (TodoWrite), then execute.
+2. **One in_progress todo at a time.** Mark complete the moment each
+   item is genuinely done — never batch-complete at the end.
+3. **Stage your own files only.** When committing, cherry-pick paths
+   that match your edits. NEVER `git add -A` or `git add .` — there
+   is almost always unrelated working-tree drift from Ben's parallel
+   work that must not ride into your commit.
+4. **One commit per logical batch** with a body that lists every file
+   touched and why.
+5. **Don't push without an explicit "git push" / "ship it" / "send it"
+   from Ben.** "Commit" never implies push.
+6. **End with a clean leftover ledger.** Two-section summary:
+   ✅ shipped (what's done) and ⚠️ still needs you (logins, calls,
+   decisions, payment info, anything blocked on a human). Never
+   silently skip an item — surface it.
+7. **Type-check at the end of the batch**, not per-file. Pre-existing
+   errors in files you didn't touch are NOT yours to fix in this
+   commit; flag them but ship.
+
+This is the mode this whole session ran in. The rule stops the
+opposite failure: stopping mid-batch to ask "should I do the next
+one?" when Ben already said yes to all of them.
+
+## Storage Decision: base64-in-Postgres vs Supabase Storage (NON-NEGOTIABLE — added 2026-05-06)
+
+**Default: store files as base64 TEXT in a Postgres column** when ALL
+of these hold:
+- File size ≤ 5 MB
+- Total volume ≤ a few hundred files
+- Accessed rarely (admin downloads, not customer-facing streams)
+- Need to ship today without provisioning a Storage bucket
+
+Examples that fit: W-9 PDFs, signed IC agreements, ID verification
+docs, weekly digest snapshots, ad-hoc CSV uploads from Ben.
+
+Reach for **Supabase Storage** only when ANY of these flips:
+- Files are streamed publicly to customer browsers (hero images,
+  product photos)
+- Volume justifies dedicated bucket configuration + RLS policies
+- File size > 5 MB (base64 inflates by ~33% — a 6 MB upload becomes
+  an 8 MB row)
+
+Canonical pattern lives in `partner_documents`
+(`supabase/migrations/20260516_partner_documents.sql`):
+
+```sql
+create table partner_documents (
+  id uuid primary key default gen_random_uuid(),
+  <owner>_id uuid not null references <owner>(id) on delete cascade,
+  kind text not null,             -- 'w9' | 'ic-agreement' | ...
+  filename text not null,
+  mime_type text not null,
+  size_bytes integer not null,
+  content_base64 text not null,
+  created_at timestamptz not null default now()
+);
+```
+
+Why default to Postgres: zero operational setup, no bucket-permission
+forgetting, ships today, migrates to Storage cheap when needed.
+
+## No-Backend Client Pattern (NON-NEGOTIABLE — added 2026-05-06)
+
+When a client owns their own commerce stack (Shopify, Squarespace,
+Etsy, Wix Stores) and the BlueJays site is purely a marketing front:
+
+1. **Never POST configurator/inquiry output to `/api/clients/inquire`.**
+   Use a `mailto:` link with pre-filled `subject=` and `body=` query
+   params. The customer's own email client sends the request directly
+   to the client.
+2. **Never seed `client_owners` rows for them.** Without an owner
+   row, they have no portal — that's correct. They check leads in
+   their Shopify admin / their inbox, not in a BlueJays dashboard.
+3. **No `client_leads`, no `client_email_campaigns`, no
+   `client_subscriptions`.** Those tables are for clients on the
+   $9,700 AI Marketing System tier. Marketing-only clients don't
+   touch them.
+4. **`client-site-urls.ts` entry stays `kind: "internal"`** when we
+   host the marketing front under `/clients/<slug>`. The lack of an
+   owner row is what distinguishes them from full-tier clients.
+5. **Hot-link external CDN images** for product photos (e.g., the
+   client's own Shopify CDN at `<store>.com/cdn/shop/files/...`).
+   Don't download + re-host — they update inventory and we'd go stale.
+
+Reference build: Laser Lakes (`src/app/clients/laser-lakes/`).
+Configurator → mailto: pre-fill to `nate@laserlakes.com`.
+
+## Partner First-Payout Gate (NON-NEGOTIABLE — added 2026-05-06)
+
+Before any commission can leave Ben's pocket via Venmo/Zelle, the
+partner record MUST have all three:
+
+1. **Signed IC Agreement** filed at
+   `docs/contracts/<Partner Name> - Independent Contractor Agreement.md`
+   (template lives in same folder, copy + replace `[name]` blocks).
+2. **W-9 on file** — `partners.w9_received_at IS NOT NULL`. Partners
+   self-serve via `/partners/[code]/w9` (URL-as-secret). The dashboard
+   at `/partners/[code]` renders a red banner until this is filled.
+3. **Banking handle** — `partners.payout_handle` populated (Venmo
+   handle, Zelle email, or ACH details).
+
+Today this is enforced operationally — Ben checks before paying. When
+volume grows, harden in code: `partner_referrals` payout flow
+short-circuits with a clear error if any of the three is missing.
+
+The companion-doc checklist lives at the bottom of
+`docs/contracts/<name> - Independent Contractor Agreement.md` in the
+template — never skip it when onboarding a partner.
+

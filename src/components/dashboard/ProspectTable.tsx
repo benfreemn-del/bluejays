@@ -748,17 +748,32 @@ export default function ProspectTable({
                   className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
                     isSelected(prospect.id) ? "bg-blue-electric/5" : ""
                   } ${
-                    isHighValueCalcLead
-                      ? // Purple treatment for calculator-sourced inbound
-                        // leads. Highest priority in the cascade — these
-                        // are the most valuable lead source we have.
-                        // Locked-in 2026-05-06 by Ben.
-                        "border-l-4 border-l-purple-400 bg-gradient-to-r from-purple-500/[0.10] via-fuchsia-500/[0.05] to-transparent shadow-[inset_0_0_28px_rgba(168,85,247,0.10)]"
+                    // High-ticket cold-lead row treatment — locked-in
+                    // 2026-05-06 by Ben (Q1=D / Q2=C / Q4=A / Q5=A):
+                    //
+                    //   - Pink     = manufacturer-lookalike cold scout
+                    //                (lookalikeCategory IS NOT NULL).
+                    //                The 6 mfg-* slugs from the Wave 4
+                    //                manufacturer-ICP scout buildout.
+                    //                Top of the cascade — strip + tint +
+                    //                chip (chip rendered next to business
+                    //                name below).
+                    //
+                    //   - Purple   = agency/AI inbound + Full System tier
+                    //                (pricingTier === 'fullsystem'). Covers
+                    //                cut-my-agency calc submitters, agency
+                    //                landing-page bookers, and any manual
+                    //                fullsystem-tier flip.
+                    //
+                    //   - Layered  = when prospect is BOTH mfg AND
+                    //                fullsystem, strip stays pink (mfg
+                    //                signal is more specific) and the
+                    //                purple "AGENCY" chip still renders
+                    //                next to the business name.
+                    !!prospect.lookalikeCategory
+                      ? "border-l-4 border-l-pink-400 bg-gradient-to-r from-pink-500/[0.10] via-rose-500/[0.05] to-transparent shadow-[inset_0_0_28px_rgba(244,114,182,0.10)]"
                       : prospect.pricingTier === "fullsystem"
-                        ? // Gold treatment for AI-Package buyers — the
-                          // top-tier offering ($9,700 + $500-1k/mo). Bigger
-                          // visual weight than every other row.
-                          "border-l-4 border-l-amber-300 bg-gradient-to-r from-amber-500/[0.08] via-yellow-500/[0.04] to-transparent shadow-[inset_0_0_28px_rgba(251,191,36,0.07)]"
+                        ? "border-l-4 border-l-purple-400 bg-gradient-to-r from-purple-500/[0.10] via-fuchsia-500/[0.05] to-transparent shadow-[inset_0_0_28px_rgba(168,85,247,0.10)]"
                         : prospect.pricingTier === "free"
                           ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
                           : prospect.source === "inbound"
@@ -777,6 +792,30 @@ export default function ProspectTable({
                   <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
+                      {/* Pink MFG chip — manufacturer-lookalike cold lead.
+                          Renders next to the business name so it's the FIRST
+                          thing you see scanning the column. Shows the specific
+                          lookalike slug (e.g. APPAREL-KIDS) so the visual
+                          conveys both "high ticket" + "what kind". */}
+                      {prospect.lookalikeCategory && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 font-extrabold tracking-wider border border-pink-400/40 uppercase"
+                          title={`Manufacturer-lookalike cold lead · ${prospect.lookalikeCategory} · auto-tagged manuallyManaged=true (auto-funnel skips)`}
+                        >
+                          MFG · {prospect.lookalikeCategory.replace("mfg-", "").replace(/-/g, " ")}
+                        </span>
+                      )}
+                      {/* Purple AGENCY chip — Full System / agency-replacement
+                          inbound. Renders independently of MFG so dual-flagged
+                          rows show both chips. Q2=C layered model. */}
+                      {prospect.pricingTier === "fullsystem" && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-extrabold tracking-wider border border-purple-400/40 uppercase"
+                          title="Full System / Agency Replacement inbound — $9,700 + $500-1k/mo target"
+                        >
+                          AGENCY $10K
+                        </span>
+                      )}
                       {((prospect.scrapedData as { imageMapping?: { selectionStatus?: string } } | undefined)?.imageMapping?.selectionStatus === "completed") && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold" title="Images completed">📷</span>
                       )}

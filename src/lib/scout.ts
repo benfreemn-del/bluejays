@@ -81,6 +81,14 @@ async function runGooglePlacesQuery(
       }
     }
 
+    // Manufacturer-lookalike auto-tag: when the scout is operating against
+    // one of the 6 mfg-* categories, the prospect gets manuallyManaged=true
+    // (so the daily auto-enroll cron in /api/funnel/run skips them per
+    // Rule 49) AND lookalikeCategory stamped (so dashboard can group them).
+    // Until V2 templates exist for these slugs, we don't want auto-pitch
+    // sending a generic preview — Ben builds bespoke per close.
+    const isMfgLookalike = MANUFACTURER_LOOKALIKE_CATEGORIES.has(category);
+
     prospects.push({
       id: uuidv4(),
       businessName: place.name,
@@ -99,6 +107,16 @@ async function runGooglePlacesQuery(
             ? "medium"
             : "low",
       status: "scouted" as const,
+      manuallyManaged: isMfgLookalike,
+      lookalikeCategory: isMfgLookalike
+        ? (category as
+            | "mfg-ag-equipment"
+            | "mfg-sports-equipment"
+            | "mfg-apparel-kids"
+            | "mfg-auto-parts"
+            | "mfg-outdoor-gear"
+            | "mfg-food-bev")
+        : undefined,
       createdAt: now,
       updatedAt: now,
     });
@@ -165,7 +183,12 @@ function scoutWithMockData(options: ScoutOptions): Prospect[] {
   }));
 }
 
-// Categories that have premium templates built — only scout these
+// Categories that have premium templates built — only scout these.
+// Wave 4 (2026-05-06): added 6 manufacturer slugs WITHOUT V2 templates per
+// Ben's directive. Per-prospect manuallyManaged=true is auto-set inside
+// scoutWithGoogle so the auto-pitch funnel SKIPS these until templates +
+// bespoke previews exist. See `MANUFACTURER_LOOKALIKE_CATEGORIES` below
+// + the prospect-construction site at line ~84 of this file.
 export const ACTIVE_CATEGORIES: Category[] = [
   "real-estate", "dental", "law-firm", "landscaping", "salon",
   "electrician", "plumber", "hvac", "roofing", "auto-repair",
@@ -178,7 +201,26 @@ export const ACTIVE_CATEGORIES: Category[] = [
   "restaurant", "medical", "painting", "fencing", "tree-service",
   "pressure-washing", "garage-door", "locksmith", "towing", "construction",
   "med-spa", "appliance-repair", "junk-removal", "carpet-cleaning", "event-planning",
+  // Wave 4 manufacturer ICP categories — anchored by 3 manufacturer
+  // closes/inbounds: ITC Quick Attach (ag), Zenith/TEKKY (sports),
+  // Nevarland Outpost (apparel-kids). Auto-set manuallyManaged=true at
+  // scout intake until V2 templates exist for each.
+  "mfg-ag-equipment", "mfg-sports-equipment", "mfg-apparel-kids",
+  "mfg-auto-parts", "mfg-outdoor-gear", "mfg-food-bev",
 ];
+
+/** Manufacturer slugs that should be auto-tagged manuallyManaged=true at
+ *  scout intake. Auto-pitch funnel skips them per Rule 49. Ben hand-picks
+ *  these for bespoke preview build before any cold pitch fires. */
+export const MANUFACTURER_LOOKALIKE_CATEGORIES: ReadonlySet<Category> =
+  new Set<Category>([
+    "mfg-ag-equipment",
+    "mfg-sports-equipment",
+    "mfg-apparel-kids",
+    "mfg-auto-parts",
+    "mfg-outdoor-gear",
+    "mfg-food-bev",
+  ]);
 
 export async function scout(options: ScoutOptions): Promise<{ prospects: Prospect[]; nextPageToken?: string }> {
   // Only scout categories with built templates

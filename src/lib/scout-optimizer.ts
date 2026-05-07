@@ -308,6 +308,62 @@ export const SMART_QUERIES: Record<string, string[]> = {
     "commercial construction",
     "residential construction",
   ],
+  // ============================================================
+  // MANUFACTURER ICP CATEGORIES (Wave 4 — added 2026-05-06 after
+  // ITC + Zenith + Nevarland 3-anchor deep dive locked the pattern).
+  //
+  // Per the deep dive (bluejays/docs/MANUFACTURER_BACKLOG.md +
+  // 2026-05-06 audience analysis), every manufacturer match needs to
+  // be reachable through 3 audience segments simultaneously:
+  //   - end-buyer (consumer / hobbyist / parent)
+  //   - influencer / decision-maker (coach / dealer / pro buyer)
+  //   - channel partner (club / camp / boutique / content creator)
+  // The 5 search queries below mix these segments so the scout
+  // surfaces each angle on a single category run. ITC's per-audience
+  // lane structure (`bluejays/src/lib/itc-scrape.ts`) is the reference.
+  // ============================================================
+  "mfg-ag-equipment": [
+    "compact tractor accessory manufacturer",
+    "farm implement fabricator",
+    "tractor brush guard manufacturer",
+    "livestock equipment manufacturer",
+    "custom agricultural equipment maker",
+  ],
+  "mfg-sports-equipment": [
+    "youth sports training equipment manufacturer",
+    "patent pending sports product",
+    "specialty soccer training equipment",
+    "custom mouthguard maker",
+    "specialty fitness equipment manufacturer",
+  ],
+  "mfg-apparel-kids": [
+    "kids clothing manufacturer USA",
+    "children apparel brand made in usa",
+    "small batch kids clothing maker",
+    "kids boutique clothing brand",
+    "children outdoor apparel manufacturer",
+  ],
+  "mfg-auto-parts": [
+    "aftermarket auto parts manufacturer",
+    "performance auto parts fabricator",
+    "custom motorcycle parts maker",
+    "specialty exhaust manufacturer",
+    "restomod parts manufacturer",
+  ],
+  "mfg-outdoor-gear": [
+    "outdoor gear manufacturer USA",
+    "custom hunting gear maker",
+    "specialty fishing tackle manufacturer",
+    "archery accessory manufacturer",
+    "tactical gear fabricator",
+  ],
+  "mfg-food-bev": [
+    "small batch food manufacturer",
+    "specialty coffee roaster",
+    "craft hot sauce maker",
+    "artisan jerky manufacturer",
+    "specialty spice blender",
+  ],
 };
 
 /**

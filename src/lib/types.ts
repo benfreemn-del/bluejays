@@ -47,7 +47,20 @@ export type Category =
   | "event-planning"
   | "non-profit"
   | "consulting"
-  | "reiki";
+  | "reiki"
+  // Manufacturer ICP — niche product makers (small-to-medium). Anchor closes:
+  // ITC Quick Attach (mfg-ag-equipment, $10K), Zenith/TEKKY (mfg-sports-equipment, $10K),
+  // Nevarland Outpost (mfg-apparel-kids, inbound). 3-segment audience taxonomy
+  // applies to all 6: end-buyer + influencer/decision-maker + channel-partner.
+  // See bluejays/docs/MANUFACTURER_BACKLOG.md for sub-niches + scout queries.
+  // Auto-tagged manually_managed=true at scout time until V2 templates exist
+  // for each slug — auto-pitch funnel skips them so Ben hand-picks the closes.
+  | "mfg-ag-equipment"
+  | "mfg-sports-equipment"
+  | "mfg-apparel-kids"
+  | "mfg-auto-parts"
+  | "mfg-outdoor-gear"
+  | "mfg-food-bev";
 
 export type SmsMethod = "twilio" | "vonage" | "mock";
 
@@ -178,6 +191,34 @@ export interface Prospect {
   /** Manually-recorded Loom URL Ben captures for top-10 cohort prospects.
    *  Email templates inject this as a {loomUrl} token when present. */
   loomVideoUrl?: string;
+  /** Manufacturer-lookalike scout tag. When the scout matches a prospect to
+   *  one of the 5 manufacturer query banks (mfg-ag-equipment / mfg-sports-
+   *  equipment / mfg-apparel-kids / mfg-auto-parts / mfg-outdoor-gear /
+   *  mfg-food-bev), this field gets stamped with the category slug so we
+   *  can group + report on lookalike performance separately from generic
+   *  cold scout. The Prospect.category is set to the same slug for V2-
+   *  template selection later. See bluejays/docs/MANUFACTURER_BACKLOG.md.
+   *  When set, the scout also auto-flips manuallyManaged=true so the
+   *  auto-pitch funnel skips them until V2 template + bespoke preview
+   *  exists for that prospect. */
+  lookalikeCategory?:
+    | "mfg-ag-equipment"
+    | "mfg-sports-equipment"
+    | "mfg-apparel-kids"
+    | "mfg-auto-parts"
+    | "mfg-outdoor-gear"
+    | "mfg-food-bev";
+  /** Defensibility score 0-100. Computed during data extraction as a sum
+   *  of three signals (place-of-origin specificity, patent/IP/trademark
+   *  presence, named-channel relationship). Per the 2026-05-06 deep dive
+   *  on ITC + Zenith + Nevarland, manufacturers without specificity die
+   *  in cold paid — generic copy → no conversion. Filtering at scout
+   *  time saves pitch-cycle cost.
+   *
+   *  Threshold: prospects with defensibilityScore < 30 should be flagged
+   *  for manual review before any preview build / cold pitch is sent.
+   *  Threshold tunable as data accrues. */
+  defensibilityScore?: number;
   /** 8-char deterministic short code used for customer-facing preview URLs
    *  (see /p/[code] route + src/lib/short-urls.ts). Derived from md5(id).
    *  Populated by migration 20260419_prospect_short_codes.sql. */
@@ -360,4 +401,14 @@ export const CATEGORY_CONFIG: Record<
   "non-profit": { label: "Non-Profit", accentColor: "#3AAFDB", heroGradient: "linear-gradient(135deg, #14283a 0%, #0e1c2a 100%)" },
   consulting: { label: "Consulting", accentColor: "#1e40af", heroGradient: "linear-gradient(135deg, #0a1428 0%, #050a18 100%)" },
   reiki: { label: "Reiki / Energy Healing", accentColor: "#c8867e", heroGradient: "linear-gradient(135deg, #fdfaf6 0%, #f3ede1 100%)" },
+  // Manufacturer slugs — industrial palette, dark-professional gradients.
+  // Each accent picked to feel category-specific: ag = harvest amber, sports
+  // = Zenith green, apparel = playful coral, auto = Detroit chrome-blue,
+  // outdoor = forest, food-bev = warm copper.
+  "mfg-ag-equipment":     { label: "Ag / Farm Equipment Manufacturer",  accentColor: "#d97706", heroGradient: "linear-gradient(135deg, #1f1810 0%, #14100a 100%)" },
+  "mfg-sports-equipment": { label: "Sports Equipment Manufacturer",     accentColor: "#16a34a", heroGradient: "linear-gradient(135deg, #0f1a12 0%, #0a120e 100%)" },
+  "mfg-apparel-kids":     { label: "Kids' Apparel Brand",               accentColor: "#f87171", heroGradient: "linear-gradient(135deg, #faf5f5 0%, #f5e8e8 100%)" },
+  "mfg-auto-parts":       { label: "Auto / Moto Parts Manufacturer",    accentColor: "#3b82f6", heroGradient: "linear-gradient(135deg, #0c1525 0%, #080f1a 100%)" },
+  "mfg-outdoor-gear":     { label: "Outdoor / Hunting Gear Manufacturer", accentColor: "#65a30d", heroGradient: "linear-gradient(135deg, #131a0e 0%, #0c1209 100%)" },
+  "mfg-food-bev":         { label: "Specialty Food / Bev Manufacturer", accentColor: "#c2703e", heroGradient: "linear-gradient(135deg, #1c1612 0%, #14100c 100%)" },
 };

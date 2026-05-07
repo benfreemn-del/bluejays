@@ -198,6 +198,19 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     smsConsentSource:
       (row.sms_consent_source as "get_started_form" | "opt_in_page" | "manual" | null) ||
       undefined,
+    lookalikeCategory:
+      (row.lookalike_category as
+        | "mfg-ag-equipment"
+        | "mfg-sports-equipment"
+        | "mfg-apparel-kids"
+        | "mfg-auto-parts"
+        | "mfg-outdoor-gear"
+        | "mfg-food-bev"
+        | null) || undefined,
+    defensibilityScore:
+      row.defensibility_score == null
+        ? undefined
+        : Number(row.defensibility_score),
     testCohortId: (row.test_cohort_id as string | null) || undefined,
     cohortPostcardSentAt: (row.cohort_postcard_sent_at as string | null) || undefined,
     loomVideoUrl: (row.loom_video_url as string | null) || undefined,
@@ -255,6 +268,8 @@ function prospectToDb(p: Prospect) {
     sms_consent: sanitized.smsConsent ?? false,
     sms_consent_at: sanitized.smsConsentAt || null,
     sms_consent_source: sanitized.smsConsentSource || null,
+    lookalike_category: sanitized.lookalikeCategory || null,
+    defensibility_score: sanitized.defensibilityScore ?? null,
     test_cohort_id: sanitized.testCohortId || null,
     cohort_postcard_sent_at: sanitized.cohortPostcardSentAt || null,
     loom_video_url: sanitized.loomVideoUrl || null,
@@ -455,6 +470,8 @@ export async function updateProspect(
     if (sanitizedUpdates.smsConsent !== undefined) dbUpdates.sms_consent = sanitizedUpdates.smsConsent ?? false;
     if (sanitizedUpdates.smsConsentAt !== undefined) dbUpdates.sms_consent_at = sanitizedUpdates.smsConsentAt || null;
     if (sanitizedUpdates.smsConsentSource !== undefined) dbUpdates.sms_consent_source = sanitizedUpdates.smsConsentSource || null;
+    if (sanitizedUpdates.lookalikeCategory !== undefined) dbUpdates.lookalike_category = sanitizedUpdates.lookalikeCategory || null;
+    if (sanitizedUpdates.defensibilityScore !== undefined) dbUpdates.defensibility_score = sanitizedUpdates.defensibilityScore ?? null;
     if (sanitizedUpdates.testCohortId !== undefined) dbUpdates.test_cohort_id = sanitizedUpdates.testCohortId || null;
     if (sanitizedUpdates.cohortPostcardSentAt !== undefined) dbUpdates.cohort_postcard_sent_at = sanitizedUpdates.cohortPostcardSentAt || null;
     if (sanitizedUpdates.loomVideoUrl !== undefined) dbUpdates.loom_video_url = sanitizedUpdates.loomVideoUrl || null;
