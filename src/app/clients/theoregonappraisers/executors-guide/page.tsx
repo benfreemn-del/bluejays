@@ -170,11 +170,11 @@ export default function ExecutorsGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA_LD) }}
       />
-      <link
-        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
-        rel="stylesheet"
-      />
-      <style jsx global>{`
+      {/* Fonts loaded by parent layout.tsx; styled-jsx bypassed —
+          see comment in page.tsx. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .article-prose {
           font-family: "Source Sans Pro", system-ui, sans-serif;
           line-height: 1.7;
@@ -221,7 +221,9 @@ export default function ExecutorsGuidePage() {
             font-size: 11pt;
           }
         }
-      `}</style>
+      `,
+        }}
+      />
 
       {/* Top bar — back to main */}
       <nav

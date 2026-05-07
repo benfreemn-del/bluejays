@@ -40,22 +40,17 @@ import {
   Phone,
   ArrowRight,
   CheckCircle,
-  XCircle,
   Quotes,
   CaretDown,
   CaretRight,
   MapPin,
-  Calendar,
   Buildings,
-  HandCoins,
-  Tree,
   Clock,
   Lock,
   Certificate,
+  Compass,
   EnvelopeSimple,
   Star,
-  Compass,
-  GavelIcon,
 } from "@phosphor-icons/react/dist/ssr";
 
 // ============================================================================
@@ -488,14 +483,19 @@ export default function TheOregonAppraisersPage() {
         fontFamily: "'Source Sans Pro', system-ui, sans-serif",
       }}
     >
-      {/* Google Fonts — EB Garamond (headings) + Source Sans Pro (body)
-          per CLAUDE.md font pairing for legal-pro audience. */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
-        rel="stylesheet"
-      />
+      {/* Fonts: EB Garamond + Source Sans Pro loaded by the root
+          server-side via the `<link>` tag in layout.tsx (Next 16
+          Turbopack hangs at build time when client components inject
+          stylesheet `<link>` tags directly into JSX). Fallback to
+          Georgia / system-ui is visually nearly identical. */}
 
-      <style jsx global>{`
+      {/* Bypass styled-jsx — Next 16 Turbopack hangs at build time on
+          large styled-jsx blocks in client components. Plain inline
+          <style> with template-literal interpolation works identically
+          + builds in <2 min. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         body {
           background: ${CREAM};
         }
@@ -636,7 +636,9 @@ export default function TheOregonAppraisersPage() {
             display: none !important;
           }
         }
-      `}</style>
+      `,
+        }}
+      />
 
       <NavBar />
       <Hero />
