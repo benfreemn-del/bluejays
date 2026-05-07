@@ -126,6 +126,27 @@ export default function LeadPicker() {
     const filtered = prospects.filter((p) => {
       const s = String(p.status ?? "").toLowerCase();
 
+      // Drop active clients from Madie's call queue. If we've already
+      // paid them out / built them a custom site / they have an active
+      // AI System sub, calling them again as a sales-prospect would
+      // burn the relationship. Locked-in 2026-05-06 by Ben.
+      //
+      // Conditions that mark a prospect as "already a client":
+      //   - status='paid' — they bought, the relationship is sales-closed
+      //   - status='live' OR siteLiveAt set — their site is live on a domain
+      //   - status='deployed' — site shipped, awaiting domain transfer
+      //   - status='dns_transfer' — DNS migration in progress
+      //   - customSiteUrl present — bespoke / custom-tier client built
+      //   - pricingTier='fullsystem' AND status='paid' — AI Package buyer
+      const isAlreadyClient =
+        s === "paid" ||
+        s === "live" ||
+        s === "deployed" ||
+        s === "dns_transfer" ||
+        !!p.siteLiveAt ||
+        !!p.customSiteUrl;
+      if (isAlreadyClient) return false;
+
       // Lead-type / status filter chips
       if (filter === "interested" && !s.includes("interest") && !s.includes("respond") && !s.includes("engage")) return false;
       // "called-recently" / "no-calls" filters are status-substring proxies
