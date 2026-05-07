@@ -20,6 +20,33 @@ const V2_CATEGORIES = [
   "tree-service", "tutoring", "veterinary",
 ];
 
+/**
+ * Active bespoke client showcases at /clients/[slug].
+ *
+ * These are real paid + custom-tier client pages with unique local
+ * business content (real services, real photos, real addresses,
+ * real phone numbers). Each ranks for hyper-local + niche queries
+ * (e.g. "Tesla Powerwall installer Sequim" → meyer-electric).
+ *
+ * High priority (0.85) because they're compounding long-tail SEO:
+ * 1 unique business per page, no overlap with portfolio templates,
+ * each carries its own LocalBusiness/Electrician/etc. JSON-LD.
+ *
+ * Add a slug here when a new client showcase ships. Drop one if a
+ * client churns + we tear their page down.
+ */
+const ACTIVE_CLIENT_SHOWCASES = [
+  "meyer-electric",          // Tesla Powerwall + Generac · Sequim WA
+  "hector-landscaping",      // Hardscapes + lawn care · Renton WA
+  "masters-window-tinting",  // Auto + ceramic + PPF · West Babylon NY
+  "kr-ranches",              // Farm-direct beef · Prosser WA
+  "olympic-inspections",     // Home inspections (formerly P&P)
+  "itc-quick-attach",        // Tractor parts manufacturer · DTC ($10K AI System)
+  "zenith-sports",           // Soccer training balls · TEKKY brand ($10K AI System)
+  "laser-lakes",             // Custom lake-map wood art
+  "lcac",                    // Lewis County Autism Coalition
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -101,6 +128,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  // Active bespoke client showcases — high local-SEO value (real
+  // business name + city + niche → unique long-tail rankings).
+  const clientShowcaseRoutes: MetadataRoute.Sitemap =
+    ACTIVE_CLIENT_SHOWCASES.map((slug) => ({
+      url: `${BASE_URL}/clients/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    }));
+
   // Public preview pages for paid/claimed prospects
   let previewRoutes: MetadataRoute.Sitemap = [];
   try {
@@ -155,6 +192,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes,
     ...portfolioRoutes,
+    ...clientShowcaseRoutes,
     ...cityRoutes,
     ...guideRoutes,
     ...caseStudyRoutes,
