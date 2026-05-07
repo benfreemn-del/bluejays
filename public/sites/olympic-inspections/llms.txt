@@ -1,66 +1,78 @@
-# Olympic Inspections & Testing — Mold Inspection on the Olympic Peninsula
+# Olympic Inspections & Testing — Mold & Air Quality Testing on the Olympic Peninsula
 
-> Olympic Inspections & Testing (OIT) is an independent mold inspection and indoor air quality testing service for homes and businesses across the Olympic Peninsula in Washington State. Lab-backed reports in 3-5 days. ISO/IEC 17025 accredited lab partner. Tests for over 100 types of mold. Independent — we do not perform remediation, so the inspection is honest. Future expansion: radon, asbestos, lead, water testing.
+> Olympic Inspections & Testing is a family-owned mold inspection and indoor air quality testing service for residential, commercial, automotive, marine, and RV environments across the Olympic Peninsula in Washington State. Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. Independent — we do not perform remediation, so the inspection is honest. Inspections start at $150.
+
+## About
+
+Family-owned and operated. Established 2025 to fill a critical gap in high-quality air and mold testing services on the Olympic Peninsula. The business was founded after the owners discovered mold in their newly built home — an experience that turned into a frustrating and expensive ordeal because the Peninsula had few service providers, sky-high prices, and unanswered calls. They set out to offer reliable, affordable, and straightforward air and mold testing.
 
 ## Services
 
-- **Mold Inspection** — visual walkthrough, moisture meter readings, infrared thermal scan where useful
-- **Air Quality Sampling** — calibrated air pump pulls measured volume into a spore trap, lab counts spores by genus
-- **Surface and Swab Sampling** — tape-lift or swab from suspected growth, accredited lab analysis
-- **Written Lab Reports** — photo-documented PDF, plain-English findings, ready for insurance, real estate, or remediation
-- **Coming soon:** Radon testing, asbestos and lead surveys, water quality testing
+- **Complete Mold Inspection** — non-invasive walkthrough using thermal imaging to detect hidden moisture, collect humidity data, and identify areas of concern. Comprehensive report with findings and sampling recommendations.
+- **DIY Microbial Air & Surface Sampling** — sampling-only service for clients who already know what they need, or contractors verifying that air and surfaces are clear.
+- **ERMI Testing** — for clients working with healthcare professionals who need to document or track a history of mold exposure. Affordable and accessible.
+- **Written Lab Reports** — photo-documented, plain-English, formatted for insurance, real estate, or remediation contractors. Each report checks for over 100 types of mold and other particles.
+
+## Markets We Serve
+
+- **Residential** — homeowners, renters, landlords, property managers
+- **Commercial** — offices, retail, restaurants, commercial buildings
+- **Automotive** — personal vehicles, work trucks, vans, fleet cars
+- **Marine** — sailboats, yachts, fishing boats, houseboats
+- **RV & Trailer** — motorhomes, travel trailers, campers, fifth wheels
 
 ## Pricing
 
-- Base inspection (under 1,500 sqft): $295–$350
-- Base inspection (1,500–3,000 sqft): $350–$425
-- Base inspection (3,000–5,000 sqft): $450–$575
-- Over 5,000 sqft: custom quote
+- Full mold inspections start at just **$150** — the most affordable, certified, quality-driven option on the Peninsula
 - Air sample add-on: $85 each
 - Surface or swab sample: $55 each
 - Priority 24-hour report: +$150
 - Thermal/infrared scan: +$95
+- Final price confirmed after the on-site walkthrough
 
 ## Process
 
 1. Book online or call — same-day reply
 2. On-site inspection — 1 to 2 hours
-3. Lab analysis — 2 to 3 days at independent lab
-4. Written report delivered — 3 to 5 days total
+3. Lab analysis at our ISO/IEC 17025-accredited lab — 2 to 3 days
+4. Written report delivered — fast turnaround
 
-## Why customers choose OIT
+## What the Lab Tests For
 
-- Local to the Olympic Peninsula (Sequim, Port Angeles, Port Townsend, Hadlock, Chimacum, Quilcene, Forks)
-- Independent — we never perform remediation, so we have no incentive to over-find mold
-- AIHA-LAP-accredited lab partners
-- 3-5 day turnaround vs the 10-14 days most local competitors take
-- Photo-documented reports
-- Real estate and insurance ready
-- No upselling, no franchise pressure
+The lab analyzes for over 100 types of mold and other particles, including:
+
+- Stachybotrys (Black Mold)
+- Cladosporium
+- Chaetomium
+- Ulocladium
+- Aspergillus / Penicillium
+- Pollen
+- Insect parts
+- Human and animal skin cells
+- Dust and other small particles
+
+## Service Area
+
+Olympic Peninsula, Washington State. Specifically: Sequim, Port Angeles, Port Townsend, Forks, Hadlock, Chimacum, and Quilcene. Travel fees may apply for very rural or remote properties — confirmed in writing before booking.
 
 ## Contact
 
 - Phone: (360) 670-3367
 - Email: hello@olympicinspections.com
-- Service area: Olympic Peninsula, Washington State
+- Address: Sequim, WA 98382
+- Booking: https://bluejayportfolio.com/sites/olympic-inspections/#book
+- Pricing estimator: https://bluejayportfolio.com/sites/olympic-inspections/#calculator
 
-## Online booking
+## Why Choose Olympic Inspections & Testing
 
-OIT has a live booking calendar at https://bluejayportfolio.com/sites/olympic-inspections/#book — customers pick a slot, fill out property details, and submit. Confirmed within one business day.
+- Family-owned, founded 2025 by a Peninsula family who discovered mold in their own home and decided to do it better
+- Independent — we don't perform remediation, so the inspection is honest. Zero financial incentive to find more than is there.
+- ISO/IEC 17025-accredited laboratory partner
+- No upselling, ever
+- Affordable base pricing — full mold inspections start at $150 (most local competitors charge $1,500–$2,500)
+- Real-estate ready — reports formatted for buyer/seller use, routinely shared with realtors, escrow, and insurance adjusters
+- Local — we live on the Peninsula, we know the marine air, the older homes, the well-water issues
 
-## Cost calculator
+---
 
-Live cost calculator at https://bluejayportfolio.com/sites/olympic-inspections/#calculator — pick property size and add-on samples to see an instant estimate before booking.
-
-## Key URLs
-
-- Home: https://bluejayportfolio.com/sites/olympic-inspections/
-- Services: https://bluejayportfolio.com/sites/olympic-inspections/#services
-- How it works: https://bluejayportfolio.com/sites/olympic-inspections/#process
-- Cost calculator: https://bluejayportfolio.com/sites/olympic-inspections/#calculator
-- Book inspection: https://bluejayportfolio.com/sites/olympic-inspections/#book
-- FAQ: https://bluejayportfolio.com/sites/olympic-inspections/#faq
-
-## Built by
-
-[BlueJays — premium custom websites for local businesses](https://bluejayportfolio.com/audit)
+Built by [BlueJays](https://bluejayportfolio.com/audit) — get your free site audit
