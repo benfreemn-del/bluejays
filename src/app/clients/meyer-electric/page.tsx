@@ -577,28 +577,112 @@ export default function MeyerElectricPage() {
               </div>
             </div>
 
+            {/* Visual side: stylized Powerwall + lightning storm SVG.
+                Icon-led to keep our 5 unique real photos for the
+                services grid + hero + why-us — no duplicates per
+                CLAUDE.md Rule 1.5. */}
             <div className="order-1 lg:order-2 relative">
               <div
-                className="relative aspect-[4/5] sm:aspect-[5/6] rounded-2xl overflow-hidden"
+                className="relative aspect-[4/5] sm:aspect-[5/6] rounded-2xl overflow-hidden flex items-center justify-center"
                 style={{
-                  border: `1px solid rgba(250, 204, 21, 0.15)`,
+                  background: `radial-gradient(circle at 50% 30%, rgba(250, 204, 21, 0.18) 0%, rgba(10, 10, 10, 0) 60%), linear-gradient(180deg, ${BG_PANEL} 0%, ${BG} 100%)`,
+                  border: `1px solid rgba(250, 204, 21, 0.18)`,
                   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.6)",
                 }}
               >
-                <img
-                  src={PHOTOS.powerwall}
-                  alt="Tesla Powerwall and solar array installed on a modern home in Sequim WA"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(10,10,10,0) 60%, rgba(10,10,10,0.4) 100%)",
-                  }}
-                />
+                {/* Subtle grid pattern */}
+                <svg
+                  className="absolute inset-0 w-full h-full opacity-[0.06]"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <pattern
+                      id="meyer-pw-grid"
+                      width="40"
+                      height="40"
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M 40 0 L 0 0 0 40"
+                        fill="none"
+                        stroke={ACCENT}
+                        strokeWidth="0.5"
+                      />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#meyer-pw-grid)" />
+                </svg>
+
+                {/* Stylized Powerwall illustration */}
+                <div className="relative flex flex-col items-center gap-7 px-8">
+                  {/* Lightning storm cluster above */}
+                  <div className="flex items-end gap-2 opacity-70">
+                    <svg width="36" height="50" viewBox="0 0 24 32" fill={ACCENT}>
+                      <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+                    </svg>
+                    <svg width="56" height="76" viewBox="0 0 24 32" fill={ACCENT}>
+                      <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+                    </svg>
+                    <svg width="30" height="42" viewBox="0 0 24 32" fill={ACCENT} className="opacity-60">
+                      <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
+                    </svg>
+                  </div>
+
+                  {/* "Powerwall" stylized rectangle */}
+                  <div
+                    className="relative w-44 h-72 rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+                      boxShadow:
+                        "0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                    }}
+                  >
+                    {/* Tesla T mark (stylized) */}
+                    <div className="text-[10px] uppercase tracking-[0.3em] font-bold text-slate-500 mt-1">
+                      Powerwall
+                    </div>
+                    {/* Pulsing energy ring */}
+                    <div className="relative flex items-center justify-center">
+                      <div
+                        className="absolute w-24 h-24 rounded-full"
+                        style={{
+                          background: `radial-gradient(circle, ${ACCENT}40 0%, transparent 70%)`,
+                          animation: "meyerPulse 2.4s ease-in-out infinite",
+                        }}
+                      />
+                      <div
+                        className="relative w-14 h-14 rounded-full flex items-center justify-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+                          boxShadow: `0 0 28px ${ACCENT_DIM}`,
+                        }}
+                      >
+                        <Lightning size={26} weight="fill" color="#0a0a0a" />
+                      </div>
+                    </div>
+                    {/* Status LED row */}
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">
+                        Charged
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* House silhouette */}
+                  <svg
+                    width="100"
+                    height="40"
+                    viewBox="0 0 100 40"
+                    className="opacity-40"
+                    fill={INK_DIM}
+                  >
+                    <path d="M50 5 L10 28 L10 38 L40 38 L40 22 L60 22 L60 38 L90 38 L90 28 Z" />
+                  </svg>
+                </div>
               </div>
+
               {/* Floating cert badge */}
               <div
                 className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 px-4 py-3 rounded-xl shadow-xl"
@@ -620,6 +704,13 @@ export default function MeyerElectricPage() {
                   </div>
                 </div>
               </div>
+
+              <style jsx>{`
+                @keyframes meyerPulse {
+                  0%, 100% { transform: scale(1); opacity: 0.6; }
+                  50% { transform: scale(1.18); opacity: 0.95; }
+                }
+              `}</style>
             </div>
           </div>
         </div>
@@ -633,23 +724,120 @@ export default function MeyerElectricPage() {
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="relative">
+            {/* Visual side: stylized "Outage → Auto Restore" diagram.
+                Icon-led to keep our 5 unique real photos for the
+                services grid + hero — no duplicates per CLAUDE.md
+                Rule 1.5. Communicates the auto-transfer switch
+                concept visually without re-using the panel photo. */}
+            <div className="relative order-2 lg:order-1">
               <div
-                className="relative aspect-[4/3] rounded-2xl overflow-hidden"
+                className="relative aspect-[4/3] rounded-2xl overflow-hidden p-7 sm:p-9 flex flex-col justify-center gap-5"
                 style={{
+                  background: `radial-gradient(circle at 80% 20%, rgba(250, 204, 21, 0.14) 0%, transparent 60%), linear-gradient(135deg, ${BG_PANEL} 0%, ${BG} 100%)`,
                   border: `1px solid rgba(255, 255, 255, 0.08)`,
                   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.6)",
                 }}
               >
-                <img
-                  src={PHOTOS.generator}
-                  alt="Generac automatic transfer switch and main panel installation by Meyer Electric"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                />
+                {/* Subtle grid */}
+                <svg
+                  className="absolute inset-0 w-full h-full opacity-[0.05]"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <pattern
+                      id="meyer-gen-grid"
+                      width="32"
+                      height="32"
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M 32 0 L 0 0 0 32"
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth="0.5"
+                      />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#meyer-gen-grid)" />
+                </svg>
+
+                {/* Top: grid status row */}
+                <div className="relative flex items-center justify-between gap-4">
+                  <div
+                    className="flex-1 rounded-lg p-3.5 border"
+                    style={{
+                      background: "rgba(220, 38, 38, 0.10)",
+                      borderColor: "rgba(220, 38, 38, 0.35)",
+                    }}
+                  >
+                    <div className="text-[10px] uppercase tracking-[0.18em] font-bold text-rose-400">
+                      Grid
+                    </div>
+                    <div className="text-[18px] font-bold text-white mt-0.5" style={{ fontFamily: FONT_HEAD }}>
+                      OFFLINE
+                    </div>
+                  </div>
+                  <div
+                    className="text-2xl"
+                    style={{ color: ACCENT }}
+                    aria-hidden="true"
+                  >
+                    →
+                  </div>
+                  <div
+                    className="flex-1 rounded-lg p-3.5 border"
+                    style={{
+                      background: "rgba(34, 197, 94, 0.10)",
+                      borderColor: "rgba(34, 197, 94, 0.35)",
+                    }}
+                  >
+                    <div className="text-[10px] uppercase tracking-[0.18em] font-bold text-emerald-400">
+                      Generac
+                    </div>
+                    <div className="text-[18px] font-bold text-white mt-0.5" style={{ fontFamily: FONT_HEAD }}>
+                      RUNNING
+                    </div>
+                  </div>
+                </div>
+
+                {/* Center: big auto-transfer switch icon */}
+                <div className="relative flex flex-col items-center gap-3 my-2">
+                  <div
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+                      boxShadow: `0 0 32px ${ACCENT_DIM}`,
+                    }}
+                  >
+                    <Plug size={40} weight="fill" color="#0a0a0a" />
+                  </div>
+                  <div
+                    className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/70"
+                    style={{ fontFamily: FONT_HEAD }}
+                  >
+                    Auto-Transfer Switch
+                  </div>
+                </div>
+
+                {/* Bottom: house powered indicator */}
+                <div
+                  className="relative flex items-center justify-center gap-3 px-5 py-3 rounded-lg"
+                  style={{
+                    background: "rgba(34, 197, 94, 0.08)",
+                    border: "1px solid rgba(34, 197, 94, 0.25)",
+                  }}
+                >
+                  <House size={18} weight="fill" className="text-emerald-400" />
+                  <span
+                    className="text-[12px] uppercase tracking-[0.2em] font-bold text-emerald-400"
+                    style={{ fontFamily: FONT_HEAD }}
+                  >
+                    Home Powered · 8 sec
+                  </span>
+                </div>
               </div>
             </div>
-            <div>
+            <div className="order-1 lg:order-2">
               <div
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-5"
                 style={{
@@ -717,20 +905,42 @@ export default function MeyerElectricPage() {
         className="py-20 sm:py-24 lg:py-28 relative overflow-hidden"
         style={{ background: BG_ALT }}
       >
+        {/* Decorative gradient + grid (no photo — Rule 1.5 dedup;
+            about-twilight-home.jpg is already used in the services
+            grid for "Electrical Services & Upgrades"). */}
         <div className="absolute inset-0 pointer-events-none">
-          <img
-            src={PHOTOS.about}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover opacity-40"
-          />
           <div
-            className="absolute inset-0"
+            className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-30"
             style={{
               background:
-                "linear-gradient(90deg, rgba(17,17,17,0.96) 0%, rgba(17,17,17,0.85) 50%, rgba(17,17,17,0.55) 100%)",
+                "radial-gradient(circle, rgba(250, 204, 21, 0.22) 0%, transparent 65%)",
             }}
           />
+          <div
+            className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full opacity-25"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(250, 204, 21, 0.18) 0%, transparent 65%)",
+            }}
+          />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.04]" aria-hidden="true">
+            <defs>
+              <pattern
+                id="meyer-why-grid"
+                width="48"
+                height="48"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 48 0 L 0 0 0 48"
+                  fill="none"
+                  stroke="#facc15"
+                  strokeWidth="0.5"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#meyer-why-grid)" />
+          </svg>
         </div>
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">

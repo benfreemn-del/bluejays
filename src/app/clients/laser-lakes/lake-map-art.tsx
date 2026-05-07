@@ -44,24 +44,30 @@ export function LakeMapArt({
         }
       : variant === "walnut"
         ? {
-            plank1: "#6b4423",
-            plank2: "#3a2811",
-            grain: "rgba(255, 230, 180, 0.06)",
-            lakeFill: "#1c2e3a",
-            lakeStroke: "rgba(255, 230, 180, 0.35)",
-            contour: "rgba(255, 230, 180, 0.18)",
+            plank1: "#7a5232",
+            plank2: "#4a3017",
+            grain: "rgba(255, 230, 180, 0.05)",
+            lakeFill: "#1c3849",
+            lakeStroke: "rgba(255, 230, 180, 0.55)",
+            contour: "rgba(255, 230, 180, 0.28)",
             engrave: "#f6f1e8",
-            engraveShadow: "rgba(0,0,0,0.6)",
+            engraveShadow: "rgba(0,0,0,0.55)",
           }
         : {
-            plank1: "#c9a87a",
-            plank2: "#7a5a36",
-            grain: "rgba(80, 50, 20, 0.08)",
-            lakeFill: "#1f3848",
-            lakeStroke: "rgba(255, 245, 220, 0.55)",
-            contour: "rgba(255, 245, 220, 0.28)",
+            // WARM (hero) — pushed brighter + more saturated. The
+            // previous version was muddy because the wood-grain
+            // turbulence filter overwhelmed the base honey color.
+            // Lighter plank tone + warmer second stop + reduced
+            // grain noise opacity all conspire to keep the lake
+            // legible against the wood.
+            plank1: "#e0bb83",
+            plank2: "#9b7340",
+            grain: "rgba(60, 36, 12, 0.05)",
+            lakeFill: "#1f4a5f",
+            lakeStroke: "rgba(255, 248, 230, 0.7)",
+            contour: "rgba(255, 248, 230, 0.4)",
             engrave: "#2b1a08",
-            engraveShadow: "rgba(255, 240, 210, 0.4)",
+            engraveShadow: "rgba(255, 240, 210, 0.55)",
           };
 
   return (
@@ -120,12 +126,13 @@ export function LakeMapArt({
       {/* Plank background — fills the full canvas */}
       <rect width="600" height="750" fill="url(#ll-plank)" />
 
-      {/* Wood-grain noise overlay */}
+      {/* Wood-grain noise overlay — reduced from 55% → 25% so the
+          plank color stays warm + the lake stays legible. */}
       <rect
         width="600"
         height="750"
         filter="url(#ll-wood-grain)"
-        opacity="0.55"
+        opacity="0.25"
       />
 
       {/* Subtle horizontal grain stripes — multiple thin lines at
