@@ -44,15 +44,31 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   "riv-inc": { kind: "internal", href: "/clients/riv-inc" },
   "visit-marfa": { kind: "internal", href: "/clients/visit-marfa" },
 
-  // External production sites — clients who already had a site
-  // when they entered the BlueJays system. Update these as we
-  // confirm each client's actual public URL.
-  "lewis-county-autism": { kind: "none" },
-  "mountain-view-landscape": { kind: "none" },
+  // Static-HTML sites under public/sites/ — built bespoke for clients
+  // who needed a fast public marketing front but no Next-driven app.
+  // Folder slugs sometimes differ from client_slug (lcac =
+  // Lewis County Autism Coalition).
+  "lewis-county-autism": {
+    kind: "external",
+    href: "https://bluejayportfolio.com/sites/lcac/",
+  },
+  // Next page lives under a different folder name (mt-view-landscaping)
+  // than the DB slug (mountain-view-landscape). Wire to the actual
+  // route that exists on disk.
+  "mountain-view-landscape": {
+    kind: "internal",
+    href: "/clients/mt-view-landscaping",
+  },
   // Olympic Inspections & Testing (formerly Pine & Particle Co.)
   "olympic-inspections": {
     kind: "external",
     href: "https://bluejayportfolio.com/sites/olympic-inspections/",
+  },
+  // Pine & Particle Co. — pre-rebrand site, still wired so any
+  // legacy preview links route to the original asset.
+  "pine-and-particle": {
+    kind: "external",
+    href: "https://bluejayportfolio.com/sites/pine-and-particle/",
   },
 };
 
