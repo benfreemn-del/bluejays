@@ -126,6 +126,7 @@ const PUBLIC_API_PATHS = [
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
   "/api/onboarding-reminders/process", // Vercel cron — gated by CRON_SECRET in the handler
   "/api/funnel/run",                   // Vercel cron (daily 08:00 UTC) — gated by CRON_SECRET
+  "/api/funnel/feedback",              // Owner-portal funnel-edit feedback (SMS+email Ben — read-only, no auth required, mock-safe)
   "/api/client-funnels/run",           // Vercel cron (hourly) — gated by CRON_SECRET. Per-client AI-package funnel runner.
   "/api/client-funnels/missed-call",   // Twilio voice webhook — per-client missed-call → text-back.
   "/api/client-reports",               // Vercel cron (weekly Mon 14:00 UTC) — gated by CRON_SECRET. Per-client weekly digest.

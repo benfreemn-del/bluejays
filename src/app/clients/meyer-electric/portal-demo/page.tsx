@@ -36,6 +36,10 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import FunnelVisualModal, {
+  type FunnelDefLite,
+  type FunnelStepLite,
+} from "@/components/portal/FunnelVisualModal";
 import {
   MOCK_LEADS,
   MOCK_AFFILIATES,
@@ -2051,7 +2055,8 @@ function getFunnelTheme(id: string) {
 }
 
 function FunnelsTab() {
-  const [openFunnel, setOpenFunnel] = useState<string | null>(null);
+  const [openFunnelId, setOpenFunnelId] = useState<string | null>(null);
+  const [openWithNote, setOpenWithNote] = useState(false);
 
   const totals = useMemo(() => {
     const totalLeads = FUNNELS.reduce((s, f) => s + f.total_leads, 0);
@@ -2063,6 +2068,56 @@ function FunnelsTab() {
     const blended = totalLeads > 0 ? (totalWon / totalLeads) * 100 : 0;
     return { totalLeads, totalWon, totalRevenue, blended };
   }, []);
+
+  const openFunnel = FUNNELS.find((x) => x.id === openFunnelId) ?? null;
+
+  // Adapter: Meyer's mock-data Funnel shape -> FunnelDefLite the shared
+  // FunnelVisualModal expects. Channel mapping below collapses Meyer's
+  // wider channel set (which includes "call" + "site_visit") down to
+  // the 4 standard channels we ship in production. The owner can
+  // re-classify any step via the channel pills inside the modal.
+  function mapChannel(c: string): FunnelStepLite["channel"] {
+    if (c === "email" || c === "sms" || c === "voicemail" || c === "postcard") {
+      return c;
+    }
+    if (c === "call") return "voicemail";        // ringless VM is the production equivalent
+    if (c === "site_visit") return "voicemail";  // closest standard channel; label preserves intent
+    return "email";
+  }
+
+  const openFunnelDef: FunnelDefLite | null = openFunnel
+    ? {
+        segment: openFunnel.id,
+        audienceTag: openFunnel.audience.split(" · ")[0] || openFunnel.id,
+        emoji: getFunnelTheme(openFunnel.id).emoji,
+        title: openFunnel.name,
+        pitch: getFunnelTheme(openFunnel.id).pitch,
+        accentText: getFunnelTheme(openFunnel.id).accent,
+        steps: openFunnel.steps.map((s) => ({
+          day: s.day_offset,
+          channel: mapChannel(s.channel),
+          label: s.label,
+        })),
+      }
+    : null;
+
+  const openCounts = openFunnel
+    ? {
+        total: openFunnel.total_leads,
+        newCount: Math.max(0, openFunnel.total_leads - openFunnel.total_won * 2),
+        enrolledCount: Math.max(
+          0,
+          openFunnel.total_leads -
+            Math.max(0, openFunnel.total_leads - openFunnel.total_won * 2) -
+            openFunnel.total_won,
+        ),
+        wonCount: openFunnel.total_won,
+      }
+    : { total: 0, newCount: 0, enrolledCount: 0, wonCount: 0 };
+
+  const openLandingUrl = openFunnel
+    ? `/clients/meyer-electric#${openFunnel.id}`
+    : "";
 
   return (
     <div className="space-y-6">
@@ -2078,8 +2133,9 @@ function FunnelsTab() {
             </h2>
             <p className="text-sm text-slate-400 max-w-md">
               Each card is a live multi-channel sequence tuned to one customer
-              segment. Every step fires automatically based on the segment&apos;s
-              cadence — email, SMS, voicemail, on-site visit.
+              segment. Click <span className="text-amber-300 font-bold">View funnel</span>{" "}
+              to drill in, edit any step inline, or hit <span className="text-amber-300 font-bold">+</span>{" "}
+              to send a quick note to BlueJays.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-4 text-right">
@@ -2117,24 +2173,38 @@ function FunnelsTab() {
         </div>
       </div>
 
-      {/* 2-column grid of funnel cards */}
+      {/* 2-column grid of funnel cards — matches the Zenith portal exactly. */}
       <div className="grid lg:grid-cols-2 gap-3">
         {FUNNELS.map((f) => {
           const t = getFunnelTheme(f.id);
-          const isOpen = openFunnel === f.id;
           // Synthesize stage counts from the conversion percentages so the
           // cards have the same visual rhythm as Zenith's Total/New/Active/Won.
           const newCount = Math.max(0, f.total_leads - f.total_won * 2);
           const activeCount = Math.max(0, f.total_leads - newCount - f.total_won);
+          const lpUrl = `/clients/meyer-electric#${f.id}`;
           return (
             <div
               key={f.id}
-              className={`rounded-2xl border p-5 transition-shadow ${t.borderClass} ${t.bgClass} ${
-                isOpen ? "shadow-[0_0_30px_rgba(250,204,21,0.12)]" : ""
-              }`}
+              className={`relative rounded-2xl border p-5 transition-shadow ${t.borderClass} ${t.bgClass}`}
             >
+              {/* + Note pill — top-right corner. Opens the modal with
+                  note panel pre-expanded so Ben gets a free-form change
+                  request without the owner having to scan all steps. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenWithNote(true);
+                  setOpenFunnelId(f.id);
+                }}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full border border-white/15 bg-slate-900/70 hover:border-amber-400/60 hover:bg-amber-500/10 hover:text-amber-200 text-slate-400 text-base font-bold leading-none flex items-center justify-center transition-colors"
+                title="Send a note to BlueJays about this funnel"
+                aria-label="Send a note to BlueJays about this funnel"
+              >
+                +
+              </button>
+
               {/* Card header */}
-              <div className="flex items-start gap-3 mb-3">
+              <div className="flex items-start gap-3 mb-3 pr-10">
                 <span className="text-2xl">{t.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-white">{f.name}</h3>
@@ -2229,82 +2299,51 @@ function FunnelsTab() {
                 </div>
               </div>
 
-              {/* Action row */}
+              {/* Action row — matches Zenith */}
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setOpenFunnel(isOpen ? null : f.id)}
-                  className={`flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-white/15 bg-slate-900/70 hover:border-amber-400/50 hover:bg-slate-800 ${t.accent} text-center transition-colors`}
+                  onClick={() => {
+                    setOpenWithNote(false);
+                    setOpenFunnelId(f.id);
+                  }}
+                  className="flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-white/15 bg-slate-900/70 hover:border-amber-400/50 hover:bg-slate-800 text-amber-200 text-center transition-colors"
                 >
-                  {isOpen ? "Hide detail ▴" : "View detail ▾"}
+                  View funnel
                 </button>
-                <span
-                  className="px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap flex items-center"
-                  title="Conversion rate end-to-end"
+                <a
+                  href={lpUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-center"
                 >
-                  {f.conversion_rate.toFixed(1)}% close
-                </span>
+                  View landing page ↗
+                </a>
               </div>
-
-              {/* Expanded detail — slides in below the card on click */}
-              {isOpen && (
-                <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {f.description}
-                  </p>
-
-                  {/* Per-step conversion bars */}
-                  <div className="space-y-2.5">
-                    {f.steps.map((step) => (
-                      <div key={step.step}>
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-white/[0.08] text-white shrink-0">
-                              {step.step}
-                            </span>
-                            <span className="text-xs font-semibold text-white truncate">
-                              {step.label}
-                            </span>
-                          </div>
-                          <span
-                            className="text-xs font-bold tabular-nums whitespace-nowrap"
-                            style={{ color: scoreColor(step.conversion_pct) }}
-                          >
-                            {step.conversion_pct}%
-                          </span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${step.conversion_pct}%`,
-                              background: `linear-gradient(90deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Footer stats row */}
-                  <div className="flex items-center justify-between pt-2 text-xs">
-                    <span className="text-slate-400">Avg job value</span>
-                    <span className="font-bold text-yellow-300">
-                      {fmtMoney(f.avg_job_value)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Closed revenue</span>
-                    <span className="font-bold text-emerald-300">
-                      {fmtMoney(f.total_won * f.avg_job_value)}
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
           );
         })}
       </div>
+
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-4 text-xs text-slate-500 italic">
+        Edits made here go straight to BlueJays as a structured change
+        request — Ben reviews, applies, and replies within one business day.
+        Same flow as the Zenith owner portal.
+      </div>
+
+      <FunnelVisualModal
+        isOpen={openFunnelId !== null}
+        onClose={() => {
+          setOpenFunnelId(null);
+          setOpenWithNote(false);
+        }}
+        funnel={openFunnelDef}
+        counts={openCounts}
+        landingUrl={openLandingUrl}
+        slug="meyer-electric"
+        editable
+        initialShowNote={openWithNote}
+      />
     </div>
   );
 }

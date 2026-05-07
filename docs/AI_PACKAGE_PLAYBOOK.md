@@ -1140,6 +1140,33 @@ edge runtime. Lockout: 5 failed attempts → 15-min lock.
 - **Overview** — pipeline value, weekly trend, action-required, "Action
   items from Ben" peek (top 3 open client-action tasks), outreach
   contacted-vs-uncontacted progress bar, recent leads with quick contact.
+- **Funnels** — audience-funnel card grid. Each card = one audience
+  segment (parent / coach / player / etc.) with: emoji + segment chip,
+  touchpoint sequence (D{n} blocks per step), 4-stat row (Total / New /
+  Active / Won), "View funnel" button → opens **shared `FunnelVisualModal`**
+  (`src/components/portal/FunnelVisualModal.tsx`), and "View landing
+  page ↗" button. Locked UX requirements (2026-05-06 — same as
+  MOCK_BACKEND_PLAYBOOK row 11):
+  - **Per-step inline edit** inside the modal — click any step to edit
+    the label, channel (email / sms / voicemail / postcard), and day
+  - **Up/down arrows on the day number** for ±1 day nudges (and a
+    direct number input for bigger jumps)
+  - **Voicemail steps render a read-only transcript block** in the
+    edit pane — the message label is editable but the transcript itself
+    requires the "+ Note" channel (Ben re-records via the feedback flow)
+  - **"+" pill in the top-right of every funnel card** opens the modal
+    with a free-form note panel pre-expanded — the owner writes a quick
+    request and "Send to BlueJays" delivers it
+  - **All edits + notes route through `POST /api/funnel/feedback`**
+    which fires `sendOwnerAlert` SMS + structured email to Ben with
+    a step-by-step diff. Edits do NOT mutate the live funnel directly
+    (human-in-the-loop) — Ben implements the change in code + redeploys
+    after eyeballing the request, mirroring the rest of the portal's
+    "every owner-driven mutation goes through Ben" pattern
+  - **The shared modal is the standard.** Don't inline a custom
+    funnel editor per client. Every new client funnels-tab uses
+    `FunnelVisualModal` + `FUNNELS_BY_SLUG` (same path Zenith + Meyer
+    mock-backend already use)
 - **Leads** — full lead list with audience badges, manual contact logging
   (Email/Call/Text — opens native handler AND records the touch),
   manual funnel enroll, AI reply drafts (Claude Sonnet 4, locked to the

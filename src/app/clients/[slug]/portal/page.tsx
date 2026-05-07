@@ -5151,6 +5151,10 @@ function FunnelsTab({
   const [openFunnelSegment, setOpenFunnelSegment] = useState<string | null>(
     null,
   );
+  // When the + Note pill on a card opens the modal, we want it to land
+  // on the note panel (not the touchpoint sequence). Reset to false
+  // every time the modal closes.
+  const [openWithNote, setOpenWithNote] = useState(false);
   const openFunnel =
     funnels.find((f) => f.segment === openFunnelSegment) ?? null;
   const openSegLeads = openFunnel
@@ -5230,9 +5234,24 @@ function FunnelsTab({
           return (
             <div
               key={f.segment}
-              className={`rounded-2xl border p-5 ${f.cardClass}`}
+              className={`relative rounded-2xl border p-5 ${f.cardClass}`}
             >
-              <div className="flex items-start gap-3 mb-3">
+              {/* + Note pill — top-right corner. Opens the modal with the
+                  note panel pre-expanded so the owner can write a request
+                  to Ben without first scanning all steps. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenWithNote(true);
+                  setOpenFunnelSegment(f.segment);
+                }}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full border border-white/15 bg-slate-900/70 hover:border-amber-400/60 hover:bg-amber-500/10 hover:text-amber-200 text-slate-400 text-base font-bold leading-none flex items-center justify-center transition-colors"
+                title="Send a note to BlueJays about this funnel"
+                aria-label="Send a note to BlueJays about this funnel"
+              >
+                +
+              </button>
+              <div className="flex items-start gap-3 mb-3 pr-10">
                 <span className="text-2xl">{f.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-white">{f.title}</h3>
@@ -5337,7 +5356,10 @@ function FunnelsTab({
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setOpenFunnelSegment(f.segment)}
+                  onClick={() => {
+                    setOpenWithNote(false);
+                    setOpenFunnelSegment(f.segment);
+                  }}
                   className="flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-white/15 bg-slate-900/70 hover:border-amber-400/50 hover:bg-slate-800 text-amber-200 text-center transition-colors"
                 >
                   View funnel
@@ -5364,7 +5386,11 @@ function FunnelsTab({
 
       <FunnelVisualModal
         isOpen={openFunnelSegment !== null}
-        onClose={() => setOpenFunnelSegment(null)}
+        onClose={() => {
+          setOpenFunnelSegment(null);
+          setOpenWithNote(false);
+        }}
+        initialShowNote={openWithNote}
         funnel={
           openFunnel
             ? {
@@ -5380,6 +5406,8 @@ function FunnelsTab({
         }
         counts={openCounts}
         landingUrl={openLandingUrl}
+        slug={slug}
+        editable
       />
     </div>
   );

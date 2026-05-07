@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * FunnelVisualModal — opens from the portal Funnels tab "View funnel" button.
@@ -10,15 +10,28 @@ import { useEffect } from "react";
  * see at a glance: how many entered, when each touch fires, what the message
  * is, and how the system narrows leads down stage by stage.
  *
- * Receives a slim FunnelDef-shape prop so this stays decoupled from the
- * giant portal page file. Reach percentages are industry-estimate
- * baselines (clearly labeled), not invented stats.
+ * Editable controls (added 2026-05-06 per Ben's "make individual points
+ * editable" directive — this is the AI System standard now):
+ *   - Click any step to inline-edit label + day + channel
+ *   - Up/down arrows on the day number for ±1 day nudges
+ *   - Voicemail steps show a read-only transcript block
+ *   - + Note button at the top opens a free-form note panel
+ *   - Save Changes / Send Note button POSTs to /api/funnel/feedback
+ *     which SMSes + emails Ben so he can implement the change
+ *
+ * Feedback flow is intentionally human-in-the-loop — the owner's edits
+ * don't mutate the live funnel directly. Ben sees the diff, applies the
+ * change in code (or pushes back), then redeploys. Mirrors the rest of
+ * the portal (every owner-driven mutation goes through Ben for now).
  */
 
 export type FunnelStepLite = {
   day: number;
   channel: "email" | "sms" | "voicemail" | "postcard";
   label: string;
+  // Optional voicemail transcript — when not present we synthesize from
+  // the label so the read-only transcript block always renders something.
+  transcript?: string;
 };
 
 export type FunnelDefLite = {
@@ -42,18 +55,61 @@ export type FunnelStageCounts = {
 // baselines, not invented per-client stats — clearly labeled in the UI.
 const REACH_BASELINE_BY_INDEX = [1.0, 0.85, 0.65, 0.48, 0.34, 0.24, 0.17, 0.12];
 
+const CHANNEL_OPTIONS: FunnelStepLite["channel"][] = [
+  "email",
+  "sms",
+  "voicemail",
+  "postcard",
+];
+
+function channelEmoji(c: FunnelStepLite["channel"]): string {
+  return c === "email" ? "✉" : c === "sms" ? "💬" : c === "voicemail" ? "🎙" : "📮";
+}
+
+function channelLabel(c: FunnelStepLite["channel"]): string {
+  return c === "email"
+    ? "Email"
+    : c === "sms"
+      ? "SMS"
+      : c === "voicemail"
+        ? "Voicemail"
+        : "AI Postcard";
+}
+
+function deriveTranscript(step: FunnelStepLite): string {
+  if (step.transcript && step.transcript.trim()) return step.transcript;
+  // Synthesize a plausible AI-voicemail script from the step label so the
+  // owner sees what the prospect would actually hear. Real transcripts
+  // get persisted via the feedback endpoint when Ben records them.
+  return (
+    `Hey, this is a quick voicemail from your team — ${step.label.toLowerCase()}. ` +
+    `If you'd like to chat, give us a ring back when you get a sec. ` +
+    `No pressure either way.`
+  );
+}
+
 export default function FunnelVisualModal({
   isOpen,
   onClose,
   funnel,
   counts,
   landingUrl,
+  slug,
+  editable = true,
+  initialShowNote = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
   funnel: FunnelDefLite | null;
   counts: FunnelStageCounts;
   landingUrl: string;
+  /** Client slug — used as the routing key in the feedback endpoint. */
+  slug?: string;
+  /** When false, renders read-only (legacy callers). */
+  editable?: boolean;
+  /** When true, the modal opens with the note panel already expanded
+   *  (used by the + Note pill on each funnel card). */
+  initialShowNote?: boolean;
 }) {
   // Lock body scroll while open + close on Escape.
   useEffect(() => {
@@ -70,9 +126,101 @@ export default function FunnelVisualModal({
     };
   }, [isOpen, onClose]);
 
+  // Local edit state — per-step proposed overrides + an open-step pointer
+  // so click-toggles the inline editor.
+  const [edits, setEdits] = useState<Record<number, Partial<FunnelStepLite>>>({});
+  const [openStep, setOpenStep] = useState<number | null>(null);
+  const [showNotePanel, setShowNotePanel] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitMsg, setSubmitMsg] = useState<string | null>(null);
+
+  // Reset edit state every time the modal opens with a new funnel — stale
+  // edits from a previous segment are confusing.
+  useEffect(() => {
+    if (!isOpen) return;
+    setEdits({});
+    setOpenStep(null);
+    setShowNotePanel(initialShowNote);
+    setNoteText("");
+    setSubmitMsg(null);
+  }, [isOpen, funnel?.segment, initialShowNote]);
+
+  // Merged step view — original + per-step edits.
+  const mergedSteps = useMemo<FunnelStepLite[]>(() => {
+    if (!funnel) return [];
+    return funnel.steps.map((s, i) => ({ ...s, ...(edits[i] ?? {}) }));
+  }, [funnel, edits]);
+
   if (!isOpen || !funnel) return null;
 
   const enrolled = counts.total;
+  const hasEdits = Object.keys(edits).length > 0;
+  const canSubmit = editable && (hasEdits || (showNotePanel && noteText.trim().length > 0));
+
+  const updateStep = (index: number, patch: Partial<FunnelStepLite>) => {
+    setEdits((prev) => ({ ...prev, [index]: { ...prev[index], ...patch } }));
+  };
+
+  const resetStep = (index: number) => {
+    setEdits((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+  };
+
+  const submitFeedback = async () => {
+    if (!editable || !canSubmit || !funnel) return;
+    setSubmitting(true);
+    setSubmitMsg(null);
+    try {
+      const items: unknown[] = [];
+      for (const [idxStr, patch] of Object.entries(edits)) {
+        const i = Number(idxStr);
+        const original = funnel.steps[i];
+        if (!original) continue;
+        items.push({
+          kind: "step_edit",
+          funnelSegment: funnel.segment,
+          funnelTitle: funnel.title,
+          stepIndex: i,
+          original: {
+            day: original.day,
+            channel: original.channel,
+            label: original.label,
+          },
+          proposed: {
+            day: patch.day ?? original.day,
+            channel: patch.channel ?? original.channel,
+            label: patch.label ?? original.label,
+          },
+        });
+      }
+      if (showNotePanel && noteText.trim()) {
+        items.push({
+          kind: "note",
+          funnelSegment: funnel.segment,
+          funnelTitle: funnel.title,
+          note: noteText.trim(),
+        });
+      }
+      const res = await fetch("/api/funnel/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slug ?? null, items }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setSubmitMsg("Sent to BlueJays — Ben will review and reply within one business day.");
+      setEdits({});
+      setNoteText("");
+      setShowNotePanel(false);
+    } catch (e) {
+      setSubmitMsg(`Couldn't reach BlueJays — try again in a moment. (${(e as Error).message})`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div
@@ -105,15 +253,49 @@ export default function FunnelVisualModal({
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 rounded-md border border-white/10 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs px-2.5 py-1.5 transition-colors"
-            aria-label="Close"
-          >
-            ✕ Close
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {editable && (
+              <button
+                type="button"
+                onClick={() => setShowNotePanel((v) => !v)}
+                className={`rounded-md border text-xs px-2.5 py-1.5 transition-colors ${
+                  showNotePanel
+                    ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
+                    : "border-white/10 bg-slate-800 hover:bg-slate-700 text-slate-300"
+                }`}
+                title="Send a note to BlueJays about this funnel"
+              >
+                {showNotePanel ? "✕ Cancel note" : "+ Note"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md border border-white/10 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs px-2.5 py-1.5 transition-colors"
+              aria-label="Close"
+            >
+              ✕ Close
+            </button>
+          </div>
         </div>
+
+        {/* Note panel — opens when + Note clicked */}
+        {editable && showNotePanel && (
+          <div className="px-6 py-4 border-b border-white/5 bg-amber-500/[0.04]">
+            <label className="text-[10px] uppercase tracking-[0.2em] font-semibold text-amber-300 mb-1.5 block">
+              Note to BlueJays about this funnel
+            </label>
+            <textarea
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="e.g. Move D5 SMS to D3 — parents are dropping off too quickly. Or: add a new step at D14 for re-engagement."
+              className="w-full h-24 rounded-lg bg-slate-900/80 border border-white/10 focus:border-amber-400 focus:outline-none px-3 py-2 text-sm text-white placeholder-slate-500"
+            />
+            <p className="text-[10px] text-slate-500 mt-1.5 italic">
+              Ben sees the note + the step diff (if any) and replies within one business day.
+            </p>
+          </div>
+        )}
 
         {/* Top stats row */}
         <div className="grid grid-cols-4 gap-2 px-6 py-4 border-b border-white/5">
@@ -127,13 +309,14 @@ export default function FunnelVisualModal({
         <div className="px-6 py-6">
           <div className="text-[10px] uppercase tracking-[0.22em] text-slate-500 mb-4 text-center">
             Touchpoint sequence · top → bottom
+            {editable && <span className="ml-2 text-amber-400/70">· click any step to edit</span>}
           </div>
 
           {/* Entry node */}
           <div className="flex flex-col items-center">
             <FunnelEntryNode enrolled={enrolled} accentText={funnel.accentText} />
 
-            {funnel.steps.map((step, i) => {
+            {mergedSteps.map((step, i) => {
               const reachPct = Math.round(
                 (REACH_BASELINE_BY_INDEX[i] ?? 0.1) * 100,
               );
@@ -141,6 +324,8 @@ export default function FunnelVisualModal({
               const reachCount = Math.round(
                 enrolled * (REACH_BASELINE_BY_INDEX[i] ?? 0.1),
               );
+              const isOpen = openStep === i;
+              const isEdited = !!edits[i];
               return (
                 <FunnelStepRow
                   key={i}
@@ -151,6 +336,12 @@ export default function FunnelVisualModal({
                   reachCount={reachCount}
                   enrolled={enrolled}
                   accentText={funnel.accentText}
+                  editable={editable}
+                  isOpen={isOpen}
+                  isEdited={isEdited}
+                  onToggleOpen={() => setOpenStep(isOpen ? null : i)}
+                  onUpdate={(patch) => updateStep(i, patch)}
+                  onReset={() => resetStep(i)}
                 />
               );
             })}
@@ -178,8 +369,29 @@ export default function FunnelVisualModal({
           </p>
         </div>
 
+        {/* Submit message */}
+        {submitMsg && (
+          <div className="mx-6 mb-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs text-emerald-200">
+            {submitMsg}
+          </div>
+        )}
+
         {/* Footer */}
         <div className="flex flex-col sm:flex-row gap-2 border-t border-white/5 px-6 py-4">
+          {editable && (
+            <button
+              type="button"
+              onClick={submitFeedback}
+              disabled={!canSubmit || submitting}
+              className="flex-1 inline-flex items-center justify-center text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting
+                ? "Sending…"
+                : hasEdits || noteText.trim()
+                  ? `Send to BlueJays${hasEdits ? ` (${Object.keys(edits).length} edit${Object.keys(edits).length === 1 ? "" : "s"})` : ""}`
+                  : "Send to BlueJays"}
+            </button>
+          )}
           <Link
             href={landingUrl}
             target="_blank"
@@ -232,6 +444,12 @@ function FunnelStepRow({
   reachPct,
   reachCount,
   accentText,
+  editable,
+  isOpen,
+  isEdited,
+  onToggleOpen,
+  onUpdate,
+  onReset,
 }: {
   index: number;
   step: FunnelStepLite;
@@ -240,23 +458,16 @@ function FunnelStepRow({
   reachCount: number;
   enrolled: number;
   accentText: string;
+  editable: boolean;
+  isOpen: boolean;
+  isEdited: boolean;
+  onToggleOpen: () => void;
+  onUpdate: (patch: Partial<FunnelStepLite>) => void;
+  onReset: () => void;
 }) {
-  const channelEmoji =
-    step.channel === "email"
-      ? "✉"
-      : step.channel === "sms"
-        ? "💬"
-        : step.channel === "voicemail"
-          ? "🎙"
-          : "📮";
-  const channelLabel =
-    step.channel === "email"
-      ? "Email"
-      : step.channel === "sms"
-        ? "SMS"
-        : step.channel === "voicemail"
-          ? "Voicemail"
-          : "AI Postcard";
+  const emoji = channelEmoji(step.channel);
+  const label = channelLabel(step.channel);
+  const isVoicemail = step.channel === "voicemail";
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -264,29 +475,161 @@ function FunnelStepRow({
       <div className="text-slate-700 text-xl my-1">↓</div>
 
       <div
-        className="rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 transition-all hover:border-amber-500/30"
+        className={`rounded-xl border bg-slate-900/70 transition-all ${
+          isEdited
+            ? "border-amber-500/60"
+            : isOpen
+              ? "border-amber-400/40"
+              : "border-white/10 hover:border-amber-500/30"
+        }`}
         style={{ width: `${widthPct}%` }}
       >
-        <div className="flex items-center justify-between gap-3 mb-1.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <span
-              className={`text-[10px] font-black ${accentText} uppercase tracking-widest shrink-0`}
-            >
-              D{step.day}
-            </span>
-            <span className="text-base shrink-0">{channelEmoji}</span>
-            <span className="text-xs font-bold text-white shrink-0">
-              {channelLabel}
-            </span>
+        {/* Compact summary row — always visible */}
+        <button
+          type="button"
+          onClick={editable ? onToggleOpen : undefined}
+          className={`w-full text-left px-4 py-3 ${editable ? "cursor-pointer" : "cursor-default"}`}
+        >
+          <div className="flex items-center justify-between gap-3 mb-1.5">
+            <div className="flex items-center gap-2 min-w-0">
+              {/* Day with up/down arrows when editable */}
+              {editable ? (
+                <span
+                  className="inline-flex items-center gap-0.5 rounded-md bg-black/40 border border-white/10 px-1 py-0.5 shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={() => onUpdate({ day: Math.max(0, step.day - 1) })}
+                    className="text-slate-400 hover:text-white px-1 leading-none text-[12px]"
+                    aria-label="Decrease day"
+                  >
+                    ▾
+                  </button>
+                  <span
+                    className={`text-[10px] font-black ${accentText} uppercase tracking-widest tabular-nums px-0.5`}
+                  >
+                    D{step.day}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onUpdate({ day: step.day + 1 })}
+                    className="text-slate-400 hover:text-white px-1 leading-none text-[12px]"
+                    aria-label="Increase day"
+                  >
+                    ▴
+                  </button>
+                </span>
+              ) : (
+                <span className={`text-[10px] font-black ${accentText} uppercase tracking-widest shrink-0`}>
+                  D{step.day}
+                </span>
+              )}
+              <span className="text-base shrink-0">{emoji}</span>
+              <span className="text-xs font-bold text-white shrink-0">
+                {label}
+              </span>
+              {isEdited && (
+                <span className="text-[9px] uppercase tracking-wider font-black text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+                  edited
+                </span>
+              )}
+            </div>
+            <div className="text-[10px] text-slate-500 shrink-0">
+              <span className="text-white font-bold tabular-nums">
+                ~{reachCount}
+              </span>{" "}
+              reach · {reachPct}%
+            </div>
           </div>
-          <div className="text-[10px] text-slate-500 shrink-0">
-            <span className="text-white font-bold tabular-nums">
-              ~{reachCount}
-            </span>{" "}
-            reach · {reachPct}%
+          <p className="text-xs text-slate-300 leading-snug">{step.label}</p>
+        </button>
+
+        {/* Inline editor — opens on click when editable */}
+        {editable && isOpen && (
+          <div
+            className="px-4 pb-4 pt-1 border-t border-white/5 space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Channel selector — pill row */}
+            <div>
+              <label className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-500 mb-1.5 block">
+                Channel
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {CHANNEL_OPTIONS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => onUpdate({ channel: c })}
+                    className={`px-2.5 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                      step.channel === c
+                        ? "border-amber-400/60 bg-amber-500/15 text-amber-200"
+                        : "border-white/10 bg-slate-900/60 text-slate-400 hover:border-white/25 hover:text-white"
+                    }`}
+                  >
+                    {channelEmoji(c)} {channelLabel(c)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Label / message body */}
+            <div>
+              <label className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-500 mb-1.5 block">
+                {isVoicemail ? "What this voicemail accomplishes" : "Message label"}
+              </label>
+              <textarea
+                value={step.label}
+                onChange={(e) => onUpdate({ label: e.target.value })}
+                rows={2}
+                className="w-full rounded-lg bg-slate-900 border border-white/10 focus:border-amber-400 focus:outline-none px-3 py-2 text-xs text-white placeholder-slate-500"
+              />
+            </div>
+
+            {/* Voicemail transcript — read-only block, not edited inline.
+                Real transcripts live in the Activity tab; this is the
+                AI-script preview the prospect hears. */}
+            {isVoicemail && (
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-500 mb-1.5 flex items-center justify-between">
+                  <span>Voicemail transcript</span>
+                  <span className="text-slate-600 normal-case font-normal italic tracking-normal">
+                    read-only · edit via note
+                  </span>
+                </div>
+                <blockquote className="rounded-lg bg-black/40 border border-white/10 px-3 py-2.5 text-[11px] text-slate-300 leading-relaxed italic">
+                  "{deriveTranscript(step)}"
+                </blockquote>
+              </div>
+            )}
+
+            {/* Day input — also fine-grained when arrows aren't enough */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-500">
+                  Day
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={step.day}
+                  onChange={(e) => onUpdate({ day: Math.max(0, Number(e.target.value) || 0) })}
+                  className="w-16 rounded-md bg-slate-900 border border-white/10 focus:border-amber-400 focus:outline-none px-2 py-1 text-xs text-white tabular-nums"
+                />
+              </div>
+              {isEdited && (
+                <button
+                  type="button"
+                  onClick={onReset}
+                  className="text-[10px] uppercase tracking-wider text-slate-400 hover:text-amber-300 underline-offset-2 hover:underline"
+                >
+                  Revert this step
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-        <p className="text-xs text-slate-300 leading-snug">{step.label}</p>
+        )}
       </div>
     </div>
   );

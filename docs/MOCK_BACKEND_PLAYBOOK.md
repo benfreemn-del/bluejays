@@ -36,6 +36,7 @@ ask NEW questions about what's unique to THIS instance.
 | 8 | Persistence | Pure mock — page reload resets state cleanly. NO localStorage. **Sub-override (locked 2026-05-06):** within-session sessionStorage is OK for save/star-style UX features (e.g. saved customer list). Survives reload within the demo session, resets on tab close. NEVER localStorage. |
 | 9 | Branding | BlueJays dashboard frame (slate-950 bg + horizontal tab bar with border-yellow-400 active state) + the prospect's public-site accent color inside |
 | 10 | Reuse storage | Master playbook (this doc) + per-industry config in `docs/mock-backends/` + AIOS skill |
+| 11 | Funnels-tab UX (locked 2026-05-06) | Card grid mirrors Zenith owner-portal exactly. Each card → click "View funnel" opens the **shared `FunnelVisualModal`** (`src/components/portal/FunnelVisualModal.tsx`). Modal supports: per-step inline edit (label / channel / day), up/down day arrows on every step, voicemail steps render a read-only transcript block, "+" pill on the modal header opens a free-form note panel, "Send to BlueJays" button POSTs to `/api/funnel/feedback` (SMS + email Ben). Each card ALSO has a top-right "+" pill that opens the modal with the note panel pre-expanded, plus a "View landing page ↗" button matching Zenith. **Use the shared modal — do NOT inline a custom funnel editor per industry.** |
 
 **If Ben overrides any of these for a specific instance**, he says so
 explicitly. Update the locked-defaults table in this doc + the AIOS
