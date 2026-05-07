@@ -2833,8 +2833,8 @@ function BooksBlock() {
               >
                 Lineage of Fire
               </h3>
-              <p className="text-base italic max-w-md mx-auto mb-6" style={{ color: "rgba(232, 220, 196, 0.75)" }}>
-                The night that turns Sopher and Proph's world over. The first book in the saga.
+              <p className="text-lg sm:text-xl italic max-w-md mx-auto mb-6 leading-relaxed" style={{ color: "rgba(232, 220, 196, 0.85)" }}>
+                The night that turns Sopher and Proph&apos;s world over. The first book in the saga.
               </p>
               <div className="flex items-center justify-center gap-3 text-sm mb-6" style={{ color: "rgba(232, 220, 196, 0.6)" }}>
                 <span className="flex items-center gap-1"><Star /> 4.4</span>
@@ -2891,13 +2891,15 @@ function BooksBlock() {
               >
                 House of the Rose
               </h3>
-              <p className="text-base italic max-w-md mx-auto mb-6" style={{ color: "rgba(232, 220, 196, 0.75)" }}>
+              <p className="text-lg sm:text-xl italic max-w-md mx-auto mb-6 leading-relaxed" style={{ color: "rgba(232, 220, 196, 0.85)" }}>
                 The saga continues. The wilted rose was never just a sigil.
               </p>
               <div className="flex items-center justify-center gap-3 text-sm mb-6" style={{ color: "rgba(232, 220, 196, 0.6)" }}>
                 <span className="flex items-center gap-1"><Star /> 4.6</span>
                 <span>·</span>
-                <span>Available now</span>
+                <span>424 pages</span>
+                <span>·</span>
+                <span>Ages 11+</span>
               </div>
               <a
                 href={AMAZON_HOUSE}
@@ -3242,7 +3244,12 @@ function WorldMapBlock() {
               </g>
             </svg>
 
-            {/* Hot-spots */}
+            {/* Hot-spots — cartographer's pins. Each renders a colored
+                dot with a parchment-toned ring and a small compass-mark
+                cross inside when active, so it reads as "marker on a
+                map" rather than "generic UI dot." Hit-area extended via
+                button padding so fingers + mice have a comfortable
+                target on top of the underlying icon. */}
             {LOCATIONS.map((loc) => {
               const isActive = loc.id === active;
               const accentHex =
@@ -3252,35 +3259,70 @@ function WorldMapBlock() {
                   key={loc.id}
                   type="button"
                   onClick={() => setActive(loc.id)}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group p-2.5 cursor-pointer"
                   style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
                   aria-label={`View ${loc.name}`}
+                  aria-pressed={isActive}
                 >
-                  <span
-                    className="block rounded-full transition-all duration-300"
-                    style={{
-                      width: isActive ? 18 : 12,
-                      height: isActive ? 18 : 12,
-                      background: accentHex,
-                      boxShadow: `0 0 ${isActive ? 24 : 12}px ${accentHex}, 0 0 ${isActive ? 48 : 24}px ${accentHex}88`,
-                      border: `2px solid ${isActive ? "#fff" : "#09090b"}`,
-                    }}
-                  />
+                  {/* Outer pulsing ring (active only) — soft fade-in
+                      ripple instead of a hard ping. */}
                   {isActive && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-0 rounded-full animate-ping"
-                      style={{ background: accentHex, opacity: 0.5 }}
+                      className="absolute left-1/2 top-1/2 rounded-full animate-ping"
+                      style={{
+                        width: 28,
+                        height: 28,
+                        marginLeft: -14,
+                        marginTop: -14,
+                        background: accentHex,
+                        opacity: 0.45,
+                      }}
                     />
                   )}
+                  {/* The pin itself — slightly bigger when active, with
+                      a parchment-cream ring so it sits on the map like
+                      a wax seal instead of fighting the ink art. */}
                   <span
-                    className={`absolute left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 text-[10px] uppercase tracking-wider whitespace-nowrap rounded-sm transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-80"}`}
+                    className="relative block rounded-full transition-all duration-300 group-hover:scale-110"
+                    style={{
+                      width: isActive ? 20 : 13,
+                      height: isActive ? 20 : 13,
+                      background: accentHex,
+                      boxShadow: `0 0 ${isActive ? 22 : 10}px ${accentHex}, 0 0 ${isActive ? 44 : 22}px ${accentHex}88, 0 1px 3px rgba(58, 40, 23, 0.6)`,
+                      border: `2px solid ${isActive ? "#fdfaf3" : "#3a2817"}`,
+                    }}
+                  >
+                    {/* Compass-mark cross inside active pin — feels
+                        cartographic rather than abstract. */}
+                    {isActive && (
+                      <svg
+                        viewBox="0 0 16 16"
+                        className="absolute inset-0 w-full h-full"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M 8 3 L 8 13 M 3 8 L 13 8"
+                          stroke="#fdfaf3"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          opacity="0.85"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                  {/* Label tooltip — uses parchment styling instead of
+                      the prior dark dropdown so it blends with the
+                      map's typography. */}
+                  <span
+                    className={`absolute left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] whitespace-nowrap rounded-sm transition-all duration-300 ${isActive ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 group-hover:opacity-90 group-hover:translate-y-0"}`}
                     style={{
                       top: "100%",
-                      background: "rgba(9, 9, 11, 0.85)",
-                      color: GOLD,
+                      background: "#3a2817",
+                      color: "#ecdcb8",
                       fontFamily: "'Cinzel', serif",
-                      border: `1px solid ${GOLD_DEEP}66`,
+                      border: `1px solid ${accentHex}`,
+                      boxShadow: `0 4px 12px rgba(0,0,0,0.5)`,
                     }}
                   >
                     {loc.name}
