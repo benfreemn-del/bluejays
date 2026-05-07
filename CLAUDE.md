@@ -7788,7 +7788,25 @@ that.
    show a `−{X} pp` pill in rose
    (`text-rose-300/90 bg-rose-500/[0.08] border-rose-500/20`) next to
    the % number. Step 1 has no drop-off pill (it's the entry point).
-4. **Measured-vs-baseline label** — small italic note below the bar.
+4. **Close-rate pill (REQUIRED — added 2026-05-07)** — a green
+   `→ {X}% close` pill in the right cluster above the bar (between
+   the drop-off pill and the reach % number). Shows what % of the
+   people who reached THIS step eventually closed as a sale.
+   Mathematically derived: `closeRatePct = finalReach / cumulativeReach[i] × 100`.
+   Naturally monotonically NON-DECREASING across steps (people deeper
+   in the funnel are higher-quality leads; their close rate is higher).
+   Last step always 100% (those people ARE the closes — that's the
+   punchline of the funnel). Pill styling:
+   `text-emerald-300/90 bg-emerald-500/[0.08] border-emerald-500/25`
+   to match the existing "Won · converted" emerald theme. Required on
+   EVERY step including step 1 and the final step — the visual rhythm
+   compounds the realism. Never suppress on the last step ("100% close"
+   is the proof the math is consistent + lands the funnel's sales
+   story). The reasoning: the cumulative reach bar tells the prospect
+   "where am I losing people"; the close-rate pill tells them
+   "but the people who DO get here convert at X%" — together they
+   carry the full funnel story.
+5. **Measured-vs-baseline label** — small italic note below the bar.
    `Cumulative reach` when `step.cumulativeReachPct` came from
    measurement; `Cumulative reach · est. baseline` when the surface
    fell back to `REACH_BASELINE_BY_INDEX`. Lets prospects tell what's
@@ -7811,6 +7829,17 @@ parent component. Don't duplicate this logic — reuse the modal.
 - Omitting the drop-off pill on steps where reach actually dropped
   (it's the highest-signal element on the row — that's where the
   business problem is)
+- Omitting the close-rate pill on ANY step (including step 1 and the
+  final step). The pill is required on all rows for visual rhythm.
+  "100% close" on the final step is intentional — it's the punchline
+  that proves the funnel math is consistent
+- Showing the close-rate pill in any color OTHER than emerald
+  (must match the existing "Won · converted" green theme — color
+  carries the "this is the conversion signal" semantic)
+- Suppressing or hiding the close-rate pill when step 1's close rate
+  equals the funnel's overall close rate (it does — that's correct,
+  step 1 = whole funnel audience). Showing it is the proof the math
+  works end-to-end
 
 **Cascades:**
 

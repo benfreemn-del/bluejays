@@ -366,6 +366,15 @@ export default function FunnelVisualModal({
               const hasMeasuredData = mergedSteps.some(
                 (s) => s.cumulativeReachPct !== undefined,
               );
+              // Final-step reach = funnel's overall close rate (the % of
+              // the original 100% who become a sale). Per-step CLOSE
+              // RATE = finalReach / reachAtStep × 100 — i.e. of the
+              // people who reached this step, what % eventually closed.
+              // Naturally increases left-to-right because people deeper
+              // in the funnel are higher-quality leads. Last step is
+              // always 100% (these ARE the closes). Required visual per
+              // CLAUDE.md Rule 74. Locked 2026-05-07.
+              const finalReach = reachSeq[reachSeq.length - 1] ?? 0;
               return mergedSteps.map((step, i) => {
                 const reachPct = Math.round(reachSeq[i] ?? 0);
                 const widthPct = 92 - i * 9; // taper visually
@@ -375,6 +384,11 @@ export default function FunnelVisualModal({
                   i === 0
                     ? 0
                     : Math.max(0, Math.round((reachSeq[i - 1] ?? 0) - (reachSeq[i] ?? 0)));
+                // Close rate for THIS step's audience.
+                const closeRatePct =
+                  (reachSeq[i] ?? 0) > 0
+                    ? Math.round((finalReach / (reachSeq[i] ?? 1)) * 100)
+                    : 0;
                 const isOpen = openStep === i;
                 const isEdited = !!edits[i];
                 return (
@@ -386,6 +400,7 @@ export default function FunnelVisualModal({
                     reachPct={reachPct}
                     reachCount={reachCount}
                     dropPct={dropPct}
+                    closeRatePct={closeRatePct}
                     isMeasured={hasMeasuredData}
                     enrolled={enrolled}
                     accentText={funnel.accentText}
@@ -420,7 +435,11 @@ export default function FunnelVisualModal({
         <div className="px-6 pb-4">
           <p className="text-[11px] text-slate-500 leading-relaxed italic">
             Each step's bar shows cumulative reach — % of the original 100%
-            who make it that far. Bars only scale down. Numbers tagged
+            who make it that far. Bars only scale down. The
+            <span className="not-italic mx-1 px-1 rounded bg-emerald-500/10 text-emerald-300/90 border border-emerald-500/25">→ X% close</span>
+            pill shows what % of the people at THAT step eventually
+            became a sale (deeper steps = higher-quality leads). Numbers
+            tagged
             <span className="not-italic font-mono mx-1 px-1 rounded bg-slate-800/60 text-slate-400">est. baseline</span>
             use industry-typical attrition; once your funnel has real
             send-by-send data, those flip to measured.
@@ -502,6 +521,7 @@ function FunnelStepRow({
   reachPct,
   reachCount,
   dropPct,
+  closeRatePct,
   isMeasured,
   accentText,
   editable,
@@ -518,6 +538,13 @@ function FunnelStepRow({
   reachCount: number;
   /** Percentage-points dropped from previous step (0 for step 1). */
   dropPct: number;
+  /** Of the people who REACHED this step, what % eventually closed
+   *  as a sale. Derived: finalReach / cumulativeReach[i] × 100.
+   *  Naturally monotonically non-decreasing across steps (deeper =
+   *  higher-quality lead). Last step always 100%. Required visual
+   *  per CLAUDE.md Rule 74 — green pill in the right cluster above
+   *  the bar. Locked 2026-05-07. */
+  closeRatePct: number;
   /** True when reach data came from real per-step measurements
    *  (cumulativeReachPct on funnel.steps), false when falling back
    *  to the industry-typical baseline curve. Drives the footer label
@@ -634,6 +661,14 @@ function FunnelStepRow({
                     −{dropPct} pp
                   </span>
                 )}
+                {/* Close-rate pill — REQUIRED on every step row per
+                    CLAUDE.md Rule 74. Shows what % of people who
+                    reached THIS step eventually closed. Naturally
+                    monotonically non-decreasing across steps (deeper =
+                    higher-quality lead); last step always 100%. */}
+                <span className="text-[10px] tabular-nums font-bold text-emerald-300/90 bg-emerald-500/[0.08] border border-emerald-500/25 px-1.5 py-0.5 rounded">
+                  → {closeRatePct}% close
+                </span>
                 <span className="text-xs font-black tabular-nums text-white">
                   {reachPct}%
                 </span>
