@@ -6220,6 +6220,187 @@ without code changes.
 
 ---
 
+### Locked-In Rule 68 — Per-Page Metadata Override Mandatory for Client Showcases (NON-NEGOTIABLE)
+
+Established 2026-05-06 after the SEO audit on Meyer Electric caught
+the root `app/layout.tsx` leaking BlueJays-homepage values into every
+child page's `<head>`. The leaks were catastrophic — wrong canonical
+URL (told Google "this page is a duplicate of the homepage, don't
+index it"), wrong Open Graph (every social share showed BlueJays
+branding instead of the client's), wrong JSON-LD schema (described
+BlueJays selling $997 websites instead of the actual client business).
+
+**Every page at `/clients/[slug]` (or any other route hosting client-
+specific content) MUST override the following Metadata fields in its
+own `layout.tsx`:**
+
+1. **`alternates.canonical`** → MUST point at the page-specific URL,
+   never the bluejayportfolio.com homepage. Without this Google treats
+   the page as a duplicate of the canonical target and won't index it
+   independently.
+2. **`openGraph`** — full override (NOT just title/description):
+   - `title`, `description`, `url`, `siteName` — all client-specific
+   - `images` — array with at least one client photo (ideally hero or
+     a 1200×630 og-image), with explicit `width`, `height`, `alt`
+   - `type: 'website'` (or `business.business` if appropriate)
+   - `locale: 'en_US'` (or relevant)
+3. **`twitter`** — full override:
+   - `card: 'summary_large_image'`
+   - `title`, `description`, `images` — all client-specific
+4. **`keywords`** — replace BlueJays-generic terms ("web design, local
+   business website") with client-/niche-/geo-specific terms (e.g.
+   "Tesla Powerwall installer Sequim, Generac Authorized Dealer Sequim,
+   Olympic Peninsula electrician, license MEYERE*862P1"). Most search
+   engines ignore meta keywords today but Bing still uses them and it
+   doesn't hurt.
+5. **JSON-LD structured data** (`<script type="application/ld+json">`)
+   injected directly in the layout's JSX (NOT via the `metadata.other`
+   shape — Next.js escapes it):
+   - Use the appropriate Schema.org type (`Electrician`, `Plumber`,
+     `Restaurant`, `Dentist`, `LocalBusiness`, etc.)
+   - Required fields: `name`, `url`, `image`, `telephone`,
+     `address` (PostalAddress), `geo` (GeoCoordinates), `priceRange`,
+     `areaServed` (array of `City` objects), `openingHoursSpecification`
+   - `hasOfferCatalog.itemListElement` with each Service the client
+     offers + a description per service
+   - `identifier` for the license number as PropertyValue
+   - `sameAs` linking to the client's existing website / social profiles
+   - Coexists ADDITIVELY with the root BlueJays
+     `ProfessionalService` schema — Google treats multiple JSON-LD
+     blocks fine, treats them as additive context.
+
+**Reference implementation:**
+`src/app/clients/meyer-electric/layout.tsx` — sets all 5 fields with
+SITE_URL + PAGE_PATH constants at the top, full openGraph + twitter
+overrides, and an `Electrician`-typed JSON-LD with all required fields
+populated from real Meyer data.
+
+**How to verify after deploy** (use this exact command — Chrome MCP
+freezes on heavy CSS animations):
+
+```bash
+curl -s https://bluejayportfolio.com/clients/[slug] \
+  | grep -E '(canonical|og:title|og:image|og:url|twitter:title|application/ld\+json)' \
+  | head -10
+```
+
+Expected: every value should reference the client's URL/business name,
+NOT bluejayportfolio.com or "BlueJays | Premium Web Design."
+
+If you see `<link rel="canonical" href="https://bluejayportfolio.com"/>`
+(no path) or `<meta property="og:title" content="BlueJays | ..."` —
+the override is broken or didn't deploy yet.
+
+**This applies retroactively:** every existing `/clients/[slug]`
+page should be audited via the curl command above. Any page leaking
+homepage values gets the same treatment as Meyer's layout.
+
+---
+
+### Locked-In Rule 69 — Active Client Showcases MUST Be in sitemap.ts (NON-NEGOTIABLE)
+
+Companion to Rule 68. Found during the same 2026-05-06 audit:
+`src/app/sitemap.ts` had 81 entries (homepage + portfolio showcases +
+city pages + guides + case studies + previews) but ZERO `/clients/[slug]`
+entries. Google Search Console had no way to discover the bespoke
+client pages from sitemap crawl — they could only be found by chance
+via internal links from the BlueJays homepage (which doesn't link to
+them by default).
+
+**Every active bespoke client showcase MUST have a slug entry in the
+`ACTIVE_CLIENT_SHOWCASES` array in `src/app/sitemap.ts`.** Priority
+0.85 — high local-SEO value because each carries unique long-tail
+queries (real business name + city + niche → unique rankings).
+
+**When to add:** in the SAME commit as the new
+`/clients/[slug]/page.tsx` ships. Don't let it drift.
+
+**When to remove:** if a client churns + we tear down their page.
+Keeping a sitemap entry that 404s is worse than no entry — Google
+penalizes broken-link-in-sitemap signals.
+
+**Currently active (verified 2026-05-06):**
+meyer-electric, hector-landscaping, masters-window-tinting, kr-ranches,
+olympic-inspections, itc-quick-attach, zenith-sports, laser-lakes, lcac.
+
+**Verify after deploy:**
+
+```bash
+curl -s https://bluejayportfolio.com/sitemap.xml \
+  | grep -oE '<loc>[^<]*clients[^<]*</loc>'
+```
+
+Should return one `<loc>` line per active showcase.
+
+---
+
+### Locked-In Rule 70 — Animation Discipline for Trade-Category Illustrations (NON-NEGOTIABLE)
+
+Established 2026-05-06 after the Meyer Electric Powerwall + Generac
+diagram animations shipped. The pattern that works (and that should
+be reused on every future trade-illustration build — HVAC airflow,
+plumbing pressure, solar panel charging, cleaning before/after, etc.):
+
+**1. Pure CSS keyframes inside `<style jsx>`.** No framer-motion
+runtime, no Lottie, no GIFs. Reasons:
+- ~zero JS overhead, no hydration cost
+- No external library load (Lottie ~70KB, lottie-web ~250KB)
+- Animations start the moment paint completes (no JS init delay)
+- GIFs lose every quality battle vs CSS
+
+**2. Class names MUST be prefixed with section identifier.** e.g.
+`.me-pw-bolt` (Meyer Powerwall bolt), `.me-gen-arrow` (Meyer Generac
+arrow). Why: a single page can have 10+ animations and unprefixed
+class names collide.
+
+**3. Wrap every animation in `@media (prefers-reduced-motion: reduce)`
+that disables it.** Required for accessibility (vestibular disorder
+users). Pattern:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .me-pw-ring,
+  .me-pw-core,
+  .me-pw-bolt,
+  .me-pw-charge,
+  .me-pw-led {
+    animation: none;
+  }
+  .me-pw-charge { height: 100%; }  /* charge bar stops at full */
+}
+```
+
+**4. Animations must NARRATE the user's mental model.** Don't animate
+for animation's sake — every motion should reinforce the sales claim:
+- Powerwall: charge bar fills 0→100% (battery is charging up).
+  Lightning bolts strike (storm rolls through, Powerwall absorbs energy).
+  Ring waves expand outward (energy radiating).
+- Generac: arrow pulses left→right (grid energy crossing to backup).
+  Switch icon rotates -2°↔+2° (ATS lever flipping back and forth).
+  Home indicator shimmer-sweeps left→right (continuous power flow).
+
+**5. Subtle wins over flashy.** Default duration: 2-4s for breathing
+loops, 4-6s for "process" loops (charging, traveling), 1.5-2s for
+quick pulses (status LEDs). Default amplitude: ±5% scale for breaths,
+±2-4px translate for levitates, 0.4-1.0 opacity for glows. Anything
+more starts to distract from the headline.
+
+**6. Reference implementation:** the Powerwall + Generac diagrams in
+`src/app/clients/meyer-electric/page.tsx` (search for `me-pw-` and
+`me-gen-` class prefixes). 13 distinct animations across both
+diagrams, total CSS additional ~3KB, zero JS impact, all
+prefers-reduced-motion gated.
+
+**Forbidden:**
+- GIFs/MP4s for diagram animation (use CSS)
+- Lottie/lottie-react for trade illustrations (overkill for keyframes)
+- framer-motion for ambient loops (it's for orchestrated entrance/exit
+  animations, not 24/7 background loops)
+- Unprefixed keyframe names (collision risk)
+- Animations without prefers-reduced-motion override (a11y violation)
+
+---
+
 ## Daily Task System — 30-Day Growth Ramp (started 2026-04-28)
 
 **HOW TO USE:** When Ben asks "what are my daily tasks?" or "what should I do today?", calculate `currentDay = (today - 2026-04-28) + 1` (capped at 30 for day-specific tasks, the three permanent habits continue forever). Then present tasks in this format:
