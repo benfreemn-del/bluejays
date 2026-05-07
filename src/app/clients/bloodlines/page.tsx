@@ -64,6 +64,7 @@ type Location = {
   name: string;
   region: string;
   blurb: string;
+  emoji: string; // single character — characteristic glyph for the place
   // Map % coords (0-100, normalized to viewBox)
   x: number;
   y: number;
@@ -77,6 +78,7 @@ const LOCATIONS: Location[] = [
     region: "The Capital",
     blurb:
       "The crown city of the kingdom — old stone walls, screens flickering on cobblestone streets, and the seat of Queen Avi's court. Where iron and elletas have been woven together for generations.",
+    emoji: "👑",
     x: 50,
     y: 52,
     accent: "gold",
@@ -87,6 +89,7 @@ const LOCATIONS: Location[] = [
     region: "Highland Territory",
     blurb:
       "Pine-shadowed hills above the lowland farms. Home to the Upland villages — small, proud, and watching the road that leads down to the Tags.",
+    emoji: "🌲",
     x: 28,
     y: 28,
     accent: "blue",
@@ -97,6 +100,7 @@ const LOCATIONS: Location[] = [
     region: "Lowland Reaches",
     blurb:
       "The frontier shanties at the kingdom's edge. Smoke, mud, and the kind of quiet that means somebody's listening.",
+    emoji: "🏚️",
     x: 72,
     y: 70,
     accent: "crimson",
@@ -107,6 +111,7 @@ const LOCATIONS: Location[] = [
     region: "The Citadel",
     blurb:
       "Where Annarose forges its sworn blades. Foldable broadswords in hip canisters, Mechy-sleeved cadets, and an instructor or two who remembers why the Wilted Rose was outlawed.",
+    emoji: "⚔️",
     x: 56,
     y: 44,
     accent: "gold",
@@ -117,6 +122,7 @@ const LOCATIONS: Location[] = [
     region: "Hidden Order",
     blurb:
       "Whispered about in taverns, branded onto skin in secret. A rose-and-crown sigil that means more than anyone in the throne room is willing to say out loud.",
+    emoji: "🥀",
     x: 38,
     y: 58,
     accent: "crimson",
@@ -127,6 +133,7 @@ const LOCATIONS: Location[] = [
     region: "The Far Peaks",
     blurb:
       "A jagged spine of stone in the north. Storms pour off it sideways. The old maps mark it as the place where elletas first answered a human voice.",
+    emoji: "⛰️",
     x: 18,
     y: 12,
     accent: "blue",
@@ -137,6 +144,7 @@ const LOCATIONS: Location[] = [
     region: "Beyond the Border",
     blurb:
       "What lies past the kingdom's writ. The twisted ones are said to come from here. Some say worse things than that.",
+    emoji: "💀",
     x: 86,
     y: 22,
     accent: "crimson",
@@ -2605,9 +2613,452 @@ function SectionHeading({
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// Wilted Rose Sigil — embossed cover-stamp for the hero book.
+// Stylized rose viewed from the side: heavy drooping bud, curving stem,
+// thorns, a curling leaf, and a fallen petal at the base. Lore-grounded
+// — the wilted-rose mark is the bloodline sigil per Rule 72 synopsis.
+// ──────────────────────────────────────────────────────────────────────
+function WiltedRoseSigil({ size = 140 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size * 1.4}
+      viewBox="0 0 100 140"
+      fill="currentColor"
+      aria-hidden="true"
+      style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }}
+    >
+      {/* Bud cluster — drooping rose head */}
+      <g transform="translate(50, 38)">
+        {/* Outermost drooping petal (left, wilting down) */}
+        <path
+          d="M -22 -2 Q -30 -16, -20 -30 Q -10 -34, -2 -26 Q -10 -16, -16 -10 Q -22 -2, -22 -2 Z"
+          opacity="0.7"
+        />
+        {/* Right outer drooping petal */}
+        <path
+          d="M 22 -2 Q 30 -14, 22 -28 Q 14 -34, 4 -28 Q 10 -16, 16 -10 Q 22 -2, 22 -2 Z"
+          opacity="0.7"
+        />
+        {/* Lower drooping petal — wilted, hanging */}
+        <path
+          d="M -10 -2 Q -8 8, -2 12 Q 4 14, 8 6 Q 10 -2, 10 -2 Z"
+          opacity="0.55"
+        />
+        {/* Center bud — tight, embossed */}
+        <path
+          d="M 0 -10 Q -10 -20, -6 -32 Q 0 -38, 6 -32 Q 10 -20, 0 -10 Z"
+          opacity="1"
+        />
+        {/* Inner detail */}
+        <path
+          d="M 0 -16 Q -4 -22, -2 -28 Q 0 -30, 2 -28 Q 4 -22, 0 -16 Z"
+          opacity="0.5"
+        />
+      </g>
+
+      {/* Stem — curving down, slight S-curve */}
+      <path
+        d="M 50 50 Q 46 64, 51 78 Q 56 92, 49 106 Q 46 118, 50 130"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        fill="none"
+        strokeLinecap="round"
+      />
+
+      {/* Thorns — three angled barbs */}
+      <path
+        d="M 48 60 L 42 56 M 53 84 L 60 81 M 47 110 L 41 113"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        fill="none"
+        strokeLinecap="round"
+      />
+
+      {/* Leaf — single curling leaf mid-stem */}
+      <path
+        d="M 51 72 Q 38 66, 34 78 Q 36 88, 50 80 Q 53 76, 51 72 Z"
+        opacity="0.65"
+      />
+      <path
+        d="M 38 72 Q 42 78, 49 80"
+        stroke="currentColor"
+        strokeWidth="0.8"
+        fill="none"
+        opacity="0.4"
+      />
+
+      {/* Fallen petal at the base */}
+      <path
+        d="M 36 124 Q 28 122, 28 132 Q 34 136, 42 130 Q 42 124, 36 124 Z"
+        opacity="0.6"
+      />
+    </svg>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Metal Corner Stud — bezel-set crimson cabochon at each cover corner.
+// Rotated per `corner` prop so the L-bracket points the right way.
+// ──────────────────────────────────────────────────────────────────────
+function MetalCornerStud({ corner }: { corner: "tl" | "tr" | "bl" | "br" }) {
+  const rotation = {
+    tl: 0,
+    tr: 90,
+    br: 180,
+    bl: 270,
+  }[corner];
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      style={{
+        transform: `rotate(${rotation}deg)`,
+        filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.6))",
+      }}
+      aria-hidden="true"
+    >
+      {/* L-bracket — gold metal */}
+      <path
+        d="M 2 2 L 28 2 L 28 8 L 8 8 L 8 28 L 2 28 Z"
+        fill={GOLD_DEEP}
+      />
+      {/* Inner highlight along top + left edges */}
+      <path
+        d="M 3 3 L 27 3 L 27 4 L 4 4 L 4 27 L 3 27 Z"
+        fill={GOLD_LIGHT}
+        opacity="0.55"
+      />
+      {/* Bottom + right edge shadow */}
+      <path
+        d="M 8 7 L 28 7 L 28 8 L 8 8 Z M 7 8 L 8 8 L 8 28 L 7 28 Z"
+        fill="rgba(0,0,0,0.4)"
+      />
+      {/* Corner gem — crimson cabochon */}
+      <circle cx="6" cy="6" r="3" fill={CRIMSON} />
+      <circle cx="6" cy="6" r="3" fill={CRIMSON_BRIGHT} opacity="0.4" />
+      {/* Gem highlight */}
+      <circle cx="5" cy="5" r="1" fill={GOLD_LIGHT} opacity="0.7" />
+    </svg>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Wax-Seal Stat Badge — small parchment-ribbon stamp framing one stat.
+// Used in the hero stats line. Crimson wax seal dot on the left,
+// parchment background, italic gold text. Small and tight.
+// ──────────────────────────────────────────────────────────────────────
+function WaxSealStat({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="relative inline-flex items-center gap-2 px-4 py-1.5 text-xs sm:text-sm"
+      style={{
+        background:
+          "linear-gradient(180deg, #e8dcc4 0%, #d4c5a0 50%, #b89668 100%)",
+        color: INK,
+        fontFamily: "'EB Garamond', serif",
+        fontStyle: "italic",
+        fontWeight: 500,
+        clipPath:
+          "polygon(0 0, 8px 50%, 0 100%, calc(100% - 8px) 100%, 100% 50%, calc(100% - 8px) 0)",
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 8px rgba(0,0,0,0.3)",
+        textShadow: "0 1px 0 rgba(255,255,255,0.4)",
+      }}
+    >
+      {/* Wax seal dot on the left */}
+      <span
+        aria-hidden="true"
+        className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+        style={{
+          background: `radial-gradient(circle at 30% 30%, ${CRIMSON_BRIGHT}, ${CRIMSON} 60%, #4a0000 100%)`,
+          boxShadow:
+            "0 0 0 1px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3)",
+        }}
+      />
+      {children}
+    </span>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Parchment Synopsis Modal — opens on book click. Two parchment pages
+// flip open from center revealing the synopsis (left page) + Amazon CTA
+// (right page). ESC or backdrop click closes.
+// ──────────────────────────────────────────────────────────────────────
+function ParchmentSynopsisModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  // Close on ESC
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    // Lock body scroll while open
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 sm:px-8"
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Bloodlines synopsis"
+    >
+      <style jsx>{`
+        .bl-page-flip-wrap {
+          animation: bl-page-flip-in 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+          transform-origin: center center;
+          will-change: transform, opacity;
+        }
+        .bl-page-left {
+          animation: bl-page-left-flip 0.9s cubic-bezier(0.4, 0.0, 0.2, 1) 0.2s
+            both;
+          transform-origin: right center;
+          backface-visibility: hidden;
+        }
+        .bl-page-right {
+          animation: bl-page-right-flip 0.9s cubic-bezier(0.4, 0.0, 0.2, 1) 0.2s
+            both;
+          transform-origin: left center;
+          backface-visibility: hidden;
+        }
+        @keyframes bl-page-flip-in {
+          0% {
+            opacity: 0;
+            transform: scale(0.85) rotateX(20deg);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) rotateX(0deg);
+          }
+        }
+        @keyframes bl-page-left-flip {
+          0% {
+            transform: rotateY(60deg);
+            opacity: 0;
+          }
+          100% {
+            transform: rotateY(0deg);
+            opacity: 1;
+          }
+        }
+        @keyframes bl-page-right-flip {
+          0% {
+            transform: rotateY(-60deg);
+            opacity: 0;
+          }
+          100% {
+            transform: rotateY(0deg);
+            opacity: 1;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-page-flip-wrap,
+          .bl-page-left,
+          .bl-page-right {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      <div
+        className="bl-page-flip-wrap relative w-full max-w-5xl"
+        onClick={(e) => e.stopPropagation()}
+        style={{ perspective: "1800px" }}
+      >
+        {/* Close button — gold, top-right */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close synopsis"
+          className="absolute -top-12 right-0 sm:-top-10 sm:-right-2 z-10 inline-flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
+          style={{
+            background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD})`,
+            color: "#09090b",
+            boxShadow: `0 4px 12px rgba(0,0,0,0.5), 0 0 16px ${GOLD}33`,
+            fontFamily: "'Cinzel', serif",
+          }}
+        >
+          ✕
+        </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-0">
+          {/* LEFT PAGE — Synopsis */}
+          <div
+            className="bl-page-left relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 min-h-[520px]"
+            style={{
+              background:
+                "linear-gradient(135deg, #f0e3c7 0%, #e8dcc4 40%, #d4c5a0 100%)",
+              borderRight: `2px solid ${GOLD_DEEP}55`,
+              borderTopLeftRadius: 6,
+              borderBottomLeftRadius: 6,
+              boxShadow:
+                "inset 0 0 60px rgba(58,40,23,0.18), -8px 8px 24px rgba(0,0,0,0.4)",
+              fontFamily: "'EB Garamond', serif",
+              color: INK,
+            }}
+          >
+            {/* Aged-paper specks */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle at 20% 30%, rgba(58,40,23,0.08) 0%, transparent 30%), radial-gradient(circle at 80% 70%, rgba(127,29,29,0.05) 0%, transparent 25%)",
+                borderTopLeftRadius: 6,
+                borderBottomLeftRadius: 6,
+              }}
+            />
+
+            <p
+              className="uppercase tracking-[0.3em] text-[10px] mb-3"
+              style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
+            >
+              The Synopsis
+            </p>
+            <h2
+              className="text-3xl sm:text-4xl font-bold mb-6 leading-tight"
+              style={{
+                color: CRIMSON,
+                fontFamily: "'Cinzel', serif",
+                letterSpacing: "0.04em",
+              }}
+            >
+              Bloodlines
+            </h2>
+
+            <div className="space-y-4 text-base sm:text-lg leading-relaxed">
+              {SYNOPSIS_PARAGRAPHS.map((p, i) => (
+                <p key={i} className="relative">
+                  {i === 0 && (
+                    <span
+                      className="float-left mr-2 -mt-1"
+                      style={{
+                        fontSize: "3.6rem",
+                        lineHeight: 1,
+                        color: CRIMSON,
+                        fontFamily: "'Cinzel', serif",
+                        fontWeight: 700,
+                        textShadow: `0 1px 0 ${GOLD}66`,
+                      }}
+                    >
+                      {p[0]}
+                    </span>
+                  )}
+                  {i === 0 ? p.slice(1) : p}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT PAGE — CTAs + lore badge */}
+          <div
+            className="bl-page-right relative px-7 py-9 sm:px-10 sm:py-12 md:px-12 md:py-14 min-h-[520px] flex flex-col justify-between"
+            style={{
+              background:
+                "linear-gradient(225deg, #f0e3c7 0%, #e8dcc4 40%, #d4c5a0 100%)",
+              borderLeft: `2px solid ${GOLD_DEEP}55`,
+              borderTopRightRadius: 6,
+              borderBottomRightRadius: 6,
+              boxShadow:
+                "inset 0 0 60px rgba(58,40,23,0.18), 8px 8px 24px rgba(0,0,0,0.4)",
+              fontFamily: "'EB Garamond', serif",
+              color: INK,
+            }}
+          >
+            <div>
+              <p
+                className="uppercase tracking-[0.3em] text-[10px] mb-3"
+                style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
+              >
+                The First Book
+              </p>
+              <h3
+                className="text-2xl sm:text-3xl font-bold mb-2 leading-tight"
+                style={{
+                  color: CRIMSON,
+                  fontFamily: "'Cinzel', serif",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Lineage of Fire
+              </h3>
+              <p
+                className="italic text-sm sm:text-base mb-6"
+                style={{ color: `${INK}cc` }}
+              >
+                Book One of the Bloodlines saga. For readers 11+.
+              </p>
+
+              {/* Wilted-rose sigil watermark */}
+              <div
+                className="my-8 flex justify-center"
+                style={{ color: GOLD_DEEP }}
+              >
+                <WiltedRoseSigil size={88} />
+              </div>
+
+              <p
+                className="text-sm sm:text-base italic leading-relaxed mb-6 text-center"
+                style={{ color: `${INK}cc` }}
+              >
+                "Two friends, an ancient power, and a kingdom drawn to war."
+              </p>
+            </div>
+
+            {/* Amazon CTA */}
+            <div className="space-y-3">
+              <a
+                href={AMAZON_LINEAGE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center px-6 py-4 text-sm sm:text-base font-semibold tracking-wide rounded-sm transition-transform hover:scale-[1.02]"
+                style={{
+                  background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD} 100%)`,
+                  color: "#09090b",
+                  fontFamily: "'Cinzel', serif",
+                  letterSpacing: "0.1em",
+                  boxShadow: `0 6px 20px rgba(212,168,83,0.35), inset 0 1px 0 rgba(255,255,255,0.4)`,
+                }}
+              >
+                Read on Amazon →
+              </a>
+              <p
+                className="text-xs text-center italic"
+                style={{ color: `${INK}99` }}
+              >
+                Available in paperback and Kindle.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // 1. HERO — full-bleed monogram + storm vibe
 // ──────────────────────────────────────────────────────────────────────
 function HeroBlock() {
+  const [synopsisOpen, setSynopsisOpen] = useState(false);
+
   return (
     <section
       className="relative w-full overflow-hidden"
@@ -2619,6 +3070,10 @@ function HeroBlock() {
     >
       <FloatingEmbers />
       <FloatingPetals count={6} />
+      <ParchmentSynopsisModal
+        open={synopsisOpen}
+        onClose={() => setSynopsisOpen(false)}
+      />
       {/* Subtle storm vignette */}
       <div
         aria-hidden="true"
@@ -2643,6 +3098,11 @@ function HeroBlock() {
             cycle that suggests pressure building behind the cover.
             Motion-safe per Rule 70. */}
         <style jsx>{`
+          .bl-book-wrap {
+            animation: bl-book-float 6s ease-in-out infinite;
+            transform-origin: center center;
+            will-change: transform;
+          }
           .bl-book {
             animation: bl-book-tremor 4.5s ease-in-out infinite;
             transform-origin: center 70%;
@@ -2651,9 +3111,66 @@ function HeroBlock() {
           .bl-book-aura {
             animation: bl-book-aura-pulse 3.2s ease-in-out infinite;
           }
+          .bl-rose-sigil {
+            animation: bl-rose-pulse 4s ease-in-out infinite;
+            will-change: filter, opacity;
+          }
+          .bl-page-flutter {
+            animation: bl-page-flutter 7s ease-in-out infinite;
+            transform-origin: left center;
+            will-change: transform;
+          }
+          .bl-ember {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            will-change: transform, opacity;
+          }
+          .bl-ember-1 {
+            animation: bl-ember-drift-1 5.5s ease-in-out infinite;
+          }
+          .bl-ember-2 {
+            animation: bl-ember-drift-2 6.8s ease-in-out infinite 1.2s;
+          }
+          .bl-ember-3 {
+            animation: bl-ember-drift-3 7.2s ease-in-out infinite 0.6s;
+          }
+          .bl-ember-4 {
+            animation: bl-ember-drift-1 6.2s ease-in-out infinite 2.1s;
+          }
+          .bl-ember-5 {
+            animation: bl-ember-drift-2 8s ease-in-out infinite 3.4s;
+          }
+          .bl-book-btn {
+            cursor: pointer;
+            background: transparent;
+            border: 0;
+            padding: 0;
+            display: block;
+            transition: filter 0.4s ease;
+          }
+          .bl-book-btn:hover .bl-book {
+            animation-play-state: paused;
+          }
+          .bl-book-btn:hover .bl-book-aura {
+            opacity: 1 !important;
+            transform: scale(1.18) !important;
+          }
+          .bl-book-btn:focus-visible {
+            outline: 2px solid #d4a853;
+            outline-offset: 12px;
+            border-radius: 4px;
+          }
+          @keyframes bl-book-float {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-6px);
+            }
+          }
           @keyframes bl-book-tremor {
-            /* Idle most of the cycle, then a quick shudder near the end
-               like the book is about to burst open + settles back. */
             0%,
             55%,
             100% {
@@ -2698,167 +3215,395 @@ function HeroBlock() {
               transform: scale(1.1);
             }
           }
+          @keyframes bl-rose-pulse {
+            0%,
+            100% {
+              filter: drop-shadow(0 0 4px rgba(212, 168, 83, 0.5))
+                drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+              opacity: 0.92;
+            }
+            50% {
+              filter: drop-shadow(0 0 14px rgba(212, 168, 83, 0.85))
+                drop-shadow(0 0 24px rgba(127, 29, 29, 0.5))
+                drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+              opacity: 1;
+            }
+          }
+          @keyframes bl-page-flutter {
+            0%,
+            100% {
+              transform: skewY(0deg) translateX(0);
+            }
+            45% {
+              transform: skewY(0.3deg) translateX(0.4px);
+            }
+            55% {
+              transform: skewY(-0.3deg) translateX(-0.4px);
+            }
+          }
+          @keyframes bl-ember-drift-1 {
+            0% {
+              transform: translate(0, 0) scale(0.8);
+              opacity: 0;
+            }
+            15% {
+              opacity: 0.9;
+            }
+            85% {
+              opacity: 0.6;
+            }
+            100% {
+              transform: translate(-12px, -120px) scale(1.2);
+              opacity: 0;
+            }
+          }
+          @keyframes bl-ember-drift-2 {
+            0% {
+              transform: translate(0, 0) scale(0.7);
+              opacity: 0;
+            }
+            20% {
+              opacity: 0.85;
+            }
+            80% {
+              opacity: 0.5;
+            }
+            100% {
+              transform: translate(18px, -140px) scale(1.3);
+              opacity: 0;
+            }
+          }
+          @keyframes bl-ember-drift-3 {
+            0% {
+              transform: translate(0, 0) scale(0.9);
+              opacity: 0;
+            }
+            18% {
+              opacity: 1;
+            }
+            82% {
+              opacity: 0.55;
+            }
+            100% {
+              transform: translate(-4px, -160px) scale(1.4);
+              opacity: 0;
+            }
+          }
           @media (prefers-reduced-motion: reduce) {
+            .bl-book-wrap,
             .bl-book,
-            .bl-book-aura {
+            .bl-book-aura,
+            .bl-rose-sigil,
+            .bl-page-flutter,
+            .bl-ember-1,
+            .bl-ember-2,
+            .bl-ember-3,
+            .bl-ember-4,
+            .bl-ember-5 {
               animation: none;
+            }
+            .bl-ember {
+              opacity: 0.5;
             }
           }
         `}</style>
 
         <div
-          className="bl-book mx-auto mb-8 relative"
+          className="bl-book-wrap mx-auto mb-8 relative"
           style={{ width: 240, height: 304 }}
         >
-          {/* Outer aura — pulses continuously, looks like the leather
-              is leaking light from behind the cover. */}
-          <div
+          {/* Embers drifting up from the book — five varied points along
+              the base edge. Pure CSS keyframe animations, prefers-
+              reduced-motion gated. */}
+          <span
             aria-hidden="true"
-            className="bl-book-aura absolute pointer-events-none"
+            className="bl-ember bl-ember-1"
             style={{
-              top: -28,
-              left: -28,
-              right: -28,
-              bottom: -28,
-              background: `radial-gradient(circle, ${GOLD}66 0%, ${GOLD_DEEP}33 35%, transparent 70%)`,
-              filter: "blur(24px)",
+              left: "18%",
+              bottom: 0,
+              width: 4,
+              height: 4,
+              background: `radial-gradient(circle, ${GOLD_LIGHT}, ${GOLD} 60%, transparent)`,
+              boxShadow: `0 0 8px ${GOLD}, 0 0 14px ${GOLD}88`,
             }}
           />
-
-          {/* Page-edge stack — RIGHT side. Repeating gradient simulates
-              dozens of stacked pages with subtle ink-darkened gutters. */}
-          <div
+          <span
             aria-hidden="true"
-            className="absolute"
+            className="bl-ember bl-ember-2"
             style={{
-              top: 5,
-              right: -4,
-              bottom: 5,
-              width: 7,
-              background:
-                "repeating-linear-gradient(to bottom, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
-              borderRight: "1px solid #3a2817",
-              borderRadius: "0 2px 2px 0",
-              boxShadow:
-                "1px 0 3px rgba(0, 0, 0, 0.5), inset 1px 0 0 rgba(58, 40, 23, 0.4)",
+              left: "44%",
+              bottom: 4,
+              width: 3,
+              height: 3,
+              background: `radial-gradient(circle, ${GOLD_LIGHT}, ${CRIMSON_BRIGHT} 60%, transparent)`,
+              boxShadow: `0 0 6px ${CRIMSON_BRIGHT}, 0 0 12px ${GOLD}66`,
             }}
           />
-          {/* Page-edge stack — BOTTOM side. Same pattern rotated. */}
-          <div
+          <span
             aria-hidden="true"
-            className="absolute"
+            className="bl-ember bl-ember-3"
             style={{
-              left: 5,
-              right: 0,
+              left: "72%",
+              bottom: 0,
+              width: 5,
+              height: 5,
+              background: `radial-gradient(circle, ${GOLD_LIGHT}, ${GOLD} 50%, transparent)`,
+              boxShadow: `0 0 10px ${GOLD}, 0 0 16px ${GOLD}66`,
+            }}
+          />
+          <span
+            aria-hidden="true"
+            className="bl-ember bl-ember-4"
+            style={{
+              left: "30%",
               bottom: -4,
-              height: 7,
-              background:
-                "repeating-linear-gradient(to right, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
-              borderBottom: "1px solid #3a2817",
-              borderRadius: "0 0 2px 2px",
-              boxShadow:
-                "0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(58, 40, 23, 0.4)",
+              width: 3,
+              height: 3,
+              background: `radial-gradient(circle, ${GOLD_LIGHT}, ${GOLD_DEEP} 60%, transparent)`,
+              boxShadow: `0 0 6px ${GOLD}, 0 0 10px ${GOLD}66`,
+            }}
+          />
+          <span
+            aria-hidden="true"
+            className="bl-ember bl-ember-5"
+            style={{
+              left: "62%",
+              bottom: -2,
+              width: 4,
+              height: 4,
+              background: `radial-gradient(circle, ${GOLD_LIGHT}, ${CRIMSON} 60%, transparent)`,
+              boxShadow: `0 0 8px ${CRIMSON_BRIGHT}, 0 0 14px ${GOLD}66`,
             }}
           />
 
-          {/* Book cover — leather face with the monogram artwork */}
-          <div
-            className="absolute inset-0 rounded-sm overflow-hidden"
-            style={{
-              boxShadow:
-                "0 18px 48px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(58, 40, 23, 0.7)",
-            }}
+          {/* The clickable book itself — opens the synopsis modal. */}
+          <button
+            type="button"
+            onClick={() => setSynopsisOpen(true)}
+            aria-label="Open Bloodlines synopsis — Lineage of Fire"
+            className="bl-book-btn absolute inset-0"
           >
-            <Image
-              src="/images/clients/bloodlines/bloodlines-monogram.jpg"
-              alt="Bloodlines — leather-bound monogram, a gold serif N entwined with a wilted rose"
-              width={512}
-              height={640}
-              className="w-full h-full object-cover"
-              priority
-            />
-
-            {/* Inner gold-embossed border — the kind of thin gilt
-                rectangle stamped just inside the leather edge. */}
-            <div
-              aria-hidden="true"
-              className="absolute pointer-events-none"
-              style={{
-                top: 8,
-                left: 14,
-                right: 8,
-                bottom: 8,
-                border: `1px solid ${GOLD_DEEP}`,
-                opacity: 0.55,
-                borderRadius: 1,
-                boxShadow: `inset 0 0 6px ${GOLD_DEEP}33`,
-              }}
-            />
-
-            {/* Spine binding on the LEFT — dark gradient that fakes the
-                rolled leather binding, plus 4 horizontal gilt bands
-                like a real antique book. */}
-            <div
-              aria-hidden="true"
-              className="absolute left-0 top-0 bottom-0"
-              style={{
-                width: 12,
-                background:
-                  "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.15) 100%)",
-                borderRight: "1px solid rgba(58, 40, 23, 0.7)",
-              }}
-            />
-            {/* Gilt bands across the spine */}
-            {[55, 110, 175, 240].map((y, i) => (
-              <span
-                key={i}
+            <div className="bl-book relative w-full h-full">
+              {/* Outer aura — pulses continuously, looks like the leather
+                  is leaking light from behind the cover. */}
+              <div
                 aria-hidden="true"
-                className="absolute left-0 pointer-events-none"
+                className="bl-book-aura absolute pointer-events-none"
                 style={{
-                  top: y,
-                  width: 12,
-                  height: 2,
-                  background: GOLD_DEEP,
-                  opacity: 0.5,
-                  boxShadow: `0 0 4px ${GOLD}`,
+                  top: -28,
+                  left: -28,
+                  right: -28,
+                  bottom: -28,
+                  background: `radial-gradient(circle, ${GOLD}66 0%, ${GOLD_DEEP}33 35%, transparent 70%)`,
+                  filter: "blur(24px)",
                 }}
               />
-            ))}
 
-            {/* Top edge highlight + bottom edge shadow — fakes the
-                3D thickness of the cover material. */}
-            <div
-              aria-hidden="true"
-              className="absolute top-0 left-0 right-0 h-1 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to bottom, rgba(212, 168, 83, 0.4), transparent)",
-              }}
-            />
-            <div
-              aria-hidden="true"
-              className="absolute bottom-0 left-0 right-0 h-1.5 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent)",
-              }}
-            />
+              {/* Page-edge stack — RIGHT side. Subtle flutter animation
+                  hints that the pages are loose, ready to open. */}
+              <div
+                aria-hidden="true"
+                className="bl-page-flutter absolute"
+                style={{
+                  top: 5,
+                  right: -4,
+                  bottom: 5,
+                  width: 7,
+                  background:
+                    "repeating-linear-gradient(to bottom, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
+                  borderRight: "1px solid #3a2817",
+                  borderRadius: "0 2px 2px 0",
+                  boxShadow:
+                    "1px 0 3px rgba(0, 0, 0, 0.5), inset 1px 0 0 rgba(58, 40, 23, 0.4)",
+                }}
+              />
+              {/* Page-edge stack — BOTTOM side. Same pattern rotated. */}
+              <div
+                aria-hidden="true"
+                className="absolute"
+                style={{
+                  left: 5,
+                  right: 0,
+                  bottom: -4,
+                  height: 7,
+                  background:
+                    "repeating-linear-gradient(to right, #e8dcc4 0px, #e8dcc4 0.8px, #b89668 0.8px, #b89668 1.6px, #d4c5a0 1.6px, #d4c5a0 2.4px)",
+                  borderBottom: "1px solid #3a2817",
+                  borderRadius: "0 0 2px 2px",
+                  boxShadow:
+                    "0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(58, 40, 23, 0.4)",
+                }}
+              />
 
-            {/* Subtle hairline crack of light along the right edge —
-                hints that the cover is ALMOST open. Faint gold seam. */}
-            <div
-              aria-hidden="true"
-              className="absolute pointer-events-none"
-              style={{
-                right: 0,
-                top: "20%",
-                bottom: "20%",
-                width: 1,
-                background: `linear-gradient(to bottom, transparent, ${GOLD}66 30%, ${GOLD}99 50%, ${GOLD}66 70%, transparent)`,
-                boxShadow: `0 0 4px ${GOLD}, 0 0 8px ${GOLD}66`,
-              }}
-            />
-          </div>
+              {/* Book cover — leather face. Existing monogram image is
+                  used as the leather backdrop; the wilted-rose sigil +
+                  metal corner studs render OVER it for the Enchiridion-
+                  style heavy-tome feel. */}
+              <div
+                className="absolute inset-0 rounded-sm overflow-hidden"
+                style={{
+                  boxShadow:
+                    "0 18px 48px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(58, 40, 23, 0.7)",
+                }}
+              >
+                <Image
+                  src="/images/clients/bloodlines/bloodlines-monogram.jpg"
+                  alt="Bloodlines — leather-bound book embossed with the wilted-rose sigil"
+                  width={512}
+                  height={640}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+
+                {/* Dark wash over the existing monogram so the new
+                    wilted-rose sigil reads as the dominant element. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 50% 50%, rgba(20,12,6,0.55) 0%, rgba(20,12,6,0.7) 70%, rgba(10,6,3,0.85) 100%)",
+                  }}
+                />
+
+                {/* Inner gold-embossed border — the kind of thin gilt
+                    rectangle stamped just inside the leather edge. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{
+                    top: 14,
+                    left: 18,
+                    right: 14,
+                    bottom: 14,
+                    border: `1px solid ${GOLD_DEEP}`,
+                    opacity: 0.7,
+                    borderRadius: 2,
+                    boxShadow: `inset 0 0 8px ${GOLD_DEEP}55`,
+                  }}
+                />
+
+                {/* Wilted-rose sigil — embossed on the cover, glowing
+                    softly. The lore says the wilted rose is the
+                    bloodline mark. */}
+                <div
+                  aria-hidden="true"
+                  className="bl-rose-sigil absolute inset-0 flex items-center justify-center pointer-events-none"
+                  style={{ color: GOLD }}
+                >
+                  <WiltedRoseSigil size={120} />
+                </div>
+
+                {/* Spine binding on the LEFT — dark gradient that fakes
+                    the rolled leather binding. Heavier metal bands now
+                    spread across the spine + cover edge for the
+                    Enchiridion vibe. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute left-0 top-0 bottom-0"
+                  style={{
+                    width: 14,
+                    background:
+                      "linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.65) 60%, rgba(0,0,0,0.2) 100%)",
+                    borderRight: "1px solid rgba(58, 40, 23, 0.7)",
+                  }}
+                />
+
+                {/* Heavy metal bands across the spine + over cover */}
+                {[42, 100, 168, 230, 280].map((y, i) => (
+                  <div
+                    key={`band-${i}`}
+                    aria-hidden="true"
+                    className="absolute left-0 right-0 pointer-events-none"
+                    style={{
+                      top: y,
+                      height: 5,
+                      background: `linear-gradient(180deg, ${GOLD_LIGHT}55 0%, ${GOLD_DEEP} 35%, ${GOLD} 50%, ${GOLD_DEEP} 65%, rgba(0,0,0,0.5) 100%)`,
+                      boxShadow: `0 1px 2px rgba(0,0,0,0.6), inset 0 1px 0 ${GOLD_LIGHT}55`,
+                      opacity: 0.85,
+                    }}
+                  />
+                ))}
+
+                {/* Top edge highlight + bottom edge shadow — fakes the
+                    3D thickness of the cover material. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute top-0 left-0 right-0 h-1.5 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, rgba(212, 168, 83, 0.5), transparent)",
+                  }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute bottom-0 left-0 right-0 h-2 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent)",
+                  }}
+                />
+
+                {/* Subtle hairline crack of light along the right edge —
+                    hints that the cover is ALMOST open. Faint gold seam. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{
+                    right: 0,
+                    top: "20%",
+                    bottom: "20%",
+                    width: 1,
+                    background: `linear-gradient(to bottom, transparent, ${GOLD}66 30%, ${GOLD}99 50%, ${GOLD}66 70%, transparent)`,
+                    boxShadow: `0 0 4px ${GOLD}, 0 0 8px ${GOLD}66`,
+                  }}
+                />
+
+                {/* Metal corner studs — bezel-set crimson cabochons at
+                    each cover corner. Anchored absolute. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{ top: 4, left: 4 }}
+                >
+                  <MetalCornerStud corner="tl" />
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{ top: 4, right: 4 }}
+                >
+                  <MetalCornerStud corner="tr" />
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{ bottom: 4, left: 4 }}
+                >
+                  <MetalCornerStud corner="bl" />
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none"
+                  style={{ bottom: 4, right: 4 }}
+                >
+                  <MetalCornerStud corner="br" />
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Click hint — small italic gold caption beneath the book */}
+          <p
+            className="absolute left-1/2 -translate-x-1/2 -bottom-7 text-[11px] italic whitespace-nowrap pointer-events-none"
+            style={{
+              color: `${GOLD_DEEP}cc`,
+              fontFamily: "'EB Garamond', serif",
+              letterSpacing: "0.08em",
+            }}
+          >
+            tap to open
+          </p>
         </div>
 
         <h1
@@ -2920,14 +3665,16 @@ function HeroBlock() {
           </a>
         </div>
 
-        <div className="mt-16 flex items-center justify-center gap-8 text-sm" style={{ color: "rgba(232, 220, 196, 0.55)" }}>
-          <span className="flex items-center gap-1.5">
-            <Star /> 4.4 on Amazon
-          </span>
-          <span className="hidden sm:inline">·</span>
-          <span>62+ reviews</span>
-          <span className="hidden sm:inline">·</span>
-          <span>For readers 11+</span>
+        {/* Wax-seal scroll badges — antique parchment ribbons with crimson
+            wax-seal dots framing the social proof. */}
+        <div className="mt-16 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <WaxSealStat>
+            <span className="inline-flex items-center gap-1.5">
+              <Star /> 4.4 on Amazon
+            </span>
+          </WaxSealStat>
+          <WaxSealStat>62+ reviews</WaxSealStat>
+          <WaxSealStat>For readers 11+</WaxSealStat>
         </div>
       </div>
 
@@ -3214,21 +3961,87 @@ function WorldMapBlock() {
                 <ellipse cx="48" cy="40" rx="22" ry="11" fill="#a0824f" opacity="0.5" />
                 <ellipse cx="20" cy="65" rx="9" ry="3" fill="#5a3d1c" opacity="0.7" />
                 <ellipse cx="78" cy="14" rx="7" ry="4" fill="#5a3d1c" />
+                {/* Extra weathering blotches near edges — water rings,
+                    candle drips, the stuff that happens to a real
+                    map after a few seasons in a saddlebag. */}
+                <ellipse cx="8" cy="38" rx="3" ry="5" fill="#8b6914" opacity="0.6" />
+                <ellipse cx="93" cy="40" rx="2.5" ry="4" fill="#8b6914" opacity="0.5" />
+                <ellipse cx="55" cy="68" rx="6" ry="2" fill="#5a3d1c" opacity="0.4" />
+                <ellipse cx="32" cy="48" rx="4" ry="2" fill="#7a5a35" opacity="0.35" />
+                <circle cx="68" cy="20" r="1.4" fill="#5a3d1c" opacity="0.5" />
+                <circle cx="68" cy="20" r="0.6" fill="#8b6914" opacity="0.7" />
               </g>
 
-              {/* Decorative double border in ink */}
-              <rect x="0.8" y="0.8" width="98.4" height="73.4" fill="none" stroke="#3a2817" strokeWidth="0.35" />
-              <rect x="2" y="2" width="96" height="71" fill="none" stroke="#3a2817" strokeWidth="0.15" />
-              {/* Corner flourishes */}
-              <path d="M 2 5 L 5 2 M 95 2 L 98 5 M 98 70 L 95 73 M 5 73 L 2 70" stroke="#3a2817" strokeWidth="0.2" />
+              {/* Paper crease lines — subtle diagonal folds where the
+                  map has been folded and unfolded many times. Drawn as
+                  long, faint linear gradients. */}
+              <g opacity="0.13" stroke="#5a3d1c" fill="none">
+                <line x1="32" y1="2" x2="36" y2="73" strokeWidth="0.28" strokeLinecap="round" />
+                <line x1="65" y1="2" x2="68" y2="73" strokeWidth="0.28" strokeLinecap="round" />
+                <line x1="2" y1="35" x2="98" y2="38" strokeWidth="0.28" strokeLinecap="round" />
+                {/* Tiny edge wear marks — small ink scuffs near border */}
+                <line x1="2.5" y1="14" x2="3.2" y2="13.6" strokeWidth="0.3" />
+                <line x1="97.3" y1="22" x2="96.7" y2="22.4" strokeWidth="0.3" />
+                <line x1="14" y1="72.5" x2="14.4" y2="71.8" strokeWidth="0.3" />
+                <line x1="82" y1="72.4" x2="82.5" y2="71.7" strokeWidth="0.3" />
+              </g>
 
-              {/* Title cartouche */}
-              <g transform="translate(50, 4.5)">
-                <rect x="-22" y="-2.4" width="44" height="4.5" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.18" rx="0.5" />
-                <rect x="-21" y="-1.7" width="42" height="3" fill="none" stroke="#3a2817" strokeWidth="0.08" rx="0.3" />
-                <text x="0" y="0.55" fontSize="2.2" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" letterSpacing="0.4">
+              {/* Decorative TRIPLE border in ink — outer thick, mid
+                  thin, inner ornamental dashed */}
+              <rect x="0.8" y="0.8" width="98.4" height="73.4" fill="none" stroke="#3a2817" strokeWidth="0.35" />
+              <rect x="2" y="2" width="96" height="71" fill="none" stroke="#3a2817" strokeWidth="0.18" />
+              <rect x="2.6" y="2.6" width="94.8" height="69.8" fill="none" stroke="#3a2817" strokeWidth="0.08" strokeDasharray="0.4 0.6" opacity="0.7" />
+
+              {/* Ornate corner fleur-de-lis style flourishes (4 corners) */}
+              {[
+                { tx: 3.5, ty: 3.5, rot: 0 },
+                { tx: 96.5, ty: 3.5, rot: 90 },
+                { tx: 96.5, ty: 71.5, rot: 180 },
+                { tx: 3.5, ty: 71.5, rot: 270 },
+              ].map(({ tx, ty, rot }, i) => (
+                <g key={i} transform={`translate(${tx}, ${ty}) rotate(${rot})`}>
+                  {/* Diagonal corner line */}
+                  <path d="M 0 0 L 2 2" stroke="#3a2817" strokeWidth="0.2" />
+                  {/* Curling scrollwork */}
+                  <path d="M 0 0 Q 1.5 -0.3, 2.4 0.4 Q 2.9 1.2, 2.2 2 Q 1.4 2.8, 0.6 2.4" fill="none" stroke="#3a2817" strokeWidth="0.18" />
+                  <path d="M 0 0 Q -0.4 1.6, 0.6 2.4 Q 1.6 3, 2.6 2.6" fill="none" stroke="#3a2817" strokeWidth="0.14" opacity="0.7" />
+                  {/* Center pip */}
+                  <circle cx="1.6" cy="1.6" r="0.25" fill="#3a2817" />
+                  <circle cx="1.6" cy="1.6" r="0.12" fill="#7f1d1d" />
+                </g>
+              ))}
+
+              {/* Title cartouche — scrollwork-flanked plate */}
+              <g transform="translate(50, 4.8)">
+                {/* Left scroll curl */}
+                <g transform="translate(-23, 0)">
+                  <path d="M 0 -0.2 Q -2 -1.3, -1.6 -2.4 Q -0.6 -3, 0.4 -2.6" fill="none" stroke="#3a2817" strokeWidth="0.2" />
+                  <path d="M 0 0.2 Q -2 1.3, -1.6 2.4 Q -0.6 3, 0.4 2.6" fill="none" stroke="#3a2817" strokeWidth="0.2" />
+                  <circle cx="-1.4" cy="0" r="0.45" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.15" />
+                  <circle cx="-1.4" cy="0" r="0.2" fill="#7f1d1d" />
+                </g>
+                {/* Right scroll curl (mirrored) */}
+                <g transform="translate(23, 0)">
+                  <path d="M 0 -0.2 Q 2 -1.3, 1.6 -2.4 Q 0.6 -3, -0.4 -2.6" fill="none" stroke="#3a2817" strokeWidth="0.2" />
+                  <path d="M 0 0.2 Q 2 1.3, 1.6 2.4 Q 0.6 3, -0.4 2.6" fill="none" stroke="#3a2817" strokeWidth="0.2" />
+                  <circle cx="1.4" cy="0" r="0.45" fill="#ecdcb8" stroke="#3a2817" strokeWidth="0.15" />
+                  <circle cx="1.4" cy="0" r="0.2" fill="#7f1d1d" />
+                </g>
+
+                {/* Cartouche plate — slightly aged paper inside borders */}
+                <rect x="-22" y="-2.6" width="44" height="4.8" fill="#f4e6c8" stroke="#3a2817" strokeWidth="0.28" rx="0.6" />
+                <rect x="-21" y="-1.85" width="42" height="3.3" fill="none" stroke="#3a2817" strokeWidth="0.1" rx="0.4" />
+                {/* Tiny corner notches inside the plate */}
+                <path d="M -20.5 -2.1 L -20.1 -1.7 M 20.5 -2.1 L 20.1 -1.7 M -20.5 1.7 L -20.1 1.3 M 20.5 1.7 L 20.1 1.3" stroke="#3a2817" strokeWidth="0.1" />
+
+                <text x="0" y="0.6" fontSize="2.1" fill="#3a2817" textAnchor="middle" fontFamily="Cinzel" fontWeight="700" letterSpacing="0.45">
                   THE KINGDOM OF ANNAROSE
                 </text>
+
+                {/* Decorative flourish line BELOW the cartouche */}
+                <path d="M -7 3.4 Q 0 3.9, 7 3.4" fill="none" stroke="#3a2817" strokeWidth="0.13" />
+                <circle cx="0" cy="3.6" r="0.22" fill="#7f1d1d" />
+                <circle cx="0" cy="3.6" r="0.42" fill="none" stroke="#3a2817" strokeWidth="0.1" />
               </g>
 
               {/* ───── THE FAR PEAKS (Mt. Raylia, NW corner) ───── */}
@@ -3248,6 +4061,23 @@ function WorldMapBlock() {
                 <use href="#bl-peak" x="85" y="12" width="6" height="5" />
                 <use href="#bl-peak" x="91" y="15" width="5" height="4" />
                 <use href="#bl-peak" x="84" y="18" width="4" height="3" />
+              </g>
+
+              {/* Mountain base shadows — soft elliptical patches under
+                  each peak chain to fake the shadow they'd cast across
+                  the landscape. Adds depth without pulling focus. */}
+              <g opacity="0.14" fill="#3a2817">
+                <ellipse cx="18" cy="17" rx="14" ry="2" />
+                <ellipse cx="86" cy="20.5" rx="9" ry="1.6" />
+              </g>
+
+              {/* Forest shadows — flat dark ellipses laid beneath the
+                  pine clusters so the canopy reads as massed treetops
+                  instead of sparse symbols. */}
+              <g opacity="0.18" fill="#1a2010">
+                <ellipse cx="22" cy="32" rx="13" ry="2.6" />
+                <ellipse cx="68" cy="58" rx="13" ry="2.4" />
+                <ellipse cx="43" cy="62.5" rx="4" ry="1.4" />
               </g>
 
               {/* ───── FOREST PATCHES ───── */}
@@ -3449,9 +4279,39 @@ function WorldMapBlock() {
                 <circle r="0.18" fill="#7f1d1d" />
               </g>
 
-              {/* "Drawn by" cartouche bottom-left */}
+              {/* Scale bar — bottom-center, ruler with league markers
+                  in the cartographer's tradition. */}
+              <g transform="translate(38, 67.5)">
+                {/* Outer rule */}
+                <line x1="0" y1="0" x2="14" y2="0" stroke="#3a2817" strokeWidth="0.18" />
+                <line x1="0" y1="-0.45" x2="0" y2="0.45" stroke="#3a2817" strokeWidth="0.18" />
+                <line x1="14" y1="-0.45" x2="14" y2="0.45" stroke="#3a2817" strokeWidth="0.18" />
+                {/* Inner tick marks every 2 units (so 7 segments = 7
+                    leagues; pattern of alternating heavy/light */}
+                {[2, 4, 6, 8, 10, 12].map((x, i) => (
+                  <line key={x} x1={x} y1="-0.3" x2={x} y2="0.3" stroke="#3a2817" strokeWidth={i % 2 === 0 ? "0.16" : "0.1"} />
+                ))}
+                {/* Filled bar segments — alternating ink and parchment
+                    in the classic cartographer style. */}
+                <rect x="0" y="0.05" width="2" height="0.5" fill="#3a2817" />
+                <rect x="4" y="0.05" width="2" height="0.5" fill="#3a2817" />
+                <rect x="8" y="0.05" width="2" height="0.5" fill="#3a2817" />
+                <rect x="12" y="0.05" width="2" height="0.5" fill="#3a2817" />
+                {/* Labels */}
+                <text x="0" y="-0.95" fontSize="0.75" fill="#3a2817" fontFamily="Cinzel" fontWeight="600" textAnchor="middle">0</text>
+                <text x="14" y="-0.95" fontSize="0.75" fill="#3a2817" fontFamily="Cinzel" fontWeight="600" textAnchor="middle">14</text>
+                <text x="7" y="1.85" fontSize="0.75" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" textAnchor="middle" opacity="0.85">leagues</text>
+              </g>
+
+              {/* "Drawn by" cartouche bottom-left — ornament + signature */}
               <g transform="translate(8, 70)">
-                <text fontSize="0.85" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" opacity="0.6">— After the cartographers of Annarose —</text>
+                {/* Tiny rose-and-quill ornament */}
+                <g transform="translate(-2, -0.4)">
+                  <circle cx="0" cy="0" r="0.5" fill="#7f1d1d" stroke="#3a2817" strokeWidth="0.08" />
+                  <circle cx="0" cy="0" r="0.2" fill="#3a2817" />
+                  <line x1="0.5" y1="0" x2="1.4" y2="-0.2" stroke="#3a2817" strokeWidth="0.1" />
+                </g>
+                <text fontSize="0.85" fill="#3a2817" fontFamily="Cinzel" fontStyle="italic" opacity="0.65">— After the cartographers of Annarose —</text>
               </g>
             </svg>
 
@@ -3522,22 +4382,42 @@ function WorldMapBlock() {
                       </svg>
                     )}
                   </span>
-                  {/* Label tooltip — uses parchment styling instead of
-                      the prior dark dropdown so it blends with the
-                      map's typography. */}
-                  <span
-                    className={`absolute left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] whitespace-nowrap rounded-sm transition-all duration-300 ${isActive ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 group-hover:opacity-90 group-hover:translate-y-0"}`}
-                    style={{
-                      top: "100%",
-                      background: "#3a2817",
-                      color: "#ecdcb8",
-                      fontFamily: "'Cinzel', serif",
-                      border: `1px solid ${accentHex}`,
-                      boxShadow: `0 4px 12px rgba(0,0,0,0.5)`,
-                    }}
-                  >
-                    {loc.name}
-                  </span>
+                  {/* Label tooltip — flip above for locations near the
+                      bottom of the map so it doesn't get cropped, below
+                      otherwise. Includes the location's characteristic
+                      emoji + name in parchment-on-ink styling that
+                      blends with the map's typography. */}
+                  {(() => {
+                    const placeAbove = loc.y > 58;
+                    return (
+                      <span
+                        className={`absolute left-1/2 -translate-x-1/2 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] whitespace-nowrap rounded-sm transition-all duration-300 inline-flex items-center gap-1.5 ${
+                          isActive
+                            ? "opacity-100"
+                            : "opacity-0 group-hover:opacity-95"
+                        }`}
+                        style={{
+                          ...(placeAbove
+                            ? { bottom: "100%", marginBottom: 6 }
+                            : { top: "100%", marginTop: 6 }),
+                          background: "#3a2817",
+                          color: "#ecdcb8",
+                          fontFamily: "'Cinzel', serif",
+                          border: `1px solid ${accentHex}`,
+                          boxShadow: `0 4px 12px rgba(0,0,0,0.5)`,
+                          letterSpacing: "0.18em",
+                          transform: `translateX(-50%) translateY(${
+                            isActive ? 0 : placeAbove ? 4 : -4
+                          }px)`,
+                        }}
+                      >
+                        <span className="text-sm leading-none not-italic" aria-hidden="true">
+                          {loc.emoji}
+                        </span>
+                        {loc.name}
+                      </span>
+                    );
+                  })()}
                 </button>
               );
             })}
@@ -3553,10 +4433,13 @@ function WorldMapBlock() {
             </p>
             <h3
               key={activeLoc.id}
-              className="text-3xl sm:text-4xl font-bold mb-4 transition-opacity duration-500"
+              className="text-3xl sm:text-4xl font-bold mb-4 transition-opacity duration-500 flex items-center gap-3"
               style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
             >
-              {activeLoc.name}
+              <span className="text-3xl sm:text-4xl leading-none" aria-hidden="true">
+                {activeLoc.emoji}
+              </span>
+              <span>{activeLoc.name}</span>
             </h3>
             <p
               key={activeLoc.id + "-blurb"}
@@ -3574,13 +4457,16 @@ function WorldMapBlock() {
                     key={loc.id}
                     type="button"
                     onClick={() => setActive(loc.id)}
-                    className="px-3 py-1.5 text-xs uppercase tracking-wider rounded-sm transition-colors hover:bg-white/5"
+                    className="px-3 py-1.5 text-xs uppercase tracking-wider rounded-sm transition-colors hover:bg-white/5 inline-flex items-center gap-1.5"
                     style={{
                       border: `1px solid ${GOLD_DEEP}66`,
-                      color: "rgba(232, 220, 196, 0.7)",
+                      color: "rgba(232, 220, 196, 0.78)",
                       fontFamily: "'Cinzel', serif",
                     }}
                   >
+                    <span className="text-sm leading-none" aria-hidden="true">
+                      {loc.emoji}
+                    </span>
                     {loc.name}
                   </button>
                 ))}
