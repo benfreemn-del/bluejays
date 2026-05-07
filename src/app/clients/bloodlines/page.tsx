@@ -1556,7 +1556,7 @@ function ElementBackdrop({
           }
         }
 
-        /* LIGHT — beams pulse, halo breathes */
+        /* LIGHT — beams pulse softly, sun core breathes, halo breathes */
         .bl-light-beam {
           animation: bl-light-beam-pulse ease-in-out infinite;
           transform-origin: 50% 50%;
@@ -1564,10 +1564,10 @@ function ElementBackdrop({
         @keyframes bl-light-beam-pulse {
           0%,
           100% {
-            opacity: 0.25;
+            opacity: 0.12;
           }
           50% {
-            opacity: 0.8;
+            opacity: 0.42;
           }
         }
         .bl-light-halo {
@@ -1577,11 +1577,25 @@ function ElementBackdrop({
           0%,
           100% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.55;
           }
           50% {
-            transform: scale(1.15);
-            opacity: 0.75;
+            transform: scale(1.12);
+            opacity: 0.85;
+          }
+        }
+        .bl-light-sun {
+          animation: bl-light-sun-breathe 6s ease-in-out infinite;
+        }
+        @keyframes bl-light-sun-breathe {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.85;
+          }
+          50% {
+            transform: scale(1.06);
+            opacity: 1;
           }
         }
 
@@ -1596,7 +1610,8 @@ function ElementBackdrop({
           .bl-air-streak,
           .bl-air-swirl,
           .bl-light-beam,
-          .bl-light-halo {
+          .bl-light-halo,
+          .bl-light-sun {
             animation: none;
           }
           .bl-elem-particle {
@@ -1894,67 +1909,122 @@ function ElementBackdrop({
         </>
       )}
 
-      {/* ─── LIGHT ─── */}
+      {/* ─── LIGHT (Lumengarde) ─── */}
       {id === "light" && (
         <>
-          {/* Center halo gradient */}
+          {/* Outer atmospheric wash — soft gold glow filling the section */}
           <div
             className="absolute"
             style={{
               left: "50%",
               top: "50%",
-              width: "80%",
-              maxWidth: 800,
+              width: "85%",
+              maxWidth: 900,
               aspectRatio: "1",
               transform: "translate(-50%, -50%)",
-              background: `radial-gradient(circle, ${color}33 0%, ${color}11 40%, transparent 70%)`,
+              background: `radial-gradient(circle, ${color}1f 0%, ${color}0a 40%, transparent 70%)`,
             }}
           />
-          {/* Radial beams from center */}
+
+          {/* Squiggly rays — thin, low-brightness, cubic-bezier curved
+              for a more realistic "sunray through atmosphere" feel.
+              Rendered BEFORE the sun ball so the sun sits on top and
+              keeps the heading text readable. */}
           <svg
             viewBox="0 0 800 800"
             preserveAspectRatio="xMidYMid slice"
             className="absolute inset-0 w-full h-full"
-            style={{ filter: "blur(0.5px)" }}
           >
-            {Array.from({ length: 12 }).map((_, i) => {
-              const angle = (i * 30 * Math.PI) / 180;
-              const x2 = 400 + Math.cos(angle) * 600;
-              const y2 = 400 + Math.sin(angle) * 600;
+            {Array.from({ length: 18 }).map((_, i) => {
+              const angle = (i * (360 / 18) * Math.PI) / 180;
+              const perpAngle = angle + Math.PI / 2;
+              const cx = 400;
+              const cy = 400;
+              const startR = 130;
+              const endR = 560 + (i % 4) * 30;
+              // 2 control points → S-curve. Wobble pattern alternates
+              // direction so each ray reads as a unique squiggle, not a
+              // tiled shape.
+              const ctrl1R = startR + (endR - startR) * 0.33;
+              const ctrl2R = startR + (endR - startR) * 0.67;
+              const wobble1 = ((i % 5) - 2) * 22;
+              const wobble2 = -wobble1 * 0.7;
+              const x1 = cx + Math.cos(angle) * startR;
+              const y1 = cy + Math.sin(angle) * startR;
+              const c1x = cx + Math.cos(angle) * ctrl1R + Math.cos(perpAngle) * wobble1;
+              const c1y = cy + Math.sin(angle) * ctrl1R + Math.sin(perpAngle) * wobble1;
+              const c2x = cx + Math.cos(angle) * ctrl2R + Math.cos(perpAngle) * wobble2;
+              const c2y = cy + Math.sin(angle) * ctrl2R + Math.sin(perpAngle) * wobble2;
+              const x2 = cx + Math.cos(angle) * endR;
+              const y2 = cy + Math.sin(angle) * endR;
               return (
-                <line
+                <path
                   key={i}
                   className="bl-light-beam"
-                  x1="400"
-                  y1="400"
-                  x2={x2}
-                  y2={y2}
+                  d={`M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`}
+                  fill="none"
                   stroke={color}
-                  strokeWidth="2"
+                  strokeWidth="0.9"
+                  strokeLinecap="round"
                   style={{
-                    animationDuration: `${3 + (i % 4)}s`,
-                    animationDelay: `${(i * 0.25) % 3}s`,
+                    animationDuration: `${3 + (i % 5)}s`,
+                    animationDelay: `${(i * 0.2) % 3}s`,
                   }}
                 />
               );
             })}
           </svg>
-          {/* Pulsing halo at center */}
+
+          {/* SUN BALL — bright center disc that sits behind the text so
+              the heading + subtitle read against a luminous core
+              instead of a busy ray pattern. Three layers: outer halo,
+              mid disc, inner core (brightest gold-white). */}
+          {/* Outer halo (largest, softest) */}
           <div
             className="bl-light-halo absolute rounded-full"
             style={{
               left: "50%",
               top: "50%",
-              width: 240,
-              height: 240,
-              marginLeft: -120,
-              marginTop: -120,
-              background: `radial-gradient(circle, ${color}66 0%, transparent 70%)`,
-              filter: "blur(20px)",
+              width: 480,
+              height: 480,
+              marginLeft: -240,
+              marginTop: -240,
+              background: `radial-gradient(circle, ${color}66 0%, ${color}22 40%, transparent 75%)`,
+              filter: "blur(28px)",
             }}
           />
-          {/* Light particles drifting */}
-          {Array.from({ length: 14 }).map((_, i) => {
+          {/* Mid disc — the sun's body */}
+          <div
+            className="bl-light-sun absolute rounded-full"
+            style={{
+              left: "50%",
+              top: "50%",
+              width: 280,
+              height: 280,
+              marginLeft: -140,
+              marginTop: -140,
+              background: `radial-gradient(circle, ${GOLD_LIGHT} 0%, ${color} 35%, ${color}66 65%, transparent 90%)`,
+              filter: "blur(8px)",
+            }}
+          />
+          {/* Inner core — bright pin of light */}
+          <div
+            className="bl-light-sun absolute rounded-full"
+            style={{
+              left: "50%",
+              top: "50%",
+              width: 140,
+              height: 140,
+              marginLeft: -70,
+              marginTop: -70,
+              background: `radial-gradient(circle, #fffaf0 0%, ${GOLD_LIGHT} 30%, ${color} 70%, transparent 100%)`,
+              filter: "blur(2px)",
+              animationDelay: "1s",
+            }}
+          />
+
+          {/* Light motes drifting */}
+          {Array.from({ length: 12 }).map((_, i) => {
             const left = (i * 7.1 + 3) % 100;
             const top = (i * 11.7) % 90;
             const dur = 5 + (i % 6);
@@ -1971,7 +2041,7 @@ function ElementBackdrop({
                   height: size,
                   borderRadius: "50%",
                   background: color,
-                  boxShadow: `0 0 ${size * 4}px ${color}, 0 0 ${size * 8}px ${color}aa`,
+                  boxShadow: `0 0 ${size * 3}px ${color}, 0 0 ${size * 6}px ${color}88`,
                   animationDuration: `${dur}s`,
                   animationDelay: `${delay}s`,
                 }}
@@ -2735,7 +2805,7 @@ function BooksBlock() {
           <article className="group relative">
             <div className="relative mx-auto" style={{ maxWidth: 360 }}>
               <div
-                className="absolute -inset-4 rounded-sm opacity-60 blur-2xl transition-opacity group-hover:opacity-90"
+                className="absolute -inset-6 rounded-sm opacity-75 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-10 group-hover:blur-[60px]"
                 style={{ background: `radial-gradient(circle, ${GOLD} 0%, transparent 70%)` }}
               />
               <Image
@@ -2793,7 +2863,7 @@ function BooksBlock() {
           <article className="group relative">
             <div className="relative mx-auto" style={{ maxWidth: 360 }}>
               <div
-                className="absolute -inset-4 rounded-sm opacity-60 blur-2xl transition-opacity group-hover:opacity-90"
+                className="absolute -inset-6 rounded-sm opacity-75 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-10 group-hover:blur-[60px]"
                 style={{ background: `radial-gradient(circle, ${CRIMSON_BRIGHT} 0%, transparent 70%)` }}
               />
               {/* Placeholder cover until Ben confirms ASIN — gold N+rose monogram on crimson texture */}
