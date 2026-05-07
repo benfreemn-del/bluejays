@@ -21,7 +21,17 @@ import {
 } from "@/lib/leads-search";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
-import MapView from "@/components/dashboard/MapView";
+// MapView uses react-leaflet which references `window` at module scope —
+// dynamic-import with ssr:false so /dashboard can still prerender.
+import dynamic from "next/dynamic";
+const MapView = dynamic(() => import("@/components/dashboard/MapView"), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-2xl border border-border bg-surface/40 p-12 text-center text-muted">
+      Loading map…
+    </div>
+  ),
+});
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
 

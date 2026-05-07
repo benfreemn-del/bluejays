@@ -729,6 +729,297 @@ export const FUNNELS: Funnel[] = [
   },
 ];
 
+/* ───────────────────────── OLYMPIC PENINSULA TOWNS ─────────────────────────
+   Real lat/long projected to an SVG viewBox centered on Sequim (Meyer's HQ).
+   Used by the Map tab to render a detailed, geographically accurate
+   peninsula heatmap.
+
+   Projection (Sequim = 48.0794°N, -123.1024°W = svg origin):
+     - 1 degree latitude ≈ 70 miles
+     - 1 degree longitude ≈ 47 miles at this latitude
+     - Scale: 1 mile = 0.6 svg units, viewport ~100x70
+     - x = 50 + (lng - (-123.1024)) × 47 × 0.6
+     - y = 35 + (48.0794 - lat) × 70 × 0.6
+
+   Town list real-data sourced from USGS GNIS + USPS ZIP centers. */
+
+export type PeninsulaTown = {
+  name: string;
+  county: string;
+  zip?: string;
+  lat: number;
+  lng: number;
+  // Pre-computed SVG coords (projected from lat/lng — Sequim at 50,35)
+  x: number;
+  y: number;
+  // Demo lead-density score 0-100 (closer to Sequim + larger town = higher)
+  score: number;
+  active_leads: number;
+  closed_jobs_ytd: number;
+  is_hq?: boolean;
+  notes?: string;
+};
+
+// Helper to project lat/lng → SVG coords
+function projectLL(lat: number, lng: number): { x: number; y: number } {
+  const x = 50 + (lng - (-123.1024)) * 47 * 0.6;
+  const y = 35 + (48.0794 - lat) * 70 * 0.6;
+  return { x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 };
+}
+
+const _t = (lat: number, lng: number) => projectLL(lat, lng);
+
+export const PENINSULA_TOWNS: PeninsulaTown[] = [
+  // CLALLAM COUNTY — home turf, hottest
+  {
+    name: "Sequim",
+    county: "Clallam",
+    zip: "98382",
+    lat: 48.0794,
+    lng: -123.1024,
+    ..._t(48.0794, -123.1024),
+    score: 100,
+    active_leads: 18,
+    closed_jobs_ytd: 47,
+    is_hq: true,
+    notes: "Meyer Electric HQ · 35 Robbins Rd",
+  },
+  {
+    name: "Carlsborg",
+    county: "Clallam",
+    zip: "98324",
+    lat: 48.1031,
+    lng: -123.2632,
+    ..._t(48.1031, -123.2632),
+    score: 78,
+    active_leads: 9,
+    closed_jobs_ytd: 18,
+    notes: "Just west of Sequim. Industrial + light commercial.",
+  },
+  {
+    name: "Port Angeles",
+    county: "Clallam",
+    zip: "98362",
+    lat: 48.1181,
+    lng: -123.4307,
+    ..._t(48.1181, -123.4307),
+    score: 92,
+    active_leads: 14,
+    closed_jobs_ytd: 36,
+    notes: "Largest city on the peninsula. County seat. Olympic Medical Center.",
+  },
+  {
+    name: "Joyce",
+    county: "Clallam",
+    zip: "98343",
+    lat: 48.1565,
+    lng: -123.7799,
+    ..._t(48.1565, -123.7799),
+    score: 38,
+    active_leads: 3,
+    closed_jobs_ytd: 5,
+    notes: "Rural — generators in high demand.",
+  },
+  {
+    name: "Forks",
+    county: "Clallam",
+    zip: "98331",
+    lat: 47.9501,
+    lng: -124.3829,
+    ..._t(47.9501, -124.3829),
+    score: 45,
+    active_leads: 4,
+    closed_jobs_ytd: 7,
+    notes: "West side. Long drive but high job value (rural Powerwall installs).",
+  },
+  {
+    name: "Clallam Bay",
+    county: "Clallam",
+    zip: "98326",
+    lat: 48.2581,
+    lng: -124.2548,
+    ..._t(48.2581, -124.2548),
+    score: 28,
+    active_leads: 2,
+    closed_jobs_ytd: 3,
+    notes: "Far northwest corner. Generator demand from outage frequency.",
+  },
+  {
+    name: "Sekiu",
+    county: "Clallam",
+    zip: "98381",
+    lat: 48.2664,
+    lng: -124.3019,
+    ..._t(48.2664, -124.3019),
+    score: 24,
+    active_leads: 1,
+    closed_jobs_ytd: 2,
+    notes: "Fishing village. Small market.",
+  },
+
+  // JEFFERSON COUNTY
+  {
+    name: "Port Townsend",
+    county: "Jefferson",
+    zip: "98368",
+    lat: 48.117,
+    lng: -122.7604,
+    ..._t(48.117, -122.7604),
+    score: 86,
+    active_leads: 12,
+    closed_jobs_ytd: 28,
+    notes: "Affluent retiree market. Premium installs + historical-home upgrades.",
+  },
+  {
+    name: "Port Hadlock",
+    county: "Jefferson",
+    zip: "98339",
+    lat: 48.0356,
+    lng: -122.7651,
+    ..._t(48.0356, -122.7651),
+    score: 64,
+    active_leads: 7,
+    closed_jobs_ytd: 14,
+    notes: "Bedroom community for Port Townsend.",
+  },
+  {
+    name: "Chimacum",
+    county: "Jefferson",
+    zip: "98325",
+    lat: 48.0042,
+    lng: -122.7726,
+    ..._t(48.0042, -122.7726),
+    score: 52,
+    active_leads: 5,
+    closed_jobs_ytd: 9,
+    notes: "Rural agricultural community.",
+  },
+  {
+    name: "Quilcene",
+    county: "Jefferson",
+    zip: "98376",
+    lat: 47.8231,
+    lng: -122.8765,
+    ..._t(47.8231, -122.8765),
+    score: 41,
+    active_leads: 3,
+    closed_jobs_ytd: 6,
+    notes: "Hood Canal entrance. Waterfront properties.",
+  },
+  {
+    name: "Brinnon",
+    county: "Jefferson",
+    zip: "98320",
+    lat: 47.6814,
+    lng: -122.9054,
+    ..._t(47.6814, -122.9054),
+    score: 33,
+    active_leads: 2,
+    closed_jobs_ytd: 4,
+    notes: "Hood Canal retirement community.",
+  },
+
+  // KITSAP COUNTY
+  {
+    name: "Kingston",
+    county: "Kitsap",
+    zip: "98346",
+    lat: 47.7965,
+    lng: -122.4965,
+    ..._t(47.7965, -122.4965),
+    score: 72,
+    active_leads: 8,
+    closed_jobs_ytd: 17,
+    notes: "Edmonds ferry terminus. Commute town with growing affluence.",
+  },
+  {
+    name: "Poulsbo",
+    county: "Kitsap",
+    zip: "98370",
+    lat: 47.7367,
+    lng: -122.6488,
+    ..._t(47.7367, -122.6488),
+    score: 76,
+    active_leads: 9,
+    closed_jobs_ytd: 19,
+    notes: "Norwegian-themed downtown. Active waterfront.",
+  },
+  {
+    name: "Bainbridge Island",
+    county: "Kitsap",
+    zip: "98110",
+    lat: 47.6262,
+    lng: -122.5210,
+    ..._t(47.6262, -122.5210),
+    score: 88,
+    active_leads: 11,
+    closed_jobs_ytd: 22,
+    notes: "Highest property values in Kitsap. Tesla Powerwall sweet spot.",
+  },
+  {
+    name: "Silverdale",
+    county: "Kitsap",
+    zip: "98383",
+    lat: 47.6443,
+    lng: -122.6948,
+    ..._t(47.6443, -122.6948),
+    score: 58,
+    active_leads: 6,
+    closed_jobs_ytd: 11,
+    notes: "Commercial center for Kitsap. Naval contractor work.",
+  },
+  {
+    name: "Bremerton",
+    county: "Kitsap",
+    zip: "98337",
+    lat: 47.5673,
+    lng: -122.6325,
+    ..._t(47.5673, -122.6325),
+    score: 48,
+    active_leads: 5,
+    closed_jobs_ytd: 8,
+    notes: "Naval shipyard. Older housing stock = panel upgrades.",
+  },
+
+  // MASON COUNTY
+  {
+    name: "Hoodsport",
+    county: "Mason",
+    zip: "98548",
+    lat: 47.4068,
+    lng: -123.1397,
+    ..._t(47.4068, -123.1397),
+    score: 38,
+    active_leads: 3,
+    closed_jobs_ytd: 5,
+    notes: "Hood Canal cabins. Generator-heavy work.",
+  },
+  {
+    name: "Belfair",
+    county: "Mason",
+    zip: "98528",
+    lat: 47.4520,
+    lng: -122.8326,
+    ..._t(47.4520, -122.8326),
+    score: 44,
+    active_leads: 4,
+    closed_jobs_ytd: 7,
+    notes: "Eastern Hood Canal entrance.",
+  },
+  {
+    name: "Shelton",
+    county: "Mason",
+    zip: "98584",
+    lat: 47.2151,
+    lng: -123.1009,
+    ..._t(47.2151, -123.1009),
+    score: 32,
+    active_leads: 2,
+    closed_jobs_ytd: 3,
+    notes: "County seat of Mason. Edge of service area.",
+  },
+];
+
 /* ───────────────────────── EXPORTED DATASETS ───────────────────────── */
 
 export const MOCK_LEADS: Lead[] = generateLeads(200);

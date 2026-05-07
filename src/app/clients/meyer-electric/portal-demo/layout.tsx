@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
+// Skip static prerendering — the demo is fully client-side (sessionStorage,
+// stateful interactivity) and prerendering it has no SEO value (robots:noindex).
+// Forces every request to render on demand, dodging SSR-incompatible
+// dependencies that may exist in the import graph.
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   width: "device-width",

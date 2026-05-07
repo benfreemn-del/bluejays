@@ -33,7 +33,7 @@ ask NEW questions about what's unique to THIS instance.
 | 5 | Tab list | Overview · Leads · Map · Funnels · Customers · Affiliates · AI Skills · Settings (8 tabs, horizontal scroll on mobile) |
 | 6 | Interactive features | ALL FOUR — industry calculator + sizing/recommendation tool + service-area heatmap + animated narrative simulator |
 | 7 | Lead scoring | Full 3-tier signals (property/business + product fit + affiliate-source + urgency + seasonal) |
-| 8 | Persistence | Pure mock — page reload resets state cleanly. NO localStorage. |
+| 8 | Persistence | Pure mock — page reload resets state cleanly. NO localStorage. **Sub-override (locked 2026-05-06):** within-session sessionStorage is OK for save/star-style UX features (e.g. saved customer list). Survives reload within the demo session, resets on tab close. NEVER localStorage. |
 | 9 | Branding | BlueJays dashboard frame (slate-950 bg + horizontal tab bar with border-yellow-400 active state) + the prospect's public-site accent color inside |
 | 10 | Reuse storage | Master playbook (this doc) + per-industry config in `docs/mock-backends/` + AIOS skill |
 
