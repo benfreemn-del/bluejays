@@ -632,24 +632,52 @@ export default function MeyerElectricPage() {
                   <rect width="100%" height="100%" fill="url(#meyer-pw-grid)" />
                 </svg>
 
-                {/* Stylized Powerwall illustration */}
+                {/* Stylized Powerwall illustration — animated:
+                    - Lightning bolts strike one at a time (real-storm rhythm)
+                    - Energy bar inside the Powerwall fills 0→100% then resets
+                    - Three concentric rings expand outward from the bolt
+                      icon (ripple effect — staggered delays)
+                    - Status LED breathes
+                    - The whole Powerwall box subtly levitates
+                    All keyframes prefixed `mePw` so they don't collide
+                    with Generac diagram animations below. */}
                 <div className="relative flex flex-col items-center gap-7 px-8">
-                  {/* Lightning storm cluster above */}
-                  <div className="flex items-end gap-2 opacity-70">
-                    <svg width="36" height="50" viewBox="0 0 24 32" fill={ACCENT}>
+                  {/* Lightning storm cluster above — each bolt strikes
+                      individually with stagger so it reads like a real
+                      storm rolling through. */}
+                  <div className="flex items-end gap-2">
+                    <svg
+                      width="36"
+                      height="50"
+                      viewBox="0 0 24 32"
+                      fill={ACCENT}
+                      className="me-pw-bolt me-pw-bolt-1"
+                    >
                       <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
                     </svg>
-                    <svg width="56" height="76" viewBox="0 0 24 32" fill={ACCENT}>
+                    <svg
+                      width="56"
+                      height="76"
+                      viewBox="0 0 24 32"
+                      fill={ACCENT_AMBER}
+                      className="me-pw-bolt me-pw-bolt-2"
+                    >
                       <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
                     </svg>
-                    <svg width="30" height="42" viewBox="0 0 24 32" fill={ACCENT} className="opacity-60">
+                    <svg
+                      width="30"
+                      height="42"
+                      viewBox="0 0 24 32"
+                      fill={ACCENT}
+                      className="me-pw-bolt me-pw-bolt-3"
+                    >
                       <path d="M13 0 4 18h7l-1 14 9-22h-7l1-10z" />
                     </svg>
                   </div>
 
-                  {/* "Powerwall" stylized rectangle */}
+                  {/* "Powerwall" stylized rectangle — gently levitates */}
                   <div
-                    className="relative w-44 h-72 rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5"
+                    className="me-pw-box relative w-44 h-72 rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5"
                     style={{
                       background:
                         "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
@@ -657,44 +685,72 @@ export default function MeyerElectricPage() {
                         "0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
                     }}
                   >
+                    {/* Charge-level bar — vertical, fills bottom-to-top
+                        on the left edge, 0→100% then resets. Live
+                        "charging" indicator. */}
+                    <div className="absolute left-0 top-0 bottom-0 w-[5px] flex flex-col-reverse">
+                      <div
+                        className="me-pw-charge w-full origin-bottom"
+                        style={{
+                          background: `linear-gradient(0deg, ${ACCENT} 0%, ${ACCENT_AMBER} 50%, ${ACCENT_ORANGE} 100%)`,
+                          boxShadow: `0 0 8px ${ACCENT}`,
+                        }}
+                      />
+                    </div>
+
                     {/* Tesla T mark (stylized) */}
-                    <div className="text-[10px] uppercase tracking-[0.3em] font-bold text-slate-500 mt-1">
+                    <div className="relative text-[10px] uppercase tracking-[0.3em] font-bold text-slate-500 mt-1 z-10">
                       Powerwall
                     </div>
-                    {/* Pulsing energy ring */}
+
+                    {/* Pulsing energy rings — 3 concentric, staggered */}
                     <div className="relative flex items-center justify-center">
                       <div
-                        className="absolute w-24 h-24 rounded-full"
+                        className="me-pw-ring me-pw-ring-1 absolute w-24 h-24 rounded-full"
                         style={{
                           background: `radial-gradient(circle, ${ACCENT}40 0%, transparent 70%)`,
-                          animation: "meyerPulse 2.4s ease-in-out infinite",
                         }}
                       />
                       <div
-                        className="relative w-14 h-14 rounded-full flex items-center justify-center"
+                        className="me-pw-ring me-pw-ring-2 absolute w-24 h-24 rounded-full"
                         style={{
-                          background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+                          background: `radial-gradient(circle, ${ACCENT_ORANGE}30 0%, transparent 70%)`,
+                        }}
+                      />
+                      <div
+                        className="me-pw-ring me-pw-ring-3 absolute w-24 h-24 rounded-full"
+                        style={{
+                          background: `radial-gradient(circle, ${ACCENT}30 0%, transparent 70%)`,
+                        }}
+                      />
+                      <div
+                        className="me-pw-core relative w-14 h-14 rounded-full flex items-center justify-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`,
                           boxShadow: `0 0 28px ${ACCENT_DIM}`,
                         }}
                       >
                         <Lightning size={26} weight="fill" color="#0a0a0a" />
                       </div>
                     </div>
-                    {/* Status LED row */}
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+
+                    {/* Status LED row — breathing green dot */}
+                    <div className="flex items-center gap-1.5 mb-1 z-10">
+                      <span
+                        className="me-pw-led w-1.5 h-1.5 rounded-full bg-emerald-500"
+                      />
                       <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">
                         Charged
                       </span>
                     </div>
                   </div>
 
-                  {/* House silhouette */}
+                  {/* House silhouette — subtle "powered" pulse */}
                   <svg
                     width="100"
                     height="40"
                     viewBox="0 0 100 40"
-                    className="opacity-40"
+                    className="me-pw-house opacity-40"
                     fill={INK_DIM}
                   >
                     <path d="M50 5 L10 28 L10 38 L40 38 L40 22 L60 22 L60 38 L90 38 L90 28 Z" />
@@ -725,9 +781,97 @@ export default function MeyerElectricPage() {
               </div>
 
               <style jsx>{`
-                @keyframes meyerPulse {
-                  0%, 100% { transform: scale(1); opacity: 0.6; }
-                  50% { transform: scale(1.18); opacity: 0.95; }
+                /* Concentric pulsing rings around the bolt icon */
+                .me-pw-ring {
+                  animation: mePwRing 3s ease-out infinite;
+                  opacity: 0;
+                }
+                .me-pw-ring-1 { animation-delay: 0s; }
+                .me-pw-ring-2 { animation-delay: 1s; }
+                .me-pw-ring-3 { animation-delay: 2s; }
+                @keyframes mePwRing {
+                  0%   { transform: scale(0.6); opacity: 0; }
+                  20%  { opacity: 0.85; }
+                  100% { transform: scale(1.9); opacity: 0; }
+                }
+
+                /* Inner core gentle breathing */
+                .me-pw-core {
+                  animation: mePwCore 2.4s ease-in-out infinite;
+                }
+                @keyframes mePwCore {
+                  0%, 100% { transform: scale(1); }
+                  50%      { transform: scale(1.06); }
+                }
+
+                /* Lightning bolts — each strikes individually with
+                   stagger so the trio reads as a real rolling storm. */
+                .me-pw-bolt {
+                  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.5));
+                  animation: mePwStrike 4.5s ease-in-out infinite;
+                }
+                .me-pw-bolt-1 { animation-delay: 0s; }
+                .me-pw-bolt-2 { animation-delay: 1.5s; }
+                .me-pw-bolt-3 { animation-delay: 3s; }
+                @keyframes mePwStrike {
+                  0%, 8%, 18%, 100% { opacity: 0.25; transform: translateY(0) scale(1); }
+                  4%                { opacity: 1;   transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.95)); }
+                  6%                { opacity: 0.5; transform: translateY(0) scale(1); }
+                  12%               { opacity: 1;   transform: translateY(0) scale(1.02); filter: drop-shadow(0 0 16px rgba(250, 204, 21, 1)); }
+                  14%               { opacity: 0.4; transform: translateY(0) scale(1); }
+                }
+
+                /* Charge bar — fills bottom→top, then resets */
+                .me-pw-charge {
+                  animation: mePwCharge 6s ease-in-out infinite;
+                  height: 0%;
+                }
+                @keyframes mePwCharge {
+                  0%   { height: 12%;  opacity: 0.7; }
+                  85%  { height: 100%; opacity: 1; }
+                  92%  { height: 100%; opacity: 1; box-shadow: 0 0 16px ${ACCENT}; }
+                  100% { height: 12%;  opacity: 0.7; }
+                }
+
+                /* Status LED breathing */
+                .me-pw-led {
+                  animation: mePwLed 1.6s ease-in-out infinite;
+                  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+                }
+                @keyframes mePwLed {
+                  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+                  50%      { opacity: 1;    transform: scale(1.2); box-shadow: 0 0 12px rgba(16, 185, 129, 1); }
+                }
+
+                /* Whole Powerwall box gently levitates */
+                .me-pw-box {
+                  animation: mePwLevitate 4s ease-in-out infinite;
+                }
+                @keyframes mePwLevitate {
+                  0%, 100% { transform: translateY(0); }
+                  50%      { transform: translateY(-4px); }
+                }
+
+                /* House silhouette pulses with the charge cycle */
+                .me-pw-house {
+                  animation: mePwHousePulse 6s ease-in-out infinite;
+                }
+                @keyframes mePwHousePulse {
+                  0%, 92%, 100% { opacity: 0.35; filter: drop-shadow(0 0 0 rgba(250, 204, 21, 0)); }
+                  88%           { opacity: 0.85; filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6)); }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                  .me-pw-ring,
+                  .me-pw-core,
+                  .me-pw-bolt,
+                  .me-pw-charge,
+                  .me-pw-led,
+                  .me-pw-box,
+                  .me-pw-house {
+                    animation: none;
+                  }
+                  .me-pw-charge { height: 100%; }
                 }
               `}</style>
             </div>
@@ -852,10 +996,12 @@ export default function MeyerElectricPage() {
                   <rect width="100%" height="100%" fill="url(#meyer-gen-grid)" />
                 </svg>
 
-                {/* Top: grid status row */}
+                {/* Top: grid status row — Grid box flickers (failing
+                    grid), arrow pulses (energy switching paths),
+                    Generac box gets a pulsing emerald aura. */}
                 <div className="relative flex items-center justify-between gap-4">
                   <div
-                    className="flex-1 rounded-lg p-3.5 border"
+                    className="me-gen-grid-box flex-1 rounded-lg p-3.5 border"
                     style={{
                       background: "rgba(220, 38, 38, 0.10)",
                       borderColor: "rgba(220, 38, 38, 0.35)",
@@ -864,19 +1010,22 @@ export default function MeyerElectricPage() {
                     <div className="text-[10px] uppercase tracking-[0.18em] font-bold text-rose-400">
                       Grid
                     </div>
-                    <div className="text-[18px] font-bold text-white mt-0.5" style={{ fontFamily: FONT_HEAD }}>
+                    <div
+                      className="me-gen-offline text-[18px] font-bold text-white mt-0.5"
+                      style={{ fontFamily: FONT_HEAD }}
+                    >
                       OFFLINE
                     </div>
                   </div>
                   <div
-                    className="text-2xl"
+                    className="me-gen-arrow text-2xl relative"
                     style={{ color: ACCENT }}
                     aria-hidden="true"
                   >
                     →
                   </div>
                   <div
-                    className="flex-1 rounded-lg p-3.5 border"
+                    className="me-gen-running-box flex-1 rounded-lg p-3.5 border"
                     style={{
                       background: "rgba(34, 197, 94, 0.10)",
                       borderColor: "rgba(34, 197, 94, 0.35)",
@@ -885,18 +1034,33 @@ export default function MeyerElectricPage() {
                     <div className="text-[10px] uppercase tracking-[0.18em] font-bold text-emerald-400">
                       Generac
                     </div>
-                    <div className="text-[18px] font-bold text-white mt-0.5" style={{ fontFamily: FONT_HEAD }}>
+                    <div
+                      className="me-gen-running text-[18px] font-bold text-white mt-0.5"
+                      style={{ fontFamily: FONT_HEAD }}
+                    >
                       RUNNING
                     </div>
                   </div>
                 </div>
 
-                {/* Center: big auto-transfer switch icon */}
+                {/* Center: big auto-transfer switch icon — pulsing
+                    "powered" glow + the icon gently rotates back-and-
+                    forth like a switch flipping. */}
                 <div className="relative flex flex-col items-center gap-3 my-2">
+                  {/* Outer glow halo (separate element so it doesn't
+                      compete with the icon's own transform). */}
                   <div
-                    className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                    className="me-gen-halo absolute top-0 w-28 h-28 rounded-full"
                     style={{
-                      background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+                      background: `radial-gradient(circle, rgba(250, 204, 21, 0.45) 0%, transparent 70%)`,
+                      filter: "blur(8px)",
+                      transform: "translateY(-4px)",
+                    }}
+                  />
+                  <div
+                    className="me-gen-switch relative w-20 h-20 rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`,
                       boxShadow: `0 0 32px ${ACCENT_DIM}`,
                     }}
                   >
@@ -910,23 +1074,139 @@ export default function MeyerElectricPage() {
                   </div>
                 </div>
 
-                {/* Bottom: house powered indicator */}
+                {/* Bottom: house powered indicator — emerald shimmer
+                    sweeps left→right (signaling continuous power
+                    flowing into the home). */}
                 <div
-                  className="relative flex items-center justify-center gap-3 px-5 py-3 rounded-lg"
+                  className="me-gen-home relative flex items-center justify-center gap-3 px-5 py-3 rounded-lg overflow-hidden"
                   style={{
                     background: "rgba(34, 197, 94, 0.08)",
                     border: "1px solid rgba(34, 197, 94, 0.25)",
                   }}
                 >
-                  <House size={18} weight="fill" className="text-emerald-400" />
+                  {/* Shimmer sweep */}
+                  <div
+                    className="me-gen-shimmer absolute inset-y-0 w-1/3 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.35) 50%, transparent 100%)",
+                    }}
+                  />
+                  <House
+                    size={18}
+                    weight="fill"
+                    className="me-gen-house-icon relative text-emerald-400"
+                  />
                   <span
-                    className="text-[12px] uppercase tracking-[0.2em] font-bold text-emerald-400"
+                    className="relative text-[12px] uppercase tracking-[0.2em] font-bold text-emerald-400"
                     style={{ fontFamily: FONT_HEAD }}
                   >
                     Home Powered · 8 sec
                   </span>
                 </div>
               </div>
+
+              <style jsx>{`
+                /* Grid box flickering (real failing-grid feel) */
+                .me-gen-grid-box {
+                  animation: meGenFlicker 4s ease-in-out infinite;
+                }
+                @keyframes meGenFlicker {
+                  0%, 100% { opacity: 1; }
+                  62%, 64%, 68%, 72% { opacity: 0.55; }
+                  63%, 67%, 70% { opacity: 1; }
+                }
+                /* OFFLINE label — same flicker but slightly offset */
+                .me-gen-offline {
+                  animation: meGenOfflineFlicker 4s ease-in-out infinite;
+                  text-shadow: 0 0 8px rgba(220, 38, 38, 0.55);
+                }
+                @keyframes meGenOfflineFlicker {
+                  0%, 100% { opacity: 1; }
+                  60%, 64%, 68% { opacity: 0.4; }
+                  62%, 66% { opacity: 1; }
+                }
+
+                /* Arrow energy pulse — color brightens + slight x-shift
+                   showing power flowing from grid → generac side */
+                .me-gen-arrow {
+                  animation: meGenArrow 2s ease-in-out infinite;
+                  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.4));
+                }
+                @keyframes meGenArrow {
+                  0%, 100% { opacity: 0.55; transform: translateX(0); filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.4)); }
+                  50%      { opacity: 1;    transform: translateX(2px); filter: drop-shadow(0 0 14px rgba(250, 204, 21, 0.85)); }
+                }
+
+                /* Generac RUNNING — emerald box pulses confidently */
+                .me-gen-running-box {
+                  animation: meGenRunning 2s ease-in-out infinite;
+                }
+                @keyframes meGenRunning {
+                  0%, 100% { box-shadow: 0 0 0 rgba(34, 197, 94, 0); border-color: rgba(34, 197, 94, 0.35); }
+                  50%      { box-shadow: 0 0 18px rgba(34, 197, 94, 0.4); border-color: rgba(34, 197, 94, 0.7); }
+                }
+                .me-gen-running {
+                  animation: meGenRunningText 2s ease-in-out infinite;
+                }
+                @keyframes meGenRunningText {
+                  0%, 100% { text-shadow: 0 0 0 rgba(34, 197, 94, 0); }
+                  50%      { text-shadow: 0 0 10px rgba(34, 197, 94, 0.7); }
+                }
+
+                /* Halo behind the auto-transfer switch — breathes  */
+                .me-gen-halo {
+                  animation: meGenHalo 2.4s ease-in-out infinite;
+                }
+                @keyframes meGenHalo {
+                  0%, 100% { opacity: 0.55; transform: translateY(-4px) scale(0.92); }
+                  50%      { opacity: 1;    transform: translateY(-4px) scale(1.08); }
+                }
+
+                /* Switch icon itself — gentle "tick" rotation like a
+                   switch flipping back and forth */
+                .me-gen-switch {
+                  animation: meGenSwitch 4s ease-in-out infinite;
+                }
+                @keyframes meGenSwitch {
+                  0%, 100% { transform: rotate(-2deg); }
+                  50%      { transform: rotate(2deg); }
+                }
+
+                /* Home Powered shimmer sweep */
+                .me-gen-shimmer {
+                  animation: meGenShimmer 3.5s ease-in-out infinite;
+                  left: -33%;
+                }
+                @keyframes meGenShimmer {
+                  0%   { left: -33%; }
+                  100% { left: 100%; }
+                }
+
+                /* House icon — subtle scale-in pulse */
+                .me-gen-house-icon {
+                  animation: meGenHouseIcon 2s ease-in-out infinite;
+                  filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0));
+                }
+                @keyframes meGenHouseIcon {
+                  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0)); }
+                  50%      { transform: scale(1.15); filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.85)); }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                  .me-gen-grid-box,
+                  .me-gen-offline,
+                  .me-gen-arrow,
+                  .me-gen-running-box,
+                  .me-gen-running,
+                  .me-gen-halo,
+                  .me-gen-switch,
+                  .me-gen-shimmer,
+                  .me-gen-house-icon {
+                    animation: none;
+                  }
+                }
+              `}</style>
             </div>
             <div className="order-1 lg:order-2">
               <div
