@@ -3830,7 +3830,7 @@ function BooksBlock() {
           <article className="group relative">
             <div className="relative mx-auto" style={{ maxWidth: 360 }}>
               <div
-                className="absolute -inset-6 rounded-sm opacity-75 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-10 group-hover:blur-[60px]"
+                className="absolute -inset-10 rounded-sm opacity-95 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-14 group-hover:blur-[70px]"
                 style={{ background: `radial-gradient(circle, ${GOLD} 0%, transparent 70%)` }}
               />
               <Image
@@ -3888,7 +3888,7 @@ function BooksBlock() {
           <article className="group relative">
             <div className="relative mx-auto" style={{ maxWidth: 360 }}>
               <div
-                className="absolute -inset-6 rounded-sm opacity-75 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-10 group-hover:blur-[60px]"
+                className="absolute -inset-10 rounded-sm opacity-95 blur-3xl transition-all duration-500 group-hover:opacity-100 group-hover:-inset-14 group-hover:blur-[70px]"
                 style={{ background: `radial-gradient(circle, ${CRIMSON_BRIGHT} 0%, transparent 70%)` }}
               />
               <Image
