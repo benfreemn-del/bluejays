@@ -1,6 +1,7 @@
 import Link from "next/link";
 import EmailCaptureFooter from "./EmailCaptureFooter.client";
 import { BespokeExperience } from "./bespoke-experience.client";
+import BluejayFeather from "@/components/BluejayFeather";
 
 export const metadata = {
   title: "Laser Lakes — Custom Lake Maps + Wood Wildlife Art (Minnesota)",
@@ -535,7 +536,24 @@ export default function LaserLakesPage() {
           style={{ borderColor: "rgba(246, 241, 232, 0.08)" }}
         >
           <span>© {new Date().getFullYear()} Laser Lakes · All rights reserved.</span>
-          <span>Site by BlueJays</span>
+          {/* Built-by-BlueJays credit — small blue feather icon links
+              to Ben's portfolio + free audit funnel. Per CLAUDE.md the
+              footer credit on every client site uses this exact phrase
+              + format so each new customer becomes a backlink to /audit. */}
+          <a
+            href="https://bluejayportfolio.com/audit"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 hover:opacity-100 transition-opacity"
+          >
+            <BluejayFeather size={14} className="shrink-0" />
+            <span>
+              Built by{" "}
+              <span className="underline decoration-dotted underline-offset-2">
+                BlueJays
+              </span>
+            </span>
+          </a>
         </div>
       </footer>
     </main>
