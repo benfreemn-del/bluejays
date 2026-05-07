@@ -132,6 +132,40 @@ envs simply omit that script.
 - A `client_tasks` row list seeded for the new client
 - `pricingTier` flipped to `fullsystem` in the BlueJays prospects table
 
+### Audience taxonomy — look for the 3-anchor pattern
+
+Locked 2026-05-06 across ITC + Zenith + Nevarland (3 anchors,
+radically different verticals — steel ag / sports / kids' apparel).
+Manufacturer-style clients consistently break into 3 audience segments:
+
+| Segment | Who | Buying motion |
+|---|---|---|
+| **End-buyer** | The actual user/owner of the product | DTC, direct purchase from the brand |
+| **Influencer** | The trusted advisor between buyer + product | Product recommendations, embedded in education |
+| **Channel-partner** | Distributor / dealer / retailer | Wholesale orders, drop-ship, white-label |
+
+When the client is a manufacturer, ask in discovery:
+- Who buys directly? (end-buyer)
+- Who recommends you to the end-buyer? (influencer — coaches, vets,
+  contractors, financial advisors, etc.)
+- Who resells you? (channel-partner — distributors, big-box retailers,
+  Amazon FBA partners, regional reps)
+
+Each segment gets:
+- Its own audience badge color in the lead inbox
+  (parent=amber / coach=cobalt / player=lime / club=violet for Zenith
+  — adapt for the specific client)
+- Its own funnel sequence in `client-funnels/{slug}.ts`
+- Its own ad creative angle in `client-ads/{slug}-creatives.ts`
+
+If the client doesn't cleanly map to 3 segments, that's a flag —
+either they're a single-audience B2C brand (skip the multi-audience
+infrastructure) or they haven't done the discovery work yet (push
+back, get them to articulate it).
+
+See `decisions/2026-05-06_manufacturer_icp_3anchor_lock.md` (in aios)
+for the full reasoning + the 3 anchor data points.
+
 ### Steps
 ```sql
 -- Mark the prospect as a fullsystem buyer
@@ -172,6 +206,77 @@ Build their bespoke `/clients/{slug}` page. Reference past clients:
 ### Wire to the inquire route
 Add their slug + emoji + clientEmail to
 `src/app/api/clients/inquire/route.ts → SLUG_CONFIG`.
+
+### SEO Hardening (NON-NEGOTIABLE — Rules 68/69)
+
+The root `app/layout.tsx` leaks BlueJays-homepage values into every
+client showcase's `<head>` unless the per-page layout explicitly
+overrides them. Without these overrides:
+- Canonical URL points at `bluejayportfolio.com` (not the showcase)
+  → Google treats the page as a homepage duplicate, never indexes it
+- og:title / og:image / og:url all describe BlueJays
+  → social shares (FB, iMessage, Slack, LinkedIn, Discord) display
+    BlueJays branding, NOT the client's
+- JSON-LD describes BlueJays as a ProfessionalService selling websites
+  → no rich-result eligibility for the client's actual business
+
+**Every `/clients/{slug}/layout.tsx` MUST override these 5 fields:**
+
+1. `alternates.canonical` → page-specific URL
+2. `openGraph` → full set (title/description/url/siteName/images/type)
+3. `twitter` → card/title/description/images
+4. `keywords` → client-/niche-/geo-specific (replace BlueJays-generic)
+5. JSON-LD `<script>` with appropriate Schema.org type
+   (LocalBusiness, Electrician, Plumber, Restaurant, Dentist, Contractor,
+   etc.) + full structured-data fields
+
+**Reference impl:** `src/app/clients/meyer-electric/layout.tsx` — pulls
+SITE_URL + PAGE_PATH + HERO_OG_IMAGE constants at the top, full
+openGraph + twitter overrides, embedded `Electrician`-typed JSON-LD
+with all Schema.org fields (address, geo, telephone, priceRange,
+areaServed array of cities, openingHoursSpecification, hasOfferCatalog
+of services, identifier with state license #, sameAs to existing site).
+
+**Sitemap entry MUST be added in the SAME commit:**
+- Edit `src/app/sitemap.ts`
+- Add the slug to `ACTIVE_CLIENT_SHOWCASES` array
+- Priority 0.85 (high local-SEO value)
+
+**Verify-after-deploy** (use curl, NOT Chrome MCP — it freezes on
+heavy CSS animations):
+
+```bash
+curl -s https://bluejayportfolio.com/clients/{slug} \
+  | grep -E '(canonical|og:title|og:image|og:url|twitter:title|application/ld\+json)' \
+  | head -10
+```
+
+Every line should reference the client's URL/business name, NOT
+`bluejayportfolio.com` or "BlueJays | Premium Web Design."
+
+If you see `<link rel="canonical" href="https://bluejayportfolio.com"/>`
+(no path) the override is broken or didn't deploy yet.
+
+### Animated trade-illustration polish (optional — Rule 70)
+
+For trade-category clients (electrician, plumber, HVAC, solar, lawn
+care with seasonal calendars, etc.), the showcase site can ship 1-2
+hand-tuned animated CSS diagrams that visually narrate the service:
+- Powerwall: charge bar fills + lightning bolts strike + ring waves
+- Generac: grid OFFLINE → arrow pulses → Generac RUNNING → home shimmer
+- HVAC: airflow particles travel through ductwork
+- Plumbing: water drop falls + pressure gauge needle moves
+
+Pattern locked at CLAUDE.md Rule 70: pure CSS keyframes inside
+`<style jsx>`, class names prefixed (`me-pw-` / `me-gen-` / etc.),
+prefers-reduced-motion gated. Reference impl in
+`src/app/clients/meyer-electric/page.tsx` (search `me-pw-` and
+`me-gen-` class prefixes — 13 distinct keyframes, ~3KB CSS, zero JS).
+
+**Why this matters at the AI Package price point:** $10K clients
+expect bespoke polish that pure-template builds can't fake. A
+hand-tuned animated diagram is the visual differentiator — reads
+as "agency-built" without the agency-rate hours.
 
 ---
 
@@ -271,6 +376,27 @@ form, OR seed in bulk via `/api/client-affiliates?client={slug}` POST.
 
 The scoring function in `src/lib/client-affiliates.ts → scoreAffiliate`
 needs a per-client branch — copy the Zenith pattern.
+
+### NEVER pitch active customers (NON-NEGOTIABLE)
+
+Any sales-portal / cold-outreach selection mechanism that feeds the
+ads pipeline (or the Madie-style appointment-setter flow) MUST exclude:
+- Paid customers (`status='paid'`)
+- Live-site clients (`siteLiveAt IS NOT NULL`)
+- Custom-tier clients (`customSiteUrl IS NOT NULL`)
+- Deployed/DNS-transferred clients (`status IN ('live','deployed','dns_transfer')`)
+
+Hard exclusion (filter row OUT entirely from selectable lists), NOT
+visual dim/strikethrough. Cold-pitching an existing customer kills the
+relationship instantly — the ad-creative + appointment-setter pipelines
+must never surface them as targets.
+
+Reference impl: `src/app/dashboard/script/LeadPicker.client.tsx` —
+Madie's lead-picker filters out active customers at the database query
+level, not the render layer. Copy that pattern for any new sales/ads
+selection surface.
+
+This is locked as AIOS working principle #10 (`aios/CLAUDE.md`).
 
 ---
 
@@ -400,6 +526,16 @@ Patterns + gotchas that surfaced building the first one. Use these as
 defaults for client #2.
 
 ### Defaults that work
+- **Content fidelity when porting from a real source (NON-NEGOTIABLE).**
+  When the directive is "use the real source content" (their existing
+  site, their voice doc, their case studies), refuse to fabricate. If
+  a claim isn't in the source, soften or remove — never invent
+  specifics. Specificity gaps are TBD-able; invented claims poison
+  trust forever. Default behavior on every port: scrape source, diff
+  against derivative, surface fabrications, soften. Locked as AIOS
+  working principle #9 after the Olympic Inspections rebuild stripped
+  fabricated "AIHA-LAP labs / 10-25 page PDF / homes over 30 years
+  old" claims that weren't in the original `pineparticle.com` source.
 - **Always start with the brand voice doc.** If they have one, treat it
   as gospel — pull H1/eyebrow/subhead/coach-section copy verbatim from
   their Copy Vault. If they don't, do a 30-min call before writing a
@@ -507,6 +643,113 @@ defaults for client #2.
   lands (saw this with the avatar PNGs). Push a no-op empty commit
   (`git commit --allow-empty`) to force a fresh build that
   invalidates the cache. The redeploy itself takes ~60-90s.
+- **Root layout SEO leak (NON-NEGOTIABLE — Rules 68/69)** — caught
+  during the 2026-05-06 Meyer Electric audit. Without per-page
+  metadata override, EVERY client showcase ships with:
+    - Canonical pointing at `bluejayportfolio.com` → Google treats
+      the page as a homepage duplicate, never indexes it
+    - og:title / og:image / og:url describing BlueJays → social shares
+      display BlueJays branding, NOT the client's
+    - JSON-LD describing BlueJays as a ProfessionalService
+  This is silent + catastrophic. Verify-after-deploy curl recipe:
+  ```bash
+  curl -s https://bluejayportfolio.com/clients/{slug} \
+    | grep -E '(canonical|og:title|og:image|og:url|application/ld\+json)' \
+    | head -10
+  ```
+  Every line MUST reference the client's URL/business name. If you
+  see `bluejayportfolio.com` (no path) in `<link rel="canonical">`
+  or "BlueJays | Premium Web Design" in og:title, the override is
+  broken.
+- **Sitemap drift (NON-NEGOTIABLE — Rule 69)** — every new
+  `/clients/{slug}` page MUST be added to `ACTIVE_CLIENT_SHOWCASES`
+  in `src/app/sitemap.ts` in the SAME commit. Otherwise Google can't
+  discover the page from sitemap crawl. Verify after deploy:
+  ```bash
+  curl -s https://bluejayportfolio.com/sitemap.xml \
+    | grep -oE '<loc>[^<]*clients[^<]*</loc>'
+  ```
+
+---
+
+## Cross-cutting patterns from Meyer Electric (custom-tier bespoke build)
+
+Patterns shipped 2026-05-06 on Meyer Electric (a $100/yr custom-tier
+client, NOT a $10K AI Package client). Every pattern below transfers
+cleanly to AI Package showcase sites and should be considered the
+"polish standard" for any bespoke `/clients/{slug}` build.
+
+### Animated trade-illustration diagrams (Rule 70)
+Powerwall + Generac diagrams on Meyer's deep-dive sections. 13 distinct
+CSS keyframes total, ~3KB CSS, zero JS overhead. Pattern:
+- Pure CSS keyframes inside `<style jsx>` (no framer-motion runtime,
+  no Lottie, no GIFs)
+- Class names prefixed with section identifier (`me-pw-` / `me-gen-`)
+  to prevent collisions
+- Wrap every animation in `@media (prefers-reduced-motion: reduce)`
+  that disables them cleanly
+- Animations must NARRATE the user's mental model — Powerwall's
+  charge bar fills 0→100%, Generac's energy pulse travels Grid →
+  ATS → Home, switch icon rotates ±2° like a real ATS lever
+
+For trade clients (electrician, plumber, HVAC, solar, lawn care)
+ship 1-2 hand-tuned animated diagrams as polish at the AI Package
+price point. Reference impl: `src/app/clients/meyer-electric/page.tsx`.
+
+### Recolored client logo (SVG inline pattern)
+When the client's existing logo doesn't fit the new dark theme but
+you want to honor the brand identity, recreate the mark as inline
+SVG with the new palette. Reference: `meyer-mark.tsx` — original
+blue+white plug-in-circle → yellow→orange gradient circle with black
+plug. Each instance gets a unique gradient ID (uniqueId counter
+pattern) so multiple instances on the same page don't collide.
+
+Apply when:
+- Client's existing logo is a JPEG/PNG with white background that
+  clashes with a dark theme
+- The brand glyph (plug, wrench, leaf, paw) is recognizable enough
+  to recreate as a 64×64 SVG
+- You don't have time to design a whole new logo from scratch
+
+Don't replace with a generic Phosphor icon — that loses brand identity.
+
+### ~1/3 padding reduction default
+The CLAUDE.md "Vertical Padding Standards" guidance. Apply to every
+new bespoke build:
+- Sections: `py-14 sm:py-16 lg:py-20` (instead of py-20 sm:py-24 lg:py-32)
+- SectionHeader margin-bottom: `mb-8 sm:mb-10` (instead of mb-12 sm:mb-14)
+- Internal grid gaps: `gap-8 lg:gap-12` (instead of gap-10 lg:gap-16)
+
+Saves ~720px page height (~11%) on a typical 10-section showcase.
+Mobile scroll-velocity gain is significant.
+
+### Photo dedup audit before shipping (Rule 1.5)
+After integrating real client photos, run a JS audit in browser
+console:
+```js
+const counts={};Array.from(document.querySelectorAll('img'))
+  .forEach(i=>{const s=(i.currentSrc||i.src);counts[s]=(counts[s]||0)+1});
+console.log(Object.entries(counts).filter(([_,c])=>c>1));
+```
+ANY entry with count > 1 = Rule 1.5 violation. Restructure to use
+icon-led visuals OR get more unique photos. Caught a 3-image
+duplication on Meyer that would have shipped otherwise.
+
+### Even out columns when one side has a tall photo
+If you put a portrait photo in one column of a 2-col grid, the
+opposite column ends short → visible void next to the photo. Fix
+by adding balancing content (CTA + license/trust strip) so both
+columns end at the same vertical position. Reference: Why-Us section
+on Meyer Electric (commit `4345774` for the exact pattern).
+
+### Mobile menu sibling-of-header (containing-block fix)
+Already documented above under Phase 1 + Zenith gotchas. Confirmed
+again on Meyer 2026-05-06 — the `<header>` element's
+`backdrop-blur-md` (which compiles to `filter: backdrop-filter`)
+creates a containing block for fixed descendants. The `position: fixed`
+mobile menu rendered inside the header gets pinned to the header's
+64px height, NOT the viewport. Fix: hoist the menu div up to be a
+SIBLING of `<header>`, both wrapped in a fragment.
 
 ---
 
