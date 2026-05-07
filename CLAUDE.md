@@ -7571,3 +7571,93 @@ When the directive is "use the real source content" (e.g. porting a client's exi
 **The 2026-05-06 reference run:** Olympic Inspections rebuild from `pineparticle.com`. Stripped fabricated "AIHA-LAP labs" / "10-25 page PDF" / "homes over 30 years old" / 3 fake "Coming soon" services. Replaced with source-grounded language ("ISO/IEC 17025-accredited laboratory" / "fast turnaround" / Pine & Particle's actual founder origin story).
 
 **Skill that runs this audit:** `aios/.claude/skills/content_fidelity_audit/SKILL.md` (added 2026-05-06).
+
+---
+
+### Locked-In Rule 73 — Locked Decisions Cascade Forward As Defaults (NON-NEGOTIABLE)
+
+Established 2026-05-06 by Ben after the MOCK BACKEND build. Re-asking
+the same Rule 48 questions on every instance of a repeating-pattern
+build wastes Ben's time AND signals the agent didn't learn from the
+first round. Once Ben locks decisions on a pattern, those decisions
+become DEFAULTS for the next instance until he explicitly changes them.
+
+**The rule:**
+
+When a repeating-pattern build (MOCK BACKEND install, bespoke client
+showcase, V2 template, animated trade illustration, funnel sequence,
+etc.) gets done for the first time AND Ben locked specific decisions
+during the Rule 48 question gate, those decisions get captured into:
+
+1. **The relevant operational playbook** under a "Locked defaults — DO
+   NOT re-ask" section (e.g. `docs/MOCK_BACKEND_PLAYBOOK.md`)
+2. **The matching AIOS skill** under "Defaults — don't re-ask"
+   (e.g. `aios/.claude/skills/mock_backend/SKILL.md`)
+
+When a future instance of that pattern hits, the agent:
+1. **Reads the locked-defaults section first** — this is the new
+   baseline
+2. **Skips the locked questions entirely** — don't re-ask "what URL
+   pattern" / "what password" / "what tab list" / etc.
+3. **Asks only NEW questions** that focus on:
+   - What's UNIQUE to THIS instance (the prospect, the industry, the
+     specific data, the geography)
+   - Decisions the prior build didn't surface (genuinely new ground)
+   - Anything Ben explicitly flags as different from default
+4. **Confirms defaults at the end** — single-line "applying defaults
+   X / Y / Z unless you say otherwise" so Ben can override if needed
+   without burning 10 questions on it
+
+**The compounding payoff:**
+
+- First instance of a pattern: 10 questions, ~30 min of Q&A
+- Second instance: 3-5 questions on what's unique, ~5 min
+- Third+ instance: 1-2 confirmations, ~1 min
+
+The rule applies to ANY repeating-pattern build, not just MOCK BACKEND:
+
+| Pattern | Playbook | First instance | Locked defaults examples |
+|---|---|---|---|
+| MOCK BACKEND install | `docs/MOCK_BACKEND_PLAYBOOK.md` | Meyer Electric (2026-05-06) | URL pattern, password, scale, tab list, persistence, branding, doc location |
+| Bespoke client showcase | `docs/bespoke-client.md` (TBD) | Hector / Meyer / Masters / KR / OIT | metadata override pattern, sitemap entry, 1/3 padding default, photo dedup audit |
+| V2 template build | `docs/V2_UPGRADE_CHECKLIST.md` | Per CLAUDE.md V2 upgrade rules | section count, premium features list |
+| Animated trade illustration | (in CLAUDE.md Rule 70) | Powerwall + Generac (Meyer) | CSS keyframes only, namespace prefix, prefers-reduced-motion |
+| Funnel sequence | `src/lib/client-funnels/zenith-sports.ts` | Zenith | step shape, audience taxonomy, cadence rules |
+
+**Failure modes the rule prevents:**
+
+- Re-asking "what URL pattern should the demo use" when /portal-demo
+  is already locked → wastes Ben's time AND makes him distrust the agent
+- Defaulting to a different password than 1212 because the question
+  wasn't asked → breaks the demo on the sales call
+- Inventing a different scale (50 leads instead of 200) because the
+  prior decision wasn't carried forward → the demo feels light
+- Each agent run starting from zero — no compounding
+
+**The agent's responsibility:**
+
+When invoking a repeating-pattern build, the FIRST thing the agent
+does (BEFORE asking any questions) is check for the playbook + AIOS
+skill and read the "Locked defaults" section. The questions that come
+AFTER are what's not yet decided, what's unique to this instance, OR
+what Ben explicitly wants to deviate on.
+
+**Forbidden:**
+
+- Re-asking a locked question without explicit "I'm reconsidering X"
+  signal from Ben
+- Treating a default as soft / "well I'd ask anyway in case you
+  changed your mind" — defaults stand until Ben overrides
+- Adding new decisions to a pattern without writing them into the
+  playbook (otherwise the next agent doesn't know about them)
+
+**When Ben changes his mind on a previously-locked default:**
+
+He says "actually let's switch X to Y." The agent:
+1. Confirms the change in chat
+2. Updates the playbook locked-defaults section in the SAME commit
+3. Updates the AIOS skill if that pattern has one
+4. Notes the date of the override
+
+This way the system learns. Locked-decisions are durable but not
+frozen — they evolve in lockstep with Ben's evolving operating taste.

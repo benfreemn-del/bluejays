@@ -16,22 +16,76 @@
 
 ---
 
-## Build contract (locked 2026-05-06)
+## Locked defaults — DO NOT re-ask (per Rule 73)
 
-Per Ben's locked answers (Q1-Q10):
+These are Ben's locked answers from the FIRST install (Meyer Electric,
+2026-05-06). Per CLAUDE.md Rule 73 ("Locked Decisions Cascade Forward"),
+every future MOCK BACKEND install applies these as DEFAULTS without
+re-asking. Don't burn Ben's time re-asking what's already locked. Only
+ask NEW questions about what's unique to THIS instance.
 
-| # | Decision | Locked answer |
+| # | Decision | LOCKED DEFAULT |
 |---|---|---|
-| 1 | Where does it live | `/clients/[slug]/portal-demo` (per-prospect URL) |
-| 2 | Password gate | Client-side, sessionStorage on success — password "1212" today |
-| 3 | Entry point | Small secondary feather in public-site footer (no label) |
+| 1 | URL pattern | `/clients/[slug]/portal-demo` |
+| 2 | Password gate | Client-side, sessionStorage on success, password "1212" |
+| 3 | Entry point | Small secondary feather in public-site footer (opacity-30 hover-100, no visible label, next to "Built by BlueJays" link) |
 | 4 | Mock data scale | Medium — ~200 leads, ~30 affiliates, ~15 repeat customers |
-| 5 | Tab list | Overview · Leads · Map · Funnels · Customers · Affiliates · AI Skills · Settings |
-| 6 | Interactive features | ALL — industry-specific calculator + tool + heatmap + simulator |
-| 7 | Lead scoring | Full 3-tier signals (property/business + powerwall/equipment + affiliate + urgency + seasonal) |
-| 8 | Persistence | Pure mock — page reload resets state cleanly |
-| 9 | Branding | BlueJays dashboard frame (slate-950 + tab bar) + client's accent color inside |
-| 10 | Reuse storage | Master playbook (this doc) + per-industry config + AIOS skill |
+| 5 | Tab list | Overview · Leads · Map · Funnels · Customers · Affiliates · AI Skills · Settings (8 tabs, horizontal scroll on mobile) |
+| 6 | Interactive features | ALL FOUR — industry calculator + sizing/recommendation tool + service-area heatmap + animated narrative simulator |
+| 7 | Lead scoring | Full 3-tier signals (property/business + product fit + affiliate-source + urgency + seasonal) |
+| 8 | Persistence | Pure mock — page reload resets state cleanly. NO localStorage. |
+| 9 | Branding | BlueJays dashboard frame (slate-950 bg + horizontal tab bar with border-yellow-400 active state) + the prospect's public-site accent color inside |
+| 10 | Reuse storage | Master playbook (this doc) + per-industry config in `docs/mock-backends/` + AIOS skill |
+
+**If Ben overrides any of these for a specific instance**, he says so
+explicitly. Update the locked-defaults table in this doc + the AIOS
+skill in the SAME commit so future installs learn.
+
+## Future-install question template (for Rule 48 gate)
+
+Instead of re-asking the 10 locked questions, future MOCK BACKEND
+installs should ask these (skip any already locked at the prospect /
+industry level):
+
+1. Which industry config does this client fit?
+   - A) Existing config — pick from `docs/mock-backends/`
+   - B) New industry — write a new config alongside the install (~2-3
+     extra hours)
+2. What's their service area / geographic data? Need: counties or
+   metros + lead-density score per area + recent local-event signals
+   (storms, fires, etc. depending on industry)
+3. What real local business names go in the repeat-customer list?
+   Need 15 actual businesses from their region's commercial market
+   that fit the industry's recurring-customer profile.
+4. What real local cities + neighborhoods go in the lead pool? (Avoid
+   "Springfield" / generic names — kills the wow factor.)
+5. Any industry-specific lead-quality signals NOT in the existing
+   config that matter for THIS prospect's specific service mix?
+6. Brand-accent color override on the demo interior? (Default: match
+   prospect's public-site accent.)
+7. Any specific data the prospect explicitly DOESN'T want shown? (E.g.
+   if they're paranoid about a specific competitor seeing pricing.)
+8. Any specific funnel audience that's unique to their business model
+   beyond the 4 standard industry funnels?
+9. Any prospect-specific AI Skill / interactive feature beyond the 4
+   standard ones? (E.g. for an HVAC: heat-loss calculator. For a vet:
+   pet weight-by-breed lookup.)
+10. Anything truly novel about this prospect that the existing config
+    doesn't cover?
+
+Most installs will only need 3-5 of these. The rest are "applying
+defaults" — confirmed in a single line at the end.
+
+**Hand-back format after questions:**
+
+> Locked from defaults: URL pattern, password 1212, entry feather,
+> 8-tab structure, ~200 leads + 30 affiliates + 15 customers,
+> reload-resets persistence, BlueJays frame + your-yellow accent.
+>
+> Customizing for [prospect]: [list the 3-5 things that came back
+> different from default].
+>
+> Building now.
 
 ---
 
