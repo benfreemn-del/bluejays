@@ -7194,8 +7194,9 @@ to autonomous-batch:
    work that must not ride into your commit.
 4. **One commit per logical batch** with a body that lists every file
    touched and why.
-5. **Don't push without an explicit "git push" / "ship it" / "send it"
-   from Ben.** "Commit" never implies push.
+5. **Push when committing.** Default to `git push` after the commit
+   lands — don't wait for explicit permission. Ben wants the
+   autonomous batch to fully ship in one motion.
 6. **End with a clean leftover ledger.** Two-section summary:
    ✅ shipped (what's done) and ⚠️ still needs you (logins, calls,
    decisions, payment info, anything blocked on a human). Never
