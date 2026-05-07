@@ -547,11 +547,18 @@ export default function CutMyAgencyPage() {
         {stage === "step1" && (
           <div className="mb-6 sm:mb-10">
             <p className="hidden sm:block text-xs uppercase tracking-widest text-amber-300 font-semibold mb-3">
-              Free 60-second tool · No spam
+              Free 60-second marketing agency cost calculator · No spam
             </p>
             <h1 className="text-2xl sm:text-5xl font-black leading-tight mb-3 sm:mb-4">
-              How much is your agency really costing you?
+              How much is your marketing agency really costing you?
             </h1>
+            {/* Sub-h2 added 2026-05-06 for SEO + Google Ads Quality Score —
+                makes the page surface every match-typed keyword in the
+                agency-replacement campaign (marketing agency cost,
+                digital marketing pricing, marketing agency alternative). */}
+            <h2 className="hidden sm:block text-sm sm:text-base text-amber-200/85 font-semibold mb-3">
+              Calculate your digital marketing agency cost in 60 seconds — and see what a one-time custom AI marketing system would save you.
+            </h2>
             <p className="hidden sm:block text-base sm:text-lg text-slate-300 leading-relaxed">
               See your 3-year cost. See what a custom AI system costs once.
               See exactly what you&apos;d save. Real numbers — no hype.
