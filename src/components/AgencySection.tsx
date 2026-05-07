@@ -85,35 +85,91 @@ export default function AgencySection() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {/* Top CTA — agency cost calculator. Highest-intent
-                  conversion path right now (the Hormozi calculator
-                  funnel feeding the agency-replacement Google Ads
-                  campaign). Promoted above the other two buttons per
-                  Ben 2026-05-06 — calculator funnel converts at
-                  3-8x the rate of generic landing-page CTAs. Amber
-                  gradient (calc-page accent) so it visually pops
-                  vs the violet-primary + outline-secondary below. */}
+            <div className="flex flex-col gap-4">
+              {/* PROMOTED CTA — agency cost calculator. Highest-intent
+                  conversion path right now (Hormozi calculator funnel
+                  feeding the agency-replacement Google Ads campaign).
+                  Promoted hard 2026-05-06 per Ben — calculator funnel
+                  converts 3-8x generic landing-page CTAs.
+
+                  Visual treatment vs the other two buttons:
+                  - "Most chosen" eyebrow pill above
+                  - h-14 (vs h-12 below) + text-base (vs text-sm)
+                  - Pulsing amber halo ring behind (CSS keyframe in
+                    style jsx) + bigger shadow glow
+                  - Animated chevron that nudges right on hover
+                  Other 2 demoted to "Or, if you'd rather:" footer row
+                  with smaller h-10 + subdued styling. */}
+              <style jsx>{`
+                @keyframes cma-halo-pulse {
+                  0%, 100% {
+                    box-shadow:
+                      0 0 0 0 rgba(251, 191, 36, 0.55),
+                      0 12px 36px -8px rgba(251, 191, 36, 0.45);
+                  }
+                  50% {
+                    box-shadow:
+                      0 0 0 12px rgba(251, 191, 36, 0),
+                      0 16px 48px -6px rgba(251, 191, 36, 0.6);
+                  }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                  .cma-halo {
+                    animation: none !important;
+                  }
+                }
+                .cma-halo {
+                  animation: cma-halo-pulse 2.6s ease-in-out infinite;
+                }
+                .cma-chevron {
+                  transition: transform 0.25s ease-out;
+                }
+                .cma-cta:hover .cma-chevron {
+                  transform: translateX(4px);
+                }
+              `}</style>
+
+              {/* Eyebrow pill — "Most chosen path" tag */}
+              <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full border border-amber-400/40 bg-amber-400/[0.08] text-amber-300 text-[11px] font-bold uppercase tracking-widest">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+                </span>
+                Best place to start · 60 seconds
+              </div>
+
               <a
                 href="/cut-my-agency"
-                className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-amber-950 transition-all duration-300 hover:shadow-[0_0_40px_rgba(251,191,36,0.5)] active:scale-[0.97] w-fit"
-                style={{ background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)" }}
+                className="cma-cta cma-halo inline-flex items-center justify-center gap-2.5 h-14 sm:h-16 px-8 rounded-full font-extrabold text-base sm:text-lg text-amber-950 transition-all duration-300 active:scale-[0.97] w-full sm:w-fit"
+                style={{
+                  background: "linear-gradient(135deg, #fcd34d 0%, #fbbf24 50%, #f59e0b 100%)",
+                }}
               >
-                💰 Calculate your agency cost — free 60-sec tool
-                <ArrowIcon />
+                <span className="text-xl">💰</span>
+                See how much you&apos;d save
+                <span className="cma-chevron"><ArrowIcon /></span>
               </a>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <p className="text-white/40 text-xs -mt-2 ml-1">
+                Free. No call. Real numbers based on your inputs.
+              </p>
+
+              {/* Demoted secondary row — clearly subordinate to the
+                  calculator above. Smaller height, smaller text,
+                  outline-only treatment so the calculator pops. */}
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-white/30 text-[11px] uppercase tracking-widest font-semibold">Or</span>
+                <div className="flex-1 h-px bg-white/[0.06]" />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2.5">
                 <a
                   href="/agency"
-                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.45)] active:scale-[0.97]"
-                  style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)" }}
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-full border border-violet-500/30 bg-violet-500/[0.06] text-violet-200 hover:bg-violet-500/[0.12] hover:border-violet-500/50 font-semibold text-xs transition-all duration-300"
                 >
                   See how the system works
-                  <ArrowIcon />
                 </a>
                 <a
                   href="/get-started"
-                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/20 font-semibold text-sm transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-full border border-white/10 text-white/55 hover:text-white/85 hover:border-white/20 font-semibold text-xs transition-all duration-300"
                 >
                   Start with a website first
                 </a>
