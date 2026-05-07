@@ -2685,81 +2685,36 @@ function SectionHeading({
 // — the wilted-rose mark is the bloodline sigil per Rule 72 synopsis.
 // ──────────────────────────────────────────────────────────────────────
 function WiltedRoseSigil({ size = 140 }: { size?: number }) {
+  // Renders the cleaned tribal-rose tattoo (black-rose-on-transparent
+  // PNG produced from Preston's source art) as a CSS mask. The colour
+  // of the rose comes from the parent's `color` style via
+  // `backgroundColor: currentColor`, so each call site can paint the
+  // rose parchment-white on a dark cover OR ink-brown on a cream
+  // parchment scrap without shipping two image variants.
+  //
+  // Kept the original `size` prop and the historical 1:1.4 box ratio
+  // so existing layout math (centering, my-8 spacers, etc.) doesn't
+  // shift. The PNG is naturally ~1:1.265 — `mask-size: contain` keeps
+  // it centered with a touch of room top/bottom.
+  const ROSE_URL = "/images/clients/bloodlines/wilted-rose-tattoo.png";
   return (
-    <svg
-      width={size}
-      height={size * 1.4}
-      viewBox="0 0 100 140"
-      fill="currentColor"
+    <div
       aria-hidden="true"
-      style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }}
-    >
-      {/* Bud cluster — drooping rose head */}
-      <g transform="translate(50, 38)">
-        {/* Outermost drooping petal (left, wilting down) */}
-        <path
-          d="M -22 -2 Q -30 -16, -20 -30 Q -10 -34, -2 -26 Q -10 -16, -16 -10 Q -22 -2, -22 -2 Z"
-          opacity="0.7"
-        />
-        {/* Right outer drooping petal */}
-        <path
-          d="M 22 -2 Q 30 -14, 22 -28 Q 14 -34, 4 -28 Q 10 -16, 16 -10 Q 22 -2, 22 -2 Z"
-          opacity="0.7"
-        />
-        {/* Lower drooping petal — wilted, hanging */}
-        <path
-          d="M -10 -2 Q -8 8, -2 12 Q 4 14, 8 6 Q 10 -2, 10 -2 Z"
-          opacity="0.55"
-        />
-        {/* Center bud — tight, embossed */}
-        <path
-          d="M 0 -10 Q -10 -20, -6 -32 Q 0 -38, 6 -32 Q 10 -20, 0 -10 Z"
-          opacity="1"
-        />
-        {/* Inner detail */}
-        <path
-          d="M 0 -16 Q -4 -22, -2 -28 Q 0 -30, 2 -28 Q 4 -22, 0 -16 Z"
-          opacity="0.5"
-        />
-      </g>
-
-      {/* Stem — curving down, slight S-curve */}
-      <path
-        d="M 50 50 Q 46 64, 51 78 Q 56 92, 49 106 Q 46 118, 50 130"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      {/* Thorns — three angled barbs */}
-      <path
-        d="M 48 60 L 42 56 M 53 84 L 60 81 M 47 110 L 41 113"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      {/* Leaf — single curling leaf mid-stem */}
-      <path
-        d="M 51 72 Q 38 66, 34 78 Q 36 88, 50 80 Q 53 76, 51 72 Z"
-        opacity="0.65"
-      />
-      <path
-        d="M 38 72 Q 42 78, 49 80"
-        stroke="currentColor"
-        strokeWidth="0.8"
-        fill="none"
-        opacity="0.4"
-      />
-
-      {/* Fallen petal at the base */}
-      <path
-        d="M 36 124 Q 28 122, 28 132 Q 34 136, 42 130 Q 42 124, 36 124 Z"
-        opacity="0.6"
-      />
-    </svg>
+      style={{
+        width: size,
+        height: size * 1.4,
+        backgroundColor: "currentColor",
+        WebkitMaskImage: `url(${ROSE_URL})`,
+        maskImage: `url(${ROSE_URL})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))",
+      }}
+    />
   );
 }
 
@@ -3072,10 +3027,12 @@ function ParchmentSynopsisModal({
                 Book One of the Bloodlines saga. For readers 11+.
               </p>
 
-              {/* Wilted-rose sigil watermark */}
+              {/* Wilted-rose sigil watermark — inked on parchment, so
+                  the tattoo renders in INK (dark warm brown) which
+                  reads as a real stamp on the cream page. */}
               <div
                 className="my-8 flex justify-center"
-                style={{ color: GOLD_DEEP }}
+                style={{ color: INK }}
               >
                 <WiltedRoseSigil size={88} />
               </div>
@@ -3549,13 +3506,13 @@ function HeroBlock() {
                   }}
                 />
 
-                {/* Wilted-rose sigil — embossed on the cover, glowing
-                    softly. The lore says the wilted rose is the
-                    bloodline mark. */}
+                {/* Wilted-rose sigil — embossed on the cover. New
+                    tribal-tattoo art rendered in PARCHMENT cream so it
+                    reads as a hot-foil stamp on the dark leather. */}
                 <div
                   aria-hidden="true"
                   className="bl-rose-sigil absolute inset-0 flex items-center justify-center pointer-events-none"
-                  style={{ color: GOLD }}
+                  style={{ color: PARCHMENT }}
                 >
                   <WiltedRoseSigil size={120} />
                 </div>
@@ -6286,14 +6243,17 @@ function FooterBlock() {
       style={{ background: "#06060a", borderTop: `1px solid ${GOLD_DEEP}33` }}
     >
       <div className="max-w-4xl mx-auto text-center">
-        <Image
-          src="/images/clients/bloodlines/wilted-rose-tattoo.jpg"
-          alt="Wilted rose sigil"
-          width={48}
-          height={60}
-          className="mx-auto mb-4 opacity-70"
-          style={{ filter: `drop-shadow(0 0 12px ${GOLD_DEEP})` }}
-        />
+        {/* Wilted-rose footer mark — same component as the cover so the
+            tribal-tattoo art stays consistent across the page. Tinted
+            GOLD_DEEP so it matches the surrounding "Bloodlines" mark. */}
+        <div
+          className="mx-auto mb-4 flex justify-center opacity-80"
+          style={{ color: GOLD_DEEP }}
+          aria-label="Wilted rose sigil"
+          role="img"
+        >
+          <WiltedRoseSigil size={48} />
+        </div>
         <p
           className="uppercase tracking-[0.5em] text-xs mb-2"
           style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
