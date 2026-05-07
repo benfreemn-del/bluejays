@@ -34,7 +34,10 @@ type ChecklistItem = {
 };
 
 const ITEMS: ChecklistItem[] = [
-  // ── 🚨 BLOCKERS ─────────────────────────────────────────────────
+  // ── 🚨 BLOCKERS · do this week ────────────────────────────────
+  // Today: 2026-05-06. Items that risk legal exposure, missed
+  // filings, or partner-payment-without-paperwork.
+
   {
     id: "wa-ubi",
     title: "Verify WA UBI / Master Business License is active",
@@ -62,73 +65,51 @@ const ITEMS: ChecklistItem[] = [
     },
   },
   {
-    id: "service-agreement",
-    title: "Buy + customize Service Agreement template",
-    detail:
-      "Empty `01 Legal & Tax/Contracts & Templates/` folder. About to sign $9,700+ deals with no agreement. Use LegalTemplates 'Web Design Service Agreement', drop in the TEKKY quarterly clause Claude drafted, save into the folder. Send to Jake with the Stripe link.",
-    tier: "blocker",
-    time: "45 min",
-    cost: "$39",
-    action: {
-      label: "LegalTemplates →",
-      href: "https://legaltemplates.net/form/web-design-services-agreement/",
-    },
-  },
-  {
-    id: "ein-cp575",
-    title: "Verify EIN PDF is the IRS CP575 letter (not application receipt)",
-    detail:
-      "Open `01 Legal & Tax/Tax/EIn bluejay business.pdf`. If it says 'We assigned you Employer Identification Number...' → fine. If it's an online application acknowledgement → call IRS 1-800-829-4933, request a 147C letter (free, 10 min, mailed in 4-6 weeks). Banks need it.",
-    tier: "blocker",
-    time: "2 min",
-    cost: "$0",
-  },
-  {
-    id: "annual-report-status",
-    title: "Check WA Annual Report status (2025 + 2026)",
-    detail:
-      "LLC anniversary = June 4. Annual report due every year by then. $71. Late = +$25 penalty. >2 yrs late = LLC dissolved. Search BlueJay Business Solutions in CCFS, view filing history.",
-    tier: "blocker",
-    time: "5 min",
-    cost: "$0",
-    action: {
-      label: "WA SOS CCFS →",
-      href: "https://ccfs.sos.wa.gov/",
-    },
-  },
-
-  // ── ⚠️ THIS MONTH ──────────────────────────────────────────────
-  {
     id: "annual-report-2026",
-    title: "File 2026 WA Annual Report (due June 4)",
+    title: "File 2026 WA Annual Report — due June 4 (29 days)",
     detail:
-      "$71. Set 30-day reminder for May 5 each year going forward. If 2025 was missed → file that one too with the $25 late penalty.",
-    tier: "this-month",
+      "LLC anniversary June 4. Report is $71. Late = +$25 penalty. >2 yrs late = LLC dissolved. While in CCFS, also verify the 2025 report was filed — if missed, file with the $25 penalty NOW. Set a 30-day reminder for May 5 every future year.",
+    tier: "blocker",
     time: "15 min",
-    cost: "$71+",
+    cost: "$71–$96",
     action: {
       label: "File at CCFS →",
       href: "https://ccfs.sos.wa.gov/",
     },
   },
   {
-    id: "1040-schedule-c",
-    title: "File 2025 Form 1040 + Schedule C (due April 15, 2026)",
+    id: "madie-paperwork",
+    title: "Madie · W-9 + Independent Contractor Agreement BEFORE first payout",
     detail:
-      "Single-member LLC = pass-through. Business profit lands on personal Schedule C. If 2025 had >$400 net profit and no quarterly payments were made → expect small underpayment penalty.",
-    tier: "this-month",
-    time: "2 hours (or pay CPA)",
-    cost: "$0–$300",
+      "Madie's earning $200/website + $1k/backend close. IRS rule: W-9 must be on file BEFORE the payment that crosses the first dollar — and definitely before $600 cumulative. Get her W-9 (printable from IRS.gov) + sign a 1-page IC agreement clarifying she's a contractor (not employee), commission-only, no benefits. Save into 01 Legal & Tax/Contracts & Templates/Madie - IC Agreement.md.",
+    tier: "blocker",
+    time: "30 min",
+    cost: "$0",
     action: {
-      label: "IRS payments →",
-      href: "https://www.irs.gov/payments",
+      label: "IRS Form W-9 →",
+      href: "https://www.irs.gov/pub/irs-pdf/fw9.pdf",
     },
   },
   {
-    id: "quarterly-2026",
-    title: "Set up 2026 quarterly estimated tax schedule",
+    id: "business-bank",
+    title: "Open Mercury business bank account",
     detail:
-      "April 15 / June 15 / Sept 15 / Jan 15. Estimate 2026 net profit × ~25% (federal + SE tax) ÷ 4 = quarterly payment. With Jake + TEKKY closes, 2026 net likely >$40K — quarterly is no longer optional.",
+      "Revenue scale + multiple $9.7k closes pending = you cannot keep commingling. A court CAN pierce the LLC veil if BlueJays revenue/expenses still flow through a personal account. Mercury = free, online, 15 min. Connect Stripe payouts directly. Then route ALL future Stripe + client payments to it.",
+    tier: "blocker",
+    time: "15 min",
+    cost: "$0",
+    action: {
+      label: "Mercury →",
+      href: "https://mercury.com/start",
+    },
+  },
+
+  // ── ⚠️ THIS MONTH · before May ends ───────────────────────────
+  {
+    id: "q2-tax",
+    title: "Q2 2026 estimated tax payment — due June 15 (40 days)",
+    detail:
+      "Q1 (Apr 15) likely already passed. With TEKKY + Hector + Laser Lakes + others closing, 2026 net is tracking >$40K — quarterly tax is no longer optional. Estimate YTD net × ~25% = total tax owed YTD; pay the gap. If Q1 was missed, expect small underpayment interest (~$15-50). Pay via IRS 1040-ES.",
     tier: "this-month",
     time: "30 min",
     cost: "varies",
@@ -138,39 +119,42 @@ const ITEMS: ChecklistItem[] = [
     },
   },
   {
-    id: "147c-letter",
-    title: "Request IRS 147C letter (only if EIN PDF isn't CP575)",
+    id: "bookkeeping-system",
+    title: "Set up QuickBooks Self-Employed (or Wave) for 2026",
     detail:
-      "Phone-only request. Tell agent: 'I'm the sole member of an LLC. I need a 147C letter — my original CP575 was lost.' Free, 10-min call, mailed in 4-6 weeks.",
+      "DIY-spreadsheet bookkeeping breaks at the $9.7k-deal-volume tier. QuickBooks Self-Employed is $20/mo, auto-categorizes Stripe + Mercury transactions, generates the Schedule C automatically next April. Wave is free if you can manage manual category review. Pick one + back-categorize 2026 to date.",
     tier: "this-month",
-    time: "10 min",
-    cost: "$0",
+    time: "2 hours setup + ongoing",
+    cost: "$0–$240/yr",
     action: {
-      label: "📞 1-800-829-4933",
-      href: "tel:18008294933",
+      label: "QBSE →",
+      href: "https://quickbooks.intuit.com/self-employed/",
     },
   },
-
-  // ── 📝 NEXT 30–60 DAYS ────────────────────────────────────────
   {
-    id: "business-bank",
-    title: "Open Mercury business bank account",
+    id: "madie-commission-ledger",
+    title: "Madie · running commission ledger toward $600 1099-NEC threshold",
     detail:
-      "Stop commingling personal + business. Court can pierce the corporate veil if BlueJays revenue/expenses still flow through a personal account. Mercury = free, online, 15 min, connect Stripe payouts directly.",
-    tier: "soon",
-    time: "15 min",
+      "When her cumulative 2026 commissions cross $600, you owe her a 1099-NEC by Jan 31, 2027. Track every payout in a sheet (date, deal, amount, running total). Easiest: a tab in your accounting tool tagged 'Madie' so totals auto-sum. Crossing $600 with no W-9 on file = $290 penalty per missing 1099 + IRS notice.",
+    tier: "this-month",
+    time: "20 min",
     cost: "$0",
-    action: {
-      label: "Mercury →",
-      href: "https://mercury.com/start",
-    },
+  },
+  {
+    id: "cpa-retainer",
+    title: "Hire a CPA on retainer ($300–500/yr) — interview 3, pick 1",
+    detail:
+      "At this scale DIY tax = penalty risk. CPA does Q2-Q4 quarterly planning, Schedule C, and tells you exactly when to elect S-corp (probably the 2027 tax year at this trajectory). Find one who specializes in solo-LLC marketing/agency businesses. Pays for itself in tax-minimizing advice alone.",
+    tier: "this-month",
+    time: "2 hours to find + interview",
+    cost: "$300–500/yr",
   },
   {
     id: "eo-insurance",
     title: "Buy E&O + General Liability insurance",
     detail:
-      "Service business handling client websites + content needs E&O. ~$40-60/mo with Hiscox or Next. If a client claims your work cost them revenue, E&O covers the lawsuit. Without it = personal assets exposed.",
-    tier: "soon",
+      "Service business handling client websites + AI-generated copy + lead-capture data needs E&O. ~$40-60/mo with Hiscox or Next. If a client claims your AI System cost them revenue (or one of Madie's prospects sues over a sales call), E&O covers the lawsuit. Without it = personal assets exposed despite the LLC.",
+    tier: "this-month",
     time: "30 min",
     cost: "~$50/mo",
     action: {
@@ -179,22 +163,60 @@ const ITEMS: ChecklistItem[] = [
     },
   },
   {
-    id: "w9-process",
-    title: "Add W-9 upload to /partners/apply before any partner crosses $600/yr",
+    id: "twofa-recovery",
+    title: "Document 2FA recovery codes for all admin accounts",
     detail:
-      "Once a sales partner accumulates $600+ in payouts in a calendar year, you must have their W-9 on file BEFORE the payment that crosses $600 + issue 1099-NEC by Jan 31. Build the upload field now — saves a January scramble.",
+      "Single point of failure: lose your phone, lose access to Stripe, Vercel, Supabase, Google, Calendly, SendGrid, Twilio, Mercury, GitHub, Cloudflare. Print/store recovery codes in 1Password OR a sealed envelope in a fireproof safe. 30-min audit one time, prevents an existential outage. List every account with admin login + verify each has working recovery codes saved.",
+    tier: "this-month",
+    time: "30 min",
+    cost: "$0",
+  },
+
+  // ── 📝 NEXT 30–60 DAYS ────────────────────────────────────────
+  {
+    id: "domain-registrar-audit",
+    title: "Audit every client domain · WHOIS + auto-renew + alert email",
+    detail:
+      "We host ~10 client sites now (Tekky/Zenith, Hector, Tacos Yum, etc.). Each domain has a registrar account, an owner-of-record in WHOIS, and a renewal date. Audit: every domain auto-renews, the alert email is one YOU monitor (not a forgotten gmail), card on file is current. One missed renewal = client site goes dark = a very bad day.",
     tier: "soon",
     time: "1 hour",
     cost: "$0",
   },
   {
-    id: "cpa-retainer",
-    title: "Hire a CPA on retainer ($300–500/yr)",
+    id: "billing-audit",
+    title: "Vercel + Supabase + SendGrid + Twilio billing audit",
     detail:
-      "At your scale, DIY tax = penalty risk. CPA does quarterly planning + Schedule C. Pays for itself in penalty avoidance + tax-minimizing structure advice (e.g. when to elect S-corp).",
+      "Confirm card on file for each is current + has billing alerts set ($X spike = email). Vercel surprise bills can hit $500+ when a client gets traffic spike. Supabase free tier has hard limits — if you cross, the DB freezes. Set spend caps where possible.",
     tier: "soon",
-    time: "1 hour to find one",
-    cost: "$300–500/yr",
+    time: "30 min",
+    cost: "$0",
+  },
+  {
+    id: "supabase-backup",
+    title: "Supabase nightly backup verified + tested",
+    detail:
+      "Supabase Pro plan auto-backs-up daily, retains 7 days. Free tier doesn't. Verify your project is on a plan with backups + test a restore to a staging project once so you know the restore actually works. Database loss without a tested backup = end of business.",
+    tier: "soon",
+    time: "45 min",
+    cost: "$0–$25/mo",
+  },
+  {
+    id: "w9-self-serve",
+    title: "Build W-9 upload into /partners/apply (when you onboard rep #2)",
+    detail:
+      "When the second sales partner joins, paperwork-by-text doesn't scale. Upload field collects W-9 PDF + IC agreement signature on the apply form. Auto-saves to a partners/{id}/legal/ folder. Build BEFORE the second hire, not during.",
+    tier: "soon",
+    time: "2 hours",
+    cost: "$0",
+  },
+  {
+    id: "q3-q4-tax-reminders",
+    title: "Calendar reminders for Q3 (Sept 15) + Q4 (Jan 15) estimated tax",
+    detail:
+      "Set both NOW so neither gets missed. Each reminder fires 10 days before the due date so you have time to compute the YTD-net × 25% number. Calendar invite or phone alarm — pick the one you'll actually see.",
+    tier: "soon",
+    time: "5 min",
+    cost: "$0",
   },
 
   // ── 🟢 SOMEDAY ────────────────────────────────────────────────
@@ -215,10 +237,19 @@ const ITEMS: ChecklistItem[] = [
     id: "tos-attorney-review",
     title: "Privacy Policy + Terms of Service attorney review",
     detail:
-      "You have them on the site (likely auto-generated). Worth one attorney review at scale — checks that they actually cover what your AI Marketing System does (lead capture, AI copy generation, partner program data flows).",
+      "You have them on the site (auto-generated). Worth one attorney review at scale — checks that they actually cover what your AI Marketing System does (lead capture, AI copy generation, partner program data flows, Madie's calling, voicemail recording).",
     tier: "someday",
     time: "1 hour to set up",
     cost: "$200–400",
+  },
+  {
+    id: "s-corp-election",
+    title: "S-corp election analysis (2027 tax year)",
+    detail:
+      "When net profit clears ~$80K/yr, electing S-corp status saves ~$5-10k/yr in self-employment tax (split income into salary + distribution). Costs ~$500/yr in extra payroll/filing complexity. CPA can run the breakeven math. Decide for the 2027 tax year by Mar 15, 2027.",
+    tier: "someday",
+    time: "30 min with CPA",
+    cost: "varies",
   },
 ];
 
