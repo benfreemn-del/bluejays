@@ -17,7 +17,12 @@
 import { useRef, useState } from "react";
 import { LakeBrowser } from "./lake-browser.client";
 import { OrderConfigurator } from "./order-configurator.client";
-import { PRODUCTS, formatPrice, type Lake } from "@/data/laser-lakes-catalog";
+import {
+  PRODUCTS,
+  formatPrice,
+  SHOPIFY_SHOP_URL,
+  type Lake,
+} from "@/data/laser-lakes-catalog";
 
 const PALETTE = {
   ink: "#2b241c",
@@ -123,11 +128,22 @@ export function BespokeExperience() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {PRODUCTS.map((p) => (
-              <button
+            {PRODUCTS.map((p) => {
+              // Standard products with a Shopify URL → external link to
+              // checkout there. Custom-spec products (no Shopify URL) →
+              // open the configurator so Nate can quote them. This is
+              // the no-backend rule: standard items go straight to
+              // Shopify, custom items handoff to Nate by email.
+              const isShopify = Boolean(p.shopifyUrl);
+              const Tag: "a" | "button" = isShopify ? "a" : "button";
+              const linkProps = isShopify
+                ? { href: p.shopifyUrl!, target: "_blank", rel: "noopener noreferrer" }
+                : { onClick: () => goConfigure(undefined), type: "button" as const };
+              return (
+              <Tag
                 key={p.id}
-                type="button"
-                onClick={() => goConfigure(undefined)}
+                {...(linkProps as React.AnchorHTMLAttributes<HTMLAnchorElement> &
+                  React.ButtonHTMLAttributes<HTMLButtonElement>)}
                 className="group text-left rounded-lg overflow-hidden border-2 transition-all hover:translate-y-[-3px]"
                 style={{
                   backgroundColor: PALETTE.cream,
@@ -220,12 +236,27 @@ export function BespokeExperience() {
                       className="text-[11px] tracking-[0.2em] uppercase font-extrabold transition group-hover:translate-x-1"
                       style={{ color: PALETTE.walnut }}
                     >
-                      Configure →
+                      {isShopify ? "Shop on Shopify ↗" : "Configure →"}
                     </div>
                   </div>
                 </div>
-              </button>
-            ))}
+              </Tag>
+              );
+            })}
+          </div>
+
+          {/* Direct Shopify shop link — for browsers who want to see
+              everything Nate has on his Shopify storefront. */}
+          <div className="mt-10 text-center">
+            <a
+              href={SHOPIFY_SHOP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] underline underline-offset-4 transition hover:translate-x-1"
+              style={{ color: PALETTE.walnut }}
+            >
+              Browse the full Shopify shop ↗
+            </a>
           </div>
         </div>
       </section>

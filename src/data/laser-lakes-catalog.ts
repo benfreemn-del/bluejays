@@ -4,16 +4,26 @@
  * Two arrays here:
  *   1. PRODUCTS — every standalone product Nate sells (the lake-map
  *      variants, ornaments, wildlife pieces). Each has size / finish
- *      options + a base price.
+ *      options, a base price, and an optional Shopify product URL.
  *   2. LAKES — the catalog of lakes Nate has CNC files for. Drives
  *      the lake-browser search + the custom-order configurator's
  *      first step. Curated US lake list as a starting set; once Nate
  *      sends his real catalog, swap this array out.
  *
- * Real data lives in client_camps-style DB tables eventually; this
- * file is the day-1 source of truth so the page renders beautifully
- * before Nate sends his exports.
+ * NO BACKEND on our side. Laser Lakes runs on Shopify — checkout +
+ * customer records + order fulfillment all live there. The site
+ * here is a beautiful storefront that funnels into Shopify.
+ *
+ * For standard products → product card links to its Shopify URL.
+ * For custom orders → the configurator sends Nate a pre-filled email
+ * with all the spec; Nate prices it, builds the line item in Shopify,
+ * and emails the customer the checkout link.
  */
+
+/** Nate's Shopify shop root + the email orders go to. Update when his
+ *  custom domain switches over. */
+export const SHOPIFY_SHOP_URL = "https://laserlakes.com";
+export const ORDERS_EMAIL = "nate@laserlakes.com";
 
 export type ProductFinish =
   | "natural-birch"
@@ -41,6 +51,10 @@ export type Product = {
   isFeatured?: boolean;
   /** Engraving available (custom name / coords / family est. line). */
   engravable: boolean;
+  /** Shopify product page URL. When set, the catalog card links here.
+   *  When null, the card opens the configurator (because every variant
+   *  needs Nate to spec it). */
+  shopifyUrl?: string;
 };
 
 export const SIZE_LABELS: Record<ProductSize, string> = {

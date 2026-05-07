@@ -20,6 +20,7 @@ import {
   PRODUCTS,
   searchLakes,
   formatPrice,
+  ORDERS_EMAIL,
   type Lake,
   type Product,
   type ProductSize,
@@ -53,8 +54,6 @@ export function OrderConfigurator({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
   // Lake-pick search state
@@ -68,40 +67,57 @@ export function OrderConfigurator({
 
   const lakeLabel = lake ? `${lake.name} · ${lake.state}` : customLakeName ? `${customLakeName} · ${customLakeState || "?"}` : null;
 
-  const submit = async () => {
-    if (!product || !size || !finish || !email || !name) return;
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const r = await fetch("/api/clients/inquire", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          slug: "laser-lakes",
-          name,
-          email,
-          phone: phone || null,
-          intent: `Laser Lakes Custom Order · ${product.name} · ${lakeLabel}`,
-          source: "order-configurator",
-          productId: product.id,
-          productName: product.name,
-          lake: lake
-            ? { name: lake.name, state: lake.state, region: lake.region ?? null, custom: false }
-            : { name: customLakeName, state: customLakeState, custom: true },
-          size,
-          finish,
-          engravingLine: engravingLine.trim() || null,
-          totalCents: total,
-        }),
-      });
-      const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-      if (!j.ok) throw new Error(j.error ?? "Couldn't submit");
-      setDone(true);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Submit failed");
-    } finally {
-      setSubmitting(false);
-    }
+  /** Compose an email to Nate with the full order spec. No backend on
+   *  our side — Laser Lakes runs on Shopify, so the configurator's job
+   *  ends at "hand the structured order off to Nate by email." Nate
+   *  then prices it, builds the line item in his Shopify admin, and
+   *  emails the customer the checkout link.
+   *
+   *  We open the user's mail client with a fully pre-filled subject +
+   *  body so they only have to hit Send. Nate gets a clean, parseable
+   *  spec block every time — no two custom-order emails look different. */
+  const composeOrderEmail = (): { mailto: string } | null => {
+    if (!product || !size || !finish || !email || !name) return null;
+    const sizeLabel = product.sizes.find((s) => s.id === size)?.label ?? size;
+    const finishLabel = product.finishes.find((f) => f.id === finish)?.label ?? finish;
+    const subject = `Custom order · ${product.name} · ${lakeLabel ?? "lake"}`;
+    const body = [
+      `Hi Nate,`,
+      ``,
+      `I built this on the configurator at laserlakes.com — please send a quote + Stripe checkout link when you can.`,
+      ``,
+      `─── ORDER SPEC ───`,
+      `Lake:        ${lakeLabel ?? "(custom — see notes)"}`,
+      `Product:     ${product.name}`,
+      `Size:        ${sizeLabel}`,
+      `Finish:      ${finishLabel}`,
+      engravingLine.trim() ? `Engraving:   "${engravingLine.trim()}"` : `Engraving:   none`,
+      `Est. total:  ${formatPrice(total)}`,
+      ``,
+      `─── CONTACT ───`,
+      `Name:        ${name}`,
+      `Email:       ${email}`,
+      phone ? `Phone:       ${phone}` : ``,
+      ``,
+      `Thanks!`,
+      name,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    return {
+      mailto: `mailto:${ORDERS_EMAIL}?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(
+        subject,
+      )}&body=${encodeURIComponent(body)}`,
+    };
+  };
+
+  const submit = () => {
+    const composed = composeOrderEmail();
+    if (!composed) return;
+    // Open the customer's mail client with the order pre-filled. CC's
+    // their own email so they have a copy too.
+    window.location.href = composed.mailto;
+    setDone(true);
   };
 
   if (done) {
@@ -115,13 +131,24 @@ export function OrderConfigurator({
           className="text-3xl mb-3"
           style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
         >
-          Order received.
+          One last step.
         </h3>
-        <p className="max-w-md mx-auto text-base leading-relaxed" style={{ color: PALETTE.inkSoft }}>
-          Nate will email <span className="font-semibold" style={{ color: PALETTE.ink }}>{email}</span> within
-          24 hours with a final price quote and a Stripe checkout link. Your{" "}
-          <span className="font-semibold" style={{ color: PALETTE.ink }}>{lakeLabel}</span>{" "}
-          piece is officially in the queue.
+        <p className="max-w-md mx-auto text-base leading-relaxed mb-6" style={{ color: PALETTE.inkSoft }}>
+          Your mail app should have opened with the order spec pre-filled.
+          Hit Send — Nate replies within 24 hours with a final price quote
+          and a Shopify checkout link for your{" "}
+          <span className="font-semibold" style={{ color: PALETTE.ink }}>{lakeLabel}</span> piece.
+        </p>
+        <p className="max-w-md mx-auto text-xs leading-relaxed" style={{ color: PALETTE.inkSoft }}>
+          If your mail client didn&apos;t open, email{" "}
+          <a
+            href={`mailto:${ORDERS_EMAIL}`}
+            className="font-semibold underline underline-offset-2"
+            style={{ color: PALETTE.walnut }}
+          >
+            {ORDERS_EMAIL}
+          </a>{" "}
+          with the spec from the sidebar.
         </p>
       </div>
     );
@@ -425,25 +452,18 @@ export function OrderConfigurator({
                   style={{ borderColor: PALETTE.border, backgroundColor: "rgba(43, 36, 28, 0.04)" }}
                 />
               </Field>
-              {submitError && (
-                <p
-                  className="text-sm px-3 py-2 rounded"
-                  style={{ background: "rgba(220, 38, 38, 0.08)", color: "#991b1b" }}
-                >
-                  {submitError}
-                </p>
-              )}
               <button
                 type="button"
                 onClick={submit}
-                disabled={submitting || !name || !email}
+                disabled={!name || !email}
                 className="w-full px-6 py-4 rounded-md font-extrabold uppercase tracking-[0.18em] text-sm transition disabled:opacity-40 hover:translate-y-[-1px]"
                 style={{ backgroundColor: PALETTE.walnut, color: PALETTE.cream }}
               >
-                {submitting ? "Sending…" : `Send my order · ${formatPrice(total)}`}
+                Email Nate my order · {formatPrice(total)}
               </button>
-              <p className="text-xs text-center" style={{ color: PALETTE.inkSoft }}>
-                Nate replies within 24 hours with a Stripe checkout link. No charge yet.
+              <p className="text-xs text-center leading-relaxed" style={{ color: PALETTE.inkSoft }}>
+                Opens your mail app with the spec pre-filled. Nate replies
+                within 24 hours with a Shopify checkout link.
               </p>
               <BackBtn onClick={() => setStep(4)} />
             </div>
