@@ -191,10 +191,15 @@ export default function DashboardPage() {
             <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Images
             </Link>
+            {/* Sales Portal points DIRECTLY at the call workspace
+                (Madie's flow). The partner-approval admin page at
+                /dashboard/partners is parked until we have multiple
+                reps; until then "Sales Portal" = "the calling tool".
+                Reach the partner admin via /dashboard/partners URL. */}
             <Link
-              href="/dashboard/partners"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-amber-300 transition-colors hover:bg-background hover:text-amber-200"
-              title="Sales Portal · approve reps, manage call queue, mark payouts"
+              href="/dashboard/script"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-pink-300 transition-colors hover:bg-background hover:text-pink-200"
+              title="Madie's Sales Portal — pick prospects + run the script"
             >
               🎯 Sales Portal
             </Link>
