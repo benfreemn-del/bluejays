@@ -24,6 +24,27 @@ export default function LeadPicker() {
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "called-recently" | "no-calls" | "interested">("all");
+  // Caller mode — Ben's cold-call flow vs Madie's appointment-setter
+  // flow. Persists to localStorage so the toggle "remembers" who's
+  // running the queue. Madie's flow loads the discovery → website-or-
+  // backend pivot script with $200 / $1k commission tracking.
+  const [mode, setMode] = useState<"ben" | "madie">("ben");
+  useEffect(() => {
+    try {
+      const m = localStorage.getItem("bluejays.sales-portal.mode");
+      if (m === "madie" || m === "ben") setMode(m);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+  const setModePersist = (m: "ben" | "madie") => {
+    setMode(m);
+    try {
+      localStorage.setItem("bluejays.sales-portal.mode", m);
+    } catch {
+      /* ignore */
+    }
+  };
 
   // Load prospects.
   useEffect(() => {
@@ -73,7 +94,9 @@ export default function LeadPicker() {
 
   const start = () => {
     if (selected.length === 0) return;
-    const qs = `ids=${encodeURIComponent(selected.join(","))}&i=0`;
+    const qs =
+      `ids=${encodeURIComponent(selected.join(","))}&i=0` +
+      (mode === "madie" ? "&mode=madie" : "");
     router.push(`/dashboard/script?${qs}`);
   };
 
@@ -138,13 +161,53 @@ export default function LeadPicker() {
                 Clear
               </button>
             )}
+            {/* Caller-mode toggle — picks which Hormozi script the
+                queue will use. Madie's mode swaps in the appointment-
+                setter flow with discovery + dual website/backend pitch. */}
+            <div
+              className="ml-2 flex items-center rounded-lg border border-slate-700 bg-slate-900/50 p-0.5"
+              role="tablist"
+              aria-label="Caller"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === "ben"}
+                onClick={() => setModePersist("ben")}
+                className={`text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-md transition ${
+                  mode === "ben"
+                    ? "bg-blue-500 text-white shadow"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                Ben
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === "madie"}
+                onClick={() => setModePersist("madie")}
+                className={`text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-md transition ${
+                  mode === "madie"
+                    ? "bg-pink-500 text-white shadow"
+                    : "text-slate-400 hover:text-white"
+                }`}
+                title="Madie's appointment-setter flow ($200/site, $1k/backend)"
+              >
+                Madie
+              </button>
+            </div>
             <button
               type="button"
               onClick={start}
               disabled={selected.length === 0}
-              className="ml-3 h-9 px-4 rounded-lg bg-violet-500 hover:bg-violet-400 text-white text-sm font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className={`ml-3 h-9 px-4 rounded-lg text-white text-sm font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${
+                mode === "madie"
+                  ? "bg-pink-500 hover:bg-pink-400"
+                  : "bg-violet-500 hover:bg-violet-400"
+              }`}
             >
-              Start calling →
+              Start calling{mode === "madie" ? " (Madie)" : ""} →
             </button>
           </div>
         </div>

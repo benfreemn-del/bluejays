@@ -517,3 +517,501 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
     },
   ],
 };
+
+/* ═════════════════════════════════════════════════════════════════════
+ * MADIE — APPOINTMENT-SETTER SCRIPT
+ *
+ * Madie is BlueJays' first sales partner (joined 2026-05). She's a
+ * SETTER — she runs follow-up calls on prospects who already received
+ * a website preview, then BOOKS them on Ben's calendar. Ben does the
+ * close on the appointment, walking them through:
+ *   1. The polished website (vs the rough preview Madie introduced)
+ *   2. The backend AI Marketing System mock-up
+ * ...attempting to close on EITHER OR BOTH on that call.
+ *
+ * Compensation:
+ *   · $200 per WEBSITE Ben closes ($997)
+ *   · $1,000 per BACKEND Ben closes ($9,700 AI Marketing System)
+ *   · Best meetings book BOTH — Madie clears $1,200 if Ben dual-closes.
+ *
+ * Capacity scarcity (real, baked into close):
+ *   · Ben builds 30 sites/month max
+ *   · Ben builds 10 backend systems/month max
+ *   · "We still have a few spots left" framing — true, not fake.
+ *
+ * Permission slip on the preview:
+ *   The preview Madie sent is intentionally rough. The script names
+ *   this BEFORE the prospect can — "this is just a preview, Ben will
+ *   create a more polished version for your call with him, and he'll
+ *   present it then alongside your backend mock-up for how to
+ *   supercharge your lead gen."
+ *
+ * Voice: same Hormozi rules as Ben's script (7th-grade, blunt,
+ * friendly, no jargon, smile before dial, FM-DJ tone).
+ * ═════════════════════════════════════════════════════════════════════ */
+
+/** Madie-flow goal hierarchy. Higher = better close — feeds her
+ *  commission scoreboard. */
+export type MadieOutcome =
+  | "BOTH_BOOKED" // Ben booked for site + backend reveal — best win
+  | "BACKEND_BOOKED" // Ben booked for backend close ($1k commission)
+  | "WEBSITE_BOOKED" // Ben booked for website close ($200 commission)
+  | "AUDIT_SENT" // Couldn't book — sent the audit as a parachute
+  | "CALLBACK" // Pinned a specific time
+  | "VOICEMAIL"
+  | "NO_ANSWER"
+  | "DO_NOT_CALL";
+
+/** Madie-shaped script. Different section set than Ben's cold-call
+ *  flow — she has a discovery step + two parallel pitches (website
+ *  vs backend) + a scarcity close. */
+export type MadieCallScript = {
+  opener: ScriptSection;
+  identityFrame: ScriptSection;
+  previewFrame: ScriptSection;
+  discovery: ScriptSection;
+  websitePitch: ScriptSection;
+  backendPivot: ScriptSection;
+  backendPitch: ScriptSection;
+  scarcityClose: ScriptSection;
+  bookTheCall: ScriptSection;
+  textTheLink: ScriptSection;
+  callbackClose: ScriptSection;
+  voicemail: ScriptSection;
+  objections: ObjectionBranch[];
+};
+
+/** Pre-call coaching for Madie. Parallel to HORMOZI_CALL_TIPS but
+ *  centered on the SETTER role + the dual-product framing. */
+export const MADIE_CALL_TIPS: CallTip[] = [
+  {
+    id: "youAreNotClosing",
+    emoji: "🎯",
+    title: "★ MUST: You're NOT closing — Ben is.",
+    body: "Your job is to BOOK BEN. The hardest mistake new setters make is trying to close on the call. Stop. The pitch is just enough to earn 15 minutes. Every word past 'Tuesday or Thursday' is risk.",
+  },
+  {
+    id: "smile",
+    emoji: "😊",
+    title: "★ MUST: Smile before you dial",
+    body: "Your tone changes the second you smile. They can't see you but they feel it. First 5 words decide if they hang up.",
+  },
+  {
+    id: "preview-is-rough",
+    emoji: "🪵",
+    title: "★ Name the rough preview FIRST",
+    body: "Before they say 'it's a little rough' you say it: 'This is just a preview — Ben polishes the real version for your call.' Pre-handles the #1 objection on a website they just received.",
+  },
+  {
+    id: "two-products",
+    emoji: "🏗️",
+    title: "★ Always offer the backend escape",
+    body: "If they're cool on the website but DO pay an agency or run ads → that's not a no, that's a high-ticket signal. Pivot to the backend ($9,700 AI System) immediately. $1k commission > $200.",
+  },
+  {
+    id: "scarcity",
+    emoji: "⏰",
+    title: "Capacity scarcity is REAL",
+    body: "Ben caps at 30 sites + 10 backends a month. Drop it once in the close: 'We still have a few spots left this month.' True, not fake. Don't say it twice — feels desperate.",
+  },
+  {
+    id: "agency-killer",
+    emoji: "💸",
+    title: "Agency is a kill word",
+    body: "If they say 'we work with an agency' or 'we have someone running ads' → instant high-ticket pivot. The frame is 'we build custom software so you can CUT OUT your agency.' Their monthly retainer beats our one-time price in 6-8 months.",
+  },
+  {
+    id: "exit-offer",
+    emoji: "🚪",
+    title: "Always offer the exit",
+    body: "'If you say no right now I'll never call again.' They relax instantly. Most yeses come 30 seconds AFTER you give them permission to say no.",
+  },
+  {
+    id: "did-you-get-it",
+    emoji: "📲",
+    title: "Open WITHOUT introducing yourself",
+    body: "First line is 'Hey it's Madie — did you guys get that website we made for you?' NOT 'Hi, my name is Madie from BlueJays...' The assumption (we made you a website) earns the next 30 seconds.",
+  },
+  {
+    id: "shut-up",
+    emoji: "🤐",
+    title: "After the close question — SHUT UP",
+    body: "'Tuesday at 3 or Thursday at 10 — which works?' Then count to FOUR Mississippi. The first one to talk loses. 80% of yeses come in that 4-second silence.",
+  },
+  {
+    id: "two-pitches-one-call",
+    emoji: "🎁",
+    title: "Both products on the SAME Ben call",
+    body: "When you book Ben, he shows them BOTH the polished site AND the backend mock-up. They decide on either or both on that one call. You don't book two separate Ben meetings — you book one with both reveals.",
+  },
+];
+
+/** Mantra shown above the workspace for Madie. Different drumbeat
+ *  than Ben's "stack the nos" — she's optimizing for BOOKINGS. */
+export const MADIE_MANTRA =
+  "Book Ben. Don't close. Book Ben. The reveal is his job — yours is the 15 minutes.";
+
+export const MADIE_CALL_SCRIPT: MadieCallScript = {
+  opener: {
+    id: "opener",
+    title: "Open the call",
+    goal: "Assume the gift. They already received the preview — confirm they have it, get them looking. NEVER lead with introduction.",
+    lines: [
+      "Hey {firstName} — it's Madie. Did you guys get that website we made for you?",
+      "[If YES they have it] Awesome — pull it up real quick while we talk, takes 10 seconds.",
+      "[If NO / NOT SURE] No problem — just texted + emailed it again, you'll see it pop up in a few seconds. Pull it up while we talk.",
+      "[Click SEND PREVIEW LINK ↘ even if they say yes — confirms text + email both fired]",
+    ],
+    callerNotes: [
+      "★ ASSUMPTIVE FRAME from word one. 'Did you guys get that website we made for you?' presumes the gift exists. They feel BEHIND, not pitched.",
+      "★ DO NOT introduce yourself first. 'Hi, my name is Madie from BlueJays' = telemarketer. 'Hey {firstName} it's Madie' = old friend.",
+      "★ If they say 'who is this?' → 'Madie, the website I just sent you — pull it up' (still assumptive, still moving).",
+      "★ FM DJ voice — low and slow. Down-inflection on every statement except the question.",
+      "After they confirm receipt → IDENTITY FRAME tab.",
+      "If they're confused/hostile → IDENTITY FRAME (the partner-with-Ben line clears it up fast).",
+      "If they say BAD TIME → 'Totally — won't keep you. Real quick: better to call you back at 2 today or 10 tomorrow morning?' [pin a time] Mark CALLBACK.",
+    ],
+  },
+
+  identityFrame: {
+    id: "identityFrame",
+    title: "Set the identity",
+    goal: "One sentence that establishes who Madie is + the try-before-you-buy promise. Disarms 'is this a sales call' before they ask.",
+    lines: [
+      "Real quick — I'm Madie. I run a business with a web developer named Ben. He custom-makes websites you can try before you buy. You only move forward if you love it.",
+      "[Wait for acknowledgment — 'ok', 'gotcha', etc.]",
+    ],
+    callerNotes: [
+      "★ 'I run a business WITH Ben' = partner, not employee. Frames you as a peer. Different energy than 'I'm calling FROM BlueJays'.",
+      "★ 'Try before you buy' is the keystone — it's the answer to every 'what if I don't like it' before they ask. Say it cleanly, like a fact.",
+      "★ 'You only move forward if you love it' = the exit handed to them up front. They relax.",
+      "★ NO PRICE in this section. Don't quote anything yet — pricing comes after they've SEEN the site.",
+      "Once they acknowledge → PREVIEW FRAME tab.",
+    ],
+  },
+
+  previewFrame: {
+    id: "previewFrame",
+    title: "Frame the rough preview",
+    goal: "Pre-handle the #1 objection — 'it looks rough' — before they say it. Promise the polished version on Ben's call + tease the backend reveal.",
+    lines: [
+      "Before you dig in — what you're looking at is just a PREVIEW to give you the idea. Ben will create the polished version for your call with him.",
+      "And on that same call, he'll present the polished site alongside a BACKEND MOCK-UP — basically a custom AI marketing system showing how he'd supercharge your lead generation. Two reveals on one 15-minute call.",
+      "[Pause, let them react]",
+    ],
+    callerNotes: [
+      "★ THIS IS THE KEYSTONE PERMISSION SLIP. Without this they'll fixate on 'the colors are wrong' / 'the photo isn't right' / 'it's missing X'. With this, every imperfection becomes 'oh that's the preview, Ben polishes it.'",
+      "★ Line 2 plants the BACKEND REVEAL. Even prospects who only want a site become curious about the backend. This is how Madie books $1,200 dual-closes — she promises both reveals from the start.",
+      "★ Don't oversell the backend yet — just name it. 'Custom AI marketing system' is the bait, the pitch comes later if they ask.",
+      "If they ask 'WHAT'S A BACKEND' → 'It's a system that automatically follows up with your leads — texts, emails, missed-call replies. Ben shows the mock-up on the call. Like seeing the engine before you buy the car.' → DISCOVERY tab.",
+      "If they ask 'HOW MUCH' → see howMuch objection (DO NOT quote yet).",
+      "Once they react / nod → DISCOVERY tab.",
+    ],
+  },
+
+  discovery: {
+    id: "discovery",
+    title: "Two questions (find the path)",
+    goal: "Discover whether they're a WEBSITE close or a BACKEND close. Two questions, no third — they reveal the path themselves.",
+    lines: [
+      "Two quick questions before I let you go — just so I know what to tell Ben to focus on.",
+      "First — are you happy with your current website?",
+      "[Pause four counts. Listen.]",
+      "Second — do you currently run ads, or work with a marketing agency?",
+      "[Pause four counts. Listen.]",
+    ],
+    callerNotes: [
+      "★ THESE TWO QUESTIONS ARE THE WHOLE GAME. Their answers route you:",
+      "  → 'NOT happy with site' + 'NO agency'  = WEBSITE PITCH path ($997, $200 comm)",
+      "  → 'NOT happy with site' + 'YES agency' = WEBSITE + BACKEND PITCH (dual close, $1,200 comm)",
+      "  → 'happy with site'     + 'NO agency'  = soft path — pivot to BACKEND ($9,700, $1k comm). Frame: 'cool, then maybe the backend is the conversation.'",
+      "  → 'happy with site'     + 'YES agency' = HARD BACKEND pivot ($9,700). Frame: 'sounds like the website's not the bottleneck — let's talk about the agency replacement.'",
+      "★ AFTER EACH QUESTION — count to FOUR. Pause. Let them fill silence. Their unscripted answer is gold.",
+      "★ NEVER ask a third question. The setter who asks the third question loses control of the call.",
+      "If they answer 'YES AGENCY' → BACKEND PIVOT tab (this is the high-ticket signal).",
+      "If they answer 'YES WEBSITE IS FINE' but NO agency → BACKEND PIVOT tab (soft).",
+      "Otherwise → WEBSITE PITCH tab.",
+    ],
+  },
+
+  websitePitch: {
+    id: "websitePitch",
+    title: "Pitch the website call",
+    goal: "They said the current site isn't great. Direct their eye to the new preview, anchor the gap, book Ben.",
+    lines: [
+      "Yeah — so look at the preview real quick. Top of the homepage, the call button. See it? That alone is what most {category} sites are missing.",
+      "Ben built the whole new site around fixes like that. The polished version — colors, photos, your real content — comes together on the call with him.",
+      "Honest question — would it be the worst thing in the world to spend 15 minutes with Ben, see what he changed and why, AND see the backend mock-up too — and then decide?",
+      "[Pause four counts]",
+      "Right. Worst case 15 minutes. He's got Tuesday at 3 or Thursday at 10 — which works?",
+    ],
+    callerNotes: [
+      "★ DIRECT THE EYE — same play as Ben's script. The preview is on their screen, name a specific element. Substitute the {category}-relevant landmark (call button / menu / quote form / appointment CTA).",
+      "★ HORMOZI MAGIC LINE in line 3. 'Worst thing in the world' pre-handles 'I don't want to be sold to' before they think it.",
+      "★ Notice line 3 ALWAYS includes 'AND see the backend mock-up too' — Madie ALWAYS books for both reveals, even on a website-pitch path. Ben decides on the call which one to push.",
+      "★ AFTER 'which works?' — FOUR Mississippi. Do not breathe loud. The first one to talk loses.",
+      "If they say HOW MUCH → howMuch objection (don't quote during the pitch).",
+      "If they YES on a time → BOOK THE CALL tab.",
+      "If they hesitate → BACKEND PIVOT tab (try the backend angle as the second hook).",
+    ],
+  },
+
+  backendPivot: {
+    id: "backendPivot",
+    title: "Pivot to the backend (high-ticket)",
+    goal: "Website didn't grab them OR they signaled 'we work with an agency'. Pivot to the AI System pitch on the SAME call. This is where $1k commissions live.",
+    lines: [
+      "Honestly — sounds like the website might not be the bottleneck for you. Cool — let me tell you about the OTHER thing Ben does, because I think it's a bigger fit.",
+      "Most businesses paying an agency are spending $2,000 to $5,000 a MONTH on lead generation, ads, follow-up. We build a custom AI marketing system that does ALL of that — automated text-back when calls miss, lead follow-up sequences, a dashboard you can see your whole pipeline on.",
+      "It's a one-time build. $9,700. After that, you OWN it forever. No monthly retainer. Most clients break even versus their old agency in 6 to 8 months.",
+      "[Pause]",
+      "Ben can show you the mock-up of what yours would look like on the same 15-minute call. He'll have the website AND the backend ready — you decide which makes sense. Worst case 15 minutes. Tuesday at 3 or Thursday at 10?",
+    ],
+    callerNotes: [
+      "★ LINE 1 IS THE PIVOT — 'sounds like the website might not be the bottleneck' validates their answer + opens the door to the bigger conversation. Don't argue the website. Move on.",
+      "★ THE FRAME IS AGENCY-REPLACEMENT, not 'add-on'. If they pay an agency, the AI System is what they BUY INSTEAD of the agency, not in addition. That's the whole pitch.",
+      "★ Line 3 is the only place you quote price unprompted. $9,700 sounds like a lot — frame it against agency monthly: 6-8 months break-even. After that pure savings.",
+      "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. Madie never closes the $9,700 — she books Ben.",
+      "★ AFTER 'which works?' — four counts of silence. Let them speak first.",
+      "If they say YES → BOOK THE CALL tab. Mark BACKEND_BOOKED in outcome.",
+      "If they want BOTH details → 'Ben walks both on the call. You just need to pick a time.' → BOOK THE CALL.",
+      "If they hesitate hard → SCARCITY CLOSE tab.",
+    ],
+  },
+
+  backendPitch: {
+    id: "backendPitch",
+    title: "Backend pitch (lead-with-backend, no website angle)",
+    goal: "Used when the discovery answers were 'happy with website + working with an agency'. Skip the website pitch entirely, lead with backend.",
+    lines: [
+      "OK perfect — so the website isn't the issue. The conversation that probably matters more is the agency one.",
+      "Quick question — what are you paying them a month, ballpark?",
+      "[Listen. Don't talk over.]",
+      "Right. So here's what we'd build for you. Custom AI marketing system — automated text-back on every missed call (real number, real conversation), drip campaigns for every lead that comes in, a dashboard you can see every conversation + every conversion on. One-time $9,700 build, you own it forever. No retainer.",
+      "Versus what you're paying now, you break even in 6 to 8 months. After that the agency budget is yours to keep.",
+      "[Pause]",
+      "Ben can walk through the mock-up of what yours specifically would look like — 15 minutes. He'll have the website AND the backend ready. Tuesday at 3 or Thursday at 10?",
+    ],
+    callerNotes: [
+      "★ LINE 2 — get a number. 'Ballpark' makes it easy. Their answer becomes ammo for the break-even framing in line 5.",
+      "★ NEVER skip line 2. The number is the whole frame. Without it, $9,700 sounds expensive. With it ('you said $3k/mo'), $9,700 is 3.2 months — irresistible math.",
+      "★ Line 4 names the FOUR pillars (text-back, drip, dashboard, ownership). Don't list more — four is the brain's chunking limit.",
+      "★ KEY: still booking Ben for BOTH reveals. Even if they only want backend, the polished website mock-up is in Ben's pocket — sometimes the backend conversation surfaces a website opportunity.",
+      "If they say AGENCY IS LOCKED IN → 'Got it — when's the contract up?' Pin that as a callback. Mark CALLBACK.",
+      "If they YES → BOOK THE CALL.",
+      "If price-shock → 'Yeah, big number. But check the math against $3k/mo for forever vs $9,700 once. Ben walks the comparison on the call.' → SCARCITY CLOSE.",
+    ],
+  },
+
+  scarcityClose: {
+    id: "scarcityClose",
+    title: "Capacity scarcity (use sparingly)",
+    goal: "Real scarcity, not fake. Ben caps at 30 sites + 10 backends a month. Drop it ONCE if they're hesitating. Then go back to the close.",
+    lines: [
+      "One thing — Ben does 30 sites a month max, and only 10 of these backend systems. We still have a few spots left this month.",
+      "I'd rather book you in early than have you wait. Tuesday at 3 or Thursday at 10?",
+    ],
+    callerNotes: [
+      "★ REAL SCARCITY — not fake. The cap exists because Ben builds these himself. Don't oversell the urgency, just state the fact.",
+      "★ ONE TIME ONLY. If you say 'spots left' twice, it sounds desperate. Once = confidence.",
+      "★ This goes RIGHT BEFORE the bookTheCall close. Use it ONLY if they're sitting on the fence after the website / backend pitch.",
+      "★ AFTER the line — pause. Don't fill the silence with more pitch. The number does the work.",
+    ],
+  },
+
+  bookTheCall: {
+    id: "bookTheCall",
+    title: "Book Ben's call (the win)",
+    goal: "This is the only thing that matters. Get them on Ben's calendar before you hang up. Phone is already in hand — just send.",
+    lines: [
+      "Perfect. Texting you Ben's booking link right now to the same number — grab a 15-minute slot. He's got openings this week.",
+      "Once you book, you'll get a calendar invite from Ben. He'll have your polished website AND backend mock-up pulled up and ready to walk through.",
+      "Last thing — what's the ONE question you want Ben to answer on the call? I'll put it in his notes so he's prepped.",
+    ],
+    callerNotes: [
+      "★ Phone was captured in opener. SEND BOOKING LINK ↘ button on the right.",
+      "★ Mark outcome — pick the highest one that applies:",
+      "  · BOTH_BOOKED — discovery surfaced agency + unhappy website (most valuable, $1.2k comm)",
+      "  · BACKEND_BOOKED — discovery routed to backend pivot (high-ticket, $1k comm)",
+      "  · WEBSITE_BOOKED — discovery routed to website pitch only ($200 comm)",
+      "★ Line 3 commitment escalator. Their answer = invested in the call happening. Write it in the notes box for Ben.",
+      "If they hesitate on time → 'Mornings or afternoons better?' Two options keeps the close moving.",
+      "If they push for it 'later this week' → 'Friday morning or Monday afternoon?' Specific windows close better than vague.",
+    ],
+  },
+
+  textTheLink: {
+    id: "textTheLink",
+    title: "Send the audit (FALLBACK)",
+    goal: "They wouldn't book live. Send the personalized audit as a parachute — second touch they'll read on their own time.",
+    lines: [
+      "On top of the preview I sent — let me also text you a 60-second audit of your CURRENT site. Read it tonight, decide if it's worth 15 minutes with Ben.",
+      "Before I send it — is there one thing about your current setup that's been bugging you? I'll flag it for Ben.",
+      "Sending now. You'll see it right next to the preview link.",
+    ],
+    callerNotes: [
+      "★ Use ONLY if they won't book live. Booking > audit-send every time.",
+      "★ Click SEND AUDIT LINK button on the right ↘ (different from SEND PREVIEW LINK).",
+      "★ Mark outcome AUDIT_SENT.",
+      "Line 2 plants a seed → they answer it, half-committed to the callback.",
+    ],
+  },
+
+  callbackClose: {
+    id: "callbackClose",
+    title: "Close on a callback",
+    goal: "If they say 'maybe' — surface the real objection, then pin a specific time.",
+    lines: [
+      "What's making you want to sit on it? Most people say price or timing — is that it?",
+      "Got it. Tomorrow morning or Thursday afternoon — which works for a quick callback?",
+      "Either way the audit's in your hands tonight. If you decide it's not useful, just text me and I'll stop reaching out.",
+    ],
+    callerNotes: [
+      "Line 1 is NEPQ — surfaces the real blocker before scheduling.",
+      "Mark CALLBACK + write the specific time in notes.",
+      "Don't push for the sale on the callback — push for Ben's audit call first.",
+    ],
+  },
+
+  voicemail: {
+    id: "voicemail",
+    title: "Leave a voicemail",
+    goal: "Hook first — 'website we made for you' before identity. Under 25 seconds. Drop the link in text + email immediately after.",
+    lines: [
+      "Hey {firstName} — this is Madie. Wanted to know if you got a chance to look at the website we made for {bizName}. Sending you the link right now to your phone — takes 30 seconds.",
+      "Text back 'site' and I'll get Ben — he built it — on a quick walkthrough call. He'll have the polished version AND a backend mock-up ready. Either way the site's yours.",
+    ],
+    callerNotes: [
+      "★ ASSUMPTIVE FRAMING: 'did you get a chance to look at the website we made' presumes already sent.",
+      "★ HOOK FIRST. 'Website' before 'Madie' on voicemail every time.",
+      "★ 'Text back site' — zero-friction reply, lower bar than calling back.",
+      "★ Hang up → SEND PREVIEW LINK first → SEND BOOKING LINK second. Mark VOICEMAIL.",
+      "★ Under 25 seconds. Every extra second = lower callback rate.",
+    ],
+  },
+
+  objections: [
+    {
+      id: "alreadyHaveSite",
+      trigger: "I already have a website / I just had one done / mine works fine",
+      response: [
+        "Already have one?",
+        "[pause four counts] Cool — but here's the thing. We didn't know that and we already built yours. You should still see it. Even if you never use it, you'd know exactly what yours has versus what we made.",
+        "AND — here's the part that matters more — Ben can show you the BACKEND mock-up on the same call. The piece that handles your leads automatically. Most owners with a great site are still leaking leads on the back end. 15 minutes. Tuesday or Thursday?",
+      ],
+      callerNotes:
+        "★ Mirror first. THEN flip to backend — if their site is fine, the leak is somewhere else. The backend pitch lands hardest on owners who like their website. Use this every time.",
+    },
+    {
+      id: "haveAnAgency",
+      trigger: "I already work with an agency / we have someone running our marketing",
+      response: [
+        "You work with an agency?",
+        "[pause] What are they running for you, ballpark — ads, SEO, leads?",
+        "[listen. Get specifics.]",
+        "Right. Quick question — what would it take for you to fire them and own that whole stack yourself for one fixed cost?",
+        "[pause four counts]",
+        "That's exactly what Ben's backend system is. Custom-built to do what your agency does — but YOU own it. $9,700 once, no retainer. Ben walks the mock-up on a 15-minute call. Tuesday at 3 or Thursday at 10?",
+      ],
+      callerNotes:
+        "★ THE HIGH-TICKET KILL SHOT. Mirror → discover what they're paying for → reframe as fire-the-agency. ★ Don't insult their agency — most owners already feel ripped off, they need permission, not a takedown. ★ This is a $1k commission objection. Lean in.",
+    },
+    {
+      id: "howMuch",
+      trigger: "How much does it cost?",
+      response: [
+        "Depends what we're solving — Ben prices based on what your current setup is leaking, and I'd be doing you dirty quoting blind.",
+        "Two ranges so you're not shopping in the dark — site is around a thousand bucks, the backend system is around ten thousand. Big spread because they solve different problems.",
+        "Ben walks the math on the call — 15 minutes. Tuesday at 3 or Thursday at 10?",
+      ],
+      callerNotes:
+        "★ DON'T price-quote in the pitch. Hormozi rule: price-first calls close at 5%; value-first calls close at 25%. ★ When you DO quote (line 2), give the spread $997 / $9,700 — anchors high, makes the website feel cheap. Then immediately re-close.",
+    },
+    {
+      id: "previewIsRough",
+      trigger: "It looks rough / unfinished / not what I expected",
+      response: [
+        "Yep — that's exactly what I told you up top. The preview's intentionally rough. It's a sketch, not the finished piece.",
+        "Ben does the polished version FOR your call with him. Your real photos, your real colors, your real content. The preview just exists so you can picture the structure before he invests the polish hours.",
+        "Want to see what the polished version looks like? That's the call. 15 minutes. Tuesday at 3 or Thursday at 10?",
+      ],
+      callerNotes:
+        "★ NEVER apologize. The rough preview is a feature, not a bug — it's why Ben can offer 'try before you buy'. Reframe as INTENTIONAL.",
+    },
+    {
+      id: "tooExpensive",
+      trigger: "Too expensive / can't afford it",
+      response: [
+        "Compared to what?",
+        "[pause four counts]",
+        "Most owners feel that until they see the audit. Site is a thousand bucks once. Versus an agency at three thousand a month, the backend system is break-even in six months.",
+        "Let me text you the audit free. If it doesn't show you're losing more than the price tag, ignore us. If you say no right now, I'll never call again — but take a look first.",
+      ],
+      callerNotes:
+        "★ 'Compared to what?' is the mirror. Shut up. ★ The Hormozi exit offer at the end ('say no right now and I'll never call again') is the highest-converting line in the script. Calm and confident, not desperate.",
+    },
+    {
+      id: "thinkAboutIt",
+      trigger: "I'll think about it",
+      response: [
+        "Of course. What part — the website piece, the backend piece, or both?",
+        "[mirror their answer]",
+        "Got it. Honest question — would it be the worst thing in the world to take 15 minutes with Ben, see both options walked through, and decide AFTER?",
+        "[pause four]",
+        "Right. Worst case 15 minutes. Best case the leak finally closes. Tuesday at 3 or Thursday at 10?",
+      ],
+      callerNotes:
+        "★ 'I'll think about it' = 'I don't want to say no on the phone'. The discovery question (which part) re-engages — they'll commit to one.",
+    },
+    {
+      id: "busy",
+      trigger: "I'm busy / bad time",
+      response: [
+        "Makes sense — keep going. Real quick: better to call you back at 2 today or 10 tomorrow morning?",
+        "[pin a time]",
+        "Cool — texting you the site link now so you can look between things. Talk then.",
+      ],
+      callerNotes: "Pin the time, hang up fast, mark CALLBACK with the specific time in notes.",
+    },
+    {
+      id: "notInterested",
+      trigger: "Not interested",
+      response: [
+        "Heard that. Quick question — is it the website thing in general, or is it the timing?",
+        "If you say no right now, I'll never call again. But before you do — would it be the worst thing to take 30 seconds and see the preview AND hear how the backend would replace what your agency's doing?",
+        "Either way, have a good one.",
+      ],
+      callerNotes:
+        "★ The Hormozi exit offer. Calm, confident. ★ If TIMING → callback in 90 days. If GENERAL → mark NOT_INTERESTED, exit warm.",
+    },
+    {
+      id: "isThisSpam",
+      trigger: "Is this a robocall / spam / scam?",
+      response: [
+        "Real person — Madie here. I run a business with a web developer named Ben. We built {bizName} a website preview and I'm calling to walk you through it.",
+        "Want me to text you the link instead? You decide if it's worth a closer look.",
+      ],
+      callerNotes: "Slow voice. Use first name. Don't over-explain — that confirms the suspicion.",
+    },
+    {
+      id: "removeFromList",
+      trigger: "Take me off your list / do not call",
+      response: [
+        "Done. Removed right now. You won't hear from me again. Sorry to bother you.",
+      ],
+      callerNotes: "Mark DO_NOT_CALL. Never argue. Never re-pitch.",
+    },
+    {
+      id: "letMeLookAtItLater",
+      trigger: "Let me look at it later / I'll call you back",
+      response: [
+        "Look at it later?",
+        "[pause] Totally fair — but here's the thing. You looking alone, you'll see what's there. Ben on the call, you see what's there AND what's missing — what it's costing you AND what the backend would replace.",
+        "Same 15 minutes either way. Tuesday at 3 or Thursday at 10?",
+      ],
+      callerNotes:
+        "★ #1 escape line. Same play as Ben's script — mirror, reframe (alone vs with the architect), two-option close. If they STILL deflect → drop to TextTheLink and exit warm.",
+    },
+  ],
+};
+
