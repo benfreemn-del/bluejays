@@ -763,14 +763,14 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     lines: [
       "Honestly — sounds like the website might not be the bottleneck for you. Cool — let me tell you about the OTHER thing Ben does, because I think it's a bigger fit.",
       "Most businesses paying an agency are spending $2,000 to $5,000 a MONTH on lead generation, ads, follow-up. We build a custom AI marketing system that does ALL of that — automated text-back when calls miss, lead follow-up sequences, a dashboard you can see your whole pipeline on.",
-      "It's a one-time build. $9,700. After that, you OWN it forever. No monthly retainer. Most clients break even versus their old agency in 6 to 8 months.",
+      "$9,700 to build it. Plus the AI tools run about $500 to $1,000 a month — that's Twilio, SendGrid, Claude, ad spend — but those bills go to the vendors directly, not to us. We're NOT a retainer agency. Versus what you're paying $2-5k/mo for, you're cutting your monthly cost by half or more, AND you own the whole system.",
       "[Pause]",
       "Ben can show you the mock-up of what yours would look like on the same 15-minute call. He'll have the website AND the backend ready — you decide which makes sense. Worst case 15 minutes. Tuesday at 3 or Thursday at 10?",
     ],
     callerNotes: [
       "★ LINE 1 IS THE PIVOT — 'sounds like the website might not be the bottleneck' validates their answer + opens the door to the bigger conversation. Don't argue the website. Move on.",
       "★ THE FRAME IS AGENCY-REPLACEMENT, not 'add-on'. If they pay an agency, the AI System is what they BUY INSTEAD of the agency, not in addition. That's the whole pitch.",
-      "★ Line 3 is the only place you quote price unprompted. $9,700 sounds like a lot — frame it against agency monthly: 6-8 months break-even. After that pure savings.",
+      "★ Line 3 is the only place you quote price unprompted. $9,700 + $500-1,000/mo IS the honest number. The trust move is naming the recurring BEFORE they ask — and immediately separating it from agency retainer (vendor bills, not BlueJays). Frame against agency monthly: cutting their bill in half + ownership.",
       "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. Madie never closes the $9,700 — she books Ben.",
       "★ AFTER 'which works?' — four counts of silence. Let them speak first.",
       "If they say YES → BOOK THE CALL tab. Mark BACKEND_BOOKED in outcome.",
@@ -787,14 +787,14 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       "OK perfect — so the website isn't the issue. The conversation that probably matters more is the agency one.",
       "Quick question — what are you paying them a month, ballpark?",
       "[Listen. Don't talk over.]",
-      "Right. So here's what we'd build for you. Custom AI marketing system — automated text-back on every missed call (real number, real conversation), drip campaigns for every lead that comes in, a dashboard you can see every conversation + every conversion on. One-time $9,700 build, you own it forever. No retainer.",
-      "Versus what you're paying now, you break even in 6 to 8 months. After that the agency budget is yours to keep.",
+      "Right. So here's what we'd build for you. Custom AI marketing system — automated text-back on every missed call (real number, real conversation), drip campaigns for every lead that comes in, a dashboard you can see every conversation + every conversion on. $9,700 build, then the AI tools run about $500 to $1,000 a month — Twilio, SendGrid, Claude, ad spend — paid straight to the vendors, not to us. We're NOT a retainer agency.",
+      "Versus your $2-5k/mo agency bill, you're cutting your monthly cost roughly in half AND you own the system. After the build pays for itself in 6 to 8 months, every month after that is pure savings.",
       "[Pause]",
       "Ben can walk through the mock-up of what yours specifically would look like — 15 minutes. He'll have the website AND the backend ready. Tuesday at 3 or Thursday at 10?",
     ],
     callerNotes: [
       "★ LINE 2 — get a number. 'Ballpark' makes it easy. Their answer becomes ammo for the break-even framing in line 5.",
-      "★ NEVER skip line 2. The number is the whole frame. Without it, $9,700 sounds expensive. With it ('you said $3k/mo'), $9,700 is 3.2 months — irresistible math.",
+      "★ NEVER skip line 2. The number is the whole frame. Without it, $9,700 + $500-1k/mo sounds expensive. With it ('you said $3k/mo'), the BlueJays setup is roughly half their current burn AND they own it.",
       "★ Line 4 names the FOUR pillars (text-back, drip, dashboard, ownership). Don't list more — four is the brain's chunking limit.",
       "★ KEY: still booking Ben for BOTH reveals. Even if they only want backend, the polished website mock-up is in Ben's pocket — sometimes the backend conversation surfaces a website opportunity.",
       "If they say AGENCY IS LOCKED IN → 'Got it — when's the contract up?' Pin that as a callback. Mark CALLBACK.",
@@ -911,7 +911,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
         "[listen. Get specifics.]",
         "Right. Quick question — what would it take for you to fire them and own that whole stack yourself for one fixed cost?",
         "[pause four counts]",
-        "That's exactly what Ben's backend system is. Custom-built to do what your agency does — but YOU own it. $9,700 once, no retainer. Ben walks the mock-up on a 15-minute call. Tuesday at 3 or Thursday at 10?",
+        "That's exactly what Ben's backend system is. Custom-built to do what your agency does — but YOU own it. $9,700 to build, then about $500-1,000/mo for the AI infrastructure — but that's Twilio, SendGrid, Claude, ads — paid to the vendors, NOT a retainer to us. Versus what you're paying your agency, you're cutting your monthly cost in half and you own the whole stack. Ben walks the mock-up on a 15-minute call. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
         "★ THE HIGH-TICKET KILL SHOT. Mirror → discover what they're paying for → reframe as fire-the-agency. ★ Don't insult their agency — most owners already feel ripped off, they need permission, not a takedown. ★ This is a $1k commission objection. Lean in.",
@@ -921,11 +921,11 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       trigger: "How much does it cost?",
       response: [
         "Depends what we're solving — Ben prices based on what your current setup is leaking, and I'd be doing you dirty quoting blind.",
-        "Two ranges so you're not shopping in the dark — site is around a thousand bucks, the backend system is around ten thousand. Big spread because they solve different problems.",
+        "Two ranges so you're not shopping in the dark — site is around a thousand bucks one-time, the backend system is around ten thousand to build plus five hundred to a thousand a month for the AI tools. Big spread because they solve different problems.",
         "Ben walks the math on the call — 15 minutes. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
-        "★ DON'T price-quote in the pitch. Hormozi rule: price-first calls close at 5%; value-first calls close at 25%. ★ When you DO quote (line 2), give the spread $997 / $9,700 — anchors high, makes the website feel cheap. Then immediately re-close.",
+        "★ DON'T price-quote in the pitch. Hormozi rule: price-first calls close at 5%; value-first calls close at 25%. ★ When you DO quote (line 2), give the spread $997 / $9,700 + $500-1k/mo — anchors high, makes the website feel cheap. Always say the recurring upfront — surprise pricing later kills trust. Then immediately re-close.",
     },
     {
       id: "previewIsRough",
@@ -944,7 +944,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       response: [
         "Compared to what?",
         "[pause four counts]",
-        "Most owners feel that until they see the audit. Site is a thousand bucks once. Versus an agency at three thousand a month, the backend system is break-even in six months.",
+        "Most owners feel that until they see the audit. Site is a thousand bucks once. The backend is ten thousand to build plus five hundred to a thousand a month for the AI tools — versus an agency at three thousand a month, you're cutting your monthly cost in half AND you own the system.",
         "Let me text you the audit free. If it doesn't show you're losing more than the price tag, ignore us. If you say no right now, I'll never call again — but take a look first.",
       ],
       callerNotes:

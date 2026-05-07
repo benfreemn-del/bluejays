@@ -123,6 +123,27 @@ envs simply omit that script.
 
 ## Phase 0.5 — Discovery (1–2 hours)
 
+### Inbound — Madie books, Ben closes
+
+As of 2026-05-06, **Madie is the primary inbound funnel** for AI Package
+deals. Her appointment-setter script lives at `/dashboard/script` and
+in `src/lib/partners-script.ts` (`MADIE_CALL_SCRIPT`). She runs the
+discovery → website-or-backend pivot, books the 15-minute reveal call
+on Ben's calendar, and earns $1,000 commission per backend close.
+
+When a Madie-booked call hits Ben's calendar:
+1. The booking notes carry her partner attribution code in the URL
+   params (Calendly preserves them through to the webhook).
+2. The webhook stamps `partner_attribution` on the prospect row.
+3. On close, `partner_referrals` gets an `amount_cents = 100000` row
+   in `owed` status.
+4. Payout is GATED on the **Partner First-Payout Gate** (CLAUDE.md):
+   signed IC agreement + W-9 + banking handle. Self-serve W-9 upload
+   at `/partners/[code]/w9` — no payout until all three are filled.
+
+If Ben is running his own discovery (not Madie-booked), he uses
+HORMOZI_CALL_SCRIPT in the same file — same shape, different opener.
+
 ### Inputs
 - Their existing website
 - Brand voice doc (if they have one)
@@ -150,6 +171,30 @@ When the client is a manufacturer, ask in discovery:
   contractors, financial advisors, etc.)
 - Who resells you? (channel-partner — distributors, big-box retailers,
   Amazon FBA partners, regional reps)
+
+### When 3 anchors isn't enough — segment the end-buyer
+
+The 3-anchor pattern is the MINIMUM. Multi-channel manufacturers often
+need to break the **end-buyer** anchor into sub-segments because the
+buying motion + lead-magnet + ad creative differ wildly between them.
+
+**ITC Quick Attach (Wave 4 example, locked 2026-05-06)** runs 6 audience
+segments because their end-buyer splits cleanly along usage + brand:
+- `hobbyist` — weekend tractor owner (SawBoss, toolboxes)
+- `forester` — professional forester / commercial cutter
+- `tym` — TYM tractor owner (highest-leverage upsell — 28+ T474 reviews)
+- `hunter` — outdoor/firearm-mount buyer
+- `dealer` — Cascade Tractor Supply-style channel-partner
+- `community` — homepage testimonials, "real operators"
+
+Phase 3 (funnel content) and Phase 6 (ad creatives) scale linearly with
+segment count. Budget time accordingly:
+- **3 segments**: 4-8 hours funnels + 1 day ads (the canonical baseline)
+- **5-7 segments**: 8-16 hours funnels + 2 days ads (manufacturer-style)
+
+Don't artificially compress 6 audiences into 3 — losing the segmentation
+loses the headline-relevance lift. If a vertical genuinely needs 6, the
+playbook scales; just plan for the extra week of bespoke content.
 
 Each segment gets:
 - Its own audience badge color in the lead inbox
@@ -428,6 +473,38 @@ add to `vercel.json → crons`:
    - Lead magnet URLs
    - Coach demo / consultation booking link (if applicable)
    - First weekly report date
+
+### Capacity scarcity is real — drop it on the close
+
+BlueJays caps at **30 sites/month + 10 backend (AI Package) builds/month**.
+This is real (Ben's bandwidth, not marketing fiction) and is the
+strongest closing lever in the script. Drop it ONCE on the discovery
+call when a prospect is hesitating:
+
+> "One thing — Ben does 30 sites a month max, and only 10 of these
+>  backend systems. We still have a few spots left this month."
+
+Don't say it twice (feels desperate). Don't fake it (says all 10 are
+gone if 4 are gone). When the cap is genuinely hit for the month, push
+the client to next month's batch — that scarcity is more valuable than
+a rushed build.
+
+The cap is also why `prospects.status = fullsystem_inquiry` matters —
+it's how Ben tracks the backend pipeline against the 10/month ceiling
+before close.
+
+### Partner attribution — the payout gate
+
+If the close came through a partner (Madie or any future appointment-
+setter), payout follows the **Partner First-Payout Gate** in CLAUDE.md:
+- Signed IC Agreement (`docs/contracts/<Name> - Independent Contractor Agreement.md`)
+- W-9 on file (`partners.w9_received_at IS NOT NULL` — partner uploads
+  via `/partners/[code]/w9`)
+- `partners.payout_handle` populated
+
+Until all three are filled, the payout is parked in `owed` status. Send
+the partner the W-9 link the moment the deal signs so the gate clears
+in parallel with the build sprint, not after.
 
 ---
 

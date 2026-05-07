@@ -186,6 +186,13 @@ export default function AuditCTAHub({
               You pay once + a fraction monthly.<br/>
               Saves you $25,000+ in year one alone.
             </p>
+            {/* Real scarcity: BlueJays caps backend builds at 10/month —
+                Ben's actual capacity, not marketing copy. Mirror of the
+                same close used in Madie's appointment-setter script. */}
+            <p className="text-[10px] text-amber-300/90 mb-3 leading-relaxed font-semibold">
+              Only 10 backend builds per month —<br/>
+              we cap to keep quality.
+            </p>
             <span className="inline-flex items-center justify-center w-full rounded-md bg-violet-600 hover:bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white group-hover:opacity-90 transition-colors">
               Book a discovery call →
             </span>
@@ -286,7 +293,7 @@ export default function AuditCTAHub({
             <span className="text-emerald-400">✓</span> Live in 2 days flat
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-emerald-400">✓</span> No retainers, no monthly fees
+            <span className="text-emerald-400">✓</span> Website is one-time · no retainer
           </span>
         </div>
 
