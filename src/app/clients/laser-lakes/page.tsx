@@ -143,7 +143,7 @@ export default function LaserLakesPage() {
             </h1>
             <p className="text-lg md:text-xl leading-relaxed max-w-xl mb-8 opacity-90">
               Every Laser Lakes piece is hand-finished Baltic birch — the
-              shoreline of <em>your</em> lake, cut in three layers, sanded by
+              shoreline of <em>your</em> lake, cut in eighteen layers, sanded by
               hand, and signed by Nate. Made one at a time in our Minnesota
               workshop.
             </p>
@@ -199,7 +199,7 @@ export default function LaserLakesPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="https://laserlakes.com/cdn/shop/files/BurntsideLakeMap_Top3234_30db2ab9-8e5f-445f-b004-95f5c3166d03.jpg"
-                alt="Burntside Lake Map — hand-cut three-layer Baltic birch, signed by Nate"
+                alt="Burntside Lake Map — hand-cut 18-layer Baltic birch, signed by Nate"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               {/* Subtle warm vignette for premium product-photo feel */}
@@ -229,7 +229,7 @@ export default function LaserLakesPage() {
                 }}
               >
                 <span>Burntside Lake · MN</span>
-                <span>3-layer Baltic birch</span>
+                <span>18-layer Baltic birch</span>
               </div>
             </div>
             <div
@@ -284,7 +284,7 @@ export default function LaserLakesPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://laserlakes.com/cdn/shop/files/TenMileIMG_3050.jpg"
-              alt="Ten Mile Lake Map · close-up showing the three-layer Baltic birch construction"
+              alt="Ten Mile Lake Map · close-up showing the 18-layer Baltic birch construction"
               className="w-full h-full object-cover"
             />
           </div>

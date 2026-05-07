@@ -43,6 +43,10 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   "greatminds-ae": { kind: "internal", href: "/clients/greatminds-ae" },
   "riv-inc": { kind: "internal", href: "/clients/riv-inc" },
   "visit-marfa": { kind: "internal", href: "/clients/visit-marfa" },
+  // Laser Lakes — Nate's bespoke marketing front. Storefront stays on
+  // Shopify (laserlakes.com), but BlueJays runs the back-office:
+  // customer + purchase ledger across Shopify + craft fairs + wholesale.
+  "laser-lakes": { kind: "internal", href: "/clients/laser-lakes" },
 
   // Static-HTML sites under public/sites/ — built bespoke for clients
   // who needed a fast public marketing front but no Next-driven app.
