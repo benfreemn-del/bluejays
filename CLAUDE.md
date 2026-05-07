@@ -7822,4 +7822,58 @@ parent component. Don't duplicate this logic — reuse the modal.
   automatically because they go through the shared modal
 - AI Package Playbook + Mock Backend Playbook updated in lockstep
 
+### Locked-In Rule 75 — Cross-project ripples (every commit checks for cascade)
+
+Locked 2026-05-06 by Ben. The bluejays / aios / LCAC codebases share a
+gravitational field — patterns shipped in one often need to ripple into
+the others. Today this happens hit-or-miss; this rule makes it
+mechanical.
+
+**Every bluejays/ commit MUST check for these cascade triggers and
+update the relevant aios/ artifact IN THE SAME COMMIT WAVE:**
+
+1. **New locked decision (anything Ben says "lock this in")** →
+   - Append entry to `~/.claude/projects/.../memory/recent_locked_decisions.md`
+   - If it's a repeating-pattern decision (Rule 11) → also write to relevant playbook's "Locked defaults" section
+
+2. **New productizable pattern (something a Pro client could use)** →
+   - Add row to `aios/PRO_SYNTHESIS.md` synthesis log (Rule 64)
+
+3. **New CLAUDE.md rule** →
+   - If it affects Ben's personal workflow → mirror in `aios/CLAUDE.md` working principles
+   - If it's project-specific (this codebase only) → no aios/ ripple needed
+
+4. **New skill scaffolded** →
+   - Add to `aios/.claude/skills/{name}/SKILL.md` if it's reusable across projects
+   - Reference in `aios/CLAUDE.md` skill index if applicable
+
+5. **New question template (5+ Q gate that would repeat)** →
+   - Capture at `aios/references/question_templates/{type}.md` for future cascade
+
+6. **Active client state change** (paid / live / churned / status flip) →
+   - Update `~/.claude/projects/.../memory/business_state_snapshot.md`
+   - Update `~/.claude/projects/.../memory/active_commitments.md` if it adds/removes a thread
+
+7. **Cost / MRR / financial event** (new SKU, price change, infra cost added) →
+   - Update `~/.claude/projects/.../memory/costs_dashboard.md` watchlist
+
+8. **Pricing language touched** →
+   - Run grep on `997` + `100/year` + new value across the codebase per
+     existing Rule 1 of End-to-End Pipeline Rules
+   - Update Service Agreement + PLAYBOOK + HANDOFF + public landing pages
+     in lockstep
+
+**The inverse** — `aios/` work that affects bluejays/ — also applies. New
+working principle in aios/CLAUDE.md that changes how I work on bluejays/?
+Ship the matching CLAUDE.md update in the same batch.
+
+**Audited weekly by `/sync-state`** — the Monday tick scans last 7 days
+of commits across all 3 codebases and surfaces ripples that should have
+fired but didn't. Per `aios/CLAUDE.md` Working Principle 17 (friction
+self-audit).
+
+**When AIOS forgets to ripple** — this is itself a friction pattern
+that should be self-surfaced. End-of-batch footer line "🔄 Cross-project
+ripples" is non-negotiable on customer-impacting commits.
+
 
