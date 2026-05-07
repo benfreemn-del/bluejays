@@ -131,6 +131,42 @@ export default async function PartnerDashboardPage({
               days.
             </p>
           </div>
+
+          {/* W-9 status block — required before first payout */}
+          <div
+            className={`mt-4 rounded-2xl border p-5 ${
+              partner.w9_received_at
+                ? "border-emerald-500/30 bg-emerald-500/5"
+                : "border-rose-500/30 bg-rose-500/5"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <p
+                  className={`text-xs uppercase tracking-wider font-semibold mb-1 ${
+                    partner.w9_received_at ? "text-emerald-300" : "text-rose-300"
+                  }`}
+                >
+                  IRS Form W-9
+                </p>
+                <p className="text-sm text-slate-200">
+                  {partner.w9_received_at
+                    ? `On file since ${new Date(partner.w9_received_at).toLocaleDateString()}. You're paid-ready.`
+                    : "Required before your first commission can be paid."}
+                </p>
+              </div>
+              <Link
+                href={`/partners/${partner.code}/w9`}
+                className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-bold transition-colors ${
+                  partner.w9_received_at
+                    ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                    : "bg-rose-500 text-white hover:bg-rose-400"
+                }`}
+              >
+                {partner.w9_received_at ? "Re-upload" : "Upload W-9 →"}
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

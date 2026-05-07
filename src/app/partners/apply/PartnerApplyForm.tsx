@@ -87,21 +87,39 @@ export default function PartnerApplyForm() {
           <p className="font-mono text-amber-300 text-sm break-all">{link}</p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            navigator.clipboard?.writeText(link);
-          }}
-          className="inline-flex items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors mr-3"
-        >
-          Copy link
-        </button>
-        <Link
-          href={`/partners/${code}`}
-          className="inline-flex items-center justify-center rounded-md bg-amber-500 hover:bg-amber-400 px-4 py-2 text-sm font-bold text-amber-950 transition-colors"
-        >
-          View your dashboard →
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard?.writeText(link);
+            }}
+            className="inline-flex items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
+          >
+            Copy link
+          </button>
+          <Link
+            href={`/partners/${code}`}
+            className="inline-flex items-center justify-center rounded-md bg-amber-500 hover:bg-amber-400 px-4 py-2 text-sm font-bold text-amber-950 transition-colors"
+          >
+            View your dashboard →
+          </Link>
+        </div>
+
+        <div className="mt-6 rounded-lg border border-white/10 bg-slate-900/60 p-4 text-left">
+          <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+            Next step (required before first payout)
+          </p>
+          <p className="text-sm text-slate-300">
+            Upload your IRS Form W-9 so we can pay you when deals close.
+            Takes 2 minutes.
+          </p>
+          <Link
+            href={`/partners/${code}/w9`}
+            className="mt-3 inline-flex items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
+          >
+            Upload W-9 →
+          </Link>
+        </div>
       </div>
     );
   }

@@ -32,6 +32,9 @@ export type Partner = {
   // Added by 20260516_partners_client_slug.sql — multi-tenant fields
   client_slug?: string;
   default_payout_cents?: number | null;
+  // Added by 20260516_partner_documents.sql — W-9 self-serve upload
+  w9_received_at?: string | null;
+  w9_review_note?: string | null;
 };
 
 /** Default partner client_slug — preserves "no slug" → BlueJays semantics
