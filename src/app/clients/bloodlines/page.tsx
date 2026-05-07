@@ -516,6 +516,663 @@ function FloatingEmbers() {
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// Atmospheric Layers — per-section ambient ties to lore
+// ──────────────────────────────────────────────────────────────────────
+// Pure CSS keyframes only (no JS animation libs, no framer for ambient
+// loops per CLAUDE.md Rule 70). All animations gated behind
+// prefers-reduced-motion. Each layer is positioned absolute inset-0 so
+// it sits behind section content without intercepting clicks.
+//
+// Iteration logic for each layer:
+//   Pass 1 — basic motion + correct lore color
+//   Pass 2 — randomized speed/path/size so it doesn't tile uniformly
+//   Pass 3 — mobile-aware density + motion-safe gate
+//
+// All layers expect the parent <section> to be `relative overflow-hidden`.
+
+/** Wilted-rose petals drifting down. Used in HeroBlock — the wilted
+ *  rose is the central recurring sigil of the saga. */
+function FloatingPetals({ count = 7 }: { count?: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-petal {
+          position: absolute;
+          top: -40px;
+          opacity: 0;
+          animation: bl-petal-fall linear infinite;
+        }
+        @keyframes bl-petal-fall {
+          0% {
+            transform: translateY(0) translateX(0) rotate(0);
+            opacity: 0;
+          }
+          8% {
+            opacity: 0.55;
+          }
+          50% {
+            transform: translateY(50vh) translateX(30px) rotate(180deg);
+            opacity: 0.7;
+          }
+          100% {
+            transform: translateY(120vh) translateX(-20px) rotate(540deg);
+            opacity: 0;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-petal {
+            animation: none;
+            display: none;
+          }
+        }
+      `}</style>
+      {Array.from({ length: count }).map((_, i) => {
+        const left = (i * 14.7 + 5) % 100;
+        const dur = 22 + (i % 9);
+        const delay = (i * 3.1) % 18;
+        const scale = 0.7 + ((i * 7) % 10) / 10;
+        return (
+          <svg
+            key={i}
+            className="bl-petal"
+            width={24 * scale}
+            height={24 * scale}
+            viewBox="0 0 24 24"
+            style={{
+              left: `${left}%`,
+              animationDuration: `${dur}s`,
+              animationDelay: `${delay}s`,
+            }}
+          >
+            <path
+              d="M12 3 Q 7 9, 12 16 Q 17 9, 12 3 Z"
+              fill={CRIMSON}
+              fillOpacity="0.8"
+              stroke={CRIMSON_BRIGHT}
+              strokeOpacity="0.5"
+              strokeWidth="0.4"
+            />
+            <path
+              d="M12 8 L 12 17"
+              stroke={CRIMSON_BRIGHT}
+              strokeOpacity="0.6"
+              strokeWidth="0.5"
+            />
+          </svg>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Slow-drifting fog blobs (large soft gradients). Used in
+ *  SynopsisBlock + WorldMapBlock for atmospheric distance. */
+function DriftingFog({ tint = GOLD_DEEP, count = 4 }: { tint?: string; count?: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-fog {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(60px);
+          opacity: 0;
+          animation: bl-fog-drift ease-in-out infinite;
+        }
+        @keyframes bl-fog-drift {
+          0%,
+          100% {
+            transform: translateX(0) scale(1);
+            opacity: 0;
+          }
+          50% {
+            transform: translateX(80px) scale(1.15);
+            opacity: 0.35;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-fog {
+            animation: none;
+            opacity: 0.18;
+          }
+        }
+      `}</style>
+      {Array.from({ length: count }).map((_, i) => {
+        const top = 10 + (i * 27) % 80;
+        const left = 5 + (i * 31) % 85;
+        const size = 200 + (i % 4) * 80;
+        const dur = 28 + (i % 6) * 4;
+        const delay = i * 5;
+        return (
+          <span
+            key={i}
+            className="bl-fog"
+            style={{
+              top: `${top}%`,
+              left: `${left}%`,
+              width: size,
+              height: size,
+              background: `radial-gradient(circle, ${tint}55 0%, transparent 70%)`,
+              animationDuration: `${dur}s`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/** Distant kingdom silhouette — castle towers + mountain peaks at the
+ *  bottom of the section. Used in SynopsisBlock to set the scene. */
+function KingdomSilhouette() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 bottom-0 overflow-hidden"
+      style={{ height: "40%" }}
+    >
+      <svg
+        viewBox="0 0 1200 200"
+        preserveAspectRatio="xMidYEnd slice"
+        className="absolute bottom-0 w-full h-full"
+      >
+        {/* Far mountains */}
+        <path
+          d="M 0 200 L 0 130 L 80 90 L 140 110 L 220 70 L 300 100 L 380 80 L 460 105 L 540 75 L 620 95 L 700 65 L 780 90 L 860 75 L 940 100 L 1020 85 L 1100 110 L 1200 95 L 1200 200 Z"
+          fill="#1a1410"
+          opacity="0.6"
+        />
+        {/* Mid mountains */}
+        <path
+          d="M 0 200 L 0 160 L 60 130 L 140 150 L 200 120 L 280 145 L 360 125 L 440 150 L 520 130 L 600 105 L 680 135 L 760 115 L 840 145 L 920 125 L 1000 150 L 1080 130 L 1160 155 L 1200 145 L 1200 200 Z"
+          fill="#0e0a08"
+          opacity="0.85"
+        />
+        {/* Castle silhouette — center, the spires of Annarose */}
+        <g transform="translate(540, 120)">
+          {/* Main keep */}
+          <rect x="40" y="20" width="40" height="60" fill="#0a0606" />
+          {/* Keep crenellations */}
+          <rect x="40" y="14" width="6" height="6" fill="#0a0606" />
+          <rect x="50" y="14" width="6" height="6" fill="#0a0606" />
+          <rect x="60" y="14" width="6" height="6" fill="#0a0606" />
+          <rect x="70" y="14" width="6" height="6" fill="#0a0606" />
+          {/* Left tower */}
+          <rect x="20" y="35" width="18" height="45" fill="#0a0606" />
+          <polygon points="20,35 38,35 29,18" fill="#0a0606" />
+          {/* Right tower */}
+          <rect x="82" y="30" width="20" height="50" fill="#0a0606" />
+          <polygon points="82,30 102,30 92,12" fill="#0a0606" />
+          {/* Far right tower */}
+          <rect x="110" y="40" width="14" height="40" fill="#0a0606" />
+          <polygon points="110,40 124,40 117,28" fill="#0a0606" />
+          {/* Window light glints */}
+          <rect x="55" y="35" width="3" height="5" fill={GOLD_DEEP} opacity="0.5" />
+          <rect x="62" y="35" width="3" height="5" fill={GOLD_DEEP} opacity="0.4" />
+          <rect x="89" y="50" width="3" height="4" fill={GOLD_DEEP} opacity="0.45" />
+          <rect x="115" y="55" width="2" height="4" fill={GOLD_DEEP} opacity="0.4" />
+        </g>
+        {/* Foreground hills */}
+        <path
+          d="M 0 200 L 0 180 Q 200 160 400 175 T 800 170 T 1200 175 L 1200 200 Z"
+          fill="#050304"
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Floating gold dust motes drifting upward. Used in BooksBlock + the
+ *  Author column for warm "lit room" feel. */
+function FloatingDust({ count = 14, tint = GOLD }: { count?: number; tint?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-dust {
+          position: absolute;
+          bottom: -10px;
+          border-radius: 50%;
+          opacity: 0;
+          animation: bl-dust-rise linear infinite;
+        }
+        @keyframes bl-dust-rise {
+          0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.5;
+          }
+          70% {
+            opacity: 0.4;
+          }
+          100% {
+            transform: translateY(-120vh) translateX(60px);
+            opacity: 0;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-dust {
+            animation: none;
+            display: none;
+          }
+        }
+      `}</style>
+      {Array.from({ length: count }).map((_, i) => {
+        const left = (i * 7.9 + 2) % 100;
+        const dur = 18 + (i % 11);
+        const delay = (i * 1.7) % 20;
+        const size = 1.5 + (i % 4) * 0.8;
+        return (
+          <span
+            key={i}
+            className="bl-dust"
+            style={{
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              background: tint,
+              boxShadow: `0 0 ${size * 3}px ${tint}, 0 0 ${size * 6}px ${tint}88`,
+              animationDuration: `${dur}s`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/** Floating gold runes — Cinzel-style letterforms drifting through the
+ *  scene as ghosted background. Used in CharacterRosterBlock. */
+function FloatingRunes({ count = 9 }: { count?: number }) {
+  // Letters that recur in character monograms — feels intentional to the
+  // page rather than random alphabet soup.
+  const RUNES = ["S", "P", "A", "Q", "R", "T", "Φ", "Σ"];
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden hidden sm:block"
+    >
+      <style jsx>{`
+        .bl-rune {
+          position: absolute;
+          color: ${GOLD_DEEP};
+          opacity: 0;
+          font-family: "Cinzel", serif;
+          font-weight: 700;
+          animation: bl-rune-drift ease-in-out infinite;
+          will-change: transform, opacity;
+        }
+        @keyframes bl-rune-drift {
+          0%,
+          100% {
+            transform: translateY(0) rotate(0);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-30px) rotate(8deg);
+            opacity: 0.18;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-rune {
+            animation: none;
+            opacity: 0.1;
+          }
+        }
+      `}</style>
+      {Array.from({ length: count }).map((_, i) => {
+        const top = (i * 19) % 90;
+        const left = (i * 13.3) % 95;
+        const size = 60 + (i % 5) * 24;
+        const dur = 14 + (i % 8) * 2;
+        const delay = (i * 2.4) % 12;
+        return (
+          <span
+            key={i}
+            className="bl-rune"
+            style={{
+              top: `${top}%`,
+              left: `${left}%`,
+              fontSize: `${size}px`,
+              animationDuration: `${dur}s`,
+              animationDelay: `${delay}s`,
+            }}
+          >
+            {RUNES[i % RUNES.length]}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Compass-rose watermark fixed at center of the section. Used in
+ *  WorldMapBlock as a faint cartographer's mark behind the live map. */
+function CompassWatermark() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-compass {
+          animation: bl-compass-spin 120s linear infinite;
+          opacity: 0.06;
+        }
+        @keyframes bl-compass-spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-compass {
+            animation: none;
+          }
+        }
+      `}</style>
+      <svg
+        viewBox="0 0 200 200"
+        className="bl-compass"
+        style={{ width: "min(70%, 600px)", height: "min(70%, 600px)" }}
+      >
+        <circle cx="100" cy="100" r="95" fill="none" stroke={GOLD} strokeWidth="0.5" />
+        <circle cx="100" cy="100" r="80" fill="none" stroke={GOLD} strokeWidth="0.3" />
+        <circle cx="100" cy="100" r="55" fill="none" stroke={GOLD} strokeWidth="0.3" strokeDasharray="2 3" />
+        {/* 8-point star */}
+        <g>
+          <path d="M 100 5 L 105 100 L 100 195 L 95 100 Z" fill={GOLD} />
+          <path d="M 5 100 L 100 95 L 195 100 L 100 105 Z" fill={GOLD} opacity="0.7" />
+          <path d="M 33 33 L 100 95 L 167 167 L 100 105 Z" fill={GOLD} opacity="0.5" />
+          <path d="M 167 33 L 105 95 L 33 167 L 95 105 Z" fill={GOLD} opacity="0.5" />
+        </g>
+        {/* Letters */}
+        <text x="100" y="20" fontSize="10" fill={GOLD} textAnchor="middle" fontFamily="Cinzel">N</text>
+        <text x="185" y="105" fontSize="10" fill={GOLD} textAnchor="middle" fontFamily="Cinzel">E</text>
+        <text x="100" y="190" fontSize="10" fill={GOLD} textAnchor="middle" fontFamily="Cinzel">S</text>
+        <text x="15" y="105" fontSize="10" fill={GOLD} textAnchor="middle" fontFamily="Cinzel">W</text>
+      </svg>
+    </div>
+  );
+}
+
+/** Element-specific ambient particles — fire embers, water droplets,
+ *  earth fragments, air streaks, light beams. Driven by the active
+ *  Magic System tab (MagicSystemBlock). */
+function ElementParticles({ id, color }: { id: string; color: string }) {
+  // Different shapes per element, all sharing the same drift rhythm.
+  const renderParticle = (i: number) => {
+    const left = (i * 11.3 + 3) % 100;
+    const top = (i * 17.7) % 90;
+    const dur = 8 + (i % 6);
+    const delay = (i * 0.9) % 8;
+    const size = 5 + (i % 4) * 3;
+    const baseStyle: React.CSSProperties = {
+      left: `${left}%`,
+      top: `${top}%`,
+      animationDuration: `${dur}s`,
+      animationDelay: `${delay}s`,
+    };
+    if (id === "fire") {
+      return (
+        <span
+          key={i}
+          className="bl-elem-particle"
+          style={{
+            ...baseStyle,
+            width: size,
+            height: size,
+            borderRadius: "50%",
+            background: color,
+            boxShadow: `0 0 ${size * 2}px ${color}, 0 0 ${size * 4}px ${color}88`,
+          }}
+        />
+      );
+    }
+    if (id === "water") {
+      return (
+        <span
+          key={i}
+          className="bl-elem-particle"
+          style={{
+            ...baseStyle,
+            width: size + 4,
+            height: (size + 4) * 1.4,
+            borderRadius: "50% 50% 50% 0",
+            transform: "rotate(-45deg)",
+            background: `linear-gradient(135deg, ${color}, ${color}66)`,
+            boxShadow: `0 0 8px ${color}66`,
+          }}
+        />
+      );
+    }
+    if (id === "earth") {
+      return (
+        <span
+          key={i}
+          className="bl-elem-particle"
+          style={{
+            ...baseStyle,
+            width: size + 2,
+            height: size + 2,
+            background: color,
+            opacity: 0.6,
+            clipPath:
+              "polygon(20% 0, 80% 10%, 100% 50%, 80% 95%, 25% 100%, 0 60%)",
+          }}
+        />
+      );
+    }
+    if (id === "air") {
+      return (
+        <span
+          key={i}
+          className="bl-elem-particle"
+          style={{
+            ...baseStyle,
+            width: size * 4,
+            height: 1.5,
+            background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+            transform: "rotate(-15deg)",
+          }}
+        />
+      );
+    }
+    // light
+    return (
+      <span
+        key={i}
+        className="bl-elem-particle"
+        style={{
+          ...baseStyle,
+          width: size,
+          height: size,
+          borderRadius: "50%",
+          background: color,
+          boxShadow: `0 0 ${size * 4}px ${color}, 0 0 ${size * 8}px ${color}aa`,
+        }}
+      />
+    );
+  };
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-elem-particle {
+          position: absolute;
+          opacity: 0;
+          animation: bl-elem-float ease-in-out infinite;
+        }
+        @keyframes bl-elem-float {
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-30px) translateX(15px);
+            opacity: 0.7;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-elem-particle {
+            animation: none;
+            opacity: 0.3;
+          }
+        }
+      `}</style>
+      {Array.from({ length: 14 }).map((_, i) => renderParticle(i))}
+    </div>
+  );
+}
+
+/** Drifting ink wisps — flowing curved paths that ease in and out. Used
+ *  in ParchmentReaderBlock to evoke "the writer's quill at work." */
+function InkWisps() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <style jsx>{`
+        .bl-wisp {
+          animation: bl-wisp-flow ease-in-out infinite;
+          transform-origin: center;
+        }
+        @keyframes bl-wisp-flow {
+          0%,
+          100% {
+            opacity: 0;
+            transform: translateX(-30px) scale(0.95);
+          }
+          50% {
+            opacity: 0.18;
+            transform: translateX(30px) scale(1.05);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-wisp {
+            animation: none;
+            opacity: 0.1;
+          }
+        }
+      `}</style>
+      <svg
+        viewBox="0 0 1200 600"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 w-full h-full"
+      >
+        <path
+          className="bl-wisp"
+          d="M 0 100 Q 200 50, 400 150 T 800 100 T 1200 200"
+          fill="none"
+          stroke={GOLD_DEEP}
+          strokeWidth="1"
+          style={{ animationDuration: "16s" }}
+        />
+        <path
+          className="bl-wisp"
+          d="M 0 350 Q 300 280, 600 380 T 1200 320"
+          fill="none"
+          stroke={GOLD_DEEP}
+          strokeWidth="1.2"
+          style={{ animationDuration: "20s", animationDelay: "3s" }}
+        />
+        <path
+          className="bl-wisp"
+          d="M 0 500 Q 400 450, 700 520 T 1200 480"
+          fill="none"
+          stroke={CRIMSON}
+          strokeWidth="0.8"
+          opacity="0.4"
+          style={{ animationDuration: "24s", animationDelay: "6s" }}
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Ambient faction-tinted background for FactionSelectorBlock. The tint
+ *  shifts based on whatever faction has the most votes so far. */
+function FactionAmbient({ tint }: { tint: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      style={{
+        background: `radial-gradient(circle at 50% 50%, ${tint}1a 0%, transparent 70%)`,
+        transition: "background 1.2s ease-in-out",
+      }}
+    >
+      <style jsx>{`
+        .bl-faction-pulse {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(80px);
+          animation: bl-faction-breathe 8s ease-in-out infinite;
+        }
+        @keyframes bl-faction-breathe {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.25;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 0.45;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bl-faction-pulse {
+            animation: none;
+            opacity: 0.2;
+          }
+        }
+      `}</style>
+      <span
+        className="bl-faction-pulse"
+        style={{
+          top: "20%",
+          left: "15%",
+          width: 320,
+          height: 320,
+          background: `radial-gradient(circle, ${tint} 0%, transparent 70%)`,
+          transition: "background 1.2s ease-in-out",
+        }}
+      />
+      <span
+        className="bl-faction-pulse"
+        style={{
+          bottom: "10%",
+          right: "10%",
+          width: 280,
+          height: 280,
+          background: `radial-gradient(circle, ${tint} 0%, transparent 70%)`,
+          transition: "background 1.2s ease-in-out",
+          animationDelay: "3s",
+        }}
+      />
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // Gold Divider — recurring section break (filigree-style)
 // ──────────────────────────────────────────────────────────────────────
 function GoldDivider() {
@@ -611,6 +1268,7 @@ function HeroBlock() {
       }}
     >
       <FloatingEmbers />
+      <FloatingPetals count={6} />
       {/* Subtle storm vignette */}
       <div
         aria-hidden="true"
@@ -745,8 +1403,10 @@ function Star() {
 // ──────────────────────────────────────────────────────────────────────
 function SynopsisBlock() {
   return (
-    <section className="relative py-20 sm:py-24 lg:py-32 px-6">
-      <div className="max-w-3xl mx-auto">
+    <section className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden">
+      <DriftingFog tint={GOLD_DEEP} count={3} />
+      <KingdomSilhouette />
+      <div className="relative max-w-3xl mx-auto">
         <SectionHeading
           eyebrow="The Saga"
           title="A Kingdom Drawn to War"
@@ -781,8 +1441,10 @@ function SynopsisBlock() {
 // ──────────────────────────────────────────────────────────────────────
 function BooksBlock() {
   return (
-    <section id="books" className="relative py-20 sm:py-24 lg:py-32 px-6" style={{ background: "linear-gradient(180deg, #09090b 0%, #100b0b 50%, #09090b 100%)" }}>
-      <div className="max-w-6xl mx-auto">
+    <section id="books" className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden" style={{ background: "linear-gradient(180deg, #09090b 0%, #100b0b 50%, #09090b 100%)" }}>
+      <FloatingDust count={12} tint={GOLD} />
+      <DriftingFog tint={CRIMSON} count={2} />
+      <div className="relative max-w-6xl mx-auto">
         <SectionHeading
           eyebrow="The Volumes"
           title="The Books"
@@ -944,10 +1606,12 @@ function WorldMapBlock() {
   return (
     <section
       id="world"
-      className="relative py-20 sm:py-24 lg:py-32 px-6"
+      className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{ background: "#0b0907" }}
     >
-      <div className="max-w-6xl mx-auto">
+      <CompassWatermark />
+      <DriftingFog tint={GOLD_DEEP} count={3} />
+      <div className="relative max-w-6xl mx-auto">
         <SectionHeading
           eyebrow="The Realm"
           title="The World of Annarose"
@@ -1103,8 +1767,9 @@ function CharacterRosterBlock() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <section className="relative py-20 sm:py-24 lg:py-32 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden">
+      <FloatingRunes count={9} />
+      <div className="relative max-w-6xl mx-auto">
         <SectionHeading
           eyebrow="The Cast"
           title="Faces of the Saga"
@@ -1253,7 +1918,12 @@ function MagicSystemBlock() {
           "radial-gradient(ellipse at 30% 20%, rgba(127, 29, 29, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(212, 168, 83, 0.08) 0%, transparent 50%), #0a0808",
       }}
     >
-      <div className="max-w-5xl mx-auto">
+      {/* Element-specific particle layer — keyed on active.id so React
+          fully unmounts/remounts when the user picks a new tab, giving
+          the new element a clean fade-in instead of cross-fading from
+          the prior one. */}
+      <ElementParticles key={activeElleta.id} id={activeElleta.id} color={activeElleta.color} />
+      <div className="relative max-w-5xl mx-auto">
         <SectionHeading
           eyebrow="The Old Powers"
           title="The Elletas"
@@ -1375,13 +2045,14 @@ function MagicSystemBlock() {
 function ParchmentReaderBlock() {
   return (
     <section
-      className="relative py-20 sm:py-24 lg:py-32 px-6"
+      className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{
         background:
           "linear-gradient(180deg, #0a0808 0%, #100b0b 50%, #0a0808 100%)",
       }}
     >
-      <div className="max-w-3xl mx-auto">
+      <InkWisps />
+      <div className="relative max-w-3xl mx-auto">
         <SectionHeading
           eyebrow="A First Glimpse"
           title="From the Pages"
@@ -1528,15 +2199,28 @@ function FactionSelectorBlock() {
     setStep(0);
   }, []);
 
+  // The ambient layer's tint follows the user's running quiz — picks up
+  // whichever faction is leading after each answer. Defaults to gold
+  // until the first pick, and locks to the result tint at step 5.
+  const ambientTint = useMemo(() => {
+    if (step === 5 && result) return result.color;
+    if (answers.length === 0) return GOLD;
+    const tally: Record<string, number> = {};
+    for (const a of answers) tally[a] = (tally[a] || 0) + 1;
+    const leading = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]?.[0];
+    return leading && FACTIONS[leading] ? FACTIONS[leading].color : GOLD;
+  }, [answers, step, result]);
+
   return (
     <section
-      className="relative py-20 sm:py-24 lg:py-32 px-6"
+      className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{
         background:
           "radial-gradient(ellipse at 50% 0%, rgba(212, 168, 83, 0.08) 0%, transparent 60%), #08070a",
       }}
     >
-      <div className="max-w-3xl mx-auto">
+      <FactionAmbient tint={ambientTint} />
+      <div className="relative max-w-3xl mx-auto">
         <SectionHeading
           eyebrow="A Personal Test"
           title="Where Would You Stand?"
@@ -1692,12 +2376,13 @@ function FactionSelectorBlock() {
 function AuthorBlock() {
   return (
     <section
-      className="relative py-20 sm:py-24 lg:py-32 px-6"
+      className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden"
       style={{
         background:
           "linear-gradient(180deg, #08070a 0%, #100b0b 50%, #08070a 100%)",
       }}
     >
+      <FloatingDust count={10} tint={GOLD} />
       {/* Pulsing-seal glow + corner-flourish keyframes. Motion-safe per
           Rule 70 — the @media block kills both animations on
           prefers-reduced-motion. */}
@@ -1737,7 +2422,7 @@ function AuthorBlock() {
         }
       `}</style>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="relative max-w-4xl mx-auto">
         <SectionHeading eyebrow="The Author" title="Preston James Hunsaker" />
 
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-10 lg:gap-14 items-center md:items-start">
