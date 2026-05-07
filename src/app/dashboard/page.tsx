@@ -34,6 +34,7 @@ const MapView = dynamic(() => import("@/components/dashboard/MapView"), {
 });
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
+import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
 
 /* ───────────────────────── TAB SYSTEM ─────────────────────────
    Refactored 2026-05-06 (Ben answers 1A/2C/3A/4D/5A/6A/7B/8A/9A/10A).
@@ -67,7 +68,7 @@ const TABS: TabDef[] = [
   { id: "overview", label: "Overview", emoji: "🏠" },
   { id: "leads", label: "Leads", emoji: "📥" },
   { id: "map", label: "Map", emoji: "🗺️" },
-  { id: "funnels", label: "Funnels", emoji: "🎯", href: "/dashboard/funnel" },
+  { id: "funnels", label: "Funnels", emoji: "🎯" },
   { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks" },
   { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script" },
   { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
@@ -462,6 +463,13 @@ export default function DashboardPage() {
                 onStateClick={() => setScoutOpen(true)}
               />
             )}
+
+            {/* ──────────────── FUNNELS TAB ────────────────
+                BlueJays' own audience funnels. Same shared modal as
+                the per-client owner portal Funnels tab — Rule 74 bars
+                + drop-off pills + edit / + Note. In-place tab; no nav
+                away from /dashboard. */}
+            {tab === "funnels" && <BluejaysFunnelsTab />}
 
             {/* ──────────────── AI SKILLS TAB ────────────────
                 Both AIOS skills + BlueJays-internal AI features per Q2=C. */}
