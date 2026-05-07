@@ -1989,90 +1989,321 @@ function LayerPill({
 
 /* ───────────────────────── FUNNELS TAB ───────────────────────── */
 
+/* ───────────────────────── FUNNELS TAB (Zenith-style) ─────────────────────
+   Rebuilt 2026-05-06 per Ben — match the Zenith portal funnels grid
+   pattern. All 4 funnels visible at once in a 2-col card grid; each
+   card surfaces the touchpoint sequence inline (D0 / D2 / D5… per
+   channel), Total/New/Active/Won counts, and a "View detail" expander
+   that slides open in place. Mock data only. */
+
+const CHANNEL_GLYPH: Record<string, string> = {
+  email: "✉",
+  sms: "💬",
+  voicemail: "🎙",
+  call: "📞",
+  site_visit: "🏠",
+};
+
+const FUNNEL_THEMES: Record<
+  string,
+  { borderClass: string; bgClass: string; accent: string; emoji: string; pitch: string }
+> = {
+  "funnel-powerwall-homeowner": {
+    borderClass: "border-amber-400/30",
+    bgClass: "bg-amber-400/[0.04]",
+    accent: "text-amber-300",
+    emoji: "⚡",
+    pitch: "High-bill homeowners curious about Tesla Powerwall ROI.",
+  },
+  "funnel-generator-storm": {
+    borderClass: "border-orange-500/30",
+    bgClass: "bg-orange-500/[0.05]",
+    accent: "text-orange-300",
+    emoji: "🔌",
+    pitch: "Storm-trigger SMS to rural homes after a recent outage.",
+  },
+  "funnel-commercial-maintenance": {
+    borderClass: "border-cyan-500/30",
+    bgClass: "bg-cyan-500/[0.05]",
+    accent: "text-cyan-300",
+    emoji: "🏢",
+    pitch: "Quarterly check-in for multi-property commercial accounts.",
+  },
+  "funnel-affiliate-partner": {
+    borderClass: "border-violet-500/30",
+    bgClass: "bg-violet-500/[0.05]",
+    accent: "text-violet-300",
+    emoji: "🤝",
+    pitch: "30-day onboarding for new solar / GC / HVAC referrers.",
+  },
+};
+
+function getFunnelTheme(id: string) {
+  return (
+    FUNNEL_THEMES[id] ?? {
+      borderClass: "border-white/10",
+      bgClass: "bg-white/[0.02]",
+      accent: "text-yellow-300",
+      emoji: "🎯",
+      pitch: "Outreach sequence.",
+    }
+  );
+}
+
 function FunnelsTab() {
-  const [activeFunnel, setActiveFunnel] = useState(FUNNELS[0].id);
-  const f = FUNNELS.find((x) => x.id === activeFunnel) || FUNNELS[0];
+  const [openFunnel, setOpenFunnel] = useState<string | null>(null);
+
+  const totals = useMemo(() => {
+    const totalLeads = FUNNELS.reduce((s, f) => s + f.total_leads, 0);
+    const totalWon = FUNNELS.reduce((s, f) => s + f.total_won, 0);
+    const totalRevenue = FUNNELS.reduce(
+      (s, f) => s + f.total_won * f.avg_job_value,
+      0,
+    );
+    const blended = totalLeads > 0 ? (totalWon / totalLeads) * 100 : 0;
+    return { totalLeads, totalWon, totalRevenue, blended };
+  }, []);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          🎯 Funnels
-        </h2>
-        <p className="text-sm text-slate-400 mt-1">
-          Per-audience automated outreach sequences. Each funnel has its own steps + conversion data.
-        </p>
-      </div>
-      <div className="flex gap-2 flex-wrap">
-        {FUNNELS.map((fn) => (
-          <button
-            key={fn.id}
-            type="button"
-            onClick={() => setActiveFunnel(fn.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${activeFunnel === fn.id ? "bg-yellow-400 text-black" : "bg-slate-900 border border-slate-700 text-slate-400 hover:text-white"}`}
-          >
-            {fn.name}
-          </button>
-        ))}
-      </div>
-      <div className="rounded-2xl border border-white/8 bg-slate-900/40 p-6">
-        <div className="flex items-end justify-between flex-wrap gap-4 mb-4">
+      {/* Hero summary card — parity with the Zenith portal "Audience funnels" header */}
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h3 className="text-xl font-bold">{f.name}</h3>
-            <p className="text-sm text-slate-400 mt-0.5">{f.audience}</p>
+            <h2
+              className="text-2xl font-bold tracking-tight mb-1"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              🎯 Audience funnels
+            </h2>
+            <p className="text-sm text-slate-400 max-w-md">
+              Each card is a live multi-channel sequence tuned to one customer
+              segment. Every step fires automatically based on the segment&apos;s
+              cadence — email, SMS, voicemail, on-site visit.
+            </p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">Leads</div>
-              <div className="text-lg font-bold tabular-nums">{f.total_leads}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">Won</div>
-              <div className="text-lg font-bold text-emerald-400 tabular-nums">{f.total_won}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-wider text-slate-500">Convert</div>
-              <div className="text-lg font-bold text-yellow-400 tabular-nums">{f.conversion_rate.toFixed(1)}%</div>
-            </div>
-          </div>
-        </div>
-        <p className="text-sm text-slate-400 mb-6 leading-relaxed">{f.description}</p>
-        {/* Funnel steps */}
-        <div className="space-y-3">
-          {f.steps.map((step, i) => {
-            const widthPct = step.conversion_pct;
-            return (
-              <div key={step.step}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-white/8">
-                      {step.step}
-                    </span>
-                    <span className="text-sm font-semibold text-white">{step.label}</span>
-                    <span className="text-[10px] uppercase tracking-wider text-slate-500">{step.channel}</span>
-                  </div>
-                  <span className="text-sm font-bold tabular-nums" style={{ color: scoreColor(step.conversion_pct) }}>
-                    {step.conversion_pct}%
-                  </span>
-                </div>
-                <div className="h-2.5 rounded-full bg-white/5 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${widthPct}%`,
-                      background: `linear-gradient(90deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`,
-                      animationDelay: `${i * 100}ms`,
-                    }}
-                  />
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1">Day +{step.day_offset}</div>
+          <div className="grid grid-cols-3 gap-4 text-right">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Leads
               </div>
-            );
-          })}
+              <div className="text-2xl font-black text-white tabular-nums">
+                {totals.totalLeads.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Won
+              </div>
+              <div className="text-2xl font-black text-emerald-300 tabular-nums">
+                {totals.totalWon}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Blended
+              </div>
+              <div className="text-2xl font-black text-amber-300 tabular-nums">
+                {totals.blended.toFixed(1)}%
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="mt-6 pt-5 border-t border-white/8 flex items-center justify-between text-sm">
-          <span className="text-slate-400">Avg job value</span>
-          <span className="font-bold text-yellow-400">{fmtMoney(f.avg_job_value)}</span>
+        <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-sm">
+          <span className="text-slate-400">Closed revenue across all funnels</span>
+          <span className="font-bold text-yellow-300 tabular-nums">
+            {fmtMoney(totals.totalRevenue)}
+          </span>
         </div>
+      </div>
+
+      {/* 2-column grid of funnel cards */}
+      <div className="grid lg:grid-cols-2 gap-3">
+        {FUNNELS.map((f) => {
+          const t = getFunnelTheme(f.id);
+          const isOpen = openFunnel === f.id;
+          // Synthesize stage counts from the conversion percentages so the
+          // cards have the same visual rhythm as Zenith's Total/New/Active/Won.
+          const newCount = Math.max(0, f.total_leads - f.total_won * 2);
+          const activeCount = Math.max(0, f.total_leads - newCount - f.total_won);
+          return (
+            <div
+              key={f.id}
+              className={`rounded-2xl border p-5 transition-shadow ${t.borderClass} ${t.bgClass} ${
+                isOpen ? "shadow-[0_0_30px_rgba(250,204,21,0.12)]" : ""
+              }`}
+            >
+              {/* Card header */}
+              <div className="flex items-start gap-3 mb-3">
+                <span className="text-2xl">{t.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-white">{f.name}</h3>
+                  <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
+                    {t.pitch}
+                  </p>
+                </div>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-wider ${t.accent} whitespace-nowrap`}
+                >
+                  {f.audience.split(" · ")[0]}
+                </span>
+              </div>
+
+              {/* Touchpoint sequence — D0 / D2 / D5 with channel glyphs */}
+              <div className="mb-3">
+                <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500 mb-1.5">
+                  Touchpoint sequence
+                </div>
+                <ol
+                  className="grid gap-1"
+                  style={{
+                    gridTemplateColumns: `repeat(${Math.min(f.steps.length, 6)}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {f.steps.map((s, i) => {
+                    const glyph = CHANNEL_GLYPH[s.channel] ?? "•";
+                    return (
+                      <li
+                        key={s.step}
+                        className="relative rounded-md bg-black/30 border border-white/[0.04] px-1.5 py-1.5"
+                      >
+                        <div className={`text-[10px] font-black ${t.accent} mb-0.5`}>
+                          D{s.day_offset}
+                        </div>
+                        <div className="text-[9px] text-slate-500 mb-0.5 whitespace-nowrap">
+                          {glyph} {s.channel === "site_visit" ? "visit" : s.channel}
+                        </div>
+                        <div
+                          className="text-[10px] text-slate-300 leading-tight line-clamp-2"
+                          title={s.label}
+                        >
+                          {s.label}
+                        </div>
+                        {i < f.steps.length - 1 && (
+                          <span
+                            aria-hidden
+                            className={`absolute top-1/2 -right-[2.5px] -translate-y-1/2 ${t.accent} text-[10px]`}
+                          >
+                            ▶
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+
+              {/* 4-stat row */}
+              <div className="grid grid-cols-4 gap-1.5 mb-3 text-center">
+                <div className="rounded-md bg-black/30 px-1.5 py-1.5">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Total
+                  </div>
+                  <div className="text-sm font-black text-white tabular-nums">
+                    {f.total_leads}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1.5">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    New
+                  </div>
+                  <div className="text-sm font-black text-blue-300 tabular-nums">
+                    {newCount}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1.5">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Active
+                  </div>
+                  <div className="text-sm font-black text-amber-300 tabular-nums">
+                    {activeCount}
+                  </div>
+                </div>
+                <div className="rounded-md bg-black/30 px-1.5 py-1.5">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Won
+                  </div>
+                  <div className="text-sm font-black text-emerald-300 tabular-nums">
+                    {f.total_won}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action row */}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenFunnel(isOpen ? null : f.id)}
+                  className={`flex-1 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-lg border border-white/15 bg-slate-900/70 hover:border-amber-400/50 hover:bg-slate-800 ${t.accent} text-center transition-colors`}
+                >
+                  {isOpen ? "Hide detail ▴" : "View detail ▾"}
+                </button>
+                <span
+                  className="px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap flex items-center"
+                  title="Conversion rate end-to-end"
+                >
+                  {f.conversion_rate.toFixed(1)}% close
+                </span>
+              </div>
+
+              {/* Expanded detail — slides in below the card on click */}
+              {isOpen && (
+                <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {f.description}
+                  </p>
+
+                  {/* Per-step conversion bars */}
+                  <div className="space-y-2.5">
+                    {f.steps.map((step) => (
+                      <div key={step.step}>
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-white/[0.08] text-white shrink-0">
+                              {step.step}
+                            </span>
+                            <span className="text-xs font-semibold text-white truncate">
+                              {step.label}
+                            </span>
+                          </div>
+                          <span
+                            className="text-xs font-bold tabular-nums whitespace-nowrap"
+                            style={{ color: scoreColor(step.conversion_pct) }}
+                          >
+                            {step.conversion_pct}%
+                          </span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${step.conversion_pct}%`,
+                              background: `linear-gradient(90deg, ${ACCENT} 0%, ${ACCENT_ORANGE} 100%)`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer stats row */}
+                  <div className="flex items-center justify-between pt-2 text-xs">
+                    <span className="text-slate-400">Avg job value</span>
+                    <span className="font-bold text-yellow-300">
+                      {fmtMoney(f.avg_job_value)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-400">Closed revenue</span>
+                    <span className="font-bold text-emerald-300">
+                      {fmtMoney(f.total_won * f.avg_job_value)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -2296,44 +2527,182 @@ function AffiliatesTab() {
 
 /* ───────────────────────── AI SKILLS TAB (interactive features) ─────── */
 
+/* ───────────────────────── AI SKILLS TAB (Zenith-style polish) ──────────
+   Rebuilt 2026-05-06 per Ben — match the polish bar of the Zenith
+   portal AI tools view. Each skill card now shows:
+     - Gradient ACCENT border on the active card
+     - Per-skill mock usage stats (this-quarter use count + closes
+       attributed) so prospects can read "this thing is moving the
+       needle" in 2 seconds
+     - Click anywhere on the card to toggle open/closed
+   The 3 calculator panels themselves are unchanged.
+*/
+
+const SKILLS_META: Array<{
+  id: "powerwall" | "generator" | "outage";
+  emoji: string;
+  label: string;
+  desc: string;
+  used: number;
+  closes: number;
+  closeRate: number;
+  color: string;
+}> = [
+  {
+    id: "powerwall",
+    emoji: "⚡",
+    label: "Powerwall ROI Calculator",
+    desc: "Slider tool that shows 7-year payback timeline based on utility rate + monthly bill. Lands in 23% of cold emails.",
+    used: 87,
+    closes: 19,
+    closeRate: 21.8,
+    color: "#facc15",
+  },
+  {
+    id: "generator",
+    emoji: "🔌",
+    label: "Generator Sizing Tool",
+    desc: "Sq ft + appliances → recommended kW + matching Generac model. Becomes the kitchen-table close after every storm.",
+    used: 142,
+    closes: 38,
+    closeRate: 26.8,
+    color: "#f97316",
+  },
+  {
+    id: "outage",
+    emoji: "🌧",
+    label: "Outage Recovery Simulator",
+    desc: "Animated timeline: grid fails → Powerwall → Generac → home stays powered. Top closing tool for hybrid systems.",
+    used: 64,
+    closes: 11,
+    closeRate: 17.2,
+    color: "#60a5fa",
+  },
+];
+
 function AISkillsTab() {
-  const [active, setActive] = useState<"powerwall" | "generator" | "outage" | null>(null);
+  const [active, setActive] = useState<
+    "powerwall" | "generator" | "outage" | null
+  >(null);
+
+  const totalUsed = SKILLS_META.reduce((s, x) => s + x.used, 0);
+  const totalCloses = SKILLS_META.reduce((s, x) => s + x.closes, 0);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          🧠 AI Skills
-        </h2>
-        <p className="text-sm text-slate-400 mt-1">
-          Customer-facing tools that qualify leads + close deals at the kitchen table.
-        </p>
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2
+              className="text-2xl font-bold tracking-tight mb-1"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              🧠 AI Skills
+            </h2>
+            <p className="text-sm text-slate-400 max-w-md">
+              Customer-facing tools that qualify leads + close deals at the
+              kitchen table. Click any card to open the live demo — same
+              experience your prospects see on the lead-magnet pages.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-right">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Used this Q
+              </div>
+              <div className="text-2xl font-black text-amber-300 tabular-nums">
+                {totalUsed}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Attributed closes
+              </div>
+              <div className="text-2xl font-black text-emerald-300 tabular-nums">
+                {totalCloses}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div className="grid sm:grid-cols-3 gap-3">
-        <SkillCard emoji="⚡" label="Powerwall ROI Calculator" desc="Slider tool that shows 7-year payback timeline based on utility rate + monthly bill." active={active === "powerwall"} onOpen={() => setActive("powerwall")} />
-        <SkillCard emoji="🔌" label="Generator Sizing Tool" desc="Sq ft + appliances → recommended kW + matching Generac model." active={active === "generator"} onOpen={() => setActive("generator")} />
-        <SkillCard emoji="🌧" label="Outage Recovery Simulator" desc="Animated timeline showing what happens when grid fails: Powerwall → Generac → home stays powered." active={active === "outage"} onOpen={() => setActive("outage")} />
+        {SKILLS_META.map((s) => {
+          const isActive = active === s.id;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setActive(isActive ? null : s.id)}
+              className="text-left rounded-xl p-4 transition relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+              style={{
+                border: `1px solid ${isActive ? `${s.color}80` : "rgba(255,255,255,0.08)"}`,
+                background: isActive
+                  ? `linear-gradient(135deg, ${s.color}14 0%, transparent 70%), rgba(255,255,255,0.02)`
+                  : "rgba(255,255,255,0.02)",
+                boxShadow: isActive ? `0 0 24px ${s.color}30` : "none",
+              }}
+            >
+              {isActive && (
+                <span
+                  className="absolute top-0 left-0 right-0 h-0.5"
+                  style={{
+                    background: `linear-gradient(90deg, transparent 0%, ${s.color} 50%, transparent 100%)`,
+                  }}
+                />
+              )}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-2xl">{s.emoji}</span>
+                <span
+                  className="text-[9px] uppercase tracking-widest font-bold"
+                  style={{ color: isActive ? s.color : "rgba(148,163,184,0.6)" }}
+                >
+                  {isActive ? "Open ▾" : "Open ▸"}
+                </span>
+              </div>
+              <div className="text-sm font-bold text-white">{s.label}</div>
+              <div className="mt-1 text-[11px] text-slate-500 leading-relaxed line-clamp-2">
+                {s.desc}
+              </div>
+              {/* Usage stats row */}
+              <div className="mt-3 pt-3 border-t border-white/[0.06] grid grid-cols-3 gap-1.5 text-center">
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Used
+                  </div>
+                  <div className="text-sm font-black text-white tabular-nums">
+                    {s.used}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Closes
+                  </div>
+                  <div className="text-sm font-black text-emerald-300 tabular-nums">
+                    {s.closes}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-slate-500">
+                    Rate
+                  </div>
+                  <div
+                    className="text-sm font-black tabular-nums"
+                    style={{ color: s.color }}
+                  >
+                    {s.closeRate}%
+                  </div>
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
+
       {active === "powerwall" && <PowerwallROI />}
       {active === "generator" && <GeneratorSizer />}
       {active === "outage" && <OutageSimulator />}
     </div>
-  );
-}
-
-function SkillCard({ emoji, label, desc, active, onOpen }: { emoji: string; label: string; desc: string; active: boolean; onOpen: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className={`text-left rounded-xl border p-4 hover:bg-white/[0.04] transition ${active ? "border-yellow-400/60 bg-yellow-400/[0.04]" : "border-white/8 bg-white/[0.02]"}`}
-    >
-      <div className="text-2xl">{emoji}</div>
-      <div className="mt-2 text-sm font-bold">{label}</div>
-      <div className="mt-1 text-[11px] text-slate-500 leading-relaxed">{desc}</div>
-      <div className="mt-2 text-[11px] uppercase tracking-wider font-semibold" style={{ color: active ? ACCENT : "rgb(148,163,184)" }}>
-        {active ? "Open ▾" : "Open ▸"}
-      </div>
-    </button>
   );
 }
 
@@ -2497,48 +2866,427 @@ function ResultCard({ label, value, sub, tone }: { label: string; value: string;
 
 /* ───────────────────────── SETTINGS TAB ───────────────────────── */
 
+/* ───────────────────────── SETTINGS TAB (Zenith-style polish) ──────
+   Rebuilt 2026-05-06 per Ben — same density / section grouping /
+   toggle-switches / integration-status-pills bar that the Zenith
+   portal uses. Pure demo (Q8=A): toggles persist in sessionStorage
+   and the "Reset demo" button clears every override + status pill +
+   saved customer + dismissed lead in one tap. */
+
+type IntegrationStatus = "connected" | "warning" | "off";
+
+const INTEGRATIONS: Array<{
+  name: string;
+  desc: string;
+  status: IntegrationStatus;
+  icon: string;
+}> = [
+  { name: "Stripe", desc: "Deposits + customer-portal billing", status: "connected", icon: "💳" },
+  { name: "Twilio", desc: "SMS + missed-call auto-text · A2P approved", status: "connected", icon: "💬" },
+  { name: "Google Ads", desc: "Search + Performance Max · auto-optim weekly", status: "connected", icon: "🔍" },
+  { name: "Meta Business", desc: "Facebook + Instagram retargeting", status: "connected", icon: "📱" },
+  { name: "GA4", desc: "Events firing · 30-day retention", status: "connected", icon: "📊" },
+  { name: "Tesla Energy API", desc: "Powerwall ROI live rate lookups", status: "warning", icon: "⚡" },
+  { name: "SendGrid", desc: "meyerelectric.com · DKIM + SPF + DMARC pass", status: "connected", icon: "✉" },
+  { name: "Lob (postcards)", desc: "Optional · enable to add to funnel", status: "off", icon: "📮" },
+];
+
+const TOGGLE_KEYS = {
+  missedCallText: "bj_demo_setting_missed_call_text",
+  stormCampaign: "bj_demo_setting_storm_campaign",
+  aiAutoReply: "bj_demo_setting_ai_auto_reply",
+  emergencyLine: "bj_demo_setting_emergency_line",
+  weeklyDigest: "bj_demo_setting_weekly_digest",
+  partnerProgram: "bj_demo_setting_partner_program",
+} as const;
+
+function loadToggle(key: string, fallback: boolean): boolean {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const v = window.sessionStorage.getItem(key);
+    if (v === "1") return true;
+    if (v === "0") return false;
+  } catch {
+    // ignore
+  }
+  return fallback;
+}
+
+function persistToggle(key: string, on: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(key, on ? "1" : "0");
+  } catch {
+    // ignore
+  }
+}
+
+function statusPillFor(s: IntegrationStatus): { label: string; bg: string; text: string } {
+  if (s === "connected") {
+    return { label: "✓ Connected", bg: "rgba(16,185,129,0.12)", text: "rgb(74,222,128)" };
+  }
+  if (s === "warning") {
+    return { label: "⚠ Needs attention", bg: "rgba(250,204,21,0.12)", text: "rgb(252,211,77)" };
+  }
+  return { label: "⊘ Off", bg: "rgba(148,163,184,0.10)", text: "rgb(148,163,184)" };
+}
+
 function SettingsTab() {
+  // Per-toggle state — hydrated lazily so SSR stays clean.
+  const [missedCallText, setMissedCallText] = useState(true);
+  const [stormCampaign, setStormCampaign] = useState(true);
+  const [aiAutoReply, setAiAutoReply] = useState(false);
+  const [emergencyLine, setEmergencyLine] = useState(true);
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
+  const [partnerProgram, setPartnerProgram] = useState(true);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMissedCallText(loadToggle(TOGGLE_KEYS.missedCallText, true));
+    setStormCampaign(loadToggle(TOGGLE_KEYS.stormCampaign, true));
+    setAiAutoReply(loadToggle(TOGGLE_KEYS.aiAutoReply, false));
+    setEmergencyLine(loadToggle(TOGGLE_KEYS.emergencyLine, true));
+    setWeeklyDigest(loadToggle(TOGGLE_KEYS.weeklyDigest, true));
+    setPartnerProgram(loadToggle(TOGGLE_KEYS.partnerProgram, true));
+  }, []);
+
+  const onToggle =
+    (key: string, setter: (v: boolean) => void) =>
+    (next: boolean) => {
+      setter(next);
+      persistToggle(key, next);
+    };
+
+  const handleResetDemo = () => {
+    if (typeof window === "undefined") return;
+    // Clear every demo override key — leads, customers, dismissals,
+    // toggle states. Keeps the unlock cookie so the user doesn't get
+    // bumped back to the password screen.
+    const keys = [
+      "bj_demo_status_overrides",
+      "bj_demo_dismissed",
+      SAVED_KEY,
+      ...Object.values(TOGGLE_KEYS),
+    ];
+    for (const k of keys) {
+      try {
+        window.sessionStorage.removeItem(k);
+      } catch {
+        // ignore
+      }
+    }
+    setResetMsg("Demo state cleared. Reload to see fresh data.");
+    setTimeout(() => setResetMsg(null), 3500);
+    // Snap toggles back to defaults
+    setMissedCallText(true);
+    setStormCampaign(true);
+    setAiAutoReply(false);
+    setEmergencyLine(true);
+    setWeeklyDigest(true);
+    setPartnerProgram(true);
+  };
+
+  const handleSignOut = () => {
+    if (typeof window === "undefined") return;
+    window.sessionStorage.removeItem("bj_demo");
+    window.location.reload();
+  };
+
+  const integrationsConnected = INTEGRATIONS.filter((i) => i.status === "connected").length;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          ⚙️ Settings
-        </h2>
-        <p className="text-sm text-slate-400 mt-1">Mock backend — read-only demo. Real backend connects to Stripe / Twilio / Google Ads.</p>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        <SettingsCard label="Business" desc="Meyer Electric LLC · 35 Robbins Rd, Sequim WA · License MEYERE*862P1" />
-        <SettingsCard label="Phone" desc="(360) 477-2202 · Twilio + auto-text on missed call · ATS-approved" />
-        <SettingsCard label="Hours" desc="Mon-Fri 8 AM - 5 PM · After-hours auto-responder · Emergency dispatch line on" />
-        <SettingsCard label="Sender domain" desc="meyerelectric.com · SendGrid authenticated · DKIM + SPF + DMARC pass" />
-        <SettingsCard label="Service area" desc="10 cities across Clallam, Jefferson, Kitsap, Mason counties" />
-        <SettingsCard label="Integrations" desc="Stripe (deposits) · Twilio (SMS) · Google Ads · Meta · GA4 · Tesla Energy API" />
-      </div>
-      <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/[0.03] p-5 flex items-center justify-between">
-        <div>
-          <p className="text-sm font-semibold">This is a demo</p>
-          <p className="text-xs text-slate-400 mt-0.5">All data is simulated. The real backend has live integrations + auto-flows.</p>
+      {/* Hero summary card — matches the Funnels + AI Skills hero pattern */}
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2
+              className="text-2xl font-bold tracking-tight mb-1"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              ⚙️ Settings
+            </h2>
+            <p className="text-sm text-slate-400 max-w-md">
+              Toggle behaviors live. Connect or pause integrations. Demo
+              changes save in your session and clear when you sign out.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-right">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Integrations
+              </div>
+              <div className="text-2xl font-black text-emerald-300 tabular-nums">
+                {integrationsConnected}/{INTEGRATIONS.length}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                Status
+              </div>
+              <div className="text-2xl font-black text-amber-300">Live</div>
+            </div>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            window.sessionStorage.removeItem("bj_demo");
-            window.location.reload();
-          }}
-          className="h-9 px-4 rounded-md text-xs font-semibold border border-rose-500/30 text-rose-400 hover:border-rose-500/60"
-        >
-          Sign out
-        </button>
+      </div>
+
+      {/* Business / Hours / Service area — read-only info card */}
+      <SettingsSection title="Business" emoji="🏢">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <InfoRow
+            label="Legal name + license"
+            value="Meyer Electric LLC · License MEYERE*862P1"
+          />
+          <InfoRow
+            label="Address"
+            value="35 Robbins Rd, Sequim WA 98382"
+          />
+          <InfoRow label="Phone" value="(360) 477-2202" />
+          <InfoRow label="Sender domain" value="meyerelectric.com" />
+          <InfoRow
+            label="Hours"
+            value="Mon-Fri 8 AM – 5 PM · Emergency line 24/7"
+          />
+          <InfoRow
+            label="Service area"
+            value="Clallam · Jefferson · Kitsap · Mason · Grays Harbor"
+          />
+        </div>
+      </SettingsSection>
+
+      {/* Channels — toggle switches for behavior controls */}
+      <SettingsSection title="Channels" emoji="📡">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <ToggleCard
+            label="Missed-call auto-text"
+            desc="Caller hangs up → sub-60s SMS with 'we'll call back + book here' link."
+            stat="47 saved this month"
+            on={missedCallText}
+            onChange={onToggle(TOGGLE_KEYS.missedCallText, setMissedCallText)}
+          />
+          <ToggleCard
+            label="Storm-trigger campaign"
+            desc="When NWS flags an Olympic Peninsula outage, fires the Generator funnel within 2 hrs."
+            stat="68 closes attributed YTD"
+            on={stormCampaign}
+            onChange={onToggle(TOGGLE_KEYS.stormCampaign, setStormCampaign)}
+          />
+          <ToggleCard
+            label="AI auto-reply (inbound)"
+            desc="Drafts replies to inbound emails + texts. OFF by default — drafts queue for review."
+            stat="Drafts queue · review-only"
+            on={aiAutoReply}
+            onChange={onToggle(TOGGLE_KEYS.aiAutoReply, setAiAutoReply)}
+            warning={!aiAutoReply}
+            warningText="Keep OFF for first 30 days · review prompts before enabling"
+          />
+          <ToggleCard
+            label="Emergency dispatch line"
+            desc="After-hours line forwards to on-call electrician. Auto-records + auto-bills."
+            stat="On-call: Kyle this week"
+            on={emergencyLine}
+            onChange={onToggle(TOGGLE_KEYS.emergencyLine, setEmergencyLine)}
+          />
+          <ToggleCard
+            label="Weekly digest email"
+            desc="Monday 7am inbox digest: pipeline value, this-week leads, action items."
+            stat="Sent every Monday 7am PT"
+            on={weeklyDigest}
+            onChange={onToggle(TOGGLE_KEYS.weeklyDigest, setWeeklyDigest)}
+          />
+          <ToggleCard
+            label="Partner / referral program"
+            desc="Affiliate dashboard active for solar / GC / HVAC referrers. $250/closed-job commission."
+            stat="22 active partners"
+            on={partnerProgram}
+            onChange={onToggle(TOGGLE_KEYS.partnerProgram, setPartnerProgram)}
+          />
+        </div>
+      </SettingsSection>
+
+      {/* Integrations — status pills */}
+      <SettingsSection title="Integrations" emoji="🔌">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {INTEGRATIONS.map((i) => {
+            const pill = statusPillFor(i.status);
+            return (
+              <div
+                key={i.name}
+                className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 flex items-start gap-3"
+              >
+                <span className="text-xl shrink-0 leading-none">{i.icon}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2 mb-0.5">
+                    <span className="text-sm font-bold text-white">{i.name}</span>
+                    <span
+                      className="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded whitespace-nowrap"
+                      style={{ background: pill.bg, color: pill.text }}
+                    >
+                      {pill.label}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 leading-snug">
+                    {i.desc}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </SettingsSection>
+
+      {/* Demo controls — reset state + sign out */}
+      <SettingsSection title="Demo controls" emoji="🧪">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div className="rounded-xl border border-amber-400/30 bg-amber-400/[0.04] p-4">
+            <div className="text-sm font-bold text-amber-200 mb-1">
+              Reset demo state
+            </div>
+            <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+              Clears every lead status override, dismissal, saved customer,
+              and toggle. Keeps you signed in.
+            </p>
+            <button
+              type="button"
+              onClick={handleResetDemo}
+              className="h-9 px-4 rounded-md text-xs font-semibold border border-amber-400/40 text-amber-200 hover:border-amber-400/80 hover:bg-amber-400/10 transition"
+            >
+              Reset
+            </button>
+            {resetMsg && (
+              <p className="text-[11px] text-emerald-300 mt-2">{resetMsg}</p>
+            )}
+          </div>
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/[0.04] p-4">
+            <div className="text-sm font-bold text-rose-200 mb-1">Sign out</div>
+            <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+              Returns to the password screen. Demo state is preserved until
+              you reload.
+            </p>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="h-9 px-4 rounded-md text-xs font-semibold border border-rose-500/40 text-rose-300 hover:border-rose-500/80 hover:bg-rose-500/10 transition"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      </SettingsSection>
+
+      <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/[0.03] p-4 flex items-center gap-3">
+        <span className="text-2xl">🧪</span>
+        <div>
+          <p className="text-xs font-semibold text-yellow-200">
+            This is a mock backend
+          </p>
+          <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+            All data is simulated. The real backend has live Stripe charges,
+            Twilio SMS deliveries, ad-spend pacing, and integration webhooks
+            firing in real time.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function SettingsCard({ label, desc }: { label: string; desc: string }) {
+function SettingsSection({
+  title,
+  emoji,
+  children,
+}: {
+  title: string;
+  emoji: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
-      <div className="text-[11px] uppercase tracking-wider text-yellow-400 font-semibold">{label}</div>
-      <div className="mt-1 text-sm text-slate-300">{desc}</div>
+    <section>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-base">{emoji}</span>
+        <h3
+          className="text-base font-bold text-white"
+          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+        >
+          {title}
+        </h3>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+      <div className="text-[10px] uppercase tracking-widest text-yellow-400 font-bold">
+        {label}
+      </div>
+      <div className="mt-1 text-sm text-slate-200">{value}</div>
+    </div>
+  );
+}
+
+function ToggleCard({
+  label,
+  desc,
+  stat,
+  on,
+  onChange,
+  warning,
+  warningText,
+}: {
+  label: string;
+  desc: string;
+  stat?: string;
+  on: boolean;
+  onChange: (next: boolean) => void;
+  warning?: boolean;
+  warningText?: string;
+}) {
+  return (
+    <div
+      className={`rounded-xl border p-4 transition ${
+        on
+          ? "border-emerald-500/30 bg-emerald-500/[0.03]"
+          : "border-white/[0.06] bg-white/[0.02]"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-bold text-white">{label}</div>
+          <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
+            {desc}
+          </p>
+        </div>
+        {/* iOS-style toggle */}
+        <button
+          type="button"
+          onClick={() => onChange(!on)}
+          role="switch"
+          aria-checked={on}
+          aria-label={`Toggle ${label}`}
+          className={`relative w-11 h-6 rounded-full transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 ${
+            on ? "bg-emerald-500" : "bg-slate-700"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+              on ? "translate-x-[22px]" : "translate-x-0.5"
+            }`}
+          />
+        </button>
+      </div>
+      {stat && (
+        <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mt-2">
+          {stat}
+        </div>
+      )}
+      {warning && warningText && (
+        <div className="text-[10px] text-amber-300 mt-2 leading-snug">
+          ⚠ {warningText}
+        </div>
+      )}
     </div>
   );
 }
