@@ -142,17 +142,24 @@ export default function AgencyPage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-16 text-center max-w-4xl mx-auto">
+        {/* Eyebrow rewritten 2026-05-06 for the ad-system-2026-05 Google
+            Ads campaign — speaks to owners already running paid ads
+            (huge audience vs the agency-firers we were targeting before).
+            The maker / product-shop framing still fires lower on the
+            page; this hero is the front door for the wider ad-runner
+            buyer profile. */}
         <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-          Built for makers, brands, and product shops
+          Already running ads? Make them work twice as hard.
         </div>
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-          You make a real thing.{" "}
-          <span className="text-violet-400">We build the system that sells it.</span>
+          You&apos;re already paying for ads.{" "}
+          <span className="text-violet-400">We build the system that doubles what they pull in.</span>
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4 leading-relaxed">
-          One system that runs your ads, emails, texts, voicemails, and SEO.
-          Every week it figures out what works for your buyers and does
-          more of it. You don&apos;t touch anything.
+          One custom system that runs your ads, website, emails, texts,
+          voicemails, and SEO together — every week it figures out what
+          works for your customers and does more of it. You don&apos;t
+          tweak bids, swap creative, or babysit a dashboard.
         </p>
         <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-4 leading-relaxed">
           We build a path for the buyer who wants the thing, the pro who
