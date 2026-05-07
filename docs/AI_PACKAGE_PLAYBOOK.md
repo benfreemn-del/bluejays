@@ -9,6 +9,34 @@ walk through these phases in order. Most of the code is already
 abstracted per `client_slug`, so adding a new client is 60–80% config
 and 20–40% bespoke content.
 
+## References — supporting discipline locked in CLAUDE.md / aios
+
+This playbook is the build-side companion to a set of operator rules. Read
+these before any new AI Package engagement so the discipline stays
+load-bearing through delivery:
+
+- **CLAUDE.md Rule 67** — multi-anchor ICP validation (≥3 anchors across
+  radically different verticals before locking a customer-profile pattern)
+- **CLAUDE.md Rule 68** — per-page metadata override mandatory for client
+  showcases (canonical, OG, Twitter, JSON-LD)
+- **CLAUDE.md Rule 69** — active client showcases must be in `sitemap.ts`
+- **CLAUDE.md Rule 70** — animation discipline for trade-category
+  illustrations (pure-CSS keyframes, prefixed class names,
+  `prefers-reduced-motion` gated)
+- **CLAUDE.md Rule 71** — defensibility-score concept for product-business
+  prospects (place-of-origin / patent-IP / named-channel signals)
+- **CLAUDE.md Rule 72** — content fidelity when porting from a real source
+  (don't fabricate; soften or remove)
+- **CLAUDE.md Rule 35** — TCPA-compliant SMS gate (smsConsent + source =
+  inbound; Phase 4 below extends this to per-client funnels)
+- **`aios/CLAUDE.md` working principles 8–10** — the AIOS-side mirror of
+  the same discipline (multi-anchor ICP, content fidelity, active-customer
+  filter on cold sales surfaces)
+- **`aios/references/manufacturer_icp_synthesis.md`** — the canonical
+  3-anchor (ITC + Zenith + Nevarland) ICP synthesis report
+- **`aios/decisions/2026-05-06_manufacturer_icp_3anchor_lock.md`** — the
+  lock-in decision record
+
 ---
 
 ## What the AI Package includes (per the audit page)
@@ -211,6 +239,42 @@ back, get them to articulate it).
 See `decisions/2026-05-06_manufacturer_icp_3anchor_lock.md` (in aios)
 for the full reasoning + the 3 anchor data points.
 
+### Discovery warning signs (advisory — not deal-breakers)
+
+These don't block a sale. They tell you to go in eyes-open and either
+(a) raise scope/timeline expectations, (b) push back on weak signals
+before contract, or (c) flag inside Notion/Tasks so the build team
+treats the deal as elevated-risk:
+
+- **Defensibility-score signal weak** — does the prospect's copy /
+  product page name a specific manufacturing location, patent / trademark
+  / fitment data, OR a named channel partner (dealer / distributor /
+  influencer)? Aim for at least 2 of those 3 signals. Zero signals on
+  all 3 = the prospect is a commodity reseller — cold paid will burn
+  through ad-spend without conversions. Generic "Quality wholesale
+  jewelry — call us today" copy fails this gate. (See CLAUDE.md Rule 71
+  for the field + scoring concept; auto-compute logic still pending in
+  `data-extractor.ts`.)
+- **Audience taxonomy doesn't cleanly split into 3 classes** — if the
+  prospect can't articulate end-buyer + influencer/decision-maker +
+  channel-partner clearly, the 6-funnel build will overfit to 1-2
+  audiences and the Hyperloop loop won't have enough variants to learn
+  from. Either narrow scope (single-audience build, lower price) or push
+  back to discovery and force the articulation.
+- **No existing customer base / 0-1 closed deals** — the lead-magnet
+  pair (Phase 5) is most powerful when seeded with REAL past-customer
+  language (testimonial pulls, frequently-asked-questions, etc.). A
+  prospect with 0 closed deals can still buy the System, but the first
+  60 days will lean heavier on hypothesis than data.
+- **Copy is voice-less or ghost-written** — if the brand voice doc is
+  empty AND the existing site reads as generic SEO filler, expect to
+  spend an extra 30 min per audience on Phase 3 funnel content because
+  there's no authentic voice to mirror.
+
+Treat these as inputs to the close conversation, not blockers. Most
+deals can absorb 1-2 weak signals; a deal with all 4 weak signals is
+worth pausing to re-scope.
+
 ### Steps
 ```sql
 -- Mark the prospect as a fullsystem buyer
@@ -387,18 +451,124 @@ Client records 6 clips (3 audiences × 2 follow-ups each). Upload to
 Twilio Media or Vercel Blob. Set `mediaUrl` on the relevant
 FunnelChannelTouch entries in their `{slug}.ts` funnel def.
 
+### TCPA-compliant SMS gate (NON-NEGOTIABLE — extends CLAUDE.md Rule 35)
+
+Per-client SMS funnels MUST honor the same belt-and-suspenders consent
+gate the BlueJays funnel does. TCR rejected the BlueJays A2P 10DLC
+campaign twice (April + May 2026) for opt-in-language defects;
+shipping a per-client SMS pipeline that doesn't replicate the same
+defenses risks a third rejection AND exposes Client to TCPA liability.
+
+**The contract** (per-client adaptation of Rule 35):
+
+1. Every per-client `client_leads` row needs an explicit `sms_consent`
+   boolean + `sms_consent_at` timestamp + `sms_consent_source` text.
+   Add columns to the migration when standing up Phase 2 for the
+   client.
+2. The per-client funnel runner (`src/lib/client-funnels/runner.ts` or
+   per-slug equivalent) MUST gate every SMS-channel send on:
+   ```ts
+   const smsAllowedForLead =
+     lead.source === "inbound" &&
+     lead.smsConsent === true;
+   ```
+3. The lead-capture form on `/clients/{slug}` MUST NOT make the SMS
+   consent checkbox `required` — TCPA 47 CFR 64.1200(a)(7)(i) forbids
+   making consent a condition of service. Phone is OPTIONAL on submit
+   unless the SMS-consent box is ticked.
+4. Checkbox copy MUST start with an "Optional" badge AND state
+   explicitly: "Consent is not required to submit this form or receive
+   a response." Reference wording is in `bluejays/src/app/get-started/page.tsx`.
+5. Every outbound SMS MUST end with "Reply STOP to opt out". HELP
+   replies must auto-respond with the business name + a privacy/terms
+   link + a STOP reminder.
+6. If the client doesn't have their own A2P 10DLC campaign approved,
+   route SMS through the BlueJays campaign during the first 30 days
+   (must use BlueJays-issued numbers) and migrate to the client's own
+   approved campaign at handoff. Track campaign status in
+   `client_subscriptions.metadata.a2p_status`.
+
+**What does NOT count as consent:** scraped phone numbers, "the number
+is publicly listed," past purchase history, employer-provided contact
+info, anyone who didn't tick an explicit affirmative box on a form
+written to TCPA standards. If in doubt, route to email + voicemail
+only — never SMS.
+
+**Operator action at every kickoff:** confirm in writing with Client
+that THEY are responsible for verifying their lead capture sources
+honor TCPA, and that BlueJays' build will REFUSE to fire SMS to leads
+that don't carry the consent flags. Add a row to `client_tasks`:
+"Confirm SMS consent capture path — only fire to opted-in inbound
+leads."
+
 ---
 
 ## Phase 5 — Lead magnets (~1 day per client)
 
-Three standard archetypes:
+Standard archetypes:
 - **Coach guide / playbook** (B2B PDF) — see `zenith-sports/training-guide`
 - **Camp finder / locator** (consumer geo lookup) — see `zenith-sports/camps`
 - **Product story / origin** (brand) — typically baked into showcase
+- **Configurator + gated reference doc PAIR** (manufacturer-ICP — see below)
 
 For PDF-style lead magnets, build a printable HTML page (not a real PDF)
 at `/clients/{slug}/{magnet-name}`. Wire the EmailCapture component's
 `successCta` prop to its URL for instant access on form submit.
+
+### Configurator + reference doc pair (canonical manufacturer-ICP play)
+
+Locked 2026-05-06 across the 3 manufacturer anchors (ITC + Zenith +
+Nevarland). Every product-business client gets TWO complementary lead
+magnets that map cleanly to two of the three audience classes from
+Phase 0.5:
+
+**1. Interactive configurator → end-buyer audience** — a "Build Your X"
+tool that lets the visitor co-construct their own version of the
+product. The reveal at the end is a personalized recommendation +
+lead-capture + auto-route into the matching segment funnel.
+
+**2. Gated professional reference doc → influencer / channel-partner
+audience** — a substantive PDF or printable HTML page (coaching plan,
+wholesale catalog with margin math, methodology guide, dealer pack)
+that an industry pro would actually want on their desk. Email-gated.
+
+Why pairs win for manufacturers: a single archetype only converts ONE
+audience. A configurator alone misses the coach / dealer / vet who
+recommends the product. A whitepaper alone misses the end-buyer who
+just wants to play. The pair captures both intent levels in one
+launch — and both feed segment-routed funnels under Phase 3.
+
+**Anchor reference examples:**
+
+| Anchor | Configurator | Reference doc |
+|---|---|---|
+| ITC Quick Attach | "Build Your Dream Tractor" — toggle accessories on a real tractor SVG, live price + parts-fit summary, auto-routes by tractor brand | Wholesale dealer catalog with 35–40% margin math, MAP-pricing protection, Cascade Tractor Supply peer-proof letter |
+| Zenith Sports / TEKKY | "Build Your Player" — skill tier × age bracket character builder w/ rendered PNG cards, height + years-to-mastery chips | TEKKY Coaching Plan — 26 drills, ECNL/MLS-Next credibility, Touch-per-minute methodology, 60-second BAE drill video |
+| Nevarland Outpost (kids' apparel) | TBD on enrichment — likely "Find Your Style" matchmaker (cottagecore / vintage Americana / neutrals × age × occasion → curated bundle) | TBD — likely a buyer's guide for boutique resellers (handmade-in-USA story, organic-cotton sourcing, gift-shop wholesale terms, small-MOQ pricing) |
+
+**Build pattern for a new client:**
+
+1. Discovery call — surface the end-buyer's biggest co-build moment
+   (what do they actually want to customize?) AND the influencer's
+   biggest "send me the deck" moment (what reference would make them
+   recommend the brand?). Two distinct asks, two distinct outputs.
+2. Configurator: build as a Next.js client component at
+   `/clients/{slug}/build-your-{thing}` with PNG / SVG layered visuals,
+   live state, and a final form that POSTs to `/api/clients/inquire`
+   with audience tagged as `end-buyer`.
+3. Reference doc: build as a printable HTML page at
+   `/clients/{slug}/{ref-doc-slug}` gated behind an EmailCapture
+   component that POSTs with audience tagged as the influencer or
+   channel-partner class (whichever the doc is written for).
+4. Wire BOTH magnets into Phase 3 funnels — the configurator submission
+   triggers the end-buyer cadence, the reference-doc capture triggers
+   the influencer cadence.
+5. Drop on the showcase hero AND on the audience-specific
+   landing-page nav; they should be impossible to miss.
+
+This pair IS the productizable manufacturer-ICP deliverable surfaced
+in `aios/PRO_SYNTHESIS.md` and named explicitly in § 2(p) of the
+Service Agreement. Don't skip the pair on a manufacturer client.
 
 ---
 

@@ -7,6 +7,29 @@ hand off the system.
 The build itself is governed by `AI_PACKAGE_PLAYBOOK.md`. THIS file is
 the post-build "here's what you bought + what you need to do" doc.
 
+## What you paid (3 ways to pay)
+
+You picked one of three plans on the contract. Here's a quick refresh
+in plain English:
+
+- **Pay it all up front** — $9,700 one time. You save $300.
+- **Three milestones** — $3,500 to start. $3,500 at day 30. $3,000 at
+  day 60. $10,000 total.
+- **Four quarters** — $2,500 today. Then $2,500 every 90 days. Stops
+  on its own after the fourth payment. $10,000 total.
+
+The Total Fee covers the build. After it's built, you can keep us on
+for monthly support ($500–$1,000/mo). That part is optional. You can
+cancel any time on 30 days' notice. Your system keeps running either
+way — you own it.
+
+## How many clients we take
+
+Ben builds 30 sites a month. Of those, 10 spots are for the AI
+Marketing System (this package). Once those 10 are full for the month,
+new builds roll into next month's batch. No rushed work. If you got a
+spot, you got a spot.
+
 ---
 
 ## Phase A — Frictionless Onboarding (Day 0–14)
