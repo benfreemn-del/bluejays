@@ -51,10 +51,10 @@ export default async function DashboardScriptPage({
 }) {
   const params = await searchParams;
   const idsParam = (params.ids || "").trim();
-  // Caller mode — switches which Hormozi script renders. Default is
-  // Ben's cold-call flow; ?mode=madie loads Madie's appointment-setter
-  // flow with the discovery → website-or-backend pivot built in.
-  const mode: "ben" | "madie" = params.mode === "madie" ? "madie" : "ben";
+  // Caller mode — Madie is the primary sales-portal user (uses Ben's
+  // login). Defaults to her flow. ?mode=ben is the escape hatch if
+  // Ben ever wants to run his original cold-call Hormozi script.
+  const mode: "ben" | "madie" = params.mode === "ben" ? "ben" : "madie";
 
   // No queue param → render the Sales Portal lead picker so Ben can browse
   // prospects, build a queue, and start the call workflow. Replaces the
@@ -76,11 +76,11 @@ export default async function DashboardScriptPage({
 
   // Build queue navigation URLs that the workspace uses for Prev/Next
   // and for "Skip" / "Mark outcome → advance"
-  // Preserve the mode flag through Prev/Next navigation so the caller
-  // doesn't drop out of Madie's flow when advancing the queue.
+  // Madie is the default — only carry the mode flag through nav
+  // when Ben has explicitly switched to his original script.
   const baseQS =
     `ids=${encodeURIComponent(ids.join(","))}` +
-    (mode === "madie" ? "&mode=madie" : "");
+    (mode === "ben" ? "&mode=ben" : "");
   const prevHref = index > 0 ? `/dashboard/script?${baseQS}&i=${index - 1}` : null;
   const nextHref = index < ids.length - 1 ? `/dashboard/script?${baseQS}&i=${index + 1}` : null;
 
