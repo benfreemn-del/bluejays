@@ -2578,7 +2578,7 @@ function AffiliatesTab() {
 */
 
 const SKILLS_META: Array<{
-  id: "powerwall" | "generator" | "outage";
+  id: "powerwall" | "generator" | "outage" | "operator";
   emoji: string;
   label: string;
   desc: string;
@@ -2586,7 +2586,19 @@ const SKILLS_META: Array<{
   closes: number;
   closeRate: number;
   color: string;
+  isNew?: boolean;
 }> = [
+  {
+    id: "operator",
+    emoji: "🤖",
+    label: "AI Operator",
+    desc: "Type or voice-command: 'draft a follow-up to the Davis lead about the storm.' Plan-mode preview, send-or-save in your voice. The whole AI Skills shelf in one prompt.",
+    used: 23,
+    closes: 8,
+    closeRate: 34.8,
+    color: "#a78bfa",
+    isNew: true,
+  },
   {
     id: "powerwall",
     emoji: "⚡",
@@ -2621,7 +2633,7 @@ const SKILLS_META: Array<{
 
 function AISkillsTab() {
   const [active, setActive] = useState<
-    "powerwall" | "generator" | "outage" | null
+    "powerwall" | "generator" | "outage" | "operator" | null
   >(null);
 
   const totalUsed = SKILLS_META.reduce((s, x) => s + x.used, 0);
@@ -2665,7 +2677,7 @@ function AISkillsTab() {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {SKILLS_META.map((s) => {
           const isActive = active === s.id;
           return (
@@ -2690,17 +2702,33 @@ function AISkillsTab() {
                   }}
                 />
               )}
+              {s.isNew && (
+                <span
+                  className="absolute top-2 right-2 text-[8px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded"
+                  style={{
+                    background: s.color,
+                    color: "#0a0a0a",
+                  }}
+                >
+                  NEW
+                </span>
+              )}
               <div className="flex items-center justify-between mb-2">
                 <span className="text-2xl">{s.emoji}</span>
                 <span
                   className="text-[9px] uppercase tracking-widest font-bold"
-                  style={{ color: isActive ? s.color : "rgba(148,163,184,0.6)" }}
+                  style={{
+                    color: isActive
+                      ? s.color
+                      : "rgba(148,163,184,0.6)",
+                    marginRight: s.isNew ? 32 : 0,
+                  }}
                 >
                   {isActive ? "Open ▾" : "Open ▸"}
                 </span>
               </div>
               <div className="text-sm font-bold text-white">{s.label}</div>
-              <div className="mt-1 text-[11px] text-slate-500 leading-relaxed line-clamp-2">
+              <div className="mt-1 text-[11px] text-slate-500 leading-relaxed line-clamp-3">
                 {s.desc}
               </div>
               {/* Usage stats row */}
@@ -2738,9 +2766,286 @@ function AISkillsTab() {
         })}
       </div>
 
+      {active === "operator" && <AIOperatorPanel />}
       {active === "powerwall" && <PowerwallROI />}
       {active === "generator" && <GeneratorSizer />}
       {active === "outage" && <OutageSimulator />}
+    </div>
+  );
+}
+
+/* ───── AI Operator (mock) — Lead Reply Drafter demo
+   Pure mock; no API calls. Demonstrates the locked AI Operator spec
+   (Service Agreement § 2(q) + AI_PACKAGE_PLAYBOOK Phase 9) to
+   prospects on sales calls. Voice button shown as "coming soon"
+   per Q3D (text-input only for V1). */
+
+function AIOperatorPanel() {
+  const [step, setStep] = useState<"prompt" | "planning" | "plan" | "drafting" | "draft">(
+    "prompt",
+  );
+  const [prompt, setPrompt] = useState(
+    "Draft a follow-up to the Davis lead — mention the storm last week, link to scheduling, sign off as Kyle",
+  );
+
+  const goPlan = () => {
+    setStep("planning");
+    setTimeout(() => setStep("plan"), 1200);
+  };
+  const goDraft = () => {
+    setStep("drafting");
+    setTimeout(() => setStep("draft"), 1500);
+  };
+  const reset = () => setStep("prompt");
+
+  return (
+    <div className="rounded-2xl border-2 border-violet-400/40 bg-gradient-to-b from-violet-500/[0.06] to-transparent p-5 sm:p-6 relative overflow-hidden">
+      {/* Pulsing top edge */}
+      <span
+        className="absolute top-0 left-0 right-0 h-0.5 animate-pulse"
+        style={{
+          background: "linear-gradient(90deg, transparent, #a78bfa, transparent)",
+        }}
+      />
+
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-2xl">🤖</span>
+            <h3 className="text-lg font-bold text-violet-200">
+              AI Operator
+            </h3>
+            <span className="text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded bg-violet-400 text-violet-950">
+              NEW
+            </span>
+          </div>
+          <p className="text-xs text-slate-400">
+            Type a request. Operator drafts in your voice using your customer
+            data. Approve before send.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-[10px]">
+          <span className="px-2 py-1 rounded bg-emerald-500/15 text-emerald-300 font-bold uppercase tracking-wider">
+            ✓ Plan-mode ON
+          </span>
+          <button
+            type="button"
+            disabled
+            className="px-2 py-1 rounded bg-slate-800 text-slate-500 font-semibold uppercase tracking-wider opacity-60 cursor-not-allowed"
+            title="Voice input ships in V2"
+          >
+            🎙 Voice (V2)
+          </button>
+        </div>
+      </div>
+
+      {/* Step 1: prompt */}
+      {step === "prompt" && (
+        <>
+          <label className="block text-[10px] uppercase tracking-widest text-violet-300/80 font-bold mb-1.5">
+            What should the Operator do?
+          </label>
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg bg-slate-950 border border-violet-500/30 p-3 text-sm text-white placeholder-slate-500 focus:border-violet-400 focus:outline-none resize-none"
+            placeholder="e.g. Draft a follow-up to the Davis lead about the storm…"
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={goPlan}
+              className="h-10 px-5 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:brightness-110 text-white text-sm font-bold transition"
+            >
+              Plan first →
+            </button>
+            <span className="text-[11px] text-slate-500 self-center">
+              · Plan-mode preview before any send
+            </span>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-1.5 text-center">
+            <SkillRecipe label="Lead reply" desc="(this demo)" />
+            <SkillRecipe label="Quote drafter" />
+            <SkillRecipe label="Weekly digest" />
+          </div>
+        </>
+      )}
+
+      {/* Step 2: planning loader */}
+      {step === "planning" && (
+        <div className="py-8 text-center">
+          <div className="text-violet-300 text-sm font-bold animate-pulse">
+            🧠 Reading Davis lead history + your last 6 outbound replies…
+          </div>
+          <div className="text-[11px] text-slate-500 mt-2">
+            Plan-mode · ~5 sec
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: plan preview */}
+      {step === "plan" && (
+        <>
+          <div className="rounded-lg border border-violet-500/30 bg-violet-500/[0.04] p-4 mb-3">
+            <div className="text-[10px] uppercase tracking-widest text-violet-300 font-bold mb-2">
+              Operator&apos;s plan
+            </div>
+            <ul className="space-y-1.5 text-sm text-slate-200">
+              <li className="flex gap-2">
+                <span className="text-violet-300">1.</span>
+                <span>
+                  Open with reference to the Nov 14 storm (matched in your
+                  outbound voice — friendly, not salesy)
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-violet-300">2.</span>
+                <span>
+                  Lead with Powerwall + Generac fit signal (Davis was 75
+                  score, score-90 after the outage)
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-violet-300">3.</span>
+                <span>
+                  Embed scheduling link (Cal.com /15min/kyle) — your default
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-violet-300">4.</span>
+                <span>
+                  Sign off as Kyle, electrician tag, mobile signature
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-violet-300">5.</span>
+                <span>
+                  Screenshot the email preview in Gmail-render before send
+                  (per Operator Q7=A)
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={goDraft}
+              className="h-10 px-5 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:brightness-110 text-white text-sm font-bold transition"
+            >
+              Draft it →
+            </button>
+            <button
+              type="button"
+              onClick={reset}
+              className="h-10 px-4 rounded-lg border border-slate-600 text-slate-300 hover:border-violet-400 text-sm font-semibold transition"
+            >
+              ← Edit prompt
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Step 4: drafting loader */}
+      {step === "drafting" && (
+        <div className="py-8 text-center">
+          <div className="text-violet-300 text-sm font-bold animate-pulse">
+            ✍ Writing draft + screenshot self-verifying…
+          </div>
+          <div className="text-[11px] text-slate-500 mt-2">~7 sec</div>
+        </div>
+      )}
+
+      {/* Step 5: draft preview */}
+      {step === "draft" && (
+        <>
+          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/[0.03] p-4 mb-3">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[10px] uppercase tracking-widest text-emerald-300 font-bold">
+                Draft · ready to send
+              </div>
+              <span className="text-[10px] text-emerald-400 font-semibold">
+                ✓ Screenshot verified · Gmail-render OK
+              </span>
+            </div>
+            <div className="text-xs space-y-2 text-slate-200 font-sans">
+              <div className="text-slate-500">
+                <strong className="text-slate-400">To:</strong> tom.davis@example.com
+                <br />
+                <strong className="text-slate-400">Subject:</strong> Hope you
+                rode out the storm OK, Tom
+              </div>
+              <div className="border-t border-white/10 pt-2 leading-relaxed">
+                <p className="mb-2">Hey Tom,</p>
+                <p className="mb-2">
+                  Saw the Nov 14 storm hit Sequim hard — figured I&apos;d circle
+                  back. When we walked your panel last month you were on the
+                  fence about a Powerwall + Generac combo, and three days
+                  without grid would have answered a lot of those questions
+                  for you.
+                </p>
+                <p className="mb-2">
+                  No rush, but if you want to chat through what the install
+                  would look like for your place, here&apos;s 15 min on my
+                  calendar:{" "}
+                  <span className="text-violet-300 underline">
+                    cal.com/kyle/15min
+                  </span>
+                </p>
+                <p className="mb-0">
+                  Glad you and yours are good either way.
+                </p>
+                <p className="mt-3 mb-0">— Kyle</p>
+                <p className="text-[10px] text-slate-500">
+                  Meyer Electric · (360) 477-2202 · Sequim WA
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => alert("Mock — would send via SendGrid in prod.")}
+              className="h-10 px-5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-sm font-bold transition"
+            >
+              ✉ Send now
+            </button>
+            <button
+              type="button"
+              onClick={() => alert("Mock — would save to drafts folder.")}
+              className="h-10 px-5 rounded-lg border border-slate-600 text-slate-200 hover:border-violet-400 text-sm font-semibold transition"
+            >
+              Save as draft
+            </button>
+            <button
+              type="button"
+              onClick={reset}
+              className="h-10 px-5 rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-semibold transition"
+            >
+              ↻ New request
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Footer hint — what else the Operator can do */}
+      <div className="mt-5 pt-4 border-t border-white/[0.06] text-[11px] text-slate-500">
+        <span className="text-slate-400 font-semibold">5 skills standard:</span>{" "}
+        Lead Reply · Quote Drafter · Weekly Digest · Customer Save · 1 of your
+        choosing. Plus natural-language scheduled workflows ("every Monday 7am
+        digest"). All bundled in your monthly support.
+      </div>
+    </div>
+  );
+}
+
+function SkillRecipe({ label, desc }: { label: string; desc?: string }) {
+  return (
+    <div className="rounded-md bg-violet-500/[0.04] border border-violet-500/15 px-2 py-1.5">
+      <div className="text-[10px] font-bold text-violet-200">{label}</div>
+      {desc && (
+        <div className="text-[9px] text-violet-400/70">{desc}</div>
+      )}
     </div>
   );
 }

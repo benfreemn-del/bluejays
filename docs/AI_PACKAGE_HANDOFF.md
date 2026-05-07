@@ -30,6 +30,40 @@ Marketing System (this package). Once those 10 are full for the month,
 new builds roll into next month's batch. No rushed work. If you got a
 spot, you got a spot.
 
+## Your AI Operator
+
+Inside the Owner Portal you get an AI Operator. Think of it as your
+own version of the AI tools you've seen in headlines — but trained on
+YOUR business, with YOUR voice, your customer list, your past quotes,
+your calendar.
+
+Five skills come standard:
+1. **Lead Reply Drafter** — type or say "follow up with the Davis lead
+   about the storm last week" → it drafts the reply in your voice. You
+   approve, then it sends.
+2. **Quote Drafter** — gives you a clean, formatted quote in seconds,
+   built from your real winning quotes and your standard pricing.
+3. **Weekly Digest Author** — writes your Monday digest. You can ask
+   follow-up questions ("which counties slowed down?") and get a real
+   answer.
+4. **Customer Save Agent** — when a customer goes quiet or a payment
+   fails, it drafts a personal save-the-deal message in your voice.
+5. **Pick one more** — one skill of YOUR choosing tuned to a workflow
+   you do every week (quarterly check-ins, storm campaigns, booking
+   reschedules, wholesale orders, anything).
+
+The Operator only HITS SEND when you say so. For anything that goes
+to a real human (email, text, call), you get a "Plan first" preview.
+Read it, edit it, then approve.
+
+You can also tell it to do things on a schedule. "Every Monday at 7am,
+send me a digest." "Every Friday at 3pm, list the leads we haven't
+called this week." Plain English, no setup screens.
+
+All of this is bundled into your monthly support — no per-message
+billing. If your usage gets unusually high, we'll send you a heads-up
+at 80% and an upgrade option at 100%.
+
 ---
 
 ## Phase A — Frictionless Onboarding (Day 0–14)

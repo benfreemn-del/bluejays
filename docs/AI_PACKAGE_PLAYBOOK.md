@@ -678,6 +678,140 @@ in parallel with the build sprint, not after.
 
 ---
 
+## Phase 9 — AI Operator (skills library + scheduled workflows)
+
+The flagship feature the $9,700 + monthly tier earns. Replaces the
+v1 static "AI Skills" calculator tools with a real per-client agentic
+Claude system. Ships as Service Agreement § 2(q). Locked spec
+2026-05-06 — see `bluejays/CLAUDE.md` "Locked decisions cascade
+forward as defaults" rule.
+
+### What every Client gets (5-skill library, locked)
+
+1. **Lead Reply Drafter** — owner types/voices "draft a follow-up to
+   the [name] lead, mention [context]"; agent reads CLAUDE.md +
+   client_leads + last 6 outbound messages, drafts in plan-mode,
+   shows preview, owner taps Send / Save Draft / Edit. Re-uses the
+   existing `src/lib/ai-responder.ts` infra.
+2. **Quote Drafter** — agent ingests a lead + the client's last 3
+   winning quotes + standard pricing → drafts a fully-formatted PDF
+   quote with cover letter. Plan-mode confirms before render.
+3. **Weekly Digest Author** — replaces the static Monday digest with
+   an interactive author. Owner can ask follow-up questions ("which
+   counties slowed down?", "draft a post about the Davis close").
+4. **Customer Save Agent** — fires when a churn signal hits (payment
+   failed, repeat-customer 90-day silence, NPS detractor). Drafts a
+   personal save-the-deal message in the owner's voice. Always
+   plan-mode + preview.
+5. **Client-selected skill** — one (1) skill of Client's choosing
+   tuned to their recurring workflow. Common picks: Quarterly Check-
+   in (commercial), Storm-Trigger Campaign (electrical), Booking
+   Reschedule (services), Wholesale Order Builder (manufacturer).
+
+### Per-client artifacts (Phase 9 specific)
+
+```
+src/lib/client-skills/{slug}.ts                # per-client skill registry
+src/lib/client-claudemd/{slug}.md              # Client's brand-voice CLAUDE.md
+supabase/migrations/{date}_client_skills.sql   # DB schema (see below)
+```
+
+### DB schema (locked)
+
+- `client_skills` — slug, skill_id, name, description, prompt_template,
+  enabled, version, updated_at
+- `client_skill_runs` — id, client_slug, skill_id, owner_id, input,
+  plan, output, plan_approved, sent, cost_cents, latency_ms, created_at
+- `client_scheduled_skills` — id, client_slug, skill_id, schedule_natural
+  ("every Monday 7am"), schedule_cron (resolved), last_run_at, next_run_at,
+  enabled, owner_id
+
+### Locked operational rules (Q1-Q12 answers 2026-05-06)
+
+- **Voice input** — text-only for V1. Voice (Web Speech API) lands V2 once
+  Anthropic's native `/voice` ships broadly. Mock the voice button on
+  client portals + Meyer demo so the roadmap is visible (Q3D).
+- **Pricing model** — bundled into Section 4.5 ongoing support fee. No
+  per-call billing visible to Client. Soft cap with notification at 80%
+  monthly Anthropic spend; tier-upgrade prompt at 100% (Q4A + Q11B).
+- **Skills library storage** — DB-backed (`client_skills` table) AND
+  per-Client GitHub export so Client sees their skills as readable .md
+  files matching Anthropic's pattern (Q5C). Path:
+  `<bluejays-client-skills>/{slug}/skills/*.md`.
+- **Plan-mode default** — ON for irreversible actions (send email, send
+  SMS, dispatch call, register domain, charge card, modify ad budget).
+  OFF for read-only (drafting, summarizing, querying). Owner-toggleable
+  in portal Settings (Q6B).
+- **Screenshot self-verify** — ON for outbound communications only
+  (email preview render, SMS render check, postcard preview). OFF for
+  internal-only outputs (Q7A).
+- **Scheduled workflows** — Ben curates 5 canonical schedules per Client
+  at onboarding (Monday digest / Wednesday lead-quality summary / Friday
+  win-recap / 1st-of-month KPI / quarterly check-in). Owner can add
+  custom natural-language schedules via portal Settings tab (Q8C).
+- **Voice + outbound SMS interaction** — voice input can DRAFT SMS only,
+  never auto-send. Owner must tap-confirm. Preserves Rule 35 belt+
+  suspenders (smsConsent + source=inbound) gate (Q12A).
+
+### Cost ceiling per Client (rough)
+
+Assuming a Client uses skills ~50 times/month at average ~5K input +
+1K output tokens per call, on Sonnet 4 ($3/MTok in / $15/MTok out):
+- ~$0.022 per call × 50 = ~$1.10/mo at light usage
+- ~$0.022 × 500 = ~$11/mo at heavy usage
+- Heavy + Quote Drafter (more tokens) = realistic ceiling ~$25/mo
+
+Soft cap defaults: Starter $20/mo · Pro $50/mo · Unlimited $200/mo.
+Maps cleanly onto existing `client_subscriptions` Claude tiers.
+
+### Build sequence (3-4 week prod buildout)
+
+**Wave 1 (Days 1-7):**
+1. Migration: `client_skills` + `client_skill_runs` + `client_scheduled_skills`
+2. API: `POST /api/client-portal/skills/run` with plan-mode + screenshot-verify
+3. Type + skill-registry pattern (mirror `client_funnels/registry.ts`)
+4. Wave 1 skill: Lead Reply Drafter — wired to existing AI Responder
+5. Owner-portal AI Skills tab refactor on Zenith (first prod client)
+6. Soft-cap usage tracker + 80% notification email
+
+**Wave 2 (Days 8-14):**
+7. Quote Drafter
+8. Weekly Digest Author
+9. Customer Save Agent
+10. Client-selected skill scaffolding (Ben fills per client at onboarding)
+11. /loop scheduled workflows infra (cron + natural-language schedule editor)
+
+**Wave 3 (Days 15-21):**
+12. Per-Client CLAUDE.md authoring tool (Ben edits via internal admin →
+    saved to DB → exported to GitHub)
+13. Per-Client GitHub export pipeline
+14. Mobile-portal optimizations (touch-first skill drawer)
+15. 3-anchor validation prep (Zenith + ITC + 3rd AI Package client)
+
+**Wave 4 (Days 22-28):**
+16. Voice input wiring (Web Speech API V2)
+17. Documentation + per-Client onboarding playbook for the 5-skill library
+18. Lock spec into BlueJays Pro tier (post-3-anchor)
+
+### Mock version on Meyer demo (sales asset, not real impl)
+
+Meyer Electric is custom-tier ($100/yr), NOT an AI Package client — but
+the portal-demo at `/clients/meyer-electric/portal-demo` is a sales
+artifact for prospects. Adds a 4th card to the AI Skills tab labeled
+"AI Operator (NEW)" with a mock Lead Reply Drafter flow. Pure mock data
+per Q8=A; no API calls fire. Demonstrates the locked spec to prospects
+on sales calls before the real implementation lands on Zenith.
+
+### Productization seed (per Rule 64)
+
+Logged in `aios/PRO_SYNTHESIS.md` as "BlueJays Pro: AI Operator with
+custom CLAUDE.md + skills library + voice + /loop." Treat as the
+flagship Pro-tier feature. Do NOT lock the spec into Pro tier marketing
+until 3-anchor validation hits (Rule 67) — need 3 AI Package clients
+adopting before declaring this the Pro centerpiece.
+
+---
+
 ## Per-client artifact checklist
 
 When a new client is fully onboarded, every box should be checked:
