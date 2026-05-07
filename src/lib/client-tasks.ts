@@ -200,18 +200,41 @@ export async function listAllTasks(opts: {
 }
 
 export async function listClientsWithTasks(): Promise<
-  { client_slug: string; open_count: number }[]
+  { client_slug: string; open_count: number; done_count: number }[]
 > {
   const { data, error } = await getSupabase()
     .from("client_tasks")
     .select("client_slug, status");
   if (error) throw new Error(`listClientsWithTasks: ${error.message}`);
-  const counts = new Map<string, number>();
+
+  // Track BOTH open and done counts per client so the dashboard can
+  // surface a "✅ all done" state for fully-completed jobs (e.g.
+  // Hector once his cutover lands) instead of dropping them off the
+  // list silently. Open clients sort first; finished clients fall to
+  // the bottom with a green checkmark.
+  const open = new Map<string, number>();
+  const done = new Map<string, number>();
   for (const row of (data ?? []) as Pick<ClientTask, "client_slug" | "status">[]) {
-    if (row.status === "done" || row.status === "wont-do") continue;
-    counts.set(row.client_slug, (counts.get(row.client_slug) ?? 0) + 1);
+    if (row.status === "done" || row.status === "wont-do") {
+      done.set(row.client_slug, (done.get(row.client_slug) ?? 0) + 1);
+    } else {
+      open.set(row.client_slug, (open.get(row.client_slug) ?? 0) + 1);
+    }
   }
-  return Array.from(counts.entries())
-    .map(([client_slug, open_count]) => ({ client_slug, open_count }))
-    .sort((a, b) => b.open_count - a.open_count);
+
+  const slugs = new Set([...open.keys(), ...done.keys()]);
+  return Array.from(slugs)
+    .map((client_slug) => ({
+      client_slug,
+      open_count: open.get(client_slug) ?? 0,
+      done_count: done.get(client_slug) ?? 0,
+    }))
+    .sort((a, b) => {
+      // Open work first (highest count → top), then fully-done
+      // clients alphabetically at the bottom.
+      if (a.open_count > 0 && b.open_count === 0) return -1;
+      if (a.open_count === 0 && b.open_count > 0) return 1;
+      if (a.open_count !== b.open_count) return b.open_count - a.open_count;
+      return a.client_slug.localeCompare(b.client_slug);
+    });
 }

@@ -142,6 +142,15 @@ const PHOTOS = {
   retainingBuild: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371909114-QJ3WAQXOO51Z7TBKA9V6/Photo+Dec+14+2022%2C+10+24+16+AM.jpg",
   stoneAccent: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1672371741329-2LRC8980E8URYZJ8RGHQ/Photo+Dec+14+2022%2C+10+23+36+AM.jpg",
   sodInstall: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477190007-T44NY9I44S0Z3307JUJC/lawn.jpg",
+
+  // ─── STOCK FILLERS — Hector hasn't shot these in his portfolio yet.
+  // Hot-linked Unsplash CDs (same hot-link pattern Laser Lakes uses).
+  // Swap to real Hector phone shots the moment he sends them. Until
+  // then a stock photo that ACTUALLY shows the discipline beats a
+  // mismatched real photo (a brick paver tagged "Native Planting"
+  // reads as bait-and-switch on cold reads). ───
+  waterFeature: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=80&auto=format&fit=crop",
+  nightLights: "https://images.unsplash.com/photo-1605007493699-af65834f8a00?w=2000&q=80&auto=format&fit=crop",
 } as const;
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -385,12 +394,12 @@ function LeafPattern({ opacity = 0.03 }: { opacity?: number }) {
 const services = [
   { title: "Landscape Design", desc: "Site walk, concept, and a planting plan that respects what's already there before adding to it. The install runs from the same drawing — no surprises between the page and the ground.", icon: PaintBrush, photo: PHOTOS.hardscapeWide },
   { title: "Hardscapes", desc: "Patios, walkways, outdoor kitchens, and fire features in natural stone, pavers, and brick — built to last in a Pacific Northwest rainy season, not just to look right on day one.", icon: Mountains, photo: PHOTOS.paver1 },
-  { title: "Retaining Walls", desc: "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.", icon: Shovel, photo: PHOTOS.paver2 },
-  { title: "Water Features", desc: "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed all arrive together.", icon: Drop, photo: PHOTOS.yardDec1 },
+  { title: "Retaining Walls", desc: "Engineered walls in natural stone, concrete, brick, or timber. Solves drainage and slope, reclaims yard, and reads as part of the design — not as a wall.", icon: Shovel, photo: PHOTOS.retainingMain },
+  { title: "Water Features", desc: "Ponds, waterfalls, and naturalistic stream beds installed alongside the planting so the stone, water, and surrounding bed all arrive together.", icon: Drop, photo: PHOTOS.waterFeature },
   { title: "Irrigation", desc: "System design, install, and repair. Zoned for plant type and exposure, scheduled for our climate, and built to be serviceable years out.", icon: Drop, photo: PHOTOS.yardJun2 },
-  { title: "Sod Installation", desc: "Grade work, soil amendment, and clean-edge sod laydown. The lawn looks finished the day we leave and roots in for the long haul.", icon: Leaf, photo: PHOTOS.yardJul },
-  { title: "Native & Climate-Smart Planting", desc: "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.", icon: Plant, photo: PHOTOS.brick3 },
-  { title: "Night Lighting", desc: "Low-voltage LED designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.", icon: Lightning, photo: PHOTOS.yardDec5 },
+  { title: "Sod Installation", desc: "Grade work, soil amendment, and clean-edge sod laydown. The lawn looks finished the day we leave and roots in for the long haul.", icon: Leaf, photo: PHOTOS.lawnFinished },
+  { title: "Native & Climate-Smart Planting", desc: "Pacific Northwest natives — Douglas Fir, Oregon Grape, Salal, Red Flowering Currant — for low-water, low-maintenance landscapes that already belong here.", icon: Plant, photo: PHOTOS.yardJun2 },
+  { title: "Night Lights", desc: "Low-voltage LED designed in the same pass as the plantings. Pathway, accent, and architectural — so the yard reads after sunset, not just at noon.", icon: Lightning, photo: PHOTOS.nightLights },
 ];
 
 // Process — 5 steps, voiced for Hector. Site visit → concept → plants → install → aftercare.
@@ -408,10 +417,10 @@ const processSteps = [
 // section, video placeholder, testimonial backdrops). All 19 photos used.
 const projects = [
   { title: "Kirse Residence", location: "King County", scope: "Full-yard installation — terraced front-yard plantings, stone entry walkway, integrated bed work from curb to back door.", image: PHOTOS.hardscapeWide },
-  { title: "Custom Stoneworks", location: "Western Washington", scope: "Engineered retaining walls in natural stone — built to hold a slope through a real PNW rainy season.", image: PHOTOS.paver2 },
-  { title: "Aquavista", location: "Pierce County", scope: "Naturalistic water feature carried through the surrounding plantings — stone, water, and beds installed together.", image: PHOTOS.yardDec1 },
+  { title: "Custom Stoneworks", location: "Western Washington", scope: "Engineered retaining walls in natural stone — built to hold a slope through a real PNW rainy season.", image: PHOTOS.retainingMain },
+  { title: "Aquavista", location: "Pierce County", scope: "Naturalistic water feature carried through the surrounding plantings — stone, water, and beds installed together.", image: PHOTOS.waterFeature },
   { title: "Olano Property", location: "Puget Sound", scope: "Half-acre transformation across front, side, and rear yards — coordinated plantings, walkways, and grade work.", image: PHOTOS.lawnFinished },
-  { title: "Night Work", location: "Multi-site", scope: "Low-voltage LED lighting designed alongside the planting plan — pathway, accent, and architectural.", image: PHOTOS.yardDec5 },
+  { title: "Night Lights", location: "Multi-site", scope: "Low-voltage LED lighting designed alongside the planting plan — pathway, accent, and architectural.", image: PHOTOS.nightLights },
   { title: "Stoneworks Detail", location: "King County", scope: "Tiered hardscape integration — stone wall meeting bed work and finished plantings.", image: PHOTOS.paver1 },
 ];
 
@@ -566,8 +575,8 @@ const faqs = [
 // Hero floating cards — three feature views from Hector Landscaping's archive.
 const heroCards = [
   { src: PHOTOS.hardscapeWide, alt: "Kirse residence — full-yard installation with mature plantings" },
-  { src: PHOTOS.yardDec1, alt: "Aquavista — naturalistic water feature with surrounding landscape" },
-  { src: PHOTOS.paver2, alt: "Custom Stoneworks — tiered retaining wall in natural stone" },
+  { src: PHOTOS.waterFeature, alt: "Aquavista — naturalistic water feature with surrounding landscape" },
+  { src: PHOTOS.retainingMain, alt: "Custom Stoneworks — tiered retaining wall in natural stone" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1141,9 +1150,9 @@ export default function HectorLandscapingLandscapingPage() {
           <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
               { src: PHOTOS.brick1, alt: "Kirse residence — entry walkway in natural stone" },
-              { src: PHOTOS.stoneAccent, alt: "Stoneworks — engineered single-tier retaining wall" },
+              { src: PHOTOS.retainingMain, alt: "Stoneworks — engineered single-tier retaining wall" },
               { src: PHOTOS.retainingMain, alt: "Stoneworks — landscape integrated with retaining wall" },
-              { src: PHOTOS.yardDec3, alt: "Aquavista — water feature integrated into the landscape" },
+              { src: PHOTOS.waterFeature, alt: "Aquavista — water feature integrated into the landscape" },
               { src: PHOTOS.yardJun2, alt: "Olano residence — yard view" },
               { src: PHOTOS.yardJun1, alt: "Hector Landscaping — summer plantings" },
             ].map((d, i) => (
