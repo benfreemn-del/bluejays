@@ -1152,6 +1152,78 @@ export default function MeyerElectricPage() {
                 <WhyBullet text="Upfront pricing — no surprise change orders" />
                 <WhyBullet text="Local, owner-operated, code-first crew" />
               </ul>
+
+              {/* CTA + license callout — balances the right column's
+                  taller content (stats + quote + crew photo) so the
+                  two columns align at the bottom. Without this the
+                  left column ended at the bullet list and left a big
+                  void next to the crew photo. */}
+              <div className="mt-8 max-w-xl flex flex-col sm:flex-row items-stretch gap-3">
+                <a
+                  href="#contact"
+                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97] shadow-[0_4px_18px_rgba(250,204,21,0.32)]"
+                  style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+                >
+                  Get a Free Estimate
+                  <ArrowRight size={14} weight="bold" />
+                </a>
+                <a
+                  href={BUSINESS.phoneHref}
+                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md font-bold uppercase tracking-wide text-[13px] text-white border-2 transition-all hover:bg-white/[0.06] active:scale-[0.97]"
+                  style={{
+                    borderColor: "rgba(255, 255, 255, 0.18)",
+                    fontFamily: FONT_HEAD,
+                  }}
+                >
+                  <Phone size={14} weight="fill" style={{ color: ACCENT }} />
+                  {BUSINESS.phoneDisplay}
+                </a>
+              </div>
+
+              {/* License + service-area mini-strip — fills the remaining
+                  vertical space so left column matches right column's
+                  bottom edge. Doubles as a credibility reinforcer. */}
+              <div
+                className="mt-4 max-w-xl flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 rounded-md border"
+                style={{
+                  background: "rgba(255, 255, 255, 0.025)",
+                  borderColor: "rgba(255, 255, 255, 0.06)",
+                  fontFamily: FONT_HEAD,
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <Certificate
+                    size={14}
+                    weight="fill"
+                    style={{ color: ACCENT }}
+                  />
+                  <span className="text-[11px] uppercase tracking-[0.18em] text-white/70 font-semibold">
+                    License {BUSINESS.license}
+                  </span>
+                </div>
+                <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-white/20" />
+                <div className="flex items-center gap-2">
+                  <MapPin
+                    size={14}
+                    weight="fill"
+                    style={{ color: ACCENT }}
+                  />
+                  <span className="text-[11px] uppercase tracking-[0.18em] text-white/70 font-semibold">
+                    Sequim, WA
+                  </span>
+                </div>
+                <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-white/20" />
+                <div className="flex items-center gap-2">
+                  <ShieldCheck
+                    size={14}
+                    weight="fill"
+                    style={{ color: ACCENT }}
+                  />
+                  <span className="text-[11px] uppercase tracking-[0.18em] text-white/70 font-semibold">
+                    Bonded · Insured
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Stats */}
