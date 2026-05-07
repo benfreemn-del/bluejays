@@ -28,6 +28,30 @@ export default function HectorLandscapingLayout({
 }) {
   return (
     <>
+      {/* Hector-specific scrollbar — vertical gradient earthy brown →
+          lush green over a deep-soil track. Matches the landscaping
+          dark-green hero palette. Style is scoped by route segment —
+          Next only injects this block while inside
+          /clients/hector-landscaping/*, so other tenants keep their
+          own scrollbars (or the OS default) unaffected. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            html { scrollbar-color: #4d7c0f #1a0f08; scrollbar-width: thin; }
+            ::-webkit-scrollbar { width: 12px; height: 12px; }
+            ::-webkit-scrollbar-track { background: #1a0f08; }
+            ::-webkit-scrollbar-thumb {
+              background: linear-gradient(180deg, #5e3a1e 0%, #7a4d28 50%, #4d7c0f 100%);
+              border-radius: 6px;
+              border: 2px solid #1a0f08;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+              background: linear-gradient(180deg, #4a2d18 0%, #5e3a1e 50%, #65a30d 100%);
+            }
+            ::-webkit-scrollbar-corner { background: #1a0f08; }
+          `,
+        }}
+      />
       <ClientTrackingScripts slug="hector-landscaping" />
       {children}
     </>
