@@ -864,8 +864,49 @@ function OverviewTab({
     ? leads.filter((l) => new Date(l.created_at) > new Date(owner.last_login_at!)).length
     : leads.length;
 
+  // Live "what your AI did this week" banner — added 2026-05-07.
+  // Outcome-focused (vs the "X capabilities" feature list elsewhere).
+  // Pulls from the existing weekly report payload — no new query needed.
+  // Three stats that map cleanly onto the existing Report fields:
+  //   leads     = report.leads.new_this_week  (top-of-funnel)
+  //   replied   = report.funnel.responded     (mid-funnel engagement)
+  //   converted = report.funnel.converted     (closed deals)
+  const aiThisWeek = {
+    leads: report?.leads.new_this_week ?? 0,
+    replied: report?.funnel.responded ?? 0,
+    converted: report?.funnel.converted ?? 0,
+  };
+  const aiBannerActive =
+    aiThisWeek.leads + aiThisWeek.replied + aiThisWeek.converted > 0;
+
   return (
     <div className="space-y-6">
+      {/* Live AI activity banner — outcome readout, not feature list */}
+      {aiBannerActive && (
+        <div className="rounded-xl border border-violet-500/30 bg-gradient-to-br from-violet-950/40 via-violet-900/15 to-slate-900/60 p-4 sm:p-5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-violet-300 font-bold mb-2">
+            Your AI · last 7 days
+          </p>
+          <div className="grid grid-cols-3 gap-3 sm:gap-5">
+            <LiveAIStat
+              value={aiThisWeek.leads}
+              label="new leads"
+              emoji="📥"
+            />
+            <LiveAIStat
+              value={aiThisWeek.replied}
+              label="prospects replied"
+              emoji="✉️"
+            />
+            <LiveAIStat
+              value={aiThisWeek.converted}
+              label="converted"
+              emoji="🎯"
+            />
+          </div>
+        </div>
+      )}
+
       {/* New-since-last-login banner */}
       {newSinceLastLogin > 0 && (
         <div className="rounded-lg border border-blue-500/30 bg-blue-950/40 p-4 flex items-center gap-3">
@@ -3982,6 +4023,28 @@ function AccountTab({
 }
 
 /* ─────────────────────────── ATOMS ─────────────────────────── */
+
+function LiveAIStat({
+  value,
+  label,
+  emoji,
+}: {
+  value: number;
+  label: string;
+  emoji: string;
+}) {
+  return (
+    <div className="text-center">
+      <div className="text-2xl sm:text-3xl mb-1">{emoji}</div>
+      <div className="text-2xl sm:text-4xl font-black text-violet-100 tabular-nums leading-none">
+        {value}
+      </div>
+      <div className="text-[10px] sm:text-[11px] text-violet-200/70 uppercase tracking-wider mt-1.5 font-bold">
+        {label}
+      </div>
+    </div>
+  );
+}
 
 function StatCard({
   label,
