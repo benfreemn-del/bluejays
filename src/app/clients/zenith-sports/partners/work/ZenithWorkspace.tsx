@@ -191,12 +191,13 @@ export default function ZenithWorkspace({
           <div className="rounded-xl border border-dashed border-lime-500/30 bg-gradient-to-br from-lime-950/20 to-slate-900/30 p-6 sm:p-8">
             <div className="text-2xl mb-2">🎯</div>
             <p className="text-slate-100 font-bold mb-2">
-              Your first sale is the hardest. Then it gets easy.
+              Ready when you are. Pick a play and ship it.
             </p>
             <p className="text-sm text-slate-400 mb-4 leading-relaxed">
-              Most active partners hit their first sale within 7 days. The
-              ones who don&apos;t are just sitting on the link. Pick the path
-              that matches you:
+              Most active partners land their first referral within the
+              first 7 days. The system tracks every click and credits you
+              automatically — your only job is the conversation. Pick the
+              one that fits your day:
             </p>
             <div className="grid sm:grid-cols-3 gap-2 text-sm">
               <a
