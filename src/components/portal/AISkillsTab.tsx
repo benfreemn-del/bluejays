@@ -1,6 +1,7 @@
 "use client";
 
 import AIBotFlowChart from "./AIBotFlowChart";
+import HyperloopTransparency from "./HyperloopTransparency";
 
 /**
  * AISkillsTab — universal owner-portal panel showing every AI capability
@@ -373,6 +374,13 @@ export default function AISkillsTab({
           Reads from the same CATEGORIES + statusFor() this file already
           exports, so the visual + the detailed list never drift. */}
       <AIBotFlowChart slug={slug} />
+
+      {/* HYPERLOOP TRANSPARENCY — added 2026-05-07. Glass-box view of
+          every A/B decision the engine has made. Currently testing /
+          promoted winners / killed losers, with per-variant CTR +
+          impressions. Renewal-stickiness move: clients SEE the AI
+          making decisions instead of trusting the abstract claim. */}
+      <HyperloopTransparency slug={slug} />
 
       {/* HEADER */}
       <div className="rounded-2xl bg-gradient-to-br from-violet-950/40 via-violet-900/15 to-slate-900/60 border border-violet-500/20 p-6">
