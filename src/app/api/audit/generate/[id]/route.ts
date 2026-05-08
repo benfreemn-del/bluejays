@@ -103,6 +103,63 @@ export async function POST(
     );
   }
 
+  // ─── HeyGen video kickoff ────────────────────────────────────────
+  // Fire off a per-prospect HeyGen video the moment the audit lands.
+  // Soft no-op if HEYGEN_API_KEY/AVATAR/VOICE envs aren't set on
+  // Vercel — generateVideo() returns null + we just don't stamp the
+  // video_id. Audit page falls back to the existing layout cleanly.
+  // The /api/cron/heygen-poll job picks up the video_id every 5 min
+  // and stamps the URL when HeyGen finishes rendering.
+  void (async () => {
+    try {
+      const { data: full } = await supabase
+        .from("site_audits")
+        .select("audit_content")
+        .eq("id", id)
+        .maybeSingle();
+      const content = full?.audit_content as
+        | { issues?: { title?: string }[]; topFindings?: string[] }
+        | null;
+      const findings =
+        content?.topFindings ??
+        (content?.issues ?? [])
+          .map((i) => i.title)
+          .filter((s): s is string => !!s)
+          .slice(0, 3);
+
+      const { generateVideo } = await import("@/lib/heygen");
+      // Re-fetch owner_name (the earlier prospect select scoped to
+      // id+business_name+email; HeyGen wants first-name personalization).
+      const { data: ownerRow } = await supabase
+        .from("prospects")
+        .select("owner_name")
+        .eq("id", prospect.id)
+        .maybeSingle();
+      const ownerName = (ownerRow as { owner_name?: string } | null)?.owner_name;
+      const video = await generateVideo({
+        businessName: targetBusinessName,
+        ownerFirstName: ownerName
+          ? String(ownerName).split(/\s+/)[0]
+          : undefined,
+        category: audit.business_category as string,
+        findings: findings ?? [],
+      });
+
+      if (video) {
+        await supabase
+          .from("site_audits")
+          .update({
+            heygen_video_id: video.videoId,
+            heygen_requested_at: new Date().toISOString(),
+          })
+          .eq("id", id);
+      }
+    } catch (err) {
+      // Don't surface — video is a nice-to-have, audit must succeed.
+      console.warn("[audit/generate] HeyGen kickoff failed:", err);
+    }
+  })();
+
   // Send Email #1 (Day 0) — the audit-ready notification.
   // Subsequent emails (Day 1/3/7/14) fire from the followup cron.
   if (prospect.email) {

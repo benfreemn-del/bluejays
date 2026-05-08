@@ -39,6 +39,10 @@ type Audit = {
   prospect_id: string;
   generated_at: string | null;
   first_viewed_at: string | null;
+  /** Per-prospect HeyGen explainer video URL — null until the
+   *  /api/cron/heygen-poll cron stamps it. Renders at the top of
+   *  the audit page when set. */
+  heygen_video_url: string | null;
 };
 
 type Prospect = {
@@ -124,7 +128,7 @@ export default async function AuditPage({
 
   const { data: audit } = await supabase
     .from("site_audits")
-    .select("id, status, audit_content, target_url, business_category, prospect_id, generated_at, first_viewed_at")
+    .select("id, status, audit_content, target_url, business_category, prospect_id, generated_at, first_viewed_at, heygen_video_url")
     .eq("id", id)
     .maybeSingle();
 
@@ -293,6 +297,26 @@ export default async function AuditPage({
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {content.oneLineSummary}
           </p>
+
+          {/* Per-prospect HeyGen explainer video — Ben on camera (or
+              the configured avatar) walking the prospect through their
+              top issues. Renders only when /api/cron/heygen-poll has
+              stamped the URL (typical 60-180s after audit-ready).
+              Falls back to the existing static layout when env not
+              configured / video failed / still rendering. */}
+          {a.heygen_video_url && (
+            <div className="mt-6 rounded-xl border border-sky-500/30 bg-slate-900/50 overflow-hidden shadow-2xl">
+              <video
+                src={a.heygen_video_url}
+                controls
+                preload="metadata"
+                className="w-full aspect-video bg-black"
+              />
+              <p className="px-4 py-2 text-[11px] text-slate-400 text-center">
+                Personalized walkthrough · 30 sec · click to play
+              </p>
+            </div>
+          )}
 
           {/* Share button — many owners need to forward this to a partner /
               spouse / office manager who handles "the website stuff". */}
