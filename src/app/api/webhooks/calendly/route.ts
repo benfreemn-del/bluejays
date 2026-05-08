@@ -228,17 +228,51 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Look up the prospect if we have an ID — for SMS context only
+    // Look up the prospect if we have an ID — for SMS context AND
+    // pipeline auto-bump on booking. Bumps prospects.pipeline_stage
+    // to '2' (Website track: meeting scheduled) or '3' (AI System
+    // track: meeting completed when paired with payment) automatically,
+    // so /dashboard/sales-pipeline reflects the booking without Ben
+    // pushing the stage manually. Only bumps UP — never overwrites
+    // a higher stage (e.g. if they already paid, stage 3/4 stays).
     if (prospectId) {
       try {
         const { data: prospectRow } = await supabase
           .from("prospects")
-          .select("business_name")
+          .select("business_name, pricing_tier, pipeline_stage")
           .eq("id", prospectId)
           .maybeSingle();
         if (prospectRow) {
-          prospectBusinessName =
-            (prospectRow as { business_name?: string }).business_name || null;
+          const pr = prospectRow as {
+            business_name?: string;
+            pricing_tier?: string;
+            pipeline_stage?: string | null;
+          };
+          prospectBusinessName = pr.business_name || null;
+
+          // Booking → stage 2 on either track. Don't downgrade if
+          // they're already past stage 2 (e.g. paid → stage 3+).
+          const currentStage = pr.pipeline_stage || "0";
+          const currentStageNum = parseInt(currentStage[0] || "0", 10) || 0;
+          if (currentStageNum < 2) {
+            try {
+              await supabase
+                .from("prospects")
+                .update({
+                  pipeline_stage: "2",
+                  pipeline_stage_updated_at: new Date().toISOString(),
+                })
+                .eq("id", prospectId);
+              console.log(
+                `[calendly-webhook] pipeline_stage auto-bumped to 2 (booked) for prospect=${prospectId}`,
+              );
+            } catch (err) {
+              console.error(
+                "[calendly-webhook] pipeline_stage bump failed:",
+                err,
+              );
+            }
+          }
         }
       } catch (err) {
         console.error("[calendly-webhook] prospect lookup failed:", err);

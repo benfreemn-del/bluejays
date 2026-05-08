@@ -144,12 +144,25 @@ export async function POST(request: NextRequest) {
             ? (session.subscription as string)
             : undefined;
 
+          // Auto-bump pipeline stage based on the prospect's track:
+          //   AI Package (fullsystem)  → stage 4 (purchased · needs delivery)
+          //   Website ($997 / standard) → stage 3 (bought + paid)
+          // Saves Ben from manually pushing the stage on /dashboard/sales-pipeline
+          // every time a payment lands. The pipeline_stage column is text
+          // (allows '4a' sub-states) — bare digit '3' / '4' is correct here;
+          // operator can add a sub-letter later if needed.
+          const isFullSystem =
+            prospect.pricingTier === "fullsystem" ||
+            session.metadata?.pricingTier === "fullsystem";
+          const autoBumpStage = isFullSystem ? "4" : "3";
+
           await updateProspect(prospectId, {
             status: "paid",
             stripeCustomerId: (session.customer as string) || undefined,
             paidAt: new Date().toISOString(),
             subscriptionStatus: session.subscription ? "active" : "none",
             funnelPaused: true, // Stop all outreach after payment
+            pipelineStage: autoBumpStage,
             ...(mgmtIdFromCustom ? { mgmtSubscriptionId: mgmtIdFromCustom } : {}),
           });
 
