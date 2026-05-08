@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import AuditVSLAuto from "./AuditVSLAuto";
 
 type AuditStatus = "pending" | "generating" | "ready" | "failed" | "cancelled" | "unknown";
 
@@ -60,9 +61,15 @@ const ESTIMATED_TOTAL_SECONDS = 120; // generate endpoint maxDuration=300s; typi
 export default function ProcessingClient({
   auditId,
   videoUrl,
+  businessName,
+  category,
+  firstName,
 }: {
   auditId: string;
   videoUrl: string | null;
+  businessName?: string;
+  category?: string;
+  firstName?: string;
 }) {
   const [status, setStatus] = useState<AuditStatus>("pending");
   const [pollCount, setPollCount] = useState(0);
@@ -156,9 +163,12 @@ export default function ProcessingClient({
     <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-10 pb-40">
       <div className="w-full max-w-2xl">
         {/* Hormozi-mod: pre-frame video on the wait page.
-            Renders only when NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_URL is set
-            (Loom share / YouTube / direct mp4). Hidden cleanly otherwise. */}
-        {embedUrl && (
+            When NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_URL is set (real
+            Loom / YouTube / mp4), the recorded video plays. Otherwise
+            we fall back to AuditVSLAuto — an animated 30-sec VSL that
+            personalizes per-business. Always something on screen
+            while the prospect waits, never a blank loading state. */}
+        {embedUrl ? (
           <div className="mb-6">
             <p className="text-center text-xs uppercase tracking-wider text-sky-400 mb-3">
               Watch this while your audit generates
@@ -183,6 +193,12 @@ export default function ProcessingClient({
               )}
             </div>
           </div>
+        ) : (
+          <AuditVSLAuto
+            businessName={businessName}
+            category={category}
+            firstName={firstName}
+          />
         )}
 
         <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-8 text-center">
