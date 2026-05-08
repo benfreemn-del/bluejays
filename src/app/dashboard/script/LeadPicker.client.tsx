@@ -16,6 +16,14 @@ import type { Prospect } from "@/lib/types";
  */
 
 const QUEUE_KEY = "bluejays.sales-portal.queue.v1";
+// Per-browser hide list. The Remove button on each lead row pushes the
+// prospect ID here; the picker filter excludes any IDs in this set.
+// Persisted to localStorage so the dismiss survives reloads.
+const DISMISSED_KEY = "bluejays.sales-portal.dismissed.v1";
+// Undo stack — most recent removal at the END (LIFO). The Undo button
+// pops the last entry, removes it from `dismissed`, and the lead reappears.
+// Persisted alongside `dismissed` so undo works across reloads too.
+const UNDO_STACK_KEY = "bluejays.sales-portal.undo.v1";
 
 export default function LeadPicker() {
   const router = useRouter();
@@ -23,6 +31,13 @@ export default function LeadPicker() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  // Sales-side dismiss state. `dismissed` = currently-hidden IDs.
+  // `undoStack` = history of removals so the Undo button can restore the
+  // last one (and the one before that, etc — unlimited undo levels).
+  const [dismissed, setDismissed] = useState<string[]>([]);
+  const [undoStack, setUndoStack] = useState<string[]>([]);
+  // Floating toast confirming the last action (auto-clears after ~2.5s).
+  const [toast, setToast] = useState<string | null>(null);
   // Filter chips along the top of the picker. the caller controls these to
   // narrow the list of prospects to call today.
   //   "all"             — every prospect, no filter
@@ -74,13 +89,24 @@ export default function LeadPicker() {
     };
   }, []);
 
-  // Hydrate queue from localStorage so half-built selections survive reloads.
+  // Hydrate queue + dismiss state from localStorage so half-built
+  // selections AND dismiss history survive reloads.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(QUEUE_KEY);
       if (raw) {
         const arr = JSON.parse(raw) as string[];
         if (Array.isArray(arr)) setSelected(arr);
+      }
+      const rawD = localStorage.getItem(DISMISSED_KEY);
+      if (rawD) {
+        const arr = JSON.parse(rawD) as string[];
+        if (Array.isArray(arr)) setDismissed(arr);
+      }
+      const rawU = localStorage.getItem(UNDO_STACK_KEY);
+      if (rawU) {
+        const arr = JSON.parse(rawU) as string[];
+        if (Array.isArray(arr)) setUndoStack(arr);
       }
     } catch {
       // ignore
@@ -96,11 +122,82 @@ export default function LeadPicker() {
     }
   };
 
+  // Persist helpers for the dismiss/undo lists.
+  const persistDismissed = (next: string[]) => {
+    setDismissed(next);
+    try {
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+  const persistUndoStack = (next: string[]) => {
+    setUndoStack(next);
+    try {
+      localStorage.setItem(UNDO_STACK_KEY, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  // Auto-clear toast after 2.5s.
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const toggle = (id: string) => {
     persist(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
   };
 
   const clear = () => persist([]);
+
+  // === Remove / Undo ===
+  // Remove a lead from the picker. Pushes the ID to the undo stack so the
+  // sales rep can hit Undo if they fat-finger a removal. Also drops the
+  // lead from the selected queue if it was already in line to be called.
+  // The prospect record itself is NEVER touched — Remove is per-browser
+  // hide only (localStorage-scoped). Other surfaces (admin dashboard,
+  // scout, funnel) still see the lead. Use the prospect detail page +
+  // status flip for permanent dismissal.
+  const removeFromList = (id: string, label?: string) => {
+    if (dismissed.includes(id)) return; // already hidden, no-op
+    persistDismissed([...dismissed, id]);
+    persistUndoStack([...undoStack, id]);
+    if (selected.includes(id)) {
+      persist(selected.filter((x) => x !== id));
+    }
+    setToast(
+      label
+        ? `Removed "${label}" from the list. Hit Undo to restore.`
+        : `Removed lead. Hit Undo to restore.`,
+    );
+  };
+
+  // Pop the most recent removal off the undo stack and unhide that lead.
+  // Idempotent + safe to call when the stack is empty (no-op).
+  const undoRemove = () => {
+    if (undoStack.length === 0) return;
+    const lastId = undoStack[undoStack.length - 1];
+    persistUndoStack(undoStack.slice(0, -1));
+    persistDismissed(dismissed.filter((id) => id !== lastId));
+    const restored = prospects.find((p) => p.id === lastId);
+    setToast(
+      restored?.businessName
+        ? `Restored "${restored.businessName}".`
+        : `Restored last removed lead.`,
+    );
+  };
+
+  // Restore every dismissed lead at once. Wipes both lists.
+  const restoreAllDismissed = () => {
+    if (dismissed.length === 0) return;
+    const count = dismissed.length;
+    persistDismissed([]);
+    persistUndoStack([]);
+    setToast(`Restored all ${count} removed leads.`);
+  };
 
   const start = () => {
     if (selected.length === 0) return;
@@ -123,7 +220,13 @@ export default function LeadPicker() {
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
+    const dismissedSet = new Set(dismissed);
     const filtered = prospects.filter((p) => {
+      // Drop sales-portal-dismissed leads (local hide list — see
+      // Remove/Undo handlers above). The prospect record itself is
+      // unaffected; this is per-browser scope only.
+      if (dismissedSet.has(p.id)) return false;
+
       const s = String(p.status ?? "").toLowerCase();
 
       // Drop active clients from the call queue. If we've already
@@ -194,7 +297,7 @@ export default function LeadPicker() {
         break;
     }
     return sorted;
-  }, [prospects, search, filter, categoryFilter, sortBy]);
+  }, [prospects, search, filter, categoryFilter, sortBy, dismissed]);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -216,7 +319,38 @@ export default function LeadPicker() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-muted">
+            {/* Undo last removal — appears whenever the undo stack has
+                anything in it. Counter shows how many removals can be
+                undone. Stack is LIFO (most recent first), persisted to
+                localStorage so undo works across reloads + crashes. */}
+            <button
+              type="button"
+              onClick={undoRemove}
+              disabled={undoStack.length === 0}
+              className="h-9 px-3 rounded-lg border border-border bg-background hover:bg-surface text-amber-300 text-xs font-bold uppercase tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title={
+                undoStack.length === 0
+                  ? "Nothing to undo"
+                  : `Restore the last removed lead (${undoStack.length} in undo history)`
+              }
+            >
+              ↶ Undo{undoStack.length > 0 ? ` (${undoStack.length})` : ""}
+            </button>
+            {/* Restore-all-dismissed — only appears when at least one
+                lead is currently hidden. Wipes both the dismiss list
+                and the undo stack. Useful if a sales rep wants to
+                start over with a clean view. */}
+            {dismissed.length > 0 && (
+              <button
+                type="button"
+                onClick={restoreAllDismissed}
+                className="h-9 px-3 rounded-lg border border-rose-500/30 bg-rose-500/[0.06] hover:bg-rose-500/[0.10] text-rose-300 text-xs font-bold uppercase tracking-wider transition-colors"
+                title="Restore every lead currently hidden"
+              >
+                Restore all ({dismissed.length})
+              </button>
+            )}
+            <span className="text-[11px] uppercase tracking-wider text-muted ml-2">
               Queue
             </span>
             <span
@@ -497,6 +631,23 @@ export default function LeadPicker() {
                           .join(" · ") || "no contact info"}
                       </p>
                     </div>
+                    {/* Per-row Remove button — hides the lead from this
+                        picker (per-browser scope). Pushes to undo stack
+                        so the Undo button in the header can restore.
+                        Stops propagation so clicking ✕ doesn't also
+                        toggle the row's selected state. */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromList(p.id, p.businessName ?? undefined);
+                      }}
+                      className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-md text-rose-400/70 hover:text-rose-300 hover:bg-rose-500/10 transition-colors"
+                      title={`Remove "${p.businessName ?? "this lead"}" from the picker (Undo available)`}
+                      aria-label="Remove lead"
+                    >
+                      <span className="text-base leading-none">✕</span>
+                    </button>
                     <Link
                       href={`/dashboard/prospects/${p.id}`}
                       target="_blank"
@@ -513,6 +664,20 @@ export default function LeadPicker() {
           </ul>
         )}
       </div>
+
+      {/* Floating toast — auto-clears after 2.5s. Confirms remove/undo
+          actions so the sales rep gets feedback without a layout jump. */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+        >
+          <div className="rounded-lg border border-amber-500/30 bg-slate-900/95 backdrop-blur px-4 py-2.5 shadow-xl text-sm text-amber-200 max-w-md">
+            {toast}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
