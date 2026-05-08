@@ -47,6 +47,11 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   // Shopify (laserlakes.com), but BlueJays runs the back-office:
   // customer + purchase ledger across Shopify + craft fairs + wholesale.
   "laser-lakes": { kind: "internal", href: "/clients/laser-lakes" },
+  // Nevarland Outpost — Christopher's handmade kids' + adult apparel
+  // brand. Same pattern as Laser Lakes: Shopify owns the storefront +
+  // checkout, BlueJays builds the marketing/story front + back-office
+  // for cross-channel customer + order tracking.
+  "nevarland-outpost": { kind: "internal", href: "/clients/nevarland-outpost" },
 
   // Static-HTML sites under public/sites/ — built bespoke for clients
   // who needed a fast public marketing front but no Next-driven app.
