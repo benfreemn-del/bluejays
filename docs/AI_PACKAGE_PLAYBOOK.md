@@ -172,6 +172,38 @@ When a Madie-booked call hits Ben's calendar:
 If Ben is running his own discovery (not Madie-booked), he uses
 HORMOZI_CALL_SCRIPT in the same file — same shape, different opener.
 
+### Locked diagnostic question (default opener — added 2026-05-07)
+
+The first beat after rapport on every $10k discovery call:
+
+> *"If 500 new clients showed up at your business tomorrow, what would
+> break first?"*
+
+Use verbatim. Do not soften, paraphrase, or add a windup. The phrasing
+forces the prospect to walk their operation step-by-step and surface
+the actual bottleneck. Whatever they say first IS the clog to lead
+with in the backend tour.
+
+**Map the answer to one of 5 clogs** (5-Clog Automation Framework,
+locked 2026-05-07 — full reference at
+`aios/decisions/2026-05-07_5-clog-framework.md`):
+
+| Prospect quote shape | Clog | Backend-tour lead |
+|---|---|---|
+| "couldn't answer fast enough" / "leads would fall through" | Speed to Lead | Auto inbound responder + missed-call texter + contact-form auto-SMS |
+| "follow-up would die" / "reps don't do enough touches" | Follow-up & Nurture | Lifecycle email cron + NPS Day-14 + retention suite |
+| "tons of past customers we never re-engage" / "CRM is a graveyard" | Database Reactivation | `database_reactivation` upsell SKU ($499) |
+| "no idea what's happening day-to-day" / "reports take hours" | Internal Reporting | Monthly report cron + daily SMS digest + owner-portal dashboard |
+| "drown in paperwork" / "manual data entry would crush us" | Document Processing | ⚠ Out-of-ICP — pivot to clog they name SECOND |
+
+After they answer, confirm verbatim: *"So if I'm hearing it right —
+the thing that breaks first isn't leads, it's [clog]."* Wait for the
+nod, then lead the backend tour with the feature that fixes that clog.
+
+The AIOS skill `discovery_question` (in
+`aios/.claude/skills/discovery_question/SKILL.md`) returns the question
++ parsing guide on demand for any pre-call prep.
+
 ### Inputs
 - Their existing website
 - Brand voice doc (if they have one)

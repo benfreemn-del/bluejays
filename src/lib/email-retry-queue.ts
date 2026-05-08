@@ -40,7 +40,8 @@ export type EmailRetryType =
   | "upsell_review_blast"
   | "upsell_extra_pages"
   | "upsell_gbp_setup"
-  | "upsell_monthly_updates";
+  | "upsell_monthly_updates"
+  | "upsell_database_reactivation";
 
 export type EmailRetryStatus = "pending" | "succeeded" | "failed";
 

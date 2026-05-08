@@ -1178,6 +1178,7 @@ $100K lifestyle business and a $300K machine.
 | `extra_pages`      | Add 5 Extra Pages             | $400 one-time    | 5 additional pages (services, FAQ, gallery, blog, case studies — customer's choice). Live in 48 hrs. |
 | `gbp_setup`        | Google Business Profile Setup | $150 one-time    | Claim, optimize, post-schedule the prospect's GBP. Includes 5 weekly posts pre-scheduled. |
 | `monthly_updates`  | Monthly Content Updates       | $50/mo subscription | Once-a-month site refresh — photos, copy tweaks, seasonal banners, special offers. Cancel anytime. |
+| `database_reactivation` | Database Reactivation    | $499 one-time       | Re-engagement sequence to past customers + dormant CRM leads. Industry agency benchmark: 200% ROI in 60 days. Customer hands us the CSV, we segment + write + send. Per the 5-Clog Framework (locked 2026-05-07 — `aios/decisions/2026-05-07_5-clog-framework.md`). |
 
 Single source of truth: `src/lib/upsells.ts` (`UPSELL_CATALOG`). Every
 SKU's price + display name + Stripe mode + welcome email is wired
@@ -1187,8 +1188,8 @@ the matching welcome email helper in `email-templates.ts`.
 ### Stripe Products + Price IDs
 
 Ben must (one-time, in production):
-1. Create 4 Stripe Products at https://dashboard.stripe.com/products with
-   prices matching the table above. Three are one-time `payment` mode,
+1. Create 5 Stripe Products at https://dashboard.stripe.com/products with
+   prices matching the table above. Four are one-time `payment` mode,
    `monthly_updates` is a `recurring/month` subscription mode.
 2. Set the Price IDs as Vercel env vars:
    ```
@@ -1196,6 +1197,7 @@ Ben must (one-time, in production):
    STRIPE_PRICE_EXTRA_PAGES=price_xxx
    STRIPE_PRICE_GBP_SETUP=price_xxx
    STRIPE_PRICE_MONTHLY_UPDATES=price_xxx
+   STRIPE_PRICE_DATABASE_REACTIVATION=price_xxx
    ```
 3. **Until env vars are set, the upsell flow uses inline `price_data`** —
    Stripe accepts ad-hoc prices and the system works in mock-mode
@@ -1233,7 +1235,7 @@ status, and sku.
 
 ### Customer-facing surfaces
 
-- **`/upsells/[id]`** — public page. 4 SKU cards each with display name,
+- **`/upsells/[id]`** — public page. 5 SKU cards each with display name,
   price, 1-paragraph description, "Buy Now" button. POSTs to
   `/api/checkout/upsell` and redirects to Stripe Checkout. Shows the
   prospect's current site URL in the header. Light theme, matches
@@ -1247,9 +1249,9 @@ status, and sku.
   "browse add-ons" line.
 - **SKU-specific welcome emails** (`getReviewBlastWelcomeEmail`,
   `getExtraPagesWelcomeEmail`, `getGbpSetupWelcomeEmail`,
-  `getMonthlyUpdatesWelcomeEmail`) — fire from the Stripe webhook on
-  successful upsell purchase. Each is ≤80 words, single link, follows
-  CLAUDE.md outreach email rules.
+  `getMonthlyUpdatesWelcomeEmail`, `getDatabaseReactivationWelcomeEmail`)
+  — fire from the Stripe webhook on successful upsell purchase. Each is
+  ≤80 words, single link, follows CLAUDE.md outreach email rules.
 
 ### Operator dashboard
 

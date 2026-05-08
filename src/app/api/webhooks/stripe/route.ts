@@ -12,6 +12,7 @@ import {
   getExtraPagesWelcomeEmail,
   getGbpSetupWelcomeEmail,
   getMonthlyUpdatesWelcomeEmail,
+  getDatabaseReactivationWelcomeEmail,
 } from "@/lib/email-templates";
 import { queueEmailRetry } from "@/lib/email-retry-queue";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -1019,5 +1020,7 @@ function pickUpsellWelcomeTemplate(
       return getGbpSetupWelcomeEmail(prospect);
     case "monthly_updates":
       return getMonthlyUpdatesWelcomeEmail(prospect);
+    case "database_reactivation":
+      return getDatabaseReactivationWelcomeEmail(prospect);
   }
 }

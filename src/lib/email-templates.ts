@@ -1353,6 +1353,30 @@ Reply here with access: ${CONTACT_EMAIL}
   return { subject, body, sequence: 222 };
 }
 
+/** Database Reactivation — $499 — needs a CSV/export of past customers
+ * + dormant leads. Customer hands us the data, we segment + run a
+ * personalized re-engagement sequence. Industry benchmark: 200% ROI
+ * in 60 days. Per the 5-Clog Framework (locked 2026-05-07). */
+export function getDatabaseReactivationWelcomeEmail(
+  prospect: Prospect,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+
+  const subject = `${prospect.businessName} — got your $499 for the Database Reactivation`;
+
+  const body = `Hi ${name},
+
+Got your $499 for the Database Reactivation — thanks!
+
+Reply with a CSV (or just an export) of your past customers and dormant leads — name, email, phone, and the last date they bought or inquired if you have it. I'll segment the list, write the re-engagement sequence in your voice, and start sending within 5 business days. Replies route straight to your inbox.
+
+Reply here when you're ready: ${CONTACT_EMAIL}
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 224 };
+}
+
 /** Monthly Content Updates — $50/month — sets expectations + portal link. */
 export function getMonthlyUpdatesWelcomeEmail(prospect: Prospect): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || "there";

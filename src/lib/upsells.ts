@@ -20,7 +20,8 @@ export type UpsellSku =
   | "review_blast"
   | "extra_pages"
   | "gbp_setup"
-  | "monthly_updates";
+  | "monthly_updates"
+  | "database_reactivation";
 
 export interface UpsellDefinition {
   sku: UpsellSku;
@@ -91,6 +92,18 @@ export const UPSELL_CATALOG: Record<UpsellSku, UpsellDefinition> = {
     envVar: "STRIPE_PRICE_MONTHLY_UPDATES",
     productDescription:
       "Monthly Content Updates — once-a-month site refresh with photos, copy, seasonal banners, or offers",
+  },
+  database_reactivation: {
+    sku: "database_reactivation",
+    displayName: "Database Reactivation",
+    description:
+      "Send your past customers, dead leads, and old inquiries a personalized re-engagement sequence. Industry agencies see 200% ROI in 60 days from CRMs that were sitting cold. Money you forgot you had.",
+    priceCents: 49900, // $499
+    priceLabel: "$499 one-time",
+    mode: "payment",
+    envVar: "STRIPE_PRICE_DATABASE_REACTIVATION",
+    productDescription:
+      "Database Reactivation — segmented re-engagement sequence to past customers and dormant leads in the CRM",
   },
 };
 

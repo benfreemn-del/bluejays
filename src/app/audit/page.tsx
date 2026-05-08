@@ -296,6 +296,79 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
+      {/* The 5 Clogs — what we audit for + what we fix.
+          Per AIOS Rule 24 / 5-Clog Framework locked 2026-05-07.
+          Doc-processing clog is OUT-OF-ICP for local service buyers
+          and intentionally not listed — we only show the 5 that
+          BlueJays actually fixes for this audience. Source:
+          aios/decisions/2026-05-07_5-clog-framework.md */}
+      <section className="border-b border-white/5 bg-slate-950/60">
+        <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="text-center mb-3">
+            <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold">The 5 most common money-leaks</p>
+          </div>
+          <h2 className="text-3xl font-bold text-center mb-3">
+            What&apos;s actually costing you customers
+          </h2>
+          <p className="text-center text-slate-400 mb-12 max-w-2xl mx-auto">
+            Most local businesses lose money in the same five places. Your audit shows which ones are leaking — and if you book a build, we fix every one of them.
+          </p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <ClogCard
+              n="1"
+              title="Slow lead response"
+              stat="5-min response = 10× conversion vs 30-min"
+              pain="Industry average: 47 hours to respond. By then they&apos;ve called three competitors."
+              fix="Auto-responder fires within seconds of any form submit. Personalized, qualifies them, routes to your phone."
+              accent="rose"
+            />
+            <ClogCard
+              n="2"
+              title="Missed calls go silent"
+              stat="Every missed call is a customer who calls a competitor next"
+              pain="Phone rings, nobody picks up, caller hangs up and you never know they tried."
+              fix="Every unanswered call triggers an instant text within seconds: &ldquo;Sorry we missed you — book here.&rdquo;"
+              accent="amber"
+            />
+            <ClogCard
+              n="3"
+              title="No real follow-up"
+              stat="80% of sales need 5+ follow-ups. Most reps stop after 1-2."
+              pain="Warm leads who already raised their hand go cold because nobody touched them again."
+              fix="Multi-touch nurture sequence runs automatically. Warm replies route back to you, sequence stops on book."
+              accent="emerald"
+            />
+            <ClogCard
+              n="4"
+              title="Old customers forgotten"
+              stat="Industry agency benchmark: 200% ROI in 60 days"
+              pain="Past customers, dead leads, churned trial users — all sitting in your CRM doing nothing."
+              fix="Database reactivation sequence pulls them back. Personalized per their history with you, not generic blasts."
+              accent="violet"
+            />
+            <ClogCard
+              n="5"
+              title="Flying blind on numbers"
+              stat="Decisions delayed because nobody compiled the report"
+              pain="You don&apos;t know yesterday&apos;s leads, this week&apos;s pipeline, or last month&apos;s ROI without spending an hour pulling it."
+              fix="Daily digest hits your phone. Weekly performance email. The dashboard you check once instead of six tools."
+              accent="sky"
+            />
+            {/* The frame — which clog is leaking the most? */}
+            <div className="rounded-xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-slate-900/60 to-slate-900/40 p-6 flex flex-col justify-center">
+              <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold mb-3">The diagnostic</p>
+              <p className="text-lg font-semibold text-white mb-3 leading-snug">
+                &ldquo;If 500 new clients showed up tomorrow, what would break first?&rdquo;
+              </p>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Your honest answer is the clog leaking the most money right now. Your audit identifies which one — and we&apos;ll show you exactly what it&apos;s worth.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-16">
@@ -402,6 +475,33 @@ function Step({ n, icon, title, body }: { n: string; icon: React.ReactNode; titl
       </div>
       <h3 className="font-semibold text-white mb-2">{title}</h3>
       <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+function ClogCard({ n, title, stat, pain, fix, accent }: {
+  n: string;
+  title: string;
+  stat: string;
+  pain: string;
+  fix: string;
+  accent: string;
+}) {
+  const a = CARD_ACCENTS[accent] || CARD_ACCENTS.sky;
+  return (
+    <div className={`relative rounded-xl border ${a.border} bg-slate-900/50 p-5 transition-all duration-200 ${a.glow}`}>
+      <div className="flex items-start gap-3 mb-3">
+        <div className={`shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-lg ${a.icon} font-bold text-sm`}>
+          {n}
+        </div>
+        <h3 className={`font-bold text-base leading-tight pt-1 ${a.title}`}>{title}</h3>
+      </div>
+      <p className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2">{stat}</p>
+      <p className="text-sm text-slate-400 leading-relaxed mb-3">{pain}</p>
+      <div className="border-t border-white/5 pt-3">
+        <p className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold mb-1">What we ship</p>
+        <p className="text-sm text-slate-300 leading-relaxed">{fix}</p>
+      </div>
     </div>
   );
 }
