@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import TrustBar from "@/components/TrustBar";
 
 const BASE_URL = "https://bluejayportfolio.com";
 
@@ -166,10 +167,19 @@ export default function AgencyPage() {
           tells them to buy it (the coach, the dealer, the contractor), and
           the shop that sells it for you. Three jobs. One system.
         </p>
-        <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">
+        <p className="text-lg text-slate-400 max-w-xl mx-auto mb-8">
           We build it for you in 30 days. You own all of it.
           <strong className="text-white"> 100 real leads in 90 days, or we keep working free until you hit it.</strong>
         </p>
+
+        {/* Live social-proof bar — pulls from /api/stats/public.
+            Floor values keep the surface healthy on cold paid
+            traffic; live numbers take over once volume exceeds
+            the floor. */}
+        <div className="max-w-2xl mx-auto mb-10">
+          <TrustBar />
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/agency/apply"

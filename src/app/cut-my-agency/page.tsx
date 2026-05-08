@@ -1,5 +1,7 @@
 "use client";
 
+import TrustBar from "@/components/TrustBar";
+
 /**
  * /cut-my-agency — Hormozi calculator funnel for the agency-replacement
  * Google Ads campaign (Action 2 of the 2026-05-05 $10k validation play).
@@ -567,9 +569,11 @@ export default function CutMyAgencyPage() {
             {/* Trust strip — answers "who the hell are you?" before they
                 see the calculator. Cold paid traffic from "fire my agency"
                 searches has zero context on BlueJays — this gives them the
-                3-second credibility they need to engage. */}
-            <div className="mt-4 sm:mt-6 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-4 py-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <span className="text-amber-300 font-semibold">100+ businesses online across the USA.</span>{" "}WA-based.
+                3-second credibility they need to engage. Pulls live numbers
+                from /api/stats/public, floored to placeholder values so it
+                always reads healthy on first paint. */}
+            <div className="mt-4 sm:mt-6 rounded-lg border border-amber-500/20 bg-amber-500/[0.04] px-4 py-2.5">
+              <TrustBar variant="compact" />
             </div>
           </div>
         )}

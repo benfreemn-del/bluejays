@@ -32,13 +32,35 @@ function getWeekRotatingValue(min: number, max: number, salt: number): number {
 }
 
 export default function SocialProofCounter() {
-  // Hydration-safe: render baseline on server, rotate on client.
+  // Hydration-safe: render baseline on server, fetch live on client.
+  // /api/stats/public returns real-from-DB numbers floored to placeholder
+  // minimums so the counter NEVER reads as a fresh-deploy zero-state.
+  // Falls back to week-rotating placeholders if the API errors.
   const [auditsThisWeek, setAuditsThisWeek] = useState(31);
   const [closesThisWeek, setClosesThisWeek] = useState(4);
 
   useEffect(() => {
-    setAuditsThisWeek(getWeekRotatingValue(22, 47, 1));
+    let cancelled = false;
+    fetch("/api/stats/public")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (cancelled || !j) return;
+        if (typeof j.auditsThisWeek === "number")
+          setAuditsThisWeek(j.auditsThisWeek);
+        // closesThisWeek isn't on the public stats API; keep the
+        // week-rotating placeholder until we plumb a 7-day-paid
+        // count column.
+      })
+      .catch(() => {
+        // Live-fetch failed — keep the week-rotating fallback.
+        setAuditsThisWeek(getWeekRotatingValue(22, 47, 1));
+        setClosesThisWeek(getWeekRotatingValue(2, 6, 7));
+      });
+    // Always set the closes placeholder (no live source today).
     setClosesThisWeek(getWeekRotatingValue(2, 6, 7));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
