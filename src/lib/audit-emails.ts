@@ -1,13 +1,17 @@
 /**
- * Hormozi-cadence 5-email follow-up sequence for the BlueJays Free
+ * Hormozi-cadence 7-email follow-up sequence for the BlueJays Free
  * Website Audit lead-magnet.
  *
- * Cadence locked 2026-04-26 from research deliverable Section D:
- *  - Email 1 (Day 0): Delivery + frame
- *  - Email 2 (Day 1): Add value, soft pitch
- *  - Email 3 (Day 3): Real client case study
- *  - Email 4 (Day 7): Objection handling
- *  - Email 5 (Day 14): Last call + scarcity
+ * Cadence (extended 2026-05-07 from 5 to 7 emails per Ben — recovers
+ * 80%+ of audit-completed-but-no-purchase prospects who were silently
+ * walking out the back door):
+ *  - Email 1 (Day 0):  Delivery + frame
+ *  - Email 2 (Day 1):  Add value, soft pitch
+ *  - Email 3 (Day 3):  Real client case study
+ *  - Email 4 (Day 7):  Objection handling
+ *  - Email 5 (Day 14): Last call + scarcity (the OLD final)
+ *  - Email 6 (Day 30): Capacity-scarcity reopen ("opened 3 spots") · NEW
+ *  - Email 7 (Day 60): Hormozi exit offer ("closing your file") · NEW
  *
  * Tone: plain-text, person-to-person, blunt + friendly. NO HTML
  * polish (Promotions-tab risk + the audit URL itself does the
@@ -312,4 +316,74 @@ ${bookUrl}
 Or just hit reply with "in" and I'll send the onboarding link.${FOOTER}`;
 
   return { subject, body, sequence: 404 };
+}
+
+/**
+ * Email 6 — Day 30. Capacity-scarcity reopen. The Hormozi rule: real
+ * scarcity > fake scarcity. Ben builds 30 sites/month max; if next
+ * month's batch isn't full, he genuinely has slots. This email pulls
+ * dormant audit prospects back when there's actual capacity.
+ */
+export function getAuditEmail6(args: {
+  businessName: string;
+  auditUrl: string;
+  bookUrl: string;
+}): EmailTemplate {
+  const { businessName, auditUrl, bookUrl } = args;
+
+  const subject = pickVariant(businessName, [
+    `Just opened 3 build slots for next month`,
+    `${businessName} — capacity update`,
+    `Re-opening the audit conversation`,
+  ] as const);
+
+  const body = `Quick note — I just opened 3 new build slots for next month and remembered ${businessName}'s audit was sitting unread.
+
+I cap at 30 sites a month so the work stays good. When a slot opens up I work the audit list before I open it to new traffic — figured I'd check if you're still interested before the spot fills.
+
+Same offer: $997 one-time, you see the new site BEFORE you pay, don't love it you don't pay a cent.
+
+Audit is still here if you want a refresher: ${auditUrl}
+
+15 minutes on the phone if you're in:
+
+${bookUrl}
+
+If you've already gone another direction, no stress — just hit reply with "passed" and I'll close your file.${FOOTER}`;
+
+  return { subject, body, sequence: 405 };
+}
+
+/**
+ * Email 7 — Day 60. Hormozi exit offer. Highest-converting line in
+ * the script ("if you say no I'll never call again"). Most yeses
+ * actually come 30 seconds AFTER you give the prospect explicit
+ * permission to say no. This is the friendly close.
+ */
+export function getAuditEmail7(args: {
+  businessName: string;
+  auditUrl: string;
+  bookUrl: string;
+}): EmailTemplate {
+  const { businessName, auditUrl, bookUrl } = args;
+
+  const subject = pickVariant(businessName, [
+    `Closing your file — last reply?`,
+    `Last email about ${businessName}'s audit`,
+    `Pulling the plug unless you say otherwise`,
+  ] as const);
+
+  const body = `Last one — I'm closing ${businessName}'s file in our system this week unless you want me to keep it open.
+
+No pitch, no pressure. If you say no right now I won't email again. Most owners I never hear from after the audit, and that's totally fine — most sites really do work well enough for what they need today.
+
+If anything ever changes — slow leads, agency contract ends, you're tired of paying $300/mo for a site that doesn't book calls — just reply "still here" and I'll keep your audit on file.
+
+Audit link in case you want to keep it: ${auditUrl}
+
+If you DO want to talk, 15 min and I'll walk you through what would actually move the needle: ${bookUrl}
+
+Either way — appreciate you running the audit. Best of luck with ${businessName}.${FOOTER}`;
+
+  return { subject, body, sequence: 406 };
 }

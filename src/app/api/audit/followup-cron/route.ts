@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendEmail } from "@/lib/email-sender";
-import { getAuditEmail2, getAuditEmail3, getAuditEmail4, getAuditEmail5 } from "@/lib/audit-emails";
+import {
+  getAuditEmail2,
+  getAuditEmail3,
+  getAuditEmail4,
+  getAuditEmail5,
+  getAuditEmail6,
+  getAuditEmail7,
+} from "@/lib/audit-emails";
 import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
@@ -84,11 +91,12 @@ export async function POST(request?: NextRequest) {
 
   for (const audit of audits) {
     const step = audit.audit_email_step ?? 1; // Step 1 is the Day-0 email already sent
-    if (step >= 5) {
-      // Sequence complete. Check if the prospect can graduate to the cold funnel.
+    if (step >= 7) {
+      // Sequence complete (Email 7 was the Hormozi exit offer at Day 60).
+      // Check if the prospect can graduate to the cold funnel.
       // Graduation requires: still audit_lead (not converted), has a generated
       // preview site (Ben reviewed and built one), and 3+ days since last email
-      // (enough time to respond to Email 5 before we move them on).
+      // (enough time to respond to Email 7 before we move them on).
       const daysSinceFinal = audit.last_audit_email_at
         ? (now - new Date(audit.last_audit_email_at).getTime()) / DAY_MS
         : 999;
@@ -118,7 +126,7 @@ export async function POST(request?: NextRequest) {
             .update(graduationUpdate)
             .eq("id", gradProspect.id);
           graduated++;
-          log.push({ auditId: audit.id, step: 5, result: "graduated_to_approved" });
+          log.push({ auditId: audit.id, step: 7, result: "graduated_to_approved" });
         }
       }
       continue;
@@ -135,9 +143,11 @@ export async function POST(request?: NextRequest) {
     // Day-N gates per cadence
     let nextStep: number | null = null;
     if (step === 1 && daysSinceLast >= 1) nextStep = 2; // Day 1
-    else if (step === 2 && daysSinceLast >= 2) nextStep = 3; // Day 3 (1 + 2)
-    else if (step === 3 && daysSinceLast >= 4) nextStep = 4; // Day 7 (3 + 4)
+    else if (step === 2 && daysSinceLast >= 2) nextStep = 3; // Day 3  (1 + 2)
+    else if (step === 3 && daysSinceLast >= 4) nextStep = 4; // Day 7  (3 + 4)
     else if (step === 4 && daysSinceLast >= 7) nextStep = 5; // Day 14 (7 + 7)
+    else if (step === 5 && daysSinceLast >= 16) nextStep = 6; // Day 30 (14 + 16) · capacity reopen
+    else if (step === 6 && daysSinceLast >= 30) nextStep = 7; // Day 60 (30 + 30) · exit offer
 
     if (!nextStep) continue;
 
@@ -179,6 +189,12 @@ export async function POST(request?: NextRequest) {
         break;
       case 5:
         template = getAuditEmail5({ businessName, auditUrl, bookUrl });
+        break;
+      case 6:
+        template = getAuditEmail6({ businessName, auditUrl, bookUrl });
+        break;
+      case 7:
+        template = getAuditEmail7({ businessName, auditUrl, bookUrl });
         break;
       default:
         continue;
