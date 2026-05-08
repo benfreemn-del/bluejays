@@ -126,9 +126,17 @@ function cleanCorpusFile(raw: string): string {
   // entries — those are NOT voice samples, they're guidance for Ben).
   s = s.replace(/<!--[\s\S]*?-->/g, "");
 
-  // Strip frontmatter blocks (--- block ---) — they're per-entry
-  // metadata for routing, not voice content the AI needs to see.
-  s = s.replace(/^---\n[\s\S]*?\n---\n?/gm, "");
+  // Strip frontmatter blocks (--- key: value ... ---) — they're
+  // per-entry metadata for routing, not voice content the AI needs to
+  // see. CRITICAL: the regex MUST require key:value lines inside the
+  // block, otherwise it eats horizontal-rule `---` separators in
+  // content sections and nukes everything between them. Bug caught
+  // 2026-05-07 when voice-rules.md lost 5K chars to this exact issue
+  // (Rules 2-4 disappeared because they sat between two `---`
+  // horizontal rules). The `(?:[a-z_-]+:.*\n)+` lookahead requires at
+  // least one `key: value` line inside the block, so `---` followed
+  // by prose content stays untouched.
+  s = s.replace(/^---\n(?:[a-zA-Z_-]+:.*\n)+(?:.*\n)*?---\n?/gm, "");
 
   // Strip the placeholder "🟡 Awaiting content" notice if present.
   s = s.replace(/🟡\s+\*\*Awaiting content\.\*\*[\s\S]*?(?=\n## |\n# |$)/g, "");
