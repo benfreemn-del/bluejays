@@ -38,7 +38,7 @@ const PAGE_PATH = "/clients/theoregonappraisers/executors-guide";
 const TITLE =
   "What Executors Need to Know About Date-of-Death Appraisals | The Oregon Appraisers";
 const DESCRIPTION =
-  "A plain-English guide for executors and personal representatives in Oregon. Date-of-death appraisals, IRS step-up basis, the common mistakes that cost estates time and money — and how to avoid them. From Robert Rochefort, Salem-rooted appraiser since 2003.";
+  "A plain-English guide for executors and personal representatives in Oregon. Date-of-death appraisals, IRS step-up basis, the common mistakes that cost estates time and money — and how to avoid them. From Bob Rochefort, Salem-rooted appraiser since 2003.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -289,7 +289,7 @@ export default function ExecutorsGuidePage() {
             >
               <Image
                 src="/images/oregon-appraisers/bob-rochefort.jpg"
-                alt="Robert Rochefort"
+                alt="Bob Rochefort"
                 fill
                 className="object-cover object-top"
                 sizes="48px"
@@ -297,7 +297,7 @@ export default function ExecutorsGuidePage() {
             </div>
             <div>
               <div className="text-sm font-bold" style={{ color: FOREST }}>
-                Robert (Bob) Rochefort
+                Bob Rochefort
               </div>
               <div
                 className="text-xs uppercase tracking-[0.14em]"
@@ -660,7 +660,7 @@ export default function ExecutorsGuidePage() {
               <Buildings size={14} weight="bold" style={{ color: AMBER_LIGHT }} />
             </div>
             <span>
-              © {new Date().getFullYear()} The Oregon Appraisers. Robert
+              © {new Date().getFullYear()} The Oregon Appraisers. Bob
               Rochefort, Salem OR.
             </span>
           </div>

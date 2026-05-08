@@ -1164,7 +1164,7 @@ function AboutBob() {
             >
               <Image
                 src="/images/oregon-appraisers/bob-rochefort.jpg"
-                alt="Robert (Bob) Rochefort, Certified Appraiser at The Oregon Appraisers"
+                alt="Bob Rochefort, Certified Appraiser at The Oregon Appraisers"
                 fill
                 className="object-cover object-top"
                 sizes="(max-width: 1024px) 100vw, 40vw"
@@ -1177,7 +1177,7 @@ function AboutBob() {
                 }}
               >
                 <div className="text-white text-sm font-semibold leading-tight">
-                  Robert Rochefort
+                  Bob Rochefort
                 </div>
                 <div className="text-xs uppercase tracking-[0.16em] mt-0.5" style={{ color: AMBER_LIGHT }}>
                   Certified Appraiser · Salem, OR
@@ -2136,7 +2136,7 @@ function Footer() {
         <div className="pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style={{ borderColor: `${CREAM}20` }}>
           <div>
             © {new Date().getFullYear()} The Oregon Appraisers. USPAP-compliant.
-            All work performed by Robert Rochefort.
+            All work performed by Bob Rochefort.
           </div>
           <div className="flex items-center gap-1.5">
             <svg width="14" height="14" viewBox="0 0 32 32" style={{ color: "#0ea5e9" }} aria-hidden>

@@ -30,9 +30,9 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const HERO_IMG = `${SITE_URL}/images/oregon-appraisers/salem-capitol.jpg`;
 
 const TITLE =
-  "The Oregon Appraisers — Salem Estate, Divorce & Litigation Appraisals | Robert Rochefort";
+  "The Oregon Appraisers — Salem Estate, Divorce & Litigation Appraisals | Bob Rochefort";
 const DESCRIPTION =
-  "Defensible probate, IRS estate, divorce, and litigation real estate appraisals across Marion, Polk, and Linn counties. Salem-rooted since 2003. USPAP-compliant, court-ready reports from Robert (Bob) Rochefort — vouched for by the former Oregon Appraiser Certification & Licensure Board Compliance Investigator.";
+  "Defensible probate, IRS estate, divorce, and litigation real estate appraisals across Marion, Polk, and Linn counties. Salem-rooted since 2003. USPAP-compliant, court-ready reports from Bob Rochefort — vouched for by the former Oregon Appraiser Certification & Licensure Board Compliance Investigator.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/images/oregon-appraisers/bob-rochefort.jpg`,
         width: 800,
         height: 800,
-        alt: "Robert (Bob) Rochefort, Certified Appraiser at The Oregon Appraisers",
+        alt: "Bob Rochefort, Certified Appraiser at The Oregon Appraisers",
       },
     ],
     type: "website",
