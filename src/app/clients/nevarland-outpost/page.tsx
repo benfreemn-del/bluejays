@@ -33,7 +33,6 @@
 
 import Link from "next/link";
 import EmberCanvas from "./EmberCanvas";
-import FounderVideoSpot from "./FounderVideoSpot";
 
 /* ───────────────────────── PALETTE ─────────────────────────
    Sampled directly from Christopher's grunge_border.png on the
@@ -1038,7 +1037,6 @@ export default function NevarlandOutpostPage() {
       <Header />
       <HeroSection />
       <StorySection />
-      <FounderVideoSpot />
       <AdultTeesSection />
       <KidsSection />
       <CustomServiceSection />
