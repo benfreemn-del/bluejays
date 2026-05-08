@@ -560,7 +560,7 @@ function FloatingEmbers() {
             opacity: 0;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-ember {
             animation: none;
             display: none;
@@ -637,7 +637,7 @@ function FloatingPetals({ count = 7 }: { count?: number }) {
             opacity: 0;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-petal {
             animation: none;
             display: none;
@@ -710,7 +710,7 @@ function DriftingFog({ tint = GOLD_DEEP, count = 4 }: { tint?: string; count?: n
             opacity: 0.35;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-fog {
             animation: none;
             opacity: 0.18;
@@ -835,7 +835,7 @@ function FloatingDust({ count = 14, tint = GOLD }: { count?: number; tint?: stri
             opacity: 0;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-dust {
             animation: none;
             display: none;
@@ -895,7 +895,7 @@ function CharacterSilhouettes() {
             opacity: 1;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-char-flicker {
             animation: none;
           }
@@ -1114,7 +1114,7 @@ function FloatingRunes({ count = 9 }: { count?: number }) {
             opacity: 0.18;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-rune {
             animation: none;
             opacity: 0.1;
@@ -1208,7 +1208,7 @@ function LandscapeBackdrop() {
             transform: rotate(360deg);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-star,
           .bl-castle-glow,
           .bl-river,
@@ -1426,7 +1426,7 @@ function CompassWatermark() {
             transform: rotate(360deg);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-compass {
             animation: none;
           }
@@ -1673,7 +1673,7 @@ function ElementBackdrop({
           }
         }
 
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-elem-particle,
           .bl-fire-flame,
           .bl-fire-glow,
@@ -2250,7 +2250,7 @@ function ElementParticles({ id, color }: { id: string; color: string }) {
             opacity: 0.7;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-elem-particle {
             animation: none;
             opacity: 0.3;
@@ -2315,7 +2315,7 @@ function LibraryBackdrop() {
             transform: scaleY(0.96) scaleX(1.04);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-candle-flicker {
             animation: none;
           }
@@ -2490,7 +2490,7 @@ function InkWisps() {
             transform: translateX(30px) scale(1.05);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-wisp {
             animation: none;
             opacity: 0.1;
@@ -2562,7 +2562,7 @@ function FactionAmbient({ tint }: { tint: string }) {
             opacity: 0.45;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-faction-pulse {
             animation: none;
             opacity: 0.2;
@@ -2900,7 +2900,7 @@ function ParchmentSynopsisModal({
             opacity: 1;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-page-flip-wrap,
           .bl-page-left,
           .bl-page-right {
@@ -3323,7 +3323,7 @@ function HeroBlock() {
               opacity: 0;
             }
           }
-          @media (prefers-reduced-motion: reduce) {
+          @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
             .bl-book-wrap,
             .bl-book,
             .bl-book-aura,
@@ -5045,7 +5045,7 @@ function WorldMapBlock() {
             transform: rotate(-360deg);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           :global(.bl-map-compass-outer),
           :global(.bl-map-compass-inner) {
             animation: none;
@@ -5060,83 +5060,124 @@ function WorldMapBlock() {
 // 5. CHARACTER ROSTER — clickable cards with expand-to-bio
 // ──────────────────────────────────────────────────────────────────────
 function CharacterRosterBlock() {
+  // Single state — the clicked card is both flipped (showing portrait
+  // on the back) AND has its bio in the top info panel. Click same
+  // card → unflips + closes panel. Click different card → previous
+  // unflips, new one flips, panel content updates.
   const [openId, setOpenId] = useState<string | null>(null);
+  // Track which portraits failed to load so we can fall back to the
+  // monogram circle. Resilient against the case where the gpt-image-1
+  // generation script hasn't been run yet for a given character.
+  const [erroredIds, setErroredIds] = useState<Set<string>>(new Set());
+  const markErrored = useCallback((id: string) => {
+    setErroredIds((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
+  const openChar = openId ? CHARACTERS.find((x) => x.id === openId) ?? null : null;
+
+  const portraitPath = (id: string) => `/images/clients/bloodlines/characters/${id}.png`;
 
   return (
     <section className="relative py-20 sm:py-24 lg:py-32 px-6 overflow-hidden">
       <FloatingRunes count={9} />
       <CharacterSilhouettes />
+
+      {/* Card-flip 3D primitives — local style block. Plain CSS, no
+          framer (per the page-level no-opacity-0-on-previews rule).
+          prefers-reduced-motion swaps the rotation for an instant
+          opacity crossfade so the back-side image still becomes visible
+          on click without spinning. */}
+      <style jsx>{`
+        .bl-flip-card {
+          perspective: 1200px;
+        }
+        .bl-flip-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+          transform-style: preserve-3d;
+        }
+        .bl-flip-card.is-flipped .bl-flip-inner {
+          transform: rotateY(180deg);
+        }
+        .bl-flip-face {
+          position: absolute;
+          inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .bl-flip-back {
+          transform: rotateY(180deg);
+        }
+        .bl-bio-panel {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition:
+            max-height 500ms cubic-bezier(0.22, 0.61, 0.36, 1),
+            opacity 350ms ease-out,
+            margin 400ms ease-out;
+          margin-bottom: 0;
+        }
+        .bl-bio-panel.is-open {
+          max-height: 1200px;
+          opacity: 1;
+          margin-bottom: 2.5rem;
+        }
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
+          .bl-flip-inner {
+            transition: none;
+            transform: none !important;
+          }
+          .bl-flip-back {
+            transform: none;
+            opacity: 0;
+            transition: opacity 200ms ease-out;
+          }
+          .bl-flip-card.is-flipped .bl-flip-front {
+            opacity: 0;
+          }
+          .bl-flip-card.is-flipped .bl-flip-back {
+            opacity: 1;
+          }
+          .bl-bio-panel {
+            transition:
+              max-height 200ms ease-out,
+              opacity 150ms ease-out,
+              margin 200ms ease-out;
+          }
+        }
+      `}</style>
+
       <div className="relative max-w-6xl mx-auto">
         <SectionHeading
           eyebrow="The Cast"
           title="Faces of the Saga"
-          subtitle="Tap a name to learn their story."
+          subtitle="Tap a name to flip the card and read their story."
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-          {CHARACTERS.map((c) => {
-            const isOpen = openId === c.id;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setOpenId(isOpen ? null : c.id)}
-                className="group relative aspect-[3/4] rounded-sm transition-all duration-300 hover:scale-[1.03]"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(212, 168, 83, 0.08) 0%, rgba(127, 29, 29, 0.05) 100%)",
-                  border: `1px solid ${isOpen ? GOLD : `${GOLD_DEEP}55`}`,
-                  boxShadow: isOpen
-                    ? `0 0 32px rgba(212, 168, 83, 0.3)`
-                    : "0 4px 16px rgba(0,0,0,0.4)",
-                }}
-                aria-expanded={isOpen}
-              >
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-3">
-                  <div
-                    className="flex items-center justify-center rounded-full mb-3"
-                    style={{
-                      width: 64,
-                      height: 64,
-                      background:
-                        "radial-gradient(circle, rgba(212, 168, 83, 0.25) 0%, rgba(9, 9, 11, 0.8) 70%)",
-                      border: `2px solid ${GOLD}`,
-                      color: GOLD,
-                      fontFamily: "'Cinzel', serif",
-                      fontSize: c.monogram.length > 1 ? 18 : 26,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {c.monogram}
-                  </div>
-                  <p
-                    className="text-xs sm:text-sm font-bold text-center leading-tight"
-                    style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
-                  >
-                    {c.name}
-                  </p>
-                  <p
-                    className="text-[10px] uppercase tracking-wider mt-1 text-center"
-                    style={{ color: "rgba(232, 220, 196, 0.55)" }}
-                  >
-                    {c.role}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Expanded bio drawer */}
-        {openId && (() => {
-          const c = CHARACTERS.find((x) => x.id === openId)!;
-          return (
+        {/* TOP info panel — Ben's spec: bio + quote pop up ABOVE the
+            grid when a card is clicked, not below. Smooth slide-in via
+            the .bl-bio-panel max-height/opacity transition. */}
+        <div
+          className={`bl-bio-panel ${openChar ? "is-open" : ""}`}
+          aria-live="polite"
+        >
+          {openChar && (
             <div
-              className="mt-8 p-6 sm:p-8 rounded-sm relative overflow-hidden"
+              className="relative p-6 sm:p-8 rounded-sm overflow-hidden"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(212, 168, 83, 0.08) 0%, rgba(9, 9, 11, 0.95) 100%)",
+                  "linear-gradient(135deg, rgba(212, 168, 83, 0.10) 0%, rgba(9, 9, 11, 0.95) 100%)",
                 border: `1px solid ${GOLD_DEEP}88`,
+                boxShadow: `0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(212, 168, 83, 0.12)`,
               }}
             >
               <button
@@ -5149,52 +5190,229 @@ function CharacterRosterBlock() {
                 ✕
               </button>
               <div className="flex flex-col sm:flex-row gap-6 items-start">
+                {/* Face-zoom circle in the panel mirrors the front of
+                    the card — same image, same crop, just sized up. */}
                 <div
-                  className="flex-shrink-0 flex items-center justify-center rounded-full"
+                  className="flex-shrink-0 rounded-full overflow-hidden relative flex items-center justify-center"
                   style={{
                     width: 96,
                     height: 96,
-                    background:
-                      "radial-gradient(circle, rgba(212, 168, 83, 0.3) 0%, rgba(9, 9, 11, 0.9) 70%)",
                     border: `2px solid ${GOLD}`,
-                    color: GOLD,
-                    fontFamily: "'Cinzel', serif",
-                    fontSize: c.monogram.length > 1 ? 28 : 40,
-                    fontWeight: 700,
+                    boxShadow: `0 0 16px rgba(212, 168, 83, 0.25)`,
+                    background:
+                      "radial-gradient(circle, rgba(212, 168, 83, 0.18) 0%, rgba(9, 9, 11, 0.95) 70%)",
                   }}
                 >
-                  {c.monogram}
+                  {erroredIds.has(openChar.id) ? (
+                    <span
+                      style={{
+                        color: GOLD,
+                        fontFamily: "'Cinzel', serif",
+                        fontSize: openChar.monogram.length > 1 ? 28 : 40,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {openChar.monogram}
+                    </span>
+                  ) : (
+                    <Image
+                      src={portraitPath(openChar.id)}
+                      alt={`${openChar.name} portrait`}
+                      width={192}
+                      height={192}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{ objectPosition: "50% 22%" }}
+                      sizes="96px"
+                      priority={false}
+                      onError={() => markErrored(openChar.id)}
+                    />
+                  )}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p
                     className="text-xs uppercase tracking-[0.3em] mb-1"
                     style={{ color: GOLD_DEEP, fontFamily: "'Cinzel', serif" }}
                   >
-                    {c.role} · {c.affiliation}
+                    {openChar.role} · {openChar.affiliation}
                   </p>
                   <h3
                     className="text-2xl sm:text-3xl font-bold mb-2"
                     style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
                   >
-                    {c.name}
+                    {openChar.name}
                   </h3>
                   <p
                     className="text-lg italic mb-4"
                     style={{ color: "rgba(232, 220, 196, 0.85)" }}
                   >
-                    "{c.one_liner}"
+                    "{openChar.one_liner}"
                   </p>
                   <p
                     className="text-base leading-relaxed"
                     style={{ color: "rgba(232, 220, 196, 0.78)" }}
                   >
-                    {c.bio}
+                    {openChar.bio}
                   </p>
                 </div>
               </div>
             </div>
-          );
-        })()}
+          )}
+        </div>
+
+        {/* Card grid — each card is a 3D flip. Front = face-zoom circle
+            + name + role. Back = full character portrait covering the
+            card with a name overlay at the bottom edge. */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          {CHARACTERS.map((c) => {
+            const isFlipped = openId === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setOpenId(isFlipped ? null : c.id)}
+                className={`bl-flip-card group relative aspect-[3/4] rounded-sm transition-shadow duration-300 hover:scale-[1.03] ${
+                  isFlipped ? "is-flipped" : ""
+                }`}
+                style={{
+                  boxShadow: isFlipped
+                    ? `0 0 32px rgba(212, 168, 83, 0.35)`
+                    : "0 4px 16px rgba(0,0,0,0.4)",
+                  transition:
+                    "box-shadow 300ms ease-out, transform 300ms ease-out",
+                }}
+                aria-expanded={isFlipped}
+                aria-label={`${c.name}, ${c.role}. ${
+                  isFlipped ? "Flip card back" : "Flip card to see portrait"
+                }.`}
+              >
+                <div className="bl-flip-inner">
+                  {/* FRONT — face-zoom circle + name + role */}
+                  <div
+                    className="bl-flip-face bl-flip-front"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(212, 168, 83, 0.08) 0%, rgba(127, 29, 29, 0.05) 100%)",
+                      border: `1px solid ${isFlipped ? GOLD : `${GOLD_DEEP}55`}`,
+                    }}
+                  >
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3">
+                      <div
+                        className="rounded-full overflow-hidden relative mb-3 flex items-center justify-center"
+                        style={{
+                          width: 72,
+                          height: 72,
+                          border: `2px solid ${GOLD}`,
+                          background:
+                            "radial-gradient(circle, rgba(212, 168, 83, 0.18) 0%, rgba(9, 9, 11, 0.95) 70%)",
+                        }}
+                      >
+                        {erroredIds.has(c.id) ? (
+                          <span
+                            style={{
+                              color: GOLD,
+                              fontFamily: "'Cinzel', serif",
+                              fontSize: c.monogram.length > 1 ? 18 : 26,
+                              fontWeight: 700,
+                            }}
+                          >
+                            {c.monogram}
+                          </span>
+                        ) : (
+                          <Image
+                            src={portraitPath(c.id)}
+                            alt=""
+                            width={144}
+                            height={144}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            style={{ objectPosition: "50% 22%" }}
+                            sizes="72px"
+                            priority={false}
+                            onError={() => markErrored(c.id)}
+                          />
+                        )}
+                      </div>
+                      <p
+                        className="text-xs sm:text-sm font-bold text-center leading-tight"
+                        style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
+                      >
+                        {c.name}
+                      </p>
+                      <p
+                        className="text-[10px] uppercase tracking-wider mt-1 text-center"
+                        style={{ color: "rgba(232, 220, 196, 0.55)" }}
+                      >
+                        {c.role}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* BACK — full character portrait + name overlay.
+                      Falls back to a large monogram + affiliation block
+                      when the portrait file is missing (image-gen
+                      script not yet run for this character). */}
+                  <div
+                    className="bl-flip-face bl-flip-back"
+                    style={{
+                      background:
+                        "linear-gradient(160deg, rgba(127, 29, 29, 0.18) 0%, rgba(9, 9, 11, 0.98) 60%, rgba(9, 9, 11, 1) 100%)",
+                      border: `1px solid ${GOLD}`,
+                    }}
+                  >
+                    {!erroredIds.has(c.id) && (
+                      <Image
+                        src={portraitPath(c.id)}
+                        alt={`${c.name} — full portrait`}
+                        width={400}
+                        height={533}
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                        priority={false}
+                        onError={() => markErrored(c.id)}
+                      />
+                    )}
+                    {erroredIds.has(c.id) && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span
+                          style={{
+                            color: GOLD,
+                            fontFamily: "'Cinzel', serif",
+                            fontSize: c.monogram.length > 1 ? 64 : 96,
+                            fontWeight: 700,
+                            opacity: 0.85,
+                            textShadow: `0 0 24px ${GOLD_DEEP}`,
+                          }}
+                        >
+                          {c.monogram}
+                        </span>
+                      </div>
+                    )}
+                    {/* Bottom gradient + name lockup */}
+                    <div
+                      className="absolute inset-x-0 bottom-0 px-3 pt-10 pb-3"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(9,9,11,0) 0%, rgba(9,9,11,0.85) 60%, rgba(9,9,11,0.95) 100%)",
+                      }}
+                    >
+                      <p
+                        className="text-xs sm:text-sm font-bold text-center leading-tight"
+                        style={{ color: GOLD, fontFamily: "'Cinzel', serif" }}
+                      >
+                        {c.name}
+                      </p>
+                      <p
+                        className="text-[10px] uppercase tracking-wider mt-0.5 text-center"
+                        style={{ color: "rgba(232, 220, 196, 0.65)" }}
+                      >
+                        {c.affiliation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -5594,7 +5812,7 @@ function FactionPreviewGrid() {
             transform: rotate(360deg);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-faction-crest-glow,
           .bl-faction-crest-ring {
             animation: none;
@@ -5921,7 +6139,7 @@ function AuthorBlock() {
             transform: rotate(360deg);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (prefers-reduced-motion: reduce) and (max-width: 0px) {
           .bl-author-seal,
           .bl-author-seal-rim {
             animation: none;
