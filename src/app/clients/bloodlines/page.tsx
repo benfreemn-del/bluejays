@@ -3543,21 +3543,10 @@ function HeroBlock() {
                   }}
                 />
 
-                {/* Heavy metal bands across the spine + over cover */}
-                {[42, 100, 168, 230, 280].map((y, i) => (
-                  <div
-                    key={`band-${i}`}
-                    aria-hidden="true"
-                    className="absolute left-0 right-0 pointer-events-none"
-                    style={{
-                      top: y,
-                      height: 5,
-                      background: `linear-gradient(180deg, ${GOLD_LIGHT}55 0%, ${GOLD_DEEP} 35%, ${GOLD} 50%, ${GOLD_DEEP} 65%, rgba(0,0,0,0.5) 100%)`,
-                      boxShadow: `0 1px 2px rgba(0,0,0,0.6), inset 0 1px 0 ${GOLD_LIGHT}55`,
-                      opacity: 0.85,
-                    }}
-                  />
-                ))}
+                {/* Heavy metal bands removed 2026-05-07 per Ben — the
+                    cover reads cleaner with just the embossed wilted-rose
+                    sigil + the corner caps + the gold edge highlight,
+                    no horizontal straps cutting across the artwork. */}
 
                 {/* Top edge highlight + bottom edge shadow — fakes the
                     3D thickness of the cover material. */}
