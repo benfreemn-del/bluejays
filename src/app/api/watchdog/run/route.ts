@@ -394,8 +394,32 @@ async function runWatchdog(req?: NextRequest) {
   // ─── Vendor health checks (Hormozi review #4) ─────────────────
   // Pings every external dependency (Stripe, SendGrid, Anthropic, OpenAI,
   // Twilio, Lob, Namecheap, Meta Ads, Google Ads, Supabase) and adds
-  // any failing vendors to the alert list. Skipped vendors (no creds)
-  // don't alert — silent gaps are fine while we ramp.
+  // any failing vendors to the alert list.
+  //
+  // Skipped vendors (no creds) silently passed UNTIL 2026-05-07 — that's
+  // the silent-prod-mock-mode bug class from the adversarial review.
+  // In production now, any CRITICAL vendor in skipped state means an
+  // env var is missing or got nuked, and the system is operating in
+  // mock-fallback mode without anyone noticing. Alerts on the next
+  // watchdog tick (within 24 hours) so a deleted prod env var never
+  // sits silently for a week.
+  //
+  // CRITICAL_PROD_VENDORS = vendors where 'skipped in prod' is a P0
+  //   incident. supabase = entire DB gone. stripe = no payment
+  //   processing. sendgrid = no email. anthropic+openai = AI features
+  //   all degrade. Twilio / Lob / Namecheap / Meta / Google are
+  //   intentionally parked during ramp (A2P pending, Lob test mode,
+  //   etc.) so 'skipped' is the operational state for those — they
+  //   stay in the existing fail-only alert path.
+  const CRITICAL_PROD_VENDORS = [
+    "supabase",
+    "stripe",
+    "sendgrid",
+    "anthropic",
+    "openai",
+  ];
+  const isProduction = process.env.VERCEL_ENV === "production";
+
   let vendorChecks: Awaited<ReturnType<typeof runAllHealthChecks>> | null = null;
   try {
     vendorChecks = await runAllHealthChecks();
@@ -405,6 +429,30 @@ async function runWatchdog(req?: NextRequest) {
         .map((v) => `${v.vendor}(${v.detail || "unknown"})`)
         .join(", ");
       alerts.push(`${failingVendors.length} vendor(s) failing: ${list}`);
+    }
+
+    // NEW (2026-05-07) — critical-vendor-skipped-in-prod check.
+    // Treats a missing CRITICAL_PROD_VENDOR env var as a P0 incident.
+    // Only fires in `VERCEL_ENV === "production"` so local dev + preview
+    // deploys (where skipped is the expected dev state) don't spam
+    // alerts. Single alert message lists every critical-skipped vendor
+    // so Ben gets one SMS not five.
+    if (isProduction) {
+      const criticalSkipped = vendorChecks.checks.filter(
+        (c) =>
+          c.status === "skipped" &&
+          CRITICAL_PROD_VENDORS.includes(c.vendor.toLowerCase()),
+      );
+      if (criticalSkipped.length > 0) {
+        const list = criticalSkipped
+          .map((v) => `${v.vendor}(${v.detail || "no_credentials"})`)
+          .join(", ");
+        alerts.push(
+          `🚨 PROD MOCK-MODE: ${criticalSkipped.length} critical vendor(s) ` +
+            `running on missing creds: ${list}. ` +
+            `Check Vercel env vars NOW — system writing to mock fallback.`,
+        );
+      }
     }
   } catch (err) {
     // Vendor check itself crashed — log but don't crash the watchdog.
