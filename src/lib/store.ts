@@ -169,6 +169,14 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     sourceChannel: (row.source_channel as string | null) ?? undefined,
     sourceChannelSetAt:
       (row.source_channel_set_at as string | null) ?? undefined,
+    aiPackageWelcomeStep:
+      (row.ai_package_welcome_step as number | null) ?? undefined,
+    aiPackageWelcomeAt:
+      (row.ai_package_welcome_at as string | null) ?? undefined,
+    winLossSurveySentAt:
+      (row.win_loss_survey_sent_at as string | null) ?? undefined,
+    winLossOutcome:
+      (row.win_loss_outcome as string | null) ?? undefined,
     customSiteUrl: (row.custom_site_url as string | null) || undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,
@@ -460,6 +468,9 @@ export async function updateProspect(
     if (sanitizedUpdates.sourceChannel !== undefined) {
       dbUpdates.source_channel = sanitizedUpdates.sourceChannel || null;
       dbUpdates.source_channel_set_at = new Date().toISOString();
+    }
+    if (sanitizedUpdates.winLossOutcome !== undefined) {
+      dbUpdates.win_loss_outcome = sanitizedUpdates.winLossOutcome || null;
     }
     if (sanitizedUpdates.customSiteUrl !== undefined) dbUpdates.custom_site_url = sanitizedUpdates.customSiteUrl || null;
     if (sanitizedUpdates.adminNotes !== undefined) dbUpdates.admin_notes = sanitizedUpdates.adminNotes || null;

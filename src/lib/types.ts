@@ -207,6 +207,15 @@ export interface Prospect {
    *  Used by /dashboard/sales-pipeline + future conversion-rate report. */
   sourceChannel?: string;
   sourceChannelSetAt?: string;
+  /** AI Package post-purchase 3-email welcome sequence tracker. */
+  aiPackageWelcomeStep?: number;
+  aiPackageWelcomeAt?: string;
+  /** Win-loss survey state (set by /api/cron/win-loss-survey + the
+   *  /dashboard/win-loss operator UI). */
+  winLossSurveySentAt?: string;
+  /** Operator-assigned outcome category from the win-loss reply.
+   *  One of: 'price' | 'timing' | 'fit' | 'competitor' | 'no-reply' | 'other' */
+  winLossOutcome?: string;
   /** For pricing_tier=custom prospects only: absolute URL of the real live site
    *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
    *  rendering the template preview. Ignored for non-custom tiers. */
