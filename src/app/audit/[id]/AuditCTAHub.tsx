@@ -200,6 +200,30 @@ export default function AuditCTAHub({
           </div>
         </a>
 
+        {/* Funnel preview · "see it before you pay" for the AI Package
+            tier. Mirrors the website's free-preview magic for the
+            $9,700 product so prospects can experience the offering
+            before committing. Added 2026-05-07 per Ben — single
+            biggest pre-purchase trust unlock for the high-ticket tier. */}
+        <a
+          href={`/audit/${auditId}/funnel-preview`}
+          className="block mb-4 rounded-lg border border-violet-500/30 bg-violet-950/15 px-5 py-3 hover:border-violet-400/60 hover:bg-violet-950/30 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">👀</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-violet-100 leading-tight">
+                See your AI funnel before you pay
+              </p>
+              <p className="text-[11px] text-violet-300/80 leading-tight mt-0.5">
+                3 audience tracks customized to your business · sample
+                emails, SMS, ad headlines · 60-second look
+              </p>
+            </div>
+            <span className="text-violet-300 text-sm">→</span>
+          </div>
+        </a>
+
         {/* divider */}
         <div className="flex items-center gap-3 mb-5">
           <div className="flex-1 border-t border-white/5" />
