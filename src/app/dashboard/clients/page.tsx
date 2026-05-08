@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { clientSiteFor } from "@/lib/client-site-urls";
 
 /**
  * /dashboard/clients
@@ -74,53 +75,86 @@ export default function ClientsIndexPage() {
         <div className="space-y-2">
           {clients.map((c) => {
             const allDone = c.open_count === 0 && c.done_count > 0;
+            const site = clientSiteFor(c.client_slug);
             return (
-              <Link
+              <div
                 key={c.client_slug}
-                href={`/dashboard/clients/${c.client_slug}`}
-                className={`flex items-center gap-3 rounded-lg border p-4 transition ${
+                className={`relative flex items-center gap-3 rounded-lg border p-4 transition ${
                   allDone
                     ? "border-emerald-700/40 bg-emerald-900/15 hover:border-emerald-600/60 hover:bg-emerald-900/25"
                     : "border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900"
                 }`}
               >
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold tracking-tight truncate flex items-center gap-2">
-                    {allDone && (
-                      <span
-                        aria-label="all tasks done"
-                        className="text-emerald-400 text-base leading-none"
-                      >
-                        ✅
-                      </span>
-                    )}
-                    {c.client_slug}
+                <Link
+                  href={`/dashboard/clients/${c.client_slug}`}
+                  className="flex-1 min-w-0 flex items-center gap-3"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold tracking-tight truncate flex items-center gap-2">
+                      {allDone && (
+                        <span
+                          aria-label="all tasks done"
+                          className="text-emerald-400 text-base leading-none"
+                        >
+                          ✅
+                        </span>
+                      )}
+                      {c.client_slug}
+                    </div>
+                    <div
+                      className={`text-[11px] mt-0.5 ${
+                        allDone ? "text-emerald-400/80" : "text-slate-500"
+                      }`}
+                    >
+                      {allDone
+                        ? `All ${c.done_count} tasks done · live`
+                        : `${c.open_count} open task${c.open_count === 1 ? "" : "s"}`}
+                    </div>
                   </div>
                   <div
-                    className={`text-[11px] mt-0.5 ${
-                      allDone ? "text-emerald-400/80" : "text-slate-500"
+                    className={`text-xs font-bold px-2 py-1 rounded ${
+                      allDone
+                        ? "bg-emerald-500/20 text-emerald-300"
+                        : c.open_count > 10
+                          ? "bg-rose-500/20 text-rose-300"
+                          : c.open_count > 5
+                            ? "bg-amber-500/20 text-amber-300"
+                            : "bg-blue-500/20 text-blue-300"
                     }`}
                   >
-                    {allDone
-                      ? `All ${c.done_count} tasks done · live`
-                      : `${c.open_count} open task${c.open_count === 1 ? "" : "s"}`}
+                    {allDone ? "✓" : c.open_count}
                   </div>
-                </div>
-                <div
-                  className={`text-xs font-bold px-2 py-1 rounded ${
-                    allDone
-                      ? "bg-emerald-500/20 text-emerald-300"
-                      : c.open_count > 10
-                        ? "bg-rose-500/20 text-rose-300"
-                        : c.open_count > 5
-                          ? "bg-amber-500/20 text-amber-300"
-                          : "bg-blue-500/20 text-blue-300"
-                  }`}
-                >
-                  {allDone ? "✓" : c.open_count}
-                </div>
+                </Link>
+
+                {/* Quick-access preview site link — opens the bespoke
+                    /clients/{slug} build (or the client's actual production
+                    URL if external) without drilling into the detail page. */}
+                {site.kind === "none" ? (
+                  <span
+                    title="No site URL set yet — wire it in src/lib/client-site-urls.ts"
+                    className="text-[10px] tracking-wider uppercase font-bold border border-slate-800 text-slate-600 px-2 py-1 rounded cursor-not-allowed"
+                  >
+                    Site ↗
+                  </span>
+                ) : (
+                  <a
+                    href={site.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={
+                      site.kind === "internal"
+                        ? "Open the bespoke preview site"
+                        : "Open the client's production site"
+                    }
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[10px] tracking-wider uppercase font-bold border border-cyan-700/60 text-cyan-300 hover:text-white hover:bg-cyan-900/30 px-2 py-1 rounded transition"
+                  >
+                    Site ↗
+                  </a>
+                )}
+
                 <span className="text-slate-600">→</span>
-              </Link>
+              </div>
             );
           })}
         </div>
