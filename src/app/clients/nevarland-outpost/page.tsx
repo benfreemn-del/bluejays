@@ -35,23 +35,45 @@ import Link from "next/link";
 import EmberCanvas from "./EmberCanvas";
 import FounderVideoSpot from "./FounderVideoSpot";
 
-/* ───────────────────────── PALETTE ───────────────────────── */
+/* ───────────────────────── PALETTE ─────────────────────────
+   Sampled directly from Christopher's grunge_border.png on the
+   live site (2026-05-07). Replaces the candy-rust I had with
+   his actual sepia/aged-warm-gray vintage palette so the bespoke
+   build reads like an extension of his existing brand instead of
+   a re-skin. */
 const BG_BLACK = "#0a0a0a";
-const BG_CHARCOAL = "#1a1a1a";
-const BG_PAPER = "#f4eee2";
-const INK_PAPER = "#1a1a14";
-const INK_PAPER_SOFT = "#3d3d33";
-const ACCENT_RUST = "#c45836";
-const ACCENT_RUST_LIGHT = "#d97757";
-const ACCENT_SAGE = "#6b7d4f";
-const METAL = "#c4a570";
+const BG_CHARCOAL = "#1c1815";          // warm-tinted charcoal (was #1a1a1a)
+const BG_PAPER = "#e8dec8";             // warmer parchment (was #f4eee2)
+const INK_PAPER = "#1a1812";
+const INK_PAPER_SOFT = "#3d3a32";
+const ACCENT_RUST = "#a06b3c";          // sepia burnt-sienna (was #c45836)
+const ACCENT_RUST_LIGHT = "#b88860";    // lighter sepia tan (was #d97757)
+const ACCENT_SAGE = "#7d7e5c";          // washed olive-gray
+const METAL = "#8a7654";                // aged sepia gold (was #c4a570)
 
-/* ───────────────────────── ASSETS ───────────────────────── */
+/* ───────────────────────── ASSETS ─────────────────────────
+   Includes 3 brand-asset additions (2026-05-07):
+     · stayRealPoster — the "Stay real. Keep growing." brand
+       statement Christopher uses on his own site. New hero
+       centerpiece (replaces the founder photo, which moves
+       lower into the Story section where it belongs).
+     · grungeBorder + grungeBorderCustomize — his existing
+       grunge-frame PNGs, now used as section dividers across
+       the page so the bespoke build inherits brand DNA from
+       his Shopify front. */
 const ASSETS = {
   founder:
     "https://www.nevarlandoutpost.com/cdn/shop/files/20260215_120213.jpg?v=1771735328&width=1500",
   logo:
     "https://www.nevarlandoutpost.com/cdn/shop/files/logo_icon_2.png?v=1778202492&width=600",
+  stayRealPoster:
+    "https://www.nevarlandoutpost.com/cdn/shop/files/Stay_real._Keep_growing..png?v=1771786570&width=1100",
+  grungeBorder:
+    "https://www.nevarlandoutpost.com/cdn/shop/files/grunge_border.png?v=1771731640&width=3200",
+  grungeBorderCustomize:
+    "https://www.nevarlandoutpost.com/cdn/shop/files/grunge_border_CUSTOMIZE.png?v=1771732610&width=3200",
+  grungeBorderDtf:
+    "https://www.nevarlandoutpost.com/cdn/shop/files/grunge_border_DTF.png?v=1771732365&width=3200",
   productDiscipline:
     "https://www.nevarlandoutpost.com/cdn/shop/files/DISCIPLINESHIRTLOGOMAINSILK2.jpg?v=1776362431&width=900",
   productLegacy:
@@ -163,7 +185,7 @@ function Header() {
       className="sticky top-0 z-50 border-b backdrop-blur-md"
       style={{
         background: "rgba(10,10,10,0.86)",
-        borderColor: "rgba(196,88,54,0.18)",
+        borderColor: "rgba(160,107,60,0.18)",
         fontFamily: "'Inter', sans-serif",
       }}
     >
@@ -238,7 +260,7 @@ function HeroSection() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 30% 50%, rgba(196,88,54,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(107,125,79,0.12) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 30% 50%, rgba(160,107,60,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(125,126,92,0.12) 0%, transparent 60%)",
         }}
       />
       {/* film grain */}
@@ -327,47 +349,28 @@ function HeroSection() {
           </div>
         </div>
 
-        {/* RIGHT — founder photo + tag */}
-        <div className="relative">
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-[0_30px_80px_rgba(0,0,0,0.7)]">
-            <img
-              src={ASSETS.founder}
-              alt="Christopher · founder, NevarLand Outpost"
-              className="w-full h-full object-cover"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.85) 100%)",
-              }}
-            />
-            <div className="absolute bottom-4 left-4 right-4">
-              <p
-                className="text-[10px] uppercase tracking-[0.28em] mb-1"
-                style={{ color: ACCENT_RUST_LIGHT, fontFamily: "'Sora', sans-serif" }}
-              >
-                The founder
-              </p>
-              <p
-                className="text-lg font-bold text-white"
-                style={{ fontFamily: "'Sora', sans-serif" }}
-              >
-                Christopher
-              </p>
-              <p
-                className="text-xs italic"
-                style={{ color: "rgba(255,255,255,0.7)", fontFamily: "'Special Elite', monospace" }}
-              >
-                Father of three. Father of the Outpost.
-              </p>
-            </div>
-          </div>
-          {/* corner accent stamps */}
+        {/* RIGHT — Stay Real poster centerpiece. Christopher's own brand
+            statement asset, transparent PNG, sits over a sepia glow that
+            picks up the embers drifting up from below. */}
+        <div className="relative flex items-center justify-center">
+          {/* sepia halo behind the poster */}
           <div
             aria-hidden="true"
-            className="absolute -top-3 -left-3 w-12 h-12 rounded-md rotate-[-6deg] flex items-center justify-center text-[10px] font-black uppercase tracking-wider"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at center, ${ACCENT_RUST}38 0%, ${ACCENT_RUST}12 38%, transparent 70%)`,
+            }}
+          />
+          <img
+            src={ASSETS.stayRealPoster}
+            alt="Stay real. Keep growing."
+            className="relative w-full max-w-[520px] h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
+            style={{ animation: "outpost-poster-float 8s ease-in-out infinite" }}
+          />
+          {/* corner stamp */}
+          <div
+            aria-hidden="true"
+            className="absolute top-2 -left-2 sm:-left-1 w-12 h-12 rounded-md rotate-[-6deg] flex items-center justify-center text-[10px] font-black uppercase tracking-wider"
             style={{
               background: ACCENT_RUST,
               color: BG_BLACK,
@@ -377,6 +380,12 @@ function HeroSection() {
           >
             EST.
           </div>
+          <style>{`
+            @keyframes outpost-poster-float {
+              0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+              50% { transform: translateY(-10px) rotate(0.4deg); }
+            }
+          `}</style>
         </div>
       </div>
     </section>
@@ -396,10 +405,10 @@ function StorySection() {
         className="absolute inset-0 pointer-events-none opacity-30 mix-blend-multiply"
         style={{
           background:
-            "radial-gradient(circle at 20% 30%, rgba(58,40,23,0.08) 0%, transparent 30%), radial-gradient(circle at 80% 70%, rgba(127,29,29,0.04) 0%, transparent 25%), radial-gradient(circle at 50% 50%, rgba(196,88,54,0.06) 0%, transparent 40%)",
+            "radial-gradient(circle at 20% 30%, rgba(58,40,23,0.08) 0%, transparent 30%), radial-gradient(circle at 80% 70%, rgba(127,29,29,0.04) 0%, transparent 25%), radial-gradient(circle at 50% 50%, rgba(160,107,60,0.06) 0%, transparent 40%)",
         }}
       />
-      <div className="relative mx-auto max-w-3xl px-6">
+      <div className="relative mx-auto max-w-6xl px-6">
         <p
           className="text-xs uppercase tracking-[0.32em] mb-4 text-center"
           style={{ color: ACCENT_RUST, fontFamily: "'Sora', sans-serif" }}
@@ -407,16 +416,66 @@ function StorySection() {
           A letter from the Outpost
         </p>
         <h2
-          className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight mb-10 text-center"
+          className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight mb-12 text-center"
           style={{ fontFamily: "'Sora', sans-serif" }}
         >
           Why this exists.
         </h2>
 
-        <div
-          className="space-y-5 text-lg leading-relaxed"
-          style={{ color: INK_PAPER_SOFT, fontFamily: "'Special Elite', monospace" }}
-        >
+        {/* Two-column: Christopher's polaroid on the left, the letter on
+            the right. Photo lives HERE — out of the hero, into the personal
+            story where it belongs. */}
+        <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14 items-start">
+          {/* polaroid */}
+          <div className="relative mx-auto max-w-sm w-full lg:sticky lg:top-24">
+            <div
+              className="relative p-3 pb-12 rotate-[-2.5deg] shadow-[0_20px_40px_rgba(0,0,0,0.18)]"
+              style={{
+                background: "#fbf6ea",
+                border: `1px solid ${ACCENT_RUST}22`,
+              }}
+            >
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <img
+                  src={ASSETS.founder}
+                  alt="Christopher · founder, NevarLand Outpost"
+                  className="w-full h-full object-cover"
+                  style={{ filter: "sepia(0.18) saturate(0.92)" }}
+                />
+              </div>
+              <p
+                className="absolute bottom-3 left-0 right-0 text-center text-sm italic"
+                style={{
+                  color: INK_PAPER_SOFT,
+                  fontFamily: "'Special Elite', monospace",
+                }}
+              >
+                Christopher · the Outpost
+              </p>
+              {/* tape */}
+              <div
+                aria-hidden="true"
+                className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 rotate-[-3deg]"
+                style={{
+                  background: "rgba(184,136,96,0.35)",
+                  borderLeft: "1px dashed rgba(0,0,0,0.08)",
+                  borderRight: "1px dashed rgba(0,0,0,0.08)",
+                }}
+              />
+            </div>
+            <p
+              className="mt-6 text-center text-[11px] uppercase tracking-[0.28em]"
+              style={{ color: ACCENT_RUST, fontFamily: "'Sora', sans-serif" }}
+            >
+              Father of three · Father of the Outpost
+            </p>
+          </div>
+
+          {/* the letter */}
+          <div
+            className="space-y-5 text-lg leading-relaxed"
+            style={{ color: INK_PAPER_SOFT, fontFamily: "'Special Elite', monospace" }}
+          >
           <p>
             <span
               className="float-left mr-2 text-6xl leading-none -mt-1"
@@ -454,6 +513,7 @@ function StorySection() {
           >
             — Christopher, the Outpost
           </p>
+          </div>
         </div>
       </div>
     </section>
@@ -561,7 +621,7 @@ function KidsSection() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 70% 30%, rgba(107,125,79,0.18) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 70% 30%, rgba(125,126,92,0.18) 0%, transparent 60%)",
         }}
       />
       <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center">
@@ -777,7 +837,7 @@ function ReviewsSection() {
               className="rounded-xl p-6 border"
               style={{
                 background: "rgba(255,255,255,0.04)",
-                borderColor: "rgba(196,165,112,0.24)",
+                borderColor: "rgba(138,118,84,0.28)",
               }}
             >
               <p className="text-2xl mb-3" style={{ color: METAL }}>
@@ -817,7 +877,7 @@ function NewsletterSection() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 50%, rgba(196,88,54,0.16) 0%, transparent 65%)",
+            "radial-gradient(ellipse at 50% 50%, rgba(160,107,60,0.16) 0%, transparent 65%)",
         }}
       />
       <div className="relative mx-auto max-w-2xl px-6 text-center">

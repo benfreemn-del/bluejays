@@ -71,7 +71,7 @@ export default function EmberCanvas() {
         size: 1 + Math.random() * 2.5,
         life: 0,
         maxLife,
-        hue: 14 + Math.random() * 18, // 14-32 → orange/rust band
+        hue: 22 + Math.random() * 16, // 22-38 → sepia/aged-amber band
       };
     };
 
@@ -140,16 +140,16 @@ export default function EmberCanvas() {
 
         // Glow halo
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
-        grad.addColorStop(0, `hsla(${p.hue}, 90%, 65%, ${alpha})`);
-        grad.addColorStop(0.4, `hsla(${p.hue}, 80%, 50%, ${alpha * 0.4})`);
-        grad.addColorStop(1, `hsla(${p.hue}, 80%, 40%, 0)`);
+        grad.addColorStop(0, `hsla(${p.hue}, 65%, 60%, ${alpha})`);
+        grad.addColorStop(0.4, `hsla(${p.hue}, 55%, 45%, ${alpha * 0.4})`);
+        grad.addColorStop(1, `hsla(${p.hue}, 55%, 35%, 0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
         ctx.fill();
 
         // Core ember
-        ctx.fillStyle = `hsla(${p.hue}, 95%, 70%, ${alpha})`;
+        ctx.fillStyle = `hsla(${p.hue}, 75%, 68%, ${alpha})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();

@@ -175,7 +175,7 @@ export default function NevarlandOutpostLayout({
         dangerouslySetInnerHTML={{
           __html: `
             html, body {
-              scrollbar-color: #c45836 #0a0a0a !important;
+              scrollbar-color: #a06b3c #0a0a0a !important;
               scrollbar-width: thin !important;
             }
             html::-webkit-scrollbar,
@@ -188,7 +188,7 @@ export default function NevarlandOutpostLayout({
             html::-webkit-scrollbar-thumb,
             body::-webkit-scrollbar-thumb,
             ::-webkit-scrollbar-thumb {
-              background: linear-gradient(180deg, #c45836 0%, #d97757 50%, #f4eee2 100%) !important;
+              background: linear-gradient(180deg, #a06b3c 0%, #b88860 50%, #e8dec8 100%) !important;
               border-radius: 6px !important;
               border: 2px solid #0a0a0a !important;
             }
