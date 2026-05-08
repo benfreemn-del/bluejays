@@ -74,6 +74,74 @@ function ceilingFor(track: Track): number {
   return track === "fullsystem" ? 6 : 4;
 }
 
+/** Per-prospect deal-value lookup. Drives the dollar chip on each card
+ *  and the per-track total at the section header. Custom-tier is
+ *  recurring ($100/yr) so we display the annualized value but mark it
+ *  recurring in the UI; the others are one-time at close. */
+function dealValueCents(p: Prospect): { cents: number; label: string; recurring: boolean } {
+  switch (p.pricingTier) {
+    case "fullsystem":
+      return { cents: 970000, label: "$9.7k", recurring: false };
+    case "custom":
+      return { cents: 10000, label: "$100/yr", recurring: true };
+    case "free":
+      return { cents: 3000, label: "$30", recurring: false };
+    case "standard":
+    default:
+      return { cents: 99700, label: "$997", recurring: false };
+  }
+}
+
+function fmtUsdShort(cents: number): string {
+  const d = cents / 100;
+  if (d >= 1000) return `$${(d / 1000).toFixed(d % 1000 === 0 ? 0 : 1)}k`;
+  return `$${Math.round(d)}`;
+}
+
+/** Days since the prospect's `updatedAt`. Used to flag stale stage
+ *  cards. Rough proxy — Ben's eventually moving to a dedicated
+ *  `pipeline_stage_changed_at` column, but updatedAt is good enough
+ *  until then because the most recent edit is almost always the stage
+ *  change. Returns null on bad input. */
+function daysSinceUpdate(updatedAt: string | null | undefined): number | null {
+  if (!updatedAt) return null;
+  const t = Date.parse(updatedAt);
+  if (Number.isNaN(t)) return null;
+  return Math.floor((Date.now() - t) / (1000 * 60 * 60 * 24));
+}
+
+/** Status filter: which prospects belong on the active board. Hides
+ *  the "shouldn't be here" buckets that previously made the board
+ *  read inaccurate (Rule: every funnel reads from pipeline_stage,
+ *  but an unsubscribed/bounced prospect with a stale stage shouldn't
+ *  pollute the active view). */
+const ARCHIVED_STATUSES = new Set([
+  "bounced",
+  "dismissed",
+  "unsubscribed",
+  "wont-do",
+]);
+
+type ViewMode = "active" | "stale" | "archived" | "all";
+
+function passesViewFilter(p: Prospect, mode: ViewMode): boolean {
+  const status = (p.status ?? "").toString();
+  const isArchived = ARCHIVED_STATUSES.has(status);
+  const days = daysSinceUpdate(p.updatedAt);
+  const isStale = days != null && days > 14 && !isArchived;
+  switch (mode) {
+    case "active":
+      return !isArchived;
+    case "stale":
+      return isStale;
+    case "archived":
+      return isArchived;
+    case "all":
+    default:
+      return true;
+  }
+}
+
 /** Parse '4a' → { num: 4, letter: 'a' }. '4' → { num: 4, letter: '' }.
  *  Falls back to { num: 1, letter: '' } on bad input. */
 function parseStage(raw: string | undefined | null): { num: number; letter: string } {
@@ -92,6 +160,7 @@ export default function SalesPipelinePage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<ViewMode>("active");
 
   // Per-prospect local stage edits — keyed by prospect.id. Value is
   // the full stage string (e.g. '4a'). When this differs from the
@@ -99,6 +168,7 @@ export default function SalesPipelinePage() {
   // "Unsaved" pill. Cleared on successful save.
   const [pendingStages, setPendingStages] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
+  const dirtyCount = Object.keys(pendingStages).length;
 
   const fetchProspects = async () => {
     try {
@@ -129,32 +199,62 @@ export default function SalesPipelinePage() {
     return ["all", ...Array.from(set).sort()];
   }, [prospects]);
 
+  // Counts for view-mode chips — computed pre-filter so the chip
+  // count reflects the size of the bucket, not a recursive double-
+  // filter ("Active (12)" should mean 12 active prospects exist,
+  // independent of which mode is currently selected).
+  const viewCounts = useMemo(() => {
+    let active = 0,
+      stale = 0,
+      archived = 0;
+    for (const p of prospects) {
+      if (passesViewFilter(p, "active")) active += 1;
+      if (passesViewFilter(p, "stale")) stale += 1;
+      if (passesViewFilter(p, "archived")) archived += 1;
+    }
+    return { active, stale, archived, all: prospects.length };
+  }, [prospects]);
+
   // Group prospects into Map<stageNumber, Prospect[]> per track. Sub-
   // letter doesn't change which group bucket a prospect lives in — '4'
   // and '4a' both render under stage 4, sorted by letter so 4 < 4a < 4b.
-  // Source-channel filter applied here so empty-stage rows still show
-  // up in the layout (preserves visual structure when filtering).
-  const { websiteByStage, fullsystemByStage } = useMemo(() => {
-    const website = new Map<number, Prospect[]>();
-    const fullsystem = new Map<number, Prospect[]>();
-    for (const p of prospects) {
-      if (sourceFilter !== "all" && p.sourceChannel !== sourceFilter) continue;
-      const { num } = parseStage(p.pipelineStage);
-      if (num <= 0) continue;
-      const map = trackOf(p) === "fullsystem" ? fullsystem : website;
-      if (!map.has(num)) map.set(num, []);
-      map.get(num)!.push(p);
-    }
-    // Sort each bucket by letter (empty first, then a/b/c).
-    for (const list of [...website.values(), ...fullsystem.values()]) {
-      list.sort((a, b) => {
-        const la = parseStage(a.pipelineStage).letter;
-        const lb = parseStage(b.pipelineStage).letter;
-        return la.localeCompare(lb);
-      });
-    }
-    return { websiteByStage: website, fullsystemByStage: fullsystem };
-  }, [prospects, sourceFilter]);
+  // View-mode + source-channel filters applied here so empty-stage
+  // rows still show up in the layout (preserves visual structure when
+  // filtering).
+  const { websiteByStage, fullsystemByStage, websiteTotal, fullsystemTotal } =
+    useMemo(() => {
+      const website = new Map<number, Prospect[]>();
+      const fullsystem = new Map<number, Prospect[]>();
+      let webCents = 0;
+      let fsCents = 0;
+      for (const p of prospects) {
+        if (!passesViewFilter(p, viewMode)) continue;
+        if (sourceFilter !== "all" && p.sourceChannel !== sourceFilter) continue;
+        const { num } = parseStage(p.pipelineStage);
+        if (num <= 0) continue;
+        const isFullsystem = trackOf(p) === "fullsystem";
+        const map = isFullsystem ? fullsystem : website;
+        if (!map.has(num)) map.set(num, []);
+        map.get(num)!.push(p);
+        const value = dealValueCents(p);
+        if (isFullsystem) fsCents += value.cents;
+        else webCents += value.cents;
+      }
+      // Sort each bucket by letter (empty first, then a/b/c).
+      for (const list of [...website.values(), ...fullsystem.values()]) {
+        list.sort((a, b) => {
+          const la = parseStage(a.pipelineStage).letter;
+          const lb = parseStage(b.pipelineStage).letter;
+          return la.localeCompare(lb);
+        });
+      }
+      return {
+        websiteByStage: website,
+        fullsystemByStage: fullsystem,
+        websiteTotal: webCents,
+        fullsystemTotal: fsCents,
+      };
+    }, [prospects, sourceFilter, viewMode]);
 
   const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
     const max = ceilingFor(track);
@@ -224,33 +324,82 @@ export default function SalesPipelinePage() {
             Client jobs →
           </Link>
         </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 flex items-center justify-between gap-3 flex-wrap">
-          <p className="text-xs text-slate-500">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 flex flex-col gap-3">
+          {/* View-mode chips + source filter — same row on desktop,
+              wraps on mobile. Active = the operator's daily board.
+              Stale = >14 days no update (urgent). Archived = bounced /
+              dismissed / unsubscribed (kept hidden by default per Rule
+              42 — accessible but out of the way). */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <ViewModeChip
+                mode="active"
+                active={viewMode === "active"}
+                count={viewCounts.active}
+                onClick={() => setViewMode("active")}
+                label="Active"
+                tone="emerald"
+              />
+              <ViewModeChip
+                mode="stale"
+                active={viewMode === "stale"}
+                count={viewCounts.stale}
+                onClick={() => setViewMode("stale")}
+                label="Stale"
+                tone="amber"
+                hint=">14 days no update"
+              />
+              <ViewModeChip
+                mode="archived"
+                active={viewMode === "archived"}
+                count={viewCounts.archived}
+                onClick={() => setViewMode("archived")}
+                label="Archived"
+                tone="slate"
+                hint="bounced · dismissed · unsubscribed"
+              />
+              <ViewModeChip
+                mode="all"
+                active={viewMode === "all"}
+                count={viewCounts.all}
+                onClick={() => setViewMode("all")}
+                label="All"
+                tone="slate"
+              />
+            </div>
+            {sourceOptions.length > 1 && (
+              <label className="flex items-center gap-2 text-xs text-slate-400">
+                Source
+                <select
+                  value={sourceFilter}
+                  onChange={(e) => setSourceFilter(e.target.value)}
+                  className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-sky-500"
+                >
+                  {sourceOptions.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+          <p className="text-[11px] text-slate-500 leading-snug">
             Single source of truth · every funnel reads from this stage. Use ▲▼
             on the number to change major stage, ▲▼ on the letter to add a
             sub-state (4a / 4b / 4c). Hit Save to persist.
           </p>
-          {/* Source-channel filter — surfaces prospects.source_channel
-              from /api/prospects. 'all' shows the unfiltered board.
-              Dropdown only shows values that exist on the current
-              board so it never offers a dead-end choice. */}
-          {sourceOptions.length > 1 && (
-            <label className="flex items-center gap-2 text-xs text-slate-400">
-              Source
-              <select
-                value={sourceFilter}
-                onChange={(e) => setSourceFilter(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-sky-500"
-              >
-                {sourceOptions.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
         </div>
+        {dirtyCount > 0 && (
+          <div className="border-t border-amber-500/40 bg-amber-950/40">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-2 flex items-center justify-between gap-3">
+              <span className="text-[11px] uppercase tracking-wider font-bold text-amber-300">
+                {dirtyCount} unsaved {dirtyCount === 1 ? "change" : "changes"} ·
+                save each card individually
+              </span>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
@@ -267,13 +416,20 @@ export default function SalesPipelinePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* ─── Website track ─── */}
             <section className="rounded-xl border border-sky-700/30 bg-sky-950/15 overflow-hidden">
-              <header className="px-4 py-3 border-b border-sky-700/30 bg-sky-950/40 flex items-baseline justify-between">
+              <header className="px-4 py-3 border-b border-sky-700/30 bg-sky-950/40 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-sky-200">
                   Website · $997
                 </h2>
-                <span className="text-xs text-sky-400/80">
-                  {[...websiteByStage.values()].reduce((a, b) => a + b.length, 0)} active
-                </span>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-sky-400/80 tabular-nums">
+                    {[...websiteByStage.values()].reduce((a, b) => a + b.length, 0)}
+                    {" "}leads
+                  </span>
+                  <span className="text-sky-400/40">·</span>
+                  <span className="text-sky-300 font-bold tabular-nums">
+                    {fmtUsdShort(websiteTotal)}
+                  </span>
+                </div>
               </header>
               <div className="divide-y divide-sky-900/40">
                 {WEBSITE_STAGES.map((s) => (
@@ -299,13 +455,20 @@ export default function SalesPipelinePage() {
 
             {/* ─── $10K AI System track ─── */}
             <section className="rounded-xl border border-violet-700/30 bg-violet-950/15 overflow-hidden">
-              <header className="px-4 py-3 border-b border-violet-700/30 bg-violet-950/40 flex items-baseline justify-between">
+              <header className="px-4 py-3 border-b border-violet-700/30 bg-violet-950/40 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-violet-200">
                   AI System · $10K
                 </h2>
-                <span className="text-xs text-violet-400/80">
-                  {[...fullsystemByStage.values()].reduce((a, b) => a + b.length, 0)} active
-                </span>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-violet-400/80 tabular-nums">
+                    {[...fullsystemByStage.values()].reduce((a, b) => a + b.length, 0)}
+                    {" "}leads
+                  </span>
+                  <span className="text-violet-400/40">·</span>
+                  <span className="text-violet-300 font-bold tabular-nums">
+                    {fmtUsdShort(fullsystemTotal)}
+                  </span>
+                </div>
               </header>
               <div className="divide-y divide-violet-900/40">
                 {FULLSYSTEM_STAGES.map((s) => (
@@ -358,23 +521,47 @@ function StageGroup({
   onNudgeLetter: (id: string, persisted: string, delta: number) => void;
   onSave: (id: string) => void;
 }) {
+  // Stage 3 is the cash-in transition (Bought + paid / Meeting completed
+  // → moving toward delivery). Light up green so the operator sees it
+  // as the celebrate-and-execute moment, not just another row.
+  const isCashStage = stage === 3;
+  const stageTotal = leads.reduce(
+    (sum, p) => sum + dealValueCents(p).cents,
+    0,
+  );
+
   if (leads.length === 0) {
     return (
       <div className="px-4 py-2.5 flex items-center gap-3 text-[11px] text-slate-500">
         <StageBadge label={`${stage}`} accent={accent} dim />
         <span className="flex-1">{label}</span>
-        <span className="opacity-60">empty</span>
+        <span className="opacity-50 italic">no leads at this stage</span>
       </div>
     );
   }
   return (
-    <div className="px-4 py-3">
+    <div
+      className={`px-4 py-3 ${
+        isCashStage ? "bg-emerald-950/15 border-l-2 border-emerald-500/40" : ""
+      }`}
+    >
       <div className="flex items-center gap-3 mb-2">
-        <StageBadge label={`${stage}`} accent={accent} />
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
+        <StageBadge label={`${stage}`} accent={isCashStage ? "emerald" : accent} />
+        <span
+          className={`text-[11px] font-bold uppercase tracking-wider ${
+            isCashStage ? "text-emerald-200" : "text-slate-300"
+          }`}
+        >
           {label}
         </span>
         <span className="text-[10px] text-slate-500">· {leads.length}</span>
+        <span
+          className={`ml-auto text-[10px] font-bold tabular-nums ${
+            isCashStage ? "text-emerald-300" : "text-slate-400"
+          }`}
+        >
+          {fmtUsdShort(stageTotal)}
+        </span>
       </div>
       <ul className="space-y-2">
         {leads.map((p) => (
@@ -403,13 +590,15 @@ function StageBadge({
   dim,
 }: {
   label: string;
-  accent: "sky" | "violet";
+  accent: "sky" | "violet" | "emerald";
   dim?: boolean;
 }) {
   const cls =
     accent === "sky"
       ? "bg-sky-500/15 text-sky-200 border-sky-500/30"
-      : "bg-violet-500/15 text-violet-200 border-violet-500/30";
+      : accent === "violet"
+        ? "bg-violet-500/15 text-violet-200 border-violet-500/30"
+        : "bg-emerald-500/20 text-emerald-200 border-emerald-500/40";
   return (
     <span
       className={`inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1 rounded-md border text-xs font-black tabular-nums ${cls} ${
@@ -418,6 +607,48 @@ function StageBadge({
     >
       {label}
     </span>
+  );
+}
+
+function ViewModeChip({
+  active,
+  count,
+  onClick,
+  label,
+  tone,
+  hint,
+}: {
+  mode: ViewMode;
+  active: boolean;
+  count: number;
+  onClick: () => void;
+  label: string;
+  tone: "emerald" | "amber" | "slate";
+  hint?: string;
+}) {
+  const palette =
+    tone === "emerald"
+      ? active
+        ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200"
+        : "border-slate-700 bg-slate-900/60 text-slate-400 hover:border-emerald-700/40 hover:text-emerald-300"
+      : tone === "amber"
+        ? active
+          ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
+          : "border-slate-700 bg-slate-900/60 text-slate-400 hover:border-amber-700/40 hover:text-amber-300"
+        : active
+          ? "border-slate-500 bg-slate-700/60 text-white"
+          : "border-slate-700 bg-slate-900/60 text-slate-400 hover:border-slate-600 hover:text-white";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={hint}
+      className={`text-[11px] font-bold uppercase tracking-wider rounded-full border px-3 py-1 transition-colors flex items-center gap-1.5 ${palette}`}
+    >
+      <span>{label}</span>
+      <span className="opacity-70 tabular-nums">{count}</span>
+    </button>
   );
 }
 
@@ -440,26 +671,80 @@ function LeadCard({
   const display = pending ?? persisted;
   const dirty = pending != null && pending !== persisted;
   const { num, letter } = parseStage(display);
+  const value = dealValueCents(prospect);
+  const daysStale = daysSinceUpdate(prospect.updatedAt);
+  const status = (prospect.status ?? "").toString();
+  const isArchived = ARCHIVED_STATUSES.has(status);
+  const staleSeverity =
+    daysStale == null
+      ? null
+      : daysStale > 30
+        ? "red"
+        : daysStale > 14
+          ? "amber"
+          : null;
 
   return (
     <li
       className={`rounded-lg border bg-slate-900/50 p-3 transition-colors ${
         dirty
           ? "border-amber-500/60 bg-amber-950/20"
-          : "border-slate-800 hover:border-slate-700"
+          : isArchived
+            ? "border-slate-800 opacity-60 hover:opacity-100"
+            : "border-slate-800 hover:border-slate-700"
       }`}
     >
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          <a
-            href={`/preview/${prospect.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-sm text-white hover:text-sky-300 truncate block"
-          >
-            {prospect.businessName || "(unnamed)"}
-          </a>
-          <p className="text-[11px] text-slate-500 truncate">
+          <div className="flex items-center gap-2 flex-wrap">
+            <a
+              href={`/preview/${prospect.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-sm text-white hover:text-sky-300 truncate"
+            >
+              {prospect.businessName || "(unnamed)"}
+            </a>
+            {/* Deal value chip — visible at a glance so the operator
+                can see what's $9.7k vs $997 vs custom-tier without
+                clicking in. */}
+            <span
+              className={`inline-flex items-center text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded border ${
+                prospect.pricingTier === "fullsystem"
+                  ? "bg-violet-500/15 text-violet-200 border-violet-500/40"
+                  : prospect.pricingTier === "custom"
+                    ? "bg-teal-500/15 text-teal-200 border-teal-500/40"
+                    : prospect.pricingTier === "free"
+                      ? "bg-slate-700 text-slate-300 border-slate-600"
+                      : "bg-sky-500/15 text-sky-200 border-sky-500/40"
+              }`}
+              title={value.recurring ? "Recurring annual revenue" : "One-time at close"}
+            >
+              {value.label}
+            </span>
+            {/* Stale badge — flags cards that haven't moved in 14+
+                days. Single biggest accuracy/action signal on the
+                board. Hidden on archived cards (they're already out
+                of the active flow). */}
+            {!isArchived && staleSeverity != null && (
+              <span
+                className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                  staleSeverity === "red"
+                    ? "bg-rose-500/15 text-rose-300 border-rose-500/40"
+                    : "bg-amber-500/15 text-amber-300 border-amber-500/40"
+                }`}
+                title={`No update in ${daysStale} day${daysStale === 1 ? "" : "s"}`}
+              >
+                {daysStale}d
+              </span>
+            )}
+            {isArchived && (
+              <span className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 text-slate-400">
+                {status}
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-slate-500 truncate mt-0.5">
             {[prospect.ownerName, prospect.city, prospect.state]
               .filter(Boolean)
               .join(" · ") || "—"}
