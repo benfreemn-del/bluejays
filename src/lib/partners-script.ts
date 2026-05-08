@@ -100,7 +100,7 @@ export const HORMOZI_CALL_TIPS: CallTip[] = [
     id: "doctorFrame",
     emoji: "🩺",
     title: "★ MUST: Doctor frame — diagnose before prescribe",
-    body: "Ask questions until THEY surface the pain. 'When's the last time someone worked on the site to RAISE your leads?' A doctor doesn't prescribe before diagnosing. Neither do you.",
+    body: "Ask questions until THEY surface the pain. 'When's the last time someone worked on the site to RAISE your leads?' A doctor doesn't prescribe before diagnosing. Neitthe caller's do you.",
   },
   {
     id: "mirror",
@@ -198,7 +198,7 @@ export const HORMOZI_VOICEMAIL_UNKNOWN_OWNER: ScriptSection = {
   goal: "Gift hook, no awkward 'Hey there.' Get the right person to call back.",
   lines: [
     "Hey — we just finished building a new website for {bizName}. {partnerFirstName} with BlueJays. Texting you the link right now — takes 30 seconds to look.",
-    "Text back 'site' if you want someone to walk you through it and I'll get Ben — he built it — on a quick call. Either way the site's yours to see.",
+    "Text back 'site' if you want someone to walk you through it and I'll get Ben — he built it — on a quick call. Eitthe caller's way the site's yours to see.",
   ],
   callerNotes: [
     "★ Hang up → SEND PREVIEW LINK first → SEND BOOKING LINK second. Then mark VOICEMAIL.",
@@ -241,7 +241,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
     callerNotes: [
       "★ ASSUMPTIVE FRAME. 'I just sent it' (past tense, already done) is stronger than 'I'm about to text it' (future, asks permission). The gift is already in motion — they feel behind, not pitched. 'Did you have a chance' is polite-speak for 'feel free to say no' — never use it.",
       "★ DON'T ASK FOR THEIR NUMBER. You just dialed it. Asking 'what's the best number' tells them you're not actually a real partner — you're working off a list. Send to the dialed number.",
-      "★ 'You get texts at this number?' is a micro-yes that earns the next 60 seconds — and unlike 'you in front of a phone', it doesn't imply they need to stop what they're doing. Reflexive 'yeah' either way.",
+      "★ 'You get texts at this number?' is a micro-yes that earns the next 60 seconds — and unlike 'you in front of a phone', it doesn't imply they need to stop what they're doing. Reflexive 'yeah' eitthe caller's way.",
       "★ FIRE SEND PREVIEW LINK before they answer the question. If you wait for permission, you've already lost the assumptive frame. The text arriving while you're talking IS the proof.",
       "★ SEND PREVIEW LINK button on the right ↘ fires BOTH text + email at once. Don't ask for email separately — both channels go out, no extra friction.",
       "★ NEVER start with 'Hey, is this {firstName}?' — sounds like a telemarketer. Say their name with question intonation and launch.",
@@ -340,7 +340,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
     lines: [
       "What's making you want to sit on it? Most people say price or timing — is that it?",
       "Got it. Tomorrow morning or Thursday afternoon — which works better for a quick callback?",
-      "Either way, you'll have the audit in your hands tonight. If you decide it's not useful, just text me and I'll stop reaching out.",
+      "Eitthe caller's way, you'll have the audit in your hands tonight. If you decide it's not useful, just text me and I'll stop reaching out.",
     ],
     callerNotes: [
       "Line 1 is NEPQ — surfaces the real blocker before you schedule anything. Mirror their answer back.",
@@ -355,7 +355,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
     goal: "Hook first — site before identity. Under 25 seconds. Drop the link in text + email immediately after.",
     lines: [
       "Hey {firstName} — {partnerFirstName} with BlueJays. Wanted to know if you got a chance to look at the new website we built for {bizName}. Sending you the link right now to your phone — takes 30 seconds.",
-      "Text back 'site' and I'll get Ben — he built it — on a quick walkthrough call. Either way the site's yours.",
+      "Text back 'site' and I'll get Ben — he built it — on a quick walkthrough call. Eitthe caller's way the site's yours.",
     ],
     callerNotes: [
       "★ ASSUMPTIVE FRAMING: 'did you get a chance to look' presumes you've already sent it. Curiosity > confusion.",
@@ -449,7 +449,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       response: [
         "Heard that. Quick question — is it the website thing in general, or just bad timing right now?",
         "If you say no right now, I'll never call again and we remove your info. But before you do — would it be the worst thing in the world to take 30 seconds and just see what we built?",
-        "Either way — have a good one.",
+        "Eitthe caller's way — have a good one.",
       ],
       callerNotes:
         "★ Line 2 is the Hormozi exit offer. Say it calm and confident — not desperate. If BAD TIMING → mark CALLBACK with note '90 days'. If WEBSITE THING → mark NOT_INTERESTED, exit fast and friendly. ★ 3-NO: third no here — let them go immediately.",
@@ -459,7 +459,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       trigger: "How did you get my number?",
       response: [
         "Your business listing — same place anyone searching for {category} businesses in {city} would find you.",
-        "Happy to take you off our list right now if you'd rather not hear from us.",
+        "Happy to take you off our list right now if you'd ratthe caller's not hear from us.",
       ],
       callerNotes:
         "If they say TAKE ME OFF → mark DO_NOT_CALL immediately. We honor it forever.",
@@ -478,10 +478,10 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       id: "removeFromList",
       trigger: "Take me off your list / do not call",
       response: [
-        "Done. Removed right now. You won't hear from us again. Sorry to bother you.",
+        "Done. Removed right now. You won't hear from us again. Sorry to botthe caller's you.",
       ],
       callerNotes:
-        "Mark DO_NOT_CALL — flags the prospect so no other partner can call them either. NEVER argue.",
+        "Mark DO_NOT_CALL — flags the prospect so no otthe caller's partner can call them either. NEVER argue.",
     },
     {
       id: "justGotRedone",
@@ -499,7 +499,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       trigger: "Are you trying to sell me something?",
       response: [
         "Not on this call. We built {bizName} a website and I want to show it to you. That's it.",
-        "If you like it and want to talk, I'll connect you with Ben. If not — you've got a free audit of your site either way. Fair?",
+        "If you like it and want to talk, I'll connect you with Ben. If not — you've got a free audit of your site eitthe caller's way. Fair?",
       ],
       callerNotes:
         "Straight answer, no hedging. Hedging confirms their suspicion. Direct = trustworthy. ★ End on 'Fair?' — gets a micro-yes and keeps the conversation open.",
@@ -510,7 +510,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
       response: [
         "Look at it later?",
         "[pause] Totally fair — but here's the thing. You looking alone, you'll see what's there. Ben on the call, you see what's there AND what's missing — and what it's costing you every week it stays the way it is.",
-        "Same 15 minutes either way. Tuesday at 3 or Thursday at 10?",
+        "Same 15 minutes eitthe caller's way. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
         "★ THE #1 ESCAPE LINE. They're staring at a free site you built, this is the polite way out. Mirror first → reframe (alone vs with the architect) → loss aversion → two-option close. ★ If they STILL deflect after this, drop to TextTheLink (audit as second-touch) and exit on a friendly 'have a good one.'",
@@ -519,20 +519,20 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
 };
 
 /* ═════════════════════════════════════════════════════════════════════
- * MADIE — APPOINTMENT-SETTER SCRIPT
+ * APPOINTMENT-SETTER SCRIPT
  *
- * Madie is BlueJays' first sales partner (joined 2026-05). She's a
- * SETTER — she runs follow-up calls on prospects who already received
+ * the caller is BlueJays' first sales partner (joined 2026-05). She's a
+ * SETTER — the caller runs follow-up calls on prospects who already received
  * a website preview, then BOOKS them on Ben's calendar. Ben does the
  * close on the appointment, walking them through:
- *   1. The polished website (vs the rough preview Madie introduced)
+ *   1. The polished website (vs the rough preview the caller introduced)
  *   2. The backend AI Marketing System mock-up
  * ...attempting to close on EITHER OR BOTH on that call.
  *
  * Compensation:
  *   · $200 per WEBSITE Ben closes ($997)
  *   · $1,000 per BACKEND Ben closes ($9,700 AI Marketing System)
- *   · Best meetings book BOTH — Madie clears $1,200 if Ben dual-closes.
+ *   · Best meetings book BOTH — the caller clears $1,200 if Ben dual-closes.
  *
  * Capacity scarcity (real, baked into close):
  *   · Ben builds 30 sites/month max
@@ -540,7 +540,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
  *   · "We still have a few spots left" framing — true, not fake.
  *
  * Permission slip on the preview:
- *   The preview Madie sent is intentionally rough. The script names
+ *   The preview the caller sent is intentionally rough. The script names
  *   this BEFORE the prospect can — "this is just a preview, Ben will
  *   create a more polished version for your call with him, and he'll
  *   present it then alongside your backend mock-up for how to
@@ -550,9 +550,9 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
  * friendly, no jargon, smile before dial, FM-DJ tone).
  * ═════════════════════════════════════════════════════════════════════ */
 
-/** Madie-flow goal hierarchy. Higher = better close — feeds her
+/** the caller-flow goal hierarchy. Higthe caller's = better close — feeds her
  *  commission scoreboard. */
-export type MadieOutcome =
+export type PartnerOutcome =
   | "BOTH_BOOKED" // Ben booked for site + backend reveal — best win
   | "BACKEND_BOOKED" // Ben booked for backend close ($1k commission)
   | "WEBSITE_BOOKED" // Ben booked for website close ($200 commission)
@@ -562,10 +562,10 @@ export type MadieOutcome =
   | "NO_ANSWER"
   | "DO_NOT_CALL";
 
-/** Madie-shaped script. Different section set than Ben's cold-call
- *  flow — she has a discovery step + two parallel pitches (website
+/** the caller-shaped script. Different section set than Ben's cold-call
+ *  flow — the caller has a discovery step + two parallel pitches (website
  *  vs backend) + a scarcity close. */
-export type MadieCallScript = {
+export type PartnerCallScript = {
   opener: ScriptSection;
   identityFrame: ScriptSection;
   previewFrame: ScriptSection;
@@ -582,9 +582,9 @@ export type MadieCallScript = {
   objections: ObjectionBranch[];
 };
 
-/** Pre-call coaching for Madie. Parallel to HORMOZI_CALL_TIPS but
+/** Pre-call coaching for the caller. Parallel to HORMOZI_CALL_TIPS but
  *  centered on the SETTER role + the dual-product framing. */
-export const MADIE_CALL_TIPS: CallTip[] = [
+export const PARTNER_CALL_TIPS: CallTip[] = [
   {
     id: "youAreNotClosing",
     emoji: "🎯",
@@ -631,7 +631,7 @@ export const MADIE_CALL_TIPS: CallTip[] = [
     id: "did-you-get-it",
     emoji: "📲",
     title: "Open WITHOUT introducing yourself",
-    body: "First line is 'Hey it's Madie — did you guys get that website we made for you?' NOT 'Hi, my name is Madie from BlueJays...' The assumption (we made you a website) earns the next 30 seconds.",
+    body: "First line is 'Hey it's {callerName} — did you guys get that website we made for you?' NOT 'Hi, my name is the caller from BlueJays...' The assumption (we made you a website) earns the next 30 seconds.",
   },
   {
     id: "shut-up",
@@ -643,30 +643,30 @@ export const MADIE_CALL_TIPS: CallTip[] = [
     id: "two-pitches-one-call",
     emoji: "🎁",
     title: "Both products on the SAME Ben call",
-    body: "When you book Ben, he shows them BOTH the polished site AND the backend mock-up. They decide on either or both on that one call. You don't book two separate Ben meetings — you book one with both reveals.",
+    body: "When you book Ben, he shows them BOTH the polished site AND the backend mock-up. They decide on eitthe caller's or both on that one call. You don't book two separate Ben meetings — you book one with both reveals.",
   },
 ];
 
-/** Mantra shown above the workspace for Madie. Different drumbeat
+/** Mantra shown above the workspace for the caller. Different drumbeat
  *  than Ben's "stack the nos" — she's optimizing for BOOKINGS. */
-export const MADIE_MANTRA =
+export const PARTNER_MANTRA =
   "Book Ben. Don't close. Book Ben. The reveal is his job — yours is the 15 minutes.";
 
-export const MADIE_CALL_SCRIPT: MadieCallScript = {
+export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
   opener: {
     id: "opener",
     title: "Open the call",
     goal: "Assume the gift. They already received the preview — confirm they have it, get them looking. NEVER lead with introduction.",
     lines: [
-      "Hey {firstName} — it's Madie. Did you guys get that website we made for you?",
+      "Hey {firstName} — it's {callerName}. Did you guys get that website we made for you?",
       "[If YES they have it] Awesome — pull it up real quick while we talk, takes 10 seconds.",
       "[If NO / NOT SURE] No problem — just texted + emailed it again, you'll see it pop up in a few seconds. Pull it up while we talk.",
       "[Click SEND PREVIEW LINK ↘ even if they say yes — confirms text + email both fired]",
     ],
     callerNotes: [
       "★ ASSUMPTIVE FRAME from word one. 'Did you guys get that website we made for you?' presumes the gift exists. They feel BEHIND, not pitched.",
-      "★ DO NOT introduce yourself first. 'Hi, my name is Madie from BlueJays' = telemarketer. 'Hey {firstName} it's Madie' = old friend.",
-      "★ If they say 'who is this?' → 'Madie, the website I just sent you — pull it up' (still assumptive, still moving).",
+      "★ DO NOT introduce yourself first. 'Hi, my name is [yourName] from BlueJays' = telemarketer. 'Hey {firstName} it's {callerName}' = old friend.",
+      "★ If they say 'who is this?' → '[yourName], the website I just sent you — pull it up' (still assumptive, still moving).",
       "★ FM DJ voice — low and slow. Down-inflection on every statement except the question.",
       "After they confirm receipt → IDENTITY FRAME tab.",
       "If they're confused/hostile → IDENTITY FRAME (the partner-with-Ben line clears it up fast).",
@@ -677,9 +677,9 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
   identityFrame: {
     id: "identityFrame",
     title: "Set the identity",
-    goal: "One sentence that establishes who Madie is + the try-before-you-buy promise. Disarms 'is this a sales call' before they ask.",
+    goal: "One sentence that establishes who the caller is + the try-before-you-buy promise. Disarms 'is this a sales call' before they ask.",
     lines: [
-      "Real quick — I'm Madie. I run a business with a web developer named Ben. He custom-makes websites you can try before you buy. You only move forward if you love it.",
+      "Real quick — I'm the caller. I run a business with a web developer named Ben. He custom-makes websites you can try before you buy. You only move forward if you love it.",
       "[Wait for acknowledgment — 'ok', 'gotcha', etc.]",
     ],
     callerNotes: [
@@ -702,7 +702,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     ],
     callerNotes: [
       "★ THIS IS THE KEYSTONE PERMISSION SLIP. Without this they'll fixate on 'the colors are wrong' / 'the photo isn't right' / 'it's missing X'. With this, every imperfection becomes 'oh that's the preview, Ben polishes it.'",
-      "★ Line 2 plants the BACKEND REVEAL. Even prospects who only want a site become curious about the backend. This is how Madie books $1,200 dual-closes — she promises both reveals from the start.",
+      "★ Line 2 plants the BACKEND REVEAL. Even prospects who only want a site become curious about the backend. This is how the caller books $1,200 dual-closes — the caller promises both reveals from the start.",
       "★ Don't oversell the backend yet — just name it. 'Custom AI marketing system' is the bait, the pitch comes later if they ask.",
       "If they ask 'WHAT'S A BACKEND' → 'It's a system that automatically follows up with your leads — texts, emails, missed-call replies. Ben shows the mock-up on the call. Like seeing the engine before you buy the car.' → DISCOVERY tab.",
       "If they ask 'HOW MUCH' → see howMuch objection (DO NOT quote yet).",
@@ -713,7 +713,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
   discovery: {
     id: "discovery",
     title: "Two questions (find the path)",
-    goal: "Discover whether they're a WEBSITE close or a BACKEND close. Two questions, no third — they reveal the path themselves.",
+    goal: "Discover whetthe caller's they're a WEBSITE close or a BACKEND close. Two questions, no third — they reveal the path themselves.",
     lines: [
       "Two quick questions before I let you go — just so I know what to tell Ben to focus on.",
       "First — are you happy with your current website?",
@@ -741,7 +741,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     goal: "They said the current site isn't great. Direct their eye to the new preview, anchor the gap, book Ben.",
     lines: [
       "Yeah — so look at the preview real quick. Top of the homepage, the call button. See it? That alone is what most {category} sites are missing.",
-      "Ben built the whole new site around fixes like that. The polished version — colors, photos, your real content — comes together on the call with him.",
+      "Ben built the whole new site around fixes like that. The polished version — colors, photos, your real content — comes togetthe caller's on the call with him.",
       "Honest question — would it be the worst thing in the world to spend 15 minutes with Ben, see what he changed and why, AND see the backend mock-up too — and then decide?",
       "[Pause four counts]",
       "Right. Worst case 15 minutes. He's got Tuesday at 3 or Thursday at 10 — which works?",
@@ -749,7 +749,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     callerNotes: [
       "★ DIRECT THE EYE — same play as Ben's script. The preview is on their screen, name a specific element. Substitute the {category}-relevant landmark (call button / menu / quote form / appointment CTA).",
       "★ HORMOZI MAGIC LINE in line 3. 'Worst thing in the world' pre-handles 'I don't want to be sold to' before they think it.",
-      "★ Notice line 3 ALWAYS includes 'AND see the backend mock-up too' — Madie ALWAYS books for both reveals, even on a website-pitch path. Ben decides on the call which one to push.",
+      "★ Notice line 3 ALWAYS includes 'AND see the backend mock-up too' — the caller ALWAYS books for both reveals, even on a website-pitch path. Ben decides on the call which one to push.",
       "★ AFTER 'which works?' — FOUR Mississippi. Do not breathe loud. The first one to talk loses.",
       "If they say HOW MUCH → howMuch objection (don't quote during the pitch).",
       "If they YES on a time → BOOK THE CALL tab.",
@@ -790,7 +790,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       "★ LINE 1 IS THE PIVOT — 'sounds like the website might not be the bottleneck' validates their answer + opens the door to the bigger conversation. Don't argue the website. Move on.",
       "★ THE FRAME IS AGENCY-REPLACEMENT, not 'add-on'. If they pay an agency, the AI System is what they BUY INSTEAD of the agency, not in addition. That's the whole pitch.",
       "★ Line 3 is the only place you quote price unprompted. $9,700 + $500-1,000/mo IS the honest number. The trust move is naming the recurring BEFORE they ask — and immediately separating it from agency retainer (vendor bills, not BlueJays). Frame against agency monthly: cutting their bill in half + ownership.",
-      "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. Madie never closes the $9,700 — she books Ben.",
+      "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. the caller never closes the $9,700 — the caller books Ben.",
       "★ AFTER 'which works?' — four counts of silence. Let them speak first.",
       "If they say YES → BOOK THE CALL tab. Mark BACKEND_BOOKED in outcome.",
       "If they want BOTH details → 'Ben walks both on the call. You just need to pick a time.' → BOOK THE CALL.",
@@ -828,7 +828,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     goal: "Real scarcity, not fake. Ben caps at 30 sites + 10 backends a month. Drop it ONCE if they're hesitating. Then go back to the close.",
     lines: [
       "One thing — Ben does 30 sites a month max, and only 10 of these backend systems. We still have a few spots left this month.",
-      "I'd rather book you in early than have you wait. Tuesday at 3 or Thursday at 10?",
+      "I'd ratthe caller's book you in early than have you wait. Tuesday at 3 or Thursday at 10?",
     ],
     callerNotes: [
       "★ REAL SCARCITY — not fake. The cap exists because Ben builds these himself. Don't oversell the urgency, just state the fact.",
@@ -883,7 +883,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     lines: [
       "What's making you want to sit on it? Most people say price or timing — is that it?",
       "Got it. Tomorrow morning or Thursday afternoon — which works for a quick callback?",
-      "Either way the audit's in your hands tonight. If you decide it's not useful, just text me and I'll stop reaching out.",
+      "Eitthe caller's way the audit's in your hands tonight. If you decide it's not useful, just text me and I'll stop reaching out.",
     ],
     callerNotes: [
       "Line 1 is NEPQ — surfaces the real blocker before scheduling.",
@@ -897,12 +897,12 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
     title: "Leave a voicemail",
     goal: "Hook first — 'website we made for you' before identity. Under 25 seconds. Drop the link in text + email immediately after.",
     lines: [
-      "Hey {firstName} — this is Madie. Wanted to know if you got a chance to look at the website we made for {bizName}. Sending you the link right now to your phone — takes 30 seconds.",
-      "Text back 'site' and I'll get Ben — he built it — on a quick walkthrough call. He'll have the polished version AND a backend mock-up ready. Either way the site's yours.",
+      "Hey {firstName} — this is the caller. Wanted to know if you got a chance to look at the website we made for {bizName}. Sending you the link right now to your phone — takes 30 seconds.",
+      "Text back 'site' and I'll get Ben — he built it — on a quick walkthrough call. He'll have the polished version AND a backend mock-up ready. Eitthe caller's way the site's yours.",
     ],
     callerNotes: [
       "★ ASSUMPTIVE FRAMING: 'did you get a chance to look at the website we made' presumes already sent.",
-      "★ HOOK FIRST. 'Website' before 'Madie' on voicemail every time.",
+      "★ HOOK FIRST. 'Website' before 'the caller' on voicemail every time.",
       "★ 'Text back site' — zero-friction reply, lower bar than calling back.",
       "★ Hang up → SEND PREVIEW LINK first → SEND BOOKING LINK second. Mark VOICEMAIL.",
       "★ Under 25 seconds. Every extra second = lower callback rate.",
@@ -998,7 +998,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       response: [
         "Heard that. Quick question — is it the website thing in general, or is it the timing?",
         "If you say no right now, I'll never call again. But before you do — would it be the worst thing to take 30 seconds and see the preview AND hear how the backend would replace what your agency's doing?",
-        "Either way, have a good one.",
+        "Eitthe caller's way, have a good one.",
       ],
       callerNotes:
         "★ The Hormozi exit offer. Calm, confident. ★ If TIMING → callback in 90 days. If GENERAL → mark NOT_INTERESTED, exit warm.",
@@ -1007,7 +1007,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       id: "isThisSpam",
       trigger: "Is this a robocall / spam / scam?",
       response: [
-        "Real person — Madie here. I run a business with a web developer named Ben. We built {bizName} a website preview and I'm calling to walk you through it.",
+        "Real person — the caller here. I run a business with a web developer named Ben. We built {bizName} a website preview and I'm calling to walk you through it.",
         "Want me to text you the link instead? You decide if it's worth a closer look.",
       ],
       callerNotes: "Slow voice. Use first name. Don't over-explain — that confirms the suspicion.",
@@ -1016,7 +1016,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       id: "removeFromList",
       trigger: "Take me off your list / do not call",
       response: [
-        "Done. Removed right now. You won't hear from me again. Sorry to bother you.",
+        "Done. Removed right now. You won't hear from me again. Sorry to botthe caller's you.",
       ],
       callerNotes: "Mark DO_NOT_CALL. Never argue. Never re-pitch.",
     },
@@ -1026,7 +1026,7 @@ export const MADIE_CALL_SCRIPT: MadieCallScript = {
       response: [
         "Look at it later?",
         "[pause] Totally fair — but here's the thing. You looking alone, you'll see what's there. Ben on the call, you see what's there AND what's missing — what it's costing you AND what the backend would replace.",
-        "Same 15 minutes either way. Tuesday at 3 or Thursday at 10?",
+        "Same 15 minutes eitthe caller's way. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
         "★ #1 escape line. Same play as Ben's script — mirror, reframe (alone vs with the architect), two-option close. If they STILL deflect → drop to TextTheLink and exit warm.",

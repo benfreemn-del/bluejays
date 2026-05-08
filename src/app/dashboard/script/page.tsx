@@ -8,9 +8,9 @@ import {
   HORMOZI_MANTRA,
   HORMOZI_INTRO_UNKNOWN_OWNER,
   HORMOZI_VOICEMAIL_UNKNOWN_OWNER,
-  MADIE_CALL_SCRIPT,
-  MADIE_CALL_TIPS,
-  MADIE_MANTRA,
+  PARTNER_CALL_SCRIPT,
+  PARTNER_CALL_TIPS,
+  PARTNER_MANTRA,
   type ScriptSection,
   type ScriptVars,
 } from "@/lib/partners-script";
@@ -51,10 +51,10 @@ export default async function DashboardScriptPage({
 }) {
   const params = await searchParams;
   const idsParam = (params.ids || "").trim();
-  // Caller mode — Madie is the primary sales-portal user (uses Ben's
-  // login). Defaults to her flow. ?mode=ben is the escape hatch if
+  // Caller mode — the caller is the primary sales-portal user (uses Ben's
+  // login). Defaults to the caller's flow. ?mode=ben is the escape hatch if
   // Ben ever wants to run his original cold-call Hormozi script.
-  const mode: "ben" | "madie" = params.mode === "ben" ? "ben" : "madie";
+  const mode: "ben" | "partner" = params.mode === "ben" ? "ben" : "partner";
 
   // No queue param → render the Sales Portal lead picker so Ben can browse
   // prospects, build a queue, and start the call workflow. Replaces the
@@ -76,7 +76,7 @@ export default async function DashboardScriptPage({
 
   // Build queue navigation URLs that the workspace uses for Prev/Next
   // and for "Skip" / "Mark outcome → advance"
-  // Madie is the default — only carry the mode flag through nav
+  // the caller is the default — only carry the mode flag through nav
   // when Ben has explicitly switched to his original script.
   const baseQS =
     `ids=${encodeURIComponent(ids.join(","))}` +
@@ -137,7 +137,7 @@ export default async function DashboardScriptPage({
     url:
       prospect.currentWebsite ||
       `${prospect.businessName}'s website`,
-    partnerFirstName: mode === "madie" ? "Madie" : "Ben",
+    partnerFirstName: mode === "partner" ? "the caller" : "Ben",
     previewUrl,
     auditUrl,
     scheduleUrl,
@@ -158,7 +158,7 @@ export default async function DashboardScriptPage({
     goal: s.goal ? fillVars(s.goal, vars) : undefined,
   });
 
-  // Merge two ScriptSections into one — used to fold Madie's parallel
+  // Merge two ScriptSections into one — used to fold partner-parallel
   // sections into the same 8-slot CallWorkspace shape without losing
   // any content. Lines stack with a divider; callerNotes concatenate.
   const mergeSections = (
@@ -181,15 +181,15 @@ export default async function DashboardScriptPage({
     ],
   });
 
-  // Build Madie's filled script — maps her 12-section flow onto the
+  // Build the partner-filled script — maps the caller's 12-section flow onto the
   // 8-slot CallWorkspace shape:
   //   intro       = opener + identityFrame
   //   qualify     = previewFrame + discovery (the keystone 2 questions)
   //   pitch       = websitePitch (default — backend pitches live in objections)
   //   bookTheCall = bookTheCall + scarcityClose (drop scarcity if hesitating)
-  //   Other slots map 1:1.
-  const buildMadieScript = () => {
-    const m = MADIE_CALL_SCRIPT;
+  //   Otthe caller's slots map 1:1.
+  const buildPartnerScript = () => {
+    const m = PARTNER_CALL_SCRIPT;
     return {
       intro: fillSec(mergeSections(m.opener, m.identityFrame, "THEN — set the identity")),
       qualify: fillSec(
@@ -206,7 +206,7 @@ export default async function DashboardScriptPage({
       textTheLink: fillSec(m.textTheLink),
       callbackClose: fillSec(m.callbackClose),
       voicemail: fillSec(m.voicemail),
-      // Objection list = Madie's branches FIRST, then her two
+      // Objection list = partner-branches FIRST, then the caller's two
       // backend pitches surfaced as named objection branches so the
       // CallWorkspace's objection-jump UI can route the caller into
       // the high-ticket path mid-call.
@@ -234,8 +234,8 @@ export default async function DashboardScriptPage({
   };
 
   const filledScript =
-    mode === "madie"
-      ? buildMadieScript()
+    mode === "partner"
+      ? buildPartnerScript()
       : {
           intro: fillSec(introSection),
           qualify: fillSec(HORMOZI_CALL_SCRIPT.qualify),
@@ -299,9 +299,9 @@ export default async function DashboardScriptPage({
         doneHref: "/dashboard",
       }}
       partner={{
-        id: mode === "madie" ? "madie-setter" : "ben-admin",
-        name: mode === "madie" ? "Madie" : "Ben",
-        code: mode === "madie" ? "madie" : "ben",
+        id: mode === "partner" ? "partner-setter" : "ben-admin",
+        name: mode === "partner" ? "the caller" : "Ben",
+        code: mode === "partner" ? "partner" : "ben",
         agreementAccepted: true,
       }}
       prospect={{
@@ -344,8 +344,8 @@ export default async function DashboardScriptPage({
       }}
       links={{ previewUrl, auditUrl, scheduleUrl }}
       script={filledScript}
-      tips={mode === "madie" ? MADIE_CALL_TIPS : HORMOZI_CALL_TIPS}
-      mantra={mode === "madie" ? MADIE_MANTRA : HORMOZI_MANTRA}
+      tips={mode === "partner" ? PARTNER_CALL_TIPS : HORMOZI_CALL_TIPS}
+      mantra={mode === "partner" ? PARTNER_MANTRA : HORMOZI_MANTRA}
       callHistory={callHistory}
       recentActivity={[]}
     />

@@ -5,7 +5,7 @@
  *
  * Visual map of every Claude personality the BlueJays system runs.
  * Each "bot" is a distinct prompt + role Claude plays inside the
- * codebase — Madie's appointment-setter on outbound calls, the QC
+ * codebase — the appointment-setter on outbound calls, the QC
  * reviewer that audits generated sites, the Hyperloop A/B engine
  * that promotes winning email subjects, etc. They all use the same
  * underlying Anthropic API but with different prompts, different
@@ -48,11 +48,11 @@ const BRANCHES: Branch[] = [
     color: "sky",
     bots: [
       {
-        id: "madie",
-        name: "Madie Claude",
+        id: "partner",
+        name: "Sales Setter Claude",
         emoji: "🎯",
-        desc: "Appointment-setter. Books Ben on the calendar from inbound + Madie's outbound dialing. Pivots website → backend if prospect signals an agency. Earns $1k commission per backend close.",
-        files: ["src/lib/partners-script.ts → MADIE_CALL_SCRIPT"],
+        desc: "Appointment-setter. Books Ben on the calendar from inbound + partner outbound dialing. Pivots website → backend if prospect signals an agency. Earns $1k commission per backend close.",
+        files: ["src/lib/partners-script.ts → PARTNER_CALL_SCRIPT"],
       },
       {
         id: "hormozi",

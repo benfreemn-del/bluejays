@@ -188,7 +188,7 @@ export default function AuditCTAHub({
             </p>
             {/* Real scarcity: BlueJays caps backend builds at 10/month —
                 Ben's actual capacity, not marketing copy. Mirror of the
-                same close used in Madie's appointment-setter script. */}
+                same close used in the appointment-setter script. */}
             <p className="text-[10px] text-amber-300/90 mb-3 leading-relaxed font-semibold">
               Only 10 backend builds per month —<br/>
               we cap to keep quality.

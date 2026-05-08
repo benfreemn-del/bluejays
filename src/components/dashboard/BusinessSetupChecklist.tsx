@@ -52,10 +52,10 @@ const ITEMS: ChecklistItem[] = [
     },
   },
   {
-    id: "madie-paperwork",
-    title: "Madie · W-9 + Independent Contractor Agreement BEFORE first payout",
+    id: "partner-paperwork",
+    title: "the caller · W-9 + Independent Contractor Agreement BEFORE first payout",
     detail:
-      "Madie's earning $200/website + $1k/backend close. IRS rule: W-9 must be on file BEFORE the payment that crosses the first dollar — and definitely before $600 cumulative. Get her W-9 (printable from IRS.gov) + sign a 1-page IC agreement clarifying she's a contractor (not employee), commission-only, no benefits. Save into 01 Legal & Tax/Contracts & Templates/Madie - IC Agreement.md.",
+      "the caller's earning $200/website + $1k/backend close. IRS rule: W-9 must be on file BEFORE the payment that crosses the first dollar — and definitely before $600 cumulative. Get the caller's W-9 (printable from IRS.gov) + sign a 1-page IC agreement clarifying she's a contractor (not employee), commission-only, no benefits. Save into 01 Legal & Tax/Contracts & Templates/Partner - IC Agreement.md.",
     tier: "blocker",
     time: "30 min",
     cost: "$0",
@@ -106,10 +106,10 @@ const ITEMS: ChecklistItem[] = [
     },
   },
   {
-    id: "madie-commission-ledger",
-    title: "Madie · running commission ledger toward $600 1099-NEC threshold",
+    id: "partner-commission-ledger",
+    title: "the caller · running commission ledger toward $600 1099-NEC threshold",
     detail:
-      "When her cumulative 2026 commissions cross $600, you owe her a 1099-NEC by Jan 31, 2027. Track every payout in a sheet (date, deal, amount, running total). Easiest: a tab in your accounting tool tagged 'Madie' so totals auto-sum. Crossing $600 with no W-9 on file = $290 penalty per missing 1099 + IRS notice.",
+      "When the caller's cumulative 2026 commissions cross $600, you owe the caller's a 1099-NEC by Jan 31, 2027. Track every payout in a sheet (date, deal, amount, running total). Easiest: a tab in your accounting tool tagged 'the caller' so totals auto-sum. Crossing $600 with no W-9 on file = $290 penalty per missing 1099 + IRS notice.",
     tier: "this-month",
     time: "20 min",
     cost: "$0",
@@ -127,7 +127,7 @@ const ITEMS: ChecklistItem[] = [
     id: "eo-insurance",
     title: "Buy E&O + General Liability insurance",
     detail:
-      "Service business handling client websites + AI-generated copy + lead-capture data needs E&O. ~$40-60/mo with Hiscox or Next. If a client claims your AI System cost them revenue (or one of Madie's prospects sues over a sales call), E&O covers the lawsuit. Without it = personal assets exposed despite the LLC.",
+      "Service business handling client websites + AI-generated copy + lead-capture data needs E&O. ~$40-60/mo with Hiscox or Next. If a client claims your AI System cost them revenue (or one of the caller's prospects sues over a sales call), E&O covers the lawsuit. Without it = personal assets exposed despite the LLC.",
     tier: "this-month",
     time: "30 min",
     cost: "~$50/mo",
@@ -187,7 +187,7 @@ const ITEMS: ChecklistItem[] = [
     id: "q3-q4-tax-reminders",
     title: "Calendar reminders for Q3 (Sept 15) + Q4 (Jan 15) estimated tax",
     detail:
-      "Set both NOW so neither gets missed. Each reminder fires 10 days before the due date so you have time to compute the YTD-net × 25% number. Calendar invite or phone alarm — pick the one you'll actually see.",
+      "Set both NOW so neitthe caller's gets missed. Each reminder fires 10 days before the due date so you have time to compute the YTD-net × 25% number. Calendar invite or phone alarm — pick the one you'll actually see.",
     tier: "soon",
     time: "5 min",
     cost: "$0",
@@ -211,7 +211,7 @@ const ITEMS: ChecklistItem[] = [
     id: "tos-attorney-review",
     title: "Privacy Policy + Terms of Service attorney review",
     detail:
-      "You have them on the site (auto-generated). Worth one attorney review at scale — checks that they actually cover what your AI Marketing System does (lead capture, AI copy generation, partner program data flows, Madie's calling, voicemail recording).",
+      "You have them on the site (auto-generated). Worth one attorney review at scale — checks that they actually cover what your AI Marketing System does (lead capture, AI copy generation, partner program data flows, the caller's calling, voicemail recording).",
     tier: "someday",
     time: "1 hour to set up",
     cost: "$200–400",

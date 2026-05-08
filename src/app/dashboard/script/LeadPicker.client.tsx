@@ -23,8 +23,8 @@ export default function LeadPicker() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  // Filter chips along the top of the picker. Madie controls these to
-  // narrow the list of prospects she calls today.
+  // Filter chips along the top of the picker. the caller controls these to
+  // narrow the list of prospects to call today.
   //   "all"             — every prospect, no filter
   //   "no-calls"        — never been contacted (good for cold-call queues)
   //   "called-recently" — already in some kind of contact loop
@@ -46,15 +46,15 @@ export default function LeadPicker() {
   // Industry / category drop-down — auto-populated from the distinct
   // category values present in the loaded prospects.
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  // Sort dropdown — Madie picks how the picker is ordered.
+  // Sort dropdown — the caller picks how the picker is ordered.
   const [sortBy, setSortBy] = useState<
     "newest" | "oldest" | "category" | "source" | "status"
   >("newest");
-  // Sales portal is Madie's tool now. Ben can override with
+  // Sales portal is this tool now. Ben can override with
   // ?mode=ben on the URL if he ever wants to use his original
   // cold-call Hormozi script — the toggle UI was removed since
   // Ben doesn't dial from this surface day-to-day anymore.
-  const mode: "ben" | "madie" = "madie";
+  const mode: "ben" | "partner" = "partner";
 
   // Load prospects.
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function LeadPicker() {
 
   const start = () => {
     if (selected.length === 0) return;
-    // Madie is the default — no mode flag needed in the URL.
+    // the caller is the default — no mode flag needed in the URL.
     // Ben can override per-session via ?mode=ben if he wants his
     // original Hormozi cold-call script.
     const qs = `ids=${encodeURIComponent(selected.join(","))}&i=0`;
@@ -126,7 +126,7 @@ export default function LeadPicker() {
     const filtered = prospects.filter((p) => {
       const s = String(p.status ?? "").toLowerCase();
 
-      // Drop active clients from Madie's call queue. If we've already
+      // Drop active clients from the call queue. If we've already
       // paid them out / built them a custom site / they have an active
       // AI System sub, calling them again as a sales-prospect would
       // burn the relationship. Locked-in 2026-05-06 by Ben.
@@ -153,7 +153,7 @@ export default function LeadPicker() {
       // until we wire actual partner_calls history into the prospect list.
       if (filter === "called-recently" && !s.includes("contact")) return false;
       if (filter === "no-calls" && (s.includes("contact") || s.includes("interest"))) return false;
-      // Source-based + tier-based filters (Madie 2026-05-06):
+      // Source-based + tier-based filters (the caller 2026-05-06):
       if (filter === "inbound" && p.source !== "inbound") return false;
       if (filter === "cold" && p.source !== "scouted") return false;
       if (filter === "fullsystem" && p.pricingTier !== "fullsystem") return false;
@@ -208,7 +208,7 @@ export default function LeadPicker() {
               ← Dashboard
             </Link>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight mt-1">
-              🎯 Madie&apos;s Sales Portal
+              🎯 Sales Portal
             </h1>
             <p className="text-xs text-muted mt-0.5">
               Pick the prospects to call. Hit Start to run the appointment-
@@ -286,7 +286,7 @@ export default function LeadPicker() {
             </select>
           </div>
           {/* Bottom row: lead-type filter chips. Pink/purple chips visually
-              match the row treatment so Madie can connect "show me MFG"
+              match the row treatment so the caller can connect "show me MFG"
               with "the pink rows". */}
           <div className="flex gap-1 flex-wrap">
             {(
@@ -351,13 +351,13 @@ export default function LeadPicker() {
               const isSel = selected.includes(p.id);
               const queuePos = isSel ? selected.indexOf(p.id) + 1 : null;
 
-              // Madie's call-priority signals — locked-in 2026-05-06.
+              // caller-priority signals — locked-in 2026-05-06.
               // Pink = manufacturer cold lookalike (high ticket, hand-built
               //        funnel, $10K target). Top-of-cascade row treatment.
               // Purple = Full System / agency-replacement inbound. Already
               //          opted in for $10K-class fit, paid-traffic warm.
               // Green/red likely-to-close dot derives from a simple
-              // heuristic Madie can tune over time:
+              // heuristic the caller can tune over time:
               //   GREEN: any positive intent — inbound source, fullsystem
               //          tier, lookalikeCategory present, or status in the
               //          (interested, responded, claimed) cluster.
@@ -471,7 +471,7 @@ export default function LeadPicker() {
                             INBOUND
                           </span>
                         )}
-                        {/* Category chip — gives Madie the vertical at a glance */}
+                        {/* Category chip — gives the caller the vertical at a glance */}
                         {p.category && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-500/15 text-slate-300 font-bold tracking-wider border border-slate-500/25 uppercase">
                             {String(p.category).replace(/-/g, " ")}

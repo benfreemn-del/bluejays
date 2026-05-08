@@ -6,7 +6,7 @@ import { sendOwnerAlert } from "@/lib/alerts";
 /**
  * POST /api/partners/[code]/upload-w9
  *
- * Multipart form upload for a partner's IRS Form W-9. Used by Madie
+ * Multipart form upload for a partner's IRS Form W-9. Used by the caller
  * (and every future partner) to deliver their W-9 PDF without email
  * attachments.
  *
