@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { rateLimit } from "@/lib/rate-limit";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { deriveSourceChannel } from "@/lib/source-attribution";
 
 /**
  * POST /api/audit/submit
@@ -174,6 +175,18 @@ export async function POST(request: NextRequest) {
     // but the audit form itself doesn't ask for phone or SMS consent yet
     // so we leave source='inbound' for the email funnel only).
     const newProspectId = uuidv4();
+    // Source-channel attribution: derive once from form payload + URL
+    // params + origin path. Stamped on prospect.source_channel so the
+    // /dashboard/sales-pipeline can answer "what's actually working"
+    // without manual back-fill.
+    const sourceChannel = deriveSourceChannel({
+      explicit: (body as { sourceChannel?: string }).sourceChannel,
+      searchParams:
+        body.utm && typeof body.utm === "object"
+          ? new URLSearchParams(body.utm as Record<string, string>)
+          : null,
+      originPath: "/audit",
+    });
     const { error: createErr } = await supabase.from("prospects").insert({
       id: newProspectId,
       business_name: businessName,
@@ -186,6 +199,8 @@ export async function POST(request: NextRequest) {
       category: businessCategory,
       status: "audit_lead",
       source: "inbound",
+      source_channel: sourceChannel,
+      source_channel_set_at: new Date().toISOString(),
       pricing_tier: "standard",
       manually_managed: false,
       scraped_data: {

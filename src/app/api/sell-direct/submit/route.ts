@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { rateLimit } from "@/lib/rate-limit";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { deriveSourceChannel } from "@/lib/source-attribution";
 
 /**
  * POST /api/sell-direct/submit
@@ -248,6 +249,18 @@ export async function POST(request: NextRequest) {
         : name.split(/\s+/).slice(0, 3).join(" ") + "'s Business"
       : `Calculator visitor · ${email}`;
 
+    // Source-channel attribution for /sell-direct (manufacturer-side
+     // calculator). Heuristic origin path is '/sell-direct' but the form
+     // mirrors /agency's targeting so 'agency-form' or UTM-driven values
+     // win when the upstream ad set them.
+    const sourceChannel = deriveSourceChannel({
+      explicit: (body as { sourceChannel?: string }).sourceChannel,
+      searchParams: body.utm
+        ? new URLSearchParams(body.utm as Record<string, string>)
+        : null,
+      originPath: "/sell-direct",
+    });
+
     const { error: insertErr } = await supabase.from("prospects").insert({
       id: newId,
       business_name: businessName,
@@ -263,6 +276,8 @@ export async function POST(request: NextRequest) {
       category: "general",
       status: "audit_lead",
       source: "inbound",
+      source_channel: sourceChannel,
+      source_channel_set_at: new Date().toISOString(),
       pricing_tier: "fullsystem",
       manually_managed: false,
       scraped_data: {

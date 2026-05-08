@@ -5,6 +5,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { sendEmail } from "@/lib/email-sender";
 import { getCutMyAgencyPlanEmail } from "@/lib/email-templates";
+import { deriveSourceChannel } from "@/lib/source-attribution";
 
 /**
  * POST /api/cut-my-agency/submit
@@ -354,6 +355,19 @@ export async function POST(request: NextRequest) {
       ? name.split(/\s+/).slice(0, 3).join(" ") + "'s Business"
       : `Calculator visitor · ${email}`;
 
+    // Source-channel attribution. The /cut-my-agency calculator is the
+    // /agency-replacement Google Ads landing page, so 'agency-replacement-ad'
+    // when UTM matches, 'cma-calculator' for direct (organic + bookmarked)
+    // visits. Lets the sales-pipeline filter group calculator deals
+    // distinctly from generic inbound.
+    const sourceChannel = deriveSourceChannel({
+      explicit: (body as { sourceChannel?: string }).sourceChannel,
+      searchParams: body.utm
+        ? new URLSearchParams(body.utm as Record<string, string>)
+        : null,
+      originPath: "/cut-my-agency",
+    });
+
     const { error: insertErr } = await supabase.from("prospects").insert({
       id: newId,
       business_name: businessName,
@@ -366,6 +380,8 @@ export async function POST(request: NextRequest) {
       category: "general",
       status: "audit_lead",
       source: "inbound",
+      source_channel: sourceChannel,
+      source_channel_set_at: new Date().toISOString(),
       pricing_tier: "fullsystem",
       // Calculator leads = Ben handles personally (Q8C 2026-05-06 +
       // Rule 49). Flipped to true on full submits so the auto-enroll

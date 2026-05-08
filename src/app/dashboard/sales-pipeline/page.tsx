@@ -91,6 +91,7 @@ export default function SalesPipelinePage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
 
   // Per-prospect local stage edits — keyed by prospect.id. Value is
   // the full stage string (e.g. '4a'). When this differs from the
@@ -117,13 +118,27 @@ export default function SalesPipelinePage() {
     fetchProspects();
   }, []);
 
+  // Discover the set of source_channel values present on the board so
+  // the filter dropdown only offers options the operator can actually
+  // pick. Sorted alpha + 'all' always first.
+  const sourceOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of prospects) {
+      if (p.sourceChannel) set.add(p.sourceChannel);
+    }
+    return ["all", ...Array.from(set).sort()];
+  }, [prospects]);
+
   // Group prospects into Map<stageNumber, Prospect[]> per track. Sub-
   // letter doesn't change which group bucket a prospect lives in — '4'
   // and '4a' both render under stage 4, sorted by letter so 4 < 4a < 4b.
+  // Source-channel filter applied here so empty-stage rows still show
+  // up in the layout (preserves visual structure when filtering).
   const { websiteByStage, fullsystemByStage } = useMemo(() => {
     const website = new Map<number, Prospect[]>();
     const fullsystem = new Map<number, Prospect[]>();
     for (const p of prospects) {
+      if (sourceFilter !== "all" && p.sourceChannel !== sourceFilter) continue;
       const { num } = parseStage(p.pipelineStage);
       if (num <= 0) continue;
       const map = trackOf(p) === "fullsystem" ? fullsystem : website;
@@ -139,7 +154,7 @@ export default function SalesPipelinePage() {
       });
     }
     return { websiteByStage: website, fullsystemByStage: fullsystem };
-  }, [prospects]);
+  }, [prospects, sourceFilter]);
 
   const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
     const max = ceilingFor(track);
@@ -209,11 +224,33 @@ export default function SalesPipelinePage() {
             Client jobs →
           </Link>
         </div>
-        <p className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 text-xs text-slate-500">
-          Single source of truth · every funnel reads from this stage. Use ▲▼
-          on the number to change major stage, ▲▼ on the letter to add a
-          sub-state (4a / 4b / 4c). Hit Save to persist.
-        </p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-xs text-slate-500">
+            Single source of truth · every funnel reads from this stage. Use ▲▼
+            on the number to change major stage, ▲▼ on the letter to add a
+            sub-state (4a / 4b / 4c). Hit Save to persist.
+          </p>
+          {/* Source-channel filter — surfaces prospects.source_channel
+              from /api/prospects. 'all' shows the unfiltered board.
+              Dropdown only shows values that exist on the current
+              board so it never offers a dead-end choice. */}
+          {sourceOptions.length > 1 && (
+            <label className="flex items-center gap-2 text-xs text-slate-400">
+              Source
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-sky-500"
+              >
+                {sourceOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
