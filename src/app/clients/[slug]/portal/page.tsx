@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
+import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
@@ -66,6 +67,10 @@ type Owner = {
   name: string | null;
   role: string;
   last_login_at: string | null;
+  /** When the client_owners row was inserted — used as a "paid at"
+   *  proxy for the OnboardingTimeline since the owner row is created
+   *  on AI Package payment. */
+  created_at?: string | null;
 };
 
 type ClientLead = {
@@ -881,6 +886,14 @@ function OverviewTab({
 
   return (
     <div className="space-y-6">
+      {/* 14-day onboarding timeline — visible to clients in their first
+          two weeks post-purchase. Reduces day-1-anxiety and gives them
+          a concrete "what's happening this week" anchor. Auto-hides
+          after day 14 when the rhythm is established. Reads owner.
+          created_at as the start anchor (proxy for paid-at since the
+          owner row is created on AI Package payment). */}
+      <OnboardingTimeline paidAt={owner.created_at ?? null} />
+
       {/* Live AI activity banner — outcome readout, not feature list */}
       {aiBannerActive && (
         <div className="rounded-xl border border-violet-500/30 bg-gradient-to-br from-violet-950/40 via-violet-900/15 to-slate-900/60 p-4 sm:p-5">
