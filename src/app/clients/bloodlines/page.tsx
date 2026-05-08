@@ -3049,8 +3049,8 @@ function ParchmentSynopsisModal({
               </div>
 
               <p
-                className="text-sm sm:text-base italic leading-relaxed mb-6 text-center"
-                style={{ color: `${INK}cc` }}
+                className="text-lg sm:text-2xl italic leading-relaxed mb-6 text-center"
+                style={{ color: `${INK}cc`, fontFamily: "'EB Garamond', serif" }}
               >
                 "Two friends, an ancient power, and a kingdom drawn to war."
               </p>
