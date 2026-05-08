@@ -32,6 +32,8 @@
  */
 
 import Link from "next/link";
+import EmberCanvas from "./EmberCanvas";
+import FounderVideoSpot from "./FounderVideoSpot";
 
 /* ───────────────────────── PALETTE ───────────────────────── */
 const BG_BLACK = "#0a0a0a";
@@ -248,6 +250,10 @@ function HeroSection() {
             "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22120%22 height=%22120%22 filter=%22url(%23n)%22/></svg>')",
         }}
       />
+      {/* Pointer-reactive embers — drift up like sparks off the heat-
+          press; mouse/touch creates a wind that pushes them sideways.
+          Sits over grain but below the content. */}
+      <EmberCanvas />
       <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-24 md:py-32 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
         {/* LEFT — copy */}
         <div>
@@ -972,6 +978,7 @@ export default function NevarlandOutpostPage() {
       <Header />
       <HeroSection />
       <StorySection />
+      <FounderVideoSpot />
       <AdultTeesSection />
       <KidsSection />
       <CustomServiceSection />
