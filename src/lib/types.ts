@@ -194,6 +194,19 @@ export interface Prospect {
    *  /dashboard/sales-pipeline only renders prospects where this is set. */
   pipelineStage?: string;
   pipelineStageUpdatedAt?: string;
+  /** Lead-source attribution. Free-text — canonical values:
+   *    'madie-cold-call'        — Madie booked the discovery
+   *    'ben-cold-call'          — Ben booked the discovery
+   *    'audit-inbound'          — submitted /audit form directly
+   *    'agency-replacement-ad'  — clicked /cut-my-agency Google Ad
+   *    'ad-system-ad'           — clicked /agency Google Ad
+   *    'partner:{code}'         — partner ?ref=code attribution
+   *    'website-direct'         — landed on home, no UTM
+   *    'scout-mfg-icp'          — scouted via manufacturer scout
+   *    'referral'               — direct introduction, free-form
+   *  Used by /dashboard/sales-pipeline + future conversion-rate report. */
+  sourceChannel?: string;
+  sourceChannelSetAt?: string;
   /** For pricing_tier=custom prospects only: absolute URL of the real live site
    *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
    *  rendering the template preview. Ignored for non-custom tiers. */

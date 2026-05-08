@@ -166,6 +166,9 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     pipelineStage: (row.pipeline_stage as string | null) ?? undefined,
     pipelineStageUpdatedAt:
       (row.pipeline_stage_updated_at as string | null) ?? undefined,
+    sourceChannel: (row.source_channel as string | null) ?? undefined,
+    sourceChannelSetAt:
+      (row.source_channel_set_at as string | null) ?? undefined,
     customSiteUrl: (row.custom_site_url as string | null) || undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,
@@ -453,6 +456,10 @@ export async function updateProspect(
     if (sanitizedUpdates.pipelineStage !== undefined) {
       dbUpdates.pipeline_stage = sanitizedUpdates.pipelineStage ?? null;
       dbUpdates.pipeline_stage_updated_at = new Date().toISOString();
+    }
+    if (sanitizedUpdates.sourceChannel !== undefined) {
+      dbUpdates.source_channel = sanitizedUpdates.sourceChannel || null;
+      dbUpdates.source_channel_set_at = new Date().toISOString();
     }
     if (sanitizedUpdates.customSiteUrl !== undefined) dbUpdates.custom_site_url = sanitizedUpdates.customSiteUrl || null;
     if (sanitizedUpdates.adminNotes !== undefined) dbUpdates.admin_notes = sanitizedUpdates.adminNotes || null;

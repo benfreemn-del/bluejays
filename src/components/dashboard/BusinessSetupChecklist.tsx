@@ -145,6 +145,15 @@ const ITEMS: ChecklistItem[] = [
     time: "30 min",
     cost: "$0",
   },
+  {
+    id: "madie-loom-intro",
+    title: "Record Madie's 30-sec Loom intro + branded email signature",
+    detail:
+      "Booked-call show-up rate jumps 20-40% when the prospect has seen the person who booked them. One-time 30-sec phone-shot Loom from Madie: 'Hey it's Madie, looking forward to your call with Ben Tuesday at 3 — quick intro:'. Auto-text it after every Calendly booking via the existing webhook. Pair with a branded email signature (.png banner + Calendly link + LinkedIn) so every reply she sends carries the same trust frame. Wired into /partners/[code] workspace once recorded.",
+    tier: "this-month",
+    time: "45 min",
+    cost: "$0",
+  },
 
   // ── 📝 NEXT 30–60 DAYS ────────────────────────────────────────
   {

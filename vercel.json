@@ -95,6 +95,10 @@
     {
       "path": "/api/cron/campaigns-scheduled",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/cutover-smoke-test",
+      "schedule": "7 16 * * *"
     }
   ],
   "functions": {

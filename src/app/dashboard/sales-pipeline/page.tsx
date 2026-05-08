@@ -432,6 +432,13 @@ function LeadCard({
               {prospect.phone || prospect.email}
             </p>
           )}
+          {prospect.sourceChannel && (
+            <p className="text-[10px] text-slate-500 truncate mt-1">
+              <span className="inline-block px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">
+                {prospect.sourceChannel}
+              </span>
+            </p>
+          )}
         </div>
 
         {/* Stage steppers — number + optional letter */}
