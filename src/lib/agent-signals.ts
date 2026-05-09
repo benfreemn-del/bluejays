@@ -134,3 +134,102 @@ export async function markSignalsRead(
     console.warn("[agent-signals] mark-read failed:", error.message);
   }
 }
+
+/* ─────────────────────────── RETENTION ─────────────────────────── */
+
+/**
+ * Retention thresholds. Tuned to keep the table small without losing
+ * forensic value:
+ *   · Read (acked) signals → 90 days. Once a downstream bot has acked
+ *     a signal it's already been acted on; older copies are clutter.
+ *   · Unread non-urgent signals → 180 days. If nobody picked these up
+ *     in 6 months they're noise — surface in the prune log so we can
+ *     find sources that emit-without-consumers, then sweep.
+ *   · Unread URGENT signals → never auto-pruned. These mean something
+ *     real broke and never got acked. Surface as a stale-urgent warning
+ *     instead of silently deleting.
+ */
+export const AGENT_SIGNALS_READ_RETENTION_DAYS = 90;
+export const AGENT_SIGNALS_UNREAD_RETENTION_DAYS = 180;
+
+export interface PruneResult {
+  readDeleted: number;
+  unreadDeleted: number;
+  staleUrgentRemaining: number;
+  ok: boolean;
+  error?: string;
+}
+
+/**
+ * Delete signals past their retention window. Called by the weekly
+ * cron at /api/cron/agent-signals-prune.
+ */
+export async function pruneOldSignals(): Promise<PruneResult> {
+  if (!isSupabaseConfigured()) {
+    return {
+      readDeleted: 0,
+      unreadDeleted: 0,
+      staleUrgentRemaining: 0,
+      ok: true,
+    };
+  }
+  const now = Date.now();
+  const readCutoff = new Date(
+    now - AGENT_SIGNALS_READ_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
+  const unreadCutoff = new Date(
+    now - AGENT_SIGNALS_UNREAD_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
+
+  // Delete acked signals older than the read window. These have been
+  // consumed by downstream bots already.
+  const { count: readDeleted, error: readErr } = await supabase
+    .from("agent_signals")
+    .delete({ count: "exact" })
+    .not("read_at", "is", null)
+    .lt("created_at", readCutoff);
+  if (readErr) {
+    return {
+      readDeleted: 0,
+      unreadDeleted: 0,
+      staleUrgentRemaining: 0,
+      ok: false,
+      error: `read prune: ${readErr.message}`,
+    };
+  }
+
+  // Delete unread non-urgent signals past the unread window. Urgent
+  // signals are never auto-deleted — they need human eyes.
+  const { count: unreadDeleted, error: unreadErr } = await supabase
+    .from("agent_signals")
+    .delete({ count: "exact" })
+    .is("read_at", null)
+    .lt("created_at", unreadCutoff)
+    .neq("severity", "urgent");
+  if (unreadErr) {
+    return {
+      readDeleted: readDeleted ?? 0,
+      unreadDeleted: 0,
+      staleUrgentRemaining: 0,
+      ok: false,
+      error: `unread prune: ${unreadErr.message}`,
+    };
+  }
+
+  // Count any unread urgent signals that have aged past the unread
+  // window. These represent something that broke and never got acked
+  // — the cron emits a meta-signal so they don't silently rot.
+  const { count: staleUrgent } = await supabase
+    .from("agent_signals")
+    .select("id", { count: "exact", head: true })
+    .is("read_at", null)
+    .lt("created_at", unreadCutoff)
+    .eq("severity", "urgent");
+
+  return {
+    readDeleted: readDeleted ?? 0,
+    unreadDeleted: unreadDeleted ?? 0,
+    staleUrgentRemaining: staleUrgent ?? 0,
+    ok: true,
+  };
+}

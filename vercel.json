@@ -143,6 +143,10 @@
     {
       "path": "/api/cron/ad-roas-sync",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/agent-signals-prune",
+      "schedule": "30 4 * * 0"
     }
   ],
   "functions": {
