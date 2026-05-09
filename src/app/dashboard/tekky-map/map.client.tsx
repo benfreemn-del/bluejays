@@ -1338,28 +1338,66 @@ export default function TekkyMapClient() {
               })}
             </div>
 
-            {/* Green Run button — fires the scrape against ALL staged
-                 audiences sequentially. Disabled until at least one is
-                 picked. Shows count when 2+. */}
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-[10px] text-slate-400">
-                {stagedAudiences.size === 0
-                  ? "Select audience(s)"
-                  : stagedAudiences.size === 1
-                    ? `Ready: ${AUDIENCE_META[Array.from(stagedAudiences)[0]!].label}`
-                    : `Ready: ${stagedAudiences.size} audiences`}
-              </span>
-              <div className="flex-1" />
+            {/* SCOUT button — promoted from a small pill to a full-width
+                 prominent CTA so the next action after picking audiences
+                 is impossible to miss. Two visual states:
+                   - audiences staged: solid emerald, animated pulse,
+                     readable from across the room
+                   - none staged: muted slate, hint copy
+                 Per Ben spec 2026-05-10. */}
+            <div className="mt-3">
+              {/* Status line above the button so the count is paired
+                  visually with the action. */}
+              <div className="flex items-center justify-between mb-1.5">
+                <span
+                  className={`text-[10px] uppercase tracking-wider font-bold ${
+                    stagedAudiences.size === 0
+                      ? "text-slate-500"
+                      : "text-emerald-300"
+                  }`}
+                >
+                  {stagedAudiences.size === 0
+                    ? "↑ Pick audiences first"
+                    : stagedAudiences.size === 1
+                      ? `Ready · ${AUDIENCE_META[Array.from(stagedAudiences)[0]!].label}`
+                      : `Ready · ${stagedAudiences.size} audiences`}
+                </span>
+                {inProgress.size > 0 && (
+                  <span className="text-[9px] uppercase tracking-wider text-blue-300 font-bold">
+                    Scouting…
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => {
                   if (stagedAudiences.size === 0) return;
                   runAllStaged(countyTarget.name, countyTarget.state);
                 }}
                 disabled={stagedAudiences.size === 0 || inProgress.size > 0}
-                className="text-[11px] font-black uppercase tracking-wider rounded-md px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 disabled:opacity-30 disabled:cursor-not-allowed transition"
+                className={`w-full h-11 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${
+                  stagedAudiences.size === 0 || inProgress.size > 0
+                    ? "bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed"
+                    : "bg-emerald-500 hover:bg-emerald-400 text-slate-950 border-2 border-emerald-300 shadow-lg shadow-emerald-500/40 ring-2 ring-emerald-400/60 hover:scale-[1.02] active:scale-[0.98]"
+                }`}
               >
-                ▶ Run
-                {stagedAudiences.size > 1 ? ` ×${stagedAudiences.size}` : ""}
+                {inProgress.size > 0 ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-300 animate-pulse" />
+                    Scouting in progress…
+                  </span>
+                ) : stagedAudiences.size === 0 ? (
+                  "▶ Scout this county"
+                ) : (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="text-base">▶</span>
+                    <span>
+                      Scout {countyTarget.name}
+                      {stagedAudiences.size > 1
+                        ? ` · ${stagedAudiences.size} audiences`
+                        : ""}
+                    </span>
+                  </span>
+                )}
               </button>
             </div>
             {scrapeStatus &&
