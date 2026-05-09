@@ -73,7 +73,7 @@ export const CATEGORIES: Category[] = [
         emoji: "🎁",
         title: "Interactive Lead Magnet",
         detail:
-          "Configurator quizzes (Build Your Player, Build Your Tractor, Build Your Lake Map) generate a personalized recommendation and capture the lead with full context — 3-5× the conversion of static PDF magnets.",
+          "Configurator quizzes (Build Your Player, Build Your Tractor, Build Your Lake Map, Cost Calculator for inspections) generate a personalized recommendation and capture the lead with full context — 3-5× the conversion of static PDF magnets.",
         status: { default: "active" },
         seeItIn: { label: "Funnels tab", tab: "funnels" },
       },
@@ -131,7 +131,7 @@ export const CATEGORIES: Category[] = [
         emoji: "📮",
         title: "AI Postcards (Lob)",
         detail:
-          "Physical mail step inside your funnel. AI generates artwork + copy per lead (their tractor model, kid's age group, their lake's shoreline) — Lob prints + ships. ~$1/card. Multi-channel sequences with a postcard step pull 3-5× the response of email-only. Hits when the inbox doesn't.",
+          "Physical mail step inside your funnel. AI generates artwork + copy per lead — referencing what's specific to them (tractor model, kid's age group, lake's shoreline, the part of the home they're worried about). Lob prints + ships. ~$1/card. Multi-channel sequences with a postcard step pull 3-5× the response of email-only. Hits when the inbox doesn't.",
         status: { default: "available" },
         seeItIn: { label: "Funnels tab", tab: "funnels" },
       },
@@ -324,7 +324,7 @@ export const CATEGORIES: Category[] = [
         emoji: "🔁",
         title: "Smart Re-Engagement of Dormant Customers",
         detail:
-          "AI mines past customers, predicts who'll respond, writes a unique message per person (references what they bought + when + their family's lake / kid's age group / tractor model), ships across email + SMS + postcard. 8-12% reactivation = $X thousand in immediate recovered revenue from a list you already paid to build.",
+          "AI mines past customers, predicts who'll respond, writes a unique message per person — referencing what they bought + when + something specific to them (their family's lake / kid's age group / tractor model / the part of the house we inspected). Ships across email + SMS + postcard. 8-12% reactivation = thousands in immediate recovered revenue from a list you already paid to build.",
         status: { default: "trainable" },
       },
       {

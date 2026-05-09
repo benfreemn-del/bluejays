@@ -151,7 +151,7 @@ Booking link if you haven't yet: {{bookingUrl}}
 Just circling back. If you haven't booked yet but still want to:
 
 • Booking link: {{bookingUrl}}
-• Not sure if you need an inspection? Take this 90-second quiz: {{quizUrl}}
+• Not sure if you need an inspection? Run a 60-second cost estimate: {{calculatorUrl}}
 
 If timing's off or you went with someone else, no problem — reply and let me know and I'll stop reaching out. I'd rather hear "no" than chase a "maybe" forever.
 

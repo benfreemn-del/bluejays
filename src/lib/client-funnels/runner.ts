@@ -49,19 +49,38 @@ export type RunSummary = {
 function substitutions(lead: ClientLead): Record<string, string> {
   const firstName =
     (lead.name?.trim().split(/\s+/)[0] || "there").replace(/[<>]/g, "");
-  return {
+  const phone = (lead.phone || "").trim();
+  const base: Record<string, string> = {
     name: lead.name ?? firstName,
     firstName,
-    shopUrl: "https://bluejayportfolio.com/clients/zenith-sports/shop",
-    trainingUrl: "https://bluejayportfolio.com/clients/zenith-sports#training",
-    contactUrl: "https://bluejayportfolio.com/clients/zenith-sports#contact",
-    // Lead-magnet pages (Sprint 3) — usable in any funnel template.
-    campsUrl: "https://bluejayportfolio.com/clients/zenith-sports/camps",
-    coachGuideUrl:
-      "https://bluejayportfolio.com/clients/zenith-sports/training-guide",
-    builderUrl:
-      "https://bluejayportfolio.com/clients/zenith-sports/build-your-player",
+    phone,
   };
+
+  // Per-slug merge tags — funnel templates reference {{bookingUrl}} /
+  // {{partnersUrl}} / {{calculatorUrl}} / etc. and the right URL
+  // resolves based on which client_slug the lead belongs to.
+  if (lead.client_slug === "olympic-inspections") {
+    base.bookingUrl = "https://www.olympicinspections.com/#book";
+    base.calculatorUrl = "https://www.olympicinspections.com/#calculator";
+    base.partnersUrl = "https://www.olympicinspections.com/#partners";
+    base.contactUrl = "https://www.olympicinspections.com/#contact";
+    // Old quizUrl alias — funnel copy migrated 2026-05-09 but keep
+    // backward compatibility so historical templates still resolve.
+    base.quizUrl = base.calculatorUrl;
+    return base;
+  }
+
+  // Zenith default (legacy — keeps the existing funnel resolving
+  // unchanged for the soccer tenant).
+  base.shopUrl = "https://bluejayportfolio.com/clients/zenith-sports/shop";
+  base.trainingUrl = "https://bluejayportfolio.com/clients/zenith-sports#training";
+  base.contactUrl = "https://bluejayportfolio.com/clients/zenith-sports#contact";
+  base.campsUrl = "https://bluejayportfolio.com/clients/zenith-sports/camps";
+  base.coachGuideUrl =
+    "https://bluejayportfolio.com/clients/zenith-sports/training-guide";
+  base.builderUrl =
+    "https://bluejayportfolio.com/clients/zenith-sports/build-your-player";
+  return base;
 }
 
 /** Stable per-lead variant assignment. Same lead.id always maps to the

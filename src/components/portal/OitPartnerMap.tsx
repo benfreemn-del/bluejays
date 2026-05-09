@@ -315,6 +315,15 @@ type ScoutedAffiliate = {
   lng: number | null;
 };
 
+// Augment Partner with optional DB-row fields so the focused-detail
+// panel can show "called X ago" + a Mark-as-called button when the
+// pin came from client_affiliates (not from the curated seed).
+type PartnerWithDb = Partner & {
+  dbId?: string;
+  status?: string;
+  lastContactedAt?: string | null;
+};
+
 // Map DB role → local PartnerCategory so scouted rows merge cleanly
 // with the curated seeds.
 function roleToCategory(role: string): PartnerCategory | null {
@@ -345,9 +354,11 @@ export default function OitPartnerMap() {
       "commercial-property",
     ]),
   );
-  const [focused, setFocused] = useState<Partner | null>(null);
-  const [scouted, setScouted] = useState<Partner[]>([]);
+  const [focused, setFocused] = useState<PartnerWithDb | null>(null);
+  const [scouted, setScouted] = useState<PartnerWithDb[]>([]);
   const [scoutedLoaded, setScoutedLoaded] = useState(false);
+  const [markBusy, setMarkBusy] = useState(false);
+  const [markMsg, setMarkMsg] = useState<string | null>(null);
 
   // Live-scouted affiliates (auto-discovered by the weekly cron). Merged
   // with the curated PARTNERS[] seed at render — seed gives Luke a
@@ -366,12 +377,15 @@ export default function OitPartnerMap() {
           affiliates?: ScoutedAffiliate[];
         };
         if (cancelled || !j.ok || !j.affiliates) return;
-        const mapped: Partner[] = [];
+        const mapped: PartnerWithDb[] = [];
         for (const a of j.affiliates) {
           const cat = roleToCategory(a.role);
           if (!cat || a.lat == null || a.lng == null) continue;
           mapped.push({
             id: `scout-${a.id}`,
+            dbId: a.id,
+            status: a.status,
+            lastContactedAt: a.last_contacted_at,
             name: a.org_name,
             category: cat,
             city: a.city ?? "",
@@ -381,7 +395,7 @@ export default function OitPartnerMap() {
             website: a.website ?? undefined,
             pitch:
               a.fit_score != null
-                ? `Auto-scouted (fit score ${a.fit_score}). ${a.status === "discovered" ? "Cold — call this week." : "Already in conversation."}`
+                ? `Auto-scouted (fit score ${a.fit_score}). ${a.status === "discovered" ? "Cold — call this week." : a.status === "contacted" ? "Already reached out." : "In conversation."}`
                 : "Auto-scouted partner candidate.",
           });
         }
@@ -395,7 +409,7 @@ export default function OitPartnerMap() {
     };
   }, []);
 
-  const allPartners = useMemo(() => {
+  const allPartners = useMemo<PartnerWithDb[]>(() => {
     // Dedupe scouted vs seed by lowercase name+city
     const seedKeys = new Set(
       PARTNERS.map(
@@ -408,6 +422,49 @@ export default function OitPartnerMap() {
     );
     return [...PARTNERS, ...uniqScouted];
   }, [scouted]);
+
+  // Mark-as-called handler. Only valid for scouted rows (ones with a
+  // dbId). Optimistic UI update + server PATCH; toast result.
+  const markCalled = async (partner: PartnerWithDb) => {
+    if (!partner.dbId || markBusy) return;
+    setMarkBusy(true);
+    setMarkMsg(null);
+    try {
+      const r = await fetch(
+        `/api/clients/olympic-inspections/affiliates/${partner.dbId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ markCalled: true }),
+        },
+      );
+      const j = await r.json();
+      if (j.ok) {
+        // Update local copy + focused state
+        const stamped = new Date().toISOString();
+        setScouted((prev) =>
+          prev.map((p) =>
+            p.dbId === partner.dbId
+              ? { ...p, status: "contacted", lastContactedAt: stamped }
+              : p,
+          ),
+        );
+        setFocused((cur) =>
+          cur && cur.dbId === partner.dbId
+            ? { ...cur, status: "contacted", lastContactedAt: stamped }
+            : cur,
+        );
+        setMarkMsg("Logged. Pipeline stamped.");
+      } else {
+        setMarkMsg(j.error || "Couldn't update — try again.");
+      }
+    } catch {
+      setMarkMsg("Network error — try again.");
+    }
+    setMarkBusy(false);
+    setTimeout(() => setMarkMsg(null), 4000);
+  };
 
   const visiblePartners = useMemo(
     () => allPartners.filter((p) => active.has(p.category)),
@@ -651,9 +708,105 @@ export default function OitPartnerMap() {
             <strong style={{ color: "#2d4a2d" }}>Pitch angle:</strong>{" "}
             {focused.pitch}
           </div>
+          {/* Action row — Call / Open site / Mark as called.
+              "Mark as called" only renders for scouted rows (have
+              a dbId). Curated seed pins lack a DB row to update. */}
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              marginTop: 4,
+            }}
+          >
+            {focused.phone && (
+              <a
+                href={`tel:${focused.phone}`}
+                style={{
+                  padding: "7px 12px",
+                  background: "rgba(45,74,45,0.10)",
+                  border: "1px solid rgba(45,74,45,0.30)",
+                  color: "#2d4a2d",
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                📞 Call
+              </a>
+            )}
+            {focused.website && (
+              <a
+                href={focused.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  padding: "7px 12px",
+                  background: "transparent",
+                  border: "1px solid rgba(45,74,45,0.30)",
+                  color: "#4a5547",
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                🌐 Site
+              </a>
+            )}
+            {focused.dbId && (
+              <button
+                type="button"
+                onClick={() => markCalled(focused)}
+                disabled={markBusy}
+                style={{
+                  padding: "7px 12px",
+                  background:
+                    focused.status === "contacted"
+                      ? "rgba(31, 42, 28, 0.06)"
+                      : "rgba(200, 123, 41, 0.10)",
+                  border:
+                    focused.status === "contacted"
+                      ? "1px solid rgba(31, 42, 28, 0.20)"
+                      : "1px solid rgba(200, 123, 41, 0.40)",
+                  color:
+                    focused.status === "contacted" ? "#7a857a" : "#7a4d18",
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: markBusy ? "wait" : "pointer",
+                }}
+              >
+                {markBusy
+                  ? "Logging…"
+                  : focused.status === "contacted"
+                    ? "✓ Already called · log again"
+                    : "✅ Mark as called"}
+              </button>
+            )}
+            {markMsg && (
+              <span style={{ fontSize: 11, color: "#2d4a2d", alignSelf: "center" }}>
+                {markMsg}
+              </span>
+            )}
+          </div>
+
+          {focused.lastContactedAt && (
+            <div style={{ fontSize: 11, color: "#7a857a" }}>
+              Last contacted{" "}
+              {new Date(focused.lastContactedAt).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </div>
+          )}
+
           <div style={{ fontSize: 12, color: "#7a857a", marginTop: 4 }}>
-            Hand-curated v1 dataset. Future: auto-feed from Google Places +
-            LinkedIn scout once the partner-targets cron lands.
+            {focused.dbId
+              ? "Auto-scouted from Google Places. Updates persist to client_affiliates."
+              : "Hand-curated seed. Outreach tracking lives on auto-scouted rows."}
           </div>
         </div>
       )}
