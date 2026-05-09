@@ -103,10 +103,14 @@ export type PortalConfig = {
 const ZENITH: PortalConfig = {
   displayName: "Zenith Sports",
   audiences: [
-    { id: "parent", label: "Parents", emoji: "👪", defaultDealUsd: 0 },
-    { id: "coach", label: "Coaches", emoji: "🏟️", defaultDealUsd: 0 },
-    { id: "player", label: "Players", emoji: "⚽", defaultDealUsd: 0 },
-    { id: "club", label: "Clubs", emoji: "🏛️", defaultDealUsd: 0 },
+    // Labels renamed 2026-05-10 to describe the buyer-CHANNEL each
+    // org unlocks rather than the org itself. The scout returns clubs +
+    // rec leagues + academies; the audience tag tells you who the END
+    // BUYER is downstream. See docs/clients/zenith-sports/brand-voice.md.
+    { id: "parent", label: "Family rec", emoji: "👪", defaultDealUsd: 0 },
+    { id: "coach", label: "Coach / pro", emoji: "🏟️", defaultDealUsd: 0 },
+    { id: "player", label: "Elite / academy", emoji: "⚽", defaultDealUsd: 0 },
+    { id: "club", label: "Competitive club", emoji: "🏛️", defaultDealUsd: 0 },
   ],
   audienceSourceKeywords: [
     { audienceId: "parent", keywords: ["parent"] },

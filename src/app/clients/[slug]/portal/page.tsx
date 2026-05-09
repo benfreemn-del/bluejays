@@ -408,12 +408,18 @@ const TIER_FILTER_META: Record<
 };
 
 /** Plain-text labels for audience IDs — pairs with AUDIENCE_EMOJI when
- *  rendering bar charts / stat rows. */
+ *  rendering bar charts / stat rows.
+ *
+ *  Tekky/Zenith labels were renamed 2026-05-10 to clarify that the
+ *  audience tag describes the BUYER-CHANNEL the org unlocks, NOT the
+ *  org itself. Before: "Parents" tagged a soccer CLUB and read wrong.
+ *  After: "Family rec" tags rec-league orgs (parents are end-buyers).
+ *  Data IDs unchanged — pure visual relabel. */
 const AUDIENCE_LABEL_PLAIN: Record<string, string> = {
-  parent: "Parents",
-  coach: "Coaches",
-  player: "Players",
-  club: "Clubs",
+  parent: "Family rec",
+  coach: "Coach / pro",
+  player: "Elite / academy",
+  club: "Competitive club",
   unknown: "Unknown",
   untagged: "Untagged",
   hobbyist: "Hobbyists",
@@ -3528,8 +3534,10 @@ function LeadCard({
             {lead.audience_segment && (
               <span
                 className={`text-[10px] tracking-wider uppercase font-bold px-1.5 py-0.5 rounded ${aud.chip}`}
+                title={`Audience channel: ${lead.audience_segment}`}
               >
-                {lead.audience_segment}
+                {AUDIENCE_LABEL_PLAIN[lead.audience_segment] ??
+                  lead.audience_segment}
               </span>
             )}
             {lead.competition_tier && (

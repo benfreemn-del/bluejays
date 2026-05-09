@@ -121,13 +121,19 @@ const LEAD_STATUS_COLOR: Record<TekkyLeadStatus, string> = {
   dismissed: "bg-rose-500/20 text-rose-300 line-through",
 };
 
+// Labels were renamed 2026-05-10 — the IDs stayed (parent/coach/player)
+// but the visible label now describes WHAT KIND OF ORG the scout returns:
+//   parent → rec leagues / AYSO / family-rec orgs (parent buyer-channel)
+//   coach  → competitive clubs / training centers (coach buyer-channel)
+//   player → ECNL / MLS NEXT / elite academies   (player buyer-channel)
+// Before the rename, "Parents" tagged a soccer CLUB and read wrong.
 const AUDIENCE_META: Record<
   TekkyAudience,
   { label: string; emoji: string; color: string }
 > = {
-  parent: { label: "Parents", emoji: "👪", color: "#fbbf24" },
-  coach: { label: "Coaches", emoji: "🏟️", color: "#60a5fa" },
-  player: { label: "Players", emoji: "🥇", color: "#a3e635" },
+  parent: { label: "Family rec", emoji: "👪", color: "#fbbf24" },
+  coach: { label: "Coach / pro", emoji: "🏟️", color: "#60a5fa" },
+  player: { label: "Elite / academy", emoji: "🥇", color: "#a3e635" },
 };
 
 const STATE_BORDERS_URL =
