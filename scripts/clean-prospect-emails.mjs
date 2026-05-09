@@ -4,17 +4,28 @@
 /**
  * clean-prospect-emails — bulk email validity sweep
  *
- * Walks every prospect with a non-null email + status NOT IN
- * ('paid','bounced','unsubscribed','dismissed') and runs MX-record
- * verification via Google DNS-over-HTTPS. Marks every invalid address
- * as status='bounced' + funnelPaused=true so the funnel cron skips
- * them and they stop counting against deliverability metrics.
+ * Two modes:
+ *
+ *   1. Default (MX-record sweep): walks every prospect with a non-null
+ *      email + status NOT IN ('paid','bounced','unsubscribed','dismissed')
+ *      and runs MX-record verification via Google DNS-over-HTTPS. Marks
+ *      every invalid address as status='bounced' + funnelPaused=true so
+ *      the funnel cron skips them.
+ *
+ *   2. --image-filenames: targets the specific bug where the scraper's
+ *      old email regex was matching retina image filenames like
+ *      `Guarantee@2x.webp` and `logo@2x.png.webp`. For each match: try
+ *      to re-scrape the prospect's source URL with the FIXED regex; set
+ *      `email` to the new value if a real one is found, else null it.
  *
  * Usage:
  *   node scripts/clean-prospect-emails.mjs [--dry-run] [--limit N]
+ *   node scripts/clean-prospect-emails.mjs --image-filenames [--dry-run] [--limit N]
  *
- *   --dry-run   Print what WOULD be marked invalid without writing
- *   --limit N   Cap the number of prospects checked (default: all)
+ *   --dry-run           Print what WOULD change without writing
+ *   --limit N           Cap the number of prospects checked (default: all)
+ *   --image-filenames   Run the image-filename false-positive cleanup
+ *                       instead of the MX sweep
  *
  * Reads .env.local for SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.
  * Concurrency capped at 20 parallel DNS lookups (Google DNS is fast
@@ -91,7 +102,41 @@ const argv = process.argv.slice(2);
 const DRY_RUN = argv.includes("--dry-run");
 const LIMIT_IDX = argv.indexOf("--limit");
 const LIMIT = LIMIT_IDX >= 0 ? Number(argv[LIMIT_IDX + 1]) || null : null;
-const CONCURRENCY = 20;
+const IMAGE_MODE = argv.includes("--image-filenames");
+const CONCURRENCY = IMAGE_MODE ? 5 : 20;
+
+// ─── email validation (mirrors src/lib/scraper.ts isValidEmail) ──────
+// Kept in-sync deliberately. The scraper.ts version is the source of truth;
+// this is duplicated here so the .mjs script runs without needing tsx.
+const IMAGE_EXTENSIONS = new Set([
+  "webp", "avif", "gif", "jpg", "jpeg", "png", "svg", "ico", "bmp",
+  "tif", "tiff", "heic", "heif",
+]);
+const EMAIL_RE_EXACT = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+const EMAIL_RE_GLOBAL = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/g;
+
+function isValidEmailStrict(email) {
+  if (!email || email.length >= 60) return false;
+  if (!EMAIL_RE_EXACT.test(email)) return false;
+  const parts = email.toLowerCase().split("@")[1].split(".");
+  const tld = parts[parts.length - 1];
+  if (IMAGE_EXTENSIONS.has(tld)) return false;
+  if (tld.length < 2 || tld.length > 6) return false;
+  if (!/^[a-z]+$/.test(tld)) return false;
+  return true;
+}
+
+// Detects the false-positive shape: text@text.{webp|avif|...}. Loose by
+// design — we want every retina filename the broken regex captured to
+// surface in the dry-run.
+function looksLikeImageFilenameEmail(email) {
+  if (!email || !email.includes("@")) return false;
+  const lower = email.toLowerCase();
+  for (const ext of IMAGE_EXTENSIONS) {
+    if (lower.endsWith(`.${ext}`)) return true;
+  }
+  return false;
+}
 
 // ─── disposable domains (matches src/lib/email-verifier.ts) ──────────
 const DISPOSABLE = new Set([
@@ -132,8 +177,171 @@ async function verifyEmail(email) {
   }
 }
 
+// ─── re-scrape helper (image-filenames mode only) ────────────────────
+async function reScrapeEmail(url) {
+  if (!url) return null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // Try mailto: first — most reliable.
+    const mailtoMatch = html.match(/href=["']mailto:([^"'?]+)/i);
+    if (mailtoMatch && isValidEmailStrict(mailtoMatch[1].trim())) {
+      return mailtoMatch[1].trim();
+    }
+
+    // Fallback: regex with the strict validator applied per-match.
+    const matches = html.match(EMAIL_RE_GLOBAL) || [];
+    for (const m of matches) {
+      if (
+        isValidEmailStrict(m) &&
+        !m.includes("example.com") &&
+        !m.includes("sentry") &&
+        !m.includes("webpack") &&
+        !m.includes("wix") &&
+        !m.includes("googleapis") &&
+        !m.includes("schema.org")
+      ) {
+        return m;
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── image-filename runner ────────────────────────────────────────────
+async function runImageFilenameMode() {
+  console.log(
+    `[clean-emails] ${DRY_RUN ? "DRY RUN — " : ""}image-filename false-positive sweep…`,
+  );
+
+  // Fetch a candidate set: all prospects with a non-null email. We filter
+  // by image-filename shape in JS rather than SQL to keep the query simple
+  // and so the heuristic stays in one place (looksLikeImageFilenameEmail).
+  let q = sb
+    .from("prospects")
+    .select("id, business_name, email, status, current_website")
+    .not("email", "is", null)
+    .order("created_at", { ascending: false });
+  if (LIMIT) q = q.limit(LIMIT);
+
+  const { data, error } = await q;
+  if (error) {
+    console.error("[clean-emails] supabase select failed:", error.message);
+    process.exit(1);
+  }
+
+  const candidates = (data || []).filter((r) =>
+    looksLikeImageFilenameEmail(r.email),
+  );
+  console.log(
+    `[clean-emails] ${(data || []).length} prospects scanned · ${candidates.length} match image-filename pattern · concurrency=${CONCURRENCY}`,
+  );
+  if (candidates.length === 0) {
+    console.log(`[clean-emails] nothing to do — exiting.`);
+    return;
+  }
+
+  let scanned = 0;
+  let fixed = 0; // re-scrape returned a real email
+  let nulled = 0; // re-scrape returned nothing — set null
+  let kept = 0; // dry-run only — would have changed but didn't
+  let errored = 0;
+  const started = Date.now();
+
+  const heartbeat = setInterval(() => {
+    const elapsed = ((Date.now() - started) / 1000).toFixed(1);
+    console.log(
+      `  ⏱ heartbeat · ${scanned}/${candidates.length} · fixed=${fixed} · nulled=${nulled} · ${elapsed}s elapsed`,
+    );
+  }, 5000);
+
+  const queue = [...candidates];
+  const workers = Array.from({ length: CONCURRENCY }, async () => {
+    while (queue.length > 0) {
+      const row = queue.shift();
+      if (!row) break;
+      scanned += 1;
+
+      const newEmail = row.current_website
+        ? await reScrapeEmail(row.current_website)
+        : null;
+
+      const display = `${row.business_name?.slice(0, 30) ?? "?"} <${row.email}>`;
+      if (newEmail) {
+        console.log(`  ✓ ${display} → ${newEmail}`);
+        if (DRY_RUN) {
+          kept += 1;
+        } else {
+          const { error: updErr } = await sb
+            .from("prospects")
+            .update({ email: newEmail, updated_at: new Date().toISOString() })
+            .eq("id", row.id);
+          if (updErr) {
+            errored += 1;
+            console.warn(`    (update failed: ${updErr.message})`);
+          } else {
+            fixed += 1;
+          }
+        }
+      } else {
+        console.log(`  ∅ ${display} → null (no real email found)`);
+        if (DRY_RUN) {
+          kept += 1;
+        } else {
+          const { error: updErr } = await sb
+            .from("prospects")
+            .update({ email: null, updated_at: new Date().toISOString() })
+            .eq("id", row.id);
+          if (updErr) {
+            errored += 1;
+            console.warn(`    (update failed: ${updErr.message})`);
+          } else {
+            nulled += 1;
+          }
+        }
+      }
+
+      if (scanned % 10 === 0) {
+        console.log(
+          `[clean-emails] progress: ${scanned}/${candidates.length} · fixed=${fixed} · nulled=${nulled}`,
+        );
+      }
+    }
+  });
+
+  await Promise.all(workers);
+  clearInterval(heartbeat);
+
+  console.log(`\n[clean-emails] DONE`);
+  console.log(`  scanned:       ${scanned}`);
+  console.log(`  fixed:         ${fixed} ${DRY_RUN ? "(would be) " : ""}(re-scrape found a real email)`);
+  console.log(`  set-null:      ${nulled} ${DRY_RUN ? "(would be) " : ""}(no real email recoverable)`);
+  if (DRY_RUN) {
+    console.log(`  kept-as-is:    ${kept} (dry-run — nothing written)`);
+  }
+  if (errored > 0) console.log(`  errored:       ${errored}`);
+  if (DRY_RUN) console.log(`\n  Re-run without --dry-run to apply.`);
+}
+
 // ─── runner ───────────────────────────────────────────────────────────
 async function main() {
+  if (IMAGE_MODE) {
+    await runImageFilenameMode();
+    return;
+  }
   console.log(
     `[clean-emails] ${DRY_RUN ? "DRY RUN — " : ""}walking prospect list…`,
   );
