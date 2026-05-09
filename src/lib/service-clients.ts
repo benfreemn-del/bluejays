@@ -129,6 +129,20 @@ const OLYMPIC_INSPECTIONS: ServiceClientConfig = {
     // for OIT's lab-grade IAQ testing.
     { query: "naturopathic clinic", role: "naturopathic", channel: "refer-out" },
     { query: "naturopathic doctor", role: "naturopathic", channel: "refer-out" },
+    // Functional / integrative / environmental medicine practices —
+    // same patient pool as naturopaths but a separate Google Places
+    // category so the scout doesn't miss them. ERMI testing is the
+    // common lab order from these practices.
+    { query: "functional medicine clinic", role: "naturopathic", channel: "refer-out" },
+    { query: "integrative medicine clinic", role: "naturopathic", channel: "refer-out" },
+    // Well-water service ecosystem — added 2026-05-09 alongside the
+    // Well Water Testing service line. Drillers + filtration installers
+    // see customers whose water needs testing pre-purchase, after a
+    // flood, or post-repair.
+    { query: "well drilling contractor", role: "well-services", channel: "refer-out" },
+    { query: "water well repair", role: "well-services", channel: "refer-out" },
+    { query: "water filtration installer", role: "well-services", channel: "refer-out" },
+    { query: "septic services", role: "well-services", channel: "refer-out" },
   ],
   scoutCities: [
     { city: "Sequim", state: "WA", region: "Clallam" },

@@ -18,6 +18,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import ScanWithProgress from "@/components/common/ScanWithProgress";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
@@ -49,7 +50,8 @@ type PartnerCategory =
   | "water-damage"
   | "property-management"
   | "commercial-property"
-  | "naturopathic";
+  | "naturopathic"
+  | "well-services";
 
 type Partner = {
   id: string;
@@ -318,6 +320,41 @@ const PARTNERS: Partner[] = [
     pitch:
       "Larger metro = higher patient volume. Refer-out partnerships scale fastest here.",
   },
+
+  // ── Well & water services (refer-out partners for well-water testing) ──
+  // Drillers, well repair, filtration installers + septic. They see
+  // customers whose water needs testing pre-purchase, post-flood, or
+  // after a repair. Two-way refer flow: we test, they fix.
+  {
+    id: "well-1",
+    name: "Olympic Well Drilling",
+    category: "well-services",
+    city: "Sequim",
+    lat: 48.077,
+    lng: -123.099,
+    pitch:
+      "Two-way refer: their drill clients need post-install water tests, our well-test clients sometimes need a driller.",
+  },
+  {
+    id: "well-2",
+    name: "Peninsula Pump & Filter",
+    category: "well-services",
+    city: "Port Angeles",
+    lat: 48.117,
+    lng: -123.435,
+    pitch:
+      "Filtration installers — they sell remediation hardware. We give them pre-install lab data justifying the system.",
+  },
+  {
+    id: "well-3",
+    name: "Jefferson Water Solutions",
+    category: "well-services",
+    city: "Port Townsend",
+    lat: 48.115,
+    lng: -122.764,
+    pitch:
+      "Older Victorian + rural Jefferson County = lots of legacy wells. Pre-purchase + post-flood test volume.",
+  },
 ];
 
 const CATEGORY_META: Record<
@@ -345,6 +382,11 @@ const CATEGORY_META: Record<
     label: "Naturopathic clinic",
     color: "#f472b6",
     emoji: "🌿",
+  },
+  "well-services": {
+    label: "Well & water services",
+    color: "#06b6d4",
+    emoji: "💧",
   },
 };
 
@@ -394,6 +436,10 @@ function roleToCategory(role: string): PartnerCategory | null {
     case "naturopathic":
     case "naturopath":
       return "naturopathic";
+    case "well-services":
+    case "well-driller":
+    case "water-filtration":
+      return "well-services";
     default:
       return null;
   }
@@ -408,6 +454,7 @@ export default function OitPartnerMap() {
       "property-management",
       "commercial-property",
       "naturopathic",
+      "well-services",
     ]),
   );
   const [focused, setFocused] = useState<PartnerWithDb | null>(null);
@@ -535,6 +582,7 @@ export default function OitPartnerMap() {
       "property-management": 0,
       "commercial-property": 0,
       naturopathic: 0,
+      "well-services": 0,
     };
     for (const p of allPartners) c[p.category]++;
     return c;
@@ -580,7 +628,14 @@ export default function OitPartnerMap() {
             {" "}· Sequim HQ at center · service rings 10 / 25 / 50 mi
           </div>
         </div>
-        <ScanNowButton onDone={loadScouted} />
+        <ScanWithProgress
+          endpoint="/api/clients/olympic-inspections/scout-now"
+          label="Scan now"
+          emoji="🛰️"
+          busyLabel="scanning Olympic Peninsula…"
+          accentColor="#2d4a2d"
+          onDone={loadScouted}
+        />
       </div>
 
       {/* Layer toggles */}
@@ -882,97 +937,3 @@ export default function OitPartnerMap() {
   );
 }
 
-/* ─────────────────────── SCAN-NOW BUTTON ─────────────────────── */
-
-/**
- * Manual partner scout trigger. Mirrors the BlueJays-internal
- * /api/auto-scout POST pattern. Live status (idle / scanning /
- * result message) renders inline so Luke sees what happened without
- * leaving the map.
- *
- * Cost ~$3 per run. Idempotent: dedupes against existing
- * client_affiliates so re-runs only add NEW candidates.
- */
-function ScanNowButton({ onDone }: { onDone: () => void }) {
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-
-  const run = async () => {
-    setBusy(true);
-    setMsg("Scanning Olympic Peninsula…");
-    try {
-      const r = await fetch(
-        "/api/clients/olympic-inspections/scout-now",
-        { method: "POST", credentials: "include" },
-      );
-      const j = (await r.json()) as {
-        ok: boolean;
-        scanned?: number;
-        inserted?: number;
-        duplicates?: number;
-        errors?: string[];
-        error?: string;
-      };
-      if (!r.ok || !j.ok) {
-        setMsg(`Scan failed: ${j.error ?? "unknown error"}`);
-      } else {
-        const ins = j.inserted ?? 0;
-        const dup = j.duplicates ?? 0;
-        const scanned = j.scanned ?? 0;
-        setMsg(
-          ins > 0
-            ? `✓ +${ins} new partner${ins === 1 ? "" : "s"} (scanned ${scanned}, ${dup} dupes)`
-            : `Done — no new candidates (scanned ${scanned}, ${dup} dupes)`,
-        );
-        await onDone();
-      }
-    } catch (err) {
-      setMsg(`Scan failed: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setBusy(false);
-      setTimeout(() => setMsg(null), 8000);
-    }
-  };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
-      <button
-        type="button"
-        onClick={run}
-        disabled={busy}
-        style={{
-          background: busy ? "#7a857a" : "#2d4a2d",
-          color: "#f7f5ee",
-          border: "none",
-          padding: "10px 16px",
-          borderRadius: 10,
-          fontSize: 13,
-          fontWeight: 700,
-          fontFamily: "Merriweather, Georgia, serif",
-          cursor: busy ? "wait" : "pointer",
-          boxShadow: "0 2px 6px rgba(31,42,28,0.18)",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          minWidth: 140,
-          justifyContent: "center",
-        }}
-      >
-        {busy ? "🔄 scanning…" : "🛰️ Scan now"}
-      </button>
-      {msg && (
-        <div
-          style={{
-            fontSize: 11,
-            color: msg.startsWith("✓") ? "#2d4a2d" : msg.startsWith("Scan failed") ? "#9b1c1c" : "#7a857a",
-            maxWidth: 280,
-            textAlign: "right",
-            lineHeight: 1.4,
-          }}
-        >
-          {msg}
-        </div>
-      )}
-    </div>
-  );
-}
