@@ -193,6 +193,20 @@ h1, h2, h3, h4, .section-title {
   justify-content: center;
 }
 .nav-logo .logo-mark svg { width: 100%; height: 100%; }
+
+/* New OIT brand mark — replaces the inline SVG mountain logo.
+   Locked 2026-05-10: PNG already contains the OIT wordmark, so this
+   is the SOLE element inside .nav-logo (no separate text block). */
+.nav-brand-img {
+  display: block;
+  height: 38px;          /* matches the old logo-mark visual height */
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+}
+@media (max-width: 600px) {
+  .nav-brand-img { height: 32px; max-width: 150px; }
+}
 .nav-logo .nav-name { line-height: 1.1; }
 .nav-logo .nav-name small {
   display: block;
@@ -1483,6 +1497,18 @@ html {
   justify-content: center;
 }
 .footer-mark .logo-mark svg { width: 100%; height: 100%; }
+
+/* New OIT brand image in footer. Logo is dark-on-transparent, footer
+   is dark — invert + brightness filter renders it as cream/white
+   without needing a separate light-version asset. */
+.footer-brand-img {
+  height: 56px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  /* Invert turns dark→light, then we shift toward cream for warmth. */
+  filter: invert(1) brightness(1.15) sepia(0.12) hue-rotate(-10deg) saturate(0.9);
+}
 .footer-mark strong {
   display: block;
   color: var(--cream);

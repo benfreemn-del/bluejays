@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/sites/olympic-inspections/css/styles.css">
+    <!-- Favicon — same brand mark, browsers down-scale to tab size. -->
+    <link rel="icon" type="image/png" href="/sites/olympic-inspections/logo.png">
+    <link rel="apple-touch-icon" href="/sites/olympic-inspections/logo.png">
 </head>
 <body>
 
@@ -16,23 +19,17 @@
     <nav id="navbar">
         <div class="container nav-inner">
             <a href="#home" class="nav-logo" aria-label="Olympic Inspections & Testing home">
-                <span class="logo-mark">
-                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <g fill="#2d4a2d">
-                            <!-- Mountain peaks -->
-                            <path d="M14 36 L26 18 L34 30 L40 22 L48 32 L56 18 L66 36 Z" opacity="0.85"/>
-                            <!-- Pine tree -->
-                            <path d="M40 12 L32 30 L36 30 L28 46 L52 46 L44 30 L48 30 Z"/>
-                            <rect x="38" y="44" width="4" height="6"/>
-                            <!-- Ground line -->
-                            <rect x="14" y="56" width="52" height="2"/>
-                        </g>
-                    </svg>
-                </span>
-                <span class="nav-name">
-                    <span>Olympic Inspections</span>
-                    <small>& Testing</small>
-                </span>
+                <!-- New logo plugged in 2026-05-10. The PNG already
+                     contains the "OIT" wordmark, so the separate
+                     `.nav-name` text block is gone — would read as
+                     redundant alongside the embedded letters. -->
+                <img
+                    src="/sites/olympic-inspections/logo.png"
+                    alt="Olympic Inspections &amp; Testing"
+                    class="nav-brand-img"
+                    width="1500"
+                    height="940"
+                />
             </a>
             <div class="nav-links">
                 <a href="#services">Services</a>
@@ -650,19 +647,22 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-mark">
-                        <span class="logo-mark">
-                            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <g fill="#2d4a2d">
-                                    <path d="M14 36 L26 18 L34 30 L40 22 L48 32 L56 18 L66 36 Z" opacity="0.85"/>
-                                    <path d="M40 12 L32 30 L36 30 L28 46 L52 46 L44 30 L48 30 Z"/>
-                                    <rect x="38" y="44" width="4" height="6"/>
-                                    <rect x="14" y="56" width="52" height="2"/>
-                                </g>
-                            </svg>
-                        </span>
+                        <!-- Footer logo — same PNG as nav, larger so the
+                             OIT wordmark is legible against the dark
+                             footer background. The PNG is dark on
+                             transparent; footer is dark, so we wrap in
+                             .footer-brand-img which inverts to white
+                             via CSS filter. -->
+                        <img
+                            src="/sites/olympic-inspections/logo.png"
+                            alt="Olympic Inspections &amp; Testing"
+                            class="footer-brand-img"
+                            width="1500"
+                            height="940"
+                        />
                         <div>
                             <strong>Olympic Inspections &amp; Testing</strong>
-                            <small>OIT</small>
+                            <small>Mold &middot; Radon &middot; Water</small>
                         </div>
                     </div>
                     <p style="font-size: 0.9rem; color: rgba(250,246,238,0.65); line-height: 1.6; max-width: 320px;">
