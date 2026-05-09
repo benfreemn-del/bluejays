@@ -1899,6 +1899,15 @@ function LeadsTab({
   // AND with the stage / audience / tier filters; applied LAST so the
   // counts on the filter chips reflect the pre-search totals.
   const [searchQuery, setSearchQuery] = useState<string>("");
+  // Pagination — CLAUDE.md rule: never render more than 100 lead rows
+  // at once. 50/page is the cap. Page resets to 0 when any filter
+  // changes so an owner doesn't land on an empty page after narrowing
+  // the view.
+  const PAGE_SIZE = 50;
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    setPage(0);
+  }, [filter, audienceFilter, tierFilter, searchQuery]);
 
   const toggleSelect = (id: string) =>
     setSelected((prev) => {
@@ -1998,6 +2007,15 @@ function LeadsTab({
     : filterBySearch(tierFiltered, searchQuery, extractClientLeadSearchText);
   const searchHasNoResults =
     !!searchQuery && tierFiltered.length > 0 && filtered.length === 0;
+
+  // Page slice — bounded by PAGE_SIZE so the DOM never renders more
+  // than 50 LeadCards. Clamp the page back to the last valid page if
+  // the current filter narrowed the result set below `page * PAGE_SIZE`.
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pageStart = safePage * PAGE_SIZE;
+  const pageEnd = Math.min(pageStart + PAGE_SIZE, filtered.length);
+  const pageRows = filtered.slice(pageStart, pageEnd);
 
   // Audiences present in the data — drives the filter dropdown counts.
   // Counts are computed against stageFiltered so they reflect the
@@ -2245,24 +2263,41 @@ function LeadsTab({
           )}
 
           {/* Select-all helper */}
-          <div className="flex items-center gap-2 mb-2 text-[11px] text-slate-500">
+          <div className="flex items-center gap-2 mb-2 text-[11px] text-slate-500 flex-wrap">
             <button
-              onClick={() =>
-                selected.size === filtered.length
-                  ? clearSelection()
-                  : setSelected(new Set(filtered.map((l) => l.id)))
-              }
+              onClick={() => {
+                // Select-all only acts on the current page so an owner
+                // doesn't accidentally bulk-action 250 hidden rows.
+                const pageIds = new Set(pageRows.map((l) => l.id));
+                const allOnPageSelected = pageRows.every((l) => selected.has(l.id));
+                if (allOnPageSelected) {
+                  // Deselect just this page's rows
+                  setSelected((prev) => {
+                    const next = new Set(prev);
+                    for (const id of pageIds) next.delete(id);
+                    return next;
+                  });
+                } else {
+                  setSelected((prev) => {
+                    const next = new Set(prev);
+                    for (const id of pageIds) next.add(id);
+                    return next;
+                  });
+                }
+              }}
               className="font-bold text-slate-400 hover:text-white border border-slate-700 px-2 py-0.5 rounded"
             >
-              {selected.size === filtered.length && filtered.length > 0
-                ? "Clear all"
-                : "Select all visible"}
+              {pageRows.length > 0 && pageRows.every((l) => selected.has(l.id))
+                ? "Clear page"
+                : "Select page"}
             </button>
-            <span>· {filtered.length} shown</span>
+            <span>
+              · showing {pageStart + 1}-{pageEnd} of {filtered.length}
+            </span>
           </div>
 
           <div className="space-y-2">
-            {filtered.map((l) => (
+            {pageRows.map((l) => (
               <LeadCard
                 key={l.id}
                 lead={l}
@@ -2274,6 +2309,31 @@ function LeadsTab({
               />
             ))}
           </div>
+
+          {/* Paginator — only visible when there's more than one page */}
+          {pageCount > 1 && (
+            <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={safePage === 0}
+                className="text-[11px] font-bold px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ← Prev
+              </button>
+              <div className="text-[11px] text-slate-400 font-mono">
+                Page {safePage + 1} of {pageCount} · {PAGE_SIZE}/page
+              </div>
+              <button
+                onClick={() =>
+                  setPage((p) => Math.min(pageCount - 1, p + 1))
+                }
+                disabled={safePage >= pageCount - 1}
+                className="text-[11px] font-bold px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>

@@ -116,6 +116,13 @@ export default function ClientLeadsPage({
   // Per-audience cost totals from /api/client-funnel-costs?group=audience.
   // Keys are audience codes (parent / coach / ...) and "" for unattributed.
   const [costsByAud, setCostsByAud] = useState<Record<string, number>>({});
+  // Pagination — CLAUDE.md: never render more than 100 lead rows. 50/page
+  // cap. Resets when any filter narrows the set.
+  const PAGE_SIZE = 50;
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    setPage(0);
+  }, [audienceFilter, statusFilter, genderFacet, ageFacet, tierFacet, stateFacet, revenueFacet]);
 
   const runFunnelNow = async () => {
     setRunningFunnel(true);
@@ -882,9 +889,16 @@ export default function ClientLeadsPage({
           </div>
         )}
 
+        {/* Page slice — capped at 50 per CLAUDE.md rule. */}
+        {(() => null)()}
         {/* Lead list */}
         <div className="space-y-2">
-          {filteredLeads.map((lead) => (
+          {(() => {
+            const pageCount = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE));
+            const safePage = Math.min(page, pageCount - 1);
+            const pageStart = safePage * PAGE_SIZE;
+            return filteredLeads.slice(pageStart, pageStart + PAGE_SIZE);
+          })().map((lead) => (
             <div
               key={lead.id}
               className={`flex items-stretch gap-2 rounded-lg border transition ${
@@ -961,6 +975,35 @@ export default function ClientLeadsPage({
             </div>
           ))}
         </div>
+
+        {/* Paginator — only renders when there's more than one page */}
+        {filteredLeads.length > PAGE_SIZE && (() => {
+          const pageCount = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE));
+          const safePage = Math.min(page, pageCount - 1);
+          const pageStart = safePage * PAGE_SIZE;
+          const pageEnd = Math.min(pageStart + PAGE_SIZE, filteredLeads.length);
+          return (
+            <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={safePage === 0}
+                className="text-[11px] font-bold px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ← Prev
+              </button>
+              <div className="text-[11px] text-slate-400 font-mono">
+                {pageStart + 1}-{pageEnd} of {filteredLeads.length} · page {safePage + 1}/{pageCount}
+              </div>
+              <button
+                onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+                disabled={safePage >= pageCount - 1}
+                className="text-[11px] font-bold px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next →
+              </button>
+            </div>
+          );
+        })()}
       </main>
 
       {/* Detail drawer */}
