@@ -23,6 +23,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import AIActivityFeed from "@/components/dashboard/AIActivityFeed";
 
 type Bot = {
   id: string;
@@ -265,6 +266,7 @@ const COLOR_MAP: Record<string, { border: string; bg: string; text: string; ring
 
 export default function AiBotsPage() {
   const [activeBot, setActiveBot] = useState<Bot | null>(null);
+  const [showArchitecture, setShowArchitecture] = useState(false);
 
   const totalBots = BRANCHES.reduce((sum, b) => sum + b.bots.length, 0);
 
@@ -279,20 +281,45 @@ export default function AiBotsPage() {
             ← Dash
           </Link>
           <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1">
-            AI Skills · Bot Map
+            AI Skills · Activity
           </h1>
-          <span className="text-[11px] tracking-wider uppercase font-bold text-slate-300 border border-slate-700 px-2.5 py-1 rounded">
-            {totalBots} bots · 5 branches
-          </span>
+          <button
+            type="button"
+            onClick={() => setShowArchitecture((v) => !v)}
+            className="text-[11px] tracking-wider uppercase font-bold text-slate-300 border border-slate-700 px-2.5 py-1 rounded hover:border-violet-500/50 hover:text-white transition-colors"
+            title={`Toggle the architecture diagram — ${totalBots} bots across 5 branches`}
+          >
+            {showArchitecture ? "Hide" : "Show"} architecture
+          </button>
         </div>
         <p className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 text-xs text-slate-500">
-          Every Claude personality the BlueJays system runs. Click any node
-          for source files + what it does. The brain is one model — the
-          prompts are how we get specialized behavior.
+          Live cross-client AI activity feed. Per-client AI Operator skills
+          come online over the next 4 weeks (Drill Drafter first, then Lead
+          Reply Drafter / Weekly Digest / Customer Save Agent / Lead Scorer).
+          Architecture diagram below the feed when toggled.
         </p>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-8 pb-32">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32 space-y-10">
+        {/* ─── Activity feed (primary surface) ─── */}
+        <AIActivityFeed />
+
+        {showArchitecture && (
+          <>
+            <div className="border-t border-white/[0.06] pt-8">
+              <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-slate-400 mb-1">
+                Architecture diagram
+              </p>
+              <h2 className="text-xl font-bold text-white mb-2">
+                {totalBots} bots · 5 branches
+              </h2>
+              <p className="text-xs text-slate-500 max-w-2xl mb-6">
+                Every Claude personality the BlueJays system runs. Click any
+                node for source files + what it does. The brain is one model
+                — the prompts are how we get specialized behavior.
+              </p>
+            </div>
+
         {/* ─── Head node ─── */}
         <div className="flex justify-center mb-2">
           <div className="relative">
@@ -386,6 +413,8 @@ export default function AiBotsPage() {
             );
           })}
         </div>
+          </>
+        )}
 
         {/* ─── Detail drawer (sticky bottom) ─── */}
         {activeBot && (
