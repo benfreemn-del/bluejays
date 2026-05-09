@@ -12,6 +12,7 @@ import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import MadieTodoList from "@/components/dashboard/MadieTodoList";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
+import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
@@ -356,7 +357,13 @@ export default function DashboardPage() {
 
             {tab === "overview" && role !== "sales" && (
               // ─── BEN'S OVERVIEW (owner) ───
+              // Automation digest at the very top — answers
+              // "what did the system actually do today?" in one card.
+              // Reads cron_heartbeats + agent_signals from the last
+              // 24h. Stalled crons (>48h silent) flag red so silent
+              // failures surface here, not just in the watchdog SMS.
               <>
+                <AutomationDailyDigest />
                 <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
                 <BusinessSetupChecklist />
                 <PaymentLinksPanel />

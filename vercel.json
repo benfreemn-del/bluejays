@@ -115,6 +115,10 @@
     {
       "path": "/api/cron/heygen-poll",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/oit-partner-scout",
+      "schedule": "0 14 * * 1"
     }
   ],
   "functions": {

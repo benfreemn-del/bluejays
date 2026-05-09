@@ -17,7 +17,7 @@
  * table that auto-updates from a Google Places + LinkedIn scout.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
@@ -300,6 +300,41 @@ const RING_10_MI = 10 * 1609.344;
 const RING_25_MI = 25 * 1609.344;
 const RING_50_MI = 50 * 1609.344;
 
+type ScoutedAffiliate = {
+  id: string;
+  org_name: string;
+  role: string;
+  city: string | null;
+  phone: string | null;
+  website: string | null;
+  fit_score: number | null;
+  status: string;
+  source: string | null;
+  last_contacted_at: string | null;
+  lat: number | null;
+  lng: number | null;
+};
+
+// Map DB role → local PartnerCategory so scouted rows merge cleanly
+// with the curated seeds.
+function roleToCategory(role: string): PartnerCategory | null {
+  switch (role) {
+    case "realtor":
+      return "realtor";
+    case "mold-remediation":
+      return "mold-remediation";
+    case "water-damage":
+      return "water-damage";
+    case "property-management":
+      return "property-management";
+    case "commercial-buyer":
+    case "commercial-property":
+      return "commercial-property";
+    default:
+      return null;
+  }
+}
+
 export default function OitPartnerMap() {
   const [active, setActive] = useState<Set<PartnerCategory>>(
     new Set([
@@ -311,10 +346,72 @@ export default function OitPartnerMap() {
     ]),
   );
   const [focused, setFocused] = useState<Partner | null>(null);
+  const [scouted, setScouted] = useState<Partner[]>([]);
+  const [scoutedLoaded, setScoutedLoaded] = useState(false);
+
+  // Live-scouted affiliates (auto-discovered by the weekly cron). Merged
+  // with the curated PARTNERS[] seed at render — seed gives Luke a
+  // reliable baseline, scout adds new candidates as they appear.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(
+          "/api/clients/olympic-inspections/affiliates",
+          { credentials: "include" },
+        );
+        if (!r.ok) return;
+        const j = (await r.json()) as {
+          ok: boolean;
+          affiliates?: ScoutedAffiliate[];
+        };
+        if (cancelled || !j.ok || !j.affiliates) return;
+        const mapped: Partner[] = [];
+        for (const a of j.affiliates) {
+          const cat = roleToCategory(a.role);
+          if (!cat || a.lat == null || a.lng == null) continue;
+          mapped.push({
+            id: `scout-${a.id}`,
+            name: a.org_name,
+            category: cat,
+            city: a.city ?? "",
+            lat: a.lat,
+            lng: a.lng,
+            phone: a.phone ?? undefined,
+            website: a.website ?? undefined,
+            pitch:
+              a.fit_score != null
+                ? `Auto-scouted (fit score ${a.fit_score}). ${a.status === "discovered" ? "Cold — call this week." : "Already in conversation."}`
+                : "Auto-scouted partner candidate.",
+          });
+        }
+        setScouted(mapped);
+      } finally {
+        if (!cancelled) setScoutedLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const allPartners = useMemo(() => {
+    // Dedupe scouted vs seed by lowercase name+city
+    const seedKeys = new Set(
+      PARTNERS.map(
+        (p) => `${p.name.toLowerCase()}::${p.city.toLowerCase()}`,
+      ),
+    );
+    const uniqScouted = scouted.filter(
+      (s) =>
+        !seedKeys.has(`${s.name.toLowerCase()}::${s.city.toLowerCase()}`),
+    );
+    return [...PARTNERS, ...uniqScouted];
+  }, [scouted]);
 
   const visiblePartners = useMemo(
-    () => PARTNERS.filter((p) => active.has(p.category)),
-    [active],
+    () => allPartners.filter((p) => active.has(p.category)),
+    [allPartners, active],
   );
 
   const counts = useMemo(() => {
@@ -325,9 +422,9 @@ export default function OitPartnerMap() {
       "property-management": 0,
       "commercial-property": 0,
     };
-    for (const p of PARTNERS) c[p.category]++;
+    for (const p of allPartners) c[p.category]++;
     return c;
-  }, []);
+  }, [allPartners]);
 
   const toggle = (cat: PartnerCategory) => {
     setActive((s) => {
@@ -353,8 +450,11 @@ export default function OitPartnerMap() {
           🗺️ Olympic Peninsula partner map
         </div>
         <div style={{ fontSize: 13, color: "#7a857a", marginTop: 4 }}>
-          {PARTNERS.length} affiliate + commercial-buyer candidates · Sequim HQ
-          at center · service rings 10 / 25 / 50 mi
+          {allPartners.length} candidate{allPartners.length === 1 ? "" : "s"}
+          {scoutedLoaded && scouted.length > 0
+            ? ` (${PARTNERS.length} curated + ${scouted.length} auto-scouted)`
+            : ""}
+          {" "}· Sequim HQ at center · service rings 10 / 25 / 50 mi
         </div>
       </div>
 
