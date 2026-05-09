@@ -784,9 +784,9 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
   if (level === 1) {
     if (callsToday < 25) {
       return {
-        headline: "Get to 25 calls before lunch.",
+        headline: "First 25 calls — start your block.",
         detail:
-          "First quarter of the day sets the tone. The script is right there — nothing to think about. Just dial.",
+          "Pick your window — naptime, after drop-off, before pickup, evening. The script is right there. Nothing to think about. Just dial.",
       };
     }
     if (callsToday < 100) {
