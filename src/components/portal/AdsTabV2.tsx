@@ -44,10 +44,12 @@ import {
   type AdPlatform,
 } from "@/lib/client-ads/zenith-creatives";
 import { OIT_CREATIVES } from "@/lib/client-ads/oit-creatives";
+import { BLUEJAYS_CREATIVES } from "@/lib/client-ads/bluejays-creatives";
 
 const CREATIVES_BY_SLUG: Record<string, CreativeSeed[]> = {
   "zenith-sports": ZENITH_CREATIVES,
   "olympic-inspections": OIT_CREATIVES,
+  bluejays: BLUEJAYS_CREATIVES,
 };
 
 /** Platform group — 4 cards on the landing view. */

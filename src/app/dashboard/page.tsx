@@ -14,6 +14,7 @@ import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import RoleBadge from "@/components/dashboard/RoleBadge";
+import AdsTabV2 from "@/components/portal/AdsTabV2";
 import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
@@ -54,6 +55,7 @@ type Tab =
   | "leads"
   | "map"
   | "funnels"
+  | "ads"
   | "todo"
   | "sales-portal"
   | "client-jobs"
@@ -89,6 +91,7 @@ const TABS: TabDef[] = [
   { id: "leads", label: "Leads", emoji: "📥" },
   { id: "map", label: "Map", emoji: "🗺️" },
   { id: "funnels", label: "Funnels", emoji: "🎯" },
+  { id: "ads", label: "Ads", emoji: "📢" },
   { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks" },
   { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script" },
   { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
@@ -528,6 +531,15 @@ export default function DashboardPage() {
                 + drop-off pills + edit / + Note. In-place tab; no nav
                 away from /dashboard. */}
             {tab === "funnels" && <BluejaysFunnelsTab />}
+
+            {/* ──────────────── ADS TAB ────────────────
+                BlueJays' own paid-traffic surface — same V2 (platform
+                cards → 70/20/10 drill-down) Luke + Philip see in their
+                tenant portals. Currently rendering BLUEJAYS_CREATIVES
+                (Manufacturer DTC + Partner outreach + Lob direct mail).
+                Real ROAS hydrates once Google + Meta delegated-access
+                lands; today it's mock data with the right shape. */}
+            {tab === "ads" && <AdsTabV2 slug="bluejays" />}
 
             {/* ──────────────── AI SKILLS TAB ────────────────
                 Both AIOS skills + BlueJays-internal AI features per Q2=C. */}
