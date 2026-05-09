@@ -98,8 +98,11 @@ export const CATEGORIES: Category[] = [
         detail:
           "Up to 6 audience tracks per tenant. Each track has its own day-by-day cadence using all 4 channels: email, SMS, ringless voicemail, and AI postcards via Lob. Definitions live; firing waits on email-domain auth + Twilio setup per tenant.",
         status: {
-          "zenith-sports": "available",
-          "itc-quick-attach": "available",
+          // Zenith funnels (parent/coach/player) are firing in prod;
+          // ITC + OIT are also live. Default 'active' for any AI-Package
+          // tenant since registering a funnel def == it runs.
+          "zenith-sports": "active",
+          "itc-quick-attach": "active",
           "olympic-inspections": "active",
           default: "active",
         },
@@ -263,8 +266,10 @@ export const CATEGORIES: Category[] = [
         detail:
           "Every funnel step writes to the analytics ledger. AI rolls up: which audience opens the most? Which converts? Where do leads drop off? Surfaces the weakest link in your sequence. Numbers populate as funnels start firing.",
         status: {
-          "zenith-sports": "available",
-          "itc-quick-attach": "available",
+          // Active for any tenant whose funnels are firing — the
+          // analytics ledger writes every step automatically.
+          "zenith-sports": "active",
+          "itc-quick-attach": "active",
           "olympic-inspections": "active",
           default: "active",
         },

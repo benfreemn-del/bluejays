@@ -364,6 +364,20 @@ const BRANCHES: Branch[] = [
           "supabase/migrations/*_agent_signals.sql",
         ],
       },
+      {
+        id: "automation-digest",
+        name: "Automation Digest",
+        emoji: "🤖",
+        kind: "tool",
+        desc: "Reads cron_heartbeats + agent_signals from the last 24h, rolls them up by source/kind/severity. Renders on Ben's dashboard overview AND inside every tenant portal — answers 'what did the AI do for me yesterday' in one card.",
+        files: [
+          "src/components/dashboard/AutomationDailyDigest.tsx",
+          "src/app/api/automation-digest/route.ts",
+        ],
+        talksTo: [
+          { to: "agent-signals", via: "reads tagged signals per slug", wired: true },
+        ],
+      },
     ],
   },
   {
@@ -434,6 +448,38 @@ const BRANCHES: Branch[] = [
         desc: "Scores inbound affiliate applicants (audience-size × match-quality × likelihood-to-promote).",
         files: ["src/lib/client-affiliates.ts"],
       },
+      {
+        id: "oit-partner-scout",
+        name: "OIT Partner Scout",
+        emoji: "🗺️",
+        kind: "agent",
+        desc: "Weekly Olympic Peninsula sweep — finds realtors, property mgmt, mold remediation contractors, water-damage restoration. Inserts into client_affiliates with fit-score per (rating × review-count). Generalizes to any inspection-style client via the registry.",
+        files: [
+          "src/lib/oit-partner-scout.ts",
+          "src/app/api/cron/oit-partner-scout/route.ts",
+          "src/lib/inspection-clients.ts",
+        ],
+        talksTo: [
+          { to: "agent-signals", via: "emits 'new-affiliates' on insert", wired: true },
+          { to: "daily-digest", via: "candidates surface in morning brief", wired: true },
+        ],
+      },
+      {
+        id: "social-leads",
+        name: "Social Lead Capture",
+        emoji: "📱",
+        kind: "agent",
+        desc: "Ben texts a FB / X / LinkedIn URL to his Twilio number → AI classifies intent (integrate-claude / hire-builder / etc) + drafts a 2-line opener in his voice, ships back as SMS within 10s. SMS-first lead-gen for posts spotted in the wild.",
+        files: [
+          "src/lib/social-leads.ts",
+          "src/app/api/social-leads/route.ts",
+          "src/app/dashboard/social-leads/page.tsx",
+        ],
+        talksTo: [
+          { to: "agent-signals", via: "emits 'captured' per drafted lead", wired: true },
+          { to: "daily-digest", via: "outstanding drafts surface daily", wired: true },
+        ],
+      },
     ],
   },
   {
@@ -457,6 +503,34 @@ const BRANCHES: Branch[] = [
         kind: "skill",
         desc: "Quarterly ops sweep — refreshes the three audit docs (domain registrar, 2FA recovery, billing).",
         files: [".claude/commands/audit-business.md"],
+      },
+      {
+        id: "onboard-inspection",
+        name: "/onboard-inspection-client",
+        emoji: "🏗️",
+        kind: "skill",
+        desc: "11-step playbook to onboard a new inspection-style service client (mold, pest, septic, home, asbestos/radon, HVAC, well-water). Reads from the inspection-clients registry — registering one config = ~90 min from yes to live portal.",
+        files: [
+          ".claude/commands/onboard-inspection-client.md",
+          "docs/playbooks/inspection-client-onboarding.md",
+          "src/lib/inspection-clients.ts",
+        ],
+      },
+      {
+        id: "build-cli",
+        name: "/build-cli",
+        emoji: "💻",
+        kind: "skill",
+        desc: "Wraps any service in a CLI. Codifies the 'CLI > API > MCP' rule for agent-consumed integrations — saves ~24× tokens vs MCP per call.",
+        files: [".claude/commands/build-cli.md", "scripts/bj.mjs"],
+      },
+      {
+        id: "optimize-costs",
+        name: "/optimize-costs",
+        emoji: "💸",
+        kind: "skill",
+        desc: "Cost-leak scan: chatty crons, image-optimizer drift, untracked recurring subs, unbounded fan-out queries, uncapped AI calls. Prints a triaged report.",
+        files: [".claude/commands/optimize-costs.md"],
       },
       {
         id: "optimize-costs",

@@ -9,6 +9,7 @@ import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
 import AdsTab from "@/components/portal/AdsTab";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
+import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
@@ -41,6 +42,21 @@ const ZenithSoccerMap = nextDynamic(
     loading: () => (
       <div className="h-[640px] flex items-center justify-center text-slate-500 text-sm rounded-2xl border border-white/[0.06] bg-slate-900/40">
         Loading map…
+      </div>
+    ),
+  },
+);
+
+// OIT partner-target map — Olympic Peninsula affiliate outreach surface.
+// Same component the OIT admin uses, just rendered here on the generic
+// portal Map tab so Luke sees it without bouncing to /admin.
+const OitPartnerMap = nextDynamic(
+  () => import("@/components/portal/OitPartnerMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[480px] flex items-center justify-center text-slate-500 text-sm rounded-2xl border border-white/[0.06] bg-slate-900/40">
+        Loading partner map…
       </div>
     ),
   },
@@ -935,6 +951,13 @@ function OverviewTab({
           created_at as the start anchor (proxy for paid-at since the
           owner row is created on AI Package payment). */}
       <OnboardingTimeline paidAt={owner.created_at ?? null} />
+
+      {/* Per-tenant automation digest — "what your AI did for YOUR
+          business in the last 24 hours". Filtered to this slug only;
+          renders cron heartbeats whose names contain the slug + agent
+          signals tagged with this client_slug. Hides itself when
+          there's nothing to show (zero crons + zero signals). */}
+      <AutomationDailyDigest clientSlug={slug} />
 
       {/* Live AI activity banner — outcome readout, not feature list */}
       {aiBannerActive && (
@@ -6343,6 +6366,28 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
  * their data.
  */
 function MapTab({ slug }: { slug: string }) {
+  // OIT — Olympic Peninsula partner-target map. Same component used
+  // in the OIT admin's Affiliates Map tab so Luke sees the same
+  // outreach surface from either entry point.
+  if (slug === "olympic-inspections") {
+    return (
+      <div className="space-y-3">
+        <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+          <h2 className="text-lg font-bold tracking-tight mb-1">
+            Olympic Peninsula partner map
+          </h2>
+          <p className="text-sm text-slate-400">
+            Affiliate-target candidates across Sequim, Port Angeles,
+            Port Townsend, Bremerton, Silverdale, and Forks. Realtors,
+            property mgmt, mold remediation, water-damage restoration,
+            and large commercial buyers. Hand-curated seeds plus
+            auto-scouted businesses from the weekly partner-scout cron.
+          </p>
+        </div>
+        <OitPartnerMap />
+      </div>
+    );
+  }
   if (slug === "itc-quick-attach") {
     return (
       <div className="space-y-3">

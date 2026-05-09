@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
@@ -16,7 +16,17 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Optional per-tenant filter. When set, restricts cron heartbeats
+  // to slug-suffixed names (e.g. partner_scout_olympic_inspections)
+  // and agent_signals to rows tagged with that client_slug. Used by
+  // the per-client portal Overview tab so owners see their own AI's
+  // activity, not Ben's whole BlueJays system.
+  const slugRaw =
+    request.nextUrl.searchParams.get("clientSlug")?.trim() || "";
+  const slug = slugRaw.replace(/[^a-z0-9-]/gi, "").toLowerCase();
+  const slugUnderscored = slug.replace(/-/g, "_");
+
   if (!isSupabaseConfigured()) {
     return NextResponse.json({
       ok: true,
@@ -29,13 +39,20 @@ export async function GET() {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
   // Pull every heartbeat in the last 24h, then group by cron_name in
-  // memory (cheaper than a SQL window function for ~50 rows).
-  const { data: rawHeartbeats } = await supabase
+  // memory (cheaper than a SQL window function for ~50 rows). When
+  // filtering by slug, match crons whose name contains the slug or
+  // whose metadata.client_slug matches.
+  let heartbeatQuery = supabase
     .from("cron_heartbeats")
     .select("cron_name, ran_at, status, metadata")
     .gte("ran_at", since)
     .order("ran_at", { ascending: false })
     .limit(500);
+  if (slug) {
+    // partner_scout_olympic_inspections, client_reports_olympic_inspections, etc.
+    heartbeatQuery = heartbeatQuery.ilike("cron_name", `%${slugUnderscored}%`);
+  }
+  const { data: rawHeartbeats } = await heartbeatQuery;
 
   const cronMap = new Map<
     string,
@@ -67,12 +84,14 @@ export async function GET() {
   // disappearing entirely. Pull last-known per cron from the broader
   // window.
   const since7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: olderHeartbeats } = await supabase
+  let olderQuery = supabase
     .from("cron_heartbeats")
     .select("cron_name, ran_at, status")
     .gte("ran_at", since7)
     .order("ran_at", { ascending: false })
     .limit(2000);
+  if (slug) olderQuery = olderQuery.ilike("cron_name", `%${slugUnderscored}%`);
+  const { data: olderHeartbeats } = await olderQuery;
   for (const h of olderHeartbeats ?? []) {
     if (!cronMap.has(h.cron_name)) {
       cronMap.set(h.cron_name, {
@@ -91,11 +110,14 @@ export async function GET() {
 
   // Roll up agent_signals by (source, kind, severity). A bot that
   // emits 12 signals in a day collapses to one row with count=12.
-  const { data: rawSignals } = await supabase
+  // Filter by client_slug when slug is set (per-tenant portal view).
+  let signalsQuery = supabase
     .from("agent_signals")
     .select("source, kind, severity")
     .gte("created_at", since)
     .limit(1000);
+  if (slug) signalsQuery = signalsQuery.eq("client_slug", slug);
+  const { data: rawSignals } = await signalsQuery;
 
   const signalMap = new Map<
     string,

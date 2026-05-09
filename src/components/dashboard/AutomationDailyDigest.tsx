@@ -223,7 +223,14 @@ function formatRelative(iso: string): string {
   return `${d}d ago`;
 }
 
-export default function AutomationDailyDigest() {
+export default function AutomationDailyDigest({
+  clientSlug,
+}: {
+  /** When set, filters cron + signal data to one tenant. Used in the
+   *  per-client portal so each owner sees what the AI did for THEIR
+   *  business — not Ben's whole BlueJays system. */
+  clientSlug?: string;
+} = {}) {
   const [data, setData] = useState<DigestPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -232,9 +239,10 @@ export default function AutomationDailyDigest() {
     let cancelled = false;
     (async () => {
       try {
-        const r = await fetch("/api/automation-digest", {
-          credentials: "include",
-        });
+        const url = clientSlug
+          ? `/api/automation-digest?clientSlug=${encodeURIComponent(clientSlug)}`
+          : "/api/automation-digest";
+        const r = await fetch(url, { credentials: "include" });
         if (!r.ok) return;
         const j = (await r.json()) as DigestPayload;
         if (!cancelled) setData(j);
@@ -245,7 +253,7 @@ export default function AutomationDailyDigest() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [clientSlug]);
 
   if (loading) {
     return (
@@ -257,6 +265,15 @@ export default function AutomationDailyDigest() {
 
   const crons = data?.crons ?? [];
   const signals = data?.signals ?? [];
+
+  // Per-tenant view: if nothing happened for this client in the last
+  // 24h, hide the card entirely instead of rendering a sad empty
+  // state. Owner overview stays clean. Ben's BlueJays-wide view
+  // (no clientSlug) always renders even when empty so silent crons
+  // are catchable.
+  if (clientSlug && crons.length === 0 && signals.length === 0) {
+    return null;
+  }
   const totalActions = crons.reduce((s, c) => s + (c.count_24h ?? 0), 0);
   const stalled = crons.filter((c) => {
     const t = Date.parse(c.last_run);
@@ -271,10 +288,14 @@ export default function AutomationDailyDigest() {
       <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
         <div>
           <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-violet-300 mb-1">
-            Automation · last 24 hours
+            {clientSlug
+              ? "Your AI · last 24 hours"
+              : "Automation · last 24 hours"}
           </p>
           <h2 className="text-lg font-bold text-white">
-            🤖 What ran today
+            {clientSlug
+              ? "🤖 What your AI did today"
+              : "🤖 What ran today"}
           </h2>
         </div>
         <div className="text-right text-[12px] text-slate-400">
