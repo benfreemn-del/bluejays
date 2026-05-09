@@ -519,8 +519,13 @@ export default function DashboardPage() {
             {tab === "ai-skills" && <AISkillsTab />}
 
             {/* ──────────────── SETTINGS TAB ────────────────
-                Q4=D — kitchen-sink config + ops + kill switches. */}
-            {tab === "settings" && (
+                Q4=D — kitchen-sink config + ops + kill switches.
+                Madie sees a stripped-down version (account info only)
+                — full settings expose env-var kill switches, admin
+                CSV exports, impersonate links, etc. that aren't
+                appropriate for the sales role. */}
+            {tab === "settings" && role === "sales" && <SalesSettingsTab />}
+            {tab === "settings" && role !== "sales" && (
               <SettingsTab
                 autoScoutData={autoScoutData}
                 onLoadAutoScout={loadAutoScout}
@@ -1059,6 +1064,65 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
             Sign Out
           </a>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SalesSettingsTab — what Madie sees on /dashboard?tab=settings.
+ *
+ * Owner Settings is a kitchen-sink with env-var kill switches, admin
+ * CSV exports, impersonate links, and ops chrome — none of that is
+ * appropriate for the sales role. Madie gets the three things she
+ * actually needs: who she's logged in as, where to ask Ben for help,
+ * and a sign-out button.
+ */
+function SalesSettingsTab() {
+  return (
+    <div className="rounded-2xl border border-pink-500/25 bg-gradient-to-br from-pink-950/30 via-slate-900/60 to-slate-950 p-6 max-w-2xl">
+      <h2 className="text-lg font-bold text-white mb-1">Account</h2>
+      <p className="text-xs text-pink-200/70 mb-5">
+        Signed in as Madie · Sales role
+      </p>
+
+      <div className="space-y-3 text-sm">
+        <div className="rounded-md border border-white/10 bg-slate-900/50 p-3">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">
+            Need something fixed?
+          </p>
+          <p className="text-slate-200">
+            Text Ben directly. He gets pinged within seconds and can
+            unblock you on anything portal-related.
+          </p>
+        </div>
+
+        <div className="rounded-md border border-white/10 bg-slate-900/50 p-3">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">
+            Where things live
+          </p>
+          <ul className="text-slate-300 text-[13px] leading-relaxed space-y-0.5 list-disc list-inside">
+            <li>
+              <strong>Today's checklist + race-track</strong> — Overview tab
+            </li>
+            <li>
+              <strong>Cold-call workspace</strong> — Sales Portal tab
+            </li>
+            <li>
+              <strong>Pipeline (book/manage meetings)</strong> — Pipeline tab
+            </li>
+            <li>
+              <strong>Why-they-said-no review</strong> — Win-Loss tab
+            </li>
+          </ul>
+        </div>
+
+        <a
+          href="/api/auth/logout"
+          className="inline-flex items-center gap-2 rounded-md bg-rose-500 hover:bg-rose-400 text-white text-sm font-bold px-4 py-2 mt-2"
+        >
+          Sign Out
+        </a>
       </div>
     </div>
   );

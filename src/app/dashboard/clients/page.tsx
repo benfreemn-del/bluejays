@@ -62,12 +62,10 @@ export default function ClientsIndexPage() {
         {!loading && clients.length === 0 && (
           <div className="text-center text-slate-500 py-10">
             <div className="text-4xl mb-2">📋</div>
-            No client tasks yet.
-            <div className="mt-3 text-xs">
-              Create one with{" "}
-              <code className="bg-slate-900 px-1.5 py-0.5 rounded">
-                POST /api/client-tasks
-              </code>
+            No active client jobs yet.
+            <div className="mt-3 text-xs max-w-sm mx-auto">
+              Once a client signs on, their open tasks will land here.
+              Each row links into that client's job board.
             </div>
           </div>
         )}

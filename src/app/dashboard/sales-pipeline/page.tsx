@@ -44,6 +44,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Prospect } from "@/lib/types";
 import PipelineVelocityWidget from "@/components/dashboard/PipelineVelocityWidget";
+import { useRole } from "@/lib/use-role";
 
 const WEBSITE_STAGES = [
   { n: 1, label: "Preview created" },
@@ -157,6 +158,12 @@ function formatStage(num: number, letter: string): string {
 }
 
 export default function SalesPipelinePage() {
+  // Role-aware: hide aggregate dollar totals from sales role. Madie
+  // needs per-card deal sizes (commission visibility) but the column
+  // + per-stage totals expose business-wide P&L which isn't her
+  // surface.
+  const role = useRole();
+  const hideTotals = role === "sales";
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
@@ -431,10 +438,14 @@ export default function SalesPipelinePage() {
                     {[...websiteByStage.values()].reduce((a, b) => a + b.length, 0)}
                     {" "}leads
                   </span>
-                  <span className="text-sky-400/40">·</span>
-                  <span className="text-sky-300 font-bold tabular-nums">
-                    {fmtUsdShort(websiteTotal)}
-                  </span>
+                  {!hideTotals && (
+                    <>
+                      <span className="text-sky-400/40">·</span>
+                      <span className="text-sky-300 font-bold tabular-nums">
+                        {fmtUsdShort(websiteTotal)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </header>
               <div className="divide-y divide-sky-900/40">
@@ -443,6 +454,7 @@ export default function SalesPipelinePage() {
                     key={s.n}
                     stage={s.n}
                     label={s.label}
+                    hideTotals={hideTotals}
                     accent="sky"
                     leads={websiteByStage.get(s.n) ?? []}
                     pendingStages={pendingStages}
@@ -470,10 +482,14 @@ export default function SalesPipelinePage() {
                     {[...fullsystemByStage.values()].reduce((a, b) => a + b.length, 0)}
                     {" "}leads
                   </span>
-                  <span className="text-violet-400/40">·</span>
-                  <span className="text-violet-300 font-bold tabular-nums">
-                    {fmtUsdShort(fullsystemTotal)}
-                  </span>
+                  {!hideTotals && (
+                    <>
+                      <span className="text-violet-400/40">·</span>
+                      <span className="text-violet-300 font-bold tabular-nums">
+                        {fmtUsdShort(fullsystemTotal)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </header>
               <div className="divide-y divide-violet-900/40">
@@ -482,6 +498,7 @@ export default function SalesPipelinePage() {
                     key={s.n}
                     stage={s.n}
                     label={s.label}
+                    hideTotals={hideTotals}
                     accent="violet"
                     leads={fullsystemByStage.get(s.n) ?? []}
                     pendingStages={pendingStages}
@@ -516,6 +533,7 @@ function StageGroup({
   onNudgeNum,
   onNudgeLetter,
   onSave,
+  hideTotals = false,
 }: {
   stage: number;
   label: string;
@@ -526,6 +544,7 @@ function StageGroup({
   onNudgeNum: (id: string, persisted: string, delta: number) => void;
   onNudgeLetter: (id: string, persisted: string, delta: number) => void;
   onSave: (id: string) => void;
+  hideTotals?: boolean;
 }) {
   // Stage 3 is the cash-in transition (Bought + paid / Meeting completed
   // → moving toward delivery). Light up green so the operator sees it
@@ -561,13 +580,15 @@ function StageGroup({
           {label}
         </span>
         <span className="text-[10px] text-slate-500">· {leads.length}</span>
-        <span
-          className={`ml-auto text-[10px] font-bold tabular-nums ${
-            isCashStage ? "text-emerald-300" : "text-slate-400"
-          }`}
-        >
-          {fmtUsdShort(stageTotal)}
-        </span>
+        {!hideTotals && (
+          <span
+            className={`ml-auto text-[10px] font-bold tabular-nums ${
+              isCashStage ? "text-emerald-300" : "text-slate-400"
+            }`}
+          >
+            {fmtUsdShort(stageTotal)}
+          </span>
+        )}
       </div>
       <ul className="space-y-2">
         {leads.map((p) => (

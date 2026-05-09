@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getProspect } from "@/lib/store";
 import LeadPicker from "./LeadPicker.client";
 import {
@@ -120,13 +121,24 @@ export default async function DashboardScriptPage({
   const ownerKnown = !!ownerFirstNameRaw;
   const ownerFirstName = ownerFirstNameRaw || "the owner";
 
+  // Read role + derive caller identity. When Madie is logged in the
+  // bj_role cookie reads 'sales' — every link she texts (audit,
+  // booking, audit-view) gets ?ref=madie / partnerCode=madie so her
+  // commissions actually attribute back to her instead of crediting
+  // Ben for everything she closes.
+  const cookieStore = await cookies();
+  const role: "owner" | "sales" =
+    cookieStore.get("bj_role")?.value === "sales" ? "sales" : "owner";
+  const callerCode = role === "sales" ? "madie" : "ben";
+  const callerName = role === "sales" ? "Madie" : "Ben";
+
   const previewUrl = prospect.pricingTier === "custom" && prospect.customSiteUrl
     ? prospect.customSiteUrl
     : `${SITE_ORIGIN}/preview/${prospect.id}`;
-  const auditUrl = `${SITE_ORIGIN}/audit?ref=ben`;
+  const auditUrl = `${SITE_ORIGIN}/audit?ref=${callerCode}`;
   const scheduleUrl = buildBookingUrlForCall({
     prospectId: prospect.id,
-    partnerCode: "ben",
+    partnerCode: callerCode,
   });
 
   const vars: ScriptVars & { ownerOrThem: string } = {
@@ -137,7 +149,7 @@ export default async function DashboardScriptPage({
     url:
       prospect.currentWebsite ||
       `${prospect.businessName}'s website`,
-    partnerFirstName: mode === "partner" ? "the caller" : "Ben",
+    partnerFirstName: mode === "partner" ? "the caller" : callerName,
     previewUrl,
     auditUrl,
     scheduleUrl,
@@ -299,9 +311,14 @@ export default async function DashboardScriptPage({
         doneHref: "/dashboard",
       }}
       partner={{
-        id: mode === "partner" ? "partner-setter" : "ben-admin",
-        name: mode === "partner" ? "the caller" : "Ben",
-        code: mode === "partner" ? "partner" : "ben",
+        id:
+          mode === "partner"
+            ? "partner-setter"
+            : role === "sales"
+              ? "madie-admin"
+              : "ben-admin",
+        name: mode === "partner" ? "the caller" : callerName,
+        code: mode === "partner" ? "partner" : callerCode,
         agreementAccepted: true,
       }}
       prospect={{
@@ -320,7 +337,7 @@ export default async function DashboardScriptPage({
         latestAuditStatus,
         previewUrl,
         auditViewUrl: hasCompletedAudit && latestAuditId
-          ? `${SITE_ORIGIN}/audit/${latestAuditId}?ref=ben`
+          ? `${SITE_ORIGIN}/audit/${latestAuditId}?ref=${callerCode}`
           : null,
         categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,
         websiteUrl: prospect.currentWebsite ?? null,

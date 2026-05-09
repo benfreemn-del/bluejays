@@ -542,7 +542,12 @@ ben@bluejayportfolio.com`;
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="font-bold text-amber-300 truncate">
-              {isAdmin ? "Ben's workspace" : `${partner.name.split(/\s+/)[0]}'s workspace`}
+              {/* Use the actual partner.name first-name in both modes
+                  (admin + partner). Previously hardcoded "Ben's
+                  workspace" for admin, which read wrong when Madie was
+                  on a call. partner.name is now derived from bj_role
+                  upstream in /dashboard/script/page.tsx. */}
+              {`${partner.name.split(/\s+/)[0]}'s workspace`}
             </div>
             <span className="hidden sm:inline text-xs text-slate-500">
               {isAdmin && adminQueueNav

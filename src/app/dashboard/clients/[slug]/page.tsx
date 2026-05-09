@@ -11,6 +11,7 @@ import type {
   ClientTaskStatus,
 } from "@/lib/client-tasks";
 import { clientSiteFor } from "@/lib/client-site-urls";
+import { useRole } from "@/lib/use-role";
 
 /**
  * /dashboard/clients/[slug]
@@ -72,6 +73,7 @@ export default function ClientTasksPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const role = useRole();
   const [tasks, setTasks] = useState<ClientTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [includeCompleted, setIncludeCompleted] = useState(false);
@@ -151,18 +153,21 @@ export default function ClientTasksPage({
         <div className="flex-1 min-w-0 text-[11px] text-slate-500">
           {totalOpen} open · {tasks.length - totalOpen} done
         </div>
-        {/* Auto-impersonate the client owner — opens their portal in
-            a new tab without asking for the password. Admin-cookie
-            gated server-side. */}
-        <a
-          href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Open this client's owner portal as them (no login required)"
-          className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-        >
-          Backend ↗
-        </a>
+        {/* Auto-impersonate the client owner — owner-only. Madie has
+            no business logging in as a client owner, so the button is
+            hidden for sales role. Server-side route is also admin-
+            cookie gated (defense in depth). */}
+        {role === "owner" && (
+          <a
+            href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open this client's owner portal as them (no login required)"
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+          >
+            Backend ↗
+          </a>
+        )}
       </div>
 
       <main className="mx-auto max-w-3xl px-4 sm:px-6 py-5 pb-32">
