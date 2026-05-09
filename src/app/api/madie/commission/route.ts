@@ -15,10 +15,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  *     - $400 per website close
  *     - $2,000 per AI System close
  *
- * Rate at TIME of close = rate at her current lap. Defensible:
- * earlier closes credited at older rates would require capturing
- * lap-at-time-of-close per record, which we don't yet have. For
- * the v1 commission ledger we use her CURRENT lap rate uniformly.
+ * Rate at TIME of close = rate at the lap stamped on the prospect when
+ * status flipped to 'paid' (prospects.madie_lap_at_close, written by
+ * updateProspect()). Falls back to current lap when null (legacy data).
+ * Audit B7 — keeps lifetime totals stable across lap promotions.
  *
  * Source: prospects table — every row with status='paid' AND
  * paid_at set during the current calendar month gets credited.
@@ -53,6 +53,7 @@ interface ProspectRow {
   status: string | null;
   paid_at: string | null;
   created_at: string | null;
+  madie_lap_at_close: number | null;
 }
 
 function isWebsiteTier(tier: string | null): boolean {
@@ -117,7 +118,9 @@ export async function GET(_request: NextRequest) {
     // memory. The status='paid' filter does the heavy lifting.
     const { data, error } = await supabase
       .from("prospects")
-      .select("id, business_name, pricing_tier, status, paid_at, created_at")
+      .select(
+        "id, business_name, pricing_tier, status, paid_at, created_at, madie_lap_at_close",
+      )
       .eq("status", "paid")
       .gte("paid_at", effectiveSince)
       .order("paid_at", { ascending: false })
@@ -148,13 +151,22 @@ export async function GET(_request: NextRequest) {
       if (!paidTs) continue;
       const isThisMonth = paidTs >= monthStart.getTime();
 
+      // Use the lap stamped at time of close when present; fall back to
+      // current lap for legacy rows. Locks lifetime totals against
+      // retroactive lap promotions (B7).
+      const closeLap =
+        r.madie_lap_at_close && r.madie_lap_at_close >= 1 && r.madie_lap_at_close <= 6
+          ? r.madie_lap_at_close
+          : currentLap;
+      const closeRates = ratesForLap(closeLap);
+
       let commissionUsd = 0;
       let bucket: "website" | "ai_system" | "other" = "other";
       if (isAiSystemTier(r.pricing_tier)) {
-        commissionUsd = rates.ai_system;
+        commissionUsd = closeRates.ai_system;
         bucket = "ai_system";
       } else if (isWebsiteTier(r.pricing_tier)) {
-        commissionUsd = rates.website;
+        commissionUsd = closeRates.website;
         bucket = "website";
       }
 

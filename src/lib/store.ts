@@ -511,6 +511,30 @@ export async function updateProspect(
       previousStatus = (currentRow?.status as string | null) ?? null;
     }
 
+    // Madie commission ledger — stamp the lap at the MOMENT a prospect
+    // transitions to 'paid' so retroactive lap promotions don't inflate
+    // historical totals (audit B7). Only writes on the in-transition,
+    // never on subsequent updates to an already-paid row.
+    if (
+      sanitizedUpdates.status === "paid" &&
+      previousStatus !== "paid" &&
+      dbUpdates.madie_lap_at_close === undefined
+    ) {
+      const { data: lapRow } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "madie_current_lap")
+        .maybeSingle();
+      const lapValue =
+        lapRow?.value && typeof lapRow.value === "object" && "lap" in lapRow.value
+          ? Number((lapRow.value as { lap: number }).lap)
+          : 1;
+      const lap = Number.isFinite(lapValue)
+        ? Math.max(1, Math.min(6, lapValue))
+        : 1;
+      dbUpdates.madie_lap_at_close = lap;
+    }
+
     const { data, error } = await supabase
       .from("prospects")
       .update(dbUpdates)

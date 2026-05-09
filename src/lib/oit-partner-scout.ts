@@ -23,6 +23,28 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
 import { logHeartbeat } from "./cron-heartbeat";
 import { getServiceClient } from "./service-clients";
+import { emitSignal } from "./agent-signals";
+
+/**
+ * Per-tenant signal copy for the daily-digest emit. Centralized here so
+ * every caller (cron route, manual trigger, smoke test) emits identically.
+ * Add a new tenant here when its scout config lands in service-clients.
+ */
+const SCOUT_SIGNAL_COPY: Record<
+  string,
+  { source: string; titleNoun: string; detailSuffix: string }
+> = {
+  "olympic-inspections": {
+    source: "oit-partner-scout",
+    titleNoun: "partner candidate",
+    detailSuffix: "Open the Affiliates Map.",
+  },
+  "zenith-sports": {
+    source: "sports-partner-scout",
+    titleNoun: "soccer-program partner candidate",
+    detailSuffix: "New clubs / academies / leagues across MLS metros.",
+  },
+};
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -198,6 +220,31 @@ export async function runPartnerScout(
     duplicates: result.duplicates,
     errors: result.errors.length,
   });
+
+  // Surface new candidates in the daily digest. Lives here (not in the
+  // cron route) so any caller — cron, manual trigger, smoke test — emits
+  // identically. B4 audit fix.
+  if (result.inserted > 0) {
+    const copy = SCOUT_SIGNAL_COPY[clientSlug] ?? {
+      source: `partner-scout-${clientSlug}`,
+      titleNoun: "partner candidate",
+      detailSuffix: "Open the Affiliates view.",
+    };
+    await emitSignal({
+      source: copy.source,
+      kind: "new-affiliates",
+      severity: "notice",
+      clientSlug,
+      title: `${result.inserted} new ${copy.titleNoun}${result.inserted === 1 ? "" : "s"}`,
+      detail: `Scanned ${result.scanned} businesses, ${result.duplicates} dupes. ${copy.detailSuffix}`,
+      target: "daily-digest",
+      metadata: {
+        inserted: result.inserted,
+        scanned: result.scanned,
+        duplicates: result.duplicates,
+      },
+    });
+  }
 
   return result;
 }
