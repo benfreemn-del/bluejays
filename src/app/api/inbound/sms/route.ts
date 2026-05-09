@@ -8,6 +8,7 @@ import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib
 import { alertOwner } from "@/lib/alerts";
 import { tryHandleReviewBlastReply } from "@/lib/review-blast";
 import { detectReply } from "@/lib/client-funnels/reply-detector";
+import { captureSocialLead, looksLikeSocialCapture } from "@/lib/social-leads";
 
 /**
  * POST /api/inbound/sms
@@ -48,6 +49,47 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Inbound SMS] Received from ${fromPhone}: "${body.substring(0, 80)}"`);
+
+    // Social-lead capture — runs FIRST and is gated to Ben's phone.
+    // When Ben texts a Facebook/X/LinkedIn URL (or pastes post text)
+    // from his own phone, we classify the post + draft a personalized
+    // opener and SMS it back to him. Same Twilio number; different
+    // intent path.
+    const ownerPhone = (process.env.OWNER_PHONE_NUMBER || "").trim();
+    const isFromOwner = ownerPhone && fromPhone === ownerPhone;
+    if (isFromOwner && looksLikeSocialCapture(body)) {
+      console.log(`[Inbound SMS] Routing to social-lead capture (from owner)`);
+      try {
+        const captured = await captureSocialLead({
+          rawBody: body,
+          capturedVia: "sms",
+        });
+        if (captured) {
+          // Reply with TwiML so Ben gets the draft directly in the
+          // same SMS thread — no separate sendSms round-trip needed.
+          const reply = [
+            `📥 ${captured.intent} · captured`,
+            captured.summary ? captured.summary.slice(0, 140) : "",
+            ``,
+            `DRAFT (copy-paste):`,
+            captured.drafted,
+            ``,
+            `→ /dashboard/social-leads`,
+          ]
+            .filter(Boolean)
+            .join("\n");
+          return twimlResponse(reply);
+        }
+        return twimlResponse(
+          "couldn't capture that one — Anthropic API or Supabase env may be off. Check /dashboard/social-leads.",
+        );
+      } catch (err) {
+        console.warn("[Inbound SMS] Social-lead capture failed:", err);
+        return twimlResponse(
+          "social-lead capture errored — saved nothing. logs in Vercel.",
+        );
+      }
+    }
 
     // Review-blast reply detection — runs BEFORE prospect lookup
     // because the sender phone is a customer-of-our-customer, not a

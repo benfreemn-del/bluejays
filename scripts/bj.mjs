@@ -235,6 +235,40 @@ const commands = {
     const j = await r.json();
     return j.digest || "(empty digest)";
   },
+
+  async "social:list"(args) {
+    const filter = args["--filter"] || "open";
+    const r = await fetch(`${BASE_URL}/api/social-leads?filter=${filter}`);
+    const j = await r.json();
+    if (!j.ok || !j.leads || j.leads.length === 0) return "no social leads";
+    return j.leads
+      .slice(0, 20)
+      .map((l) => {
+        const flag = l.status === "drafted" ? "•" : l.status === "sent" ? "→" : "✓";
+        const summary = (l.classification_summary || l.raw_text).slice(0, 80);
+        return `${flag} ${l.platform.padEnd(9)} ${(l.intent || "?").padEnd(18)} ${summary}`;
+      })
+      .join("\n");
+  },
+
+  async "social:capture"(_args, positional) {
+    const text = positional.join(" ");
+    if (!text) return "usage: bj social capture <url-or-text>";
+    const r = await fetch(`${BASE_URL}/api/social-leads`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text, capturedVia: "cli" }),
+    });
+    const j = await r.json();
+    if (!j.ok) return `error: ${j.error || "unknown"}`;
+    return [
+      `captured · intent=${j.intent}`,
+      j.summary,
+      ``,
+      `DRAFT:`,
+      j.drafted,
+    ].join("\n");
+  },
 };
 
 // ─── Arg parser (no dep) ───
@@ -272,13 +306,15 @@ async function main() {
   bj impersonate SLUG
   bj watchdog run
   bj digest preview
+  bj social list [--filter open|all]
+  bj social capture <url-or-text>
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
   }
 
   // Build subcommand key: "leads list" → "leads:list"
-  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest"];
+  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social"];
   let key, rest;
   if (groups.includes(argv[0])) {
     key = `${argv[0]}:${argv[1]}`;
