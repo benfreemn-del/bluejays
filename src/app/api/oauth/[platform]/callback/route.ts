@@ -4,6 +4,11 @@ import {
   verifyState,
   type AdPlatformOAuth,
 } from "@/lib/ad-oauth";
+import {
+  storeCalendarRefreshToken,
+  verifyCalendarState,
+  type CalendarProvider,
+} from "@/lib/calendar";
 
 /**
  * GET /api/oauth/{platform}/callback?code=...&state=...
@@ -17,7 +22,12 @@ import {
  * leak token or code in URL params back to the user.
  */
 
-const VALID_PLATFORMS = new Set<AdPlatformOAuth>(["google_ads", "meta_ads", "lob"]);
+const AD_PLATFORMS = new Set<AdPlatformOAuth>(["google_ads", "meta_ads", "lob"]);
+const CALENDAR_PROVIDERS = new Set<CalendarProvider>([
+  "google_calendar",
+  "calendly",
+  "cal_com",
+]);
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
 
@@ -26,7 +36,9 @@ export async function GET(
   { params }: { params: Promise<{ platform: string }> },
 ) {
   const { platform } = await params;
-  if (!VALID_PLATFORMS.has(platform as AdPlatformOAuth)) {
+  const isAd = AD_PLATFORMS.has(platform as AdPlatformOAuth);
+  const isCal = CALENDAR_PROVIDERS.has(platform as CalendarProvider);
+  if (!isAd && !isCal) {
     return NextResponse.json(
       { ok: false, error: "unknown platform" },
       { status: 400 },
@@ -50,8 +62,9 @@ export async function GET(
     );
   }
 
-  // Verify the signed state — prevents CSRF + carries the slug
-  const stateCheck = verifyState(state);
+  // Verify signed state — calendar uses a "cal." prefix to namespace
+  // its state vs ads OAuth state. Pick the right verifier per family.
+  const stateCheck = isCal ? verifyCalendarState(state) : verifyState(state);
   if (!stateCheck.ok) {
     return NextResponse.json(
       { ok: false, error: stateCheck.error },
@@ -146,26 +159,111 @@ export async function GET(
       return NextResponse.redirect(
         `${SITE_URL}/dashboard?ads_oauth=lob_no_oauth`,
       );
+    } else if (platform === "google_calendar") {
+      // Reuses GOOGLE_ADS_CLIENT_ID/SECRET (same Google Cloud project,
+      // different scopes — calendar.events + calendar.readonly).
+      const r = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          code,
+          client_id: process.env.GOOGLE_ADS_CLIENT_ID || "",
+          client_secret: process.env.GOOGLE_ADS_CLIENT_SECRET || "",
+          redirect_uri: `${SITE_URL}/api/oauth/google_calendar/callback`,
+          grant_type: "authorization_code",
+        }),
+      });
+      const j = (await r.json()) as {
+        refresh_token?: string;
+        scope?: string;
+        access_token?: string;
+      };
+      if (!j.refresh_token)
+        throw new Error("Google Calendar didn't return a refresh_token");
+      refreshToken = j.refresh_token;
+      scopes = (j.scope || "").split(" ").filter(Boolean);
+      // Fetch the user's email + primary calendar id
+      try {
+        const profileRes = await fetch(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          { headers: { Authorization: `Bearer ${j.access_token}` } },
+        );
+        const profile = (await profileRes.json()) as { email?: string };
+        externalAccountId = profile.email || "primary";
+        externalAccountName = profile.email || "Google Calendar";
+      } catch {
+        externalAccountId = "primary";
+      }
+    } else if (platform === "calendly") {
+      const r = await fetch("https://auth.calendly.com/oauth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          code,
+          client_id: process.env.CALENDLY_CLIENT_ID || "",
+          client_secret: process.env.CALENDLY_CLIENT_SECRET || "",
+          redirect_uri: `${SITE_URL}/api/oauth/calendly/callback`,
+          grant_type: "authorization_code",
+        }),
+      });
+      const j = (await r.json()) as {
+        refresh_token?: string;
+        access_token?: string;
+        scope?: string;
+      };
+      if (!j.refresh_token)
+        throw new Error("Calendly didn't return a refresh_token");
+      refreshToken = j.refresh_token;
+      scopes = (j.scope || "default").split(" ").filter(Boolean);
+      try {
+        const meRes = await fetch("https://api.calendly.com/users/me", {
+          headers: { Authorization: `Bearer ${j.access_token}` },
+        });
+        const me = (await meRes.json()) as {
+          resource?: { uri?: string; email?: string };
+        };
+        externalAccountId = me.resource?.uri || "pending";
+        externalAccountName = me.resource?.email || "Calendly";
+      } catch {
+        externalAccountId = "pending";
+      }
+    } else if (platform === "cal_com") {
+      return NextResponse.redirect(
+        `${SITE_URL}/dashboard?cal_oauth=cal_com_no_oauth`,
+      );
     }
 
     if (!refreshToken) {
       throw new Error("no token returned from platform");
     }
 
-    const stored = await storeRefreshToken({
-      clientSlug: slug,
-      platform: platform as AdPlatformOAuth,
-      refreshToken,
-      externalAccountId: externalAccountId || "pending",
-      externalAccountName,
-      scopes,
-    });
+    // Calendar callbacks land in the calendar-accounts table; ad
+    // callbacks in ad-accounts. Different storage, same encryption.
+    const stored = isCal
+      ? await storeCalendarRefreshToken({
+          clientSlug: slug,
+          provider: platform as CalendarProvider,
+          refreshToken,
+          externalAccountId: externalAccountId || "pending",
+          externalAccountEmail: externalAccountName,
+          scopes,
+        })
+      : await storeRefreshToken({
+          clientSlug: slug,
+          platform: platform as AdPlatformOAuth,
+          refreshToken,
+          externalAccountId: externalAccountId || "pending",
+          externalAccountName,
+          scopes,
+        });
     if (!stored.ok) {
       throw new Error(stored.error || "store failed");
     }
 
-    // Bounce back to the appropriate UI
-    const tenantPortal = `/clients/${slug}/portal?tab=ads&ads_oauth=success&platform=${platform}`;
+    // Bounce back to the appropriate UI — different tab for ads vs calendar.
+    const successTab = isCal ? "calendar" : "ads";
+    const successKey = isCal ? "cal_oauth" : "ads_oauth";
+    const tenantPortal = `/clients/${slug}/portal?tab=${successTab}&${successKey}=success&platform=${platform}`;
     return NextResponse.redirect(`${SITE_URL}${tenantPortal}`);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

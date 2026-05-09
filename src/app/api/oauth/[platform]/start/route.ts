@@ -1,27 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getAuthUrl, type AdPlatformOAuth } from "@/lib/ad-oauth";
+import {
+  getCalendarAuthUrl,
+  type CalendarProvider,
+} from "@/lib/calendar";
 
 /**
  * GET /api/oauth/{platform}/start
  *
- * Owner-portal-initiated OAuth handshake. Verifies the caller's portal
- * cookie matches their client_slug, then redirects to the platform's
- * OAuth consent screen with a signed `state` parameter carrying their
- * slug.
+ * Unified OAuth init for ad accounts AND calendar providers. Verifies
+ * the caller's portal cookie, then redirects to the right provider's
+ * OAuth consent screen with a signed `state` parameter.
  *
- * Platform = google_ads | meta_ads | lob (Lob doesn't OAuth — returns
- * a clear error pointing at LOB_API_KEY env var).
+ * Ad platforms: google_ads | meta_ads | lob (Lob = API key, not OAuth)
+ * Calendar providers: google_calendar | calendly | cal_com (Cal.com = API key)
  */
 
-const VALID_PLATFORMS = new Set<AdPlatformOAuth>(["google_ads", "meta_ads", "lob"]);
+const AD_PLATFORMS = new Set<AdPlatformOAuth>(["google_ads", "meta_ads", "lob"]);
+const CALENDAR_PROVIDERS = new Set<CalendarProvider>([
+  "google_calendar",
+  "calendly",
+  "cal_com",
+]);
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ platform: string }> },
 ) {
   const { platform } = await params;
-  if (!VALID_PLATFORMS.has(platform as AdPlatformOAuth)) {
+  const isAd = AD_PLATFORMS.has(platform as AdPlatformOAuth);
+  const isCal = CALENDAR_PROVIDERS.has(platform as CalendarProvider);
+  if (!isAd && !isCal) {
     return NextResponse.json(
       { ok: false, error: "unknown platform" },
       { status: 400 },
@@ -35,7 +45,9 @@ export async function GET(
       { status: 401 },
     );
   }
-  const result = getAuthUrl(owner.client_slug, platform as AdPlatformOAuth);
+  const result = isAd
+    ? getAuthUrl(owner.client_slug, platform as AdPlatformOAuth)
+    : getCalendarAuthUrl(owner.client_slug, platform as CalendarProvider);
   if (!result.ok) {
     return NextResponse.json({ ok: false, error: result.error }, { status: 422 });
   }

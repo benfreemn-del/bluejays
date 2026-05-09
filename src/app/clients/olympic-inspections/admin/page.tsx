@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import OitPartnerMap from "@/components/portal/OitPartnerMap";
+import CalendarSetupBanner from "@/components/portal/CalendarSetupBanner";
 
 /**
  * Olympic Inspections & Testing — owner admin dashboard.
@@ -298,6 +299,12 @@ export default function OITAdminPage() {
             Sign out
           </button>
         </div>
+      </div>
+
+      {/* Calendar onboarding nag — auto-hides once Luke has 3+ slots
+          OR a connected calendar (Google / Calendly / Cal.com). */}
+      <div style={{ padding: "16px 24px 0" }}>
+        <CalendarSetupBanner slug="olympic-inspections" />
       </div>
 
       {/* STATS STRIP */}

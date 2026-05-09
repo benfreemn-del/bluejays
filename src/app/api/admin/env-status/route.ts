@@ -179,6 +179,31 @@ export async function GET() {
       ],
     },
     {
+      group: "Calendar OAuth (calendar-availability skill)",
+      vars: [
+        {
+          key: "GOOGLE_ADS_CLIENT_ID",
+          set: has("GOOGLE_ADS_CLIENT_ID"),
+          why: "Reused for Google Calendar OAuth too — same Cloud project, calendar.events scope. Already listed under Ad-platform OAuth above.",
+        },
+        {
+          key: "CALENDLY_CLIENT_ID",
+          set: has("CALENDLY_CLIENT_ID"),
+          why: "Calendly OAuth client ID — owners on inspection-style tenants can connect their Calendly when this + secret are set.",
+        },
+        {
+          key: "CALENDLY_CLIENT_SECRET",
+          set: has("CALENDLY_CLIENT_SECRET"),
+          why: "Pair with CALENDLY_CLIENT_ID.",
+        },
+        {
+          key: "CAL_COM_API_KEY",
+          set: has("CAL_COM_API_KEY"),
+          why: "Cal.com API key — single key handles all tenants. No per-owner OAuth.",
+        },
+      ],
+    },
+    {
       group: "Misc + integrations",
       vars: [
         {

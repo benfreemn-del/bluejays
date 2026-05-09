@@ -198,9 +198,12 @@ const PUBLIC_API_PATHS = [
   "/api/clients/olympic-inspections/slots/public", // Public booking-slot list (OIT)
   "/api/clients/olympic-inspections/bookings",     // POST is public — customer creates booking; GET/PATCH check owner cookie internally
   "/api/clients/zenith-sports/camp-signup",        // Public camp-signup form (parent reserves a TEKKY camp spot)
-  "/api/oauth/google_ads/callback",                // OAuth callback (Google) — third-party redirects here, no cookie
-  "/api/oauth/meta_ads/callback",                  // OAuth callback (Meta) — third-party redirects here, no cookie
+  "/api/oauth/google_ads/callback",                // OAuth callback (Google Ads) — third-party redirects here, no cookie
+  "/api/oauth/meta_ads/callback",                  // OAuth callback (Meta Ads) — third-party redirects here, no cookie
   "/api/oauth/lob/callback",                       // OAuth callback (Lob) — reserved (Lob uses API key, not OAuth)
+  "/api/oauth/google_calendar/callback",           // OAuth callback (Google Calendar) — calendar-availability skill
+  "/api/oauth/calendly/callback",                  // OAuth callback (Calendly) — calendar-availability skill
+  "/api/oauth/cal_com/callback",                   // OAuth callback (Cal.com) — reserved (Cal.com uses API key, not OAuth)
   "/api/cut-my-agency/submit",                     // Public Hormozi calculator funnel submit (Action 2 of 2026-05-05 $10k validation play)
   "/api/sell-direct/submit",                       // Public Hormozi calculator funnel submit — manufacturer DTC angle (Action 3 of 2026-05-05 $10k validation play)
 ];

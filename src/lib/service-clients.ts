@@ -86,6 +86,16 @@ export type ServiceClientConfig = {
   smsEnabled?: boolean;
   /** Twilio number env-var name */
   twilioNumberEnvVar?: string;
+
+  /**
+   * Calendar / booking-availability surface. true = tenant gets the
+   * Calendar tab + CalendarSetupBanner + OAuth Connect for Google
+   * Calendar / Calendly / Cal.com. false = no calendar (e-commerce,
+   * curriculum-driven, etc.).
+   *
+   * See `.claude/skills/calendar-availability/SKILL.md`.
+   */
+  calendarEnabled?: boolean;
 };
 
 /* ────────────────────── REGISTRY ────────────────────── */
@@ -126,6 +136,7 @@ const OLYMPIC_INSPECTIONS: ServiceClientConfig = {
   accreditation: "ISO/IEC 17025-accredited lab",
   smsEnabled: false,
   twilioNumberEnvVar: "OIT_TWILIO_NUMBER",
+  calendarEnabled: true,
 };
 
 const ZENITH_SPORTS: ServiceClientConfig = {
@@ -184,6 +195,9 @@ const ZENITH_SPORTS: ServiceClientConfig = {
   accreditation: "US Soccer-aligned methodology",
   smsEnabled: true,
   twilioNumberEnvVar: "ZENITH_TWILIO_NUMBER",
+  // Soccer drills + camps run on a curriculum, not 1:1 scheduling.
+  // Camp signups use client_camps (event catalog), not booking slots.
+  calendarEnabled: false,
 };
 
 const REGISTRY: Record<string, ServiceClientConfig> = {
