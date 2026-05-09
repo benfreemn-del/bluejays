@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
+import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
@@ -319,6 +320,12 @@ export default function DashboardPage() {
                 All non-Leads panels collapse here per Q3=A. */}
             {tab === "overview" && (
               <>
+                {/* Madie productivity tile — answers "are we on pace
+                    for 100 calls / 3 meetings today?" Per dashboard
+                    review 2026-05-08 #1: the #1 missing surface in
+                    the system. Pinned at the top of Overview because
+                    sales velocity gates the 10×$10k/month goal. */}
+                <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
                 <BusinessSetupChecklist />
                 <PaymentLinksPanel />
                 <PendingRepliesPanel />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Prospect } from "@/lib/types";
+import MadieProductivity from "@/components/dashboard/MadieProductivity";
 
 /**
  * LeadPicker — fallback view rendered on /dashboard/script when no
@@ -380,6 +381,15 @@ export default function LeadPicker() {
           </div>
         </div>
       </header>
+
+      {/* Madie productivity strip — persistent pace tracker.
+          Per dashboard review 2026-05-08 #1: the #1 missing surface
+          in the system. Madie sees her own pace as she dials so the
+          100-calls / 3-meetings target is always visible. Auto-
+          refreshes every 60 seconds via /api/madie/today. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
+        <MadieProductivity mode="strip" />
+      </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
         {/* Filters — search + lead-type chips + category dropdown + sort */}
