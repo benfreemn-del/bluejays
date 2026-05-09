@@ -48,6 +48,9 @@ type CommissionStats = {
   distanceToMilestone: number | null;
   closesNeededWebsite: number | null;
   closesNeededAiSystem: number | null;
+  rates: { website: number; ai_system: number };
+  tier: "setter" | "closer";
+  currentLap: number;
 };
 
 type Level = {
@@ -142,15 +145,16 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Land 1 full week of 100/3 cadence — 500 calls + 15 meetings minimum.",
       skill: "Voice on the phone · objection handling · pace under pressure",
-      commission: "Foundation tier — every close from here on is YOURS",
+      commission: "🎯 Setter tier · $200/website · $1,000/AI System per close",
       status:
         currentLevel > 1
           ? "completed"
           : currentLevel === 1
             ? "current"
             : "locked",
-      ctaLabel: "Start dialing →",
-      ctaHref: "/dashboard/script",
+      // No CTA — this card renders inside /dashboard/script itself,
+      // so a "Start dialing →" button pointing back to the page she's
+      // already on was a no-op and confusing. Removed 2026-05-08.
     },
     {
       n: 2,
@@ -160,7 +164,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Generate 100 V2 previews + send 50 cold-pitch links from the portfolio library.",
       skill: "Speed + scale · category-matched personalization",
-      commission: "Multiplies your pipeline 5-10×",
+      commission: "🎯 Still Setter tier · $200/website · $1,000/AI System · multiplies your pipeline 5-10×",
       status:
         currentLevel > 2
           ? "completed"
@@ -178,7 +182,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Build 3 bespoke mock showcases for warm leads (ship a /clients/<their-slug> page in <1 hr).",
       skill: "Trust through customization · the moment 'maybe' becomes 'yes'",
-      commission: "Unlocks $400 commissions on $997 closes",
+      commission: "🎯 Setter tier · close-rate jumps because warm prospects say yes faster · same $200/$1k rates apply but you're closing 3-5× more",
       status:
         currentLevel > 3
           ? "completed"
@@ -194,7 +198,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Demo the mock-backend pattern (Meyer-style /portal-demo) to 5 qualified $10k prospects.",
       skill: "Deploy the mock backend · password-gate it · run the live walkthrough",
-      commission: "Sets up the $9,700 close motion",
+      commission: "🎯 Setter tier · sets up the $9,700 close motion · every $1,000 setter commission lands here",
       status:
         currentLevel > 4
           ? "completed"
@@ -210,7 +214,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Customize 3 mock backends with prospect-specific data DURING a close meeting.",
       skill: "Real-time confidence · the demo that closes itself",
-      commission: "Unlocks $2,000 commissions on $9,700 closes",
+      commission: "🚀 CLOSER tier unlocks · rates DOUBLE · $400/website · $2,000/AI System per close",
       status:
         currentLevel > 5
           ? "completed"
@@ -223,9 +227,9 @@ export default function MadieRaceTrack() {
       emoji: "💰",
       title: "Closer",
       subtitle: "Cash in the bank · streaks · leaderboard top",
-      unlockCriterion: "First paid close. Then the second. Then the streak.",
-      skill: "$400 per $997 website · $2,000 per AI System ($9,700+)",
-      commission: "10 closes/month at $10k tier = $20k/mo for you",
+      unlockCriterion: "First paid close YOU ran end-to-end. Then the second. Then the streak.",
+      skill: "$400 per $997 website · $2,000 per AI System ($9,700+) — top tier",
+      commission: "💎 10 closes/month at $10k tier = $20k/mo for you · the prize",
       status:
         currentLevel >= 6
           ? "current"
@@ -470,6 +474,8 @@ function CommissionTicker({ commission }: { commission: CommissionStats }) {
   const goalPct = commission.monthGoalPct;
   const next = commission.nextMilestone;
   const gap = commission.distanceToMilestone;
+  const tierLabel = commission.tier === "closer" ? "Closer tier" : "Setter tier";
+  const tierIcon = commission.tier === "closer" ? "💎" : "🎯";
 
   return (
     <div className="rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/[0.10] via-lime-500/[0.06] to-emerald-500/[0.04] p-4 sm:p-5 mb-5 relative overflow-hidden">
@@ -484,8 +490,11 @@ function CommissionTicker({ commission }: { commission: CommissionStats }) {
       />
       <div className="relative flex items-baseline justify-between gap-3 flex-wrap">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-emerald-300 mb-1">
-            💰 Earned this month
+          <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-emerald-300 mb-1 flex items-center gap-2">
+            <span>💰 Earned this month</span>
+            <span className="text-[9px] font-bold rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-100 px-2 py-0.5 normal-case tracking-wide">
+              {tierIcon} {tierLabel} · ${commission.rates.website}/website · ${commission.rates.ai_system}/AI System
+            </span>
           </p>
           <p className="text-4xl sm:text-5xl font-black text-white tabular-nums leading-none">
             ${monthUsd.toLocaleString()}
@@ -768,14 +777,16 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
   const callsToday = stats?.callsToday ?? 0;
   const meetingsToday = stats?.meetingsToday ?? 0;
 
+  // CTAs that pointed back at /dashboard/script have been removed —
+  // this race-track renders INSIDE /dashboard/script itself, so those
+  // buttons were no-ops. Remaining CTAs point to genuinely-different
+  // pages (Portfolio Library, Win-Loss) only.
   if (level === 1) {
     if (callsToday < 25) {
       return {
         headline: "Get to 25 calls before lunch.",
         detail:
-          "First quarter of the day sets the tone. Open the Sales Portal, hit Start, dial. The script is right there — nothing to think about.",
-        ctaLabel: "Open Sales Portal",
-        ctaHref: "/dashboard/script",
+          "First quarter of the day sets the tone. The script is right there — nothing to think about. Just dial.",
       };
     }
     if (callsToday < 100) {
@@ -783,15 +794,13 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
         headline: `${100 - callsToday} more dials to hit 100.`,
         detail:
           "You're in the zone. Keep dialing. Every call is a lap closer to Lap 2.",
-        ctaLabel: "Keep going",
-        ctaHref: "/dashboard/script",
       };
     }
     if (meetingsToday < 3) {
       return {
         headline: `${3 - meetingsToday} more meetings to hit today's quota.`,
         detail:
-          "100 calls done — now convert. Open the Win-Loss banner above; check this week's top objection, weave the suggested tweak into your next pitch.",
+          "100 calls done — now convert. Check the Win-Loss banner; weave this week's top objection-tweak into your next pitch.",
         ctaLabel: "Run pitch review",
         ctaHref: "/dashboard/win-loss",
       };
@@ -800,8 +809,6 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
       headline: "🔥 Daily quota crushed. Keep the streak.",
       detail:
         "100/3 done. Every extra call right now is bonus. Aim for one more meeting before EOD — that's the streak Lap 2 is built on.",
-      ctaLabel: "Bonus dials",
-      ctaHref: "/dashboard/script",
     };
   }
 
@@ -817,8 +824,6 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
 
   return {
     headline: "Keep showing up. The race rewards consistency.",
-    detail: "Open the Sales Portal and pick up where you left off.",
-    ctaLabel: "Sales Portal",
-    ctaHref: "/dashboard/script",
+    detail: "Pick up where you left off.",
   };
 }

@@ -9,6 +9,9 @@ import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
+import MadieTodoList from "@/components/dashboard/MadieTodoList";
+import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
+import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
@@ -335,13 +338,25 @@ export default function DashboardPage() {
           <>
             {/* ──────────────── OVERVIEW TAB ────────────────
                 All non-Leads panels collapse here per Q3=A. */}
-            {tab === "overview" && (
+            {tab === "overview" && role === "sales" && (
+              // ─── MADIE'S OVERVIEW (custom, NOT the same as Ben's) ───
+              // Per Ben spec 2026-05-08: Madie was seeing the same overview
+              // as the owner — BusinessSetupChecklist (BlueJays tax/legal),
+              // PaymentLinksPanel, PendingRepliesPanel, etc. None of that
+              // is her job. Her overview is HER stuff: today's velocity,
+              // her editable to-do list, her race-track progression, and
+              // the win-loss banner so she sees this week's top objection.
               <>
-                {/* Madie productivity tile — answers "are we on pace
-                    for 100 calls / 3 meetings today?" Per dashboard
-                    review 2026-05-08 #1: the #1 missing surface in
-                    the system. Pinned at the top of Overview because
-                    sales velocity gates the 10×$10k/month goal. */}
+                <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
+                <MadieTodoList />
+                <WinLossSalesBanner />
+                <MadieRaceTrack />
+              </>
+            )}
+
+            {tab === "overview" && role !== "sales" && (
+              // ─── BEN'S OVERVIEW (owner) ───
+              <>
                 <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
                 <BusinessSetupChecklist />
                 <PaymentLinksPanel />

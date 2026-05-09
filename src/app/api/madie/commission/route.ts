@@ -5,25 +5,44 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  * GET /api/madie/commission
  *
  * Madie's commission ledger for the current month. Per Ben's spec
- * locked 2026-05-08:
- *   - $400 per website close (pricing_tier in 'standard' | 'custom' | 'free')
- *   - $2,000 per AI System close (pricing_tier = 'fullsystem')
+ * locked 2026-05-08 (revised after Q4 quiz answer):
  *
- * Source: prospects table — every row with status='paid' OR paid_at
- * set during the current calendar month gets credited. Until a
- * dedicated multi-rep partner-attribution flow ships, Madie is
- * implicitly the sole salesperson — every close is hers. When a
- * second rep joins, this endpoint adds a partner_id filter.
+ *   Setter tier (Lap 1-4 — she sets meetings, Ben closes):
+ *     - $200 per website close (pricing_tier in standard / custom / free)
+ *     - $1,000 per AI System close (pricing_tier = fullsystem)
  *
- * Milestones (the "next $X away" chip): $1k → $5k → $10k → $20k →
- * $50k. The hero stat shows current month earnings + the gap to the
- * next milestone.
+ *   Closer tier (Lap 5-6 — she's running the close herself):
+ *     - $400 per website close
+ *     - $2,000 per AI System close
+ *
+ * Rate at TIME of close = rate at her current lap. Defensible:
+ * earlier closes credited at older rates would require capturing
+ * lap-at-time-of-close per record, which we don't yet have. For
+ * the v1 commission ledger we use her CURRENT lap rate uniformly.
+ *
+ * Source: prospects table — every row with status='paid' AND
+ * paid_at set during the current calendar month gets credited.
+ * Madie's current lap is read from app_settings.madie_current_lap
+ * (the same override the race-track UI uses).
+ *
+ * Milestones (the "next $X away" chip): $1k → $2.5k → $5k → $10k →
+ * $20k → $50k → $100k. The hero stat shows current month earnings +
+ * the gap to the next milestone.
  */
 
-const COMMISSION_RATES = {
-  website: 400, // $997 / $100/yr / $30 tiers
-  ai_system: 2000, // $9,700+ tier
+const SETTER_RATES = {
+  website: 200, // Lap 1-4
+  ai_system: 1000,
 } as const;
+
+const CLOSER_RATES = {
+  website: 400, // Lap 5-6
+  ai_system: 2000,
+} as const;
+
+function ratesForLap(lap: number): { website: number; ai_system: number } {
+  return lap >= 5 ? CLOSER_RATES : SETTER_RATES;
+}
 
 const MILESTONES = [1000, 2500, 5000, 10000, 20000, 50000, 100000] as const;
 
@@ -54,6 +73,22 @@ export async function GET(_request: NextRequest) {
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
     );
     const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+
+    // Read Madie's current lap from app_settings — same source the
+    // race-track UI uses. Defaults to lap 1 if no override and no
+    // table row.
+    const { data: lapRow } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "madie_current_lap")
+      .maybeSingle();
+    const lapValue =
+      lapRow?.value && typeof lapRow.value === "object" && "lap" in lapRow.value
+        ? Number((lapRow.value as { lap: number }).lap)
+        : 1;
+    const currentLap = Number.isFinite(lapValue) ? Math.max(1, Math.min(6, lapValue)) : 1;
+    const rates = ratesForLap(currentLap);
+    const tier: "setter" | "closer" = currentLap >= 5 ? "closer" : "setter";
 
     // Pull recent paid prospects — small dataset, easy to aggregate in
     // memory. The status='paid' filter does the heavy lifting.
@@ -93,10 +128,10 @@ export async function GET(_request: NextRequest) {
       let commissionUsd = 0;
       let bucket: "website" | "ai_system" | "other" = "other";
       if (isAiSystemTier(r.pricing_tier)) {
-        commissionUsd = COMMISSION_RATES.ai_system;
+        commissionUsd = rates.ai_system;
         bucket = "ai_system";
       } else if (isWebsiteTier(r.pricing_tier)) {
-        commissionUsd = COMMISSION_RATES.website;
+        commissionUsd = rates.website;
         bucket = "website";
       }
 
@@ -128,11 +163,11 @@ export async function GET(_request: NextRequest) {
     const closesNeededWebsite =
       distanceToMilestone == null
         ? null
-        : Math.ceil(distanceToMilestone / COMMISSION_RATES.website);
+        : Math.ceil(distanceToMilestone / rates.website);
     const closesNeededAiSystem =
       distanceToMilestone == null
         ? null
-        : Math.ceil(distanceToMilestone / COMMISSION_RATES.ai_system);
+        : Math.ceil(distanceToMilestone / rates.ai_system);
 
     // Annualized goal: 10 × $10k closes/month × 12 months = $240k pool
     // → at $2k/close commission, that's $20k/mo for Madie. Surface as
@@ -155,7 +190,9 @@ export async function GET(_request: NextRequest) {
       distanceToMilestone,
       closesNeededWebsite,
       closesNeededAiSystem,
-      rates: COMMISSION_RATES,
+      rates,
+      tier,
+      currentLap,
       recent,
       asOf: new Date().toISOString(),
     });
@@ -176,9 +213,11 @@ function emptyResponse() {
     lifetimeCloses: 0,
     nextMilestone: 1000 as number | null,
     distanceToMilestone: 1000 as number | null,
-    closesNeededWebsite: 3 as number | null,
+    closesNeededWebsite: 5 as number | null,
     closesNeededAiSystem: 1 as number | null,
-    rates: COMMISSION_RATES,
+    rates: SETTER_RATES,
+    tier: "setter" as "setter" | "closer",
+    currentLap: 1,
     recent: [] as Array<{
       id: string;
       businessName: string;
