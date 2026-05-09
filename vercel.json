@@ -123,6 +123,10 @@
     {
       "path": "/api/cron/sports-partner-scout",
       "schedule": "0 14 * * 2"
+    },
+    {
+      "path": "/api/client-tasks/check-reminders",
+      "schedule": "*/15 * * * *"
     }
   ],
   "functions": {

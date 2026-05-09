@@ -199,13 +199,45 @@ export async function listAllTasks(opts: {
   return (data ?? []) as ClientTask[];
 }
 
-export async function listClientsWithTasks(): Promise<
-  { client_slug: string; open_count: number; done_count: number }[]
-> {
-  const { data, error } = await getSupabase()
-    .from("client_tasks")
-    .select("client_slug, status");
-  if (error) throw new Error(`listClientsWithTasks: ${error.message}`);
+export type ClientJobMeta = {
+  client_slug: string;
+  snoozed: boolean;
+  snooze_reason: string | null;
+  snooze_until: string | null;
+  snooze_set_at: string | null;
+  snooze_notified_at: string | null;
+  snooze_notes: string | null;
+  notes: string | null;
+  updated_at: string;
+  updated_by: string | null;
+};
+
+export type ClientJobSummary = {
+  client_slug: string;
+  open_count: number;
+  done_count: number;
+  // Snooze metadata — null/false when no client_jobs_meta row exists
+  snoozed: boolean;
+  snooze_reason: string | null;
+  snooze_until: string | null;
+  snooze_notes: string | null;
+};
+
+export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
+  const sb = getSupabase();
+  const [tasksRes, metaRes] = await Promise.all([
+    sb.from("client_tasks").select("client_slug, status"),
+    // Best-effort meta read — table may not exist yet on a fresh deploy
+    sb
+      .from("client_jobs_meta")
+      .select("client_slug, snoozed, snooze_reason, snooze_until, snooze_notes")
+      .then(
+        (r) => r,
+        () => ({ data: [] as Array<Pick<ClientJobMeta, "client_slug" | "snoozed" | "snooze_reason" | "snooze_until" | "snooze_notes">>, error: null }),
+      ),
+  ]);
+
+  if (tasksRes.error) throw new Error(`listClientsWithTasks: ${tasksRes.error.message}`);
 
   // Track BOTH open and done counts per client so the dashboard can
   // surface a "✅ all done" state for fully-completed jobs (e.g.
@@ -214,7 +246,7 @@ export async function listClientsWithTasks(): Promise<
   // the bottom with a green checkmark.
   const open = new Map<string, number>();
   const done = new Map<string, number>();
-  for (const row of (data ?? []) as Pick<ClientTask, "client_slug" | "status">[]) {
+  for (const row of (tasksRes.data ?? []) as Pick<ClientTask, "client_slug" | "status">[]) {
     if (row.status === "done" || row.status === "wont-do") {
       done.set(row.client_slug, (done.get(row.client_slug) ?? 0) + 1);
     } else {
@@ -222,19 +254,136 @@ export async function listClientsWithTasks(): Promise<
     }
   }
 
-  const slugs = new Set([...open.keys(), ...done.keys()]);
+  // Snooze metadata, keyed by client_slug. Falls back gracefully if
+  // the table query failed (e.g. migration not yet applied).
+  const metaBySlug = new Map<string, Pick<ClientJobMeta, "snoozed" | "snooze_reason" | "snooze_until" | "snooze_notes">>();
+  if (metaRes && !metaRes.error && Array.isArray(metaRes.data)) {
+    for (const row of metaRes.data) {
+      metaBySlug.set(row.client_slug, {
+        snoozed: row.snoozed ?? false,
+        snooze_reason: row.snooze_reason ?? null,
+        snooze_until: row.snooze_until ?? null,
+        snooze_notes: row.snooze_notes ?? null,
+      });
+    }
+  }
+
+  const slugs = new Set([...open.keys(), ...done.keys(), ...metaBySlug.keys()]);
   return Array.from(slugs)
-    .map((client_slug) => ({
-      client_slug,
-      open_count: open.get(client_slug) ?? 0,
-      done_count: done.get(client_slug) ?? 0,
-    }))
+    .map((client_slug) => {
+      const meta = metaBySlug.get(client_slug);
+      return {
+        client_slug,
+        open_count: open.get(client_slug) ?? 0,
+        done_count: done.get(client_slug) ?? 0,
+        snoozed: meta?.snoozed ?? false,
+        snooze_reason: meta?.snooze_reason ?? null,
+        snooze_until: meta?.snooze_until ?? null,
+        snooze_notes: meta?.snooze_notes ?? null,
+      };
+    })
     .sort((a, b) => {
       // Open work first (highest count → top), then fully-done
-      // clients alphabetically at the bottom.
-      if (a.open_count > 0 && b.open_count === 0) return -1;
-      if (a.open_count === 0 && b.open_count > 0) return 1;
+      // clients alphabetically at the bottom. Snoozed rows sink
+      // below open work but above fully-done — they're parked,
+      // but Ben still wants to see them.
+      const aActive = a.open_count > 0 && !a.snoozed;
+      const bActive = b.open_count > 0 && !b.snoozed;
+      if (aActive && !bActive) return -1;
+      if (!aActive && bActive) return 1;
       if (a.open_count !== b.open_count) return b.open_count - a.open_count;
       return a.client_slug.localeCompare(b.client_slug);
     });
+}
+
+/**
+ * Bulk-complete every open task for one client. Used by the
+ * "Mark all done" button on /dashboard/clients. Returns the count
+ * of rows updated.
+ */
+export async function completeAllTasksForClient(clientSlug: string): Promise<number> {
+  const { data, error } = await getSupabase()
+    .from("client_tasks")
+    .update({
+      status: "done",
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("client_slug", clientSlug)
+    .not("status", "in", "(done,wont-do)")
+    .select("id");
+  if (error) throw new Error(`completeAllTasksForClient: ${error.message}`);
+  return (data ?? []).length;
+}
+
+/**
+ * Set or clear the snooze flag on a client_jobs_meta row. Called by
+ * the snooze toggle on /dashboard/clients. When `snoozeUntil` is
+ * provided, sets snoozed=true + writes the reminder timestamp.
+ * When null/undefined, clears the snooze.
+ */
+export async function setClientSnooze(
+  clientSlug: string,
+  opts: {
+    snoozeUntil?: string | null;
+    reason?: string | null;
+    notes?: string | null;
+  },
+): Promise<ClientJobMeta> {
+  const sb = getSupabase();
+  const now = new Date().toISOString();
+  const willSnooze = opts.snoozeUntil != null;
+
+  const row = {
+    client_slug: clientSlug,
+    snoozed: willSnooze,
+    snooze_reason: willSnooze ? opts.reason ?? "manual" : null,
+    snooze_until: willSnooze ? opts.snoozeUntil ?? null : null,
+    snooze_set_at: willSnooze ? now : null,
+    // Reset notified_at when re-snoozing so the next reminder fires
+    snooze_notified_at: null,
+    snooze_notes: opts.notes ?? null,
+    updated_at: now,
+  };
+
+  const { data, error } = await sb
+    .from("client_jobs_meta")
+    .upsert(row, { onConflict: "client_slug" })
+    .select("*")
+    .single();
+  if (error) throw new Error(`setClientSnooze: ${error.message}`);
+  return data as ClientJobMeta;
+}
+
+/**
+ * Find every client_jobs_meta row whose snooze_until <= now and
+ * whose snooze_notified_at IS NULL — used by the daily reminder
+ * cron to fire SMS+email follow-up nudges.
+ */
+export async function listDueSnoozeReminders(): Promise<ClientJobMeta[]> {
+  const sb = getSupabase();
+  const now = new Date().toISOString();
+  const { data, error } = await sb
+    .from("client_jobs_meta")
+    .select("*")
+    .eq("snoozed", true)
+    .lte("snooze_until", now)
+    .is("snooze_notified_at", null);
+  if (error) throw new Error(`listDueSnoozeReminders: ${error.message}`);
+  return (data ?? []) as ClientJobMeta[];
+}
+
+/**
+ * Mark a snooze reminder as fired (idempotency for the cron).
+ */
+export async function markSnoozeNotified(clientSlug: string): Promise<void> {
+  const sb = getSupabase();
+  const { error } = await sb
+    .from("client_jobs_meta")
+    .update({
+      snooze_notified_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("client_slug", clientSlug);
+  if (error) throw new Error(`markSnoozeNotified: ${error.message}`);
 }
