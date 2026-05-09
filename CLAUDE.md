@@ -11,6 +11,13 @@
 > - `docs/ops/` — operational audits (domain, billing, 2FA recovery).
 > - `.claude/commands/` — repeatable workflows as slash commands.
 
+## Available CLIs (prefer over reading dashboard pages)
+
+**Architecture rule: CLI > API > MCP** for any agent-consumed integration. CLIs return ~200 tokens of clean text per call; MCPs eat tokens loading tool descriptions every session even when unused. See `.claude/commands/build-cli.md` for the why + how to add new ones.
+
+- **`node scripts/bj.mjs <subcommand>`** — BlueJays admin CLI. Wraps the most-used admin ops (`leads list`, `clients`, `tasks list`, `costs ledger`, `costs add`, `signals tail`, `signals emit`, `impersonate`, `watchdog run`, `digest preview`). Run `node scripts/bj.mjs help` for full usage. Set `BJ_BASE_URL=https://bluejayportfolio.com` to hit prod instead of localhost.
+- Reads `.env.local` automatically for Supabase credentials. Output is line-per-record human-readable text — paste it into context cheaply, don't fetch the same data via the dashboard pages.
+
 ## To-Do Scoping Rules (NON-NEGOTIABLE)
 
 The to-do system has THREE distinct surfaces. Don't mix them. When
