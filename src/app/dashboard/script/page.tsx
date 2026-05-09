@@ -149,7 +149,9 @@ export default async function DashboardScriptPage({
     url:
       prospect.currentWebsite ||
       `${prospect.businessName}'s website`,
-    partnerFirstName: mode === "partner" ? "the caller" : callerName,
+    // Caller's first name (used by script merge tags). Drives the
+    // "this is X calling" intro line. Always the logged-in user.
+    partnerFirstName: callerName,
     previewUrl,
     auditUrl,
     scheduleUrl,
@@ -311,14 +313,15 @@ export default async function DashboardScriptPage({
         doneHref: "/dashboard",
       }}
       partner={{
-        id:
-          mode === "partner"
-            ? "partner-setter"
-            : role === "sales"
-              ? "madie-admin"
-              : "ben-admin",
-        name: mode === "partner" ? "the caller" : callerName,
-        code: mode === "partner" ? "partner" : callerCode,
+        // Identity is driven by ROLE (cookie), not by the mode flag.
+        // mode controls which SCRIPT flavor renders (Hormozi vs the
+        // partner/setter script) but the caller identity that
+        // attaches to merge tags + booking ?ref= is always the
+        // logged-in person. Madie ⇒ 'madie' / 'Madie', Ben ⇒ 'ben'
+        // / 'Ben'. Generic "the caller" is removed.
+        id: role === "sales" ? "madie-admin" : "ben-admin",
+        name: callerName,
+        code: callerCode,
         agreementAccepted: true,
       }}
       prospect={{

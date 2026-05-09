@@ -261,6 +261,13 @@ export default function LeadPicker() {
       // until we wire actual partner_calls history into the prospect list.
       if (filter === "called-recently" && !s.includes("contact")) return false;
       if (filter === "no-calls" && (s.includes("contact") || s.includes("interest"))) return false;
+      // Inbound leads are warm — they came IN to Ben via the audit /
+      // get-started form. Those are Ben's to close personally; Madie's
+      // queue is cold-dial-only. Hide every inbound prospect from her
+      // picker entirely (she can't filter them in or accidentally see
+      // them in 'all').
+      if (role === "sales" && p.source === "inbound") return false;
+
       // Source-based + tier-based filters (the caller 2026-05-06):
       if (filter === "inbound" && p.source !== "inbound") return false;
       if (filter === "cold" && p.source !== "scouted") return false;
@@ -467,16 +474,20 @@ export default function LeadPicker() {
               with "the pink rows". */}
           <div className="flex gap-1 flex-wrap">
             {(
-              [
+              ([
                 { id: "all", label: "All", color: "violet" },
-                { id: "inbound", label: "Inbound", color: "amber" },
+                // Inbound chip hidden for sales role — Madie's queue is
+                // cold-only by policy (Ben closes warm inbounds himself).
+                ...(role === "sales"
+                  ? []
+                  : [{ id: "inbound", label: "Inbound", color: "amber" }]),
                 { id: "cold", label: "Cold scout", color: "slate" },
                 { id: "mfg", label: "MFG", color: "pink" },
                 { id: "fullsystem", label: "Agency $10K", color: "purple" },
                 { id: "no-calls", label: "Not contacted", color: "slate" },
                 { id: "called-recently", label: "Recently called", color: "slate" },
                 { id: "interested", label: "Interested", color: "emerald" },
-              ] as { id: typeof filter; label: string; color: string }[]
+              ]) as { id: typeof filter; label: string; color: string }[]
             ).map((f) => {
               const active = filter === f.id;
               const colorMap: Record<string, string> = {
