@@ -44,7 +44,14 @@ const CATEGORIES = [
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
-export default function AuditForm() {
+export default function AuditForm({
+  variant,
+}: {
+  /** Hero variant from middleware-set bj_audit_variant cookie. Tagged
+   *  on the audit_lead conversion event so per-variant performance
+   *  splits cleanly in Meta + Google Ads attribution. */
+  variant?: "A" | "B" | "C";
+} = {}) {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -78,7 +85,14 @@ export default function AuditForm() {
           // msclkid, ttclid, referrer). Survives internal navigation +
           // 30-day return visits. parseUtmFromQuery is the legacy live-URL
           // fallback in case localStorage is disabled.
-          utm: { ...parseUtmFromQuery(), ...getAttributionForSubmit() },
+          utm: {
+            ...parseUtmFromQuery(),
+            ...getAttributionForSubmit(),
+            // Hero variant — included in UTM bag so the dashboard can
+            // split per-variant performance even if the ad UTM didn't
+            // carry it (returning visitor with cookie set).
+            audit_variant: variant ?? "A",
+          },
           // Forward partner-referral cookie value so the server can
           // attribute this prospect to a partner (90-day window). Read
           // from `bj_partner_ref` cookie set by PartnerRefCapture.
@@ -117,6 +131,10 @@ export default function AuditForm() {
           w.gtag("event", "audit_lead", {
             event_category: "lead_magnet",
             event_label: businessCategory,
+            // Per the May 2026 cold-traffic A/B test — tags the
+            // conversion with the hero variant so Google Ads + GA4
+            // can split per-hook performance.
+            audit_variant: variant ?? "A",
           });
         } catch {
           // Never let analytics break user flow

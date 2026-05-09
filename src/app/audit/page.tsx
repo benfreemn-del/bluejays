@@ -1,11 +1,70 @@
 import type { Metadata } from "next";
 import type React from "react";
 import Image from "next/image";
+import { cookies } from "next/headers";
 import AuditForm from "./AuditForm";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
 import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
+
+/**
+ * Hero variant copy — A/B/C cold-traffic test locked 2026-05-08.
+ * Variant assigned by middleware (sticky cookie). URL override
+ * `?v=A|B|C` for manual testing. See docs/templates/cold-traffic-ad-creatives.md
+ * for the matching ad copy + UTM mapping.
+ */
+type AuditVariant = "A" | "B" | "C";
+
+const HERO_VARIANTS: Record<
+  AuditVariant,
+  {
+    eyebrow: string;
+    h1Top: string;
+    h1Bottom: string;
+    sub: React.ReactNode;
+  }
+> = {
+  A: {
+    eyebrow: "Free — no credit card, no signup",
+    h1Top: "Why isn't your site",
+    h1Bottom: "booking jobs?",
+    sub: (
+      <>
+        We score your site 0–100 and show you the{" "}
+        <span className="font-semibold text-white">3 fixes worth real money</span>
+        {" "}— for free, in about 60 seconds. What&apos;s costing you customers?
+        Find out before your competitor does.
+      </>
+    ),
+  },
+  B: {
+    eyebrow: "Free 60-second diagnostic",
+    h1Top: "If 500 new clients showed up",
+    h1Bottom: "tomorrow — what would break?",
+    sub: (
+      <>
+        The honest answer is the{" "}
+        <span className="font-semibold text-white">bottleneck costing you money right now</span>.
+        We score the 5 most common money-leaks every local business has — speed-to-lead,
+        missed calls, no follow-up, dead CRM, no reporting. Free, 60 seconds, no signup.
+      </>
+    ),
+  },
+  C: {
+    eyebrow: "Free — no credit card, no signup",
+    h1Top: "5 reasons your Google Ads",
+    h1Bottom: "aren't converting",
+    sub: (
+      <>
+        Speed-to-lead. Missed calls. No follow-up. Dead CRM. No reporting.
+        We score the{" "}
+        <span className="font-semibold text-white">5 leaks every local business has</span>
+        {" "}— free, in 60 seconds. The fix that actually moves your CAC, ranked.
+      </>
+    ),
+  },
+};
 
 /**
  * /audit — Hormozi salty-pretzel lead-magnet landing page.
@@ -41,7 +100,14 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function AuditLandingPage() {
+export default async function AuditLandingPage() {
+  // Read the variant cookie set by middleware. Falls back to A
+  // (control) if anything is off — never crashes the page.
+  const cookieStore = await cookies();
+  const rawVariant = cookieStore.get("bj_audit_variant")?.value || "A";
+  const variant: AuditVariant =
+    rawVariant === "B" || rawVariant === "C" ? rawVariant : "A";
+  const hero = HERO_VARIANTS[variant];
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       {/* Structured data — helps Google show /audit as a free-tool
@@ -73,24 +139,24 @@ export default function AuditLandingPage() {
         <div className="mx-auto max-w-4xl px-6 pt-12 pb-8 md:pt-20 md:pb-12 text-center">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sky-300">
             <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
-            Free — no credit card, no signup
+            {hero.eyebrow}
           </p>
           <div className="mb-4">
             <SocialProofCounter />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Why isn&apos;t your site
+            {hero.h1Top}
             <br />
             <span className="bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">
-              booking jobs?
+              {hero.h1Bottom}
             </span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            We score your site 0–100 and show you the <span className="font-semibold text-white">3 fixes worth real money</span> — for free, in about 60 seconds. What&apos;s costing you customers? Find out before your competitor does.
+            {hero.sub}
           </p>
 
           <div className="mt-12 max-w-xl mx-auto">
-            <AuditForm />
+            <AuditForm variant={variant} />
           </div>
 
           <p className="mt-6 text-xs text-slate-500">

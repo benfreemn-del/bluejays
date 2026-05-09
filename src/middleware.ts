@@ -103,6 +103,10 @@ const PROTECTED_PATHS = [
   "/api/qc",
   "/api/leaderboard",
   "/api/email-stats",
+  "/api/cold-traffic",
+  "/api/madie",
+  "/api/pipeline/velocity",
+  "/api/ai-activity",
   "/api/referral",
   "/api/onboarding",
   "/api/vsl/generate",
@@ -250,6 +254,37 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if this is a protected route
+  // ─── /audit cold-traffic A/B variant assignment ───
+  // Per the May 2026 cold-paid-traffic validation experiment locked
+  // 2026-05-08: visitors to /audit get assigned to one of 3 hero
+  // variants (A=control · B=Hormozi-diagnostic · C=5-clog) with
+  // sticky cookie. The variant rides server-side via request.cookies
+  // so the page renders the right hook on the FIRST paint (no flash).
+  // URL override `/audit?v=A|B|C` always wins for manual testing.
+  if (pathname === "/audit" || pathname.startsWith("/audit?")) {
+    const urlOverride = request.nextUrl.searchParams.get("v");
+    const cookieVariant = request.cookies.get("bj_audit_variant")?.value;
+    let variant = (urlOverride || cookieVariant || "").toUpperCase();
+    if (variant !== "A" && variant !== "B" && variant !== "C") {
+      // Random assignment — 33/33/33. Math.random in middleware is
+      // fine for an experiment of this scale; not a security boundary.
+      const roll = Math.floor(Math.random() * 3);
+      variant = ["A", "B", "C"][roll];
+    }
+    // Inject into request so page reads it on this render
+    request.cookies.set("bj_audit_variant", variant);
+    const response = NextResponse.next({ request });
+    // Persist for the browser
+    response.cookies.set("bj_audit_variant", variant, {
+      httpOnly: false, // page reads via cookies(), AuditForm reads via document.cookie
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+    return response;
+  }
+
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
 
