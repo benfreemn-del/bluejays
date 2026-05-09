@@ -88,8 +88,11 @@
   //     sample (required for any indoor-vs-outdoor comparison). Each
   //     additional air sample = $100.
   //   · Surface sample: $100 each (no bundled extras).
-  //   · 24-hr rush: +$150 flat.
-  //   · Thermal scan: +$95 flat.
+  //
+  // Removed 2026-05-09 (Ben spec):
+  //   · 24-hr rush — can't reliably deliver, removed from offer
+  //   · Thermal/infrared scan — included in every base inspection,
+  //     not a paid add-on. Mentioned in the Process copy instead.
   //
   // The pricing math runs in priceForSqft() + addonsTotal() so future
   // changes only edit two helpers.
@@ -138,8 +141,8 @@
       // the user sees clean $X0 numbers as they drag.
       sqft: 1500,
       customQuote: false,
-      addonChecked: { airSample: false, surfaceSample: false, rush: false, thermal: false },
-      addonQty: { airSample: 1, surfaceSample: 1, rush: 1, thermal: 1 },
+      addonChecked: { airSample: false, surfaceSample: false },
+      addonQty: { airSample: 1, surfaceSample: 1 },
     };
 
     function flash() {
@@ -178,18 +181,6 @@
         var sLabel = sQty + "× surface sample";
         breakdownParts.push(sLabel);
         summaryRows.push({ label: sLabel, price: "+" + fmtMoney(sSub) });
-      }
-
-      // Flat-fee add-ons
-      if (state.addonChecked.rush) {
-        addonTotal += 150;
-        breakdownParts.push("24-hr rush");
-        summaryRows.push({ label: "24-hr rush", price: "+$150" });
-      }
-      if (state.addonChecked.thermal) {
-        addonTotal += 95;
-        breakdownParts.push("thermal scan");
-        summaryRows.push({ label: "Thermal scan", price: "+$95" });
       }
 
       // Render total
