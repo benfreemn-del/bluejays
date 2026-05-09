@@ -502,22 +502,59 @@ function ConnectButton({
     if (busy) return;
     setBusy(true);
     setMsg(null);
+    // Map UI platform-group → OAuth platform key. "lob" + "other"
+    // map to "lob" (single API key, no OAuth).
+    const oauthPlatform =
+      platform === "google"
+        ? "google_ads"
+        : platform === "meta"
+          ? "meta_ads"
+          : platform === "lob"
+            ? "lob"
+            : null;
+    // First attempt: real OAuth. If platform's env-vars aren't
+    // provisioned the start route returns 422; we fall back to the
+    // legacy request-change path so Ben gets a task to provision.
+    if (oauthPlatform && oauthPlatform !== "lob") {
+      try {
+        const probe = await fetch(`/api/oauth/${oauthPlatform}/start`, {
+          method: "GET",
+          credentials: "include",
+          redirect: "manual",
+        });
+        // 0 = redirect (opaque in fetch redirect:manual), 200 = our
+        // own OK json, 302/303 also redirect responses
+        if (probe.type === "opaqueredirect" || probe.status === 302 || probe.status === 303) {
+          // Do the real navigation
+          window.location.href = `/api/oauth/${oauthPlatform}/start`;
+          return;
+        }
+        if (probe.status === 422) {
+          // Env vars missing — fall through to request-change
+        } else if (probe.status === 401) {
+          setMsg("Sign in first.");
+          setBusy(false);
+          return;
+        }
+      } catch {
+        // network error — fall through
+      }
+    }
+    // Fallback: request-change task (Ben provisions the OAuth app +
+    // env vars in Vercel, then re-tries the connect).
     try {
       const r = await fetch(`/api/clients/${slug}/ads/request-change`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          // Whitelisted "connect" kind — landed in request-change
-          // route 2026-05-09. Server categorizes correctly and shows
-          // the OAuth instruction in details.
           kind: "connect",
           variant_label: `connect-${platform}`,
-          details: `Owner requested to connect ${m.label} account. Initiate OAuth handshake (token storage + scopes per platform).`,
+          details: `Owner clicked Connect on ${m.label}. OAuth env vars not yet provisioned — Ben needs to register the OAuth app in the platform console + add credentials to Vercel env. See docs/playbooks/ads-oauth-setup.md`,
         }),
       });
       if (r.ok) {
-        setMsg("Request sent — Ben will email the OAuth link within 24 hrs.");
+        setMsg("OAuth not provisioned — Ben got a task to set it up. Try again after he confirms.");
       } else {
         setMsg("Couldn't send — text Ben directly.");
       }

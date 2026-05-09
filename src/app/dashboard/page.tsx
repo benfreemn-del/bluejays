@@ -15,6 +15,7 @@ import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import RoleBadge from "@/components/dashboard/RoleBadge";
 import AdsTabV2 from "@/components/portal/AdsTabV2";
+import EnvStatusPanel from "@/components/dashboard/EnvStatusPanel";
 import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
@@ -918,6 +919,11 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
     onLoadAutoScout();
   }, [onLoadAutoScout]);
 
+  // EnvStatusPanel surfaces every required env var (Twilio, SendGrid,
+  // OAuth, etc.) and shows whether each is provisioned. Mount at the
+  // very top of Settings so missing-env-var blockers are unmissable
+  // (e.g. ADMIN_PASSWORD_MADIE, OIT_TWILIO_NUMBER, GOOGLE_ADS_*).
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [envCheck, setEnvCheck] = useState<any>(null);
 
@@ -957,6 +963,11 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
 
   return (
     <div className="space-y-8">
+      {/* Env-var diagnostic — at top so missing provisioning is the
+          first thing Ben sees on Settings. Hides ✓-set vars by
+          default; click "Show all" to see everything. */}
+      <EnvStatusPanel />
+
       {/* Operational toggles */}
       <div>
         <h2 className="text-xl font-semibold text-foreground mb-4">
