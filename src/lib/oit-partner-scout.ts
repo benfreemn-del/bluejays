@@ -22,35 +22,9 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
 import { logHeartbeat } from "./cron-heartbeat";
+import { getInspectionClient } from "./inspection-clients";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
-
-// Cities anchoring the Olympic Peninsula service area — combined with
-// queries below they cover most of the affiliate population.
-const OIT_CITIES = [
-  { city: "Sequim", state: "WA", region: "Clallam" },
-  { city: "Port Angeles", state: "WA", region: "Clallam" },
-  { city: "Port Townsend", state: "WA", region: "Jefferson" },
-  { city: "Bremerton", state: "WA", region: "Kitsap" },
-  { city: "Silverdale", state: "WA", region: "Kitsap" },
-  { city: "Forks", state: "WA", region: "Clallam" },
-  { city: "Shelton", state: "WA", region: "Mason" },
-];
-
-// Each query is shaped to match what Luke would actually want to
-// outreach. Role tag determines audience targeting in his AdsTab +
-// outreach scripts.
-const QUERIES: Array<{
-  query: string;
-  role: "realtor" | "property-management" | "mold-remediation" | "water-damage" | "commercial-buyer";
-  channel: string;
-}> = [
-  { query: "real estate agency", role: "realtor", channel: "outreach" },
-  { query: "real estate broker", role: "realtor", channel: "outreach" },
-  { query: "property management company", role: "property-management", channel: "outreach" },
-  { query: "mold remediation contractor", role: "mold-remediation", channel: "refer-out" },
-  { query: "water damage restoration", role: "water-damage", channel: "refer-out" },
-];
 
 type ScoutResult = {
   scanned: number;
@@ -105,11 +79,19 @@ async function placeDetails(placeId: string): Promise<{
 }
 
 /**
- * Run the OIT partner scout. Idempotent: dedupe key is
- * (client_slug, lower(org_name), lower(city)) so re-running just adds
- * new businesses that have appeared since last run.
+ * Run the partner scout for any inspection-style client. Idempotent:
+ * dedupe key is (client_slug, lower(org_name), lower(city)) so
+ * re-running just adds new businesses that have appeared since last
+ * run. Reads cities + queries from the inspection-clients registry —
+ * a new tenant just registers their config and this scout works
+ * without code changes.
+ *
+ * Backwards-compatible default = olympic-inspections so existing cron
+ * entry doesn't change shape.
  */
-export async function runOitPartnerScout(): Promise<ScoutResult> {
+export async function runPartnerScout(
+  clientSlug: string = "olympic-inspections",
+): Promise<ScoutResult> {
   const result: ScoutResult = {
     scanned: 0,
     inserted: 0,
@@ -117,16 +99,22 @@ export async function runOitPartnerScout(): Promise<ScoutResult> {
     errors: [],
   };
 
+  const config = getInspectionClient(clientSlug);
+  if (!config) {
+    result.errors.push(`unknown_inspection_client: ${clientSlug}`);
+    return result;
+  }
+
   if (!isSupabaseConfigured()) {
     result.errors.push("supabase_not_configured");
     return result;
   }
 
-  // Pre-load existing affiliates for OIT so we can dedupe in-memory.
+  // Pre-load existing affiliates so we can dedupe in-memory.
   const { data: existing } = await supabase
     .from("client_affiliates")
     .select("org_name, city")
-    .eq("client_slug", "olympic-inspections");
+    .eq("client_slug", clientSlug);
   const existingKeys = new Set<string>(
     (existing ?? []).map(
       (r) =>
@@ -134,8 +122,8 @@ export async function runOitPartnerScout(): Promise<ScoutResult> {
     ),
   );
 
-  for (const city of OIT_CITIES) {
-    for (const q of QUERIES) {
+  for (const city of config.scoutCities) {
+    for (const q of config.scoutQueries) {
       const fullQuery = `${q.query} in ${city.city}, ${city.state}`;
       try {
         const { results, status } = await placesTextSearch(fullQuery);
@@ -166,7 +154,7 @@ export async function runOitPartnerScout(): Promise<ScoutResult> {
           const reviewScore = Math.min((place.user_ratings_total ?? 0) / 2, 50);
           const fitScore = Math.round(ratingScore + reviewScore);
           const { error } = await supabase.from("client_affiliates").insert({
-            client_slug: "olympic-inspections",
+            client_slug: clientSlug,
             org_name: place.name,
             role: q.role,
             channel: q.channel,
@@ -200,7 +188,7 @@ export async function runOitPartnerScout(): Promise<ScoutResult> {
     }
   }
 
-  await logHeartbeat("oit_partner_scout", {
+  await logHeartbeat(`partner_scout_${clientSlug.replace(/-/g, "_")}`, {
     scanned: result.scanned,
     inserted: result.inserted,
     duplicates: result.duplicates,
@@ -209,3 +197,9 @@ export async function runOitPartnerScout(): Promise<ScoutResult> {
 
   return result;
 }
+
+/**
+ * @deprecated Use runPartnerScout("olympic-inspections") instead.
+ * Kept as an alias so the cron route + any callers don't break.
+ */
+export const runOitPartnerScout = runPartnerScout;

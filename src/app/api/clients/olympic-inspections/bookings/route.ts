@@ -4,6 +4,10 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
 import { sendEmailTo, sendOwnerAlert } from "@/lib/alerts";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
+import {
+  getInspectionClient,
+  renderBookingConfirmationEmail,
+} from "@/lib/inspection-clients";
 
 /**
  * /api/clients/olympic-inspections/bookings
@@ -384,45 +388,29 @@ export async function PATCH(req: NextRequest) {
         .eq("id", id)
         .maybeSingle();
       if (row?.customer_email) {
-        const slot = (row as { slot?: { start_at?: string; end_at?: string } | null }).slot;
-        const slotTxt = slot?.start_at
-          ? new Date(slot.start_at).toLocaleString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-              timeZone: "America/Los_Angeles",
-            })
-          : "your scheduled time";
-        const lines = [
-          `Hi ${row.customer_name?.split(" ")[0] || "there"},`,
-          ``,
-          `Luke from Olympic Inspections — your inspection is confirmed for:`,
-          ``,
-          slotTxt,
-          row.customer_address ? `at ${row.customer_address}` : "",
-          ``,
-          `What to do beforehand:`,
-          `• Move stuff out of corners and closets you suspect`,
-          `• Make sure attic + crawlspace + utility room are accessible`,
-          `• Have your phone handy — I'll text on the way`,
-          ``,
-          `Reply if anything changes. See you ${slotTxt.split(",")[0] || "soon"}.`,
-          ``,
-          `— Luke`,
-          `Olympic Inspections & Testing`,
-          `olympicinspections.com`,
-        ]
-          .filter(Boolean)
-          .join("\n");
-        await sendEmailTo({
-          to: row.customer_email,
-          subject: "Your inspection is confirmed — Olympic Inspections",
-          body: lines,
-          fromName: "Luke · Olympic Inspections",
-          clientSlug: SLUG,
-        });
+        // Render via the inspection-clients registry — owner name,
+        // prep checklist, signature, phone all come from the per-
+        // tenant config so adding a new inspection biz doesn't
+        // require touching this email body.
+        const config = getInspectionClient(SLUG);
+        if (config) {
+          const slot = (
+            row as { slot?: { start_at?: string; end_at?: string } | null }
+          ).slot;
+          const { subject, body: confirmBody } = renderBookingConfirmationEmail({
+            config,
+            customerFirstName: row.customer_name?.split(" ")[0] || "there",
+            slotIso: slot?.start_at || null,
+            customerAddress: row.customer_address || null,
+          });
+          await sendEmailTo({
+            to: row.customer_email,
+            subject,
+            body: confirmBody,
+            fromName: `${config.ownerSignature.split("\n")[0]} · ${config.businessShortName}`,
+            clientSlug: SLUG,
+          });
+        }
       }
     } catch (e) {
       console.error("[oit-bookings] confirmation email failed (non-blocking):", e);
