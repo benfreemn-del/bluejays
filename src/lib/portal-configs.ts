@@ -227,10 +227,145 @@ const OIT: PortalConfig = {
   ],
 };
 
+/* ─────── Static-site / showcase tenants (audit D4 backfill) ───────
+ * The 6 active tenants below have client_owners rows but no funnel
+ * automation today — they're static-site or showcase-only. Registering
+ * them here gives the portal stack proper display names + tab-flag
+ * defaults instead of falling through to "Your site"-only generic
+ * rendering. Each: displayName, no audiences, all advanced tabs off,
+ * one or two quick links to the most useful surfaces. */
+
+const HECTOR_LANDSCAPING: PortalConfig = {
+  displayName: "Hector Landscaping",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/clients/hector-landscaping", icon: "🌐", label: "Your site" },
+  ],
+};
+
+const LEWIS_COUNTY_AUTISM: PortalConfig = {
+  displayName: "Lewis County Autism Coalition",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/sites/lcac/index.html", icon: "🌐", label: "Public site" },
+  ],
+};
+
+const MT_VIEW_LANDSCAPING: PortalConfig = {
+  displayName: "Mountain View Landscape",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/clients/mt-view-landscaping", icon: "🌐", label: "Your site" },
+  ],
+};
+
+const LASER_LAKES: PortalConfig = {
+  displayName: "Laser Lakes",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: true, // Laser Lakes is the one tenant that uses Customers tab today
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/clients/laser-lakes", icon: "🌐", label: "Your site" },
+  ],
+};
+
+const KR_RANCHES: PortalConfig = {
+  displayName: "KR Ranches",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/clients/kr-ranches", icon: "🌐", label: "Your site" },
+  ],
+};
+
+const NEVARLAND_OUTPOST: PortalConfig = {
+  displayName: "Nevarland Outpost",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+  },
+  funnels: [],
+  quickLinks: [
+    { href: "/clients/nevarland-outpost", icon: "🌐", label: "Your site" },
+    {
+      href: "https://nevarlandoutpost.com",
+      icon: "🛒",
+      label: "Shopify shop",
+    },
+  ],
+};
+
 const REGISTRY: Record<string, PortalConfig> = {
+  // AI-Package tier (full audience funnels + ads + AI skills + map)
   "zenith-sports": ZENITH,
   "itc-quick-attach": ITC,
   "olympic-inspections": OIT,
+  // Static-site / showcase tier — display name + tab-flag defaults
+  "hector-landscaping": HECTOR_LANDSCAPING,
+  "lewis-county-autism": LEWIS_COUNTY_AUTISM,
+  "mt-view-landscaping": MT_VIEW_LANDSCAPING,
+  "laser-lakes": LASER_LAKES,
+  "kr-ranches": KR_RANCHES,
+  "nevarland-outpost": NEVARLAND_OUTPOST,
 };
 
 /** Returns the per-tenant portal config, or null when the slug isn't

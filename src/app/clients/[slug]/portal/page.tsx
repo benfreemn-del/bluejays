@@ -6434,18 +6434,17 @@ function MapTab({ slug }: { slug: string }) {
 // quickLinksFor() helper is now imported from "@/lib/portal-configs"
 // at the top of this file. Adding a tenant = one config entry.
 
-// Per-slug branding overrides — small fallback table for tenants
-// not yet in portal-configs. Registered tenants flow through
-// displayNameFor() which reads PortalConfig.displayName first.
+// Per-slug branding overrides — TINY fallback table after the
+// 2026-05-09 D4 backfill. Most active tenants are now in
+// portal-configs.ts (registered slugs flow through displayNameFor →
+// PortalConfig.displayName). This table covers only edge cases:
+//   · Pre-launch slugs (ps-reiki, heale-counseling) waiting on a
+//     full PortalConfig entry once they go live
+//   · Historical slugs (pine-and-particle) that may still resolve
+//     from old links — point at the rebranded name
 const SLUG_DISPLAY_NAME_FALLBACK: Record<string, string> = {
-  "hector-landscaping": "Hector Landscaping",
   "ps-reiki": "PS Reiki",
   "heale-counseling": "Heale Counseling",
-  "lewis-county-autism": "Lewis County Autism Coalition",
-  "mt-view-landscaping": "Mountain View Landscape",
-  // Pine & Particle rebranded → Olympic Inspections & Testing 2026-05-05.
-  // Phantom slug rows cleaned up in audit B2; keep this entry so any
-  // historical route resolution still labels correctly.
   "pine-and-particle": "Olympic Inspections & Testing",
 };
 
