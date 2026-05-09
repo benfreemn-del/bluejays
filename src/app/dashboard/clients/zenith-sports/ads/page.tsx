@@ -117,6 +117,50 @@ export default function ZenithAdsPage() {
           <StatTile label="Player ads" value={String(stats.byAudience.player ?? 0)} tone="lime" />
         </div>
 
+        {/* Iteration nudges — powered by paid_ads_iteration skill.
+            Mock data for now; hydrates from real ROAS once Meta +
+            Google APIs are delegated. Same nudges show on the owner-
+            facing portal Ads tab so Ben + Caleb/Philip see the same
+            recommendations. Per AIOS principle 18 (cross-project
+            ripples) — UI mirrors the skill's 6-step decision algo. */}
+        <section className="mb-10">
+          <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+            <h2 className="text-lg font-bold text-white">
+              This week&apos;s iteration recommendations
+            </h2>
+            <span className="text-[11px] text-slate-500">
+              Powered by the <code className="text-slate-300">paid_ads_iteration</code> skill ·
+              Hormozi-aligned · refreshes Mondays
+            </span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <DashboardNudgeCard
+              icon="🚀"
+              tone="emerald"
+              title="Scale: Coach · A · Outcome-led (Meta Feed)"
+              detail="Top performer in coach audience. ROAS 7.2× · 14d · $480. Hormozi Rule 10 — when ROAS is 7+ scale until capacity caps. Recommended: increase daily budget 50%."
+            />
+            <DashboardNudgeCard
+              icon="🔁"
+              tone="amber"
+              title="Iterate: Parent · A · Outcome-14days (Meta Feed)"
+              detail="Running 14+ days unchanged at 4.3× ROAS. Hormozi Rule 2 — winners get 100 versions. Suggested permutations: B&W variant · sepia · hook swap (top 3-sec from Coach winner) · headline swap."
+            />
+            <DashboardNudgeCard
+              icon="🎯"
+              tone="sky"
+              title="Audit: Retargeting gap on YouTube + TikTok"
+              detail="Pixels installed on Meta + Google Display only. Hormozi Rule 8 — retargeting is the highest-ROAS lever in any account. Recommended: install YouTube + TikTok pixels this week."
+            />
+            <DashboardNudgeCard
+              icon="✂"
+              tone="rose"
+              title="Kill: Player · C · Driveway-daily (Meta Stories)"
+              detail="ROAS 0.4× over 21 days, $180 spend. Hormozi Rule 10 — 1× or below = cut. Hard rule: needs operator approval before push."
+            />
+          </div>
+        </section>
+
         {/* Per-audience tables */}
         {audiences.map((aud) => {
           const list = ZENITH_CREATIVES.filter((c) => c.audience === aud);
@@ -243,5 +287,41 @@ function StatTile({
       </p>
       <p className="text-2xl font-black tabular-nums mt-1">{value}</p>
     </div>
+  );
+}
+
+function DashboardNudgeCard({
+  icon,
+  title,
+  detail,
+  tone,
+}: {
+  icon: string;
+  title: string;
+  detail: string;
+  tone: "emerald" | "amber" | "sky" | "rose";
+}) {
+  const cls =
+    tone === "emerald"
+      ? "border-emerald-500/30 bg-emerald-500/[0.06]"
+      : tone === "amber"
+        ? "border-amber-500/30 bg-amber-500/[0.06]"
+        : tone === "sky"
+          ? "border-sky-500/30 bg-sky-500/[0.06]"
+          : "border-rose-500/30 bg-rose-500/[0.06]";
+  return (
+    <article className={`rounded-xl border ${cls} p-4`}>
+      <div className="flex items-start gap-3">
+        <span className="text-2xl shrink-0" aria-hidden="true">
+          {icon}
+        </span>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-white text-sm leading-tight mb-1">
+            {title}
+          </h3>
+          <p className="text-[12px] text-slate-300 leading-relaxed">{detail}</p>
+        </div>
+      </div>
+    </article>
   );
 }

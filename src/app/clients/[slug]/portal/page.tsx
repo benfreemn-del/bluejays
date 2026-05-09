@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
+import AdsTab from "@/components/portal/AdsTab";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
@@ -204,6 +205,7 @@ type Tab =
   | "partners"
   | "customers"
   | "ai-skills"
+  | "ads"
   | "account";
 
 type Campaign = {
@@ -748,6 +750,13 @@ export default function PortalPage({
               ...(slug === "itc-quick-attach" || slug === "zenith-sports"
                 ? [{ id: "ai-skills" as Tab, label: "AI Skills", emoji: "🧠" }]
                 : []),
+              // 📢 Ads tab — fullsystem-tier clients. Shipped 2026-05-08
+              // ahead of Tekky's 2026-05-09 walkthrough so owners can
+              // see + request changes on their ad creatives. Powered
+              // by paid_ads_iteration skill.
+              ...(slug === "itc-quick-attach" || slug === "zenith-sports"
+                ? [{ id: "ads" as Tab, label: "Ads", emoji: "📢" }]
+                : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -827,6 +836,10 @@ export default function PortalPage({
         {tab === "customers" && slug === "laser-lakes" && (
           <CustomersTab slug={slug} />
         )}
+        {tab === "ads" &&
+          (slug === "itc-quick-attach" || slug === "zenith-sports") && (
+            <AdsTab slug={slug} />
+          )}
         {tab === "ai-skills" &&
           (slug === "itc-quick-attach" || slug === "zenith-sports") && (
             <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
