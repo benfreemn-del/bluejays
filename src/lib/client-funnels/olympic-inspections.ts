@@ -91,7 +91,7 @@ Quick walkthrough so there are no surprises tomorrow:
 1. We start with a visual walkthrough — every floor, attic, crawlspace, basement, HVAC.
 2. Moisture meter readings on suspect walls, baseboards, behind appliances.
 3. Thermal/infrared scan if you opted for that — finds hidden water behind drywall.
-4. Air or surface samples sent to an AIHA-LAP-accredited lab if requested.
+4. Air or surface samples sent to an ISO/IEC 17025-accredited lab if requested.
 
 Total time on-site: 1-2 hours. We do NOT rush.
 
@@ -293,7 +293,7 @@ const INSURANCE: AudienceFunnel = {
 Thanks for reaching out. Insurance-related mold inspections are a daily part of our work — here's what to expect.
 
 What carriers want to see:
-• AIHA-LAP-accredited lab analysis (we use one — chain-of-custody documented)
+• ISO/IEC 17025-accredited lab analysis (we use one — chain-of-custody documented)
 • Indoor vs outdoor spore comparison (so the carrier can see baseline vs anomaly)
 • Photo documentation of every area sampled
 • Plain-English findings + species identification by genus

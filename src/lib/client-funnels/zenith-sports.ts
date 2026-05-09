@@ -515,6 +515,17 @@ export const ZENITH_FUNNELS: Record<ClientLeadAudience, AudienceFunnel | null> =
   // funnel runner picks them up on the next pass.
   club: null,
   unknown: null,
+  // Cross-tenant audiences (ITC tractor + OIT inspections). Zenith
+  // never assigns these but Record<> requires the full keyset.
+  hobbyist: null,
+  forester: null,
+  tym: null,
+  hunter: null,
+  dealer: null,
+  community: null,
+  homeowner: null,
+  realtor: null,
+  insurance: null,
 };
 
 /** Lookup by audience. Returns null if no funnel is defined for that segment. */

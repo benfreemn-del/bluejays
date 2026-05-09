@@ -21,7 +21,11 @@ export type ClientLeadAudience =
   | "tym"
   | "hunter"
   | "dealer"
-  | "community";
+  | "community"
+  // Olympic Inspections & Testing audiences
+  | "homeowner"
+  | "realtor"
+  | "insurance";
 
 export type ClientLeadFunnelStatus =
   | "not_enrolled"
@@ -143,6 +147,39 @@ export function detectAudience(
     if (/hunt|firearm|gun|rifle/.test(message)) return "hunter";
     if (/sub-?compact|first tractor|new tractor|hobby/.test(message)) return "hobbyist";
     return null;
+  }
+
+  // ─── Olympic Inspections & Testing ──────────────────────────────
+  // Three audiences: homeowner (default), realtor, insurance. Detection
+  // mostly via explicit audience field on the booking form, plus a
+  // keyword fallback so booking-flow leads route to the right drip
+  // even when the field is missing.
+  if (clientSlug === "olympic-inspections") {
+    const audience = String(payload.audience ?? payload.role ?? "")
+      .trim()
+      .toLowerCase();
+    if (audience === "realtor" || audience === "agent" || audience === "broker")
+      return "realtor";
+    if (
+      audience === "insurance" ||
+      audience === "adjuster" ||
+      audience === "carrier"
+    )
+      return "insurance";
+    if (audience === "homeowner" || audience === "owner") return "homeowner";
+
+    // Source / message keyword fallbacks — sometimes the field is missing
+    // (e.g. partner referrals, walk-in form fills).
+    const source = String(payload.source ?? "").toLowerCase();
+    const message = String(payload.message ?? "").toLowerCase();
+    if (source === "partners") return "realtor";
+    if (/agent|broker|realtor|listing|mls|escrow/.test(message))
+      return "realtor";
+    if (/claim|adjuster|carrier|policy/.test(message)) return "insurance";
+
+    // Default: homeowner. Most inbound leads are owner-occupants asking
+    // about a smell / a leak / a pre-purchase concern.
+    return "homeowner";
   }
 
   if (clientSlug !== "zenith-sports") {

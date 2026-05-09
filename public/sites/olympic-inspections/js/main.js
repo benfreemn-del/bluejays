@@ -83,6 +83,10 @@
   // Pricing matrix (Olympic Peninsula realistic mold-inspection rates).
   // Ben can tune these in one place — they're the only source of truth.
   var BASE_PRICES = {
+    // "spotCheck" tier added 2026-05-09 to match the marketing copy
+    // ("Inspections start at $150"). Targeted single-room / specific-
+    // concern visit — no full-home walkthrough, one written summary.
+    spotCheck:  { low: 150, high: 195, label: "Single-room spot check" },
     under1500:  { low: 295, high: 350, label: "Under 1,500 sqft" },
     "1500to3000": { low: 350, high: 425, label: "1,500–3,000 sqft" },
     "3000to5000": { low: 450, high: 575, label: "3,000–5,000 sqft" },

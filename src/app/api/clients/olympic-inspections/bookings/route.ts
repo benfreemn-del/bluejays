@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { detectAudience, createClientLead } from "@/lib/client-leads";
 
 /**
  * /api/clients/olympic-inspections/bookings
@@ -175,8 +176,10 @@ export async function POST(req: NextRequest) {
     }
     if (body.addons && body.addons !== "none") messageParts.push(`Add-ons: ${body.addons}`);
     if (body.address) messageParts.push(`Property: ${body.address}`);
-    if (slotId && claimed) {
-      // Resolve slot time for the bridge message
+    if (slotId) {
+      // Resolve slot time for the bridge message. (Earlier `claim`
+      // step has already early-returned if the slot wasn't reservable,
+      // so reaching this branch means it's claimed and lookup is safe.)
       const { data: slotRow } = await supa
         .from("client_booking_slots")
         .select("start_at, end_at")
@@ -201,6 +204,37 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     console.error("[oit-bookings] bridge to contact_form_submissions failed (non-blocking):", e);
+  }
+
+  // ── Bridge: also write to client_leads + tag audience so the funnel
+  // runner cron picks them up and starts the right drip cadence.
+  // Without this, bookings never trigger drip emails — they just sit
+  // in client_bookings waiting for owner action. Wrap in try/catch —
+  // funnel enrollment failure must NOT block the booking.
+  try {
+    // detectAudience reads loose payload fields; cast to bypass the
+    // narrow body type while still letting it sniff for audience hints
+    // in the form data.
+    const audiencePayload: Record<string, unknown> = {
+      ...(body as Record<string, unknown>),
+      audience:
+        (body as Record<string, unknown>).audience || "homeowner",
+      source: (body as Record<string, unknown>).source || "booking-form",
+      message: body.notes || "",
+    };
+    const audience = detectAudience(SLUG, audiencePayload);
+    await createClientLead({
+      client_slug: SLUG,
+      audience_segment: audience,
+      name,
+      email: email || null,
+      phone: phone || null,
+      intent: "mold-inspection-booking",
+      source: "booking-form",
+      raw_payload: body,
+    });
+  } catch (e) {
+    console.error("[oit-bookings] client_leads enrollment failed (non-blocking):", e);
   }
 
   return NextResponse.json(
