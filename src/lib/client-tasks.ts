@@ -12,6 +12,7 @@
  */
 
 import { getSupabase } from "./supabase";
+import { slugifyBusinessName } from "./case-studies";
 
 export type ClientTaskStatus =
   | "pending"
@@ -141,6 +142,10 @@ export async function createClientTask(
     .select("*")
     .single();
   if (error) throw new Error(`createClientTask: ${error.message}`);
+  // Auto-fire: ensure a client_jobs_meta row exists for this slug so
+  // the dashboard categorization is automatic on first task creation.
+  // Best-effort — never blocks the task insert.
+  await ensureClientJobsMeta(task.client_slug).catch(() => {});
   return data as ClientTask;
 }
 
@@ -154,7 +159,80 @@ export async function createClientTasks(
     .insert(tasks)
     .select("*");
   if (error) throw new Error(`createClientTasks: ${error.message}`);
+  // Auto-fire categorization meta for every new slug touched in this
+  // bulk insert. De-duped so the same slug doesn't ensure twice.
+  const uniqueSlugs = Array.from(new Set(tasks.map((t) => t.client_slug)));
+  for (const slug of uniqueSlugs) {
+    await ensureClientJobsMeta(slug).catch(() => {});
+  }
   return (data ?? []) as ClientTask[];
+}
+
+/**
+ * Ensure a client_jobs_meta row exists for the given slug. Idempotent —
+ * the upsert function on the DB side coalesces existing values, so
+ * calling this with no opts on a row that already has category set
+ * doesn't clobber it.
+ *
+ * Wired into createClientTask + createClientTasks so the dashboard
+ * categorization is automatic for every new client/job that lands.
+ * Operators can fill in category/tier later via the dashboard inline
+ * editor — but the row exists from minute one.
+ *
+ * Per AIOS principle 24: every active build must surface in the
+ * /dashboard/clients view. This helper is the discipline-enforcer.
+ */
+export async function ensureClientJobsMeta(
+  clientSlug: string,
+  opts?: { category?: string; tier?: string },
+): Promise<void> {
+  const sb = getSupabase();
+  // Use the SQL helper function for a single round-trip upsert.
+  const { error } = await sb.rpc("upsert_client_jobs_meta", {
+    p_client_slug: clientSlug,
+    p_category: opts?.category ?? null,
+    p_tier: opts?.tier ?? null,
+  });
+  if (error) {
+    // Don't throw — caller is usually a task-creation path that
+    // shouldn't fail just because the categorization seed failed.
+    console.warn(`[ensureClientJobsMeta] upsert failed for ${clientSlug}:`, error.message);
+  }
+}
+
+/** Manual update path for the dashboard inline editor — sets category +
+ *  tier explicitly (overrides any existing values, unlike ensureClientJobsMeta
+ *  which only fills nulls). Used by the /api/client-jobs-meta PATCH route. */
+export async function setClientJobMeta(
+  clientSlug: string,
+  patch: { category?: string | null; tier?: string | null },
+): Promise<ClientJobMeta> {
+  const sb = getSupabase();
+  const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (patch.category !== undefined) update.category = patch.category;
+  if (patch.tier !== undefined) update.tier = patch.tier;
+
+  // Try update first; if no row exists yet, insert.
+  const { data: updated, error: updErr } = await sb
+    .from("client_jobs_meta")
+    .update(update)
+    .eq("client_slug", clientSlug)
+    .select("*");
+  if (updErr) throw new Error(`setClientJobMeta update: ${updErr.message}`);
+
+  if (updated && updated.length > 0) return updated[0] as ClientJobMeta;
+
+  const { data: inserted, error: insErr } = await sb
+    .from("client_jobs_meta")
+    .insert({
+      client_slug: clientSlug,
+      category: patch.category ?? null,
+      tier: patch.tier ?? null,
+    })
+    .select("*")
+    .single();
+  if (insErr) throw new Error(`setClientJobMeta insert: ${insErr.message}`);
+  return inserted as ClientJobMeta;
 }
 
 export async function updateClientTask(
@@ -208,6 +286,11 @@ export type ClientJobMeta = {
   snooze_notified_at: string | null;
   snooze_notes: string | null;
   notes: string | null;
+  // Categorization (added 2026-05-10 per AIOS principle 24).
+  // Funnel-stage IS NOT stored here — it lives on prospects.pipeline_stage
+  // (single source of truth for the sales pipeline).
+  category: string | null;
+  tier: string | null;
   updated_at: string;
   updated_by: string | null;
 };
@@ -221,19 +304,61 @@ export type ClientJobSummary = {
   snooze_reason: string | null;
   snooze_until: string | null;
   snooze_notes: string | null;
+  // Categorization
+  category: string | null;
+  tier: string | null;
+  // Pipeline stage — read from the linked prospect row (if any).
+  // String like '1', '2a', '4', '4b'. null when no prospect found.
+  pipeline_stage: string | null;
 };
 
 export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
   const sb = getSupabase();
-  const [tasksRes, metaRes] = await Promise.all([
+  const [tasksRes, metaRes, prospectsRes] = await Promise.all([
     sb.from("client_tasks").select("client_slug, status"),
     // Best-effort meta read — table may not exist yet on a fresh deploy
     sb
       .from("client_jobs_meta")
-      .select("client_slug, snoozed, snooze_reason, snooze_until, snooze_notes")
+      .select(
+        "client_slug, snoozed, snooze_reason, snooze_until, snooze_notes, category, tier",
+      )
       .then(
         (r) => r,
-        () => ({ data: [] as Array<Pick<ClientJobMeta, "client_slug" | "snoozed" | "snooze_reason" | "snooze_until" | "snooze_notes">>, error: null }),
+        () => ({
+          data: [] as Array<
+            Pick<
+              ClientJobMeta,
+              | "client_slug"
+              | "snoozed"
+              | "snooze_reason"
+              | "snooze_until"
+              | "snooze_notes"
+              | "category"
+              | "tier"
+            >
+          >,
+          error: null,
+        }),
+      ),
+    // Pull every prospect that has a pipeline stage so we can attach
+    // the stage tag to each client row on /dashboard/clients. Linkage:
+    // slugify(prospect.business_name) === client_slug. Best-effort —
+    // any prospect that doesn't slugify to a known client_slug is
+    // silently dropped from this map.
+    sb
+      .from("prospects")
+      .select("id, business_name, pipeline_stage")
+      .not("pipeline_stage", "is", null)
+      .then(
+        (r) => r,
+        () => ({
+          data: [] as Array<{
+            id: string;
+            business_name: string | null;
+            pipeline_stage: string | null;
+          }>,
+          error: null,
+        }),
       ),
   ]);
 
@@ -254,9 +379,20 @@ export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
     }
   }
 
-  // Snooze metadata, keyed by client_slug. Falls back gracefully if
-  // the table query failed (e.g. migration not yet applied).
-  const metaBySlug = new Map<string, Pick<ClientJobMeta, "snoozed" | "snooze_reason" | "snooze_until" | "snooze_notes">>();
+  // Snooze + categorization metadata, keyed by client_slug. Falls back
+  // gracefully if the table query failed (e.g. migration not yet applied).
+  const metaBySlug = new Map<
+    string,
+    Pick<
+      ClientJobMeta,
+      | "snoozed"
+      | "snooze_reason"
+      | "snooze_until"
+      | "snooze_notes"
+      | "category"
+      | "tier"
+    >
+  >();
   if (metaRes && !metaRes.error && Array.isArray(metaRes.data)) {
     for (const row of metaRes.data) {
       metaBySlug.set(row.client_slug, {
@@ -264,7 +400,23 @@ export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
         snooze_reason: row.snooze_reason ?? null,
         snooze_until: row.snooze_until ?? null,
         snooze_notes: row.snooze_notes ?? null,
+        category: row.category ?? null,
+        tier: row.tier ?? null,
       });
+    }
+  }
+
+  // Pipeline stage map — slug → stage. Built by slugifying every
+  // prospect's business_name and indexing by that. Last-write-wins
+  // when multiple prospects slugify to the same key (rare; usually
+  // means duplicate prospects we'd want to merge anyway).
+  const stageBySlug = new Map<string, string>();
+  if (prospectsRes && !prospectsRes.error && Array.isArray(prospectsRes.data)) {
+    for (const p of prospectsRes.data) {
+      if (!p.business_name || !p.pipeline_stage) continue;
+      const key = slugifyBusinessName(p.business_name);
+      if (!key) continue;
+      stageBySlug.set(key, p.pipeline_stage);
     }
   }
 
@@ -280,6 +432,9 @@ export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
         snooze_reason: meta?.snooze_reason ?? null,
         snooze_until: meta?.snooze_until ?? null,
         snooze_notes: meta?.snooze_notes ?? null,
+        category: meta?.category ?? null,
+        tier: meta?.tier ?? null,
+        pipeline_stage: stageBySlug.get(client_slug) ?? null,
       };
     })
     .sort((a, b) => {

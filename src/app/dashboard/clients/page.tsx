@@ -30,7 +30,61 @@ type ClientSummary = {
   snooze_reason: string | null;
   snooze_until: string | null;
   snooze_notes: string | null;
+  // Categorization (added 2026-05-10 per AIOS principle 24)
+  category: string | null;
+  tier: string | null;
+  // Pipeline stage from the linked prospect (e.g. '1', '2a', '4'). null
+  // when no prospect matches this slug (custom-tier clients without a
+  // prospect record, etc.).
+  pipeline_stage: string | null;
 };
+
+// Per-tier badge styling — matches the sales-pipeline column colors.
+const TIER_BADGE: Record<string, string> = {
+  fullsystem: "bg-violet-500/15 border-violet-500/40 text-violet-200",
+  custom: "bg-cyan-500/15 border-cyan-500/40 text-cyan-200",
+  standard: "bg-blue-500/15 border-blue-500/40 text-blue-200",
+  "friend-rate": "bg-emerald-500/15 border-emerald-500/40 text-emerald-200",
+};
+
+const TIER_LABEL: Record<string, string> = {
+  fullsystem: "$10k AI System",
+  custom: "Custom $100/yr",
+  standard: "$997 standard",
+  "friend-rate": "Friend rate",
+};
+
+// Pipeline-stage label lookup — matches /dashboard/sales-pipeline copy.
+// Keys are the stage prefix (without sub-letter); sub-letters render as
+// a separate dim suffix on the badge.
+const STAGE_LABEL: Record<string, string> = {
+  // Website tier (1-4)
+  "1": "Preview created",
+  "2": "Meeting scheduled",
+  "3": "Bought + paid",
+  "4": "Delivered",
+  // Fullsystem (1-6) — labels overlap by number; the badge just says
+  // "Stage N" with the matching color so we don't have to know which
+  // tier a prospect is on.
+  "5": "Hands off",
+  "6": "Managing $500/mo",
+};
+
+const STAGE_TONE: Record<string, string> = {
+  "1": "bg-slate-500/15 border-slate-500/40 text-slate-300",
+  "2": "bg-amber-500/15 border-amber-500/40 text-amber-200",
+  "3": "bg-blue-500/15 border-blue-500/40 text-blue-200",
+  "4": "bg-emerald-500/15 border-emerald-500/40 text-emerald-200",
+  "5": "bg-emerald-500/15 border-emerald-500/40 text-emerald-200",
+  "6": "bg-violet-500/15 border-violet-500/40 text-violet-200",
+};
+
+function parseStage(raw: string | null): { num: string; letter: string } | null {
+  if (!raw) return null;
+  const m = /^(\d+)([a-z])?$/.exec(raw.toLowerCase());
+  if (!m) return null;
+  return { num: m[1], letter: m[2] ?? "" };
+}
 
 const SNOOZE_REASONS: { value: string; label: string }[] = [
   { value: "interested_10k", label: "Interested in $10k AI System — check back" },
@@ -296,7 +350,7 @@ export default function ClientsIndexPage() {
                     className="flex-1 min-w-0 flex items-center gap-3"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold tracking-tight truncate flex items-center gap-2">
+                      <div className="font-semibold tracking-tight truncate flex items-center gap-2 flex-wrap">
                         {c.snoozed && (
                           <span
                             aria-label="snoozed for follow-up"
@@ -314,7 +368,43 @@ export default function ClientsIndexPage() {
                             ✅
                           </span>
                         )}
-                        {c.client_slug}
+                        <span>{c.client_slug}</span>
+                        {/* Stage badge — pipeline_stage from the linked
+                            prospect (set by /dashboard/sales-pipeline).
+                            Per AIOS principle 24 (Jobs-View Completeness):
+                            every job has a visible stage tag. */}
+                        {(() => {
+                          const stage = parseStage(c.pipeline_stage);
+                          if (!stage) return null;
+                          const label = STAGE_LABEL[stage.num] ?? `Stage ${stage.num}`;
+                          const tone = STAGE_TONE[stage.num] ?? "bg-slate-500/15 border-slate-500/40 text-slate-300";
+                          return (
+                            <span
+                              title={`Pipeline stage ${stage.num}${stage.letter} · ${label}`}
+                              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold ${tone}`}
+                            >
+                              {stage.num}{stage.letter} · {label}
+                            </span>
+                          );
+                        })()}
+                        {/* Tier badge */}
+                        {c.tier && (
+                          <span
+                            title={`Pricing tier: ${TIER_LABEL[c.tier] ?? c.tier}`}
+                            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold ${TIER_BADGE[c.tier] ?? "bg-slate-500/15 border-slate-500/40 text-slate-300"}`}
+                          >
+                            {TIER_LABEL[c.tier] ?? c.tier}
+                          </span>
+                        )}
+                        {/* Category badge */}
+                        {c.category && (
+                          <span
+                            title={`Category: ${c.category}`}
+                            className="inline-flex items-center rounded-full border border-slate-700 bg-slate-800/60 px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold text-slate-400"
+                          >
+                            {c.category}
+                          </span>
+                        )}
                       </div>
                       <div
                         className={`text-[11px] mt-0.5 ${
