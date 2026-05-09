@@ -109,6 +109,21 @@ async function placeDetails(
 }
 
 /**
+ * Optional progress reporter — called by `runPartnerScout` after each
+ * city/query iteration. Used by the manual-scan UI to write progress
+ * to the `scan_jobs` table so the client can poll for a real progress
+ * bar (instead of staring at a frozen "scanning…" button).
+ */
+export type ScoutProgress = {
+  pct: number; // 0-100
+  phase: string; // human-readable
+  scanned: number;
+  inserted: number;
+  duplicates: number;
+  errorsSoFar: number;
+};
+
+/**
  * Run the partner scout for any inspection-style client. Idempotent:
  * dedupe key is (client_slug, lower(org_name), lower(city)) so
  * re-running just adds new businesses that have appeared since last
@@ -118,9 +133,14 @@ async function placeDetails(
  *
  * Backwards-compatible default = olympic-inspections so existing cron
  * entry doesn't change shape.
+ *
+ * `onProgress` fires after each (city × query) iteration completes.
+ * Awaited — supply an async callback to stream progress to a DB row
+ * the UI is polling.
  */
 export async function runPartnerScout(
   clientSlug: string = "olympic-inspections",
+  opts: { onProgress?: (p: ScoutProgress) => Promise<void> | void } = {},
 ): Promise<ScoutResult> {
   const result: ScoutResult = {
     scanned: 0,
@@ -155,6 +175,27 @@ export async function runPartnerScout(
         `${(r.org_name || "").toLowerCase()}::${(r.city || "").toLowerCase()}`,
     ),
   );
+
+  // Same dedup for client_leads — locked 2026-05-10 per Ben spec:
+  // outreach-channel scouts also land in the Leads tab so the
+  // owner can enroll them into the funnel directly. refer-out
+  // channel partners (mold remediation, naturopathic) stay
+  // affiliates-only since Luke doesn't outreach TO them.
+  const { data: existingLeads } = await supabase
+    .from("client_leads")
+    .select("name, raw_payload")
+    .eq("client_slug", clientSlug)
+    .eq("source", "oit-partner-scout");
+  const existingLeadKeys = new Set<string>(
+    (existingLeads ?? []).map((r) => {
+      const payload = (r.raw_payload ?? {}) as Record<string, unknown>;
+      const placeId = typeof payload.place_id === "string" ? payload.place_id : "";
+      return `${(r.name || "").toLowerCase()}::${placeId}`;
+    }),
+  );
+
+  const totalIterations = config.scoutCities.length * config.scoutQueries.length;
+  let iterationsDone = 0;
 
   for (const city of config.scoutCities) {
     for (const q of config.scoutQueries) {
@@ -214,10 +255,73 @@ export async function runPartnerScout(
           }
           existingKeys.add(key);
           result.inserted += 1;
+
+          // ── Double-write to client_leads (outreach-channel only) ──
+          // Locked 2026-05-10 per Ben spec: scouted businesses Luke
+          // can directly outreach to should appear in the Leads tab,
+          // not just the affiliates board. refer-out partners stay
+          // affiliates-only (we refer customers TO them, not from).
+          if (q.channel === "outreach") {
+            const leadKey = `${place.name.toLowerCase()}::${place.place_id ?? ""}`;
+            if (!existingLeadKeys.has(leadKey)) {
+              // Map scout role → OIT audience taxonomy
+              //   realtor / property-management → realtor
+              //   anything else → leave null (operator can re-tag)
+              const audience =
+                q.role === "realtor" || q.role === "property-management"
+                  ? "realtor"
+                  : null;
+              const { error: leadErr } = await supabase
+                .from("client_leads")
+                .insert({
+                  client_slug: clientSlug,
+                  name: place.name,
+                  phone: details.phone ?? null,
+                  audience_segment: audience,
+                  intent: `Cold-scout · ${q.role}`,
+                  source: "oit-partner-scout",
+                  funnel_status: "not_enrolled",
+                  raw_payload: {
+                    place_id: place.place_id,
+                    address: place.formatted_address,
+                    rating: place.rating,
+                    review_count: place.user_ratings_total,
+                    website: details.website ?? null,
+                    city: city.city,
+                    state: city.state,
+                    region: city.region,
+                    role: q.role,
+                    channel: q.channel,
+                    fit_score: fitScore,
+                    query: fullQuery,
+                  },
+                });
+              if (leadErr) {
+                result.errors.push(`lead-insert ${place.name}: ${leadErr.message}`);
+              } else {
+                existingLeadKeys.add(leadKey);
+              }
+            }
+          }
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         result.errors.push(`${fullQuery}: ${msg}`);
+      }
+      iterationsDone += 1;
+      if (opts.onProgress) {
+        try {
+          await opts.onProgress({
+            pct: Math.min(99, Math.round((iterationsDone / totalIterations) * 100)),
+            phase: `${city.city} · ${q.role}`,
+            scanned: result.scanned,
+            inserted: result.inserted,
+            duplicates: result.duplicates,
+            errorsSoFar: result.errors.length,
+          });
+        } catch {
+          // never let progress reporting break the scout itself
+        }
       }
     }
   }
