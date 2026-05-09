@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole, SALES_CLIENT_TAB_ALLOWED } from "@/lib/use-role";
+import { clientSiteFor } from "@/lib/client-site-urls";
 
 /**
  * ClientTabsBar — unified tab bar that wraps every per-client
@@ -167,15 +168,25 @@ export default function ClientTabsBar({ slug, displayName }: Props) {
         <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1 truncate">
           {displayName || slug}
         </h1>
-        <Link
-          href={`/clients/${slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[11px] tracking-wider uppercase font-bold text-slate-300 hover:text-white border border-slate-700 px-2.5 py-1 rounded whitespace-nowrap"
-          title="Open the public-facing site / portal"
-        >
-          Site ↗
-        </Link>
+        {(() => {
+          const site = clientSiteFor(slug);
+          if (site.kind === "none") return null;
+          return (
+            <Link
+              href={site.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] tracking-wider uppercase font-bold text-slate-300 hover:text-white border border-slate-700 px-2.5 py-1 rounded whitespace-nowrap"
+              title={
+                site.kind === "internal"
+                  ? "Open the bespoke preview site"
+                  : "Open the client's production site"
+              }
+            >
+              Site ↗
+            </Link>
+          );
+        })()}
       </div>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
         {visibleTabs.map((t) => {
