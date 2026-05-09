@@ -97,8 +97,12 @@ function groupForPlatform(p: AdPlatform): PlatformGroup {
 }
 
 /* ─────────── HORMOZI 70 / 20 / 10 BUDGET RULES ─────────── */
-
-type AllocationBucket = "winners" | "iteration" | "net-new";
+// Bucket type comes from the canonical paid-ads-rules.ts engine —
+// keeping the dashboard + the autonomous iteration engine + the
+// server-side guardrail-enforcement route on one type definition so
+// rule changes propagate everywhere from a single edit.
+import type { AllocationBucket } from "@/lib/paid-ads-rules";
+import { assignBucket } from "@/lib/paid-ads-rules";
 
 const BUCKET_META: Record<
   AllocationBucket,
@@ -184,16 +188,11 @@ function mockMetrics(seed: CreativeSeed, idx: number): CreativeMetrics {
   const spend = 50 + (r % 800);
   const roas = ((r >> 4) % 100) / 12; // 0-8.3×
   const ageDays = 1 + ((r >> 8) % 60);
-  // Bucket assignment — Hormozi-aligned. Winners require BOTH high
-  // ROAS (≥5×) AND enough age (≥7d) to call it real signal. A
-  // 1-day-old creative with a single fluky conversion should NOT be
-  // marketed as "Proven Winner" — the AI engine reads bucket and
-  // would scale on noise.
-  let bucket: AllocationBucket = "net-new";
-  if (roas >= 5 && ageDays >= 7) bucket = "winners";
-  else if (roas >= 2 && ageDays >= 7) bucket = "iteration";
-  else if (ageDays < 14) bucket = "net-new";
-  else bucket = "iteration";
+  // Bucket assignment delegates to the canonical engine. Both this
+  // dashboard preview AND the autonomous iteration cron use the
+  // exact same fn — guarantees the "AI uses the same rules you see"
+  // claim on the UI is actually true.
+  const bucket = assignBucket({ ageDays, roas, spendUsd: spend });
   return {
     spendUsd: spend,
     roas: parseFloat(roas.toFixed(1)),

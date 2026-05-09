@@ -127,6 +127,18 @@
     {
       "path": "/api/client-tasks/check-reminders",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/ai/iteration-engine/run?slug=bluejays",
+      "schedule": "0 13 * * 1"
+    },
+    {
+      "path": "/api/ai/iteration-engine/run?slug=zenith-sports",
+      "schedule": "5 13 * * 1"
+    },
+    {
+      "path": "/api/ai/iteration-engine/run?slug=olympic-inspections",
+      "schedule": "10 13 * * 1"
     }
   ],
   "functions": {

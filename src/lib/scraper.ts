@@ -127,28 +127,78 @@ function extractEmail($: cheerio.CheerioAPI, html: string): string | undefined {
     if (isValidEmail(text)) return text;
   }
 
-  // Regex for email addresses in the HTML (last resort — can find spam traps)
-  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-  const matches = html.match(emailRegex) || [];
-  // Filter out common false positives
-  const filtered = matches.filter(e =>
+  // Regex for email addresses in the HTML (last resort — can find spam traps).
+  // Use the same strict pattern as isValidEmail so retina image filenames
+  // like `Guarantee@2x.webp` and `logo@2x.png.webp` never sneak through.
+  const matches = html.match(EMAIL_REGEX_GLOBAL) || [];
+  const filtered = matches.filter((e) =>
     !e.includes("example.com") &&
     !e.includes("sentry") &&
     !e.includes("webpack") &&
     !e.includes("wix") &&
     !e.includes("googleapis") &&
     !e.includes("schema.org") &&
-    !e.endsWith(".png") &&
-    !e.endsWith(".jpg") &&
-    e.length < 60
+    isValidEmail(e),
   );
   if (filtered.length > 0) return filtered[0];
 
   return undefined;
 }
 
-function isValidEmail(email: string): boolean {
-  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && email.length < 60;
+// Image extensions that retina/density-suffixed filenames use (e.g.
+// `Guarantee@2x.webp`, `logo@2x.png.webp`). Treat these as TLD blocklist —
+// a real email never ends in any of these.
+const IMAGE_EXTENSIONS = new Set([
+  "webp", "avif", "gif", "jpg", "jpeg", "png", "svg", "ico", "bmp",
+  "tif", "tiff", "heic", "heif",
+]);
+
+// Allowlist of common TLDs we accept by default. Layer 2 of the fix.
+// Generous on purpose — this is just the fast-path. Anything outside the
+// list still passes the structural check (length 2–6, alpha only).
+const TLD_ALLOWLIST = new Set([
+  "com", "org", "net", "co", "io", "app", "dev", "edu", "gov", "mil",
+  "us", "uk", "ca", "au", "nz", "ie", "de", "fr", "es", "it", "nl",
+  "se", "no", "fi", "dk", "ch", "at", "be", "pl", "pt", "cz", "gr",
+  "jp", "kr", "cn", "in", "br", "mx", "ar", "cl", "co.uk", "com.au",
+  "biz", "info", "name", "pro", "tech", "online", "store", "shop",
+  "agency", "studio", "design", "media", "social", "club", "live",
+  "tv", "fm", "cc", "ly", "me", "ai", "xyz", "site", "blog", "news",
+]);
+
+const EMAIL_REGEX_SOURCE = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}";
+const EMAIL_REGEX_GLOBAL = new RegExp(EMAIL_REGEX_SOURCE, "g");
+const EMAIL_REGEX_EXACT = new RegExp(`^${EMAIL_REGEX_SOURCE}$`);
+
+export function isValidEmail(email: string): boolean {
+  if (!email || email.length >= 60) return false;
+  if (!EMAIL_REGEX_EXACT.test(email)) return false;
+
+  const [, domain] = email.toLowerCase().split("@");
+  if (!domain || !domain.includes(".")) return false;
+
+  const parts = domain.split(".");
+  const tld = parts[parts.length - 1];
+
+  // Layer 1: explicit image-extension rejection (catches retina filenames
+  // like `logo@2x.webp`, `Beach-Side@2x-scaled.webp`, etc.)
+  if (IMAGE_EXTENSIONS.has(tld)) return false;
+
+  // Layer 3: structural sanity — TLD is 2–6 alphabetic chars.
+  // (The regex already enforces this, but keep it explicit for clarity.)
+  if (tld.length < 2 || tld.length > 6) return false;
+  if (!/^[a-z]+$/.test(tld)) return false;
+
+  // Layer 2: TLD allowlist fast-path. Multi-segment TLDs like `co.uk` are
+  // matched against the last two parts joined.
+  const lastTwo = parts.length >= 2 ? `${parts[parts.length - 2]}.${tld}` : "";
+  if (TLD_ALLOWLIST.has(tld) || (lastTwo && TLD_ALLOWLIST.has(lastTwo))) return true;
+
+  // Outside the allowlist we still accept anything that passes the
+  // structural check above — keeps us from rejecting legitimate niche TLDs
+  // we haven't enumerated. The image-extension blocklist is the load-
+  // bearing piece for the bug we're actually fixing.
+  return true;
 }
 
 function extractPhone($: cheerio.CheerioAPI, html: string): string | undefined {
