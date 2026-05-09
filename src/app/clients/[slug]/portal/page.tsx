@@ -11,6 +11,7 @@ import FunnelEnrollPicker, {
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
 import AdsTab from "@/components/portal/AdsTabV2";
+import OitCalendarTab from "@/components/portal/OitCalendarTab";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import {
@@ -236,6 +237,7 @@ type Tab =
   | "customers"
   | "ai-skills"
   | "ads"
+  | "calendar"
   | "account";
 
 type Campaign = {
@@ -826,6 +828,12 @@ export default function PortalPage({
               ...(getPortalConfig(slug)?.tabs.ads
                 ? [{ id: "ads" as Tab, label: "Ads", emoji: "📢" }]
                 : []),
+              // 📅 Calendar tab — owners with a public booking page who
+              // want their Apple/Google/iCal calendar to drive slot
+              // availability. Per portal-configs.tabs.calendar.
+              ...(getPortalConfig(slug)?.tabs.calendar
+                ? [{ id: "calendar" as Tab, label: "Calendar", emoji: "📅" }]
+                : []),
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -914,6 +922,9 @@ export default function PortalPage({
         )}
         {tab === "ai-skills" && getPortalConfig(slug)?.tabs.aiSkills && (
           <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
+        )}
+        {tab === "calendar" && getPortalConfig(slug)?.tabs.calendar && slug === "olympic-inspections" && (
+          <OitCalendarTab />
         )}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />

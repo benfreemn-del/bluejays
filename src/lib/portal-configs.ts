@@ -91,6 +91,10 @@ export type PortalConfig = {
     customers: boolean;
     /** Per-tenant /admin route exists? (e.g. /clients/SLUG/admin) */
     adminLinkInOverview: boolean;
+    /** Calendar sync tab — Apple/Google/iCal feed connection so the
+     *  public booking page filters slots against the owner's busy
+     *  times. Currently OIT-only, but flag-driven for future tenants. */
+    calendar?: boolean;
   };
   /** Funnel cards rendered on the Funnels tab */
   funnels: FunnelDef[];
@@ -221,12 +225,17 @@ const OIT: PortalConfig = {
     map: true,
     customers: false,
     adminLinkInOverview: true,
+    calendar: true,
   },
   funnels: [],
   quickLinks: [
     { href: `/clients/olympic-inspections/admin`, icon: "🛠", label: "Booking admin" },
     { href: "/sites/olympic-inspections/index.html", icon: "🌐", label: "Public site" },
-    { href: "/sites/olympic-inspections/index.html#book", icon: "📅", label: "Booking page" },
+    {
+      href: "/sites/olympic-inspections/index.html#book",
+      icon: "📅",
+      label: "Booking page · Apple-Cal-aware",
+    },
     { href: "/sites/olympic-inspections/index.html#calculator", icon: "💲", label: "Cost calculator" },
   ],
 };
