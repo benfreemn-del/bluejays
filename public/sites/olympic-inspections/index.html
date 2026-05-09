@@ -315,7 +315,7 @@
                 <div class="calc-step">
                     <span class="calc-step-label">1. Property size</span>
                     <div class="calc-pills" data-group="size">
-                        <button type="button" class="calc-pill" data-size="spotCheck">
+                        <button type="button" class="calc-pill is-active" data-size="spotCheck">
                             Single-room spot check
                             <span class="pill-sub">Targeted concern · from $150</span>
                         </button>
@@ -323,7 +323,7 @@
                             Under 1,500 sqft
                             <span class="pill-sub">Condo or small home</span>
                         </button>
-                        <button type="button" class="calc-pill is-active" data-size="1500to3000">
+                        <button type="button" class="calc-pill" data-size="1500to3000">
                             1,500–3,000 sqft
                             <span class="pill-sub">Most homes</span>
                         </button>
@@ -343,7 +343,7 @@
                     <span class="calc-step-label">2. Add-on samples (optional)</span>
                     <div class="calc-addons">
                         <label class="calc-addon">
-                            <input type="checkbox" data-addon="airSample" data-price="85">
+                            <input type="checkbox" data-addon="airSample" data-price="100">
                             <div class="calc-addon-info">
                                 <strong>Air sample</strong>
                                 <span>Pulled with calibrated pump &middot; lab analyzed</span>
@@ -353,12 +353,12 @@
                                 <span class="qty-val" data-qty-for="airSample">1</span>
                                 <button type="button" data-qty-action="inc">+</button>
                             </div>
-                            <span class="calc-addon-price">$85 ea</span>
+                            <span class="calc-addon-price">$100 ea</span>
                         </label>
                         <label class="calc-addon">
-                            <input type="checkbox" data-addon="surfaceSample" data-price="55">
+                            <input type="checkbox" data-addon="surfaceSample" data-price="100">
                             <div class="calc-addon-info">
-                                <strong>Surface / swab sample</strong>
+                                <strong>Surface sample</strong>
                                 <span>Tape-lift or swab from suspected growth</span>
                             </div>
                             <div class="calc-addon-qty">
@@ -366,7 +366,7 @@
                                 <span class="qty-val" data-qty-for="surfaceSample">1</span>
                                 <button type="button" data-qty-action="inc">+</button>
                             </div>
-                            <span class="calc-addon-price">$55 ea</span>
+                            <span class="calc-addon-price">$100 ea</span>
                         </label>
                         <label class="calc-addon">
                             <input type="checkbox" data-addon="rush" data-price="150">
@@ -400,7 +400,7 @@
                 <!-- Price card -->
                 <div class="calc-price-card">
                     <div class="calc-price-label">Estimated total</div>
-                    <div class="calc-price-value" id="calcTotal">$375</div>
+                    <div class="calc-price-value" id="calcTotal">$150</div>
                     <div class="calc-price-sub" id="calcBreakdown">Base inspection &middot; written lab report included</div>
                 </div>
 
@@ -587,7 +587,7 @@
                 <form id="bookForm" class="book-form" novalidate>
                     <div class="book-form-summary" id="bookSummary">
                         <strong>Your estimate</strong>
-                        <div class="booking-line"><span id="bookSummarySize">1,500–3,000 sqft</span><span id="bookSummaryPrice">$375</span></div>
+                        <div class="booking-line"><span id="bookSummarySize">Single-room spot check</span><span id="bookSummaryPrice">$150</span></div>
                         <div class="booking-line" id="bookSummaryAddons" style="display: none; opacity: 0.85; font-size: 0.86rem;"></div>
                     </div>
 
@@ -643,8 +643,8 @@
                         <textarea id="bookNotes" name="notes" rows="4" placeholder="Visible growth somewhere? Musty smell? Recent water damage? Real estate transaction? Anything we should know."></textarea>
                     </div>
 
-                    <input type="hidden" id="bookSize" name="propertySize" value="1500to3000">
-                    <input type="hidden" id="bookEstimate" name="estimate" value="375">
+                    <input type="hidden" id="bookSize" name="propertySize" value="spotCheck">
+                    <input type="hidden" id="bookEstimate" name="estimate" value="150">
                     <input type="hidden" id="bookAddons" name="addons" value="">
 
                     <button type="submit" class="book-submit">Request my inspection</button>

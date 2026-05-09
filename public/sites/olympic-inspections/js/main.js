@@ -112,7 +112,10 @@
     var bookSummaryAddons = document.getElementById("bookSummaryAddons");
 
     var state = {
-      size: "1500to3000",
+      // Default to "Single-room spot check" so the calculator opens at
+      // the published $150 entry-point — Ben's pitch is "$150 to know
+      // what's in your air." Customers expand from there.
+      size: "spotCheck",
       addonChecked: { airSample: false, surfaceSample: false, rush: false, thermal: false },
       addonQty: { airSample: 1, surfaceSample: 1, rush: 1, thermal: 1 },
     };
@@ -146,7 +149,10 @@
       samples.forEach(function (key) {
         if (state.addonChecked[key]) {
           var qty = state.addonQty[key] || 1;
-          var unit = key === "airSample" ? 85 : 55;
+          // $100 flat per sample (air or surface) — Ben spec 2026-05-09.
+          // The lab cost is roughly equal between the two, so a flat
+          // unit price is simpler for owners to quote on the phone.
+          var unit = 100;
           var sub = qty * unit;
           addonTotalLow += sub;
           addonTotalHigh += sub;
