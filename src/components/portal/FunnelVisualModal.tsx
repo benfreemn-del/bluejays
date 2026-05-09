@@ -133,6 +133,7 @@ export default function FunnelVisualModal({
   slug,
   editable = true,
   initialShowNote = false,
+  dataMode,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -146,6 +147,13 @@ export default function FunnelVisualModal({
   /** When true, the modal opens with the note panel already expanded
    *  (used by the + Note pill on each funnel card). */
   initialShowNote?: boolean;
+  /** Data freshness signal — "demo" renders an amber "DEMO DATA"
+   *  banner so client-facing surfaces never accidentally show
+   *  industry-baseline numbers as if they were live performance.
+   *  Per Status Accuracy Rule (locked 2026-05-09 for Tekky walk):
+   *  every funnel surface MUST be honest about whether the
+   *  numbers are real or projected. */
+  dataMode?: "live" | "demo";
 }) {
   // Lock body scroll while open + close on Escape.
   useEffect(() => {
@@ -314,6 +322,23 @@ export default function FunnelVisualModal({
             </button>
           </div>
         </div>
+
+        {/* DEMO DATA banner — render when dataMode === "demo" so the
+            owner can never confuse industry-baseline projections with
+            live numbers. Locked 2026-05-09 ahead of Tekky walkthrough. */}
+        {dataMode === "demo" && (
+          <div className="border-b border-amber-500/30 bg-amber-500/10 px-6 py-3 flex items-center gap-3">
+            <span className="text-2xl leading-none" aria-hidden>📊</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-widest font-bold text-amber-300">
+                Demo data · industry baselines
+              </p>
+              <p className="text-[11px] text-amber-200/80 mt-0.5 leading-relaxed">
+                Reach + drop-off + close-rate numbers below are typical-attrition projections — not your live performance yet. Your real numbers populate once leads enter the funnel and the cron rolls up the first 7 days.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Note panel — opens when + Note clicked */}
         {editable && showNotePanel && (

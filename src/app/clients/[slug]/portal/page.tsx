@@ -5663,6 +5663,11 @@ function FunnelsTab({
         landingUrl={openLandingUrl}
         slug={slug}
         editable
+        // Data is "demo" when no leads have entered the funnel yet
+        // (counts.total === 0). Once real leads land, the rollup
+        // populates live cumulativeReachPct values per step and the
+        // banner auto-hides. Honest by default — Status Accuracy Rule.
+        dataMode={openCounts.total === 0 ? "demo" : "live"}
       />
     </div>
   );
