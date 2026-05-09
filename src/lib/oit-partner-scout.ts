@@ -281,7 +281,13 @@ export async function runPartnerScout(
                         ? "restoration"
                         : q.role === "naturopathic"
                           ? "naturopath"
-                          : null;
+                          : q.role === "well-services"
+                            ? "well-services"
+                            : q.role === "radon-mitigation"
+                              ? "radon-mitigation"
+                              : q.role === "septic-services"
+                                ? "septic-services"
+                                : null;
               const { error: leadErr } = await supabase
                 .from("client_leads")
                 .insert({
