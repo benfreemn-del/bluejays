@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClientTask } from "@/lib/client-tasks";
+import { ownerFromCookie } from "@/lib/client-auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/clients/[slug]/ads/request-change
@@ -28,6 +30,10 @@ const VALID_KINDS = new Set([
   "copy",
   "image",
   "delete",
+  // OAuth-handoff request — owner clicks Connect on Google/Meta/Lob
+  // platform card; backend route fires this kind. Carries the
+  // platform name in details.
+  "connect",
 ]);
 
 type Body = {
@@ -37,6 +43,12 @@ type Body = {
   audience?: string;
   kind?: string;
   details?: string;
+  /** UI compat — older AdsTabV2 ConnectButton sends this field */
+  message?: string;
+  /** Optional client-side context for guardrail evaluation. Server
+   *  doesn't trust these — re-derives from DB when the row exists. */
+  age_days?: number;
+  roas?: number;
 };
 
 export async function POST(
@@ -44,6 +56,32 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
+
+  // ── AUTH: owner-portal cookie must match the slug in the URL.
+  // Pre-2026-05-09 this route had ZERO auth — anyone could spam tasks
+  // for any tenant. Now we verify the caller owns the tenant they're
+  // requesting changes for.
+  const cookie = request.cookies.get("client-portal-session")?.value;
+  const owner = await ownerFromCookie(cookie);
+  if (!owner || owner.client_slug !== slug) {
+    return NextResponse.json(
+      { ok: false, error: "unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  // ── RATE LIMIT: cap at 10 requests / minute / slug. Stops a runaway
+  // script (or a bored owner) from flooding the all-tasks board.
+  const { allowed } = rateLimit(`ads-change:${slug}`, 10, 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Too many change requests. Try again in a minute.",
+      },
+      { status: 429 },
+    );
+  }
 
   let body: Body = {};
   try {
@@ -86,7 +124,42 @@ export async function POST(
   }
   void UUID_RE; // marker — pattern reserved for future inputs
 
-  const details = (body.details || "").toString().slice(0, 2000);
+  // ── HORMOZI GUARDRAILS (server-side enforcement)
+  // The UI hides Delete on <7-day creatives and Scale on <2× ROAS.
+  // That's NOT a security boundary — anyone with curl can bypass it.
+  // Enforce here too so the AI iteration engine + manual ops stay
+  // within Hormozi rules even when the request originates outside the
+  // dashboard.
+  if (body.kind === "delete" && typeof body.age_days === "number" && body.age_days < 7) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Locked by Hormozi Rule 1: don't kill creatives under 7 days old. Let it gather data first.",
+      },
+      { status: 422 },
+    );
+  }
+  if (
+    body.kind === "budget" &&
+    typeof body.roas === "number" &&
+    body.roas > 0 &&
+    body.roas < 2 &&
+    /\bscale|increase|raise|grow|up\b/i.test(body.details || body.message || "")
+  ) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Locked: ROAS below 2× — scale recommendations require positive ROI signal first. Lower budget or run a kill check instead.",
+      },
+      { status: 422 },
+    );
+  }
+
+  // Accept `message` as fallback for `details` (older ConnectButton
+  // and any future UI sending the simpler field).
+  const details = (body.details || body.message || "").toString().slice(0, 2000);
   const platform = (body.platform || "—").toString().slice(0, 60);
   const audience = (body.audience || "—").toString().slice(0, 60);
   const adSet = (body.ad_set || "—").toString().slice(0, 200);
@@ -100,6 +173,7 @@ export async function POST(
     copy: "Update copy",
     image: "Replace image",
     delete: "Delete",
+    connect: "Connect ad account",
   } as const;
   const kindLabel =
     KIND_LABELS[body.kind as keyof typeof KIND_LABELS] ?? body.kind;

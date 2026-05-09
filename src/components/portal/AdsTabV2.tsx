@@ -88,6 +88,11 @@ const PLATFORM_GROUP_META: Record<
 function groupForPlatform(p: AdPlatform): PlatformGroup {
   if (p.startsWith("google")) return "google";
   if (p.startsWith("meta")) return "meta";
+  // Lob direct mail — DB CHECK + AdPlatform enum both include "lob"
+  // as of 2026-05-09 migration. Pre-migration creatives sometimes
+  // tagged Lob postcards as "meta-feed" — they'll show in Meta until
+  // re-tagged.
+  if ((p as string) === "lob") return "lob";
   return "other";
 }
 
@@ -179,9 +184,13 @@ function mockMetrics(seed: CreativeSeed, idx: number): CreativeMetrics {
   const spend = 50 + (r % 800);
   const roas = ((r >> 4) % 100) / 12; // 0-8.3×
   const ageDays = 1 + ((r >> 8) % 60);
-  // Bucket assignment based on ROAS + age
+  // Bucket assignment — Hormozi-aligned. Winners require BOTH high
+  // ROAS (≥5×) AND enough age (≥7d) to call it real signal. A
+  // 1-day-old creative with a single fluky conversion should NOT be
+  // marketed as "Proven Winner" — the AI engine reads bucket and
+  // would scale on noise.
   let bucket: AllocationBucket = "net-new";
-  if (roas >= 5) bucket = "winners";
+  if (roas >= 5 && ageDays >= 7) bucket = "winners";
   else if (roas >= 2 && ageDays >= 7) bucket = "iteration";
   else if (ageDays < 14) bucket = "net-new";
   else bucket = "iteration";
@@ -204,7 +213,11 @@ type AdsTabV2Props = {
 
 export default function AdsTabV2({ slug }: AdsTabV2Props) {
   const [openPlatform, setOpenPlatform] = useState<PlatformGroup | null>(null);
-  const creatives = CREATIVES_BY_SLUG[slug] ?? ZENITH_CREATIVES;
+  // Per-tenant creative library. Empty array (NOT Zenith fallback)
+  // when slug isn't registered — historical bug rendered Zenith ads
+  // in ITC's portal because of a silent fallback. Now: unknown slug
+  // = empty state with a "register your creatives" message below.
+  const creatives = CREATIVES_BY_SLUG[slug] ?? [];
 
   // Compute per-platform-group rollups
   const platformStats = useMemo(() => {
@@ -496,9 +509,12 @@ function ConnectButton({
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          kind: "copy",
+          // Whitelisted "connect" kind — landed in request-change
+          // route 2026-05-09. Server categorizes correctly and shows
+          // the OAuth instruction in details.
+          kind: "connect",
           variant_label: `connect-${platform}`,
-          message: `Owner requested to connect ${m.label} account. Initiate OAuth handshake.`,
+          details: `Owner requested to connect ${m.label} account. Initiate OAuth handshake (token storage + scopes per platform).`,
         }),
       });
       if (r.ok) {
@@ -531,6 +547,23 @@ function AllocationBar({
 }: {
   allocation: Record<AllocationBucket, number>;
 }) {
+  const total =
+    allocation.winners + allocation.iteration + allocation["net-new"];
+  // Empty platform — show a clean "no creatives yet" state instead of
+  // a 0/0/0 bar with three "70pt under target" rose lines.
+  if (total === 0) {
+    return (
+      <section className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
+        <h3 className="text-sm font-bold text-white">
+          Budget allocation · 70 / 20 / 10
+        </h3>
+        <p className="text-[11px] text-slate-400 mt-1">
+          No creatives on this platform yet. Add some to see the
+          allocation breakdown + drift signal.
+        </p>
+      </section>
+    );
+  }
   return (
     <section className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
       <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
@@ -543,24 +576,27 @@ function AllocationBar({
           </p>
         </div>
       </div>
+      {/* Bar — true percentages (no min-width floor that would push the
+          total above 100%). Tiny buckets show "<1%" labels via the
+          conditional render below to avoid 0% overlap. */}
       <div className="flex h-8 rounded-md overflow-hidden border border-white/10">
         <div
-          className="bg-emerald-500/40 flex items-center justify-center text-[11px] font-bold text-emerald-100"
-          style={{ width: `${Math.max(allocation.winners, 5)}%` }}
+          className="bg-emerald-500/40 flex items-center justify-center text-[11px] font-bold text-emerald-100 overflow-hidden"
+          style={{ width: `${allocation.winners}%` }}
         >
-          {allocation.winners}%
+          {allocation.winners >= 5 ? `${allocation.winners}%` : ""}
         </div>
         <div
-          className="bg-amber-500/40 flex items-center justify-center text-[11px] font-bold text-amber-100"
-          style={{ width: `${Math.max(allocation.iteration, 5)}%` }}
+          className="bg-amber-500/40 flex items-center justify-center text-[11px] font-bold text-amber-100 overflow-hidden"
+          style={{ width: `${allocation.iteration}%` }}
         >
-          {allocation.iteration}%
+          {allocation.iteration >= 5 ? `${allocation.iteration}%` : ""}
         </div>
         <div
-          className="bg-violet-500/40 flex items-center justify-center text-[11px] font-bold text-violet-100"
-          style={{ width: `${Math.max(allocation["net-new"], 5)}%` }}
+          className="bg-violet-500/40 flex items-center justify-center text-[11px] font-bold text-violet-100 overflow-hidden"
+          style={{ width: `${allocation["net-new"]}%` }}
         >
-          {allocation["net-new"]}%
+          {allocation["net-new"] >= 5 ? `${allocation["net-new"]}%` : ""}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 mt-2 text-[11px]">

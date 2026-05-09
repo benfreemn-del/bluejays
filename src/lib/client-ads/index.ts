@@ -5,6 +5,7 @@
 import { getSupabase } from "../supabase";
 import { ZENITH_CREATIVES, type CreativeSeed } from "./zenith-creatives";
 import { OIT_CREATIVES } from "./oit-creatives";
+import { BLUEJAYS_CREATIVES } from "./bluejays-creatives";
 
 export type AdStatus =
   | "draft"
@@ -43,6 +44,7 @@ export type ClientAdCreative = {
 const REGISTRY: Record<string, CreativeSeed[]> = {
   "zenith-sports": ZENITH_CREATIVES,
   "olympic-inspections": OIT_CREATIVES,
+  bluejays: BLUEJAYS_CREATIVES,
 };
 
 export function getCreativeSeeds(clientSlug: string): CreativeSeed[] {
@@ -71,56 +73,37 @@ export async function listClientAdCreatives(
 export async function seedClientAdCreatives(
   clientSlug: string,
   seeds: CreativeSeed[],
-): Promise<{ inserted: number; updated: number }> {
+): Promise<{ upserted: number }> {
+  // Real UPSERT keyed on the natural key (client_slug, audience,
+  // platform, variant_label). Was select-then-insert which had a race
+  // window — two concurrent calls could both miss the existing row
+  // and both insert, creating duplicates. Migration
+  // 20260509_client_ad_creatives_v2.sql adds the unique index this
+  // upsert relies on (coalesce(variant_label,'') in the index for
+  // null-safe dedupe).
   const sb = getSupabase();
-  let inserted = 0;
-  let updated = 0;
-  for (const s of seeds) {
-    const { data: existing } = await sb
-      .from("client_ad_creatives")
-      .select("id")
-      .eq("client_slug", clientSlug)
-      .eq("audience", s.audience)
-      .eq("platform", s.platform)
-      .eq("variant_label", s.variant_label ?? "")
-      .maybeSingle();
-
-    if (existing) {
-      const { error } = await sb
-        .from("client_ad_creatives")
-        .update({
-          ad_set: s.ad_set,
-          headline: s.headline,
-          body: s.body,
-          cta: s.cta,
-          image_brief: s.image_brief ?? null,
-          video_brief: s.video_brief ?? null,
-          utm: s.utm,
-        })
-        .eq("id", existing.id);
-      if (error) throw new Error(`seed update: ${error.message}`);
-      updated += 1;
-    } else {
-      const { error } = await sb.from("client_ad_creatives").insert([
-        {
-          client_slug: clientSlug,
-          audience: s.audience,
-          platform: s.platform,
-          ad_set: s.ad_set,
-          variant_label: s.variant_label,
-          headline: s.headline,
-          body: s.body,
-          cta: s.cta,
-          image_brief: s.image_brief ?? null,
-          video_brief: s.video_brief ?? null,
-          utm: s.utm,
-        },
-      ]);
-      if (error) throw new Error(`seed insert: ${error.message}`);
-      inserted += 1;
-    }
-  }
-  return { inserted, updated };
+  if (seeds.length === 0) return { upserted: 0 };
+  const rows = seeds.map((s) => ({
+    client_slug: clientSlug,
+    audience: s.audience,
+    platform: s.platform,
+    ad_set: s.ad_set,
+    variant_label: s.variant_label ?? "",
+    headline: s.headline,
+    body: s.body,
+    cta: s.cta,
+    image_brief: s.image_brief ?? null,
+    video_brief: s.video_brief ?? null,
+    utm: s.utm,
+  }));
+  const { error } = await sb
+    .from("client_ad_creatives")
+    .upsert(rows, {
+      onConflict: "client_slug,audience,platform,variant_label",
+      ignoreDuplicates: false,
+    });
+  if (error) throw new Error(`seedClientAdCreatives: ${error.message}`);
+  return { upserted: rows.length };
 }
 
 export async function updateAdCreativeStatus(
@@ -186,7 +169,10 @@ export function adsToCsv(
   ].join(",");
   const lines = rows.map((r) =>
     [
-      `"tekky-${r.audience}"`,
+      // Campaign name = slug-audience so OIT exports as "olympic-inspections-homeowner",
+      // BlueJays as "bluejays-all", etc. — was hardcoded "tekky-" which
+      // emitted invalid Zenith campaign names for every other tenant.
+      `"${r.client_slug}-${r.audience}"`,
       `"${r.ad_set ?? ""}"`,
       `"${r.headline.replace(/"/g, '""')}"`,
       `"${r.body.replace(/"/g, '""')}"`,

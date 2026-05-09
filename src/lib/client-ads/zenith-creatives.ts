@@ -31,7 +31,11 @@ export type AdPlatform =
   | "meta-stories"
   | "google-search"
   | "google-pmax"
-  | "google-yt";
+  | "google-yt"
+  // Lob direct-mail postcards — added 2026-05-09 alongside the
+  // platform-card landing view in AdsTabV2. DB CHECK constraint
+  // updated in migration 20260509_client_ad_creatives_v2.sql.
+  | "lob";
 
 export type CreativeSeed = {
   audience: AdAudience;
