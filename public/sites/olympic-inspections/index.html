@@ -19,17 +19,19 @@
     <nav id="navbar">
         <div class="container nav-inner">
             <a href="#home" class="nav-logo" aria-label="Olympic Inspections & Testing home">
-                <!-- New logo plugged in 2026-05-10. The PNG already
-                     contains the "OIT" wordmark, so the separate
-                     `.nav-name` text block is gone — would read as
-                     redundant alongside the embedded letters. -->
-                <img
-                    src="/sites/olympic-inspections/logo.png"
-                    alt="Olympic Inspections &amp; Testing"
+                <!-- New logo plugged in 2026-05-10. The PNG is dark
+                     on transparent; we render it in brand-green via
+                     CSS mask-image (background-color = forest green,
+                     PNG silhouette = the mask). Crisper than a
+                     filter chain + recolors instantly if --forest
+                     ever changes.
+                     The PNG already contains the "OIT" wordmark, so
+                     the separate `.nav-name` text block is gone. -->
+                <span
                     class="nav-brand-img"
-                    width="1500"
-                    height="940"
-                />
+                    role="img"
+                    aria-label="Olympic Inspections &amp; Testing"
+                ></span>
             </a>
             <div class="nav-links">
                 <a href="#services">Services</a>

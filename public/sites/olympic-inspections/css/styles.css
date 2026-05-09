@@ -196,16 +196,29 @@ h1, h2, h3, h4, .section-title {
 
 /* New OIT brand mark — replaces the inline SVG mountain logo.
    Locked 2026-05-10: PNG already contains the OIT wordmark, so this
-   is the SOLE element inside .nav-logo (no separate text block). */
+   is the SOLE element inside .nav-logo (no separate text block).
+
+   Rendered as a mask-image rather than an <img> so we can re-tint
+   the dark-on-transparent PNG to brand forest-green via background-
+   color. Filter-chain recoloring is brittle; mask-image gives a
+   pixel-crisp result and re-themes for free if --forest ever changes.
+
+   Aspect ratio = 1500/940 ≈ 1.596:1 (matches the cropped PNG). */
 .nav-brand-img {
   display: block;
-  height: 38px;          /* matches the old logo-mark visual height */
-  width: auto;
-  max-width: 180px;
-  object-fit: contain;
+  height: 48px;                                 /* desktop — bumped from 38px */
+  width: 76.6px;                                /* 48 * 1.596 */
+  background-color: var(--forest);
+  -webkit-mask: url(/sites/olympic-inspections/logo.png) center / contain no-repeat;
+          mask: url(/sites/olympic-inspections/logo.png) center / contain no-repeat;
+}
+#navbar.scrolled .nav-brand-img {
+  height: 42px;                                 /* shrink slightly when nav condenses */
+  width: 67px;
 }
 @media (max-width: 600px) {
-  .nav-brand-img { height: 32px; max-width: 150px; }
+  .nav-brand-img { height: 36px; width: 57.5px; }
+  #navbar.scrolled .nav-brand-img { height: 32px; width: 51px; }
 }
 .nav-logo .nav-name { line-height: 1.1; }
 .nav-logo .nav-name small {
