@@ -4,6 +4,7 @@
 
 import { getSupabase } from "../supabase";
 import { ZENITH_CREATIVES, type CreativeSeed } from "./zenith-creatives";
+import { OIT_CREATIVES } from "./oit-creatives";
 
 export type AdStatus =
   | "draft"
@@ -41,6 +42,7 @@ export type ClientAdCreative = {
 
 const REGISTRY: Record<string, CreativeSeed[]> = {
   "zenith-sports": ZENITH_CREATIVES,
+  "olympic-inspections": OIT_CREATIVES,
 };
 
 export function getCreativeSeeds(clientSlug: string): CreativeSeed[] {

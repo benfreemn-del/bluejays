@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
-import { sendEmailTo } from "@/lib/alerts";
+import { sendEmailTo, sendOwnerAlert } from "@/lib/alerts";
+import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 
 /**
  * /api/clients/olympic-inspections/bookings
@@ -236,6 +237,61 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     console.error("[oit-bookings] client_leads enrollment failed (non-blocking):", e);
+  }
+
+  // ── Bridge: ping Luke (and Ben) immediately on every new booking.
+  // Critical reliability gap: previously the booking landed silently
+  // and Luke only saw it when he loaded the admin. Now an instant
+  // email goes to every client_owner that has new_lead_email='instant'
+  // (the default), and an SMS goes to OWNER_PHONE_NUMBER (Ben's
+  // global owner-alert pipe).
+  try {
+    const summaryParts: string[] = [
+      `🛠 New booking — ${name}`,
+      ``,
+      phone ? `📞 ${phone}` : "",
+      email ? `✉️ ${email}` : "",
+      body.address ? `📍 ${body.address}` : "",
+      body.propertySize ? `🏠 ${body.propertySize}` : "",
+      typeof body.estimateLow === "number" && typeof body.estimateHigh === "number"
+        ? `💲 Estimate: $${body.estimateLow}–$${body.estimateHigh}`
+        : "",
+      body.addons && body.addons !== "none" ? `🧪 Addons: ${body.addons}` : "",
+      body.notes ? `\nNotes:\n${body.notes}` : "",
+      ``,
+      `Open admin: https://bluejayportfolio.com/clients/olympic-inspections/admin`,
+    ];
+    const fullMessage = summaryParts.filter(Boolean).join("\n");
+    const smsMessage = `🛠 OIT booking: ${name}${phone ? ` · ${phone}` : ""}. Confirm in admin.`;
+
+    // Per-owner email fan-out (Luke gets pinged, future co-owners can opt in)
+    if (isSupabaseConfigured()) {
+      const owners = await listOwnersWithPrefsForClient(SLUG);
+      const ownerSends: Promise<unknown>[] = [];
+      for (const o of owners) {
+        if (o.prefs.new_lead_email === "instant") {
+          ownerSends.push(
+            sendEmailTo({
+              to: o.email,
+              subject: `🛠 New booking — ${name}`,
+              body: fullMessage,
+              fromName: "Olympic Inspections — Booking Alert",
+              clientSlug: SLUG,
+            }).catch((err) =>
+              console.error("[oit-bookings] owner email failed:", err),
+            ),
+          );
+        }
+      }
+      await Promise.allSettled(ownerSends);
+    }
+    // Global owner SMS (Ben). Tagged with slug so /spending counts it
+    // against OIT.
+    await sendOwnerAlert(smsMessage, { clientSlug: SLUG }).catch((err) =>
+      console.error("[oit-bookings] owner SMS failed:", err),
+    );
+  } catch (e) {
+    console.error("[oit-bookings] owner alert fan-out failed (non-blocking):", e);
   }
 
   return NextResponse.json(

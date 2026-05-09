@@ -15,7 +15,16 @@
  * and we can answer "which hook is winning" without reading copy.
  */
 
-export type AdAudience = "parent" | "coach" | "player" | "all";
+export type AdAudience =
+  // Zenith Sports
+  | "parent"
+  | "coach"
+  | "player"
+  | "all"
+  // Olympic Inspections & Testing
+  | "homeowner"
+  | "realtor"
+  | "insurance";
 export type AdPlatform =
   | "meta-feed"
   | "meta-reels"

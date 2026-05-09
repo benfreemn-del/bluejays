@@ -97,7 +97,12 @@ export const CATEGORIES: Category[] = [
         title: "Audience-Segmented Funnels",
         detail:
           "Up to 6 audience tracks per tenant. Each track has its own day-by-day cadence using all 4 channels: email, SMS, ringless voicemail, and AI postcards via Lob. Definitions live; firing waits on email-domain auth + Twilio setup per tenant.",
-        status: { "zenith-sports": "available", "itc-quick-attach": "available", default: "active" },
+        status: {
+          "zenith-sports": "available",
+          "itc-quick-attach": "available",
+          "olympic-inspections": "active",
+          default: "active",
+        },
         seeItIn: { label: "Funnels tab", tab: "funnels" },
       },
       {
@@ -196,7 +201,12 @@ export const CATEGORIES: Category[] = [
         title: "Paid Ads Optimizer · Meta + Google",
         detail:
           "Hormozi-codified iteration engine running on every active creative. Every Monday surfaces 4 nudge cards: Scale (ROAS 7+ → spend more), Iterate (winners unchanged 14+ days → 100 reskins per Rule 2), Audit (retargeting gaps · branded PPC · proof-led ratio · pain hooks), Kill (ROAS <1 over 21+ days → cut). Backed by the 11-rule paid_ads_iteration skill — 70/20/10 budget allocation, 80% reskinning discipline, top-3-second mining, proof > promise. Owner requests changes from the Ads tab; operator pushes to Meta/Google within 24 hrs.",
-        status: { "zenith-sports": "available", "itc-quick-attach": "available", default: "available" },
+        status: {
+          "zenith-sports": "available",
+          "itc-quick-attach": "available",
+          "olympic-inspections": "available",
+          default: "available",
+        },
         seeItIn: { label: "Ads tab", tab: "ads" },
         trap: "Most ad operators iterate weekly without rules — burns budget on noise. The skill enforces hard rules: don't kill creatives <7 days old, reskin winners before net-new, capacity-check before any scale recommendation.",
       },
@@ -252,7 +262,12 @@ export const CATEGORIES: Category[] = [
         title: "Per-Audience Conversion Tracking",
         detail:
           "Every funnel step writes to the analytics ledger. AI rolls up: which audience opens the most? Which converts? Where do leads drop off? Surfaces the weakest link in your sequence. Numbers populate as funnels start firing.",
-        status: { "zenith-sports": "available", "itc-quick-attach": "available", default: "active" },
+        status: {
+          "zenith-sports": "available",
+          "itc-quick-attach": "available",
+          "olympic-inspections": "active",
+          default: "active",
+        },
         seeItIn: { label: "Insights tab", tab: "insights" },
       },
     ],

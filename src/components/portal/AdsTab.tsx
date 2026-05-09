@@ -37,6 +37,36 @@ import {
   type AdAudience,
   type AdPlatform,
 } from "@/lib/client-ads/zenith-creatives";
+import { OIT_CREATIVES } from "@/lib/client-ads/oit-creatives";
+
+// Per-slug creative library. Falls back to Zenith for unknown slugs
+// (legacy demo behavior — should never trigger in prod since the tab
+// is gated to known slugs). New tenants register their seeds here.
+const CREATIVES_BY_SLUG: Record<string, CreativeSeed[]> = {
+  "zenith-sports": ZENITH_CREATIVES,
+  "olympic-inspections": OIT_CREATIVES,
+};
+
+// Audience filters per tenant. Zenith uses parent/coach/player; OIT
+// uses homeowner/realtor/insurance.
+const AUDIENCE_FILTERS_BY_SLUG: Record<
+  string,
+  { id: string; label: string; tone: string }[]
+> = {
+  "zenith-sports": [
+    { id: "all_filter", label: "All", tone: "border-slate-600 bg-slate-800/60 text-white" },
+    { id: "parent", label: "Parents", tone: "border-amber-500/40 bg-amber-500/10 text-amber-200" },
+    { id: "coach", label: "Coaches", tone: "border-sky-500/40 bg-sky-500/10 text-sky-200" },
+    { id: "player", label: "Players", tone: "border-lime-500/40 bg-lime-500/10 text-lime-200" },
+    { id: "all", label: "Catalog / All", tone: "border-violet-500/40 bg-violet-500/10 text-violet-200" },
+  ],
+  "olympic-inspections": [
+    { id: "all_filter", label: "All", tone: "border-slate-600 bg-slate-800/60 text-white" },
+    { id: "homeowner", label: "Homeowners", tone: "border-emerald-500/40 bg-emerald-500/10 text-emerald-200" },
+    { id: "realtor", label: "Realtors", tone: "border-sky-500/40 bg-sky-500/10 text-sky-200" },
+    { id: "insurance", label: "Insurance", tone: "border-amber-500/40 bg-amber-500/10 text-amber-200" },
+  ],
+};
 
 const PLATFORM_LABELS: Record<AdPlatform, string> = {
   "meta-feed": "Meta · Feed",
@@ -56,15 +86,7 @@ const PLATFORM_TONES: Record<AdPlatform, string> = {
   "google-yt": "border-rose-500/40 bg-rose-500/10 text-rose-200",
 };
 
-type AudienceFilter = AdAudience | "all_filter";
-
-const AUDIENCE_FILTERS: { id: AudienceFilter; label: string; tone: string }[] = [
-  { id: "all_filter", label: "All", tone: "border-slate-600 bg-slate-800/60 text-white" },
-  { id: "parent", label: "Parents", tone: "border-amber-500/40 bg-amber-500/10 text-amber-200" },
-  { id: "coach", label: "Coaches", tone: "border-sky-500/40 bg-sky-500/10 text-sky-200" },
-  { id: "player", label: "Players", tone: "border-lime-500/40 bg-lime-500/10 text-lime-200" },
-  { id: "all", label: "Catalog / All", tone: "border-violet-500/40 bg-violet-500/10 text-violet-200" },
-];
+type AudienceFilter = AdAudience | "all_filter" | string;
 
 type ChangeKind = "pause" | "budget" | "copy" | "image" | "delete";
 
@@ -132,10 +154,15 @@ export default function AdsTab({ slug }: AdsTabProps) {
     kind: ChangeKind;
   } | null>(null);
 
+  // Per-tenant creative library + audience filters
+  const creatives = CREATIVES_BY_SLUG[slug] ?? ZENITH_CREATIVES;
+  const audienceFilters =
+    AUDIENCE_FILTERS_BY_SLUG[slug] ?? AUDIENCE_FILTERS_BY_SLUG["zenith-sports"];
+
   const filteredCreatives = useMemo(() => {
-    if (audienceFilter === "all_filter") return ZENITH_CREATIVES;
-    return ZENITH_CREATIVES.filter((c) => c.audience === audienceFilter);
-  }, [audienceFilter]);
+    if (audienceFilter === "all_filter") return creatives;
+    return creatives.filter((c) => c.audience === audienceFilter);
+  }, [audienceFilter, creatives]);
 
   const nudges = useMemo(() => getMockNudges(slug), [slug]);
 
@@ -149,7 +176,7 @@ export default function AdsTab({ slug }: AdsTabProps) {
               Your ad library · Hormozi-aligned
             </p>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-              {ZENITH_CREATIVES.length} creatives running
+              {creatives.length} creatives running
             </h2>
           </div>
           <span className="text-[10px] uppercase tracking-wider font-bold rounded-full border px-2.5 py-0.5 border-emerald-500/40 bg-emerald-500/10 text-emerald-200 whitespace-nowrap">
@@ -161,6 +188,47 @@ export default function AdsTab({ slug }: AdsTabProps) {
           See what&apos;s running, request changes (pause · budget · copy ·
           image), and review what the AI Operator recommends iterating
           this week. Ben reviews + pushes within 24 hours.
+        </p>
+      </section>
+
+      {/* CONNECT BOXES — Google Ads + Meta Ads. Owner pastes account ID
+          (or initiates OAuth once delegated-access lands) so live ROAS
+          + spend hydrate the iteration-nudge engine. Currently
+          placeholder UX — clicking opens a request-task that pings Ben
+          to wire the OAuth handshake. Replaces the read-only "Ben
+          pushes for you" message Luke would've seen otherwise. */}
+      <section>
+        <div className="flex items-baseline justify-between mb-3">
+          <h3 className="text-base font-bold text-white">
+            Connect your ad accounts
+          </h3>
+          <span className="text-[11px] text-slate-500">
+            Required for live ROAS data
+          </span>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <ConnectBox
+            platform="google"
+            slug={slug}
+            label="Google Ads"
+            sub="Search · PMax · YouTube"
+            color="emerald"
+            icon="🟢"
+          />
+          <ConnectBox
+            platform="meta"
+            slug={slug}
+            label="Meta Ads"
+            sub="Facebook · Instagram · Reels"
+            color="sky"
+            icon="🔵"
+          />
+        </div>
+        <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
+          Once connected, your AI Operator pulls daily ROAS + impressions
+          + spend by creative — that's what powers the iteration nudges
+          below. No live API push to your accounts; Ben reviews + pushes
+          changes you request.
         </p>
       </section>
 
@@ -192,12 +260,12 @@ export default function AdsTab({ slug }: AdsTabProps) {
           <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mr-1">
             Filter
           </span>
-          {AUDIENCE_FILTERS.map((f) => {
+          {audienceFilters.map((f) => {
             const active = audienceFilter === f.id;
             const count =
               f.id === "all_filter"
-                ? ZENITH_CREATIVES.length
-                : ZENITH_CREATIVES.filter((c) => c.audience === f.id).length;
+                ? creatives.length
+                : creatives.filter((c) => c.audience === f.id).length;
             return (
               <button
                 key={f.id}
@@ -492,6 +560,91 @@ function ChangeRequestModal({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * ConnectBox — placeholder Google/Meta ad-account connection card.
+ *
+ * V1 behavior: clicking "Connect" opens a request-change task that
+ * pings Ben to start the OAuth handshake server-side. Once Meta /
+ * Google delegated access lands, this swaps to a real OAuth button.
+ */
+function ConnectBox({
+  platform,
+  slug,
+  label,
+  sub,
+  color,
+  icon,
+}: {
+  platform: "google" | "meta";
+  slug: string;
+  label: string;
+  sub: string;
+  color: "emerald" | "sky";
+  icon: string;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const colorClass =
+    color === "emerald"
+      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+      : "border-sky-500/40 bg-sky-500/10 text-sky-200 hover:bg-sky-500/20";
+
+  const requestConnect = async () => {
+    if (busy) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await fetch(`/api/clients/${slug}/ads/request-change`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          kind: "copy",
+          variant_label: `connect-${platform}`,
+          message: `Owner requested to connect ${platform === "google" ? "Google Ads" : "Meta Ads"} account. Initiate OAuth handshake.`,
+        }),
+      });
+      if (r.ok) {
+        setMsg("Request sent — Ben will email you the OAuth link within 24 hours.");
+      } else {
+        setMsg("Couldn't send request — try again or text Ben directly.");
+      }
+    } catch {
+      setMsg("Couldn't send request — try again.");
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-slate-900/50 p-4 flex flex-col gap-3">
+      <div className="flex items-start gap-3">
+        <span className="text-2xl leading-none mt-0.5" aria-hidden>
+          {icon}
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-bold text-white">{label}</div>
+          <div className="text-[11px] text-slate-400">{sub}</div>
+        </div>
+        <span className="text-[10px] uppercase tracking-wider font-bold rounded-full border px-2 py-0.5 border-amber-500/40 bg-amber-500/10 text-amber-200">
+          Not connected
+        </span>
+      </div>
+      <button
+        type="button"
+        onClick={requestConnect}
+        disabled={busy}
+        className={`text-[12px] font-bold uppercase tracking-wider rounded-lg border px-3 py-2 transition-colors ${colorClass} disabled:opacity-50 disabled:cursor-wait`}
+      >
+        {busy ? "Sending request…" : "Connect"}
+      </button>
+      {msg && (
+        <p className="text-[11px] text-slate-300 leading-relaxed">{msg}</p>
+      )}
     </div>
   );
 }

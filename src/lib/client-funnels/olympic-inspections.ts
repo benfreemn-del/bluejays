@@ -182,7 +182,7 @@ Thanks for joining the Olympic Inspections referral network. Quick rundown so yo
 
 • Send your buyers/sellers our way for mold inspection — we handle scheduling, on-site, lab analysis, and the written report
 • 3-5 day turnaround so you don't hold up closings
-• Tiered referral payout: $50 first close → $75 after 5 closes → $100 after 20 closes
+• Tiered referral payout: $50 (closes 1) → $75 (closes 2–5) → $100 (closes 6+)
 • You get a unique link + tracking dashboard at {{partnersUrl}}
 
 Why our reports work for transactions:
@@ -218,7 +218,7 @@ Three ways agents typically use it:
 Payout schedule:
 • $50 — first inspection that closes from your link
 • $75 — closes 2-5
-• $100 — closes 6-19
+• $100 — closes 6+
 • $100 + bonus quarterly review — 20+ closes/year
 
 We pay monthly via Zelle, Venmo, or check. Reports come out the 5th.

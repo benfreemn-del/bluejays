@@ -770,14 +770,18 @@ export default function PortalPage({
                 : []),
               // 🧠 AI Skills tab — AI-package buyers only. See CLAUDE.md
               // "Client Tenant Status" table for who's gated in/out.
-              ...(slug === "itc-quick-attach" || slug === "zenith-sports"
+              ...(slug === "itc-quick-attach" ||
+              slug === "zenith-sports" ||
+              slug === "olympic-inspections"
                 ? [{ id: "ai-skills" as Tab, label: "AI Skills", emoji: "🧠" }]
                 : []),
               // 📢 Ads tab — fullsystem-tier clients. Shipped 2026-05-08
               // ahead of Tekky's 2026-05-09 walkthrough so owners can
               // see + request changes on their ad creatives. Powered
               // by paid_ads_iteration skill.
-              ...(slug === "itc-quick-attach" || slug === "zenith-sports"
+              ...(slug === "itc-quick-attach" ||
+              slug === "zenith-sports" ||
+              slug === "olympic-inspections"
                 ? [{ id: "ads" as Tab, label: "Ads", emoji: "📢" }]
                 : []),
               { id: "account", label: "Account", emoji: "⚙️" },
@@ -860,11 +864,13 @@ export default function PortalPage({
           <CustomersTab slug={slug} />
         )}
         {tab === "ads" &&
-          (slug === "itc-quick-attach" || slug === "zenith-sports") && (
-            <AdsTab slug={slug} />
-          )}
+          (slug === "itc-quick-attach" ||
+            slug === "zenith-sports" ||
+            slug === "olympic-inspections") && <AdsTab slug={slug} />}
         {tab === "ai-skills" &&
-          (slug === "itc-quick-attach" || slug === "zenith-sports") && (
+          (slug === "itc-quick-attach" ||
+            slug === "zenith-sports" ||
+            slug === "olympic-inspections") && (
             <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
           )}
         {tab === "account" && (
