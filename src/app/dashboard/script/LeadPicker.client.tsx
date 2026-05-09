@@ -8,6 +8,7 @@ import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
 import { useRole } from "@/lib/use-role";
+import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
 
 /**
  * LeadPicker — fallback view rendered on /dashboard/script when no
@@ -632,6 +633,25 @@ export default function LeadPicker() {
           </div>
         ) : (
           <>
+            {/* Open/closed legend — explains the green/yellow/red dot
+                next to each business name. Three-state ring around
+                the dot keeps it readable on the dark surface. */}
+            <div className="flex items-center gap-3 mb-2 px-1 text-[10px] uppercase tracking-wider font-bold text-muted">
+              <span className="text-muted/80">Open status:</span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 ring-1 ring-white/10 inline-block" />
+                Open
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-300 ring-1 ring-white/10 inline-block" />
+                Unsure
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 ring-1 ring-white/10 inline-block" />
+                Closed
+              </span>
+            </div>
+
             {/* Page header — total + current page range */}
             <div className="flex items-center justify-between mb-2 px-1 text-[11px] text-muted">
               <span>
@@ -690,6 +710,27 @@ export default function LeadPicker() {
                     ? "green"
                     : "neutral";
 
+              // Open/closed/unsure dot — based on the prospect's
+              // business-hours clock. GREEN = open right now (precise
+              // hours parsed). RED = closed right now (precise). YELLOW
+              // = heuristic only — we're guessing from the prospect's
+              // timezone alone (no parsed hours on the record). Lets
+              // Madie skim before dialing instead of finding out
+              // mid-call.
+              const clock = getProspectClock(p.state);
+              const rawHours = (
+                p.scrapedData as { hours?: string } | undefined
+              )?.hours;
+              const openStatus = getOpenStatus(clock, rawHours ?? null);
+              const openDot: "green" | "red" | "yellow" = !openStatus.precise
+                ? "yellow"
+                : openStatus.state === "open"
+                  ? "green"
+                  : "red";
+              const openDotTitle = openStatus.precise
+                ? `${openStatus.label}${openStatus.hint ? ` · ${openStatus.hint}` : ""}`
+                : `Unsure (no published hours) — ${openStatus.label.toLowerCase()}. Try the dial anyway; voicemail is fine.`;
+
               const rowAccent = isMfgLookalike
                 ? "border-l-4 border-l-pink-400 bg-pink-500/[0.06]"
                 : isFullSystem
@@ -739,6 +780,39 @@ export default function LeadPicker() {
                         }
                       />
                     )}
+                    {/* Open/closed/unsure dot — Madie's at-a-glance
+                        signal for "is the business open right now?"
+                        Green = open (precise), red = closed (precise),
+                        yellow = unsure (heuristic only, no hours
+                        published). Don't skip yellow — voicemail is
+                        fine and unsure is most prospects. */}
+                    <span
+                      aria-label={openDotTitle}
+                      title={openDotTitle}
+                      className={`shrink-0 w-2.5 h-2.5 rounded-full ring-1 ring-white/10 ${
+                        openDot === "green"
+                          ? "bg-emerald-300"
+                          : openDot === "yellow"
+                            ? "bg-amber-300"
+                            : "bg-rose-400"
+                      }`}
+                    />
+                    {/* Local-time chip — gives the dot context.
+                        Renders as e.g. "9:42 AM PT". Drops to muted
+                        when we're using the fallback timezone (state
+                        unknown). */}
+                    <span
+                      className={`shrink-0 text-[10px] tabular-nums ${
+                        clock.isFallbackTz ? "text-muted/60" : "text-muted"
+                      }`}
+                      title={
+                        clock.isFallbackTz
+                          ? "No state on record — falling back to Pacific time."
+                          : `Local time at the prospect: ${clock.display}`
+                      }
+                    >
+                      {clock.display}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-bold text-foreground truncate">
