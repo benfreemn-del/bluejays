@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import MadieCelebration from "./MadieCelebration";
 
 /**
  * MadieRaceTrack — gamified onboarding + progression UI for the
@@ -32,6 +33,20 @@ type MadieStats = {
   paceVsExpected: number | null;
 };
 
+type CommissionStats = {
+  monthCommissionUsd: number;
+  monthWebsiteCloses: number;
+  monthAiSystemCloses: number;
+  monthGoalUsd: number;
+  monthGoalPct: number;
+  lifetimeCommissionUsd: number;
+  lifetimeCloses: number;
+  nextMilestone: number | null;
+  distanceToMilestone: number | null;
+  closesNeededWebsite: number | null;
+  closesNeededAiSystem: number | null;
+};
+
 type Level = {
   n: number;
   emoji: string;
@@ -47,15 +62,24 @@ type Level = {
 
 export default function MadieRaceTrack() {
   const [stats, setStats] = useState<MadieStats | null>(null);
+  const [commission, setCommission] = useState<CommissionStats | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
-        const r = await fetch("/api/madie/today", { credentials: "include" });
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const j = (await r.json()) as MadieStats;
-        if (!cancelled) setStats(j);
+        const [statsRes, commRes] = await Promise.all([
+          fetch("/api/madie/today", { credentials: "include" }),
+          fetch("/api/madie/commission", { credentials: "include" }),
+        ]);
+        if (statsRes.ok) {
+          const j = (await statsRes.json()) as MadieStats;
+          if (!cancelled) setStats(j);
+        }
+        if (commRes.ok) {
+          const j = (await commRes.json()) as CommissionStats;
+          if (!cancelled) setCommission(j);
+        }
       } catch (err) {
         console.warn("[MadieRaceTrack]", err);
       }
@@ -187,6 +211,16 @@ export default function MadieRaceTrack() {
 
   return (
     <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 p-5 sm:p-6 mb-4 relative overflow-hidden">
+      {/* Achievement celebrations — confetti + banner overlay. Fires
+          when Madie crosses 100 calls / 3 meetings / first commission /
+          lap-up. localStorage-deduped so refreshing doesn't re-fire. */}
+      <MadieCelebration
+        callsToday={stats?.callsToday ?? 0}
+        meetingsToday={stats?.meetingsToday ?? 0}
+        monthCommissionUsd={commission?.monthCommissionUsd ?? 0}
+        currentLap={currentLevel}
+      />
+
       {/* Decorative race-stripe accent */}
       <div
         aria-hidden="true"
@@ -247,6 +281,12 @@ export default function MadieRaceTrack() {
           />
         </div>
 
+        {/* Commission ticker — money earned this month + next-milestone gap.
+            Big and front-and-center. The whole race exists for this. */}
+        {commission && (
+          <CommissionTicker commission={commission} />
+        )}
+
         {/* Today's mission CTA */}
         <div className="rounded-xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/[0.10] to-lime-500/[0.06] p-4 mb-5 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex-1 min-w-0">
@@ -299,6 +339,104 @@ export default function MadieRaceTrack() {
 /* ──────────────────────────────────────────────────────────────────── */
 // Sub-components
 /* ──────────────────────────────────────────────────────────────────── */
+
+function CommissionTicker({ commission }: { commission: CommissionStats }) {
+  const monthUsd = commission.monthCommissionUsd;
+  const goalPct = commission.monthGoalPct;
+  const next = commission.nextMilestone;
+  const gap = commission.distanceToMilestone;
+
+  return (
+    <div className="rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/[0.10] via-lime-500/[0.06] to-emerald-500/[0.04] p-4 sm:p-5 mb-5 relative overflow-hidden">
+      {/* Money-stripe accent */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-1 -right-1 -bottom-1 w-24 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, rgba(16,185,129,0.6) 0 10px, transparent 10px 20px)",
+        }}
+      />
+      <div className="relative flex items-baseline justify-between gap-3 flex-wrap">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-emerald-300 mb-1">
+            💰 Earned this month
+          </p>
+          <p className="text-4xl sm:text-5xl font-black text-white tabular-nums leading-none">
+            ${monthUsd.toLocaleString()}
+          </p>
+          <p className="text-[12px] text-slate-300 mt-1">
+            {commission.monthAiSystemCloses > 0 && (
+              <span className="text-violet-200 font-bold">
+                {commission.monthAiSystemCloses} AI System
+              </span>
+            )}
+            {commission.monthAiSystemCloses > 0 &&
+              commission.monthWebsiteCloses > 0 && (
+                <span className="text-slate-500"> · </span>
+              )}
+            {commission.monthWebsiteCloses > 0 && (
+              <span className="text-sky-200 font-bold">
+                {commission.monthWebsiteCloses} website
+              </span>
+            )}
+            {commission.monthAiSystemCloses === 0 &&
+              commission.monthWebsiteCloses === 0 && (
+                <span className="italic text-slate-500">
+                  No closes yet this month — first one starts the streak
+                </span>
+              )}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-300 mb-0.5">
+            $20k month goal
+          </p>
+          <p className="text-3xl font-black text-emerald-200 tabular-nums">
+            {goalPct}%
+          </p>
+          <div className="relative h-1.5 rounded-full bg-white/[0.06] overflow-hidden w-32 sm:w-44 mt-1.5">
+            <div
+              className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-400 to-lime-400 transition-all duration-700"
+              style={{ width: `${Math.min(100, goalPct)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Next milestone callout */}
+      {next != null && gap != null && gap > 0 && (
+        <div className="relative mt-4 pt-4 border-t border-white/[0.08] flex items-baseline justify-between gap-3 flex-wrap">
+          <p className="text-sm text-slate-200">
+            <span className="text-emerald-300 font-bold">${gap.toLocaleString()} away</span>{" "}
+            from the next milestone:{" "}
+            <span className="text-white font-black tabular-nums">
+              ${next.toLocaleString()}
+            </span>
+          </p>
+          <p className="text-[11px] text-slate-400">
+            ={" "}
+            <span className="font-bold text-violet-200 tabular-nums">
+              {commission.closesNeededAiSystem}
+            </span>{" "}
+            AI System close{commission.closesNeededAiSystem === 1 ? "" : "s"}
+            {" or "}
+            <span className="font-bold text-sky-200 tabular-nums">
+              {commission.closesNeededWebsite}
+            </span>{" "}
+            website close{commission.closesNeededWebsite === 1 ? "" : "s"}
+          </p>
+        </div>
+      )}
+
+      {next == null && monthUsd > 0 && (
+        <p className="relative mt-4 pt-4 border-t border-white/[0.08] text-sm text-emerald-200 italic">
+          🏆 You&apos;ve passed every milestone this month. Welcome to the top.
+        </p>
+      )}
+    </div>
+  );
+}
 
 function RaceStat({
   label,
