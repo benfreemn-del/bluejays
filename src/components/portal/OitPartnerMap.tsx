@@ -17,7 +17,7 @@
  * table that auto-updates from a Google Places + LinkedIn scout.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
@@ -419,51 +419,51 @@ export default function OitPartnerMap() {
   // Live-scouted affiliates (auto-discovered by the weekly cron). Merged
   // with the curated PARTNERS[] seed at render — seed gives Luke a
   // reliable baseline, scout adds new candidates as they appear.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await fetch(
-          "/api/clients/olympic-inspections/affiliates",
-          { credentials: "include" },
-        );
-        if (!r.ok) return;
-        const j = (await r.json()) as {
-          ok: boolean;
-          affiliates?: ScoutedAffiliate[];
-        };
-        if (cancelled || !j.ok || !j.affiliates) return;
-        const mapped: PartnerWithDb[] = [];
-        for (const a of j.affiliates) {
-          const cat = roleToCategory(a.role);
-          if (!cat || a.lat == null || a.lng == null) continue;
-          mapped.push({
-            id: `scout-${a.id}`,
-            dbId: a.id,
-            status: a.status,
-            lastContactedAt: a.last_contacted_at,
-            name: a.org_name,
-            category: cat,
-            city: a.city ?? "",
-            lat: a.lat,
-            lng: a.lng,
-            phone: a.phone ?? undefined,
-            website: a.website ?? undefined,
-            pitch:
-              a.fit_score != null
-                ? `Auto-scouted (fit score ${a.fit_score}). ${a.status === "discovered" ? "Cold — call this week." : a.status === "contacted" ? "Already reached out." : "In conversation."}`
-                : "Auto-scouted partner candidate.",
-          });
-        }
-        setScouted(mapped);
-      } finally {
-        if (!cancelled) setScoutedLoaded(true);
+  // Extracted as useCallback so the manual Scan-now button can re-run
+  // it after a fresh scout completes.
+  const loadScouted = useCallback(async () => {
+    try {
+      const r = await fetch(
+        "/api/clients/olympic-inspections/affiliates",
+        { credentials: "include" },
+      );
+      if (!r.ok) return;
+      const j = (await r.json()) as {
+        ok: boolean;
+        affiliates?: ScoutedAffiliate[];
+      };
+      if (!j.ok || !j.affiliates) return;
+      const mapped: PartnerWithDb[] = [];
+      for (const a of j.affiliates) {
+        const cat = roleToCategory(a.role);
+        if (!cat || a.lat == null || a.lng == null) continue;
+        mapped.push({
+          id: `scout-${a.id}`,
+          dbId: a.id,
+          status: a.status,
+          lastContactedAt: a.last_contacted_at,
+          name: a.org_name,
+          category: cat,
+          city: a.city ?? "",
+          lat: a.lat,
+          lng: a.lng,
+          phone: a.phone ?? undefined,
+          website: a.website ?? undefined,
+          pitch:
+            a.fit_score != null
+              ? `Auto-scouted (fit score ${a.fit_score}). ${a.status === "discovered" ? "Cold — call this week." : a.status === "contacted" ? "Already reached out." : "In conversation."}`
+              : "Auto-scouted partner candidate.",
+        });
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+      setScouted(mapped);
+    } finally {
+      setScoutedLoaded(true);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadScouted().catch(() => {});
+  }, [loadScouted]);
 
   const allPartners = useMemo<PartnerWithDb[]>(() => {
     // Dedupe scouted vs seed by lowercase name+city
@@ -551,25 +551,36 @@ export default function OitPartnerMap() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* Header */}
-      <div>
-        <div
-          style={{
-            fontFamily: "Merriweather, Georgia, serif",
-            fontSize: 22,
-            fontWeight: 700,
-            color: "#2d4a2d",
-          }}
-        >
-          🗺️ Olympic Peninsula partner map
+      {/* Header + manual scan trigger */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontFamily: "Merriweather, Georgia, serif",
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#2d4a2d",
+            }}
+          >
+            🗺️ Olympic Peninsula partner map
+          </div>
+          <div style={{ fontSize: 13, color: "#7a857a", marginTop: 4 }}>
+            {allPartners.length} candidate{allPartners.length === 1 ? "" : "s"}
+            {scoutedLoaded && scouted.length > 0
+              ? ` (${PARTNERS.length} curated + ${scouted.length} auto-scouted)`
+              : ""}
+            {" "}· Sequim HQ at center · service rings 10 / 25 / 50 mi
+          </div>
         </div>
-        <div style={{ fontSize: 13, color: "#7a857a", marginTop: 4 }}>
-          {allPartners.length} candidate{allPartners.length === 1 ? "" : "s"}
-          {scoutedLoaded && scouted.length > 0
-            ? ` (${PARTNERS.length} curated + ${scouted.length} auto-scouted)`
-            : ""}
-          {" "}· Sequim HQ at center · service rings 10 / 25 / 50 mi
-        </div>
+        <ScanNowButton onDone={loadScouted} />
       </div>
 
       {/* Layer toggles */}
@@ -865,6 +876,101 @@ export default function OitPartnerMap() {
               ? "Auto-scouted from Google Places. Updates persist to client_affiliates."
               : "Hand-curated seed. Outreach tracking lives on auto-scouted rows."}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────── SCAN-NOW BUTTON ─────────────────────── */
+
+/**
+ * Manual partner scout trigger. Mirrors the BlueJays-internal
+ * /api/auto-scout POST pattern. Live status (idle / scanning /
+ * result message) renders inline so Luke sees what happened without
+ * leaving the map.
+ *
+ * Cost ~$3 per run. Idempotent: dedupes against existing
+ * client_affiliates so re-runs only add NEW candidates.
+ */
+function ScanNowButton({ onDone }: { onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const run = async () => {
+    setBusy(true);
+    setMsg("Scanning Olympic Peninsula…");
+    try {
+      const r = await fetch(
+        "/api/clients/olympic-inspections/scout-now",
+        { method: "POST", credentials: "include" },
+      );
+      const j = (await r.json()) as {
+        ok: boolean;
+        scanned?: number;
+        inserted?: number;
+        duplicates?: number;
+        errors?: string[];
+        error?: string;
+      };
+      if (!r.ok || !j.ok) {
+        setMsg(`Scan failed: ${j.error ?? "unknown error"}`);
+      } else {
+        const ins = j.inserted ?? 0;
+        const dup = j.duplicates ?? 0;
+        const scanned = j.scanned ?? 0;
+        setMsg(
+          ins > 0
+            ? `✓ +${ins} new partner${ins === 1 ? "" : "s"} (scanned ${scanned}, ${dup} dupes)`
+            : `Done — no new candidates (scanned ${scanned}, ${dup} dupes)`,
+        );
+        await onDone();
+      }
+    } catch (err) {
+      setMsg(`Scan failed: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setBusy(false);
+      setTimeout(() => setMsg(null), 8000);
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+      <button
+        type="button"
+        onClick={run}
+        disabled={busy}
+        style={{
+          background: busy ? "#7a857a" : "#2d4a2d",
+          color: "#f7f5ee",
+          border: "none",
+          padding: "10px 16px",
+          borderRadius: 10,
+          fontSize: 13,
+          fontWeight: 700,
+          fontFamily: "Merriweather, Georgia, serif",
+          cursor: busy ? "wait" : "pointer",
+          boxShadow: "0 2px 6px rgba(31,42,28,0.18)",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          minWidth: 140,
+          justifyContent: "center",
+        }}
+      >
+        {busy ? "🔄 scanning…" : "🛰️ Scan now"}
+      </button>
+      {msg && (
+        <div
+          style={{
+            fontSize: 11,
+            color: msg.startsWith("✓") ? "#2d4a2d" : msg.startsWith("Scan failed") ? "#9b1c1c" : "#7a857a",
+            maxWidth: 280,
+            textAlign: "right",
+            lineHeight: 1.4,
+          }}
+        >
+          {msg}
         </div>
       )}
     </div>
