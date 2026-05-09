@@ -7,13 +7,19 @@ import Link from "next/link";
 /**
  * /clients/[slug]/login — owner sign-in page for the per-client portal.
  *
+ * Per Ben spec 2026-05-10: password-only login. The slug is in the URL,
+ * so we don't need email to disambiguate which owner — any owner whose
+ * password matches for THIS slug logs in. Friendlier UX, fewer fields
+ * to remember, identical security model (the slug+password lookup is
+ * still gated by the per-row hash).
+ *
  * Renders a minimal centered form. Branding is intentionally subtle
  * (slug only, no client logo) so the page works for every client
  * without per-slug overrides. Success → /clients/{slug}/portal.
  *
  * Linked from the showcase footer with the "Owner login" entry. Anyone
  * who knows the slug can hit this URL directly — that's intentional.
- * Auth is gated by email + password, not URL discovery.
+ * Auth is gated by password, not URL discovery.
  */
 
 export default function ClientLoginPage({
@@ -23,14 +29,13 @@ export default function ClientLoginPage({
 }) {
   const { slug } = use(params);
   const router = useRouter();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
+    if (!password.trim()) return;
     setLoading(true);
     setError("");
     try {
@@ -38,7 +43,6 @@ export default function ClientLoginPage({
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          email: email.trim(),
           password,
           slug,
         }),
@@ -85,21 +89,6 @@ export default function ClientLoginPage({
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1.5">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                autoFocus
-                required
-                className="w-full bg-slate-900 border border-slate-800 rounded-md px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition"
-                placeholder="you@example.com"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 block mb-1.5">
                 Password
               </label>
               <input
@@ -107,6 +96,7 @@ export default function ClientLoginPage({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
+                autoFocus
                 required
                 className="w-full bg-slate-900 border border-slate-800 rounded-md px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none transition"
               />

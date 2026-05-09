@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   authenticateOwner,
+  authenticateOwnerBySlug,
   makeSessionCookie,
 } from "@/lib/client-auth";
 
 /**
  * POST /api/client-portal/login
- * Body: { email, password, slug? }
+ *
+ * Two modes (per Ben spec 2026-05-10 — universal password-only login):
+ *
+ *   Password-only (preferred — what the portal UI sends now):
+ *     Body: { slug, password }
+ *     Looks up owners for the slug, matches against any owner's hash.
+ *
+ *   Email + password (legacy — kept for direct API callers that still
+ *     send the email field):
+ *     Body: { email, password, slug? }
  *
  * On success: sets the `client-portal-session` cookie and returns the
  * owner's client_slug so the client redirects to /clients/{slug}/portal.
- * On failure: 401 with a generic error.
- *
- * `slug` in the body is optional but recommended — it locks the login
- * attempt to a specific client so a Wholme owner can't accidentally
- * sign into the Zenith portal with the wrong creds.
+ * On failure: 401 with a generic error (no info leak).
  */
 
 export const dynamic = "force-dynamic";
@@ -31,9 +37,9 @@ export async function POST(req: NextRequest) {
   const password = (body.password || "").trim();
   const expectedSlug = (body.slug || "").trim();
 
-  if (!email || !password) {
+  if (!password) {
     return NextResponse.json(
-      { ok: false, error: "Email and password required" },
+      { ok: false, error: "Password required" },
       { status: 400 },
     );
   }
@@ -44,6 +50,31 @@ export async function POST(req: NextRequest) {
     "unknown";
 
   try {
+    // Branch on whether email was provided. Password-only mode requires
+    // a slug because the lookup key is (slug, password); email mode
+    // looks up by email directly and optionally double-checks slug.
+    if (!email && expectedSlug) {
+      const result = await authenticateOwnerBySlug(expectedSlug, password, ip);
+      if (!result.ok) {
+        return NextResponse.json({ ok: false, error: result.reason }, { status: 401 });
+      }
+      const cookie = makeSessionCookie(result.owner);
+      const res = NextResponse.json({
+        ok: true,
+        slug: result.owner.client_slug,
+        name: result.owner.name,
+      });
+      res.cookies.set(cookie.name, cookie.value, cookie.options);
+      return res;
+    }
+
+    if (!email) {
+      return NextResponse.json(
+        { ok: false, error: "Slug or email required" },
+        { status: 400 },
+      );
+    }
+
     const result = await authenticateOwner(email, password, ip);
     if (!result.ok) {
       return NextResponse.json({ ok: false, error: result.reason }, { status: 401 });

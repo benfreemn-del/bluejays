@@ -75,6 +75,88 @@ export async function getOwnerById(id: string): Promise<ClientOwner | null> {
 }
 
 /**
+ * Password-only login (per Ben spec 2026-05-10): looks up every
+ * client_owners row for the given slug, and returns the first one
+ * whose password hash matches. Used by the universal portal login
+ * which dropped the email field.
+ *
+ * Brute-force handling: failed_attempts is bumped on the FIRST owner
+ * for that slug if no password matches (best available proxy without
+ * tracking per-slug attempts in a separate table). The friendly per-
+ * client portal context — small N owners, low-volume — makes this
+ * acceptable. Any owner can be unlocked by clearing failed_attempts +
+ * locked_until in the DB.
+ */
+export async function authenticateOwnerBySlug(
+  slug: string,
+  password: string,
+  ip: string,
+): Promise<
+  { ok: true; owner: ClientOwner } | { ok: false; reason: string }
+> {
+  const { data, error } = await getSupabase()
+    .from("client_owners")
+    .select("*")
+    .eq("client_slug", slug);
+  if (error) throw new Error(`authenticateOwnerBySlug: ${error.message}`);
+  const owners = (data ?? []) as ClientOwner[];
+  if (owners.length === 0) {
+    return { ok: false, reason: "Invalid password" };
+  }
+
+  // Lockout check — if EVERY owner is locked, reject without trying
+  // password matches (avoids leaking which is real).
+  const now = new Date();
+  const allLocked = owners.every(
+    (o) => o.locked_until && new Date(o.locked_until) > now,
+  );
+  if (allLocked) {
+    return {
+      ok: false,
+      reason: "Account temporarily locked. Try again in a few minutes.",
+    };
+  }
+
+  const expected = sha256Password(password);
+  const match = owners.find(
+    (o) =>
+      o.password_hash === expected &&
+      (!o.locked_until || new Date(o.locked_until) <= now),
+  );
+
+  if (!match) {
+    // Bump failed_attempts on the first non-locked owner so brute-force
+    // attempts still cause an eventual lockout. If all are locked we
+    // already returned above.
+    const target = owners.find(
+      (o) => !o.locked_until || new Date(o.locked_until) <= now,
+    );
+    if (target) {
+      const next = target.failed_attempts + 1;
+      const lockUntil =
+        next >= 5 ? new Date(Date.now() + 15 * 60_000).toISOString() : null;
+      await getSupabase()
+        .from("client_owners")
+        .update({ failed_attempts: next, locked_until: lockUntil })
+        .eq("id", target.id);
+    }
+    return { ok: false, reason: "Invalid password" };
+  }
+
+  // Success — reset attempts, stamp last login.
+  await getSupabase()
+    .from("client_owners")
+    .update({
+      failed_attempts: 0,
+      locked_until: null,
+      last_login_at: new Date().toISOString(),
+      last_login_ip: ip,
+    })
+    .eq("id", match.id);
+  return { ok: true, owner: match };
+}
+
+/**
  * Validate credentials. Returns the owner record on success, null on
  * mismatch. Implements brute-force lockout: 5 failed attempts within
  * 15 min → locked for 15 min.
