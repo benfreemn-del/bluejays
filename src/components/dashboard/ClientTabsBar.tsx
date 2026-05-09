@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRole, SALES_CLIENT_TAB_ALLOWED } from "@/lib/use-role";
 
 /**
  * ClientTabsBar — unified tab bar that wraps every per-client
@@ -144,7 +145,15 @@ type Props = {
 
 export default function ClientTabsBar({ slug, displayName }: Props) {
   const pathname = usePathname();
-  const visibleTabs = TABS.filter((t) => t.visible(slug));
+  const role = useRole();
+  // Per-slug visibility AND per-role visibility. Sales (Madie) sees
+  // a curated subset (Tasks · Leads · Ads · Testimonials) per Q4=A.
+  // Owner sees everything that passes the slug-tier gate.
+  const visibleTabs = TABS.filter((t) => {
+    if (!t.visible(slug)) return false;
+    if (role === "sales" && !SALES_CLIENT_TAB_ALLOWED.has(t.id)) return false;
+    return true;
+  });
 
   return (
     <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">

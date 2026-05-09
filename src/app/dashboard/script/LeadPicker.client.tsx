@@ -388,8 +388,17 @@ export default function LeadPicker() {
           in the system. Madie sees her own pace as she dials so the
           100-calls / 3-meetings target is always visible. Auto-
           refreshes every 60 seconds via /api/madie/today. */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
-        <MadieProductivity mode="strip" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 flex items-center gap-3 flex-wrap">
+        <div className="flex-1 min-w-[280px]">
+          <MadieProductivity mode="strip" />
+        </div>
+        <Link
+          href="/dashboard/script/portfolio"
+          className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-3 py-2 rounded whitespace-nowrap"
+          title="Bespoke client showcase URLs · copy-to-clipboard for cold outreach"
+        >
+          📁 Portfolio
+        </Link>
       </div>
 
       {/* Win-Loss feedback banner — top-of-week objection + script

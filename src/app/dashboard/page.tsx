@@ -9,6 +9,7 @@ import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
+import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
@@ -95,6 +96,13 @@ const TABS: TabDef[] = [
 const VALID_TABS = new Set<Tab>(TABS.map((t) => t.id));
 
 export default function DashboardPage() {
+  const role = useRole();
+  // Filter tabs by role (Q4=A locked 2026-05-08). Owner sees the full
+  // TABS array; sales (Madie) sees only SALES_TOP_NAV_ALLOWED.
+  const visibleTabs =
+    role === "sales"
+      ? TABS.filter((t) => SALES_TOP_NAV_ALLOWED.has(t.id))
+      : TABS;
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [scoutOpen, setScoutOpen] = useState(false);
@@ -288,7 +296,7 @@ export default function DashboardPage() {
             mode: tabs without href use setTab() in-place; tabs with href
             navigate (Link) — both share the same visual treatment. */}
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
-          {TABS.map((t) => {
+          {visibleTabs.map((t) => {
             const active = tab === t.id;
             const className = `py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
               active

@@ -1,19 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
+/**
+ * Two passwords supported per Q4=A locked 2026-05-08:
+ *   - ADMIN_PASSWORD (or ADMIN_PASSWORD_BEN) → owner role
+ *   - ADMIN_PASSWORD_MADIE → sales role
+ * Both passwords produce valid session tokens; the middleware
+ * accepts EITHER token in the bluejays_auth cookie. The bj_role
+ * cookie set by /api/auth/login carries the role tag.
+ *
+ * If ADMIN_PASSWORD_MADIE is unset the second token isn't
+ * computed — behavior is identical to the pre-Q4 flow.
+ */
+const OWNER_PASSWORD = (
+  process.env.ADMIN_PASSWORD_BEN ||
+  process.env.ADMIN_PASSWORD ||
+  ""
+).trim();
+const SALES_PASSWORD = (process.env.ADMIN_PASSWORD_MADIE || "").trim();
 
-// Pre-compute session token using Web Crypto (Edge-compatible)
+// Pre-compute session tokens using Web Crypto (Edge-compatible)
 // This replaces Node.js crypto.createHash which doesn't work in Edge Runtime
-let SESSION_TOKEN_CACHE: string | null = null;
-async function getSessionToken(): Promise<string> {
-  if (SESSION_TOKEN_CACHE) return SESSION_TOKEN_CACHE;
-  if (!ADMIN_PASSWORD) return "";
+let TOKEN_CACHE: { owner: string; sales: string } | null = null;
+async function getValidTokens(): Promise<{ owner: string; sales: string }> {
+  if (TOKEN_CACHE) return TOKEN_CACHE;
   const encoder = new TextEncoder();
-  const data = encoder.encode(ADMIN_PASSWORD + "bluejays-session-salt");
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  SESSION_TOKEN_CACHE = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-  return SESSION_TOKEN_CACHE;
+
+  async function hash(secret: string): Promise<string> {
+    if (!secret) return "";
+    const data = encoder.encode(secret + "bluejays-session-salt");
+    const buffer = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(buffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  TOKEN_CACHE = {
+    owner: await hash(OWNER_PASSWORD),
+    sales: await hash(SALES_PASSWORD),
+  };
+  return TOKEN_CACHE;
+}
+
+async function getSessionToken(): Promise<string> {
+  // Backwards-compat shim — used in places that still expect the
+  // single-token API. Returns the owner token (Ben's). Multi-token
+  // checks should use isValidSessionToken() below.
+  const t = await getValidTokens();
+  return t.owner;
+}
+
+async function isValidSessionToken(token: string): Promise<boolean> {
+  if (!token) return false;
+  const t = await getValidTokens();
+  return token === t.owner || (t.sales !== "" && token === t.sales);
 }
 
 // Protected routes that require login
@@ -215,14 +254,23 @@ export async function middleware(request: NextRequest) {
   if (!isProtected) return NextResponse.next();
 
   // Check auth cookie (signed session token, not raw password)
+  // Per Q4=A: cookie may match either OWNER_PASSWORD's token or
+  // SALES_PASSWORD's token (Madie). isValidSessionToken returns
+  // true for either. Role-based UI gating happens via the bj_role
+  // cookie set at login (read in client components).
   const authCookie = request.cookies.get("bluejays_auth")?.value;
-  const expectedToken = await getSessionToken();
-  if (authCookie === expectedToken) return NextResponse.next();
+  if (authCookie && (await isValidSessionToken(authCookie))) {
+    return NextResponse.next();
+  }
 
   // Check Authorization header (for API calls)
   const authHeader = request.headers.get("authorization");
   if (authHeader) {
-    if (authHeader.startsWith("Bearer ") && authHeader.slice(7) === ADMIN_PASSWORD) {
+    if (
+      authHeader.startsWith("Bearer ") &&
+      (authHeader.slice(7) === OWNER_PASSWORD ||
+        (SALES_PASSWORD && authHeader.slice(7) === SALES_PASSWORD))
+    ) {
       return NextResponse.next();
     }
   }
