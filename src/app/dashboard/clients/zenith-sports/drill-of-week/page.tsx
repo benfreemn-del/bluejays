@@ -132,26 +132,15 @@ export default function DrillOfWeekAdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href="/dashboard/clients/zenith-sports"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Tasks
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
-              zenith-sports{" "}
-              <span className="text-slate-500 font-normal">/ drill of the week</span>
-            </h1>
-            <div className="text-[11px] text-slate-500">
-              Auto-rotated from {preview?.totalDrills ?? 0} drills · sequential by ISO week
-            </div>
-          </div>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — drill-rotation context line.
+          Tab bar (back-nav, title, Site link) is provided by
+          /dashboard/clients/zenith-sports/layout.tsx via ClientTabsBar. */}
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 py-3 border-b border-slate-800/50">
+        <p className="text-[11px] text-slate-500">
+          Auto-rotated from {preview?.totalDrills ?? 0} drills · sequential by ISO week
+        </p>
+      </div>
 
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-5 pb-32 space-y-5">
         <div className="rounded-lg border border-emerald-700/30 bg-emerald-950/20 p-3 text-xs text-emerald-200">
@@ -362,6 +351,6 @@ export default function DrillOfWeekAdminPage() {
           </>
         )}
       </main>
-    </div>
+    </>
   );
 }

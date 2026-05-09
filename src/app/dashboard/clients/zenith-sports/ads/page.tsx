@@ -83,30 +83,20 @@ export default function ZenithAdsPage() {
   const audiences: CreativeSeed["audience"][] = ["parent", "coach", "player", "all"];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href="/dashboard/clients/zenith-sports"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Zenith
-          </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1">
-            Zenith / Tekky · Ad library
-          </h1>
-          <span className="text-[11px] tracking-wider uppercase font-bold text-slate-500">
-            {stats.total} creatives
-          </span>
-        </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-3 flex items-center gap-3 flex-wrap">
-          <p className="text-[11px] text-slate-500 leading-snug flex-1 min-w-[300px]">
-            Source of truth: <code className="text-slate-300">src/lib/client-ads/zenith-creatives.ts</code>.
-            Edit + re-seed via <code className="text-slate-300">POST /api/client-ads/zenith-sports/seed?upsert=1</code>.
-            Performance columns (impressions / spend / ROAS) light up once Meta + Google Ads APIs are wired.
-          </p>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — context line + creative count.
+          Tab bar (back-nav, title, Site link) is provided by
+          /dashboard/clients/zenith-sports/layout.tsx via ClientTabsBar. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center gap-3 flex-wrap">
+        <p className="text-[11px] text-slate-500 leading-snug flex-1 min-w-[300px]">
+          Source of truth: <code className="text-slate-300">src/lib/client-ads/zenith-creatives.ts</code>.
+          Edit + re-seed via <code className="text-slate-300">POST /api/client-ads/zenith-sports/seed?upsert=1</code>.
+          Performance columns light up once Meta + Google Ads APIs are wired.
+        </p>
+        <span className="text-[11px] tracking-wider uppercase font-bold text-slate-500 whitespace-nowrap">
+          {stats.total} creatives
+        </span>
+      </div>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
         {/* Summary stats */}
@@ -255,7 +245,7 @@ export default function ZenithAdsPage() {
           <code className="text-slate-300"> client_ad_creatives </code> performance columns.
         </p>
       </main>
-    </div>
+    </>
   );
 }
 

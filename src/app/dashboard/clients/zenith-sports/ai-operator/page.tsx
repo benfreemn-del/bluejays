@@ -147,23 +147,18 @@ export default function ZenithAIOperatorPage() {
   const trainingCount = SKILLS.filter((s) => s.status === "training").length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href="/dashboard/clients/zenith-sports"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Zenith
-          </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1">
-            Zenith / Tekky · AI Operator
-          </h1>
-          <span className="text-[11px] tracking-wider uppercase font-bold text-slate-500 hidden sm:inline">
-            {SKILLS.length} skills
-          </span>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — skill count.
+          Tab bar (back-nav, title, Site link) is provided by
+          /dashboard/clients/zenith-sports/layout.tsx via ClientTabsBar. */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center gap-3">
+        <p className="text-[11px] text-slate-500 leading-snug flex-1">
+          The brain behind the funnel — five skills running on every Tekky lead.
+        </p>
+        <span className="text-[11px] tracking-wider uppercase font-bold text-slate-500 whitespace-nowrap">
+          {SKILLS.length} skills
+        </span>
+      </div>
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 pb-32">
         {/* Hero — what is the AI Operator */}
@@ -315,7 +310,7 @@ export default function ZenithAIOperatorPage() {
           </p>
         </section>
       </main>
-    </div>
+    </>
   );
 }
 

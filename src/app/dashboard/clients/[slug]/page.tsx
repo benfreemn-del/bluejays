@@ -135,99 +135,35 @@ export default function ClientTasksPage({
   ).length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      {/* Header — mobile-first, sticky */}
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href="/dashboard"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Dash
-          </Link>
-          <Link
-            href="/dashboard/all-tasks"
-            className="text-emerald-300 hover:text-white text-[11px] tracking-wider uppercase font-bold border border-emerald-700/50 px-2 py-1 rounded"
-            title="Master to-do across every client"
-          >
-            All
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
-              {slug}
-            </h1>
-            <div className="text-[11px] text-slate-500">
-              {totalOpen} open · {tasks.length - totalOpen} done
-            </div>
-          </div>
-          {/* Auto-impersonate the client owner — opens their portal in
-              a new tab without asking for the password. Admin-cookie
-              gated server-side. */}
-          <a
-            href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open this client's owner portal as them (no login required)"
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-          >
-            Backend ↗
-          </a>
-          <Link
-            href={`/dashboard/clients/${slug}/leads`}
-            className="text-[11px] tracking-wider uppercase font-bold text-cyan-300 hover:text-white border border-cyan-700/50 px-2.5 py-1 rounded"
-          >
-            Leads
-          </Link>
-          <Link
-            href={`/dashboard/clients/${slug}/testimonials`}
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-          >
-            Testimonials
-          </Link>
-          {slug === "zenith-sports" && (
-            <>
-              <Link
-                href={`/dashboard/clients/${slug}/camps`}
-                className="text-[11px] tracking-wider uppercase font-bold text-lime-300 hover:text-white border border-lime-700/50 px-2.5 py-1 rounded"
-              >
-                Camps
-              </Link>
-              <Link
-                href={`/dashboard/clients/${slug}/drill-of-week`}
-                className="text-[11px] tracking-wider uppercase font-bold text-amber-300 hover:text-white border border-amber-700/50 px-2.5 py-1 rounded"
-              >
-                Drill of Week
-              </Link>
-            </>
-          )}
-          <Link
-            href={`/dashboard/clients/${slug}/ads`}
-            className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded"
-          >
-            Ads
-          </Link>
-          <Link
-            href={`/dashboard/clients/${slug}/affiliates`}
-            className="text-[11px] tracking-wider uppercase font-bold text-amber-300 hover:text-white border border-amber-700/50 px-2.5 py-1 rounded"
-          >
-            Affiliates
-          </Link>
-          <Link
-            href={`/dashboard/clients/${slug}/insights`}
-            className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded"
-            title="Hyperloop variant analysis + subscriptions"
-          >
-            Insights
-          </Link>
-          <Link
-            href={`/dashboard/clients/${slug}/reports`}
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-          >
-            Report
-          </Link>
-          <SiteButton slug={slug} />
+    <>
+      {/* Sub-action bar — open count + impersonate-as-owner button.
+          The unified tab bar (provided by [slug]/layout.tsx) handles
+          back-nav + title + Site link, so we just keep the action
+          buttons specific to this Tasks tab. */}
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 flex items-center gap-3 border-b border-slate-800/50">
+        <Link
+          href="/dashboard/all-tasks"
+          className="text-emerald-300 hover:text-white text-[11px] tracking-wider uppercase font-bold border border-emerald-700/50 px-2 py-1 rounded"
+          title="Master to-do across every client"
+        >
+          All Tasks
+        </Link>
+        <div className="flex-1 min-w-0 text-[11px] text-slate-500">
+          {totalOpen} open · {tasks.length - totalOpen} done
         </div>
-      </header>
+        {/* Auto-impersonate the client owner — opens their portal in
+            a new tab without asking for the password. Admin-cookie
+            gated server-side. */}
+        <a
+          href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open this client's owner portal as them (no login required)"
+          className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+        >
+          Backend ↗
+        </a>
+      </div>
 
       <main className="mx-auto max-w-3xl px-4 sm:px-6 py-5 pb-32">
         {/* Filters + add */}
@@ -289,7 +225,7 @@ export default function ClientTasksPage({
           </section>
         ))}
       </main>
-    </div>
+    </>
   );
 }
 
