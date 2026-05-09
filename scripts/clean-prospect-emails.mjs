@@ -35,6 +35,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
+// Startup banner so "is it running?" is answered in milliseconds.
+console.log(`[clean-emails] starting · pid=${process.pid} · cwd=${process.cwd()}`);
+
 // ─── env ──────────────────────────────────────────────────────────────
 function loadEnv() {
   try {
@@ -67,8 +70,15 @@ const SUPABASE_KEY =
   process.env.SUPABASE_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+console.log(
+  `[clean-emails] env: SUPABASE_URL=${SUPABASE_URL ? "✓" : "✗"} · SERVICE_ROLE_KEY=${SUPABASE_KEY ? `✓ (${SUPABASE_KEY.length} chars)` : "✗"}`,
+);
+
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("Missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY in .env.local");
+  console.error(
+    "\n[clean-emails] ✗ Missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY in .env.local",
+  );
+  console.error("    Make sure you're in the bluejays/ directory and .env.local has both keys.");
   process.exit(1);
 }
 
@@ -143,11 +153,25 @@ async function main() {
   }
 
   const rows = data || [];
-  console.log(`[clean-emails] ${rows.length} prospects to verify`);
+  console.log(`[clean-emails] ${rows.length} prospects to verify · concurrency=${CONCURRENCY}`);
+  if (rows.length === 0) {
+    console.log(`[clean-emails] nothing to do — exiting.`);
+    return;
+  }
 
   let invalid = 0;
   let valid = 0;
   let processed = 0;
+  const started = Date.now();
+
+  // Heartbeat — guarantees a line every 3s even if everyone's valid
+  // (no per-record output otherwise). Cleared on completion.
+  const heartbeat = setInterval(() => {
+    const elapsed = ((Date.now() - started) / 1000).toFixed(1);
+    console.log(
+      `  ⏱ heartbeat · ${processed}/${rows.length} processed · ${invalid} invalid · ${elapsed}s elapsed`,
+    );
+  }, 3000);
 
   // Simple concurrency-limited runner
   const queue = [...rows];
@@ -178,7 +202,8 @@ async function main() {
       } else {
         valid += 1;
       }
-      if (processed % 50 === 0) {
+      // Loud progress every 10 records (was 50 — too quiet)
+      if (processed % 10 === 0) {
         console.log(
           `[clean-emails] progress: ${processed}/${rows.length} · ${invalid} invalid so far`,
         );
@@ -187,6 +212,7 @@ async function main() {
   });
 
   await Promise.all(workers);
+  clearInterval(heartbeat);
 
   console.log(`\n[clean-emails] DONE`);
   console.log(`  total checked: ${processed}`);
