@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import OitPartnerMap from "@/components/portal/OitPartnerMap";
 
 /**
  * Olympic Inspections & Testing — owner admin dashboard.
@@ -42,7 +43,7 @@ type Booking = {
   slot?: { start_at: string; end_at: string; label: string | null } | null;
 };
 
-type Tab = "bookings" | "calendar" | "customers" | "phase2";
+type Tab = "bookings" | "calendar" | "customers" | "partners" | "phase2";
 
 const SHELL = {
   background: "#faf6ee",
@@ -338,7 +339,8 @@ export default function OITAdminPage() {
             { id: "bookings", label: "Bookings" },
             { id: "calendar", label: "Calendar" },
             { id: "customers", label: "Customers" },
-            { id: "phase2", label: "Integrations" },
+            { id: "partners", label: "Affiliates Map" },
+            { id: "phase2", label: "What's next" },
           ] as const
         ).map((t) => {
           const active = tab === t.id;
@@ -385,6 +387,7 @@ export default function OITAdminPage() {
           />
         )}
         {tab === "customers" && <CustomersTab bookings={bookings} />}
+        {tab === "partners" && <PartnersTab />}
         {tab === "phase2" && <Phase2Tab />}
       </div>
     </div>
@@ -582,7 +585,7 @@ function BookingsTab({
                 )}
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 140 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 160 }}>
               <select
                 value={b.status}
                 onChange={(e) => onStatusChange(b.id, e.target.value)}
@@ -601,6 +604,53 @@ function BookingsTab({
                 <option value="cancelled">Cancelled</option>
                 <option value="no-show">No-show</option>
               </select>
+
+              {/* "Send report" button — opens Luke's mail client pre-
+                  addressed with subject + body so he attaches the
+                  inspection-report PDF himself. Only renders for
+                  completed bookings. Auto-generates a Google Workspace
+                  upload flow lands later (Phase 2). */}
+              {b.status === "completed" && b.customer_email && (
+                <a
+                  href={(() => {
+                    const firstName =
+                      b.customer_name?.split(" ")[0] || "there";
+                    const subject = encodeURIComponent(
+                      "Your inspection report — Olympic Inspections",
+                    );
+                    const body = encodeURIComponent(
+                      `Hi ${firstName},\n\n` +
+                        `Your inspection report from Olympic Inspections is attached.\n\n` +
+                        `Quick guide for reading it:\n` +
+                        `• Page 1 — summary of findings + recommendations\n` +
+                        `• Page 2-3 — photo documentation by area\n` +
+                        `• Page 4+ — lab results (if you opted for sampling)\n\n` +
+                        `If anything in the report needs more context, reply to this email or call me at 360-555-0100. I'm happy to walk through it.\n\n` +
+                        `If you need a remediation contractor, I can refer one — just let me know.\n\n` +
+                        `Thanks for trusting us with this.\n\n` +
+                        `— Luke\n` +
+                        `Olympic Inspections & Testing\n` +
+                        `olympicinspections.com`,
+                    );
+                    return `mailto:${b.customer_email}?subject=${subject}&body=${body}`;
+                  })()}
+                  style={{
+                    padding: "7px 10px",
+                    background: "rgba(45,74,45,0.10)",
+                    border: "1px solid rgba(45,74,45,0.30)",
+                    color: "#2d4a2d",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    textAlign: "center",
+                  }}
+                  title="Opens your mail client with the report email pre-filled — attach the PDF and send"
+                >
+                  📄 Send report
+                </a>
+              )}
+
               <div style={{ fontSize: 11, color: "#7a857a", textAlign: "right" }}>
                 {new Date(b.created_at).toLocaleDateString()}
               </div>
@@ -628,6 +678,51 @@ function CalendarTab({
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("11:00");
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkMsg, setBulkMsg] = useState<string | null>(null);
+
+  // Bulk-add weekday slots (M-F × 9am/12pm/3pm × next 30 calendar days).
+  // Skips weekends because OIT runs M-F. ~22 weekdays × 3 slots ≈ 66
+  // slots per click. Idempotent on rerun: each call adds another batch
+  // (no dedup in v1 — Luke can delete duplicates from the list below
+  // if he double-clicks).
+  const bulkAdd = async () => {
+    if (bulkBusy) return;
+    setBulkBusy(true);
+    setBulkMsg(null);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const slotsToAdd: Array<{ date: string; start: string; end: string }> = [];
+    for (let d = 0; d < 30; d++) {
+      const day = new Date(today);
+      day.setDate(today.getDate() + d);
+      const dow = day.getDay();
+      if (dow === 0 || dow === 6) continue; // skip weekends
+      const yyyy = day.getFullYear();
+      const mm = String(day.getMonth() + 1).padStart(2, "0");
+      const dd = String(day.getDate()).padStart(2, "0");
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+      slotsToAdd.push({ date: dateStr, start: "09:00", end: "11:00" });
+      slotsToAdd.push({ date: dateStr, start: "12:00", end: "14:00" });
+      slotsToAdd.push({ date: dateStr, start: "15:00", end: "17:00" });
+    }
+    // Fire sequentially so the optimistic UI doesn't blow up on
+    // simultaneous inserts. ~66 slots × ~50ms ≈ 3-4s end-to-end.
+    let created = 0;
+    for (const s of slotsToAdd) {
+      try {
+        onAdd(s.date, s.start, s.end);
+        created++;
+      } catch {
+        // continue — best-effort batch
+      }
+    }
+    setBulkBusy(false);
+    setBulkMsg(
+      `Created ${created} slots — ${slotsToAdd.length / 3} weekdays × 9am / 12pm / 3pm.`,
+    );
+    setTimeout(() => setBulkMsg(null), 6000);
+  };
 
   return (
     <div>
@@ -708,6 +803,43 @@ function CalendarTab({
         <p style={{ fontSize: 12, color: "#7a857a", marginTop: 10, fontStyle: "italic" }}>
           Tip: Add several slots per week so customers always have options. Slots in the past auto-hide on the public site.
         </p>
+
+        {/* Bulk-add — one-click "30-day weekday batch" so Luke doesn't
+            have to manually pick 60+ slots from his phone. */}
+        <div
+          style={{
+            marginTop: 14,
+            paddingTop: 14,
+            borderTop: "1px solid rgba(31, 42, 28, 0.10)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            onClick={bulkAdd}
+            disabled={bulkBusy}
+            style={{
+              padding: "8px 14px",
+              background: bulkBusy ? "rgba(31,42,28,0.10)" : "rgba(45,74,45,0.10)",
+              color: bulkBusy ? "#7a857a" : "#2d4a2d",
+              border: "1px solid rgba(45,74,45,0.30)",
+              borderRadius: 6,
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: bulkBusy ? "wait" : "pointer",
+            }}
+          >
+            {bulkBusy ? "Adding…" : "⚡ Pre-fill 30 days (M-F · 9 / 12 / 3)"}
+          </button>
+          {bulkMsg && (
+            <span style={{ fontSize: 12, color: "#2d4a2d", fontStyle: "italic" }}>
+              {bulkMsg}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Slot list */}
@@ -816,13 +948,51 @@ function CalendarTab({
 }
 
 function CustomersTab({ bookings }: { bookings: Booking[] }) {
+  // Roll bookings up by customer (deduped by email/phone/name) and
+  // compute history: total bookings, last seen, lifetime estimate.
+  // Repeat customers (>1 booking) are flagged so Luke can spot
+  // recurring revenue at a glance.
   const customers = useMemo(() => {
-    const seen = new Map<string, Booking>();
-    bookings.forEach((b) => {
-      const key = (b.customer_email || b.customer_phone || b.customer_name).toLowerCase();
-      if (!seen.has(key)) seen.set(key, b);
-    });
-    return Array.from(seen.values());
+    type Aggregate = {
+      first: Booking;
+      bookingCount: number;
+      lastSeenAt: string;
+      lifetimeUsd: number;
+    };
+    const map = new Map<string, Aggregate>();
+    for (const b of bookings) {
+      const key = (
+        b.customer_email ||
+        b.customer_phone ||
+        b.customer_name ||
+        ""
+      ).toLowerCase();
+      if (!key) continue;
+      const cents = b.estimate_low_cents ?? 0;
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, {
+          first: b,
+          bookingCount: 1,
+          lastSeenAt: b.created_at,
+          lifetimeUsd: Math.round(cents / 100),
+        });
+      } else {
+        existing.bookingCount += 1;
+        existing.lifetimeUsd += Math.round(cents / 100);
+        if (
+          b.created_at &&
+          (!existing.lastSeenAt || b.created_at > existing.lastSeenAt)
+        ) {
+          existing.lastSeenAt = b.created_at;
+        }
+      }
+    }
+    return Array.from(map.values()).sort(
+      (a, b) =>
+        // Repeat customers first, then by lifetime spend desc
+        b.bookingCount - a.bookingCount || b.lifetimeUsd - a.lifetimeUsd,
+    );
   }, [bookings]);
 
   if (customers.length === 0) {
@@ -842,49 +1012,144 @@ function CustomersTab({ bookings }: { bookings: Booking[] }) {
     );
   }
 
+  const repeatCount = customers.filter((c) => c.bookingCount > 1).length;
+  const totalLtv = customers.reduce((s, c) => s + c.lifetimeUsd, 0);
+
   return (
     <>
-      <h3
+      <div
         style={{
-          fontFamily: "Merriweather, Georgia, serif",
-          fontSize: 18,
-          margin: "0 0 4px",
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          gap: 12,
+          marginBottom: 16,
         }}
       >
-        Customers ({customers.length})
-      </h3>
-      <p style={{ fontSize: 13, color: "#7a857a", marginBottom: 16 }}>
-        Unique customers from all bookings, deduped by email or phone.
-      </p>
-      <div style={{ display: "grid", gap: 8 }}>
-        {customers.map((c) => (
-          <div
-            key={c.id}
+        <div>
+          <h3
             style={{
-              background: "#fff",
-              border: "1px solid rgba(31, 42, 28, 0.10)",
-              borderRadius: 8,
-              padding: "12px 16px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 10,
+              fontFamily: "Merriweather, Georgia, serif",
+              fontSize: 18,
+              margin: "0 0 4px",
             }}
           >
-            <div>
-              <strong style={{ fontSize: 14, color: "#1f2a1c" }}>
-                {c.customer_name}
-              </strong>
-              <div style={{ fontSize: 12, color: "#4a5547", marginTop: 2 }}>
-                {c.customer_phone && <span style={{ marginRight: 12 }}>{c.customer_phone}</span>}
-                {c.customer_email && <span>{c.customer_email}</span>}
+            Customers ({customers.length})
+          </h3>
+          <p style={{ fontSize: 12, color: "#7a857a", margin: 0 }}>
+            Sorted by repeat-customer status, then lifetime spend.
+          </p>
+        </div>
+        <div style={{ fontSize: 12, color: "#4a5547", textAlign: "right" }}>
+          <div>
+            <strong style={{ color: "#2d4a2d" }}>{repeatCount}</strong> repeat
+            customers
+          </div>
+          <div>
+            <strong style={{ color: "#2d4a2d" }}>${totalLtv.toLocaleString()}</strong>{" "}
+            book-of-business
+          </div>
+        </div>
+      </div>
+      <div style={{ display: "grid", gap: 8 }}>
+        {customers.map((agg) => {
+          const c = agg.first;
+          const isRepeat = agg.bookingCount > 1;
+          return (
+            <div
+              key={c.id}
+              style={{
+                background: "#fff",
+                border: isRepeat
+                  ? "1.5px solid rgba(45, 74, 45, 0.40)"
+                  : "1px solid rgba(31, 42, 28, 0.10)",
+                borderRadius: 8,
+                padding: "12px 16px",
+                display: "grid",
+                gridTemplateColumns: "1.4fr 1fr auto",
+                gap: 12,
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <strong style={{ fontSize: 14, color: "#1f2a1c" }}>
+                    {c.customer_name}
+                  </strong>
+                  {isRepeat && (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        color: "#2d4a2d",
+                        background: "rgba(45,74,45,0.12)",
+                        border: "1px solid rgba(45,74,45,0.30)",
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                      }}
+                    >
+                      ×{agg.bookingCount} bookings
+                    </span>
+                  )}
+                </div>
+                <div style={{ fontSize: 12, color: "#4a5547", marginTop: 2 }}>
+                  {c.customer_phone && (
+                    <a
+                      href={`tel:${c.customer_phone}`}
+                      style={{
+                        marginRight: 12,
+                        color: "#4a5547",
+                        textDecoration: "none",
+                      }}
+                    >
+                      📞 {c.customer_phone}
+                    </a>
+                  )}
+                  {c.customer_email && (
+                    <a
+                      href={`mailto:${c.customer_email}`}
+                      style={{
+                        color: "#4a5547",
+                        textDecoration: "none",
+                      }}
+                    >
+                      ✉️ {c.customer_email}
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "#4a5547" }}>
+                {agg.lifetimeUsd > 0 && (
+                  <div>
+                    <strong style={{ color: "#2d4a2d" }}>
+                      ${agg.lifetimeUsd.toLocaleString()}
+                    </strong>{" "}
+                    lifetime
+                  </div>
+                )}
+                <div style={{ fontSize: 11, color: "#7a857a", marginTop: 2 }}>
+                  Last:{" "}
+                  {new Date(agg.lastSeenAt).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+              <div style={{ fontSize: 11, color: "#7a857a", textAlign: "right" }}>
+                Since {new Date(c.created_at).toLocaleDateString()}
               </div>
             </div>
-            <div style={{ fontSize: 11, color: "#7a857a" }}>
-              First seen: {new Date(c.created_at).toLocaleDateString()}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );
@@ -893,6 +1158,30 @@ function CustomersTab({ bookings }: { bookings: Booking[] }) {
 function Phase2Tab() {
   return (
     <div style={{ display: "grid", gap: 16 }}>
+      <div
+        style={{
+          background: "#faf6ee",
+          border: "1px solid rgba(31, 42, 28, 0.10)",
+          borderRadius: 12,
+          padding: 18,
+        }}
+      >
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#2d4a2d",
+            marginBottom: 4,
+          }}
+        >
+          Coming next
+        </div>
+        <p style={{ fontSize: 12, color: "#4a5547", margin: 0, lineHeight: 1.5 }}>
+          These integrations are queued and will activate as Luke + Ben hit the
+          milestones. Each one removes manual work — automated invoicing,
+          report generation, domain ownership.
+        </p>
+      </div>
       <Phase2Card
         emoji="📊"
         title="QuickBooks Online sync"
@@ -916,6 +1205,17 @@ function Phase2Tab() {
       />
     </div>
   );
+}
+
+/**
+ * PartnersTab — Olympic Peninsula affiliate-target map for OIT.
+ * Realtors + mold remediation contractors + water-damage restoration
+ * + property mgmt + larger commercial buyers (hospitals, schools,
+ * marinas, hotels). Designed for Luke to pick a dot and pick up the
+ * phone.
+ */
+function PartnersTab() {
+  return <OitPartnerMap />;
 }
 
 function Phase2Card({
