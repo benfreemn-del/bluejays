@@ -1,10 +1,13 @@
 "use client";
 
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
+import FunnelEnrollPicker, {
+  type FunnelOption,
+} from "@/components/portal/FunnelEnrollPicker";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
 import AdsTab from "@/components/portal/AdsTabV2";
@@ -2181,6 +2184,7 @@ function LeadsTab({
               <LeadCard
                 key={l.id}
                 lead={l}
+                slug={slug}
                 selected={selected.has(l.id)}
                 onToggleSelect={() => toggleSelect(l.id)}
                 onStatus={onStatus}
@@ -3347,12 +3351,14 @@ function LeadTimeline({
 
 function LeadCard({
   lead,
+  slug,
   selected,
   onToggleSelect,
   onStatus,
   onMutate,
 }: {
   lead: ClientLead;
+  slug: string;
   selected: boolean;
   onToggleSelect: () => void;
   onStatus: (id: string, status: string) => void;
@@ -3370,6 +3376,7 @@ function LeadCard({
   const [logging, setLogging] = useState<string | null>(null);
   const [logMsg, setLogMsg] = useState<string | null>(null);
   const [enrolling, setEnrolling] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [timeline, setTimeline] = useState<LeadMessage[] | null>(null);
   const [contextEditorOpen, setContextEditorOpen] = useState(false);
 
@@ -3420,15 +3427,72 @@ function LeadCard({
     }
   };
 
+  // Funnels available for this client — drives the picker. Empty array
+  // when no per-client funnels configured (lead can still enroll via
+  // legacy single-audience path).
+  const availableFunnels: FunnelOption[] = useMemo(() => {
+    const defs = FUNNELS_BY_SLUG[slug] ?? [];
+    return defs.map((f) => ({
+      segment: f.segment,
+      label: f.title,
+      pitch: f.pitch,
+      emoji: f.emoji,
+      accent: f.accentText,
+      isCurrentSegment:
+        f.audienceTag != null && f.audienceTag === lead.audience_segment,
+    }));
+  }, [slug, lead.audience_segment]);
+
+  // Posts the multi-funnel enrollment to the API. Used by both the
+  // picker (multi-select) and the direct-fire path (single funnel).
+  const enrollWithFunnels = async (segments: string[]) => {
+    setEnrolling(true);
+    try {
+      const r = await fetch(`/api/client-portal/leads/${lead.id}/enroll`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ funnels: segments }),
+      });
+      const j = (await r.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!j.ok) throw new Error(j.error || "Couldn't enroll.");
+      onMutate();
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  // Click handler for the "Start funnel" button. Per Ben spec
+  // 2026-05-10: 2+ funnels = open picker; 1 funnel = enroll direct;
+  // 0 funnels = legacy single-audience enroll.
   const enrollInFunnel = async () => {
+    if (availableFunnels.length >= 2) {
+      setPickerOpen(true);
+      return;
+    }
     if (!confirm("Start the automated funnel for this lead?")) return;
+    if (availableFunnels.length === 1) {
+      try {
+        await enrollWithFunnels([availableFunnels[0].segment]);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Couldn't enroll.");
+      }
+      return;
+    }
+    // Legacy single-audience path — no funnels configured for this
+    // client, fall back to old enrollment shape (just flips status).
     setEnrolling(true);
     const r = await fetch(`/api/client-portal/leads/${lead.id}/enroll`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({}),
     });
-    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    const j = (await r.json().catch(() => ({}))) as {
+      ok?: boolean;
+      error?: string;
+    };
     setEnrolling(false);
     if (j.ok) onMutate();
     else alert(j.error || "Couldn't enroll.");
@@ -3898,6 +3962,22 @@ function LeadCard({
         onSaved={() => {
           setContextEditorOpen(false);
           onMutate();
+        }}
+      />
+
+      {/* Multi-funnel enrollment picker — opens when the lead's client
+          has 2+ funnels configured. Universal: drives every client
+          backend, now and forever (per Ben spec 2026-05-10). */}
+      <FunnelEnrollPicker
+        isOpen={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        funnels={availableFunnels}
+        leadName={lead.name ?? lead.email ?? null}
+        defaultSelected={
+          lead.audience_segment ? [lead.audience_segment] : undefined
+        }
+        onConfirm={async (segments) => {
+          await enrollWithFunnels(segments);
         }}
       />
     </article>
