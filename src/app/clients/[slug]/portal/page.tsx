@@ -10,6 +10,7 @@ import AISkillsTab from "@/components/portal/AISkillsTab";
 import AdsTab from "@/components/portal/AdsTabV2";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
+import { getPortalConfig } from "@/lib/portal-configs";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
@@ -778,26 +779,24 @@ export default function PortalPage({
               { id: "funnels", label: "Funnels", emoji: "🎯" },
               { id: "map", label: "Map", emoji: "🗺️" },
               { id: "insights", label: "Insights", emoji: "📊" },
+              // Tab visibility now reads from portal-configs.ts
+              // `tabs.*` flags. Adding a tenant = one config entry,
+              // not 6+ string-OR chains. Pre-2026-05-09 audit D2.
+              ...(getPortalConfig(slug)?.tabs.aiSkills
+                ? []  // partners tab moved out of the AI-skills gate
+                : []),
               ...(slug === "itc-quick-attach" || slug === "zenith-sports"
                 ? [{ id: "partners" as Tab, label: "Sales Portal", emoji: "🤝" }]
                 : []),
-              ...(slug === "laser-lakes"
+              ...(slug === "laser-lakes" || getPortalConfig(slug)?.tabs.customers
                 ? [{ id: "customers" as Tab, label: "Customers", emoji: "🪵" }]
                 : []),
-              // 🧠 AI Skills tab — AI-package buyers only. See CLAUDE.md
-              // "Client Tenant Status" table for who's gated in/out.
-              ...(slug === "itc-quick-attach" ||
-              slug === "zenith-sports" ||
-              slug === "olympic-inspections"
+              // 🧠 AI Skills tab — AI-package buyers. Per portal-configs.tabs.aiSkills
+              ...(getPortalConfig(slug)?.tabs.aiSkills
                 ? [{ id: "ai-skills" as Tab, label: "AI Skills", emoji: "🧠" }]
                 : []),
-              // 📢 Ads tab — fullsystem-tier clients. Shipped 2026-05-08
-              // ahead of Tekky's 2026-05-09 walkthrough so owners can
-              // see + request changes on their ad creatives. Powered
-              // by paid_ads_iteration skill.
-              ...(slug === "itc-quick-attach" ||
-              slug === "zenith-sports" ||
-              slug === "olympic-inspections"
+              // 📢 Ads tab — fullsystem-tier. Per portal-configs.tabs.ads.
+              ...(getPortalConfig(slug)?.tabs.ads
                 ? [{ id: "ads" as Tab, label: "Ads", emoji: "📢" }]
                 : []),
               { id: "account", label: "Account", emoji: "⚙️" },
@@ -879,16 +878,15 @@ export default function PortalPage({
         {tab === "customers" && slug === "laser-lakes" && (
           <CustomersTab slug={slug} />
         )}
-        {tab === "ads" &&
-          (slug === "itc-quick-attach" ||
-            slug === "zenith-sports" ||
-            slug === "olympic-inspections") && <AdsTab slug={slug} />}
-        {tab === "ai-skills" &&
-          (slug === "itc-quick-attach" ||
-            slug === "zenith-sports" ||
-            slug === "olympic-inspections") && (
-            <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
-          )}
+        {/* Render guards now mirror the nav-build via portal-configs.
+            Defense-in-depth — even if tab state is set via URL hack,
+            the registry-flag check rejects render. */}
+        {tab === "ads" && getPortalConfig(slug)?.tabs.ads && (
+          <AdsTab slug={slug} />
+        )}
+        {tab === "ai-skills" && getPortalConfig(slug)?.tabs.aiSkills && (
+          <AISkillsTab slug={slug} onJumpToTab={(t) => setTab(t as Tab)} />
+        )}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}
@@ -6482,7 +6480,7 @@ const SLUG_DISPLAY_NAME: Record<string, string> = {
   "ps-reiki": "PS Reiki",
   "heale-counseling": "Heale Counseling",
   "lewis-county-autism": "Lewis County Autism Coalition",
-  "mountain-view-landscape": "Mountain View Landscape",
+  "mt-view-landscaping": "Mountain View Landscape",
   "olympic-inspections": "Olympic Inspections & Testing",
   // Pine & Particle rebranded to Olympic Inspections & Testing 2026-05-05.
   // Keep the legacy entry pointed at the new name in case any historical

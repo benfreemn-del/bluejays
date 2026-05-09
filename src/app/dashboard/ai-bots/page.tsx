@@ -66,7 +66,7 @@ const BRANCHES: Branch[] = [
         desc: "Appointment-setter. Books Ben on the calendar from inbound + partner outbound dialing. Pivots website → backend if prospect signals an agency. $1k commission per backend close.",
         files: ["src/lib/partners-script.ts → PARTNER_CALL_SCRIPT"],
         talksTo: [
-          { to: "daily-digest", via: "books logged → digest count", wired: true },
+          { to: "daily-digest", via: "books logged → digest count", wired: false },
         ],
       },
       {
@@ -394,9 +394,12 @@ const BRANCHES: Branch[] = [
         desc: "Wilson-CI A/B engine. Tests every email subject + ad headline. Promotes winners, kills losers — no human pushes a button.",
         files: ["src/lib/client-hyperloop.ts"],
         talksTo: [
-          { to: "zenith", via: "promotes subject-line winners", wired: true },
-          { to: "olympic", via: "promotes subject-line winners", wired: true },
-          { to: "weekly-digest", via: "winner list → digest summary", wired: true },
+          // Hyperloop currently writes winners directly to client_email_campaigns
+          // via DB update — no agent_signals emit yet. Marking false until
+          // we wire the emit path so the diagram is honest.
+          { to: "zenith", via: "promotes subject-line winners (DB write, no signal)", wired: false },
+          { to: "olympic", via: "promotes subject-line winners (DB write, no signal)", wired: false },
+          { to: "weekly-digest", via: "winner list → digest summary", wired: false },
         ],
       },
     ],
@@ -533,12 +536,15 @@ const BRANCHES: Branch[] = [
         files: [".claude/commands/optimize-costs.md"],
       },
       {
-        id: "optimize-costs",
-        name: "/optimize-costs",
-        emoji: "💸",
+        id: "onboard-inspection-client",
+        name: "/onboard-inspection-client",
+        emoji: "📋",
         kind: "skill",
-        desc: "Cost-leak scan: chatty crons, image-optimizer drift, untracked recurring subs, unbounded fan-out queries, uncapped AI calls. Prints a triaged report.",
-        files: [".claude/commands/optimize-costs.md"],
+        desc: "11-step playbook to onboard a new inspection-style service client (mold/pest/septic/home/HVAC) — registry config + funnel clone + ad creatives + public site. Reduces onboarding from 8 hrs to ~90 min.",
+        files: [
+          ".claude/commands/onboard-inspection-client.md",
+          "docs/playbooks/inspection-client-onboarding.md",
+        ],
       },
     ],
   },

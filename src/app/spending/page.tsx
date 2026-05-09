@@ -133,8 +133,9 @@ const CLIENT_FILTER_OPTIONS: Array<{ slug: string; label: string }> = [
   { slug: "itc-quick-attach", label: "ITC Quick Attach" },
   { slug: "hector-landscaping", label: "Hector Landscaping" },
   { slug: "lewis-county-autism", label: "Lewis County Autism" },
-  { slug: "mountain-view-landscape", label: "Mountain View Landscape" },
-  { slug: "pine-and-particle", label: "Pine & Particle" },
+  { slug: "mt-view-landscaping", label: "Mountain View Landscape" },
+  // pine-and-particle removed 2026-05-09 — rebranded to Olympic
+  // Inspections; phantom slug rows cleaned up by audit B2 migration.
 ];
 
 export default function SpendingPage() {

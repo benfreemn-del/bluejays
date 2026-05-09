@@ -61,10 +61,11 @@ const CLIENT_SITES: Record<string, ClientSite> = {
     kind: "internal",
     href: "/clients/ways-executive-sedan",
   },
-  // Next page lives under a different folder name (mt-view-landscaping)
-  // than the DB slug (mountain-view-landscape). Wire to the actual
-  // route that exists on disk.
-  "mountain-view-landscape": {
+  // Reconciled 2026-05-09 (audit B1): canonical slug is now
+  // mt-view-landscaping everywhere. Pre-audit there were TWO active
+  // slugs (mountain-view-landscape in DB, mt-view-landscaping on
+  // disk). DB has been migrated; route folder unchanged.
+  "mt-view-landscaping": {
     kind: "internal",
     href: "/clients/mt-view-landscaping",
   },

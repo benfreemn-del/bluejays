@@ -49,7 +49,7 @@ function prettyName(slug: string): string {
     "laser-lakes": "Laser Lakes",
     "hector-landscaping": "Hector Landscaping",
     "olympic-inspections": "Olympic Inspections",
-    "mountain-view-landscape": "Mountain View Landscape",
+    "mt-view-landscaping": "Mountain View Landscape",
     "lewis-county-autism": "Lewis County Autism Coalition",
     "bloodlines": "Bloodlines · Preston Hunsaker",
     "kr-ranches": "KR Ranches",

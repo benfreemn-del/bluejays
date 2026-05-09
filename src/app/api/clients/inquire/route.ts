@@ -103,7 +103,7 @@ const SLUG_CONFIG: Record<
     clientEmail: "info@lewiscountyautism.com",
     emoji: "🧩",
   },
-  "mountain-view-landscape": {
+  "mt-view-landscaping": {
     businessLabel: "Mountain View Landscape",
     clientEmail: "info@mountainviewlandscape.com",
     emoji: "⛰️",

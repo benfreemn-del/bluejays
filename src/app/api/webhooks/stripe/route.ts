@@ -17,6 +17,7 @@ import {
 import { queueEmailRetry } from "@/lib/email-retry-queue";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Prospect } from "@/lib/types";
+import { emitSignal } from "@/lib/agent-signals";
 import {
   getUpsellDefinition,
   isUpsellSku,
@@ -166,6 +167,37 @@ export async function POST(request: NextRequest) {
             pipelineStage: autoBumpStage,
             ...(mgmtIdFromCustom ? { mgmtSubscriptionId: mgmtIdFromCustom } : {}),
           });
+
+          // Emit close signal to the agent_signals bus → daily digest
+          // surfaces the win in tomorrow's morning brief AND any future
+          // celebrate-cron / Madie-commission-recompute / capability-flip
+          // can subscribe instead of polling. Per audit B6 — Stripe
+          // webhook was the most-broken handoff in the system.
+          const amountUsd = session.amount_total
+            ? Math.round(session.amount_total / 100)
+            : 0;
+          await emitSignal({
+            source: "stripe-webhook",
+            kind: "close",
+            severity: "urgent",
+            title: `🎉 ${businessName} just paid ${amountUsd ? `$${amountUsd.toLocaleString()}` : "(amount tbd)"}`,
+            detail: `Tier=${isFullSystem ? "fullsystem" : "website"}. Pipeline auto-bumped to stage ${autoBumpStage}. ${isFullSystem ? "AI Package onboarding cron will fire welcome email 1 within 24h." : "Website delivery flow."}`,
+            target: "daily-digest",
+            metadata: {
+              prospectId,
+              tier: isFullSystem ? "fullsystem" : "website",
+              amount_usd: amountUsd,
+              business_name: businessName,
+            },
+          }).catch((err) =>
+            console.error("[stripe-webhook] emitSignal failed (non-blocking):", err),
+          );
+
+          // (Capabilities-by-slug seed deferred — per-slug capabilities
+          // flip happens during manual onboarding when Ben provisions
+          // the client_owners row + portal config. The signal above
+          // is the trigger: anyone listening can pick it up to start
+          // the onboarding flow.)
 
           // Alert Ben via SMS
           await alertProspectPaid(prospect);

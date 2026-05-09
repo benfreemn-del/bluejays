@@ -8,24 +8,16 @@
 
 import { getSupabase } from "./supabase";
 
-export type ClientLeadAudience =
-  // Zenith Sports / TEKKY soccer audiences
-  | "parent"
-  | "coach"
-  | "player"
-  | "club"
-  | "unknown"
-  // ITC Quick Attach tractor-accessory audiences
-  | "hobbyist"
-  | "forester"
-  | "tym"
-  | "hunter"
-  | "dealer"
-  | "community"
-  // Olympic Inspections & Testing audiences
-  | "homeowner"
-  | "realtor"
-  | "insurance";
+/**
+ * ClientLeadAudience — open string type. Per-tenant valid audience
+ * sets are defined in `portal-configs.ts` (PortalConfig.audiences[].id)
+ * and `service-clients.ts` (ServiceClientConfig.audiences). The union
+ * was hardcoded with 14 strings before 2026-05-09 audit — every new
+ * tenant audience required editing this base type. Now: register
+ * audiences in the portal-config + service-client registries; this
+ * type stays open so adding a tenant is one-file work.
+ */
+export type ClientLeadAudience = string;
 
 export type ClientLeadFunnelStatus =
   | "not_enrolled"

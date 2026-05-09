@@ -159,7 +159,12 @@ export async function GET(req: NextRequest) {
       clientSlug: slug,
       title: `${actionEmoji(r.action)} ${r.action}: ${r.creativeId === "_account" ? "account-level" : "creative " + r.creativeId.slice(0, 8)}`,
       detail: r.rationale,
-      target: "ads-tab",
+      // target=daily-digest so the morning SMS includes ad recs.
+      // The AdsTab can read these later via the same agent_signals
+      // tail (source="ad-iteration-engine"). Was target="ads-tab"
+      // pre-2026-05-09 audit — nothing read that target so the recs
+      // accumulated forever in a black hole.
+      target: "daily-digest",
       metadata: {
         creativeId: r.creativeId,
         action: r.action,
@@ -178,7 +183,7 @@ export async function GET(req: NextRequest) {
       clientSlug: slug,
       title: `⚖️ Budget drift: ${majorDrift.bucket} ${majorDrift.drift > 0 ? "+" : ""}${majorDrift.drift}pt off target`,
       detail: `Currently ${majorDrift.currentPct}% on ${majorDrift.bucket}. Target ${majorDrift.targetPct}% per Rule 3 (70/20/10). Rebalance on next iteration cycle.`,
-      target: "ads-tab",
+      target: "daily-digest",
       metadata: { ...majorDrift },
     });
   }
