@@ -90,13 +90,36 @@ export async function GET(_request: NextRequest) {
     const rates = ratesForLap(currentLap);
     const tier: "setter" | "closer" = currentLap >= 5 ? "closer" : "setter";
 
+    // Read commission baseline — only paid_at >= this counts toward
+    // Madie's totals. Lets Ben "reset to 0" by stamping a new baseline
+    // without destroying historical prospect data. Stored as ISO
+    // timestamp string in app_settings.value.at.
+    const { data: baselineRow } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "madie_commission_baseline_at")
+      .maybeSingle();
+    const baselineAt =
+      baselineRow?.value &&
+      typeof baselineRow.value === "object" &&
+      "at" in baselineRow.value
+        ? String((baselineRow.value as { at: string }).at)
+        : null;
+    // Effective lower bound — whichever is LATER between yearStart and
+    // baseline. Yearly anchor still defines the "lifetime" window so
+    // baseline only ever moves the bar UP (resets going forward).
+    const effectiveSince =
+      baselineAt && Date.parse(baselineAt) > yearStart.getTime()
+        ? baselineAt
+        : yearStart.toISOString();
+
     // Pull recent paid prospects — small dataset, easy to aggregate in
     // memory. The status='paid' filter does the heavy lifting.
     const { data, error } = await supabase
       .from("prospects")
       .select("id, business_name, pricing_tier, status, paid_at, created_at")
       .eq("status", "paid")
-      .gte("paid_at", yearStart.toISOString())
+      .gte("paid_at", effectiveSince)
       .order("paid_at", { ascending: false })
       .limit(200);
 

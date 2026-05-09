@@ -691,14 +691,22 @@ export default function LeadPicker() {
                     >
                       <span className="text-base leading-none">✕</span>
                     </button>
+                    {/* "View site" button — opens the personalized preview
+                        site for this prospect (the page BlueJays has built
+                        / would build for them). Previously pointed at
+                        /dashboard/prospects/[id] which doesn't exist
+                        anywhere → 404 for Madie every time. Fixed
+                        2026-05-08 to /preview/[id] which is the actual
+                        public preview surface. */}
                     <Link
-                      href={`/dashboard/prospects/${p.id}`}
+                      href={`/preview/${p.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       className="shrink-0 text-[11px] uppercase tracking-wider font-bold text-muted hover:text-foreground"
+                      title="Open the personalized preview site for this prospect"
                     >
-                      Open ↗
+                      View site ↗
                     </Link>
                   </div>
                 </li>
