@@ -1722,9 +1722,30 @@ html {
 }
 .markets-grid {
   display: grid;
+  /* Mobile: 1 column. Tablet: auto-fit. Desktop ≥1024: explicit 3+2
+     layout — first 3 cards on row 1, remaining 2 centered on row 2.
+     Avoids the orphaned single-card row that the old auto-fit layout
+     produced when the count grew to 5 (Residential / Commercial /
+     Automotive / Marine / RV & Trailer). */
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 22px;
   margin-top: 44px;
+}
+@media (min-width: 1024px) {
+  .markets-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  /* First 3 cards: 2 cols each (3 × 2 = 6 → row 1) */
+  .markets-grid > .market-card:nth-child(1),
+  .markets-grid > .market-card:nth-child(2),
+  .markets-grid > .market-card:nth-child(3) {
+    grid-column: span 2;
+  }
+  /* Last 2 cards: 3 cols each (2 × 3 = 6 → row 2 fills, centered) */
+  .markets-grid > .market-card:nth-child(4),
+  .markets-grid > .market-card:nth-child(5) {
+    grid-column: span 3;
+  }
 }
 .market-card {
   background: #fff;
