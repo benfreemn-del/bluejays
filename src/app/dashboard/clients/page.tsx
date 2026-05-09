@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { clientSiteFor } from "@/lib/client-site-urls";
+import RoleBadge from "@/components/dashboard/RoleBadge";
 
 /**
  * /dashboard/clients
@@ -188,6 +189,7 @@ export default function ClientsIndexPage() {
           <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1">
             Client jobs
           </h1>
+          <RoleBadge />
           <Link
             href="/dashboard/all-tasks"
             className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
