@@ -314,27 +314,26 @@
                 <!-- Square footage tier -->
                 <div class="calc-step">
                     <span class="calc-step-label">1. Property size</span>
-                    <div class="calc-pills" data-group="size">
-                        <button type="button" class="calc-pill is-active" data-size="spotCheck">
-                            Single-room spot check
-                            <span class="pill-sub">Targeted concern · from $150</span>
-                        </button>
-                        <button type="button" class="calc-pill" data-size="under1500">
-                            Under 1,500 sqft
-                            <span class="pill-sub">Condo or small home</span>
-                        </button>
-                        <button type="button" class="calc-pill" data-size="1500to3000">
-                            1,500–3,000 sqft
-                            <span class="pill-sub">Most homes</span>
-                        </button>
-                        <button type="button" class="calc-pill" data-size="3000to5000">
-                            3,000–5,000 sqft
-                            <span class="pill-sub">Larger home</span>
-                        </button>
-                        <button type="button" class="calc-pill" data-size="over5000">
-                            Over 5,000 sqft
-                            <span class="pill-sub">Custom quote</span>
-                        </button>
+                    <div class="calc-slider-wrap">
+                        <input
+                            type="range"
+                            id="calcSqft"
+                            class="calc-slider"
+                            min="500"
+                            max="5000"
+                            step="100"
+                            value="1500"
+                            aria-label="Property size in square feet"
+                        >
+                        <div class="calc-slider-meta">
+                            <span class="calc-slider-readout" id="calcSqftReadout">1,500 sqft · $150</span>
+                            <button type="button" class="calc-pill calc-over5000-btn" id="calcSizeOver5000">
+                                Over 5,000 sqft? Custom quote
+                            </button>
+                        </div>
+                        <div class="calc-slider-formula">
+                            $150 base for 1,500 sqft &amp; under &middot; +$50 per additional 500 sqft
+                        </div>
                     </div>
                 </div>
 
@@ -343,17 +342,17 @@
                     <span class="calc-step-label">2. Add-on samples (optional)</span>
                     <div class="calc-addons">
                         <label class="calc-addon">
-                            <input type="checkbox" data-addon="airSample" data-price="100">
+                            <input type="checkbox" data-addon="airSample" data-price="250">
                             <div class="calc-addon-info">
                                 <strong>Air sample</strong>
-                                <span>Pulled with calibrated pump &middot; lab analyzed</span>
+                                <span>First $250 &middot; <em>includes outdoor control sample</em>. Each additional $100. Calibrated pump, lab analyzed.</span>
                             </div>
                             <div class="calc-addon-qty">
                                 <button type="button" data-qty-action="dec">&minus;</button>
                                 <span class="qty-val" data-qty-for="airSample">1</span>
                                 <button type="button" data-qty-action="inc">+</button>
                             </div>
-                            <span class="calc-addon-price">$100 ea</span>
+                            <span class="calc-addon-price">$250 / $100</span>
                         </label>
                         <label class="calc-addon">
                             <input type="checkbox" data-addon="surfaceSample" data-price="100">
@@ -587,7 +586,7 @@
                 <form id="bookForm" class="book-form" novalidate>
                     <div class="book-form-summary" id="bookSummary">
                         <strong>Your estimate</strong>
-                        <div class="booking-line"><span id="bookSummarySize">Single-room spot check</span><span id="bookSummaryPrice">$150</span></div>
+                        <div class="booking-line"><span id="bookSummarySize">1,500 sqft</span><span id="bookSummaryPrice">$150</span></div>
                         <div class="booking-line" id="bookSummaryAddons" style="display: none; opacity: 0.85; font-size: 0.86rem;"></div>
                     </div>
 
@@ -643,7 +642,7 @@
                         <textarea id="bookNotes" name="notes" rows="4" placeholder="Visible growth somewhere? Musty smell? Recent water damage? Real estate transaction? Anything we should know."></textarea>
                     </div>
 
-                    <input type="hidden" id="bookSize" name="propertySize" value="spotCheck">
+                    <input type="hidden" id="bookSize" name="propertySize" value="1500">
                     <input type="hidden" id="bookEstimate" name="estimate" value="150">
                     <input type="hidden" id="bookAddons" name="addons" value="">
 

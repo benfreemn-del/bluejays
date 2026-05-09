@@ -780,6 +780,78 @@ section {
   letter-spacing: 0;
 }
 
+/* Property-size slider — replaces the old tier pills (Ben spec 2026-05-09).
+   Continuous pricing: $150 base ≤1500 sqft, +$50 per 500 sqft after. */
+.calc-slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--cream);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+}
+.calc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(to right, var(--forest) 0%, var(--forest) var(--pct, 22%), rgba(45,74,45,0.18) var(--pct, 22%), rgba(45,74,45,0.18) 100%);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+.calc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--forest);
+  border: 3px solid var(--cream);
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 2px 6px rgba(45,74,45,0.35);
+}
+.calc-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--forest);
+  border: 3px solid var(--cream);
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 2px 6px rgba(45,74,45,0.35);
+}
+.calc-slider:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.calc-slider-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.calc-slider-readout {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+.calc-over5000-btn {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+}
+.calc-slider-formula {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--ink);
+  opacity: 0.65;
+  font-style: italic;
+}
+
 .calc-addons {
   display: grid;
   grid-template-columns: 1fr;

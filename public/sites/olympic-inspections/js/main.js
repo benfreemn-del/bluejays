@@ -80,29 +80,50 @@
   }
 
   // ---- COST CALCULATOR ----
-  // Pricing matrix (Olympic Peninsula realistic mold-inspection rates).
-  // Ben can tune these in one place — they're the only source of truth.
-  var BASE_PRICES = {
-    // "spotCheck" tier added 2026-05-09 to match the marketing copy
-    // ("Inspections start at $150"). Targeted single-room / specific-
-    // concern visit — no full-home walkthrough, one written summary.
-    spotCheck:  { low: 150, high: 195, label: "Single-room spot check" },
-    under1500:  { low: 295, high: 350, label: "Under 1,500 sqft" },
-    "1500to3000": { low: 350, high: 425, label: "1,500–3,000 sqft" },
-    "3000to5000": { low: 450, high: 575, label: "3,000–5,000 sqft" },
-    over5000:   { low: null, high: null, label: "Over 5,000 sqft" }, // custom quote
-  };
+  // Pricing model (Ben spec 2026-05-09):
+  //   · Property base: $150 for ≤ 1500 sqft, +$50 per 500 sqft after
+  //     (so 2000=$200, 2500=$250, 3000=$300, 3500=$350, 4000=$400,
+  //     4500=$450, 5000=$500). Over 5000 = custom quote (book a call).
+  //   · Air sample: FIRST sample = $250 and INCLUDES the outdoor control
+  //     sample (required for any indoor-vs-outdoor comparison). Each
+  //     additional air sample = $100.
+  //   · Surface sample: $100 each (no bundled extras).
+  //   · 24-hr rush: +$150 flat.
+  //   · Thermal scan: +$95 flat.
+  //
+  // The pricing math runs in priceForSqft() + addonsTotal() so future
+  // changes only edit two helpers.
 
   function fmtMoney(n) { return "$" + n.toLocaleString("en-US"); }
 
+  function priceForSqft(sqft) {
+    if (sqft >= 5500) return null; // custom quote
+    if (sqft <= 1500) return 150;
+    var increments = Math.ceil((sqft - 1500) / 500);
+    return 150 + increments * 50;
+  }
+
+  function priceForAirSamples(qty) {
+    if (qty <= 0) return 0;
+    // first one bundles outdoor control — $250 flat
+    if (qty === 1) return 250;
+    return 250 + (qty - 1) * 100;
+  }
+
+  function sizeLabel(sqft) {
+    if (sqft >= 5500) return "Over 5,000 sqft (custom)";
+    return sqft.toLocaleString("en-US") + " sqft";
+  }
+
   function initCalculator() {
-    var sizePills = document.querySelectorAll('[data-group="size"] .calc-pill');
+    var sizeSlider = document.getElementById("calcSqft");
+    var sizeReadout = document.getElementById("calcSqftReadout");
+    var sizeOverBtn = document.getElementById("calcSizeOver5000");
     var addons = document.querySelectorAll('.calc-addon input[type="checkbox"]');
-    var qtyVals = document.querySelectorAll(".qty-val[data-qty-for]");
     var totalEl = document.getElementById("calcTotal");
     var breakdownEl = document.getElementById("calcBreakdown");
     var bookCta = document.getElementById("calcBookCta");
-    if (!sizePills.length || !totalEl) return;
+    if (!sizeSlider || !totalEl) return;
 
     var bookSize = document.getElementById("bookSize");
     var bookEstimate = document.getElementById("bookEstimate");
@@ -112,10 +133,11 @@
     var bookSummaryAddons = document.getElementById("bookSummaryAddons");
 
     var state = {
-      // Default to "Single-room spot check" so the calculator opens at
-      // the published $150 entry-point — Ben's pitch is "$150 to know
-      // what's in your air." Customers expand from there.
-      size: "spotCheck",
+      // Default 1500 sqft → $150 entry-point. Slider is in 100-sqft steps
+      // but the price formula floors to the next 500-sqft increment so
+      // the user sees clean $X0 numbers as they drag.
+      sqft: 1500,
+      customQuote: false,
       addonChecked: { airSample: false, surfaceSample: false, rush: false, thermal: false },
       addonQty: { airSample: 1, surfaceSample: 1, rush: 1, thermal: 1 },
     };
@@ -126,62 +148,57 @@
       totalEl.classList.add("flash");
     }
 
-    function setActiveSize(value) {
-      for (var i = 0; i < sizePills.length; i++) {
-        if (sizePills[i].getAttribute("data-size") === value) sizePills[i].classList.add("is-active");
-        else sizePills[i].classList.remove("is-active");
-      }
-    }
-
     function escHtml(s) {
       return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     }
 
     function render() {
-      var base = BASE_PRICES[state.size];
-      var addonTotalLow = 0, addonTotalHigh = 0;
+      var base = state.customQuote ? null : priceForSqft(state.sqft);
+      var addonTotal = 0;
       var breakdownParts = [];
-      // Each summary row = { label, price } — rendered as receipt-style line items
       var summaryRows = [];
 
-      // sample-based add-ons (per quantity)
-      var samples = ["airSample", "surfaceSample"];
-      samples.forEach(function (key) {
-        if (state.addonChecked[key]) {
-          var qty = state.addonQty[key] || 1;
-          // $100 flat per sample (air or surface) — Ben spec 2026-05-09.
-          // The lab cost is roughly equal between the two, so a flat
-          // unit price is simpler for owners to quote on the phone.
-          var unit = 100;
-          var sub = qty * unit;
-          addonTotalLow += sub;
-          addonTotalHigh += sub;
-          var label = key === "airSample" ? "air sample" : "surface sample";
-          breakdownParts.push(qty + "× " + label);
-          summaryRows.push({ label: qty + "× " + label, price: "+" + fmtMoney(sub) });
-        }
-      });
+      // Air sample (first $250 incl. outdoor control, then $100 each)
+      if (state.addonChecked.airSample) {
+        var aQty = state.addonQty.airSample || 1;
+        var aSub = priceForAirSamples(aQty);
+        addonTotal += aSub;
+        var aLabel = aQty === 1
+          ? "1× air sample (incl. outdoor control)"
+          : aQty + "× air sample (1 incl. outdoor control)";
+        breakdownParts.push(aLabel);
+        summaryRows.push({ label: aLabel, price: "+" + fmtMoney(aSub) });
+      }
+
+      // Surface sample (flat $100 each)
+      if (state.addonChecked.surfaceSample) {
+        var sQty = state.addonQty.surfaceSample || 1;
+        var sSub = sQty * 100;
+        addonTotal += sSub;
+        var sLabel = sQty + "× surface sample";
+        breakdownParts.push(sLabel);
+        summaryRows.push({ label: sLabel, price: "+" + fmtMoney(sSub) });
+      }
 
       // Flat-fee add-ons
       if (state.addonChecked.rush) {
-        addonTotalLow += 150; addonTotalHigh += 150;
+        addonTotal += 150;
         breakdownParts.push("24-hr rush");
         summaryRows.push({ label: "24-hr rush", price: "+$150" });
       }
       if (state.addonChecked.thermal) {
-        addonTotalLow += 95; addonTotalHigh += 95;
+        addonTotal += 95;
         breakdownParts.push("thermal scan");
         summaryRows.push({ label: "Thermal scan", price: "+$95" });
       }
 
       // Render total
-      if (base.low === null) {
+      if (base === null) {
         totalEl.textContent = "Custom quote";
         if (breakdownEl) breakdownEl.textContent = "Larger properties get a written estimate after a quick call.";
       } else {
-        var totalLow = base.low + addonTotalLow;
-        var totalHigh = base.high + addonTotalHigh;
-        totalEl.textContent = fmtMoney(totalLow) + " – " + fmtMoney(totalHigh);
+        var total = base + addonTotal;
+        totalEl.textContent = fmtMoney(total);
         var bd = "Base inspection";
         if (breakdownParts.length > 0) bd += " + " + breakdownParts.join(", ");
         bd += " · written lab report included";
@@ -190,20 +207,16 @@
       flash();
 
       // Sync hidden booking form fields
-      if (bookSize) bookSize.value = state.size;
-      if (bookEstimate && base.low !== null) {
-        bookEstimate.value = String(base.low + addonTotalLow) + "-" + String(base.high + addonTotalHigh);
-      } else if (bookEstimate) {
-        bookEstimate.value = "custom";
+      if (bookSize) bookSize.value = state.customQuote ? "over5000" : String(state.sqft);
+      if (bookEstimate) {
+        bookEstimate.value = base === null ? "custom" : String(base + addonTotal);
       }
       if (bookAddonsField) bookAddonsField.value = breakdownParts.join(", ") || "none";
 
       // Sync booking summary card
-      if (bookSummarySize) bookSummarySize.textContent = base.label;
+      if (bookSummarySize) bookSummarySize.textContent = sizeLabel(state.customQuote ? 5500 : state.sqft);
       if (bookSummaryPrice) {
-        bookSummaryPrice.textContent = base.low === null
-          ? "Custom quote"
-          : fmtMoney(base.low + addonTotalLow) + "–" + fmtMoney(base.high + addonTotalHigh);
+        bookSummaryPrice.textContent = base === null ? "Custom quote" : fmtMoney(base + addonTotal);
       }
       if (bookSummaryAddons) {
         if (summaryRows.length > 0) {
@@ -220,17 +233,41 @@
           bookSummaryAddons.style.display = "none";
         }
       }
+
+      // Live readout next to the slider
+      if (sizeReadout) {
+        if (state.customQuote) {
+          sizeReadout.textContent = "Over 5,000 sqft · custom quote";
+        } else {
+          sizeReadout.textContent = sizeLabel(state.sqft) + " · " + fmtMoney(priceForSqft(state.sqft));
+        }
+      }
+      if (sizeOverBtn) {
+        sizeOverBtn.classList.toggle("is-active", !!state.customQuote);
+      }
+      if (sizeSlider) {
+        sizeSlider.disabled = !!state.customQuote;
+        // Paint the filled portion of the slider track. Range 500-5000.
+        var pct = state.customQuote ? 100 : ((state.sqft - 500) / 4500) * 100;
+        sizeSlider.style.setProperty("--pct", pct + "%");
+      }
     }
 
-    // Wire size pills
-    for (var i = 0; i < sizePills.length; i++) {
-      (function (pill) {
-        pill.addEventListener("click", function () {
-          state.size = pill.getAttribute("data-size");
-          setActiveSize(state.size);
-          render();
-        });
-      })(sizePills[i]);
+    // Wire slider
+    sizeSlider.addEventListener("input", function () {
+      var v = parseInt(sizeSlider.value, 10) || 1500;
+      // snap to 100-sqft steps for clean readout, formula handles the rest
+      state.sqft = Math.max(500, Math.min(5000, Math.round(v / 100) * 100));
+      state.customQuote = false;
+      render();
+    });
+
+    // Wire "Over 5,000" toggle
+    if (sizeOverBtn) {
+      sizeOverBtn.addEventListener("click", function () {
+        state.customQuote = !state.customQuote;
+        render();
+      });
     }
 
     // Wire add-on checkboxes
