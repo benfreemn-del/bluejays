@@ -3,6 +3,7 @@ import { getAllProspects } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { logHeartbeat } from "@/lib/cron-heartbeat";
+import { readUnreadSignals, markSignalsRead } from "@/lib/agent-signals";
 
 /**
  * GET /api/digest
@@ -79,10 +80,35 @@ export async function GET(request: Request) {
     day: "numeric",
   });
 
+  // Pull anything any other bot has emitted for the daily digest since
+  // we last ran. Watchdog is the primary emitter today; future bots
+  // (AI responder hot-leads, hyperloop big-mover variants, etc.) can
+  // join by emitting with target='daily-digest'.
+  const signals = await readUnreadSignals({
+    target: "daily-digest",
+    minSeverity: "notice",
+    limit: 20,
+  });
+  const signalLines: string[] = [];
+  if (signals.length > 0) {
+    const urgent = signals.filter((s) => s.severity === "urgent");
+    const warn = signals.filter((s) => s.severity === "warn");
+    if (urgent.length > 0) {
+      signalLines.push(`🚨 ${urgent.length} URGENT:`);
+      for (const s of urgent.slice(0, 5)) signalLines.push(`  · ${s.title}`);
+    }
+    if (warn.length > 0) {
+      signalLines.push(`⚠️ ${warn.length} watch:`);
+      for (const s of warn.slice(0, 5)) signalLines.push(`  · ${s.title}`);
+    }
+    signalLines.push(``);
+  }
+
   // Build the SMS digest
   const lines = [
     `📊 BlueJays Daily — ${dateStr}`,
     ``,
+    ...signalLines,
     counts.enrolled > 0 ? `📤 Enrolled: ${counts.enrolled}` : null,
     counts.opened > 0 ? `👁 Opened: ${counts.opened}` : null,
     counts.clicked > 0 ? `🔗 Clicked: ${counts.clicked}` : null,
@@ -95,11 +121,17 @@ export async function GET(request: Request) {
     `📋 ${BASE_URL}/dashboard`,
   ].filter((l) => l !== null).join("\n");
 
+  // Ack the signals once we've rendered them so they don't re-fire
+  // tomorrow. Only ack on real sends — preview/dry-run keeps them.
+  if (send && signals.length > 0) {
+    await markSignalsRead(signals.map((s) => s.id), "daily-digest");
+  }
+
   const nothingHappened =
     Object.values(counts).every((v) => v === 0);
 
-  if (nothingHappened) {
-    // Still send — quiet day is useful signal
+  if (nothingHappened && signals.length === 0) {
+    // Truly quiet — no funnel activity AND no inter-bot signals.
     const quietLines = [
       `📊 BlueJays Daily — ${dateStr}`,
       `Quiet day — no funnel activity.`,

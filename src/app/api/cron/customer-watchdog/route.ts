@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
+import { emitSignal } from "@/lib/agent-signals";
 import { logHeartbeat } from "@/lib/cron-heartbeat";
 
 /**
@@ -215,10 +216,31 @@ export async function POST(request?: NextRequest) {
   }
   lines.push(`Open /dashboard/clients/${[...byClient.keys()][0]} to investigate`);
 
-  try {
-    await sendOwnerAlert(lines.join("\n"));
-  } catch (err) {
-    console.warn("[customer-watchdog] alert failed:", err);
+  // Emit a signal per anomaly so the daily digest (and any other
+  // consumer) can pick them up via the agent_signals event bus.
+  // Severity maps watchdog 'critical' → 'urgent', else 'warn'.
+  for (const a of anomalies) {
+    await emitSignal({
+      source: "customer-watchdog",
+      kind: a.kind,
+      severity: a.severity === "critical" ? "urgent" : "warn",
+      clientSlug: a.client,
+      title: `${a.client}: ${a.kind}`,
+      detail: a.detail,
+      target: "daily-digest",
+      metadata: { severity: a.severity },
+    });
+  }
+
+  // Out-of-band SMS still fires for urgent incidents — don't wait for
+  // the morning digest to surface a critical regression.
+  const hasCritical = anomalies.some((a) => a.severity === "critical");
+  if (hasCritical) {
+    try {
+      await sendOwnerAlert(lines.join("\n"));
+    } catch (err) {
+      console.warn("[customer-watchdog] alert failed:", err);
+    }
   }
 
   await logHeartbeat("customer_watchdog", {
