@@ -10,7 +10,17 @@ import AISkillsTab from "@/components/portal/AISkillsTab";
 import AdsTab from "@/components/portal/AdsTabV2";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
-import { getPortalConfig } from "@/lib/portal-configs";
+import {
+  getPortalConfig,
+  audienceEmojiFor,
+  audienceLabelFor,
+  audienceDefaultDealFor,
+  audienceOptionsFor,
+  displayNameFor,
+  sampleLeadFor,
+  quickLinksFor,
+  pipelineValueOptInFor,
+} from "@/lib/portal-configs";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
@@ -424,37 +434,45 @@ const AUDIENCE_LABEL_PLAIN: Record<string, string> = {
  * with the right emoji. Final fallback is the inbox icon.
  */
 function audienceEmoji(audience: string | null | undefined, source?: string | null): string {
-  if (audience && AUDIENCE_EMOJI[audience]) return AUDIENCE_EMOJI[audience];
+  // Direct hit on a known audience id wins. Reads from the canonical
+  // portal-configs registry — no slug context needed because audience
+  // ids are globally unique across tenants today.
+  if (audience) {
+    const e = audienceEmojiFor(audience);
+    if (e !== "📥") return e;
+  }
+  // Source-string fallback for legacy leads with no audience_segment
+  // tagged. Source keyword sniffs are still heuristic so they stay
+  // local — adding new ones doesn't require a registry edit.
   if (source) {
     const s = source.toLowerCase();
-    if (s.includes("tym")) return AUDIENCE_EMOJI.tym;
-    if (s.includes("hobbyist")) return AUDIENCE_EMOJI.hobbyist;
-    if (s.includes("forester")) return AUDIENCE_EMOJI.forester;
-    if (s.includes("hunter")) return AUDIENCE_EMOJI.hunter;
-    if (s.includes("dealer")) return AUDIENCE_EMOJI.dealer;
-    if (s.includes("community")) return AUDIENCE_EMOJI.community;
-    if (s.includes("parent")) return AUDIENCE_EMOJI.parent;
-    if (s.includes("coach")) return AUDIENCE_EMOJI.coach;
-    if (s.includes("player")) return AUDIENCE_EMOJI.player;
-    if (s.includes("club")) return AUDIENCE_EMOJI.club;
-    // OIT
+    if (s.includes("tym")) return audienceEmojiFor("tym");
+    if (s.includes("hobbyist")) return audienceEmojiFor("hobbyist");
+    if (s.includes("forester")) return audienceEmojiFor("forester");
+    if (s.includes("hunter")) return audienceEmojiFor("hunter");
+    if (s.includes("dealer")) return audienceEmojiFor("dealer");
+    if (s.includes("community")) return audienceEmojiFor("community");
+    if (s.includes("parent")) return audienceEmojiFor("parent");
+    if (s.includes("coach")) return audienceEmojiFor("coach");
+    if (s.includes("player")) return audienceEmojiFor("player");
+    if (s.includes("club")) return audienceEmojiFor("club");
     if (s.includes("homeowner") || s.includes("owner"))
-      return AUDIENCE_EMOJI.homeowner;
+      return audienceEmojiFor("homeowner");
     if (
       s.includes("realtor") ||
       s.includes("agent") ||
       s.includes("broker") ||
       s.includes("listing")
     )
-      return AUDIENCE_EMOJI.realtor;
+      return audienceEmojiFor("realtor");
     if (
       s.includes("insurance") ||
       s.includes("claim") ||
       s.includes("adjuster")
     )
-      return AUDIENCE_EMOJI.insurance;
+      return audienceEmojiFor("insurance");
   }
-  return AUDIENCE_EMOJI.unknown;
+  return "📥";
 }
 
 /**
@@ -1646,8 +1664,8 @@ function InsightsTab({
               {best.rate > 0 && (
                 <p className="text-[11px] text-slate-400">
                   <span className="text-emerald-300 font-bold">
-                    {AUDIENCE_EMOJI[best.aud] ?? ""}{" "}
-                    {AUDIENCE_LABEL_PLAIN[best.aud] ?? best.aud}
+                    {audienceEmojiFor(best.aud)}{" "}
+                    {audienceLabelFor(best.aud)}
                   </span>{" "}
                   converts{" "}
                   <span className="text-emerald-300 font-bold">{lift}</span>{" "}
@@ -1662,8 +1680,8 @@ function InsightsTab({
                 return (
                   <div key={r.aud} className="flex items-center gap-3 text-sm">
                     <span className="w-28 sm:w-36 shrink-0 text-slate-300 truncate">
-                      {AUDIENCE_EMOJI[r.aud] ?? "•"}{" "}
-                      {AUDIENCE_LABEL_PLAIN[r.aud] ?? r.aud}
+                      {audienceEmojiFor(r.aud) || "•"}{" "}
+                      {audienceLabelFor(r.aud)}
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="h-3 rounded-full bg-slate-800 overflow-hidden">
@@ -4410,23 +4428,9 @@ const CAMPAIGN_STATUS_COLOR: Record<string, string> = {
   cancelled: "bg-rose-500/20 text-rose-300",
 };
 
-// Per-slug audience filter set. Zenith uses parent/coach/player/club;
-// ITC uses hobbyist/forester/tym/hunter/dealer/community. New clients
-// fall through to the "unknown only" set until their audiences are mapped.
-const AUDIENCE_OPTIONS_BY_SLUG: Record<string, string[]> = {
-  "zenith-sports": ["parent", "coach", "player", "club", "unknown"],
-  "itc-quick-attach": [
-    "hobbyist",
-    "forester",
-    "tym",
-    "hunter",
-    "dealer",
-    "community",
-  ],
-};
-function audienceOptionsFor(slug: string): string[] {
-  return AUDIENCE_OPTIONS_BY_SLUG[slug] ?? ["unknown"];
-}
+// audienceOptionsFor migrated to portal-configs.ts (audit D2). Reads
+// PortalConfig.audiences[].id from the canonical registry. Falls
+// back to ["unknown"] for unregistered slugs — same shape as before.
 
 const LEAD_STATUS_OPTIONS = [
   "not_enrolled",
@@ -4789,7 +4793,7 @@ function CampaignForm({
                     : "border-slate-700 text-slate-400 hover:text-white"
                 }`}
               >
-                {AUDIENCE_EMOJI[a] || ""} {a}
+                {audienceEmojiFor(a)} {a}
               </button>
             ))}
           </div>
@@ -5681,30 +5685,11 @@ function FunnelsTab({
  * use the server-computed value untouched (avoids inflating Zenith's
  * pipeline number with synthetic defaults).
  */
-const AUDIENCE_DEFAULT_DEAL_USD: Record<string, number> = {
-  // ITC Quick Attach
-  hobbyist: 250,
-  forester: 600,
-  tym: 400,
-  hunter: 350,
-  dealer: 3600,
-  community: 100,
-  // Olympic Inspections & Testing — average inspection size by audience
-  // (OIT pricing tiers $150-575). Homeowners do mid-size whole-home,
-  // realtors batch smaller pre-listing checks, insurance gets larger
-  // claim-driven jobs with multiple sample addons.
-  homeowner: 350,
-  realtor: 250,
-  insurance: 500,
-};
-
-// Only clients in this set get the per-audience-default fallback.
-// Others rely on the server-computed value to avoid surprise
-// inflation of historical numbers.
-const AUDIENCE_DEFAULT_OPTIN_SLUGS = new Set([
-  "itc-quick-attach",
-  "olympic-inspections",
-]);
+// AUDIENCE_DEFAULT_DEAL_USD + AUDIENCE_DEFAULT_OPTIN_SLUGS migrated to
+// portal-configs.ts (audit D2). Per-tenant defaults live in
+// PortalConfig.audiences[].defaultDealUsd; opt-in flag lives in
+// PortalConfig.pipelineValueOptIn. Use audienceDefaultDealFor() +
+// pipelineValueOptInFor() helpers below.
 
 function estimatePipelineValueUsd(
   leads: ClientLead[],
@@ -5729,15 +5714,16 @@ function estimatePipelineValueUsd(
     }
   }
 
-  // If this client opted into the audience-default fallback, layer those
-  // estimates in for leads without explicit values.
-  if (clientSlug && AUDIENCE_DEFAULT_OPTIN_SLUGS.has(clientSlug)) {
+  // If this client opted into the audience-default fallback, layer
+  // those estimates in for leads without explicit values. Opt-in
+  // flag + per-audience defaults both come from portal-configs.ts.
+  if (clientSlug && pipelineValueOptInFor(clientSlug)) {
     let defaultSum = 0;
     for (const l of inPipeline) {
       const explicit = Number(l.raw_payload?.["deal_value_usd"] ?? 0);
       if (explicit > 0) continue;
       const seg = l.audience_segment ?? "unknown";
-      defaultSum += AUDIENCE_DEFAULT_DEAL_USD[seg] ?? 0;
+      defaultSum += audienceDefaultDealFor(seg, clientSlug);
     }
     return Math.max(explicitSum + defaultSum, fallback);
   }
@@ -5771,7 +5757,13 @@ type SampleLeadPayload = Record<string, unknown> & {
   message?: string;
 };
 
-const SAMPLE_LEADS_BY_SLUG: Record<string, SampleLeadPayload> = {
+// SAMPLE_LEADS_BY_SLUG migrated to portal-configs.ts (audit D2).
+// Reads via sampleLeadFor() helper. The legacy inline map below is
+// retained ONLY for tenants that haven't been registered in
+// portal-configs yet — sampleLeadFor() returns null for them and the
+// caller falls back to a generic stub anyway. Safe to delete after
+// every active tenant is in the registry.
+const _LEGACY_SAMPLE_LEADS_BY_SLUG_UNUSED: Record<string, SampleLeadPayload> = {
   "itc-quick-attach": {
     name: "Live Demo · Forester (auto-generated)",
     email: `demo-live-${Date.now()}@itcquickattach.example`,
@@ -5811,7 +5803,9 @@ function SampleLeadButton({ slug }: { slug: string }) {
   const fire = async () => {
     setBusy(true);
     setMsg(null);
-    const tmpl = SAMPLE_LEADS_BY_SLUG[slug] ?? {
+    // Sample lead payload reads from portal-configs.ts. Adding a
+    // tenant = one config entry instead of editing the inline map.
+    const tmpl = sampleLeadFor(slug) ?? {
       name: "Live Demo Lead (auto-generated)",
       email: `demo-live-${Date.now()}@example.com`,
       intent: "Demo run",
@@ -6436,64 +6430,32 @@ function MapTab({ slug }: { slug: string }) {
   );
 }
 
-// Per-slug Overview "Quick links" rail. Each entry = one tile. Each
-// tenant gets the four links that actually map to their business —
-// e.g. ITC's segment-specific lead-magnet pages, Zenith's player
-// builder + training guide.
-type QuickLinkDef = { href: string; icon: string; label: string };
-const QUICK_LINKS_BY_SLUG: Record<string, (slug: string) => QuickLinkDef[]> = {
-  "zenith-sports": (slug) => [
-    { href: `/clients/${slug}`, icon: "🌐", label: "Your site" },
-    { href: `/clients/${slug}/build-your-player`, icon: "🎮", label: "Build Your Player" },
-    { href: `/clients/${slug}/training-guide`, icon: "📘", label: "Coach guide" },
-    { href: `/clients/${slug}/shop`, icon: "🛒", label: "Shop" },
-  ],
-  "itc-quick-attach": (slug) => [
-    { href: `/clients/${slug}/lp/dream-tractor`, icon: "🚜", label: "Dream tractor" },
-    { href: `/clients/${slug}/lp/tym`, icon: "⚙️", label: "TYM owners" },
-    { href: `/clients/${slug}/lp/dealer`, icon: "🤝", label: "Dealer ROI" },
-    { href: "https://itcquickattach.com", icon: "🛒", label: "ITC shop" },
-  ],
-  "olympic-inspections": (slug) => [
-    { href: `/clients/${slug}/admin`, icon: "🛠", label: "Booking admin" },
-    { href: "/sites/olympic-inspections/index.html", icon: "🌐", label: "Public site" },
-    { href: "/sites/olympic-inspections/index.html#book", icon: "📅", label: "Booking page" },
-    { href: "/sites/olympic-inspections/index.html#calculator", icon: "💲", label: "Cost calculator" },
-  ],
-};
+// Quick links migrated to portal-configs.ts (audit D2). The
+// quickLinksFor() helper is now imported from "@/lib/portal-configs"
+// at the top of this file. Adding a tenant = one config entry.
 
-function quickLinksFor(slug: string): QuickLinkDef[] {
-  const fn = QUICK_LINKS_BY_SLUG[slug];
-  if (fn) return fn(slug);
-  // Fallback: just a "your site" link for new clients we haven't
-  // configured yet.
-  return [{ href: `/clients/${slug}`, icon: "🌐", label: "Your site" }];
-}
-
-// Per-slug branding overrides for headers / display. Keeps the title-case
-// fallback for new clients while giving us pixel-correct names for existing
-// ones (e.g. "ITC Quick Attach" — not "Itc Quick Attach").
-const SLUG_DISPLAY_NAME: Record<string, string> = {
-  "itc-quick-attach": "ITC Quick Attach",
-  "zenith-sports": "Zenith Sports",
+// Per-slug branding overrides — small fallback table for tenants
+// not yet in portal-configs. Registered tenants flow through
+// displayNameFor() which reads PortalConfig.displayName first.
+const SLUG_DISPLAY_NAME_FALLBACK: Record<string, string> = {
   "hector-landscaping": "Hector Landscaping",
   "ps-reiki": "PS Reiki",
   "heale-counseling": "Heale Counseling",
   "lewis-county-autism": "Lewis County Autism Coalition",
   "mt-view-landscaping": "Mountain View Landscape",
-  "olympic-inspections": "Olympic Inspections & Testing",
-  // Pine & Particle rebranded to Olympic Inspections & Testing 2026-05-05.
-  // Keep the legacy entry pointed at the new name in case any historical
-  // route still resolves the old slug.
+  // Pine & Particle rebranded → Olympic Inspections & Testing 2026-05-05.
+  // Phantom slug rows cleaned up in audit B2; keep this entry so any
+  // historical route resolution still labels correctly.
   "pine-and-particle": "Olympic Inspections & Testing",
 };
 
 function humanizeSlug(slug: string): string {
-  if (SLUG_DISPLAY_NAME[slug]) return SLUG_DISPLAY_NAME[slug];
-  return slug
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  // Registered tenants come from portal-configs.ts via displayNameFor.
+  // Unregistered tenants get the fallback table OR a humanized slug.
+  const cfg = getPortalConfig(slug);
+  if (cfg) return cfg.displayName;
+  if (SLUG_DISPLAY_NAME_FALLBACK[slug]) return SLUG_DISPLAY_NAME_FALLBACK[slug];
+  return displayNameFor(slug);
 }
 
 function formatHours(h: number): string {

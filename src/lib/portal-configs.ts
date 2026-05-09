@@ -255,3 +255,116 @@ export function audienceDealUsdMap(slug: string): Record<string, number> {
   if (!cfg) return {};
   return Object.fromEntries(cfg.audiences.map((a) => [a.id, a.defaultDealUsd]));
 }
+
+/* ────────────────────── AGGREGATION HELPERS ──────────────────────
+ * Audit D2: portal/page.tsx had 8 inline registries (SLUG_DISPLAY_NAME,
+ * AUDIENCE_EMOJI, etc.) duplicating the data already modeled here.
+ * These helpers read from THIS registry first so adding a tenant is
+ * one config-entry edit instead of editing 8 maps in the portal page.
+ *
+ * Helpers fall back to a global lookup across ALL registered tenants
+ * when only an audience id is known (no slug context) — keeps the
+ * historical AUDIENCE_EMOJI[id] / AUDIENCE_LABEL_PLAIN[id] usage working
+ * as the inline maps get retired. */
+
+const ALL_AUDIENCES_INDEX = (() => {
+  const m = new Map<string, AudienceMeta>();
+  for (const cfg of Object.values(REGISTRY)) {
+    for (const a of cfg.audiences) {
+      // First tenant to register an audience id wins. (No conflicts
+      // today: parent/coach/player are zenith-only, hobbyist/forester/
+      // tym/hunter/dealer/community are itc-only, homeowner/realtor/
+      // insurance are oit-only.)
+      if (!m.has(a.id)) m.set(a.id, a);
+    }
+  }
+  return m;
+})();
+
+/**
+ * Get the audience emoji. When `slug` is provided, looks at that
+ * tenant's audiences first; otherwise falls back to the global
+ * cross-tenant index.
+ */
+export function audienceEmojiFor(
+  audienceId: string | null | undefined,
+  slug?: string,
+): string {
+  if (!audienceId) return "📥";
+  if (slug) {
+    const cfg = getPortalConfig(slug);
+    const local = cfg?.audiences.find((a) => a.id === audienceId);
+    if (local) return local.emoji;
+  }
+  return ALL_AUDIENCES_INDEX.get(audienceId)?.emoji ?? "📥";
+}
+
+/** Same shape, label instead of emoji. */
+export function audienceLabelFor(
+  audienceId: string | null | undefined,
+  slug?: string,
+): string {
+  if (!audienceId) return "Unknown";
+  if (slug) {
+    const cfg = getPortalConfig(slug);
+    const local = cfg?.audiences.find((a) => a.id === audienceId);
+    if (local) return local.label;
+  }
+  return ALL_AUDIENCES_INDEX.get(audienceId)?.label ?? audienceId;
+}
+
+/** Default-deal-USD for a (slug, audience) pair. Used by
+ *  estimatePipelineValueUsd in portal/page.tsx. */
+export function audienceDefaultDealFor(
+  audienceId: string,
+  slug?: string,
+): number {
+  if (slug) {
+    const cfg = getPortalConfig(slug);
+    const local = cfg?.audiences.find((a) => a.id === audienceId);
+    if (local) return local.defaultDealUsd;
+  }
+  return ALL_AUDIENCES_INDEX.get(audienceId)?.defaultDealUsd ?? 0;
+}
+
+/** Audience ids whitelist for the slug (used by LeadContextEditor +
+ *  Leads-tab filter chips). Falls back to ["unknown"] when slug
+ *  isn't registered — same shape as the legacy AUDIENCE_OPTIONS_BY_SLUG
+ *  default. */
+export function audienceOptionsFor(slug: string): string[] {
+  const cfg = getPortalConfig(slug);
+  if (!cfg) return ["unknown"];
+  return cfg.audiences.map((a) => a.id);
+}
+
+/** Pretty business name for a slug. Falls back to humanized slug. */
+export function displayNameFor(slug: string): string {
+  return (
+    getPortalConfig(slug)?.displayName ??
+    slug
+      .split("-")
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(" ")
+  );
+}
+
+/** Sample-lead payload for the demo button. Returns null when slug
+ *  isn't registered — caller falls back to a generic stub. */
+export function sampleLeadFor(slug: string): SampleLeadPayload | null {
+  return getPortalConfig(slug)?.sampleLead ?? null;
+}
+
+/** Quick-links rail tiles for the slug. Falls back to a single "site"
+ *  link when no per-tenant config exists. */
+export function quickLinksFor(slug: string): QuickLink[] {
+  return (
+    getPortalConfig(slug)?.quickLinks ?? [
+      { href: `/clients/${slug}`, icon: "🌐", label: "Your site" },
+    ]
+  );
+}
+
+/** Opt-in flag for per-audience-default pipeline-value fallback. */
+export function pipelineValueOptInFor(slug: string): boolean {
+  return getPortalConfig(slug)?.pipelineValueOptIn ?? false;
+}
