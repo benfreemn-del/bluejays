@@ -142,7 +142,18 @@ const OLYMPIC_INSPECTIONS: ServiceClientConfig = {
     { query: "well drilling contractor", role: "well-services", channel: "refer-out" },
     { query: "water well repair", role: "well-services", channel: "refer-out" },
     { query: "water filtration installer", role: "well-services", channel: "refer-out" },
-    { query: "septic services", role: "well-services", channel: "refer-out" },
+    // Radon mitigation contractors — added 2026-05-09 alongside the
+    // Radon Testing service line. We test, they fix. Two-way refer:
+    // their customers need pre/post-mitigation testing, our elevated
+    // reads send customers their way.
+    { query: "radon mitigation contractor", role: "radon-mitigation", channel: "refer-out" },
+    { query: "radon mitigation services", role: "radon-mitigation", channel: "refer-out" },
+    // Septic contractors — pumping + repair + design. Pre-purchase
+    // septic inspections are required by most lenders, so septic
+    // contractors and OIT's pre-purchase septic flow naturally pair.
+    { query: "septic pumping company", role: "septic-services", channel: "refer-out" },
+    { query: "septic repair contractor", role: "septic-services", channel: "refer-out" },
+    { query: "septic system design", role: "septic-services", channel: "refer-out" },
   ],
   scoutCities: [
     { city: "Sequim", state: "WA", region: "Clallam" },

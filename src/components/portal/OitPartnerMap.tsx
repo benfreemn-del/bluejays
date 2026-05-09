@@ -51,7 +51,9 @@ type PartnerCategory =
   | "property-management"
   | "commercial-property"
   | "naturopathic"
-  | "well-services";
+  | "well-services"
+  | "radon-mitigation"
+  | "septic-services";
 
 type Partner = {
   id: string;
@@ -355,6 +357,67 @@ const PARTNERS: Partner[] = [
     pitch:
       "Older Victorian + rural Jefferson County = lots of legacy wells. Pre-purchase + post-flood test volume.",
   },
+
+  // ── Radon mitigation contractors (refer-out partners) ──
+  // We test radon, they fix it. Two-way refer: their installs need
+  // post-mitigation verification, our elevated reads send customers
+  // their way. Olympic Peninsula is EPA Zone 2, so steady demand.
+  {
+    id: "radon-1",
+    name: "Peninsula Radon Mitigation",
+    category: "radon-mitigation",
+    city: "Sequim",
+    lat: 48.080,
+    lng: -123.090,
+    pitch:
+      "Local radon installer — every elevated read we get becomes their lead. They send post-install verification work back to us.",
+  },
+  {
+    id: "radon-2",
+    name: "Cascade Air Quality Services",
+    category: "radon-mitigation",
+    city: "Port Angeles",
+    lat: 48.118,
+    lng: -123.430,
+    pitch:
+      "Indoor air quality + radon mitigation combo shop — natural fit for IAQ-focused referrals across services.",
+  },
+
+  // ── Septic services (refer-out partners) ──
+  // Pre-purchase septic inspections often kick off a pump-out / repair
+  // / system-design referral. Two-way relationship: they can refer
+  // pre-purchase clients to us for the inspection portion, we refer
+  // failed-system findings their way.
+  {
+    id: "septic-1",
+    name: "Olympic Septic Pumping",
+    category: "septic-services",
+    city: "Sequim",
+    lat: 48.078,
+    lng: -123.095,
+    pitch:
+      "High-volume pumping shop. They see every septic in the area on a 3-year cycle — natural source of pre-purchase referrals.",
+  },
+  {
+    id: "septic-2",
+    name: "Peninsula Septic Repair",
+    category: "septic-services",
+    city: "Port Angeles",
+    lat: 48.115,
+    lng: -123.435,
+    pitch:
+      "Repair-side specialist — when our pre-purchase inspection flags a failing system, they handle the fix.",
+  },
+  {
+    id: "septic-3",
+    name: "Hood Canal Septic Design",
+    category: "septic-services",
+    city: "Bremerton",
+    lat: 47.570,
+    lng: -122.625,
+    pitch:
+      "Designs new + replacement systems. Larger project tickets but lower frequency — referrals lean educational.",
+  },
 ];
 
 const CATEGORY_META: Record<
@@ -387,6 +450,16 @@ const CATEGORY_META: Record<
     label: "Well & water services",
     color: "#06b6d4",
     emoji: "💧",
+  },
+  "radon-mitigation": {
+    label: "Radon mitigation",
+    color: "#fbbf24",
+    emoji: "☢️",
+  },
+  "septic-services": {
+    label: "Septic services",
+    color: "#a16207",
+    emoji: "🚽",
   },
 };
 
@@ -440,6 +513,13 @@ function roleToCategory(role: string): PartnerCategory | null {
     case "well-driller":
     case "water-filtration":
       return "well-services";
+    case "radon-mitigation":
+    case "radon":
+      return "radon-mitigation";
+    case "septic-services":
+    case "septic":
+    case "septic-pumping":
+      return "septic-services";
     default:
       return null;
   }
@@ -455,6 +535,8 @@ export default function OitPartnerMap() {
       "commercial-property",
       "naturopathic",
       "well-services",
+      "radon-mitigation",
+      "septic-services",
     ]),
   );
   const [focused, setFocused] = useState<PartnerWithDb | null>(null);
@@ -583,6 +665,8 @@ export default function OitPartnerMap() {
       "commercial-property": 0,
       naturopathic: 0,
       "well-services": 0,
+      "radon-mitigation": 0,
+      "septic-services": 0,
     };
     for (const p of allPartners) c[p.category]++;
     return c;
