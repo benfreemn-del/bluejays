@@ -256,21 +256,32 @@ export async function runPartnerScout(
           existingKeys.add(key);
           result.inserted += 1;
 
-          // ── Double-write to client_leads (outreach-channel only) ──
-          // Locked 2026-05-10 per Ben spec: scouted businesses Luke
-          // can directly outreach to should appear in the Leads tab,
-          // not just the affiliates board. refer-out partners stay
-          // affiliates-only (we refer customers TO them, not from).
-          if (q.channel === "outreach") {
+          // ── Double-write to client_leads (every channel) ──
+          // Locked 2026-05-10 per Ben spec: every scouted business
+          // appears in the Leads tab so the owner can sort + filter
+          // by category. Affiliates board still has the same data
+          // for the map view; this is the parallel surface for the
+          // pipeline workflow.
+          {
             const leadKey = `${place.name.toLowerCase()}::${place.place_id ?? ""}`;
             if (!existingLeadKeys.has(leadKey)) {
-              // Map scout role → OIT audience taxonomy
-              //   realtor / property-management → realtor
-              //   anything else → leave null (operator can re-tag)
+              // Map scout role → OIT audience taxonomy. 7 audiences:
+              //   realtor / property-management → realtor / property-mgmt
+              //   mold-remediation → mold-remediator
+              //   water-damage → restoration
+              //   naturopathic → naturopath
               const audience =
-                q.role === "realtor" || q.role === "property-management"
+                q.role === "realtor"
                   ? "realtor"
-                  : null;
+                  : q.role === "property-management"
+                    ? "property-mgmt"
+                    : q.role === "mold-remediation"
+                      ? "mold-remediator"
+                      : q.role === "water-damage"
+                        ? "restoration"
+                        : q.role === "naturopathic"
+                          ? "naturopath"
+                          : null;
               const { error: leadErr } = await supabase
                 .from("client_leads")
                 .insert({

@@ -385,10 +385,15 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   hunter: "🦌",
   dealer: "🤝",
   community: "🏆",
-  // Olympic Inspections & Testing
+  // Olympic Inspections — customer audiences
   homeowner: "🏠",
   realtor: "🪧",
+  "property-mgmt": "🏢",
   insurance: "🛡️",
+  // Olympic Inspections — referral-network partners
+  "mold-remediator": "🧪",
+  restoration: "💧",
+  naturopath: "🌿",
 };
 
 /**
@@ -433,9 +438,15 @@ const AUDIENCE_LABEL_PLAIN: Record<string, string> = {
   hunter: "Hunters",
   dealer: "Dealers",
   community: "Community",
+  // OIT customer audiences
   homeowner: "Homeowners",
-  realtor: "Real-estate agents",
+  realtor: "Realtors",
+  "property-mgmt": "Property mgmt",
   insurance: "Insurance",
+  // OIT referral-network audiences (mutual-referral partners)
+  "mold-remediator": "Mold remediation",
+  restoration: "Water restoration",
+  naturopath: "Naturopathic",
 };
 
 /**
@@ -537,6 +548,57 @@ const AUDIENCE_COLOR: Record<
     chip: "bg-slate-700/40 text-slate-300 border border-slate-600",
     accent: "#94a3b8",
   },
+  // OIT customer audiences
+  homeowner: {
+    bg: "bg-amber-500/[0.06]",
+    ring: "border-amber-500/30",
+    text: "text-amber-200",
+    chip: "bg-amber-500/15 text-amber-200 border border-amber-500/30",
+    accent: "#f59e0b",
+  },
+  realtor: {
+    bg: "bg-sky-500/[0.06]",
+    ring: "border-sky-500/30",
+    text: "text-sky-200",
+    chip: "bg-sky-500/15 text-sky-200 border border-sky-500/30",
+    accent: "#0ea5e9",
+  },
+  "property-mgmt": {
+    bg: "bg-indigo-500/[0.06]",
+    ring: "border-indigo-500/30",
+    text: "text-indigo-200",
+    chip: "bg-indigo-500/15 text-indigo-200 border border-indigo-500/30",
+    accent: "#6366f1",
+  },
+  insurance: {
+    bg: "bg-violet-500/[0.06]",
+    ring: "border-violet-500/30",
+    text: "text-violet-200",
+    chip: "bg-violet-500/15 text-violet-200 border border-violet-500/30",
+    accent: "#8b5cf6",
+  },
+  // OIT referral-network partners
+  "mold-remediator": {
+    bg: "bg-rose-500/[0.06]",
+    ring: "border-rose-500/30",
+    text: "text-rose-200",
+    chip: "bg-rose-500/15 text-rose-200 border border-rose-500/30",
+    accent: "#f43f5e",
+  },
+  restoration: {
+    bg: "bg-cyan-500/[0.06]",
+    ring: "border-cyan-500/30",
+    text: "text-cyan-200",
+    chip: "bg-cyan-500/15 text-cyan-200 border border-cyan-500/30",
+    accent: "#06b6d4",
+  },
+  naturopath: {
+    bg: "bg-emerald-500/[0.06]",
+    ring: "border-emerald-500/30",
+    text: "text-emerald-200",
+    chip: "bg-emerald-500/15 text-emerald-200 border border-emerald-500/30",
+    accent: "#10b981",
+  },
 };
 
 /**
@@ -562,6 +624,15 @@ const AUDIENCE_FILTER_META: Record<
   hunter: { emoji: "🦌", label: "Hunters", activeChip: "bg-rose-500 border-rose-400 text-white" },
   hobbyist: { emoji: "🏡", label: "Hobbyists", activeChip: "bg-emerald-500 border-emerald-400 text-emerald-950" },
   community: { emoji: "🤝", label: "Community", activeChip: "bg-violet-500 border-violet-400 text-white" },
+  // Olympic Inspections — customer audiences
+  homeowner: { emoji: "🏠", label: "Homeowners", activeChip: "bg-amber-500 border-amber-400 text-amber-950" },
+  realtor: { emoji: "🪧", label: "Realtors", activeChip: "bg-sky-500 border-sky-400 text-white" },
+  "property-mgmt": { emoji: "🏢", label: "Property mgmt", activeChip: "bg-indigo-500 border-indigo-400 text-white" },
+  insurance: { emoji: "🛡️", label: "Insurance", activeChip: "bg-violet-500 border-violet-400 text-white" },
+  // Olympic Inspections — referral-network partners
+  "mold-remediator": { emoji: "🧪", label: "Mold remediation", activeChip: "bg-rose-500 border-rose-400 text-white" },
+  restoration: { emoji: "💧", label: "Water restoration", activeChip: "bg-cyan-500 border-cyan-400 text-cyan-950" },
+  naturopath: { emoji: "🌿", label: "Naturopathic", activeChip: "bg-emerald-500 border-emerald-400 text-emerald-950" },
   // Catch-all
   untagged: { emoji: "•", label: "Untagged", activeChip: "bg-slate-500 border-slate-400 text-white" },
   unknown: { emoji: "?", label: "Unknown", activeChip: "bg-slate-500 border-slate-400 text-white" },

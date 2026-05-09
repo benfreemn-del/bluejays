@@ -199,14 +199,26 @@ const ITC: PortalConfig = {
 const OIT: PortalConfig = {
   displayName: "Olympic Inspections & Testing",
   audiences: [
+    // Customer audiences (Luke serves these directly).
     { id: "homeowner", label: "Homeowners", emoji: "🏠", defaultDealUsd: 350 },
-    { id: "realtor", label: "Real-estate agents", emoji: "🪧", defaultDealUsd: 250 },
+    { id: "realtor", label: "Realtors", emoji: "🪧", defaultDealUsd: 250 },
+    { id: "property-mgmt", label: "Property mgmt", emoji: "🏢", defaultDealUsd: 800 },
     { id: "insurance", label: "Insurance", emoji: "🛡️", defaultDealUsd: 500 },
+    // Referral-network audiences (mutual-referral partners surfaced
+    // by the OIT scout — Luke refers customers TO them, they refer
+    // back when their patient/client needs OIT's IAQ testing).
+    { id: "mold-remediator", label: "Mold remediation", emoji: "🧪", defaultDealUsd: 0 },
+    { id: "restoration", label: "Water restoration", emoji: "💧", defaultDealUsd: 0 },
+    { id: "naturopath", label: "Naturopathic", emoji: "🌿", defaultDealUsd: 0 },
   ],
   audienceSourceKeywords: [
     { audienceId: "homeowner", keywords: ["homeowner", "owner"] },
     { audienceId: "realtor", keywords: ["realtor", "agent", "broker", "listing"] },
+    { audienceId: "property-mgmt", keywords: ["property management", "property mgmt"] },
     { audienceId: "insurance", keywords: ["insurance", "claim", "adjuster"] },
+    { audienceId: "mold-remediator", keywords: ["mold remediation", "remediator"] },
+    { audienceId: "restoration", keywords: ["water damage", "restoration"] },
+    { audienceId: "naturopath", keywords: ["naturopathic", "naturopath"] },
   ],
   pipelineValueOptIn: true,
   sampleLead: {
