@@ -55,7 +55,10 @@ type ScoutResult = {
   errors: string[];
 };
 
-async function placesTextSearch(query: string): Promise<{
+async function placesTextSearch(
+  query: string,
+  clientSlug: string,
+): Promise<{
   results: Array<{
     name: string;
     formatted_address?: string;
@@ -72,15 +75,19 @@ async function placesTextSearch(query: string): Promise<{
   const r = await fetch(url);
   const data = await r.json();
   await logCost({
+    clientSlug,
     service: "google_places",
     action: "text_search",
     costUsd: 0.032,
-    metadata: { query, source: "oit-partner-scout" },
+    metadata: { query, source: "partner-scout" },
   });
   return data;
 }
 
-async function placeDetails(placeId: string): Promise<{
+async function placeDetails(
+  placeId: string,
+  clientSlug: string,
+): Promise<{
   phone?: string;
   website?: string;
 }> {
@@ -89,10 +96,11 @@ async function placeDetails(placeId: string): Promise<{
   const r = await fetch(url);
   const data = await r.json();
   await logCost({
+    clientSlug,
     service: "google_places",
     action: "place_details",
     costUsd: 0.017,
-    metadata: { placeId, source: "oit-partner-scout" },
+    metadata: { placeId, source: "partner-scout" },
   });
   return {
     phone: data.result?.formatted_phone_number,
@@ -152,7 +160,7 @@ export async function runPartnerScout(
     for (const q of config.scoutQueries) {
       const fullQuery = `${q.query} in ${city.city}, ${city.state}`;
       try {
-        const { results, status } = await placesTextSearch(fullQuery);
+        const { results, status } = await placesTextSearch(fullQuery, clientSlug);
         if (status === "MISSING_API_KEY") {
           result.errors.push(
             "GOOGLE_PLACES_API_KEY unset — scout returned 0 results",
@@ -172,7 +180,7 @@ export async function runPartnerScout(
             continue;
           }
           const details = place.place_id
-            ? await placeDetails(place.place_id)
+            ? await placeDetails(place.place_id, clientSlug)
             : {};
           // Score 0-100 based on review count + rating. >100 reviews +
           // 4.5+ stars = top-tier outreach target.

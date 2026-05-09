@@ -164,7 +164,8 @@ async function trySendWithProvider(
   prospectId: string,
   to: string,
   body: string,
-  sequence: number
+  sequence: number,
+  clientSlug?: string,
 ): Promise<{ success: true; sms: SentSms } | { success: false; error: string }> {
   if (provider === "vonage") {
     if (!isVonageConfigured()) {
@@ -212,6 +213,7 @@ async function trySendWithProvider(
 
   await logCost({
     prospectId,
+    clientSlug,
     service: "twilio_sms",
     action: `sms_sequence_${sequence}`,
     costUsd: COST_RATES.twilio_sms,
@@ -225,13 +227,14 @@ export async function sendSms(
   prospectId: string,
   to: string,
   body: string,
-  sequence: number
+  sequence: number,
+  options: { clientSlug?: string } = {},
 ): Promise<SentSms> {
   const providerOrder = getProviderOrder();
   const errors: string[] = [];
 
   for (const provider of providerOrder) {
-    const result = await trySendWithProvider(provider, prospectId, to, body, sequence);
+    const result = await trySendWithProvider(provider, prospectId, to, body, sequence, options.clientSlug);
     if (result.success) {
       await logSms(result.sms);
       return result.sms;

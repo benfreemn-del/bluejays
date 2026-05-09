@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { estimatedRevenueFromPaidCount } from "@/lib/actual-revenue";
 
 /**
- * GET /api/costs/analytics
+ * GET /api/costs/analytics[?client=slug]
  *
  * Returns enhanced cost analytics data:
  * - Daily cost chart (last 30 days)
@@ -11,8 +11,14 @@ import { estimatedRevenueFromPaidCount } from "@/lib/actual-revenue";
  * - Cost by service breakdown
  * - Per-lead cost breakdown
  * - ROI projections based on current conversion rates
+ *
+ * When `?client=slug` is set, all aggregates are filtered to rows tagged
+ * with that client_slug (per-tenant view in /spending). Default = unfiltered
+ * (all rows = global BlueJays-internal view, the legacy behavior).
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const clientSlug =
+    new URL(req.url).searchParams.get("client") || undefined;
   try {
     // PERF (2026-04-29): replaced getAllProspects() with two count
     // queries. We only needed the totals, not the rows themselves.
@@ -74,13 +80,15 @@ export async function GET() {
     // ~10k rows. 90 days covers daily chart + month-over-month math.
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-    const { data: allCosts, error } = await supabase
+    let costsQ = supabase
       .from("system_costs")
       .select("service, action, cost_usd, created_at, prospect_id, status")
       .eq("status", "success")
       .gte("created_at", ninetyDaysAgo.toISOString())
       .order("created_at", { ascending: true })
       .limit(50000); // hard cap — anything beyond this is noise for the dashboard
+    if (clientSlug) costsQ = costsQ.eq("client_slug", clientSlug);
+    const { data: allCosts, error } = await costsQ;
 
     if (error || !allCosts || allCosts.length === 0) {
       const dailyCosts = generateEmptyDailyData();

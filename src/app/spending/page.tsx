@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { listAllPortalSlugs } from "@/lib/portal-configs";
 
 interface RecurringCost {
   id: string;
@@ -127,15 +128,12 @@ const FIXED_MONTHLY = 242.09; // Vercel $20 + SendGrid $20 + Twilio $1.15 + Doma
 // Per-client filter options. "all" = global (legacy default).
 // Adding a client = drop a slug here (matches what's in
 // SLUG_CONFIG / client_owners). Order shown to user as ↓.
+// Per-tenant filter options derived from the canonical portal-configs
+// registry. Adding a new tenant there auto-extends this dropdown. Strategic
+// item from audit follow-up: cost attribution rollout.
 const CLIENT_FILTER_OPTIONS: Array<{ slug: string; label: string }> = [
   { slug: "all", label: "All clients" },
-  { slug: "zenith-sports", label: "Zenith Sports" },
-  { slug: "itc-quick-attach", label: "ITC Quick Attach" },
-  { slug: "hector-landscaping", label: "Hector Landscaping" },
-  { slug: "lewis-county-autism", label: "Lewis County Autism" },
-  { slug: "mt-view-landscaping", label: "Mountain View Landscape" },
-  // pine-and-particle removed 2026-05-09 — rebranded to Olympic
-  // Inspections; phantom slug rows cleaned up by audit B2 migration.
+  ...listAllPortalSlugs().map((t) => ({ slug: t.slug, label: t.displayName })),
 ];
 
 export default function SpendingPage() {

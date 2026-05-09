@@ -376,6 +376,17 @@ export function getPortalConfig(slug: string): PortalConfig | null {
   return REGISTRY[slug] ?? null;
 }
 
+/** Returns every registered tenant's `{slug, displayName}` in stable
+ *  insertion order (AI-Package tier first, then static-site tier). Used
+ *  by /spending's per-client filter dropdown so adding a new tenant to
+ *  the registry automatically extends every cross-tenant UI. */
+export function listAllPortalSlugs(): Array<{ slug: string; displayName: string }> {
+  return Object.entries(REGISTRY).map(([slug, cfg]) => ({
+    slug,
+    displayName: cfg.displayName,
+  }));
+}
+
 /** Convenience: get the audience-emoji map for a tenant (used by
  *  AudienceTab + LeadsTab). */
 export function audienceEmojiMap(slug: string): Record<string, string> {
