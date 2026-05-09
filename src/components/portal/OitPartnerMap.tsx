@@ -48,7 +48,8 @@ type PartnerCategory =
   | "mold-remediation"
   | "water-damage"
   | "property-management"
-  | "commercial-property";
+  | "commercial-property"
+  | "naturopathic";
 
 type Partner = {
   id: string;
@@ -271,6 +272,52 @@ const PARTNERS: Partner[] = [
     pitch:
       "Larger hospital system. Multi-building IAQ portfolio. High-ticket.",
   },
+
+  // ── Naturopathic clinics (refer-out partners) ──
+  // Naturopaths see chronic-illness patients whose symptoms often
+  // trace back to indoor air quality (mold, VOCs, water damage).
+  // High-trust referral channel — their patients arrive pre-qualified
+  // for OIT's lab-grade IAQ testing.
+  {
+    id: "nat-1",
+    name: "Sequim Natural Medicine",
+    category: "naturopathic",
+    city: "Sequim",
+    lat: 48.078,
+    lng: -123.094,
+    pitch:
+      "Chronic-illness practice — IAQ root-cause angle. Refer-out: $50/test commission.",
+  },
+  {
+    id: "nat-2",
+    name: "Olympic Naturopathic",
+    category: "naturopathic",
+    city: "Port Angeles",
+    lat: 48.116,
+    lng: -123.428,
+    pitch:
+      "Patients with mystery symptoms = mold-test gateway. Pitch the joint-protocol angle.",
+  },
+  {
+    id: "nat-3",
+    name: "Port Townsend Holistic Health",
+    category: "naturopathic",
+    city: "Port Townsend",
+    lat: 48.118,
+    lng: -122.762,
+    pitch:
+      "Older Victorian housing stock = high mold-positive rate. Built-in audience.",
+  },
+  {
+    id: "nat-4",
+    name: "Kitsap Natural Health Clinic",
+    category: "naturopathic",
+    city: "Bremerton",
+    lat: 47.569,
+    lng: -122.628,
+    pitch:
+      "Larger metro = higher patient volume. Refer-out partnerships scale fastest here.",
+  },
 ];
 
 const CATEGORY_META: Record<
@@ -293,6 +340,11 @@ const CATEGORY_META: Record<
     label: "Commercial buyer",
     color: "#34d399",
     emoji: "🏥",
+  },
+  naturopathic: {
+    label: "Naturopathic clinic",
+    color: "#f472b6",
+    emoji: "🌿",
   },
 };
 
@@ -339,6 +391,9 @@ function roleToCategory(role: string): PartnerCategory | null {
     case "commercial-buyer":
     case "commercial-property":
       return "commercial-property";
+    case "naturopathic":
+    case "naturopath":
+      return "naturopathic";
     default:
       return null;
   }
@@ -352,6 +407,7 @@ export default function OitPartnerMap() {
       "water-damage",
       "property-management",
       "commercial-property",
+      "naturopathic",
     ]),
   );
   const [focused, setFocused] = useState<PartnerWithDb | null>(null);
@@ -478,6 +534,7 @@ export default function OitPartnerMap() {
       "water-damage": 0,
       "property-management": 0,
       "commercial-property": 0,
+      naturopathic: 0,
     };
     for (const p of allPartners) c[p.category]++;
     return c;

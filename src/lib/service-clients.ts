@@ -123,6 +123,12 @@ const OLYMPIC_INSPECTIONS: ServiceClientConfig = {
     { query: "property management company", role: "property-management", channel: "outreach" },
     { query: "mold remediation contractor", role: "mold-remediation", channel: "refer-out" },
     { query: "water damage restoration", role: "water-damage", channel: "refer-out" },
+    // Naturopathic clinics see chronic-illness patients whose symptoms
+    // often trace back to indoor air quality (mold, VOCs, water damage).
+    // High-trust refer-out partners — their patients are pre-qualified
+    // for OIT's lab-grade IAQ testing.
+    { query: "naturopathic clinic", role: "naturopathic", channel: "refer-out" },
+    { query: "naturopathic doctor", role: "naturopathic", channel: "refer-out" },
   ],
   scoutCities: [
     { city: "Sequim", state: "WA", region: "Clallam" },
