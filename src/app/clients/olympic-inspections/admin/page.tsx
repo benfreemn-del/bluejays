@@ -255,7 +255,7 @@ export default function OITAdminPage() {
           <div style={{ fontSize: 12, color: "#7a857a", marginTop: 2 }}>
             Live edits show on{" "}
             <a
-              href="/sites/olympic-inspections/"
+              href="/sites/olympic-inspections/index.html"
               target="_blank"
               rel="noopener"
               style={{ color: "#2d4a2d" }}
@@ -476,7 +476,7 @@ function BookingsTab({
           Share your booking page so customers can request an inspection in two clicks:
           <br />
           <a
-            href="/sites/olympic-inspections/#book"
+            href="/sites/olympic-inspections/index.html#book"
             target="_blank"
             rel="noopener"
             style={{ color: "#2d4a2d", fontWeight: 600 }}

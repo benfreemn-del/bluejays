@@ -412,7 +412,7 @@ export function fillOITVars(template: string, vars: OITScriptVars): string {
     .replace(/\{state\}/g, vars.state || "")
     .replace(
       /\{trackingUrl\}/g,
-      vars.trackingUrl || "https://bluejayportfolio.com/sites/olympic-inspections/",
+      vars.trackingUrl || "https://bluejayportfolio.com/sites/olympic-inspections/index.html",
     );
 }
 

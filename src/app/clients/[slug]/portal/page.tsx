@@ -6458,9 +6458,9 @@ const QUICK_LINKS_BY_SLUG: Record<string, (slug: string) => QuickLinkDef[]> = {
   ],
   "olympic-inspections": (slug) => [
     { href: `/clients/${slug}/admin`, icon: "🛠", label: "Booking admin" },
-    { href: "/sites/olympic-inspections/", icon: "🌐", label: "Public site" },
-    { href: "/sites/olympic-inspections/#book", icon: "📅", label: "Booking page" },
-    { href: "/sites/olympic-inspections/#calculator", icon: "💲", label: "Cost calculator" },
+    { href: "/sites/olympic-inspections/index.html", icon: "🌐", label: "Public site" },
+    { href: "/sites/olympic-inspections/index.html#book", icon: "📅", label: "Booking page" },
+    { href: "/sites/olympic-inspections/index.html#calculator", icon: "💲", label: "Cost calculator" },
   ],
 };
 

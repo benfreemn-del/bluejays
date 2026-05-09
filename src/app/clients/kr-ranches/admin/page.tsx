@@ -243,7 +243,7 @@ export default function KRAdminPage() {
           <div style={{ fontSize: 12, color: "#7a6f60", marginTop: 2 }}>
             Live edits show on{" "}
             <a
-              href="/sites/kr-ranches/"
+              href="/sites/kr-ranches/index.html"
               target="_blank"
               rel="noopener"
               style={{ color: "#9d3030" }}

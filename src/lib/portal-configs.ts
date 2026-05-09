@@ -221,9 +221,9 @@ const OIT: PortalConfig = {
   funnels: [],
   quickLinks: [
     { href: `/clients/olympic-inspections/admin`, icon: "🛠", label: "Booking admin" },
-    { href: "/sites/olympic-inspections/", icon: "🌐", label: "Public site" },
-    { href: "/sites/olympic-inspections/#book", icon: "📅", label: "Booking page" },
-    { href: "/sites/olympic-inspections/#calculator", icon: "💲", label: "Cost calculator" },
+    { href: "/sites/olympic-inspections/index.html", icon: "🌐", label: "Public site" },
+    { href: "/sites/olympic-inspections/index.html#book", icon: "📅", label: "Booking page" },
+    { href: "/sites/olympic-inspections/index.html#calculator", icon: "💲", label: "Cost calculator" },
   ],
 };
 

@@ -79,7 +79,7 @@ const SHOWCASES: Showcase[] = [
     category: "food-bev",
     highlight:
       "Bespoke static HTML site · farm-direct meat shop · custom-tier $100/yr · shipped 2026-05-05",
-    url: `${SITE_URL}/sites/kr-ranches/`,
+    url: `${SITE_URL}/sites/kr-ranches/index.html`,
   },
   {
     slug: "masters-window-tinting",
@@ -97,7 +97,9 @@ const SHOWCASES: Showcase[] = [
     category: "inspections",
     highlight:
       "Replatform from Pine & Particle · content-fidelity rebuild · native booking calendar",
-    url: `${SITE_URL}/clients/olympic-inspections`,
+    // Olympic Inspections lives as a static HTML site at /sites/, not as
+    // a Next page under /clients/ (only an /admin subroute exists there).
+    url: `${SITE_URL}/sites/olympic-inspections/index.html`,
   },
   {
     slug: "zenith-sports",
