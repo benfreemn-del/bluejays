@@ -353,6 +353,10 @@ const AUDIENCE_EMOJI: Record<string, string> = {
   hunter: "🦌",
   dealer: "🤝",
   community: "🏆",
+  // Olympic Inspections & Testing
+  homeowner: "🏠",
+  realtor: "🪧",
+  insurance: "🛡️",
 };
 
 /**
@@ -391,6 +395,9 @@ const AUDIENCE_LABEL_PLAIN: Record<string, string> = {
   hunter: "Hunters",
   dealer: "Dealers",
   community: "Community",
+  homeowner: "Homeowners",
+  realtor: "Real-estate agents",
+  insurance: "Insurance",
 };
 
 /**
@@ -413,6 +420,22 @@ function audienceEmoji(audience: string | null | undefined, source?: string | nu
     if (s.includes("coach")) return AUDIENCE_EMOJI.coach;
     if (s.includes("player")) return AUDIENCE_EMOJI.player;
     if (s.includes("club")) return AUDIENCE_EMOJI.club;
+    // OIT
+    if (s.includes("homeowner") || s.includes("owner"))
+      return AUDIENCE_EMOJI.homeowner;
+    if (
+      s.includes("realtor") ||
+      s.includes("agent") ||
+      s.includes("broker") ||
+      s.includes("listing")
+    )
+      return AUDIENCE_EMOJI.realtor;
+    if (
+      s.includes("insurance") ||
+      s.includes("claim") ||
+      s.includes("adjuster")
+    )
+      return AUDIENCE_EMOJI.insurance;
   }
   return AUDIENCE_EMOJI.unknown;
 }
@@ -5279,9 +5302,68 @@ const ZENITH_FUNNELS: FunnelDef[] = [
   },
 ];
 
+// Olympic Inspections & Testing — three audience funnels mirror the
+// real cadences in src/lib/client-funnels/olympic-inspections.ts.
+// Surfaces here so Luke can see his funnel system actually built (the
+// "no funnels" empty state was the most embarrassing miss in his portal).
+const OIT_FUNNELS: FunnelDef[] = [
+  {
+    segment: "homeowner",
+    audienceTag: "homeowner",
+    emoji: "🏠",
+    title: "Homeowner · Mold + Air Quality",
+    pitch:
+      "Owner-occupants worried about a smell, a leak, or a pre-listing concern. Default audience.",
+    cardClass: "border-emerald-500/30 bg-emerald-500/[0.05]",
+    accentText: "text-emerald-300",
+    steps: [
+      { day: 0, channel: "email", label: "Booking confirmation + what to expect" },
+      { day: 1, channel: "email", label: "Pre-inspection prep checklist" },
+      { day: 4, channel: "email", label: "Lab-report walkthrough + next steps" },
+      { day: 7, channel: "sms", label: "Quick text — questions on the report?" },
+    ],
+    landingPath: "/#book",
+  },
+  {
+    segment: "realtor",
+    audienceTag: "realtor",
+    emoji: "🪧",
+    title: "Realtor · Pre-Listing + Closing",
+    pitch:
+      "Agents and brokers who refer + repeat. Tiered referral program ($50/$75/$100 per close).",
+    cardClass: "border-sky-500/30 bg-sky-500/[0.05]",
+    accentText: "text-sky-300",
+    steps: [
+      { day: 0, channel: "email", label: "Referral partner welcome + tier breakdown" },
+      { day: 2, channel: "email", label: "How OIT reports speed up closings" },
+      { day: 5, channel: "sms", label: "Easy-share booking link for clients" },
+      { day: 14, channel: "email", label: "Quarterly check-in + payout summary" },
+    ],
+    landingPath: "/#book",
+  },
+  {
+    segment: "insurance",
+    audienceTag: "insurance",
+    emoji: "🛡️",
+    title: "Insurance · Claim + Adjuster",
+    pitch:
+      "Adjusters and carriers needing independent third-party reports for claim files. Higher-margin jobs.",
+    cardClass: "border-amber-500/30 bg-amber-500/[0.05]",
+    accentText: "text-amber-300",
+    steps: [
+      { day: 0, channel: "email", label: "Claim-file format walkthrough" },
+      { day: 2, channel: "email", label: "ISO/IEC 17025-accredited lab process" },
+      { day: 5, channel: "sms", label: "72-hour turnaround commitment" },
+      { day: 30, channel: "email", label: "Carrier scorecard + repeat-volume check-in" },
+    ],
+    landingPath: "/#book",
+  },
+];
+
 const FUNNELS_BY_SLUG: Record<string, FunnelDef[]> = {
   "itc-quick-attach": ITC_FUNNELS,
   "zenith-sports": ZENITH_FUNNELS,
+  "olympic-inspections": OIT_FUNNELS,
 };
 
 function FunnelsTab({
@@ -5568,18 +5650,29 @@ function FunnelsTab({
  * pipeline number with synthetic defaults).
  */
 const AUDIENCE_DEFAULT_DEAL_USD: Record<string, number> = {
+  // ITC Quick Attach
   hobbyist: 250,
   forester: 600,
   tym: 400,
   hunter: 350,
   dealer: 3600,
   community: 100,
+  // Olympic Inspections & Testing — average inspection size by audience
+  // (OIT pricing tiers $150-575). Homeowners do mid-size whole-home,
+  // realtors batch smaller pre-listing checks, insurance gets larger
+  // claim-driven jobs with multiple sample addons.
+  homeowner: 350,
+  realtor: 250,
+  insurance: 500,
 };
 
 // Only clients in this set get the per-audience-default fallback.
 // Others rely on the server-computed value to avoid surprise
 // inflation of historical numbers.
-const AUDIENCE_DEFAULT_OPTIN_SLUGS = new Set(["itc-quick-attach"]);
+const AUDIENCE_DEFAULT_OPTIN_SLUGS = new Set([
+  "itc-quick-attach",
+  "olympic-inspections",
+]);
 
 function estimatePipelineValueUsd(
   leads: ClientLead[],
@@ -5665,6 +5758,16 @@ const SAMPLE_LEADS_BY_SLUG: Record<string, SampleLeadPayload> = {
     message:
       "Looking for a TEKKY ball + summer camp options for my U10 player.",
     role: "parent",
+  },
+  "olympic-inspections": {
+    name: "Live Demo · Homeowner (auto-generated)",
+    email: `demo-live-${Date.now()}@olympicinspections.example`,
+    intent: "mold-inspection-booking",
+    source: "booking-form",
+    message:
+      "1,800 sqft single-story in Sequim — smelled mold in the crawlspace. Need a real-estate-ready report before listing.",
+    audience: "homeowner",
+    propertySize: "1500to3000",
   },
 };
 
@@ -6297,6 +6400,12 @@ const QUICK_LINKS_BY_SLUG: Record<string, (slug: string) => QuickLinkDef[]> = {
     { href: `/clients/${slug}/lp/dealer`, icon: "🤝", label: "Dealer ROI" },
     { href: "https://itcquickattach.com", icon: "🛒", label: "ITC shop" },
   ],
+  "olympic-inspections": (slug) => [
+    { href: `/clients/${slug}/admin`, icon: "🛠", label: "Booking admin" },
+    { href: "/sites/olympic-inspections/", icon: "🌐", label: "Public site" },
+    { href: "/sites/olympic-inspections/#book", icon: "📅", label: "Booking page" },
+    { href: "/sites/olympic-inspections/#calculator", icon: "💲", label: "Cost calculator" },
+  ],
 };
 
 function quickLinksFor(slug: string): QuickLinkDef[] {
@@ -6318,7 +6427,11 @@ const SLUG_DISPLAY_NAME: Record<string, string> = {
   "heale-counseling": "Heale Counseling",
   "lewis-county-autism": "Lewis County Autism Coalition",
   "mountain-view-landscape": "Mountain View Landscape",
-  "pine-and-particle": "Pine & Particle",
+  "olympic-inspections": "Olympic Inspections & Testing",
+  // Pine & Particle rebranded to Olympic Inspections & Testing 2026-05-05.
+  // Keep the legacy entry pointed at the new name in case any historical
+  // route still resolves the old slug.
+  "pine-and-particle": "Olympic Inspections & Testing",
 };
 
 function humanizeSlug(slug: string): string {

@@ -194,7 +194,26 @@ export default function OITAdminPage() {
     const upcoming = slots.filter(
       (s) => s.status === "available" && new Date(s.start_at) > new Date(),
     ).length;
-    return { requested, confirmed, completed, upcoming };
+    // Month-to-date revenue from completed bookings. Estimate uses the
+    // low end so the number is conservative ("at least $X cleared" is
+    // healthier than overestimating). Falls back to 0 when an old
+    // booking has no estimate stored.
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthRevenueCents = bookings
+      .filter((b) => b.status === "completed")
+      .filter((b) => {
+        const at = b.created_at ? new Date(b.created_at) : null;
+        return at && at >= monthStart;
+      })
+      .reduce((sum, b) => sum + (b.estimate_low_cents ?? 0), 0);
+    return {
+      requested,
+      confirmed,
+      completed,
+      upcoming,
+      monthRevenueUsd: Math.round(monthRevenueCents / 100),
+    };
   }, [bookings, slots]);
 
   if (!authChecked) {
@@ -244,20 +263,40 @@ export default function OITAdminPage() {
             within ~60 seconds
           </div>
         </div>
-        <button
-          onClick={logout}
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(31, 42, 28, 0.20)",
-            color: "#4a5547",
-            padding: "8px 14px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontSize: 13,
-          }}
-        >
-          Sign out
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          {/* Cross-link to the generic portal where Luke's leads,
+              funnels, tasks, and reports live. The two surfaces
+              had zero links between them prior to 2026-05-09. */}
+          <a
+            href="/clients/olympic-inspections/portal"
+            style={{
+              background: "rgba(45, 74, 45, 0.08)",
+              border: "1px solid rgba(45, 74, 45, 0.30)",
+              color: "#2d4a2d",
+              padding: "8px 14px",
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            ← Lead pipeline + funnels
+          </a>
+          <button
+            onClick={logout}
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(31, 42, 28, 0.20)",
+              color: "#4a5547",
+              padding: "8px 14px",
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 13,
+            }}
+          >
+            Sign out
+          </button>
+        </div>
       </div>
 
       {/* STATS STRIP */}
@@ -275,6 +314,11 @@ export default function OITAdminPage() {
         <StatCard label="Confirmed" num={stats.confirmed} color="#2d4a2d" />
         <StatCard label="Completed" num={stats.completed} color="#1d331d" />
         <StatCard label="Open slots" num={stats.upcoming} color="#5a6e5a" />
+        <StatCard
+          label="This month"
+          num={`$${stats.monthRevenueUsd.toLocaleString()}`}
+          color="#1d331d"
+        />
       </div>
 
       {/* TABS */}
@@ -349,7 +393,15 @@ export default function OITAdminPage() {
 
 // ─────── Sub-components ───────
 
-function StatCard({ label, num, color }: { label: string; num: number; color: string }) {
+function StatCard({
+  label,
+  num,
+  color,
+}: {
+  label: string;
+  num: number | string;
+  color: string;
+}) {
   return (
     <div
       style={{
@@ -407,7 +459,23 @@ function BookingsTab({
           color: "#7a857a",
         }}
       >
-        No bookings yet. Customers who request an inspection will show up here.
+        <div style={{ fontSize: 15, fontWeight: 600, color: "#2d4a2d", marginBottom: 8 }}>
+          No bookings yet.
+        </div>
+        <div style={{ fontSize: 13, lineHeight: 1.5, maxWidth: 440, margin: "0 auto" }}>
+          Share your booking page so customers can request an inspection in two clicks:
+          <br />
+          <a
+            href="/sites/olympic-inspections/#book"
+            target="_blank"
+            rel="noopener"
+            style={{ color: "#2d4a2d", fontWeight: 600 }}
+          >
+            olympicinspections.com/#book
+          </a>
+          <br />
+          Paste it in your email signature and Facebook bio.
+        </div>
       </div>
     );
   }

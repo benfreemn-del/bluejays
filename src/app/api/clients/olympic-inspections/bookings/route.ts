@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
+import { sendEmailTo } from "@/lib/alerts";
 
 /**
  * /api/clients/olympic-inspections/bookings
@@ -301,7 +302,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ ok: true, mock: true });
   }
 
-  const { error } = await getSupabase()
+  const supa = getSupabase();
+  const { error } = await supa
     .from("client_bookings")
     .update(update)
     .eq("id", id)
@@ -310,5 +312,66 @@ export async function PATCH(req: NextRequest) {
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
+
+  // When Luke flips a booking to 'confirmed', email the customer the
+  // confirmation. Previously this was a silent DB update — customer
+  // never knew their booking was approved. Best-effort: failure here
+  // doesn't undo the status change. (SMS confirmation lands once
+  // OIT_TWILIO_NUMBER is provisioned — see setup task.)
+  if (body.status === "confirmed") {
+    try {
+      const { data: row } = await supa
+        .from("client_bookings")
+        .select(
+          "customer_name, customer_email, customer_phone, customer_address, slot:client_booking_slots(start_at, end_at)",
+        )
+        .eq("id", id)
+        .maybeSingle();
+      if (row?.customer_email) {
+        const slot = (row as { slot?: { start_at?: string; end_at?: string } | null }).slot;
+        const slotTxt = slot?.start_at
+          ? new Date(slot.start_at).toLocaleString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              timeZone: "America/Los_Angeles",
+            })
+          : "your scheduled time";
+        const lines = [
+          `Hi ${row.customer_name?.split(" ")[0] || "there"},`,
+          ``,
+          `Luke from Olympic Inspections — your inspection is confirmed for:`,
+          ``,
+          slotTxt,
+          row.customer_address ? `at ${row.customer_address}` : "",
+          ``,
+          `What to do beforehand:`,
+          `• Move stuff out of corners and closets you suspect`,
+          `• Make sure attic + crawlspace + utility room are accessible`,
+          `• Have your phone handy — I'll text on the way`,
+          ``,
+          `Reply if anything changes. See you ${slotTxt.split(",")[0] || "soon"}.`,
+          ``,
+          `— Luke`,
+          `Olympic Inspections & Testing`,
+          `olympicinspections.com`,
+        ]
+          .filter(Boolean)
+          .join("\n");
+        await sendEmailTo({
+          to: row.customer_email,
+          subject: "Your inspection is confirmed — Olympic Inspections",
+          body: lines,
+          fromName: "Luke · Olympic Inspections",
+          clientSlug: SLUG,
+        });
+      }
+    } catch (e) {
+      console.error("[oit-bookings] confirmation email failed (non-blocking):", e);
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }
