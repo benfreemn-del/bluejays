@@ -1884,6 +1884,75 @@ html {
   margin: 0 auto;
 }
 
+/* "100+" hero stat card — replaces the old 9-item bullet grid.
+   Single visual anchor. Big serif numeral, accent underline, soft
+   gradient background to lift it off the cream-deep section. */
+.lab-stat-card {
+  position: relative;
+  max-width: 640px;
+  margin: 36px auto 28px;
+  padding: 44px 36px 36px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45, 74, 45, 0.07) 0%, transparent 70%),
+    linear-gradient(180deg, #fff 0%, #faf6ee 100%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.lab-stat-card::before {
+  /* gold-amber accent strip across the top */
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--forest), var(--amber), var(--wheat));
+}
+.lab-stat-number {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(5rem, 14vw, 8.5rem);
+  line-height: 0.9;
+  color: var(--forest);
+  letter-spacing: -0.04em;
+  display: inline-flex;
+  align-items: flex-start;
+  background: linear-gradient(180deg, var(--forest) 0%, var(--forest-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.lab-stat-plus {
+  font-size: 0.5em;
+  color: var(--amber);
+  -webkit-text-fill-color: var(--amber);
+  margin-top: 0.25em;
+  margin-left: 0.05em;
+  font-weight: 800;
+}
+.lab-stat-label {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 6px;
+}
+.lab-stat-sub {
+  margin-top: 18px;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (max-width: 600px) {
+  .lab-stat-card { padding: 36px 22px 28px; border-radius: 14px; }
+}
+
 /* PRICING POSITIONING ("DON'T GET SPORED") */
 .pricing-pitch {
   background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
