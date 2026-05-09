@@ -17,6 +17,15 @@ interface DeliverabilityAlert {
   timestamp: string;
 }
 
+interface DomainStatusEntry {
+  enabled: boolean;
+  warmingDay: number;
+  sentToday: number;
+  limitToday: number;
+  percentWarmed: number;
+  domain: string;
+}
+
 interface DeliverabilityData {
   domain: string;
   health: {
@@ -41,6 +50,9 @@ interface DeliverabilityData {
     totalHardBounces: number;
     totalSoftBounces: number;
   };
+  // Parallel-warming snapshot — primary + backup. Renders side-by-side
+  // when both rows exist in `domain_warming`. Empty when mock-mode.
+  domains?: DomainStatusEntry[];
 }
 
 const GRADE_COLOR: Record<string, string> = {
@@ -166,18 +178,58 @@ export default function DeliverabilityWidget() {
             <p className="text-xs text-muted pt-0.5">{data.domain}</p>
           </div>
 
-          {/* Warm-up */}
+          {/* Warm-up — renders the primary domain by default. When the
+              parallel-warming snapshot has both domains, render them
+              side-by-side so the backup (bluejaywebs.com) is visible
+              instead of silently invisible per the legacy widget bug. */}
           <div className="space-y-1.5">
             <p className="text-xs uppercase tracking-widest text-muted mb-1">Warm-up</p>
-            <p className="text-sm font-semibold capitalize">{health.warmupStatus.replace(/-/g, " ")}</p>
-            <p className="text-xs text-muted">Phase {sending.phase}</p>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mt-1">
-              <div
-                className="h-full rounded-full bg-blue-electric transition-all"
-                style={{ width: `${Math.min(100, sentPct)}%` }}
-              />
-            </div>
-            <p className="text-xs text-muted">{health.sentToday} / {health.dailySendLimit} today</p>
+            {data.domains && data.domains.length > 1 ? (
+              <div className="space-y-2">
+                {data.domains.map((d) => {
+                  const pct = d.limitToday > 0 ? (d.sentToday / d.limitToday) * 100 : 0;
+                  const phaseLabel = !d.enabled
+                    ? "disabled · unlimited"
+                    : d.limitToday >= 100
+                      ? "full"
+                      : d.limitToday >= 50
+                        ? "ramping"
+                        : "warming";
+                  return (
+                    <div key={d.domain}>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted truncate" title={d.domain}>
+                          {d.domain.replace(".com", "")}
+                        </span>
+                        <span className="font-medium capitalize">{phaseLabel}</span>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mt-1">
+                        <div
+                          className="h-full rounded-full bg-blue-electric transition-all"
+                          style={{ width: `${Math.min(100, pct)}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-muted">
+                        {d.enabled ? `Day ${d.warmingDay} · ` : ""}
+                        {d.sentToday} / {d.limitToday} today
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <>
+                <p className="text-sm font-semibold capitalize">{health.warmupStatus.replace(/-/g, " ")}</p>
+                <p className="text-xs text-muted">Phase {sending.phase}</p>
+                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mt-1">
+                  <div
+                    className="h-full rounded-full bg-blue-electric transition-all"
+                    style={{ width: `${Math.min(100, sentPct)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted">{health.sentToday} / {health.dailySendLimit} today</p>
+              </>
+            )}
           </div>
 
           {/* Rates */}

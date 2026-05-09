@@ -6,6 +6,7 @@ import {
   getSendingDomain,
   getBounceStats,
   getSoftBouncesForRetry,
+  getAllDomainStatuses,
 } from "@/lib/email-deliverability";
 
 /**
@@ -23,11 +24,12 @@ export async function GET(request: NextRequest) {
   try {
     const domain = request.nextUrl.searchParams.get("domain") || getSendingDomain();
 
-    const [health, sendStatus, bounceStats, softBounces] = await Promise.all([
+    const [health, sendStatus, bounceStats, softBounces, domainStatuses] = await Promise.all([
       getDeliverabilityHealth(domain),
       Promise.resolve(canSendEmail(domain)),
-      Promise.resolve(getBounceStats()),
+      getBounceStats(),
       Promise.resolve(getSoftBouncesForRetry()),
+      getAllDomainStatuses(),
     ]);
 
     return NextResponse.json({
@@ -45,6 +47,9 @@ export async function GET(request: NextRequest) {
           reason: b.reason,
         })),
       },
+      // Parallel-warming snapshot — primary + backup. UI renders both.
+      // Empty array when domain-warming isn't configured (mock mode).
+      domains: domainStatuses,
     });
   } catch (error) {
     console.error("[Deliverability API] Error:", error);

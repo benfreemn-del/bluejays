@@ -13,6 +13,7 @@ import path from "path";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { updateProspect, getProspect } from "./store";
 import { logCost } from "./cost-logger";
+import { getWarmingStatus, type DomainStatus } from "./domain-warming";
 
 const DATA_DIR = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
 const DELIVERABILITY_FILE = path.join(DATA_DIR, "email-deliverability.json");
@@ -707,22 +708,68 @@ export function getSoftBouncesForRetry(): BounceRecord[] {
 }
 
 /**
- * Get bounce statistics.
+ * Get bounce statistics. Supabase-first; falls back to /tmp file
+ * when Supabase isn't configured (mock mode). The shape is the same
+ * as the legacy file-based stats so no caller changes are required,
+ * but the additional `totalHardBounces` / `totalSoftBounces` aliases
+ * are added for the dashboard widget's consumption.
+ *
+ * Diagnosed 2026-05-09: previously read from /tmp/email-bounces.json
+ * which is wiped on every Vercel cold start, so the widget always
+ * showed 0/0 even when Supabase had a real bounce history.
  */
-export function getBounceStats(): {
+export async function getBounceStats(): Promise<{
   totalBounces: number;
   hardBounces: number;
   softBounces: number;
   pendingRetries: number;
   resolvedBounces: number;
-} {
+  totalHardBounces: number;
+  totalSoftBounces: number;
+}> {
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from("email_bounces")
+        .select("bounce_type, resolved")
+        .limit(5000);
+
+      if (!error && data) {
+        type Row = { bounce_type: string | null; resolved: boolean | null };
+        const rows = data as Row[];
+        const hard = rows.filter((b) => b.bounce_type === "hard").length;
+        const soft = rows.filter((b) => b.bounce_type === "soft").length;
+        const resolved = rows.filter((b) => b.resolved === true).length;
+        const pending = rows.filter(
+          (b) => b.bounce_type === "soft" && b.resolved !== true,
+        ).length;
+
+        return {
+          totalBounces: rows.length,
+          hardBounces: hard,
+          softBounces: soft,
+          pendingRetries: pending,
+          resolvedBounces: resolved,
+          totalHardBounces: hard,
+          totalSoftBounces: soft,
+        };
+      }
+    } catch {
+      // Fall through to file-based fallback below.
+    }
+  }
+
   const bounces = loadBounceData();
+  const hard = bounces.filter((b) => b.type === "hard").length;
+  const soft = bounces.filter((b) => b.type === "soft").length;
   return {
     totalBounces: bounces.length,
-    hardBounces: bounces.filter((b) => b.type === "hard").length,
-    softBounces: bounces.filter((b) => b.type === "soft").length,
+    hardBounces: hard,
+    softBounces: soft,
     pendingRetries: bounces.filter((b) => b.type === "soft" && !b.resolved).length,
     resolvedBounces: bounces.filter((b) => b.resolved).length,
+    totalHardBounces: hard,
+    totalSoftBounces: soft,
   };
 }
 
@@ -871,13 +918,63 @@ export async function getDeliverabilityHealth(
   }
 
   // 3. Warm-up status
-  const warmup = getWarmupSchedule(domain);
-  const warmupStatus = warmup.phase;
+  // Source of truth = Supabase `domain_warming` table (managed by
+  // domain-warming.ts). The legacy /tmp file-based warm-up tracker
+  // never had real data on Vercel — /tmp is wiped on every cold
+  // start. Diagnosed 2026-05-09 after dashboard always rendered
+  // "Day 1 / 0 sent" regardless of actual sending history.
+  const warmingStatus = await getWarmingStatus().catch(() => null);
+  const target = warmingStatus?.domains.find((d) => d.domain === domain);
 
-  if (warmup.phase === "warming") {
+  // Map current daily limit to a phase string. The legacy enum
+  // ("warming"|"ramping"|"full"|"not_started") is preserved so any
+  // downstream consumer that switches on it still works.
+  let warmupStatus: "warming" | "ramping" | "full" | "not_started";
+  let dailyLimit: number;
+  let sentToday: number;
+  let warmingDay: number;
+  let warmupEnabled: boolean;
+
+  if (target && target.enabled) {
+    warmupEnabled = true;
+    dailyLimit = target.limitToday;
+    sentToday = target.sentToday;
+    warmingDay = target.warmingDay;
+    if (dailyLimit < 50) warmupStatus = "warming";
+    else if (dailyLimit < 100) warmupStatus = "ramping";
+    else warmupStatus = "full";
+  } else if (target && !target.enabled) {
+    // Warming disabled = unlimited sends. Honest state: "not_started"
+    // means the warm-up program isn't active, which on this domain
+    // means we trust SendGrid's own rate limits.
+    warmupEnabled = false;
+    warmupStatus = "not_started";
+    dailyLimit = 999;
+    sentToday = target.sentToday;
+    warmingDay = 0;
+  } else {
+    // Supabase unreachable or domain row missing — fall back to the
+    // legacy file-based tracker so the dashboard at least shows
+    // something. Mock-mode safety.
+    const warmup = getWarmupSchedule(domain);
+    warmupEnabled = true;
+    warmupStatus = warmup.phase;
+    dailyLimit = warmup.dailyLimit;
+    sentToday = warmup.sentToday;
+    warmingDay = warmup.currentDay;
+  }
+
+  if (warmupEnabled && warmupStatus === "warming") {
     alerts.push({
       level: "info",
-      message: `Domain is in warm-up phase (Day ${warmup.currentDay}/30). Daily limit: ${warmup.dailyLimit} emails.`,
+      message: `Domain is in warm-up phase (Day ${warmingDay}/30). Daily limit: ${dailyLimit} emails.`,
+      metric: "warmup",
+      timestamp: now,
+    });
+  } else if (!warmupEnabled) {
+    alerts.push({
+      level: "info",
+      message: `Warm-up disabled — sending at SendGrid's native rate limits.`,
       metric: "warmup",
       timestamp: now,
     });
@@ -909,8 +1006,8 @@ export async function getDeliverabilityHealth(
   else score += 2;
 
   // Warm-up compliance: 10 points
-  if (warmup.phase === "full") score += 10;
-  else if (warmup.phase === "ramping") score += 7;
+  if (warmupStatus === "full") score += 10;
+  else if (warmupStatus === "ramping") score += 7;
   else score += 4;
 
   // Determine grade
@@ -930,11 +1027,27 @@ export async function getDeliverabilityHealth(
     spamRate,
     domainAuth,
     warmupStatus,
-    dailySendLimit: warmup.dailyLimit,
-    sentToday: warmup.sentToday,
+    dailySendLimit: dailyLimit,
+    sentToday,
     alerts,
     lastUpdated: now,
   };
+}
+
+/**
+ * Multi-domain status snapshot for the dashboard widget. Returns
+ * one entry per warmed sender domain (primary + backup) so the UI
+ * can render them side-by-side. Uses Supabase as the source of truth.
+ *
+ * Returns an empty array if domain-warming isn't configured (mock mode).
+ */
+export async function getAllDomainStatuses(): Promise<DomainStatus[]> {
+  try {
+    const status = await getWarmingStatus();
+    return status.domains;
+  } catch {
+    return [];
+  }
 }
 
 /**
