@@ -67,6 +67,17 @@ type TabDef = {
   href?: string;
 };
 
+// Tabs surfaced in the top nav. Reduced 2026-05-08 per dashboard-
+// review #3 (combine wasted tabs):
+//   - Removed "Case Studies" — set-once admin toggle, accessible at
+//     /dashboard/case-studies directly or from Settings.
+//   - Removed "Images" — admin image-mapper utility, low-frequency,
+//     accessible at /image-mapper directly.
+// Routes still exist; just no longer cluttering Ben + Madie's daily
+// nav. The set we kept maps directly to the daily operator flow:
+// Overview pulse → Leads → Map (scout) → Funnels → Master To-Do →
+// Sales Portal (Madie's surface) → Client Jobs → Pipeline → Win-Loss
+// → AI Skills → Settings.
 const TABS: TabDef[] = [
   { id: "overview", label: "Overview", emoji: "🏠" },
   { id: "leads", label: "Leads", emoji: "📥" },
@@ -77,9 +88,7 @@ const TABS: TabDef[] = [
   { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
   { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline" },
   { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss" },
-  { id: "case-studies", label: "Case Studies", emoji: "📈", href: "/dashboard/case-studies" },
   { id: "ai-skills", label: "AI Skills", emoji: "🧠", href: "/dashboard/ai-bots" },
-  { id: "images", label: "Images", emoji: "🖼️", href: "/image-mapper" },
   { id: "settings", label: "Settings", emoji: "⚙️" },
 ];
 
