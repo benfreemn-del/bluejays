@@ -55,6 +55,57 @@ filtered by `owner='client'`.
 - **ALWAYS drop runnable SQL / scripts inline in the chat — never just point at a file path.** When a migration, seed script, one-off SQL, or any "Ben must run this somewhere" snippet is needed, paste the FULL code into the chat inside a fenced ```sql / ```bash / ```powershell block so Ben can copy it directly. Telling him to "open `supabase/migrations/X.sql` and paste the contents" forces an extra step every single time. Also state where to paste it (Supabase SQL Editor, Vercel CLI, terminal, etc.). The file in the repo is the source of truth; the inline drop is for ergonomics. Both, every time.
 - **NEVER render >100 list rows at once. Paginate at 50/page.** Lead lists, prospect lists, customer lists, booking lists, affiliate maps, partner tables, scout results, agent_signals tails, audit history, search results, anything that grows unboundedly. The standard pagination pattern: 50 rows/page, prev/next buttons, "Showing X-Y of Z" header, `setPage(0)` on filter change. The reference implementation lives in `src/app/dashboard/script/LeadPicker.client.tsx` (search for `PAGE_SIZE = 50`). Browser perf cliff is at ~200 React rows on cheap phones; 50 keeps us well clear with headroom for filter changes. The only exception: dashboard tiles / stat cards / fixed-N admin grids where the count is bounded by design (≤20 typical).
 
+## Site URL Rules (NON-NEGOTIABLE — added 2026-05-09)
+
+**The bug this prevents:** hardcoded URLs of the form `/sites/SLUG/`
+(with trailing slash) trigger a 308 redirect chain on Vercel that
+some browsers render as a 404 in a new tab. Same problem with
+`/sites/SLUG/#anchor`. Diagnosed 2026-05-09 after Ben hit broken
+"Site ↗" links in the dashboard + Madie's portfolio + the OIT owner
+portal + the audit landing testimonials — same root cause across 8
+files.
+
+### Two allowed shapes — anything else fails the build
+
+1. **Use `clientSiteFor(slug)` from `src/lib/client-site-urls.ts`**
+   when you need the URL for a known client slug. The map handles
+   internal Next routes (`/clients/SLUG`) AND external static sites
+   (`https://bluejayportfolio.com/sites/SLUG/index.html`) AND the
+   `kind: "none"` fallback for slugs without a site yet.
+2. **Use the explicit `/sites/SLUG/index.html` form** if you must
+   hardcode (one-off references in admin pages, fallback URLs in
+   partner scripts, etc.). This bypasses every redirect chain.
+
+### Banned
+
+- ❌ `/sites/SLUG/` (with trailing slash)
+- ❌ `/sites/SLUG/#anchor` (trailing slash + hash)
+- ❌ `https://bluejayportfolio.com/sites/SLUG/` (same)
+- ❌ Hardcoding `/clients/SLUG` for a slug that's actually static
+  (e.g. `/clients/olympic-inspections` 404s — only `/admin` lives
+  there. The public site is at `/sites/olympic-inspections/...`)
+
+### CI guard
+
+`scripts/check-client-site-urls.mjs` runs on every `npm run build`
+(wired via `prebuild`). Fails the build if any forbidden pattern
+slips through. The single allowed file is `src/lib/client-site-urls.ts`
+where the canonical map lives.
+
+To run the guard manually:
+```
+npm run lint:site-urls
+```
+
+### When adding a new client
+
+1. Drop one entry into `CLIENT_SITES` in `src/lib/client-site-urls.ts`
+2. Pick `kind`: `internal` (Next route under `/clients/`), `external`
+   (static site under `/sites/SLUG/index.html` OR client's own domain),
+   or `none` (no site yet — button renders disabled with tooltip)
+3. Verify with `curl -s -o /dev/null -w "%{http_code}" <url>` — should
+   be 200 directly, not 30x then 200
+
 ## Client Tenant Status — READ BEFORE BUILDING ANY TENANT FEATURE
 
 Different BlueJays clients buy different tiers. NOT all clients have an

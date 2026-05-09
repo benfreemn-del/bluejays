@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-client-site-urls.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "lint:site-urls": "node scripts/check-client-site-urls.mjs",
     "backfill:cities": "tsx scripts/backfill-prospect-cities.ts"
   },
 "dependencies": {
