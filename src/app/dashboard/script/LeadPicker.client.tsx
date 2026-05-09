@@ -76,6 +76,14 @@ export default function LeadPicker() {
   // Ben doesn't dial from this surface day-to-day anymore.
   const mode: "ben" | "partner" = "partner";
 
+  // Active-client business-name set. Used to filter Ben's existing
+  // clients out of Madie's cold-call pool — e.g. don't let her dial
+  // Luke at Olympic Inspections or Philip at Zenith Sports as if
+  // they were prospects. Hydrates once on mount.
+  const [activeClientNames, setActiveClientNames] = useState<Set<string>>(
+    new Set(),
+  );
+
   // Load prospects.
   useEffect(() => {
     let cancelled = false;
@@ -94,8 +102,47 @@ export default function LeadPicker() {
     };
   }, []);
 
+  // Hydrate active-client filter list (slugs + display names from
+  // client_owners). Lowercased for fuzzy substring match against
+  // prospect business names.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/active-clients", { credentials: "include" })
+      .then((r) => r.json())
+      .then(
+        (j: {
+          ok: boolean;
+          clients?: Array<{ slug: string; name: string | null }>;
+        }) => {
+          if (cancelled || !j.ok || !j.clients) return;
+          const set = new Set<string>();
+          for (const c of j.clients) {
+            const slugTokens = c.slug.toLowerCase().split("-").filter(Boolean);
+            const nameTokens = (c.name || "")
+              .toLowerCase()
+              .split(/[\s·]+/)
+              .filter((t) => t.length >= 4);
+            // Anchor strings — at least 4 chars, drops common stop words
+            for (const t of [...slugTokens, ...nameTokens]) {
+              if (t.length >= 4) set.add(t);
+            }
+            set.add(c.slug.toLowerCase());
+          }
+          setActiveClientNames(set);
+        },
+      )
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Hydrate queue + dismiss state from localStorage so half-built
-  // selections AND dismiss history survive reloads.
+  // selections AND dismiss history survive reloads — for OWNER role.
+  // For SALES role (Madie): wipe dismissed/undo on every refresh so
+  // her picker starts clean every session. Per Ben spec 2026-05-09:
+  // dismissed-leads-from-yesterday shouldn't carry into today's
+  // dialing block.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(QUEUE_KEY);
@@ -103,20 +150,32 @@ export default function LeadPicker() {
         const arr = JSON.parse(raw) as string[];
         if (Array.isArray(arr)) setSelected(arr);
       }
-      const rawD = localStorage.getItem(DISMISSED_KEY);
-      if (rawD) {
-        const arr = JSON.parse(rawD) as string[];
-        if (Array.isArray(arr)) setDismissed(arr);
-      }
-      const rawU = localStorage.getItem(UNDO_STACK_KEY);
-      if (rawU) {
-        const arr = JSON.parse(rawU) as string[];
-        if (Array.isArray(arr)) setUndoStack(arr);
+      if (role === "sales") {
+        // Sales role — clear stale dismiss/undo on each fresh page load.
+        try {
+          localStorage.removeItem(DISMISSED_KEY);
+          localStorage.removeItem(UNDO_STACK_KEY);
+        } catch {
+          // ignore
+        }
+        setDismissed([]);
+        setUndoStack([]);
+      } else {
+        const rawD = localStorage.getItem(DISMISSED_KEY);
+        if (rawD) {
+          const arr = JSON.parse(rawD) as string[];
+          if (Array.isArray(arr)) setDismissed(arr);
+        }
+        const rawU = localStorage.getItem(UNDO_STACK_KEY);
+        if (rawU) {
+          const arr = JSON.parse(rawU) as string[];
+          if (Array.isArray(arr)) setUndoStack(arr);
+        }
       }
     } catch {
       // ignore
     }
-  }, []);
+  }, [role]);
 
   const persist = (next: string[]) => {
     setSelected(next);
@@ -255,6 +314,19 @@ export default function LeadPicker() {
         !!p.customSiteUrl;
       if (isAlreadyClient) return false;
 
+      // Sales-role only: also drop prospects whose business name
+      // matches an active client_owners slug or display name. Catches
+      // the cases where the prospect record never got status='paid'
+      // stamped but is in fact a live BlueJays client (manual
+      // pipeline drift). Keeps Madie from cold-calling Luke / Philip /
+      // any other actual customer.
+      if (role === "sales" && activeClientNames.size > 0) {
+        const biz = (p.businessName ?? "").toLowerCase();
+        for (const token of activeClientNames) {
+          if (biz.includes(token)) return false;
+        }
+      }
+
       // Lead-type / status filter chips
       if (filter === "interested" && !s.includes("interest") && !s.includes("respond") && !s.includes("engage")) return false;
       // "called-recently" / "no-calls" filters are status-substring proxies
@@ -309,7 +381,32 @@ export default function LeadPicker() {
         break;
     }
     return sorted;
-  }, [prospects, search, filter, categoryFilter, sortBy, dismissed]);
+  }, [
+    prospects,
+    search,
+    filter,
+    categoryFilter,
+    sortBy,
+    dismissed,
+    role,
+    activeClientNames,
+  ]);
+
+  // Pagination — 50 rows per page (CLAUDE.md rule: never load >100
+  // list rows at once without page breaks). Resets to page 0 whenever
+  // any filter changes so the user lands on the first page of new
+  // results.
+  const PAGE_SIZE = 50;
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    setPage(0);
+  }, [search, filter, categoryFilter, sortBy]);
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const pagedVisible = useMemo(
+    () => visible.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE),
+    [visible, safePage],
+  );
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -534,8 +631,23 @@ export default function LeadPicker() {
             </p>
           </div>
         ) : (
-          <ul className="space-y-1.5">
-            {visible.map((p) => {
+          <>
+            {/* Page header — total + current page range */}
+            <div className="flex items-center justify-between mb-2 px-1 text-[11px] text-muted">
+              <span>
+                Showing {safePage * PAGE_SIZE + 1}
+                {visible.length > PAGE_SIZE
+                  ? `–${Math.min((safePage + 1) * PAGE_SIZE, visible.length)} of ${visible.length}`
+                  : ` of ${visible.length}`}
+              </span>
+              {totalPages > 1 && (
+                <span>
+                  Page {safePage + 1} / {totalPages}
+                </span>
+              )}
+            </div>
+            <ul className="space-y-1.5">
+            {pagedVisible.map((p) => {
               const isSel = selected.includes(p.id);
               const queuePos = isSel ? selected.indexOf(p.id) + 1 : null;
 
@@ -723,7 +835,35 @@ export default function LeadPicker() {
                 </li>
               );
             })}
-          </ul>
+            </ul>
+
+            {/* Pagination footer — only renders when there's >1 page. */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-3 px-1">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={safePage === 0}
+                  className="text-[11px] uppercase tracking-wider font-bold border border-border rounded px-3 py-1.5 text-foreground hover:border-pink-500/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ← Prev
+                </button>
+                <span className="text-[11px] text-muted tabular-nums">
+                  Page {safePage + 1} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
+                  disabled={safePage >= totalPages - 1}
+                  className="text-[11px] uppercase tracking-wider font-bold border border-border rounded px-3 py-1.5 text-foreground hover:border-pink-500/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
