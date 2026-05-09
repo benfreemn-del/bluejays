@@ -22,11 +22,11 @@
     },
     {
       "path": "/api/replies/process",
-      "schedule": "* * * * *"
+      "schedule": "*/5 * * * *"
     },
     {
       "path": "/api/onboarding-reminders/process",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/digest",
@@ -94,7 +94,7 @@
     },
     {
       "path": "/api/cron/campaigns-scheduled",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/cron/cutover-smoke-test",
@@ -114,7 +114,7 @@
     },
     {
       "path": "/api/cron/heygen-poll",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/10 * * * *"
     }
   ],
   "functions": {

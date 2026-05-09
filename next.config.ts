@@ -66,6 +66,12 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Vercel's image optimizer is OFF. Brand/client pages already use plain
+    // <img> against external CDNs (Shopify, client-owned hosts) so the
+    // optimizer never sees them. The few next/image consumers ship pre-sized
+    // assets from /public — they don't need server-side resizing. Killing
+    // the line item drops the per-source-image bill on Vercel Pro to $0.
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
