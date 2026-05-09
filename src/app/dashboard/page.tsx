@@ -294,6 +294,24 @@ export default function DashboardPage() {
               <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
             </div>
           </Link>
+          {/* Active-role badge — at-a-glance debug for "why does X
+              tab look like Y." Sales = pink, Owner = blue. If Madie
+              opens the dashboard and sees "OWNER" here, her cookie
+              didn't set correctly — sign out + back in fixes it. */}
+          <span
+            className={`ml-auto text-[10px] uppercase tracking-[0.18em] font-bold px-2 py-1 rounded border ${
+              role === "sales"
+                ? "border-pink-500/50 bg-pink-500/15 text-pink-200"
+                : "border-blue-electric/50 bg-blue-electric/10 text-blue-200"
+            }`}
+            title={
+              role === "sales"
+                ? "Logged in as the sales role (Madie). bj_role=sales cookie is set."
+                : "Logged in as the owner role (Ben). bj_role=owner cookie is set."
+            }
+          >
+            {role === "sales" ? "Madie · Sales" : "Ben · Owner"}
+          </span>
         </div>
 
         {/* TAB BAR — horizontal scroll on mobile (overflow-x-auto). Mixed
