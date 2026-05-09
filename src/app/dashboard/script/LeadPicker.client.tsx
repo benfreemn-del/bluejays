@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { Prospect } from "@/lib/types";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
+import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
+import { useRole } from "@/lib/use-role";
 
 /**
  * LeadPicker — fallback view rendered on /dashboard/script when no
@@ -29,6 +31,7 @@ const UNDO_STACK_KEY = "bluejays.sales-portal.undo.v1";
 
 export default function LeadPicker() {
   const router = useRouter();
+  const role = useRole();
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
@@ -382,6 +385,17 @@ export default function LeadPicker() {
           </div>
         </div>
       </header>
+
+      {/* MADIE-ONLY: race-track welcome panel — the 6-lap progression
+          UI Ben designed. Shows on every page load for sales role
+          (Madie). Frames her growth as a race; lets her see what's
+          unlocked, what's next, and today's mission. Owner role
+          (Ben) skips this — he sees just the productivity strip. */}
+      {role === "sales" && (
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
+          <MadieRaceTrack />
+        </div>
+      )}
 
       {/* Madie productivity strip — persistent pace tracker.
           Per dashboard review 2026-05-08 #1: the #1 missing surface
