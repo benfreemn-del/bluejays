@@ -22,7 +22,7 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
 import { logHeartbeat } from "./cron-heartbeat";
-import { getInspectionClient } from "./inspection-clients";
+import { getServiceClient } from "./service-clients";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -99,9 +99,13 @@ export async function runPartnerScout(
     errors: [],
   };
 
-  const config = getInspectionClient(clientSlug);
+  const config = getServiceClient(clientSlug);
   if (!config) {
-    result.errors.push(`unknown_inspection_client: ${clientSlug}`);
+    result.errors.push(`unknown_service_client: ${clientSlug}`);
+    return result;
+  }
+  if (config.scoutCities.length === 0 || config.scoutQueries.length === 0) {
+    result.errors.push(`no_scout_config_for: ${clientSlug}`);
     return result;
   }
 

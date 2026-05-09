@@ -197,6 +197,7 @@ const PUBLIC_API_PATHS = [
   "/api/clients/kr-ranches/waitlist",    // Public waitlist email capture from the freezer section
   "/api/clients/olympic-inspections/slots/public", // Public booking-slot list (OIT)
   "/api/clients/olympic-inspections/bookings",     // POST is public — customer creates booking; GET/PATCH check owner cookie internally
+  "/api/clients/zenith-sports/camp-signup",        // Public camp-signup form (parent reserves a TEKKY camp spot)
   "/api/cut-my-agency/submit",                     // Public Hormozi calculator funnel submit (Action 2 of 2026-05-05 $10k validation play)
   "/api/sell-direct/submit",                       // Public Hormozi calculator funnel submit — manufacturer DTC angle (Action 3 of 2026-05-05 $10k validation play)
 ];

@@ -5,9 +5,9 @@ import { detectAudience, createClientLead } from "@/lib/client-leads";
 import { sendEmailTo, sendOwnerAlert } from "@/lib/alerts";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 import {
-  getInspectionClient,
+  getServiceClient,
   renderBookingConfirmationEmail,
-} from "@/lib/inspection-clients";
+} from "@/lib/service-clients";
 
 /**
  * /api/clients/olympic-inspections/bookings
@@ -392,7 +392,7 @@ export async function PATCH(req: NextRequest) {
         // prep checklist, signature, phone all come from the per-
         // tenant config so adding a new inspection biz doesn't
         // require touching this email body.
-        const config = getInspectionClient(SLUG);
+        const config = getServiceClient(SLUG);
         if (config) {
           const slot = (
             row as { slot?: { start_at?: string; end_at?: string } | null }

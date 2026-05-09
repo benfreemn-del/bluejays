@@ -119,6 +119,10 @@
     {
       "path": "/api/cron/oit-partner-scout",
       "schedule": "0 14 * * 1"
+    },
+    {
+      "path": "/api/cron/sports-partner-scout",
+      "schedule": "0 14 * * 2"
     }
   ],
   "functions": {

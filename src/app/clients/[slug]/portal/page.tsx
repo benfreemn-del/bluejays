@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
 import CustomersTab from "@/components/portal/CustomersTab";
 import AISkillsTab from "@/components/portal/AISkillsTab";
-import AdsTab from "@/components/portal/AdsTab";
+import AdsTab from "@/components/portal/AdsTabV2";
 import OnboardingTimeline from "@/components/portal/OnboardingTimeline";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
