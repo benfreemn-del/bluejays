@@ -43,6 +43,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Prospect } from "@/lib/types";
+import PipelineVelocityWidget from "@/components/dashboard/PipelineVelocityWidget";
 
 const WEBSITE_STAGES = [
   { n: 1, label: "Preview created" },
@@ -403,6 +404,11 @@ export default function SalesPipelinePage() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
+        {/* Pipeline velocity widget — answers "are deals MOVING?" Per
+            dashboard review #4. Mounts ABOVE the kanban so the daily
+            scan order is: pulse first, then drill into stage details. */}
+        <PipelineVelocityWidget />
+
         {loading && (
           <div className="text-center text-slate-500 py-10">Loading…</div>
         )}

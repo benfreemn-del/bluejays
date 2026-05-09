@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Prospect } from "@/lib/types";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
+import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 
 /**
  * LeadPicker — fallback view rendered on /dashboard/script when no
@@ -389,6 +390,15 @@ export default function LeadPicker() {
           refreshes every 60 seconds via /api/madie/today. */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
         <MadieProductivity mode="strip" />
+      </div>
+
+      {/* Win-Loss feedback banner — top-of-week objection + script
+          tweak. Per dashboard review #4: closes the gap where loss
+          reasons were captured but never surfaced to the operator
+          who needs them. Hides automatically when no losses logged
+          this week. Dismissible per-session. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
+        <WinLossSalesBanner />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
