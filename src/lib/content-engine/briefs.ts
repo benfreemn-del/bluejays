@@ -23,6 +23,7 @@ import {
   type HookVariant,
 } from "./hooks";
 import { CTA_BY_BUCKET, fillCtaKeyword, type CtaTemplate } from "./ctas";
+import { findAssets, type BrollAsset } from "./assets";
 
 export interface ContentBrief {
   date: string; // YYYY-MM-DD
@@ -41,8 +42,15 @@ export interface ScriptDraft {
   promiseSeconds: string; // 3-8s
   proofSeconds: string; // 8-22s
   ctaSeconds: string; // 22-30s
-  /** B-roll cues — fixed 3-position template until asset library lands */
-  bRollCues: Array<{ atSecond: number; assetTag: string; note: string }>;
+  /** B-roll cues — each cue carries up to 3 recommended URLs from the
+   *  asset manifest, ranked by tag match. Ben screen-records the one
+   *  he likes (or none if he wants to fix in post). */
+  bRollCues: Array<{
+    atSecond: number;
+    assetTag: string;
+    note: string;
+    recommendations: BrollAsset[];
+  }>;
   /** Total estimated duration */
   estimatedSeconds: number;
 }
@@ -203,6 +211,13 @@ function buildScriptDraft(
 
   const proofPlaceholder = `(show: ${candidate.sourceLabel}) ${candidate.seed}`;
 
+  // Match b-roll candidates from the asset manifest by bucket-shaped
+  // queries. Each cue gets the top 3 recommendations Ben can pick
+  // from (or screen-record on demand).
+  const bucketTag = bucketToAssetTag(candidate.bucket);
+  const seedQuery = `${bucketTag} ${candidate.seed}`;
+  const ctaQuery = `${bucketTag} audit landing lead-magnet`;
+
   return {
     hookSeconds: hookText,
     promiseSeconds: promise,
@@ -211,18 +226,21 @@ function buildScriptDraft(
     bRollCues: [
       {
         atSecond: 8,
-        assetTag: bucketToAssetTag(candidate.bucket),
+        assetTag: bucketTag,
         note: "first b-roll — establish the surface you're talking about",
+        recommendations: findAssets(bucketTag, 3),
       },
       {
         atSecond: 15,
         assetTag: "specific",
         note: `pull a screen recording showing the specific thing: ${candidate.seed.slice(0, 60)}`,
+        recommendations: findAssets(seedQuery, 3),
       },
       {
         atSecond: 22,
         assetTag: "cta-target",
         note: "show the destination of the CTA — landing page, dashboard, etc",
+        recommendations: findAssets(ctaQuery, 3),
       },
     ],
     estimatedSeconds: 30,

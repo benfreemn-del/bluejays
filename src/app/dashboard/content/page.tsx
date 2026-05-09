@@ -155,21 +155,47 @@ export default function ContentBriefPage() {
       {/* B-roll cues */}
       <section className="mb-7">
         <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-2">
-          b-roll cues (drop into edit at these marks)
+          b-roll cues + recommended surfaces
         </h2>
-        <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4 space-y-2">
+        <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4 space-y-4">
           {brief.scriptDraft.bRollCues.map((c, i) => (
-            <div key={i} className="text-[12px] text-slate-300">
-              <span className="font-mono text-emerald-400">@{c.atSecond}s</span>{" "}
-              <span className="text-slate-500">·</span>{" "}
-              <span className="font-bold text-white">{c.assetTag}</span>{" "}
-              <span className="text-slate-500">— {c.note}</span>
+            <div key={i} className="space-y-1.5">
+              <div className="text-[12px] text-slate-300">
+                <span className="font-mono text-emerald-400">@{c.atSecond}s</span>{" "}
+                <span className="text-slate-500">·</span>{" "}
+                <span className="font-bold text-white">{c.assetTag}</span>{" "}
+                <span className="text-slate-500">— {c.note}</span>
+              </div>
+              {c.recommendations.length > 0 ? (
+                <ul className="ml-4 space-y-1">
+                  {c.recommendations.map((a) => (
+                    <li key={a.id} className="text-[11px]">
+                      <a
+                        href={a.url.startsWith("/") ? a.url : a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-blue-400 hover:text-blue-300"
+                      >
+                        {a.url}
+                      </a>{" "}
+                      <span className="text-slate-500">— {a.label}</span>{" "}
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-slate-600">
+                        {a.captureMode}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="ml-4 text-[11px] text-amber-500">
+                  no manifest match — add the surface to{" "}
+                  <code className="text-amber-400">src/lib/content-engine/assets.ts</code>
+                </p>
+              )}
             </div>
           ))}
-          <p className="text-[11px] text-slate-500 leading-relaxed mt-2 pt-2 border-t border-slate-800">
-            asset library is not yet built. record a phone screen capture
-            of each b-roll surface for now, OR mark these as &quot;fix in
-            post&quot; and edit later in capcut.
+          <p className="text-[11px] text-slate-500 leading-relaxed pt-2 border-t border-slate-800">
+            screen-record the linked surface (capcut · quicktime · OBS) at
+            1080×1920 vertical. phase-3 cron will auto-render these.
           </p>
         </div>
       </section>
