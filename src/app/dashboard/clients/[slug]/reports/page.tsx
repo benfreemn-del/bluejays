@@ -35,18 +35,10 @@ export default function ReportsPage({ params }: { params: Promise<{ slug: string
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link href={`/dashboard/clients/${slug}`} className="text-slate-400 hover:text-white text-sm">
-            ← Tasks
-          </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1 truncate">
-            {slug} <span className="text-slate-500 font-normal">/ weekly report</span>
-          </h1>
-        </div>
-      </header>
-
+    <>
+      {/* Tab bar supplied by [slug]/layout via ClientTabsBar — no
+          per-page sub-action bar needed (the report itself opens
+          with its own week-context line below). */}
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 pb-24 space-y-6">
         <div className="text-[11px] uppercase tracking-wider text-slate-500">
           Week ending {new Date(report.period.end).toDateString()}
@@ -137,7 +129,7 @@ export default function ReportsPage({ params }: { params: Promise<{ slug: string
           </section>
         )}
       </main>
-    </div>
+    </>
   );
 }
 

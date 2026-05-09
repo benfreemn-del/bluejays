@@ -362,39 +362,28 @@ export default function ClientLeadsPage({
     });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href={`/dashboard/clients/${slug}`}
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Tasks
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
-              {slug} <span className="text-slate-500 font-normal">/ leads</span>
-            </h1>
-            <div className="text-[11px] text-slate-500">
-              {counts ? `${counts.total} total leads` : "Loading…"}
-            </div>
-          </div>
-          <button
-            onClick={runFunnelNow}
-            disabled={runningFunnel}
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded disabled:opacity-50"
-            title="Enroll new leads + send any due funnel steps right now"
-          >
-            {runningFunnel ? "Running…" : "Run funnel"}
-          </button>
-          <SiteButton slug={slug} />
+    <>
+      {/* Sub-action bar — count + Run Funnel button.
+          Tab bar (back-nav, title, Site link) supplied by the
+          [slug]/layout via ClientTabsBar. */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center gap-3 flex-wrap">
+        <span className="text-[11px] text-slate-500 flex-1">
+          {counts ? `${counts.total} total leads` : "Loading…"}
+        </span>
+        <button
+          onClick={runFunnelNow}
+          disabled={runningFunnel}
+          className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded disabled:opacity-50"
+          title="Enroll new leads + send any due funnel steps right now"
+        >
+          {runningFunnel ? "Running…" : "Run funnel"}
+        </button>
+      </div>
+      {runResult && (
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-2 text-[11px] text-emerald-300 border-b border-emerald-700/30 bg-emerald-950/20">
+          ✓ {runResult}
         </div>
-        {runResult && (
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-2 text-[11px] text-emerald-300">
-            ✓ {runResult}
-          </div>
-        )}
-      </header>
+      )}
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-32">
         {/* Run history strip — last cron pulse so Ben can confirm
@@ -993,7 +982,7 @@ export default function ClientLeadsPage({
           }}
         />
       )}
-    </div>
+    </>
   );
 }
 

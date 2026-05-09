@@ -194,32 +194,20 @@ export default function CampsAdminPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Link
-            href={`/dashboard/clients/${slug}`}
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
-          >
-            ← Tasks
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">
-              {slug}{" "}
-              <span className="text-slate-500 font-normal">/ camps</span>
-            </h1>
-            <div className="text-[11px] text-slate-500">
-              {items.length} total · {items.filter((c) => c.is_active).length} live
-            </div>
-          </div>
-          <button
-            onClick={() => setAdding((v) => !v)}
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-          >
-            {adding ? "Cancel" : "+ Add camp"}
-          </button>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — count + Add Camp button.
+          Tab bar supplied by zenith-sports/layout via ClientTabsBar. */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center gap-3">
+        <span className="text-[11px] text-slate-500 flex-1">
+          {items.length} total · {items.filter((c) => c.is_active).length} live
+        </span>
+        <button
+          onClick={() => setAdding((v) => !v)}
+          className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
+        >
+          {adding ? "Cancel" : "+ Add camp"}
+        </button>
+      </div>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-32">
         <div className="mb-5 rounded-lg border border-emerald-700/30 bg-emerald-950/20 p-3 text-xs text-emerald-200">
@@ -385,7 +373,7 @@ export default function CampsAdminPage({
           ))}
         </div>
       </main>
-    </div>
+    </>
   );
 }
 

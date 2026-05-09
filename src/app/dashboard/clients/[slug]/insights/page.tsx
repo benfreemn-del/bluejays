@@ -98,24 +98,18 @@ export default function InsightsPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center gap-3 flex-wrap">
-          <Link href={`/dashboard/clients/${slug}`} className="text-slate-400 hover:text-white text-sm">
-            ← Tasks
-          </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1 truncate">
-            {slug} <span className="text-slate-500 font-normal">/ insights</span>
-          </h1>
-          <button
-            onClick={runAnalysis}
-            disabled={running}
-            className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded disabled:opacity-50"
-          >
-            {running ? "Running…" : "Run analysis"}
-          </button>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — Run Analysis button.
+          Tab bar supplied by [slug]/layout via ClientTabsBar. */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center justify-end gap-3">
+        <button
+          onClick={runAnalysis}
+          disabled={running}
+          className="text-[11px] tracking-wider uppercase font-bold text-violet-300 hover:text-white border border-violet-700/50 px-2.5 py-1 rounded disabled:opacity-50"
+        >
+          {running ? "Running…" : "Run analysis"}
+        </button>
+      </div>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 pb-24 space-y-8">
         {/* Subscription panel */}
@@ -255,7 +249,7 @@ export default function InsightsPage({
           </div>
         )}
       </main>
-    </div>
+    </>
   );
 }
 

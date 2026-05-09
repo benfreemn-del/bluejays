@@ -57,38 +57,32 @@ export default function AffiliatesPage({ params }: { params: Promise<{ slug: str
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 backdrop-blur bg-slate-950/85 border-b border-slate-800">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center gap-3 flex-wrap">
-          <Link href={`/dashboard/clients/${slug}`} className="text-slate-400 hover:text-white text-sm">
-            ← Tasks
-          </Link>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1 min-w-0 truncate">
-            {slug} <span className="text-slate-500 font-normal">/ affiliates</span>
-          </h1>
-          <button
-            onClick={async () => {
-              if (!confirm("Bulk-seed the starter affiliate list? Idempotent — safe to re-run.")) return;
-              const r = await fetch(`/api/client-affiliates/seed?client=${slug}`, {
-                method: "POST",
-              });
-              const j = (await r.json()) as { ok: boolean; inserted?: number; skipped?: number };
-              if (j.ok) alert(`Seeded ${j.inserted} affiliates (${j.skipped} already existed).`);
-              load();
-            }}
-            className="text-[11px] tracking-wider uppercase font-bold text-amber-300 hover:text-white border border-amber-700/50 px-2.5 py-1 rounded"
-            title="Bulk-load 30+ pre-researched affiliate prospects"
-          >
-            Seed list
-          </button>
-          <button
-            onClick={() => setShowAdd((v) => !v)}
-            className="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-3 py-1.5 rounded"
-          >
-            {showAdd ? "Cancel" : "+ Affiliate"}
-          </button>
-        </div>
-      </header>
+    <>
+      {/* Sub-action bar — Seed list + Add Affiliate buttons.
+          Tab bar supplied by [slug]/layout via ClientTabsBar. */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 border-b border-slate-800/50 flex items-center justify-end gap-2">
+        <button
+          onClick={async () => {
+            if (!confirm("Bulk-seed the starter affiliate list? Idempotent — safe to re-run.")) return;
+            const r = await fetch(`/api/client-affiliates/seed?client=${slug}`, {
+              method: "POST",
+            });
+            const j = (await r.json()) as { ok: boolean; inserted?: number; skipped?: number };
+            if (j.ok) alert(`Seeded ${j.inserted} affiliates (${j.skipped} already existed).`);
+            load();
+          }}
+          className="text-[11px] tracking-wider uppercase font-bold text-amber-300 hover:text-white border border-amber-700/50 px-2.5 py-1 rounded"
+          title="Bulk-load 30+ pre-researched affiliate prospects"
+        >
+          Seed list
+        </button>
+        <button
+          onClick={() => setShowAdd((v) => !v)}
+          className="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-3 py-1.5 rounded"
+        >
+          {showAdd ? "Cancel" : "+ Affiliate"}
+        </button>
+      </div>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 pb-24">
         {showAdd && <AddForm slug={slug} onAdded={() => { setShowAdd(false); load(); }} />}
@@ -172,7 +166,7 @@ export default function AffiliatesPage({ params }: { params: Promise<{ slug: str
           ))}
         </div>
       </main>
-    </div>
+    </>
   );
 }
 
