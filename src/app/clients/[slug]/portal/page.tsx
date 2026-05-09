@@ -873,6 +873,7 @@ export default function PortalPage({
             items={budgetItems}
             summary={budgetSummary}
             onMutate={loadBudget}
+            slug={slug}
           />
         )}
         {tab === "campaigns" && (
@@ -2214,13 +2215,38 @@ function BudgetTab({
   items,
   summary,
   onMutate,
+  slug,
 }: {
   items: BudgetItem[];
   summary: BudgetSummary | null;
   onMutate: () => void;
+  slug: string;
 }) {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "recurring" | "onetime">("all");
+  const [opsCost, setOpsCost] = useState<{
+    thirtyDayUsd: number;
+    byService: Record<string, number>;
+    hasData: boolean;
+  } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/clients/${slug}/ops-cost`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && d?.ok) {
+          setOpsCost({
+            thirtyDayUsd: d.thirtyDayUsd,
+            byService: d.byService,
+            hasData: d.hasData,
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   const filtered =
     filter === "all"
@@ -2282,6 +2308,46 @@ function BudgetTab({
             accent="violet"
           />
         </div>
+      )}
+
+      {/* BlueJays ops-cost banner — actual cost-to-serve over the last
+          30 days, per the system_costs rows tagged with this slug. Hidden
+          until at least one cost row has landed for this tenant. */}
+      {opsCost?.hasData && (
+        <section className="rounded-lg border border-emerald-900/60 bg-gradient-to-br from-emerald-950/40 to-slate-900/40 p-4">
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <div>
+              <h3 className="text-[10px] tracking-[0.22em] uppercase font-bold text-emerald-400">
+                Your BlueJays ops cost · last 30 days
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                What it actually costs us to run your stack — Twilio,
+                SendGrid, Google Places, scout APIs. Logged per-event,
+                attributed to your tenant.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-emerald-300">
+                ${opsCost.thirtyDayUsd.toFixed(2)}
+              </div>
+              <div className="text-[10px] text-slate-500">/ 30d</div>
+            </div>
+          </div>
+          {Object.keys(opsCost.byService).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {Object.entries(opsCost.byService)
+                .sort((a, b) => b[1] - a[1])
+                .map(([svc, usd]) => (
+                  <span
+                    key={svc}
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400"
+                  >
+                    {svc} <span className="text-emerald-400">${usd.toFixed(2)}</span>
+                  </span>
+                ))}
+            </div>
+          )}
+        </section>
       )}
 
       {/* Category breakdown bar */}

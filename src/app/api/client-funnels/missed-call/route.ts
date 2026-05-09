@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { createClientLead } from "@/lib/client-leads";
 import { getClientFunnelConfig } from "@/lib/client-funnels/registry";
+import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 /**
  * POST /api/client-funnels/missed-call
@@ -249,6 +250,19 @@ async function sendMissedCallText(args: {
       .from("client_lead_messages")
       .update({ status: "sent", provider_id: data.sid ?? null })
       .eq("id", msgId);
+  // Per-tenant cost attribution (phase 2): missed-call-textback fires
+  // from a per-tenant Twilio number, so the cost row should land on the
+  // owner's /spending breakdown.
+  await logCost({
+    clientSlug: args.clientSlug,
+    service: "twilio_sms",
+    action: "missed_call_textback",
+    costUsd: COST_RATES.twilio_sms,
+    metadata: {
+      lead_id: args.leadId,
+      message_sid: data.sid ?? null,
+    },
+  });
 }
 
 /** Local-hour comparison for after-hours mode. */

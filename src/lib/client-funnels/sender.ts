@@ -17,6 +17,7 @@
 
 import type { ClientLead } from "../client-leads";
 import { getSupabase } from "../supabase";
+import { logCost, COST_RATES } from "../cost-logger";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
@@ -110,6 +111,19 @@ export async function sendClientLeadEmail(args: {
       .from("client_lead_messages")
       .update({ status: "sent", provider_id: providerId })
       .eq("id", msgId);
+    // Per-tenant cost attribution — every funnel email lands on the
+    // owner's /spending?client=slug breakdown.
+    await logCost({
+      clientSlug: args.lead.client_slug,
+      service: "sendgrid_email",
+      action: "client_funnel_step",
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: {
+        template_id: args.templateId,
+        step: args.stepIndex,
+        message_id: msgId,
+      },
+    });
   } catch (err) {
     await sb
       .from("client_lead_messages")
@@ -195,6 +209,18 @@ export async function sendClientLeadSms(args: {
       .from("client_lead_messages")
       .update({ status: "sent", provider_id: data.sid ?? null })
       .eq("id", msgId);
+    await logCost({
+      clientSlug: args.lead.client_slug,
+      service: "twilio_sms",
+      action: "client_funnel_step",
+      costUsd: COST_RATES.twilio_sms,
+      metadata: {
+        template_id: args.templateId,
+        step: args.stepIndex,
+        message_id: msgId,
+        message_sid: data.sid ?? null,
+      },
+    });
   } catch (err) {
     await sb
       .from("client_lead_messages")
