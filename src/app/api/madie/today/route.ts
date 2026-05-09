@@ -56,17 +56,23 @@ export async function GET(_request: NextRequest) {
     startOfTodayUtc.getTime() - 6 * 24 * 60 * 60 * 1000,
   );
 
+  // 90-day window for streak calculation. partner_calls is small
+  // enough that this is fine; saves a separate query.
+  const startOf90dWindow = new Date(
+    startOfTodayUtc.getTime() - 90 * 24 * 60 * 60 * 1000,
+  );
+
   try {
-    // Pull every partner_calls row from the last 7 days. Light-weight
-    // — typical row count is a few hundred per week, easily fits in
-    // the response. We aggregate in memory rather than running 5
-    // separate aggregate queries against Postgres.
+    // Pull partner_calls from the last 90 days. Light-weight enough
+    // — typical row count is a few thousand max — and gives us streak
+    // calculation in the same query as today/week stats. Aggregated
+    // in memory.
     const { data, error } = await supabase
       .from("partner_calls")
       .select("id, outcome, created_at, partner_id")
-      .gte("created_at", startOf7dWindow.toISOString())
+      .gte("created_at", startOf90dWindow.toISOString())
       .order("created_at", { ascending: false })
-      .limit(2000);
+      .limit(5000);
 
     if (error) {
       console.error("[madie/today] supabase select failed:", error);
@@ -81,15 +87,28 @@ export async function GET(_request: NextRequest) {
     let callsWeek = 0;
     let meetingsWeek = 0;
     const outcomesToday: Record<string, number> = {};
+    // For streak calc: track which days had ≥1 call in the last 90d
+    const daysWithCalls = new Set<string>();
 
     for (const r of rows) {
       const ts = r.created_at ? Date.parse(r.created_at) : 0;
       if (!ts) continue;
       const isToday = ts >= startOfTodayUtc.getTime();
+      const isThisWeek = ts >= startOf7dWindow.getTime();
       const outcome = (r.outcome || "unknown").toString();
 
-      callsWeek += 1;
-      if (MEETING_OUTCOMES.has(outcome)) meetingsWeek += 1;
+      // Day key for streak set
+      const dayKey = new Date(ts).toISOString().slice(0, 10);
+      daysWithCalls.add(dayKey);
+
+      // Week-window stats only count calls within the 7-day window.
+      // (Without this guard the 90-day pull would inflate the "week"
+      // numbers — bug from the original 7-day query that didn't need
+      // the check.)
+      if (isThisWeek) {
+        callsWeek += 1;
+        if (MEETING_OUTCOMES.has(outcome)) meetingsWeek += 1;
+      }
 
       if (isToday) {
         callsToday += 1;
@@ -97,6 +116,25 @@ export async function GET(_request: NextRequest) {
         if (MEETING_OUTCOMES.has(outcome)) meetingsToday += 1;
         if (ENGAGED_OUTCOMES.has(outcome)) engagedToday += 1;
       }
+    }
+
+    // Streak — consecutive calendar days ending TODAY (or yesterday if
+    // today has 0 calls but yesterday did) with ≥1 call. Walk
+    // backwards from today; first day with 0 breaks it.
+    const todayKey = startOfTodayUtc.toISOString().slice(0, 10);
+    const streakIncludesToday = daysWithCalls.has(todayKey);
+    let streakDays = 0;
+    // Start at today (if has calls) or yesterday (if not — streak
+    // continues until today is over without calls).
+    let cursor = streakIncludesToday
+      ? new Date(startOfTodayUtc)
+      : new Date(startOfTodayUtc.getTime() - 24 * 60 * 60 * 1000);
+    // Walk back up to 90 days
+    for (let i = 0; i < 90; i++) {
+      const key = cursor.toISOString().slice(0, 10);
+      if (!daysWithCalls.has(key)) break;
+      streakDays += 1;
+      cursor.setUTCDate(cursor.getUTCDate() - 1);
     }
 
     const callsTarget = 100;
@@ -134,6 +172,8 @@ export async function GET(_request: NextRequest) {
       hoursIntoDay,
       workdayLength,
       outcomesToday,
+      streakDays,
+      streakIncludesToday,
       asOf: now.toISOString(),
     });
   } catch (err) {
@@ -156,6 +196,8 @@ function emptyResponse() {
     hoursIntoDay: 0,
     workdayLength: 10,
     outcomesToday: {} as Record<string, number>,
+    streakDays: 0,
+    streakIncludesToday: false,
     asOf: new Date().toISOString(),
   };
 }

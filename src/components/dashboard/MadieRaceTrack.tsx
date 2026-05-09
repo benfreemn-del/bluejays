@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import MadieCelebration from "./MadieCelebration";
+import { useRole } from "@/lib/use-role";
 
 /**
  * MadieRaceTrack — gamified onboarding + progression UI for the
@@ -31,6 +32,8 @@ type MadieStats = {
   callsTarget: number;
   meetingsTarget: number;
   paceVsExpected: number | null;
+  streakDays: number;
+  streakIncludesToday: boolean;
 };
 
 type CommissionStats = {
@@ -61,44 +64,74 @@ type Level = {
 };
 
 export default function MadieRaceTrack() {
+  const role = useRole();
   const [stats, setStats] = useState<MadieStats | null>(null);
   const [commission, setCommission] = useState<CommissionStats | null>(null);
+  const [lapOverride, setLapOverride] = useState<number | null>(null);
+  const [advancing, setAdvancing] = useState(false);
+
+  const loadAll = async () => {
+    try {
+      const [statsRes, commRes, lapRes] = await Promise.all([
+        fetch("/api/madie/today", { credentials: "include" }),
+        fetch("/api/madie/commission", { credentials: "include" }),
+        fetch("/api/madie/lap-override", { credentials: "include" }),
+      ]);
+      if (statsRes.ok) {
+        const j = (await statsRes.json()) as MadieStats;
+        setStats(j);
+      }
+      if (commRes.ok) {
+        const j = (await commRes.json()) as CommissionStats;
+        setCommission(j);
+      }
+      if (lapRes.ok) {
+        const j = (await lapRes.json()) as { lap: number | null };
+        setLapOverride(j.lap);
+      }
+    } catch (err) {
+      console.warn("[MadieRaceTrack]", err);
+    }
+  };
 
   useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const [statsRes, commRes] = await Promise.all([
-          fetch("/api/madie/today", { credentials: "include" }),
-          fetch("/api/madie/commission", { credentials: "include" }),
-        ]);
-        if (statsRes.ok) {
-          const j = (await statsRes.json()) as MadieStats;
-          if (!cancelled) setStats(j);
-        }
-        if (commRes.ok) {
-          const j = (await commRes.json()) as CommissionStats;
-          if (!cancelled) setCommission(j);
-        }
-      } catch (err) {
-        console.warn("[MadieRaceTrack]", err);
-      }
-    };
-    load();
-    const t = setInterval(load, 60_000);
-    return () => {
-      cancelled = true;
-      clearInterval(t);
-    };
+    void loadAll();
+    const t = setInterval(loadAll, 60_000);
+    return () => clearInterval(t);
   }, []);
 
-  // Determine current level from stats. v1: progression is mostly
-  // hand-rolled; the real graduation gates ship when skill-completion
-  // events (preview-generated, mock-site-shipped, backend-customized,
-  // close-won) get logged. For now: Madie advances based on cumulative
-  // call volume + closes-implied behavior. Ben can flip this to
-  // explicit advancement in /dashboard or via Supabase.
-  const currentLevel = computeCurrentLevel(stats);
+  // Owner-only: graduate Madie to a specific lap. Persists via PUT
+  // to /api/madie/lap-override; UI reflects the new lap on next
+  // render (from the response, no extra fetch needed).
+  const advanceLap = async (toLap: number) => {
+    if (advancing) return;
+    setAdvancing(true);
+    try {
+      const r = await fetch("/api/madie/lap-override", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ lap: toLap }),
+      });
+      if (r.ok) {
+        setLapOverride(toLap);
+      } else {
+        const j = (await r.json().catch(() => null)) as { error?: string } | null;
+        alert(`Failed to advance: ${j?.error || `HTTP ${r.status}`}`);
+      }
+    } catch (err) {
+      alert(`Failed to advance: ${err instanceof Error ? err.message : "unknown"}`);
+    } finally {
+      setAdvancing(false);
+    }
+  };
+
+  // Lap-override (set by Ben via the admin button) wins over the
+  // heuristic call-volume detector. Allows manual graduation through
+  // the skill-based laps (3-5) which can't be inferred from call data.
+  const heuristicLevel = computeCurrentLevel(stats);
+  const currentLevel =
+    lapOverride != null ? Math.max(lapOverride, heuristicLevel) : heuristicLevel;
 
   const levels: Level[] = [
     {
@@ -233,9 +266,15 @@ export default function MadieRaceTrack() {
 
       {/* Hero */}
       <div className="relative">
-        <p className="text-[10px] uppercase tracking-[0.28em] font-bold text-violet-300 mb-1">
-          🏁 Welcome back · the race
-        </p>
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-1">
+          <p className="text-[10px] uppercase tracking-[0.28em] font-bold text-violet-300">
+            🏁 Welcome back · the race
+          </p>
+          {/* Streak pill — visible whenever streak > 0 OR today is blank
+              (motivational nudge to start). Solid orange flame when
+              streak ≥ 7 days; ember when streak ≤ 7. */}
+          {stats && <StreakPill stats={stats} />}
+        </div>
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
           Hi Madie.{" "}
           <span className="bg-gradient-to-r from-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
@@ -248,6 +287,55 @@ export default function MadieRaceTrack() {
           dial 100 calls a day for 30 days hit Lap 6 within their first 90 days.
           The ones who skip days don&apos;t. Pick a lap, run it, level up.
         </p>
+
+        {/* Owner-only: manual lap-advance admin panel. Hidden from
+            sales role. Lets Ben graduate Madie past the heuristic
+            detection when she demonstrates Lap 3+ skills. */}
+        {role === "owner" && (
+          <div className="mb-5 rounded-xl border border-amber-500/40 bg-amber-500/[0.08] p-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex-1 min-w-[200px]">
+              <p className="text-[10px] uppercase tracking-wider font-bold text-amber-300 mb-0.5">
+                ⚙ Admin · lap controls
+              </p>
+              <p className="text-[11px] text-amber-100">
+                Currently:{" "}
+                <span className="font-bold tabular-nums">Lap {currentLevel}</span>
+                {lapOverride != null && (
+                  <span className="text-amber-300/80">
+                    {" "}
+                    · override active (Lap {lapOverride})
+                  </span>
+                )}
+                {lapOverride == null && heuristicLevel > 1 && (
+                  <span className="text-amber-300/80">
+                    {" "}
+                    · auto-detected from call volume
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {[1, 2, 3, 4, 5, 6].map((n) => {
+                const isCurrent = n === currentLevel;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => advanceLap(n)}
+                    disabled={advancing || isCurrent}
+                    className={`text-[11px] font-bold rounded px-2.5 py-1 transition-colors ${
+                      isCurrent
+                        ? "bg-amber-500 text-amber-950 cursor-default"
+                        : "border border-amber-500/40 text-amber-200 hover:bg-amber-500/15 disabled:opacity-50"
+                    }`}
+                  >
+                    Lap {n}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* This week's velocity */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
@@ -339,6 +427,43 @@ export default function MadieRaceTrack() {
 /* ──────────────────────────────────────────────────────────────────── */
 // Sub-components
 /* ──────────────────────────────────────────────────────────────────── */
+
+function StreakPill({ stats }: { stats: MadieStats }) {
+  const days = stats.streakDays;
+  const live = stats.streakIncludesToday;
+
+  if (days === 0) {
+    return (
+      <span className="text-[11px] font-bold rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-200 px-3 py-1 flex items-center gap-1.5 whitespace-nowrap">
+        <span>🎯</span>
+        <span>Start your streak — 1 call today</span>
+      </span>
+    );
+  }
+
+  // Hot streak: 7+ days · animated flame
+  const isHot = days >= 7;
+  return (
+    <span
+      className={`text-[11px] font-bold rounded-full border px-3 py-1 flex items-center gap-1.5 whitespace-nowrap ${
+        isHot
+          ? "border-orange-500/50 bg-orange-500/15 text-orange-200"
+          : "border-amber-500/40 bg-amber-500/10 text-amber-200"
+      }`}
+      title={
+        live
+          ? `${days}-day streak (today logged)`
+          : `${days}-day streak — make 1 call today to extend it`
+      }
+    >
+      <span className={isHot ? "animate-pulse" : ""}>🔥</span>
+      <span className="tabular-nums">{days}-day streak</span>
+      {!live && (
+        <span className="text-amber-300/80 italic font-normal">· today blank</span>
+      )}
+    </span>
+  );
+}
 
 function CommissionTicker({ commission }: { commission: CommissionStats }) {
   const monthUsd = commission.monthCommissionUsd;
