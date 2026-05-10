@@ -44,6 +44,11 @@ const SCOUT_SIGNAL_COPY: Record<
     titleNoun: "soccer-program partner candidate",
     detailSuffix: "New clubs / academies / leagues across MLS metros.",
   },
+  "itc-quick-attach": {
+    source: "itc-partner-scout",
+    titleNoun: "ag-channel partner candidate",
+    detailSuffix: "Dealers / forestry / hunting suppliers across Northeast + Midwest.",
+  },
 };
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;

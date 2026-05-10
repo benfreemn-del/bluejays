@@ -125,6 +125,10 @@
       "schedule": "0 14 * * 2"
     },
     {
+      "path": "/api/cron/itc-partner-scout",
+      "schedule": "0 14 * * 3"
+    },
+    {
       "path": "/api/client-tasks/check-reminders",
       "schedule": "*/15 * * * *"
     },

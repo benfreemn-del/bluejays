@@ -238,9 +238,66 @@ const ZENITH_SPORTS: ServiceClientConfig = {
   calendarEnabled: false,
 };
 
+const ITC_QUICK_ATTACH: ServiceClientConfig = {
+  slug: "itc-quick-attach",
+  kind: "manufacturer",
+  businessName: "ITC Quick Attach",
+  businessShortName: "ITC",
+  ownerFirstName: "Jake",
+  ownerSignature: "Jake McCall\nITC Quick Attach",
+  ownerPhone: "(315) 245-1212", // Blossvale NY HQ — verify before locking
+  publicSiteUrl: "https://bluejayportfolio.com/clients/itc-quick-attach",
+  serviceArea: "USA + Canada (DTC + dealer-channel ag accessories)",
+  timezone: "America/New_York",
+  // Manufacturer = ships product, no on-site jobs. Confirmation emails
+  // skip the prep checklist — replaced with order-tracking + dealer-fit
+  // notes via the funnel runner.
+  prepChecklist: [],
+  audiences: ["hobbyist", "forester", "tym"],
+  // Scout config locked from docs/mock-backends/mfg-ag-equipment.md.
+  // Refer-out partners across the ag ecosystem: dealers, forestry,
+  // hunting (firearm-mount cross-niche), trade shows.
+  scoutQueries: [
+    { query: "tractor dealer", role: "tractor-dealer", channel: "outreach" },
+    { query: "compact tractor dealer", role: "tractor-dealer", channel: "outreach" },
+    { query: "TYM tractor dealer", role: "tractor-dealer-tym", channel: "outreach" },
+    { query: "Kioti tractor dealer", role: "tractor-dealer-kioti", channel: "outreach" },
+    { query: "agricultural extension office", role: "extension-office", channel: "refer-out" },
+    { query: "forestry equipment supplier", role: "forestry-supplier", channel: "refer-out" },
+    { query: "land management services", role: "land-management", channel: "refer-out" },
+    { query: "hunting and outdoor supply", role: "hunting-supply", channel: "refer-out" },
+    { query: "firearm dealer", role: "firearm-dealer", channel: "refer-out" },
+    { query: "tractor implement fabricator", role: "implement-peer", channel: "commercial" },
+  ],
+  // Rural/agricultural metros across Northeast + Midwest (highest TYM /
+  // Kioti / Mahindra / Branson dealer concentration). Scout fanout =
+  // 10 queries × 12 cities = 120 lookups per cron run.
+  scoutCities: [
+    { city: "Blossvale", state: "NY", region: "Northeast" }, // ITC HQ
+    { city: "Syracuse", state: "NY", region: "Northeast" },
+    { city: "Albany", state: "NY", region: "Northeast" },
+    { city: "Lancaster", state: "PA", region: "Northeast" },
+    { city: "Columbus", state: "OH", region: "Midwest" },
+    { city: "Indianapolis", state: "IN", region: "Midwest" },
+    { city: "Lexington", state: "KY", region: "Southeast" },
+    { city: "Nashville", state: "TN", region: "Southeast" },
+    { city: "Atlanta", state: "GA", region: "Southeast" },
+    { city: "Springfield", state: "MO", region: "Midwest" },
+    { city: "Madison", state: "WI", region: "Midwest" },
+    { city: "Knoxville", state: "TN", region: "Southeast" },
+  ],
+  accreditation: "Made-in-USA fabrication · Blossvale NY",
+  // SMS not enabled until Twilio number provisioned (see audit task).
+  smsEnabled: false,
+  twilioNumberEnvVar: "ITC_TWILIO_NUMBER",
+  // Manufacturer = ships product, no calendar booking flow.
+  calendarEnabled: false,
+};
+
 const REGISTRY: Record<string, ServiceClientConfig> = {
   "olympic-inspections": OLYMPIC_INSPECTIONS,
   "zenith-sports": ZENITH_SPORTS,
+  "itc-quick-attach": ITC_QUICK_ATTACH,
 };
 
 /**
