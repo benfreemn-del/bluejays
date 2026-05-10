@@ -33,26 +33,26 @@ const nextConfig: NextConfig = {
       // Asset paths (/sites/*/css/ and /sites/*/js/) are in public/ and get
       // served directly without hitting these rules.
       beforeFiles: [
-        // Olympic Inspections & Testing — go-live on olympicinspections.com
+        // Olympic Inspections & Testing — go-live on olympicinspect.com
         // (2026-05-10). Apex + www both serve the OIT static site.
         // Asset paths (/sites/olympic-inspections/css/, /js/, /logo.png)
         // are absolute in the HTML so they resolve against the same host
         // without any extra rewrites.
         {
-          has: [{ type: 'host', value: 'olympicinspections.com' }],
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
           source: '/',
           destination: '/sites/olympic-inspections/index.html',
         },
         {
-          has: [{ type: 'host', value: 'www.olympicinspections.com' }],
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
           source: '/',
           destination: '/sites/olympic-inspections/index.html',
         },
         // Pine & Particle Co. rebranded to Olympic Inspections & Testing
         // 2026-05-05. The pineparticle.com domain is in transfer; while
         // it still resolves it serves the OIT site directly. Once the
-        // olympicinspections.com go-live is verified, change these to
-        // 301 redirects → https://olympicinspections.com so traffic
+        // olympicinspect.com go-live is verified, change these to
+        // 301 redirects → https://olympicinspect.com so traffic
         // consolidates on the canonical domain.
         {
           has: [{ type: 'host', value: 'pineparticle.com' }],

@@ -108,7 +108,7 @@ const OLYMPIC_INSPECTIONS: ServiceClientConfig = {
   ownerFirstName: "Luke",
   ownerSignature: "Luke\nOlympic Inspections & Testing",
   ownerPhone: "(360) 670-3367",
-  publicSiteUrl: "https://www.olympicinspections.com",
+  publicSiteUrl: "https://www.olympicinspect.com",
   serviceArea: "Olympic Peninsula",
   timezone: "America/Los_Angeles",
   prepChecklist: [
