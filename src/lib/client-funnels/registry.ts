@@ -104,7 +104,7 @@ export const CLIENT_FUNNELS: Record<string, ClientFunnelConfig> = {
       // an OIT display name. Replies route to the actual OIT inbox.
       email: "ben@bluejayportfolio.com",
       name: "Olympic Inspections & Testing",
-      replyTo: "hello@olympicinspect.com",
+      replyTo: "info@olympicinspect.com",
     },
     missedCall: {
       mode: "always",

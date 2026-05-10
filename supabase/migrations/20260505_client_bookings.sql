@@ -87,7 +87,7 @@ create trigger client_bookings_touch
 -- Default password is "trooper" (same as KR). Owner can change later.
 do $$
 declare
-  oit_email text := 'hello@olympicinspect.com';
+  oit_email text := 'info@olympicinspect.com';
 begin
   if not exists (select 1 from public.client_owners where lower(email) = oit_email) then
     insert into public.client_owners (client_slug, email, name, password_hash, role)
