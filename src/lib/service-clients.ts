@@ -96,6 +96,14 @@ export type ServiceClientConfig = {
    * See `.claude/skills/calendar-availability/SKILL.md`.
    */
   calendarEnabled?: boolean;
+
+  /**
+   * Optional tone-profile override for non-commercial tenants
+   * (church / recovery / education-nonprofit). Defaults to commercial
+   * vocabulary when unset. See src/lib/tone-profiles.ts. Apply at
+   * install-time only — not a user-switchable preference.
+   */
+  toneProfile?: import("./tone-profiles").ToneProfileId;
 };
 
 /* ────────────────────── REGISTRY ────────────────────── */
