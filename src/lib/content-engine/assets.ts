@@ -206,7 +206,7 @@ export const BROLL_ASSETS: BrollAsset[] = [
   },
   {
     id: "pub-sites-oit",
-    url: "https://www.olympicinspections.com",
+    url: "https://www.olympicinspect.com",
     label: "Olympic Inspections public site",
     description: "Live tenant homepage",
     tags: ["public", "oit", "inspection", "tenant-site"],

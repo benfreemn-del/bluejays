@@ -14,10 +14,10 @@
 
 import type { CreativeSeed, AdPlatform } from "./zenith-creatives";
 
-const BOOK_URL = "https://www.olympicinspections.com/#book";
-const CALC_URL = "https://www.olympicinspections.com/#calculator";
+const BOOK_URL = "https://www.olympicinspect.com/#book";
+const CALC_URL = "https://www.olympicinspect.com/#calculator";
 const PARTNERS_URL =
-  "https://www.olympicinspections.com/#partners";
+  "https://www.olympicinspect.com/#partners";
 
 function utm(p: AdPlatform, audience: string, content: string) {
   return {

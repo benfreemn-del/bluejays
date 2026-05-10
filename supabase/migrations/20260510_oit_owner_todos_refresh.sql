@@ -73,8 +73,8 @@ update public.client_tasks
 insert into public.client_tasks (client_slug, owner, category, priority, title, description)
 select * from (values
   ('olympic-inspections', 'client', 'client-action', 'high',
-   'Verify (360) 670-3367 + hello@olympicinspections.com both work',
-   E'Public site footer + admin login both reference these. If either is disconnected, the customer-response path breaks silently.\n\nQuick test:\n  1. Call (360) 670-3367 from your phone — does it ring?\n  2. Email yourself at hello@olympicinspections.com — do you get it?\n\nIf either is wrong, tell Ben the correct one and he''ll update across the site + funnels in one batch.'),
+   'Verify (360) 670-3367 + hello@olympicinspect.com both work',
+   E'Public site footer + admin login both reference these. If either is disconnected, the customer-response path breaks silently.\n\nQuick test:\n  1. Call (360) 670-3367 from your phone — does it ring?\n  2. Email yourself at hello@olympicinspect.com — do you get it?\n\nIf either is wrong, tell Ben the correct one and he''ll update across the site + funnels in one batch.'),
 
   ('olympic-inspections', 'client', 'decision', 'medium',
    'Confirm pricing on calculator ($150 base + $50/500sqft + $250/$100 samples)',

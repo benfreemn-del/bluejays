@@ -60,10 +60,10 @@ function substitutions(lead: ClientLead): Record<string, string> {
   // {{partnersUrl}} / {{calculatorUrl}} / etc. and the right URL
   // resolves based on which client_slug the lead belongs to.
   if (lead.client_slug === "olympic-inspections") {
-    base.bookingUrl = "https://www.olympicinspections.com/#book";
-    base.calculatorUrl = "https://www.olympicinspections.com/#calculator";
-    base.partnersUrl = "https://www.olympicinspections.com/#partners";
-    base.contactUrl = "https://www.olympicinspections.com/#contact";
+    base.bookingUrl = "https://www.olympicinspect.com/#book";
+    base.calculatorUrl = "https://www.olympicinspect.com/#calculator";
+    base.partnersUrl = "https://www.olympicinspect.com/#partners";
+    base.contactUrl = "https://www.olympicinspect.com/#contact";
     // Old quizUrl alias — funnel copy migrated 2026-05-09 but keep
     // backward compatibility so historical templates still resolve.
     base.quizUrl = base.calculatorUrl;

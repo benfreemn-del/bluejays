@@ -99,12 +99,12 @@ export const CLIENT_FUNNELS: Record<string, ClientFunnelConfig> = {
   "olympic-inspections": {
     label: "Olympic Inspections & Testing",
     sender: {
-      // Until DKIM is wired on olympicinspections.com (post domain
+      // Until DKIM is wired on olympicinspect.com (post domain
       // transfer), send from a verified BlueJay-managed address with
       // an OIT display name. Replies route to the actual OIT inbox.
       email: "ben@bluejayportfolio.com",
       name: "Olympic Inspections & Testing",
-      replyTo: "hello@olympicinspections.com",
+      replyTo: "hello@olympicinspect.com",
     },
     missedCall: {
       mode: "always",

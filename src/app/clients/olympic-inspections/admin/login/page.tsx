@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const OIT_OWNER_EMAIL = "hello@olympicinspections.com";
+const OIT_OWNER_EMAIL = "hello@olympicinspect.com";
 const SLUG = "olympic-inspections";
 
 export default function OITLoginPage() {

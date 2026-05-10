@@ -260,7 +260,7 @@ export default function OITAdminPage() {
               rel="noopener"
               style={{ color: "#2d4a2d" }}
             >
-              olympicinspections.com
+              olympicinspect.com
             </a>{" "}
             within ~60 seconds
           </div>
@@ -481,7 +481,7 @@ function BookingsTab({
             rel="noopener"
             style={{ color: "#2d4a2d", fontWeight: 600 }}
           >
-            olympicinspections.com/#book
+            olympicinspect.com/#book
           </a>
           <br />
           Paste it in your email signature and Facebook bio.
@@ -637,7 +637,7 @@ function BookingsTab({
                         `Thanks for trusting us with this.\n\n` +
                         `— Luke\n` +
                         `Olympic Inspections & Testing\n` +
-                        `olympicinspections.com`,
+                        `olympicinspect.com`,
                     );
                     return `mailto:${b.customer_email}?subject=${subject}&body=${body}`;
                   })()}
