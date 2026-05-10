@@ -35,7 +35,8 @@ const TESTIMONIALS: Testimonial[] = [
     business: "Pine & Particle Co.",
     quote:
       "Hi, this is Luke with Pine & Particle. I went to Ben with BlueJays looking for a new website and a new backend for marketing — wanted to upgrade my whole brand and get a new name. He did a fantastic job. I'd recommend him to anybody, and I'd strongly recommend you call him.",
-    videoUrl: null, // TODO: drop video file at /public/testimonials/luke-wright.mp4 + update this path
+    videoUrl: "/testimonials/luke-wright.mp4",
+    posterUrl: "/testimonials/luke-wright-poster.jpg",
     siteUrl: "https://bluejayportfolio.com/sites/olympic-inspections/index.html",
   },
   {
