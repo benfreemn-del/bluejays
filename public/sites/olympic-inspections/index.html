@@ -477,32 +477,37 @@
             <div class="section-titlewrap">
                 <h2 class="section-title reveal">What customers say</h2>
             </div>
-            <p class="section-sub reveal">Real homeowners, realtors, and insurance pros across the Peninsula.</p>
-            <div class="testimonial-grid reveal">
-                <article class="testimonial-card">
-                    <p class="testimonial-stars" aria-hidden="true">★★★★★</p>
-                    <blockquote>"Found the moisture our handyman missed behind the master bath wall. Report was three pages, no jargon, no upsell. Saved us a $14k remediation by catching it early."</blockquote>
-                    <footer>
-                        <strong>Homeowner · Sequim, WA</strong>
-                        <span>Pre-purchase inspection</span>
-                    </footer>
-                </article>
-                <article class="testimonial-card">
-                    <p class="testimonial-stars" aria-hidden="true">★★★★★</p>
-                    <blockquote>"I refer every listing with a moisture flag to Olympic. Their reports close deals — buyers see lab numbers and trust the answer instead of stalling on a renegotiation."</blockquote>
-                    <footer>
-                        <strong>Real Estate Agent · Port Angeles</strong>
-                        <span>5+ closings last year</span>
-                    </footer>
-                </article>
-                <article class="testimonial-card">
-                    <p class="testimonial-stars" aria-hidden="true">★★★★★</p>
-                    <blockquote>"Independent third-party reports formatted for claim files. Lab-backed, defensible, and turned around in 72 hours. They've become my go-to on the Peninsula."</blockquote>
-                    <footer>
-                        <strong>Claims Adjuster · Independent</strong>
-                        <span>Mold + water-loss claims</span>
-                    </footer>
-                </article>
+            <p class="section-sub reveal" id="testimonialsSubtitle">Live Google Reviews from real homeowners, realtors, and insurance pros across the Peninsula.</p>
+
+            <!-- Carousel — populated live from /api/clients/olympic-inspections/google-reviews
+                 (cached 1hr server-side). JS in main.js fetches on load,
+                 renders cards, wires prev/next + dots + autoplay. Empty
+                 state hides the section gracefully if no reviews yet. -->
+            <div class="testimonial-carousel reveal" id="reviewsCarousel" aria-roledescription="carousel" aria-label="Customer reviews from Google">
+                <div class="testimonial-loading" id="reviewsLoading">
+                    <span class="testimonial-spinner" aria-hidden="true"></span>
+                    Loading reviews from Google…
+                </div>
+                <div class="testimonial-track" id="reviewsTrack" role="region" aria-live="polite" hidden>
+                    <!-- Cards injected by JS -->
+                </div>
+                <button type="button" class="testimonial-arrow testimonial-arrow--prev" id="reviewsPrev" aria-label="Previous review" hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button type="button" class="testimonial-arrow testimonial-arrow--next" id="reviewsNext" aria-label="Next review" hidden>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <div class="testimonial-dots" id="reviewsDots" role="tablist" aria-label="Review navigation" hidden></div>
+                <div class="testimonial-rating-summary" id="reviewsRatingSummary" hidden>
+                    <span class="rating-stars" aria-hidden="true"></span>
+                    <strong class="rating-number"></strong>
+                    <span class="rating-count"></span>
+                    <a class="rating-google-link" href="#" target="_blank" rel="noopener noreferrer">View on Google &rarr;</a>
+                </div>
+            </div>
+            <!-- Hidden by default — script reveals if zero reviews returned. -->
+            <div class="testimonial-empty" id="reviewsEmpty" hidden>
+                <p>Reviews are coming in &mdash; check back soon, or <a href="#book">book your inspection</a> and be one of the first.</p>
             </div>
         </div>
     </section>

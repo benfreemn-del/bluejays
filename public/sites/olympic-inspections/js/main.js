@@ -15,6 +15,7 @@
     initSlotPicker();
     initBookingForm();
     initYearStamp();
+    initReviewsCarousel();
   });
 
   // ---- NAV: scrolled state + smooth scroll ----
@@ -562,6 +563,183 @@
   function initYearStamp() {
     var year = document.getElementById("year");
     if (year) year.textContent = String(new Date().getFullYear());
+  }
+
+  // ─── LIVE GOOGLE REVIEWS CAROUSEL (added 2026-05-10) ────────────────────
+  // Fetches reviews from /api/clients/olympic-inspections/google-reviews
+  // (cached server-side 1hr). Renders cards into the carousel, wires
+  // prev/next + dots + autoplay (6s) + keyboard nav. Pauses on hover.
+  // Graceful empty state when API unconfigured or zero reviews.
+  function initReviewsCarousel() {
+    var loading = document.getElementById("reviewsLoading");
+    var track = document.getElementById("reviewsTrack");
+    var prev = document.getElementById("reviewsPrev");
+    var next = document.getElementById("reviewsNext");
+    var dots = document.getElementById("reviewsDots");
+    var summary = document.getElementById("reviewsRatingSummary");
+    var empty = document.getElementById("reviewsEmpty");
+    var subtitle = document.getElementById("testimonialsSubtitle");
+    if (!track) return;
+
+    fetch("/api/clients/olympic-inspections/google-reviews")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (loading) loading.hidden = true;
+        var reviews = (data && data.reviews) || [];
+        if (!reviews.length) {
+          if (empty) empty.hidden = false;
+          if (subtitle && data && !data.configured) {
+            // Hide the "Live Google Reviews" subtitle when API isn't
+            // configured yet — don't promise live data we can't deliver.
+            subtitle.hidden = true;
+          }
+          return;
+        }
+        renderCards(track, reviews);
+        renderDots(dots, reviews.length);
+        renderSummary(summary, data);
+        if (prev) prev.hidden = false;
+        if (next) next.hidden = false;
+        if (dots) dots.hidden = false;
+        if (summary) summary.hidden = false;
+        track.hidden = false;
+        wireCarousel(track, prev, next, dots, reviews.length);
+      })
+      .catch(function (err) {
+        if (loading) loading.hidden = true;
+        if (empty) empty.hidden = false;
+        console.warn("[oit] reviews fetch failed:", err);
+      });
+  }
+
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderCards(track, reviews) {
+    track.innerHTML = reviews
+      .map(function (r) {
+        var initial = (r.author || "?").trim().charAt(0).toUpperCase() || "?";
+        var avatar = r.profilePhoto
+          ? '<img src="' + escapeHtml(r.profilePhoto) + '" alt="" loading="lazy" referrerpolicy="no-referrer" />'
+          : escapeHtml(initial);
+        var stars = "★★★★★".slice(0, Math.max(1, Math.min(5, Math.round(r.rating || 5))));
+        return (
+          '<article class="testimonial-card" role="group" aria-roledescription="slide">' +
+            '<div class="testimonial-card-header">' +
+              '<div class="testimonial-avatar">' + avatar + '</div>' +
+              '<div class="testimonial-meta">' +
+                '<span class="testimonial-meta-author">' + escapeHtml(r.author) + '</span>' +
+                '<span class="testimonial-meta-time">' + escapeHtml(r.relativeTime || "") + '</span>' +
+              '</div>' +
+              '<span class="testimonial-google-badge" title="Verified Google review">G&nbsp;Review</span>' +
+            '</div>' +
+            '<p class="testimonial-stars" aria-label="' + r.rating + ' out of 5 stars">' + stars + '</p>' +
+            '<blockquote>' + escapeHtml(r.text) + '</blockquote>' +
+          '</article>'
+        );
+      })
+      .join("");
+  }
+
+  function renderDots(dots, count) {
+    if (!dots) return;
+    dots.innerHTML = "";
+    for (var i = 0; i < count; i++) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "testimonial-dot";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-label", "Review " + (i + 1) + " of " + count);
+      b.setAttribute("aria-selected", i === 0 ? "true" : "false");
+      b.dataset.index = String(i);
+      dots.appendChild(b);
+    }
+  }
+
+  function renderSummary(summary, data) {
+    if (!summary || !data || data.rating == null) {
+      if (summary) summary.hidden = true;
+      return;
+    }
+    var starsEl = summary.querySelector(".rating-stars");
+    var numEl = summary.querySelector(".rating-number");
+    var countEl = summary.querySelector(".rating-count");
+    var linkEl = summary.querySelector(".rating-google-link");
+    if (starsEl) starsEl.textContent = "★★★★★".slice(0, Math.round(data.rating));
+    if (numEl) numEl.textContent = Number(data.rating).toFixed(1);
+    if (countEl) countEl.textContent = "(" + (data.reviewCount || 0) + " reviews)";
+    if (linkEl && data.placeId) {
+      linkEl.href = "https://search.google.com/local/reviews?placeid=" +
+        encodeURIComponent(data.placeId);
+    } else if (linkEl) {
+      linkEl.hidden = true;
+    }
+  }
+
+  function wireCarousel(track, prev, next, dots, count) {
+    var current = 0;
+    var autoplayMs = 6000;
+    var autoplayTimer = null;
+
+    function go(index) {
+      current = (index + count) % count;
+      var card = track.children[current];
+      if (card) {
+        card.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "start",
+        });
+      }
+      if (dots) {
+        var allDots = dots.querySelectorAll(".testimonial-dot");
+        for (var i = 0; i < allDots.length; i++) {
+          allDots[i].setAttribute("aria-selected", i === current ? "true" : "false");
+        }
+      }
+    }
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = setInterval(function () { go(current + 1); }, autoplayMs);
+    }
+    function stopAutoplay() {
+      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    }
+
+    if (prev) prev.addEventListener("click", function () { go(current - 1); stopAutoplay(); });
+    if (next) next.addEventListener("click", function () { go(current + 1); stopAutoplay(); });
+    if (dots) {
+      dots.addEventListener("click", function (e) {
+        var btn = e.target.closest(".testimonial-dot");
+        if (!btn) return;
+        go(parseInt(btn.dataset.index, 10));
+        stopAutoplay();
+      });
+    }
+
+    var carousel = track.parentElement;
+    if (carousel) {
+      carousel.addEventListener("mouseenter", stopAutoplay);
+      carousel.addEventListener("mouseleave", startAutoplay);
+      carousel.addEventListener("focusin", stopAutoplay);
+      carousel.addEventListener("focusout", startAutoplay);
+    }
+
+    track.tabIndex = 0;
+    track.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { go(current - 1); stopAutoplay(); }
+      else if (e.key === "ArrowRight") { go(current + 1); stopAutoplay(); }
+    });
+
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    startAutoplay();
   }
 
 })();
