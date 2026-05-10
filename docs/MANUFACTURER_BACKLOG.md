@@ -181,7 +181,7 @@ children outdoor apparel manufacturer
 
 | Field | Value |
 |---|---|
-| Status | ⏳ backlog (no V2 template yet) |
+| Status | ⏳ backlog (no V2 template yet) · mock-backend config drafted 2026-05-10 |
 | Anchor proof | KR Ranches (custom-tier client, not $10k yet) |
 | Showcase URL when built | `/v2/mfg-food-bev` |
 | Priority | **#5** (high volume, low avg ticket — last priority) |
@@ -200,6 +200,36 @@ artisan jerky maker
 craft honey producer
 specialty spice blender
 ```
+
+---
+
+### 7. Indie authors — `authors`
+
+| Field | Value |
+|---|---|
+| Status | ⏳ backlog (no V2 template yet) · mock-backend config drafted 2026-05-10 |
+| Anchor proof | Bloodlines / Preston Hunsaker (custom-tier showcase live at `/clients/bloodlines`) |
+| Showcase URL when built | `/v2/authors` |
+| Priority | **#6** (parallel ICP — manufacturer-shaped sales motion, "book series" = "hero product") |
+
+**ICP fit:** indie authors with 1+ published novel(s) (or trad-pub authors keeping rights), owner-operator (the author writes + sells), weak/no DTC funnel — selling primarily on Amazon KDP / IngramSpark with no list, no series-fan pipeline, no patron tier. Same anti-pattern as a manufacturer relying on a single distributor: their "Amazon" is ITC's "wholesale chain."
+
+**Sub-niches:**
+- Indie fantasy / sci-fi novelists with a multi-book series
+- Romance authors writing in-genre under pen name(s)
+- Mystery/thriller indie authors
+- Niche-genre authors (LitRPG, progression-fantasy, cozy mystery)
+- Memoir / niche-non-fic with a tight reader profile (military / faith / homestead)
+
+**Google Places search queries:** N/A — authors aren't on Google Places. Scout via:
+```
+[via Goodreads "indie authors with 5+ books in series" lists]
+[via Reddit /r/selfpublish recent posts]
+[via Amazon KDP top-100 of niche subgenre]
+[via Bookfunnel / StoryOrigin author directories]
+```
+
+(Manufacturer-style Places scout doesn't apply — different scout pattern lives in `src/lib/auto-scout-authors.ts` when built.)
 
 ---
 
