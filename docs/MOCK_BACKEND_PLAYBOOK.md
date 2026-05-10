@@ -90,6 +90,31 @@ defaults" — confirmed in a single line at the end.
 
 ---
 
+## Quick-start with the scaffold generator (preferred path)
+
+Per `docs/MOCK_BACKEND_TEMPLATE_AUDIT.md` roadmap item #1 — instead of
+hand-cloning meyer-electric, use the scaffold script:
+
+```bash
+node scripts/scaffold-portal-demo.mjs --slug=<prospect-slug> --business="Pretty Name"
+```
+
+This:
+- Reads `docs/mock-backends/<slug>.md` (if exists) to extract the
+  audience taxonomy + affiliate categories + funnel names
+- Clones `src/app/clients/meyer-electric/portal-demo/` (3 files)
+- Substitutes `meyer-electric` → `<slug>` and `Meyer Electric` →
+  `<businessName>` across the cloned files
+- Prepends a `SCAFFOLD-TODO` comment to each file with a per-spec
+  customization checklist
+
+Output is **80% complete out of the box** — operator polishes the last
+20% in ~30 minutes (industry-specific signals, geography, color tweaks).
+
+Drops install time from ~3-4 hrs (the manual flow below) to ~30 min.
+
+---
+
 ## File structure (every install creates these)
 
 ```
