@@ -294,10 +294,155 @@ const ITC_QUICK_ATTACH: ServiceClientConfig = {
   calendarEnabled: false,
 };
 
+/* ───── Hector Landscaping (service tier) ───── */
+const HECTOR_LANDSCAPING: ServiceClientConfig = {
+  slug: "hector-landscaping",
+  kind: "service",
+  businessName: "Hector Landscaping",
+  businessShortName: "Hector Landscaping",
+  ownerFirstName: "Hector",
+  ownerSignature: "Hector\nHector Landscaping",
+  ownerPhone: "", // TBD — confirm with Hector before any SMS sends
+  publicSiteUrl: "https://bluejayportfolio.com/clients/hector-landscaping",
+  serviceArea: "regional landscaping service",
+  timezone: "America/Los_Angeles",
+  prepChecklist: [
+    "Mark sprinkler heads + low-voltage cables",
+    "Clear access to the back yard / side gate",
+    "Have a phone handy — Hector will text on the way",
+  ],
+  audiences: ["homeowner", "realtor", "insurance"],
+  // Scout config from docs/mock-backends/landscaping.md — refer-out
+  // partners (realtors / property mgmt / GCs / designers / pool / tree).
+  scoutQueries: [
+    { query: "real estate agency", role: "realtor", channel: "outreach" },
+    { query: "property management company", role: "property-management", channel: "outreach" },
+    { query: "general contractor", role: "general-contractor", channel: "refer-out" },
+    { query: "interior designer", role: "interior-designer", channel: "refer-out" },
+    { query: "pool installer", role: "pool-installer", channel: "refer-out" },
+    { query: "tree service company", role: "tree-service", channel: "refer-out" },
+  ],
+  // Default to PNW until Hector's actual region is confirmed.
+  scoutCities: [
+    { city: "Sequim", state: "WA", region: "Olympic Peninsula" },
+    { city: "Port Angeles", state: "WA", region: "Olympic Peninsula" },
+    { city: "Bremerton", state: "WA", region: "Kitsap" },
+  ],
+  smsEnabled: false,
+  twilioNumberEnvVar: "HECTOR_TWILIO_NUMBER",
+  calendarEnabled: true,
+};
+
+/* ───── KR Ranches (food/bev manufacturer) ───── */
+const KR_RANCHES: ServiceClientConfig = {
+  slug: "kr-ranches",
+  kind: "manufacturer",
+  businessName: "KR Ranches",
+  businessShortName: "KR Ranches",
+  ownerFirstName: "KR",
+  ownerSignature: "KR Ranches Team",
+  ownerPhone: "", // TBD
+  publicSiteUrl: "https://bluejayportfolio.com/sites/kr-ranches/index.html",
+  serviceArea: "Prosser WA + DTC nationwide ship",
+  timezone: "America/Los_Angeles",
+  prepChecklist: [],
+  audiences: ["homeowner", "realtor", "insurance"],
+  scoutQueries: [
+    { query: "specialty food retailer", role: "specialty-retail", channel: "refer-out" },
+    { query: "restaurant chef independent", role: "restaurant-buyer", channel: "outreach" },
+    { query: "farmers market organizer", role: "market-organizer", channel: "commercial" },
+    { query: "subscription box curator", role: "box-curator", channel: "refer-out" },
+    { query: "local food co-op", role: "food-coop", channel: "outreach" },
+  ],
+  scoutCities: [
+    { city: "Prosser", state: "WA", region: "Yakima Valley" },
+    { city: "Yakima", state: "WA", region: "Yakima Valley" },
+    { city: "Tri-Cities", state: "WA", region: "Tri-Cities" },
+    { city: "Seattle", state: "WA", region: "Pacific NW" },
+    { city: "Spokane", state: "WA", region: "Inland NW" },
+    { city: "Portland", state: "OR", region: "Pacific NW" },
+  ],
+  smsEnabled: false,
+  twilioNumberEnvVar: "KR_RANCHES_TWILIO_NUMBER",
+  calendarEnabled: false,
+};
+
+/* ───── Nevarland Outpost (kids-apparel manufacturer) ───── */
+const NEVARLAND_OUTPOST: ServiceClientConfig = {
+  slug: "nevarland-outpost",
+  kind: "manufacturer",
+  businessName: "Nevarland Outpost",
+  businessShortName: "Nevarland",
+  ownerFirstName: "Christopher",
+  ownerSignature: "Christopher\nNevarland Outpost",
+  ownerPhone: "", // TBD
+  publicSiteUrl: "https://bluejayportfolio.com/clients/nevarland-outpost",
+  serviceArea: "USA (Shopify storefront + IG / Etsy / craft-fair retail)",
+  timezone: "America/Denver",
+  prepChecklist: [],
+  audiences: ["homeowner", "realtor", "insurance"],
+  scoutQueries: [
+    { query: "kids boutique", role: "boutique", channel: "refer-out" },
+    { query: "mommy blogger", role: "mom-blogger", channel: "outreach" },
+    { query: "craft fair organizer", role: "craft-fair", channel: "commercial" },
+    { query: "homeschool co-op", role: "homeschool-coop", channel: "refer-out" },
+    { query: "family photographer", role: "family-photo", channel: "refer-out" },
+  ],
+  scoutCities: [
+    { city: "Denver", state: "CO", region: "Mountain" },
+    { city: "Colorado Springs", state: "CO", region: "Mountain" },
+    { city: "Boulder", state: "CO", region: "Mountain" },
+    { city: "Salt Lake City", state: "UT", region: "Mountain" },
+    { city: "Boise", state: "ID", region: "Mountain" },
+    { city: "Bozeman", state: "MT", region: "Mountain" },
+  ],
+  smsEnabled: false,
+  twilioNumberEnvVar: "NEVARLAND_TWILIO_NUMBER",
+  calendarEnabled: false,
+};
+
+/* ───── Laser Lakes (specialty-product manufacturer) ───── */
+const LASER_LAKES: ServiceClientConfig = {
+  slug: "laser-lakes",
+  kind: "manufacturer",
+  businessName: "Laser Lakes",
+  businessShortName: "Laser Lakes",
+  ownerFirstName: "Nate",
+  ownerSignature: "Nate\nLaser Lakes",
+  ownerPhone: "", // TBD
+  publicSiteUrl: "https://bluejayportfolio.com/clients/laser-lakes",
+  serviceArea: "USA (DTC laser-engraved lake-map art)",
+  timezone: "America/Los_Angeles",
+  prepChecklist: [],
+  audiences: ["homeowner", "realtor", "insurance"],
+  scoutQueries: [
+    { query: "lake property realtor", role: "lake-realtor", channel: "outreach" },
+    { query: "gift shop", role: "gift-shop", channel: "refer-out" },
+    { query: "vacation rental property manager", role: "vacation-rental-mgr", channel: "outreach" },
+    { query: "wedding planner", role: "wedding-planner", channel: "refer-out" },
+    { query: "corporate gifting service", role: "corporate-gift", channel: "commercial" },
+  ],
+  scoutCities: [
+    { city: "Coeur d'Alene", state: "ID", region: "Inland NW" },
+    { city: "Lake Tahoe", state: "CA", region: "Sierra" },
+    { city: "Minneapolis", state: "MN", region: "Lake Country" },
+    { city: "Traverse City", state: "MI", region: "Great Lakes" },
+    { city: "Burlington", state: "VT", region: "Northeast Lakes" },
+    { city: "Chelan", state: "WA", region: "Pacific NW" },
+  ],
+  smsEnabled: false,
+  twilioNumberEnvVar: "LASER_LAKES_TWILIO_NUMBER",
+  calendarEnabled: false,
+};
+
 const REGISTRY: Record<string, ServiceClientConfig> = {
   "olympic-inspections": OLYMPIC_INSPECTIONS,
   "zenith-sports": ZENITH_SPORTS,
   "itc-quick-attach": ITC_QUICK_ATTACH,
+  "hector-landscaping": HECTOR_LANDSCAPING,
+  "kr-ranches": KR_RANCHES,
+  "nevarland-outpost": NEVARLAND_OUTPOST,
+  "laser-lakes": LASER_LAKES,
 };
 
 /**

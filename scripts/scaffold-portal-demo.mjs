@@ -112,8 +112,10 @@ let spec = {
 
 if (specExists) {
   const md = readFileSync(specPath, "utf-8");
-  // Customer category mix table — extract audience-ish values from rows
-  const mixMatch = md.match(/Customer category mix[\s\S]*?\| Type \|[\s\S]*?\n\n/);
+  // Customer / Audience category mix table — match either header variant
+  // (church.md + restaurant.md use "Audience" because of their non-
+  // commercial framing).
+  const mixMatch = md.match(/(?:Customer|Audience) category mix[\s\S]*?\| Type \|[\s\S]*?\n\n/);
   if (mixMatch) {
     const rows = mixMatch[0]
       .split("\n")
