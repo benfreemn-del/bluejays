@@ -60,3 +60,9 @@ next-env.d.ts
 
 # Video render working folder (locally cached clips, captions, previews)
 edit-cache/
+
+# B-roll library — manifest + recording guide are tracked,
+# but actual mp4 clips stay local until promoted via 'git add -f'
+content-assets/broll/**/*.mp4
+content-assets/broll/**/*.mov
+content-assets/broll/**/*.MOV

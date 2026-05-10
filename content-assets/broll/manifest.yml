@@ -1,0 +1,277 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# B-roll asset library — manifest
+#
+# Locked 2026-05-09 per content-engine SKILL.md. The video editor (Claude or
+# manual) reads this file to pick the right b-roll clip for any given script
+# beat. Each clip has tags so we can match by topic keyword automatically.
+#
+# Recording guide: ./RECORDING-GUIDE.md (90-min one-time iPhone session)
+# Clips themselves: gitignored by default (drop in /content-assets/broll/<dir>/
+# locally; if you want a specific clip committed for production, `git add -f`)
+#
+# Naming convention: {category}/{slug}-{shot}.mp4
+# Required dimensions: 1080×1920 vertical, 5-10 sec each
+# ─────────────────────────────────────────────────────────────────────────────
+
+clips:
+
+  # ── Olympic Inspections / Luke ────────────────────────────────────────────
+  - file: oit/hero-scroll.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/sites/olympic-inspections/index.html
+    capture_action: |
+      Open in Safari mobile (vertical), scroll the homepage from
+      top to bottom slowly over 6 sec. Show the green nav logo,
+      glowing "Upfront pricing" eyebrow, hero image, $150 badge.
+    tags: [oit, hero, brand, site-walkthrough, new-site]
+
+  - file: oit/locations.mp4
+    duration_sec: 5
+    capture_url: https://bluejayportfolio.com/sites/olympic-inspections/index.html#locations
+    capture_action: |
+      Land on the Locations section. Both cards (Sequim + Longview)
+      should be in frame. Slow zoom OR slight scroll over 5 sec.
+    tags: [oit, locations, multi-location, expansion]
+
+  - file: oit/reviews-carousel.mp4
+    duration_sec: 8
+    capture_url: https://bluejayportfolio.com/sites/olympic-inspections/index.html#testimonials
+    capture_action: |
+      Land on the testimonials section. Let the live Google
+      Reviews carousel auto-rotate through 2-3 cards (the autoplay
+      cycles every 6 sec, so 8 sec captures 1.3 cycles).
+    tags: [oit, reviews, social-proof, google-reviews, testimonials]
+
+  - file: oit/booking-calendar.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/sites/olympic-inspections/index.html#book
+    capture_action: |
+      Scroll into the booking section. Let the slot picker render
+      with available times. Tap a slot to show the "selected" state.
+    tags: [oit, booking, system, automation, conversion]
+
+  - file: oit/calculator.mp4
+    duration_sec: 7
+    capture_url: https://bluejayportfolio.com/sites/olympic-inspections/index.html#calculator
+    capture_action: |
+      Drag the sqft slider from 1500 → 4000. Toggle 1-2 air sample
+      checkboxes. Show the price flashing as it updates in real time.
+    tags: [oit, calculator, pricing, transparency, ux]
+
+  - file: oit/admin-bookings.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/clients/olympic-inspections/admin
+    capture_action: |
+      Bookings tab. Show the list of booking cards with status
+      pills (requested/confirmed/completed). If empty, hover a
+      "+ Add slot" button instead.
+    tags: [oit, admin, backend, owner-portal, dashboard]
+
+  - file: oit/admin-calendar.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/clients/olympic-inspections/admin
+    capture_action: |
+      Switch to Calendar tab. Show available slots, hover the
+      "⚡ Pre-fill 30 days" button, click it (slots populate).
+    tags: [oit, admin, calendar, time-saver, automation]
+
+  - file: oit/partner-map.mp4
+    duration_sec: 7
+    capture_url: https://bluejayportfolio.com/clients/olympic-inspections/admin
+    capture_action: |
+      Affiliates Map tab. Show partner pins on the Olympic Peninsula.
+      Hover a pin to reveal the popup. Pan/zoom slowly.
+    tags: [oit, partners, affiliates, map, territory]
+
+  # ── Zenith Sports / TEKKY ─────────────────────────────────────────────────
+  - file: zenith/showcase-hero.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/clients/zenith-sports
+    capture_action: |
+      Mobile vertical scroll from hero to founder section. Show
+      the "Smaller Ball — Bigger Gains" tagline + Philip + Paul.
+    tags: [zenith, tekky, showcase, brand, sports, founders]
+
+  - file: zenith/build-your-player.mp4
+    duration_sec: 8
+    capture_url: https://bluejayportfolio.com/clients/zenith-sports/build-your-player
+    capture_action: |
+      Interactive — pick a player avatar, adjust the slider for
+      hours, watch the training plan generate. Show the interactivity.
+    tags: [zenith, interactive, gamification, parents, engagement]
+
+  - file: zenith/tekky-map.mp4
+    duration_sec: 8
+    capture_url: https://bluejayportfolio.com/dashboard/tekky-map
+    capture_action: |
+      Open the territory map. Toggle 2-3 layers (MLS NEXT clubs,
+      ECNL, NCAA). Click a county. Hit the green "Scout this county"
+      button. Show the "scouting…" pulse animation.
+    tags: [zenith, scout, automation, territory, lead-gen, map]
+
+  - file: zenith/portal-leads.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/clients/zenith-sports/portal
+    capture_action: |
+      Leads tab. Show audience-color-coded cards (parent=amber,
+      coach=cobalt, player=lime, club=violet). Hover a card.
+    tags: [zenith, leads, portal, multi-audience, owner-portal]
+
+  - file: zenith/drill-of-week.mp4
+    duration_sec: 5
+    capture_url: https://bluejayportfolio.com/dashboard/clients/zenith-sports/drill-of-week
+    capture_action: |
+      Show the drill picker with the 26-drill rotation. Hover the
+      "Send broadcast" button.
+    tags: [zenith, automation, drill, weekly, ai-skill]
+
+  # ── BlueJays main + funnel ────────────────────────────────────────────────
+  - file: bluejays/audit-form.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/audit
+    capture_action: |
+      Mobile vertical. Show the audit form. Type a fake URL
+      (e.g. "exampleshop.com"). Hit submit. Show the loading
+      animation as the audit runs.
+    tags: [bluejays, audit, lead-magnet, conversion, funnel-entry]
+
+  - file: bluejays/audit-results.mp4
+    duration_sec: 8
+    capture_url: https://bluejayportfolio.com/audit (any prior submission)
+    capture_action: |
+      Land on a completed audit results page. Scroll through the
+      score, the 5-clog breakdown, the recommendations. Show
+      detail cards with red flags + green checks.
+    tags: [bluejays, audit, results, scoring, value-delivery]
+
+  - file: bluejays/portfolio-grid.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com
+    capture_action: |
+      Scroll the homepage portfolio grid showing the V2 templates.
+      Multiple industries represented (electrician, dental, salon,
+      etc.). Slow scroll over 6 sec.
+    tags: [bluejays, portfolio, templates, range, agency]
+
+  - file: bluejays/cut-my-agency.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/cut-my-agency
+    capture_action: |
+      The agency-replacement landing page. Hero + first scroll showing
+      "tired of $X/mo and no leads?" + the offer card.
+    tags: [bluejays, sales, replacement, agency, offer]
+
+  - file: bluejays/dashboard-overview.mp4
+    duration_sec: 7
+    capture_url: https://bluejayportfolio.com/dashboard
+    capture_action: |
+      Owner dashboard. Show the Overview tab with status counts,
+      Madie productivity tile, recent activity. Slight pan/scroll.
+    tags: [bluejays, dashboard, operator, system, overview]
+
+  - file: bluejays/dashboard-clients.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/dashboard/clients
+    capture_action: |
+      The Client Jobs view. Show the list of slugs with stage
+      badges + tier badges + category badges. Hover a row.
+    tags: [bluejays, dashboard, clients, jobs, multi-tenant]
+
+  - file: bluejays/dashboard-pipeline.mp4
+    duration_sec: 6
+    capture_url: https://bluejayportfolio.com/dashboard/sales-pipeline
+    capture_action: |
+      Sales pipeline kanban. Show the Website + AI System columns
+      with prospect cards. Drag a card from one stage to another
+      if possible (or just hover the stepper).
+    tags: [bluejays, pipeline, sales, kanban, conversion]
+
+  # ── Operator / behind-the-scenes ──────────────────────────────────────────
+  - file: operator/commit-log.mp4
+    duration_sec: 5
+    capture_url: terminal
+    capture_action: |
+      Run `git log --oneline -20` in the terminal. Slow vertical
+      scroll showing recent commits. Captures "ship velocity"
+      visually for build-in-public posts.
+    tags: [operator, code, commits, build-in-public, velocity]
+
+  - file: operator/typing-laptop.mp4
+    duration_sec: 6
+    capture_url: physical
+    capture_action: |
+      iPhone records over your shoulder while you type at your
+      laptop. Show your hands + the screen partially. Real focus
+      energy. Vertical orientation.
+    tags: [operator, work, typing, focus, behind-scenes]
+
+  - file: operator/phone-replying.mp4
+    duration_sec: 5
+    capture_url: physical
+    capture_action: |
+      iPhone selfie or held by 2nd phone — you typing a reply on
+      your phone. Show the messaging app. "Always-on" energy.
+    tags: [operator, mobile, response, support, hustle]
+
+  - file: operator/notification-pop.mp4
+    duration_sec: 4
+    capture_url: physical
+    capture_action: |
+      Phone screen close-up showing a Vercel deploy success
+      notification or Stripe payment notification arriving.
+    tags: [operator, notifications, deployment, automation, win]
+
+  # ── Brand / end cards / motion ────────────────────────────────────────────
+  - file: brand/bluejays-logo-reveal.mp4
+    duration_sec: 3
+    capture_url: physical
+    capture_action: |
+      Static end card — black background, BlueJays bird icon
+      fading in over 1 sec, then "bluejayportfolio.com" appearing
+      below. Can re-use existing /public/og-image.png as source.
+    tags: [brand, end-card, logo, bluejays, outro]
+
+  - file: brand/oit-logo-reveal.mp4
+    duration_sec: 3
+    capture_url: physical
+    capture_action: |
+      Forest-green background, OIT logo (the magnifier+mountains
+      mark) fading in. Source: /public/sites/olympic-inspections/logo.png
+    tags: [brand, end-card, logo, oit, outro]
+
+  - file: brand/audit-cta.mp4
+    duration_sec: 4
+    capture_url: physical
+    capture_action: |
+      Black background → animated "Comment AUDIT" text appearing
+      → arrow pointing down → "free 30-second site audit" subtitle.
+    tags: [brand, cta, end-card, audit, comment-trigger]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Auto-selection rules (used by the video editor when picking b-roll)
+# ─────────────────────────────────────────────────────────────────────────────
+selection_rules:
+  - if_script_contains: ["new site", "rebuild", "rebrand"]
+    prefer_tags: [oit, hero, site-walkthrough]
+
+  - if_script_contains: ["leads", "pipeline", "automation"]
+    prefer_tags: [bluejays, dashboard, automation]
+
+  - if_script_contains: ["1 day", "ship", "fast", "this week"]
+    prefer_tags: [operator, commits, velocity]
+
+  - if_script_contains: ["audit", "free"]
+    prefer_tags: [bluejays, audit, lead-magnet]
+
+  - if_script_contains: ["client", "outcome", "win"]
+    prefer_tags: [oit, zenith, showcase]
+
+  - if_script_contains: ["multiple", "many", "every"]
+    prefer_tags: [portfolio, templates, range]
+
+  - if_script_contains: ["backend", "system", "behind"]
+    prefer_tags: [operator, dashboard, behind-scenes]
+
+# When no rule matches: fall back to the highest-tag-overlap clip.
+# When no clip matches at all: use a brand/end-card clip with text
+# overlay synthesized from the script beat.
