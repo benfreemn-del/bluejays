@@ -195,6 +195,13 @@ const ZENITH_SPORTS: ServiceClientConfig = {
     { query: "youth sports league", role: "youth-league", channel: "outreach" },
     { query: "TopSoccer chapter", role: "topsoccer", channel: "outreach" },
     { query: "soccer coaching certification", role: "certification-org", channel: "refer-out" },
+    // Phase 2 (2026-05-10): per docs/mock-backends/mfg-sports-equipment.md
+    // the highest-trust affiliate is "coach (paid commission)" — parents
+    // buy what coach picks. Add 4 channels we were missing:
+    { query: "soccer retail shop", role: "soccer-retail", channel: "refer-out" },
+    { query: "private soccer coach", role: "private-coach", channel: "outreach" },
+    { query: "soccer camp organizer", role: "camp-organizer", channel: "commercial" },
+    { query: "youth athletics non-profit", role: "athletics-nonprofit", channel: "outreach" },
   ],
   // MLS / NWSL host metros — highest soccer density in N. America.
   scoutCities: [
