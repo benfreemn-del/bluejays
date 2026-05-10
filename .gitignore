@@ -57,3 +57,6 @@ next-env.d.ts
 /*.jpg
 /*.jpeg
 /*.png
+
+# Video render working folder (locally cached clips, captions, previews)
+edit-cache/
