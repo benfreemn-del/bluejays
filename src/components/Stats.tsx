@@ -108,7 +108,7 @@ export default function Stats() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <StatCard value="150+" label="Websites Built" icon={<WebsiteIcon />} />
+          <StatCard value="2k+" label="Websites Built" icon={<WebsiteIcon />} />
           <StatCard value="30" label="Industries Served" icon={<IndustryIcon />} />
           <StatCard value="2M+" label="Impressions Generated" icon={<ImpressionsIcon />} />
           <StatCard value="98%" label="Client Satisfaction" icon={<SatisfactionIcon />} />
