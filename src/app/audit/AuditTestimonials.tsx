@@ -60,7 +60,7 @@ const TESTIMONIALS: Testimonial[] = [
       "Before, I had zero online visibility and was losing a lot of potential customers. Now I've been getting a lot of work. I'm extremely satisfied with the website he made me.",
     videoUrl: "/testimonials/hector.mp4",
     posterUrl: "/testimonials/hector-poster.jpg",
-    siteUrl: null,  // TODO: add once site is live
+    siteUrl: "https://bluejayportfolio.com/clients/hector-landscaping",
   },
   {
     name: "Bonnie Hunsaker",
