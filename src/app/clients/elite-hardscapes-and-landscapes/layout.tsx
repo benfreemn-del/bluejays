@@ -102,6 +102,13 @@ const LOCAL_BUSINESS_SCHEMA = {
     },
   ],
   priceRange: "$$",
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.6",
+    reviewCount: "11",
+    bestRating: "5",
+    worstRating: "1",
+  },
   knowsAbout: [
     "Retaining wall installation",
     "Paver patios",

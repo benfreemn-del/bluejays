@@ -47,6 +47,16 @@ import BluejayFeather from "@/components/BluejayFeather";
 
 const PHOTO_BASE = "/clients/elite-hardscapes-and-landscapes/photos";
 
+// Real Google Business Profile snapshot (provided by Ben 2026-05-12).
+// Update these two numbers when Tyler's GBP gains/loses reviews.
+const GOOGLE_RATING = 4.6;
+const GOOGLE_REVIEW_COUNT = 11;
+const GOOGLE_REVIEW_URL =
+  "https://www.google.com/search?q=" +
+  encodeURIComponent(
+    "Elite Hardscapes and Landscapes 9321 Old Olympic Hwy Port Angeles WA reviews",
+  );
+
 const BRAND = {
   name: "Elite",
   suffix: "Hardscapes & Landscapes",
@@ -377,6 +387,130 @@ function FloatingLeaves() {
   );
 }
 
+/* ───────────── Google reviews chip (sliding) ─────────────
+   Small floating badge that slides in from the bottom-left after a
+   2s delay. Dismissable. Click-through to a Google search that
+   surfaces Tyler's GBP. Numbers are real (provided by Tyler). */
+function GoogleReviewBadge() {
+  const [shown, setShown] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShown(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (dismissed) return null;
+
+  const rating = GOOGLE_RATING.toFixed(1);
+  const fillPct = Math.max(0, Math.min(100, (GOOGLE_RATING / 5) * 100));
+
+  return (
+    <a
+      href={GOOGLE_REVIEW_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${rating} stars on Google — ${GOOGLE_REVIEW_COUNT} reviews`}
+      className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-40 group inline-flex items-center gap-3 pl-3 pr-2 py-2 transition-all hover:gap-3.5 hover:-translate-y-0.5"
+      style={{
+        background: "rgba(0,0,0,0.85)",
+        border: `1px solid ${PALETTE.steelLine}`,
+        borderRadius: "10px",
+        backdropFilter: "blur(8px)",
+        boxShadow:
+          "0 10px 30px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)",
+        transform: shown ? "translateX(0)" : "translateX(-130%)",
+        opacity: shown ? 1 : 0,
+        transition:
+          "transform 700ms cubic-bezier(.22,.61,.36,1), opacity 700ms ease, gap 200ms ease",
+      }}
+    >
+      {/* Google G */}
+      <svg width="22" height="22" viewBox="0 0 48 48" aria-hidden>
+        <path
+          fill="#FFC107"
+          d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4C12.9 4 4 12.9 4 24s8.9 20 20 20s20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
+        />
+        <path
+          fill="#FF3D00"
+          d="m6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4C16.3 4 9.6 8.3 6.3 14.7z"
+        />
+        <path
+          fill="#4CAF50"
+          d="M24 44c5.5 0 10.5-2.1 14.2-5.6l-6.6-5.4c-2 1.5-4.6 2.5-7.6 2.5c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"
+        />
+        <path
+          fill="#1976D2"
+          d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.8l6.6 5.4C41.4 36 44 30.5 44 24c0-1.3-.1-2.3-.4-3.5z"
+        />
+      </svg>
+
+      {/* Rating + stars + count */}
+      <div className="leading-tight">
+        <div className="flex items-center gap-1.5">
+          <span
+            className="text-sm font-semibold"
+            style={{ color: PALETTE.bone }}
+          >
+            {rating}
+          </span>
+          {/* 5-star track with partial fill */}
+          <span
+            className="relative inline-block"
+            style={{ width: "70px", height: "12px" }}
+          >
+            {/* base (dim stars) */}
+            <span
+              className="absolute inset-0 flex items-center gap-0.5"
+              style={{ color: "#3f3f46" }}
+              aria-hidden
+            >
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} size={12} weight="fill" />
+              ))}
+            </span>
+            {/* fill (gold stars, clipped to rating %) */}
+            <span
+              className="absolute inset-0 flex items-center gap-0.5 overflow-hidden"
+              style={{
+                color: "#FBBF24",
+                width: `${fillPct}%`,
+                whiteSpace: "nowrap",
+              }}
+              aria-hidden
+            >
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} size={12} weight="fill" />
+              ))}
+            </span>
+          </span>
+        </div>
+        <div
+          className="text-[10px] mt-0.5"
+          style={{ color: PALETTE.chrome }}
+        >
+          {GOOGLE_REVIEW_COUNT} Google reviews · Tap to read
+        </div>
+      </div>
+
+      {/* Dismiss */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setDismissed(true);
+        }}
+        aria-label="Dismiss"
+        className="ml-1 w-6 h-6 inline-flex items-center justify-center rounded-md transition-colors hover:bg-white/[0.08]"
+        style={{ color: PALETTE.chrome }}
+      >
+        <CloseIcon size={12} weight="bold" />
+      </button>
+    </a>
+  );
+}
+
 /* ───────────── scroll-reveal hook ───────────── */
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -451,6 +585,7 @@ export default function Site() {
       style={{ background: PALETTE.ink, color: PALETTE.bone }}
     >
       <FloatingLeaves />
+      <GoogleReviewBadge />
       <style>{`
         .font-display { font-family: 'Oswald', 'Arial Narrow', sans-serif; letter-spacing: 0.01em; }
         .font-body    { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
