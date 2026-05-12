@@ -98,6 +98,13 @@ const SLUG_CONFIG: Record<
     clientEmail: "hectorlandscapingonline@gmail.com",
     emoji: "🌿",
   },
+  "elite-hardscapes-and-landscapes": {
+    // Tyler Fritz · $1k bespoke · Port Angeles WA · Olympic Peninsula.
+    // Email TBD — routing to Ben's inbox until Tyler shares one.
+    businessLabel: "Elite Hardscapes & Landscapes (Tyler Fritz · Port Angeles, WA)",
+    clientEmail: "bluejaycontactme@gmail.com",
+    emoji: "🔨",
+  },
   "lewis-county-autism": {
     businessLabel: "Lewis County Autism Coalition",
     clientEmail: "info@lewiscountyautism.com",

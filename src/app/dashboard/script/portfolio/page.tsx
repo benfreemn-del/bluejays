@@ -129,6 +129,15 @@ const SHOWCASES: Showcase[] = [
     url: `${SITE_URL}/clients/hector-landscaping`,
   },
   {
+    slug: "elite-hardscapes-and-landscapes",
+    name: "Elite Hardscapes & Landscapes",
+    industry: "Hardscape + Landscape (Port Angeles WA)",
+    category: "landscaping",
+    highlight:
+      "Tyler Fritz · $1k bespoke · Olympic Peninsula · No-Backend pattern (mailto + SMS for photos)",
+    url: `${SITE_URL}/clients/elite-hardscapes-and-landscapes`,
+  },
+  {
     slug: "laser-lakes",
     name: "Laser Lakes",
     industry: "Lake-mapping equipment · DTC",

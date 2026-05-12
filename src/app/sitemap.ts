@@ -38,6 +38,7 @@ const V2_CATEGORIES = [
 const ACTIVE_CLIENT_SHOWCASES = [
   "meyer-electric",          // Tesla Powerwall + Generac · Sequim WA
   "hector-landscaping",      // Hardscapes + lawn care · Renton WA
+  "elite-hardscapes-and-landscapes", // Hardscape + landscape · Port Angeles WA (Tyler Fritz)
   "masters-window-tinting",  // Auto + ceramic + PPF · West Babylon NY
   "kr-ranches",              // Farm-direct beef · Prosser WA
   "olympic-inspections",     // Home inspections (formerly P&P)

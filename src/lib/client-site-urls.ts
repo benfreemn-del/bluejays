@@ -49,6 +49,14 @@ const CLIENT_SITES: Record<string, ClientSite> = {
     kind: "internal",
     href: "/clients/masters-window-tinting",
   },
+  // Elite Hardscapes & Landscapes — Tyler Fritz, Port Angeles WA.
+  // $1k bespoke custom-tier hardscape + landscape crew. Olympic
+  // Peninsula. No portal backend (No-Backend Client Pattern) —
+  // leads via mailto + tel/sms.
+  "elite-hardscapes-and-landscapes": {
+    kind: "internal",
+    href: "/clients/elite-hardscapes-and-landscapes",
+  },
   // Meyer Electric — Snohomish, WA. Custom-tier mock-backend showcase.
   "meyer-electric": { kind: "internal", href: "/clients/meyer-electric" },
   // The Oregon Appraisers — bespoke real-estate appraisal showcase.
