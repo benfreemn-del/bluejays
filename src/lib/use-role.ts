@@ -37,6 +37,41 @@ export function useRole(): Role {
   return role;
 }
 
+/** Identity of the logged-in operator (Ben / Madie / Raidas / Tyler).
+ *  Falls back to null when the user logged in with the legacy
+ *  env-password flow (no user_id cookie). UIs that need a name should
+ *  gracefully degrade in that case. */
+export interface BluejaysSessionUser {
+  id: string | null;
+  name: string | null;
+  role: Role;
+}
+
+export function useBluejaysUser(): BluejaysSessionUser {
+  const [user, setUser] = useState<BluejaysSessionUser>({
+    id: null,
+    name: null,
+    role: "owner",
+  });
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    function readCookie(name: string): string | null {
+      const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+    const roleRaw = readCookie("bj_role");
+    const role: Role = roleRaw === "sales" ? "sales" : "owner";
+    setUser({
+      id: readCookie("bj_user_id"),
+      name: readCookie("bj_user_name"),
+      role,
+    });
+  }, []);
+
+  return user;
+}
+
 /** Tab IDs Madie sees in the BlueJays top nav. Everything else is
  *  owner-only when role = "sales". */
 export const SALES_TOP_NAV_ALLOWED = new Set([

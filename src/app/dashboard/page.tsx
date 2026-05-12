@@ -61,6 +61,7 @@ type Tab =
   | "sales-portal"
   | "diagnostic"
   | "onboarding"
+  | "team"
   | "client-jobs"
   | "sales-pipeline"
   | "win-loss"
@@ -103,6 +104,7 @@ const TABS: TabDef[] = [
   { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline" },
   { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss" },
   { id: "ai-skills", label: "AI Skills", emoji: "🧠", href: "/dashboard/ai-bots" },
+  { id: "team", label: "Team", emoji: "👥", href: "/dashboard/team" },
   { id: "settings", label: "Settings", emoji: "⚙️" },
 ];
 

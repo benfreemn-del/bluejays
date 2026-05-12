@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,16 +17,19 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
+    // Email optional — legacy env-password flow (Ben + Madie) still works
+    // password-only. New staff (Raidas, Tyler, etc.) supply email+password.
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ email: email.trim() || undefined, password }),
     });
 
     if (res.ok) {
       router.push("/dashboard");
     } else {
-      setError("Invalid password");
+      const j = await res.json().catch(() => ({ error: "Invalid email or password" }));
+      setError(j.error || "Invalid email or password");
     }
     setLoading(false);
   };
@@ -47,11 +51,20 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email (optional for Ben + Madie)"
+            className="w-full h-12 px-4 rounded-xl bg-surface border border-border text-foreground placeholder:text-muted/50"
+            autoComplete="username"
+          />
+          <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             className="w-full h-12 px-4 rounded-xl bg-surface border border-border text-foreground placeholder:text-muted/50"
+            autoComplete="current-password"
             autoFocus
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}

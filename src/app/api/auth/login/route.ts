@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { checkSessionCookie } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
+import { authenticateByEmail } from "@/lib/bluejays-auth";
 
 /**
  * Login endpoint — Q4=A locked 2026-05-08. Two passwords supported:
@@ -40,26 +41,47 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { password } = body;
+  const { password, email } = body as { password?: string; email?: string };
 
   let role: "owner" | "sales" | null = null;
   let tokenSource = "";
-  if (password === OWNER_PASSWORD) {
-    role = "owner";
-    tokenSource = OWNER_PASSWORD;
-  } else if (SALES_PASSWORD && password === SALES_PASSWORD) {
-    role = "sales";
-    tokenSource = SALES_PASSWORD;
+  let userId: string | null = null;
+  let userName: string | null = null;
+
+  // Path 1: email + password against bluejays_users. Preferred path
+  // for Raidas / Tyler / and anyone added post-launch via /dashboard/team.
+  if (email && password) {
+    const user = await authenticateByEmail(email, password);
+    if (user) {
+      role = user.role;
+      userId = user.id;
+      userName = user.name;
+      // Mint the legacy session-token cookie value that middleware
+      // accepts — keyed off the env password matching this role — so
+      // middleware doesn't need a DB round-trip on every request.
+      tokenSource = user.role === "owner" ? OWNER_PASSWORD : SALES_PASSWORD || OWNER_PASSWORD;
+    }
+  }
+
+  // Path 2: legacy env-password (Ben + Madie's existing flow).
+  if (!role && password) {
+    if (password === OWNER_PASSWORD) {
+      role = "owner";
+      tokenSource = OWNER_PASSWORD;
+    } else if (SALES_PASSWORD && password === SALES_PASSWORD) {
+      role = "sales";
+      tokenSource = SALES_PASSWORD;
+    }
   }
 
   if (!role) {
-    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
   const sessionToken = createHash("sha256")
     .update(tokenSource + "bluejays-session-salt")
     .digest("hex");
-  const response = NextResponse.json({ success: true, role });
+  const response = NextResponse.json({ success: true, role, userId, name: userName });
 
   // Auth cookie — httpOnly, validated in middleware
   response.cookies.set("bluejays_auth", sessionToken, {
@@ -81,6 +103,30 @@ export async function POST(request: NextRequest) {
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
+
+  // bj_user_id — set only when we authenticated against the
+  // bluejays_users table (email-based login). Legacy env-password
+  // logins don't get this cookie, so server-side handlers that need
+  // user identity fall back to role-only filtering (which is the
+  // existing behavior — no regression).
+  if (userId) {
+    response.cookies.set("bj_user_id", userId, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+  }
+  if (userName) {
+    response.cookies.set("bj_user_name", userName, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+  }
 
   return response;
 }
