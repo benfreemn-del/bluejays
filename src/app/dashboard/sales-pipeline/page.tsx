@@ -43,7 +43,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Prospect } from "@/lib/types";
 import PipelineVelocityWidget from "@/components/dashboard/PipelineVelocityWidget";
-import { useRole } from "@/lib/use-role";
+import { useRole, useBluejaysUser } from "@/lib/use-role";
 
 const WEBSITE_STAGES = [
   { n: 1, label: "Preview created" },
@@ -162,6 +162,7 @@ export default function SalesPipelinePage() {
   // + per-stage totals expose business-wide P&L which isn't her
   // surface.
   const role = useRole();
+  const currentUser = useBluejaysUser();
   const hideTotals = role === "sales";
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -354,6 +355,34 @@ export default function SalesPipelinePage() {
   // it now is a no-op since saves happen on nudge.
   const saveStage = async (_id: string) => {};
 
+  // Sales-rep self-claim: hit /claim (gated to unassigned). Optimistic.
+  const claimProspect = async (prospectId: string) => {
+    if (!currentUser.id) return;
+    const previous = prospects.find((p) => p.id === prospectId)?.assignedToUserId;
+    setProspects((prev) =>
+      prev.map((p) =>
+        p.id === prospectId ? { ...p, assignedToUserId: currentUser.id ?? undefined } : p,
+      ),
+    );
+    try {
+      const res = await fetch("/api/dashboard/prospects/claim", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prospectId }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || `HTTP ${res.status}`);
+      }
+    } catch (e) {
+      console.error("[sales-pipeline] claim failed:", e);
+      setProspects((prev) =>
+        prev.map((p) => (p.id === prospectId ? { ...p, assignedToUserId: previous } : p)),
+      );
+    }
+  };
+
   // Per-card assignment: PATCH the assigned_to_user_id directly.
   // Optimistic + non-blocking; revert on failure.
   const assignProspect = async (prospectId: string, userId: string | null) => {
@@ -521,7 +550,10 @@ export default function SalesPipelinePage() {
                       accent="sky"
                       leads={websiteByStage.get(s.n) ?? []}
                       users={users}
+                      role={role}
+                      currentUserId={currentUser.id}
                       onAssign={assignProspect}
+                      onClaim={claimProspect}
                       pendingStages={pendingStages}
                       savingId={savingId}
                       savedId={savedId}
@@ -576,7 +608,10 @@ export default function SalesPipelinePage() {
                       accent="violet"
                       leads={fullsystemByStage.get(s.n) ?? []}
                       users={users}
+                      role={role}
+                      currentUserId={currentUser.id}
                       onAssign={assignProspect}
+                      onClaim={claimProspect}
                       pendingStages={pendingStages}
                       savingId={savingId}
                       savedId={savedId}
@@ -608,7 +643,10 @@ function StageGroup({
   accent,
   leads,
   users,
+  role,
+  currentUserId,
   onAssign,
+  onClaim,
   pendingStages,
   savingId,
   savedId,
@@ -623,7 +661,10 @@ function StageGroup({
   accent: "sky" | "violet";
   leads: Prospect[];
   users: Array<{ id: string; name: string; role: string; active: boolean }>;
+  role: "owner" | "sales";
+  currentUserId: string | null;
   onAssign: (prospectId: string, userId: string | null) => void;
+  onClaim: (prospectId: string) => void;
   pendingStages: Record<string, string>;
   savingId: string | null;
   savedId: string | null;
@@ -683,7 +724,10 @@ function StageGroup({
             key={p.id}
             prospect={p}
             users={users}
+            role={role}
+            currentUserId={currentUserId}
             onAssign={onAssign}
+            onClaim={onClaim}
             pending={pendingStages[p.id]}
             saving={savingId === p.id}
             saved={savedId === p.id}
@@ -773,7 +817,10 @@ function ViewModeChip({
 function LeadCard({
   prospect,
   users,
+  role,
+  currentUserId,
   onAssign,
+  onClaim,
   pending,
   saving,
   saved,
@@ -784,7 +831,10 @@ function LeadCard({
 }: {
   prospect: Prospect;
   users: Array<{ id: string; name: string; role: string; active: boolean }>;
+  role: "owner" | "sales";
+  currentUserId: string | null;
   onAssign: (prospectId: string, userId: string | null) => void;
+  onClaim: (prospectId: string) => void;
   pending: string | undefined;
   saving: boolean;
   saved: boolean;
@@ -890,10 +940,13 @@ function LeadCard({
               </span>
             </p>
           )}
-          {/* Assign-to dropdown — distributes leads to Madie / Raidas /
-              Tyler / future hires. Suppresses if no users have been
-              added under /dashboard/team yet. */}
-          {users.length > 0 && (
+          {/* Assignment surface:
+              · Owner sees a dropdown — distribute to any rep.
+              · Sales rep sees one of three states:
+                  - unassigned → "Claim" button
+                  - assigned to me → "Mine" pill (green)
+                  - assigned to someone else → "Assigned to {name}" pill */}
+          {users.length > 0 && role === "owner" && (
             <select
               value={prospect.assignedToUserId ?? ""}
               onChange={(e) => onAssign(prospect.id, e.target.value || null)}
@@ -908,6 +961,34 @@ function LeadCard({
               ))}
             </select>
           )}
+          {role === "sales" && (() => {
+            const assignedTo = prospect.assignedToUserId ?? null;
+            if (!assignedTo) {
+              return (
+                <button
+                  type="button"
+                  onClick={() => onClaim(prospect.id)}
+                  disabled={!currentUserId}
+                  className="mt-2 w-full rounded-md bg-sky-500 hover:bg-sky-400 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-950 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5"
+                >
+                  Claim
+                </button>
+              );
+            }
+            if (assignedTo === currentUserId) {
+              return (
+                <p className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full border border-emerald-500/40 bg-emerald-500/15 text-emerald-300 px-2 py-0.5">
+                  ✓ Mine
+                </p>
+              );
+            }
+            const owner = users.find((u) => u.id === assignedTo);
+            return (
+              <p className="mt-2 text-[10px] text-slate-500 uppercase tracking-wider">
+                Assigned · {owner?.name ?? "someone else"}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Stage steppers — number + optional letter */}
