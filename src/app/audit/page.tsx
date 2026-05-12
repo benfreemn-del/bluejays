@@ -3,6 +3,7 @@ import type React from "react";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import AuditForm from "./AuditForm";
+import AuditTestimonials from "./AuditTestimonials";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
@@ -175,98 +176,19 @@ export default async function AuditLandingPage() {
             </span>
             <span className="text-slate-700 hidden sm:block">·</span>
             <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
-              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-violet-400 shrink-0" aria-hidden="true"><path fillRule="evenodd" d="M8 .5C5.8.5 4 2.3 4 4.5v.67C2.8 5.7 2 6.8 2 8v5c0 1.4 1.1 2.5 2.5 2.5h7c1.4 0 2.5-1.1 2.5-2.5V8c0-1.2-.8-2.3-2-2.83V4.5C12 2.3 10.2.5 8 .5zm2.5 4.17V4.5a2.5 2.5 0 00-5 0v.17c.32-.1.65-.17 1-.17h3c.35 0 .68.07 1 .17zM8 9a1 1 0 01.5 1.87V12a.5.5 0 01-1 0v-1.13A1 1 0 018 9z" clipRule="evenodd" /></svg>
-              SSL encrypted
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-violet-400 shrink-0" aria-hidden="true"><path d="M8 .5a1 1 0 01.92.612l1.789 4.295 4.643.397a1 1 0 01.569 1.751l-3.527 3.05 1.063 4.54a1 1 0 01-1.491 1.083L8 13.84l-3.966 2.389a1 1 0 01-1.49-1.084l1.062-4.54L.08 7.555a1 1 0 01.57-1.75l4.643-.398L7.08 1.112A1 1 0 018 .5z" /></svg>
+              Real audits by Ben — not bots
             </span>
           </div>
         </div>
       </section>
 
-      {/* Real client testimonials — Hector has a self-hosted video at
-          /public/testimonials/hector.mp4. Luke + Michelle render as
-          quote-only cards (Verified client badge + quotation glyph)
-          until their videos arrive. When more videos land, drop them
-          in /public/testimonials/{slug}.{mp4,jpg} and swap the card's
-          header block for the same <video> tag pattern Hector uses. */}
-      <section className="border-b border-white/5 bg-slate-900/40">
-        <div className="mx-auto max-w-5xl px-6 py-16">
-          <div className="text-center mb-10">
-            <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">Real clients · Real results</p>
-            <h2 className="text-2xl md:text-3xl font-bold">What local owners are saying</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Hector — has video. Quote intentionally general so it
-                doesn't clash with whatever specific words he says on
-                camera (different content reinforces, doesn't repeat). */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <video
-                src="/testimonials/hector.mp4"
-                poster="/testimonials/hector-poster.jpg"
-                controls
-                preload="metadata"
-                playsInline
-                className="w-full aspect-video bg-black object-cover"
-              />
-              <div className="p-5">
-                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Before, I had zero online visibility and was losing a lot of potential customers. Now I&apos;ve been getting a lot of work.&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm">E</div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Erik Hernandez</p>
-                    <p className="text-xs text-slate-400">Hector Landscaping</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Luke — quote-only card (no video yet) */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <div className="aspect-video bg-gradient-to-br from-amber-500/20 via-slate-900 to-rose-500/15 border-b border-white/5 flex flex-col items-center justify-center gap-4 relative overflow-hidden p-6">
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="relative w-12 h-12 text-amber-500/40">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-                <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><polyline points="20 6 9 17 4 12" /></svg>
-                  Verified client
-                </div>
-              </div>
-              <div className="p-5">
-                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Way better than the freelancer who ghosted me last year. Ben actually picks up the phone.&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold text-sm">L</div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Luke</p>
-                    <p className="text-xs text-slate-400">Pine &amp; Particle</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Michelle / LCAC — quote-only card (no video yet) */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/60 overflow-hidden hover:border-sky-500/30 transition-all">
-              <div className="aspect-video bg-gradient-to-br from-sky-500/20 via-slate-900 to-violet-500/15 border-b border-white/5 flex flex-col items-center justify-center gap-4 relative overflow-hidden p-6">
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="relative w-12 h-12 text-sky-500/40">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-                <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><polyline points="20 6 9 17 4 12" /></svg>
-                  Verified client
-                </div>
-              </div>
-              <div className="p-5">
-                <p className="text-sm text-slate-200 leading-relaxed mb-3 italic">&ldquo;Ben took our outdated nonprofit site and made it look like a real organization. Donations went up the first month.&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 font-bold text-sm">M</div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Michelle</p>
-                    <p className="text-xs text-slate-400">Lewis County Autism Coalition</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Real client testimonials — render the shared <AuditTestimonials/>
+          component instead of inlining cards. That component has Erik's
+          real video, Luke's real video, "Paid for itself in X months"
+          badges, and a 4th testimonial (Bonnie / Mt View). One source
+          of truth for both /audit and /audit/[id]. */}
+      <AuditTestimonials />
 
       {/* Meet Ben — compact half-size founder section.
           Full version lives on bluejayportfolio.com homepage; this is a
@@ -481,17 +403,33 @@ export default async function AuditLandingPage() {
         </div>
       </section>
 
-      {/* Final CTA — anchor scrolls to top via #audit-top id (CSS scroll-behavior:smooth on html handles smoothness) */}
-      <section>
-        <div className="mx-auto max-w-2xl px-6 py-16 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to see your score?</h2>
-          <p className="text-slate-400 mb-8">It&apos;s free. It&apos;s 60 seconds. The audit lands in your inbox in about a minute.</p>
+      {/* Final CTA — anchor scrolls to top via #audit-top id (CSS scroll-behavior:smooth on html handles smoothness).
+          Closes with a Hormozi-style "what you avoid" frame + the
+          real cost-of-inaction the 5 clogs translate to. */}
+      <section className="border-t border-white/5">
+        <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            Free · 60 seconds · no signup
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
+            Stop guessing which fix matters most.
+          </h2>
+          <p className="text-slate-300 mb-2 leading-relaxed">
+            Every week you don&apos;t know which clog is leaking is another week of customers calling competitors.
+          </p>
+          <p className="text-slate-400 mb-10 text-sm">
+            The audit shows you in 60 seconds. We email the report + the 3 fixes that actually move the needle.
+          </p>
           <a
             href="#audit-top"
-            className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 hover:shadow-sky-500/30 hover:scale-[1.02] transition-all"
           >
-            Run my audit →
+            Run my free audit →
           </a>
+          <p className="mt-6 text-xs text-slate-500">
+            Ben personally reviews every audit before it hits your inbox.
+          </p>
         </div>
       </section>
 
