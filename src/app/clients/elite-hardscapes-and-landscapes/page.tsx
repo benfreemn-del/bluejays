@@ -586,7 +586,12 @@ export default function Site() {
     >
       <FloatingLeaves />
       <GoogleReviewBadge />
-      <style>{`
+      {/* CSS via dangerouslySetInnerHTML — avoids Turbopack 16.2.2
+          optimized-build hang on large <style>{`...`}</style> blocks
+          in client components (CLAUDE.md NON-NEGOTIABLE). */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .font-display { font-family: 'Oswald', 'Arial Narrow', sans-serif; letter-spacing: 0.01em; }
         .font-body    { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         .tracking-tightest { letter-spacing: -0.02em; }
@@ -612,7 +617,9 @@ export default function Site() {
           from { transform: rotate(var(--start-rot)); }
           to   { transform: rotate(calc(var(--start-rot) + 360deg)); }
         }
-      `}</style>
+      `,
+        }}
+      />
 
       {/* ═══════════════ NAV ═══════════════ */}
       <nav
