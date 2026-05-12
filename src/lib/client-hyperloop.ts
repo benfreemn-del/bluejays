@@ -81,6 +81,22 @@ async function pickRunMode(
  * Then run Wilson-CI to flag winners + losers.
  */
 
+async function loadCycleThresholds() {
+  const { getSetting } = await import("./system-settings");
+  const minVerdict = await getSetting<number>(
+    "hyperloop.min_impressions_for_verdict",
+    200,
+  );
+  const minLoser = await getSetting<number>(
+    "hyperloop.min_impressions_for_loser",
+    400,
+  );
+  return {
+    minImpressionsForVerdict: Number(minVerdict),
+    minImpressionsForLoser: Number(minLoser),
+  };
+}
+
 async function analyzeFunnelTemplates(
   clientSlug: string,
 ): Promise<ClientInsight[]> {
@@ -144,7 +160,7 @@ async function analyzeFunnelTemplates(
   }
   if (variants.length === 0) return [];
 
-  const analyses = analyzeKind(variants);
+  const analyses = analyzeKind(variants, await loadCycleThresholds());
   return analyses.map((a) => ({
     kind: "funnel-template" as const,
     variantId: a.id,
@@ -196,7 +212,7 @@ async function analyzeAdCreatives(
   }
   if (variants.length === 0) return [];
 
-  const analyses = analyzeKind(variants);
+  const analyses = analyzeKind(variants, await loadCycleThresholds());
   // Map id back to original variant so we have the friendly name
   const variantById = new Map(variants.map((v) => [v.id, v.variantName]));
   return analyses.map((a) => ({

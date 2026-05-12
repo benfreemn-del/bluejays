@@ -57,8 +57,19 @@ const Z_95 = 1.96;
 // for $50-100/day budgets. If you scale to $200+/day, the upper
 // thresholds will trigger faster but small variants will also get
 // more signal so the absolute numbers still hold.
-const MIN_IMPRESSIONS_FOR_VERDICT = 200;
-const MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC = 400;
+// Defaults. Operator can override per-run via /dashboard/hyperloop's
+// cycle-time slider — overrides land in system_settings:
+//   hyperloop.min_impressions_for_verdict
+//   hyperloop.min_impressions_for_loser
+// Pass them through the `thresholds` argument on analyzeKind() when
+// reading from settings; otherwise the defaults below apply.
+const DEFAULT_MIN_IMPRESSIONS_FOR_VERDICT = 200;
+const DEFAULT_MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC = 400;
+
+export interface CycleTimeThresholds {
+  minImpressionsForVerdict?: number;
+  minImpressionsForLoser?: number;
+}
 
 /**
  * Wilson score 95% CI for a Bernoulli proportion. Returns [lower, upper]
@@ -107,7 +118,14 @@ function cohortBaselineCPA(variants: VariantMetrics[]): number {
  *   - testing: in between — keep running
  *   - insufficient_data: < MIN_FOR_VERDICT impressions
  */
-export function analyzeKind(variants: VariantMetrics[]): VariantAnalysis[] {
+export function analyzeKind(
+  variants: VariantMetrics[],
+  thresholds: CycleTimeThresholds = {},
+): VariantAnalysis[] {
+  const MIN_IMPRESSIONS_FOR_VERDICT =
+    thresholds.minImpressionsForVerdict ?? DEFAULT_MIN_IMPRESSIONS_FOR_VERDICT;
+  const MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC =
+    thresholds.minImpressionsForLoser ?? DEFAULT_MIN_IMPRESSIONS_FOR_LOSER_HEURISTIC;
   const baselineCR = cohortBaselineCR(variants);
   const baselineCPA = cohortBaselineCPA(variants);
 
@@ -165,7 +183,10 @@ export function analyzeKind(variants: VariantMetrics[]): VariantAnalysis[] {
  * map from variant ID → analysis. Caller decides what to do with each
  * verdict (retire losers, surface winners to AI, etc.).
  */
-export function analyzeAll(variants: VariantMetrics[]): Map<string, VariantAnalysis> {
+export function analyzeAll(
+  variants: VariantMetrics[],
+  thresholds: CycleTimeThresholds = {},
+): Map<string, VariantAnalysis> {
   const byKind = new Map<string, VariantMetrics[]>();
   for (const v of variants) {
     const list = byKind.get(v.kind) ?? [];
@@ -175,7 +196,7 @@ export function analyzeAll(variants: VariantMetrics[]): Map<string, VariantAnaly
 
   const result = new Map<string, VariantAnalysis>();
   for (const [, group] of byKind) {
-    for (const a of analyzeKind(group)) {
+    for (const a of analyzeKind(group, thresholds)) {
       result.set(a.id, a);
     }
   }
