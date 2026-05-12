@@ -37,7 +37,7 @@
  * the same allocation rules so the system stays internally consistent.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ZENITH_CREATIVES,
   type CreativeSeed,
@@ -285,6 +285,8 @@ export default function AdsTabV2({ slug }: AdsTabV2Props) {
         </p>
       </section>
 
+      <ConnectStrip slug={slug} />
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {(Object.keys(PLATFORM_GROUP_META) as PlatformGroup[]).map((g) => (
           <PlatformCard
@@ -298,8 +300,8 @@ export default function AdsTabV2({ slug }: AdsTabV2Props) {
 
       <p className="text-[11px] text-slate-500 leading-relaxed">
         ROAS + spend numbers are placeholder until your Meta + Google
-        OAuth lands. Click any card to see the per-platform 70/20/10
-        breakdown + edit creatives with guardrails.
+        accounts are connected above. Click any card to see the
+        per-platform 70/20/10 breakdown + edit creatives with guardrails.
       </p>
     </div>
   );
@@ -824,5 +826,189 @@ function ChangeBtn({
     >
       {label}
     </button>
+  );
+}
+
+/* ──────────────────────── CONNECT STRIP ──────────────────────── */
+//
+// Compact 3-column row at the top of the Ads tab. Each cell is a
+// platform (Meta / Google / Lob) showing connection status + a
+// Connect / Reconnect / Manage button. OAuth lives at
+// /api/oauth/{platform}/start; Lob is API-key entry below.
+//
+
+interface AdAccountRow {
+  platform: string;
+  external_account_id: string | null;
+  external_account_name: string | null;
+  status: string;
+  last_used_at: string | null;
+  consecutive_failures: number;
+  last_error: string | null;
+}
+
+function ConnectStrip({ slug }: { slug: string }) {
+  const [rows, setRows] = useState<AdAccountRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lobOpen, setLobOpen] = useState(false);
+  const [lobKey, setLobKey] = useState("");
+  const [lobSaving, setLobSaving] = useState(false);
+  const [lobErr, setLobErr] = useState<string | null>(null);
+
+  async function load() {
+    try {
+      const r = await fetch(`/api/clients/${slug}/ad-accounts`);
+      const j = await r.json();
+      if (j.ok) setRows(j.rows);
+    } catch {
+      // ignore — strip will show "not connected" everywhere
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
+  const byPlatform: Record<string, AdAccountRow | undefined> = {};
+  for (const r of rows) byPlatform[r.platform] = r;
+
+  const tiles: Array<{
+    platform: "meta_ads" | "google_ads" | "lob";
+    label: string;
+    description: string;
+    accent: string;
+  }> = [
+    { platform: "meta_ads", label: "Meta (Facebook / Instagram)", description: "Connect ad account for spend + ROAS sync", accent: "sky" },
+    { platform: "google_ads", label: "Google Ads", description: "Connect for spend, conversions, ROAS", accent: "emerald" },
+    { platform: "lob", label: "Lob direct mail", description: "Use BlueJays master key or enter your own", accent: "amber" },
+  ];
+
+  async function saveLobKey() {
+    if (!lobKey.startsWith("live_") && !lobKey.startsWith("test_") && lobKey !== "use_bluejays_master") {
+      setLobErr("Lob keys start with live_ or test_, or type use_bluejays_master to use BlueJays's account.");
+      return;
+    }
+    setLobSaving(true);
+    setLobErr(null);
+    try {
+      const r = await fetch(`/api/clients/${slug}/ad-accounts/lob`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apiKey: lobKey }),
+      });
+      const j = await r.json();
+      if (!j.ok) {
+        setLobErr(j.error || "Could not save Lob key");
+      } else {
+        setLobOpen(false);
+        setLobKey("");
+        load();
+      }
+    } catch (e) {
+      setLobErr((e as Error).message);
+    } finally {
+      setLobSaving(false);
+    }
+  }
+
+  return (
+    <section className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">
+          Connected accounts
+        </p>
+        {loading && <span className="text-[10px] text-slate-500">loading…</span>}
+      </div>
+      <div className="grid sm:grid-cols-3 gap-3">
+        {tiles.map((t) => {
+          const row = byPlatform[t.platform];
+          const connected = row && (row.status === "active" || row.status === "pending");
+          return (
+            <div
+              key={t.platform}
+              className={`rounded-lg border px-3 py-3 ${
+                connected
+                  ? "border-emerald-500/30 bg-emerald-500/5"
+                  : "border-white/10 bg-slate-950/40"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">{t.label}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">
+                    {connected ? row?.external_account_name || row?.external_account_id || t.description : t.description}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${
+                    connected
+                      ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40"
+                      : "bg-slate-800 text-slate-400"
+                  }`}
+                >
+                  {connected ? row?.status : "not set"}
+                </span>
+              </div>
+
+              <div className="mt-3">
+                {t.platform === "lob" ? (
+                  <button
+                    type="button"
+                    onClick={() => setLobOpen((o) => !o)}
+                    className="w-full text-xs font-semibold rounded-md bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5"
+                  >
+                    {connected ? "Manage key" : "Enter Lob key"}
+                  </button>
+                ) : (
+                  <a
+                    href={`/api/oauth/${t.platform}/start?slug=${encodeURIComponent(slug)}`}
+                    className="block text-center text-xs font-semibold rounded-md bg-sky-500 hover:bg-sky-400 text-slate-950 px-3 py-1.5"
+                  >
+                    {connected ? "Reconnect" : "Connect"}
+                  </a>
+                )}
+              </div>
+
+              {row?.last_error && (
+                <p className="mt-2 text-[10px] text-rose-400">
+                  Last error: {row.last_error.slice(0, 80)}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {lobOpen && (
+        <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 space-y-2">
+          <p className="text-xs text-amber-200">
+            Paste your Lob secret key, OR type{" "}
+            <code className="text-amber-100">use_bluejays_master</code> to bill
+            through BlueJays&apos;s Lob account at-cost.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={lobKey}
+              onChange={(e) => setLobKey(e.target.value)}
+              placeholder="live_… or test_… or use_bluejays_master"
+              className="flex-1 rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-xs font-mono"
+            />
+            <button
+              type="button"
+              onClick={saveLobKey}
+              disabled={lobSaving || !lobKey}
+              className="rounded-md bg-amber-500 hover:bg-amber-400 disabled:bg-slate-700 text-amber-950 px-3 py-2 text-xs font-semibold"
+            >
+              {lobSaving ? "Saving…" : "Save"}
+            </button>
+          </div>
+          {lobErr && <p className="text-xs text-rose-400">{lobErr}</p>}
+        </div>
+      )}
+    </section>
   );
 }

@@ -61,6 +61,29 @@ export default function OnboardingPage({
 
   useEffect(() => {
     (async () => {
+      // Stripe SETUP-mode Checkout sends the customer back here with
+      // ?setup=ok&session_id=…. Drain that into our payment step before
+      // we render so the wizard sees the captured card immediately.
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        const setup = url.searchParams.get("setup");
+        const sessionId = url.searchParams.get("session_id");
+        if (setup === "ok" && sessionId) {
+          try {
+            await fetch(
+              `/api/clients/${slug}/onboarding/payment/complete?session_id=${encodeURIComponent(sessionId)}`,
+            );
+          } catch {
+            // best-effort — wizard will show "card not on file" if it failed
+          }
+          // Strip the params so a refresh doesn't re-fire the completion.
+          url.searchParams.delete("setup");
+          url.searchParams.delete("session_id");
+          url.searchParams.delete("step");
+          window.history.replaceState({}, "", url.toString());
+        }
+      }
+
       const r = await fetch(`/api/clients/${slug}/onboarding`);
       if (r.status === 401) {
         router.push(`/clients/${slug}/login?next=/clients/${slug}/onboarding`);
@@ -267,6 +290,7 @@ export default function OnboardingPage({
             )}
             {active === "payment" && (
               <PaymentForm
+                slug={slug}
                 initial={row.step_payment as Partial<PaymentData> | null}
                 onSubmit={(d) => saveStep("payment", d)}
                 saving={saving}
@@ -551,41 +575,120 @@ interface PaymentData {
   notes: string;
 }
 
-function PaymentForm({ initial, onSubmit, saving }: { initial: Partial<PaymentData> | null; onSubmit: (d: Record<string, unknown>) => void; saving: boolean }) {
+function PaymentForm({
+  slug,
+  initial,
+  onSubmit,
+  saving,
+}: {
+  slug: string;
+  initial: Partial<PaymentData> | null;
+  onSubmit: (d: Record<string, unknown>) => void;
+  saving: boolean;
+}) {
   const [d, setD] = useState<PaymentData>({
     card_last4: initial?.card_last4 ?? "",
     card_brand: initial?.card_brand ?? "",
-    pending_manual_capture: initial?.pending_manual_capture ?? true,
+    pending_manual_capture: initial?.pending_manual_capture ?? false,
     notes: initial?.notes ?? "",
   });
+  const [redirecting, setRedirecting] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const cardOnFile = !!d.card_last4;
+
+  async function startCheckout() {
+    setRedirecting(true);
+    setErr(null);
+    try {
+      const r = await fetch(`/api/clients/${slug}/onboarding/payment/start`, {
+        method: "POST",
+      });
+      const j = await r.json();
+      if (!j.ok) {
+        setErr(j.error || "Could not start Stripe checkout");
+        setRedirecting(false);
+        return;
+      }
+      window.location.href = j.url;
+    } catch (e) {
+      setErr((e as Error).message);
+      setRedirecting(false);
+    }
+  }
+
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(d as unknown as Record<string, unknown>); }} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(d as unknown as Record<string, unknown>);
+      }}
+      className="space-y-4"
+    >
       <H2>Card on file</H2>
       <p className="text-sm text-slate-400">
         We pass through your real costs at cost (Twilio ~$1.15/mo per number,
-        Lob postage, ad spend). For security, you&apos;ll get a Stripe secure
-        link by email — we never see your card number on this screen.
+        Lob postage, ad spend). Card data goes straight to Stripe — we
+        never see your number.
       </p>
-      <div className="rounded-lg border border-sky-500/30 bg-sky-500/5 p-4 text-sm text-sky-200">
-        <p className="font-semibold mb-1">What happens next</p>
-        <p>
-          When you submit this step, BlueJays emails you a one-time Stripe
-          payment link. The card you enter there gets saved against your
-          BlueJays customer ID and is only charged for pass-through costs
-          you&apos;ve approved.
-        </p>
-      </div>
-      <Check
-        label="I understand BlueJays will email me a Stripe link to capture my card"
-        value={d.pending_manual_capture}
-        onChange={(v) => setD({ ...d, pending_manual_capture: v })}
-      />
+
+      {cardOnFile ? (
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
+          <p className="text-sm font-semibold text-emerald-200">
+            ✓ Card on file
+          </p>
+          <p className="text-sm text-emerald-200/80 mt-1">
+            {d.card_brand || "Card"} ending in {d.card_last4}
+          </p>
+          <button
+            type="button"
+            onClick={startCheckout}
+            disabled={redirecting}
+            className="mt-3 text-xs underline text-emerald-300 hover:text-emerald-200"
+          >
+            Replace card
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={startCheckout}
+          disabled={redirecting}
+          className="w-full rounded-lg bg-sky-500 hover:bg-sky-400 disabled:bg-slate-700 text-slate-950 font-semibold px-5 py-3 text-sm"
+        >
+          {redirecting ? "Redirecting to Stripe…" : "Add card via Stripe →"}
+        </button>
+      )}
+
+      {err && <p className="text-sm text-rose-400">{err}</p>}
+
+      <details className="text-xs text-slate-500 cursor-pointer">
+        <summary className="hover:text-slate-300 transition-colors">
+          Prefer a secure link by email instead?
+        </summary>
+        <div className="mt-3 space-y-3">
+          <p className="text-slate-400">
+            Skip the Stripe redirect and Ben will email you a one-time secure
+            payment link.
+          </p>
+          <Check
+            label="Yes — send me a secure link by email"
+            value={d.pending_manual_capture}
+            onChange={(v) => setD({ ...d, pending_manual_capture: v })}
+          />
+        </div>
+      </details>
+
       <Textarea
-        label="Anything we should know? (preferred billing email, accounting contact, etc.)"
+        label="Billing notes (optional)"
         value={d.notes}
         onChange={(v) => setD({ ...d, notes: v })}
+        placeholder="Preferred billing email, accounting contact, etc."
       />
-      <SubmitButton saving={saving} disabled={!d.pending_manual_capture}>
+
+      <SubmitButton
+        saving={saving}
+        disabled={!cardOnFile && !d.pending_manual_capture}
+      >
         Save & continue
       </SubmitButton>
     </form>

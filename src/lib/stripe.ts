@@ -281,6 +281,132 @@ export async function createCheckoutSession(
 }
 
 /**
+ * Create a Stripe Checkout Session in SETUP mode — captures a card on
+ * file without charging it. Used during client onboarding (step 5 —
+ * "Card on file") so the customer's card lands in Stripe as a
+ * payment_method tied to a Customer, ready for pass-through billing
+ * (Twilio, Lob, ad-spend at-cost).
+ *
+ * Returns the hosted session URL — caller redirects the browser there.
+ * Stripe redirects back to success_url with a {CHECKOUT_SESSION_ID}
+ * placeholder which the callback route uses to retrieve setup_intent +
+ * payment_method details (last4, brand) for display.
+ *
+ * Mock mode: when STRIPE_SECRET_KEY is unset, returns a fake URL that
+ * loops back to the onboarding page with a `?mock=ok` flag so local
+ * dev can test the success path without Stripe credentials.
+ */
+export interface SetupSession {
+  id: string;
+  url: string;
+  customerId: string | null;
+}
+
+export async function createSetupCheckoutSession(opts: {
+  clientSlug: string;
+  email: string;
+  businessName: string;
+  successPath: string; // e.g. /clients/meyer-electric/onboarding?step=payment&setup=ok
+  cancelPath: string;
+  /** Existing Stripe customer id, if any. When omitted we create a new one. */
+  existingCustomerId?: string;
+}): Promise<SetupSession> {
+  if (!STRIPE_SECRET_KEY) {
+    return {
+      id: `mock_setup_${opts.clientSlug}`,
+      url: `${opts.successPath}${opts.successPath.includes("?") ? "&" : "?"}mock=ok`,
+      customerId: null,
+    };
+  }
+
+  const stripe = getStripe();
+  const baseUrl = "https://bluejayportfolio.com";
+
+  // Reuse or create a Stripe Customer for this client. We carry
+  // `client_slug` in metadata so the customer can be looked up later.
+  let customerId = opts.existingCustomerId;
+  if (!customerId) {
+    const customer = await stripe.customers.create({
+      email: opts.email,
+      name: opts.businessName,
+      metadata: {
+        client_slug: opts.clientSlug,
+        source: "bluejays_onboarding",
+      },
+    });
+    customerId = customer.id;
+  }
+
+  const successUrl = opts.successPath.startsWith("http")
+    ? opts.successPath
+    : `${baseUrl}${opts.successPath}`;
+  const cancelUrl = opts.cancelPath.startsWith("http")
+    ? opts.cancelPath
+    : `${baseUrl}${opts.cancelPath}`;
+
+  const sep = successUrl.includes("?") ? "&" : "?";
+  const session = await stripe.checkout.sessions.create({
+    mode: "setup",
+    payment_method_types: ["card"],
+    customer: customerId,
+    success_url: `${successUrl}${sep}session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: cancelUrl,
+    metadata: {
+      client_slug: opts.clientSlug,
+      type: "onboarding_card_capture",
+    },
+  });
+
+  return {
+    id: session.id,
+    url: session.url!,
+    customerId,
+  };
+}
+
+/**
+ * Retrieve a setup-mode Checkout Session + drill into the
+ * payment_method it captured, returning a tiny safe summary
+ * (last4, brand, customer_id, setup_intent_id).
+ */
+export async function retrieveSetupSession(sessionId: string): Promise<{
+  setupIntentId: string | null;
+  customerId: string | null;
+  paymentMethodId: string | null;
+  last4: string | null;
+  brand: string | null;
+}> {
+  if (!STRIPE_SECRET_KEY) {
+    return {
+      setupIntentId: null,
+      customerId: null,
+      paymentMethodId: null,
+      last4: null,
+      brand: null,
+    };
+  }
+  const stripe = getStripe();
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["setup_intent.payment_method"],
+  });
+  const setupIntent =
+    session.setup_intent && typeof session.setup_intent !== "string"
+      ? session.setup_intent
+      : null;
+  const paymentMethod =
+    setupIntent?.payment_method && typeof setupIntent.payment_method !== "string"
+      ? setupIntent.payment_method
+      : null;
+  return {
+    setupIntentId: setupIntent?.id ?? null,
+    customerId: typeof session.customer === "string" ? session.customer : session.customer?.id ?? null,
+    paymentMethodId: paymentMethod?.id ?? null,
+    last4: paymentMethod?.card?.last4 ?? null,
+    brand: paymentMethod?.card?.brand ?? null,
+  };
+}
+
+/**
  * Verify a Stripe webhook signature and parse the event.
  */
 export function constructWebhookEvent(

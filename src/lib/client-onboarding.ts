@@ -88,6 +88,9 @@ export interface AccountsStep {
 export interface PaymentStep {
   /** Stripe SetupIntent id once captured. We never store PAN. */
   stripe_setup_intent_id?: string;
+  /** Stripe Customer id — reused across resumes so the same customer
+   *  gets multiple payment_methods rather than a new customer per try. */
+  stripe_customer_id?: string;
   /** Last 4 of card for operator-side display only. */
   card_last4?: string;
   card_brand?: string;
