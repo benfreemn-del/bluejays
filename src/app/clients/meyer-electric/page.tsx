@@ -597,14 +597,31 @@ export default function MeyerElectricPage() {
               {["2020", "2022", "2024", "2025"].map((yr) => (
                 <span
                   key={yr}
-                  className="inline-flex items-center justify-center min-w-[58px] px-3 py-1.5 rounded-md text-[12px] font-bold tracking-wider"
+                  className="group inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[12px] font-bold tracking-wider transition-transform hover:-translate-y-0.5"
                   style={{
-                    background: "rgba(249, 115, 22, 0.10)",
-                    border: "1px solid rgba(249, 115, 22, 0.35)",
-                    color: ACCENT,
+                    // Amber→orange diagonal gradient matches the FIRE_GRAD
+                    // language used in the page's CTAs, so the badges read
+                    // as part of the brand system instead of decoration.
+                    background:
+                      "linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(249, 115, 22, 0.22) 100%)",
+                    // Slightly inset highlight (top) + warm border for the
+                    // medal-like "stamped metal" feel.
+                    border: "1px solid rgba(249, 115, 22, 0.55)",
+                    boxShadow:
+                      "0 1px 0 rgba(255, 200, 120, 0.18) inset, 0 4px 12px rgba(249, 115, 22, 0.18)",
+                    color: ACCENT_AMBER,
                     fontFamily: FONT_HEAD,
                   }}
+                  aria-label={`Voted #1 Electrician — Clallam County — ${yr}`}
                 >
+                  <Star
+                    size={13}
+                    weight="fill"
+                    style={{
+                      color: ACCENT_AMBER,
+                      filter: "drop-shadow(0 0 4px rgba(251, 191, 36, 0.6))",
+                    }}
+                  />
                   {yr}
                 </span>
               ))}
