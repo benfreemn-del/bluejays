@@ -4,7 +4,7 @@ import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 /**
  * Layout for /clients/meyer-electric — Meyer Electric LLC, Sequim WA.
  * Custom-tier bespoke premium build for the Olympic Peninsula's Tesla
- * Powerwall Certified Installer + Generac Authorized Dealer + general
+ * Powerwall Certified Installer + Generac Certified Installer + general
  * licensed electrical contractor.
  *
  * Aesthetic: dark electrician — pure near-black background with bright
@@ -32,7 +32,7 @@ const HERO_OG_IMAGE = `${SITE_URL}/images/meyer-electric/hero-powerwall-storm.jp
 const TITLE =
   "Meyer Electric LLC — Tesla Powerwall, Generators & Licensed Electrician · Sequim, WA";
 const DESCRIPTION =
-  "Olympic Peninsula's Tesla Powerwall Certified Installer + Generac Authorized Dealer. Licensed, bonded & insured. 15+ years powering Sequim, Port Angeles, Port Townsend, and the entire Olympic Peninsula. Call (360) 477-2202.";
+  "Olympic Peninsula's Tesla Powerwall Certified Installer + Generac Certified Installer. Licensed, bonded & insured. 15+ years powering Sequim, Port Angeles, Port Townsend, and the entire Olympic Peninsula. Call (360) 477-2202.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     "electrician Sequim WA",
     "Tesla Powerwall installer Sequim",
     "Tesla Powerwall Certified Installer",
-    "Generac Authorized Dealer Sequim",
+    "Generac Certified Installer Sequim",
     "Generac generator installation Sequim",
     "Olympic Peninsula electrician",
     "Port Angeles electrician",
@@ -112,7 +112,7 @@ const meyerSchema = {
   name: "Meyer Electric LLC",
   alternateName: "Meyer Electric",
   description:
-    "Tesla Powerwall Certified Installer + Generac Authorized Dealer serving the Olympic Peninsula. Licensed, bonded & insured electrical contractor with 15+ years of clean, code-compliant installations.",
+    "Tesla Powerwall Certified Installer + Generac Certified Installer serving the Olympic Peninsula. Licensed, bonded & insured electrical contractor with 15+ years of clean, code-compliant installations.",
   url: PAGE_URL,
   image: HERO_OG_IMAGE,
   logo: `${SITE_URL}/images/meyer-electric/banner-logo.jpg`,

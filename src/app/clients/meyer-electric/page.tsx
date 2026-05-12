@@ -6,7 +6,7 @@
  * /clients/meyer-electric — Meyer Electric LLC, Sequim WA
  *
  * Custom-tier bespoke premium showcase for the Olympic Peninsula's
- * Tesla Powerwall Certified Installer + Generac Authorized Dealer +
+ * Tesla Powerwall Certified Installer + Generac Certified Installer +
  * licensed electrical contractor. Real services + real photos + real
  * trust signals from sequimelectrician.com — recolored to a yellow-on-
  * black trade-dress that screams "modern electrician, premium energy
@@ -326,7 +326,7 @@ type QuizOption = {
 // upfront pricing, 15+ yr local, owner-operated, peninsula-wide.
 const COMPARISON_ROWS: Array<{ label: string; meyer: string; avg: string }> = [
   { label: "Tesla Powerwall Certified Installer", meyer: "yes", avg: "Sometimes" },
-  { label: "Generac Authorized Dealer", meyer: "yes", avg: "Rarely" },
+  { label: "Generac Certified Installer", meyer: "yes", avg: "Rarely" },
   { label: "Licensed, bonded & insured", meyer: "yes", avg: "Usually" },
   { label: "15+ years on the Olympic Peninsula", meyer: "yes", avg: "Varies" },
   { label: "Upfront pricing — no surprise change orders", meyer: "yes", avg: "Time + materials" },
@@ -363,7 +363,7 @@ export default function MeyerElectricPage() {
       label: "Need a backup generator",
       icon: <Plug size={24} weight="fill" />,
       rec:
-        "Generac standby. Sized to your real load (not oversold), fueled by propane or natural gas, tested weekly without you lifting a finger. 5-year warranty.",
+        "Generac standby. Sized to your real load (not oversold), fueled by propane or natural gas, tested weekly without you lifting a finger. 5-year limited warranty from Generac (manufacturer).",
       ctaHref: "#generators",
       ctaText: "See Generator Details",
       color: ACCENT_ORANGE,
@@ -1375,7 +1375,7 @@ export default function MeyerElectricPage() {
                 }}
               >
                 <Plug size={13} weight="fill" />
-                Generac Authorized Dealer
+                Generac Certified Installer
               </div>
               <h2
                 className="text-[34px] sm:text-[44px] lg:text-[52px] font-bold leading-[1.05] tracking-tight text-white"
@@ -1408,7 +1408,7 @@ export default function MeyerElectricPage() {
                 />
                 <FeatureBullet
                   icon={<Shield size={18} weight="fill" />}
-                  text="5-year limited warranty"
+                  text="5-year limited warranty from Generac (manufacturer)"
                 />
               </div>
 
@@ -1503,7 +1503,7 @@ export default function MeyerElectricPage() {
                 <WhyBullet text={`${BUSINESS.yearsInBusiness}+ years on the Olympic Peninsula`} />
                 <WhyBullet text="Licensed, bonded, and insured" />
                 <WhyBullet text="Tesla Powerwall Certified Installer" />
-                <WhyBullet text="Generac Authorized Dealer" />
+                <WhyBullet text="Generac Certified Installer" />
                 <WhyBullet text="Upfront pricing — no surprise change orders" />
                 <WhyBullet text="Local, owner-operated, code-first crew" />
               </ul>
@@ -1949,7 +1949,7 @@ export default function MeyerElectricPage() {
                 <ContactRow
                   icon={<Calendar size={18} weight="fill" />}
                   label="Hours"
-                  value="Mon-Fri · 8 AM to 5 PM"
+                  value="Mon-Fri · 7:15 AM to 3:15 PM"
                 />
                 <ContactRow
                   icon={<Certificate size={18} weight="fill" />}
@@ -2010,7 +2010,7 @@ export default function MeyerElectricPage() {
                 style={{ color: INK_DIM, fontFamily: FONT_BODY }}
               >
                 Olympic Peninsula&rsquo;s Tesla Powerwall Certified Installer
-                and Generac Authorized Dealer. {BUSINESS.yearsInBusiness}+ years
+                and Generac Certified Installer. {BUSINESS.yearsInBusiness}+ years
                 of clean, code-compliant electrical work.
               </p>
             </div>
