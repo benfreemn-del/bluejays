@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Page, PageHeader, Card, Pill, StatusDot, SectionLabel, Button, ErrorHint, type Tone } from "@/components/ui";
 
 /**
  * /dashboard/backend-audit — operator-facing integration status board.
@@ -30,16 +31,10 @@ interface Setting {
   updated_at: string;
 }
 
-const PILL_CLASS: Record<Subsystem["state"], string> = {
-  green: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40",
-  yellow: "bg-amber-500/15 text-amber-300 border border-amber-500/40",
-  red: "bg-rose-500/15 text-rose-300 border border-rose-500/40",
-};
-
-const PILL_DOT: Record<Subsystem["state"], string> = {
-  green: "bg-emerald-400",
-  yellow: "bg-amber-400",
-  red: "bg-rose-400",
+const TONE_FOR_STATE: Record<Subsystem["state"], Tone> = {
+  green: "emerald",
+  yellow: "amber",
+  red: "rose",
 };
 
 export default function BackendAuditPage() {
@@ -91,104 +86,82 @@ export default function BackendAuditPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto max-w-4xl px-6 py-10 space-y-10">
-        <header>
-          <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
-            BlueJays internal · operator
-          </p>
-          <h1 className="text-3xl font-bold mb-2">Backend audit</h1>
-          <p className="text-sm text-slate-400 max-w-2xl">
-            Live status of every operating system. Companion to{" "}
-            <code className="text-slate-300">docs/THEORETICAL_BACKEND_AUDIT.md</code> —
-            that&apos;s the architectural narrative, this is the dashboard.
-          </p>
-        </header>
+    <Page max="4xl">
+      <PageHeader
+        eyebrow="BlueJays internal · operator"
+        title="Backend audit"
+        description="Live status of every operating system. Companion to docs/THEORETICAL_BACKEND_AUDIT.md — that's the architectural narrative, this is the dashboard."
+      />
 
-        {err && <p className="text-sm text-rose-400">{err}</p>}
+      {err && <ErrorHint>{err}</ErrorHint>}
 
-        {/* ─── INTEGRATION STATUS ─── */}
-        <section className="space-y-2">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
-              Integrations
-            </h2>
-            <button
-              onClick={load}
-              className="text-xs text-slate-500 hover:text-white"
-            >
-              {loading ? "Refreshing…" : "Refresh"}
-            </button>
-          </div>
-          {subsystems.map((s) => (
-            <div
-              key={s.key}
-              className="rounded-xl border border-white/10 bg-slate-900/60 px-5 py-3 flex items-center gap-4"
-            >
-              <span className={`shrink-0 w-2.5 h-2.5 rounded-full ${PILL_DOT[s.state]}`} />
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white text-sm">{s.label}</p>
-                <p className="text-xs text-slate-400 mt-0.5 truncate">{s.detail}</p>
-              </div>
-              <span
-                className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 ${PILL_CLASS[s.state]}`}
-              >
-                {s.state}
-              </span>
-              {s.drilldown_href && (
-                <Link
-                  href={s.drilldown_href}
-                  className="text-xs text-sky-400 hover:underline shrink-0"
-                >
-                  open →
-                </Link>
-              )}
+      {/* ─── INTEGRATION STATUS ─── */}
+      <section className="space-y-2 mb-10">
+        <div className="flex items-center justify-between mb-2">
+          <SectionLabel>Integrations</SectionLabel>
+          <Button variant="ghost" size="sm" onClick={load}>
+            {loading ? "Refreshing…" : "Refresh"}
+          </Button>
+        </div>
+        {subsystems.map((s) => (
+          <Card key={s.key} className="!p-4 flex items-center gap-4">
+            <StatusDot tone={TONE_FOR_STATE[s.state]} className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-sm">{s.label}</p>
+              <p className="text-xs text-slate-400 mt-0.5 truncate">{s.detail}</p>
             </div>
-          ))}
-        </section>
+            <Pill tone={TONE_FOR_STATE[s.state]}>{s.state}</Pill>
+            {s.drilldown_href && (
+              <Link
+                href={s.drilldown_href}
+                className="text-xs text-sky-400 hover:underline shrink-0"
+              >
+                open →
+              </Link>
+            )}
+          </Card>
+        ))}
+      </section>
 
-        {/* ─── CYCLE-TIME SLIDER ─── */}
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">
-            Hyperloop cycle-time
-          </h2>
-          <p className="text-sm text-slate-400 mb-4 max-w-2xl">
-            Dial how fast the AI variant-feedback loop calls a winner /
-            kills a loser. Lower = faster decisions, more variance. Higher
-            = slower decisions, more confidence. Changes apply within ~60
-            seconds (settings cache TTL).
-          </p>
+      {/* ─── CYCLE-TIME SLIDER ─── */}
+      <section>
+        <SectionLabel className="mb-2">Hyperloop cycle-time</SectionLabel>
+        <p className="text-sm text-slate-400 mb-4 max-w-2xl">
+          Dial how fast the AI variant-feedback loop calls a winner /
+          kills a loser. Lower = faster decisions, more variance. Higher
+          = slower decisions, more confidence. Changes apply within ~60
+          seconds (settings cache TTL).
+        </p>
 
-          <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5 space-y-6">
-            <SliderRow
-              label="Verdict threshold"
-              hint="Below this many impressions, variants stay in 'testing'. Default 200."
-              min={50}
-              max={1000}
-              step={50}
-              value={getNumber("hyperloop.min_impressions_for_verdict", 200)}
-              saving={saving === "hyperloop.min_impressions_for_verdict"}
-              onChange={(v) => setSetting("hyperloop.min_impressions_for_verdict", v)}
-            />
-            <SliderRow
-              label="Loser kill threshold"
-              hint="Above this many impressions with zero conversions → auto-pause. Default 400."
-              min={100}
-              max={2000}
-              step={100}
-              value={getNumber("hyperloop.min_impressions_for_loser", 400)}
-              saving={saving === "hyperloop.min_impressions_for_loser"}
-              onChange={(v) => setSetting("hyperloop.min_impressions_for_loser", v)}
-            />
-          </div>
+        <Card className="space-y-6">
+          <SliderRow
+            label="Verdict threshold"
+            hint="Below this many impressions, variants stay in 'testing'. Default 200."
+            min={50}
+            max={1000}
+            step={50}
+            value={getNumber("hyperloop.min_impressions_for_verdict", 200)}
+            saving={saving === "hyperloop.min_impressions_for_verdict"}
+            onChange={(v) => setSetting("hyperloop.min_impressions_for_verdict", v)}
+          />
+          <SliderRow
+            label="Loser kill threshold"
+            hint="Above this many impressions with zero conversions → auto-pause. Default 400."
+            min={100}
+            max={2000}
+            step={100}
+            value={getNumber("hyperloop.min_impressions_for_loser", 400)}
+            saving={saving === "hyperloop.min_impressions_for_loser"}
+            onChange={(v) => setSetting("hyperloop.min_impressions_for_loser", v)}
+          />
+        </Card>
 
-          <p className="text-[11px] text-slate-500 mt-3">
-            Defaults are tuned for $50–100/day ad budgets. Scale up: pick
-            higher thresholds. Scale down: pick lower.
-          </p>
-        </section>
-      </div>
-    </main>
+        <p className="text-[11px] text-slate-500 mt-3">
+          Defaults are tuned for $50–100/day ad budgets. Scale up: pick
+          higher thresholds. Scale down: pick lower.
+        </p>
+      </section>
+    </Page>
   );
 }
 

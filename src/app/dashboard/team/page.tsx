@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Page, PageHeader, ErrorHint } from "@/components/ui";
 
 /**
  * /dashboard/team — manage BlueJays sales staff.
@@ -116,21 +117,14 @@ export default function TeamPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <header className="mb-8">
-          <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
-            BlueJays internal · operator
-          </p>
-          <h1 className="text-3xl font-bold mb-2">Team</h1>
-          <p className="text-sm text-slate-400 max-w-2xl">
-            Salespeople you&apos;ve added. Each one logs in at <code className="text-slate-300">/login</code> with
-            their email + the password you set here. Toggle &quot;active&quot; off to instantly
-            revoke access.
-          </p>
-        </header>
+    <Page max="4xl">
+      <PageHeader
+        eyebrow="BlueJays internal · operator"
+        title="Team"
+        description="Salespeople you've added. Each one logs in at /login with their email + the password you set here. Toggle 'active' off to instantly revoke access."
+      />
 
-        {err && <p className="mb-4 text-sm text-rose-400">{err}</p>}
+      {err && <div className="mb-4"><ErrorHint>{err}</ErrorHint></div>}
 
         {/* CREATE */}
         <section className="mb-8 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
@@ -266,7 +260,6 @@ export default function TeamPage() {
             </div>
           ))}
         </div>
-      </div>
-    </main>
+    </Page>
   );
 }

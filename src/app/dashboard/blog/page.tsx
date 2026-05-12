@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Page, PageHeader, Button, Pill, EmptyState, ErrorHint, type Tone } from "@/components/ui";
 
 /**
  * /dashboard/blog — operator view of the SEO blog system.
@@ -24,10 +25,10 @@ interface Post {
   updated_at: string;
 }
 
-const STATUS_STYLES: Record<Post["status"], string> = {
-  draft: "bg-amber-500/15 text-amber-300 border border-amber-500/30",
-  published: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30",
-  archived: "bg-slate-800 text-slate-400 border border-slate-700",
+const STATUS_TONE: Record<Post["status"], Tone> = {
+  draft: "amber",
+  published: "emerald",
+  archived: "slate",
 };
 
 export default function BlogDashboardPage() {
@@ -83,37 +84,28 @@ export default function BlogDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <header className="mb-8 flex items-end justify-between flex-wrap gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
-              BlueJays internal · SEO
-            </p>
-            <h1 className="text-3xl font-bold mb-2">Blog</h1>
-            <p className="text-sm text-slate-400 max-w-2xl">
-              Daily auto-drafts from the cron. Review, edit if needed, hit Publish
-              to go live at <code className="text-slate-300">/blog/[slug]</code>.
-            </p>
-          </div>
-          <button
-            onClick={generateNew}
-            disabled={generating}
-            className="rounded-lg bg-sky-500 hover:bg-sky-400 disabled:bg-slate-700 text-slate-950 font-semibold px-4 py-2.5 text-sm"
-          >
+    <Page max="4xl">
+      <PageHeader
+        eyebrow="BlueJays internal · SEO"
+        title="Blog"
+        description="Daily auto-drafts from the cron. Review, edit if needed, hit Publish to go live at /blog/[slug]."
+        actions={
+          <Button onClick={generateNew} disabled={generating}>
             {generating ? "Writing…" : "Write a new post"}
-          </button>
-        </header>
+          </Button>
+        }
+      />
 
-        {err && <p className="mb-4 text-sm text-rose-400">{err}</p>}
-        {loading && <p className="text-sm text-slate-500">Loading…</p>}
+      {err && <div className="mb-4"><ErrorHint>{err}</ErrorHint></div>}
+      {loading && <p className="text-sm text-slate-500">Loading…</p>}
 
-        {!loading && posts.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-8 text-center text-slate-500 text-sm">
-            No posts yet. Click <b>Write a new post</b> to generate the first
-            one, or wait for the 09:00 UTC cron.
-          </div>
-        )}
+      {!loading && posts.length === 0 && (
+        <EmptyState
+          icon="📝"
+          title="No posts yet"
+          description="Click 'Write a new post' to generate the first one, or wait for the 09:00 UTC cron."
+        />
+      )}
 
         <div className="space-y-2">
           {posts.map((p) => (
@@ -125,11 +117,9 @@ export default function BlogDashboardPage() {
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-white">
                     {p.title}{" "}
-                    <span
-                      className={`ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_STYLES[p.status]}`}
-                    >
+                    <Pill tone={STATUS_TONE[p.status]} className="ml-2">
                       {p.status}
-                    </span>
+                    </Pill>
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {new Date(p.created_at).toLocaleString()}
@@ -181,7 +171,6 @@ export default function BlogDashboardPage() {
             </div>
           ))}
         </div>
-      </div>
-    </main>
+    </Page>
   );
 }
