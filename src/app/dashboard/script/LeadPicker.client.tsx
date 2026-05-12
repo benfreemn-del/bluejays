@@ -68,9 +68,26 @@ export default function LeadPicker() {
   // category values present in the loaded prospects.
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   // Sort dropdown — the caller picks how the picker is ordered.
+  // Default sort for sales reps is "fit" so their priority leads
+  // bubble to the top instead of being buried under newer junk.
+  // Verified live 2026-05-12 — Madie's queue surfaced weak event-
+  // planning prospects first because they were newest. Defaulting to
+  // hormozi-fit-desc fixes the triage flow she actually cares about.
+  // (role is already declared at the top of this component — reuse.)
+  // useRole() resolves async (reads document.cookie in useEffect after
+  // mount), so on first render role="owner" and useState locks in
+  // "newest". The useEffect below flips to "fit" once role hydrates
+  // to "sales" — guarded by `userTouchedSort` so we never overwrite a
+  // manual choice after the user picks something themselves.
   const [sortBy, setSortBy] = useState<
-    "newest" | "oldest" | "category" | "source" | "status"
+    "fit" | "newest" | "oldest" | "category" | "source" | "status"
   >("newest");
+  const [userTouchedSort, setUserTouchedSort] = useState(false);
+  useEffect(() => {
+    if (userTouchedSort) return;
+    if (role === "sales") setSortBy("fit");
+    // role="owner" → leave default ("newest")
+  }, [role, userTouchedSort]);
   // Sales portal is this tool now. Ben can override with
   // ?mode=ben on the URL if he ever wants to use his original
   // cold-call Hormozi script — the toggle UI was removed since
@@ -365,6 +382,17 @@ export default function LeadPicker() {
     // Sort
     const sorted = [...filtered];
     switch (sortBy) {
+      case "fit":
+        // Hormozi-fit score desc, then newest within same score. Nulls
+        // (unscored prospects) fall to the bottom — they shouldn't
+        // beat any scored prospect.
+        sorted.sort((a, b) => {
+          const sa = a.hormoziFitScore ?? -1;
+          const sb = b.hormoziFitScore ?? -1;
+          if (sb !== sa) return sb - sa;
+          return (b.createdAt || "").localeCompare(a.createdAt || "");
+        });
+        break;
       case "newest":
         sorted.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
         break;
@@ -556,10 +584,14 @@ export default function LeadPicker() {
             </select>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              onChange={(e) => {
+                setUserTouchedSort(true);
+                setSortBy(e.target.value as typeof sortBy);
+              }}
               className="h-9 px-2 rounded-lg bg-background border border-border text-xs text-foreground focus:outline-none focus:border-pink-500/50"
               title="Sort the list"
             >
+              <option value="fit">🔥 Sort: Best fit</option>
               <option value="newest">Sort: Newest</option>
               <option value="oldest">Sort: Oldest</option>
               <option value="category">Sort: Category</option>
