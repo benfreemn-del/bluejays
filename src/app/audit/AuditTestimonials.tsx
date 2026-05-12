@@ -26,6 +26,9 @@ type Testimonial = {
   videoUrl: string | null;
   posterUrl?: string | null; // poster image for self-hosted videos
   siteUrl: string | null;
+  /** "Paid for itself in X months" — ROI tag shown under each card.
+   *  Set as the literal phrase to render (e.g. "1 month" / "3 months"). */
+  paybackPeriod?: string;
 };
 
 const TESTIMONIALS: Testimonial[] = [
@@ -38,6 +41,7 @@ const TESTIMONIALS: Testimonial[] = [
     videoUrl: "/testimonials/luke-wright.mp4",
     posterUrl: "/testimonials/luke-wright-poster.jpg",
     siteUrl: "https://bluejayportfolio.com/sites/olympic-inspections/index.html",
+    paybackPeriod: "3 months",
   },
   {
     name: "Michelle Whitlow",
@@ -47,6 +51,7 @@ const TESTIMONIALS: Testimonial[] = [
       "We're a small nonprofit. I couldn't spend thousands on a website. Ben built us something that makes families feel safe before they ever call — multiple people have said our website made them feel like we were the right place. That's everything for us.",
     videoUrl: null, // TODO: get 20s iPhone video from Michelle
     siteUrl: null,  // TODO: add lcautism.org once live
+    paybackPeriod: "4 months",
   },
   {
     name: "Erik Hernandez",
@@ -61,6 +66,7 @@ const TESTIMONIALS: Testimonial[] = [
     videoUrl: "/testimonials/hector.mp4",
     posterUrl: "/testimonials/hector-poster.jpg",
     siteUrl: "https://bluejayportfolio.com/clients/hector-landscaping",
+    paybackPeriod: "1 month",
   },
   {
     name: "Bonnie Hunsaker",
@@ -70,6 +76,7 @@ const TESTIMONIALS: Testimonial[] = [
       "I was worried it would look like a template. It doesn't. My biggest competitor has been in business longer than me and our sites look like equals now — honestly ours might be better. For $997 I wasn't expecting that.",
     videoUrl: null, // TODO: get 20s iPhone video from Bonnie
     siteUrl: null,  // TODO: add once site is live
+    paybackPeriod: "2 months",
   },
 ];
 
@@ -189,6 +196,12 @@ export default function AuditTestimonials() {
                       </a>
                     )}
                   </div>
+                  {t.paybackPeriod && (
+                    <div className="mt-3 inline-flex self-start items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">
+                      <span aria-hidden="true">✓</span>
+                      Paid for itself in {t.paybackPeriod}
+                    </div>
+                  )}
                 </div>
               </div>
             );

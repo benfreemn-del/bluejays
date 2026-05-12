@@ -108,7 +108,7 @@ const PHOTOS = {
 
   // ─── FULL BACKYARD TRANSFORMATION ─── The "whole deal" wide shot:
   // patio + dry creek + curved beds + bushes + fresh lawn + house in
-  // frame. Used as the About Hector spotlight + featured project lead.
+  // frame. Used as the About Erik spotlight + featured project lead.
   fullYard: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1567477064017-WYM36TXYQVTAVMT045FC/maxresdefault.jpg",
 
   // ─── HARDSCAPE & PAVERS — Squarespace web crops (lower res but
@@ -403,11 +403,11 @@ const services = [
 
 // Process — 5 steps, voiced for Hector. Site visit → concept → plants → install → aftercare.
 const processSteps = [
-  { step: "01", title: "Site Visit", desc: "Hector walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the two-county service area. ", icon: Eye },
+  { step: "01", title: "Site Visit", desc: "Erik walks the property with you, listens to what you want, and looks at soil, drainage, sun, and what's already growing well. No charge across the two-county service area. ", icon: Eye },
   { step: "02", title: "Concept & Design", desc: "A concept drawing with materials, planting plan, and a clear scope. You see the install on paper before we break ground — phased to your budget if it needs to be.", icon: Ruler },
   { step: "03", title: "Plant Selection", desc: "Plants picked for your site — natives and climate-adapted species first. Forty-nine seasons of installs in this region tells you which ones make it past their second winter.", icon: Plant },
-  { step: "04", title: "Installation", desc: "One crew, run by Hector, from the first cleared lot to the last finished bed. Every discipline in-house — design, hardscape, irrigation, planting, sod. When it's done, you walk the yard with Hector for a final pass.", icon: Shovel },
-  { step: "05", title: "Hand-Off", desc: "Final walk-through, plant care notes, and your direct line to Hector for any post-install questions. We're around for the next phase whenever it lands — most of our work is repeat clients calling back for the next yard or a friend's.", icon: Heart },
+  { step: "04", title: "Installation", desc: "One crew, run by Erik, from the first cleared lot to the last finished bed. Every discipline in-house — design, hardscape, irrigation, planting, sod. When it's done, you walk the yard with Erik for a final pass.", icon: Shovel },
+  { step: "05", title: "Hand-Off", desc: "Final walk-through, plant care notes, and your direct line to Erik for any post-install questions. We're around for the next phase whenever it lands — most of our work is repeat clients calling back for the next yard or a friend's.", icon: Heart },
 ];
 
 // 5 named Hector Landscaping projects, mapped from the existing PROJECTS array. Each
@@ -660,7 +660,7 @@ export default function HectorLandscapingLandscapingPage() {
                   >
                     Hardscapes, pavers, retaining walls, sod, and full-yard
                     transformations across the greater Renton area.
-                    Owner-operated by Hector — every project is hands-on,
+                    Owner-operated by Erik — every project is hands-on,
                     on-budget, and built to last more than a decade.
                   </motion.p>
 
@@ -682,7 +682,7 @@ export default function HectorLandscapingLandscapingPage() {
                     <a href={BUSINESS.phoneHref}>
                       <MagneticButton className="px-7 py-3.5 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                         <Phone size={18} weight="duotone" />
-                        Call Hector
+                        Call Erik
                       </MagneticButton>
                     </a>
                   </motion.div>
@@ -854,7 +854,7 @@ export default function HectorLandscapingLandscapingPage() {
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
-              { icon: Certificate, title: "Same Family Since 2018", desc: "Owner-operated by Hector — same standard, same crew style, the whole way through. Most of our work is repeat clients calling back for the next phase." },
+              { icon: Certificate, title: "Same Family Since 2018", desc: "Owner-operated by Erik — same standard, same crew style, the whole way through. Most of our work is repeat clients calling back for the next phase." },
               { icon: PaintBrush, title: "Design You See First", desc: "A concept and planting plan with materials and scope, before we break ground. The install runs from the same drawing." },
               { icon: ShieldCheck, title: "Engineered to Last", desc: "Walls, walkways, and stone work sized for a Pacific Northwest rainy season — not for a finish photograph." },
               { icon: Recycle, title: "Climate-Smart First", desc: "PNW natives and adapted species default. Lower water, lower maintenance, plants that make it past their second winter." },
@@ -939,10 +939,10 @@ export default function HectorLandscapingLandscapingPage() {
             <div>
               <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>About</p>
               <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Meet Hector" />
+                <WordReveal text="Meet Erik" />
               </h2>
               <div className="space-y-4 text-slate-400 leading-relaxed">
-                <p>Hector Landscaping Landscape &amp; Design is a family-owned firm based in Renton, Washington. <span className="text-white font-medium">Hector</span> has been landscaping in the Pacific Northwest since 2018 — What started as a one-truck operation has grown into a full-service crew known for paver work, retaining walls, sod, and full-yard transformations across the greater Renton area.</p>
+                <p>Hector Landscaping &amp; Design is a family-owned firm based in Renton, Washington. <span className="text-white font-medium">Erik</span> has been landscaping in the Pacific Northwest since 2018 — what started as a one-truck operation has grown into a full-service crew known for paver work, retaining walls, sod, and full-yard transformations across the greater Renton area.</p>
                 <p>The work is residential, the crew is local, and every discipline runs in-house. Forty-nine seasons of installs in this region tells you which plants make it past their second winter and which ones don&rsquo;t. It tells you how to size a base course for our rainfall. It tells you which clients call back, and why.</p>
               </div>
               <div className="mt-8 grid grid-cols-2 gap-4">
@@ -1254,7 +1254,7 @@ export default function HectorLandscapingLandscapingPage() {
             <div>
               <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Get Started</p>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Tell Hector about your yard" />
+                <WordReveal text="Tell Erik about your yard" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md mb-8">
                 Site visits are free across King, Pierce, and the surrounding Eastside. We typically respond within one business day, usually faster.
@@ -1413,11 +1413,11 @@ export default function HectorLandscapingLandscapingPage() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-4">On the page</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#about" className="hover:text-white transition-colors">About Hector</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">About Erik</a></li>
                 <li><a href="#work" className="hover:text-white transition-colors">Selected Work</a></li>
                 <li><a href="#process" className="hover:text-white transition-colors">Process</a></li>
                 <li><a href="#service-area" className="hover:text-white transition-colors">Service Area</a></li>
-                <li><a href="#contact" className="hover:text-white transition-colors">Tell Hector about your yard</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Tell Erik about your yard</a></li>
               </ul>
             </div>
             {/* Contact */}
