@@ -226,6 +226,24 @@ export async function POST(request: NextRequest) {
       );
     }
     prospectId = newProspectId;
+
+    // Fire-and-forget Hormozi-fit score for triage. The submitter has
+    // already received their audit response; this just stamps a 0-100
+    // priority chip on their record for Madie's queue.
+    void import("@/lib/hormozi-fit-scorer").then(({ scoreAndPersistFit }) =>
+      scoreAndPersistFit({
+        id: newProspectId,
+        businessName,
+        ownerName,
+        email,
+        phone,
+        category: businessCategory,
+        status: "audit_lead",
+        sourceChannel,
+        pricingTier: "standard",
+        currentWebsite: targetUrl,
+      } as Parameters<typeof scoreAndPersistFit>[0]),
+    );
   }
 
   // Derive a target-business-name from the URL hostname for the AUDIT COPY.

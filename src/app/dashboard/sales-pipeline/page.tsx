@@ -197,6 +197,22 @@ export default function SalesPipelinePage() {
     localStorage.setItem("bj_pipeline_collapsed", JSON.stringify(collapsed));
   }, [collapsed]);
 
+  // BlueJays users list — populates the per-card "Assign to" dropdown
+  // so Ben can distribute leads to Madie/Raidas/Tyler without a round
+  // trip to /dashboard/team.
+  const [users, setUsers] = useState<Array<{ id: string; name: string; role: string; active: boolean }>>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch("/api/dashboard/team");
+        const j = await r.json();
+        if (j.ok) setUsers(j.users.filter((u: { active: boolean }) => u.active));
+      } catch {
+        // dropdown will just be empty — pipeline still works
+      }
+    })();
+  }, []);
+
   const fetchProspects = async () => {
     try {
       const res = await fetch("/api/prospects", { credentials: "include" });
@@ -337,6 +353,31 @@ export default function SalesPipelinePage() {
   // Kept for backwards-compat in Track/Card prop signature — calling
   // it now is a no-op since saves happen on nudge.
   const saveStage = async (_id: string) => {};
+
+  // Per-card assignment: PATCH the assigned_to_user_id directly.
+  // Optimistic + non-blocking; revert on failure.
+  const assignProspect = async (prospectId: string, userId: string | null) => {
+    const previous = prospects.find((p) => p.id === prospectId)?.assignedToUserId;
+    setProspects((prev) =>
+      prev.map((p) =>
+        p.id === prospectId ? { ...p, assignedToUserId: userId ?? undefined } : p,
+      ),
+    );
+    try {
+      const res = await fetch("/api/dashboard/prospects/assign", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prospectIds: [prospectId], userId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch (e) {
+      console.error("[sales-pipeline] assign failed:", e);
+      setProspects((prev) =>
+        prev.map((p) => (p.id === prospectId ? { ...p, assignedToUserId: previous } : p)),
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -479,6 +520,8 @@ export default function SalesPipelinePage() {
                       hideTotals={hideTotals}
                       accent="sky"
                       leads={websiteByStage.get(s.n) ?? []}
+                      users={users}
+                      onAssign={assignProspect}
                       pendingStages={pendingStages}
                       savingId={savingId}
                       savedId={savedId}
@@ -532,6 +575,8 @@ export default function SalesPipelinePage() {
                       hideTotals={hideTotals}
                       accent="violet"
                       leads={fullsystemByStage.get(s.n) ?? []}
+                      users={users}
+                      onAssign={assignProspect}
                       pendingStages={pendingStages}
                       savingId={savingId}
                       savedId={savedId}
@@ -562,6 +607,8 @@ function StageGroup({
   label,
   accent,
   leads,
+  users,
+  onAssign,
   pendingStages,
   savingId,
   savedId,
@@ -575,6 +622,8 @@ function StageGroup({
   label: string;
   accent: "sky" | "violet";
   leads: Prospect[];
+  users: Array<{ id: string; name: string; role: string; active: boolean }>;
+  onAssign: (prospectId: string, userId: string | null) => void;
   pendingStages: Record<string, string>;
   savingId: string | null;
   savedId: string | null;
@@ -633,6 +682,8 @@ function StageGroup({
           <LeadCard
             key={p.id}
             prospect={p}
+            users={users}
+            onAssign={onAssign}
             pending={pendingStages[p.id]}
             saving={savingId === p.id}
             saved={savedId === p.id}
@@ -721,6 +772,8 @@ function ViewModeChip({
 
 function LeadCard({
   prospect,
+  users,
+  onAssign,
   pending,
   saving,
   saved,
@@ -730,6 +783,8 @@ function LeadCard({
   onSave,
 }: {
   prospect: Prospect;
+  users: Array<{ id: string; name: string; role: string; active: boolean }>;
+  onAssign: (prospectId: string, userId: string | null) => void;
   pending: string | undefined;
   saving: boolean;
   saved: boolean;
@@ -834,6 +889,24 @@ function LeadCard({
                 {prospect.sourceChannel}
               </span>
             </p>
+          )}
+          {/* Assign-to dropdown — distributes leads to Madie / Raidas /
+              Tyler / future hires. Suppresses if no users have been
+              added under /dashboard/team yet. */}
+          {users.length > 0 && (
+            <select
+              value={prospect.assignedToUserId ?? ""}
+              onChange={(e) => onAssign(prospect.id, e.target.value || null)}
+              className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 text-[11px] text-slate-300 px-2 py-1 focus:outline-none focus:border-sky-500/40"
+              aria-label="assign to"
+            >
+              <option value="">Unassigned</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} · {u.role}
+                </option>
+              ))}
+            </select>
           )}
         </div>
 

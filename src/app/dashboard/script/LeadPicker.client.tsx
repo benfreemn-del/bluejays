@@ -845,6 +845,30 @@ export default function LeadPicker() {
                             INBOUND
                           </span>
                         )}
+                        {/* Hormozi-fit score chip — auto-assigned on
+                            inbound by src/lib/hormozi-fit-scorer.ts.
+                            Color matches the four tiers (priority/good/
+                            borderline/weak). Suppressed when unscored. */}
+                        {typeof p.hormoziFitScore === "number" && (() => {
+                          const s = p.hormoziFitScore;
+                          const cls =
+                            s >= 80
+                              ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/40"
+                              : s >= 60
+                                ? "bg-sky-500/15 text-sky-300 border-sky-400/40"
+                                : s >= 40
+                                  ? "bg-amber-500/15 text-amber-300 border-amber-400/40"
+                                  : "bg-rose-500/15 text-rose-300 border-rose-400/40";
+                          const emoji = s >= 80 ? "🔥 " : "";
+                          return (
+                            <span
+                              className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold tracking-wider border tabular-nums ${cls}`}
+                              title={p.hormoziFitSummary ?? `Hormozi-fit ${s}/100`}
+                            >
+                              {emoji}{s}
+                            </span>
+                          );
+                        })()}
                         {/* Category chip — gives the caller the vertical at a glance */}
                         {p.category && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-500/15 text-slate-300 font-bold tracking-wider border border-slate-500/25 uppercase">

@@ -150,7 +150,7 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 512, // Sales responses should be short — 2-3 sentences
         system: systemPart ? [{ type: "text", text: systemPart, cache_control: { type: "ephemeral" } }] : undefined,
         messages: [{ role: "user", content: userPart }],
@@ -167,7 +167,7 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
       service: "claude",
       action: "sales_agent_response",
       costUsd: COST_RATES.site_generation, // ~$0.003 per response
-      metadata: { model: "claude-sonnet-4-20250514", channel: "inbound" },
+      metadata: { model: "claude-sonnet-4-6", channel: "inbound" },
     });
 
     const data = await response.json();

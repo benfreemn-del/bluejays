@@ -3,7 +3,7 @@ import type { Prospect } from "./types";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_ANTHROPIC_MODEL =
-  process.env.ANTHROPIC_HANDOFF_MODEL || "claude-opus-4-20250514";
+  process.env.ANTHROPIC_HANDOFF_MODEL || "claude-opus-4-7";
 
 interface ClaudeMessageResponse {
   content?: Array<{ type?: string; text?: string }>;

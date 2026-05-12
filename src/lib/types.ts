@@ -197,6 +197,13 @@ export interface Prospect {
   /** FK to bluejays_users — the salesperson responsible for this
    *  prospect. Null/undefined = unassigned (visible to everyone). */
   assignedToUserId?: string;
+  /** Hormozi-fit score 0-100 set by src/lib/hormozi-fit-scorer.ts on
+   *  inbound (/api/audit/submit + /api/leads/submit). Triages Madie/
+   *  Raidas/Tyler's queues so 80+ prospects bubble up. Null = not yet
+   *  scored (legacy rows or feature disabled). */
+  hormoziFitScore?: number;
+  hormoziFitSummary?: string;
+  hormoziFitScoredAt?: string;
   /** Lead-source attribution. Free-text — canonical values:
    *    'madie-cold-call'        — Madie booked the discovery
    *    'ben-cold-call'          — Ben booked the discovery

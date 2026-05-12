@@ -167,6 +167,9 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     pipelineStageUpdatedAt:
       (row.pipeline_stage_updated_at as string | null) ?? undefined,
     assignedToUserId: (row.assigned_to_user_id as string | null) ?? undefined,
+    hormoziFitScore: (row.hormozi_fit_score as number | null) ?? undefined,
+    hormoziFitSummary: (row.hormozi_fit_summary as string | null) ?? undefined,
+    hormoziFitScoredAt: (row.hormozi_fit_scored_at as string | null) ?? undefined,
     sourceChannel: (row.source_channel as string | null) ?? undefined,
     sourceChannelSetAt:
       (row.source_channel_set_at as string | null) ?? undefined,

@@ -6,7 +6,7 @@ import { OpenAI } from "openai";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_ANTHROPIC_MODEL =
-  process.env.ANTHROPIC_HANDOFF_MODEL || "claude-opus-4-20250514";
+  process.env.ANTHROPIC_HANDOFF_MODEL || "claude-opus-4-7";
 
 // Use cheap OpenAI model for QC & supercharge; reserve Claude Opus for notes/handoff
 const QC_MODEL = process.env.QC_MODEL || "gpt-4.1-mini";

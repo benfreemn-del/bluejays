@@ -26,7 +26,10 @@ import {
  */
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
-const MODEL = process.env.HORMOZI_AGENT_MODEL || "claude-sonnet-4-20250514";
+// Diagnostic agent runs on Opus 4.7 by default. The 1M context window
+// fits the entire Hormozi KB in a single cached system prompt — caching
+// makes the cost-per-diagnosis identical to sonnet within the 5-min TTL.
+const MODEL = process.env.HORMOZI_AGENT_MODEL || "claude-opus-4-7";
 
 // Sonnet 4: ~$3/1M input cached at $0.30/1M; $15/1M output. A typical
 // diagnosis is ~6k cached input + 500 fresh input + 1500 output ≈ $0.026
