@@ -349,7 +349,7 @@ function FloatingLeaves() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-[1] overflow-hidden hidden md:block"
+      className="pointer-events-none fixed inset-0 z-[1] overflow-hidden"
       style={{
         opacity: fading ? 0 : 1,
         transition: "opacity 1.5s ease-out",
