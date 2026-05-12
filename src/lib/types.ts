@@ -194,6 +194,9 @@ export interface Prospect {
    *  /dashboard/sales-pipeline only renders prospects where this is set. */
   pipelineStage?: string;
   pipelineStageUpdatedAt?: string;
+  /** FK to bluejays_users — the salesperson responsible for this
+   *  prospect. Null/undefined = unassigned (visible to everyone). */
+  assignedToUserId?: string;
   /** Lead-source attribution. Free-text — canonical values:
    *    'madie-cold-call'        — Madie booked the discovery
    *    'ben-cold-call'          — Ben booked the discovery

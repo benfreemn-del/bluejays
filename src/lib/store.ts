@@ -166,6 +166,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     pipelineStage: (row.pipeline_stage as string | null) ?? undefined,
     pipelineStageUpdatedAt:
       (row.pipeline_stage_updated_at as string | null) ?? undefined,
+    assignedToUserId: (row.assigned_to_user_id as string | null) ?? undefined,
     sourceChannel: (row.source_channel as string | null) ?? undefined,
     sourceChannelSetAt:
       (row.source_channel_set_at as string | null) ?? undefined,

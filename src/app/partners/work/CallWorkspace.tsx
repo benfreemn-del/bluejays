@@ -123,6 +123,10 @@ type Props = {
     previewUrl: string;          // /preview/[id]
     auditViewUrl: string | null; // /audit/[audit-id] if hasCompletedAudit
     categoryTemplateUrl: string; // /v2/[category]
+    /** Current pipeline stage — needed for the auto-promote-on-book
+     *  branch in logCall(). Caller passes `prospect.pipelineStage`
+     *  from the parent (script page / partner work page). */
+    pipelineStage?: string;
   } | null;
   counters: {
     callsThisSession: number;
@@ -299,6 +303,29 @@ export default function CallWorkspace(props: Props) {
             });
           } catch {
             // Status patch failed — non-blocking. Note is still saved.
+          }
+        }
+
+        // ─── Auto-promote pipeline stage when a meeting is booked ───
+        // "Booked Ben's call" = the prospect is locked in for a
+        // discovery call. Bumps pipelineStage to '2' (Meeting scheduled
+        // for website / Mockup done for fullsystem — both represent
+        // "next active step ready"). Only fires when stage is null or
+        // '1' so we never downgrade a more-progressed prospect.
+        if (outcome === "answered_call_scheduled") {
+          const currentStage = (prospect.pipelineStage ?? "").trim();
+          const shouldPromote = !currentStage || /^1[a-z]?$/.test(currentStage);
+          if (shouldPromote) {
+            try {
+              await fetch(`/api/prospects/${prospect.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pipelineStage: "2" }),
+              });
+            } catch {
+              // Pipeline patch failed — non-blocking, rep can correct
+              // manually from /dashboard/sales-pipeline.
+            }
           }
         }
 

@@ -34,10 +34,9 @@
  * Editing UX:
  *   - Each card has TWO steppers — a number stepper (1-N, clamped to
  *     per-track ceiling) and a letter stepper (none/a/b/c/d/e).
- *   - Changes are LOCAL until the user hits Save on that card. Pending
- *     changes show as amber outline + "Unsaved" pill so it's obvious.
- *   - Save calls PATCH /api/prospects/[id] with { pipelineStage: '4a' }
- *     and reflects success/failure in the card.
+ *   - Changes AUTO-SAVE on click (no Save button). Optimistic update +
+ *     debounced PATCH /api/prospects/[id]. Card shows a fading "Saved"
+ *     pill on success or a red "Retry" if the request failed.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -170,13 +169,33 @@ export default function SalesPipelinePage() {
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("active");
 
-  // Per-prospect local stage edits — keyed by prospect.id. Value is
-  // the full stage string (e.g. '4a'). When this differs from the
-  // persisted prospect.pipelineStage, the card shows amber outline +
-  // "Unsaved" pill. Cleared on successful save.
-  const [pendingStages, setPendingStages] = useState<Record<string, string>>({});
+  // Auto-save state: which card is currently flushing to the server,
+  // and which one just succeeded (drives a fade-out "Saved" pill).
+  // pendingStages is kept around as an empty stub for compatibility
+  // with the Track / Card prop signature; effectively always {}.
+  const [pendingStages] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
-  const dirtyCount = Object.keys(pendingStages).length;
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [failedId, setFailedId] = useState<string | null>(null);
+  const dirtyCount = 0;
+  // Track collapse state per side. Persist in localStorage so the
+  // operator's preferred view sticks across reloads.
+  const [collapsed, setCollapsed] = useState<{ website: boolean; fullsystem: boolean }>(
+    () => {
+      if (typeof window === "undefined") return { website: false, fullsystem: false };
+      try {
+        const raw = localStorage.getItem("bj_pipeline_collapsed");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+      return { website: false, fullsystem: false };
+    },
+  );
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("bj_pipeline_collapsed", JSON.stringify(collapsed));
+  }, [collapsed]);
 
   const fetchProspects = async () => {
     try {
@@ -264,31 +283,17 @@ export default function SalesPipelinePage() {
       };
     }, [prospects, sourceFilter, viewMode]);
 
-  const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
-    const max = ceilingFor(track);
-    const current = pendingStages[id] ?? persisted;
-    const { num, letter } = parseStage(current);
-    const nextNum = Math.max(1, Math.min(max, num + delta));
-    // When changing the major stage, drop the sub-letter (different
-    // stage = different sub-meanings).
-    const next = formatStage(nextNum, nextNum === num ? letter : "");
-    setPendingStages((prev) => ({ ...prev, [id]: next }));
-  };
-
-  const nudgeLetter = (id: string, persisted: string, delta: number) => {
-    const current = pendingStages[id] ?? persisted;
-    const { num, letter } = parseStage(current);
-    const idx = LETTER_CYCLE.indexOf(letter as (typeof LETTER_CYCLE)[number]);
-    const nextIdx = (idx + delta + LETTER_CYCLE.length) % LETTER_CYCLE.length;
-    const next = formatStage(num, LETTER_CYCLE[nextIdx]);
-    setPendingStages((prev) => ({ ...prev, [id]: next }));
-  };
-
-  const saveStage = async (id: string) => {
-    if (savingId) return;
-    const next = pendingStages[id];
-    if (!next) return;
+  // Auto-save: optimistically update the local prospect row, then PATCH.
+  // The "Saved ✓" pill fades after 1.2s; on failure we flag the card
+  // red and revert. Per-card busy gating prevents stomping a request
+  // that's already inflight for the same id.
+  const persistStage = async (id: string, next: string, previous: string | undefined) => {
+    if (savingId === id) return;
+    setProspects((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, pipelineStage: next } : p)),
+    );
     setSavingId(id);
+    setFailedId((f) => (f === id ? null : f));
     try {
       const res = await fetch(`/api/prospects/${id}`, {
         method: "PATCH",
@@ -297,20 +302,41 @@ export default function SalesPipelinePage() {
         body: JSON.stringify({ pipelineStage: next }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setProspects((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, pipelineStage: next } : p)),
-      );
-      setPendingStages((prev) => {
-        const copy = { ...prev };
-        delete copy[id];
-        return copy;
-      });
+      setSavedId(id);
+      setTimeout(() => setSavedId((s) => (s === id ? null : s)), 1200);
     } catch (e) {
       console.error("[sales-pipeline] save failed:", e);
+      // Revert optimistic update
+      setProspects((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, pipelineStage: previous } : p)),
+      );
+      setFailedId(id);
     } finally {
       setSavingId(null);
     }
   };
+
+  const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
+    const max = ceilingFor(track);
+    const { num, letter } = parseStage(persisted);
+    const nextNum = Math.max(1, Math.min(max, num + delta));
+    const next = formatStage(nextNum, nextNum === num ? letter : "");
+    if (next === persisted) return;
+    persistStage(id, next, persisted);
+  };
+
+  const nudgeLetter = (id: string, persisted: string, delta: number) => {
+    const { num, letter } = parseStage(persisted);
+    const idx = LETTER_CYCLE.indexOf(letter as (typeof LETTER_CYCLE)[number]);
+    const nextIdx = (idx + delta + LETTER_CYCLE.length) % LETTER_CYCLE.length;
+    const next = formatStage(num, LETTER_CYCLE[nextIdx]);
+    if (next === persisted) return;
+    persistStage(id, next, persisted);
+  };
+
+  // Kept for backwards-compat in Track/Card prop signature — calling
+  // it now is a no-op since saves happen on nudge.
+  const saveStage = async (_id: string) => {};
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -395,19 +421,9 @@ export default function SalesPipelinePage() {
           <p className="text-[11px] text-slate-500 leading-snug">
             Single source of truth · every funnel reads from this stage. Use ▲▼
             on the number to change major stage, ▲▼ on the letter to add a
-            sub-state (4a / 4b / 4c). Hit Save to persist.
+            sub-state (4a / 4b / 4c). Auto-saves on click.
           </p>
         </div>
-        {dirtyCount > 0 && (
-          <div className="border-t border-amber-500/40 bg-amber-950/40">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-2 flex items-center justify-between gap-3">
-              <span className="text-[11px] uppercase tracking-wider font-bold text-amber-300">
-                {dirtyCount} unsaved {dirtyCount === 1 ? "change" : "changes"} ·
-                save each card individually
-              </span>
-            </div>
-          </div>
-        )}
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
@@ -429,8 +445,13 @@ export default function SalesPipelinePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* ─── Website track ─── */}
             <section className="rounded-xl border border-sky-700/30 bg-sky-950/15 overflow-hidden">
-              <header className="px-4 py-3 border-b border-sky-700/30 bg-sky-950/40 flex items-center justify-between gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-sky-200">
+              <button
+                type="button"
+                onClick={() => setCollapsed((c) => ({ ...c, website: !c.website }))}
+                className="w-full px-4 py-3 border-b border-sky-700/30 bg-sky-950/40 flex items-center justify-between gap-2 hover:bg-sky-950/60 transition-colors"
+              >
+                <h2 className="text-sm font-bold uppercase tracking-wider text-sky-200 flex items-center gap-2">
+                  <span className="text-xs opacity-70 inline-block w-3">{collapsed.website ? "▸" : "▾"}</span>
                   Website · $997
                 </h2>
                 <div className="flex items-center gap-2 text-xs">
@@ -447,34 +468,43 @@ export default function SalesPipelinePage() {
                     </>
                   )}
                 </div>
-              </header>
-              <div className="divide-y divide-sky-900/40">
-                {WEBSITE_STAGES.map((s) => (
-                  <StageGroup
-                    key={s.n}
-                    stage={s.n}
-                    label={s.label}
-                    hideTotals={hideTotals}
-                    accent="sky"
-                    leads={websiteByStage.get(s.n) ?? []}
-                    pendingStages={pendingStages}
-                    savingId={savingId}
-                    onNudgeNum={(id, persisted, delta) =>
-                      nudgeNum(id, persisted, "website", delta)
-                    }
-                    onNudgeLetter={(id, persisted, delta) =>
-                      nudgeLetter(id, persisted, delta)
-                    }
-                    onSave={saveStage}
-                  />
-                ))}
-              </div>
+              </button>
+              {!collapsed.website && (
+                <div className="divide-y divide-sky-900/40">
+                  {WEBSITE_STAGES.map((s) => (
+                    <StageGroup
+                      key={s.n}
+                      stage={s.n}
+                      label={s.label}
+                      hideTotals={hideTotals}
+                      accent="sky"
+                      leads={websiteByStage.get(s.n) ?? []}
+                      pendingStages={pendingStages}
+                      savingId={savingId}
+                      savedId={savedId}
+                      failedId={failedId}
+                      onNudgeNum={(id, persisted, delta) =>
+                        nudgeNum(id, persisted, "website", delta)
+                      }
+                      onNudgeLetter={(id, persisted, delta) =>
+                        nudgeLetter(id, persisted, delta)
+                      }
+                      onSave={saveStage}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* ─── $10K AI System track ─── */}
             <section className="rounded-xl border border-violet-700/30 bg-violet-950/15 overflow-hidden">
-              <header className="px-4 py-3 border-b border-violet-700/30 bg-violet-950/40 flex items-center justify-between gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-violet-200">
+              <button
+                type="button"
+                onClick={() => setCollapsed((c) => ({ ...c, fullsystem: !c.fullsystem }))}
+                className="w-full px-4 py-3 border-b border-violet-700/30 bg-violet-950/40 flex items-center justify-between gap-2 hover:bg-violet-950/60 transition-colors"
+              >
+                <h2 className="text-sm font-bold uppercase tracking-wider text-violet-200 flex items-center gap-2">
+                  <span className="text-xs opacity-70 inline-block w-3">{collapsed.fullsystem ? "▸" : "▾"}</span>
                   AI System · $10K
                 </h2>
                 <div className="flex items-center gap-2 text-xs">
@@ -491,28 +521,32 @@ export default function SalesPipelinePage() {
                     </>
                   )}
                 </div>
-              </header>
-              <div className="divide-y divide-violet-900/40">
-                {FULLSYSTEM_STAGES.map((s) => (
-                  <StageGroup
-                    key={s.n}
-                    stage={s.n}
-                    label={s.label}
-                    hideTotals={hideTotals}
-                    accent="violet"
-                    leads={fullsystemByStage.get(s.n) ?? []}
-                    pendingStages={pendingStages}
-                    savingId={savingId}
-                    onNudgeNum={(id, persisted, delta) =>
-                      nudgeNum(id, persisted, "fullsystem", delta)
-                    }
-                    onNudgeLetter={(id, persisted, delta) =>
-                      nudgeLetter(id, persisted, delta)
-                    }
-                    onSave={saveStage}
-                  />
-                ))}
-              </div>
+              </button>
+              {!collapsed.fullsystem && (
+                <div className="divide-y divide-violet-900/40">
+                  {FULLSYSTEM_STAGES.map((s) => (
+                    <StageGroup
+                      key={s.n}
+                      stage={s.n}
+                      label={s.label}
+                      hideTotals={hideTotals}
+                      accent="violet"
+                      leads={fullsystemByStage.get(s.n) ?? []}
+                      pendingStages={pendingStages}
+                      savingId={savingId}
+                      savedId={savedId}
+                      failedId={failedId}
+                      onNudgeNum={(id, persisted, delta) =>
+                        nudgeNum(id, persisted, "fullsystem", delta)
+                      }
+                      onNudgeLetter={(id, persisted, delta) =>
+                        nudgeLetter(id, persisted, delta)
+                      }
+                      onSave={saveStage}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
           </div>
         )}
@@ -530,6 +564,8 @@ function StageGroup({
   leads,
   pendingStages,
   savingId,
+  savedId,
+  failedId,
   onNudgeNum,
   onNudgeLetter,
   onSave,
@@ -541,6 +577,8 @@ function StageGroup({
   leads: Prospect[];
   pendingStages: Record<string, string>;
   savingId: string | null;
+  savedId: string | null;
+  failedId: string | null;
   onNudgeNum: (id: string, persisted: string, delta: number) => void;
   onNudgeLetter: (id: string, persisted: string, delta: number) => void;
   onSave: (id: string) => void;
@@ -597,6 +635,8 @@ function StageGroup({
             prospect={p}
             pending={pendingStages[p.id]}
             saving={savingId === p.id}
+            saved={savedId === p.id}
+            failed={failedId === p.id}
             onNudgeNum={(delta) =>
               onNudgeNum(p.id, p.pipelineStage ?? `${stage}`, delta)
             }
@@ -683,6 +723,8 @@ function LeadCard({
   prospect,
   pending,
   saving,
+  saved,
+  failed,
   onNudgeNum,
   onNudgeLetter,
   onSave,
@@ -690,6 +732,8 @@ function LeadCard({
   prospect: Prospect;
   pending: string | undefined;
   saving: boolean;
+  saved: boolean;
+  failed: boolean;
   onNudgeNum: (delta: number) => void;
   onNudgeLetter: (delta: number) => void;
   onSave: () => void;
@@ -697,6 +741,9 @@ function LeadCard({
   const persisted = prospect.pipelineStage ?? "1";
   const display = pending ?? persisted;
   const dirty = pending != null && pending !== persisted;
+  // Unused under auto-save but kept for backwards-compat with the
+  // existing Save button render block below.
+  void onSave;
   const { num, letter } = parseStage(display);
   const value = dealValueCents(prospect);
   const daysStale = daysSinceUpdate(prospect.updatedAt);
@@ -858,19 +905,23 @@ function LeadCard({
         </div>
       </div>
 
-      {dirty && (
-        <div className="mt-2.5 flex items-center justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider font-bold text-amber-300">
-            Unsaved · {persisted} → {display}
-          </span>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={onSave}
-            className="text-[11px] font-bold uppercase tracking-wider rounded px-3 py-1 bg-amber-500 hover:bg-amber-400 text-amber-950 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? "Saving…" : "Save"}
-          </button>
+      {(saving || saved || failed) && (
+        <div className="mt-2.5 flex items-center justify-end">
+          {saving && (
+            <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+              Saving…
+            </span>
+          )}
+          {!saving && saved && (
+            <span className="text-[10px] uppercase tracking-wider font-bold text-emerald-300">
+              ✓ Saved
+            </span>
+          )}
+          {!saving && failed && (
+            <span className="text-[10px] uppercase tracking-wider font-bold text-rose-300">
+              ✗ Failed — change again to retry
+            </span>
+          )}
         </div>
       )}
     </li>

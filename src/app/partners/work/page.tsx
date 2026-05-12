@@ -184,6 +184,9 @@ export default async function PartnerWorkPage() {
                   ? `${SITE_ORIGIN}/audit/${prospect.latestAuditId}?ref=${partner.code}`
                   : null,
                 categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,
+                pipelineStage:
+                  ((prospect as { pipeline_stage?: string | null }).pipeline_stage as string | null) ??
+                  undefined,
                 websiteUrl:
                   (prospect.scraped_data?.submittedUrl as string | undefined) ||
                   (prospect.scraped_data?.website as string | undefined) ||

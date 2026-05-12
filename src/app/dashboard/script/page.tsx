@@ -343,6 +343,7 @@ export default async function DashboardScriptPage({
           ? `${SITE_ORIGIN}/audit/${latestAuditId}?ref=${callerCode}`
           : null,
         categoryTemplateUrl: `${SITE_ORIGIN}/v2/${prospect.category || "general"}`,
+        pipelineStage: prospect.pipelineStage,
         websiteUrl: prospect.currentWebsite ?? null,
         googleSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(
           `${prospect.businessName} ${prospect.city || ""} ${(prospect.category || "").replace(/-/g, " ")}`.trim(),
