@@ -113,6 +113,9 @@ const PROTECTED_PATHS = [
   "/api/voicemail",
   "/api/videos",
   "/api/admin",
+  // Owner/sales-only dashboard APIs — team mgmt, onboarding monitoring,
+  // hormozi diagnostic, prospect assign, blog generation.
+  "/api/dashboard",
   "/api/retarget",
   "/api/followup-scheduler",
   "/api/scout-optimizer",

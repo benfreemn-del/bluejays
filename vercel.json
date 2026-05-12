@@ -151,6 +151,18 @@
     {
       "path": "/api/cron/agent-signals-prune",
       "schedule": "30 4 * * 0"
+    },
+    {
+      "path": "/api/cron/data-cycle",
+      "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/cron/hormozi-yt-scan",
+      "schedule": "30 8 * * *"
+    },
+    {
+      "path": "/api/cron/seo-blog-write",
+      "schedule": "0 9 * * *"
     }
   ],
   "functions": {
