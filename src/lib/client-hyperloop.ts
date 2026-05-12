@@ -316,14 +316,36 @@ async function autoPauseLosingAds(
   clientSlug: string,
   insights: ClientInsight[],
 ): Promise<void> {
-  const adLosers = insights
-    .filter((i) => i.kind === "ad-creative" && i.analysis.verdict === "loser")
-    .map((i) => i.variantId);
-  if (adLosers.length === 0) return;
+  const losers = insights.filter(
+    (i) => i.kind === "ad-creative" && i.analysis.verdict === "loser",
+  );
+  if (losers.length === 0) return;
+  const adLoserIds = losers.map((i) => i.variantId);
   const { error } = await getSupabase()
     .from("client_ad_creatives")
     .update({ status: "paused" })
     .eq("client_slug", clientSlug)
-    .in("id", adLosers);
-  if (error) console.error("[client-hyperloop] auto-pause failed:", error.message);
+    .in("id", adLoserIds);
+  if (error) {
+    console.error("[client-hyperloop] auto-pause failed:", error.message);
+    return;
+  }
+
+  // Audit log: record each kill into hyperloop_decisions so the
+  // /dashboard/hyperloop/history timeline can replay what happened.
+  // Lazy-import to keep the bundle of any caller that doesn't reach
+  // this branch small.
+  const { recordDecision } = await import("./hyperloop-decisions");
+  for (const i of losers) {
+    await recordDecision({
+      clientSlug,
+      decisionKind: "pause_loser",
+      variantId: i.variantId,
+      variantName: i.variantName,
+      cohortKind: i.kind,
+      reason: i.analysis.reason,
+      afterState: { status: "paused" },
+      triggeredBy: "cron",
+    });
+  }
 }

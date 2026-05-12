@@ -273,6 +273,12 @@ export default function HyperloopDashboard() {
               auto-pauses losers, generates new variants from winners.
               Stage 1 active — platform APIs (Meta/Google) come in Stage 2.
             </p>
+            <a
+              href="/dashboard/hyperloop/history"
+              className="inline-block mt-3 text-xs font-semibold text-sky-400 hover:text-sky-300"
+            >
+              View decision history →
+            </a>
           </div>
           <div className="flex items-center gap-3">
             <button
