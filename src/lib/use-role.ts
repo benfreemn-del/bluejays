@@ -42,6 +42,7 @@ export function useRole(): Role {
 export const SALES_TOP_NAV_ALLOWED = new Set([
   "overview", // shows Madie productivity tile (her own pace)
   "sales-portal",
+  "diagnostic", // Madie uses this live on calls
   "sales-pipeline",
   "client-jobs",
   "win-loss",
