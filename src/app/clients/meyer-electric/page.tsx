@@ -47,6 +47,7 @@ import {
   Star,
   CaretDown,
   XCircle,
+  Trophy,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
@@ -329,7 +330,7 @@ const COMPARISON_ROWS: Array<{ label: string; meyer: string; avg: string }> = [
   { label: "Generac Certified Installer", meyer: "yes", avg: "Rarely" },
   { label: "Licensed, bonded & insured", meyer: "yes", avg: "Usually" },
   { label: "15+ years on the Olympic Peninsula", meyer: "yes", avg: "Varies" },
-  { label: "Upfront pricing — no surprise change orders", meyer: "yes", avg: "Time + materials" },
+  { label: "Upfront pricing throughout any project", meyer: "yes", avg: "Time + materials" },
   { label: "Same-day estimates", meyer: "yes", avg: "3-5 days" },
   { label: "Owner-operated, code-first crew", meyer: "yes", avg: "Subcontracted" },
   { label: "Service across all 10 Peninsula cities", meyer: "yes", avg: "Sequim only" },
@@ -351,10 +352,10 @@ export default function MeyerElectricPage() {
       color: ACCENT,
     },
     {
-      label: "I want solar + storage",
+      label: "Adding solar — need a panel upgrade",
       icon: <Sun size={24} weight="fill" />,
       rec:
-        "Tesla Powerwall + solar tie-in. Store the sunshine you generate, use it after dark, sell back the rest. We're certified to design + install the whole system.",
+        "Tesla Powerwall + the panel work your solar installer needs. We don't install solar panels — we do the breaker panel upgrade so your installer can connect cleanly. Plus Powerwall storage so you can use what you generate after dark.",
       ctaHref: "#powerwall",
       ctaText: "See Powerwall Details",
       color: ACCENT_AMBER,
@@ -372,7 +373,7 @@ export default function MeyerElectricPage() {
       label: "Service upgrade or panel issue",
       icon: <Wrench size={24} weight="fill" />,
       rec:
-        "Panel replacements, service upgrades, sub-panels, EV chargers, troubleshooting. Code-compliant work, upfront pricing, no surprise change orders.",
+        "Panel replacements, service upgrades, sub-panels, EV chargers, troubleshooting. Code-compliant work, upfront pricing throughout any project.",
       ctaHref: BUSINESS.phoneHref,
       ctaText: `Call ${BUSINESS.phoneDisplay}`,
       color: ACCENT,
@@ -492,7 +493,7 @@ export default function MeyerElectricPage() {
               className="mt-6 flex flex-wrap gap-x-6 gap-y-3"
             >
               <HeroPill icon={<Shield size={16} weight="fill" />} label="Whole Home Backup" />
-              <HeroPill icon={<SpeakerHigh size={16} weight="fill" />} label="Quiet & Silent" />
+              <HeroPill icon={<SpeakerHigh size={16} weight="fill" />} label="Silent" />
               <HeroPill icon={<WifiHigh size={16} weight="fill" />} label="Monitor From Anywhere" />
             </motion.div>
 
@@ -548,6 +549,66 @@ export default function MeyerElectricPage() {
               label="Licensed · Bonded · Insured"
               sublabel={`License ${BUSINESS.license}`}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────── AWARDS STRIP ────────────────────── */}
+      {/* Voted #1 Electrician in Clallam County — 2020, 2022, 2024, 2025.
+          Kyle's office sent confirmation 2026-05-12 (4 awards across 6
+          years). Position right under the cert badges so the "certified
+          + voted #1" combo lands as one trust beat before the
+          emergency-response urgency strip. */}
+      <section
+        className="border-b"
+        style={{
+          background: BG,
+          borderColor: "rgba(255,255,255,0.06)",
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-7 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <div
+                className="flex items-center justify-center w-12 h-12 rounded-full shrink-0"
+                style={{
+                  background: "rgba(249, 115, 22, 0.15)",
+                  color: ACCENT,
+                }}
+              >
+                <Trophy size={24} weight="fill" />
+              </div>
+              <div className="leading-tight">
+                <div
+                  className="text-[10px] uppercase tracking-[0.2em] font-bold"
+                  style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+                >
+                  Best of the Peninsula
+                </div>
+                <div
+                  className="text-[15px] sm:text-[16px] font-bold text-white mt-0.5"
+                  style={{ fontFamily: FONT_HEAD }}
+                >
+                  Voted #1 Electrician — Clallam County
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              {["2020", "2022", "2024", "2025"].map((yr) => (
+                <span
+                  key={yr}
+                  className="inline-flex items-center justify-center min-w-[58px] px-3 py-1.5 rounded-md text-[12px] font-bold tracking-wider"
+                  style={{
+                    background: "rgba(249, 115, 22, 0.10)",
+                    border: "1px solid rgba(249, 115, 22, 0.35)",
+                    color: ACCENT,
+                    fontFamily: FONT_HEAD,
+                  }}
+                >
+                  {yr}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -642,9 +703,9 @@ export default function MeyerElectricPage() {
             <ServiceCard
               icon={<Lightning size={22} weight="fill" />}
               title="Tesla Powerwall Installation"
-              description="Store solar energy. Power your home through outages. Reduce your reliance on the grid. We're certified installers — we handle permits, install, and Tesla app setup."
+              description="Store energy from any source — solar, grid, or generator. Power your home through outages. We're Tesla-certified Powerwall installers: permits, install, and Tesla app setup handled."
               image={PHOTOS.powerwall}
-              imageAlt="Tesla Powerwall and solar panels installed on a modern home"
+              imageAlt="Tesla Powerwall installed on a modern home"
               href="#powerwall"
             />
             <ServiceCard
@@ -657,16 +718,16 @@ export default function MeyerElectricPage() {
             />
             <ServiceCard
               icon={<Wrench size={22} weight="fill" />}
-              title="Underground Power Installation"
-              description="From trenching to final hookup, we install underground power the right way — properly conduited, depth-compliant, and built to last decades."
+              title="Underground Power & In-House Excavation"
+              description="We trench it ourselves with our Kubota U27 excavator — no waiting on a separate excavation contractor. Underground power runs conduit-correct, depth-compliant, built to last decades."
               image={PHOTOS.underground}
-              imageAlt="Tesla Wall Connector installed in a residential garage"
+              imageAlt="In-house excavation work for underground electrical service"
               href="#contact"
             />
             <ServiceCard
               icon={<Buildings size={22} weight="fill" />}
-              title="Electrical Services & Upgrades"
-              description="Service upgrades, panel replacements, lighting, EV chargers, troubleshooting. Residential, commercial, and new construction across Sequim and beyond."
+              title="Full-Service Electrical"
+              description="Panel upgrades (incl. solar+storage prep), service upgrades, lighting, EV chargers, saunas, hot tubs, heated floors, cook tops, wall ovens, greenhouse / shed / garage wiring, septic, troubleshooting. If it carries current, we can do it."
               image={PHOTOS.electrical}
               imageAlt="Modern home with exterior electrical lighting at twilight"
               href="#contact"
@@ -717,8 +778,8 @@ export default function MeyerElectricPage() {
                   body="Keep lights, refrigerator, HVAC, and outlets running automatically when the grid goes down. No flashlights. No spoiled food."
                 />
                 <PowerwallFeature
-                  title="Solar-Ready"
-                  body="Pair with new or existing solar to store the sunshine you generate. Use it at night. Sell back the rest."
+                  title="Pairs with Solar"
+                  body="Got solar already (or planning to add it)? Powerwall stores what your panels generate. We do the panel upgrade — your solar installer connects the panels."
                 />
                 <PowerwallFeature
                   title="Silent &amp; Stackable"
@@ -1504,7 +1565,7 @@ export default function MeyerElectricPage() {
                 <WhyBullet text="Licensed, bonded, and insured" />
                 <WhyBullet text="Tesla Powerwall Certified Installer" />
                 <WhyBullet text="Generac Certified Installer" />
-                <WhyBullet text="Upfront pricing — no surprise change orders" />
+                <WhyBullet text="Upfront pricing throughout any project" />
                 <WhyBullet text="Local, owner-operated, code-first crew" />
               </ul>
             </div>
