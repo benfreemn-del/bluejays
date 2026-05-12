@@ -120,7 +120,7 @@ every slug.
 | `itc-quick-attach` | ✓ | ✓ (queued) | ✓ | Jake · $9.7K AI System · tractor accessories · signing later |
 | `laser-lakes` | ✓ | ✗ | ✗ | Nate · custom site + Customers/Email tab ONLY · explicitly NO AI features |
 | `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |
-| `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) |
+| `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) · Owner-Editable Site enabled 2026-05-12 (needs GITHUB_TOKEN + ANTHROPIC_API_KEY env vars on Vercel) |
 | `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |

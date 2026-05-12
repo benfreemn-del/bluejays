@@ -44,7 +44,13 @@ type Booking = {
   slot?: { start_at: string; end_at: string; label: string | null } | null;
 };
 
-type Tab = "bookings" | "calendar" | "customers" | "partners" | "phase2";
+type Tab =
+  | "bookings"
+  | "calendar"
+  | "customers"
+  | "partners"
+  | "edit-site"
+  | "phase2";
 
 const SHELL = {
   background: "#faf6ee",
@@ -347,6 +353,7 @@ export default function OITAdminPage() {
             { id: "calendar", label: "Calendar" },
             { id: "customers", label: "Customers" },
             { id: "partners", label: "Affiliates Map" },
+            { id: "edit-site", label: "Edit Site" },
             { id: "phase2", label: "What's next" },
           ] as const
         ).map((t) => {
@@ -395,6 +402,7 @@ export default function OITAdminPage() {
         )}
         {tab === "customers" && <CustomersTab bookings={bookings} />}
         {tab === "partners" && <PartnersTab />}
+        {tab === "edit-site" && <EditSiteTab />}
         {tab === "phase2" && <Phase2Tab />}
       </div>
     </div>
@@ -1223,6 +1231,526 @@ function Phase2Tab() {
  */
 function PartnersTab() {
   return <OitPartnerMap />;
+}
+
+/**
+ * EditSiteTab — owner-side site editor powered by the Claude API.
+ *
+ * Flow: owner types a plain-English change request → server fetches
+ * current HTML from git → calls Claude with strict edit rules →
+ * returns proposed HTML. Owner previews the proposal in an inline
+ * iframe (via Blob URL — no network round-trip needed for preview) →
+ * clicks publish → server commits to git → Vercel auto-redeploys.
+ *
+ * Locked rules baked into the server prompt (see site-edit/route.ts):
+ *  - Asset paths, script tags, head links must not change
+ *  - Booking form action/method/inputs are off-limits
+ *  - "Built by BlueJays" footer credit stays
+ */
+function EditSiteTab() {
+  const [siteContent, setSiteContent] = useState<{
+    content: string;
+    sha: string;
+    path: string;
+  } | null>(null);
+  const [loadingContent, setLoadingContent] = useState(true);
+  const [contentError, setContentError] = useState<string | null>(null);
+
+  const [instruction, setInstruction] = useState("");
+  const [proposing, setProposing] = useState(false);
+  const [proposalError, setProposalError] = useState<string | null>(null);
+  const [proposal, setProposal] = useState<{
+    html: string;
+    baseSha: string;
+    sizeDelta: number;
+    costUsd: number;
+  } | null>(null);
+
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishResult, setPublishResult] = useState<{
+    commitSha: string;
+    commitUrl: string;
+    message: string;
+  } | null>(null);
+
+  const loadContent = useCallback(async () => {
+    setLoadingContent(true);
+    setContentError(null);
+    try {
+      const r = await fetch("/api/clients/olympic-inspections/site-content", {
+        credentials: "include",
+      });
+      const j = await r.json();
+      if (!r.ok || !j.ok) {
+        setContentError(j.error || "Could not load site content");
+        setSiteContent(null);
+      } else {
+        setSiteContent({ content: j.content, sha: j.sha, path: j.path });
+      }
+    } catch (err) {
+      setContentError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setLoadingContent(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadContent();
+  }, [loadContent]);
+
+  const proposedBlobUrl = useMemo(() => {
+    if (!proposal?.html) return null;
+    if (typeof window === "undefined") return null;
+    const blob = new Blob([proposal.html], { type: "text/html" });
+    return URL.createObjectURL(blob);
+  }, [proposal?.html]);
+
+  useEffect(() => {
+    return () => {
+      if (proposedBlobUrl) URL.revokeObjectURL(proposedBlobUrl);
+    };
+  }, [proposedBlobUrl]);
+
+  async function propose() {
+    if (!instruction.trim() || proposing) return;
+    setProposing(true);
+    setProposalError(null);
+    setProposal(null);
+    setPublishResult(null);
+    setPublishError(null);
+    try {
+      const r = await fetch("/api/clients/olympic-inspections/site-edit", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction: instruction.trim() }),
+      });
+      const j = await r.json();
+      if (!r.ok || !j.ok) {
+        setProposalError(j.error || `Failed (${r.status})`);
+      } else {
+        setProposal({
+          html: j.proposedHtml,
+          baseSha: j.baseSha,
+          sizeDelta: j.proposedLength - j.baseLength,
+          costUsd: j.costUsd || 0,
+        });
+      }
+    } catch (err) {
+      setProposalError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setProposing(false);
+    }
+  }
+
+  async function publish() {
+    if (!proposal || publishing) return;
+    setPublishing(true);
+    setPublishError(null);
+    try {
+      const r = await fetch("/api/clients/olympic-inspections/site-publish", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          html: proposal.html,
+          baseSha: proposal.baseSha,
+          summary: instruction.trim().slice(0, 140),
+        }),
+      });
+      const j = await r.json();
+      if (!r.ok || !j.ok) {
+        setPublishError(j.error || `Failed (${r.status})`);
+      } else {
+        setPublishResult({
+          commitSha: j.commitSha,
+          commitUrl: j.commitUrl,
+          message: j.message,
+        });
+        setProposal(null);
+        setInstruction("");
+        // Refresh the cached HTML so the next edit starts from the new baseline.
+        setTimeout(loadContent, 1500);
+      }
+    } catch (err) {
+      setPublishError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  return (
+    <div>
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid rgba(31, 42, 28, 0.10)",
+          borderRadius: 12,
+          padding: 20,
+          marginBottom: 16,
+        }}
+      >
+        <h3
+          style={{
+            fontFamily: "Merriweather, Georgia, serif",
+            fontSize: 18,
+            margin: "0 0 6px",
+            color: "#1f2a1c",
+          }}
+        >
+          Edit your site with AI
+        </h3>
+        <p
+          style={{
+            fontSize: 13,
+            color: "#4a5547",
+            margin: "0 0 14px",
+            lineHeight: 1.5,
+          }}
+        >
+          Tell me what to change in plain English — like &ldquo;change the hero
+          subtitle to <em>Serving the Olympic Peninsula since 2014</em>&rdquo;
+          or &ldquo;add &lsquo;Sewer scope inspections&rsquo; to my services&rdquo;.
+          I&apos;ll show you the proposed change before anything goes live.
+        </p>
+
+        {contentError && (
+          <Alert tone="error" message={contentError} />
+        )}
+        {loadingContent && !contentError && (
+          <div style={{ fontSize: 13, color: "#7a857a" }}>
+            Loading your current site…
+          </div>
+        )}
+
+        <textarea
+          value={instruction}
+          onChange={(e) => setInstruction(e.target.value)}
+          rows={3}
+          maxLength={2000}
+          placeholder="e.g. Change the headline from 'Mold, Asbestos & Air Quality' to 'Mold, Asbestos, Lead & Air Quality'"
+          disabled={!siteContent || proposing || publishing}
+          style={{
+            width: "100%",
+            padding: "12px 14px",
+            border: "1px solid rgba(31, 42, 28, 0.18)",
+            borderRadius: 8,
+            background: "#fff",
+            fontSize: 14,
+            color: "#1f2a1c",
+            outline: "none",
+            fontFamily: "inherit",
+            resize: "vertical",
+            marginBottom: 10,
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            onClick={propose}
+            disabled={!siteContent || !instruction.trim() || proposing || publishing}
+            style={{
+              padding: "10px 18px",
+              background:
+                !siteContent || !instruction.trim() || proposing
+                  ? "rgba(31,42,28,0.15)"
+                  : "linear-gradient(180deg, #2d4a2d 0%, #1d331d 100%)",
+              color:
+                !siteContent || !instruction.trim() || proposing
+                  ? "#7a857a"
+                  : "#faf6ee",
+              border: "none",
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.04em",
+              cursor:
+                !siteContent || !instruction.trim() || proposing
+                  ? "not-allowed"
+                  : "pointer",
+            }}
+          >
+            {proposing ? "Thinking…" : "Propose change"}
+          </button>
+          <span style={{ fontSize: 11, color: "#7a857a" }}>
+            {instruction.length} / 2000
+          </span>
+        </div>
+
+        {proposalError && (
+          <div style={{ marginTop: 12 }}>
+            <Alert tone="error" message={proposalError} />
+          </div>
+        )}
+      </div>
+
+      {proposal && (
+        <div
+          style={{
+            background: "#fff",
+            border: "1.5px solid rgba(45, 74, 45, 0.40)",
+            borderRadius: 12,
+            padding: 20,
+            marginBottom: 16,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 10,
+              marginBottom: 12,
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "Merriweather, Georgia, serif",
+                fontSize: 17,
+                margin: 0,
+                color: "#1d331d",
+              }}
+            >
+              Proposed change — preview below
+            </h3>
+            <span style={{ fontSize: 11, color: "#7a857a" }}>
+              {proposal.sizeDelta >= 0
+                ? `+${proposal.sizeDelta}`
+                : proposal.sizeDelta}{" "}
+              chars · ${proposal.costUsd.toFixed(4)}
+            </span>
+          </div>
+
+          {proposedBlobUrl && (
+            <iframe
+              src={proposedBlobUrl}
+              title="Proposed site preview"
+              sandbox="allow-same-origin"
+              style={{
+                width: "100%",
+                height: 480,
+                border: "1px solid rgba(31, 42, 28, 0.18)",
+                borderRadius: 8,
+                background: "#fff",
+                marginBottom: 14,
+              }}
+            />
+          )}
+
+          <p
+            style={{
+              fontSize: 12,
+              color: "#7a857a",
+              margin: "0 0 12px",
+              lineHeight: 1.5,
+            }}
+          >
+            Preview only — your live site has not changed yet. Click publish
+            to push this to olympicinspect.com (takes 60-90 seconds).
+          </p>
+
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={publish}
+              disabled={publishing}
+              style={{
+                padding: "10px 18px",
+                background: publishing
+                  ? "rgba(31,42,28,0.15)"
+                  : "linear-gradient(180deg, #2d4a2d 0%, #1d331d 100%)",
+                color: publishing ? "#7a857a" : "#faf6ee",
+                border: "none",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+                cursor: publishing ? "wait" : "pointer",
+              }}
+            >
+              {publishing ? "Publishing…" : "✓ Publish to my live site"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setProposal(null);
+                setPublishError(null);
+              }}
+              disabled={publishing}
+              style={{
+                padding: "10px 16px",
+                background: "transparent",
+                color: "#4a5547",
+                border: "1px solid rgba(31, 42, 28, 0.25)",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: publishing ? "not-allowed" : "pointer",
+              }}
+            >
+              Discard
+            </button>
+          </div>
+
+          {publishError && (
+            <div style={{ marginTop: 12 }}>
+              <Alert tone="error" message={publishError} />
+            </div>
+          )}
+        </div>
+      )}
+
+      {publishResult && (
+        <div
+          style={{
+            background: "rgba(45, 74, 45, 0.08)",
+            border: "1px solid rgba(45, 74, 45, 0.30)",
+            borderRadius: 10,
+            padding: 16,
+            marginBottom: 16,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: "#1d331d",
+              marginBottom: 6,
+            }}
+          >
+            ✓ Edit saved
+          </div>
+          <div
+            style={{
+              fontSize: 13,
+              color: "#1f2a1c",
+              lineHeight: 1.5,
+              marginBottom: 8,
+            }}
+          >
+            {publishResult.message}
+          </div>
+          <div style={{ fontSize: 11, color: "#7a857a" }}>
+            Commit{" "}
+            {publishResult.commitUrl ? (
+              <a
+                href={publishResult.commitUrl}
+                target="_blank"
+                rel="noopener"
+                style={{ color: "#2d4a2d" }}
+              >
+                {publishResult.commitSha.slice(0, 7)} ↗
+              </a>
+            ) : (
+              publishResult.commitSha.slice(0, 7)
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar with helpful examples + ground rules. Kept terse so
+          first-time visitors aren't intimidated. */}
+      <div
+        style={{
+          background: "#faf6ee",
+          border: "1px solid rgba(31, 42, 28, 0.10)",
+          borderRadius: 12,
+          padding: 16,
+        }}
+      >
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "#2d4a2d",
+            marginBottom: 8,
+          }}
+        >
+          What works well
+        </div>
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: 18,
+            fontSize: 13,
+            color: "#4a5547",
+            lineHeight: 1.6,
+          }}
+        >
+          <li>Change a headline, subtitle, or paragraph</li>
+          <li>Add a service to the services list</li>
+          <li>Update the phone number, hours, or service area</li>
+          <li>Swap a testimonial quote</li>
+          <li>Tweak the about section</li>
+        </ul>
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "#a35e1d",
+            marginTop: 14,
+            marginBottom: 8,
+          }}
+        >
+          What you can&apos;t do here yet
+        </div>
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: 18,
+            fontSize: 13,
+            color: "#4a5547",
+            lineHeight: 1.6,
+          }}
+        >
+          <li>Add or remove photos (text me a photo, I&apos;ll add it)</li>
+          <li>Change the booking form fields</li>
+          <li>Big layout overhauls — those need Ben</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function Alert({
+  tone,
+  message,
+}: {
+  tone: "error" | "info";
+  message: string;
+}) {
+  const c =
+    tone === "error"
+      ? { bg: "rgba(157, 48, 48, 0.10)", border: "rgba(157, 48, 48, 0.30)", fg: "#9d3030" }
+      : { bg: "rgba(45, 74, 45, 0.08)", border: "rgba(45, 74, 45, 0.30)", fg: "#2d4a2d" };
+  return (
+    <div
+      style={{
+        background: c.bg,
+        border: `1px solid ${c.border}`,
+        color: c.fg,
+        padding: "10px 12px",
+        borderRadius: 6,
+        fontSize: 13,
+        lineHeight: 1.45,
+      }}
+    >
+      {message}
+    </div>
+  );
 }
 
 function Phase2Card({
