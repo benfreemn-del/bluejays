@@ -176,7 +176,7 @@ const meyerSchema = {
           "@type": "Service",
           name: "Generac Standby Generator Installation",
           description:
-            "Generac standby generator installation by an authorized dealer. Auto-start when grid fails, sized to your home, propane or natural gas, 5-year limited warranty.",
+            "Generac standby generator installation by a certified installer. Auto-start when grid fails, sized to your home, propane or natural gas, 5-year limited warranty from Generac (manufacturer).",
         },
       },
       {

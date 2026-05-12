@@ -541,7 +541,7 @@ export default function MeyerElectricPage() {
             <TrustBadge
               icon={<Plug size={22} weight="fill" />}
               label="Generac"
-              sublabel="Authorized Dealer"
+              sublabel="Certified Installer"
             />
             <TrustBadge
               icon={<ShieldCheck size={22} weight="fill" />}
@@ -650,7 +650,7 @@ export default function MeyerElectricPage() {
             <ServiceCard
               icon={<Plug size={22} weight="fill" />}
               title="Generators & Backup Power"
-              description="Generac standby generators that kick on automatically when the grid drops. Sized to your home. Fueled by propane or natural gas. Authorized dealer."
+              description="Generac standby generators that kick on automatically when the grid drops. Sized to your home. Fueled by propane or natural gas. Certified installer."
               image={PHOTOS.generator}
               imageAlt="Generac automatic transfer switch and electrical panel installation"
               href="#generators"
