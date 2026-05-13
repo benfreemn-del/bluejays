@@ -58,20 +58,48 @@ const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const BASE_URL = "https://bluejayportfolio.com";
 
 async function sendOwnerEmail(ownerEmail: string, subject: string, body: string): Promise<void> {
-  if (!SENDGRID_API_KEY) return;
-  await fetch("https://api.sendgrid.com/v3/mail/send", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${SENDGRID_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: ownerEmail }] }],
-      from: { email: FROM_EMAIL, name: "BlueJays Leads" },
-      subject,
-      content: [{ type: "text/plain", value: body }],
-    }),
-  });
+  // Debug logging — surfaces silent SendGrid failures (missing key,
+  // suspended account, revoked credentials, etc.) in Vercel function
+  // logs. Previously this function ran inside a `.catch(() => {})` at
+  // the call site, so every failure mode looked identical to success
+  // from the API's perspective. Added 2026-05-12 after SendGrid
+  // billing-suspension cascade produced silently-dropped form
+  // submissions for Meyer Electric.
+  if (!SENDGRID_API_KEY) {
+    console.error("[contact-form] SENDGRID_API_KEY missing — email NOT sent to", ownerEmail);
+    return;
+  }
+  console.log("[contact-form] Sending lead email to", ownerEmail, "via SendGrid");
+  try {
+    const sgRes = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: ownerEmail }] }],
+        from: { email: FROM_EMAIL, name: "BlueJays Leads" },
+        subject,
+        content: [{ type: "text/plain", value: body }],
+      }),
+    });
+    if (!sgRes.ok) {
+      const errText = await sgRes.text().catch(() => "<no body>");
+      console.error(
+        "[contact-form] SendGrid REJECTED send to",
+        ownerEmail,
+        "→ status",
+        sgRes.status,
+        "body:",
+        errText,
+      );
+    } else {
+      console.log("[contact-form] SendGrid accepted send to", ownerEmail, "(status", sgRes.status + ")");
+    }
+  } catch (err) {
+    console.error("[contact-form] SendGrid fetch THREW:", err);
+  }
 }
 
 export async function POST(
