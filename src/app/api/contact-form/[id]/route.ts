@@ -79,18 +79,30 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
-  const { name, phone, email, message, service } = body as {
-    name: string;
-    phone?: string;
-    email?: string;
-    message?: string;
-    service?: string;
-  };
+  // Accept BOTH naming conventions:
+  //   • short form  → name, phone, email, service           (this route's
+  //     original embed-snippet API shape, used by 3rd-party client sites
+  //     copy-pasting the snippet from the JSDoc above)
+  //   • supabase-ish → customer_name, customer_phone,
+  //     customer_email, service_requested                    (internal
+  //     showcase forms — Meyer, Masters, etc. — that named their fields
+  //     to match the `contact_form_submissions` Supabase columns)
+  // Bug fixed 2026-05-12: server only read short-form keys, so the
+  // showcase forms (which only send the long-form keys) hit
+  // "name is required" even when the customer typed their name.
+  const name = String(body.name || body.customer_name || "").trim();
+  const phone = String(body.phone || body.customer_phone || "").trim();
+  const email = String(body.email || body.customer_email || "").trim();
+  const message = String(body.message || "").trim();
+  const service = String(body.service || body.service_requested || "").trim();
 
   if (!id || !name) {
-    return NextResponse.json({ error: "name is required" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "name is required" },
+      { status: 400 },
+    );
   }
 
   const prospect = await getProspect(id);
@@ -149,6 +161,7 @@ export async function POST(
   }
 
   return NextResponse.json({
+    ok: true,
     success: true,
     scheduleUrl,
     message: "Form received. Open scheduleUrl to let the customer book an appointment.",
