@@ -53,8 +53,18 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
-// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+// FROM_EMAIL hardcoded per CLAUDE.md Rule 16 — SendGrid was rejecting
+// sends with status 400 "Invalid from email address" because
+// ben@bluejayportfolio.com isn't authenticated as a verified single
+// sender on this SendGrid account (and the bluejayportfolio.com domain
+// authentication was reset during the 2026-05-12 billing suspension).
+// bluejaycontactme@gmail.com is the verified single sender used across
+// the rest of the email pipeline (email-sender.ts, etc.) — keep this
+// in lockstep with that file. Don't read from process.env.FROM_EMAIL —
+// the env var on Vercel has historically been set to invalid values
+// (stale NEXT_PUBLIC_* legacy), so hardcoding is the safety net.
+const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Same Rule 16 pattern — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
 
 async function sendOwnerEmail(ownerEmail: string, subject: string, body: string): Promise<void> {
