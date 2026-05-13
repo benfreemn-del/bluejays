@@ -482,3 +482,87 @@ export const CATEGORY_CONFIG: Record<
   // near-black for the dark luxury fantasy/literary vibe.
   "indie-author":         { label: "Indie Author / Book Series",       accentColor: "#d4a853", heroGradient: "linear-gradient(135deg, #1a1310 0%, #09090b 70%)" },
 };
+
+// ─────────────────────────── DIAGNOSIS METRICS ───────────────────────────
+// Per-prospect financial profile collected via /dashboard/diagnostic
+// MetricsPanel + filled in by the prospect via /diagnosis/[token].
+// Table: diagnosis_metrics (migration 20260512_diagnosis_metrics.sql).
+// Math lives in src/lib/diagnosis/metrics-calc.ts.
+// Industry benchmarks live in src/lib/diagnosis/benchmarks.ts.
+// Reverse-engineering qualifier flows live in src/lib/diagnosis/qualifier-flows.ts.
+
+export type DiagnosisIndustry =
+  | "landscaping"
+  | "electrician"
+  | "contractor"
+  | "small_ecomm"
+  | "other";
+
+/**
+ * How each input got its value. Stored in diagnosis_metrics.estimates JSONB
+ * so the UI can flag estimates with ⚠ and the audit trail is honest.
+ *
+ * 'user_entered'      — operator or prospect typed it directly
+ * 'industry_default'  — pulled from BENCHMARKS (flagged ⚠ in UI)
+ * 'derived'           — computed by a qualifier-flow (reverse-engineered)
+ * 'auto_computed'     — math from other inputs (e.g. AOV from rev÷cust)
+ */
+export type DiagnosisEstimateSource =
+  | "user_entered"
+  | "industry_default"
+  | "derived"
+  | "auto_computed";
+
+export type DiagnosisHealthScore =
+  | "healthy"
+  | "watch"
+  | "red_flag"
+  | "insufficient_data";
+
+/**
+ * Server-shape row from diagnosis_metrics. snake_case to match Postgres.
+ */
+export interface DiagnosisMetricsRow {
+  id: string;
+  prospect_id: string | null;
+  industry: DiagnosisIndustry | null;
+
+  // Six core metrics — nullable until entered
+  monthly_revenue: number | null;
+  active_customers: number | null;
+  average_order_value: number | null;
+  gross_margin_pct: number | null;
+  churn_monthly_pct: number | null;
+  customer_acquisition_cost: number | null;
+
+  estimates: Partial<Record<DiagnosisMetricKey, DiagnosisEstimateSource>>;
+  qualifier_answers: Record<string, number | null>;
+  derived: DiagnosisDerived;
+
+  magic_token: string | null;
+  magic_token_expires_at: string | null;
+  client_last_opened_at: string | null;
+  client_completed_at: string | null;
+
+  created_at: string;
+  updated_at: string;
+}
+
+export type DiagnosisMetricKey =
+  | "monthly_revenue"
+  | "active_customers"
+  | "average_order_value"
+  | "gross_margin_pct"
+  | "churn_monthly_pct"
+  | "customer_acquisition_cost";
+
+export interface DiagnosisDerived {
+  arpu_monthly?: number | null;
+  avg_lifespan_months?: number | null;
+  ltv?: number | null;
+  ltv_cac_ratio?: number | null;
+  payback_months?: number | null;
+  health_score?: DiagnosisHealthScore;
+  health_reasons?: string[];
+}
+

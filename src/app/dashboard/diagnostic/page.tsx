@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import MetricsPanel from "@/components/diagnosis/MetricsPanel";
+import type { DiagnosisMetricsRow } from "@/lib/types";
 
 /**
  * /dashboard/diagnostic — Hormozi-style live business diagnosis tool.
@@ -45,6 +47,45 @@ interface RecentRun {
   created_at: string;
 }
 
+interface AttachedFile {
+  name: string;
+  mediaType: string;
+  sizeBytes: number;
+  base64: string;
+  previewUrl?: string;
+}
+
+const ACCEPTED_TYPES = "image/png,image/jpeg,image/webp,image/gif,application/pdf";
+const ACCEPTED_MIMES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+  "application/pdf",
+]);
+const MAX_FILES = 3;
+const MAX_BYTES_PER_FILE = 2 * 1024 * 1024;
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const stripped = result.includes(",") ? result.split(",", 2)[1] : result;
+      resolve(stripped);
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 const EMPTY_FORM = {
   businessText: "",
   businessName: "",
@@ -56,13 +97,139 @@ const EMPTY_FORM = {
   topComplaint: "",
 };
 
+// Match prospects.id UUID format
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default function DiagnosticPage() {
   const [form, setForm] = useState(EMPTY_FORM);
+  const [files, setFiles] = useState<AttachedFile[]>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Diagnosis | null>(null);
   const [meta, setMeta] = useState<{ durationMs: number; chunksUsed: number } | null>(null);
   const [recent, setRecent] = useState<RecentRun[]>([]);
+
+  // ─── Metrics panel state ─────────────────────────────────────
+  const [metricsOpen, setMetricsOpen] = useState(false);
+  const [prospectId, setProspectId] = useState("");
+  const [metricsRow, setMetricsRow] = useState<DiagnosisMetricsRow | null>(null);
+  const [metricsLoading, setMetricsLoading] = useState(false);
+  const [magicLink, setMagicLink] = useState<string | null>(null);
+  const [magicLinkCopied, setMagicLinkCopied] = useState(false);
+
+  const isValidProspectId = UUID_RE.test(prospectId.trim());
+
+  // Load existing metrics whenever a valid prospect ID is entered
+  useEffect(() => {
+    if (!isValidProspectId) {
+      setMetricsRow(null);
+      return;
+    }
+    setMetricsLoading(true);
+    fetch(`/api/dashboard/diagnosis-metrics?prospectId=${prospectId.trim()}`)
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.ok) setMetricsRow(j.row);
+      })
+      .catch(() => {})
+      .finally(() => setMetricsLoading(false));
+  }, [prospectId, isValidProspectId]);
+
+  async function saveMetrics(state: Parameters<
+    NonNullable<React.ComponentProps<typeof MetricsPanel>["onSave"]>
+  >[0]) {
+    if (!isValidProspectId) return;
+    const r = await fetch("/api/dashboard/diagnosis-metrics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "save",
+        prospect_id: prospectId.trim(),
+        industry: state.industry,
+        ...state.inputs,
+        estimates: state.estimates,
+        qualifier_answers: state.qualifier_answers,
+      }),
+    });
+    const j = await r.json();
+    if (j.ok) setMetricsRow(j.row);
+    else throw new Error(j.error || "save failed");
+  }
+
+  async function generateMagicLink() {
+    if (!isValidProspectId) return;
+    const r = await fetch("/api/dashboard/diagnosis-metrics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "generate_magic_link",
+        prospect_id: prospectId.trim(),
+      }),
+    });
+    const j = await r.json();
+    if (j.ok) {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      setMagicLink(`${origin}${j.url}`);
+      setMagicLinkCopied(false);
+    }
+  }
+
+  async function copyMagicLink() {
+    if (!magicLink) return;
+    try {
+      await navigator.clipboard.writeText(magicLink);
+      setMagicLinkCopied(true);
+      setTimeout(() => setMagicLinkCopied(false), 2000);
+    } catch {
+      // ignore — user can manually copy
+    }
+  }
+
+  async function addFiles(fileList: FileList | File[]) {
+    const incoming = Array.from(fileList);
+    if (files.length + incoming.length > MAX_FILES) {
+      setError(`Max ${MAX_FILES} files per diagnosis.`);
+      return;
+    }
+    const next: AttachedFile[] = [];
+    for (const f of incoming) {
+      if (!ACCEPTED_MIMES.has(f.type)) {
+        setError(`Unsupported type: ${f.type || "unknown"}. PNG/JPG/WEBP/GIF/PDF only.`);
+        continue;
+      }
+      if (f.size > MAX_BYTES_PER_FILE) {
+        setError(`"${f.name}" is over 2MB.`);
+        continue;
+      }
+      try {
+        const base64 = await fileToBase64(f);
+        next.push({
+          name: f.name,
+          mediaType: f.type,
+          sizeBytes: f.size,
+          base64,
+          previewUrl: f.type.startsWith("image/") ? URL.createObjectURL(f) : undefined,
+        });
+      } catch (e) {
+        setError(`Failed to read "${f.name}": ${(e as Error).message}`);
+      }
+    }
+    if (next.length > 0) {
+      setError(null);
+      setFiles((prev) => [...prev, ...next]);
+    }
+  }
+
+  function removeFile(idx: number) {
+    setFiles((prev) => {
+      const target = prev[idx];
+      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((_, i) => i !== idx);
+    });
+  }
 
   async function loadRecent() {
     try {
@@ -88,10 +255,19 @@ export default function DiagnosticPage() {
     setResult(null);
     setMeta(null);
     try {
+      const payload = {
+        ...form,
+        files: files.map((f) => ({
+          name: f.name,
+          mediaType: f.mediaType,
+          sizeBytes: f.sizeBytes,
+          base64: f.base64,
+        })),
+      };
       const r = await fetch("/api/dashboard/hormozi-diagnostic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const j = await r.json();
       if (!j.ok) {
@@ -117,6 +293,9 @@ export default function DiagnosticPage() {
       ...run.business_input,
       businessText: run.business_input.businessText ?? "",
     });
+    // Recent runs don't restore file bytes — only metadata is stored.
+    files.forEach((f) => f.previewUrl && URL.revokeObjectURL(f.previewUrl));
+    setFiles([]);
   }
 
   return (
@@ -149,6 +328,86 @@ export default function DiagnosticPage() {
               className="w-full min-h-[180px] rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm placeholder-slate-600 mb-4"
             />
 
+            <div className="mb-4">
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
+                Attachments <span className="text-slate-600 normal-case tracking-normal">— screenshots, PDFs, P&L, GBP listing (max {MAX_FILES}, 2MB each)</span>
+              </label>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`rounded-lg border-2 border-dashed px-4 py-5 text-center cursor-pointer transition-colors ${
+                  dragOver
+                    ? "border-emerald-400 bg-emerald-500/5"
+                    : "border-white/10 bg-slate-950 hover:border-white/20"
+                }`}
+              >
+                <p className="text-sm text-slate-300">
+                  {files.length >= MAX_FILES
+                    ? `Max ${MAX_FILES} files reached.`
+                    : "Drop files or click to upload"}
+                </p>
+                <p className="text-[11px] text-slate-500 mt-1">PNG · JPG · WEBP · GIF · PDF</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_TYPES}
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files?.length) addFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+
+              {files.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {files.map((f, i) => (
+                    <li
+                      key={`${f.name}-${i}`}
+                      className="flex items-center gap-3 rounded-lg border border-white/10 bg-slate-950 px-3 py-2"
+                    >
+                      {f.previewUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={f.previewUrl}
+                          alt={f.name}
+                          className="w-10 h-10 rounded object-cover border border-white/10"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-slate-800 border border-white/10 flex items-center justify-center text-[10px] font-semibold text-slate-400">
+                          PDF
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-white truncate">{f.name}</p>
+                        <p className="text-[11px] text-slate-500">
+                          {f.mediaType} · {formatBytes(f.sizeBytes)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(i)}
+                        className="text-xs text-slate-500 hover:text-rose-400 px-2"
+                        aria-label={`Remove ${f.name}`}
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <Field label="Business name" value={form.businessName} onChange={(v) => setForm({ ...form, businessName: v })} />
               <Field label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} placeholder="landscaper, gym, dental…" />
@@ -159,6 +418,145 @@ export default function DiagnosticPage() {
               <div className="col-span-2">
                 <Field label="Top complaint" value={form.topComplaint} onChange={(v) => setForm({ ...form, topComplaint: v })} />
               </div>
+            </div>
+
+            {/* ─── Business Metrics (collapsible) ──────────────────── */}
+            <div className="mt-6 rounded-xl border border-white/10 bg-slate-950/40 overflow-hidden">
+              <button
+                onClick={() => setMetricsOpen((o) => !o)}
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-900/40 transition-colors"
+              >
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-white">
+                    📊 Business Metrics
+                    <span className="ml-2 text-[10px] uppercase tracking-wider text-emerald-400">
+                      new
+                    </span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    LTV · CAC · Churn · MRR · AOV · Gross Margin —
+                    smart-ordered, industry benchmarks, reverse-engineering
+                    helpers, magic link to share with prospect.
+                  </p>
+                </div>
+                <span className="text-slate-400 text-lg">
+                  {metricsOpen ? "▾" : "▸"}
+                </span>
+              </button>
+
+              {metricsOpen && (
+                <div className="px-4 pb-4 border-t border-white/10">
+                  {/* Prospect picker */}
+                  <div className="mt-4 mb-4">
+                    <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
+                      Prospect UUID *
+                    </label>
+                    <input
+                      type="text"
+                      value={prospectId}
+                      onChange={(e) => {
+                        setProspectId(e.target.value);
+                        setMagicLink(null);
+                      }}
+                      placeholder="paste prospect UUID (from CRM / dashboard / URL)"
+                      className={`w-full rounded-lg border px-3 py-2 text-sm font-mono ${
+                        prospectId === ""
+                          ? "border-white/10 bg-slate-950"
+                          : isValidProspectId
+                            ? "border-emerald-500/40 bg-slate-950"
+                            : "border-rose-500/40 bg-slate-950"
+                      }`}
+                    />
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Find a prospect&apos;s UUID by opening their row in
+                      /dashboard/clients or /dashboard/sales-pipeline and
+                      copying from the URL.
+                    </p>
+                  </div>
+
+                  {isValidProspectId ? (
+                    <>
+                      {metricsLoading && (
+                        <p className="text-xs text-slate-500 my-3">
+                          Loading existing metrics…
+                        </p>
+                      )}
+                      <MetricsPanel
+                        key={prospectId}
+                        initialInputs={
+                          metricsRow
+                            ? {
+                                monthly_revenue: metricsRow.monthly_revenue,
+                                active_customers: metricsRow.active_customers,
+                                average_order_value:
+                                  metricsRow.average_order_value,
+                                gross_margin_pct: metricsRow.gross_margin_pct,
+                                churn_monthly_pct:
+                                  metricsRow.churn_monthly_pct,
+                                customer_acquisition_cost:
+                                  metricsRow.customer_acquisition_cost,
+                              }
+                            : undefined
+                        }
+                        initialIndustry={metricsRow?.industry ?? null}
+                        initialEstimates={metricsRow?.estimates ?? {}}
+                        initialQualifierAnswers={
+                          metricsRow?.qualifier_answers ?? {}
+                        }
+                        onSave={saveMetrics}
+                      />
+
+                      {/* Magic link generator */}
+                      <div className="mt-5 rounded-lg border border-sky-500/30 bg-sky-500/5 p-4">
+                        <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
+                          Send to prospect
+                        </p>
+                        <p className="text-[11px] text-slate-300 mb-3">
+                          Generate a one-time magic link so the prospect can
+                          fill in any missing metrics themselves. Link expires
+                          in 7 days.
+                        </p>
+                        {!magicLink ? (
+                          <button
+                            onClick={generateMagicLink}
+                            className="px-3 py-2 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
+                          >
+                            Generate magic link →
+                          </button>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="flex gap-2">
+                              <input
+                                readOnly
+                                value={magicLink}
+                                className="flex-1 rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-[11px] text-white font-mono"
+                                onFocus={(e) => e.currentTarget.select()}
+                              />
+                              <button
+                                onClick={copyMagicLink}
+                                className="px-3 py-1.5 text-[11px] font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
+                              >
+                                {magicLinkCopied ? "✓ Copied" : "Copy"}
+                              </button>
+                            </div>
+                            <p className="text-[10px] text-slate-500">
+                              Expires in 7 days · text/email this to the
+                              prospect
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    prospectId !== "" && (
+                      <p className="text-xs text-rose-400 my-3">
+                        Not a valid UUID — paste the full 36-char prospect
+                        ID.
+                      </p>
+                    )
+                  )}
+                </div>
+              )}
             </div>
 
             <button
@@ -176,6 +574,8 @@ export default function DiagnosticPage() {
             <button
               onClick={() => {
                 setForm(EMPTY_FORM);
+                files.forEach((f) => f.previewUrl && URL.revokeObjectURL(f.previewUrl));
+                setFiles([]);
                 setResult(null);
                 setMeta(null);
                 setError(null);
