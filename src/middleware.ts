@@ -257,10 +257,16 @@ export async function middleware(request: NextRequest) {
     !pathname.startsWith("/api") &&
     !pathname.startsWith(showcasePath)
   ) {
-    const rewriteUrl = new URL(
-      showcasePath + (pathname === "/" ? "" : pathname),
-      request.url,
-    );
+    // Single-page bespoke showcases (Meyer, Hector, etc.) don't have
+    // sub-pages. Legacy paths Google still has indexed from the prior
+    // hosting (e.g. /contact, /catalog, /about from old YOLA/Wix sites)
+    // should 301 to the showcase root rather than rewrite to a path
+    // that 404s on the new Next.js page. The 301 tells Google to
+    // update its index — stale sitelinks drop within a few weeks.
+    if (pathname !== "/") {
+      return NextResponse.redirect(new URL("/", request.url), 301);
+    }
+    const rewriteUrl = new URL(showcasePath, request.url);
     rewriteUrl.search = request.nextUrl.search;
     return NextResponse.rewrite(rewriteUrl);
   }
