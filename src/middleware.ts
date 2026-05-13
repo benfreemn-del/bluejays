@@ -232,6 +232,13 @@ const CLIENT_DOMAIN_MAP: Record<string, string> = {
   // info). Was previously pointed at /preview/{prospect-id}; now
   // upgraded to the bespoke build.
   "hectorlandscaping.com": "/clients/hector-landscaping",
+  // Meyer Electric (Kyle Meyer, Sequim WA) — bespoke custom-tier
+  // showcase at /clients/meyer-electric. Kyle owns both the short
+  // and long variants of the domain; we serve the same showcase on
+  // both. Email lives on sequimelectrician.com (Zoho Mail Lite,
+  // migrated from YOLA 2026-05-12).
+  "sequimelectric.com": "/clients/meyer-electric",
+  "sequimelectrician.com": "/clients/meyer-electric",
   // "tekky.org": "/clients/zenith-sports",  // (when Philip activates)
 };
 
