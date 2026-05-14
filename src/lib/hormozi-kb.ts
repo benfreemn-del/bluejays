@@ -119,6 +119,33 @@ export function pickRelevantTags(businessText: string): string[] {
   if (/\b\.99|micro[-\s]?pricing|cents|nickel|penny\b/.test(t)) tags.add("pricing-micro");
   if (/\bpairs?\s?with|pairing|combo|bundle\b/.test(t)) tags.add("pairing");
 
+  // Coupleneurs / coaching-business additions (2026-05-13)
+  if (/\bcoach|mentor|consult|fractional|advisor|adviser\b/.test(t)) tags.add("coaching");
+  if (/\bsupport|slack|texting|messaging|always available|24[\s-/]?7|unlimited access\b/.test(t))
+    tags.add("support");
+  if (/\bevent|conference|retreat|getaway|workshop|inerson|in[\s-]?person|live\b/.test(t))
+    tags.add("event");
+  if (/\bkey[\s-]?man|founder dependency|founder[\s-]?led|x[\s-]?factor|brand built on\b/.test(t))
+    tags.add("key-man");
+  if (/\bcash[\s-]?flow|cash[\s-]?cycle|prepay|installment|payment plan|deferred|cash up front\b/.test(t))
+    tags.add("cashflow");
+  if (/\blayaway|payment plan|installment|monthly payment|quarterly\b/.test(t))
+    tags.add("payment-plan");
+  if (/\btrim|stack|bundle|cut|remove|simplify|consolid\b/.test(t)) tags.add("trim-stack");
+  if (/\bchallenge|webinar|virtual event|cohort|live training\b/.test(t)) tags.add("funnel");
+  if (/\bshow[\s-]?up rate|attendance|drop[\s-]?off|attrition\b/.test(t)) tags.add("conversion");
+  if (/\bvideo ad|video creative|reel|tiktok|short[\s-]?form\b/.test(t)) tags.add("creative");
+  if (/\btestimonial|case study|success story|client story|results\b/.test(t)) tags.add("social-proof");
+  if (/\brebate|incentive|kickback|referral bonus|cash back\b/.test(t)) tags.add("incentives");
+  if (/\bbelief|assumption|conviction|certain|always|never\b/.test(t)) tags.add("mindset");
+  if (/\bemergency|escalation|panic|urgent|911\b/.test(t)) tags.add("support");
+  if (/\bcap|ceiling|max capacity|max out|topline limit\b/.test(t)) tags.add("capacity");
+  if (/\bratio|one[\s-]?on[\s-]?one|one[\s-]?to[\s-]?many|small group|cohort\b/.test(t))
+    tags.add("delivery-ratio");
+  if (/\bdependent|dependency|outsource decision|hand[\s-]?hold|chat[\s-]?gpt for\b/.test(t))
+    tags.add("delivery");
+  if (/\brenewal|year[\s-]?two|second year|recurring revenue\b/.test(t)) tags.add("renewal");
+
   return Array.from(tags);
 }
 
