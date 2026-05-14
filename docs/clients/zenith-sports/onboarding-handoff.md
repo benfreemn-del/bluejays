@@ -152,9 +152,9 @@ For your records — what you're paying for + when each piece bills:
 |---|---|---|---|
 | AI System (BlueJays setup) | $9,700 | one-time | paid in 4 quarterly installments |
 | Hyperloop (auto-optimization) | Off → Starter | $0 → $99 | recommend flip after 50+ leads |
-| Claude (AI replies + drafting) | Starter | $49 | starts walkthrough day |
+| Claude (AI replies + drafting) | Pro | $149 | live since walkthrough |
 | Twilio (SMS + missed-call texter) | TBD | ~$10-30 | starts when number provisions |
-| SendGrid (email delivery) | Active | $0 | included in BlueJays setup |
+| SendGrid (email delivery) | Starter | $0 | included in BlueJays setup |
 | Meta Ads · Google Ads | TBD | ad spend only | starts Phase A account stand-up |
 
 **Phase B handoff (target: 30 days post-launch):**
@@ -180,5 +180,6 @@ Bring these to the walkthrough so we're all aligned by close:
 
 ---
 
-Last updated: 2026-05-09 ahead of walkthrough.
+Last updated: 2026-05-12 ahead of 2026-05-13 walkthrough (Claude tier
+synced to live Pro/$149 config).
 Maintained at: `bluejays/docs/clients/zenith-sports/onboarding-handoff.md`
