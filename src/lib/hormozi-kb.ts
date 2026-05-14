@@ -52,13 +52,44 @@ export function pickRelevantTags(businessText: string): string[] {
   // Always relevant for a Hormozi diagnosis
   tags.add("offer");
   tags.add("leads");
-  if (/\bprice|pricing|charge|cost|cheap|expensive|undercut\b/.test(t)) tags.add("pricing");
-  if (/\bchurn|retention|cancel|drop off|lifetime|ltv\b/.test(t)) tags.add("churn");
-  if (/\bad|ads|facebook|google ads|meta\b/.test(t)) tags.add("paid-ads");
+  tags.add("strategy");
+  tags.add("prioritization");
+
+  if (/\bprice|pricing|charge|cost|cheap|expensive|undercut|discount|surge\b/.test(t)) tags.add("pricing");
+  if (/\bchurn|retention|cancel|drop off|lifetime|ltv|loyalty\b/.test(t)) tags.add("churn");
+  if (/\bad|ads|facebook|google ads|meta|paid traffic|cpc|roas\b/.test(t)) tags.add("paid-ads");
   if (/\bcold call|outreach|dm|email blast\b/.test(t)) tags.add("cold-outreach");
-  if (/\bcontent|youtube|tiktok|instagram|post\b/.test(t)) tags.add("content");
-  if (/\bsales call|close|pitch|deck\b/.test(t)) tags.add("sales");
-  if (/\bteam|hire|staff|delivery\b/.test(t)) tags.add("delivery");
+  if (/\bcontent|youtube|tiktok|instagram|post|reel\b/.test(t)) tags.add("content");
+  if (/\bsales call|close|pitch|deck|objection|upsell|crossell|add[-\s]?on\b/.test(t)) tags.add("sales");
+  if (/\bupsell|cross[-\s]?sell|add[-\s]?on|recurring|membership|subscription\b/.test(t)) tags.add("upsell");
+  if (/\bteam|hire|staff|deliver|fulfill|operator|manager\b/.test(t)) tags.add("delivery");
+
+  // Annie-diagnosis additions (2026-05-13)
+  if (/\bpartner|co[-\s]?owner|co[-\s]?founder|equity|share|split|cap[\s-]?table\b/.test(t))
+    tags.add("partnership");
+  if (/\bstage|scaling|scale|growth|grow|expand|next level\b/.test(t)) tags.add("scaling-stage");
+  if (/\bstage|location|locations|franchise|multi[-\s]?unit|open another\b/.test(t))
+    tags.add("scaling-stage");
+  if (/\bstaff|hire|hiring|turn[-\s]?over|trainer|trainee|technician|stylist|coach|barista\b/.test(t))
+    tags.add("staff");
+  if (/\bretention|stay|stick|loyal|career|path|promotion|raise\b/.test(t)) tags.add("retention");
+  if (/\btrain|training|onboard|onboarding|role[-\s]?play|script\b/.test(t)) tags.add("training");
+  if (/\brebook|come back|return|recurring|appointment|booking|schedul\b/.test(t)) tags.add("rebook");
+  if (/\bmembership|monthly|annual|subscription|recurring\b/.test(t)) tags.add("membership");
+  if (/\bbottleneck|stuck|plateau|constraint|capacity|busy|overwhelm|slow week\b/.test(t))
+    tags.add("constraint");
+  if (/\bdemand|supply|busy|slow|peak|off[-\s]?peak|weekend|weekday\b/.test(t)) tags.add("demand");
+  if (/\bbonus|free|gift|incentive|reward|stack\b/.test(t)) tags.add("bonus-stack");
+  if (/\bmembership|recurring|monthly|annual|subscription|loyalty\b/.test(t)) tags.add("membership");
+  if (/\battribut|track|where did|where they hear|source|channel\b/.test(t)) tags.add("attribution");
+  if (/\bfollow[-\s]?up|callback|speed[-\s]?to[-\s]?lead|response time|cold lead\b/.test(t))
+    tags.add("speed-to-lead");
+  if (/\bservice|salon|gym|clinic|appointment|booking|stylist|technician\b/.test(t))
+    tags.add("service-business");
+  if (/\bprofit|margin|cogs|labor cost|payroll|unit economics|revenue per\b/.test(t))
+    tags.add("unit-economics");
+  if (/\bpre[-\s]?pay|prepay|annual plan|paid up[-\s]?front|locked in\b/.test(t)) tags.add("cashflow");
+
   return Array.from(tags);
 }
 
