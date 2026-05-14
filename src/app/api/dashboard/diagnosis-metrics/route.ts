@@ -15,16 +15,22 @@ import type {
 /**
  * /api/dashboard/diagnosis-metrics
  *
- * Owner-side CRUD for the per-prospect financial profile that powers
- * the Diagnosis Tool. Sits inside /dashboard/* so middleware-gated.
+ * Owner-side CRUD for the diagnosis-tool financial profile. Sits inside
+ * /dashboard/* so middleware-gated.
+ *
+ * Two key shapes (mutually exclusive — every row has ONE):
+ *   · prospect_id  — for actual prospect records (used by /dashboard/diagnostic)
+ *   · client_slug  — for BlueJays-itself + per-client portal + ad-hoc demos
+ *                     (used by /dashboard/numbers + future /clients/[slug]/portal)
  *
  * GET ?prospectId=<uuid>      → load row for that prospect (or null)
+ * GET ?clientSlug=<slug>      → load row for that client_slug (or null)
  * GET ?token=<magic_token>    → load row by magic-link token (internal)
  *
- * POST { prospect_id, ...inputs, estimates?, qualifier_answers? }
+ * POST { prospect_id|client_slug, ...inputs, estimates?, qualifier_answers? }
  *   → upsert row, recompute derived, return updated row
  *
- * POST + action='generate_magic_link' → mint a 7-day token + return URL
+ * POST + action='generate_magic_link' → mint a 7-day token (prospect_id only)
  *
  * The client-facing /diagnosis/[token] page uses a SEPARATE public API
  * route (see /api/diagnosis/[token]/route.ts) that only allows updates
@@ -36,6 +42,10 @@ export const dynamic = "force-dynamic";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Match client_slug shape (matches CLIENT_SITES keys + spawnable per-business slugs).
+// Allow letters, digits, dashes, underscores; 2-64 chars. No spaces, no leading/trailing dashes.
+const CLIENT_SLUG_RE = /^[a-z0-9]([a-z0-9_-]{0,62}[a-z0-9])?$/i;
 
 const VALID_INDUSTRIES: DiagnosisIndustry[] = [
   "landscaping",
@@ -76,11 +86,12 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url);
   const prospectId = url.searchParams.get("prospectId");
+  const clientSlug = url.searchParams.get("clientSlug");
   const token = url.searchParams.get("token");
 
-  if (!prospectId && !token) {
+  if (!prospectId && !clientSlug && !token) {
     return NextResponse.json(
-      { ok: false, error: "prospectId or token required" },
+      { ok: false, error: "prospectId, clientSlug, or token required" },
       { status: 400 },
     );
   }
@@ -92,9 +103,17 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  if (clientSlug && !CLIENT_SLUG_RE.test(clientSlug)) {
+    return NextResponse.json(
+      { ok: false, error: "Invalid clientSlug" },
+      { status: 400 },
+    );
+  }
+
   let query = supabase.from(SUPABASE_TABLE).select("*").limit(1);
   if (prospectId) query = query.eq("prospect_id", prospectId);
-  if (token) query = query.eq("magic_token", token);
+  else if (clientSlug) query = query.eq("client_slug", clientSlug);
+  else if (token) query = query.eq("magic_token", token);
 
   const { data, error } = await query.maybeSingle();
   if (error) {
@@ -113,6 +132,7 @@ export async function GET(req: NextRequest) {
 type PostBody = {
   action?: "save" | "generate_magic_link";
   prospect_id?: string | null;
+  client_slug?: string | null;
   industry?: DiagnosisIndustry | null;
   monthly_revenue?: number | null;
   active_customers?: number | null;
@@ -189,9 +209,30 @@ export async function POST(req: NextRequest) {
   }
 
   // ─── Action: save (default) ──────────────────────────────────
-  if (!body.prospect_id || !UUID_RE.test(body.prospect_id)) {
+  // Row must be keyed by either prospect_id OR client_slug (mutually exclusive).
+  const hasProspectId = !!body.prospect_id;
+  const hasClientSlug = !!body.client_slug;
+  if (!hasProspectId && !hasClientSlug) {
     return NextResponse.json(
-      { ok: false, error: "Valid prospect_id required" },
+      { ok: false, error: "Either prospect_id or client_slug required" },
+      { status: 400 },
+    );
+  }
+  if (hasProspectId && hasClientSlug) {
+    return NextResponse.json(
+      { ok: false, error: "Provide only one of prospect_id or client_slug" },
+      { status: 400 },
+    );
+  }
+  if (hasProspectId && !UUID_RE.test(body.prospect_id!)) {
+    return NextResponse.json(
+      { ok: false, error: "Invalid prospect_id" },
+      { status: 400 },
+    );
+  }
+  if (hasClientSlug && !CLIENT_SLUG_RE.test(body.client_slug!)) {
+    return NextResponse.json(
+      { ok: false, error: "Invalid client_slug" },
       { status: 400 },
     );
   }
@@ -236,9 +277,10 @@ export async function POST(req: NextRequest) {
 
   const derived = computeDerivedMetrics(inputs);
 
-  // Upsert (insert if missing, update if exists — keyed by prospect_id unique)
+  // Upsert keyed by whichever side was provided.
   const payload = {
-    prospect_id: body.prospect_id,
+    prospect_id: hasProspectId ? body.prospect_id : null,
+    client_slug: hasClientSlug ? body.client_slug : null,
     industry: body.industry ?? null,
     ...inputs,
     estimates: body.estimates ?? {},
@@ -248,7 +290,9 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from(SUPABASE_TABLE)
-    .upsert(payload, { onConflict: "prospect_id" })
+    .upsert(payload, {
+      onConflict: hasProspectId ? "prospect_id" : "client_slug",
+    })
     .select("*")
     .single();
 

@@ -525,6 +525,9 @@ export type DiagnosisHealthScore =
 export interface DiagnosisMetricsRow {
   id: string;
   prospect_id: string | null;
+  /** Alternate key for BlueJays-itself, per-client portals, and ad-hoc demos.
+   *  Exactly one of prospect_id or client_slug is set per row. */
+  client_slug: string | null;
   industry: DiagnosisIndustry | null;
 
   // Six core metrics — nullable until entered
