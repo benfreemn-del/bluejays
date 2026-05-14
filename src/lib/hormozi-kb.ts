@@ -90,6 +90,35 @@ export function pickRelevantTags(businessText: string): string[] {
     tags.add("unit-economics");
   if (/\bpre[-\s]?pay|prepay|annual plan|paid up[-\s]?front|locked in\b/.test(t)) tags.add("cashflow");
 
+  // Calvin & Air / restaurant-diagnosis additions (2026-05-13)
+  if (/\bmenu|entree|dish|plate|tasting|tab|ticket\b/.test(t)) tags.add("menu");
+  if (/\brestaurant|cafe|bar|kitchen|dine|takeout|delivery|reservation\b/.test(t))
+    tags.add("restaurant");
+  if (/\breview|stars|rating|yelp|google review|trustpilot|testimonial\b/.test(t))
+    tags.add("reviews");
+  if (/\breview|review velocity|review count|stars per\b/.test(t)) tags.add("review-velocity");
+  if (/\banchor|first price|leading price|expensive first\b/.test(t)) tags.add("anchor-pricing");
+  if (/\bsocial proof|testimonial|case study|client logo\b/.test(t)) tags.add("social-proof");
+  if (/\bfirst[-\s]?time|new customer|new client|brand[-\s]?new\b/.test(t)) tags.add("first-time");
+  if (/\bpeak[-\s]?end|surprise|delight|moment\b/.test(t)) tags.add("peak-end");
+  if (/\bexperience|hospitality|vibe|atmosphere\b/.test(t)) tags.add("experience");
+  if (/\bskit|role[-\s]?play|scenario|practice|drill\b/.test(t)) tags.add("training-skit");
+  if (/\bleaderboard|gamif|ranking|tip|tip pool|tip[-\s]?out\b/.test(t)) tags.add("incentives");
+  if (/\bloyalty|punch card|points|members\b/.test(t)) tags.add("loyalty");
+  if (/\baov|average order|average ticket|cart size|basket\b/.test(t)) tags.add("aov");
+  if (/\baffiliate|influencer|partnership|partner network|micro[-\s]?influencer\b/.test(t))
+    tags.add("affiliates");
+  if (/\blaunch|grand opening|new location|second location|opening week\b/.test(t))
+    tags.add("launch");
+  if (/\bnew location|second location|expansion|opening\b/.test(t)) tags.add("new-location");
+  if (/\bdiscount|percent off|sale|promo|coupon\b/.test(t)) tags.add("branding");
+  if (/\bculture|values|behavior|reward|punish|consequence\b/.test(t)) tags.add("culture");
+  if (/\bexecut|tactic|strategy|plan|implementation\b/.test(t)) tags.add("execution");
+  if (/\bbenchmark|industry|norm|typical|average for\b/.test(t)) tags.add("benchmark");
+  if (/\bproduct|quality|repeat customer|return rate\b/.test(t)) tags.add("product");
+  if (/\b\.99|micro[-\s]?pricing|cents|nickel|penny\b/.test(t)) tags.add("pricing-micro");
+  if (/\bpairs?\s?with|pairing|combo|bundle\b/.test(t)) tags.add("pairing");
+
   return Array.from(tags);
 }
 
