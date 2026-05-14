@@ -30,6 +30,18 @@ import { getSupabase } from "@/lib/supabase";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const MAX_FILES = 3;
+const MAX_BYTES_PER_FILE = 2 * 1024 * 1024; // 2MB raw → ~2.7MB base64
+const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // ~5.3MB base64 — under Vercel 4.5MB body cap when paired w/ Content-Encoding
+const ALLOWED_MIMES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+  "application/pdf",
+]);
+
 export async function POST(req: NextRequest) {
   let body: Partial<DiagnosticInput>;
   try {
@@ -42,6 +54,41 @@ export async function POST(req: NextRequest) {
       { ok: false, error: "businessText is required (minimum 20 chars)" },
       { status: 400 },
     );
+  }
+
+  if (Array.isArray(body.files) && body.files.length > 0) {
+    if (body.files.length > MAX_FILES) {
+      return NextResponse.json(
+        { ok: false, error: `Max ${MAX_FILES} files per diagnosis.` },
+        { status: 400 },
+      );
+    }
+    let total = 0;
+    for (const f of body.files) {
+      if (!f || typeof f !== "object") {
+        return NextResponse.json({ ok: false, error: "Malformed file entry." }, { status: 400 });
+      }
+      if (!ALLOWED_MIMES.has(f.mediaType)) {
+        return NextResponse.json(
+          { ok: false, error: `Unsupported file type: ${f.mediaType}. Allowed: PNG, JPG, WEBP, GIF, PDF.` },
+          { status: 400 },
+        );
+      }
+      const approxBytes = Math.floor(((f.base64 ?? "").length * 3) / 4);
+      if (approxBytes > MAX_BYTES_PER_FILE) {
+        return NextResponse.json(
+          { ok: false, error: `File "${f.name}" exceeds 2MB.` },
+          { status: 400 },
+        );
+      }
+      total += approxBytes;
+    }
+    if (total > MAX_TOTAL_BYTES) {
+      return NextResponse.json(
+        { ok: false, error: "Total attachment size exceeds 4MB." },
+        { status: 400 },
+      );
+    }
   }
 
   try {

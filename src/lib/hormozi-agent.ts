@@ -49,7 +49,34 @@ export interface DiagnosticInput {
   topComplaint?: string;
   /** Prospect row to attach the run to (optional) */
   prospectId?: string;
+  /**
+   * Optional attachments — screenshots of their site / GBP, P&L PDFs,
+   * ad-account snapshots, etc. Each entry carries the raw base64 bytes
+   * so we can forward them to Claude as image or document blocks.
+   * Only the metadata (name/type/size) is persisted to the row;
+   * the bytes are dropped after the API call.
+   */
+  files?: AttachedFile[];
 }
+
+export interface AttachedFile {
+  name: string;
+  /** e.g. image/png, image/jpeg, image/webp, image/gif, application/pdf */
+  mediaType: string;
+  /** Raw base64 (no `data:` prefix) */
+  base64: string;
+  /** Original byte size for logging — optional */
+  sizeBytes?: number;
+}
+
+const SUPPORTED_IMAGE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+]);
+const SUPPORTED_DOC_TYPES = new Set(["application/pdf"]);
 
 export interface Diagnosis {
   one_line_summary: string;
@@ -98,6 +125,17 @@ function buildUserPrompt(input: DiagnosticInput): string {
   if (input.currentOffer) lines.push(`Current offer: ${input.currentOffer}`);
   if (input.pricing) lines.push(`Pricing: ${input.pricing}`);
   if (input.topComplaint) lines.push(`Top complaint: ${input.topComplaint}`);
+  if (input.files && input.files.length > 0) {
+    lines.push("");
+    lines.push(
+      `Attachments (already included as image/document blocks above): ${input.files
+        .map((f) => `${f.name} [${f.mediaType}]`)
+        .join(", ")}.`,
+    );
+    lines.push(
+      "Pull concrete details out of them — pricing, screenshots of their site, ads, P&L numbers, GBP listing — and fold the most relevant ones into the diagnosis. Cite which attachment a number came from.",
+    );
+  }
   lines.push("");
   lines.push("What they said:");
   lines.push(input.businessText.trim());
@@ -177,6 +215,11 @@ export async function diagnose(input: DiagnosticInput): Promise<DiagnoseResult> 
   ];
 
   const userPrompt = buildUserPrompt(input);
+  const fileBlocks = buildFileContentBlocks(input.files);
+  const userContent =
+    fileBlocks.length === 0
+      ? userPrompt
+      : [...fileBlocks, { type: "text" as const, text: userPrompt }];
 
   const resp = await fetch(ANTHROPIC_API_URL, {
     method: "POST",
@@ -190,7 +233,7 @@ export async function diagnose(input: DiagnosticInput): Promise<DiagnoseResult> 
       model: MODEL,
       max_tokens: 2000,
       system: systemSegments,
-      messages: [{ role: "user", content: userPrompt }],
+      messages: [{ role: "user", content: userContent }],
     }),
   });
 
@@ -207,12 +250,27 @@ export async function diagnose(input: DiagnosticInput): Promise<DiagnoseResult> 
 
   const diagnosis = parseDiagnosisJson(text);
 
+  const fileMeta = (input.files ?? []).map((f) => ({
+    name: f.name,
+    mediaType: f.mediaType,
+    sizeBytes: f.sizeBytes ?? null,
+  }));
+  // Strip base64 bytes from the persisted row so JSONB doesn't bloat;
+  // metadata (name/type/size) is enough for the audit trail.
+  const { files: _files, ...inputWithoutBytes } = input;
+  void _files;
+
   const sb = getSupabase();
   const { data: row, error: insErr } = await sb
     .from("hormozi_diagnostics")
     .insert({
       prospect_id: input.prospectId ?? null,
-      business_input: { ...input, chunks_used: chunks.length, tags },
+      business_input: {
+        ...inputWithoutBytes,
+        attachments: fileMeta,
+        chunks_used: chunks.length,
+        tags,
+      },
       diagnosis,
       model: MODEL,
       input_tokens: inputTokens,
@@ -244,6 +302,43 @@ export async function diagnose(input: DiagnosticInput): Promise<DiagnoseResult> 
     durationMs,
     chunksUsed: chunks.length,
   };
+}
+
+type AnthropicContentBlock =
+  | { type: "text"; text: string }
+  | {
+      type: "image";
+      source: { type: "base64"; media_type: string; data: string };
+    }
+  | {
+      type: "document";
+      source: { type: "base64"; media_type: string; data: string };
+    };
+
+/**
+ * Turn attached files into Anthropic content blocks. Images go in as
+ * vision blocks; PDFs as document blocks. Unsupported types are dropped
+ * silently — the textarea is still the primary input channel.
+ */
+function buildFileContentBlocks(files?: AttachedFile[]): AnthropicContentBlock[] {
+  if (!files || files.length === 0) return [];
+  const blocks: AnthropicContentBlock[] = [];
+  for (const f of files) {
+    if (!f.base64 || typeof f.base64 !== "string") continue;
+    const data = f.base64.replace(/^data:[^;]+;base64,/, "");
+    if (SUPPORTED_IMAGE_TYPES.has(f.mediaType)) {
+      blocks.push({
+        type: "image",
+        source: { type: "base64", media_type: f.mediaType, data },
+      });
+    } else if (SUPPORTED_DOC_TYPES.has(f.mediaType)) {
+      blocks.push({
+        type: "document",
+        source: { type: "base64", media_type: f.mediaType, data },
+      });
+    }
+  }
+  return blocks;
 }
 
 /**
