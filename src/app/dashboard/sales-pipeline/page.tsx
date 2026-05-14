@@ -61,6 +61,19 @@ const FULLSYSTEM_STAGES = [
   { n: 6, label: "Delivered + managing $500/mo" },
 ] as const;
 
+/** Minimum pipeline stage rendered on this board. Stage 1 on either
+ *  track is "preview exists / mockup queued" — not yet a real sales
+ *  opportunity. Those leads live in /dashboard/leads (the prospect
+ *  table); this board is for people who scheduled an appointment and
+ *  beyond. (Locked 2026-05-12 per Ben's review.) */
+const MIN_PIPELINE_STAGE = 2;
+const VISIBLE_WEBSITE_STAGES = WEBSITE_STAGES.filter(
+  (s) => s.n >= MIN_PIPELINE_STAGE,
+);
+const VISIBLE_FULLSYSTEM_STAGES = FULLSYSTEM_STAGES.filter(
+  (s) => s.n >= MIN_PIPELINE_STAGE,
+);
+
 // Available sub-letters in the stepper. Empty string = no letter.
 // Cycle order: '' → 'a' → 'b' → 'c' → 'd' → 'e' → '' (wraps).
 const LETTER_CYCLE = ["", "a", "b", "c", "d", "e"] as const;
@@ -198,6 +211,44 @@ export default function SalesPipelinePage() {
     localStorage.setItem("bj_pipeline_collapsed", JSON.stringify(collapsed));
   }, [collapsed]);
 
+  // Per-stage collapse, keyed by `${track}:${stageNumber}`. Independent
+  // from the per-track collapse above so the operator can hide a single
+  // stage row (e.g. "Stage 4 — Product delivered" once it's full of
+  // shipped clients) without losing the whole column.
+  const [collapsedStages, setCollapsedStages] = useState<Record<string, boolean>>(
+    () => {
+      if (typeof window === "undefined") return {};
+      try {
+        const raw = localStorage.getItem("bj_pipeline_collapsed_stages");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+      return {};
+    },
+  );
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(
+      "bj_pipeline_collapsed_stages",
+      JSON.stringify(collapsedStages),
+    );
+  }, [collapsedStages]);
+
+  const toggleStageCollapsed = (track: Track, stage: number) => {
+    const key = `${track}:${stage}`;
+    setCollapsedStages((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+  const expandStage = (track: Track, stage: number) => {
+    const key = `${track}:${stage}`;
+    setCollapsedStages((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   // BlueJays users list — populates the per-card "Assign to" dropdown
   // so Ben can distribute leads to Madie/Raidas/Tyler without a round
   // trip to /dashboard/team.
@@ -276,6 +327,11 @@ export default function SalesPipelinePage() {
         if (sourceFilter !== "all" && p.sourceChannel !== sourceFilter) continue;
         const { num } = parseStage(p.pipelineStage);
         if (num <= 0) continue;
+        // Pre-appointment leads (Website "Preview created" / Fullsystem
+        // "Needs mockup") aren't real opportunities yet — they live in
+        // /dashboard/leads instead. Keeping them off the kanban is the
+        // whole point of having both surfaces.
+        if (num < MIN_PIPELINE_STAGE) continue;
         const isFullsystem = trackOf(p) === "fullsystem";
         const map = isFullsystem ? fullsystem : website;
         if (!map.has(num)) map.set(num, []);
@@ -336,9 +392,28 @@ export default function SalesPipelinePage() {
   const nudgeNum = (id: string, persisted: string, track: Track, delta: number) => {
     const max = ceilingFor(track);
     const { num, letter } = parseStage(persisted);
-    const nextNum = Math.max(1, Math.min(max, num + delta));
+    // Floor at MIN_PIPELINE_STAGE — can't demote a pipeline lead back
+    // to "preview created"; route them off the pipeline from /dashboard/leads.
+    const nextNum = Math.max(MIN_PIPELINE_STAGE, Math.min(max, num + delta));
     const next = formatStage(nextNum, nextNum === num ? letter : "");
     if (next === persisted) return;
+    // If the lead is moving to a different major stage, auto-expand the
+    // destination (in case Ben collapsed it) AND scroll the card into
+    // view so editing can continue without re-finding it.
+    if (nextNum !== num) {
+      expandStage(track, nextNum);
+      // Defer scroll until after React re-renders the card into the new
+      // stage group. Two RAFs is enough for the optimistic state update
+      // → render → DOM reconciliation cycle.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(`pipeline-lead-${id}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        });
+      });
+    }
     persistStage(id, next, persisted);
   };
 
@@ -541,7 +616,7 @@ export default function SalesPipelinePage() {
               </button>
               {!collapsed.website && (
                 <div className="divide-y divide-sky-900/40">
-                  {WEBSITE_STAGES.map((s) => (
+                  {VISIBLE_WEBSITE_STAGES.map((s) => (
                     <StageGroup
                       key={s.n}
                       stage={s.n}
@@ -558,6 +633,8 @@ export default function SalesPipelinePage() {
                       savingId={savingId}
                       savedId={savedId}
                       failedId={failedId}
+                      collapsed={!!collapsedStages[`website:${s.n}`]}
+                      onToggleCollapsed={() => toggleStageCollapsed("website", s.n)}
                       onNudgeNum={(id, persisted, delta) =>
                         nudgeNum(id, persisted, "website", delta)
                       }
@@ -599,7 +676,7 @@ export default function SalesPipelinePage() {
               </button>
               {!collapsed.fullsystem && (
                 <div className="divide-y divide-violet-900/40">
-                  {FULLSYSTEM_STAGES.map((s) => (
+                  {VISIBLE_FULLSYSTEM_STAGES.map((s) => (
                     <StageGroup
                       key={s.n}
                       stage={s.n}
@@ -616,6 +693,8 @@ export default function SalesPipelinePage() {
                       savingId={savingId}
                       savedId={savedId}
                       failedId={failedId}
+                      collapsed={!!collapsedStages[`fullsystem:${s.n}`]}
+                      onToggleCollapsed={() => toggleStageCollapsed("fullsystem", s.n)}
                       onNudgeNum={(id, persisted, delta) =>
                         nudgeNum(id, persisted, "fullsystem", delta)
                       }
@@ -651,6 +730,8 @@ function StageGroup({
   savingId,
   savedId,
   failedId,
+  collapsed,
+  onToggleCollapsed,
   onNudgeNum,
   onNudgeLetter,
   onSave,
@@ -669,6 +750,8 @@ function StageGroup({
   savingId: string | null;
   savedId: string | null;
   failedId: string | null;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
   onNudgeNum: (id: string, persisted: string, delta: number) => void;
   onNudgeLetter: (id: string, persisted: string, delta: number) => void;
   onSave: (id: string) => void;
@@ -694,11 +777,22 @@ function StageGroup({
   }
   return (
     <div
-      className={`px-4 py-3 ${
+      className={`${
         isCashStage ? "bg-emerald-950/15 border-l-2 border-emerald-500/40" : ""
       }`}
     >
-      <div className="flex items-center gap-3 mb-2">
+      <button
+        type="button"
+        onClick={onToggleCollapsed}
+        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.03] ${
+          collapsed ? "" : "pb-2"
+        }`}
+        aria-expanded={!collapsed}
+        title={collapsed ? "Expand this stage" : "Collapse this stage"}
+      >
+        <span className="text-[10px] text-slate-500 inline-block w-3 leading-none">
+          {collapsed ? "▸" : "▾"}
+        </span>
         <StageBadge label={`${stage}`} accent={isCashStage ? "emerald" : accent} />
         <span
           className={`text-[11px] font-bold uppercase tracking-wider ${
@@ -717,31 +811,33 @@ function StageGroup({
             {fmtUsdShort(stageTotal)}
           </span>
         )}
-      </div>
-      <ul className="space-y-2">
-        {leads.map((p) => (
-          <LeadCard
-            key={p.id}
-            prospect={p}
-            users={users}
-            role={role}
-            currentUserId={currentUserId}
-            onAssign={onAssign}
-            onClaim={onClaim}
-            pending={pendingStages[p.id]}
-            saving={savingId === p.id}
-            saved={savedId === p.id}
-            failed={failedId === p.id}
-            onNudgeNum={(delta) =>
-              onNudgeNum(p.id, p.pipelineStage ?? `${stage}`, delta)
-            }
-            onNudgeLetter={(delta) =>
-              onNudgeLetter(p.id, p.pipelineStage ?? `${stage}`, delta)
-            }
-            onSave={() => onSave(p.id)}
-          />
-        ))}
-      </ul>
+      </button>
+      {!collapsed && (
+        <ul className="space-y-2 px-4 pb-3">
+          {leads.map((p) => (
+            <LeadCard
+              key={p.id}
+              prospect={p}
+              users={users}
+              role={role}
+              currentUserId={currentUserId}
+              onAssign={onAssign}
+              onClaim={onClaim}
+              pending={pendingStages[p.id]}
+              saving={savingId === p.id}
+              saved={savedId === p.id}
+              failed={failedId === p.id}
+              onNudgeNum={(delta) =>
+                onNudgeNum(p.id, p.pipelineStage ?? `${stage}`, delta)
+              }
+              onNudgeLetter={(delta) =>
+                onNudgeLetter(p.id, p.pipelineStage ?? `${stage}`, delta)
+              }
+              onSave={() => onSave(p.id)}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -865,7 +961,8 @@ function LeadCard({
 
   return (
     <li
-      className={`rounded-lg border bg-slate-900/50 p-3 transition-colors ${
+      id={`pipeline-lead-${prospect.id}`}
+      className={`rounded-lg border bg-slate-900/50 p-3 transition-colors scroll-mt-32 ${
         dirty
           ? "border-amber-500/60 bg-amber-950/20"
           : isArchived

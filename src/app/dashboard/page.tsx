@@ -81,17 +81,19 @@ type TabDef = {
   href?: string;
 };
 
-// Tabs surfaced in the top nav. Reduced 2026-05-08 per dashboard-
-// review #3 (combine wasted tabs):
-//   - Removed "Case Studies" — set-once admin toggle, accessible at
-//     /dashboard/case-studies directly or from Settings.
-//   - Removed "Images" — admin image-mapper utility, low-frequency,
-//     accessible at /image-mapper directly.
-// Routes still exist; just no longer cluttering Ben + Madie's daily
-// nav. The set we kept maps directly to the daily operator flow:
-// Overview pulse → Leads → Map (scout) → Funnels → Master To-Do →
-// Sales Portal (Madie's surface) → Client Jobs → Pipeline → Win-Loss
-// → AI Skills → Settings.
+// Tabs surfaced in the top nav. Reduced 2026-05-08 + 2026-05-12 per
+// dashboard-review #3 (combine wasted tabs):
+//   - Removed "Case Studies" — set-once admin toggle, /dashboard/case-studies.
+//   - Removed "Images" — admin image-mapper, /image-mapper.
+//   - 2026-05-12: Removed "Audit", "Blog", "Team" from top nav. All
+//     three are low-frequency operator surfaces — Audit is a one-off
+//     backend health check, Blog is monthly content publishing, Team
+//     is user admin. They're now in Settings → External Services so
+//     they're one click away without polluting the daily nav.
+// Routes still exist; just no longer in the top bar. The kept set is
+// the daily operator flow: Overview → Leads → Map → Funnels → Ads
+// → Master To-Do → Sales Portal → Diagnostic → Onboarding → Client
+// Jobs → Pipeline → Win-Loss → AI Skills → Settings.
 const TABS: TabDef[] = [
   { id: "overview", label: "Overview", emoji: "🏠" },
   { id: "leads", label: "Leads", emoji: "📥" },
@@ -106,9 +108,6 @@ const TABS: TabDef[] = [
   { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline" },
   { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss" },
   { id: "ai-skills", label: "AI Skills", emoji: "🧠", href: "/dashboard/ai-bots" },
-  { id: "audit", label: "Audit", emoji: "🩺", href: "/dashboard/backend-audit" },
-  { id: "blog", label: "Blog", emoji: "📝", href: "/dashboard/blog" },
-  { id: "team", label: "Team", emoji: "👥", href: "/dashboard/team" },
   { id: "settings", label: "Settings", emoji: "⚙️" },
 ];
 
@@ -1071,6 +1070,9 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
+            { label: "Backend Audit", href: "/dashboard/backend-audit" },
+            { label: "Blog", href: "/dashboard/blog" },
+            { label: "Team", href: "/dashboard/team" },
             { label: "Stats", href: "/analytics" },
             { label: "Spending", href: "/spending" },
             { label: "Email Deliverability", href: "/deliverability" },
