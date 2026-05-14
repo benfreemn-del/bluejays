@@ -166,6 +166,27 @@ export function pickRelevantTags(businessText: string): string[] {
   if (/\bdemand[\s-]?constrain|more leads|need more customers|lead gen\b/.test(t)) tags.add("demand");
   if (/\bcap|ceiling|wall|plateau|stuck at|cannot break through\b/.test(t)) tags.add("scaling-stage");
 
+  // Luis / e-commerce + custom-order additions (2026-05-13)
+  if (/\battribut|tracking|utm|post[-\s]?purchase survey|pixel|conversion track\b/.test(t))
+    tags.add("attribution");
+  if (/\bshopify|woo|magento|bigcommerce|ecom|e[-\s]?com|online store\b/.test(t))
+    tags.add("ecommerce");
+  if (/\bcustom order|configurator|made[-\s]?to[-\s]?order|bespoke|custom build\b/.test(t))
+    tags.add("custom-order");
+  if (/\bvsl|video sales letter|sales video|pre[-\s]?call video\b/.test(t)) tags.add("vsl");
+  if (/\bbant|qualif|budget authority need timing\b/.test(t)) tags.add("qualification");
+  if (/\bfinanc|klarna|affirm|afterpay|shop pay|installment\b/.test(t)) tags.add("payment-plan");
+  if (/\bemail|newsletter|drip|sequence|nurture\b/.test(t)) tags.add("email");
+  if (/\bcalendar|calendly|cal\.com|hubspot scheduler|book a call\b/.test(t)) tags.add("calendar");
+  if (/\bbefore[\s-]?and[\s-]?after|transformation|case study|portfolio\b/.test(t))
+    tags.add("social-proof");
+  if (/\brail|kitchen|home renovation|car|custom build|home improvement\b/.test(t))
+    tags.add("low-frequency-purchase");
+  if (/\bdream|visualize|imagine your|picture this|mood board\b/.test(t)) tags.add("consultative-selling");
+  if (/\bgross margin|margin per|profit per|GP\b/.test(t)) tags.add("unit-economics");
+  if (/\bsegment|niche|avatar|customer mix|customer type\b/.test(t)) tags.add("segmentation");
+  if (/\bsticky|persistent|always visible|across page|every page\b/.test(t)) tags.add("CRO");
+
   return Array.from(tags);
 }
 
