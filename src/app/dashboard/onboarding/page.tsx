@@ -38,6 +38,7 @@ export default function DashboardOnboardingPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [seeded, setSeeded] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +46,10 @@ export default function DashboardOnboardingPage() {
         const r = await fetch("/api/dashboard/onboarding");
         const j = await r.json();
         if (!j.ok) setErr(j.error);
-        else setRows(j.rows);
+        else {
+          setRows(j.rows);
+          if (Array.isArray(j.seeded)) setSeeded(j.seeded);
+        }
       } catch (e) {
         setErr((e as Error).message);
       } finally {
@@ -71,6 +75,17 @@ export default function DashboardOnboardingPage() {
 
         {loading && <p className="text-sm text-slate-500">Loading…</p>}
         {err && <p className="text-sm text-rose-400">{err}</p>}
+
+        {seeded.length > 0 && (
+          <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+            <p className="font-semibold mb-1">
+              Auto-added {seeded.length} client{seeded.length === 1 ? "" : "s"} from sales pipeline
+            </p>
+            <p className="text-xs text-emerald-300/80">
+              {seeded.join(", ")}
+            </p>
+          </div>
+        )}
 
         {rows.length === 0 && !loading && !err && (
           <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-8 text-center text-slate-500 text-sm">

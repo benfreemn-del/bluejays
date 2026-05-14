@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { listOnboardingForOperator } from "@/lib/client-onboarding";
+import {
+  listOnboardingForOperator,
+  syncOnboardingFromPipeline,
+} from "@/lib/client-onboarding";
 
 /**
  * GET /api/dashboard/onboarding
@@ -16,8 +19,18 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    // Pull post-sale clients from the pipeline into onboarding so the
+    // operator never has to manually seed a row. Best-effort — a sync
+    // failure shouldn't block the list render.
+    let seeded: string[] = [];
+    try {
+      const r = await syncOnboardingFromPipeline();
+      seeded = r.seeded;
+    } catch (e) {
+      console.error("[dashboard/onboarding] sync failed:", (e as Error).message);
+    }
     const rows = await listOnboardingForOperator();
-    return NextResponse.json({ ok: true, rows });
+    return NextResponse.json({ ok: true, rows, seeded });
   } catch (e) {
     return NextResponse.json(
       { ok: false, error: (e as Error).message },

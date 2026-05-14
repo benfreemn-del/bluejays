@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase";
+import { slugifyBusinessName } from "./case-studies";
 
 /**
  * client-onboarding — post-deal wizard state lib.
@@ -331,6 +332,93 @@ export async function launchOnboarding(
   }
 
   return data as OnboardingRow;
+}
+
+/**
+ * Find every prospect that's reached the cash-in stage and ensure a
+ * `client_onboarding` row exists for the corresponding client slug.
+ * Idempotent — only inserts what's missing. Used by /api/dashboard/onboarding
+ * to keep the operator-facing onboarding list synced with /dashboard/sales-pipeline
+ * without anyone having to visit /clients/[slug]/onboarding first.
+ *
+ * Cash-in thresholds match the labels on /dashboard/sales-pipeline:
+ *   - Website tier (standard / free / custom / undefined): stage ≥3
+ *     ("Bought + paid")
+ *   - Fullsystem tier: stage ≥4 ("Purchased · needs delivery")
+ *
+ * Archived statuses (bounced / dismissed / unsubscribed) are skipped — a
+ * prospect who once bought but later unsubscribed shouldn't pollute the
+ * active onboarding list.
+ */
+const ARCHIVED_PROSPECT_STATUSES = new Set([
+  "bounced",
+  "dismissed",
+  "unsubscribed",
+  "wont-do",
+]);
+
+export async function syncOnboardingFromPipeline(): Promise<{
+  seeded: string[];
+  skipped: string[];
+}> {
+  const sb = getSupabase();
+  const { data: prospects, error } = await sb
+    .from("prospects")
+    .select("business_name, pricing_tier, pipeline_stage, status")
+    .not("pipeline_stage", "is", null);
+  if (error) throw new Error(`syncOnboarding: ${error.message}`);
+
+  const { data: existing } = await sb
+    .from("client_onboarding")
+    .select("client_slug");
+  const have = new Set(
+    (existing ?? []).map((r) => (r as { client_slug: string }).client_slug),
+  );
+
+  const seeded: string[] = [];
+  const skipped: string[] = [];
+
+  for (const row of prospects ?? []) {
+    const p = row as {
+      business_name: string | null;
+      pricing_tier: string | null;
+      pipeline_stage: string | null;
+      status: string | null;
+    };
+    if (!p.business_name || !p.pipeline_stage) continue;
+    const slug = slugifyBusinessName(p.business_name);
+    if (!slug || slug === "case-study") continue;
+    if (have.has(slug)) continue;
+    if (ARCHIVED_PROSPECT_STATUSES.has((p.status ?? "").toString())) {
+      skipped.push(slug);
+      continue;
+    }
+
+    const m = /^(\d+)/.exec(p.pipeline_stage);
+    if (!m) continue;
+    const stageNum = parseInt(m[1], 10);
+    const tier = (p.pricing_tier ?? "").toString();
+    const threshold = tier === "fullsystem" ? 4 : 3;
+    if (stageNum < threshold) {
+      skipped.push(slug);
+      continue;
+    }
+
+    const { error: insErr } = await sb
+      .from("client_onboarding")
+      .insert({ client_slug: slug });
+    if (insErr) {
+      // 23505 = unique_violation — a parallel request beat us. Treat as success.
+      if ((insErr as { code?: string }).code !== "23505") {
+        console.error("[syncOnboarding] insert failed:", slug, insErr.message);
+      }
+      continue;
+    }
+    have.add(slug);
+    seeded.push(slug);
+  }
+
+  return { seeded, skipped };
 }
 
 /** Operator-facing summary for the dashboard list. */
