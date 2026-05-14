@@ -146,6 +146,26 @@ export function pickRelevantTags(businessText: string): string[] {
     tags.add("delivery");
   if (/\brenewal|year[\s-]?two|second year|recurring revenue\b/.test(t)) tags.add("renewal");
 
+  // Joel / demand-constraint additions (2026-05-13)
+  if (/\bugc|user[\s-]?generated|customer video|community video|testimonial video\b/.test(t))
+    tags.add("ugc");
+  if (/\boutbound|cold call|dialer|power[\s-]?dial|parallel[\s-]?dial\b/.test(t))
+    tags.add("outbound");
+  if (/\bdialer|aircall|justcall|phoneburner|orum|connect rate\b/.test(t)) tags.add("dialer");
+  if (/\blead score|qualif|sales[\s-]?ready|fit score|priority lead\b/.test(t))
+    tags.add("lead-scoring");
+  if (/\bdamaging|too good to be true|frontload|admission|objection\b/.test(t))
+    tags.add("objection-handling");
+  if (/\bavatar|persona|target audience|ICP\b/.test(t)) tags.add("avatar");
+  if (/\btargeting|audience|broader pool|niche|expand audience\b/.test(t)) tags.add("targeting");
+  if (/\bAI tools?|midjourney|chatGPT|stable diffusion|generative AI\b/.test(t)) tags.add("ai-tools");
+  if (/\bcontent|short[\s-]?form|reel|tiktok|short video|brain rot\b/.test(t)) tags.add("content");
+  if (/\bbook funnel|lead magnet|free book|tripwire|frontend product\b/.test(t)) tags.add("funnel");
+  if (/\bgen[\s-]?z|young hire|content creator|social lead|content coordinator\b/.test(t))
+    tags.add("staffing");
+  if (/\bdemand[\s-]?constrain|more leads|need more customers|lead gen\b/.test(t)) tags.add("demand");
+  if (/\bcap|ceiling|wall|plateau|stuck at|cannot break through\b/.test(t)) tags.add("scaling-stage");
+
   return Array.from(tags);
 }
 
