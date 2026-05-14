@@ -60,6 +60,7 @@ type Tab =
   | "todo"
   | "sales-portal"
   | "diagnostic"
+  | "numbers"
   | "onboarding"
   | "audit"
   | "blog"
