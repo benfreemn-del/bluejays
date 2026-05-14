@@ -187,6 +187,24 @@ export function pickRelevantTags(businessText: string): string[] {
   if (/\bsegment|niche|avatar|customer mix|customer type\b/.test(t)) tags.add("segmentation");
   if (/\bsticky|persistent|always visible|across page|every page\b/.test(t)) tags.add("CRO");
 
+  // Cory / HVAC + affiliate additions (2026-05-13)
+  if (/\bhvac|duct|vent|cleaning|inspection|home service|local service\b/.test(t))
+    tags.add("local-service");
+  if (/\bdebt|loan|financing|leverage|interest payment|owe\b/.test(t)) tags.add("finance");
+  if (/\bhoa|community event|chamber of commerce|networking event|local meetup\b/.test(t))
+    tags.add("local-community");
+  if (/\baffiliate offer|partner program|sell our service|referral structure\b/.test(t))
+    tags.add("affiliates");
+  if (/\bseasonal|spring|summer|fall|winter|pollen|allergy|holiday\b/.test(t))
+    tags.add("seasonality");
+  if (/\bbrand term|own search|google my name|brand bid|brand keyword\b/.test(t))
+    tags.add("brand-defense");
+  if (/\bretarget|pixel|remarketing|cross[\s-]?platform\b/.test(t)) tags.add("retargeting");
+  if (/\bportal|customer profile|account dashboard|customer portal\b/.test(t))
+    tags.add("trust-signal");
+  if (/\bsub[\s-]?5m|under 5 million|small business|early stage\b/.test(t)) tags.add("sub-5m");
+  if (/\b65 percent|close rate floor|breakeven close rate\b/.test(t)) tags.add("close-rate");
+
   return Array.from(tags);
 }
 
