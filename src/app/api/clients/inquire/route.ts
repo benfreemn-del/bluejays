@@ -98,6 +98,13 @@ const SLUG_CONFIG: Record<
     clientEmail: "hectorlandscapingonline@gmail.com",
     emoji: "🌿",
   },
+  "family-care-cleaning": {
+    // Family-run residential cleaning · Clallam + Jefferson Counties WA
+    // Inbound from the bespoke preview at /clients/family-care-cleaning.
+    businessLabel: "Family Care Cleaning (Olympic Peninsula, WA)",
+    clientEmail: "familycarecleaning@gmail.com",
+    emoji: "🍋",
+  },
   "elite-hardscapes-and-landscapes": {
     // Tyler Fritz · $1k bespoke · Port Angeles WA · Olympic Peninsula.
     // Email TBD — routing to Ben's inbox until Tyler shares one.

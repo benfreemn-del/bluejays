@@ -64,6 +64,12 @@ const CLIENT_SITES: Record<string, ClientSite> = {
     kind: "internal",
     href: "/clients/theoregonappraisers",
   },
+  // Family Care Cleaning — Olympic Peninsula (Clallam + Jefferson Counties, WA).
+  // Custom-tier bespoke build, light/citrus editorial theme.
+  "family-care-cleaning": {
+    kind: "internal",
+    href: "/clients/family-care-cleaning",
+  },
   // WAYS Executive Sedan — luxury chauffeur service.
   "ways-executive-sedan": {
     kind: "internal",
@@ -113,6 +119,14 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   "kr-ranches": {
     kind: "external",
     href: "https://bluejayportfolio.com/sites/kr-ranches/index.html",
+  },
+  // Dungeness Meadows HOA — Sequim WA. ~200-home homeowners' association
+  // along the Dungeness River. Bespoke static HTML pitch piece (sales
+  // preview) at /sites/dungeness-meadows/. Pacific Northwest residential
+  // palette · 8 real Unsplash photos · numbered amenity cards.
+  "dungeness-meadows": {
+    kind: "external",
+    href: "https://bluejayportfolio.com/sites/dungeness-meadows/index.html",
   },
 };
 
