@@ -68,6 +68,7 @@ import {
 
 import StickyNav from "./sticky-nav";
 import FamilyCareCleaningContactForm from "./contact-form";
+import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS DATA ───────────────────────── */
 const BUSINESS = {
@@ -90,11 +91,11 @@ const LOGO =
    sun-filled, family-home aesthetic — not industrial. Each photo is
    loaded once and referenced by semantic key. */
 const PHOTOS = {
-  // Hero — pristine sunlit living room w/ light fabrics, the
-  // archetypal "after a Family Care visit" feeling.
-  hero: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1800&q=85&auto=format&fit=crop",
+  // Hero — bright sunlit living room with gallery wall, plants, leather
+  // couch. Warm/family/Peninsula feeling. Verified 2026-05-14.
+  hero: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1800&q=85&auto=format&fit=crop",
 
-  // Service spotlights
+  // Room tab + service spotlights (all verified live 2026-05-14).
   kitchen:
     "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80&auto=format&fit=crop",
   bathroom:
@@ -104,19 +105,26 @@ const PHOTOS = {
   living:
     "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=1400&q=80&auto=format&fit=crop",
 
-  // Supporting
-  towels:
+  // Hero floating card — cleaner in PPE wiping shutters. Actual
+  // cleaning-action shot (filename kept legacy for diff readability;
+  // alt text describes accurately).
+  cleaningAction:
     "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80&auto=format&fit=crop",
-  supplies:
-    "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=1200&q=80&auto=format&fit=crop",
-  windows:
-    "https://images.unsplash.com/photo-1581578731048-c40b7c3dbf30?w=1200&q=80&auto=format&fit=crop",
-  pacificNW:
-    "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=1600&q=80&auto=format&fit=crop",
-  cleanCounter:
-    "https://images.unsplash.com/photo-1556909211-d5b07b48f0e1?w=1200&q=80&auto=format&fit=crop",
+
+  // Move-in/move-out service — fresh, calm living space, the "ready
+  // to start" feeling.
+  moveInOut:
+    "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=1400&q=80&auto=format&fit=crop",
+
+  // Special-event service — bright living room with sunlit window,
+  // warm tones with teal accents.
   freshHome:
-    "https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=1400&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=1400&q=80&auto=format&fit=crop",
+
+  // Service Area — misty Pacific Northwest conifer forest. The
+  // Olympic Peninsula in one frame.
+  pacificNW:
+    "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80&auto=format&fit=crop",
 } as const;
 
 /* ───────────────────────── COLORS (logo-derived) ───────────────────── */
@@ -384,7 +392,7 @@ const services = [
     title: "Move-In & Move-Out",
     blurb:
       "Moving is stressful enough. Whether you're handing off the keys or just got them, we make the home feel ready to start fresh — inside cabinets, appliances, every surface.",
-    photo: PHOTOS.windows,
+    photo: PHOTOS.moveInOut,
     icon: Truck,
     pillar: "Owners, renters & PMs",
     bullets: [
@@ -780,8 +788,8 @@ export default function FamilyCareCleaningPage() {
                 transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               >
                 <img
-                  src={PHOTOS.towels}
-                  alt="Folded fresh towels"
+                  src={PHOTOS.cleaningAction}
+                  alt="Family Care Cleaning crew wiping shutters during a routine clean"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </motion.div>
@@ -1352,7 +1360,7 @@ export default function FamilyCareCleaningPage() {
             <div className="relative h-[440px] sm:h-[520px] rounded-3xl overflow-hidden shadow-[0_30px_70px_-30px_rgba(31,40,32,0.4)] border-4 border-white">
               <img
                 src={PHOTOS.pacificNW}
-                alt="Olympic Peninsula coastline"
+                alt="Misty Olympic Peninsula conifer forest"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div
@@ -1616,10 +1624,7 @@ export default function FamilyCareCleaningPage() {
               © {new Date().getFullYear()} Family Care Cleaning · Clallam & Jefferson Counties, WA
             </div>
             <div className="fcc-sans text-[12px] flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.55)" }}>
-              <svg width="14" height="14" viewBox="0 0 32 32" style={{ color: "#0ea5e9" }} aria-hidden>
-                <circle cx="16" cy="16" r="14" fill="currentColor" opacity="0.2" />
-                <circle cx="16" cy="16" r="6" fill="currentColor" />
-              </svg>
+              <BluejayLogo size={16} className="text-[#7dd3fc] shrink-0" />
               <span>
                 Built by{" "}
                 <a
