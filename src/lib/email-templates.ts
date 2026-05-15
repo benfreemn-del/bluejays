@@ -466,11 +466,23 @@ export function getWelcomeEmail(prospect: Prospect): EmailTemplate {
   const onboardingUrl = `${baseUrl}/onboarding/${prospect.id}`;
   const upsellsUrl = `${baseUrl}/upsells/${prospect.id}`;
 
+  // Vertical-aware paragraph for AI System tier ($10k) customers — calls
+  // out their bonus stack upfront so they know what's included by default.
+  // Added 2026-05-14 (niche-down Phase 3). Service tier ($997) customers
+  // get the generic copy unchanged.
+  const vertical = getVerticalContext(prospect);
+  const isAiSystemTier = prospect.pricingTier === "fullsystem";
+  const verticalIntro = isAiSystemTier && vertical.key === "manufacturer"
+    ? `\n\nQuick note — since you're a product manufacturer, your build includes the full manufacturer bonus stack by default: DTC storefront + dealer locator, smart postcards, county lead finder, and the dealer/distributor partner program. Same pattern as Tekky and ITC Quick Attach. I'll walk through each one on your kickoff call so you know exactly what's getting built.`
+    : isAiSystemTier && vertical.key === "author"
+    ? `\n\nQuick note — since you're working on a fiction series, your build includes the full indie-author bonus stack by default: interactive book-world showcase, Amazon + retailer direct CTAs, series-aware newsletter capture, pre-order + launch funnel, and reader retargeting. Same pattern as the Bloodlines fantasy saga. I'll walk through each one on your kickoff call so you know exactly what's getting built.`
+    : "";
+
   const subject = `Welcome to BlueJays — here's what happens next, ${name}`;
 
   const body = `Hi ${name},
 
-Thanks for trusting me with ${prospect.businessName}'s website — I'm genuinely excited to build this out for you.
+Thanks for trusting me with ${prospect.businessName}'s website — I'm genuinely excited to build this out for you.${verticalIntro}
 
 Here's exactly what happens from here:
 
@@ -964,13 +976,26 @@ export function getHandoffEmail(
 ): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
 
+  // Vertical-aware "your system is live" paragraph for AI System tier
+  // customers. Calls out the specific bonus modules that just went live
+  // so they connect their $10k to concrete delivered surfaces. Added
+  // 2026-05-14 niche-down Phase 3.
+  const vertical = getVerticalContext(prospect);
+  const isAiSystemTier = prospect.pricingTier === "fullsystem";
+  const verticalSystemLine =
+    isAiSystemTier && vertical.key === "manufacturer"
+      ? `\n\nYour manufacturer system is wired and live: DTC storefront + dealer locator on the same product catalog, smart-postcard delivery, county lead-finder map, and the dealer/distributor partner program with audience-aware scripts and commission tracking. Every piece feeds the same loop. The dealer-margin math starts compounding from day one.`
+      : isAiSystemTier && vertical.key === "author"
+      ? `\n\nYour author system is wired and live: interactive book-world showcase, Amazon + retailer direct CTAs (with JSON-LD Book schema for Google's book carousel), series-aware newsletter capture, pre-order + launch funnel, and reader retargeting pixels. Every reader you capture from here becomes a book-#2+ customer when the series progresses.`
+      : "";
+
   return {
     subject: `${prospect.businessName} is live — here's everything you need`,
     body: `Hi ${name},
 
 Your website is live. Bookmark this email — it's your complete reference going forward.
 
-Your site: ${liveUrl}
+Your site: ${liveUrl}${verticalSystemLine}
 
 
 What's covered at $100/year (first charge year 2, cancel anytime)

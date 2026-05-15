@@ -36,6 +36,27 @@ import {
 interface ProspectInfo {
   businessName: string;
   status: string;
+  /** Extended 2026-05-14 (Phase 3 niche-down) — drives the vertical-aware
+   *  Step 2 question block that captures mfg-specific or author-specific
+   *  build info. Only AI System tier (fullsystem) prospects see it. */
+  category?: string;
+  lookalikeCategory?: string;
+  pricingTier?: string;
+}
+
+/** Vertical detection for the onboarding form's vertical-aware Q block.
+ *  Mirrors getVerticalContext() in email-templates.ts but returns null
+ *  when no vertical-specific Qs apply (service tier, unknown). Inlined
+ *  rather than imported because the email-templates.ts side pulls
+ *  Node-only modules. */
+type OnboardingVertical = "manufacturer" | "author" | null;
+
+function detectOnboardingVertical(p: ProspectInfo | null): OnboardingVertical {
+  if (!p || p.pricingTier !== "fullsystem") return null;
+  const lookalike = (p.lookalikeCategory ?? "").toLowerCase();
+  if (lookalike.startsWith("mfg-")) return "manufacturer";
+  if (p.category === "indie-author") return "author";
+  return null;
 }
 
 /** Auto-domain suggestion from /api/domain-suggestions/[id] (Q7C). */
@@ -48,6 +69,11 @@ interface DomainSuggestion {
 type OnboardingStatus = "step1_complete" | "step2_complete" | "completed";
 
 interface FormData extends OnboardingPrefillData {
+  // Step 2 — vertical-specific build info (Phase 3 niche-down 2026-05-14)
+  //   Persisted in form_data JSONB. Only shown to AI System tier (fullsystem)
+  //   prospects whose vertical resolves to manufacturer or author. Empty
+  //   string for everyone else — backwards-compatible.
+  verticalSpecificContext: string;
   // Step 3 — Preferences
   themePreference: "light" | "dark" | "let-ben-decide" | "";
   languages: "english-only" | "english-spanish" | "other" | "";
@@ -78,6 +104,7 @@ const initialFormData: FormData = {
   ],
   socialLinks: "",
   domainPreference: "",
+  verticalSpecificContext: "",
   themePreference: "",
   languages: "",
   languagesOther: "",
@@ -126,6 +153,9 @@ export default function OnboardingPage() {
           setProspect({
             businessName: prospectInfo.businessName,
             status: prospectInfo.status,
+            category: prospectInfo.category,
+            lookalikeCategory: prospectInfo.lookalikeCategory,
+            pricingTier: prospectInfo.pricingTier,
           });
           const prefill = getPrefillData(prospectInfo);
           setData((prev) => ({ ...prev, ...prefill }));
@@ -355,6 +385,11 @@ export default function OnboardingPage() {
         hours: data.hours,
         testimonials: data.testimonials.filter((t) => t.name || t.quote),
         photos,
+        // Phase 3 niche-down 2026-05-14 — vertical-specific build info,
+        // only populated for AI System tier mfg/author prospects.
+        // Empty string for service tier; merged into form_data JSONB
+        // unchanged via the existing API merge logic.
+        verticalSpecificContext: data.verticalSpecificContext,
       };
     }
     return {
@@ -491,6 +526,7 @@ export default function OnboardingPage() {
           <Step2
             data={data}
             photos={photos}
+            vertical={detectOnboardingVertical(prospect)}
             updateField={updateField}
             updateTestimonial={updateTestimonial}
             handleBlur={handleBlur}
@@ -825,6 +861,7 @@ function Step1({
 function Step2({
   data,
   photos,
+  vertical,
   updateField,
   updateTestimonial,
   handleBlur,
@@ -838,6 +875,7 @@ function Step2({
 }: {
   data: FormData;
   photos: string[];
+  vertical: OnboardingVertical;
   updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
   updateTestimonial: (i: number, field: keyof TestimonialPrefill, v: string) => void;
   handleBlur: () => void;
@@ -978,6 +1016,54 @@ function Step2({
         onChange={(e) => updateField("hours", e.target.value)}
         onBlur={handleBlur}
       />
+
+      {/* ── Vertical-aware build context ─────────────────────────────────
+         Phase 3 niche-down 2026-05-14. Only renders for AI System tier
+         (fullsystem) mfg/author prospects. Captures vertical-specific
+         build info as free-text so the build team has the context they
+         need without forcing a deep form-schema rewrite. Future phase
+         can split into structured fields once the patterns are proven. */}
+      {vertical && (
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.04] p-5 space-y-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="inline-block bg-amber-500/15 text-amber-300 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
+                AI System tier
+              </span>
+              <span className="text-xs text-muted">
+                {vertical === "manufacturer" ? "Manufacturer build" : "Indie author build"}
+              </span>
+            </div>
+            <h3 className="text-base font-bold">
+              {vertical === "manufacturer"
+                ? "Manufacturer-specific build info"
+                : "Indie-author-specific build info"}
+            </h3>
+            <p className="text-xs text-muted mt-1">
+              {vertical === "manufacturer"
+                ? "Your build includes the DTC storefront, dealer locator, smart postcards, county finder, and dealer partner program. Help us wire them right with the info below."
+                : "Your build includes the interactive book-world showcase, Amazon CTAs, series-aware newsletter, pre-order funnel, and reader retargeting. Help us wire them right with the info below."}
+            </p>
+          </div>
+          <textarea
+            value={data.verticalSpecificContext}
+            onChange={(e) => updateField("verticalSpecificContext", e.target.value)}
+            onBlur={handleBlur}
+            rows={8}
+            placeholder={
+              vertical === "manufacturer"
+                ? "Examples:\n• Top 3-5 product SKUs (with prices)\n• Existing dealer list (names + cities, or just a count)\n• Amazon storefront URL (if any)\n• Top customer segments (e.g. parent / coach / club / contractor)\n• Postcard mailing list size (if you have one)\n• Existing CRM (Klaviyo, HubSpot, none, etc.)\n• Any patents / trademarks / proprietary fit"
+                : "Examples:\n• Book #1 Amazon ASIN (and any others in the series)\n• Goodreads author URL\n• Existing newsletter platform (Mailchimp, ConvertKit, Substack, none)\n• Series roadmap (book #2 ETA, planned book count)\n• Other retailers (Apple Books, Kobo, IngramSpark)\n• Existing audience size (Amazon followers, newsletter, social)\n• Any existing author site URL (Squarespace, Wix, custom)"
+            }
+            className="w-full px-4 py-3 rounded-xl bg-surface border border-border text-foreground placeholder:text-muted/60 placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition font-mono text-sm"
+          />
+          <p className="text-[11px] text-muted">
+            Optional — paste whatever you have, in any format. Ben will read it
+            personally during the build kickoff. The more context you give, the
+            less back-and-forth before launch.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button

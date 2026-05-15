@@ -20,8 +20,10 @@ alter table diagnosis_metrics
 alter table diagnosis_metrics
   add column if not exists client_slug text;
 
--- One row per prospect (existing constraint, restated as partial)
-drop index if exists diagnosis_metrics_prospect_id_key;
+-- One row per prospect — replace the legacy UNIQUE constraint (which
+-- treats NULL as "uniqueness violation") with a partial unique index
+-- that ignores NULL rows. Dropping the constraint cascade-drops the
+-- index it implicitly created.
 alter table diagnosis_metrics
   drop constraint if exists diagnosis_metrics_prospect_id_key;
 create unique index if not exists diagnosis_metrics_prospect_id_uidx
