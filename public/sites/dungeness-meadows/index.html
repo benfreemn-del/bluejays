@@ -65,7 +65,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
         body {
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--cream);
@@ -74,6 +74,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
+            width: 100%;
         }
         h1, h2, h3, h4, h5 {
             font-family: 'Fraunces', Georgia, serif;
@@ -285,8 +286,8 @@
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(180deg, rgba(250, 246, 238, 0.35) 0%, rgba(250, 246, 238, 0.62) 40%, rgba(250, 246, 238, 0.92) 78%, rgba(238, 242, 230, 1) 100%),
-                linear-gradient(90deg, rgba(250, 246, 238, 0.55) 0%, rgba(250, 246, 238, 0.15) 50%, rgba(250, 246, 238, 0) 100%);
+                linear-gradient(180deg, rgba(250, 246, 238, 0.55) 0%, rgba(250, 246, 238, 0.78) 35%, rgba(250, 246, 238, 0.95) 70%, rgba(238, 242, 230, 1) 100%),
+                linear-gradient(90deg, rgba(250, 246, 238, 0.65) 0%, rgba(250, 246, 238, 0.25) 55%, rgba(250, 246, 238, 0.05) 100%);
             pointer-events: none;
         }
         .hero-mountains {
@@ -1445,11 +1446,11 @@
         <div class="container">
             <div class="hero-content reveal">
                 <span class="eyebrow">Sequim · Olympic Peninsula · Clallam County</span>
-                <h1>Live in the <span class="accent">rain shadow</span><br>of the Olympics.</h1>
-                <p class="hero-sub">Dungeness Meadows is a quiet community of roughly 200 homes along the Dungeness River — golf, pool, clubhouse, and miles of trails, just minutes from Sequim and the Strait of Juan de Fuca.</p>
+                <h1>Home in the <span class="accent">rain shadow</span><br>of the Olympics.</h1>
+                <p class="hero-sub">The official site for the homeowners of Dungeness Meadows — documents, forms, office hours, and what's happening around the neighborhood. A community of roughly 200 homes along the Dungeness River.</p>
                 <div class="hero-ctas">
-                    <a href="#amenities" class="btn-primary">
-                        Explore the Community
+                    <a href="#documents" class="btn-primary">
+                        Forms &amp; Documents
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>
                     <a href="#contact" class="btn-outline">Contact the Office</a>
@@ -2020,7 +2021,7 @@
                 <div class="contact-info reveal">
                     <span class="eyebrow">Get in Touch</span>
                     <h2 style="margin-top:18px">The office is open. The phone is answered. The coffee's on.</h2>
-                    <p class="lead">Questions about the community, looking to buy a home here, or need to drop off a form? Here's the easiest way to reach us.</p>
+                    <p class="lead">Reserving the clubhouse, dropping off a form, reporting a maintenance issue, or just need to talk to someone on the board? Here's how to reach us.</p>
                     <div class="contact-rows">
                         <div class="contact-row">
                             <div class="contact-row-icon">
