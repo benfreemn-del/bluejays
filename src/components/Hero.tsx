@@ -573,7 +573,11 @@ const defaultSiteCards: SiteCard[] = [
   { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories", group: "manufacturer" },
   { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand", group: "manufacturer" },
   { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront", group: "manufacturer" },
-  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "author" },
+  // Bloodlines rolled into the "Custom Builds" group 2026-05-15 — was its
+  // own "Indie Authors" row with 1 card, which orphaned on mobile. Sits
+  // alongside the other bespoke hand-built sites (Pine & Particle, LCAC,
+  // Meyer Electric) under a single banner so the grid renders 4+4 even.
+  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "service" },
   { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing", group: "service" },
   { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA", group: "service" },
   { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA", group: "service" },
@@ -592,8 +596,12 @@ const GROUP_META: Record<SiteGroup, { label: string; eyebrow: string; accent: st
     accent: "text-violet-300",
     ring: "border-violet-500/20 bg-violet-500/5",
   },
+  // Renamed 2026-05-15 — group now mixes service businesses + bespoke
+  // builds (Bloodlines indie author, LCAC nonprofit, etc). "Custom Builds"
+  // captures the common denominator: every site in this row is hand-
+  // crafted, not V2-template-generated.
   service: {
-    label: "Local Service Businesses",
+    label: "Custom Builds",
     eyebrow: "🛠️",
     accent: "text-sky-300",
     ring: "border-sky-500/20 bg-sky-500/5",
