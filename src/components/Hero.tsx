@@ -431,29 +431,51 @@ export default function Hero() {
           </p>
         </div>
 
+        {/* Local CSS for the Custom Builds <details> dropdown — rotates the
+            chevron + swaps "Click to expand" ↔ "Hide" when the parent's
+            [open] attribute toggles. Inline (vs <style jsx>) per the
+            Turbopack hang rule in CLAUDE.md. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .bj-dropdown summary { list-style: none; cursor: pointer; }
+              .bj-dropdown summary::-webkit-details-marker { display: none; }
+              .bj-dropdown .bj-chevron { transition: transform 0.2s ease; }
+              .bj-dropdown[open] .bj-chevron { transform: rotate(180deg); }
+              .bj-dropdown .bj-when-open { display: none; }
+              .bj-dropdown[open] .bj-when-closed { display: none; }
+              .bj-dropdown[open] .bj-when-open { display: inline-flex; }
+            `,
+          }}
+        />
+
         {/* Cards — grouped by vertical (Hormozi review #16, 2026-05-14).
-            Three horizontal bands so a product-brand visitor sees themselves
-            in row 1, authors in row 2, service businesses in row 3.
-            Each band has an eyebrow label so the grouping reads cleanly even
-            on mobile where the rows stack. */}
+            Manufacturer group stays always-visible (4 product builds, the
+            page's primary anchor). Custom Builds group becomes a native
+            <details> dropdown so the homepage doesn't open with 12 cards
+            stacked — visitor sees the 4 manufacturer builds + a clearly-
+            labeled "show all custom builds (12)" summary they can click
+            to expand. Per Ben 2026-05-15. */}
         {(["manufacturer", "author", "service"] as SiteGroup[]).map((g) => {
           const groupCards = cards.filter((c) => c.group === g);
           if (groupCards.length === 0) return null;
           const meta = GROUP_META[g];
-          return (
-            <div key={g} className="mb-10 last:mb-0">
-              <div className="flex items-center gap-3 mb-4">
-                <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] px-3 py-1 rounded-full border ${meta.ring} ${meta.accent}`}>
-                  <span>{meta.eyebrow}</span>
-                  {meta.label}
-                </span>
-                <span className="text-white/25 text-xs">
-                  {groupCards.length} {groupCards.length === 1 ? "build" : "builds"}
-                </span>
-                <div className="flex-1 h-px bg-white/[0.04]" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                {groupCards.map((site) => {
+
+          const headerEyebrow = (
+            <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] px-3 py-1 rounded-full border ${meta.ring} ${meta.accent}`}>
+              <span>{meta.eyebrow}</span>
+              {meta.label}
+            </span>
+          );
+          const headerCount = (
+            <span className="text-white/25 text-xs">
+              {groupCards.length} {groupCards.length === 1 ? "build" : "builds"}
+            </span>
+          );
+
+          const grid = (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {groupCards.map((site) => {
                   const isExternal = site.href.startsWith("http");
                   return (
                     <a
@@ -511,7 +533,47 @@ export default function Hero() {
                     </a>
                   );
                 })}
+            </div>
+          );
+
+          // Service group → collapsible <details> dropdown so the 12
+          // custom builds don't dominate the homepage at first glance.
+          if (g === "service") {
+            return (
+              <details key={g} className="bj-dropdown mb-10 last:mb-0">
+                <summary
+                  className="flex items-center gap-3 mb-4 rounded-lg px-3 py-2.5 -mx-3 border border-white/[0.04] hover:border-sky-500/30 hover:bg-white/[0.02] transition-colors"
+                  aria-label={`Show all ${groupCards.length} custom builds`}
+                >
+                  {headerEyebrow}
+                  {headerCount}
+                  <div className="flex-1 h-px bg-white/[0.04]" />
+                  <span className="bj-when-closed inline-flex items-center gap-1.5 text-xs font-semibold text-sky-300 whitespace-nowrap">
+                    Click to expand
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="bj-chevron w-3.5 h-3.5">
+                      <path d="M3 6l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="bj-when-open items-center gap-1.5 text-xs font-semibold text-white/55 whitespace-nowrap">
+                    Hide
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="bj-chevron w-3.5 h-3.5">
+                      <path d="M3 6l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </summary>
+                <div className="pt-5">{grid}</div>
+              </details>
+            );
+          }
+
+          return (
+            <div key={g} className="mb-10 last:mb-0">
+              <div className="flex items-center gap-3 mb-4">
+                {headerEyebrow}
+                {headerCount}
+                <div className="flex-1 h-px bg-white/[0.04]" />
               </div>
+              {grid}
             </div>
           );
         })}
@@ -569,18 +631,29 @@ export default function Hero() {
 // framework — show prospects what their version will look like, not 23
 // versions of someone else's industry).
 const defaultSiteCards: SiteCard[] = [
+  // ── Manufacturer (always visible, 4 cards) ──────────────────────────
   { name: "Zenith Sports / TEKKY", category: "Sports manufacturer", color: "#0a0f1e", href: "/clients/zenith-sports", icon: "⚽", tagline: "Full AI marketing system — soccer training brand", group: "manufacturer" },
   { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories", group: "manufacturer" },
   { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand", group: "manufacturer" },
   { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront", group: "manufacturer" },
-  // Bloodlines rolled into the "Custom Builds" group 2026-05-15 — was its
-  // own "Indie Authors" row with 1 card, which orphaned on mobile. Sits
-  // alongside the other bespoke hand-built sites (Pine & Particle, LCAC,
-  // Meyer Electric) under a single banner so the grid renders 4+4 even.
+  // ── Custom Builds (collapsed dropdown, expanded 2026-05-15) ─────────
+  // All non-manufacturer bespoke client builds collected under one
+  // collapsible <details> so the homepage stays tight at first glance
+  // (4 product builds visible) but every real custom build is one click
+  // away. Order: highest-recognition first (Bloodlines indie author),
+  // then proven income-generating local clients, then specialty.
   { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "service" },
+  { name: "Hector Landscaping", category: "Landscape design", color: "#0d1a0a", href: "/clients/hector-landscaping", icon: "🌿", tagline: "Lawn care + property maintenance · Sequim WA", group: "service" },
+  { name: "Mountain View Landscaping", category: "Landscape design", color: "#0f1a14", href: "/clients/mt-view-landscaping", icon: "🏞️", tagline: "Full-service landscape design · Sequim WA", group: "service" },
+  { name: "Elite Hardscapes & Landscapes", category: "Hardscape + landscape", color: "#1a1410", href: "/clients/elite-hardscapes-and-landscapes", icon: "🪨", tagline: "Patios, walls, drainage · Port Angeles WA", group: "service" },
   { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing", group: "service" },
   { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA", group: "service" },
   { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA", group: "service" },
+  { name: "Masters Window Tinting", category: "Auto tint + detail", color: "#0a0a14", href: "/clients/masters-window-tinting", icon: "🚗", tagline: "Window tint + auto detail · Long Island NY", group: "service" },
+  { name: "Wholme Naturopathy", category: "Naturopathic medicine", color: "#1a1714", href: "/clients/wholme-naturopathy", icon: "🌱", tagline: "Holistic naturopathic practice", group: "service" },
+  { name: "Family Care Cleaning", category: "Residential cleaning", color: "#1a1408", href: "/clients/family-care-cleaning", icon: "🧽", tagline: "House cleaning · Olympic Peninsula WA", group: "service" },
+  { name: "Ways Executive Sedan", category: "Luxury chauffeur", color: "#0a0a0a", href: "/clients/ways-executive-sedan", icon: "🚙", tagline: "Executive transport + airport service", group: "service" },
+  { name: "The Oregon Appraisers", category: "Real-estate appraisal", color: "#0a121a", href: "/clients/theoregonappraisers", icon: "🏠", tagline: "Residential appraisal · Oregon", group: "service" },
 ];
 
 const GROUP_META: Record<SiteGroup, { label: string; eyebrow: string; accent: string; ring: string }> = {
