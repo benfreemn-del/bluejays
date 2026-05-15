@@ -76,6 +76,8 @@ type Tab =
   | "images"
   | "settings";
 
+type TabGroup = "pipeline" | "building" | "admin";
+
 type TabDef = {
   id: Tab;
   label: string;
@@ -83,40 +85,53 @@ type TabDef = {
   /** When set, clicking the tab navigates AWAY (link mode). When unset,
       the tab swaps content in-place via setTab() (real tab mode). */
   href?: string;
+  /** Hormozi backend review C1 (2026-05-16): every non-overview tab
+   *  rolls up to one of three groups so the daily nav shows 4 primary
+   *  buttons (Overview + 3 groups) instead of 15. Sub-tabs surface in
+   *  a secondary row when the parent group is active. */
+  group?: TabGroup;
 };
 
-// Tabs surfaced in the top nav. Reduced 2026-05-08 + 2026-05-12 per
-// dashboard-review #3 (combine wasted tabs):
-//   - Removed "Case Studies" — set-once admin toggle, /dashboard/case-studies.
-//   - Removed "Images" — admin image-mapper, /image-mapper.
-//   - 2026-05-12: Removed "Audit", "Blog", "Team" from top nav. All
-//     three are low-frequency operator surfaces — Audit is a one-off
-//     backend health check, Blog is monthly content publishing, Team
-//     is user admin. They're now in Settings → External Services so
-//     they're one click away without polluting the daily nav.
-// Routes still exist; just no longer in the top bar. The kept set is
-// the daily operator flow: Overview → Leads → Map → Funnels → Ads
-// → Master To-Do → Sales Portal → Diagnostic → Onboarding → Client
-// Jobs → Pipeline → Win-Loss → AI Skills → Settings.
+// Tabs surfaced in the top nav. Reduced 2026-05-08 + 2026-05-12 +
+// regrouped 2026-05-16 per Hormozi backend review C1.
+//
+// Groupings (Hormozi: "simpler beats more"):
+//   Overview standalone — money pulse + proof of work (top of mind)
+//   Pipeline group  — every lead-flow surface (Leads / Map / Funnels /
+//                     Pipeline / Win-Loss / Sales Portal)
+//   Building group  — every active-work surface (Client Jobs /
+//                     Onboarding / Master To-Do / AI Skills / Ads)
+//   Admin group     — every back-office surface (Numbers /
+//                     Diagnostic / Settings)
 const TABS: TabDef[] = [
+  // Standalone — always primary
   { id: "overview", label: "Overview", emoji: "🏠" },
-  { id: "leads", label: "Leads", emoji: "📥" },
-  { id: "map", label: "Map", emoji: "🗺️" },
-  { id: "funnels", label: "Funnels", emoji: "🎯" },
-  { id: "ads", label: "Ads", emoji: "📢" },
-  { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks" },
-  { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script" },
-  { id: "diagnostic", label: "Diagnostic", emoji: "🧠", href: "/dashboard/diagnostic" },
-  { id: "numbers", label: "Numbers", emoji: "🧮", href: "/dashboard/numbers" },
-  { id: "onboarding", label: "Onboarding", emoji: "🛒", href: "/dashboard/onboarding" },
-  { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients" },
-  { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline" },
-  { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss" },
-  { id: "ai-skills", label: "AI Skills", emoji: "🧠", href: "/dashboard/ai-bots" },
-  { id: "settings", label: "Settings", emoji: "⚙️" },
+  // ── PIPELINE ──────────────────────────────────────────────────
+  { id: "leads", label: "Leads", emoji: "📥", group: "pipeline" },
+  { id: "map", label: "Map", emoji: "🗺️", group: "pipeline" },
+  { id: "funnels", label: "Funnels", emoji: "🎯", group: "pipeline" },
+  { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline", group: "pipeline" },
+  { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss", group: "pipeline" },
+  { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script", group: "pipeline" },
+  // ── BUILDING ─────────────────────────────────────────────────
+  { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients", group: "building" },
+  { id: "onboarding", label: "Onboarding", emoji: "🛒", href: "/dashboard/onboarding", group: "building" },
+  { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks", group: "building" },
+  { id: "ai-skills", label: "AI Skills", emoji: "🧠", group: "building" },
+  { id: "ads", label: "Ads", emoji: "📢", group: "building" },
+  // ── ADMIN ────────────────────────────────────────────────────
+  { id: "numbers", label: "Numbers", emoji: "🧮", href: "/dashboard/numbers", group: "admin" },
+  { id: "diagnostic", label: "Diagnostic", emoji: "🧠", href: "/dashboard/diagnostic", group: "admin" },
+  { id: "settings", label: "Settings", emoji: "⚙️", group: "admin" },
 ];
 
 const VALID_TABS = new Set<Tab>(TABS.map((t) => t.id));
+
+const GROUP_META: Record<TabGroup, { label: string; emoji: string }> = {
+  pipeline: { label: "Pipeline", emoji: "📥" },
+  building: { label: "Building", emoji: "🔧" },
+  admin: { label: "Admin", emoji: "⚙️" },
+};
 
 export default function DashboardPage() {
   const role = useRole();
@@ -322,38 +337,112 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* TAB BAR — horizontal scroll on mobile (overflow-x-auto). Mixed
-            mode: tabs without href use setTab() in-place; tabs with href
-            navigate (Link) — both share the same visual treatment. */}
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
-          {visibleTabs.map((t) => {
-            const active = tab === t.id;
-            const className = `py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
+        {/* TAB BAR — Hormozi backend review C1 (2026-05-16). Refactored
+            from a flat 15-tab strip to a 2-tier nav: primary row shows
+            [Overview] + 3 group chips (Pipeline / Building / Admin),
+            secondary row shows the active group's sub-tabs. Cuts the
+            visible nav surface from 15 items to 4 by default — Hormozi
+            "simpler beats more" — with every tab still 1 click away. */}
+        {(() => {
+          const overviewTab = visibleTabs.find((t) => t.id === "overview");
+          // Which group is the user currently in? Drives the secondary row.
+          const activeTabDef = visibleTabs.find((t) => t.id === tab);
+          const activeGroup: TabGroup | null = activeTabDef?.group ?? null;
+          const groupsWithTabs: TabGroup[] = (["pipeline", "building", "admin"] as TabGroup[]).filter(
+            (g) => visibleTabs.some((t) => t.group === g),
+          );
+          const subTabs = activeGroup
+            ? visibleTabs.filter((t) => t.group === activeGroup)
+            : [];
+
+          const primaryBtn = (
+            active: boolean,
+          ): string =>
+            `py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
               active
                 ? "border-blue-400 text-white"
                 : "border-transparent text-slate-500 hover:text-slate-300"
             }`;
-            if (t.href) {
-              return (
-                <Link key={t.id} href={t.href} className={className}>
-                  <span className="text-base">{t.emoji}</span>
-                  {t.label}
-                </Link>
-              );
-            }
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => switchTab(t.id)}
-                className={className}
-              >
-                <span className="text-base">{t.emoji}</span>
-                {t.label}
-              </button>
-            );
-          })}
-        </nav>
+
+          const subBtn = (active: boolean): string =>
+            `py-1.5 px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition ${
+              active
+                ? "bg-blue-500/15 border border-blue-400/50 text-blue-200"
+                : "bg-white/[0.02] border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
+            }`;
+
+          return (
+            <>
+              {/* PRIMARY ROW — Overview + 3 group chips */}
+              <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
+                {overviewTab && (
+                  <button
+                    type="button"
+                    onClick={() => switchTab("overview")}
+                    className={primaryBtn(tab === "overview")}
+                  >
+                    <span className="text-base">{overviewTab.emoji}</span>
+                    {overviewTab.label}
+                  </button>
+                )}
+                {groupsWithTabs.map((g) => {
+                  const groupActive = activeGroup === g;
+                  const firstTab = visibleTabs.find((t) => t.group === g);
+                  if (!firstTab) return null;
+                  // Clicking a group chip jumps to its first tab — either
+                  // setTab() if in-place, or href navigation if link.
+                  if (firstTab.href) {
+                    return (
+                      <Link key={g} href={firstTab.href} className={primaryBtn(groupActive)}>
+                        <span className="text-base">{GROUP_META[g].emoji}</span>
+                        {GROUP_META[g].label}
+                      </Link>
+                    );
+                  }
+                  return (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => switchTab(firstTab.id)}
+                      className={primaryBtn(groupActive)}
+                    >
+                      <span className="text-base">{GROUP_META[g].emoji}</span>
+                      {GROUP_META[g].label}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* SECONDARY ROW — sub-tabs for the active group */}
+              {activeGroup && subTabs.length > 0 && (
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-2.5 flex gap-2 overflow-x-auto">
+                  {subTabs.map((t) => {
+                    const active = tab === t.id;
+                    if (t.href) {
+                      return (
+                        <Link key={t.id} href={t.href} className={subBtn(active)}>
+                          <span>{t.emoji}</span>
+                          {t.label}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => switchTab(t.id)}
+                        className={subBtn(active)}
+                      >
+                        <span>{t.emoji}</span>
+                        {t.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          );
+        })()}
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
