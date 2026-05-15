@@ -89,89 +89,79 @@ export interface VideoScript {
 // Don't rotate anything in until you have 14 days of conversion data on these.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Rewritten 2026-05-14 per ICP niche-down (memory: recent_locked_decisions.md).
+// L-01 + L-02 = manufacturer vertical (two sub-angles, ITC ag + Tekky sports
+//   anchors — Kaleidoscope test, NOT two different messages).
+// L-03 = indie author vertical (Bloodlines anchor).
+// Service-trade Hector copy archived in git history pre-15510bdf.
 export const META_LAUNCH_ADS: MetaAd[] = [
   {
     id: "L-01",
     phase: "launch",
     format: "single_image",
     placement: ["feed", "stories", "reels"],
-    hook: "This is what a $997 local business website looks like.",
-    primaryText: `This is what a $997 local business website looks like.
+    hook: "ITC builds tractor accessories. Their distributors made more than they did. Then they fired the funnel problem.",
+    primaryText: `ITC Quick Attach makes tractor accessories that farmers actually need. Real product, patent-protected fit.
 
-Custom design. Real services. Real photos. Your city.
+But their dealers were making more margin off ITC's product than ITC itself. The problem wasn't the product. The problem was that ITC had no direct-to-customer funnel — every order routed through someone else's website.
 
-Not a template. Not a drag-and-drop builder. A site that looks like you paid $5,000 — because we've built 150+ of them and we know exactly what works.
+We built ITC a full marketing system: DTC-storefront sites, dealer-locator funnel, retargeting pixels across Meta + Google, automated email nurture for end-buyers. Their dealers still get a cut on regional installs. ITC keeps the margin on every direct order.
 
-It goes live in 48 hours. Includes domain registration and hosting. 100% money back if you don't love it.
+If you manufacture a real product and sell it through distributors, dealers, or Amazon — you're losing the customer relationship every day you don't have an owned funnel.
 
-First step is free: we score your current site in 60 seconds and show you exactly what it's costing you.
-
-Find out what yours would look like.`,
-    headline: "$997. Custom. 48 hours. See it free.",
-    description: "150+ local sites built. Free audit shows what yours is costing you.",
+Free 60-second audit shows you the 3 leaks every product brand has.`,
+    headline: "Own your customer. $10k AI System.",
+    description: "Free audit. Built for manufacturers, not service trades.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Show a split-screen: left side an outdated, cluttered website (generic stock). Right side a clean, premium V2 preview for the same category — dental, roofing, or electrician. No text overlay needed. The visual IS the ad. The contrast does the work. The left side makes them feel the pain. The right side makes them want the fix.",
-    targetingNote: "Broadest possible cold audience. Business owners, self-employed, small business job titles. 35-65. Pacific NW 100-mile radius to start. This is your #1 ad — give it the most budget. If only one ad runs, it's this one. The hook now matches the actual funnel: show quality → offer free audit → build preview → close.",
+    creativeNote: "Show ITC's actual product on a tractor (or similar product-in-use shot). Text overlay: 'Your dealer is making more on your product than you are.' Authentic, not stocky. The visual establishes 'product manufacturer' instantly — service-trade audiences self-filter.",
+    targetingNote: "Cold audience. Manufacturers + product brand owners. Job titles: founder, owner, CEO, president of small manufacturing. Interest in 'distributors', 'manufacturing software', 'DTC e-commerce', 'Amazon FBA'. 35-65. National US to start. This is the strongest ad in the launch — give it the most budget. Track CPA against vertical specifically.",
   },
   {
     id: "L-02",
     phase: "launch",
     format: "single_image",
     placement: ["feed"],
-    hook: "What $997 buys from BlueJays:",
-    primaryText: `What $997 buys from BlueJays:
+    hook: "Tekky makes the best soccer training gear in the US. Their website made it look like a side hustle.",
+    primaryText: `Paul + Philip have been making elite-level soccer training equipment for over a decade. Same product the academies use. Same product the pros train with.
 
-✓ Custom website — not a template
-✓ Your real photos, services, and contact info
-✓ Domain registration included
-✓ Hosting setup included
-✓ Mobile-first, built to rank on Google
-✓ Live in 48 hours
-✓ 100% money back if you don't love it
-✓ No monthly fees. Ever.
+But before BlueJays, Tekky's website looked like every other random Shopify store. No story. No partner program for coaches and clubs. No retargeting. No system to capture the parent who clicked through from an Instagram ad and then forgot.
 
-Most agencies: $5,000–$15,000 upfront. Then $200–$400/month, forever.
+We built Tekky a full AI marketing system: shop + build-your-player + training-guide + camps + partner program for coaches. Email capture at every entry point. Retargeting pixels for cold-traffic warming. Automated follow-up for abandoned carts.
 
-We charge $997 once. You own everything.
+If you make a defined product that an audience actually wants — but your website doesn't tell anyone why YOU are the version of it to buy — you're losing every cold-traffic visit you've ever paid for.
 
-150+ local businesses. 30+ industries. 6 years.
-
-Start with the free audit — see your current site's score and what we'd build instead.`,
-    headline: "$997 flat. You own everything.",
-    description: "No monthly fees. 48 hours. 100% money back.",
+Free 60-second audit shows you the 5 things every product website is missing.`,
+    headline: "Built for product brands. Not service trades.",
+    description: "What a $10k AI System looks like. See it free first.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Clean two-column graphic. Left column: 'Other agencies' header, red X list (high price, long timeline, monthly fees, you don't own it). Right column: 'BlueJays' header, green check list matching the bullets above. Simple, high-contrast, scannable on mobile. No stock photos.",
-    targetingNote: "Cold audience. Same targeting as L-01 but this ad skews toward people who've already been thinking about a new website — they recognize the agency price problem. Test against L-01 for 14 days. The winner of L-01 vs L-02 becomes the evergreen ad you scale.",
+    creativeNote: "Tekky product action shot (kid training in a backyard, branded ball, branded training cone). Premium athletic-brand visual language — NOT generic Shopify product shot. If you don't have permission to use Tekky's actual brand, use a representative training-gear shot with the same vibe. Text overlay: 'A product brand is worth more than a Shopify store.'",
+    targetingNote: "Cold audience. Sports gear + outdoor gear + niche-product founders. Interest in 'product founders', 'DTC brands', 'Shopify Plus'. Job titles: founder, owner, head of brand, head of DTC. 30-60. National US. Test against L-01 for 14 days — winner becomes the evergreen ad scaled in Phase 2. Together L-01 + L-02 split-test the manufacturer vertical at the sub-niche level (ag vs sports). Same message, different anchor.",
   },
   {
     id: "L-03",
     phase: "launch",
     format: "single_image",
     placement: ["feed", "stories"],
-    hook: "Hector's phone stopped ringing. Same work. Same prices. Same crew.",
-    primaryText: `Hector runs a landscaping company in Washington.
+    hook: "Preston wrote a fantasy series. Then he found out 90% of his Amazon readers had no idea he existed.",
+    primaryText: `Preston James Hunsaker wrote the Bloodlines fantasy saga. Book #1 is live on Amazon. Book #2 in his head.
 
-Great reviews. Real work. Steady clients. But his phone had slowed down and he didn't know why.
+But his author website was the same one most indie authors have: a Squarespace landing page, a Goodreads link, a contact form he never checked.
 
-Turned out his call button was broken on half the browsers out there. Anyone visiting on an iPhone or Android couldn't tap to call him. He had no idea.
+That meant: zero email capture, zero way for a reader to discover book #2 when it dropped, zero way to keep that book-#1 reader in his world for the next 2-3 years until the series finishes.
 
-We found it in a 2-minute audit. Fixed everything in 48 hours. He paid $997.
+We built Preston a bespoke author showcase: animated world map, character roster, magic-system explorer, parchment reader, faction quiz. Newsletter capture wired through 5 entry points. Pixel retargeting for the readers who DID find him.
 
-His first new booking came in that same week.
+If you've sold copies of Book 1 and you're working on Book 2 or Book 3 — every reader you don't capture today is a customer your future books will never find again.
 
-That was 6 years ago. He's been doing six figures a year since. Same neighborhood. Same prices. Same crew. The site just stopped working against him.
-
-Most local business websites have at least one thing like Hector's. A broken button. A page that takes 8 seconds to load on mobile. A phone number you can't tap.
-
-Find out what yours has. Free. 60 seconds.`,
-    headline: "One fix. Six figures a year since.",
-    description: "Free audit finds what yours has. $997 to fix it.",
+Free 60-second audit for indie authors. See what your author site is missing.`,
+    headline: "Indie authors: your site can sell the next book.",
+    description: "What a real author site looks like. Free audit first.",
     cta: "LEARN_MORE",
     url: "bluejayportfolio.com/audit",
-    creativeNote: "Real-feeling image: a landscaping truck or crew in action. Not stock-photo perfect — authentic. Text overlay in the corner: '6 years. Six figures. $997.' Small enough to not crowd the image but visible on scroll. If no real photo is available, a 5-star Google review card with a landscaping photo behind it.",
-    targetingNote: "Cold audience. Trade business owners especially (landscaping, plumbing, roofing, electrical, HVAC). The Hector story self-filters — trade owners immediately picture themselves in it. Also effective for any service business with a mobile audience. Test $20/day alongside L-01 and L-02.",
+    creativeNote: "Atmospheric fantasy/book-cover-vibe image (parchment, candle, sword, world map) — premium author-brand visual language. If using Bloodlines actual artwork, must have Preston's written permission. Text overlay: 'Your book is selling. Your author site isn't.'",
+    targetingNote: "Cold audience. Self-published fiction authors specifically. Interest in 'Kindle Direct Publishing', 'KDP', 'IngramSpark', 'BookFunnel', 'self-publishing', '20books'. Job title or self-described: 'author', 'novelist', 'indie author', 'fantasy author', 'romance author'. 25-55. National US. Smaller audience than manufacturers — expect tighter CAC but lower volume. Start at $10/day and scale up only if CPA under $300.",
   },
 ];
 

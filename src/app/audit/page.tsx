@@ -17,6 +17,10 @@ import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
  */
 type AuditVariant = "A" | "B" | "C";
 
+// Rewritten 2026-05-14 per ICP niche-down. Both verticals tested in
+// parallel: A + B = manufacturer (2 sub-angles, Kaleidoscope-style test),
+// C = indie author (Bloodlines anchor). Service-trade variants archived
+// in git history; see commit before 15510bdf for legacy copy.
 const HERO_VARIANTS: Record<
   AuditVariant,
   {
@@ -27,41 +31,43 @@ const HERO_VARIANTS: Record<
   }
 > = {
   A: {
-    eyebrow: "Free — no credit card, no signup",
-    h1Top: "Why isn't your site",
-    h1Bottom: "booking jobs?",
+    eyebrow: "Free — for product makers selling through distributors",
+    h1Top: "Why is your distributor",
+    h1Bottom: "making more than you?",
     sub: (
       <>
         We score your site 0–100 and show you the{" "}
-        <span className="font-semibold text-white">3 fixes worth real money</span>
-        {" "}— for free, in about 60 seconds. What&apos;s costing you customers?
-        Find out before your competitor does.
+        <span className="font-semibold text-white">3 fixes that pull demand back to you</span>
+        {" "}— for free, in about 60 seconds. If you make the product, you should
+        own the customer. Find out what&apos;s costing you the relationship.
       </>
     ),
   },
   B: {
-    eyebrow: "Free 60-second diagnostic",
-    h1Top: "If 500 new clients showed up",
-    h1Bottom: "tomorrow — what would break?",
+    eyebrow: "Free 60-second diagnostic — manufacturers + niche brands",
+    h1Top: "Your product is great.",
+    h1Bottom: "Your website is leaking the demand.",
     sub: (
       <>
         The honest answer is the{" "}
-        <span className="font-semibold text-white">bottleneck costing you money right now</span>.
-        We score the 5 most common money-leaks every local business has — speed-to-lead,
-        missed calls, no follow-up, dead CRM, no reporting. Free, 60 seconds, no signup.
+        <span className="font-semibold text-white">bottleneck costing you orders right now</span>.
+        Speed-to-lead. Cart abandonment. Dealer cannibalization. Zero email capture.
+        No audience to retarget. We score the 5 leaks every product brand has.
+        Free, 60 seconds, no signup.
       </>
     ),
   },
   C: {
-    eyebrow: "Free — no credit card, no signup",
-    h1Top: "5 reasons your Google Ads",
-    h1Bottom: "aren't converting",
+    eyebrow: "Free — for indie authors with a book on Amazon",
+    h1Top: "Your book is selling.",
+    h1Bottom: "Your author site is selling it short.",
     sub: (
       <>
-        Speed-to-lead. Missed calls. No follow-up. Dead CRM. No reporting.
-        We score the{" "}
-        <span className="font-semibold text-white">5 leaks every local business has</span>
-        {" "}— free, in 60 seconds. The fix that actually moves your CAC, ranked.
+        Most indie author sites are a Squarespace landing page and a Goodreads link.
+        That&apos;s a problem if you&apos;re working on book #2 or #3. We score the{" "}
+        <span className="font-semibold text-white">5 leaks every author site has</span>
+        {" "}— newsletter capture, series funnel, world-building reveal, retargeting.
+        Free, 60 seconds, no signup.
       </>
     ),
   },
