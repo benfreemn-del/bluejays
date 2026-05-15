@@ -46,11 +46,16 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 
 export default function AuditForm({
   variant,
+  ctaLabel,
 }: {
   /** Hero variant from middleware-set bj_audit_variant cookie. Tagged
    *  on the audit_lead conversion event so per-variant performance
    *  splits cleanly in Meta + Google Ads attribution. */
   variant?: "A" | "B" | "C";
+  /** Override the submit-button text. Defaults to the legacy
+   *  "Run my free audit →". The product-audit variant of /audit uses
+   *  "Audit my product →" to match the new pain-led H1. */
+  ctaLabel?: string;
 } = {}) {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
@@ -295,7 +300,7 @@ export default function AuditForm({
         disabled={state === "submitting" || !url.trim() || !email.trim()}
         className="w-full rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-6 py-4 text-base font-semibold text-white shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
       >
-        {state === "submitting" ? "Starting your audit…" : "Run my free audit →"}
+        {state === "submitting" ? "Starting your audit…" : (ctaLabel ?? "Run my free audit →")}
       </button>
     </form>
   );
