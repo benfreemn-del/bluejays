@@ -36,7 +36,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Who's actually building this?",
-    a: "Me. Ben Freeman. I'm a Washington State Trooper who started BlueJays because I watched too many local business owners get burned by web designers who ghost after the invoice cleared. You have my direct phone, my email, and you're talking to a real person — not an \"account executive\" who hands you off to someone you'll never meet.",
+    a: "Me. Ben Freeman. I've spent my career in law enforcement and I started BlueJays because I watched too many local business owners get burned by web designers who ghost after the invoice cleared. You have my direct phone, my email, and you're talking to a real person — not an \"account executive\" who hands you off to someone you'll never meet.",
   },
   {
     q: "What happens to my current website during the switch?",

@@ -128,7 +128,7 @@ export default function AboutBen() {
                 Hi, I&apos;m Ben. I live in Quilcene, Washington with my wife &mdash; that&apos;s us in the photo.
               </p>
               <p>
-                I&apos;ve spent most of my career in public service — Washington State Trooper. That work taught me one thing every single day: people remember when someone shows up, and they remember when someone disappears.
+                I&apos;ve spent my career in law enforcement. That work taught me one thing every single day: people remember when someone shows up, and they remember when someone disappears.
               </p>
               <p>
                 I started BlueJays because I watched too many local owners get burned by web designers who sold slick promises, dropped a generic template on them, and vanished the moment the invoice cleared. The people I knew deserved better. So did the towns they served.

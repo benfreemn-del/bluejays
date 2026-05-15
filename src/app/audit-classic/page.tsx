@@ -239,7 +239,7 @@ export default async function AuditLandingPage() {
                 <span className="text-sky-400">you hire me.</span>
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed mb-4 max-w-xl">
-                I&apos;m a Washington State Trooper based in Quilcene. I started BlueJays because too many local owners get burned by web designers who ghost after the invoice. <span className="text-white font-semibold">I answer my phone. I don&apos;t disappear.</span>
+                I&apos;ve spent my career in law enforcement and I&apos;m based in Quilcene. I started BlueJays because too many local owners get burned by web designers who ghost after the invoice. <span className="text-white font-semibold">I answer my phone. I don&apos;t disappear.</span>
               </p>
 
               {/* Trust pillars — inline strip */}

@@ -67,7 +67,7 @@ function buildFrames({
     {
       emoji: "🤝",
       headline: "Real human, not an agency",
-      body: `I'm Ben — Washington State Trooper who started BlueJays because I watched local owners get burned by web designers who ghost. You'll get my direct phone, my direct email, and the audit you're about to read.`,
+      body: `I'm Ben — career in law enforcement, started BlueJays because I watched local owners get burned by web designers who ghost. You'll get my direct phone, my direct email, and the audit you're about to read.`,
     },
     {
       emoji: "✅",

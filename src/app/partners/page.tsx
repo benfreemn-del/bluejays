@@ -259,8 +259,8 @@ export default function PartnersPage() {
               You&apos;re not selling a website. You&apos;re telling
               someone you trust:{" "}
               <span className="text-white font-semibold">
-                &quot;Ben builds these in 48 hours, he&apos;s a Trooper,
-                he doesn&apos;t ghost. Get the free audit.&quot;
+                &quot;Ben builds these in 48 hours, career in law
+                enforcement, he doesn&apos;t ghost. Get the free audit.&quot;
               </span>
             </p>
           </div>
