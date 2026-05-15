@@ -241,7 +241,12 @@ const CLIENT_DOMAIN_MAP: Record<string, string> = {
   // migrated from YOLA 2026-05-12).
   "sequimelectric.com": "/clients/meyer-electric",
   "sequimelectrician.com": "/clients/meyer-electric",
-  // "tekky.org": "/clients/zenith-sports",  // (when Philip activates)
+  // Zenith Sports / TEKKY — bespoke showcase at /clients/zenith-sports.
+  // Domain activated for 2026-05-17 cutover. Safe to leave uncommented
+  // even before Paul flips DNS — middleware only rewrites when the
+  // request hostname matches, so this is dormant until tekky.org's
+  // nameservers point at Vercel.
+  "tekky.org": "/clients/zenith-sports",
 };
 
 export async function middleware(request: NextRequest) {

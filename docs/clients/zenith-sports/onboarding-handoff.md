@@ -1,10 +1,13 @@
 # Zenith Sports / TEKKY® — Owner Portal Onboarding
 
-For the 2026-05-10 walkthrough with Paul Hanson + Philip Lund.
+For Paul Hanson + Philip Lund.
 
-This is the doc Paul + Philip leave the meeting with. Print it,
-email it, or screenshot it — but they have the URL + their login
-+ a self-serve guide before they walk out.
+Live walkthrough + cutover: **Sunday 2026-05-17, 9am PT.**
+Going live on: **tekky.org** (pending Paul's domain confirmation).
+
+This is the doc Paul + Philip use as their portal reference. Print it,
+email it, or bookmark it — everything they need to operate the cockpit
+is in here.
 
 ---
 
@@ -150,12 +153,20 @@ For your records — what you're paying for + when each piece bills:
 
 | Service | Tier | Monthly | Status |
 |---|---|---|---|
-| AI System (BlueJays setup) | $9,700 | one-time | paid in 4 quarterly installments |
+| AI System (BlueJays setup) | $9,700 | one-time | 4 quarterly installments of $2,425. Q1 due at launch (Sunday 2026-05-17). |
 | Hyperloop (auto-optimization) | Off → Starter | $0 → $99 | recommend flip after 50+ leads |
-| Claude (AI replies + drafting) | Pro | $149 | live since walkthrough |
+| Claude (AI replies + drafting) | Pro | $149 | live from Phase A |
 | Twilio (SMS + missed-call texter) | TBD | ~$10-30 | starts when number provisions |
 | SendGrid (email delivery) | Starter | $0 | included in BlueJays setup |
 | Meta Ads · Google Ads | TBD | ad spend only | starts Phase A account stand-up |
+
+**Installment schedule:**
+- Q1 — $2,425 at launch (Sunday 2026-05-17)
+- Q2 — $2,425 on 2026-08-17
+- Q3 — $2,425 on 2026-11-17
+- Q4 — $2,425 on 2027-02-17
+
+Q1 is due before the DNS flips Sunday morning.
 
 **Phase B handoff (target: 30 days post-launch):**
 Account ownership transfers from BlueJays-managed → Zenith-managed
@@ -180,6 +191,6 @@ Bring these to the walkthrough so we're all aligned by close:
 
 ---
 
-Last updated: 2026-05-12 ahead of 2026-05-13 walkthrough (Claude tier
-synced to live Pro/$149 config).
+Last updated: 2026-05-15 ahead of 2026-05-17 launch (added Q1
+installment schedule + tekky.org domain reference).
 Maintained at: `bluejays/docs/clients/zenith-sports/onboarding-handoff.md`
