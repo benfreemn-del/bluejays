@@ -138,6 +138,209 @@ export const VERTICAL_OPENERS: Record<VerticalKey, VerticalOpener> = {
   },
 };
 
+/* ───────────────────────────────────────────────────────────────────────
+ * VERTICAL-SPECIFIC PITCH + OBJECTIONS — added 2026-05-14 (Phase 4 of
+ * niche-down). These run AFTER the opener has landed (prospect said yes
+ * to "worth showing you the 60-second version?") and they're staring at
+ * the preview link Madie just texted them.
+ *
+ * The existing `HORMOZI_CALL_SCRIPT.pitch` and `HORMOZI_CALL_SCRIPT.objections`
+ * stay intact for backwards compat — service-trade prospects (and any
+ * legacy prospect on the $997 ladder) get the generic version. When the
+ * prospect.category resolves to manufacturer or author, LeadPicker uses
+ * VERTICAL_PITCH[vertical] + concatenates VERTICAL_OBJECTIONS[vertical]
+ * into the objection menu.
+ *
+ * Frameworks (Hormozi KB):
+ *   · "Customer Dream Layout (Show 4 Wild Ideas)" — pitch shows them
+ *     the bonus stack their vertical unlocks
+ *   · "Damaging Admissions Frontloaded" — objection handling leads
+ *     with the constraint, not the value
+ *   · "Self-Qualifying via Friction List" — objections that pre-empt
+ *     misfit prospects (too early authors, distributor-loyal mfgs)
+ * ─────────────────────────────────────────────────────────────────── */
+
+export const VERTICAL_PITCH: Record<"manufacturer" | "author", ScriptSection> = {
+  manufacturer: {
+    id: "pitch-mfg",
+    title: "Pitch — manufacturer vertical",
+    goal: "They're staring at the preview. Direct their eye to the dealer/DTC split. Magic question → close the call.",
+    lines: [
+      "Look at the homepage real quick — see the DTC storefront on top + the dealer locator right below it? Same product catalog, two surfaces. End-buyers who want to order direct can finally find you. Your dealers still get every territory install they handle today.",
+      "[Pause — wait for 'yeah' or 'I see it'] Based on what you told me about your dealer network, the math is roughly this: every direct-order customer you capture is one your distributor isn't middling. Even if 80% of volume stays through dealers, the 20% direct compounds in margin AND in retargetable audience for ad spend.",
+      "Honest question — would it be the worst thing in the world if you gave Ben 15 minutes, saw what he'd change about your specific product catalog and dealer-locator setup, and decided not to use us?",
+      "Right. Worst case 15 minutes. Best case you stop losing every direct-order customer to a Google search that lands on your dealer's website. He's got Tuesday at 3 or Thursday at 10 — which works better?",
+    ],
+    callerNotes: [
+      "★ DIRECT THEIR EYE to the DTC + dealer split visible on the preview. Tekky and ITC anchors both have this layout — point to it.",
+      "★ HORMOZI MAGIC LINE in line 3. Pre-handles 'I don't want to be sold to' before they think it.",
+      "★ AFTER 'decided not to use us?' — count to FOUR Mississippi in silence. First to talk loses.",
+      "★ If they ask HOW MUCH → see howMuch-mfg objection. NEVER quote price during the pitch — quote during the call with Ben.",
+      "★ If they push back on 'my dealers wouldn't like this' → see dealersWontLike objection. The dealer-locator IS the dealer-protection answer.",
+      "★ If they're already on Amazon → see amazonAlready objection. Amazon is rented audience, this is owned.",
+    ],
+  },
+  author: {
+    id: "pitch-author",
+    title: "Pitch — indie author vertical",
+    goal: "They're looking at the Bloodlines-pattern preview. Direct their eye to the interactive features. Magic question → close.",
+    lines: [
+      "Look at the homepage real quick — see the world-map / character-roster / faction-quiz at the top? Each one is a newsletter capture point. A reader who hits the site doesn't just see a book cover — they get pulled INTO your world. We built Preston James Hunsaker exactly this for the Bloodlines saga.",
+      "[Pause — wait for 'yeah' or 'I see it'] If book #2 dropped tomorrow, would your current site know who finished book #1? Right — Goodreads knows. Amazon knows. You don't. Every book-1 reader who isn't on your list is a customer your book #2 launch will never find.",
+      "Honest question — would it be the worst thing in the world if you gave Ben 15 minutes, saw what he'd build for your specific series (which interactive features fit your world, how the newsletter capture wires through), and decided not to use us?",
+      "Right. Worst case 15 minutes. Best case every book-1 reader from here on becomes a book-2-3-4 reader. He's got Tuesday at 3 or Thursday at 10 — which works better?",
+    ],
+    callerNotes: [
+      "★ DIRECT THEIR EYE to the interactive features (world map / roster / quiz). Bloodlines anchor has all 5 — point to whichever shows on their preview.",
+      "★ HORMOZI MAGIC LINE in line 3. Pre-handles 'I don't want to be sold to' before they think it.",
+      "★ AFTER 'decided not to use us?' — count to FOUR Mississippi in silence. First to talk loses.",
+      "★ If they only have ONE book → see onlyOneBook objection. Tell them the truth — too early for $10k tier.",
+      "★ If they ask about Squarespace → see squarespaceIsFine objection. The gap, not the win.",
+      "★ If they ask HOW MUCH → see howMuch-author objection. Same as mfg — defer to call with Ben.",
+    ],
+  },
+};
+
+export const VERTICAL_OBJECTIONS: Record<"manufacturer" | "author", ObjectionBranch[]> = {
+  manufacturer: [
+    {
+      id: "dealersWontLike",
+      trigger: "My dealers wouldn't like this / it'll undercut my dealer network",
+      response: [
+        "Fair concern — and it's the FIRST thing every manufacturer asks. Here's the answer: we don't undercut dealers. We protect them.",
+        "Look at the preview again — there's a DTC storefront AND a dealer locator on the SAME catalog. End-buyers who want a regional install get routed to your nearest authorized dealer. End-buyers who want to order direct (which is happening anyway, they just hit your dealer's website instead of yours) finally land on YOUR site.",
+        "ITC Quick Attach had this exact concern. After 3 months their dealers were sending MORE leads back to ITC because the partner program tracked attribution cleanly — they get a kickback on every regional install they help close.",
+        "If you want to see how the dealer-locator wires up, Ben can walk through it on the 15-minute call. Tuesday or Thursday?",
+      ],
+      callerNotes: "This is THE biggest manufacturer objection. Answer it confidently — the answer IS the product. Then route to book.",
+    },
+    {
+      id: "amazonAlready",
+      trigger: "We already sell on Amazon / Amazon does this for us",
+      response: [
+        "Amazon's great for checkout. It's terrible for everything else. You don't own those buyers — you can't email them, you can't retarget them, you can't pitch them on book #2 / next product / accessory bundle.",
+        "The system runs ALONGSIDE Amazon. We keep your Amazon listings live, drive traffic to BOTH the Amazon listing and your DTC storefront, but capture email + retargeting on every visit. Amazon stays the easy-checkout option, you stop losing the relationship.",
+        "Tekky still has every Amazon listing they had before — but now they own a 12,000-person email list of buyers Amazon would never have given them.",
+        "Want Ben to walk through the Amazon + DTC coexistence math on the call? Tuesday or Thursday?",
+      ],
+      callerNotes: "Don't dunk on Amazon. Amazon IS a good checkout. The story is 'rented vs owned audience.' Routes to book.",
+    },
+    {
+      id: "b2bOnly",
+      trigger: "We're B2B only / we don't sell to consumers / dealers are 100% of our volume",
+      response: [
+        "Got it. The system still works — the DTC piece is your email-capture layer, not your sales-conversion layer. Even if 100% of sales flow through dealers, every visitor to YOUR site (which DOES happen — they Google the brand) leaves an email + retargeting pixel.",
+        "What that gets you: a real owned audience for dealer-recruitment campaigns, for product-launch announcements that you push to your dealer network, for distributor-side content marketing.",
+        "ITC's about 95% B2B by volume. The system shows up in a totally different place for them than for Tekky — different funnel, same engine. Ben can walk through the B2B-specific configuration on the call.",
+        "Tuesday or Thursday?",
+      ],
+      callerNotes: "B2B-only prospects often think DTC = sales-conversion. Reframe: DTC = audience layer. Then route to book.",
+    },
+    {
+      id: "noDealerMomentum",
+      trigger: "We're still building our dealer network / not enough dealers yet",
+      response: [
+        "Honest answer — if you don't have at least 8-10 dealers OR a clear path to 8-10 in the next 12 months, the AI System tier is probably too early for you.",
+        "Reason: the dealer-locator + partner program math only compounds when there's enough dealer volume to attribute against. Below ~8 dealers, you're paying $10k for a system you can't fully use.",
+        "Here's what I'd suggest instead — start with the $997 custom website tier first, focus on dealer-recruitment for 6-12 months, and graduate to the AI System when your dealer count justifies the math. We track these conversations — Ben can put you on a 12-month check-in.",
+        "Want me to send you the $997 tier info? Or schedule the 12-month check-in?",
+      ],
+      callerNotes: "DAMAGING ADMISSION — tell them no. Filters out misfit prospects, raises perceived value, builds trust. Some will book the call anyway to disagree; that's a real lead.",
+    },
+    {
+      id: "noPaidAds",
+      trigger: "We don't run paid ads / we don't believe in advertising",
+      response: [
+        "Got it. The system runs without paid ads — about 60% of what it does is organic. Email capture, retargeting (which is just remembering visitors), the dealer partner program, smart postcards to your existing dealer list, the county lead finder for dealer-recruitment.",
+        "The paid ads piece is a multiplier — if you DO eventually run ads, the system tunes them automatically. But it's not the engine. The engine is the email capture + dealer-network compounding.",
+        "ITC ran with zero ad spend for the first 4 months. The dealer partner program alone paid the system off. Ben can walk through the no-ads version on the call.",
+        "Tuesday or Thursday?",
+      ],
+      callerNotes: "Manufacturers who hate ads still love dealer-recruitment + email capture. Reframe: ads are optional, audience is mandatory.",
+    },
+    {
+      id: "howMuch-mfg",
+      trigger: "How much / what's the cost?",
+      response: [
+        "$10,000 — three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (Twilio + SendGrid + Claude + your ad spend — those bills go to the vendors, not us).",
+        "But honest — the price isn't the question. The question is whether the math works for your dealer-margin situation. Ben covers that on the call. If your numbers don't justify it, he'll tell you on the spot.",
+        "Tuesday or Thursday?",
+      ],
+      callerNotes: "Quote the number, redirect to the math conversation. Don't defend the price — defer to Ben.",
+    },
+  ],
+  author: [
+    {
+      id: "onlyOneBook",
+      trigger: "I only have one book out so far / book #2 isn't done yet",
+      response: [
+        "Honest answer — if book #2 isn't drafted yet, the AI System tier is probably too early. The math on $10k works when you have a SERIES.",
+        "Here's why: the system's biggest payoff is the book-1-reader-becomes-book-2-3-4-reader sequence. If book #2 is 12+ months out, the system pays for itself slowly. Better to start with our $997 author website tier, build the audience for 6-9 months while you finish book #2, and graduate to the AI System when the series is real.",
+        "What's the book #2 ETA?",
+        "[If 6 months or sooner] → That's the right timing. Let's book the call with Ben so the system's ready when book #2 drops.",
+        "[If 12+ months out] → Let me send you the $997 tier info. We'll circle back when book #2 is in beta.",
+      ],
+      callerNotes: "DAMAGING ADMISSION — most one-book authors are too early. Filter them down to $997 OR pre-qualify by asking about book #2 timing. Don't try to make a $10k sale on a one-book author.",
+    },
+    {
+      id: "squarespaceIsFine",
+      trigger: "I have a Squarespace / Wix / [other simple author site] already — it works fine",
+      response: [
+        "Squarespace is great for a static landing page. It's not built for a series.",
+        "Honest test — pull up your Squarespace right now and tell me: does it know which visitor finished book #1 versus a first-time visitor? When book #2 drops, can you send a different email to those two groups? Does it capture a newsletter signup from someone who DIDN'T buy book #1 yet but is exploring your world?",
+        "Almost always the answer is no, no, and no. That's not a Squarespace failure — Squarespace is doing its job. The job we do is series-aware capture + retargeting, which is a different shape entirely.",
+        "Want Ben to walk through what gets added on top of (or replaces) the Squarespace? Tuesday or Thursday?",
+      ],
+      callerNotes: "Don't dunk on Squarespace. The story is 'right tool, wrong job.' Routes to book.",
+    },
+    {
+      id: "genreConcern",
+      trigger: "I'm not a fantasy author / [my genre] is different / Bloodlines doesn't apply to me",
+      response: [
+        "Totally fair — the system is genre-agnostic in mechanic but genre-specific in delivery.",
+        "Romance series → couples quiz + tropes explorer + character relationship map (instead of magic-system explorer).",
+        "Thriller series → case-file dossier + clue tracker + character-suspect roster.",
+        "Sci-fi series → worldbuilding wiki + tech-glossary + faction matrix.",
+        "Literary / contemporary fiction → location/setting tour + thematic essay archive + character interview series.",
+        "Same engine, your genre's flavor. Ben can walk through which interactive features fit YOUR series specifically on the call. Tuesday or Thursday?",
+      ],
+      callerNotes: "Authors worry the Bloodlines pattern only fits fantasy. Show them the genre-translation menu fast. Routes to book.",
+    },
+    {
+      id: "newsletterConflict",
+      trigger: "I use Mailchimp / ConvertKit / Substack — I don't want to switch",
+      response: [
+        "Good. Don't switch. We integrate with whatever you're using.",
+        "The system writes to your existing newsletter platform via API — Mailchimp, ConvertKit, Substack, MailerLite, Beehiiv, all work. We just add the capture surfaces (the interactive book-world features) and the audience-tagging logic (book-1 reader vs first-time visitor vs pre-order signup).",
+        "Your subscribers stay in your existing tool. Your existing automations keep running. We layer on top, we don't replace.",
+        "Want Ben to walk through the integration on the call? Tuesday or Thursday?",
+      ],
+      callerNotes: "Most authors are precious about their list (rightfully). The fact that we integrate vs replace IS the unblock. Routes to book.",
+    },
+    {
+      id: "amazonExclusive",
+      trigger: "I'm KDP Select exclusive / I can't sell anywhere else",
+      response: [
+        "Got it — KDP Select doesn't conflict at all. We're not selling your books on the site, we're sending traffic TO Amazon. KDP exclusivity is about where the EBOOK is sold, not where the marketing lives.",
+        "What the system does: captures the email + retargeting pixel on YOUR site, then routes the actual purchase click to your Amazon listing. KDP Select stays clean.",
+        "If you eventually leave KDP Select (which a lot of series authors do at book #3-4 to capture wide retailer income), the system already has Apple Books / Kobo / IngramSpark CTAs wired up — just toggle them on. No rebuild needed.",
+        "Want Ben to walk through the KDP-compatible setup? Tuesday or Thursday?",
+      ],
+      callerNotes: "KDP-exclusive authors worry about contract violations. The site doesn't sell books, it sends to Amazon. Zero conflict.",
+    },
+    {
+      id: "howMuch-author",
+      trigger: "How much / what's the cost?",
+      response: [
+        "$10,000 — three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (newsletter platform fees + ad spend if you run any + Claude AI). Those bills go to the vendors, not to us.",
+        "But honest — for authors, the price isn't the question. The question is whether your series is far enough along to make the math work. Ben covers that on the call. If your series isn't ready, he'll tell you straight up and route you to the $997 tier instead.",
+        "Tuesday or Thursday?",
+      ],
+      callerNotes: "Same shape as mfg pricing objection. Quote, redirect, defer to Ben.",
+    },
+  ],
+};
+
 /** Pre-call coaching shown BEFORE every dial.
  *  ★ MUST KNOW tips first — burn these into muscle memory over your first 100 calls. */
 export const HORMOZI_CALL_TIPS: CallTip[] = [
