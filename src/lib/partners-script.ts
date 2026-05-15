@@ -69,6 +69,74 @@ export type CallScript = {
   objections: ObjectionBranch[];
 };
 
+/* ───────────────────────────────────────────────────────────────────────
+ * VERTICAL-BRANCH OPENERS — added 2026-05-14 per ICP niche-down lock.
+ *
+ * BlueJays now targets only two verticals: niche product manufacturers
+ * (Tekky + ITC anchors) and indie authors (Bloodlines anchor). REI dropped
+ * for 90 days. The full script below is being rewritten in Phase 2 (Days
+ * 24-30) to branch top-to-bottom per vertical. This Phase 1 minimal change
+ * surfaces the first 30-60 seconds of script per vertical, so Madie can
+ * say the right thing in the opening 5 lines based on what's on the
+ * prospect's lead row.
+ *
+ * Frameworks: "Customer Dream Layout (Show 4 Wild Ideas)" + "Damaging
+ * Admissions Frontload" (Joel batch) — caller names the vertical-specific
+ * outcome first, then filters out misfit prospects up front.
+ *
+ * Usage in the LeadPicker.client.tsx: pull prospect.category, map to one
+ * of: 'manufacturer' | 'author' | 'referral'. Default 'referral' for any
+ * prospect outside the two ICP verticals.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+export type VerticalKey = "manufacturer" | "author" | "referral";
+
+export type VerticalOpener = {
+  /** Short label shown above the script — Madie knows which branch she's reading. */
+  label: string;
+  /** First 4-6 lines of the call that lock the frame. Read in order. */
+  openingLines: string[];
+  /** Note shown to Madie BEFORE reading — coaching, not script. */
+  callerNote: string;
+};
+
+export const VERTICAL_OPENERS: Record<VerticalKey, VerticalOpener> = {
+  manufacturer: {
+    label: "🏭 Manufacturer vertical (Tekky / ITC pattern)",
+    openingLines: [
+      "Hey {firstName} — this is {partnerFirstName} from BlueJays. Quick call, takes 2 minutes.",
+      "I'm reaching out because we work with product manufacturers like {bizName} — folks who make a real product and have dealers or distributors moving it.",
+      "Honest question — when one of your dealers sells a unit of your product, are you making more on that sale, or are they?",
+      "Most makers we talk to: the dealer is making more. Because the dealer owns the customer. You don't.",
+      "We just helped a tractor-accessory manufacturer (ITC Quick Attach) fix that. And a soccer-training-gear brand (Tekky). Same shape of problem.",
+      "Worth showing you the 60-second version of what we built them? I can text you the link and you tell me yes or no.",
+    ],
+    callerNote: "You're not selling a website. You're selling 'own your customer relationship.' If they say 'I already have a website' — that's not the pitch. The pitch is the dealer / distributor margin problem. Ask: 'is your distributor making more than you on each unit?' If yes → they're in. If no → they're already running their own funnel and don't need us yet.",
+  },
+  author: {
+    label: "📖 Indie author vertical (Bloodlines pattern)",
+    openingLines: [
+      "Hey {firstName} — {partnerFirstName} from BlueJays. Two minutes, then I'll let you write.",
+      "I'm reaching out because we work with indie fiction authors — folks who have book #1 live and are working on the rest of a series.",
+      "Quick question — when someone finishes your first book on Kindle, what's the next thing that happens on YOUR side? Do you hear from them, or do they just disappear into Amazon?",
+      "Most authors we talk to: the reader disappears. Goodreads owns them. Amazon owns them. The author doesn't.",
+      "We built Preston James Hunsaker's Bloodlines saga a bespoke showcase — world map, magic system, faction quiz, newsletter capture, retargeting pixels. So when book #2 drops, every book-#1 reader gets pulled back in.",
+      "Worth showing you the 60-second version? I'll text the link, you tell me yes or no.",
+    ],
+    callerNote: "You're not selling 'a website for an author.' You're selling 'every book-1 reader becomes a book-2-3-4 reader.' If they say 'I have a Squarespace already' — that's the gap, not the win. Ask: 'does your Squarespace know who finished book 1?' Almost always no. That's the pitch.",
+  },
+  referral: {
+    label: "🤝 Referral / unknown vertical fallback",
+    openingLines: [
+      "Hey {firstName} — {partnerFirstName} from BlueJays. Two-minute call.",
+      "Reaching out because {referralContext}. I'd love to see if what we do is a fit for {bizName}.",
+      "Quick honest answer: we only take two kinds of clients right now — product manufacturers (dealers + distributors) and indie fiction authors. If {bizName} isn't one of those, I'll tell you straight up and point you at someone who'd actually help.",
+      "If it's a fit, here's what we'd do: free 60-second audit, then a custom preview built before you pay anything. Worth a look?",
+    ],
+    callerNote: "Default branch when the prospect's category isn't manufacturer or author. Lead with damaging admissions ('we only take two kinds of clients') — it filters in seconds. If they're misaligned, refer them out cleanly. Don't fight to make a service-trade prospect fit.",
+  },
+};
+
 /** Pre-call coaching shown BEFORE every dial.
  *  ★ MUST KNOW tips first — burn these into muscle memory over your first 100 calls. */
 export const HORMOZI_CALL_TIPS: CallTip[] = [

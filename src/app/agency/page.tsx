@@ -90,7 +90,7 @@ const FAQS = [
   },
   {
     q: "Is this for service businesses or product makers?",
-    a: "Both work, but the system shines for product makers and brands. Why: a product made in one place, with a patent or a tight fit, sold by trusted pros — that's a story the AI can learn. A service that's the same as ten others on the block has less to teach the system. If you make something only you make, this is the right fit. If you sell a commodity, your ad spend will burn fast and Ben will say so on the call.",
+    a: "Product makers and indie authors only. We don't take service-trade businesses on this tier — local trades (electricians, landscapers, dental practices, salons, HVAC, contractors, etc.) are a poor fit for the AI marketing system and we refer them elsewhere. Why: a product made in one place, with a patent or tight fit, sold by trusted pros, with an audience you can retarget across years — that's the story the AI can learn and the math that justifies $9.7k of infrastructure. A service that's the same as ten others on the block has no compounding customer relationship to teach the system. If you make a product only you make, or you write a fiction series readers want to follow book-to-book, this is the right fit. If you sell a commodity service, your ad spend will burn fast and Ben will say so on the call — we'd rather lose the sale than waste your money.",
   },
   {
     q: "How do AI Postcards work?",
