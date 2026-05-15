@@ -1,7 +1,72 @@
-import type { Prospect } from "./types";
+import type { Prospect, Category } from "./types";
 import { CATEGORY_CONFIG } from "./types";
 import { getShortPreviewUrl, getShortUnsubUrl, deriveShortCode } from "./short-urls";
 import { addUtm } from "./utm";
+import { MANUFACTURER_LOOKALIKE_CATEGORIES } from "./scout";
+
+/* ───────────────────────────────────────────────────────────────────────
+ * Vertical context — added 2026-05-14 (Phase 2 of niche-down).
+ *
+ * Routes prospect.category / prospect.lookalikeCategory to one of three
+ * verticals so email templates can branch on vertical-specific copy.
+ *
+ * Used (so far) in getPitchEmail's "P.S. if you want the full system"
+ * upsell line — manufacturer + author prospects see vertical-specific
+ * anchor case studies (Tekky/ITC for mfg, Bloodlines for author).
+ * Service prospects drop the upsell entirely because the $10k AI System
+ * is product-makers + authors only (per memory: recent_locked_decisions
+ * 2026-05-14).
+ *
+ * Phase 3 will branch more templates (welcome, follow-ups, handoff,
+ * monthly report) — each requires its own copy review. This helper is
+ * the seam they'll all use.
+ * ─────────────────────────────────────────────────────────────────── */
+
+export type VerticalKey = "manufacturer" | "author" | "service" | "unknown";
+
+export interface VerticalContext {
+  key: VerticalKey;
+  /** Human-readable label for body interpolation (e.g. "product manufacturer"). */
+  label: string;
+  /** Anchor case-study reference for proof-by-example (empty for service). */
+  anchorCaseStudy: string;
+  /**
+   * Pre-built PS line for the cold-pitch email. Empty string means
+   * "drop the PS entirely" — used for service-tier prospects who
+   * aren't eligible for the $10k AI System upsell.
+   */
+  systemPsLine: string;
+}
+
+export function getVerticalContext(prospect: Prospect): VerticalContext {
+  const lookalike = prospect.lookalikeCategory as Category | undefined;
+  if (lookalike && MANUFACTURER_LOOKALIKE_CATEGORIES.has(lookalike)) {
+    return {
+      key: "manufacturer",
+      label: "product manufacturer",
+      anchorCaseStudy: "Tekky and ITC Quick Attach",
+      systemPsLine:
+        'P.S. If you want the full system — DTC storefront, dealer locator, smart postcards, and the manufacturer funnel we built for Tekky and ITC Quick Attach — reply "system" and I\'ll tell you what that looks like.',
+    };
+  }
+  if (prospect.category === "indie-author") {
+    return {
+      key: "author",
+      label: "indie author",
+      anchorCaseStudy: "the Bloodlines fantasy saga",
+      systemPsLine:
+        'P.S. If you want the full system — interactive book-world showcase, series-aware newsletter, Amazon-direct funnel, reader retargeting — same pattern as the Bloodlines fantasy saga — reply "system" and I\'ll tell you what that looks like.',
+    };
+  }
+  // Service / unknown — drop the $10k upsell PS entirely. Service-tier
+  // prospects on the $997 ladder aren't eligible for the AI System.
+  return {
+    key: "service",
+    label: "service business",
+    anchorCaseStudy: "",
+    systemPsLine: "",
+  };
+}
 
 /**
  * Self-hosted open-tracking pixel for HTML pitch emails.
@@ -282,6 +347,13 @@ export function getPitchEmail(
 
   const effortPhrase = pickEffortPhrase(prospect.id);
 
+  // Branch the "$10k AI System" upsell PS line on vertical. Mfg + author
+  // prospects see vertical-specific anchor copy; service prospects drop
+  // the PS entirely because they're not eligible for the AI System tier
+  // (per memory: recent_locked_decisions.md 2026-05-14).
+  const vertical = getVerticalContext(prospect);
+  const psBlock = vertical.systemPsLine ? `\n${vertical.systemPsLine}\n` : "";
+
   const body = `Hi ${greeting},
 
 ${discoveryLine}${ratingLine}
@@ -294,9 +366,7 @@ No idea if it's what you had in mind, but figured you'd want to see it. Curious 
 
 — Ben
 bluejaycontactme@gmail.com
-
-P.S. If you want the full system — Google ads, Meta ads, SEO, email, and text — reply "system" and I'll tell you what that looks like.
-${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
+${psBlock}${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
 
   // HTML version — identical copy but with the prospect's live preview
   // screenshot embedded inline as a clickable image.
@@ -331,7 +401,7 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
     <p style="margin:0 0 16px;">No idea if it's what you had in mind, but figured you'd want to see it. Curious what you'd change.</p>
     <p style="margin:0 0 4px;">— Ben</p>
     <p style="margin:0 0 16px;"><a href="mailto:bluejaycontactme@gmail.com" style="color:#6b7280;">bluejaycontactme@gmail.com</a></p>
-    <p style="margin:0 0 16px;color:#9ca3af;font-size:12px;">P.S. If you want the full system — Google ads, Meta ads, SEO, email, and text — reply &quot;system&quot; and I&apos;ll tell you what that looks like.</p>
+    ${vertical.systemPsLine ? `<p style="margin:0 0 16px;color:#9ca3af;font-size:12px;">${esc(vertical.systemPsLine)}</p>` : ""}
     <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
       Quilcene, WA · <a href="${esc(getShortUnsubUrl(prospect))}" style="color:#9ca3af;">Opt out</a>
     </p>
