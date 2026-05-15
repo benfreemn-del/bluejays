@@ -32,7 +32,20 @@ const AGENCY_ITEMS = [
   { agency: "Siloed: ads don't talk to email/text", blueJays: "Single funnel: ads → site → email → text → voicemail" },
 ];
 
-const INCLUDED = [
+// Deliverables split into 3 buckets 2026-05-14 per ICP niche-down vertical
+// callout (memory: recent_locked_decisions.md). Every $10k AI System client
+// gets the Universal stack. Then their vertical adds bonus modules:
+//   · Product manufacturers → DTC storefront + dealer locator, smart postcards,
+//     county lead finder, dealer partner program
+//   · Indie authors → interactive book-world showcase, Amazon retailer CTAs,
+//     series-aware newsletter, pre-order funnel, reader retargeting
+//
+// Frameworks (Hormozi KB): "Customer Dream Layout (Show 4 Wild Ideas)" (Luis batch)
+// + "Bonus Stack Beats Discount" (Annie batch) — each vertical-specific bonus
+// is worth the perceived value of the whole offer on its own ("I'd buy this
+// just for the Bloodlines-style interactive world showcase").
+
+const INCLUDED_UNIVERSAL = [
   { icon: "🌐", title: "Custom Website", detail: "Built for your business. Every click feeds the system so it gets smarter." },
   { icon: "📈", title: "Google Ads That Learn", detail: "Headlines that get clicks get more money. Headlines that flop get cut." },
   { icon: "🎯", title: "Facebook + Instagram Ads That Learn", detail: "Customer types that buy get more ads. The ones that don't buy get dropped." },
@@ -42,10 +55,7 @@ const INCLUDED = [
   { icon: "📱", title: "Text Follow-Ups", detail: "Auto-texts that get smarter based on who replies." },
   { icon: "☎️", title: "Missed-Call Text-Back", detail: "Caller hangs up → auto-text in under 60 seconds. You stop losing the leads voicemail eats." },
   { icon: "📞", title: "Voicemail Drops", detail: "Drop a voicemail straight into every warm lead's inbox — phone never rings, no awkward call." },
-  { icon: "📮", title: "Smart Postcards In The Mail", detail: "We send a real postcard to each lead with stuff they care about — their tractor brand, their hunting season, their kid's age. Mail steps work 3-5× better than email alone." },
   { icon: "🎁", title: "A Free Gift That Catches Leads", detail: "A short quiz built for your business that gives the visitor a custom answer — and routes them to the right sales track." },
-  { icon: "🗺️", title: "Pick-Your-County Lead Finder", detail: "Click any US county on a map → fresh leads land in your inbox. Color-coded so you always know where you've already searched." },
-  { icon: "🤝", title: "Sales Team / Partner Program", detail: "A page where partners can sign up, plus a script library so each partner has the right pitch for each customer type. Built-in commission tracking — flat fee or split (like $50 retail / $250 dealer)." },
   { icon: "📊", title: "Owner Dashboard", detail: "One screen for Leads · To-Do · Budget · Campaigns · Funnels · Map · Insights · Account. One login, everything in view." },
   { icon: "🔬", title: "Auto A/B Test Engine", detail: "Tests every email subject and every ad. Winners get more traffic — automatically." },
   { icon: "🔍", title: "Long-Term Google Rank Growth", detail: "Articles + backlinks that climb Google over months, while the ads do the heavy lifting now." },
@@ -53,6 +63,21 @@ const INCLUDED = [
   { icon: "📈", title: "Live Open/Click Tracking", detail: "See who opened, who clicked, who replied — in real time on your dashboard." },
   { icon: "🔥", title: "Heatmap Recordings", detail: "Watch real visitors click around your site so we know exactly where they get stuck — and fix it fast." },
   { icon: "📊", title: "Weekly + Monthly Reports", detail: "Auto-emailed. Real numbers showing the system getting better." },
+];
+
+const INCLUDED_MFG = [
+  { icon: "🛒", title: "DTC Storefront + Dealer Locator", detail: "Direct-to-customer storefront for end-buyers PLUS a dealer locator that protects your existing dealer network. Both run on the same product catalog. Stop watching your distributor make more on your product than you do." },
+  { icon: "📮", title: "Smart Postcards In The Mail", detail: "Real Lob-printed postcards tuned to your product audience — a tractor-brand catalog for dealers, a hunting-season checklist for end-buyers, a back-to-school sports kit for parents. Mail steps work 3-5× better than email alone, especially for B2B touch." },
+  { icon: "🗺️", title: "Pick-Your-County Lead Finder", detail: "Click any US county on a map → fresh leads land in your inbox. Color-coded so you always know where you've already searched. Built for dealer territory expansion and B2B prospecting." },
+  { icon: "🤝", title: "Dealer / Distributor Partner Program", detail: "A page where dealers sign up, plus a script library with the right pitch for each customer type (BUYER · PRO · SHOP). Built-in commission tracking — flat fee or split (like $50 retail / $250 dealer)." },
+];
+
+const INCLUDED_AUTHOR = [
+  { icon: "📖", title: "Interactive Book-World Showcase", detail: "Animated world map, character roster, magic-system explorer, parchment-style chapter reader, faction quiz. Each interactive feature is a newsletter capture point. Built on the Bloodlines pattern — readers who play with these stay 3-5× longer than on a typical author site." },
+  { icon: "📚", title: "Amazon + Retailer Direct CTAs", detail: "ASIN-aware buy buttons that route to Amazon, Apple Books, Kobo, IngramSpark — whatever you sell on. JSON-LD Book schema so each book gets Google's book carousel and your author Knowledge Panel populates correctly." },
+  { icon: "🔖", title: "Series-Aware Newsletter Capture", detail: "Different capture sequences for first-time visitors, book #1 finishers, pre-order signups, and existing subscribers. The reader who finished book #1 doesn't see the same welcome email as someone who just landed — they get the book #2 pitch instead." },
+  { icon: "📅", title: "Pre-Order + Launch Funnel", detail: "Book #2 (or book #3) pre-order capture with a countdown sequence. Email + text + retargeting until launch day, then conversion-tracked through Amazon. Drives the series-LTV math that makes one book-#1 reader worth 5-10× over their lifetime." },
+  { icon: "⭐", title: "Reader Retargeting", detail: "Pixel-tracked readers who finished book #1 but didn't pre-order book #2 get a targeted ad sequence on Meta + Google. Lapsed-reader sequences run across multi-year horizons — when book #3 drops two years later, your book-#1 readers see it first." },
 ];
 
 const FAQS = [
@@ -313,21 +338,86 @@ export default function AgencyPage() {
         </h2>
         <p className="text-slate-400 text-center text-lg mb-10">
           One connected loop — every piece feeds data back to every other piece.
+          Then your vertical adds its own bonus modules on top.
         </p>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {INCLUDED.map((item) => (
-            <div
-              key={item.title}
-              className="flex gap-4 items-start bg-white/[0.04] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-            >
-              <div className="text-3xl flex-shrink-0">{item.icon}</div>
-              <div>
-                <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
-                <p className="text-sm text-slate-400">{item.detail}</p>
+
+        {/* Universal stack — every $10k client gets these 17 */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="inline-block bg-sky-500/15 text-sky-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+              Every system gets
+            </span>
+            <span className="text-slate-500 text-xs">Universal — 17 modules</span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {INCLUDED_UNIVERSAL.map((item) => (
+              <div
+                key={item.title}
+                className="flex gap-4 items-start bg-white/[0.04] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
+              >
+                <div className="text-3xl flex-shrink-0">{item.icon}</div>
+                <div>
+                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
+                  <p className="text-sm text-slate-400">{item.detail}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        {/* Manufacturer vertical bonus stack */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="inline-block bg-amber-500/15 text-amber-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+              Product manufacturers also get
+            </span>
+            <span className="text-slate-500 text-xs">Tekky · ITC pattern — 4 modules</span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {INCLUDED_MFG.map((item) => (
+              <div
+                key={item.title}
+                className="flex gap-4 items-start bg-amber-500/[0.03] border border-amber-500/20 rounded-xl p-5 hover:border-amber-500/40 transition-colors"
+              >
+                <div className="text-3xl flex-shrink-0">{item.icon}</div>
+                <div>
+                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
+                  <p className="text-sm text-slate-400">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Indie author vertical bonus stack */}
+        <div className="mb-4">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="inline-block bg-violet-500/15 text-violet-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+              Indie authors also get
+            </span>
+            <span className="text-slate-500 text-xs">Bloodlines pattern — 5 modules</span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {INCLUDED_AUTHOR.map((item) => (
+              <div
+                key={item.title}
+                className="flex gap-4 items-start bg-violet-500/[0.03] border border-violet-500/20 rounded-xl p-5 hover:border-violet-500/40 transition-colors"
+              >
+                <div className="text-3xl flex-shrink-0">{item.icon}</div>
+                <div>
+                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
+                  <p className="text-sm text-slate-400">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-center text-slate-500 text-xs mt-8 max-w-2xl mx-auto">
+          Same $10k. Your vertical&apos;s bonus stack is included automatically
+          based on what you sell — manufacturers get the dealer-network modules,
+          authors get the series-funnel modules. No upcharge.
+        </p>
       </section>
 
       {/* ── THE TECH ─────────────────────────────────────────────────────────── */}

@@ -39,7 +39,107 @@ load-bearing through delivery:
 
 ---
 
-## What the AI Package includes (per the audit page)
+## Vertical split: Universal + Manufacturer + Author (locked 2026-05-14)
+
+Per the ICP niche-down (`memory: recent_locked_decisions.md` 2026-05-14),
+the $10k AI System is product-makers + indie authors only — service-trade
+businesses get the $997 site tier instead. EVERY $10k client gets the
+**Universal** stack. Then their vertical adds a **bonus stack** on top —
+no upcharge.
+
+Both verticals' deliverables surface publicly on `/agency` page (single
+source of truth — see `INCLUDED_UNIVERSAL`, `INCLUDED_MFG`, and
+`INCLUDED_AUTHOR` arrays at `src/app/agency/page.tsx`).
+
+### Universal (17 modules — every $10k client gets these)
+
+1. Custom website
+2. Google Ads — self-learning campaigns
+3. Meta Ads — self-learning iterations per audience
+4. Different pitch per customer type (up to 6 funnels)
+5. Auto-reply to every email (Claude-drafted, 6 buckets)
+6. Set-it-and-forget-it campaigns (scheduled blasts)
+7. Text follow-ups (Twilio)
+8. Missed-call text-back
+9. Voicemail drops
+10. Free-gift lead magnet (custom quiz)
+11. Owner dashboard (9 tabs)
+12. Auto A/B test engine
+13. Long-term Google rank growth (SEO + backlinks)
+14. Logo refresh
+15. Live open/click tracking
+16. Heatmap recordings
+17. Weekly + monthly reports
+
+### Manufacturer bonus stack (4 modules — Tekky + ITC pattern)
+
+1. **DTC Storefront + Dealer Locator** — direct-to-consumer storefront
+   for end-buyers PLUS a dealer locator that protects existing dealer
+   network. Both run on the same product catalog. The "fire your
+   distributor" infrastructure.
+2. **Smart Postcards In The Mail** (Lob) — tractor-brand catalog for
+   dealers, hunting-season checklist for end-buyers, back-to-school
+   sports kit for parents. Mail steps work 3-5× better than email-only
+   for B2B touch.
+3. **Pick-Your-County Lead Finder** — clickable US county map → fresh
+   leads land in inbox. Dealer territory expansion.
+4. **Dealer / Distributor Partner Program** — signup page + per-audience
+   script library (BUYER / PRO / SHOP). Commission tracking — flat fee
+   or split (e.g. $50 retail / $250 dealer).
+
+Build refs: `src/app/clients/zenith-sports/*` (Tekky anchor),
+`src/app/clients/itc-quick-attach/*` (ITC anchor),
+`src/lib/zenith-partners-script.ts`, `src/lib/itc-partners-script.ts`.
+
+### Indie author bonus stack (5 modules — Bloodlines pattern)
+
+1. **Interactive Book-World Showcase** — animated world map, character
+   roster, magic-system explorer, parchment-style chapter reader,
+   faction quiz. Each interactive feature is a newsletter capture
+   point. Per Bloodlines: readers who play with these stay 3-5× longer
+   than typical author sites.
+2. **Amazon + Retailer Direct CTAs** — ASIN-aware buy buttons → Amazon,
+   Apple Books, Kobo, IngramSpark. JSON-LD Book schema so each book
+   gets Google's book carousel + author Knowledge Panel populates.
+3. **Series-Aware Newsletter Capture** — different sequences for
+   first-time visitors, book #1 finishers, pre-order signups, existing
+   subscribers. Book-1-reader gets book-2 pitch, not generic welcome.
+4. **Pre-Order + Launch Funnel** — book #2/#3 pre-order capture with
+   countdown sequence. Email + text + retargeting until launch day,
+   conversion-tracked through Amazon. Series-LTV math: one book-1
+   reader → 5-10× lifetime value when properly funneled.
+5. **Reader Retargeting** — pixel-tracked book-1 finishers who didn't
+   pre-order book-2 → targeted ad sequence on Meta + Google. Lapsed-
+   reader sequences run multi-year so when book-3 drops in 2 years,
+   book-1 readers see it first.
+
+Build refs: `src/app/clients/bloodlines/page.tsx` (Preston James
+Hunsaker's Bloodlines saga — Phase 1 author anchor, 5 interactive
+features all live).
+
+### Auto-detection on intake
+
+The vertical bonus stack auto-applies based on `prospect.category` or
+`prospect.lookalikeCategory`:
+
+| Category | Vertical | Bonus stack |
+|---|---|---|
+| `mfg-ag-equipment`, `mfg-sports-equipment`, `mfg-outdoor-gear` | manufacturer | INCLUDED_MFG (4 modules) |
+| `indie-author` | author | INCLUDED_AUTHOR (5 modules) |
+| anything else (legacy, edge case) | universal-only | flag for manual review — likely should be $997 tier instead |
+
+**Pricing tier**: `pricingTier = "fullsystem"` — renders with the
+gold $ badge in the dashboard. Same price ($9,700 / $10,000 plan),
+different module mix per vertical at no extra cost.
+
+---
+
+## Legacy section: "What the AI Package includes" (deprecated 2026-05-14)
+
+This 8-item list above the Universal stack is the historical version
+of the deliverables list. Kept for diff-history reference only. The
+canonical list now lives on `/agency` page + the Vertical-split section
+above.
 
 1. Custom website
 2. Google Ads — self-learning campaigns
@@ -49,9 +149,6 @@ load-bearing through delivery:
 6. Lead magnet (custom per business)
 7. Logo revision if needed
 8. Monthly performance reports
-
-**Pricing tier**: `pricingTier = "fullsystem"` — renders with the
-gold $ badge in the dashboard.
 
 ---
 
