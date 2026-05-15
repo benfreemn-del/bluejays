@@ -183,36 +183,57 @@ function scoutWithMockData(options: ScoutOptions): Prospect[] {
   }));
 }
 
-// Categories that have premium templates built — only scout these.
-// Wave 4 (2026-05-06): added 6 manufacturer slugs WITHOUT V2 templates per
-// Ben's directive. Per-prospect manuallyManaged=true is auto-set inside
-// scoutWithGoogle so the auto-pitch funnel SKIPS these until templates +
-// bespoke previews exist. See `MANUFACTURER_LOOKALIKE_CATEGORIES` below
-// + the prospect-construction site at line ~84 of this file.
+// Categories the scout actively pulls.
+//
+// ICP NICHE-DOWN LOCKED 2026-05-14 (memory: recent_locked_decisions.md):
+// BlueJays now targets ONLY owner-operators who sell a defined product —
+// physical (manufacturers) or digital (indie authors). Two verticals,
+// REI dropped for 90 days. The 46 service-trade V2 templates stay on
+// disk as fallback (cost to delete > value) but are NO LONGER ACTIVELY
+// SCOUTED. Hormozi "Pick One" + Luis "Optimize for the Customer You
+// Already Have the Most Of" (1-yr-validated framework) — concentrate
+// acquisition spend on the two segments where BlueJays has anchored wins
+// (Tekky + ITC for mfg, Bloodlines for author).
+//
+// Active set: 3 mfg sub-niches (ag, sports, outdoor — the ones with
+// validated anchors or strong adjacency) + indie-author. Commented-out
+// categories are preserved-but-paused — uncomment to reactivate, but
+// expect to bear the dilution cost.
 export const ACTIVE_CATEGORIES: Category[] = [
-  "real-estate", "dental", "law-firm", "landscaping", "salon",
-  "electrician", "plumber", "hvac", "roofing", "auto-repair",
-  "chiropractic", "fitness", "veterinary", "photography",
-  "cleaning", "pest-control", "accounting", "moving", "florist", "daycare",
-  "insurance", "interior-design", "tattoo", "martial-arts",
-  "physical-therapy", "tutoring", "pool-spa", "general-contractor",
-  "catering", "pet-services", "church",
-  // Wave 3 categories (all 46 now have premium V2 templates)
-  "restaurant", "medical", "painting", "fencing", "tree-service",
-  "pressure-washing", "garage-door", "locksmith", "towing", "construction",
-  "med-spa", "appliance-repair", "junk-removal", "carpet-cleaning", "event-planning",
-  // Wave 4 manufacturer ICP categories — anchored by 3 manufacturer
-  // closes/inbounds: ITC Quick Attach (ag), Zenith/TEKKY (sports),
-  // Nevarland Outpost (apparel-kids). Auto-set manuallyManaged=true at
-  // scout intake until V2 templates exist for each.
-  "mfg-ag-equipment", "mfg-sports-equipment", "mfg-apparel-kids",
-  "mfg-auto-parts", "mfg-outdoor-gear", "mfg-food-bev",
-  // Wave 5 indie-author ICP — first anchor: Preston James Hunsaker's
-  // Bloodlines fantasy series (live at /clients/bloodlines, 2026-05-07).
-  // Each author site is a bespoke hand-built showcase (world map, character
-  // roster, parchment reader, magic-system explorer). Manually managed —
-  // never auto-pitched.
+  // ── ACTIVE — manufacturer vertical ──────────────────────────────
+  // Anchored by ITC Quick Attach ($9.7k closed, ag) and Zenith/TEKKY
+  // ($10k closed, sports). Outdoor stays in for adjacent ag/sports
+  // overlap. Auto-set manuallyManaged=true at scout intake; Ben hand-
+  // picks for bespoke preview build before any cold pitch fires.
+  "mfg-ag-equipment", "mfg-sports-equipment", "mfg-outdoor-gear",
+  // ── ACTIVE — indie author vertical ──────────────────────────────
+  // Anchored by Preston James Hunsaker's Bloodlines fantasy series
+  // (/clients/bloodlines, 2026-05-07). Bespoke hand-built showcase per
+  // author. Manually managed — never auto-pitched.
   "indie-author",
+  // ── PAUSED 2026-05-14 (niche-down) ──────────────────────────────
+  // Manufacturer sub-niches without validated anchors. Reactivate
+  // when food-bev / apparel / auto-parts mfg gets to n=2 closed.
+  // "mfg-apparel-kids", "mfg-auto-parts", "mfg-food-bev",
+  // ── PAUSED 2026-05-14 (niche-down) ──────────────────────────────
+  // 31 local service trades + 5 Wave-3 service categories. The 46 V2
+  // templates remain on disk at src/components/templates/V2*Preview.tsx
+  // for inbound + future productization, but the scout no longer pulls
+  // these categories. Existing paying clients in these categories stay
+  // live forever (Hector landscaping, Meyer electric, Elite hardscapes,
+  // LCAC non-profit, Mountain View landscape, Wholme naturopathy,
+  // Olympic Inspections, Masters Window Tinting). See
+  // recent_locked_decisions.md 2026-05-14.
+  // "real-estate", "dental", "law-firm", "landscaping", "salon",
+  // "electrician", "plumber", "hvac", "roofing", "auto-repair",
+  // "chiropractic", "fitness", "veterinary", "photography",
+  // "cleaning", "pest-control", "accounting", "moving", "florist", "daycare",
+  // "insurance", "interior-design", "tattoo", "martial-arts",
+  // "physical-therapy", "tutoring", "pool-spa", "general-contractor",
+  // "catering", "pet-services", "church",
+  // "restaurant", "medical", "painting", "fencing", "tree-service",
+  // "pressure-washing", "garage-door", "locksmith", "towing", "construction",
+  // "med-spa", "appliance-repair", "junk-removal", "carpet-cleaning", "event-planning",
 ];
 
 /** Manufacturer slugs that should be auto-tagged manuallyManaged=true at
