@@ -4,39 +4,43 @@ import AuditForm from "./AuditForm";
 import AuditTestimonials from "./AuditTestimonials";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
+import AuditLiveSlots from "@/components/AuditLiveSlots";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
 import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
 
 /**
- * /audit — Product Audit lead-magnet (2026-05-15 rebuild).
+ * /audit — Product Audit lead-magnet, Hormozi-grade rebuild
+ * (2026-05-15, "lead capture tool Hormozi would be proud of").
  *
- * Replaces the legacy website-audit landing with a Hormozi pain-led
- * funnel for the $10K AI Marketing System ICP: product manufacturers
- * and indie authors who already have a site that doesn't sell.
+ * Key conversion mechanics applied:
+ *   - Form lives ABOVE THE FOLD (no scroll required to convert) —
+ *     prior version buried it 1 viewport down.
+ *   - Single H1 + 1-line sub + form, with social-proof counter
+ *     wrapping the trust line directly under the button.
+ *   - LIVE scarcity counter pulls real fullsystem-tier paid-this-
+ *     month count from /api/agency/slots-remaining — no more
+ *     hardcoded "5 businesses this month" optic.
+ *   - "What you'll get in 60 seconds" preview card sits between
+ *     the hero and the 4-reasons proof-of-pain so a hesitant
+ *     visitor sees the output BEFORE the form-fill commitment.
+ *   - 4 reasons stay (Ben's locked spec) but reframed as
+ *     "Sound familiar?" — pain-validation rather than
+ *     diagnostic reveal.
+ *   - Testimonials, Meet Ben, scarcity footer all preserved but
+ *     tightened.
  *
- * The OLD website-audit landing is preserved verbatim at /audit-classic
- * (full duplicate of the 13-file tree, internal paths rewritten). Both
- * funnels post to the same /api/audit/submit so the backend pipeline
- * stays single source of truth.
- *
- * Hormozi framework anchors used here:
- *   - Lead with pain (H1 = "4 Reasons Why Your Product Isn't Selling")
- *   - Curiosity gap with specific number (4)
- *   - Reasons listed ABOVE the form so the prospect sees the value of
- *     the audit before being asked to opt in
- *   - "Audit my product" CTA matches the H1 verb so click feels like
- *     a continuation, not a context switch
+ * Old website-audit landing is preserved verbatim at /audit-classic.
+ * Both funnels post to /api/audit/submit (single backend).
  */
 
 const SITE = "https://bluejayportfolio.com";
 
-// Title omits "| BlueJays" — the root layout template at src/app/layout.tsx
-// appends it via `template: "%s | BlueJays"`. Including it here causes the
-// duplicate "BlueJays | BlueJays" we saw in browser review 2026-05-15.
+// Root layout adds "| BlueJays" via metadata.title.template — don't
+// double-include it here.
 export const metadata: Metadata = {
   title: "4 Reasons Your Product Isn't Selling — Free Audit",
   description:
-    "Free 60-second audit for product brands + indie authors. We score the 5 leaks costing you orders and email you the top fixes — no signup required to see the results.",
+    "Free 60-second audit for product brands + indie authors. We score the 5 leaks costing you orders and email you the top fixes — no signup required to see the result.",
   alternates: { canonical: `${SITE}/audit` },
   openGraph: {
     title: "4 Reasons Your Product Isn't Selling — Free Audit | BlueJays",
@@ -49,10 +53,6 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-/** The 4 reasons rendered above the form. Locked Hormozi-style: each
- *  reason is a SPECIFIC operator-flavor failure mode the prospect
- *  recognizes in their own funnel. No hand-wavy "your branding"
- *  garbage — every reason is testable in 60 seconds. */
 const FOUR_REASONS = [
   {
     n: 1,
@@ -114,51 +114,126 @@ export default function ProductAuditLandingPage() {
       <ExitIntentPopup />
       <PartnerRefCapture />
 
-      {/* ── HERO ───────────────────────────────────────────────────── */}
+      {/* ── HERO — H1 + sub + FORM all above the fold ──────────────── */}
       <section id="audit-top" className="border-b border-white/5 scroll-mt-20 relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-amber-500/[0.05] blur-[160px]" />
+          <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-amber-500/[0.06] blur-[160px]" />
           <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-rose-500/[0.05] blur-[140px]" />
         </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-12 pb-10 md:pt-20 md:pb-14 text-center">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-            Free — for product makers + indie authors
-          </p>
-          <div className="mb-4">
-            <SocialProofCounter />
+        <div className="relative mx-auto max-w-5xl px-6 pt-10 pb-12 md:pt-16 md:pb-16">
+          <div className="text-center mb-6 md:mb-8">
+            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+              Free — for product makers + indie authors
+            </p>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.05] mb-5">
+              4 Reasons Why{" "}
+              <span className="bg-gradient-to-r from-rose-400 via-amber-300 to-amber-400 bg-clip-text text-transparent">
+                Your Product Isn&apos;t Selling
+              </span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
+              Drop your URL. In 60 seconds we score the 5 biggest leaks costing
+              you orders + email the top fixes.{" "}
+              <span className="text-white font-semibold">
+                No signup to see the result.
+              </span>
+            </p>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.05]">
-            4 Reasons Why{" "}
-            <span className="bg-gradient-to-r from-rose-400 via-amber-300 to-amber-400 bg-clip-text text-transparent">
-              Your Product Isn&apos;t Selling
-            </span>
-          </h1>
-          <p className="mt-6 text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Your product is great. Your funnel is leaking the orders.{" "}
-            <span className="text-white font-semibold">
-              Free 60-second audit — we score the 5 biggest leaks and email you the top fixes.
-            </span>{" "}
-            No signup to see the result.
-          </p>
+
+          {/* Above-the-fold form card */}
+          <div className="max-w-xl mx-auto">
+            <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/[0.06] to-transparent p-5 md:p-6 shadow-[0_0_60px_-12px_rgba(245,158,11,0.25)]">
+              <AuditForm
+                variant="B"
+                ctaLabel="Audit my product →"
+                defaultCategory="mfg-ag-equipment"
+              />
+
+              {/* Social proof + trust strip — directly under the button */}
+              <div className="mt-4 flex flex-col items-center gap-2.5">
+                <SocialProofCounter />
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                  <span className="inline-flex items-center gap-1">
+                    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 text-emerald-500"><path fillRule="evenodd" d="M8 .5a7.5 7.5 0 100 15A7.5 7.5 0 008 .5zm3.53 5.97a.75.75 0 010 1.06l-4 4a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.47-3.47a.75.75 0 011.06 0z" clipRule="evenodd" /></svg>
+                    No credit card
+                  </span>
+                  <span className="text-slate-700">·</span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 text-sky-500"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4a.75.75 0 011.5 0v3.25l1.75 1.75a.75.75 0 11-1.06 1.06l-2-2A.75.75 0 017.25 8.5V5z" /></svg>
+                    ~60 sec results
+                  </span>
+                  <span className="text-slate-700">·</span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 text-violet-400"><path d="M8 .5a1 1 0 01.92.612l1.789 4.295 4.643.397a1 1 0 01.569 1.751l-3.527 3.05 1.063 4.54a1 1 0 01-1.491 1.083L8 13.84l-3.966 2.389a1 1 0 01-1.49-1.084l1.062-4.54L.08 7.555a1 1 0 01.57-1.75l4.643-.398L7.08 1.112A1 1 0 018 .5z" /></svg>
+                    Real audits by Ben
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Live scarcity strip directly under the form */}
+            <div className="mt-4 flex justify-center">
+              <AuditLiveSlots variant="strip" />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── 4 REASONS ──────────────────────────────────────────────── */}
+      {/* ── WHAT YOU'LL GET — visual proof BEFORE the deeper pain ──── */}
+      <section className="border-b border-white/5">
+        <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
+          <div className="text-center mb-8 md:mb-10">
+            <p className="text-xs uppercase tracking-wider text-emerald-400 font-bold mb-2">
+              What you&apos;ll get · in 60 seconds
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+              Specific. Ranked. Honest.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4 md:gap-5">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.04] p-5">
+              <div className="text-3xl mb-2">📊</div>
+              <h3 className="text-white font-bold mb-1.5">A real score</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                One honest number 0-100. Color-coded. You know exactly where
+                you stand at a glance.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.04] p-5">
+              <div className="text-3xl mb-2">💰</div>
+              <h3 className="text-white font-bold mb-1.5">Money-leak estimate</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                A conservative dollar/month figure of what your current funnel
+                is costing you in missed orders.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-rose-500/30 bg-rose-500/[0.04] p-5">
+              <div className="text-3xl mb-2">🛠️</div>
+              <h3 className="text-white font-bold mb-1.5">Top 5 fixes, ranked</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Specific, plain-English issues. Ranked by dollar impact + how
+                hard each one is to fix. No 40-item to-do list.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4 REASONS — proof-of-pain ─────────────────────────────── */}
       <section className="border-b border-white/5 bg-slate-900/40">
         <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
-          <div className="text-center mb-10 md:mb-14">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold mb-2">
-              The honest answer
+              Sound familiar?
             </p>
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
               Most product brands lose orders in the same 4 places.
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              The audit confirms which of these are leaking on YOUR site. The
-              full report ranks all 5 leaks by dollar impact + how hard each
-              one is to fix.
+              The audit confirms which of these are leaking on YOUR site —
+              ranked by dollar impact.
             </p>
           </div>
 
@@ -187,47 +262,19 @@ export default function ProductAuditLandingPage() {
             ))}
           </div>
 
-          {/* CTA card — hosts the AuditForm directly under the 4 reasons
-              so the prospect's curiosity peak doesn't leak. Pain-pulled
-              then form, classic Hormozi flow. */}
-          <div className="mt-12 md:mt-14 max-w-xl mx-auto">
-            <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/[0.05] to-transparent p-6 md:p-8">
-              <div className="text-center mb-5">
-                <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-2">
-                  See your audit
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight">
-                  Which of these is yours?
-                </h3>
-                <p className="text-sm text-slate-400 mt-2">
-                  Drop your site below. We grade all 5 leaks in 60 seconds.
-                </p>
-              </div>
-              <AuditForm
-                variant="B"
-                ctaLabel="Audit my product →"
-                defaultCategory="mfg-ag-equipment"
-              />
-              <p className="mt-4 text-xs text-slate-500 text-center">
-                Audit generates in about 60 seconds. We&apos;ll email it to you the moment it&apos;s ready.
-              </p>
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1.5">
-                  <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-emerald-500 shrink-0"><path fillRule="evenodd" d="M8 .5a7.5 7.5 0 100 15A7.5 7.5 0 008 .5zm3.53 5.97a.75.75 0 010 1.06l-4 4a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.47-3.47a.75.75 0 011.06 0z" clipRule="evenodd" /></svg>
-                  No credit card
-                </span>
-                <span className="text-slate-700">·</span>
-                <span className="inline-flex items-center gap-1.5">
-                  <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-sky-500 shrink-0"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4a.75.75 0 011.5 0v3.25l1.75 1.75a.75.75 0 11-1.06 1.06l-2-2A.75.75 0 017.25 8.5V5z" /></svg>
-                  ~60 sec results
-                </span>
-                <span className="text-slate-700">·</span>
-                <span className="inline-flex items-center gap-1.5">
-                  <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-violet-400 shrink-0"><path d="M8 .5a1 1 0 01.92.612l1.789 4.295 4.643.397a1 1 0 01.569 1.751l-3.527 3.05 1.063 4.54a1 1 0 01-1.491 1.083L8 13.84l-3.966 2.389a1 1 0 01-1.49-1.084l1.062-4.54L.08 7.555a1 1 0 01.57-1.75l4.643-.398L7.08 1.112A1 1 0 018 .5z" /></svg>
-                  Real audits by Ben
-                </span>
-              </div>
-            </div>
+          {/* Anchor CTA — bounces back up to the hero form for visitors
+              who scrolled before converting. Avoids a redundant second
+              form (would split focus + hurt analytics). */}
+          <div className="mt-10 md:mt-12 text-center">
+            <a
+              href="#audit-top"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-amber-950 font-bold text-base hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] active:scale-[0.97] transition-all"
+            >
+              Audit my product →
+            </a>
+            <p className="mt-3 text-xs text-slate-500">
+              60 seconds. No signup to see the result.
+            </p>
           </div>
         </div>
       </section>
@@ -278,20 +325,23 @@ export default function ProductAuditLandingPage() {
         </div>
       </section>
 
-      {/* ── SCARCITY FOOTER ────────────────────────────────────────── */}
-      <section className="border-b border-white/5 bg-slate-900/40">
-        <div className="mx-auto max-w-3xl px-6 py-12 text-center">
+      {/* ── SCARCITY FOOTER — live count ───────────────────────────── */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-amber-950/15 to-transparent">
+        <div className="mx-auto max-w-3xl px-6 py-12 md:py-14 text-center">
           <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-3">
             Heads up
           </p>
           <p className="text-base md:text-lg text-slate-300 leading-relaxed">
-            If you&apos;d like to be one of the{" "}
-            <span className="text-white font-bold">5 businesses</span> I&apos;ll be building custom software for this month —{" "}
+            If you&apos;d like to be one of the businesses I&apos;ll be building
+            custom software for this month —{" "}
             <span className="text-white font-semibold">
               let&apos;s see if we&apos;re a good fit.
             </span>{" "}
             Start with the free audit and we&apos;ll go from there.
           </p>
+          <div className="mt-5">
+            <AuditLiveSlots variant="inline" />
+          </div>
           <a
             href="#audit-top"
             className="mt-6 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-amber-950 font-bold text-base hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] active:scale-[0.97] transition-all"
