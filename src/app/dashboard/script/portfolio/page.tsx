@@ -156,6 +156,15 @@ const SHOWCASES: Showcase[] = [
     url: "https://lcautism.org",
   },
   {
+    slug: "dungeness-meadows",
+    name: "Dungeness Meadows HOA",
+    industry: "HOA / community association (Sequim WA)",
+    category: "nonprofit",
+    highlight:
+      "Bespoke static HTML pitch piece · ~200-home HOA on the Dungeness River · Pacific NW palette · 8 real photos · layered Olympic Mountains hero · custom amenity icons",
+    url: `${SITE_URL}/sites/dungeness-meadows/index.html`,
+  },
+  {
     slug: "bluejayportfolio",
     name: "BlueJays Portfolio",
     industry: "BlueJays · agency self",
