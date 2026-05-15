@@ -850,13 +850,25 @@ export default function LeadPicker() {
                         <p className="text-sm font-bold text-foreground truncate">
                           {p.businessName ?? "(no name)"}
                         </p>
-                        {/* Pink MFG chip — manufacturer cold lookalike */}
+                        {/* Pink MFG chip — manufacturer cold lookalike. Vertical-aware
+                            script auto-fires when Madie clicks into this lead. */}
                         {isMfgLookalike && (
                           <span
                             className="text-[9px] px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 font-extrabold tracking-wider border border-pink-400/40 uppercase"
-                            title={`Manufacturer-lookalike cold lead · ${p.lookalikeCategory}`}
+                            title={`Manufacturer-lookalike cold lead · ${p.lookalikeCategory} · script auto-routes to VERTICAL_PITCH.manufacturer + 6 mfg objections`}
                           >
-                            MFG · {p.lookalikeCategory!.replace("mfg-", "").replace(/-/g, " ")}
+                            🏭 MFG · {p.lookalikeCategory!.replace("mfg-", "").replace(/-/g, " ")}
+                          </span>
+                        )}
+                        {/* Violet AUTHOR chip — indie-author vertical. Symmetric with MFG
+                            chip per Phase 4 niche-down 2026-05-14. Vertical-aware script
+                            auto-fires in the call workspace. */}
+                        {p.category === "indie-author" && (
+                          <span
+                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-violet-500/20 text-violet-300 font-extrabold tracking-wider border border-violet-400/40 uppercase"
+                            title="Indie-author vertical · Bloodlines pattern · script auto-routes to VERTICAL_PITCH.author + 6 author objections"
+                          >
+                            📖 AUTHOR
                           </span>
                         )}
                         {/* Purple AGENCY chip — Full System inbound */}
