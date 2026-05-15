@@ -392,12 +392,17 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 0;
-            border-top: 1px solid var(--line);
-            padding-top: 28px;
+            padding: 26px 28px 22px;
             max-width: 760px;
+            background: rgba(250, 246, 238, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px -10px rgba(20, 32, 25, 0.18);
         }
         .hero-stats > div {
-            padding-right: 24px;
+            padding-right: 22px;
             position: relative;
         }
         .hero-stats > div:not(:last-child)::after {
@@ -422,10 +427,11 @@
         }
         .stat-label {
             font-size: 0.78rem;
-            color: var(--ink-muted);
+            color: var(--forest-deep);
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            font-weight: 500;
+            font-weight: 600;
+            opacity: 0.75;
         }
         @media (max-width: 760px) {
             .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 24px 0; }
@@ -1474,10 +1480,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="hero-scroll-cue" aria-hidden="true">
-            <span>Scroll</span>
-            <div class="scroll-line"></div>
         </div>
     </section>
 
