@@ -25,14 +25,15 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Floors — placeholder values that show when DB is empty / unconfigured.
-// Match the prior week-rotating placeholder ranges so the page never
-// reads as "this is a brand-new business."
+// Floors — lifetime numbers Ben confirmed honest as of 2026-05-15.
+// MAX(live, floor) is applied below so a brand-new deploy / quiet
+// week never backslides into a single-digit count. When live volume
+// passes a floor, the real number takes over automatically.
 const FLOORS = {
-  sitesBuilt: 47,
-  aiPackagesRunning: 4,
+  sitesBuilt: 2000,
+  aiPackagesRunning: 20,
   auditsThisWeek: 22,
-  savedForClients: 47 * 4200, // sitesBuilt floor × per-site savings
+  savedForClients: 600_000,
 };
 
 export async function GET() {

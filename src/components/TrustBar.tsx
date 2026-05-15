@@ -17,10 +17,10 @@
 import { useEffect, useState } from "react";
 
 const FLOOR = {
-  sitesBuilt: 47,
-  aiPackagesRunning: 4,
+  sitesBuilt: 2000,
+  aiPackagesRunning: 20,
   auditsThisWeek: 22,
-  savedForClients: 197400, // matches /api/stats/public floor
+  savedForClients: 600_000, // matches /api/stats/public floor
 };
 
 type Stats = typeof FLOOR;
@@ -29,6 +29,13 @@ function fmtUsd(v: number): string {
   if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
   if (v >= 1_000) return `$${Math.round(v / 1000)}K`;
   return `$${v}`;
+}
+
+/** Render whole-number counts compactly: 2000 -> "2k", 12000 -> "12k". */
+function fmtCount(v: number): string {
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1_000) return `${Math.round(v / 1000)}k`;
+  return `${v}`;
 }
 
 export default function TrustBar({
@@ -65,7 +72,7 @@ export default function TrustBar({
       <div className="inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300">
         <span>
           <span className="text-white font-bold tabular-nums">
-            {stats.sitesBuilt}+
+            {fmtCount(stats.sitesBuilt)}+
           </span>{" "}
           sites built
         </span>
@@ -90,7 +97,7 @@ export default function TrustBar({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <Tile
-        value={`${stats.sitesBuilt}+`}
+        value={`${fmtCount(stats.sitesBuilt)}+`}
         label="Sites built"
         sub="Real businesses, real owners"
         accent="sky"
