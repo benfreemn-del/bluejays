@@ -45,10 +45,18 @@ const phrases = ["BlueJays Stand Out", "See For Yourself"];
 
 /* ───────────────────────── Main Component ───────────────────────── */
 
+type SlotStats = { used: number; cap: number; remaining: number; monthLabel: string };
+
 export default function Hero() {
   const [phase, setPhase] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
   const [cards] = useState<SiteCard[]>(defaultSiteCards);
+
+  // Live slot count for the urgency line. Falls back to a generic
+  // "limited slots remaining" string if the API errors or DB isn't
+  // configured. Powered by /api/agency/slots-remaining (Hormozi
+  // backend review A2, 2026-05-16).
+  const [slots, setSlots] = useState<SlotStats | null>(null);
 
   useEffect(() => {
     const timers = [
@@ -56,6 +64,29 @@ export default function Hero() {
       setTimeout(() => setBubbleVisible(false), 5000),
     ];
     return () => timers.forEach(clearTimeout);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/agency/slots-remaining", { cache: "no-store" });
+        const j = (await res.json()) as { ok?: boolean } & SlotStats;
+        if (!cancelled && j.ok !== false) {
+          setSlots({
+            used: j.used ?? 0,
+            cap: j.cap ?? 10,
+            remaining: j.remaining ?? 10,
+            monthLabel: j.monthLabel ?? new Date().toLocaleString("en-US", { month: "long", year: "numeric" }),
+          });
+        }
+      } catch {
+        // Stay on the static fallback if the API fails.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Portfolio shows only curated showcase cards — not every generated prospect
@@ -353,14 +384,33 @@ export default function Hero() {
             </a>
           </p>
 
-          {/* Urgency / scarcity line — Hormozi review #7 (2026-05-14). The
-              /agency page documents the 10-builds-per-month cap; surfacing
-              it on the homepage prevents the "I'll come back later" stall.
-              Month is computed at render so the line stays current without
-              manual edits. */}
+          {/* Urgency / scarcity line — Hormozi review #7 (2026-05-14).
+              Live slot count via /api/agency/slots-remaining (review A2,
+              2026-05-16): pulls real fullsystem-tier paid prospects this
+              month and renders "X of 10 remaining." Falls back to a
+              generic "limited slots remaining" string if the API errors
+              so the page never shows fake numbers. */}
           <p className="mt-3 text-xs text-white/35 tracking-wide">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 align-middle animate-pulse" />
-            {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })} · only 10 AI system builds per month — limited slots remaining
+            {slots ? (
+              <>
+                {slots.monthLabel} · {slots.remaining > 0 ? (
+                  <>
+                    <span className="text-amber-300/80 font-semibold">{slots.remaining} of {slots.cap}</span>{" "}
+                    AI system build slots remaining
+                  </>
+                ) : (
+                  <>
+                    <span className="text-rose-300/80 font-semibold">{slots.cap} of {slots.cap}</span>{" "}
+                    AI system builds taken — next slot rolls to next month
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })} · only 10 AI system builds per month — limited slots remaining
+              </>
+            )}
           </p>
         </div>
 

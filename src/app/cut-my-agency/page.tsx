@@ -224,6 +224,14 @@ export default function CutMyAgencyPage() {
   // still saves the corrected version.
   const partialSavedEmailsRef = useRef<Set<string>>(new Set());
 
+  // Calculator-run telemetry (Hormozi backend review A1, 2026-05-16).
+  // Fires ONE row to /api/calculator/log the first time the user reaches
+  // the results screen — independent of lead submit. The returned id is
+  // PATCH'd to converted=true when the user submits the lead form so
+  // Ben sees the calculator's true funnel (X runs / Y leads = conv rate).
+  const calcLogIdRef = useRef<string | null>(null);
+  const calcLogFiredRef = useRef<boolean>(false);
+
   // Captured UTMs from URL on mount (per Rule 59 + outreach attribution)
   const utmRef = useRef<Record<string, string>>({});
   useEffect(() => {
@@ -245,6 +253,40 @@ export default function CutMyAgencyPage() {
     });
     utmRef.current = captured;
   }, []);
+
+  // Fire one telemetry beacon when the user first hits the results
+  // screen — captures everyone who saw their savings number, not just
+  // the ones who submitted the lead form. See /api/calculator/log
+  // route + supabase/migrations/20260516_calculator_runs.sql.
+  useEffect(() => {
+    if (stage !== "results") return;
+    if (calcLogFiredRef.current) return;
+    calcLogFiredRef.current = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/calculator/log", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            monthlyRetainer,
+            monthsAsClient,
+            monthlyAdSpend,
+            services: Array.from(services),
+            industry,
+            timeline,
+            goal,
+            math,
+            utm: utmRef.current,
+          }),
+        });
+        const j = (await res.json().catch(() => ({}))) as { ok?: boolean; id?: string };
+        if (j.ok && j.id) calcLogIdRef.current = j.id;
+      } catch {
+        // Telemetry beacon — silent on failure. Never block the UX.
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
 
   // Math derived from inputs.
   //
@@ -399,6 +441,19 @@ export default function CutMyAgencyPage() {
         }
       } catch {
         // never fail the submit because the gtag call blew up
+      }
+      // Flag the calculator-run telemetry row as converted. Lets Ben
+      // measure "true funnel" — runs vs leads — on the dashboard tile.
+      // Best-effort, fire-and-forget. Never block the UX.
+      if (calcLogIdRef.current) {
+        fetch("/api/calculator/log", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            id: calcLogIdRef.current,
+            email: email.trim().toLowerCase(),
+          }),
+        }).catch(() => {});
       }
       // Soft gate unlock — proof + side-by-side + social proof reveal
       // BELOW the form. Most leads submit + jump to thank-you (the

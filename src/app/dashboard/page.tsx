@@ -43,6 +43,7 @@ const MapView = dynamic(() => import("@/components/dashboard/MapView"), {
 });
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
+import CalculatorStatsCard from "@/components/dashboard/CalculatorStatsCard";
 import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
 
 /* ───────────────────────── TAB SYSTEM ─────────────────────────
@@ -398,6 +399,7 @@ export default function DashboardPage() {
                   activeFilter={statusFilter}
                 />
                 <StatusTransitionsToday />
+                <CalculatorStatsCard />
                 <LossReasonsPanel />
                 <DeliverabilityWidget />
               </>

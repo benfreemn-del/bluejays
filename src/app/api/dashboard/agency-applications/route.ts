@@ -67,12 +67,26 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ ok: true, applications: data || [], counts });
 }
 
+const VALID_MEETING_OUTCOMES = new Set(["no_show", "declined", "interested", "closed"]);
+
 export async function PATCH(request: NextRequest) {
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: false, error: "Supabase not configured" }, { status: 503 });
   }
 
-  let body: { id?: string; status?: string; notes?: string; reviewed_by?: string };
+  let body: {
+    id?: string;
+    status?: string;
+    notes?: string;
+    reviewed_by?: string;
+    // BAM-FAM outcome tracking (Hormozi backend review A3, 2026-05-16).
+    // All optional. Pass an ISO string to set / "null" string to clear.
+    calendly_sent_at?: string | null;
+    meeting_booked_at?: string | null;
+    meeting_completed_at?: string | null;
+    meeting_outcome?: string | null;
+    bamfam_notes?: string;
+  };
   try {
     body = await request.json();
   } catch {
@@ -96,6 +110,24 @@ export async function PATCH(request: NextRequest) {
   }
   if (body.notes !== undefined) update.notes = body.notes;
   if (body.reviewed_by) update.reviewed_by = body.reviewed_by;
+
+  // BAM-FAM fields — pass `null` to clear, ISO string to set, omit to leave alone.
+  if ("calendly_sent_at" in body) update.calendly_sent_at = body.calendly_sent_at;
+  if ("meeting_booked_at" in body) update.meeting_booked_at = body.meeting_booked_at;
+  if ("meeting_completed_at" in body) update.meeting_completed_at = body.meeting_completed_at;
+  if ("meeting_outcome" in body) {
+    if (body.meeting_outcome === null) {
+      update.meeting_outcome = null;
+    } else if (typeof body.meeting_outcome === "string" && VALID_MEETING_OUTCOMES.has(body.meeting_outcome)) {
+      update.meeting_outcome = body.meeting_outcome;
+    } else {
+      return NextResponse.json(
+        { ok: false, error: `Invalid meeting_outcome. Must be one of: ${Array.from(VALID_MEETING_OUTCOMES).join(", ")}` },
+        { status: 400 },
+      );
+    }
+  }
+  if (body.bamfam_notes !== undefined) update.bamfam_notes = body.bamfam_notes;
 
   const { data, error } = await supabase
     .from("agency_applications")
