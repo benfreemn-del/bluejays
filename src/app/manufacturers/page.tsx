@@ -45,7 +45,11 @@ const FAQS = [
   },
   {
     q: "What's the pricing breakdown?",
-    a: "Three ways to pay: (1) $9,700 up front and save $300. (2) $3,500 to start, $3,500 at day 30, $3,000 at day 60 — $10,000 total. (3) $2,500 today and $2,500 every 90 days, four times — $10,000 total, then it stops on its own. Same $10k whether you take 1 path or another — pick whichever fits your cash flow. After the build, ongoing runs at $500-1,000/mo (Twilio + SendGrid + Claude + your ad spend — those bills go to the vendors, not to us).",
+    a: "The $10k AI System is the main goal for manufacturers — three ways to pay: (1) $9,700 up front and save $300. (2) $3,500 to start, $3,500 at day 30, $3,000 at day 60 — $10,000 total. (3) $2,500 today and $2,500 every 90 days, four times — $10,000 total, then it stops on its own. Same $10k whether you take 1 path or another — pick whichever fits your cash flow. After the build, ongoing runs at $500-1,000/mo (Twilio + SendGrid + Claude + your ad spend — those bills go to the vendors, not to us).",
+  },
+  {
+    q: "What if I'm not ready for $10k yet?",
+    a: "The $997 custom website tier is open to you. Honest answer — if you don't have at least 8-10 dealers (or a clear path to 8-10 in the next 12 months), the AI System tier is probably too early; the dealer-locator + partner program math only compounds when there's enough dealer volume to attribute against. The $997 site gets you a premium custom build today while you focus on dealer recruitment, and we graduate you to the full $10k AI System when the math is right. Same Ben, same quality, same approval gate — just the right tier for where you are. Start at /audit either way.",
   },
 ];
 

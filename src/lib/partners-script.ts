@@ -262,11 +262,11 @@ export const VERTICAL_OBJECTIONS: Record<"manufacturer" | "author", ObjectionBra
       id: "howMuch-mfg",
       trigger: "How much / what's the cost?",
       response: [
-        "$10,000 — three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (Twilio + SendGrid + Claude + your ad spend — those bills go to the vendors, not us).",
-        "But honest — the price isn't the question. The question is whether the math works for your dealer-margin situation. Ben covers that on the call. If your numbers don't justify it, he'll tell you on the spot.",
-        "Tuesday or Thursday?",
+        "Main offer is the $10,000 AI Marketing System — that's what we're aiming for. Three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (Twilio + SendGrid + Claude + your ad spend — those bills go to the vendors, not us).",
+        "If the $10k math doesn't fit your dealer momentum yet (fewer than 8 dealers, or a tight cash window right now), we also have a $997 custom website tier as the entry-point — you graduate to the AI System when the dealer math compounds. But for most manufacturers we talk to, the $10k pays for itself in margin-pull within 3-6 months.",
+        "Honest — the price isn't really the question. The question is whether the math works for your specific dealer-margin situation. Ben covers that on the call. If your numbers don't justify the $10k, he'll tell you on the spot and route you to the $997 path. Tuesday or Thursday?",
       ],
-      callerNotes: "Quote the number, redirect to the math conversation. Don't defend the price — defer to Ben.",
+      callerNotes: "ALWAYS lead with $10k AI System as the main goal. $997 is the downsell for prospects who self-disqualify on dealer momentum or cash. Defer to Ben for the math conversation.",
     },
   ],
   author: [
@@ -332,11 +332,11 @@ export const VERTICAL_OBJECTIONS: Record<"manufacturer" | "author", ObjectionBra
       id: "howMuch-author",
       trigger: "How much / what's the cost?",
       response: [
-        "$10,000 — three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (newsletter platform fees + ad spend if you run any + Claude AI). Those bills go to the vendors, not to us.",
-        "But honest — for authors, the price isn't the question. The question is whether your series is far enough along to make the math work. Ben covers that on the call. If your series isn't ready, he'll tell you straight up and route you to the $997 tier instead.",
-        "Tuesday or Thursday?",
+        "Main offer is the $10,000 AI Marketing System — that's what we're aiming for. Three ways to pay: $9,700 up front and save $300, OR $3,500 + $3,500 + $3,000 across 60 days, OR $2,500 quarterly four times. After the build there's roughly $500-1,000/mo for ongoing infrastructure (newsletter platform fees + ad spend if you run any + Claude AI). Those bills go to the vendors, not to us.",
+        "If your series isn't far enough along yet — only book #1 live and book #2 is 12+ months out — we also have a $997 custom author site tier as the starting point. You build your audience for 6-9 months while you finish book #2, and we graduate you to the AI System when book #2 hits beta.",
+        "Honest — for authors, the price isn't the question. The question is whether your series is far enough along to make the math work. Ben covers that on the call. If your series isn't ready, he'll tell you straight up and route you to the $997 path. Tuesday or Thursday?",
       ],
-      callerNotes: "Same shape as mfg pricing objection. Quote, redirect, defer to Ben.",
+      callerNotes: "ALWAYS lead with $10k AI System as the main goal. $997 is the downsell for too-early authors (only book #1, book #2 is 12+ months out). Defer to Ben for the series-readiness call.",
     },
   ],
 };
