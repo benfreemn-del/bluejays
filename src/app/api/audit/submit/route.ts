@@ -28,7 +28,15 @@ import { deriveSourceChannel } from "@/lib/source-attribution";
 // Plus "general" catch-all + "restaurant" + "medical" + "painting" +
 // "fencing" — these have V2 templates but were missing from the audit
 // allowlist. Synced per Q11B locked design.
+// Extended 2026-05-15 with product-audit ICP categories — manufacturer
+// + indie-author + ecommerce so the new /audit form's selections pass
+// validation. Match AuditForm.tsx CATEGORIES const.
 const ALLOWED_CATEGORIES = new Set([
+  // Product-audit ICP (new /audit funnel)
+  "mfg-ag-equipment", "mfg-sports-equipment", "mfg-outdoor-gear",
+  "mfg-apparel-kids", "mfg-auto-parts", "mfg-food-bev",
+  "indie-author", "ecommerce",
+  // Service trades (legacy /audit-classic funnel + spillover)
   "dental", "electrician", "plumber", "hvac", "roofing", "auto-repair",
   "law-firm", "salon", "fitness", "real-estate", "veterinary", "photography",
   "landscaping", "cleaning", "chiropractic", "accounting", "insurance",

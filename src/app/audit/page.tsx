@@ -30,8 +30,11 @@ import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
 
 const SITE = "https://bluejayportfolio.com";
 
+// Title omits "| BlueJays" — the root layout template at src/app/layout.tsx
+// appends it via `template: "%s | BlueJays"`. Including it here causes the
+// duplicate "BlueJays | BlueJays" we saw in browser review 2026-05-15.
 export const metadata: Metadata = {
-  title: "4 Reasons Your Product Isn't Selling — Free Audit | BlueJays",
+  title: "4 Reasons Your Product Isn't Selling — Free Audit",
   description:
     "Free 60-second audit for product brands + indie authors. We score the 5 leaks costing you orders and email you the top fixes — no signup required to see the results.",
   alternates: { canonical: `${SITE}/audit` },
@@ -200,7 +203,11 @@ export default function ProductAuditLandingPage() {
                   Drop your site below. We grade all 5 leaks in 60 seconds.
                 </p>
               </div>
-              <AuditForm variant="B" ctaLabel="Audit my product →" />
+              <AuditForm
+                variant="B"
+                ctaLabel="Audit my product →"
+                defaultCategory="mfg-ag-equipment"
+              />
               <p className="mt-4 text-xs text-slate-500 text-center">
                 Audit generates in about 60 seconds. We&apos;ll email it to you the moment it&apos;s ready.
               </p>

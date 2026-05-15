@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { existsSync } from "fs";
+import { join } from "path";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import RetargetingPixels from "@/components/RetargetingPixels";
@@ -208,9 +210,22 @@ export default async function ProductAuditResultsPage({
       </section>
 
       {/* ── VIDEO + CALENDAR HANDOFF ───────────────────────────────── */}
+      {/* Server-side check: pass videoSrc only when the file actually
+          exists on disk. The component renders a clean "video coming
+          soon" fallback when videoSrc is falsy — replaces the broken
+          <video> player we saw in the 2026-05-15 live review. Auto-
+          enables when Ben drops the file at the expected path; no
+          code changes required. */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-3xl px-6 py-10 md:py-14">
-          <ProductAuditVideoBlock calendlyUrl={CALENDLY_URL} />
+          <ProductAuditVideoBlock
+            calendlyUrl={CALENDLY_URL}
+            videoSrc={
+              existsSync(join(process.cwd(), "public", "videos", "audit-followup-pitch.mp4"))
+                ? "/videos/audit-followup-pitch.mp4"
+                : null
+            }
+          />
         </div>
       </section>
 

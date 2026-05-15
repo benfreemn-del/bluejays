@@ -92,8 +92,9 @@ const HERO_VARIANTS: Record<
  *  - "What's costing you customers? Find out before your competitor does."
  */
 
+// Root layout appends "| BlueJays" via template — don't double-include it.
 export const metadata: Metadata = {
-  title: "Free Website Audit — BlueJays",
+  title: "Free Website Audit",
   description:
     "Free 60-second audit that tells you exactly why your site isn't booking jobs. We score your site 0–100 and show you the 3 fixes worth real money.",
   openGraph: {

@@ -22,22 +22,27 @@ type Props = {
   /** Calendly URL for the discovery call. Server passes
    *  AGENCY_CALENDLY_URL with a sensible fallback. */
   calendlyUrl: string;
-  /** Optional poster image path. Defaults to a generated thumbnail. */
+  /** Optional poster image path. Only used when videoSrc is set. */
   posterUrl?: string;
-  /** Optional video source path. Defaults to the project-standard
-   *  audit pitch file. Falsy = no media element, only thumbnail. */
-  videoSrc?: string;
+  /** Optional video source path. Falsy / omitted = render the clean
+   *  "video coming soon" fallback INSTEAD of a broken player. This is
+   *  the default so the page never shows a 404'd <video> element on
+   *  prod (server passes videoSrc only when the file is confirmed). */
+  videoSrc?: string | null;
 };
 
 export default function ProductAuditVideoBlock({
   calendlyUrl,
   posterUrl = "/videos/audit-followup-pitch-poster.jpg",
-  videoSrc = "/videos/audit-followup-pitch.mp4",
+  videoSrc,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
-  const [videoMissing, setVideoMissing] = useState(false);
+  // Treat both "no videoSrc provided" and "file 404'd" as missing.
+  // The page now passes videoSrc only when the file is confirmed on
+  // disk, so the most common state until Ben uploads is "missing".
+  const [videoMissing, setVideoMissing] = useState(!videoSrc);
 
   // Listen for the native `ended` event AND a safety timer (90s)
   // so even if the file is missing or the user mutes-and-scrubs,

@@ -5,7 +5,21 @@ import { trackMetaEvent, trackGoogleAdsConversion } from "@/components/Retargeti
 import { readPartnerRefCookie } from "@/components/PartnerRefCapture";
 import { getAttributionForSubmit } from "@/lib/attribution";
 
+// 2026-05-15 — re-ordered + extended for the product-audit ICP rebuild.
+// Manufacturer + indie-author categories now sit at the top so the
+// /audit funnel's default selection is product-relevant. Service-trade
+// categories remain below for /audit-classic + spillover traffic.
 const CATEGORIES = [
+  // Product-audit ICP (top of list)
+  ["mfg-ag-equipment", "Manufacturer — Ag / Equipment"],
+  ["mfg-sports-equipment", "Manufacturer — Sports / Fitness"],
+  ["mfg-outdoor-gear", "Manufacturer — Outdoor / Hunting"],
+  ["mfg-apparel-kids", "Manufacturer — Apparel / Kids"],
+  ["mfg-auto-parts", "Manufacturer — Auto Parts"],
+  ["mfg-food-bev", "Manufacturer — Food / Beverage"],
+  ["indie-author", "Indie Author / Book Series"],
+  ["ecommerce", "E-commerce / Shopify brand"],
+  // Service trades (audit-classic)
   ["dental", "Dental"],
   ["electrician", "Electrician"],
   ["plumber", "Plumber"],
@@ -47,6 +61,7 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 export default function AuditForm({
   variant,
   ctaLabel,
+  defaultCategory = "dental",
 }: {
   /** Hero variant from middleware-set bj_audit_variant cookie. Tagged
    *  on the audit_lead conversion event so per-variant performance
@@ -56,11 +71,15 @@ export default function AuditForm({
    *  "Run my free audit →". The product-audit variant of /audit uses
    *  "Audit my product →" to match the new pain-led H1. */
   ctaLabel?: string;
+  /** Default selected category in the dropdown. /audit (product-audit)
+   *  passes "mfg-ag-equipment" so the form opens on a product-relevant
+   *  option. /audit-classic accepts the "dental" fallback. */
+  defaultCategory?: string;
 } = {}) {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [businessCategory, setBusinessCategory] = useState("dental");
+  const [businessCategory, setBusinessCategory] = useState(defaultCategory);
   const [businessName, setBusinessName] = useState("");
   const [biggestFrustration, setBiggestFrustration] = useState("");
   const [timeline, setTimeline] = useState("");
