@@ -436,28 +436,19 @@ export default function Hero() {
 
 /* ───────────────────────── Default Cards ───────────────────────── */
 
+// ICP niche-down portfolio — locked 2026-05-14 per memory/recent_locked_decisions.md.
+// Five product-seller anchors lead. Two verticals: manufacturer (Tekky,
+// ITC, KR Ranches, Laser Lakes) + indie author (Bloodlines). Each card
+// points to a REAL client build, not a V2 template showcase. The 23 legacy
+// service-trade cards are archived in git history pre-15510bdf — V2
+// templates remain on disk for inbound but no longer surface on the
+// homepage (per "Optimize for the Customer You Already Have" Luis-validated
+// framework — show prospects what their version will look like, not 23
+// versions of someone else's industry).
 const defaultSiteCards: SiteCard[] = [
-  // Each card has a unique business name, specific tagline, and distinct color shade
-  { name: "Puget Sound Realty", category: "Real Estate", color: "#09090b", href: "/v2/real-estate", icon: "🏠", tagline: "Cinematic luxury reveal — animated" },
-  { name: "Emerald City Dental", category: "Dental", color: "#0f172a", href: "/v2/dental", icon: "🦷", tagline: "Sparkle particles — calming motion" },
-  { name: "Pacific Law Group", category: "Law Firm", color: "#0f172a", href: "/v2/law-firm", icon: "⚖️", tagline: "Animated scales of justice" },
-  { name: "Cascade Electric Co.", category: "Electrician", color: "#1a1a1a", href: "/v2/electrician", icon: "⚡", tagline: "Lightning animations — premium electrical" },
-  { name: "Emerald City Plumbing", category: "Plumber", color: "#0f172a", href: "/v2/plumber", icon: "🔧", tagline: "Water flow animations — premium plumbing" },
-  { name: "Iron & Oak Fitness", category: "Fitness", color: "#0a0a0a", href: "/v2/fitness", icon: "💪", tagline: "Pulsing heartbeat — raw energy" },
-  { name: "Summit Roofing NW", category: "Roofing", color: "#111827", href: "/v2/roofing", icon: "🏗️", tagline: "Storm protection — premium roofing" },
-  { name: "Pacific Auto Works", category: "Auto Repair", color: "#111111", href: "/v2/auto-repair", icon: "🚗", tagline: "Garage vibes — premium auto repair" },
-  { name: "Velvet Hair Studio", category: "Salon", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
-  { name: "Cascade Landscapes", category: "Landscaping", color: "#0a1a0a", href: "/v2/landscaping", icon: "🌳", tagline: "Nature transforms — premium landscaping" },
-  { name: "Grace Community Church", category: "Church", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
-  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a1a0f", href: "/v2/veterinary", icon: "🐾", tagline: "Paw prints — premium pet care" },
-  { name: "Summit Builders NW", category: "General Contractor", color: "#0f1215", href: "/v2/general-contractor", icon: "🔨", tagline: "Blueprint grid — construction premium" },
-  { name: "Ember & Oak Catering", category: "Catering", color: "#0f0a0a", href: "/v2/catering", icon: "🍷", tagline: "Burgundy elegance — culinary excellence" },
-  { name: "Happy Tails Pet Care", category: "Pet Services", color: "#0a1015", href: "/v2/pet-services", icon: "🐕", tagline: "Playful energy — happy pets" },
-  { name: "Summit PT & Rehab", category: "Physical Therapy", color: "#0a0f1a", href: "/v2/physical-therapy", icon: "💪", tagline: "Healing waves — recovery focus" },
-  { name: "Bright Minds Tutoring", category: "Tutoring", color: "#0a0f1a", href: "/v2/tutoring", icon: "📚", tagline: "Academic excellence — grade boost" },
-  { name: "Radiance Med Spa", category: "Med Spa", color: "#1a0f1e", href: "/v2/med-spa", icon: "✨", tagline: "Flowing elegance — rejuvenation premium" },
-  { name: "ProFix Appliance Repair", category: "Appliance Repair", color: "#0f1720", href: "/v2/appliance-repair", icon: "🔧", tagline: "Circuit grid — technical precision" },
-  { name: "CleanSlate Junk Removal", category: "Junk Removal", color: "#0f1a12", href: "/v2/junk-removal", icon: "🚛", tagline: "Eco-friendly — clear the clutter" },
-  { name: "Lewis County Autism Coalition", category: "Non-Profit", color: "#0a1e3f", href: "https://lcautism-coalition.vercel.app", icon: "💙", tagline: "Community, resources, hope — real client build" },
-  { name: "Elevate Events", category: "Event Planning", color: "#1a1520", href: "/v2/event-planning", icon: "🎉", tagline: "Confetti sparkle — celebration design" },
+  { name: "Zenith Sports / TEKKY", category: "Sports manufacturer", color: "#0a0f1e", href: "/clients/zenith-sports", icon: "⚽", tagline: "Full AI marketing system — soccer training brand" },
+  { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories" },
+  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz" },
+  { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand" },
+  { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront" },
 ];
