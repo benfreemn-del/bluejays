@@ -2,33 +2,35 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
-import AuditCTAHub from "./AuditCTAHub";
-import AuditTestimonials from "../AuditTestimonials";
 import RetargetingPixels from "@/components/RetargetingPixels";
-import ShareAuditButton from "./ShareAuditButton";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
+import ProductAuditVideoBlock from "./ProductAuditVideoBlock";
 
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
 
 /**
- * /audit/[id] — Hormozi salty-pretzel report display.
+ * /audit/[id] — Product Audit Results (Phase 3 of the 2026-05-15
+ * product-audit rebuild).
  *
- * Public via PUBLIC_API_PATHS in middleware (URL-as-secret pattern —
- * URL knowledge IS the auth, same as /claim/[id], /client/[id], etc.).
+ * Simpler than the legacy website-audit report: emphasizes the
+ * TOP 5 biggest fixes, recaps the 4 reasons from the landing, and
+ * folds everything else under a scroll-to-see ranked list. The
+ * video block at the top runs a 2-min Ben pitch + auto-handoffs
+ * to a Calendly embed when the video ends (BAM-FAM, Hormozi).
  *
- * Per research deliverable Section C, structure is:
- *  1. Top-line score (single big number, color-coded)
- *  2. Money-leak headline (one sentence, anchored to vertical)
- *  3. 5-7 prioritized findings (NOT 40 — paralysis kills conversion)
- *  4. Industry benchmark callout (gap vs BlueJays' V2 template)
- *  5. Honest verdict (the bridge to rebuild)
- *  6. Single CTA — Rebuild for $997 OR Book a 15-min call
+ * Old report layout preserved verbatim at /audit-classic/[id]
+ * (Phase 1 duplicate, internal paths rewritten).
  *
- * Tone: plain English, blunt, friendly, 7th-grade reading level.
+ * Public via PUBLIC_API_PATHS — URL-as-secret pattern.
  */
 
 export const dynamic = "force-dynamic";
+
+const CALENDLY_URL =
+  process.env.AGENCY_CALENDLY_URL ||
+  process.env.GROWTH_ENGINE_CALENDLY_URL ||
+  "https://calendly.com/benfreeman-bluejayportfolio/30min";
 
 type Audit = {
   id: string;
@@ -39,86 +41,35 @@ type Audit = {
   prospect_id: string;
   generated_at: string | null;
   first_viewed_at: string | null;
-  /** Per-prospect HeyGen explainer video URL — null until the
-   *  /api/cron/heygen-poll cron stamps it. Renders at the top of
-   *  the audit page when set. */
-  heygen_video_url: string | null;
 };
 
-type Prospect = {
-  business_name: string;
+type Prospect = { business_name: string };
+
+const FOUR_REASONS_RECAP = [
+  { n: 1, accent: "rose", title: "Your product page is a brochure, not a buy-button." },
+  { n: 2, accent: "amber", title: "Your distributor owns the customer relationship — you don't." },
+  { n: 3, accent: "sky", title: "You can't retarget the people who almost bought." },
+  { n: 4, accent: "violet", title: "Your funnel doesn't speak to the buyer who actually decides." },
+] as const;
+
+const RECAP_RING: Record<string, string> = {
+  rose: "border-rose-500/30 bg-rose-500/[0.04] text-rose-300",
+  amber: "border-amber-500/30 bg-amber-500/[0.04] text-amber-300",
+  sky: "border-sky-500/30 bg-sky-500/[0.04] text-sky-300",
+  violet: "border-violet-500/30 bg-violet-500/[0.04] text-violet-300",
 };
 
-// Simplified to 3 visual tiers: red (problem), green (strength), neutral (no-op).
-// Critical and high collapse into the same red tier — the prospect doesn't need
-// to distinguish "critical" from "high" while skimming a fix list. Medium gets
-// red too because anything we flag IS a problem; the bar to be flagged at all
-// already filtered low-impact noise out.
-const SEVERITY_COLORS: Record<string, { bg: string; text: string; border: string; label: string; emoji: string }> = {
-  critical: { bg: "bg-rose-500/15", text: "text-rose-200", border: "border-rose-500/40", label: "Fix this", emoji: "🔴" },
-  high:     { bg: "bg-rose-500/15", text: "text-rose-200", border: "border-rose-500/40", label: "Fix this", emoji: "🔴" },
-  medium:   { bg: "bg-rose-500/10", text: "text-rose-200", border: "border-rose-500/30", label: "Fix this", emoji: "🟠" },
-  low:      { bg: "bg-emerald-500/15", text: "text-emerald-200", border: "border-emerald-500/40", label: "Working", emoji: "🟢" },
-};
-
-const EFFORT_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
-  low:    { label: "Easy fix", emoji: "⚡", color: "text-emerald-300" },
-  medium: { label: "Moderate", emoji: "🛠️", color: "text-amber-300" },
-  // "Rebuild" pre-loaded the "this is too much work / too expensive"
-  // objection right at the moment we want them committing. "Big fix"
-  // is honest about scope without flagging "this means a rewrite."
-  // (Hormozi review round 2 #7.)
-  high:   { label: "Big fix", emoji: "🛠️", color: "text-amber-300" },
-};
-
-/**
- * Defensive jargon-stripper for content that was generated under older
- * prompt versions and is now sitting in audit_content. New audits won't
- * have these strings (the prompt's banned-word list catches them) but
- * existing rows in Supabase do — strip at render time so an audit
- * generated yesterday doesn't say "(V2)" or "above the fold" today.
- *
- * Conservative: only strips clearly-jargon phrases. Doesn't touch
- * AI-generated reasoning text where context matters.
- */
-function stripJargon(s: string | null | undefined): string {
-  if (!s) return "";
-  return s
-    .replace(/\s*\(V2\)/gi, "")
-    .replace(/\bV2\s+/g, "")
-    .replace(/\babove[ -]the[ -]fold\b/gi, "top of the page")
-    .replace(/\bsocial proof\b/gi, "trust signals")
-    .replace(/\btitle tag\b/gi, "page title")
-    // Tech jargon (defensive — should already be filtered at the prompt
-    // layer in src/lib/site-audit.ts, but legacy audits + AI slips get
-    // caught here on render).
-    .replace(/\b(missing|no|zero|absent)\s+H1(\s+heading)?\b/gi, "no main heading")
-    .replace(/\bH1\s+heading\b/gi, "main heading")
-    .replace(/\b(an?\s+)?H1\b/gi, "main heading")
-    .replace(/\bH2\b/gi, "section heading")
-    .replace(/\bH3\b/gi, "sub heading")
-    .replace(/\bLocalBusiness\s+schema\b/gi, "Google address-book info")
-    .replace(/\bElectricalContractor\s+(schema|code)\b/gi, "Google address-book info")
-    .replace(/\bschema\s+markup\b/gi, "Google address-book info")
-    .replace(/\bstructured\s+data\b/gi, "Google address-book info")
-    .replace(/\bJSON-?LD\b/gi, "Google address-book info")
-    .replace(/\bschema\b/gi, "Google address-book info")
-    .replace(/\bfavicon\b/gi, "tab icon")
-    .replace(/\bviewport\s+(meta\s+)?tag\b/gi, "mobile scaling tag")
-    .replace(/\bmobile\s+scaling\s+tag\b/gi, "mobile scaling tag")
-    .replace(/\bphone[- ]friendly\s+setup\b/gi, "mobile scaling tag")
-    .replace(/\bviewport\b/gi, "mobile scaling tag")
-    .replace(/\b(external\s+)?scripts?\b/gi, "code files")
-    .replace(/\balt\s+text\b/gi, "image label")
-    .replace(/\balt\s+attribute\b/gi, "image label")
-    .replace(/\bmeta\s+description\b/gi, "Google blurb")
-    .replace(/\bmeta\s+tag\b/gi, "page info")
-    // Section-title cleanup — common AI outputs
-    .replace(/\bMissing\s+main heading\s+Heading\b/gi, "Missing main heading")
-    .replace(/\bMain\s+heading\s+Heading\b/gi, "Main heading");
+async function getViewCount(id: string): Promise<number> {
+  if (!isSupabaseConfigured()) return 0;
+  const { data } = await supabase
+    .from("site_audits")
+    .select("view_count")
+    .eq("id", id)
+    .maybeSingle();
+  return ((data as { view_count?: number } | null)?.view_count ?? 0) as number;
 }
 
-export default async function AuditPage({
+export default async function ProductAuditResultsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -128,13 +79,15 @@ export default async function AuditPage({
 
   const { data: audit } = await supabase
     .from("site_audits")
-    .select("id, status, audit_content, target_url, business_category, prospect_id, generated_at, first_viewed_at, heygen_video_url")
+    .select(
+      "id, status, audit_content, target_url, business_category, prospect_id, generated_at, first_viewed_at",
+    )
     .eq("id", id)
     .maybeSingle();
 
   if (!audit) notFound();
-
   const a = audit as unknown as Audit;
+
   if (a.status !== "ready" || !a.audit_content) {
     return (
       <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
@@ -160,12 +113,7 @@ export default async function AuditPage({
     .select("business_name")
     .eq("id", a.prospect_id)
     .maybeSingle();
-  const businessName = (prospect as unknown as Prospect | null)?.business_name || "Your Business";
-
-  // Always compute checkout URLs from the prospect ID — the URLs stored in
-  // audit_content.callToAction were originally /contact which doesn't exist.
-  const checkoutUrlInstallment = `/claim/${a.prospect_id}?plan=installment&source=audit`;
-  const checkoutUrlFull = `/claim/${a.prospect_id}?plan=full&source=audit`;
+  const businessName = (prospect as unknown as Prospect | null)?.business_name || "Your Product";
 
   // Track view (best-effort, non-blocking)
   await supabase
@@ -176,785 +124,295 @@ export default async function AuditPage({
     })
     .eq("id", id);
 
+  // Top 5 fixes — pulled from the pre-ranked prioritizedRoadmap.
+  // If the audit only generated 3 fixes (small site), we show what's
+  // there; no padding with fake items.
+  const top5 = (content.prioritizedRoadmap || []).slice(0, 5);
+
+  // Everything else — the rest of the prioritized roadmap + every
+  // section finding that wasn't already in the top-5 highlight cards.
+  // Flattened into a single ranked list so the scroll-to-see surface
+  // is one coherent list, not 7 sub-sections.
+  const restRoadmap = (content.prioritizedRoadmap || []).slice(5);
+  const allSectionFindings: Array<{ section: string; finding: AuditFinding }> = [];
+  for (const [section, value] of Object.entries(content)) {
+    if (typeof value !== "object" || value === null) continue;
+    const findings = (value as { findings?: AuditFinding[] }).findings;
+    if (!Array.isArray(findings)) continue;
+    for (const f of findings) {
+      allSectionFindings.push({ section, finding: f });
+    }
+  }
+
   const score = content.overallScore ?? 50;
-  // Two-color system on score: red (problem) or green (working). No middle
-  // tones — easier to read at a glance.
-  const scoreColor = score >= 80 ? "text-emerald-400" : "text-rose-400";
-  const monthlyLeak = content.moneyLeak?.monthlyEstimate ?? 0;
-  const scoreLabel =
+  const scoreColor =
+    score >= 80 ? "text-emerald-400" : score >= 50 ? "text-amber-400" : "text-rose-400";
+  const scoreBadge =
     score >= 80
-      ? "Working hard"
-      : monthlyLeak > 0
-        ? "Leaking customers"
-        : score >= 60
-          ? "Has bones"
-          : "Costing customers";
-  // Capability framing: what % of potential customers is the site actually catching?
-  // Score maps directly — a 47 means running at ~47% of what a great site would do.
-  const missedPct = 100 - score;
-  const capabilityLine =
-    score >= 80
-      ? `Your site is doing real work — most people who land on it are reaching you. A few small tweaks could add 5–10 more leads a month without touching anything else.`
-      : score >= 60
-        ? `Your site is catching about ${score} out of every 100 people who could become a customer. The other ${missedPct} slip away.`
-        : `Your site is catching roughly ${score} out of every 100 people who could call. That means about ${missedPct} people leave without ever reaching you.`;
+      ? "Working well"
+      : score >= 50
+        ? "Has leaks"
+        : "Leaking hard";
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* Retargeting pixels — every audit-report visitor enters the
-          30-day Meta + Google retargeting window. High-intent audience
-          (they ran an audit AND opened the result), so the retargeting
-          is well worth the cost-per-impression. */}
       <RetargetingPixels />
-      {/* Capture ?ref=<code> on the audit-share landing too — partners
-          can share /audit/[id] preview links of their referrals. */}
       <PartnerRefCapture />
 
       {/* Header */}
       <header className="border-b border-white/5">
-        <div className="mx-auto max-w-4xl px-6 py-6 flex items-center justify-between">
-          <Link href="https://bluejayportfolio.com" className="text-sm text-slate-400 hover:text-white transition-colors">
+        <div className="mx-auto max-w-4xl px-6 py-5 flex items-center justify-between">
+          <Link
+            href={SITE_ORIGIN}
+            className="text-sm text-slate-400 hover:text-white transition-colors"
+          >
             ← BlueJays
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400">
-              By <span className="text-white font-medium">Ben</span>
-              <span className="hidden sm:inline text-slate-600"> · BlueJays</span>
-            </span>
-            <span className="text-xs text-slate-600 font-mono hidden sm:inline">{id.slice(0, 8)}</span>
-          </div>
+          <span className="text-xs text-slate-500 font-mono hidden sm:inline">
+            {id.slice(0, 8)}
+          </span>
         </div>
       </header>
 
-      {/* Hero — money number is now the lead, not the score. The dollar
-          consequence is what makes the prospect stay; the score is supporting
-          context. When score >= 80 we hide the money leak entirely (would feel
-          scammy to anchor a healthy site to a fake leak number). */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-rose-950/20 to-transparent">
-        <div className="mx-auto max-w-4xl px-6 py-14 text-center">
-          <p className="text-sm uppercase tracking-wider text-slate-400 mb-2">
-            Website Audit · {businessName}
+      {/* ── HERO STRIP ─────────────────────────────────────────────── */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-amber-950/20 to-transparent">
+        <div className="mx-auto max-w-4xl px-6 py-10 md:py-14 text-center">
+          <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">
+            Product Audit · {businessName}
           </p>
           <a
             href={a.target_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-sky-400 hover:underline mb-10 inline-block max-w-[90vw] truncate"
+            className="text-sm text-sky-400 hover:underline inline-block max-w-[90vw] truncate mb-6"
           >
             🔗 {a.target_url}
           </a>
-
-          {monthlyLeak > 0 && score < 80 ? (
-            <>
-              {/* Money leak hero — clean card treatment */}
-              <div className="relative mx-auto max-w-lg mb-8 rounded-2xl border border-rose-500/20 bg-rose-950/20 p-6 sm:p-8">
-                {/* Subtle glow behind the number — clipped inside its own div so the card doesn't clip the /mo */}
-                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none" aria-hidden="true">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-600/15 blur-3xl" />
-                </div>
-                <p className="relative text-xs font-semibold uppercase tracking-widest text-rose-400 mb-4">
-                  Money slipping away each month
-                </p>
-                <div className="relative flex items-baseline justify-center gap-1.5 mb-4 whitespace-nowrap">
-                  <span className="text-5xl sm:text-6xl md:text-7xl font-black text-rose-400 leading-none tabular-nums" style={{ textShadow: "0 0 40px rgba(244,63,94,0.35)" }}>
-                    ${content.moneyLeak.monthlyEstimate.toLocaleString()}
-                  </span>
-                  <span className="text-xl sm:text-2xl text-slate-500 font-bold">/mo</span>
-                </div>
-                {content.moneyLeak?.avgCustomerValue ? (
-                  <p className="relative text-sm text-slate-400 leading-relaxed">
-                    Each new {content.businessCategory.replace("-", " ")} customer is worth about{" "}
-                    <span className="text-amber-300 font-semibold">${content.moneyLeak.avgCustomerValue.toLocaleString()}</span>.{" "}
-                    Your site is capturing roughly {score}% of visitors who could become one.
-                  </p>
-                ) : (
-                  <p className="relative text-sm text-slate-400 leading-relaxed">{capabilityLine}</p>
-                )}
-              </div>
-
-              {/* Capability chip — framed as % not "Score" */}
-              <div className="inline-flex flex-wrap justify-center items-center gap-x-2 gap-y-1 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8 max-w-xs sm:max-w-none">
-                <span className={`text-base font-bold ${scoreColor}`}>~{score}%</span>
-                <span className="text-xs text-slate-400">of visitors reached</span>
-                <span className="text-slate-600">·</span>
-                <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
-              </div>
-            </>
-          ) : (
-            // High-score path: lead with the score
-            <div className="my-10">
-              <div className={`text-8xl md:text-9xl font-black ${scoreColor} leading-none`}>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-3">
+            <div>
+              <span className={`text-5xl md:text-6xl font-black tabular-nums ${scoreColor}`}>
                 {score}
-                <span className="text-3xl text-slate-600">/100</span>
-              </div>
-              <p className={`mt-4 text-2xl font-bold ${scoreColor}`}>{scoreLabel} 🟢</p>
-              <p className="mt-3 text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
-                {capabilityLine}
-              </p>
+              </span>
+              <span className="text-2xl md:text-3xl text-slate-500 font-bold">/100</span>
             </div>
-          )}
-
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            {content.oneLineSummary}
-          </p>
-
-          {/* Per-prospect HeyGen explainer video — Ben on camera (or
-              the configured avatar) walking the prospect through their
-              top issues. Renders only when /api/cron/heygen-poll has
-              stamped the URL (typical 60-180s after audit-ready).
-              Falls back to the existing static layout when env not
-              configured / video failed / still rendering. */}
-          {a.heygen_video_url && (
-            <div className="mt-6 rounded-xl border border-sky-500/30 bg-slate-900/50 overflow-hidden shadow-2xl">
-              <video
-                src={a.heygen_video_url}
-                controls
-                preload="metadata"
-                className="w-full aspect-video bg-black"
-              />
-              <p className="px-4 py-2 text-[11px] text-slate-400 text-center">
-                Personalized walkthrough · 30 sec · click to play
-              </p>
-            </div>
-          )}
-
-          {/* Share button — many owners need to forward this to a partner /
-              spouse / office manager who handles "the website stuff". */}
-          <div className="mt-6">
-            <ShareAuditButton
-              auditUrl={`${SITE_ORIGIN}/audit/${a.id}`}
-              businessName={businessName}
-            />
+            <span className={`text-sm font-bold uppercase tracking-wider ${scoreColor}`}>
+              {scoreBadge}
+            </span>
           </div>
-          {/* Hormozi review round 1: range footnote moved out of the hero
-              (it diluted the headline number). Methodology still appears
-              once at the bottom of the recovery section. */}
+          {content.oneLineSummary && (
+            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              {content.oneLineSummary}
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Prioritized roadmap — single visual track, emoji-led, compact */}
+      {/* ── VIDEO + CALENDAR HANDOFF ───────────────────────────────── */}
       <section className="border-b border-white/5">
-        <div className="mx-auto max-w-4xl px-6 py-12">
-          <h2 className="text-3xl font-bold mb-2">🎯 Top fixes — ranked by impact</h2>
-          <p className="text-slate-400 mb-8">
-            The {content.prioritizedRoadmap.length} things that actually move the needle. Skip the other 40.
-          </p>
+        <div className="mx-auto max-w-3xl px-6 py-10 md:py-14">
+          <ProductAuditVideoBlock calendlyUrl={CALENDLY_URL} />
+        </div>
+      </section>
 
-          <div className="space-y-2">
-            {content.prioritizedRoadmap.map((item) => {
-              const eff = EFFORT_LABELS[item.effort];
-              const recovery = item.recoveryMonthly ?? 0;
-              // Per-fix unit is LEADS (Q2C). v5 audits don't carry leads
-              // directly — derive from customers ÷ default close rate as
-              // a backwards-compat fallback so old audits still vary.
-              const FALLBACK_CLOSE_RATE = 0.4;
-              const leads =
-                item.recoveryLeads ??
-                (item.recoveryCustomers
-                  ? Math.max(1, Math.round((item.recoveryCustomers as number) / FALLBACK_CLOSE_RATE))
-                  : 0);
-              return (
+      {/* ── TOP 5 BIGGEST THINGS ───────────────────────────────────── */}
+      <section className="border-b border-white/5 bg-slate-900/40">
+        <div className="mx-auto max-w-4xl px-6 py-12 md:py-16">
+          <div className="text-center mb-8 md:mb-10">
+            <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-2">
+              Top 5 biggest things to fix
+            </p>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight">
+              Fix these first.
+            </h2>
+            <p className="text-slate-400 mt-2 text-sm">
+              Ranked by dollar impact. Everything else is below.
+            </p>
+          </div>
+
+          {top5.length === 0 ? (
+            <p className="text-center text-slate-400 italic">
+              No fixes to surface — your product page is in great shape.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {top5.map((fix, i) => (
                 <div
-                  key={item.rank}
-                  className="flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900/50 p-4 hover:border-emerald-500/30 transition-colors"
+                  key={fix.rank}
+                  className="rounded-2xl border-2 border-amber-500/30 bg-gradient-to-r from-amber-500/[0.06] to-transparent p-5 md:p-6"
                 >
-                  <div className="flex-shrink-0 h-9 w-9 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold text-sm">
-                    {item.rank}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate">{stripJargon(item.title)}</h3>
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
-                      <span className={`inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2 py-0.5 ${eff?.color || "text-slate-400"}`}>
-                        <span>{eff?.emoji || "🔧"}</span>
-                        <span className="font-medium">{eff?.label || item.effort}</span>
-                      </span>
-                      {item.blueJaysCanDo && (
-                        <a
-                          href="#pick-your-move"
-                          className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-sky-300 font-medium hover:bg-sky-500/20 transition-colors text-[11px]"
-                        >
-                          ✦ We fix this in every build →
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  {/* Right-side recovery: $/mo + % of total leak recovered */}
-                  {recovery > 0 && (
-                    <div className="flex-shrink-0 text-right pl-2 border-l border-emerald-500/20">
-                      <div className="text-emerald-300 font-bold text-base md:text-xl leading-none whitespace-nowrap">
-                        +${recovery.toLocaleString()}/mo
+                  <div className="flex items-start gap-4">
+                    <span className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/15 border-2 border-amber-500/50 text-amber-300 text-xl font-black">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-lg md:text-xl font-bold text-white leading-snug mb-2">
+                        {fix.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300">
+                          Impact: {fix.impact}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/15 border border-sky-500/30 text-sky-300">
+                          Effort: {fix.effort}
+                        </span>
+                        {fix.recoveryMonthly > 0 && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                            +${fix.recoveryMonthly.toLocaleString()}/mo
+                          </span>
+                        )}
                       </div>
-                      {monthlyLeak > 0 && (
-                        <div className="text-emerald-400/60 text-[11px] mt-1 whitespace-nowrap">
-                          ~{Math.max(1, Math.round((recovery / monthlyLeak) * 100))}% back
-                        </div>
-                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 4 REASONS RECAP ────────────────────────────────────────── */}
+      <section className="border-b border-white/5">
+        <div className="mx-auto max-w-4xl px-6 py-12 md:py-14">
+          <div className="text-center mb-8">
+            <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">
+              The 4 things every product brand gets wrong
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold">
+              Which of these is yours?
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {FOUR_REASONS_RECAP.map((r) => (
+              <div
+                key={r.n}
+                className={`rounded-xl border ${RECAP_RING[r.accent]} p-4 flex items-start gap-3`}
+              >
+                <span className="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/[0.04] border border-white/10 text-sm font-bold">
+                  {r.n}
+                </span>
+                <p className="text-sm font-medium text-white leading-snug">
+                  {r.title}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Strengths — moved BELOW the fix list (Hormozi review round 1 #4)
-          so the page reads pain → fixes → "but you have these going for
-          you, let's protect them." Showing strengths BEFORE pain weakens
-          the urgency. */}
-      {content.strengths && content.strengths.length > 0 && (
-        <section className="border-b border-white/5 bg-emerald-950/20">
-          <div className="mx-auto max-w-4xl px-6 py-8">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-300 mb-4">
-              🟢 What&apos;s working — let&apos;s keep these
+      {/* ── EVERYTHING ELSE — smaller, ranked, requires scroll ─────── */}
+      <section className="border-b border-white/5 bg-slate-950/60">
+        <div className="mx-auto max-w-4xl px-6 py-12 md:py-14">
+          <div className="text-center mb-6">
+            <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">
+              Everything else
+            </p>
+            <h2 className="text-xl md:text-2xl font-bold text-slate-200">
+              The full ranked list
             </h2>
-            <ul className="space-y-2">
-              {content.strengths.map((s, i) => (
-                <li key={i} className="text-slate-300 flex gap-3">
-                  <span className="text-emerald-400">✓</span>
-                  <span>{stripJargon(s)}</span>
+            <p className="text-slate-500 text-xs mt-2">
+              Top 5 above. Rest below. Tackle them in order.
+            </p>
+          </div>
+
+          {/* Remaining roadmap items (rank 6+) */}
+          {restRoadmap.length > 0 && (
+            <ol className="space-y-2 mb-8">
+              {restRoadmap.map((fix, i) => (
+                <li
+                  key={fix.rank}
+                  className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 flex items-start gap-3"
+                >
+                  <span className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/[0.05] border border-white/10 text-xs font-bold text-slate-400">
+                    {i + 6}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-slate-300 leading-snug">
+                      {fix.title}
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Impact {fix.impact} · Effort {fix.effort}
+                      {fix.recoveryMonthly > 0 && (
+                        <> · +${fix.recoveryMonthly.toLocaleString()}/mo</>
+                      )}
+                    </p>
+                  </div>
                 </li>
               ))}
-            </ul>
-          </div>
-        </section>
-      )}
+            </ol>
+          )}
 
-      {/* Detailed findings by section. Plain-English headers — no
-          "above the fold", "social proof", "UX", "positioning". A 50yo
-          plumber should read these and know exactly what's in each. */}
-      <FindingSection emoji="👋" title="Top of Your Page" findings={content.heroAnalysis.findings} score={content.heroAnalysis.score} />
-      <FindingSection emoji="✍️" title="Your Words" findings={content.copyAndPositioning.findings} />
-      <FindingSection emoji="⭐" title="Why People Trust You" findings={content.trustAndSocialProof.findings} />
-      <FindingSection emoji="🔍" title="Google & Tech" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
-      <FindingSection emoji="📱" title="On Phones" findings={content.mobileAndUx.findings} />
+          {/* Per-section findings — even smaller, one liner each */}
+          {allSectionFindings.length > 0 && (
+            <details className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3">
+              <summary className="text-sm font-semibold text-slate-300 cursor-pointer">
+                Section-by-section notes ({allSectionFindings.length})
+              </summary>
+              <ul className="mt-3 space-y-1.5 text-xs text-slate-400">
+                {allSectionFindings.map((row, i) => (
+                  <li key={i} className="flex items-start gap-2 py-1">
+                    <span className="flex-shrink-0 text-slate-600 text-[10px] uppercase tracking-wider mt-0.5">
+                      {row.section.replace(/([A-Z])/g, " $1").trim()}
+                    </span>
+                    <span className="text-slate-300">{row.finding.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
 
-      {/* Benchmark — Hormozi review round 1 #8: "See the difference:
-          Cascade Electric Co." reads like a competitor stealing your
-          customers. Reframe as YOUR build of THEIR site. */}
-      {content.blueJaysBenchmark && (
-        <section className="border-b border-white/5 bg-slate-900/30">
-          <div className="mx-auto max-w-4xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3 font-semibold">
-              🏗️ What BlueJays would build for you
+          {restRoadmap.length === 0 && allSectionFindings.length === 0 && (
+            <p className="text-center text-slate-500 text-sm italic">
+              Nothing else to flag — top 5 covers everything.
             </p>
-            <h2 className="text-xl md:text-2xl font-bold mb-3">
-              See what a premium {content.businessCategory.replace(/-/g, " ")} site looks like
-            </h2>
-            <p className="text-slate-300 mb-5 text-sm md:text-base leading-relaxed">
-              {stripJargon(content.blueJaysBenchmark.gapSummary) ||
-                `This is the quality bar we'd ship for your business — a fully custom ${content.businessCategory.replace(/-/g, " ")} site with real photos, your branding, and conversion sections built in.`}
-            </p>
+          )}
+        </div>
+      </section>
 
-            {/* Side-by-side: their current site vs a BlueJays V2 build
-                scale(0.28): 1400×0.28=392px fills ~342px mobile col (right edge clips)
-                and ~416px desktop col (24px gap). h-56=224px; 800×0.28=224px ✓ */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-6">
-              {/* Their current site — live iframe mini-preview */}
-              <div className="relative rounded-lg overflow-hidden border border-rose-500/20 bg-white">
-                <div className="relative h-56 overflow-hidden">
-                  <iframe
-                    src={a.target_url}
-                    title="Your current site"
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: "50%",
-                      marginLeft: "-700px",
-                      width: "1400px",
-                      height: "800px",
-                      transform: "scale(0.28)",
-                      transformOrigin: "top center",
-                      pointerEvents: "none",
-                      border: "none",
-                    }}
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-rose-950/90 px-3 py-2 text-xs text-rose-200 font-medium">
-                  Your site now · scores {score}/100
-                </div>
-              </div>
-              {/* BlueJays V2 preview — centered so hero content is visible, not left-edge */}
-              <div className="relative rounded-lg overflow-hidden border border-emerald-500/20 bg-slate-950">
-                <div className="relative h-56 overflow-hidden">
-                  <iframe
-                    src={`/v2/${content.businessCategory}`}
-                    title="BlueJays premium site preview"
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: "50%",
-                      marginLeft: "-700px",
-                      width: "1400px",
-                      height: "800px",
-                      transform: "scale(0.28)",
-                      transformOrigin: "top center",
-                      pointerEvents: "none",
-                      border: "none",
-                    }}
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col items-end justify-end pb-3 px-3 gap-0.5">
-                  <span className="text-white text-xs font-bold drop-shadow-lg">What yours could look like</span>
-                  <span className="text-emerald-300 text-[10px] drop-shadow">BlueJays builds score 85–95/100</span>
-                </div>
-              </div>
-            </div>
-
-            <a
-              href={content.blueJaysBenchmark.referenceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-full sm:w-auto rounded-lg bg-sky-500 px-6 py-3 text-sm font-bold text-white hover:bg-sky-400 transition-colors"
-            >
-              See the full example site →
-            </a>
-          </div>
-        </section>
-      )}
-
-      {/* Cost of waiting — Hormozi review round 2 #2: re-highlight 6 MOS
-          (was 3 MOS) + visually larger so the loss-aversion math escalates
-          left→right. Round 2 #4: add explicit ROI multiplier line. */}
-      {monthlyLeak > 0 && (
-        <section className="border-b border-white/5 bg-rose-950/20">
-          <div className="mx-auto max-w-3xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-rose-300 mb-2 font-semibold text-center">
-              ⏳ The cost of waiting
-            </p>
-            <p className="text-center text-sm text-slate-400 mb-5">
-              Every month your site runs at ~{score}% costs you more. Here&apos;s what that adds up to.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto items-stretch">
-              {/* Mobile: 2-col grid — 1mo + 3mo on top row, 6mo full-width below */}
-              {/* Desktop: 4-col — 1mo + 3mo each take 1 col, 6mo spans 2 */}
-              <div className="col-span-1">
-                <CostTile months={1} leak={monthlyLeak} />
-              </div>
-              <div className="col-span-1">
-                <CostTile months={3} leak={monthlyLeak} />
-              </div>
-              <div className="col-span-2">
-                <CostTile months={6} leak={monthlyLeak} highlight large />
-              </div>
-            </div>
-            {(() => {
-              const sixMo = monthlyLeak * 6;
-              const ratio = Math.round(sixMo / 997);
-              return (
-                <>
-                  <p className="text-center text-sm text-slate-400 mt-5 max-w-xl mx-auto">
-                    6 months of waiting:{" "}
-                    <span className="text-rose-300 font-bold">
-                      ${sixMo.toLocaleString()}
-                    </span>{" "}
-                    lost · Fixing it: <span className="text-emerald-300 font-bold">$997</span>
-                  </p>
-                  <p className="text-center text-base md:text-lg text-white mt-3 max-w-xl mx-auto font-semibold">
-                    ${sixMo.toLocaleString()} lost OR $997 to fix ={" "}
-                    <span className="text-emerald-300">{ratio}x return</span> in 6 months.
-                  </p>
-                  <p className="text-center text-xs text-slate-500 mt-1 max-w-xl mx-auto">
-                    The site pays for itself the first week. Every week after is profit.
-                  </p>
-                </>
-              );
-            })()}
-          </div>
-        </section>
-      )}
-
-      {/* "Stop the leak" — bridge from the audit to the offer. Sums the
-          per-fix recovery numbers and offers the rebuild as the way to
-          claim them. Hidden when score >= 80 (no leak to recover). */}
-      {content.recoveryProjection && content.recoveryProjection.totalMonthly > 0 && (
-        <section className="border-b border-white/5 bg-gradient-to-b from-emerald-950/30 to-slate-950">
-          <div className="mx-auto max-w-3xl px-6 py-14">
-            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/5 p-6 md:p-10 text-center shadow-[0_0_60px_rgba(16,185,129,0.15)]">
-              <p className="text-sm uppercase tracking-wider text-emerald-300 mb-3 font-semibold">
-                💰 Stop the leak
-              </p>
-              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">
-                +<span className="text-emerald-300">${content.recoveryProjection.totalMonthly.toLocaleString()}</span>
-                <span className="text-slate-400 text-2xl md:text-3xl">/mo</span>{" "}
-                back in your pocket
-              </h2>
-              {content.recoveryProjection.totalCustomers > 0 && (
-                <p className="text-base md:text-lg text-slate-200 mb-3">
-                  That&apos;s about{" "}
-                  <span className="text-emerald-300 font-bold">
-                    +{content.recoveryProjection.totalLeads ??
-                      content.recoveryProjection.totalCustomers}{" "}
-                    {(content.recoveryProjection.totalLeads ?? content.recoveryProjection.totalCustomers) === 1
-                      ? "lead"
-                      : "leads"}/month
-                  </span>
-                  {" "}— roughly{" "}
-                  <span className="text-emerald-300 font-bold">
-                    +{content.recoveryProjection.totalCustomers}{" "}
-                    {content.recoveryProjection.totalCustomers === 1 ? "new customer" : "new customers"}/month
-                  </span>
-                  .
-                </p>
-              )}
-              {monthlyLeak > 0 && (() => {
-                const recovPct = Math.round((content.recoveryProjection.totalMonthly / monthlyLeak) * 100);
-                const projectedScore = Math.min(98, score + Math.round(recovPct * 0.6));
-                return (
-                  <p className="text-sm text-slate-400 mb-6 max-w-md mx-auto leading-relaxed">
-                    Right now your site catches about{" "}
-                    <span className="text-rose-300 font-semibold">{score} out of 100</span>{" "}people who could become customers.
-                    Fix these and you&apos;re closer to{" "}
-                    <span className="text-emerald-300 font-semibold">{projectedScore} out of 100</span>.
-                  </p>
-                );
-              })()}
-
-              {/* Primary CTA inside the box (Q10A) */}
-              <div className="mt-6 flex flex-col items-center gap-2">
-                <a
-                  href={checkoutUrlInstallment}
-                  className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-emerald-500 to-sky-500 px-6 md:px-8 py-3 md:py-4 text-base font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
-                >
-                  Recover ~${content.recoveryProjection.totalMonthly.toLocaleString()}/mo for $997 →
-                </a>
-                <p className="text-xs text-slate-500">
-                  Or 3 × $349 — first today, then 30, then 60 days · 100% money-back, no questions
-                </p>
-              </div>
-
-              {/* Methodology footnote (Q7A) */}
-              <p className="mt-6 text-[11px] text-slate-500 max-w-xl mx-auto leading-relaxed">
-                {content.recoveryProjection.methodology}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 3-year cost comparison — kills the "is this expensive?" objection
-          right before the hub. Hormozi: don't argue against a low-priced
-          competitor, change the comparison frame. We're CHEAPER over 3
-          years AND we build it for them. Numbers per Q4A:
-            Wix:        $16/mo × 36 = $576 + $48/yr domain × 3 = $720 → round
-                        with theme/plugins to $1,170
-            Squarespace: $23/mo × 36 = $828 + ~$24/yr extras = $900 → personal
-                        plan; Business is $33/mo = $1,188; Commerce is $40 =
-                        $1,440. Use Business tier midpoint = $1,800
-            BlueJays:    $997 setup + $100/yr × 3 = $1,297
-          Numbers are deliberately conservative on competitor side —
-          we'd rather underclaim than overclaim. Both Wix + SS could
-          easily be higher with apps/extensions/transactions. */}
-      <section className="border-b border-white/5 bg-slate-950">
-        <div className="mx-auto max-w-4xl px-6 py-12">
-          <div className="text-center mb-8">
-            <p className="text-sm uppercase tracking-wider text-amber-300 mb-3 font-semibold">
-              💵 What you&apos;ll actually spend
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              3-year cost — apples to apples
-            </h2>
-            <p className="text-sm text-slate-400">
-              Most owners don&apos;t do this math. Here it is.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-4">
-            {/* Wix — greyed out, "you build it" pain */}
-            <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5 text-center opacity-80">
-              <p className="text-xs uppercase tracking-wider text-slate-500 mb-2 font-semibold">Wix</p>
-              <p className="text-3xl font-bold text-slate-300 mb-1">$1,170</p>
-              <p className="text-xs text-slate-500 mb-4">over 3 years</p>
-              <p className="text-sm text-slate-400 leading-relaxed">You build it.</p>
-              <p className="text-xs text-slate-500 mt-1">~16 hrs of YouTube tutorials.</p>
-            </div>
-
-            {/* Squarespace — greyed out, "you build it" pain */}
-            <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5 text-center opacity-80">
-              <p className="text-xs uppercase tracking-wider text-slate-500 mb-2 font-semibold">Squarespace</p>
-              <p className="text-3xl font-bold text-slate-300 mb-1">$1,800</p>
-              <p className="text-xs text-slate-500 mb-4">over 3 years</p>
-              <p className="text-sm text-slate-400 leading-relaxed">You build it.</p>
-              <p className="text-xs text-slate-500 mt-1">10+ hrs of YouTube tutorials.</p>
-            </div>
-
-            {/* BlueJays — highlighted, "we build it" win.
-                Hormozi review round 2 #10: badge changed from
-                "Cheapest + done for you" → "Pays for itself week 1"
-                (frames specific value, not unverifiable popularity). */}
-            <div className="rounded-xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-500/10 to-sky-500/10 p-5 text-center shadow-[0_0_30px_rgba(16,185,129,0.2)] relative">
-              <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow whitespace-nowrap">
-                Pays for itself week 1
-              </span>
-              <p className="text-xs uppercase tracking-wider text-emerald-300 mb-2 font-semibold">BlueJays</p>
-              <p className="text-3xl font-bold text-white mb-1">$1,297</p>
-              <p className="text-xs text-emerald-300 mb-4">over 3 years</p>
-              <p className="text-sm text-slate-100 leading-relaxed font-semibold">We build it.</p>
-              <p className="text-xs text-emerald-300/80 mt-1">Live in 48 hours.</p>
-            </div>
-          </div>
-
-          {/* Hormozi review round 2 #9: "Cheaper than Squarespace…" was
-              one compound sentence — split into 3 short hits. */}
-          <p className="mt-6 text-center text-sm md:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-semibold">
-            <span className="text-emerald-300">$500 less than Squarespace.</span> AND you don&apos;t lift a finger. AND it&apos;s done in 48 hours.
+      {/* ── SCARCITY FOOTER ────────────────────────────────────────── */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-amber-950/15 to-transparent">
+        <div className="mx-auto max-w-3xl px-6 py-12 md:py-14 text-center">
+          <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-3">
+            Want me to fix this for you?
           </p>
-
-          {/* Hormozi review round 2 #5: tie 3-year cost back to the
-              waiting-math. Connection wasn't being made. */}
-          {monthlyLeak > 0 && (() => {
-            const sixMo = monthlyLeak * 6;
-            const netWin = sixMo - 1297;
-            return (
-              <p className="mt-3 text-center text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                Wait 6 months: lose <span className="text-rose-300 font-bold">${sixMo.toLocaleString()}</span>.
-                Pay BlueJays over 3 years: <span className="text-emerald-300 font-bold">$1,297</span>.{" "}
-                <span className="text-white font-semibold">Net win: ${netWin.toLocaleString()}</span> — and you keep the wins forever.
-              </p>
-            );
-          })()}
-
-          <p className="mt-4 text-center text-[11px] text-slate-500 max-w-xl mx-auto">
-            BlueJays: $997 once + $100/year starting year 2 (covers domain, hosting, support; cancel anytime). Wix Premium ~$16/mo + domain. Squarespace Business ~$33/mo + extras. Numbers based on standard plans most small businesses pick.
+          <p className="text-base md:text-lg text-slate-300 leading-relaxed">
+            If you&apos;d like to be one of the{" "}
+            <span className="text-white font-bold">5 businesses</span> I&apos;ll
+            be building custom software for this month —{" "}
+            <span className="text-white font-semibold">
+              let&apos;s see if we&apos;re a good fit.
+            </span>{" "}
+            Schedule a 30-min call below.
+          </p>
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-amber-950 font-bold text-base hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] active:scale-[0.97] transition-all"
+          >
+            Schedule a call →
+          </a>
+          <p className="mt-3 text-xs text-slate-500">
+            Or scroll back up and watch the 2-min video first.
           </p>
         </div>
       </section>
 
-      {/* Hormozi review round 2 #1: testimonial removed (anonymous +
-          AI-grammar tells = trust kill). Per CLAUDE.md "Social proof
-          MUST use real data or be removed. NEVER show fake or inflated
-          numbers." Will reinstate once real client testimonials exist
-          (top of Ben's manual TODO — first 3 paying clients). */}
-
-      {/* Testimonials — prospect has just read their audit and is deciding
-          whether to act. Showing real clients at this moment answers "but
-          is this company actually real?" before the CTA hub. */}
-      <AuditTestimonials />
-
-      {/* Final CTA — replaced in v7 with the 3-CTA hub (Buy / Schedule
-          / Get Preview). The single-CTA "You know the problems. Now fix
-          them." block forced one yes; the hub asks for THREE different
-          yeses ascending in commitment so we capture every intent level. */}
-      <div id="cta-hub">
-      <AuditCTAHub
-        auditId={a.id}
-        prospectId={a.prospect_id}
-        primaryButtonUrl={checkoutUrlInstallment}
-        secondaryButtonUrl={checkoutUrlFull}
-      />
-      </div>
-
-      {/* "What Happens Next?" bridge — closes the post-CTA vacuum.
-          Three columns map to the three forks in AuditCTAHub so
-          prospects know exactly what each commitment level leads to. */}
-      <section className="border-b border-white/5 bg-slate-900/30">
-        <div className="mx-auto max-w-4xl px-6 py-12">
-          <h2 className="text-xl font-bold text-center mb-8 text-slate-300">What happens next</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/15 p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-3">If you fix it now</p>
-              <ol className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">1.</span>Quick 15-min onboarding form</li>
-                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">2.</span>Live preview lands in 48 hours</li>
-                <li className="flex items-start gap-2"><span className="text-emerald-400 font-bold shrink-0">3.</span>You review, we tweak, we ship</li>
-              </ol>
-              <p className="text-xs text-emerald-400/70 mt-4">100% money-back if you don&apos;t love it.</p>
-            </div>
-            <div className="rounded-xl border border-sky-500/20 bg-sky-950/15 p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-sky-400 mb-3">If you book a call</p>
-              <ol className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">1.</span>Pick a 15-min slot that works</li>
-                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">2.</span>Ben walks you through the audit live</li>
-                <li className="flex items-start gap-2"><span className="text-sky-400 font-bold shrink-0">3.</span>You decide — zero pressure</li>
-              </ol>
-              <p className="text-xs text-sky-400/70 mt-4">No pitch deck. No agenda. You leave knowing the next move.</p>
-            </div>
-            <div className="rounded-xl border border-amber-500/20 bg-amber-950/15 p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">If you want a free preview</p>
-              <ol className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">1.</span>Ben builds a real mockup — free</li>
-                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">2.</span>Ready within 48 hours</li>
-                <li className="flex items-start gap-2"><span className="text-amber-400 font-bold shrink-0">3.</span>You see it before spending a dollar</li>
-              </ol>
-              <p className="text-xs text-amber-400/70 mt-4">Ben does these by hand. Limited spots each week.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-white/5 pb-24 md:pb-20">
+      <footer className="border-t border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">
           <p className="text-slate-400 text-sm">
-            — Ben, BlueJays · <a href="mailto:ben@bluejayportfolio.com" className="text-sky-400 hover:underline">ben@bluejayportfolio.com</a>
+            — Ben, BlueJays ·{" "}
+            <a href="mailto:ben@bluejayportfolio.com" className="text-sky-400 hover:underline">
+              ben@bluejayportfolio.com
+            </a>
           </p>
           <p>
-            Audit generated {new Date(content.generatedAt).toLocaleDateString()} ·
-            <Link href="/audit" className="text-sky-400 hover:underline ml-2">Audit a different site →</Link>
+            Audit generated {new Date(content.generatedAt).toLocaleDateString()} ·{" "}
+            <Link href="/audit" className="text-sky-400 hover:underline">
+              Audit a different product →
+            </Link>
           </p>
         </div>
       </footer>
-
-      {/* Sticky bottom CTA — persists while scrolling so the offer is always
-          1 tap away. Hormozi review round 2 #6: anchor RECOVERY (not just
-          loss) — left rail shows the loss-→-recovery flip, CTA shows the
-          installment plan that matches the page-body recovery promise. */}
-      {score < 80 && (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-white/10 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
-          <div className="mx-auto max-w-4xl px-4 py-3">
-            {monthlyLeak > 0 && (
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-base">💰</span>
-                <span className="text-xs text-slate-400">~{score}% · recover</span>
-                <span className="text-sm font-bold text-emerald-300">
-                  ${(content.recoveryProjection?.totalMonthly ?? Math.round(content.moneyLeak.monthlyEstimate * 0.6)).toLocaleString()}/mo
-                </span>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <a
-                href={checkoutUrlInstallment}
-                className="flex-1 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-3 py-2 text-xs font-bold text-white shadow hover:opacity-90 transition-opacity text-center"
-              >
-                Fix it · 3×$349
-              </a>
-              <a
-                href={`/schedule/${a.prospect_id}?source=audit-sticky`}
-                className="flex-1 inline-flex items-center justify-center rounded-md border border-sky-500/50 bg-sky-500/10 px-3 py-2 text-xs font-semibold text-sky-300 hover:bg-sky-500/20 transition-colors text-center"
-              >
-                Book a call
-              </a>
-              <a
-                href="#cta-hub"
-                className="flex-1 inline-flex items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors text-center"
-              >
-                Free preview
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
-}
-
-function FindingSection({
-  title,
-  findings,
-  score,
-  emoji,
-}: {
-  title: string;
-  findings: AuditFinding[];
-  score?: number;
-  emoji?: string;
-}) {
-  if (!findings || findings.length === 0) return null;
-
-  return (
-    <section className="border-b border-white/5">
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">
-            {emoji && <span className="mr-2">{emoji}</span>}
-            {title}
-          </h2>
-          {score !== undefined && (
-            <span className="text-sm text-slate-400">~{score}% there</span>
-          )}
-        </div>
-        <div className="space-y-3">
-          {findings.map((f, i) => {
-            const colors = SEVERITY_COLORS[f.severity] || SEVERITY_COLORS.medium;
-            const isStrength = f.severity === "low";
-            return (
-              <article
-                key={i}
-                className={`rounded-xl border ${colors.border} ${colors.bg} p-5`}
-              >
-                {/* Title row — emoji + title together, no separate badge.
-                    Prospect reads ONE line and knows what + severity. */}
-                <h3 className="flex items-start gap-2 font-semibold text-white mb-3 leading-snug">
-                  <span className="flex-shrink-0">{colors.emoji}</span>
-                  <span className="flex-1">{stripJargon(f.title)}</span>
-                </h3>
-
-                {/* Observation + recommendation: just two lines with emoji
-                    anchors. No "What's happening / How to fix" labels — the
-                    emojis ARE the labels. */}
-                <div className="space-y-2 text-sm pl-7">
-                  <p className="text-slate-300 leading-relaxed">
-                    <span className="text-slate-500 mr-1.5">📍</span>
-                    {stripJargon(f.observation)}
-                  </p>
-                  {!isStrength && (
-                    <p className="text-slate-200 leading-relaxed">
-                      <span className="text-emerald-400 mr-1.5">🛠️</span>
-                      {stripJargon(f.recommendation)}
-                    </p>
-                  )}
-                  {f.blueJaysSolution && !isStrength && (
-                    <p className="text-sky-300 leading-relaxed text-xs pt-1">
-                      <span className="mr-1">✦</span>
-                      <span className="font-semibold">BlueJays:</span>{" "}
-                      <span className="text-sky-200/90">{stripJargon(f.blueJaysSolution)}</span>
-                    </p>
-                  )}
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CostTile({
-  months,
-  leak,
-  highlight,
-  large,
-}: {
-  months: number;
-  leak: number;
-  highlight?: boolean;
-  /** Pumps the dollar number up + adds heavier glow. Reserved for the
-   * 6-month tile so the loss-aversion peak DOMINATES the row visually. */
-  large?: boolean;
-}) {
-  const total = leak * months;
-  return (
-    <div
-      className={`rounded-xl border ${large ? "p-4 md:p-6" : "p-3 md:p-4"} text-center transition-colors h-full flex flex-col justify-center ${
-        highlight
-          ? `border-rose-500/60 bg-rose-500/15 ${large ? "shadow-[0_0_48px_rgba(244,63,94,0.3)]" : "shadow-[0_0_24px_rgba(244,63,94,0.15)]"}`
-          : "border-white/10 bg-slate-900/40"
-      }`}
-    >
-      <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
-        {months} {months === 1 ? "mo" : "mos"}
-      </p>
-      <p
-        className={`font-bold ${
-          large ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"
-        } ${highlight ? "text-rose-300" : "text-slate-200"}`}
-      >
-        ${total.toLocaleString()}
-      </p>
-      <p className={`${large ? "text-xs" : "text-[10px]"} text-slate-500 mt-1`}>lost</p>
-    </div>
-  );
-}
-
-
-async function getViewCount(id: string): Promise<number> {
-  if (!isSupabaseConfigured()) return 0;
-  const { data } = await supabase
-    .from("site_audits")
-    .select("view_count")
-    .eq("id", id)
-    .maybeSingle();
-  return (data?.view_count as number | null) ?? 0;
 }
