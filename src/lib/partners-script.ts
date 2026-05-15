@@ -130,10 +130,11 @@ export const VERTICAL_OPENERS: Record<VerticalKey, VerticalOpener> = {
     openingLines: [
       "Hey {firstName} — {partnerFirstName} from BlueJays. Two-minute call.",
       "Reaching out because {referralContext}. I'd love to see if what we do is a fit for {bizName}.",
-      "Quick honest answer: we only take two kinds of clients right now — product manufacturers (dealers + distributors) and indie fiction authors. If {bizName} isn't one of those, I'll tell you straight up and point you at someone who'd actually help.",
-      "If it's a fit, here's what we'd do: free 60-second audit, then a custom preview built before you pay anything. Worth a look?",
+      "Real quick — we work two tiers. The $997 custom website tier is open to most businesses (service trades, local businesses, anyone who wants a great site). The $10k AI Marketing System tier is for product manufacturers and indie authors only — that one has tighter math.",
+      "What tier are you curious about? And what does {bizName} sell — physical product, digital product, or a service?",
+      "Either way, free 60-second audit first, then we build a custom preview before you pay anything. Worth a look?",
     ],
-    callerNote: "Default branch when the prospect's category isn't manufacturer or author. Lead with damaging admissions ('we only take two kinds of clients') — it filters in seconds. If they're misaligned, refer them out cleanly. Don't fight to make a service-trade prospect fit.",
+    callerNote: "Default branch when the prospect's category isn't clearly manufacturer or author. Lead with the tier-fit question — the $997 site is open to service trades, the $10k AI System isn't. If they're a service trade asking about the $10k tier, route them down to $997. If they sell a product, escalate to the manufacturer branch. If they write fiction, escalate to author branch.",
   },
 };
 
