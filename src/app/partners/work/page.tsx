@@ -14,6 +14,8 @@ import {
   HORMOZI_MANTRA,
   HORMOZI_INTRO_UNKNOWN_OWNER,
   HORMOZI_VOICEMAIL_UNKNOWN_OWNER,
+  VERTICAL_PITCH,
+  VERTICAL_OBJECTIONS,
 } from "@/lib/partners-script";
 import type { ScriptVars } from "@/lib/partners-script";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
@@ -130,19 +132,47 @@ export default async function PartnerWorkPage() {
     ? HORMOZI_CALL_SCRIPT.voicemail
     : HORMOZI_VOICEMAIL_UNKNOWN_OWNER;
 
+  // Vertical detection — Phase 4 niche-down 2026-05-14. Same logic as
+  // dashboard/script/page.tsx but reads from the LeadPoolProspect shape
+  // (which only exposes `category`, not `lookalikeCategory`). For mfg
+  // leads the category field IS the mfg-* slug from scout.ts. Service
+  // / unknown / null prospect → no override (filledScript uses generic).
+  const verticalKey: "manufacturer" | "author" | null = !prospect
+    ? null
+    : (prospect.category ?? "").startsWith("mfg-")
+      ? "manufacturer"
+      : prospect.category === "indie-author"
+        ? "author"
+        : null;
+
   const filledScript = {
     intro: filledSection(introSection, vars),
     qualify: filledSection(HORMOZI_CALL_SCRIPT.qualify, vars),
-    pitch: filledSection(HORMOZI_CALL_SCRIPT.pitch, vars),
+    pitch: filledSection(
+      verticalKey ? VERTICAL_PITCH[verticalKey] : HORMOZI_CALL_SCRIPT.pitch,
+      vars,
+    ),
     bookTheCall: filledSection(HORMOZI_CALL_SCRIPT.bookTheCall, vars),
     textTheLink: filledSection(HORMOZI_CALL_SCRIPT.textTheLink, vars),
     callbackClose: filledSection(HORMOZI_CALL_SCRIPT.callbackClose, vars),
     voicemail: filledSection(voicemailSection, vars),
-    objections: HORMOZI_CALL_SCRIPT.objections.map((o) => ({
-      ...o,
-      response: o.response.map((line) => fillVars(line, vars)),
-      callerNotes: o.callerNotes ? fillVars(o.callerNotes, vars) : undefined,
-    })),
+    objections: [
+      // Vertical-specific objections prepended when the prospect is
+      // mfg or author — these surface FIRST in the objection-jump UI
+      // because they're the most relevant for the conversation.
+      ...(verticalKey
+        ? VERTICAL_OBJECTIONS[verticalKey].map((o) => ({
+            ...o,
+            response: o.response.map((line) => fillVars(line, vars)),
+            callerNotes: o.callerNotes ? fillVars(o.callerNotes, vars) : undefined,
+          }))
+        : []),
+      ...HORMOZI_CALL_SCRIPT.objections.map((o) => ({
+        ...o,
+        response: o.response.map((line) => fillVars(line, vars)),
+        callerNotes: o.callerNotes ? fillVars(o.callerNotes, vars) : undefined,
+      })),
+    ],
   };
 
   return (

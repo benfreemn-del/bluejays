@@ -12,6 +12,8 @@ import {
   PARTNER_CALL_SCRIPT,
   PARTNER_CALL_TIPS,
   PARTNER_MANTRA,
+  VERTICAL_PITCH,
+  VERTICAL_OBJECTIONS,
   type ScriptSection,
   type ScriptVars,
 } from "@/lib/partners-script";
@@ -247,7 +249,7 @@ export default async function DashboardScriptPage({
     };
   };
 
-  const filledScript =
+  const baseScript =
     mode === "partner"
       ? buildPartnerScript()
       : {
@@ -264,6 +266,39 @@ export default async function DashboardScriptPage({
             callerNotes: o.callerNotes ? fillVars(o.callerNotes, vars) : undefined,
           })),
         };
+
+  // ─── Vertical override (Phase 4 niche-down 2026-05-14) ────────────
+  // When the prospect is a manufacturer or indie author, replace the
+  // generic pitch with the vertical-specific one and PREPEND the
+  // vertical-specific objections to the existing objection list. The
+  // partner intro (which assumes the prospect already received the
+  // preview email) stays unchanged — it's the right shape for the
+  // warm-after-email flow regardless of vertical.
+  //
+  // Detection: mfg-* lookalikeCategory → manufacturer; category ===
+  // 'indie-author' → author. Service/unknown → no override (baseScript
+  // unchanged). Mirrors getVerticalContext() in email-templates.ts.
+  const verticalKey: "manufacturer" | "author" | null =
+    (prospect.lookalikeCategory ?? "").toString().startsWith("mfg-")
+      ? "manufacturer"
+      : prospect.category === "indie-author"
+        ? "author"
+        : null;
+
+  const filledScript = verticalKey
+    ? {
+        ...baseScript,
+        pitch: fillSec(VERTICAL_PITCH[verticalKey]),
+        objections: [
+          ...VERTICAL_OBJECTIONS[verticalKey].map((o) => ({
+            ...o,
+            response: o.response.map((line) => fillVars(line, vars)),
+            callerNotes: o.callerNotes ? fillVars(o.callerNotes, vars) : undefined,
+          })),
+          ...baseScript.objections,
+        ],
+      }
+    : baseScript;
 
   // ─── Prospect clock + open-status ────────────────────────────────
   const clock = getProspectClock(prospect.state);
