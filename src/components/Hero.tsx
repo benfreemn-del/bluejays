@@ -451,4 +451,7 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz" },
   { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand" },
   { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront" },
+  { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing" },
+  { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA" },
+  { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA" },
 ];
