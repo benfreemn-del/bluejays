@@ -44,6 +44,8 @@ const MapView = dynamic(() => import("@/components/dashboard/MapView"), {
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
 import CalculatorStatsCard from "@/components/dashboard/CalculatorStatsCard";
+import InFlightBuildsCard from "@/components/dashboard/InFlightBuildsCard";
+import AIActivityCard from "@/components/dashboard/AIActivityCard";
 import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
 
 /* ───────────────────────── TAB SYSTEM ─────────────────────────
@@ -387,6 +389,13 @@ export default function DashboardPage() {
               // 24h. Stalled crons (>48h silent) flag red so silent
               // failures surface here, not just in the watchdog SMS.
               <>
+                {/* Proof-of-work block — Hormozi backend review B1+B2
+                    (2026-05-16). "Currently building for" + "AI activity"
+                    sit at the very top so Ben can screen-share them live
+                    on a sales call without scrolling past the operator-
+                    flavor cron heartbeat. */}
+                <InFlightBuildsCard />
+                <AIActivityCard />
                 <AutomationDailyDigest />
                 <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
                 <BusinessSetupChecklist />
