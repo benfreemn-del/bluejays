@@ -32,7 +32,6 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { label: "Portfolio", href: "/" },
-                { label: "Templates", href: "/#portfolio" },
                 { label: "AI Marketing System", href: "/agency" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms of Service", href: "/terms" },

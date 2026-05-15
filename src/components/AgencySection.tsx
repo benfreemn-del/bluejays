@@ -73,15 +73,19 @@ export default function AgencySection() {
               One system that runs your ads, website, emails, texts, and voicemails. Every week it figures out what works for your customers and does more of it. You don&apos;t touch a thing. We bet the deal on a number — most agencies won&apos;t.
             </p>
 
-            {/* Price + guarantee callout */}
+            {/* Guarantee + price callout — Hormozi review #5 (2026-05-14).
+                Outcome FIRST (emerald guarantee row), price SECOND (violet
+                price strip). Reverses the original visual hierarchy so the
+                $9,700 anchors against a stated outcome instead of leading
+                with the number. */}
             <div className="flex flex-col gap-2 mb-8">
+              <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.08] w-fit max-w-full">
+                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Guaranteed outcome</span>
+                <span className="text-white text-sm font-semibold">100 qualified leads in 90 days — or we work free</span>
+              </div>
               <div className="flex flex-wrap items-baseline gap-2 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] w-fit">
                 <span className="text-white/40 text-sm line-through">$36,000+/yr agency fees</span>
                 <span className="text-white font-extrabold text-xl md:text-2xl">$9,700 one-time</span>
-              </div>
-              <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.08] w-fit max-w-full">
-                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Guaranteed</span>
-                <span className="text-white/70 text-sm">100 qualified leads in 90 days — or we work free</span>
               </div>
             </div>
 

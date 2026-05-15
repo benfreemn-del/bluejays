@@ -6,6 +6,8 @@ import BluejayLogo, { BluejayLogoCircle } from "./BluejayLogo";
 
 /* ───────────────────────── Types ───────────────────────── */
 
+type SiteGroup = "manufacturer" | "author" | "service";
+
 interface SiteCard {
   name: string;
   category: string;
@@ -13,6 +15,7 @@ interface SiteCard {
   href: string;
   icon: string;
   tagline: string;
+  group: SiteGroup;
 }
 
 /* ───────────────────────── Grid Pattern ───────────────────────── */
@@ -269,13 +272,18 @@ export default function Hero() {
         {/* Value prop headline — visible from page load */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            A premium website for your business — built in 48 hours.{" "}
-            <span className="text-sky-400 block">Pay only if you love it.</span>
+            Your business deserves to be{" "}
+            <span className="text-sky-400 block">the obvious choice — online.</span>
           </h1>
           <p className="text-white/65 text-lg md:text-xl mt-5 max-w-2xl mx-auto leading-relaxed">
-            I&apos;m Ben. I&apos;ll build your business a brand-new site, send you the finished link, and only charge you if you keep it. $997 one-time.{" "}
-            <span className="text-white font-semibold">Don&apos;t love it? You don&apos;t pay a cent.</span>
+            A premium website in 48 hours, or the full AI marketing system — site, ads, funnel, customer machine — built in weeks.{" "}
+            <span className="text-white font-semibold">Pay nothing until you love it.</span>
           </p>
+          {/* Trust strip — Hormozi review #14 (2026-05-14). 3rd badge swapped
+              from generic "100% risk-free" to the $10K-tier guarantee so a
+              product-brand visitor sees themselves above the fold. The first
+              two badges anchor the $997 website path; the third anchors the
+              system path. Together they tell both buyers: yes, you're home. */}
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 text-sm text-white/40">
             <span className="flex items-center gap-1.5">
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
@@ -286,32 +294,74 @@ export default function Hero() {
               Domain &amp; hosting included
             </span>
             <span className="flex items-center gap-1.5">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-sky-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-              100% risk-free
+              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-emerald-400"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              100 leads in 90 days — guaranteed
             </span>
           </div>
 
-          {/* Above-the-fold dual CTA — Hormozi "lead with the cheapest yes."
-              Audit captures not-ready leads (60s, free); preview captures
-              ready buyers. Both routes already exist + retain UTM tracking
-              via existing pipeline. */}
+          {/* Above-the-fold dual CTA — Hormozi many-to-one funnel.
+              Two front doors: $997 website (local-service path) +
+              $10K AI growth system (product-brand / manufacturer path,
+              lives at /agency per the 2026-05-14 vertical-split decision).
+              Both route into the same trust apparatus below. */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="/audit"
+              href="/get-started"
               className="group inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_45px_rgba(14,165,233,0.55)] active:scale-[0.97] transition-all duration-300"
             >
-              Run my free 60-second audit
+              Build my website — $997
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                 <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
             <a
-              href="/get-started"
+              href="/agency"
               className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-sky-500/40 bg-sky-500/[0.04] text-sky-200 hover:bg-sky-500/10 hover:border-sky-400/70 hover:text-white text-base font-semibold transition-all duration-300"
             >
-              Or build my full preview
+              Build my marketing system
             </a>
           </div>
+
+          {/* Two-guarantee strip — Hormozi review #3 + #4 (2026-05-14). The
+              big guarantee belongs above the fold, not buried in AgencySection.
+              Two distinct promises, two paths, side-by-side so both buyers
+              see their risk-reversal in one glance. */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs md:text-sm">
+            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-sky-500/25 bg-sky-500/[0.05] text-sky-200">
+              <span className="text-base">🛡</span>
+              <span className="font-medium">$997 website: pay nothing until you love it</span>
+            </span>
+            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/[0.06] text-emerald-200">
+              <span className="text-base">💪</span>
+              <span className="font-medium">$10K system: 100 leads in 90 days or we work free</span>
+            </span>
+          </div>
+
+          {/* Tertiary calculator link — Hormozi review #6 (2026-05-14). The
+              /cut-my-agency calculator is the highest-intent funnel for
+              agency-firers; surfacing it above the fold (not just inside
+              AgencySection) captures shopping-around visitors before they
+              bounce. Plain text link to keep visual hierarchy clean — the
+              two CTAs stay primary. */}
+          <p className="mt-5 text-sm text-white/45">
+            Not sure which?{" "}
+            <a
+              href="/cut-my-agency"
+              className="text-amber-300 hover:text-amber-200 underline underline-offset-2 font-medium transition-colors"
+            >
+              See what an agency would charge you →
+            </a>
+          </p>
+
+          {/* Urgency / scarcity line — Hormozi review #7 (2026-05-14). The
+              /agency page documents the 10-builds-per-month cap; surfacing
+              it on the homepage prevents the "I'll come back later" stall.
+              Month is computed at render so the line stays current without
+              manual edits. */}
+          <p className="mt-3 text-xs text-white/35 tracking-wide">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 align-middle animate-pulse" />
+            {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })} · only 10 AI system builds per month — limited slots remaining
+          </p>
         </div>
 
         {/* Section header */}
@@ -331,67 +381,90 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {cards.map((site) => {
-            const isExternal = site.href.startsWith("http");
-            return (
-            <a
-              key={site.name}
-              href={site.href}
-              target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noopener noreferrer" : undefined}
-              className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
-            >
-              {/* Thumbnail area */}
-              <div
-                className="aspect-[4/3] relative overflow-hidden"
-                style={{
-                  background: `linear-gradient(135deg, ${site.color} 0%, ${site.color}dd 100%)`,
-                }}
-              >
-                {/* Icon */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-7xl opacity-40 group-hover:opacity-60 group-hover:scale-125 transition-all duration-500">
-                    {site.icon}
-                  </span>
-                </div>
-                {/* Mock browser chrome */}
-                <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                  <div className="w-2 h-2 rounded-full bg-white/15" />
-                  <div className="w-2 h-2 rounded-full bg-white/10" />
-                  <div className="flex-1 h-3 rounded-full bg-white/[0.06] ml-2" />
-                </div>
-                {/* Gradient overlay */}
-                <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                {/* Category pill */}
-                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm text-[10px] text-white/80 font-semibold tracking-wide border border-white/10">
-                  {site.category}
-                </div>
-                {/* Hover overlay with "View Site" */}
-                <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/20 transition-all duration-500 flex items-center justify-center">
-                  <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-white/0 group-hover:bg-white text-transparent group-hover:text-gray-900 font-bold text-sm transition-all duration-500 scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100">
-                    View Site
-                    <ArrowUpRightIcon />
-                  </span>
-                </div>
+        {/* Cards — grouped by vertical (Hormozi review #16, 2026-05-14).
+            Three horizontal bands so a product-brand visitor sees themselves
+            in row 1, authors in row 2, service businesses in row 3.
+            Each band has an eyebrow label so the grouping reads cleanly even
+            on mobile where the rows stack. */}
+        {(["manufacturer", "author", "service"] as SiteGroup[]).map((g) => {
+          const groupCards = cards.filter((c) => c.group === g);
+          if (groupCards.length === 0) return null;
+          const meta = GROUP_META[g];
+          return (
+            <div key={g} className="mb-10 last:mb-0">
+              <div className="flex items-center gap-3 mb-4">
+                <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] px-3 py-1 rounded-full border ${meta.ring} ${meta.accent}`}>
+                  <span>{meta.eyebrow}</span>
+                  {meta.label}
+                </span>
+                <span className="text-white/25 text-xs">
+                  {groupCards.length} {groupCards.length === 1 ? "build" : "builds"}
+                </span>
+                <div className="flex-1 h-px bg-white/[0.04]" />
               </div>
-              {/* Info */}
-              <div className="p-4">
-                <p className="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors duration-300">
-                  {site.name}
-                </p>
-                <p className="text-white/40 text-xs mt-1 line-clamp-1">{site.tagline}</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {groupCards.map((site) => {
+                  const isExternal = site.href.startsWith("http");
+                  return (
+                    <a
+                      key={site.name}
+                      href={site.href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                      className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
+                    >
+                      {/* Thumbnail area */}
+                      <div
+                        className="aspect-[4/3] relative overflow-hidden"
+                        style={{
+                          background: `linear-gradient(135deg, ${site.color} 0%, ${site.color}dd 100%)`,
+                        }}
+                      >
+                        {/* Icon */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-7xl opacity-40 group-hover:opacity-60 group-hover:scale-125 transition-all duration-500">
+                            {site.icon}
+                          </span>
+                        </div>
+                        {/* Mock browser chrome */}
+                        <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5">
+                          <div className="w-2 h-2 rounded-full bg-white/20" />
+                          <div className="w-2 h-2 rounded-full bg-white/15" />
+                          <div className="w-2 h-2 rounded-full bg-white/10" />
+                          <div className="flex-1 h-3 rounded-full bg-white/[0.06] ml-2" />
+                        </div>
+                        {/* Gradient overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                        {/* Category pill */}
+                        <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm text-[10px] text-white/80 font-semibold tracking-wide border border-white/10">
+                          {site.category}
+                        </div>
+                        {/* Hover overlay with "View Site" */}
+                        <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/20 transition-all duration-500 flex items-center justify-center">
+                          <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-white/0 group-hover:bg-white text-transparent group-hover:text-gray-900 font-bold text-sm transition-all duration-500 scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100">
+                            View Site
+                            <ArrowUpRightIcon />
+                          </span>
+                        </div>
+                      </div>
+                      {/* Info */}
+                      <div className="p-4">
+                        <p className="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors duration-300">
+                          {site.name}
+                        </p>
+                        <p className="text-white/40 text-xs mt-1 line-clamp-1">{site.tagline}</p>
+                      </div>
+                      {/* Hover glow top line */}
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* Hover glow bg */}
+                      <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
+                    </a>
+                  );
+                })}
               </div>
-              {/* Hover glow top line */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              {/* Hover glow bg */}
-              <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
-            </a>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* ── Bottom CTA Banner — dual CTA + explicit risk reversal ── */}
@@ -446,12 +519,33 @@ export default function Hero() {
 // framework — show prospects what their version will look like, not 23
 // versions of someone else's industry).
 const defaultSiteCards: SiteCard[] = [
-  { name: "Zenith Sports / TEKKY", category: "Sports manufacturer", color: "#0a0f1e", href: "/clients/zenith-sports", icon: "⚽", tagline: "Full AI marketing system — soccer training brand" },
-  { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories" },
-  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz" },
-  { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand" },
-  { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront" },
-  { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing" },
-  { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA" },
-  { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA" },
+  { name: "Zenith Sports / TEKKY", category: "Sports manufacturer", color: "#0a0f1e", href: "/clients/zenith-sports", icon: "⚽", tagline: "Full AI marketing system — soccer training brand", group: "manufacturer" },
+  { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories", group: "manufacturer" },
+  { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand", group: "manufacturer" },
+  { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront", group: "manufacturer" },
+  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "author" },
+  { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing", group: "service" },
+  { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA", group: "service" },
+  { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA", group: "service" },
 ];
+
+const GROUP_META: Record<SiteGroup, { label: string; eyebrow: string; accent: string; ring: string }> = {
+  manufacturer: {
+    label: "Product Manufacturers",
+    eyebrow: "🏭",
+    accent: "text-amber-300",
+    ring: "border-amber-500/20 bg-amber-500/5",
+  },
+  author: {
+    label: "Indie Authors",
+    eyebrow: "📚",
+    accent: "text-violet-300",
+    ring: "border-violet-500/20 bg-violet-500/5",
+  },
+  service: {
+    label: "Local Service Businesses",
+    eyebrow: "🛠️",
+    accent: "text-sky-300",
+    ring: "border-sky-500/20 bg-sky-500/5",
+  },
+};

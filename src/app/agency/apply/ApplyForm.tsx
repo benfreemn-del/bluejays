@@ -284,27 +284,65 @@ export default function ApplyForm() {
   // ─── Result screens ────────────────────────────────────────────────
 
   if (status.kind === "qualified") {
+    // BAM-FAM — Hormozi review #12 (2026-05-14). When a prospect qualifies,
+    // every minute between interest and a held meeting is a leak. Instead
+    // of the old "Pick a time →" click-out button, embed the Calendly
+    // widget inline so they book without leaving the page. The fallback
+    // button stays below the iframe in case the widget fails to render
+    // (ad-block, iframe restriction, etc.) — belt + suspenders.
+    const calendlyEmbedUrl = (() => {
+      try {
+        const u = new URL(status.calendlyUrl);
+        // hide the Calendly chrome we don't need + brand-match the dark UI
+        u.searchParams.set("hide_event_type_details", "0");
+        u.searchParams.set("hide_gdpr_banner", "1");
+        u.searchParams.set("background_color", "0f172a");
+        u.searchParams.set("text_color", "e2e8f0");
+        u.searchParams.set("primary_color", "8b5cf6");
+        return u.toString();
+      } catch {
+        return status.calendlyUrl;
+      }
+    })();
+
     return (
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 md:p-10">
+      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 md:p-8">
         <div className="text-emerald-400 text-sm font-semibold tracking-wider uppercase mb-3">
           ✓ You&apos;re a fit
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold mb-3">
           Book your 30-minute strategy call.
         </h2>
-        <p className="text-slate-300 mb-6 leading-relaxed">
-          Based on your answers, the AI Marketing System should work for you. Pick
-          a time that works — Ben will come to the call having already pulled a
-          target prospect count for your ICP and a rough 90-day plan.
+        <p className="text-slate-300 mb-5 leading-relaxed">
+          Pick a time below — Ben will come to the call having already pulled
+          a target prospect count for your ICP and a rough 90-day plan.
         </p>
+
+        {/* Inline Calendly embed — BAM-FAM, no click-out friction.
+            Height tuned for the standard Calendly 30-min picker on mobile
+            + desktop. The iframe sandbox allows the embed's own scripts +
+            forms without granting wider permissions. */}
+        <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-950 mb-4">
+          <iframe
+            src={calendlyEmbedUrl}
+            title="Pick a time with Ben"
+            className="w-full block"
+            style={{ minHeight: "720px", height: "720px" }}
+            frameBorder={0}
+          />
+        </div>
+
+        {/* Fallback open-in-new-tab link — surfaces if the iframe is blocked
+            by an ad-blocker or an org's CSP that disallows third-party frames. */}
         <a
           href={status.calendlyUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-violet-500 hover:bg-violet-400 text-slate-950 font-semibold px-6 py-3.5 rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 text-violet-300 hover:text-violet-200 text-sm underline underline-offset-2"
         >
-          Pick a time →
+          Calendar not loading? Open in a new tab →
         </a>
+
         <p className="text-xs text-slate-500 mt-6">
           Heads up: we only run 1 strategy call per business per week. If your
           first-choice slot is gone, grab the next one.

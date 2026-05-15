@@ -26,15 +26,69 @@ export const metadata: Metadata = {
   },
 };
 
+// Comparison table — Hormozi review #11 (2026-05-14). Trimmed from 8 rows
+// to 6 for skim-readability. Dropped rows: "You own nothing" (overlapped
+// with the contract-length row below it) and "Results next month" (overlapped
+// with the cost/launch-speed framing of row 1). Kept the strongest 6
+// dimensions: cost, commoditization, relationship, lock-in, speed, integration.
 const AGENCY_ITEMS = [
   { agency: "$3,000–$8,000 / month", blueJays: "$500–$1,000 / month (after setup)" },
   { agency: "Same playbook for every client", blueJays: "Built for your business — no template" },
   { agency: "Junior reps rotate every 6 months", blueJays: "Ben — direct, no middlemen" },
-  { agency: "You own nothing — cancel and it's gone", blueJays: "You own the system, always" },
   { agency: "12-month contracts, hard to exit", blueJays: "Month-to-month, cancel any time" },
-  { agency: "\"Results next month\" — indefinitely", blueJays: "Live in 30 days, tracked monthly" },
   { agency: "Slow creative revisions (weeks)", blueJays: "AI generates + iterates in hours" },
   { agency: "Siloed: ads don't talk to email/text", blueJays: "Single funnel: ads → site → email → text → voicemail" },
+];
+
+// Process testimonials — Hormozi review #10 (2026-05-14). Real active
+// builds, not stock quotes. Each card shows what's shipped + what's coming
+// for a real client by name. Hormozi pattern: when outcome data (Day-90
+// leads) isn't available yet, show the build cadence — proof the work is
+// real and the system gets shipped, week by week.
+const PROCESS_TESTIMONIALS: Array<{
+  client: string;
+  vertical: string;
+  status: string;
+  icon: string;
+  accent: string;
+  timeline: Array<{ when: string; what: string; done: boolean }>;
+}> = [
+  {
+    client: "Bloodlines — Preston James Hunsaker",
+    vertical: "Indie author · fantasy series",
+    status: "Live — 1 week in",
+    icon: "📖",
+    accent: "violet",
+    timeline: [
+      { when: "Week 0 (May 7)", what: "Bespoke showcase shipped — world map, character roster, magic-system explorer, faction quiz, parchment reader", done: true },
+      { when: "Week 1 (now)", what: "Amazon-driven CTAs live, reader-list capture running, content funnel pumping", done: true },
+      { when: "Coming", what: "Book #2 beta-launch sequence + audience-segmented email cadence (early-reader / superfan / casual)", done: false },
+    ],
+  },
+  {
+    client: "Zenith Sports / TEKKY",
+    vertical: "Manufacturer · soccer training",
+    status: "Active build — Q1 in progress",
+    icon: "⚽",
+    accent: "amber",
+    timeline: [
+      { when: "Weeks 1–3", what: "Full site rebuild, brand-voice doc, 4-audience taxonomy (parent / coach / player / club)", done: true },
+      { when: "Weeks 4–6", what: "AI auto-responder live, per-audience funnel sequences, configurator quiz scaffolding", done: false },
+      { when: "Day 90 target", what: "100 qualified soccer-parent leads via Meta + Google Ads — covered by the 100-lead guarantee", done: false },
+    ],
+  },
+  {
+    client: "ITC Quick Attach — Jake",
+    vertical: "Manufacturer · tractor accessories",
+    status: "Just closed — build kicking off",
+    icon: "🚜",
+    accent: "sky",
+    timeline: [
+      { when: "Week 1", what: "Site rebuild + dealer-network audit + 6-audience taxonomy (dealer / hunter / forester / arborist / homeowner / fleet)", done: false },
+      { when: "Weeks 4–6", what: "TYM/Kioti configurator quiz, Lob postcard sequences (dealer catalog, hunter pre-season card)", done: false },
+      { when: "Day 90 target", what: "100 qualified dealer + end-buyer leads — covered by the 100-lead guarantee", done: false },
+    ],
+  },
 ];
 
 // Deliverables stacks moved to `src/lib/agency-included.ts` 2026-05-14
@@ -78,8 +132,16 @@ const FAQS = [
     a: "Most agencies blast the same email to every lead. We don't. Three kinds of people care about your product: the BUYER who uses it, the PRO who tells the buyer to get it (coach, dealer, contractor, vet), and the SHOP that resells it. Each one needs a different message. We build a separate path for each — and each path uses email, text, voicemail, and a real printed postcard. Example for a tractor-accessory shop: the Dealer gets margin math + a printed dealer catalog. The Hunter gets gun-mount install tips + a season-prep card. The Forester gets a chainsaw-rig setup card. Same lead-magnet site. Up to six paths. Four channels per path.",
   },
   {
-    q: "Is this for service businesses or product makers?",
-    a: "The $10k AI System is product-makers + indie authors only. For service trades (electricians, landscapers, dental, salons, HVAC, contractors), the $997 custom website tier is the right fit — we still build sites for service businesses, just not the $10k AI System tier. The $10k math justifies itself when there's a defined product, a tight-fit audience you can retarget across years, and a story the AI can learn — a commodity service doesn't have the compounding customer relationship to make that math work. If you make a product only you make, or you write a fiction series readers want to follow book-to-book, the $10k AI System is the right fit. NOTE for product makers + indie authors: the $997 site is also open to YOU as an entry-point — if you're a manufacturer without a dealer network yet, or an author with only book #1, the $997 site is a smart starting point and we'll graduate you to the $10k AI System when the math is right (typically 8+ dealers for mfg, or book #2 in beta for authors). Either way, start at /audit.",
+    q: "Is the $10K system for service businesses?",
+    a: "No — service businesses (electricians, dental, salons, HVAC, contractors) belong on the $997 custom website tier. Same Ben, same risk-free guarantee, just sized to the math. The $10K system needs a defined product, a retargetable audience, and a story the AI can compound over time — commodity services don't have the LTV mechanics to justify the spend. Start at /audit and we'll route you correctly.",
+  },
+  {
+    q: "What if I'm a manufacturer without dealers yet?",
+    a: "Start with the $997 site. The AI System compounds best with a working dealer network or distribution channel — typically 8+ dealers — so the math works on day one. The $997 site builds the credibility you need to recruit dealers; we graduate you to the $10K system when the network is alive. Same Ben, no re-onboarding.",
+  },
+  {
+    q: "What if I'm an author with only book #1?",
+    a: "Same logic as the manufacturer route. The AI System compounds book-to-book — newsletter subscribers from book #1 → pre-order surge for book #2 → backlist sales loop. With only one book out, the LTV ceiling is too low to justify the full spend. Start with a $997 bespoke showcase (Bloodlines pattern), build the reader list, graduate when book #2 hits beta.",
   },
   {
     q: "How do AI Postcards work?",
@@ -206,6 +268,17 @@ export default function AgencyPage() {
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
             Who this works best for
           </h2>
+          {/* SPCL paragraph — Hormozi review #14 (2026-05-14). Adds Status
+              ("the brands you compete with") + Likeness ("a real thing made
+              by a real owner") to a section that previously only carried
+              qualification logic. Pairs the math-heavy bottom of the page
+              with one emotional positioning beat. */}
+          <p className="text-slate-200 text-center max-w-2xl mx-auto mb-5 text-lg leading-relaxed font-medium">
+            If you make a <span className="text-violet-300">real thing</span> — a tractor accessory,
+            a fantasy book series, a kid&apos;s apparel brand — you compete with
+            companies running $10K-a-month agencies. This is how you outrun
+            them without spending $120K a year.
+          </p>
           <p className="text-slate-300 text-center max-w-2xl mx-auto mb-6 leading-relaxed">
             We built this for owners who make a real thing. A product. A
             service with proof. Something only you do. If your work has any
@@ -292,6 +365,101 @@ export default function AgencyPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── PROCESS TESTIMONIALS ─────────────────────────────────────────────── */}
+      {/* Hormozi review #10 (2026-05-14). The page below this point is all
+          logic — math, comparison, value stack, guarantee. This section adds
+          the emotional proof: real client builds, real timelines, real
+          status. Process testimonials (week-by-week build cadence) work
+          BEFORE outcome data (Day-90 leads) is available — they prove the
+          work gets shipped, not just promised. */}
+      <section className="px-6 py-16 bg-gradient-to-b from-slate-900/30 to-transparent">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-block bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
+              Real builds · live this month
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+              Here&apos;s what&apos;s shipping right now
+            </h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+              Three active builds. Real client names. Week-by-week milestones —
+              what&apos;s done, what&apos;s coming. No stock testimonials.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {PROCESS_TESTIMONIALS.map((card) => {
+              const accentRing =
+                card.accent === "violet"
+                  ? "border-violet-500/30 bg-violet-500/[0.04]"
+                  : card.accent === "amber"
+                  ? "border-amber-500/30 bg-amber-500/[0.04]"
+                  : "border-sky-500/30 bg-sky-500/[0.04]";
+              const accentText =
+                card.accent === "violet"
+                  ? "text-violet-300"
+                  : card.accent === "amber"
+                  ? "text-amber-300"
+                  : "text-sky-300";
+              return (
+                <div
+                  key={card.client}
+                  className={`rounded-2xl border ${accentRing} p-5 md:p-6 flex flex-col`}
+                >
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="text-3xl flex-shrink-0">{card.icon}</div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white text-base leading-tight">
+                        {card.client}
+                      </h3>
+                      <p className={`text-xs ${accentText} mt-0.5`}>{card.vertical}</p>
+                    </div>
+                  </div>
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${accentText} bg-white/[0.04] border border-white/10 self-start mb-4`}>
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className={`absolute inline-flex h-full w-full rounded-full ${
+                        card.accent === "violet" ? "bg-violet-400" : card.accent === "amber" ? "bg-amber-400" : "bg-sky-400"
+                      } opacity-75 animate-ping`} />
+                      <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                        card.accent === "violet" ? "bg-violet-400" : card.accent === "amber" ? "bg-amber-400" : "bg-sky-400"
+                      }`} />
+                    </span>
+                    {card.status}
+                  </div>
+                  <ul className="space-y-3 flex-1">
+                    {card.timeline.map((step) => (
+                      <li key={step.when} className="flex items-start gap-2.5">
+                        <span
+                          className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                            step.done
+                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                              : "bg-white/[0.04] text-slate-500 border border-white/10"
+                          }`}
+                          aria-label={step.done ? "Done" : "Upcoming"}
+                        >
+                          {step.done ? "✓" : "○"}
+                        </span>
+                        <div className="min-w-0">
+                          <p className={`text-[11px] font-bold uppercase tracking-wider ${step.done ? accentText : "text-slate-500"}`}>
+                            {step.when}
+                          </p>
+                          <p className={`text-sm leading-snug mt-0.5 ${step.done ? "text-slate-200" : "text-slate-400"}`}>
+                            {step.what}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-center text-slate-500 text-xs mt-6 max-w-2xl mx-auto leading-relaxed">
+            These are the three active builds right now. Day-90 outcome data
+            posts here as it lands — no curated quotes, no cherry-picked screenshots.
+          </p>
         </div>
       </section>
 

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
-import About from "@/components/About";
 import AboutBen from "@/components/AboutBen";
 import AgencySection from "@/components/AgencySection";
 import FAQ from "@/components/FAQ";
@@ -54,14 +53,16 @@ export default function Home() {
           gtag library + Meta Pixel load on every route (including /audit form
           submits, claim flow, etc.). */}
       <Hero />
-      <AgencySection />
+      {/* Hormozi reorder 2026-05-14: proof BEFORE the pitch. AuditTestimonials
+          (real Luke/Erik/Michelle/Bonnie quotes) moves above AgencySection so
+          the $10K pitch lands on a believer, not a stranger. About.tsx was
+          deleted in the same pass — its 4 feature cards moved into AboutBen
+          as a "How it works" strip so the page has one founder section, not
+          two competing about blocks. */}
       <AuditTestimonials />
+      <AgencySection />
       <Stats />
-      <About />
       <AboutBen />
-      {/* <Services /> removed 2026-05-14 per ICP niche-down — was the legacy
-          service-trade list. Component file kept on disk in src/components/Services.tsx
-          for future productization or service-trade-inbound landing. */}
       <FAQ />
       <Contact />
       <Footer />

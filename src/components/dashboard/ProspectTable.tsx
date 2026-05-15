@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
+import {
+  type CategoryGroup,
+  CATEGORY_GROUP_EMOJI,
+  CATEGORY_GROUP_LABEL,
+  getCategoryGroup,
+} from "@/lib/category-groups";
 import { hasPendingAdminUpdates } from "@/lib/admin-notes";
 import { getShortPreviewUrl } from "@/lib/short-urls";
 import { getProspectClock } from "@/lib/business-hours";
@@ -167,9 +173,24 @@ export default function ProspectTable({
   // because the audit-lead → ready-to-review → claimed pipeline is
   // already its own status flow; "inbound" is about origin, not stage.
   const [inboundOnly, setInboundOnly] = useState(false);
+  // Category-group filter — slices leads by the refocused 2026-05-14
+  // vertical taxonomy: manufacturer (6 mfg-* slugs), author (indie-author),
+  // service (everything else). Composes AND with the individual-category
+  // dropdown so Ben can drill from "all Manufacturers" → "ag-equipment".
+  const [groupFilter, setGroupFilter] = useState<CategoryGroup | "">("");
+
+  // Counts per group — computed BEFORE search/category/status filters so
+  // the pill labels stay honest (a stage filter elsewhere doesn't make
+  // "Manufacturer" appear empty when it isn't).
+  const groupCounts = useMemo(() => {
+    const counts: Record<CategoryGroup, number> = { manufacturer: 0, author: 0, service: 0 };
+    for (const p of prospects) counts[getCategoryGroup(p.category)] += 1;
+    return counts;
+  }, [prospects]);
 
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
+    if (groupFilter && getCategoryGroup(p.category) !== groupFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     // Hidden by default: dismissed (gone) and audit_marketing (still
     // on email sequence but not in the call queue — accessible if you
@@ -184,7 +205,7 @@ export default function ProspectTable({
   const paginatedFiltered = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   // Reset to page 1 when filters change
-  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, liveOnly, inboundOnly]);
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, liveOnly, inboundOnly, groupFilter]);
 
   const isSelected = (id: string) => selectedIds.includes(id);
 
@@ -468,6 +489,44 @@ export default function ProspectTable({
 
   return (
     <div className="relative">
+      {/* Group filter pills — vertical-level slicing for the refocused
+          2026-05-14 ICP. Composes AND with the category dropdown so
+          Manufacturer + a specific mfg-* slug narrows further. */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        <button
+          onClick={() => setGroupFilter("")}
+          className={
+            groupFilter === ""
+              ? "h-9 px-3 rounded-lg bg-blue-electric/20 border border-blue-electric/50 text-blue-electric text-sm font-medium cursor-pointer"
+              : "h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-sm text-muted hover:text-foreground hover:border-white/20 transition-colors cursor-pointer"
+          }
+          title="Show prospects across every vertical"
+        >
+          All Groups <span className="ml-1 text-xs opacity-70">({prospects.length})</span>
+        </button>
+        {(["manufacturer", "author", "service"] as CategoryGroup[]).map((g) => (
+          <button
+            key={g}
+            onClick={() => setGroupFilter(groupFilter === g ? "" : g)}
+            className={
+              groupFilter === g
+                ? "h-9 px-3 rounded-lg bg-blue-electric/20 border border-blue-electric/50 text-blue-electric text-sm font-medium cursor-pointer"
+                : "h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-sm text-muted hover:text-foreground hover:border-white/20 transition-colors cursor-pointer"
+            }
+            title={
+              g === "manufacturer"
+                ? "Manufacturer ICP — 6 mfg-* slugs on the $10K AI System ladder"
+                : g === "author"
+                ? "Indie-author ICP — bespoke Bloodlines-pattern showcases"
+                : "Service businesses — 46 V2 templates, $997 + $100/yr tier"
+            }
+          >
+            <span className="mr-1">{CATEGORY_GROUP_EMOJI[g]}</span>
+            {CATEGORY_GROUP_LABEL[g]}
+            <span className="ml-1 text-xs opacity-70">({groupCounts[g]})</span>
+          </button>
+        ))}
+      </div>
       <div className="flex flex-wrap gap-3 mb-4">
         <select
           value={categoryFilter}
