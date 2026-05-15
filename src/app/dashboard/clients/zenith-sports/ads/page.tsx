@@ -32,6 +32,7 @@ const PLATFORM_LABELS: Record<CreativeSeed["platform"], string> = {
   "google-search": "Google · Search",
   "google-pmax": "Google · PMax",
   "google-yt": "Google · YouTube",
+  lob: "Lob · Postcard",
 };
 
 const PLATFORM_ACCENTS: Record<
@@ -62,6 +63,10 @@ const PLATFORM_ACCENTS: Record<
     tone: "border-rose-500/40 bg-rose-500/10 text-rose-200",
     ext: "https://ads.google.com",
   },
+  lob: {
+    tone: "border-orange-500/40 bg-orange-500/10 text-orange-200",
+    ext: "https://dashboard.lob.com",
+  },
 };
 
 const AUDIENCE_LABELS: Record<CreativeSeed["audience"], string> = {
@@ -69,6 +74,9 @@ const AUDIENCE_LABELS: Record<CreativeSeed["audience"], string> = {
   coach: "Coaches",
   player: "Players",
   all: "All / catalog",
+  homeowner: "Homeowners",
+  realtor: "Realtors",
+  insurance: "Insurance",
 };
 
 const AUDIENCE_TONES: Record<CreativeSeed["audience"], string> = {
@@ -76,6 +84,9 @@ const AUDIENCE_TONES: Record<CreativeSeed["audience"], string> = {
   coach: "border-sky-500/40 text-sky-200 bg-sky-500/[0.08]",
   player: "border-lime-500/40 text-lime-200 bg-lime-500/[0.08]",
   all: "border-violet-500/40 text-violet-200 bg-violet-500/[0.08]",
+  homeowner: "border-emerald-500/40 text-emerald-200 bg-emerald-500/[0.08]",
+  realtor: "border-cyan-500/40 text-cyan-200 bg-cyan-500/[0.08]",
+  insurance: "border-indigo-500/40 text-indigo-200 bg-indigo-500/[0.08]",
 };
 
 export default function ZenithAdsPage() {

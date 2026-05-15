@@ -536,8 +536,8 @@ export default function Hero() {
             </div>
           );
 
-          // Service group → collapsible <details> dropdown so the 12
-          // custom builds don't dominate the homepage at first glance.
+          // Service group → collapsible <details> dropdown so the 12 custom
+          // builds don't dominate the homepage at first glance.
           if (g === "service") {
             return (
               <details key={g} className="bj-dropdown mb-10 last:mb-0">

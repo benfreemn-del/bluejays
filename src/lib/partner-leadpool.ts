@@ -136,7 +136,7 @@ export async function getNextProspectForPartner(): Promise<{
     Math.abs(
       seed.split("").reduce((acc, ch) => acc * 31 + ch.charCodeAt(0), 0),
     ) % fresh.length;
-  const picked = fresh[idx] as LeadPoolProspect & { manually_managed?: boolean };
+  const picked = fresh[idx] as unknown as LeadPoolProspect & { manually_managed?: boolean };
 
   // Look up the latest completed audit for the picked prospect — used
   // for the personalized SMS link (avoids re-running the audit).

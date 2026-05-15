@@ -75,6 +75,7 @@ const PLATFORM_LABELS: Record<AdPlatform, string> = {
   "google-search": "Google · Search",
   "google-pmax": "Google · PMax",
   "google-yt": "Google · YouTube",
+  lob: "Lob · Postcard",
 };
 
 const PLATFORM_TONES: Record<AdPlatform, string> = {
@@ -84,6 +85,7 @@ const PLATFORM_TONES: Record<AdPlatform, string> = {
   "google-search": "border-emerald-500/40 bg-emerald-500/10 text-emerald-200",
   "google-pmax": "border-amber-500/40 bg-amber-500/10 text-amber-200",
   "google-yt": "border-rose-500/40 bg-rose-500/10 text-rose-200",
+  lob: "border-orange-500/40 bg-orange-500/10 text-orange-200",
 };
 
 type AudienceFilter = AdAudience | "all_filter" | string;

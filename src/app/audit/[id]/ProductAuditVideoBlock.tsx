@@ -108,7 +108,7 @@ export default function ProductAuditVideoBlock({
             {!videoMissing ? (
               <video
                 ref={videoRef}
-                src={videoSrc}
+                src={videoSrc ?? undefined}
                 poster={posterUrl}
                 controls
                 playsInline

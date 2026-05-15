@@ -92,6 +92,9 @@ export async function POST(
     scrapedData: {
       ...(prospect.scrapedData || {
         businessName: prospect.businessName,
+        services: [],
+        testimonials: [],
+        photos: [],
       }),
       apolloContact: contact,
     },

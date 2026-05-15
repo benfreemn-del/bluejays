@@ -509,6 +509,7 @@ export async function runAudit(args: {
           score: 50,
           tokensIn: 0,
           tokensOut: 0,
+          cacheReadTokens: 0,
           model: "fallback",
           error: err instanceof Error ? err.message : String(err),
         }),

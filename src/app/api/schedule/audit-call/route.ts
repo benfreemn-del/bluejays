@@ -52,18 +52,20 @@ export async function POST(request: NextRequest) {
 
   // Persist before alerting (Rule 43)
   if (isSupabaseConfigured()) {
-    await supabase
-      .from("audit_call_requests")
-      .insert({
-        id: uuidv4(),
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone?.trim() || null,
-        preferred_time: preferredTime || "anytime",
-        created_at: new Date().toISOString(),
-      })
-      .then(() => null)
-      .catch(() => null); // Table may not exist yet — best effort
+    try {
+      await supabase
+        .from("audit_call_requests")
+        .insert({
+          id: uuidv4(),
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone?.trim() || null,
+          preferred_time: preferredTime || "anytime",
+          created_at: new Date().toISOString(),
+        });
+    } catch {
+      // Table may not exist yet — best effort
+    }
   }
 
   // Alert Ben
