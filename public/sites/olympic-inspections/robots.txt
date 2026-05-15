@@ -1,0 +1,11 @@
+# Olympic Inspections & Testing — robots policy
+# Canonical site: https://www.olympicinspect.com/
+
+User-agent: *
+Allow: /
+
+# Surface AI/LLM discoverability files
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+Sitemap: https://www.olympicinspect.com/sitemap.xml

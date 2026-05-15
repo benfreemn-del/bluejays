@@ -21,11 +21,27 @@ const TEMPLATE_TO_V2_INDUSTRIES = [
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return TEMPLATE_TO_V2_INDUSTRIES.map((slug) => ({
-      source: `/templates/${slug}`,
-      destination: `/v2/${slug}`,
-      permanent: true, // 301 — passes link equity, tells Google to update its index
-    }));
+    return [
+      // 31 template→v2 industry redirects. Permanent (308) — passes link
+      // equity, tells Google to update its index.
+      ...TEMPLATE_TO_V2_INDUSTRIES.map((slug) => ({
+        source: `/templates/${slug}`,
+        destination: `/v2/${slug}`,
+        permanent: true,
+      })),
+      // Anyone with the legacy /sites/pine-and-particle/ link gets redirected
+      // to the rebranded OIT site.
+      {
+        source: '/sites/pine-and-particle',
+        destination: '/sites/olympic-inspections/',
+        permanent: true,
+      },
+      {
+        source: '/sites/pine-and-particle/:path*',
+        destination: '/sites/olympic-inspections/:path*',
+        permanent: true,
+      },
+    ];
   },
   async rewrites() {
     return {
@@ -48,6 +64,38 @@ const nextConfig: NextConfig = {
           source: '/',
           destination: '/sites/olympic-inspections/index.html',
         },
+        // Per-service landing pages on the canonical OIT domain.
+        // Added 2026-05-14 (Phase 2 SEO). Each slug maps to a dedicated
+        // .html file under /public/sites/olympic-inspections/. The regex
+        // is explicit so other paths (booking API, /admin, future
+        // additions) still flow through normal routing — only these
+        // five marketing slugs get rewritten to static HTML.
+        // To add a sixth service landing page: add the slug to BOTH
+        // alternations below AND drop the matching .html file in the
+        // public sites folder.
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/:slug(mold-inspection-sequim-wa|ermi-testing-olympic-peninsula|well-water-testing-sequim|radon-testing-port-angeles|septic-inspection-clallam-county)',
+          destination: '/sites/olympic-inspections/:slug.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/:slug(mold-inspection-sequim-wa|ermi-testing-olympic-peninsula|well-water-testing-sequim|radon-testing-port-angeles|septic-inspection-clallam-county)',
+          destination: '/sites/olympic-inspections/:slug.html',
+        },
+        // SEO discovery files — sitemap, robots, llms.txt, llms-full.txt.
+        // These MUST live at the domain root for crawlers to find them.
+        // Same regex pattern keeps the rewrite scope tight.
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/:file(sitemap.xml|robots.txt|llms.txt|llms-full.txt)',
+          destination: '/sites/olympic-inspections/:file',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/:file(sitemap.xml|robots.txt|llms.txt|llms-full.txt)',
+          destination: '/sites/olympic-inspections/:file',
+        },
         // Pine & Particle Co. rebranded to Olympic Inspections & Testing
         // 2026-05-05. The pineparticle.com domain is in transfer; while
         // it still resolves it serves the OIT site directly. Once the
@@ -66,22 +114,6 @@ const nextConfig: NextConfig = {
         },
       ],
     };
-  },
-  async redirects() {
-    return [
-      // Anyone with the legacy /sites/pine-and-particle/ link gets redirected
-      // to the rebranded OIT site.
-      {
-        source: '/sites/pine-and-particle',
-        destination: '/sites/olympic-inspections/',
-        permanent: true,
-      },
-      {
-        source: '/sites/pine-and-particle/:path*',
-        destination: '/sites/olympic-inspections/:path*',
-        permanent: true,
-      },
-    ];
   },
   images: {
     // Vercel's image optimizer is OFF. Brand/client pages already use plain
