@@ -173,15 +173,26 @@ export default function ProcessingClient({
             <p className="text-center text-xs uppercase tracking-wider text-sky-400 mb-3">
               Watch this while your audit generates
             </p>
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-2xl">
-              {embedUrl.startsWith("direct:") ? (
-                <video
-                  src={embedUrl.replace(/^direct:/, "")}
-                  controls
-                  preload="metadata"
-                  className="w-full aspect-video bg-black"
-                />
-              ) : (
+            {embedUrl.startsWith("direct:") ? (
+              // Direct mp4 path — VSL-style vertical 9:16 source. Autoplay
+              // muted+loop runs the video continuously for the full audit
+              // wait (~120s), no click required. Browsers allow muted
+              // autoplay so the captions do the heavy lifting until the
+              // visitor unmutes. max-h-[60vh] keeps the player from
+              // dominating the page above the progress tracker.
+              <video
+                src={embedUrl.replace(/^direct:/, "")}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="auto"
+                className="mx-auto block max-h-[60vh] rounded-2xl bg-black shadow-2xl"
+              />
+            ) : (
+              // Loom / YouTube iframe path — always horizontal 16:9.
+              <div className="rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-2xl">
                 <iframe
                   src={embedUrl}
                   title="Audit walkthrough"
@@ -190,8 +201,8 @@ export default function ProcessingClient({
                   allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ) : (
           <AuditVSLAuto
