@@ -2721,6 +2721,119 @@ When onboarding a new client at the AI System tier, expect to register
 weekly-check-in cadence. The pattern scales to dozens of clients
 without per-client routing code — only the registry grows.
 
+### Form draft auto-save (added 2026-05-15)
+
+The /sign/[slug]/[doc] SignForm auto-saves every change to localStorage
+keyed by `bluejays:sign-draft:[slug]:[doc]`. On revisit, fields restore
+and a "Picked up where you left off — last saved <time>" banner appears
+with a "Start fresh" reset link.
+
+- The draft is cleared automatically on successful submit (200 + ok:true).
+- Draft is per-slug + per-doc — Paul filling out /sign/zenith-sports/handoff
+  doesn't affect any other sign URL he might also be working through.
+- Failed-submission state preserves the draft (so client doesn't retype
+  on flaky networks).
+- Empty-state guard: localStorage isn't touched until the client types
+  at least one character somewhere (no empty draft pollution).
+
+Don't ship any new client-facing acknowledgment / sign-off form without
+the same auto-save behavior. The bigger-picture rule: anything that
+asks a client to fill 5+ fields in one shot needs draft persistence.
+
+---
+
+## Per-Client Docs + Credentials Pattern (NON-NEGOTIABLE — added 2026-05-15)
+
+Every client we operate for has a **Docs tab** under
+`/dashboard/clients/[slug]/docs`. It's the single surface that gathers
+everything tied to that customer:
+
+1. **🔑 Account credentials** — encrypted password vault. Domain
+   registrar logins, hosting, Google Workspace, Stripe, social media,
+   whatever Ben (or a future operator) touches on the client's behalf.
+2. **📨 Shareable docs** — every entry in `onboard-docs.ts` registered
+   for this client, with one-click "Copy URL" for the `/sign/[slug]/[doc]`
+   link. Send THESE to clients, not raw `/pdfs/*.pdf` URLs.
+3. **✅ Signed acknowledgments** — recent rows from `onboarding_acks`
+   showing who signed what, when, with their replies inline.
+
+### Where it lives
+
+| Surface | Path | Purpose |
+|---|---|---|
+| Docs page | `src/app/dashboard/clients/[slug]/docs/page.tsx` | Server-side fetch + render |
+| Client UI | `src/app/dashboard/clients/[slug]/docs/DocsClient.tsx` | All interactive CRUD |
+| API list/create | `src/app/api/clients/[slug]/credentials/route.ts` | GET + POST |
+| API update/delete | `src/app/api/clients/[slug]/credentials/[id]/route.ts` | PATCH + DELETE |
+| Crypto helper | `src/lib/crypto-creds.ts` | AES-256-GCM encrypt/decrypt |
+| Table | `client_credentials` (migration `20260516_client_credentials.sql`) | Persistence |
+
+### Encryption contract
+
+- **At-rest encryption:** AES-256-GCM. Each row gets a fresh 12-byte
+  IV. Format: `base64(iv):base64(tag):base64(cipher)`. Stored in the
+  `password_enc` TEXT column.
+- **Key source:** `CREDS_ENCRYPTION_KEY` env var (32 bytes encoded as
+  hex or base64). MUST be set on Vercel before any production data
+  lands; rotating the key requires re-encrypting all rows.
+- **Dev fallback:** if `CREDS_ENCRYPTION_KEY` is unset locally, a
+  deterministic SHA-256 of `"bluejays-creds-dev-key-do-not-use-in-prod"`
+  is used. Encrypted values are prefixed with `DEV:` so it's obvious
+  in the DB. Never ship a deploy without the env var set.
+- **Authenticated encryption:** GCM detects tampering on decrypt.
+  Corrupted rows surface as `null` via `tryDecryptCredential()` and
+  show "(decrypt failed)" in the UI — never crash the page.
+
+### Rules
+
+- **Owner-only.** Docs tab is excluded from `SALES_CLIENT_TAB_ALLOWED`
+  in `src/lib/use-role.ts`. Sales (Madie) never sees credentials.
+- **Always-visible.** Docs tab shows for every client slug, not just
+  AI System tier. Every client has SOME credentials worth tracking —
+  domain, hosting, email — even leads-only clients.
+- **No plaintext passwords in chat / logs / errors.** When debugging
+  the credentials surface, never `console.log()` the decrypted value.
+  Trace by ID, not by value.
+- **No new password storage outside this table.** If you need to
+  store an account credential anywhere else (a per-prospect field,
+  a per-funnel config, etc.), STOP and use `client_credentials`
+  instead. One vault, one encryption boundary.
+- **Append-only via UI; full CRUD via API.** The UI has Add / Edit /
+  Delete. Edits update fields by name; passwords are encrypted on
+  every save. Deletes are hard-deletes — there's no soft-delete
+  column. Treat the delete confirmation seriously.
+- **Notes are plaintext.** The `notes` column is not encrypted —
+  use it for non-sensitive context (security questions, MFA setup
+  notes, "uses Google login", etc.). For sensitive notes, drop them
+  inline into the password by separator (e.g., `secret\n2FA: 123456`).
+- **Update-trigger keeps `updated_at` honest.** The migration installs
+  a trigger that touches `updated_at` on every `UPDATE`. Don't bypass.
+
+### Required env var (production)
+
+```
+CREDS_ENCRYPTION_KEY=<32 bytes hex or base64>
+```
+
+Generate locally:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Store in 1Password (or wherever you store secrets) AND set on Vercel.
+Lost key = lost vault contents (no recovery).
+
+### Future: client-facing read-only view
+
+Eventually we'll surface a stripped-down view of this vault inside
+each client's portal Settings tab (`/clients/[slug]/portal`) so the
+client can self-serve their accounts. Out of scope for the initial
+build — admin surface ships first, client surface follows after the
+encryption + RLS story is fully tested in production. When adding
+the client-facing view, gate by `client_owners` cookie (same pattern
+as the portal Leads tab).
+
 ---
 
 ## Locked-In Rules · 2026-05-06 evening — moved to docs/archive/2026-Q2-locked-rules.md

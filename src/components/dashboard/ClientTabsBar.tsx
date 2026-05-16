@@ -36,6 +36,23 @@ const PORTAL_SLUGS = new Set([
   "laser-lakes",
 ]);
 
+const SLUG_CATEGORY: Record<string, string> = {
+  "zenith-sports": "soccer training",
+  "itc-quick-attach": "tractor accessories",
+  "laser-lakes": "marine / outdoor recreation",
+  "hector-landscaping": "landscaping",
+  "mt-view-landscaping": "landscaping",
+  "olympic-inspections": "home inspection",
+  "lewis-county-autism": "non-profit",
+  "bloodlines": "indie author",
+  "kr-ranches": "farm-direct meat",
+  "masters-window-tinting": "window tint / auto detail",
+  "meyer-electric": "electrician",
+  "the-oregon-appraisers": "real estate appraisal",
+  "nevarland-outpost": "outdoor / hunting",
+  "elite-hardscapes-and-landscapes": "landscaping",
+};
+
 type TabDef = {
   id: string;
   label: string;
@@ -108,6 +125,32 @@ const TABS: TabDef[] = [
     visible: (slug) => PORTAL_SLUGS.has(slug),
   },
   {
+    // Docs — per-client password vault, signed acknowledgments, and
+    // shareable onboarding doc index. Owner-only (sensitive creds).
+    // Always visible for owners across every slug — every client has
+    // SOME account credentials worth tracking, even leads-only ones.
+    // See CLAUDE.md "Per-Client Docs + Credentials Pattern".
+    id: "docs",
+    label: "Docs",
+    emoji: "🗂",
+    href: (slug) => `/dashboard/clients/${slug}/docs`,
+    matchPrefix: (slug) => `/dashboard/clients/${slug}/docs`,
+    visible: () => true,
+  },
+  {
+    id: "diagnostic",
+    label: "Diagnostic",
+    emoji: "🧠",
+    href: (slug) => {
+      const category = SLUG_CATEGORY[slug] ?? "";
+      const params = new URLSearchParams({ slug });
+      if (category) params.set("category", category);
+      return `/dashboard/diagnostic?${params.toString()}`;
+    },
+    matchPrefix: () => `/dashboard/diagnostic`,
+    visible: () => true,
+  },
+  {
     id: "camps",
     label: "Camps",
     emoji: "⚽",
@@ -144,6 +187,26 @@ type Props = {
   displayName?: string;
 };
 
+function FeatherIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-3 h-3"
+      aria-hidden
+    >
+      <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+      <line x1="16" y1="8" x2="2" y2="22" />
+      <line x1="17.5" y1="15" x2="9" y2="15" />
+    </svg>
+  );
+}
+
 export default function ClientTabsBar({ slug, displayName }: Props) {
   const pathname = usePathname();
   const role = useRole();
@@ -168,6 +231,18 @@ export default function ClientTabsBar({ slug, displayName }: Props) {
         <h1 className="text-lg sm:text-xl font-bold tracking-tight flex-1 truncate">
           {displayName || slug}
         </h1>
+        {role === "owner" && (
+          <a
+            href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open this client's owner portal as them (no login required) — Routes, Tasks, Leads, all of it"
+            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 hover:border-emerald-500 px-2.5 py-1 rounded whitespace-nowrap flex items-center gap-1"
+          >
+            <FeatherIcon />
+            Backend
+          </a>
+        )}
         {(() => {
           const site = clientSiteFor(slug);
           if (site.kind === "none") return null;
@@ -190,7 +265,14 @@ export default function ClientTabsBar({ slug, displayName }: Props) {
       </div>
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
         {visibleTabs.map((t) => {
-          const href = t.href(slug);
+          // Diagnostic tab pre-fills businessName from displayName at render
+          // time (displayName isn't in scope inside the static TABS const).
+          let href = t.href(slug);
+          if (t.id === "diagnostic" && displayName) {
+            const url = new URL(href, "http://x");
+            url.searchParams.set("businessName", displayName);
+            href = url.pathname + url.search;
+          }
           const matchPrefix = t.matchPrefix(slug);
           // Active when pathname matches the prefix exactly OR when
           // pathname is the slug root + matchPrefix is the tasks tab

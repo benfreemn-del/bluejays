@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 type ExtraQuestion = { id: string; label: string; placeholder?: string };
 
@@ -16,6 +16,20 @@ type SubmitState =
   | { kind: "success" }
   | { kind: "error"; message: string };
 
+type Draft = {
+  name: string;
+  email: string;
+  role: string;
+  notes: string;
+  replies: Record<string, string>;
+  acknowledged: boolean;
+  savedAt: number;
+};
+
+function draftKey(slug: string, doc: string): string {
+  return `bluejays:sign-draft:${slug}:${doc}`;
+}
+
 export default function SignForm({ slug, doc, extraQuestions }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,6 +38,76 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
   const [replies, setReplies] = useState<Record<string, string>>({});
   const [acknowledged, setAcknowledged] = useState(false);
   const [state, setState] = useState<SubmitState>({ kind: "idle" });
+  const [draftRestored, setDraftRestored] = useState<Date | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = useState<Date | null>(null);
+  const hydratedRef = useRef(false);
+
+  // ── Restore draft on mount ──
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(draftKey(slug, doc));
+      if (raw) {
+        const d = JSON.parse(raw) as Draft;
+        setName(d.name || "");
+        setEmail(d.email || "");
+        setRole(d.role || "");
+        setNotes(d.notes || "");
+        setReplies(d.replies || {});
+        setAcknowledged(!!d.acknowledged);
+        if (d.savedAt) setDraftRestored(new Date(d.savedAt));
+      }
+    } catch {
+      // corrupt draft — ignore
+    }
+    hydratedRef.current = true;
+  }, [slug, doc]);
+
+  // ── Save draft on every change (after first hydrate) ──
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    if (typeof window === "undefined") return;
+    const hasAnyInput =
+      name || email || role || notes || acknowledged ||
+      Object.values(replies).some((v) => v && v.trim());
+    if (!hasAnyInput) {
+      // Nothing entered yet — don't pollute localStorage with empties.
+      return;
+    }
+    const draft: Draft = {
+      name,
+      email,
+      role,
+      notes,
+      replies,
+      acknowledged,
+      savedAt: Date.now(),
+    };
+    try {
+      window.localStorage.setItem(draftKey(slug, doc), JSON.stringify(draft));
+      setDraftSavedAt(new Date(draft.savedAt));
+    } catch {
+      // Quota exceeded etc — fail silent, the form still works
+    }
+  }, [slug, doc, name, email, role, notes, replies, acknowledged]);
+
+  function clearDraft() {
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(draftKey(slug, doc));
+      } catch {
+        /* ignore */
+      }
+    }
+    setName("");
+    setEmail("");
+    setRole("");
+    setNotes("");
+    setReplies({});
+    setAcknowledged(false);
+    setDraftRestored(null);
+    setDraftSavedAt(null);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -63,6 +147,14 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
         });
         return;
       }
+      // Success — clear the draft from localStorage
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.removeItem(draftKey(slug, doc));
+        } catch {
+          /* ignore */
+        }
+      }
       setState({ kind: "success" });
     } catch (err) {
       setState({
@@ -94,6 +186,21 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
+      {draftRestored && (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-sky-500/30 bg-sky-500/[0.06] px-3.5 py-2.5 text-sm">
+          <p className="text-sky-200">
+            Picked up where you left off — last saved{" "}
+            <time>{draftRestored.toLocaleString()}</time>.
+          </p>
+          <button
+            type="button"
+            onClick={clearDraft}
+            className="text-xs text-sky-300 hover:text-white underline underline-offset-2"
+          >
+            Start fresh
+          </button>
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="name" className={labelCls}>
@@ -195,15 +302,22 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={state.kind === "submitting"}
-        className="w-full sm:w-auto h-12 px-8 rounded-full bg-lime-500 text-slate-950 font-bold text-sm hover:bg-lime-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {state.kind === "submitting"
-          ? "Submitting…"
-          : "Submit & notify Ben"}
-      </button>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
+        <button
+          type="submit"
+          disabled={state.kind === "submitting"}
+          className="w-full sm:w-auto h-12 px-8 rounded-full bg-lime-500 text-slate-950 font-bold text-sm hover:bg-lime-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {state.kind === "submitting"
+            ? "Submitting…"
+            : "Submit & notify Ben"}
+        </button>
+        <p className="text-xs text-slate-500 sm:ml-2">
+          {draftSavedAt
+            ? `Saved automatically. Close the tab anytime — pick up here later.`
+            : `No pressure to finish now. Your progress auto-saves as you type.`}
+        </p>
+      </div>
     </form>
   );
 }
