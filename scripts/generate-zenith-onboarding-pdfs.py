@@ -1047,19 +1047,20 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
 
     flow.append(PageBreak())
 
-    # ── Section: Account creation permissions ──
+    # ── Section: Account access (credentials Paul shares) ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("06 · ACCOUNT CREATION", s["eyebrow"]))
-    flow.append(Paragraph("Authority to spin up accounts on your behalf.", s["h1"]))
+    flow.append(Paragraph("06 · ACCOUNT ACCESS", s["eyebrow"]))
+    flow.append(Paragraph("Logins I need from you for Phase A.", s["h1"]))
     flow.append(
         Paragraph(
-            "Phase A involves standing up several third-party accounts for "
-            "TEKKY — Twilio (SMS), Meta Business Manager (ads), Google Ads, "
-            "SendGrid (email), Calendly, and one or two others depending on "
-            "scope. Some of these require an email + verification on TEKKY's "
-            "behalf. Before any account is created I need your written "
-            "permission and the email username you want me to use.",
+            "Phase A plugs into several accounts you already own (Shopify, "
+            "Facebook/Meta, Google, your domain registrar) plus a few new "
+            "ones I'll stand up on your behalf (Twilio, SendGrid, Calendly, "
+            "etc.). Fill in the credentials you can share below — every "
+            "password lands in your encrypted credentials vault the moment "
+            "I receive it (AES-256). If you'd rather hand them off verbally "
+            "or via a password manager, leave blank and we'll coordinate.",
             s["body"],
         )
     )
@@ -1069,9 +1070,8 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(
         Checkbox(
             "I authorize BlueJays (Ben Freeman) to create accounts on TEKKY's "
-            "behalf for the Phase A buildout — Twilio, Meta Business Manager, "
-            "Google Ads, SendGrid, Calendly, and any other vendor required to "
-            "complete the AI System scope.",
+            "behalf for the Phase A buildout — Twilio, SendGrid, Calendly, "
+            "and any other vendor required to complete the AI System scope.",
             bold=False,
             font_size=10,
         )
@@ -1088,46 +1088,107 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         )
     )
 
-    flow.append(Spacer(1, 14))
-    flow.append(Paragraph("Email login for new accounts", s["h3"]))
+    flow.append(PageBreak())
+
+    # ── Per-account credential blocks ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("ACCOUNT LOGINS", s["eyebrow"]))
+    flow.append(Paragraph("Share what you have. Skip what you don't.", s["h1"]))
+    flow.append(Spacer(1, 10))
+
+    def add_account_block(title: str, notes: str = "") -> None:
+        """Helper — render a per-account credentials block."""
+        flow.append(Paragraph(title, s["h3"]))
+        if notes:
+            flow.append(Paragraph(notes, s["body_muted"]))
+            flow.append(Spacer(1, 4))
+        flow.append(FillLine("Username / email:", label_width=1.8 * inch))
+        flow.append(Spacer(1, 6))
+        flow.append(FillLine("Password:", label_width=1.8 * inch))
+        flow.append(Spacer(1, 14))
+
+    add_account_block(
+        "📧 Email account",
+        "The inbox you'd like me to use for new accounts (or an existing "
+        "shared inbox if you have one).",
+    )
+
+    add_account_block(
+        "🛍 Shopify (Zenith Sports store)",
+        "Admin-level access so I can wire the Shop CTAs + verify inventory "
+        "events fire to Meta Pixel + GA4.",
+    )
+
+    add_account_block(
+        "📘 Facebook / Meta Business Manager",
+        "Personal FB login is fine — I'll request admin access on your "
+        "Business Manager from there. Used for Meta Ads + Pixel + Instagram.",
+    )
+
+    add_account_block(
+        "🔵 Google account (Ads + Analytics)",
+        "Used for Google Ads, Google Analytics 4, and Search Console. "
+        "If you have a Google Workspace under TEKKY, share that one.",
+    )
+
+    flow.append(PageBreak())
+
+    # ── Domain registrar with provider choice ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("🌐 Domain registrar (tekky.org)", s["h3"]))
     flow.append(
         Paragraph(
-            "When I create a new account, what email address should I use? "
-            "Either pick one of the options below or give me a specific one "
-            "you'd prefer.",
+            "Where tekky.org is registered — pick your provider so I know "
+            "where to find your DNS settings. If your registrar isn't in "
+            "the list, check Other and write it in.",
             s["body_muted"],
         )
     )
     flow.append(Spacer(1, 8))
-    flow.append(
-        Checkbox(
-            "Create accounts under a brand-new alias I should set up "
-            "(e.g. info@tekky.org · accounts@tekky.org · admin@tekky.org)",
-            bold=False,
-            font_size=10,
+
+    # 10 most common registrars laid out 2 per row for a clean grid
+    registrar_data = [
+        [Checkbox("GoDaddy", font_size=10), Checkbox("Namecheap", font_size=10)],
+        [Checkbox("Cloudflare Registrar", font_size=10), Checkbox("Squarespace / Google Domains", font_size=10)],
+        [Checkbox("Hover", font_size=10), Checkbox("Network Solutions", font_size=10)],
+        [Checkbox("Bluehost", font_size=10), Checkbox("Domain.com", font_size=10)],
+        [Checkbox("Name.com", font_size=10), Checkbox("HostGator", font_size=10)],
+    ]
+    reg_table = Table(
+        registrar_data,
+        colWidths=[doc.width / 2, doc.width / 2],
+    )
+    reg_table.setStyle(
+        TableStyle(
+            [
+                ("LEFTPADDING", (0, 0), (-1, -1), 4),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ]
         )
     )
+    flow.append(reg_table)
+    flow.append(Spacer(1, 6))
+    flow.append(Checkbox("Other — write it in below:", font_size=10))
     flow.append(Spacer(1, 4))
-    flow.append(
-        Checkbox(
-            "Use an existing email login you'll give me access to",
-            bold=False,
-            font_size=10,
-        )
-    )
+    flow.append(FillLine("Other registrar name:", label_width=2.0 * inch))
+    flow.append(Spacer(1, 12))
+
+    flow.append(FillLine("Username / email:", label_width=1.8 * inch))
+    flow.append(Spacer(1, 6))
+    flow.append(FillLine("Password:", label_width=1.8 * inch))
     flow.append(Spacer(1, 10))
+
     flow.append(
-        FillLine(
-            "Specific email I should use:",
-            label_width=2.4 * inch,
-        )
-    )
-    flow.append(Spacer(1, 8))
-    flow.append(
-        FillLine(
-            "Login password for that email (if existing):",
-            label_width=3.1 * inch,
-            sublabel="Optional — only if you're sharing an existing inbox.",
+        Paragraph(
+            "Prefer to handle DNS yourself? Skip the credentials and I'll "
+            "send you the two nameservers to paste — should take 60 seconds "
+            "in your registrar's dashboard.",
+            s["body_small"],
         )
     )
 
