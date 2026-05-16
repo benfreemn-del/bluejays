@@ -311,13 +311,17 @@ class FillLine(Flowable):
         c.setStrokeColor(colors.HexColor("#94a3b8"))
         c.setLineWidth(0.6)
         c.line(line_start, 4, line_end, 4)
-        # Overlay AcroForm text field (clickable in any PDF reader)
+        # Overlay AcroForm text field (clickable in any PDF reader).
+        # acroForm.textfield() uses ABSOLUTE page coordinates, so we have
+        # to convert the flowable-local (x, y) to page coords via the
+        # canvas's current transform.
         try:
+            abs_x, abs_y = c.absolutePosition(line_start, 0)
             c.acroForm.textfield(
                 name=self.field_name,
                 tooltip=self.label,
-                x=line_start,
-                y=2,
+                x=abs_x,
+                y=abs_y,
                 width=line_end - line_start,
                 height=self.height - 4,
                 fontSize=11,
@@ -360,13 +364,17 @@ class Checkbox(Flowable):
 
     def draw(self) -> None:  # type: ignore[override]
         c = self.canv
-        # Real AcroForm checkbox (renders its own visible box).
+        # Real AcroForm checkbox (renders its own visible box). Uses
+        # absolute page coordinates — translate via current canvas
+        # transform.
+        placed_box = False
         try:
+            abs_x, abs_y = c.absolutePosition(0, 1)
             c.acroForm.checkbox(
                 name=self.field_name,
                 tooltip=self.label,
-                x=0,
-                y=1,
+                x=abs_x,
+                y=abs_y,
                 size=self.size,
                 checked=False,
                 buttonStyle="check",
@@ -375,8 +383,14 @@ class Checkbox(Flowable):
                 textColor=NAVY,
                 forceBorder=True,
             )
+            placed_box = True
         except Exception:
-            # Fallback: plain rectangle if acroForm.checkbox fails.
+            pass
+        # Fallback or supplement: draw a visible square so printed copies
+        # still show the checkbox. ReportLab's acroForm checkbox does NOT
+        # render a permanent box in the PDF — only the click target. So
+        # we always draw the visible square underneath.
+        if not placed_box:
             c.setStrokeColor(NAVY)
             c.setLineWidth(0.8)
             c.rect(0, 1, self.size, self.size, stroke=1, fill=0)
@@ -478,13 +492,15 @@ class WriteBox(Flowable):
         for i in range(1, self.lines):
             y = box_bottom + i * self.line_height
             c.line(6, y, self.width - 6, y)
-        # Overlay AcroForm multi-line text field
+        # Overlay AcroForm multi-line text field. Uses absolute page
+        # coordinates — translate via current canvas transform.
         try:
+            abs_x, abs_y = c.absolutePosition(2, box_bottom + 2)
             c.acroForm.textfield(
                 name=self.field_name,
                 tooltip=self.label or "Notes",
-                x=2,
-                y=box_bottom + 2,
+                x=abs_x,
+                y=abs_y,
                 width=self.width - 4,
                 height=(box_top - box_bottom) - 4,
                 fontSize=10,
@@ -809,10 +825,76 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
 
     flow.append(PageBreak())
 
+    # ── Section: What's included (value reinforcement) ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("03 · WHAT'S INCLUDED", s["eyebrow"]))
+    flow.append(Paragraph("Everything already running for you.", s["h1"]))
+    flow.append(
+        Paragraph(
+            "Beyond the portal you just toured, the AI System ships with "
+            "the website, funnel engine, and the tracking layer that makes "
+            "the whole thing get smarter over time. Quick reference list — "
+            "scan it once so nothing gets forgotten.",
+            s["body"],
+        )
+    )
+    flow.append(Spacer(1, 14))
+
+    flow.append(Paragraph("Your website", s["h3"]))
+    for b in [
+        "Bespoke showcase at <b>tekky.org</b> — built ground-up to TEKKY's brand, not a template.",
+        "Built-in Shop page routes to your Zenith Sports Shopify checkout — no double-billing, no separate cart.",
+        "Interactive Build-Your-Player tool — parents pick age + position, get a personalized training plan.",
+    ]:
+        flow.append(Paragraph(f"• {b}", s["bullet"]))
+
+    flow.append(Spacer(1, 8))
+    flow.append(Paragraph("Your portal cockpit", s["h3"]))
+    for b in [
+        "986 leads pre-loaded, color-coded by audience (🟡 parent · 🔵 coach · 🟢 player · 🟣 club).",
+        "Cmd-K search + bulk-action toolbar — log a touch on 50 leads in 3 clicks.",
+        "Per-audience funnel visualization with feedback that texts Ben directly.",
+        "Weekly auto-report every Monday + Sales/Partners portal for your affiliate roster.",
+    ]:
+        flow.append(Paragraph(f"• {b}", s["bullet"]))
+
+    flow.append(Spacer(1, 8))
+    flow.append(Paragraph("Your funnel engine", s["h3"]))
+    for b in [
+        "6-touch parent + coach + player email sequences, fully automated by day-offset.",
+        "43 ad creatives ready across Meta Feed/Reels/Stories + Google Search/PMax/YouTube + Lob direct mail.",
+        "AI Lead Reply Drafter + Audience Detector — drafts personalized replies in your voice (Phase A).",
+        "Drill of Week auto-broadcasts to coach list every Tuesday 9am PT (already LIVE).",
+    ]:
+        flow.append(Paragraph(f"• {b}", s["bullet"]))
+
+    flow.append(Spacer(1, 8))
+    flow.append(Paragraph("Tracking + analytics (the invisible improvements)", s["h3"]))
+    for b in [
+        "<b>Microsoft Clarity heatmaps</b> installed — see every click, scroll depth, and rage-click on every page.",
+        "Meta Pixel + Google Analytics 4 firing on every conversion event.",
+        "Per-audience conversion-rate tracking — you'll know which audience converts at what rate by week 2.",
+        "Custom event tracking on every CTA (shop, training drills, contact form, build-your-player).",
+    ]:
+        flow.append(Paragraph(f"• {b}", s["bullet"]))
+
+    flow.append(Spacer(1, 10))
+    flow.append(
+        Paragraph(
+            "If anything on this list ever feels invisible to you, that's "
+            "a feedback loop I want to hear about. Text or email — see the "
+            "Communication section.",
+            s["body_muted"],
+        )
+    )
+
+    flow.append(PageBreak())
+
     # ── Section: What's automated vs not ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("03 · OWNERSHIP", s["eyebrow"]))
+    flow.append(Paragraph("04 · OWNERSHIP", s["eyebrow"]))
     flow.append(Paragraph("What's automated. What's on you.", s["h1"]))
     flow.append(Spacer(1, 6))
 
@@ -839,7 +921,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         flow.append(Paragraph(f"• {line}", s["bullet"]))
 
     flow.append(Spacer(1, 8))
-    flow.append(Paragraph("🛠 STILL ON BEN'S TEAM", s["h3"]))
+    flow.append(Paragraph("🛠 STILL ON BEN", s["h3"]))
     for line in [
         "Ad creative iteration based on weekly performance data",
         "Hyperloop variant optimization once data warrants the upgrade",
@@ -853,7 +935,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Pricing reference ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("04 · PRICING REFERENCE", s["eyebrow"]))
+    flow.append(Paragraph("05 · PRICING REFERENCE", s["eyebrow"]))
     flow.append(Paragraph("What you're paying for.", s["h1"]))
     flow.append(Spacer(1, 6))
 
@@ -968,7 +1050,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Account creation permissions ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("05 · ACCOUNT CREATION", s["eyebrow"]))
+    flow.append(Paragraph("06 · ACCOUNT CREATION", s["eyebrow"]))
     flow.append(Paragraph("Authority to spin up accounts on your behalf.", s["h1"]))
     flow.append(
         Paragraph(
@@ -1054,7 +1136,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Card on file policy ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("06 · CARD ON FILE", s["eyebrow"]))
+    flow.append(Paragraph("07 · CARD ON FILE", s["eyebrow"]))
     flow.append(Paragraph("Our spending rules. Locked in writing.", s["h1"]))
     flow.append(
         Paragraph(
@@ -1101,7 +1183,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Your action items ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("07 · ACTION ITEMS", s["eyebrow"]))
+    flow.append(Paragraph("08 · ACTION ITEMS", s["eyebrow"]))
     flow.append(Paragraph("What's on you. Check off as you go.", s["h1"]))
     flow.append(Spacer(1, 8))
 
@@ -1142,7 +1224,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Voicemail scripts ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("08 · VOICEMAIL SCRIPTS", s["eyebrow"]))
+    flow.append(Paragraph("09 · VOICEMAIL SCRIPTS", s["eyebrow"]))
     flow.append(Paragraph("Three clips. Your voice. Brand-aligned.", s["h1"]))
     flow.append(
         Paragraph(
@@ -1227,7 +1309,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Feedback channels ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("09 · HOW WE COMMUNICATE", s["eyebrow"]))
+    flow.append(Paragraph("10 · HOW WE COMMUNICATE", s["eyebrow"]))
     flow.append(Paragraph("Two channels. Both fast.", s["h1"]))
     flow.append(Spacer(1, 8))
 
