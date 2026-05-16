@@ -307,8 +307,7 @@ export default function Hero() {
             <span className="text-sky-400 block">the obvious choice — online.</span>
           </h1>
           <p className="text-white/65 text-lg md:text-xl mt-5 max-w-2xl mx-auto leading-relaxed">
-            A premium website in 48 hours, or the full AI marketing system — site, ads, funnel, customer machine — built in weeks.{" "}
-            <span className="text-white font-semibold">Pay nothing until you love it.</span>
+            A premium website in 48 hours, or the full AI marketing system — site, ads, funnel, customer machine — built in weeks.
           </p>
           {/* Trust strip — Hormozi review #14 (2026-05-14). 3rd badge swapped
               from generic "100% risk-free" to the $10K-tier guarantee so a
@@ -349,7 +348,7 @@ export default function Hero() {
               href="/agency"
               className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-sky-500/40 bg-sky-500/[0.04] text-sky-200 hover:bg-sky-500/10 hover:border-sky-400/70 hover:text-white text-base font-semibold transition-all duration-300"
             >
-              Build my marketing system
+              Or build the full AI system →
             </a>
           </div>
 

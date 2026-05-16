@@ -8,11 +8,13 @@ import Footer from "@/components/Footer";
  * flagged /pricing as missing — cold paid traffic clicking a "pricing"
  * ad CTA had no destination).
  *
- * Ladder mirrors the FAQ on /agency: Standard $997 (templated entry),
- * Custom Bespoke ($100/yr maintenance + custom build, per-client),
- * Full AI System $10k (high-ticket). Per the offer-ladder rule the
- * $500/mo management does NOT appear here — it's a post-purchase
- * cart-bump on the $10k checkout, not a public tier.
+ * Two-tier ladder per the locked offer rule (memory:
+ * feedback_offer_ladder_two_tiers): $997 Standard Website (entry / gate)
+ * + $10k Full AI System (high-ticket). $500/mo management does NOT
+ * appear — it's a post-purchase cart-bump on the $10k checkout, not a
+ * public tier. Prior 2026-05-16 version included a "Custom Bespoke"
+ * middle tier with a $2,500 anchor; removed 2026-05-16 because no such
+ * tier actually exists in Ben's offer.
  *
  * Applied skill chunks:
  *   - frameworks_video_01 chunk 6 — value-equation per tier (each card
@@ -80,34 +82,11 @@ const TIERS: Tier[] = [
     best: "Service trades · local businesses · solo operators",
   },
   {
-    name: "Custom Bespoke",
-    tagline: "Hand-built showcase for brands with a real story to tell.",
-    price: "Custom",
-    priceNote: "starting around $2,500 · $100/yr maintenance",
-    outcome:
-      "Get a bespoke site that reads like agency work — interactive features, custom photography, brand-aligned design — built in 3-6 weeks.",
-    highlights: [
-      "Fully custom design, no template",
-      "Interactive features (quiz, calculator, map, gallery)",
-      "Real photography sourced + optimized",
-      "Brand-voice copy from a discovery call",
-      "5-15 pages, content fidelity guaranteed",
-      "Pre-launch audit before DNS flip",
-    ],
-    cta: { label: "Apply for a custom build →", href: "/agency/apply" },
-    riskBadges: [
-      "Pre-launch audit before DNS flip",
-      "Real content, zero fabrications",
-    ],
-    accent: "violet",
-    emphasis: true,
-    best: "Indie authors · niche manufacturers · premium service brands",
-  },
-  {
     name: "Full AI System",
     tagline: "Your ads, site, emails, texts, voicemails, and SEO as one system.",
     price: "$10,000",
-    priceNote: "one-time · $500-1,000/mo ongoing infra",
+    priceNote: "one-time · pay-in-full or 4 quarterly payments",
+    emphasis: true,
     outcome:
       "Built in 30 days, paid back in 90 — guaranteed 100 real leads or we keep working free until you hit it.",
     highlights: [
@@ -171,7 +150,7 @@ export default function PricingPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-12 text-center max-w-4xl mx-auto">
         <div className="inline-block bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-          Three tiers · One operator · Real guarantee on every tier
+          Two tiers · One operator · Real guarantee on every tier
         </div>
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
           Pick the system that fits{" "}
@@ -191,8 +170,8 @@ export default function PricingPage() {
       </section>
 
       {/* ── TIER GRID ────────────────────────────────────────────────────── */}
-      <section className="px-6 pb-16 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-6">
+      <section className="px-6 pb-16 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6">
           {TIERS.map((tier) => {
             const a = accentClasses(tier.accent);
             return (
@@ -203,8 +182,8 @@ export default function PricingPage() {
                 } p-6 md:p-7 flex flex-col`}
               >
                 {tier.emphasis && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-violet-500 text-white text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                    Most distinctive
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                    Most operators end here
                   </div>
                 )}
 
@@ -272,9 +251,8 @@ export default function PricingPage() {
           </p>
           <p className="text-lg md:text-xl text-slate-200 leading-relaxed">
             Standard gets you <span className="text-sky-300">live fast</span>.
-            Custom Bespoke gets you <span className="text-violet-300">memorable</span>.
             Full AI System gets you <span className="text-amber-300">compounding</span>.
-            All three are built by Ben, with a written guarantee per tier.
+            Both built by Ben, both with a written guarantee.
           </p>
         </div>
       </section>
@@ -304,7 +282,7 @@ export default function PricingPage() {
             {
               n: "Step 3",
               t: "Pick the tier that fits",
-              d: "Standard for fast launch. Custom for distinction. Full System for compounding scale.",
+              d: "Standard for fast launch. Full System for compounding scale.",
             },
           ].map((s) => (
             <div key={s.n} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">

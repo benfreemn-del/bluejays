@@ -41,6 +41,21 @@ const nextConfig: NextConfig = {
         destination: '/sites/olympic-inspections/:path*',
         permanent: true,
       },
+      // Legacy /audit-classic funnel — retired 2026-05-16. Both the entry
+      // form and any prospect-specific result page (with sub-paths like
+      // /processing and /funnel-preview) redirect to the canonical
+      // /audit funnel. Permanent (308) so Madie's sent links + any
+      // prospect bookmarks still resolve.
+      {
+        source: '/audit-classic',
+        destination: '/audit',
+        permanent: true,
+      },
+      {
+        source: '/audit-classic/:path*',
+        destination: '/audit/:path*',
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

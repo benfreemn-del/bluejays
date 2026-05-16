@@ -31,7 +31,15 @@ interface GeneratedSiteRow {
   site_data: object | null;
 }
 
+// Per audit 2026-05-16: bad URLs like /preview/junk previously slipped
+// through to Postgres which threw "22P02 invalid input syntax for type
+// uuid" three times in a row (retry loop). Guard at the door so non-UUID
+// inputs return null immediately — no DB roundtrip, no retry storm.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function fetchGeneratedSiteRow(id: string): Promise<GeneratedSiteRow | null> {
+  if (!UUID_RE.test(id)) return null;
+
   const { data, error } = await supabase
     .from("generated_sites")
     .select("site_data")

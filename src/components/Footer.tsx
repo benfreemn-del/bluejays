@@ -64,29 +64,6 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-            {/* Social placeholder icons */}
-            <div className="flex items-center gap-3 mt-5">
-              {/* Twitter/X */}
-              <a href="#" className="w-9 h-9 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/30 hover:text-sky-400 hover:border-sky-500/30 transition-all duration-300">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-              {/* LinkedIn */}
-              <a href="#" className="w-9 h-9 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/30 hover:text-sky-400 hover:border-sky-500/30 transition-all duration-300">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
-                </svg>
-              </a>
-              {/* Instagram */}
-              <a href="#" className="w-9 h-9 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/30 hover:text-sky-400 hover:border-sky-500/30 transition-all duration-300">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
-                  <rect x="2" y="2" width="20" height="20" rx="5" />
-                  <circle cx="12" cy="12" r="5" />
-                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
-                </svg>
-              </a>
-            </div>
           </div>
         </div>
 
@@ -109,7 +86,7 @@ export default function Footer() {
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              Work with us
+              Become an affiliate
             </a>
             <p className="flex items-center gap-2 text-white/30 text-sm">
               <BluejayLogo size={16} className="text-sky-500" />
