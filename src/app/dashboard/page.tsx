@@ -16,7 +16,7 @@ import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest"
 import RoleBadge from "@/components/dashboard/RoleBadge";
 import AdsTabV2 from "@/components/portal/AdsTabV2";
 import EnvStatusPanel from "@/components/dashboard/EnvStatusPanel";
-import { useRole, SALES_TOP_NAV_ALLOWED } from "@/lib/use-role";
+import { useRole } from "@/lib/use-role";
 import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
@@ -47,6 +47,9 @@ import CalculatorStatsCard from "@/components/dashboard/CalculatorStatsCard";
 import InFlightBuildsCard from "@/components/dashboard/InFlightBuildsCard";
 import AIActivityCard from "@/components/dashboard/AIActivityCard";
 import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
+import DashboardTopNav, {
+  type NavTabId,
+} from "@/components/dashboard/DashboardTopNav";
 
 /* ───────────────────────── TAB SYSTEM ─────────────────────────
    Refactored 2026-05-06 (Ben answers 1A/2C/3A/4D/5A/6A/7B/8A/9A/10A).
@@ -76,71 +79,26 @@ type Tab =
   | "images"
   | "settings";
 
-type TabGroup = "pipeline" | "building" | "admin";
-
-type TabDef = {
-  id: Tab;
-  label: string;
-  emoji: string;
-  /** When set, clicking the tab navigates AWAY (link mode). When unset,
-      the tab swaps content in-place via setTab() (real tab mode). */
-  href?: string;
-  /** Hormozi backend review C1 (2026-05-16): every non-overview tab
-   *  rolls up to one of three groups so the daily nav shows 4 primary
-   *  buttons (Overview + 3 groups) instead of 15. Sub-tabs surface in
-   *  a secondary row when the parent group is active. */
-  group?: TabGroup;
-};
-
-// Tabs surfaced in the top nav. Reduced 2026-05-08 + 2026-05-12 +
-// regrouped 2026-05-16 per Hormozi backend review C1.
-//
-// Groupings (Hormozi: "simpler beats more"):
-//   Overview standalone — money pulse + proof of work (top of mind)
-//   Pipeline group  — every lead-flow surface (Leads / Map / Funnels /
-//                     Pipeline / Win-Loss / Sales Portal)
-//   Building group  — every active-work surface (Client Jobs /
-//                     Onboarding / Master To-Do / AI Skills / Ads)
-//   Admin group     — every back-office surface (Numbers /
-//                     Diagnostic / Settings)
-const TABS: TabDef[] = [
-  // Standalone — always primary
-  { id: "overview", label: "Overview", emoji: "🏠" },
-  // ── PIPELINE ──────────────────────────────────────────────────
-  { id: "leads", label: "Leads", emoji: "📥", group: "pipeline" },
-  { id: "map", label: "Map", emoji: "🗺️", group: "pipeline" },
-  { id: "funnels", label: "Funnels", emoji: "🎯", group: "pipeline" },
-  { id: "sales-pipeline", label: "Pipeline", emoji: "📊", href: "/dashboard/sales-pipeline", group: "pipeline" },
-  { id: "win-loss", label: "Win-Loss", emoji: "📉", href: "/dashboard/win-loss", group: "pipeline" },
-  { id: "sales-portal", label: "Sales Portal", emoji: "🤝", href: "/dashboard/script", group: "pipeline" },
-  // ── BUILDING ─────────────────────────────────────────────────
-  { id: "client-jobs", label: "Client Jobs", emoji: "💼", href: "/dashboard/clients", group: "building" },
-  { id: "onboarding", label: "Onboarding", emoji: "🛒", href: "/dashboard/onboarding", group: "building" },
-  { id: "todo", label: "Master To-Do", emoji: "✅", href: "/dashboard/all-tasks", group: "building" },
-  { id: "ai-skills", label: "AI Skills", emoji: "🧠", group: "building" },
-  { id: "ads", label: "Ads", emoji: "📢", group: "building" },
-  // ── ADMIN ────────────────────────────────────────────────────
-  { id: "numbers", label: "Numbers", emoji: "🧮", href: "/dashboard/numbers", group: "admin" },
-  { id: "diagnostic", label: "Diagnostic", emoji: "🧠", href: "/dashboard/diagnostic", group: "admin" },
-  { id: "settings", label: "Settings", emoji: "⚙️", group: "admin" },
-];
-
-const VALID_TABS = new Set<Tab>(TABS.map((t) => t.id));
-
-const GROUP_META: Record<TabGroup, { label: string; emoji: string }> = {
-  pipeline: { label: "Pipeline", emoji: "📥" },
-  building: { label: "Building", emoji: "🔧" },
-  admin: { label: "Admin", emoji: "⚙️" },
-};
+// In-place tabs that render content inside dashboard/page.tsx (vs href
+// tabs that navigate to a separate /dashboard/* page). The full
+// 7-category nav structure lives in
+// src/components/dashboard/DashboardTopNav.tsx — this set is just the
+// URL-hydration whitelist for `?tab=...`.
+const IN_PLACE_TABS = new Set<Tab>([
+  "overview",
+  "leads",
+  "map",
+  "funnels",
+  "ads",
+  "ai-skills",
+  "settings",
+]);
 
 export default function DashboardPage() {
   const role = useRole();
-  // Filter tabs by role (Q4=A locked 2026-05-08). Owner sees the full
-  // TABS array; sales (Madie) sees only SALES_TOP_NAV_ALLOWED.
-  const visibleTabs =
-    role === "sales"
-      ? TABS.filter((t) => SALES_TOP_NAV_ALLOWED.has(t.id))
-      : TABS;
+  // Role-based nav filtering happens inside DashboardTopNav now —
+  // sales role sees only items in SALES_TOP_NAV_ALLOWED. Per-tab body
+  // rendering still gates by `role` below.
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [scoutOpen, setScoutOpen] = useState(false);
@@ -163,7 +121,7 @@ export default function DashboardPage() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const t = params.get("tab") as Tab;
-    if (t && VALID_TABS.has(t)) setTabState(t);
+    if (t && IN_PLACE_TABS.has(t)) setTabState(t);
   }, []);
 
   const switchTab = useCallback((next: Tab) => {
@@ -318,14 +276,17 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* HEADER — title row + horizontal scrolling tab bar (Zenith pattern) */}
+      {/* HEADER — title row + categorized hover/click-dropdown nav.
+          Redesigned 2026-05-12 per Ben: widened to max-w-screen-2xl,
+          7 categories with dropdowns, AI System now its own category.
+          See src/components/dashboard/DashboardTopNav.tsx. */}
       <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 sm:px-6 py-3">
+        <div className="mx-auto flex w-full max-w-screen-2xl items-center gap-3 px-4 sm:px-6 lg:px-8 py-3">
           <Link href="/" className="flex min-w-0 items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.18em] text-muted">BlueJays</p>
-              <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
+              <h1 className="truncate text-2xl font-bold sm:text-3xl">Dashboard</h1>
             </div>
           </Link>
           {/* Active-role badge — shows the session role (sales/owner)
@@ -337,115 +298,14 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* TAB BAR — Hormozi backend review C1 (2026-05-16). Refactored
-            from a flat 15-tab strip to a 2-tier nav: primary row shows
-            [Overview] + 3 group chips (Pipeline / Building / Admin),
-            secondary row shows the active group's sub-tabs. Cuts the
-            visible nav surface from 15 items to 4 by default — Hormozi
-            "simpler beats more" — with every tab still 1 click away. */}
-        {(() => {
-          const overviewTab = visibleTabs.find((t) => t.id === "overview");
-          // Which group is the user currently in? Drives the secondary row.
-          const activeTabDef = visibleTabs.find((t) => t.id === tab);
-          const activeGroup: TabGroup | null = activeTabDef?.group ?? null;
-          const groupsWithTabs: TabGroup[] = (["pipeline", "building", "admin"] as TabGroup[]).filter(
-            (g) => visibleTabs.some((t) => t.group === g),
-          );
-          const subTabs = activeGroup
-            ? visibleTabs.filter((t) => t.group === activeGroup)
-            : [];
-
-          const primaryBtn = (
-            active: boolean,
-          ): string =>
-            `py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-              active
-                ? "border-blue-400 text-white"
-                : "border-transparent text-slate-500 hover:text-slate-300"
-            }`;
-
-          const subBtn = (active: boolean): string =>
-            `py-1.5 px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition ${
-              active
-                ? "bg-blue-500/15 border border-blue-400/50 text-blue-200"
-                : "bg-white/[0.02] border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
-            }`;
-
-          return (
-            <>
-              {/* PRIMARY ROW — Overview + 3 group chips */}
-              <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
-                {overviewTab && (
-                  <button
-                    type="button"
-                    onClick={() => switchTab("overview")}
-                    className={primaryBtn(tab === "overview")}
-                  >
-                    <span className="text-base">{overviewTab.emoji}</span>
-                    {overviewTab.label}
-                  </button>
-                )}
-                {groupsWithTabs.map((g) => {
-                  const groupActive = activeGroup === g;
-                  const firstTab = visibleTabs.find((t) => t.group === g);
-                  if (!firstTab) return null;
-                  // Clicking a group chip jumps to its first tab — either
-                  // setTab() if in-place, or href navigation if link.
-                  if (firstTab.href) {
-                    return (
-                      <Link key={g} href={firstTab.href} className={primaryBtn(groupActive)}>
-                        <span className="text-base">{GROUP_META[g].emoji}</span>
-                        {GROUP_META[g].label}
-                      </Link>
-                    );
-                  }
-                  return (
-                    <button
-                      key={g}
-                      type="button"
-                      onClick={() => switchTab(firstTab.id)}
-                      className={primaryBtn(groupActive)}
-                    >
-                      <span className="text-base">{GROUP_META[g].emoji}</span>
-                      {GROUP_META[g].label}
-                    </button>
-                  );
-                })}
-              </nav>
-
-              {/* SECONDARY ROW — sub-tabs for the active group */}
-              {activeGroup && subTabs.length > 0 && (
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-2.5 flex gap-2 overflow-x-auto">
-                  {subTabs.map((t) => {
-                    const active = tab === t.id;
-                    if (t.href) {
-                      return (
-                        <Link key={t.id} href={t.href} className={subBtn(active)}>
-                          <span>{t.emoji}</span>
-                          {t.label}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => switchTab(t.id)}
-                        className={subBtn(active)}
-                      >
-                        <span>{t.emoji}</span>
-                        {t.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </>
-          );
-        })()}
+        <DashboardTopNav
+          activeTab={tab as NavTabId}
+          onTabChange={(next) => switchTab(next as Tab)}
+          role={role}
+        />
       </header>
 
-      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto w-full max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6 lg:px-8 sm:py-8">
         {loading ? (
           <div className="py-20 text-center text-muted">
             Loading prospects...
