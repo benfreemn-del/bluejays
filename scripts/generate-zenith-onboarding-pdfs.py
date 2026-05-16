@@ -1,7 +1,11 @@
 """
 Generate 4 client-onboarding PDFs for Tekky / Zenith Sports.
 
-Outputs to bluejays/docs/clients/zenith-sports/pdfs/:
+Outputs to bluejays/public/clients/zenith-sports/pdfs/ so the files are
+web-accessible at https://bluejayportfolio.com/clients/zenith-sports/pdfs/
+(and from the local dev server at http://localhost:PORT/clients/
+zenith-sports/pdfs/<filename>.pdf):
+
   1. tekky-onboarding-handoff.pdf  — Paul-facing welcome packet with
      fillable sections (new password, voicemail dates, sign-off).
   2. tekky-walkthrough-prep.pdf    — Ben-facing prep sheet with
@@ -58,8 +62,9 @@ WHITE = colors.white
 
 # ── Paths ────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
-DOCS = ROOT / "docs" / "clients" / "zenith-sports"
-OUT = DOCS / "pdfs"
+# Output to public/ so PDFs are web-accessible at
+# /clients/zenith-sports/pdfs/<file>.pdf
+OUT = ROOT / "public" / "clients" / "zenith-sports" / "pdfs"
 OUT.mkdir(parents=True, exist_ok=True)
 
 
