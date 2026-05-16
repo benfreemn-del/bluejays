@@ -62,6 +62,7 @@ export type NavTabId =
   | "cold-traffic"
   | "social-leads"
   | "heatmap"
+  | "hormozi"
   | "numbers"
   | "backend-audit"
   | "team"
@@ -287,6 +288,13 @@ const CATEGORIES: NavCategory[] = [
         emoji: "🔍",
         href: "/dashboard/backend-audit",
         hint: "Cron heartbeats + system health",
+      },
+      {
+        id: "hormozi",
+        label: "Hormozi Scoreboard",
+        emoji: "🐎",
+        href: "/dashboard/hormozi",
+        hint: "6-Horseman live state + critical-week + back-end fix",
       },
       {
         id: "team",
