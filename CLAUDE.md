@@ -2652,6 +2652,77 @@ template — never skip it when onboarding a partner.
 
 ---
 
+## Shareable Client Doc Pattern (NON-NEGOTIABLE — added 2026-05-15)
+
+Every client-facing onboarding document (welcome packet, brand voice,
+contract acknowledgment, sign-off, walkthrough materials) ships as a
+**paired (PDF + sign-page) deliverable**, not a raw markdown file.
+
+### Why
+- Markdown is for engineers. Clients read PDFs.
+- A raw PDF link gives no acknowledgment signal — Ben has no idea if
+  the client read it, opened it, or just trashed the email.
+- The `/sign/[slug]/[doc]` page makes the read-AND-acknowledge step
+  one-click. Submission fires `sendOwnerAlert()` so Ben gets SMS +
+  email the moment the client confirms receipt. No more "did you get
+  it?" follow-ups.
+
+### The pattern (every shareable client doc follows this shape)
+
+1. **Generate the PDF** to `public/clients/[slug]/pdfs/[filename].pdf`.
+   - Use `scripts/generate-zenith-onboarding-pdfs.py` as the template
+     for new clients. ReportLab + Platypus, brand-aligned per client.
+   - Include the sign URL on the cover page so even printed copies
+     point back to the digital acknowledgment.
+2. **Register it** in `src/lib/onboard-docs.ts`. One entry per (slug,
+   doc) pair: `title`, `brand`, `pdfPath`, `alertSubject`,
+   `description`, optional `extraQuestions[]`.
+3. **The route auto-wires** — `/sign/[slug]/[doc]` reads the registry,
+   embeds the PDF inline, renders the sign-off form with the doc's
+   extra questions, and POSTs to `/api/sign/[slug]/[doc]`.
+4. **On submit:** the API route inserts into `onboarding_acks` table
+   AND calls `sendOwnerAlert()` (SMS + email) with the signer's name,
+   role, email, replies, and any free-form notes.
+
+### What lives where
+
+| Surface | Path | Purpose |
+|---|---|---|
+| PDF (client reads / prints / annotates) | `public/clients/[slug]/pdfs/*.pdf` | Static asset, direct-URL shareable |
+| Registry | `src/lib/onboard-docs.ts` | Maps `(slug, doc)` → PDF + metadata |
+| Sign page | `src/app/sign/[slug]/[doc]/page.tsx` | Embeds PDF + form |
+| API | `src/app/api/sign/[slug]/[doc]/route.ts` | Validates, persists, fires alert |
+| Table | `onboarding_acks` (migration `20260516_onboarding_acks.sql`) | Submission log |
+
+### Rules
+
+- **NEVER send a raw `/pdfs/*.pdf` URL to a client.** Always send the
+  `/sign/[slug]/[doc]` URL. The PDF link is what's embedded inside the
+  sign page; clients can still download it from there.
+- **Acknowledgment fires both channels.** SMS via `sendOwnerAlert()`
+  and the same helper's email branch. If either fails the row still
+  lands in `onboarding_acks` — submission ≠ notification.
+- **URL-as-secret.** Slugs and doc keys are part of the URL; anyone
+  with the link can sign. Don't put PII (phones, internal scores,
+  passwords) into the PDF body — that's what the portal is for. The
+  PDF + sign page is for content the client should see anyway.
+- **Submissions are append-only.** Same client signing twice creates
+  two rows. Don't dedupe — re-signs are real signal (e.g., founder
+  signed initially, partner signs later).
+- **Internal-only docs (Ben's prep, runbooks) DON'T get a sign
+  page.** Keep them in `bluejays/docs/clients/[slug]/` as markdown OR
+  in `public/clients/[slug]/pdfs/` if you want a URL for yourself —
+  but never wire them into the `onboard-docs` registry.
+
+### Extending the pattern
+
+When onboarding a new client at the AI System tier, expect to register
+3-5 sign-able docs: welcome packet, brand voice, scope-of-work,
+weekly-check-in cadence. The pattern scales to dozens of clients
+without per-client routing code — only the registry grows.
+
+---
+
 ## Locked-In Rules · 2026-05-06 evening — moved to docs/archive/2026-Q2-locked-rules.md
 
 Manufacturer ICP buildout + Madie's portal restore. Read on demand if a question references that build.

@@ -500,6 +500,16 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
             s["body_muted"],
         )
     )
+    flow.append(Spacer(1, 10))
+    flow.append(
+        Paragraph(
+            "<b>Confirm receipt online:</b><br/>"
+            "<font face='Courier' size='10'>"
+            "bluejayportfolio.com/sign/zenith-sports/handoff"
+            "</font>",
+            s["body_muted"],
+        )
+    )
     flow.append(PageBreak())
 
     # ── Section: Your portal ──
@@ -1151,6 +1161,16 @@ def build_brand_voice(s: dict[str, ParagraphStyle]) -> None:
             "reply follows when it goes out in TEKKY's name. Read these "
             "once. Flag anything that drifts.",
             s["cover_subtitle"],
+        )
+    )
+    flow.append(Spacer(1, 18))
+    flow.append(
+        Paragraph(
+            "<b>Confirm receipt online:</b><br/>"
+            "<font face='Courier' size='10'>"
+            "bluejayportfolio.com/sign/zenith-sports/brand-voice"
+            "</font>",
+            s["body_muted"],
         )
     )
     flow.append(PageBreak())
