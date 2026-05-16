@@ -121,7 +121,11 @@ export async function sendOwnerEmail(args: {
   prospectId?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+  // Rule 67 (locked 2026-05-12): FROM_EMAIL MUST be hardcoded. Reading
+  // from env caused silent SendGrid 403s when sender-auth on the env
+  // value broke — the Meyer-Electric 90-min debug. Same root cause
+  // was suppressing OIT booking emails to Luke through 2026-05-16.
+  const FROM_EMAIL = "bluejaycontactme@gmail.com";
   const OWNER_EMAIL = process.env.OWNER_EMAIL || "ben@bluejayportfolio.com";
 
   if (!SENDGRID_API_KEY) {
@@ -201,7 +205,11 @@ export async function sendEmailTo(args: {
   clientSlug?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+  // Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL. This function is
+  // the OIT booking-form's email fan-out path to Luke — the env-var
+  // fallback was the silent-drop root cause for the 2026-05-09 and
+  // 2026-05-16 bookings.
+  const FROM_EMAIL = "bluejaycontactme@gmail.com";
   if (!SENDGRID_API_KEY) {
     console.log(`  🔔 [ALERT - would email ${args.to}]: ${args.subject}\n${args.body}`);
     return false;

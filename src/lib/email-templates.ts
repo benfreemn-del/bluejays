@@ -812,7 +812,8 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
 }
 
 const BASE = "https://bluejayportfolio.com";
-const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
+const CONTACT_EMAIL = "bluejaycontactme@gmail.com";
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 /**

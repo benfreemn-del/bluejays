@@ -31,7 +31,8 @@ export const runtime = "nodejs";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
+const FROM_EMAIL = "bluejaycontactme@gmail.com";
 const FROM_NAME = "Ben @ BlueJays";
 
 type App = {

@@ -4,7 +4,8 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
+const FROM_EMAIL = "bluejaycontactme@gmail.com";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

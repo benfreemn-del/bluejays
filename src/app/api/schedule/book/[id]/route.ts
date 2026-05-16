@@ -18,7 +18,8 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
+const FROM_EMAIL = "bluejaycontactme@gmail.com";
 
 // Default appointment duration in minutes
 const APPT_DURATION_MIN = 60;

@@ -56,7 +56,9 @@ async function sendToClient(args: {
   replyToName?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+  // Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL. Env fallback
+  // silently 403s on sender-auth failures.
+  const FROM_EMAIL = "bluejaycontactme@gmail.com";
 
   if (!SENDGRID_API_KEY) {
     console.log(
