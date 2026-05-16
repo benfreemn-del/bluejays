@@ -138,18 +138,26 @@ generator. It implements the four rules below.
 - Eliminate inter-card gaps (each card ends exactly when the next begins,
   no flicker)
 
-**Brand-aligned styling (locked):**
+**Brand-aligned styling (LOCKED — do not deviate per-clip):**
+- **EVERY WORD ALL CAPS.** Locked 2026-05-16 per Ben directive. Matches
+  Hormozi's viral-clip pattern: maximum thumb-stoppage on vertical mobile
+  feeds; ALL CAPS + bold + outline + sky-blue emphasis stack for impact.
+  Captions are not subtitles — they're punch.
 - Font: Arial Black 92pt bold white
 - Outline: 7px black
 - Drop shadow: 4px, 60% alpha (`&HA0000000`)
 - Alignment: top-center (ASS alignment=8)
 - MarginV: 220 (from top — puts text firmly in sky zone above face)
 - Emphasis color: sky-blue `#38bdf8` (BlueJays brand sky-400) → ASS BGR
-  `&HF8BD38&`
+  `&HF8BD38&`. Stays sky-blue even when ALL CAPS — color does the
+  emphasis lift, case does the impact lift.
 - Emphasis target: load-bearing nouns/verbs from the script. Per-VSL
   emphasis word lists live in `vsl-audit-funnel.md`. For daily content,
   emphasize numbers, brand names, dollar amounts, and the verb in the
   CTA.
+- 2-line auto-wrap is expected on 5-word cards at 92pt ALL CAPS. ASS
+  WrapStyle=0 handles it cleanly. Don't shrink the font to fit; the
+  wrap reads as intentional rhythm.
 
 **Inline color override syntax (verified working):**
 ```

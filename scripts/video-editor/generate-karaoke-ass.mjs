@@ -166,17 +166,13 @@ const toAss = (s) => {
   return `${h}:${m.toString().padStart(2, "0")}:${sec}`;
 };
 
-// Render a single card to its dialogue text, applying sky-blue on emphasized words.
-// Capitalize the first character of the card's first word so every card reads
-// as a discrete beat — Whisper's native casing leaves mid-sentence cards
-// lowercase, which makes captions feel like broken speech instead of authored
-// units. Hormozi cap-each-card pattern.
+// Render a single card to its dialogue text. Every word ALL-CAPS — the
+// locked BlueJays caption standard, matching Hormozi's viral-clip pattern
+// (maximum thumb-stoppage on vertical mobile feeds; color + size + caps
+// stack for impact). Emphasis words stay sky-blue.
 const renderCardText = (card) => {
-  const cleanedWords = card.indices.map((idx, position) => {
-    let w = words[idx].word.trim();
-    if (position === 0 && w.length > 0) {
-      w = w[0].toUpperCase() + w.slice(1);
-    }
+  const cleanedWords = card.indices.map((idx) => {
+    const w = words[idx].word.trim().toUpperCase();
     if (emphasizedIdx.has(idx)) {
       return `{\\c&HF8BD38&}${w}{\\rBJ}`;
     }
