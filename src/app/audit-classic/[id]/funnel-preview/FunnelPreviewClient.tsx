@@ -151,7 +151,7 @@ export default function FunnelPreviewClient({
           Real pricing, no surprises
         </p>
         <h3 className="text-2xl md:text-3xl font-black text-white mb-2">
-          $9,700 build · $500-1,000/mo for the AI tools
+          $10,000 build · $500-1,000/mo for the AI tools
         </h3>
         <p className="text-sm text-slate-300 leading-relaxed max-w-xl mx-auto mb-5">
           The recurring goes to Twilio + SendGrid + Claude + your ad

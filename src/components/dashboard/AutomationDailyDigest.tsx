@@ -81,7 +81,7 @@ const CRON_META: Record<string, { emoji: string; label: string; what: string }> 
   ai_package_welcome: {
     emoji: "🎁",
     label: "AI package welcome",
-    what: "5-email arc for $9,700 closes",
+    what: "5-email arc for $10,000 closes",
   },
   win_loss_survey: {
     emoji: "📋",

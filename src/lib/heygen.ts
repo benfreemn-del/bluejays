@@ -24,7 +24,7 @@
  * code is in place, env flip flips it on.
  *
  * Cost: HeyGen Pro is $89/mo for 30 video credits. ~$3 per personalized
- * video. Worth it on a $9,700 close — even a 1% lift over the static
+ * video. Worth it on a $10,000 close — even a 1% lift over the static
  * audit page covers the subscription many times over.
  */
 

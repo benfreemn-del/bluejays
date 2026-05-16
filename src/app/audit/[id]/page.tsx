@@ -7,6 +7,8 @@ import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import RetargetingPixels from "@/components/RetargetingPixels";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
 import ProductAuditVideoBlock from "./ProductAuditVideoBlock";
+import AuditFaqVideos from "./AuditFaqVideos";
+import AuditCTAHub from "./AuditCTAHub";
 
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
@@ -229,6 +231,15 @@ export default async function ProductAuditResultsPage({
         </div>
       </section>
 
+      {/* ── PRE-CALL FAQ VIDEOS (top-5 objection layer) ────────────
+          116-Funnels chunk 13a — confirmation-page 60-second FAQ
+          videos handle the top objections BEFORE the prospect hits
+          Calendly. Quoted "up to 40% show-rate lift." Renders 5
+          accordion cards with script fallback until Loom URLs land
+          in `src/lib/audit-faq-data.ts`. Recording protocol +
+          scripts in `docs/playbooks/audit-faq-videos.md`. */}
+      <AuditFaqVideos />
+
       {/* ── TOP 5 BIGGEST THINGS ───────────────────────────────────── */}
       <section className="border-b border-white/5 bg-slate-900/40">
         <div className="mx-auto max-w-4xl px-6 py-12 md:py-16">
@@ -383,34 +394,30 @@ export default async function ProductAuditResultsPage({
         </div>
       </section>
 
-      {/* ── SCARCITY FOOTER ────────────────────────────────────────── */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-amber-950/15 to-transparent">
-        <div className="mx-auto max-w-3xl px-6 py-12 md:py-14 text-center">
-          <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-3">
-            Want me to fix this for you?
-          </p>
-          <p className="text-base md:text-lg text-slate-300 leading-relaxed">
-            If you&apos;d like to be one of the{" "}
-            <span className="text-white font-bold">5 businesses</span> I&apos;ll
-            be building custom software for this month —{" "}
-            <span className="text-white font-semibold">
-              let&apos;s see if we&apos;re a good fit.
-            </span>{" "}
-            Schedule a 30-min call below.
-          </p>
-          <a
-            href={CALENDLY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-amber-950 font-bold text-base hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] active:scale-[0.97] transition-all"
-          >
-            Schedule a call →
-          </a>
-          <p className="mt-3 text-xs text-slate-500">
-            Or scroll back up and watch the 2-min video first.
-          </p>
-        </div>
-      </section>
+      {/* ── 3-FORK CTA HUB (#pick-your-move) ─────────────────────────
+          Per redesigned funnel architecture (`bluejays-funnels.ts`
+          inbound-audit D0 step 2): "CTA hub click — buy / schedule /
+          preview fork chosen." This is the close surface that the
+          AuditFaqVideos component scrolls to via #pick-your-move.
+
+          Replaces the previous single-Calendly scarcity footer because
+          AuditCTAHub is strictly broader: anchor card for $10,000 Full
+          System (AI System path) + funnel-preview upsell + 3-fork grid
+          (Buy / Schedule / Build me a preview) + trust badges. Aligns
+          with Brunson stack-slide methodology (chunk 18+19 — show
+          every commitment level, let prospect pick the highest one
+          they're ready for) and Hormozi quick-win-front-end pattern
+          (`reference_hormozi_offer_design.md`).
+
+          Checkout URLs go through /claim/[prospectId] which handles
+          Stripe session creation. Schedule fork goes through
+          /schedule/[prospectId] which renders the Calendly embed. */}
+      <AuditCTAHub
+        auditId={a.id}
+        prospectId={a.prospect_id}
+        primaryButtonUrl={`/claim/${a.prospect_id}?plan=installment&source=audit`}
+        secondaryButtonUrl={`/claim/${a.prospect_id}?plan=full&source=audit`}
+      />
 
       <footer className="border-t border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">

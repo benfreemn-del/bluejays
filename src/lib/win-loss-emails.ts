@@ -1,7 +1,7 @@
 /**
  * Win-loss survey email — fires once per prospect when they hit
  * dismissed / unsubscribed status without ever paying for the AI
- * Package ($9,700 tier).
+ * Package ($10,000 tier).
  *
  * Goal: get a one-line reply from the prospect explaining WHY they
  * walked. Five categories cover most: price, timing, fit, competitor,

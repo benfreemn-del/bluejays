@@ -330,7 +330,7 @@ export async function POST(request: NextRequest) {
     // treat it as the agency-tier event. Otherwise treat as a $997
     // website lead. Tunable later if Ben wants different bidding.
     const isAgencyTier = medium === "partner-call" || partnerCode.length > 0;
-    const value = isAgencyTier ? 9700 : 997;
+    const value = isAgencyTier ? 10000 : 997;
     void fireMetaCapi({
       eventName: "Schedule",
       eventId: scheduledEvent?.uri || `calendly-${Date.now()}-${inviteeEmail}`,

@@ -95,7 +95,7 @@ function ceilingFor(track: Track): number {
 function dealValueCents(p: Prospect): { cents: number; label: string; recurring: boolean } {
   switch (p.pricingTier) {
     case "fullsystem":
-      return { cents: 970000, label: "$9.7k", recurring: false };
+      return { cents: 1000000, label: "$10k", recurring: false };
     case "custom":
       return { cents: 10000, label: "$100/yr", recurring: true };
     case "free":

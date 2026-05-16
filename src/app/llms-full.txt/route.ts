@@ -40,7 +40,7 @@ A custom $997 website, designed and shipped before you pay anything, with a 100%
 - No setup fee — just $100/year recurring
 - Examples: Lewis County Autism Coalition, Hector Landscaping, Olympic Inspections & Testing, Master's Window Tinting, KR Ranches
 
-### Full System tier ($9,700 + $500–$1,000/month)
+### Full System tier ($10,000 + $500–$1,000/month)
 - Complete AI Marketing System replacing a traditional agency
 - Custom website + Google Ads + Meta Ads + email automation + SMS automation + SEO + lead-magnet system
 - Per-business AI optimization (Hyperloop) — auto-improves over time

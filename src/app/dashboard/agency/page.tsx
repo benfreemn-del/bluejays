@@ -147,7 +147,7 @@ export default function AgencyDashboardPage() {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">Agency Applications</h1>
               <p className="text-sm text-slate-400 mt-1">
-                $9,700 AI Marketing System review queue
+                $10,000 AI Marketing System review queue
               </p>
             </div>
             {agingNew > 0 && (

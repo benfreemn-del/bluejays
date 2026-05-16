@@ -153,21 +153,9 @@ export default function ClientTasksPage({
         <div className="flex-1 min-w-0 text-[11px] text-slate-500">
           {totalOpen} open · {tasks.length - totalOpen} done
         </div>
-        {/* Auto-impersonate the client owner — owner-only. Madie has
-            no business logging in as a client owner, so the button is
-            hidden for sales role. Server-side route is also admin-
-            cookie gated (defense in depth). */}
-        {role === "owner" && (
-          <a
-            href={`/api/admin/impersonate-client?slug=${encodeURIComponent(slug)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open this client's owner portal as them (no login required)"
-            className="text-[11px] tracking-wider uppercase font-bold text-emerald-300 hover:text-white border border-emerald-700/50 px-2.5 py-1 rounded"
-          >
-            Backend ↗
-          </a>
-        )}
+        {/* Backend impersonation button moved to ClientTabsBar header
+            (2026-05-16) — now persistent across every per-client tab,
+            not just Tasks. */}
       </div>
 
       <main className="mx-auto max-w-3xl px-4 sm:px-6 py-5 pb-32">

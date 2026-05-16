@@ -89,7 +89,7 @@ function qualify(args: {
     return {
       kind: "declined",
       reason:
-        "$9,700 isn't liquid right now — totally fair. The system only pencils out when the budget is firm. Come back when it is.",
+        "$10,000 isn't liquid right now — totally fair. The system only pencils out when the budget is firm. Come back when it is.",
     };
   }
   if (
@@ -109,7 +109,7 @@ function qualify(args: {
     return {
       kind: "declined",
       reason:
-        "Under $3K/mo in revenue suggests you're still finding product-market fit. Throwing $9,700 at a marketing system before the offer is dialed is how good money gets burned. Get the offer working at small scale first.",
+        "Under $3K/mo in revenue suggests you're still finding product-market fit. Throwing $10,000 at a marketing system before the offer is dialed is how good money gets burned. Get the offer working at small scale first.",
     };
   }
 

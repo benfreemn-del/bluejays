@@ -18,7 +18,7 @@ select
   count(*) filter (where pricing_tier = 'standard') as standard_997_count,
   count(*) filter (where pricing_tier = 'custom') as custom_100_count,
   count(*) filter (where pricing_tier = 'free') as free_count,
-  round(avg(case when pricing_tier = 'fullsystem' then 9700
+  round(avg(case when pricing_tier = 'fullsystem' then 10000
                  when pricing_tier = 'standard' then 997
                  when pricing_tier = 'custom' then 100
                  when pricing_tier = 'free' then 30

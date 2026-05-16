@@ -61,6 +61,7 @@ export type NavTabId =
   | "blog"
   | "cold-traffic"
   | "social-leads"
+  | "heatmap"
   | "numbers"
   | "backend-audit"
   | "team"
@@ -258,6 +259,13 @@ const CATEGORIES: NavCategory[] = [
         emoji: "📱",
         href: "/dashboard/social-leads",
         hint: "Inbound from IG / LinkedIn / TT",
+      },
+      {
+        id: "heatmap",
+        label: "Heat Map",
+        emoji: "♨️",
+        href: "/dashboard/heatmap",
+        hint: "Leakage overlay on live site (Clarity-powered)",
       },
     ],
   },

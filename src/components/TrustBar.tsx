@@ -9,7 +9,7 @@
  * Three tiles + a saved-for-clients dollar tile. Falls back to floor
  * values if the fetch fails so the page never shows a 0/loading
  * state to a cold paid-traffic visitor (single biggest first-three-
- * second trust killer on a $9,700 offer).
+ * second trust killer on a $10,000 offer).
  *
  * Per the deep-dive review: cheapest conversion lever sitting unused.
  */
@@ -105,7 +105,7 @@ export default function TrustBar({
       <Tile
         value={`${stats.aiPackagesRunning}`}
         label="AI Packages running"
-        sub="$9,700 tier · live today"
+        sub="$10,000 tier · live today"
         accent="violet"
       />
       <Tile

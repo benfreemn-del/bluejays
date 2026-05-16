@@ -232,10 +232,10 @@ export default function ApplyForm() {
           trackMetaEvent("Lead", {
             content_name: "agency_qualified",
             content_category: form.industry || "uncategorized",
-            value: 9700,
+            value: 10000,
             currency: "USD",
           });
-          trackGoogleAdsConversion(agencyQualifiedSendTo, 9700);
+          trackGoogleAdsConversion(agencyQualifiedSendTo, 10000);
         } else if (json.decision === "review") {
           trackMetaEvent("Lead", {
             content_name: "agency_review",
@@ -543,10 +543,10 @@ export default function ApplyForm() {
 
           {/* Budget */}
           <div className="pt-2">
-            <p className="text-sm font-semibold text-white mb-2">Can you invest $9,700?</p>
+            <p className="text-sm font-semibold text-white mb-2">Can you invest $10,000?</p>
             <p className="text-xs text-slate-400 mb-3">
-              Honest answer only. The full system is $9,700 paid upfront (save
-              $300) or 3 × $3,500 split over 90 days. If that isn&apos;t on the
+              Honest answer only. The full system is $10,000 — pay in full and save $300 ($9,700)
+              or 3 × $3,500 split over 90 days ($10,000 total). If that isn&apos;t on the
               table right now, the $997 website is a better starting point.
             </p>
             <label className="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-slate-700 bg-slate-950/40 hover:border-violet-500/40 transition-colors">
@@ -557,7 +557,7 @@ export default function ApplyForm() {
                 className="mt-1 w-5 h-5 rounded border-slate-600 bg-slate-900 text-violet-500 focus:ring-violet-500/40"
               />
               <span className="text-sm text-slate-300">
-                Yes — I have $9,700 (or 3 × $3,500) liquid available to invest in
+                Yes — I have $10,000 (or 3 × $3,500) liquid available to invest in
                 this system if we decide on the call we&apos;re a fit for each other.
               </span>
             </label>

@@ -2,7 +2,7 @@
 --
 -- Wraps the client_tasks aggregation in /dashboard/clients with a
 -- per-slug "snoozed for follow-up" surface. Use case (locked
--- 2026-05-09): a prospect was interested in the $9,700 AI System
+-- 2026-05-09): a prospect was interested in the $10,000 AI System
 -- offer but isn't ready yet — Ben snoozes the row + picks a
 -- date/time, and the system fires SMS+email reminders at that
 -- moment so the lead doesn't fall off.

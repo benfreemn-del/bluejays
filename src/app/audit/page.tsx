@@ -149,6 +149,7 @@ export default function ProductAuditLandingPage() {
                 variant="B"
                 ctaLabel="Audit my product →"
                 defaultCategory="mfg-ag-equipment"
+                hideCategory
               />
 
               {/* Social proof + trust strip — directly under the button */}

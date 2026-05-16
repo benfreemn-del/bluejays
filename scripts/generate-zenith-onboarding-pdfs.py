@@ -948,14 +948,17 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         ],
         [
             Paragraph("AI System buildout", s["body_muted"]),
-            Paragraph("$9,700", s["body_muted"]),
+            Paragraph("$10,000", s["body_muted"]),
             Paragraph("one-time", s["body_muted"]),
             Paragraph(
-                "<b>4 quarterly installments of $2,425.</b> "
-                "Q1 due at launch. Each installment includes ~$36 "
+                "<b>4 quarterly installments of $2,500.</b> "
+                "Q1 due at launch. Each installment includes <b>~$37</b> "
                 "reserved for WA state Business &amp; Occupation tax "
-                "(1.5% of service revenue), remitted by BlueJays directly "
-                "to the state — no extra charge to you.",
+                "(1.5% of service revenue, $150 total across the program), "
+                "remitted by BlueJays directly to the state — no extra "
+                "charge to you. <b>$300 pay-in-full discount</b> available "
+                "for clients who pay the full $10,000 up front — not "
+                "applied on the 4-installment plan.",
                 s["body_muted"],
             ),
         ],
@@ -1021,17 +1024,35 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Paragraph("Quarterly installment schedule", s["h3"]))
     flow.append(
         Paragraph(
-            "Each installment: <b>$2,389</b> services + <b>$36</b> WA "
-            "B&amp;O tax reserve = <b>$2,425</b> total. Total program: "
-            "$9,555 services + $145 tax reserve = $9,700.",
+            "Each installment: <b>$2,463</b> services + <b>$37</b> WA "
+            "B&amp;O tax reserve = <b>$2,500</b> total. Total program: "
+            "<b>$10,000</b> ($9,850 services + $150 WA B&amp;O tax reserve "
+            "at 1.5%, remitted by BlueJays directly to the state). "
+            "Pay-in-full discount of <b>$300</b> available for clients "
+            "who pay the full program up front — not applied on the "
+            "4-installment plan.",
             s["body_muted"],
         )
     )
     flow.append(Spacer(1, 4))
-    flow.append(Paragraph("• Q1 — $2,425 at launch (Sunday 2026-05-17)", s["bullet"]))
-    flow.append(Paragraph("• Q2 — $2,425 on 2026-08-17", s["bullet"]))
-    flow.append(Paragraph("• Q3 — $2,425 on 2026-11-17", s["bullet"]))
-    flow.append(Paragraph("• Q4 — $2,425 on 2027-02-17", s["bullet"]))
+    flow.append(Paragraph("• Q1 — $2,500 at launch (Sunday 2026-05-17)", s["bullet"]))
+    flow.append(Paragraph("• Q2 — $2,500 on 2026-08-17", s["bullet"]))
+    flow.append(Paragraph("• Q3 — $2,500 on 2026-11-17", s["bullet"]))
+    flow.append(Paragraph("• Q4 — $2,500 on 2027-02-17", s["bullet"]))
+
+    flow.append(Spacer(1, 12))
+    flow.append(Paragraph("When the build clock starts", s["h3"]))
+    flow.append(
+        Paragraph(
+            "Phase A account stand-up and build work begin the business day "
+            "Q1 payment clears. This is standard for engagements at this "
+            "scope — it keeps the launch timeline honest on both sides and "
+            "ensures your accounts aren't sitting half-provisioned while "
+            "an invoice is open. Once the first installment lands, the "
+            "30-day onboarding window starts the same day.",
+            s["body_muted"],
+        )
+    )
 
     flow.append(Spacer(1, 14))
     flow.append(Paragraph("Phase B handoff", s["h3"]))
@@ -1506,8 +1527,9 @@ def build_walkthrough_prep(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Paragraph("Pricing reconciliation", s["h3"]))
     flow.append(
         Paragraph(
-            "Confirm doc says: $9,700 in 4 quarterly installments of "
-            "$2,425. Q1 due at launch.",
+            "Confirm doc says: $10,000 in 4 quarterly installments of "
+            "$2,500. Q1 due at launch. (Pay-in-full discount of $300 "
+            "not applied — Tekky is on the 4-installment plan.)",
             s["body_muted"],
         )
     )
@@ -1916,7 +1938,7 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
     flow.append(
         Paragraph(
             "Domain target: <b>tekky.org</b> &nbsp;·&nbsp; "
-            "Q1 installment: <b>$2,425</b>",
+            "Q1 installment: <b>$2,500</b>",
             s["cover_meta"],
         )
     )
@@ -1932,7 +1954,7 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
     saturday_steps = [
         ("Add tekky.org to Vercel project domains", "2 min · Vercel dashboard"),
         ("Add www.tekky.org to Vercel project domains", "2 min"),
-        ("Create Q1 Stripe Payment Link ($2,425 one-time)", "5 min"),
+        ("Create Q1 Stripe Payment Link ($2,500 one-time)", "5 min"),
         ("Cancel existing $2,500/mo subscription in Stripe", "3 min"),
         ("Confirm Paul's reply has 4 items (domain, access, email, copy)", "2 min"),
         ("Smoke-test live showcase routes in incognito", "5 min"),
@@ -2011,7 +2033,7 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Paragraph("9:15 — collect Q1 payment (~5 min)", s["h2"]))
     flow.append(
         Paragraph(
-            "“Quick housekeeping. First quarterly installment is $2,425. "
+            "“Quick housekeeping. First quarterly installment is $2,500. "
             "I'm sending you the payment link right now — takes 30 "
             "seconds. Once that clears I'll flip the domain and we watch "
             "it go live together.”",

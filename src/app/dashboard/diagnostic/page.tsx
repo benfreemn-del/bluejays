@@ -1,8 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import MetricsPanel from "@/components/diagnosis/MetricsPanel";
-import type { DiagnosisMetricsRow } from "@/lib/types";
+import {
+  computeDerivedMetrics,
+  METRIC_LABELS,
+  type MetricInputs,
+} from "@/lib/diagnosis/metrics-calc";
+import type { Industry } from "@/lib/diagnosis/benchmarks";
+import type {
+  DiagnosisEstimateSource,
+  DiagnosisMetricKey,
+  DiagnosisMetricsRow,
+} from "@/lib/types";
 
 /**
  * /dashboard/diagnostic — Hormozi-style live business diagnosis tool.
@@ -97,6 +107,67 @@ const EMPTY_FORM = {
   topComplaint: "",
 };
 
+/** 4 extra stats (round out the top-10 alongside the 6 MetricsPanel fields). */
+type ExtraStats = {
+  monthly_leads: string;
+  close_rate_pct: string;
+  monthly_ad_spend: string;
+  team_size: string;
+};
+
+const EMPTY_EXTRA_STATS: ExtraStats = {
+  monthly_leads: "",
+  close_rate_pct: "",
+  monthly_ad_spend: "",
+  team_size: "",
+};
+
+const EXTRA_STATS_LABELS: Record<keyof ExtraStats, string> = {
+  monthly_leads: "Monthly leads (new prospects in)",
+  close_rate_pct: "Close rate %",
+  monthly_ad_spend: "Monthly ad spend",
+  team_size: "Team size (people who deliver)",
+};
+
+const EXTRA_STATS_UNIT: Record<keyof ExtraStats, "currency" | "count" | "percent"> = {
+  monthly_leads: "count",
+  close_rate_pct: "percent",
+  monthly_ad_spend: "currency",
+  team_size: "count",
+};
+
+const EMPTY_INPUTS: MetricInputs = {
+  monthly_revenue: null,
+  active_customers: null,
+  average_order_value: null,
+  gross_margin_pct: null,
+  churn_monthly_pct: null,
+  customer_acquisition_cost: null,
+};
+
+type MetricsMode = "prospect" | "manual";
+
+type ManualMetricsState = {
+  industry: Industry | null;
+  inputs: MetricInputs;
+  estimates: Partial<Record<DiagnosisMetricKey, DiagnosisEstimateSource>>;
+  qualifier_answers: Record<string, number | null>;
+};
+
+const EMPTY_MANUAL_METRICS: ManualMetricsState = {
+  industry: null,
+  inputs: EMPTY_INPUTS,
+  estimates: {},
+  qualifier_answers: {},
+};
+
+function parseNumericField(v: string): number | null {
+  const trimmed = v.trim();
+  if (!trimmed) return null;
+  const n = parseFloat(trimmed.replace(/[$,\s%]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+
 // Match prospects.id UUID format
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -114,11 +185,27 @@ export default function DiagnosticPage() {
 
   // ─── Metrics panel state ─────────────────────────────────────
   const [metricsOpen, setMetricsOpen] = useState(false);
+  const [metricsMode, setMetricsMode] = useState<MetricsMode>("prospect");
   const [prospectId, setProspectId] = useState("");
   const [metricsRow, setMetricsRow] = useState<DiagnosisMetricsRow | null>(null);
   const [metricsLoading, setMetricsLoading] = useState(false);
   const [magicLink, setMagicLink] = useState<string | null>(null);
   const [magicLinkCopied, setMagicLinkCopied] = useState(false);
+
+  // Manual-mode local metrics state (used when metricsMode === "manual").
+  // Mirrors the shape MetricsPanel.onSave emits so the same panel works
+  // in both modes — saved-to-server (prospect) vs. local-only (manual).
+  const [manualMetrics, setManualMetrics] = useState<ManualMetricsState>(
+    EMPTY_MANUAL_METRICS,
+  );
+
+  // 4 extra top-10 stats — apply in both modes. String state so empty
+  // inputs render cleanly; coerced to number at submit time.
+  const [extraStats, setExtraStats] = useState<ExtraStats>(EMPTY_EXTRA_STATS);
+
+  // Pre-flight modal — gates the diagnose click when stats are missing.
+  const [preFlightOpen, setPreFlightOpen] = useState(false);
+  const [preFlightDismissed, setPreFlightDismissed] = useState(false);
 
   const isValidProspectId = UUID_RE.test(prospectId.trim());
 
@@ -245,6 +332,102 @@ export default function DiagnosticPage() {
     loadRecent();
   }, []);
 
+  // Hydrate businessName + category from URL on mount (so the per-client
+  // Diagnostic tab in ClientTabsBar can deep-link straight into a
+  // pre-filled diagnosis). Uses window.location to avoid the Suspense
+  // boundary useSearchParams would require.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const businessName = sp.get("businessName") ?? "";
+    const category = sp.get("category") ?? "";
+    if (!businessName && !category) return;
+    setForm((prev) => ({
+      ...prev,
+      businessName: businessName || prev.businessName,
+      category: category || prev.category,
+    }));
+  }, []);
+
+  // ─── Effective metrics — merged from whichever mode is active ───
+  const effectiveMetrics = useMemo(() => {
+    // Pick the source: manual state OR the persisted prospect row.
+    const src: ManualMetricsState =
+      metricsMode === "manual"
+        ? manualMetrics
+        : metricsRow
+          ? {
+              industry: (metricsRow.industry ?? null) as Industry | null,
+              inputs: {
+                monthly_revenue: metricsRow.monthly_revenue ?? null,
+                active_customers: metricsRow.active_customers ?? null,
+                average_order_value: metricsRow.average_order_value ?? null,
+                gross_margin_pct: metricsRow.gross_margin_pct ?? null,
+                churn_monthly_pct: metricsRow.churn_monthly_pct ?? null,
+                customer_acquisition_cost:
+                  metricsRow.customer_acquisition_cost ?? null,
+              },
+              estimates: metricsRow.estimates ?? {},
+              qualifier_answers: metricsRow.qualifier_answers ?? {},
+            }
+          : EMPTY_MANUAL_METRICS;
+
+    const derived = computeDerivedMetrics(src.inputs);
+    return {
+      industry: src.industry,
+      ...src.inputs,
+      monthly_leads: parseNumericField(extraStats.monthly_leads),
+      close_rate_pct: parseNumericField(extraStats.close_rate_pct),
+      monthly_ad_spend: parseNumericField(extraStats.monthly_ad_spend),
+      team_size: parseNumericField(extraStats.team_size),
+      derived: {
+        ltv: derived.ltv,
+        ltv_cac_ratio: derived.ltv_cac_ratio,
+        payback_months: derived.payback_months,
+        avg_lifespan_months: derived.avg_lifespan_months,
+        arpu_monthly: derived.arpu_monthly,
+        health_score: derived.health_score,
+      },
+    };
+  }, [metricsMode, manualMetrics, metricsRow, extraStats]);
+
+  // The 10 top stats — surfaced in the pre-flight check.
+  const TOP_10_KEYS: Array<{
+    key: keyof typeof effectiveMetrics;
+    label: string;
+  }> = [
+    { key: "monthly_revenue", label: METRIC_LABELS.monthly_revenue },
+    { key: "active_customers", label: METRIC_LABELS.active_customers },
+    { key: "average_order_value", label: METRIC_LABELS.average_order_value },
+    { key: "gross_margin_pct", label: METRIC_LABELS.gross_margin_pct },
+    { key: "churn_monthly_pct", label: METRIC_LABELS.churn_monthly_pct },
+    {
+      key: "customer_acquisition_cost",
+      label: METRIC_LABELS.customer_acquisition_cost,
+    },
+    { key: "monthly_leads", label: EXTRA_STATS_LABELS.monthly_leads },
+    { key: "close_rate_pct", label: EXTRA_STATS_LABELS.close_rate_pct },
+    { key: "monthly_ad_spend", label: EXTRA_STATS_LABELS.monthly_ad_spend },
+    { key: "team_size", label: EXTRA_STATS_LABELS.team_size },
+  ];
+
+  const missingTop10 = TOP_10_KEYS.filter(
+    ({ key }) => effectiveMetrics[key] === null || effectiveMetrics[key] === undefined,
+  );
+
+  // What the user CLICKS — gates on the pre-flight when stats are missing.
+  function onDiagnoseClick() {
+    if (form.businessText.trim().length < 20) {
+      setError("Add at least one sentence about the business (20+ chars).");
+      return;
+    }
+    if (missingTop10.length > 0 && !preFlightDismissed) {
+      setPreFlightOpen(true);
+      return;
+    }
+    submit();
+  }
+
   async function submit() {
     if (form.businessText.trim().length < 20) {
       setError("Add at least one sentence about the business (20+ chars).");
@@ -254,9 +437,16 @@ export default function DiagnosticPage() {
     setError(null);
     setResult(null);
     setMeta(null);
+    setPreFlightOpen(false);
     try {
+      // Strip null fields so the payload only carries actual numbers.
+      const cleanMetrics = Object.fromEntries(
+        Object.entries(effectiveMetrics).filter(([, v]) => v !== null && v !== undefined),
+      );
       const payload = {
         ...form,
+        prospectId: metricsMode === "prospect" && isValidProspectId ? prospectId.trim() : undefined,
+        metrics: Object.keys(cleanMetrics).length > 0 ? cleanMetrics : undefined,
         files: files.map((f) => ({
           name: f.name,
           mediaType: f.mediaType,
@@ -446,125 +636,219 @@ export default function DiagnosticPage() {
 
               {metricsOpen && (
                 <div className="px-4 pb-4 border-t border-white/10">
-                  {/* Prospect picker */}
-                  <div className="mt-4 mb-4">
-                    <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
-                      Prospect UUID *
-                    </label>
-                    <input
-                      type="text"
-                      value={prospectId}
-                      onChange={(e) => {
-                        setProspectId(e.target.value);
-                        setMagicLink(null);
-                      }}
-                      placeholder="paste prospect UUID (from CRM / dashboard / URL)"
-                      className={`w-full rounded-lg border px-3 py-2 text-sm font-mono ${
-                        prospectId === ""
-                          ? "border-white/10 bg-slate-950"
-                          : isValidProspectId
-                            ? "border-emerald-500/40 bg-slate-950"
-                            : "border-rose-500/40 bg-slate-950"
+                  {/* Mode toggle — prospect UUID vs manual entry */}
+                  <div className="mt-4 mb-3 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setMetricsMode("prospect")}
+                      className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                        metricsMode === "prospect"
+                          ? "bg-emerald-500 text-slate-950"
+                          : "bg-slate-900 text-slate-400 hover:text-white"
                       }`}
-                    />
-                    <p className="text-[11px] text-slate-500 mt-1">
-                      Find a prospect&apos;s UUID by opening their row in
-                      /dashboard/clients or /dashboard/sales-pipeline and
-                      copying from the URL.
-                    </p>
+                    >
+                      Existing prospect (UUID)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMetricsMode("manual")}
+                      className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                        metricsMode === "manual"
+                          ? "bg-emerald-500 text-slate-950"
+                          : "bg-slate-900 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      Manual entry (no UUID)
+                    </button>
                   </div>
 
-                  {isValidProspectId ? (
+                  {metricsMode === "prospect" ? (
                     <>
-                      {metricsLoading && (
-                        <p className="text-xs text-slate-500 my-3">
-                          Loading existing metrics…
+                      <div className="mt-4 mb-4">
+                        <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
+                          Prospect UUID *
+                        </label>
+                        <input
+                          type="text"
+                          value={prospectId}
+                          onChange={(e) => {
+                            setProspectId(e.target.value);
+                            setMagicLink(null);
+                          }}
+                          placeholder="paste prospect UUID (from CRM / dashboard / URL)"
+                          className={`w-full rounded-lg border px-3 py-2 text-sm font-mono ${
+                            prospectId === ""
+                              ? "border-white/10 bg-slate-950"
+                              : isValidProspectId
+                                ? "border-emerald-500/40 bg-slate-950"
+                                : "border-rose-500/40 bg-slate-950"
+                          }`}
+                        />
+                        <p className="text-[11px] text-slate-500 mt-1">
+                          Find a prospect&apos;s UUID by opening their row in
+                          /dashboard/clients or /dashboard/sales-pipeline and
+                          copying from the URL.
                         </p>
-                      )}
-                      <MetricsPanel
-                        key={prospectId}
-                        initialInputs={
-                          metricsRow
-                            ? {
-                                monthly_revenue: metricsRow.monthly_revenue,
-                                active_customers: metricsRow.active_customers,
-                                average_order_value:
-                                  metricsRow.average_order_value,
-                                gross_margin_pct: metricsRow.gross_margin_pct,
-                                churn_monthly_pct:
-                                  metricsRow.churn_monthly_pct,
-                                customer_acquisition_cost:
-                                  metricsRow.customer_acquisition_cost,
-                              }
-                            : undefined
-                        }
-                        initialIndustry={metricsRow?.industry ?? null}
-                        initialEstimates={metricsRow?.estimates ?? {}}
-                        initialQualifierAnswers={
-                          metricsRow?.qualifier_answers ?? {}
-                        }
-                        onSave={saveMetrics}
-                      />
-
-                      {/* Magic link generator */}
-                      <div className="mt-5 rounded-lg border border-sky-500/30 bg-sky-500/5 p-4">
-                        <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
-                          Send to prospect
-                        </p>
-                        <p className="text-[11px] text-slate-300 mb-3">
-                          Generate a one-time magic link so the prospect can
-                          fill in any missing metrics themselves. Link expires
-                          in 7 days.
-                        </p>
-                        {!magicLink ? (
-                          <button
-                            onClick={generateMagicLink}
-                            className="px-3 py-2 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
-                          >
-                            Generate magic link →
-                          </button>
-                        ) : (
-                          <div className="space-y-2">
-                            <div className="flex gap-2">
-                              <input
-                                readOnly
-                                value={magicLink}
-                                className="flex-1 rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-[11px] text-white font-mono"
-                                onFocus={(e) => e.currentTarget.select()}
-                              />
-                              <button
-                                onClick={copyMagicLink}
-                                className="px-3 py-1.5 text-[11px] font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
-                              >
-                                {magicLinkCopied ? "✓ Copied" : "Copy"}
-                              </button>
-                            </div>
-                            <p className="text-[10px] text-slate-500">
-                              Expires in 7 days · text/email this to the
-                              prospect
-                            </p>
-                          </div>
-                        )}
                       </div>
+
+                      {isValidProspectId ? (
+                        <>
+                          {metricsLoading && (
+                            <p className="text-xs text-slate-500 my-3">
+                              Loading existing metrics…
+                            </p>
+                          )}
+                          <MetricsPanel
+                            key={prospectId}
+                            initialInputs={
+                              metricsRow
+                                ? {
+                                    monthly_revenue: metricsRow.monthly_revenue,
+                                    active_customers: metricsRow.active_customers,
+                                    average_order_value:
+                                      metricsRow.average_order_value,
+                                    gross_margin_pct: metricsRow.gross_margin_pct,
+                                    churn_monthly_pct:
+                                      metricsRow.churn_monthly_pct,
+                                    customer_acquisition_cost:
+                                      metricsRow.customer_acquisition_cost,
+                                  }
+                                : undefined
+                            }
+                            initialIndustry={metricsRow?.industry ?? null}
+                            initialEstimates={metricsRow?.estimates ?? {}}
+                            initialQualifierAnswers={
+                              metricsRow?.qualifier_answers ?? {}
+                            }
+                            onSave={saveMetrics}
+                          />
+
+                          {/* Magic link generator */}
+                          <div className="mt-5 rounded-lg border border-sky-500/30 bg-sky-500/5 p-4">
+                            <p className="text-xs uppercase tracking-wider text-sky-400 font-semibold mb-2">
+                              Send to prospect
+                            </p>
+                            <p className="text-[11px] text-slate-300 mb-3">
+                              Generate a one-time magic link so the prospect
+                              can fill in any missing metrics themselves. Link
+                              expires in 7 days.
+                            </p>
+                            {!magicLink ? (
+                              <button
+                                onClick={generateMagicLink}
+                                className="px-3 py-2 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
+                              >
+                                Generate magic link →
+                              </button>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="flex gap-2">
+                                  <input
+                                    readOnly
+                                    value={magicLink}
+                                    className="flex-1 rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-[11px] text-white font-mono"
+                                    onFocus={(e) => e.currentTarget.select()}
+                                  />
+                                  <button
+                                    onClick={copyMagicLink}
+                                    className="px-3 py-1.5 text-[11px] font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950"
+                                  >
+                                    {magicLinkCopied ? "✓ Copied" : "Copy"}
+                                  </button>
+                                </div>
+                                <p className="text-[10px] text-slate-500">
+                                  Expires in 7 days · text/email this to the
+                                  prospect
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        prospectId !== "" && (
+                          <p className="text-xs text-rose-400 my-3">
+                            Not a valid UUID — paste the full 36-char
+                            prospect ID.
+                          </p>
+                        )
+                      )}
                     </>
                   ) : (
-                    prospectId !== "" && (
-                      <p className="text-xs text-rose-400 my-3">
-                        Not a valid UUID — paste the full 36-char prospect
-                        ID.
+                    <>
+                      <p className="text-[11px] text-slate-500 mt-3 mb-3">
+                        Local-only — nothing saved to the prospect row.
+                        Numbers flow straight into the diagnosis prompt.
                       </p>
-                    )
+                      <MetricsPanel
+                        key="manual"
+                        initialInputs={manualMetrics.inputs}
+                        initialIndustry={manualMetrics.industry}
+                        initialEstimates={manualMetrics.estimates}
+                        initialQualifierAnswers={manualMetrics.qualifier_answers}
+                        onSave={async (state) => {
+                          setManualMetrics({
+                            industry: state.industry,
+                            inputs: state.inputs,
+                            estimates: state.estimates,
+                            qualifier_answers: state.qualifier_answers,
+                          });
+                        }}
+                      />
+                    </>
                   )}
+
+                  {/* 4 extra stats — apply to both modes (round out to 10). */}
+                  <div className="mt-5 rounded-lg border border-white/10 bg-slate-950/60 p-4">
+                    <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3">
+                      Top-of-funnel & capacity (4 more)
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {(Object.keys(EXTRA_STATS_LABELS) as Array<keyof ExtraStats>).map(
+                        (k) => {
+                          const unit = EXTRA_STATS_UNIT[k];
+                          return (
+                            <div key={k}>
+                              <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                                {EXTRA_STATS_LABELS[k]}
+                              </label>
+                              <div className="flex items-center gap-1">
+                                {unit === "currency" && (
+                                  <span className="text-slate-500 text-sm">$</span>
+                                )}
+                                <input
+                                  type="number"
+                                  inputMode={unit === "count" ? "numeric" : "decimal"}
+                                  value={extraStats[k]}
+                                  onChange={(e) =>
+                                    setExtraStats((p) => ({ ...p, [k]: e.target.value }))
+                                  }
+                                  placeholder="—"
+                                  className="w-full rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-sm text-white placeholder-slate-600"
+                                />
+                                {unit === "percent" && (
+                                  <span className="text-slate-500 text-sm">%</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        },
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
 
             <button
-              onClick={submit}
+              onClick={onDiagnoseClick}
               disabled={loading}
               className="mt-6 w-full rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-950 font-semibold px-4 py-3 text-sm transition-colors"
             >
-              {loading ? "Diagnosing…" : "Diagnose"}
+              {loading
+                ? "Diagnosing…"
+                : missingTop10.length > 0
+                  ? `Diagnose · ${10 - missingTop10.length}/10 stats filled`
+                  : "Diagnose · all 10 stats filled"}
             </button>
 
             {error && (
@@ -579,6 +863,9 @@ export default function DiagnosticPage() {
                 setResult(null);
                 setMeta(null);
                 setError(null);
+                setManualMetrics(EMPTY_MANUAL_METRICS);
+                setExtraStats(EMPTY_EXTRA_STATS);
+                setPreFlightDismissed(false);
               }}
               className="mt-2 w-full text-xs text-slate-500 hover:text-slate-300"
             >
@@ -600,6 +887,37 @@ export default function DiagnosticPage() {
             )}
           </section>
         </div>
+
+        {/* PRE-FLIGHT CHECK — surfaces missing stats before firing diagnose */}
+        {preFlightOpen && (
+          <PreFlightModal
+            missing={missingTop10}
+            filledCount={10 - missingTop10.length}
+            mode={metricsMode}
+            extraStats={extraStats}
+            manualMetrics={manualMetrics}
+            onSetExtra={(k, v) =>
+              setExtraStats((p) => ({ ...p, [k]: v }))
+            }
+            onSetManualMetric={(k, v) =>
+              setManualMetrics((p) => ({
+                ...p,
+                inputs: { ...p.inputs, [k]: v },
+                estimates: { ...p.estimates, [k]: "user_entered" },
+              }))
+            }
+            onCancel={() => setPreFlightOpen(false)}
+            onProceed={() => {
+              setPreFlightDismissed(true);
+              setPreFlightOpen(false);
+              submit();
+            }}
+            onOpenMetricsPanel={() => {
+              setMetricsOpen(true);
+              setPreFlightOpen(false);
+            }}
+          />
+        )}
 
         {/* RECENT */}
         {recent.length > 0 && (
@@ -748,6 +1066,185 @@ function KV({ k, v, highlight }: { k: string; v: string; highlight?: boolean }) 
     <div className="mb-2 last:mb-0">
       <p className="text-[11px] uppercase tracking-wider text-slate-500">{k}</p>
       <p className={`text-sm ${highlight ? "text-emerald-300 font-medium" : "text-slate-200"}`}>{v}</p>
+    </div>
+  );
+}
+
+function PreFlightModal({
+  missing,
+  filledCount,
+  mode,
+  extraStats,
+  manualMetrics,
+  onSetExtra,
+  onSetManualMetric,
+  onCancel,
+  onProceed,
+  onOpenMetricsPanel,
+}: {
+  missing: Array<{ key: string; label: string }>;
+  filledCount: number;
+  mode: MetricsMode;
+  extraStats: ExtraStats;
+  manualMetrics: ManualMetricsState;
+  onSetExtra: (k: keyof ExtraStats, v: string) => void;
+  onSetManualMetric: (k: DiagnosisMetricKey, v: number | null) => void;
+  onCancel: () => void;
+  onProceed: () => void;
+  onOpenMetricsPanel: () => void;
+}) {
+  const coreKeys = new Set([
+    "monthly_revenue",
+    "active_customers",
+    "average_order_value",
+    "gross_margin_pct",
+    "churn_monthly_pct",
+    "customer_acquisition_cost",
+  ]);
+  const extraKeys = new Set([
+    "monthly_leads",
+    "close_rate_pct",
+    "monthly_ad_spend",
+    "team_size",
+  ]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      onClick={onCancel}
+    >
+      <div
+        className="w-full max-w-xl rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold mb-1">
+          Quick numbers check
+        </p>
+        <h3 className="text-xl font-bold text-white mb-1">
+          {filledCount}/10 stats filled — {missing.length} still missing
+        </h3>
+        <p className="text-sm text-slate-400 mb-5">
+          The diagnosis gets sharper with every number. Fill what you can
+          here, or skip and let Claude infer from the free-text dump.
+        </p>
+
+        <div className="space-y-3">
+          {missing.map(({ key, label }) => {
+            const isCore = coreKeys.has(key);
+            const isExtra = extraKeys.has(key);
+
+            if (isExtra) {
+              const ek = key as keyof ExtraStats;
+              const unit = EXTRA_STATS_UNIT[ek];
+              return (
+                <div
+                  key={key}
+                  className="rounded-lg border border-white/10 bg-slate-950/60 p-3"
+                >
+                  <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
+                    {label}
+                  </label>
+                  <div className="flex items-center gap-1">
+                    {unit === "currency" && (
+                      <span className="text-slate-500 text-sm">$</span>
+                    )}
+                    <input
+                      type="number"
+                      inputMode={unit === "count" ? "numeric" : "decimal"}
+                      value={extraStats[ek]}
+                      onChange={(e) => onSetExtra(ek, e.target.value)}
+                      placeholder="—"
+                      className="w-full rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-sm text-white placeholder-slate-600"
+                      autoFocus={missing[0]?.key === key}
+                    />
+                    {unit === "percent" && (
+                      <span className="text-slate-500 text-sm">%</span>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            if (isCore && mode === "manual") {
+              const mk = key as DiagnosisMetricKey;
+              const currentValue = manualMetrics.inputs[mk];
+              const unit =
+                mk === "monthly_revenue" ||
+                mk === "average_order_value" ||
+                mk === "customer_acquisition_cost"
+                  ? "currency"
+                  : mk === "gross_margin_pct" || mk === "churn_monthly_pct"
+                    ? "percent"
+                    : "count";
+              return (
+                <div
+                  key={key}
+                  className="rounded-lg border border-white/10 bg-slate-950/60 p-3"
+                >
+                  <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">
+                    {label}
+                  </label>
+                  <div className="flex items-center gap-1">
+                    {unit === "currency" && (
+                      <span className="text-slate-500 text-sm">$</span>
+                    )}
+                    <input
+                      type="number"
+                      inputMode={unit === "count" ? "numeric" : "decimal"}
+                      value={currentValue ?? ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v === "") onSetManualMetric(mk, null);
+                        else {
+                          const n = parseFloat(v);
+                          if (Number.isFinite(n)) onSetManualMetric(mk, n);
+                        }
+                      }}
+                      placeholder="—"
+                      className="w-full rounded border border-white/15 bg-slate-950 px-2 py-1.5 text-sm text-white placeholder-slate-600"
+                      autoFocus={missing[0]?.key === key}
+                    />
+                    {unit === "percent" && (
+                      <span className="text-slate-500 text-sm">%</span>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            // Core metric missing in prospect mode — point user back to the panel.
+            return (
+              <div
+                key={key}
+                className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-200 flex items-center justify-between"
+              >
+                <span>{label}</span>
+                <button
+                  onClick={onOpenMetricsPanel}
+                  className="text-amber-300 hover:text-amber-100 underline-offset-2 hover:underline"
+                >
+                  Open metrics panel →
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 flex gap-3 justify-end">
+          <button
+            onClick={onProceed}
+            className="px-4 py-2 text-sm text-slate-400 hover:text-white"
+          >
+            Skip — diagnose with what I have
+          </button>
+          <button
+            onClick={onProceed}
+            className="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+          >
+            Use these numbers · Diagnose
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

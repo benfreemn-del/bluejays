@@ -95,7 +95,7 @@ From `src/lib/client-site-urls.ts`:
   `src/app/clients/laser-lakes/page.tsx`)
 
 **Action item:**
-- [ ] When ITC closes the $9,700 deal, decide: do they want
+- [ ] When ITC closes the $10,000 deal, decide: do they want
       `itcquickattach.com` → Vercel CNAME (we control DNS) or do they
       want their existing domain pointed at us? Add a row to category
       #2 either way.

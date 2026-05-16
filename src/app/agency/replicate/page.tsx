@@ -3,7 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "What you'd build to replicate this — BlueJays AI Marketing System",
   description:
-    "Honest engineering teardown: every component inside the $9,700 BlueJays AI Marketing System, with hours-to-build and monthly running cost estimates.",
+    "Honest engineering teardown: every component inside the $10,000 BlueJays AI Marketing System, with hours-to-build and monthly running cost estimates.",
 };
 
 /**
@@ -357,7 +357,7 @@ export default function ReplicatePage() {
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-7">
             Yes — you could build this with Claude. Here&apos;s every component
-            inside the $9,700 AI Marketing System, with senior-contractor
+            inside the $10,000 AI Marketing System, with senior-contractor
             hours and monthly running cost. No padding. We built it; we know
             what it cost.
           </p>
@@ -519,7 +519,7 @@ export default function ReplicatePage() {
                     BlueJays AI Marketing System
                   </td>
                   <td className="py-3 text-right text-emerald-400 font-extrabold text-lg">
-                    $9,700
+                    $10,000
                   </td>
                 </tr>
               </tbody>
@@ -581,7 +581,7 @@ export default function ReplicatePage() {
             Or just buy the system
           </h2>
           <p className="text-slate-400 mb-8 leading-relaxed">
-            $9,700 (or 3-pay $10K) · live in 30 days · you own every piece ·
+            $10,000 ($300 off pay-in-full · 3-pay also available) · live in 30 days · you own every piece ·
             cancel monthly support and the system keeps running.
           </p>
           <Link

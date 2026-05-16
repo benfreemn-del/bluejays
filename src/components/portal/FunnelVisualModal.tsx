@@ -27,7 +27,17 @@ import { useEffect, useMemo, useState } from "react";
 
 export type FunnelStepLite = {
   day: number;
-  channel: "email" | "sms" | "voicemail" | "postcard";
+  /** Channel types extended 2026-05-16 to cover the full BlueJays funnel
+   *  architecture. Beyond the 4 cold-outreach channels (email/sms/
+   *  voicemail/postcard), the redesigned funnels surface:
+   *  - call: 1:1 sales calls (Madie 2-min Typeform callback per
+   *    116-Funnels chunk 13c, discovery calls, closing calls)
+   *  - ad: paid creative impressions (Dream 100 buy-in track per
+   *    Brunson chunk 7 — ad targeting dream-100 entries' follower
+   *    audiences)
+   *  - linkedin: LinkedIn voice notes / DMs (Dream 100 work-in track
+   *    for high-ticket manufacturer ICP) */
+  channel: "email" | "sms" | "voicemail" | "postcard" | "call" | "ad" | "linkedin";
   label: string;
   // Optional voicemail transcript — when not present we synthesize from
   // the label so the read-only transcript block always renders something.
@@ -96,20 +106,51 @@ const CHANNEL_OPTIONS: FunnelStepLite["channel"][] = [
   "sms",
   "voicemail",
   "postcard",
+  "call",
+  "ad",
+  "linkedin",
 ];
 
 function channelEmoji(c: FunnelStepLite["channel"]): string {
-  return c === "email" ? "✉" : c === "sms" ? "💬" : c === "voicemail" ? "🎙" : "📮";
+  switch (c) {
+    case "email":
+      return "✉";
+    case "sms":
+      return "💬";
+    case "voicemail":
+      return "🎙";
+    case "postcard":
+      return "📮";
+    case "call":
+      return "📞";
+    case "ad":
+      return "💸";
+    case "linkedin":
+      return "🔗";
+    default:
+      return "📮";
+  }
 }
 
 function channelLabel(c: FunnelStepLite["channel"]): string {
-  return c === "email"
-    ? "Email"
-    : c === "sms"
-      ? "SMS"
-      : c === "voicemail"
-        ? "Voicemail"
-        : "AI Postcard";
+  switch (c) {
+    case "email":
+      return "Email";
+    case "sms":
+      return "SMS";
+    case "voicemail":
+      return "Voicemail";
+    case "postcard":
+      return "AI Postcard";
+    case "call":
+      return "Sales Call";
+    case "ad":
+      return "Paid Ad";
+    case "linkedin":
+      return "LinkedIn";
+    default:
+      return "Touch";
+  }
 }
 
 function deriveTranscript(step: FunnelStepLite): string {

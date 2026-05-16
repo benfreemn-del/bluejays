@@ -1562,7 +1562,7 @@ function AdSpendLogger() {
 /* ─────────────────────────── ROAD TO $5M ─────────────────────────── */
 /**
  * Two-tier revenue tracker for BlueJays' actual product mix:
- *   1. AI Marketing System ($9,700) — the custom AI deal Ben sells
+ *   1. AI Marketing System ($10,000) — the custom AI deal Ben sells
  *      (sites + backend AI software bundled, e.g. Zenith, ITC, Hector)
  *   2. Standard sites ($997) — the templated tier
  *
@@ -1573,13 +1573,13 @@ function AdSpendLogger() {
  * Note: TEKKY balls / Zenith ball revenue is intentionally NOT in
  * here — those belong to Zenith Sports (a client), not BlueJays.
  * Ben's revenue from Zenith is captured under the AI Marketing
- * System tier (one closed deal, $9,700).
+ * System tier (one closed deal, $10,000).
  */
 const GOAL_USD = 5_000_000;
 const STORAGE_KEY = "bluejays.road5m.v2";
 
 type Road5MState = {
-  /** Number of AI Marketing System deals closed ($9,700 each) */
+  /** Number of AI Marketing System deals closed ($10,000 each) */
   aiSystemDeals: number;
   aiSystemPrice: number;
   /** Number of standard $997 site builds */
@@ -1589,7 +1589,7 @@ type Road5MState = {
 
 const ROAD_DEFAULTS: Road5MState = {
   aiSystemDeals: 3,
-  aiSystemPrice: 9700,
+  aiSystemPrice: 10000,
   standardSites: 50,
   standardPrice: 997,
 };
@@ -1650,7 +1650,7 @@ function RoadTo5M({
         <div>
           <h2 className="text-lg font-bold">Road to $5M</h2>
           <p className="text-white/40 text-sm mt-1">
-            Your two product tiers: $9,700 AI Marketing System deals +
+            Your two product tiers: $10,000 AI Marketing System deals +
             $997 standard sites. Edit unit price if your packaging shifts.
             Sliders persist locally.
           </p>

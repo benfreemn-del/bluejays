@@ -76,7 +76,7 @@ export default function AgencySection() {
             {/* Guarantee + price callout — Hormozi review #5 (2026-05-14).
                 Outcome FIRST (emerald guarantee row), price SECOND (violet
                 price strip). Reverses the original visual hierarchy so the
-                $9,700 anchors against a stated outcome instead of leading
+                $10,000 anchors against a stated outcome instead of leading
                 with the number. */}
             <div className="flex flex-col gap-2 mb-8">
               <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.08] w-fit max-w-full">
@@ -85,7 +85,7 @@ export default function AgencySection() {
               </div>
               <div className="flex flex-wrap items-baseline gap-2 px-5 py-3 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] w-fit">
                 <span className="text-white/40 text-sm line-through">$36,000+/yr agency fees</span>
-                <span className="text-white font-extrabold text-xl md:text-2xl">$9,700 one-time</span>
+                <span className="text-white font-extrabold text-xl md:text-2xl">$10,000 one-time</span>
               </div>
             </div>
 

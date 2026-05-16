@@ -6,7 +6,7 @@
  * /api/sell-direct/submit, /api/clients/inquire/[code], /api/partners/apply,
  * etc.) to stamp where a lead actually came from BEFORE the row inserts.
  *
- * Without this stamp, we can't tell post-hoc whether a closed $9,700
+ * Without this stamp, we can't tell post-hoc whether a closed $10,000
  * deal originated from Madie cold-dial vs /cut-my-agency Google Ad
  * vs /audit inbound vs partner ?ref=. Every channel lights up the same
  * after, but optimization is blind without the upstream signal.

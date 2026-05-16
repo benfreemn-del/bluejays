@@ -30,6 +30,18 @@
   box-sizing: border-box;
 }
 
+/* Leaflet z-index containment (NON-NEGOTIABLE — added 2026-05-15).
+   Leaflet's internal panes go up to z-index 1000 (tile=200, overlay=400,
+   marker=600, popup=700, controls=1000). Without containment, a page
+   header at z-40 or a dropdown at z-50 disappears the moment a map
+   renders on the same page. `isolation: isolate` creates a new stacking
+   context that traps every Leaflet z-index inside the map element, so
+   the rest of the page is free to use normal z-index values.
+   See "Map z-index containment" rule in CLAUDE.md. */
+.leaflet-container {
+  isolation: isolate;
+}
+
 html {
   scroll-behavior: smooth;
 }

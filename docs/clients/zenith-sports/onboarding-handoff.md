@@ -153,20 +153,36 @@ For your records — what you're paying for + when each piece bills:
 
 | Service | Tier | Monthly | Status |
 |---|---|---|---|
-| AI System (BlueJays setup) | $9,700 | one-time | 4 quarterly installments of $2,425. Q1 due at launch (Sunday 2026-05-17). |
+| AI System (BlueJays setup) | $10,000 | one-time | 4 quarterly installments of $2,500. Q1 due at launch (Sunday 2026-05-17). |
 | Hyperloop (auto-optimization) | Off → Starter | $0 → $99 | recommend flip after 50+ leads |
 | Claude (AI replies + drafting) | Pro | $149 | live from Phase A |
 | Twilio (SMS + missed-call texter) | TBD | ~$10-30 | starts when number provisions |
 | SendGrid (email delivery) | Starter | $0 | included in BlueJays setup |
 | Meta Ads · Google Ads | TBD | ad spend only | starts Phase A account stand-up |
 
+> **Pay-in-full discount:** $300 off the $10,000 program is available for
+> clients who pay the full amount up front. Not applied on the
+> 4-installment plan — Tekky is on installments.
+
+**Tax breakdown:** Each $2,500 installment = ~$2,463 services + ~$37 WA
+B&O tax reserve (1.5%). Total program = $9,850 services + $150 tax
+reserve = $10,000. BlueJays remits the WA B&O tax directly to the
+state — no extra charge to you.
+
 **Installment schedule:**
-- Q1 — $2,425 at launch (Sunday 2026-05-17)
-- Q2 — $2,425 on 2026-08-17
-- Q3 — $2,425 on 2026-11-17
-- Q4 — $2,425 on 2027-02-17
+- Q1 — $2,500 at launch (Sunday 2026-05-17)
+- Q2 — $2,500 on 2026-08-17
+- Q3 — $2,500 on 2026-11-17
+- Q4 — $2,500 on 2027-02-17
 
 Q1 is due before the DNS flips Sunday morning.
+
+**When the build clock starts:** Phase A account stand-up and build
+work begin the business day Q1 payment clears. This is standard for
+engagements at this scope — keeps the launch timeline honest on both
+sides and ensures your accounts aren't sitting half-provisioned while
+an invoice is open. The 30-day onboarding window starts the moment
+the first installment lands.
 
 **Phase B handoff (target: 30 days post-launch):**
 Account ownership transfers from BlueJays-managed → Zenith-managed

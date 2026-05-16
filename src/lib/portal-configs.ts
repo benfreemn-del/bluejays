@@ -95,6 +95,11 @@ export type PortalConfig = {
      *  public booking page filters slots against the owner's busy
      *  times. Currently OIT-only, but flag-driven for future tenants. */
     calendar?: boolean;
+    /** Route Ops tab — recurring-service crews + ordered customer
+     *  stops + day-of-week sort + Google Maps view + Route Quality
+     *  Score. Phase 1 alpha = landscaping (Hector + Mt View + Elite
+     *  Hardscapes). Phase 2 expands to cleaning/pool/HVAC/etc. */
+    routes?: boolean;
   };
   /** Funnel cards rendered on the Funnels tab */
   funnels: FunnelDef[];
@@ -272,6 +277,7 @@ const HECTOR_LANDSCAPING: PortalConfig = {
     map: false,
     customers: false,
     adminLinkInOverview: false,
+    routes: true,
   },
   funnels: [],
   quickLinks: [
@@ -310,6 +316,7 @@ const MT_VIEW_LANDSCAPING: PortalConfig = {
     map: false,
     customers: false,
     adminLinkInOverview: false,
+    routes: true,
   },
   funnels: [],
   quickLinks: [
@@ -379,6 +386,30 @@ const NEVARLAND_OUTPOST: PortalConfig = {
   ],
 };
 
+const ELITE_HARDSCAPES: PortalConfig = {
+  displayName: "Elite Hardscapes & Landscapes",
+  audiences: [],
+  audienceSourceKeywords: [],
+  pipelineValueOptIn: false,
+  tabs: {
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
+    customers: false,
+    adminLinkInOverview: false,
+    routes: true,
+  },
+  funnels: [],
+  quickLinks: [
+    {
+      href: "/clients/elite-hardscapes-and-landscapes",
+      icon: "🌐",
+      label: "Your site",
+    },
+  ],
+};
+
 const REGISTRY: Record<string, PortalConfig> = {
   // AI-Package tier (full audience funnels + ads + AI skills + map)
   "zenith-sports": ZENITH,
@@ -388,6 +419,7 @@ const REGISTRY: Record<string, PortalConfig> = {
   "hector-landscaping": HECTOR_LANDSCAPING,
   "lewis-county-autism": LEWIS_COUNTY_AUTISM,
   "mt-view-landscaping": MT_VIEW_LANDSCAPING,
+  "elite-hardscapes-and-landscapes": ELITE_HARDSCAPES,
   "laser-lakes": LASER_LAKES,
   "kr-ranches": KR_RANCHES,
   "nevarland-outpost": NEVARLAND_OUTPOST,

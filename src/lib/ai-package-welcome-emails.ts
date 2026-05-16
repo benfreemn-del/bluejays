@@ -1,5 +1,5 @@
 /**
- * AI Package ($9,700) post-purchase welcome sequence.
+ * AI Package ($10,000) post-purchase welcome sequence.
  *
  * Three emails over the first 48 hours after a prospect's pricing_tier
  * flips to 'fullsystem' (i.e. the AI Package is paid). Closes the

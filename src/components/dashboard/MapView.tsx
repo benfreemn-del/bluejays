@@ -702,7 +702,7 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
 
         {/* Hover label overlay — only when no state is locked */}
         {hoveredState && !lockedState && (
-          <div className="absolute top-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-sky-500/30 pointer-events-none z-[400]">
+          <div className="absolute top-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-sky-500/30 pointer-events-none z-10">
             <div className="text-[10px] uppercase tracking-widest text-sky-400 font-bold">
               {STATE_NAMES_FULL[hoveredState] ?? hoveredState}
             </div>
@@ -714,7 +714,7 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
         )}
 
         {/* Status legend — bottom-left overlay */}
-        <div className="absolute bottom-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-white/10 pointer-events-none z-[400]">
+        <div className="absolute bottom-3 left-3 px-3 py-2 rounded-lg bg-slate-900/90 backdrop-blur-sm border border-white/10 pointer-events-none z-10">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/75">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded border border-[#475569] bg-[#0a0f1c] inline-block" />

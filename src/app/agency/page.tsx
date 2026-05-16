@@ -203,15 +203,22 @@ export default function AgencyPage() {
         <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
           Already running ads? Make them work twice as hard.
         </div>
+        {/* Hero rewritten 2026-05-16 per landing_page_optimizer audit
+            (frameworks_video_01 chunk 7 "so-that" outcome + chunk 17
+            three-part headline formula + chunk 14 risk-reversal above
+            value stack). Keeps the "we build the system" framing Ben
+            locked, adds the 100-lead outcome + 90-day timeframe inline
+            so the headline carries the dream outcome AND the risk
+            reversal in one read. */}
         <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
           You&apos;re already paying for ads.{" "}
-          <span className="text-violet-400">We build the system that doubles what they pull in.</span>
+          <span className="text-violet-400">We build the system that doubles them — and guarantees 100 leads in 90 days.</span>
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-4 leading-relaxed">
-          One custom system that runs your ads, website, emails, texts,
-          voicemails, and SEO together — every week it figures out what
-          works for your customers and does more of it. You don&apos;t
-          tweak bids, swap creative, or babysit a dashboard.
+          Your ad spend stops getting wasted. One system runs your ads,
+          website, emails, texts, voicemails, and SEO together — every
+          week it learns what works for your buyers and does more of it.
+          You don&apos;t tweak bids, swap creative, or babysit a dashboard.
         </p>
         <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-4 leading-relaxed">
           We build a path for the buyer who wants the thing, the pro who
@@ -219,8 +226,8 @@ export default function AgencyPage() {
           the shop that sells it for you. Three jobs. One system.
         </p>
         <p className="text-lg text-slate-400 max-w-xl mx-auto mb-8">
-          We build it for you in 30 days. You own all of it.
-          <strong className="text-white"> 100 real leads in 90 days, or we keep working free until you hit it.</strong>
+          Built in 30 days. You own all of it.{" "}
+          <strong className="text-white">100 real leads in 90 days, or we keep working free until you hit it.</strong>
         </p>
 
         {/* Live social-proof bar — pulls from /api/stats/public.
@@ -589,8 +596,8 @@ export default function AgencyPage() {
           they see the price. Each line is what an agency or freelancer would
           quote for that single deliverable in isolation. The total is what
           you'd actually pay if you hired this stack à la carte. The price you
-          actually pay reframes the same buyer from "is $9,700 a lot?" to
-          "I'm getting $24K of value for $9,700." */}
+          actually pay reframes the same buyer from "is $10,000 a lot?" to
+          "I'm getting $24K of value for $10,000." */}
       <section className="px-6 py-16 max-w-3xl mx-auto">
         <div className="text-center mb-10">
           <div className="inline-block bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
@@ -601,8 +608,9 @@ export default function AgencyPage() {
             <span className="text-violet-300">$24,000.</span>
           </h2>
           <p className="text-slate-400 text-lg">
-            You pay $9,700 because we build them all in one connected loop —
+            You pay $10,000 because we build them all in one connected loop —
             not as separate engagements that don&apos;t talk to each other.
+            Pay in full and save $300.
           </p>
         </div>
 
@@ -646,7 +654,10 @@ export default function AgencyPage() {
             </span>
             <div className="text-right">
               <div className="text-3xl md:text-4xl font-black text-white tabular-nums">
-                $9,700
+                $10,000
+              </div>
+              <div className="text-xs text-emerald-400 mt-0.5">
+                save $300 paying in full
               </div>
               <div className="text-xs text-slate-400 mt-0.5">
                 or 3 × $3,500 split over 90 days
@@ -682,7 +693,7 @@ export default function AgencyPage() {
                 If by Day 90 the system hasn&apos;t generated <strong className="text-white">100 qualified leads</strong> for your business, we don&apos;t walk away — we keep running ads, keep optimizing, keep emailing, keep texting, keep iterating. <strong className="text-white">At zero additional cost.</strong> Until you hit the number.
               </p>
               <p className="text-slate-400 text-base leading-relaxed max-w-2xl mx-auto mb-8">
-                We can promise this because the system pays us back through the customer LTV you make from the leads. Hitting the number is in our interest, not just yours. Most agencies refuse to attach a number to their work. We bet $9,700 on ours.
+                We can promise this because the system pays us back through the customer LTV you make from the leads. Hitting the number is in our interest, not just yours. Most agencies refuse to attach a number to their work. We bet $10,000 on ours.
               </p>
               <div className="grid sm:grid-cols-3 gap-4 mt-8 text-left">
                 <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
@@ -729,7 +740,7 @@ export default function AgencyPage() {
             Build the loop once. Let it run.
           </h2>
           <p className="text-slate-400 text-lg mb-8">
-            $9,700 one-time. 100 qualified leads in 90 days, guaranteed — or we
+            $10,000 one-time ($300 off for pay-in-full). 100 qualified leads in 90 days, guaranteed — or we
             work free until you hit it. 8-question fit check first; if
             we&apos;re not right for you, Ben will tell you on the spot.
           </p>

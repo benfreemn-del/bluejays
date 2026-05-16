@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
  * /audit/[id]/funnel-preview
  *
  * Pre-purchase preview of the 3-audience AI Marketing System a prospect
- * would get if they bought the $9,700 package. Mirrors the website
+ * would get if they bought the $10,000 package. Mirrors the website
  * tier's "see the site before you pay" magic — for the AI Package.
  *
  * Renders 3 audience cards customized to the prospect's business

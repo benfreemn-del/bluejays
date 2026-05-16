@@ -214,6 +214,14 @@ export async function POST(request: NextRequest) {
       scraped_data: {
         source: "audit_form",
         submittedUrl: targetUrl,
+        // Explicit funnel-segment tag — connects this submission to
+        // the "inbound-audit" funnel in BLUEJAYS_FUNNELS so the
+        // dashboard's Funnels tab can attribute pipeline counts to
+        // the /audit lead magnet without inferring from source +
+        // status. Added 2026-05-16 alongside the 116-Funnels +
+        // Brunson redesign of bluejays-funnels.ts.
+        funnelSegment: "inbound-audit",
+        funnelEnrolledAt: new Date().toISOString(),
         ...(body.utm || {}),
         // Partner attribution — only stamp if the value looks like a
         // valid code (alphanumeric+dash, 2-40 chars). Webhook will
@@ -407,9 +415,19 @@ export async function POST(request: NextRequest) {
 
   // Hot-lead alert — fire immediately (not inside after()) so Ben gets
   // the SMS before we even respond to the client.
+  //
+  // 2-MIN SLA framing per 116-Funnels chunk 13c. The alert explicitly
+  // names the SLA window so the operator (Ben/Madie) treats it as a
+  // forcing function, not a notification. Telemetry chip on
+  // /dashboard?tab=funnels surfaces the actual hit rate over time.
+  //
+  // Category is included so Madie can route to the right pitch on the
+  // first read — product-ICP categories (mfg-* / indie-author /
+  // ecommerce) get the $10k AI System path; service categories get the
+  // $997 site path. Avoids the wrong-pitch-on-first-call failure mode.
   if (phone) {
     void sendOwnerAlert(
-      `📞 Hot lead: ${businessName} left their phone on the audit form.\nNumber: ${phone}\nCall now → https://bluejayportfolio.com/audit/${finalAuditId}`,
+      `🔥 HOT AUDIT LEAD · 2-min SLA started\n${businessCategory} · ${businessName} (${phone})\nCall NOW: tel:${phone}\nAudit: https://bluejayportfolio.com/audit/${finalAuditId}\nLog the call: hit "Just called" on /dashboard/script`,
     ).catch(() => {});
   }
 

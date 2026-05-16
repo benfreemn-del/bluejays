@@ -25,7 +25,7 @@ const PLAN_LABEL: Record<ServiceAgreementPlan, string> = {
   standard: "Standard ($997 one-time)",
   installment: "Installment ($349 × 3)",
   custom: "Custom (per quote)",
-  agency: "AI Marketing System ($9,700)",
+  agency: "AI Marketing System ($10,000 base / $9,700 pay-in-full)",
 };
 
 export default async function ServiceAgreementPage({

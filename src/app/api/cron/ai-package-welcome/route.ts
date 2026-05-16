@@ -12,7 +12,7 @@ import { logHeartbeat } from "@/lib/cron-heartbeat";
  * /api/cron/ai-package-welcome
  *
  * Daily cron — sends the 3-email post-purchase welcome sequence to
- * AI Package ($9,700) clients. Closes the "Day 1 of being a paying
+ * AI Package ($10,000) clients. Closes the "Day 1 of being a paying
  * client is silent" gap that was costing trust on every $9.7K close.
  *
  * Trigger: prospect.pricing_tier = 'fullsystem' AND

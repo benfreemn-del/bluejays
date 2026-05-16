@@ -28,6 +28,34 @@
  */
 
 import type { EmailTemplate } from "./email-templates";
+import { MANUFACTURER_CATEGORIES } from "./bluejays-funnels";
+
+/**
+ * Product-ICP categories that route to the $10k AI System pitch path
+ * (per `project_10k_package_vertical_split.md` + offer-ladder lock at
+ * `feedback_offer_ladder_two_tiers.md`). When the audit submitter's
+ * category is in this set, Emails 2/3/4 swap to manufacturer-flavored
+ * value-drop copy referencing Tekky / ITC / Brunson stack-slide math.
+ *
+ * SUPERSET of MANUFACTURER_CATEGORIES (the canonical list lives in
+ * `bluejays-funnels.ts`). Adds `indie-author` + `ecommerce` because
+ * those also get the $10k pitch but aren't on the manufacturer
+ * Dream-100 outreach motion (different acquisition funnels but same
+ * email branching).
+ *
+ * Any category NOT in this set defaults to the service-business path
+ * ($997 site only). The service emails are the existing copy — proven
+ * winners; don't touch.
+ */
+const PRODUCT_ICP_CATEGORIES = new Set<string>([
+  ...MANUFACTURER_CATEGORIES,
+  "indie-author",
+  "ecommerce",
+]);
+
+function isProductIcp(category: string): boolean {
+  return PRODUCT_ICP_CATEGORIES.has(category);
+}
 
 /**
  * Subject-line A/B/C variant picker.
@@ -172,9 +200,18 @@ Reply with the word "rebuild" if you want a custom mockup of what your new site 
 }
 
 /**
- * EMAIL 2 — Day 1 — "The fix most {industry} owners get wrong"
- * Frame: vertical-specific insight that 80% of viewers will recognize
- * as their own problem. Soft pitch via reply-driven CTA.
+ * EMAIL 2 — Day 1 — Value-drop wrapping the #1 objection
+ *
+ * Per 116-Funnels chunk 13b — every email must be a value drop wrapped
+ * around one specific objection, NOT a generic reminder. Brunson HSO
+ * recursive framework: hook = curiosity-objection / story = belief-
+ * rewrite TRUMP / offer = single soft CTA.
+ *
+ * Branches on PRODUCT_ICP_CATEGORIES:
+ *  - Product ICP (manufacturers / authors / ecommerce) → objection
+ *    "Is $10k just a website?" → stack slide math (17 + 4 modules)
+ *  - Service businesses → existing vertical-hook copy (proven winner,
+ *    don't touch). For these prospects $997 site is the offer, not $10k.
  */
 export function getAuditEmail2(args: {
   businessName: string;
@@ -182,8 +219,38 @@ export function getAuditEmail2(args: {
   auditUrl: string;
 }): EmailTemplate {
   const { businessName, category, auditUrl } = args;
-  const hook = pickHook(category);
 
+  // ── PRODUCT ICP branch ($10k AI System path) ──────────────────────
+  // 116-Funnels chunk 13b — value drop on FAQ #1 ("Is $10k just a website?")
+  // Pulls from audit-faq-data.ts entry `price-10k-website` belief-rewrite.
+  if (isProductIcp(category)) {
+    const subject = pickVariant(businessName, [
+      `Why $10k for a website actually isn't a website`, // baseline
+      `${businessName} — the 21-module math`, // curiosity + personal
+      `If you saw the audit and thought "what would $10k actually buy me"`, // long-tail
+    ] as const);
+
+    const body = `Saw you ran the audit on ${businessName}. Quick note before tomorrow's email lands:
+
+Most people who run the audit think the next step is "I should fix my website." That's not actually what we sell.
+
+The $10k AI System is 21 modules. The website is one of them. The other 20 are the engine — AI inbound responder, customer-portal backend, missed-call auto-texter, review funnel, lead-scoring, content engine. Manufacturers like ${businessName} also get 4 bonus modules: distributor portal, B2B quote system, custom-order intake, inventory sync.
+
+Math: ~$50k of standalone value. We charge $10k.
+
+Most agencies sell you a $10k brochure. We sell you a $10k machine that keeps making your money back.
+
+Audit's still here if you want the specifics: ${auditUrl}
+
+Reply with "stack" and I'll send you the full breakdown — what each module does + what it'd cost if you bought it standalone.${FOOTER}`;
+
+    return { subject, body, sequence: 401 };
+  }
+
+  // ── SERVICE business branch ($997 site path) ─────────────────────
+  // Existing copy — proven winner. Vertical-hook map drives the
+  // industry-specific mistake/insight pair.
+  const hook = pickHook(category);
   const categoryLabel = category === "general" ? "small business" : category.replace("-", " ");
 
   const subject = pickVariant(businessName, [
@@ -208,10 +275,16 @@ If you want me to send a custom mockup of what ${businessName}'s site could look
 }
 
 /**
- * EMAIL 3 — Day 3 — Case study
- * Frame: "How [client] went from 2 calls/week to 14" — specific named
- * results. NOTE: when we have real client data, replace placeholder
- * Sarah/Maple example with actual.
+ * EMAIL 3 — Day 3 — Case study + Brunson belief-rewrite via TRUMP story
+ *
+ * Per Brunson chunk 17 — better story rewrites the limiting belief.
+ * Per 116-Funnels chunk 5 — proof distribution replaces guarantees in
+ * burned markets.
+ *
+ * Branches on PRODUCT_ICP_CATEGORIES:
+ *  - Product ICP → Tekky case study (manufacturer prospect, $10,000
+ *    AI System, inbound doubled in month 1) — direct apples-to-apples
+ *  - Service businesses → existing Hector landscaping story
  */
 export function getAuditEmail3(args: {
   businessName: string;
@@ -221,6 +294,34 @@ export function getAuditEmail3(args: {
 }): EmailTemplate {
   const { businessName, category, auditUrl, bookUrl } = args;
 
+  // ── PRODUCT ICP branch (Tekky / AI System case study) ────────────
+  if (isProductIcp(category)) {
+    const subject = pickVariant(businessName, [
+      `Tekky — manufacturer + $10,000 + inbound doubled month 1`, // baseline
+      `${businessName}, I want to show you a case study before tomorrow`, // curiosity
+      `What happens when the AI System actually runs`, // outcome-driven
+    ] as const);
+
+    const body = `Quick case study before I let you get on with your day.
+
+Caleb runs Tekky / Zenith Sports — manufacturer, builds soccer training equipment. He took the same audit you took. Scored similar. Had the same skepticism you might be having right now ("$10k for a website? That's insane").
+
+He paid $10,000 in February. First month with the AI System running, his inbound inquiries doubled.
+
+That's not a guarantee — guarantees are dead. Market got burned by too many agencies promising the moon. That's a documented result. The system pays for itself in the first quarter or it doesn't, and you'd know within 90 days.
+
+I'm not telling you Tekky's story to brag. I'm telling you because ${businessName} is a manufacturer like Tekky — and the audit found the same shape of leaks. The 4 manufacturer-bonus modules (distributor portal, B2B quote system, custom-order intake, inventory sync) are specifically why this works for product brands.
+
+Audit's still here: ${auditUrl}
+
+If you want to see Tekky's actual backend — the live mock with the AI inbound responder running, the lead-scoring, the customer portal — book 15 minutes and I'll walk you through it:
+
+${bookUrl}${FOOTER}`;
+
+    return { subject, body, sequence: 402 };
+  }
+
+  // ── SERVICE business branch (Hector case — existing proven copy) ─
   const categoryName = category === "general" ? "local business" : category.replace("-", " ");
   const subject = pickVariant(businessName, [
     `How a ${categoryName} owner doubled her bookings`, // baseline
@@ -248,16 +349,56 @@ ${bookUrl}${FOOTER}`;
 }
 
 /**
- * EMAIL 4 — Day 7 — Objections / FAQ
- * Frame: address the 3 most common objections in <300 words.
+ * EMAIL 4 — Day 7 — Top 3 objections + Brunson belief-rewrite
+ *
+ * Per 116-Funnels chunk 13a — the objections every business owner asks
+ * surface here in email form (mirror of the audit page FAQ accordion).
+ * Per Brunson chunk 17 — each TRUMP story rewrites the limiting belief
+ * with a concrete narrative.
+ *
+ * Branches on PRODUCT_ICP_CATEGORIES:
+ *  - Product ICP → top 3 from locked FAQ stack (audit-faq-data.ts):
+ *    #1 "Is $10k just a website?" / #3 "How fast does it pay back?" /
+ *    #5 "Why trust you over an agency?"
+ *  - Service businesses → existing $997 objection trio (proven copy)
  */
 export function getAuditEmail4(args: {
   businessName: string;
+  category: string;
   auditUrl: string;
   bookUrl: string;
 }): EmailTemplate {
-  const { businessName, auditUrl, bookUrl } = args;
+  const { businessName, category, auditUrl, bookUrl } = args;
 
+  // ── PRODUCT ICP branch (top 3 from locked FAQ stack) ─────────────
+  if (isProductIcp(category)) {
+    const subject = pickVariant(businessName, [
+      `The 3 objections every product owner asks first`, // baseline
+      `${businessName} — top 3 questions before you book`, // personal
+      `"Why $10k?" + "Will it ROI?" + "Why you?" — short answers`, // long-tail curiosity
+    ] as const);
+
+    const body = `Three questions every manufacturer asks before booking a call. Short answers:
+
+1. "Why $10k? That seems expensive for a website."
+The website is 1 of 21 modules. The AI System is the other 20 — AI inbound responder, customer-portal backend, missed-call auto-texter, review funnel, lead-scoring, content engine, plus 4 manufacturer-bonus modules (distributor portal, B2B quote system, custom-order intake, inventory sync). ~$50k of standalone value. We charge $10k. Stack-slide math, not pricing-down.
+
+2. "How fast does it pay back?"
+Tekky paid $10,000 in February. First month with the AI System running, their inbound inquiries doubled. Optimum Works (similar-shape business) went $2.5M → $3.6M in 12 months in a public case study. The system pays for itself in the first quarter or it doesn't — and you'd know within 90 days.
+
+3. "Why trust you over an established agency?"
+You probably shouldn't, if you can afford to wait 6 months and pay $40k. What you get with me instead: $10k, live in 30-60 days, with a working AI System backend you can actually SEE on a demo call BEFORE you pay. Not slides — the actual backend, live, with real mock data, that becomes yours after purchase.
+
+Audit's still here: ${auditUrl}
+
+If even one of those sounds right, book a 15-min call. I'll tell you in the first 5 minutes whether we're a fit.
+
+${bookUrl}${FOOTER}`;
+
+    return { subject, body, sequence: 403 };
+  }
+
+  // ── SERVICE business branch ($997 objection trio — existing copy) ─
   const subject = pickVariant(businessName, [
     `"But I already have a website…"`, // baseline (objection-frame)
     `The 3 reasons owners say no — and what I tell them`, // honest framing

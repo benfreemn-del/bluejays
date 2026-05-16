@@ -40,9 +40,36 @@ interface ForkStats {
   conversion_rate_pct: number;
 }
 
+// 2-min callback SLA telemetry (116-Funnels chunk 13c).
+// Surfaces Madie's response time to hot-lead audit submissions on the
+// dashboard so operator discipline is visible, not just hypothetical.
+interface CallbackSlaStats {
+  label: string;
+  audits_with_phone: number;
+  called_within_2min: number;
+  called_within_15min: number;
+  called_at_all: number;
+  sla_2min_pct: number;
+  sla_15min_pct: number;
+  overall_reach_pct: number;
+}
+
+// Per-funnel-segment counts wired from real Supabase via funnelSegment
+// tag + legacy attribution heuristics. The dashboard card prefers these
+// over hardcoded `defaultCounts` in bluejays-funnels.ts when available.
+interface SegmentCounts {
+  segment: string;
+  total: number;
+  newCount: number;
+  enrolledCount: number;
+  wonCount: number;
+}
+
 interface FunnelStatsResponse {
   windows?: WindowStats[];
   byFork?: ForkStats[];
+  callbackSla?: CallbackSlaStats[];
+  bySegment?: SegmentCounts[];
   generatedAt?: string;
 }
 
@@ -84,19 +111,50 @@ export default function BluejaysFunnelsTab() {
     load();
   }, []);
 
-  // Aggregate-stats strip across all 3 funnels
+  // Lookup map: segment name → real Supabase counts. Empty until
+  // /api/funnel-conversion/stats returns. The card render prefers real
+  // counts over hardcoded `defaultCounts` baselines when present.
+  const segmentCountsMap = useMemo(() => {
+    const m = new Map<string, SegmentCounts>();
+    for (const s of stats?.bySegment ?? []) m.set(s.segment, s);
+    return m;
+  }, [stats]);
+
+  // Effective counts per funnel — real when present, defaultCounts
+  // otherwise. Hoisted as a helper so card render + aggregate strip
+  // stay in sync.
+  function effectiveCounts(segment: string): {
+    counts: { total: number; newCount: number; enrolledCount: number; wonCount: number };
+    isReal: boolean;
+  } {
+    const real = segmentCountsMap.get(segment);
+    if (real) return { counts: real, isReal: true };
+    const def =
+      BLUEJAYS_FUNNELS.find((f) => f.segment === segment)?.defaultCounts;
+    return {
+      counts: def ?? { total: 0, newCount: 0, enrolledCount: 0, wonCount: 0 },
+      isReal: false,
+    };
+  }
+
+  // Aggregate-stats strip across all 3 funnels. Uses real counts when
+  // present; falls back to defaultCounts so the strip never shows zeros
+  // pre-stats-load. The aggregate.isAllReal flag drives the "live data"
+  // badge so Ben sees whether the strip is real-data or baseline.
   const aggregate = useMemo(() => {
-    const total = BLUEJAYS_FUNNELS.reduce(
-      (s, f) => s + f.defaultCounts.total,
-      0,
-    );
-    const won = BLUEJAYS_FUNNELS.reduce(
-      (s, f) => s + f.defaultCounts.wonCount,
-      0,
-    );
+    let total = 0;
+    let won = 0;
+    let allReal = true;
+    for (const f of BLUEJAYS_FUNNELS) {
+      const { counts, isReal } = effectiveCounts(f.segment);
+      total += counts.total;
+      won += counts.wonCount;
+      if (!isReal) allReal = false;
+    }
     const blended = total > 0 ? (won / total) * 100 : 0;
-    return { total, won, blended };
-  }, []);
+    return { total, won, blended, allReal };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [segmentCountsMap]);
 
   return (
     <div className="space-y-6">
@@ -120,6 +178,28 @@ export default function BluejaysFunnelsTab() {
               <span className="text-amber-300 font-bold">+</span> to drop
               a note to yourself.
             </p>
+            {/* Lead-magnet connection strip — surfaces the /audit
+                lead-magnet → primary-funnel relationship at the top
+                of the dashboard so it's never invisible. Redesigned
+                2026-05-16 with the 116-Funnels + Brunson framework
+                stack. */}
+            <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] px-3 py-1.5 text-[11px]">
+              <span className="text-amber-300 font-bold">
+                📥 Active lead magnet
+              </span>
+              <a
+                href="/audit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-200 underline decoration-amber-400/40 hover:decoration-amber-300 font-semibold"
+              >
+                /audit
+              </a>
+              <span className="text-slate-500">→</span>
+              <span className="text-amber-200/90 font-semibold">
+                Inbound Audit → $10k AI System funnel
+              </span>
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-4 text-right">
             <div>
@@ -152,7 +232,11 @@ export default function BluejaysFunnelsTab() {
 
       <div className="grid lg:grid-cols-2 gap-3">
         {BLUEJAYS_FUNNELS.map((f) => {
-          const counts = f.defaultCounts;
+          // Prefer real Supabase counts wired via funnelSegment tag +
+          // attribution heuristics in /api/funnel-conversion/stats.
+          // Falls back to hardcoded defaultCounts baselines until the
+          // stats fetch resolves.
+          const { counts, isReal } = effectiveCounts(f.segment);
           return (
             <div
               key={f.segment}
@@ -188,6 +272,26 @@ export default function BluejaysFunnelsTab() {
                 </span>
               </div>
 
+              {/* Lead-magnet badge — only renders on funnels with an
+                  explicit lead magnet (today: the /audit form on the
+                  Inbound Audit funnel). Surfaces the lead-magnet →
+                  funnel connection on the card itself so it's never
+                  invisible. */}
+              {f.leadMagnet && (
+                <a
+                  href={f.leadMagnet.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mb-3 flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/[0.08] px-2.5 py-1.5 text-[10px] hover:border-amber-400/60 hover:bg-amber-500/[0.12] transition-colors`}
+                  title="Open the lead magnet that feeds this funnel"
+                >
+                  <span className="text-amber-200 font-semibold leading-tight">
+                    {f.leadMagnet.label}
+                  </span>
+                  <span className="text-amber-300/80 text-[11px]">↗</span>
+                </a>
+              )}
+
               {/* Touchpoint sequence — D{n} chips */}
               <div className="mb-3">
                 <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500 mb-1.5">
@@ -207,7 +311,13 @@ export default function BluejaysFunnelsTab() {
                           ? "💬"
                           : s.channel === "voicemail"
                             ? "🎙"
-                            : "📮";
+                            : s.channel === "call"
+                              ? "📞"
+                              : s.channel === "ad"
+                                ? "💸"
+                                : s.channel === "linkedin"
+                                  ? "🔗"
+                                  : "📮";
                     return (
                       <li
                         key={i}
@@ -237,6 +347,29 @@ export default function BluejaysFunnelsTab() {
                     );
                   })}
                 </ol>
+              </div>
+
+              {/* LIVE / BASELINE data-mode badge — surfaces whether
+                  this card's counts come from real Supabase via the
+                  funnelSegment tag + attribution heuristics, or from
+                  hardcoded defaultCounts baselines. Per CLAUDE.md
+                  Status Accuracy Rule (Rule 74 dataMode signal — every
+                  funnel surface must be honest about real vs baseline). */}
+              <div className="mb-2">
+                <span
+                  className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded ${
+                    isReal
+                      ? "text-emerald-300 bg-emerald-500/[0.08] border border-emerald-500/30"
+                      : "text-slate-500 bg-slate-800/40 border border-white/[0.06]"
+                  }`}
+                  title={
+                    isReal
+                      ? "Counts wired from real Supabase via funnelSegment tag + attribution heuristics"
+                      : "Hardcoded baselines from bluejays-funnels.ts (stats fetch failed or pre-load)"
+                  }
+                >
+                  {isReal ? "● Live data" : "○ Baseline"}
+                </span>
               </div>
 
               {/* 4-stat row */}
@@ -296,6 +429,29 @@ export default function BluejaysFunnelsTab() {
                   View landing page ↗
                 </a>
               </div>
+
+              {/* Framework attribution — shows which memory-codified
+                  frameworks shape this funnel's steps. Operators can
+                  grep the framework names back into the reference
+                  files in `.claude/projects/.../memory/`. Surfaces
+                  the redesign work so it's never lost. */}
+              {f.frameworks && f.frameworks.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-white/[0.05]">
+                  <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500 mb-1">
+                    📚 Frameworks
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {f.frameworks.map((fw, i) => (
+                      <span
+                        key={i}
+                        className="inline-block text-[9px] px-1.5 py-0.5 rounded bg-black/30 border border-white/[0.06] text-slate-400"
+                      >
+                        {fw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
@@ -315,6 +471,83 @@ export default function BluejaysFunnelsTab() {
         <p className="text-slate-500 text-sm">Loading analytics…</p>
       ) : !stats ? null : (
         <>
+          {/* 2-MIN CALLBACK SLA CHIPS — 116-Funnels chunk 13c
+              Surfaces Madie's response time on hot audit leads.
+              Three windows (7d / 30d / all) so trend is visible at
+              a glance. Lime when SLA hit; amber when soft-missed
+              (15-min reach); rose when chronically slow. */}
+          <section>
+            <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
+              <h2 className="text-xl font-bold">
+                📞 2-min Callback SLA
+              </h2>
+              <p className="text-[11px] text-slate-500 max-w-xs text-right">
+                Per 116-Funnels chunk 13c — every audit submission
+                with a phone gets called within 2 minutes. Surfaces
+                whether Madie&apos;s operator discipline is holding.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {(stats.callbackSla ?? []).map((s) => {
+                const pct = s.sla_2min_pct;
+                const tone =
+                  pct >= 80
+                    ? { ring: "ring-lime-500/30", text: "text-lime-300", label: "On pace" }
+                    : pct >= 50
+                      ? { ring: "ring-amber-500/30", text: "text-amber-300", label: "Soft miss" }
+                      : { ring: "ring-rose-500/30", text: "text-rose-300", label: "Breached" };
+                return (
+                  <div
+                    key={s.label}
+                    className={`rounded-xl border border-white/10 bg-slate-900/40 p-5 ring-1 ${tone.ring}`}
+                  >
+                    <p className="text-xs uppercase tracking-wider text-slate-500 mb-2">
+                      Last {s.label}
+                    </p>
+                    <p className={`text-3xl font-bold ${tone.text}`}>
+                      {s.sla_2min_pct.toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {s.called_within_2min} of {s.audits_with_phone} hot leads
+                      reached within 2 min
+                    </p>
+                    <div className="mt-4 space-y-1 text-xs text-slate-500">
+                      <p>
+                        Within 15 min:{" "}
+                        <span className="text-slate-300 font-semibold">
+                          {s.sla_15min_pct.toFixed(1)}%
+                        </span>
+                      </p>
+                      <p>
+                        Reached at all:{" "}
+                        <span className="text-slate-300 font-semibold">
+                          {s.overall_reach_pct.toFixed(1)}%
+                        </span>
+                      </p>
+                      <p
+                        className={`text-[10px] uppercase tracking-wider font-bold mt-2 ${tone.text}`}
+                      >
+                        {tone.label}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-xs text-slate-500">
+              Hot lead = audit submission with phone on record. The
+              SLA clock starts at <code className="not-italic mx-1 px-1 rounded bg-slate-800/60 text-slate-400">prospects.created_at</code>{" "}
+              and stops at{" "}
+              <code className="not-italic mx-1 px-1 rounded bg-slate-800/60 text-slate-400">last_contacted_at</code>{" "}
+              (stamped by{" "}
+              <code className="not-italic mx-1 px-1 rounded bg-slate-800/60 text-slate-400">
+                POST /api/prospects/[id]/log-call
+              </code>
+              ). Madie&apos;s LeadPicker has a &quot;Just called&quot; button
+              that fires the stamp.
+            </p>
+          </section>
+
           {/* Audit-to-paid by window */}
           <section>
             <h2 className="text-xl font-bold mb-4">
@@ -417,13 +650,25 @@ export default function BluejaysFunnelsTab() {
         funnel={openFunnel}
         counts={
           openFunnel
-            ? openFunnel.defaultCounts
+            ? effectiveCounts(openFunnel.segment).counts
             : { total: 0, newCount: 0, enrolledCount: 0, wonCount: 0 }
         }
         landingUrl={openFunnel?.landingPath ?? "/audit"}
         slug="bluejays-internal"
         editable
         initialShowNote={openWithNote}
+        // dataMode signal — per Rule 74 / Status Accuracy: every funnel
+        // surface must be honest about whether numbers are real or
+        // projected. When real Supabase counts are wired via the
+        // funnelSegment tag, the modal renders without the amber "DEMO
+        // DATA" banner. When still on hardcoded baselines, the modal
+        // surfaces the demo banner so Ben never confuses baseline for
+        // measured performance.
+        dataMode={
+          openFunnel && effectiveCounts(openFunnel.segment).isReal
+            ? "live"
+            : "demo"
+        }
       />
     </div>
   );

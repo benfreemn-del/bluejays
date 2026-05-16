@@ -28,6 +28,7 @@ import {
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
+import EspConnectSection from "@/components/portal/EspConnectSection";
 import ClientDocsTab from "./ClientDocsTab";
 import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
 import {
@@ -4902,6 +4903,11 @@ function CampaignsTab({
           />
         )}
       </div>
+
+      {/* Phase 1 ESP demand-capture (2026-05-16). Surfaces 5 provider
+          cards so we know which OAuth flow to build first. Wired to
+          /api/client-esp-interest + client_esp_interest Supabase table. */}
+      <EspConnectSection slug={slug} />
 
       <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] divide-y divide-white/[0.06]">
         {campaigns.length === 0 && (

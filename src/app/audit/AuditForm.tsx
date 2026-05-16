@@ -62,6 +62,7 @@ export default function AuditForm({
   variant,
   ctaLabel,
   defaultCategory = "dental",
+  hideCategory = false,
 }: {
   /** Hero variant from middleware-set bj_audit_variant cookie. Tagged
    *  on the audit_lead conversion event so per-variant performance
@@ -75,6 +76,14 @@ export default function AuditForm({
    *  passes "mfg-ag-equipment" so the form opens on a product-relevant
    *  option. /audit-classic accepts the "dental" fallback. */
   defaultCategory?: string;
+  /** Hide the category dropdown entirely (cold-traffic quiz-funnel
+   *  anti-pattern fix, landing_page_optimizer chunk 8 in
+   *  frameworks_video_03). Form silently uses defaultCategory.
+   *  Server can later infer real category from URL via the existing
+   *  scout pipeline. Set true on /audit (cold paid traffic);
+   *  leave false on /audit-classic + dashboard surfaces where
+   *  operator-driven category selection still matters. */
+  hideCategory?: boolean;
 } = {}) {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
@@ -194,8 +203,13 @@ export default function AuditForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-left">
-        <div>
+      {hideCategory ? (
+        // Cold-traffic mode: single email field, full-width. Category is
+        // silently set from defaultCategory and the server will refine via
+        // the scout pipeline. Removes the 41-row dropdown friction that
+        // the landing_page_optimizer skill flagged as a quiz-funnel
+        // anti-pattern (frameworks_video_03 chunk 8).
+        <div className="text-left">
           <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
             Your email
           </label>
@@ -210,24 +224,42 @@ export default function AuditForm({
             className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
           />
         </div>
-        <div>
-          <label htmlFor="cat" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Business category
-          </label>
-          <select
-            id="cat"
-            required
-            value={businessCategory}
-            onChange={(e) => setBusinessCategory(e.target.value)}
-            disabled={state === "submitting"}
-            className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-          >
-            {CATEGORIES.map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-left">
+          <div>
+            <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              Your email
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={state === "submitting"}
+              className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="cat" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              Business category
+            </label>
+            <select
+              id="cat"
+              required
+              value={businessCategory}
+              onChange={(e) => setBusinessCategory(e.target.value)}
+              disabled={state === "submitting"}
+              className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            >
+              {CATEGORIES.map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="text-left">
         <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">

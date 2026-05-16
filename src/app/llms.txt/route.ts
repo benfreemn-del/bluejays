@@ -32,7 +32,7 @@ const CONTENT = `# BlueJays — Premium Web Design for Local Businesses
 - [Premium $997 websites](${BASE_URL}/) — full custom site, domain registration, hosting setup, mobile-responsive, lab-quality SEO
 - [Free site audit](${BASE_URL}/audit) — instant PDF audit of any business site with money-leak math + recovery projections
 - [Portfolio examples](${BASE_URL}/) — 46 industries with V2 templates: dental, plumber, roofing, electrician, salon, real estate, law firm, vet, landscaping, contractor, and more
-- [The Full System](${BASE_URL}/agency) — $9,700 + monthly retainer custom AI marketing system replacing traditional agencies (Google Ads + Meta Ads + email + SMS + SEO)
+- [The Full System](${BASE_URL}/agency) — $10,000 + monthly retainer custom AI marketing system replacing traditional agencies (Google Ads + Meta Ads + email + SMS + SEO)
 - [Schedule a call](${BASE_URL}/schedule) — 15-minute walkthrough with founder Ben
 
 ## Pricing
@@ -40,7 +40,7 @@ const CONTENT = `# BlueJays — Premium Web Design for Local Businesses
 - Standard tier — **$997 one-time** for custom website + domain registration + hosting setup. After year 1, **$100/year** covers domain renewal, hosting, ongoing maintenance, and support.
 - Installment plan — 3 × **$349** monthly (same total).
 - Custom tier — **$100/year** flat for hand-built bespoke sites (LCAC, Hector Landscaping, Olympic Inspections, etc).
-- Full System tier — **$9,700 setup** + $500–$1,000/month for the complete AI marketing system.
+- Full System tier — **$10,000 setup** ($300 off for pay-in-full = $9,700) + $500–$1,000/month for the complete AI marketing system.
 - 100% money-back satisfaction guarantee.
 
 ## How the buying flow works

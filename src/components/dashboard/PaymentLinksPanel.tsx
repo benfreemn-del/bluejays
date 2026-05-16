@@ -29,7 +29,7 @@ const PAYMENT_LINKS: LinkRow[] = [
     id: "ai-system-full",
     emoji: "💎",
     title: "AI Marketing System · Full Pay",
-    subtitle: "$9,700 · one-time · save $300 vs 3-pay",
+    subtitle: "$9,700 · one-time · save $300 vs $10,000 installments",
     url: "https://buy.stripe.com/5kQeVf9gD60y9BlbdS04801",
     accent: "violet",
   },

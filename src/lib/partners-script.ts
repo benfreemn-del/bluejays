@@ -803,7 +803,7 @@ export const HORMOZI_CALL_SCRIPT: CallScript = {
  *
  * Compensation:
  *   · $200 per WEBSITE Ben closes ($997)
- *   · $1,000 per BACKEND Ben closes ($9,700 AI Marketing System)
+ *   · $1,000 per BACKEND Ben closes ($10,000 AI Marketing System)
  *   · Best meetings book BOTH — the caller clears $1,200 if Ben dual-closes.
  *
  * Capacity scarcity (real, baked into close):
@@ -879,7 +879,7 @@ export const PARTNER_CALL_TIPS: CallTip[] = [
     id: "two-products",
     emoji: "🏗️",
     title: "★ Always offer the backend escape",
-    body: "If they're cool on the website but DO pay an agency or run ads → that's not a no, that's a high-ticket signal. Pivot to the backend ($9,700 AI System) immediately. $1k commission > $200.",
+    body: "If they're cool on the website but DO pay an agency or run ads → that's not a no, that's a high-ticket signal. Pivot to the backend ($10,000 AI System) immediately. $1k commission > $200.",
   },
   {
     id: "scarcity",
@@ -997,8 +997,8 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
       "★ THESE TWO QUESTIONS ARE THE WHOLE GAME. Their answers route you:",
       "  → 'NOT happy with site' + 'NO agency'  = WEBSITE PITCH path ($997, $200 comm)",
       "  → 'NOT happy with site' + 'YES agency' = WEBSITE + BACKEND PITCH (dual close, $1,200 comm)",
-      "  → 'happy with site'     + 'NO agency'  = soft path — pivot to BACKEND ($9,700, $1k comm). Frame: 'cool, then maybe the backend is the conversation.'",
-      "  → 'happy with site'     + 'YES agency' = HARD BACKEND pivot ($9,700). Frame: 'sounds like the website's not the bottleneck — let's talk about the agency replacement.'",
+      "  → 'happy with site'     + 'NO agency'  = soft path — pivot to BACKEND ($10,000, $1k comm). Frame: 'cool, then maybe the backend is the conversation.'",
+      "  → 'happy with site'     + 'YES agency' = HARD BACKEND pivot ($10,000). Frame: 'sounds like the website's not the bottleneck — let's talk about the agency replacement.'",
       "★ AFTER EACH QUESTION — count to FOUR. Pause. Let them fill silence. Their unscripted answer is gold.",
       "★ NEVER ask a third question. The setter who asks the third question loses control of the call.",
       "If they answer 'YES AGENCY' → BACKEND PIVOT tab (this is the high-ticket signal).",
@@ -1032,7 +1032,7 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
   agencyReplacementHook: {
     id: "agencyReplacementHook",
     title: "Agency-replacement hook (high-margin categories)",
-    goal: "Two short qualifying questions to drop in mid-discovery when the prospect's category is one that typically PAYS for a marketing agency (chiropractic, dental, law-firm, real-estate, accounting, insurance, medical, fitness, physical-therapy, interior-design, photography). Both questions are kill-shots — if they say YES to either, pivot straight to backendPitch ($9,700 + $500-1k/mo, $1k commission).",
+    goal: "Two short qualifying questions to drop in mid-discovery when the prospect's category is one that typically PAYS for a marketing agency (chiropractic, dental, law-firm, real-estate, accounting, insurance, medical, fitness, physical-therapy, interior-design, photography). Both questions are kill-shots — if they say YES to either, pivot straight to backendPitch ($10,000 + $500-1k/mo, $1k commission).",
     lines: [
       "Have you ever thought about replacing your marketing agency permanently with AI?",
       "[pause four counts]",
@@ -1042,7 +1042,7 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
       "★ TWO QUESTIONS, FOUR-COUNT PAUSE BETWEEN. Don't run them together. The first is a thought-experiment — opens the door. The second is the gut-punch — names the pain (the bill that arrives every single month).",
       "★ ONLY use this hook on categories that actually pay agencies — see the goal field. For trades (plumber, electrician, locksmith, towing) the hook falls flat because they don't have an agency to replace.",
       "★ If they say 'yes' / 'I've thought about it' / 'tell me more' → straight to backendPitch tab.",
-      "★ If they say 'we don't have an agency' → fall through to websitePitch + the standard discovery flow. They're a $997 lead, not a $9,700 lead.",
+      "★ If they say 'we don't have an agency' → fall through to websitePitch + the standard discovery flow. They're a $997 lead, not a $10,000 lead.",
       "★ If they say 'no, I love my agency' → don't push. 'Cool, just had to ask. Let's keep going.' Move on. Hard-pushing here burns the call.",
     ],
   },
@@ -1054,15 +1054,15 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
     lines: [
       "Honestly — sounds like the website might not be the bottleneck for you. Cool — let me tell you about the OTHER thing Ben does, because I think it's a bigger fit.",
       "Most businesses paying an agency are spending $2,000 to $5,000 a MONTH on lead generation, ads, follow-up. We build a custom AI marketing system that does ALL of that — automated text-back when calls miss, lead follow-up sequences, a dashboard you can see your whole pipeline on.",
-      "$9,700 to build it. Plus the AI tools run about $500 to $1,000 a month — that's Twilio, SendGrid, Claude, ad spend — but those bills go to the vendors directly, not to us. We're NOT a retainer agency. Versus what you're paying $2-5k/mo for, you're cutting your monthly cost by half or more, AND you own the whole system.",
+      "$10,000 to build it. Plus the AI tools run about $500 to $1,000 a month — that's Twilio, SendGrid, Claude, ad spend — but those bills go to the vendors directly, not to us. We're NOT a retainer agency. Versus what you're paying $2-5k/mo for, you're cutting your monthly cost by half or more, AND you own the whole system.",
       "[Pause]",
       "Ben can show you the mock-up of what yours would look like on the same 15-minute call. He'll have the website AND the backend ready — you decide which makes sense. Worst case 15 minutes. Tuesday at 3 or Thursday at 10?",
     ],
     callerNotes: [
       "★ LINE 1 IS THE PIVOT — 'sounds like the website might not be the bottleneck' validates their answer + opens the door to the bigger conversation. Don't argue the website. Move on.",
       "★ THE FRAME IS AGENCY-REPLACEMENT, not 'add-on'. If they pay an agency, the AI System is what they BUY INSTEAD of the agency, not in addition. That's the whole pitch.",
-      "★ Line 3 is the only place you quote price unprompted. $9,700 + $500-1,000/mo IS the honest number. The trust move is naming the recurring BEFORE they ask — and immediately separating it from agency retainer (vendor bills, not BlueJays). Frame against agency monthly: cutting their bill in half + ownership.",
-      "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. the caller never closes the $9,700 — the caller books Ben.",
+      "★ Line 3 is the only place you quote price unprompted. $10,000 + $500-1,000/mo IS the honest number. The trust move is naming the recurring BEFORE they ask — and immediately separating it from agency retainer (vendor bills, not BlueJays). Frame against agency monthly: cutting their bill in half + ownership.",
+      "★ KEY: the close is STILL Ben's 15-minute call with BOTH reveals. the caller never closes the $10,000 — the caller books Ben.",
       "★ AFTER 'which works?' — four counts of silence. Let them speak first.",
       "If they say YES → BOOK THE CALL tab. Mark BACKEND_BOOKED in outcome.",
       "If they want BOTH details → 'Ben walks both on the call. You just need to pick a time.' → BOOK THE CALL.",
@@ -1078,19 +1078,19 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
       "OK perfect — so the website isn't the issue. The conversation that probably matters more is the agency one.",
       "Quick question — what are you paying them a month, ballpark?",
       "[Listen. Don't talk over.]",
-      "Right. So here's what we'd build for you. Custom AI marketing system — automated text-back on every missed call (real number, real conversation), drip campaigns for every lead that comes in, a dashboard you can see every conversation + every conversion on. $9,700 build, then the AI tools run about $500 to $1,000 a month — Twilio, SendGrid, Claude, ad spend — paid straight to the vendors, not to us. We're NOT a retainer agency.",
+      "Right. So here's what we'd build for you. Custom AI marketing system — automated text-back on every missed call (real number, real conversation), drip campaigns for every lead that comes in, a dashboard you can see every conversation + every conversion on. $10,000 build, then the AI tools run about $500 to $1,000 a month — Twilio, SendGrid, Claude, ad spend — paid straight to the vendors, not to us. We're NOT a retainer agency.",
       "Versus your $2-5k/mo agency bill, you're cutting your monthly cost roughly in half AND you own the system. After the build pays for itself in 6 to 8 months, every month after that is pure savings.",
       "[Pause]",
       "Ben can walk through the mock-up of what yours specifically would look like — 15 minutes. He'll have the website AND the backend ready. Tuesday at 3 or Thursday at 10?",
     ],
     callerNotes: [
       "★ LINE 2 — get a number. 'Ballpark' makes it easy. Their answer becomes ammo for the break-even framing in line 5.",
-      "★ NEVER skip line 2. The number is the whole frame. Without it, $9,700 + $500-1k/mo sounds expensive. With it ('you said $3k/mo'), the BlueJays setup is roughly half their current burn AND they own it.",
+      "★ NEVER skip line 2. The number is the whole frame. Without it, $10,000 + $500-1k/mo sounds expensive. With it ('you said $3k/mo'), the BlueJays setup is roughly half their current burn AND they own it.",
       "★ Line 4 names the FOUR pillars (text-back, drip, dashboard, ownership). Don't list more — four is the brain's chunking limit.",
       "★ KEY: still booking Ben for BOTH reveals. Even if they only want backend, the polished website mock-up is in Ben's pocket — sometimes the backend conversation surfaces a website opportunity.",
       "If they say AGENCY IS LOCKED IN → 'Got it — when's the contract up?' Pin that as a callback. Mark CALLBACK.",
       "If they YES → BOOK THE CALL.",
-      "If price-shock → 'Yeah, big number. But check the math against $3k/mo for forever vs $9,700 once. Ben walks the comparison on the call.' → SCARCITY CLOSE.",
+      "If price-shock → 'Yeah, big number. But check the math against $3k/mo for forever vs $10,000 once. Ben walks the comparison on the call.' → SCARCITY CLOSE.",
     ],
   },
 
@@ -1202,7 +1202,7 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
         "[listen. Get specifics.]",
         "Right. Quick question — what would it take for you to fire them and own that whole stack yourself for one fixed cost?",
         "[pause four counts]",
-        "That's exactly what Ben's backend system is. Custom-built to do what your agency does — but YOU own it. $9,700 to build, then about $500-1,000/mo for the AI infrastructure — but that's Twilio, SendGrid, Claude, ads — paid to the vendors, NOT a retainer to us. Versus what you're paying your agency, you're cutting your monthly cost in half and you own the whole stack. Ben walks the mock-up on a 15-minute call. Tuesday at 3 or Thursday at 10?",
+        "That's exactly what Ben's backend system is. Custom-built to do what your agency does — but YOU own it. $10,000 to build, then about $500-1,000/mo for the AI infrastructure — but that's Twilio, SendGrid, Claude, ads — paid to the vendors, NOT a retainer to us. Versus what you're paying your agency, you're cutting your monthly cost in half and you own the whole stack. Ben walks the mock-up on a 15-minute call. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
         "★ THE HIGH-TICKET KILL SHOT. Mirror → discover what they're paying for → reframe as fire-the-agency. ★ Don't insult their agency — most owners already feel ripped off, they need permission, not a takedown. ★ This is a $1k commission objection. Lean in.",
@@ -1216,7 +1216,7 @@ export const PARTNER_CALL_SCRIPT: PartnerCallScript = {
         "Ben walks the math on the call — 15 minutes. Tuesday at 3 or Thursday at 10?",
       ],
       callerNotes:
-        "★ DON'T price-quote in the pitch. Hormozi rule: price-first calls close at 5%; value-first calls close at 25%. ★ When you DO quote (line 2), give the spread $997 / $9,700 + $500-1k/mo — anchors high, makes the website feel cheap. Always say the recurring upfront — surprise pricing later kills trust. Then immediately re-close.",
+        "★ DON'T price-quote in the pitch. Hormozi rule: price-first calls close at 5%; value-first calls close at 25%. ★ When you DO quote (line 2), give the spread $997 / $10,000 + $500-1k/mo — anchors high, makes the website feel cheap. Always say the recurring upfront — surprise pricing later kills trust. Then immediately re-close.",
     },
     {
       id: "previewIsRough",

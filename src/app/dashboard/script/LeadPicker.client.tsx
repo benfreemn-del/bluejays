@@ -939,6 +939,52 @@ export default function LeadPicker() {
                           .join(" · ") || "no contact info"}
                       </p>
                     </div>
+                    {/* "Just called" button — stamps prospects.last_contacted_at
+                        for the 2-min callback SLA telemetry chip on
+                        /dashboard?tab=funnels. Per 116-Funnels chunk 13c.
+                        Only renders for prospects with a phone (no point
+                        logging a "call" for an email-only lead). */}
+                    {p.phone && (
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            const res = await fetch(
+                              `/api/prospects/${p.id}/log-call`,
+                              {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                              },
+                            );
+                            const j = (await res.json().catch(() => ({}))) as {
+                              ok?: boolean;
+                              isFirstContact?: boolean;
+                            };
+                            if (j.ok) {
+                              setToast(
+                                j.isFirstContact
+                                  ? `📞 Logged first call to ${p.businessName ?? "lead"} — SLA timer captured.`
+                                  : `📞 Re-stamped contact for ${p.businessName ?? "lead"}.`,
+                              );
+                              setTimeout(() => setToast(null), 2500);
+                            } else {
+                              setToast("⚠ Couldn't log call. Try again.");
+                              setTimeout(() => setToast(null), 2500);
+                            }
+                          } catch {
+                            setToast("⚠ Network blip — call not logged.");
+                            setTimeout(() => setToast(null), 2500);
+                          }
+                        }}
+                        className="shrink-0 inline-flex items-center justify-center px-2 h-7 rounded-md text-[10px] font-bold uppercase tracking-wider text-emerald-300 hover:text-emerald-200 hover:bg-emerald-500/10 border border-emerald-500/30 transition-colors"
+                        title="Stamp last_contacted_at — feeds the 2-min SLA chip on the funnels tab"
+                        aria-label="Log call to this lead"
+                      >
+                        📞 Just called
+                      </button>
+                    )}
+
                     {/* Per-row Remove button — hides the lead from this
                         picker (per-browser scope). Pushes to undo stack
                         so the Undo button in the header can restore.

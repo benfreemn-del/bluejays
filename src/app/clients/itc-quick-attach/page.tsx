@@ -631,6 +631,13 @@ export default function ITCQuickAttachPage() {
               Made in USA — Blossvale, NY
             </motion.div>
 
+            {/* Hero tuned 2026-05-16 per the landing_page_optimizer skill —
+                added 14-day timeframe to the headline (chunk v01-15: specific
+                timeframes convert better than vague) and reordered sub-headline
+                to frontload the 3 strongest benefit phrases (chunk v03-18:
+                frontload benefit, then feature) plus tractor-model-fit
+                specificity (per-industry-templates manufacturer pain: dealers
+                lose bids to spec-sheet uncertainty). */}
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -640,7 +647,7 @@ export default function ITCQuickAttachPage() {
             >
               The tractor setup
               <br />
-              <span style={{ color: INK_DIM }}>you&apos;ve always</span>
+              <span style={{ color: INK_DIM }}>you&apos;ve always wanted —</span>
               <br />
               <span
                 style={{
@@ -649,7 +656,7 @@ export default function ITCQuickAttachPage() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                wanted.
+                shipped in 14 days.
               </span>
             </motion.h1>
 
@@ -660,10 +667,12 @@ export default function ITCQuickAttachPage() {
               className="text-base md:text-lg max-w-xl mb-9 leading-relaxed"
               style={{ color: INK_SOFT }}
             >
-              Heavy-gauge, machine-specific accessories for compact tractors —
-              toolboxes, chainsaw carriers, brush guards, modular tool systems,
-              and protection. Designed and built in Central New York. Bolts on.
-              Holds up. <span style={{ color: ORANGE_LIGHT }}>Doesn&apos;t fall off in the woods.</span>
+              Bolts on. Holds up.{" "}
+              <span style={{ color: ORANGE_LIGHT }}>Doesn&apos;t fall off in the woods.</span>{" "}
+              Heavy-gauge accessories machined for your exact tractor model
+              (TYM, Kubota, John Deere) — toolboxes, chainsaw carriers, brush
+              guards, modular tool systems, and chassis protection. Designed
+              and built in Central New York.
             </motion.p>
 
             <motion.div

@@ -42,7 +42,7 @@ const MANUFACTURER: CreativeSeed[] = [
     variant_label: "shopify-stuck",
     headline: "Stuck at $50k/mo on Shopify? Build a marketing system.",
     body:
-      "AI-driven funnel + ads + email + SMS designed for DTC manufacturers. $9,700 setup, no monthly retainer. 30-day live audit.",
+      "AI-driven funnel + ads + email + SMS designed for DTC manufacturers. $10,000 setup, no monthly retainer. 30-day live audit.",
     cta: "Get the audit",
     utm: utm("google-search", "manufacturer", "shopify-stuck"),
   },
@@ -53,7 +53,7 @@ const MANUFACTURER: CreativeSeed[] = [
     variant_label: "agency-replacement",
     headline: "Replace your $4k/mo marketing agency with AI.",
     body:
-      "BlueJays replaces 1-2 full-time marketers with an always-on AI system. $9,700 build, you own it. Audit your current setup free.",
+      "BlueJays replaces 1-2 full-time marketers with an always-on AI system. $10,000 build, you own it. Audit your current setup free.",
     cta: "Free audit",
     utm: utm("google-search", "manufacturer", "agency-replacement"),
   },
@@ -110,7 +110,7 @@ const PARTNERS: CreativeSeed[] = [
     variant_label: "consultant-revshare",
     headline: "Consultants — refer DTC clients, earn $1k per close.",
     body:
-      "BlueJays runs the AI marketing system you'd build manually for clients. Your reputation, our delivery. $1k commission per $9,700 close.",
+      "BlueJays runs the AI marketing system you'd build manually for clients. Your reputation, our delivery. $1k commission per $10,000 close.",
     cta: "Become a partner",
     utm: utm("meta-feed", "partners", "consultant-revshare"),
   },

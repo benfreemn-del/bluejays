@@ -1,7 +1,7 @@
 # Full AI System — Build Playbook
 
 The repeatable buildout for a "Custom AI Marketing Funnel" client (the
-$9,700 + $500–1,000/mo offering on the audit page). One client = one
+$10,000 + $500–1,000/mo offering on the audit page; $300 off for pay-in-full = $9,700). One client = one
 complete go-through of this playbook.
 
 This file IS the system. When you sell the package to a new client, you
@@ -129,7 +129,7 @@ The vertical bonus stack auto-applies based on `prospect.category` or
 | anything else (legacy, edge case) | universal-only | flag for manual review — likely should be $997 tier instead |
 
 **Pricing tier**: `pricingTier = "fullsystem"` — renders with the
-gold $ badge in the dashboard. Same price ($9,700 / $10,000 plan),
+gold $ badge in the dashboard. Same price ($10,000 base / $9,700 pay-in-full),
 different module mix per vertical at no extra cost.
 
 ---
@@ -809,7 +809,7 @@ in parallel with the build sprint, not after.
 
 ## Phase 9 — AI Operator (skills library + scheduled workflows)
 
-The flagship feature the $9,700 + monthly tier earns. Replaces the
+The flagship feature the $10,000 + monthly tier earns. Replaces the
 v1 static "AI Skills" calculator tools with a real per-client agentic
 Claude system. Ships as Service Agreement § 2(q). Locked spec
 2026-05-06 — see `bluejays/CLAUDE.md` "Locked decisions cascade
@@ -1522,5 +1522,5 @@ When pitching the package:
   per-audience customization
 - Show the gold $ row in the dashboard ("This is what your row will
   look like once you're onboarded")
-- Quote $9,700 + $500–1,000/mo with a payment plan option (3x $3,500
-  / $3,500 / $3,000 per the audit page)
+- Quote $10,000 + $500–1,000/mo with a payment plan option (3x $3,500
+  / $3,500 / $3,000 per the audit page = $10,000) or $9,700 pay-in-full

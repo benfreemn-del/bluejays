@@ -184,6 +184,7 @@ Every AI API call must follow these rules to minimize cost:
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
 - **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
+- **Bespoke Client Showcase — Meyer Electric reference pattern (locked 2026-05-16).** Every bespoke `/clients/[slug]` build (custom tier — not generated previews) audits against the Meyer Electric reference standard at `/clients/meyer-electric`. Four required elements above the fold: (1) **Hero image shows the OUTCOME**, not the trade-person at work — Powerwall installed protecting a home during storm, finished landscape at golden hour, harvested orchard with the attachment in frame. Stock photos of "happy contractor in uniform" or "workshop activity" FAIL this rule. (2) **Hero headline is benefit-driven and short** — "Reliable Power. No Compromises." (Meyer) — not activity-led ("We Install Electrical Systems"). 3-part formula preferred per `aios/.claude/skills/landing_page_optimizer/frameworks_video_03.md` chunk 17 (end result + time period + emotional payoff). (3) **3 believability markers visible above-fold** — real credentials with badges (Tesla Powerwall Certified, NATE-certified HVAC, ISA-certified arborist, etc.) + real service area named (Sequim, Port Angeles, Forks) + real years-in-business number. Generic "trusted by businesses" fails — must be verifiable. (4) **Theme matched to industry vibe** — dark professional + accent color for trades (electrician + yellow, plumber + blue); warm cream + soft tones for feminine/elegant (salon, florist, daycare). Reinforces existing rule "Match theme darkness to the industry's vibe" but applies SPECIFICALLY to bespoke builds, not just generated previews. **Audit cadence:** every new bespoke build is checked against this rule at ship-gate. Failure on any of the 4 = block ship + propose fix. **Reference live page:** `https://bluejayportfolio.com/clients/meyer-electric`. Reference until a stronger bespoke build emerges and is locked.
 
 ## Premium Preview Overhaul Rules (NON-NEGOTIABLE)
 When manually reviewing/upgrading a preview from the dashboard:
@@ -372,11 +373,11 @@ Every premium feature mandated for new V2 category templates. Read on demand whe
   1. **Standard ($997)** — one-time for custom website + domain + hosting setup → $100/yr after 1 year. Default for cold-outreach prospects.
   2. **Free ($30 upfront)** — friends/family only. Same $100/yr after.
   3. **Custom ($100/yr)** — bespoke hand-built showcase at `customSiteUrl` (e.g. `/clients/wholme-naturopathy`). Inbound leads. No setup fee.
-  4. **Fullsystem ($9,700 + $500–1,000/mo)** — Custom AI Marketing Funnel package. Includes everything in Custom plus the per-audience funnel engine, ad library, affiliate pipeline, weekly reports, and lead magnets. Renders with the **gold $ badge** in the dashboard. See `docs/AI_PACKAGE_PLAYBOOK.md` for the full buildout pattern.
+  4. **Fullsystem ($10,000 + $500–1,000/mo)** — Custom AI Marketing Funnel package. Base price $10,000. **Pay-in-full discount: $300 off** for clients who pay the full $10,000 up front (effective $9,700). NOT applied on the 4-installment plan — installment clients pay the full $10,000 ($2,500/quarter). Includes everything in Custom plus the per-audience funnel engine, ad library, affiliate pipeline, weekly reports, and lead magnets. Renders with the **gold $ badge** in the dashboard. See `docs/AI_PACKAGE_PLAYBOOK.md` for the full buildout pattern.
 - The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, Stripe session, and dashboard rendering all respect this field dynamically.
 
 ## AI Package — Custom AI Marketing Funnel (`fullsystem` tier)
-The full pipeline behind the $9,700 + $500–1,000/mo offering on the audit page. **Documented in `docs/AI_PACKAGE_PLAYBOOK.md`** — read that file before building anything for an AI-package client. **Closeout deliverable in `docs/AI_PACKAGE_HANDOFF.md`** — the doc the client receives at handoff.
+The full pipeline behind the $10,000 + $500–1,000/mo offering on the audit page (pay-in-full discount of $300 brings it to $9,700 if paid up front; installment clients pay the full $10,000). **Documented in `docs/AI_PACKAGE_PLAYBOOK.md`** — read that file before building anything for an AI-package client. **Closeout deliverable in `docs/AI_PACKAGE_HANDOFF.md`** — the doc the client receives at handoff.
 
 ### Subscription model (capability tiers)
 The system DEGRADES GRACEFULLY based on per-client subscriptions tracked in `client_subscriptions`. Source of truth in `src/lib/client-subscriptions.ts → TIERS`.
@@ -2615,7 +2616,7 @@ Etsy, Wix Stores) and the BlueJays site is purely a marketing front:
    their Shopify admin / their inbox, not in a BlueJays dashboard.
 3. **No `client_leads`, no `client_email_campaigns`, no
    `client_subscriptions`.** Those tables are for clients on the
-   $9,700 AI Marketing System tier. Marketing-only clients don't
+   $10,000 AI Marketing System tier. Marketing-only clients don't
    touch them.
 4. **`client-site-urls.ts` entry stays `kind: "internal"`** when we
    host the marketing front under `/clients/<slug>`. The lack of an
@@ -2833,6 +2834,59 @@ build — admin surface ships first, client surface follows after the
 encryption + RLS story is fully tested in production. When adding
 the client-facing view, gate by `client_owners` cookie (same pattern
 as the portal Leads tab).
+
+---
+
+## Map z-index Containment (NON-NEGOTIABLE — added 2026-05-15)
+
+**The bug this prevents:** A dropdown menu (header nav, filter chip, kebab menu, autocomplete, anything z-50-ish) renders BEHIND a Leaflet map on the same page. Diagnosed 2026-05-15 on the dashboard header dropdowns — header was `sticky top-0 z-40` and the BlueJays scout map at `src/components/dashboard/MapView.tsx` rendered Leaflet panes that internally use z-index 200-1000. Header dropdowns disappeared the moment the map mounted.
+
+### Why this happens (Leaflet internal z-index scale)
+
+Leaflet assigns its own z-index values to its panes. They have nothing to do with Tailwind's `z-*` utilities and they go MUCH higher than most page elements:
+
+| Leaflet pane | z-index |
+|---|---|
+| `.leaflet-tile-pane` | 200 |
+| `.leaflet-overlay-pane` | 400 |
+| `.leaflet-shadow-pane` | 500 |
+| `.leaflet-marker-pane` | 600 |
+| `.leaflet-tooltip-pane` | 650 |
+| `.leaflet-popup-pane` | 700 |
+| `.leaflet-control` | 800 |
+| `.leaflet-top/bottom` | 1000 |
+
+A Tailwind `z-50` dropdown is z-index 50. That's **20× smaller** than a Leaflet control. The dropdown loses every fight.
+
+### The fix (already shipped)
+
+Single line in `src/app/globals.css`:
+
+```css
+.leaflet-container {
+  isolation: isolate;
+}
+```
+
+`isolation: isolate` creates a new stacking context that **traps every Leaflet z-index inside the map element**. Leaflet's panes still resolve normally among themselves (popup beats marker beats tile), but nothing inside the map can compete with elements outside the map. The rest of the page is free to use normal z-index values (z-10, z-40, z-50) without worrying about whether a map is on the page.
+
+### Rules going forward
+
+1. **Never raise a non-map element above z-1000 just to win the leaflet fight.** That's a Band-Aid. The CSS rule above is the fix — verify it's still present in `globals.css` before "fixing" any z-index complaint by bumping numbers.
+2. **Every new leaflet-based map MUST use the `.leaflet-container` class** (react-leaflet's `MapContainer` adds it automatically; raw Leaflet calls need it added by hand). If you write a custom map wrapper, also set `isolation: isolate` on the wrapper.
+3. **For non-Leaflet maps (Google Maps, Mapbox, embedded iframes):** apply `isolation: isolate` to the map's outer container. The principle is universal — any third-party UI that ships its own internal z-index hierarchy must be CONTAINED, not negotiated with.
+4. **This rule ships with every BlueJays Pro client backend.** Per the dual-path Pro architecture (locked 2026-05-15) — every Pro client's AIOS install inherits this CSS rule + the corresponding `CLAUDE.md` entry. New client backends never relearn this bug.
+
+### Affected files when the bug surfaces
+
+- `src/app/globals.css` — must contain `.leaflet-container { isolation: isolate; }`
+- Pages that simultaneously render a Leaflet map + a dropdown/header:
+  - `src/app/dashboard/page.tsx` (BlueJays admin map + header nav)
+  - `src/app/dashboard/tekky-map/page.tsx`
+  - `src/app/clients/[slug]/portal/page.tsx` (any portal with a map tab + filter chips)
+  - Anywhere `MapView.tsx`, `tekky-map/map.client.tsx`, `OitPartnerMap.tsx`, `itc-map.client.tsx` mounts
+
+If a dropdown ever goes behind a map again, the first check is: did someone delete or override the `.leaflet-container { isolation: isolate; }` rule? That's almost always the cause.
 
 ---
 

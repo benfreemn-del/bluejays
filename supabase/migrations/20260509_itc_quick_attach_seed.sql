@@ -332,7 +332,7 @@ values
   ('itc-quick-attach', 'SendGrid Pro', 'Transactional email + campaign blasts.', 2000, true, 'communication', 'SendGrid'),
   ('itc-quick-attach', 'Twilio (number + per-use)', 'Missed-call text-back number + per-use SMS.', 115, true, 'communication', 'Twilio'),
   ('itc-quick-attach', 'Vercel Pro hosting', 'Operations dashboard hosting.', 2000, true, 'site', 'Vercel'),
-  ('itc-quick-attach', 'BlueJays AI Marketing System (annual)', 'One-time setup fee for the package.', 970000, false, 'ai-system', 'BlueJays')
+  ('itc-quick-attach', 'BlueJays AI Marketing System (annual)', 'One-time setup fee for the package ($10,000 base; $300 off pay-in-full = $9,700).', 1000000, false, 'ai-system', 'BlueJays')
 on conflict do nothing;
 
 -- 6. Subscriptions — show all four AI subsystems trialing.

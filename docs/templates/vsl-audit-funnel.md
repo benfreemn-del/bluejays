@@ -30,7 +30,7 @@ The audit reveal IS the sign-off.
 finishes. Get them to scroll past the reveal.
 
 **Why no ladder mention here:** 30 seconds is too tight for two
-offers. Adding "and we also have a $9,700 system" in this window
+offers. Adding "and we also have a $10,000 system" in this window
 dilutes the warming-up job. Ladder lives in VSL #2.
 
 ### Script
@@ -77,7 +77,7 @@ splicing in the prospect's business name + top-3 audit issues.
 and `{TOP_ISSUE_1/2/3}` from the audit results.
 
 **Why the ladder lives here:** post-audit is the moment they've
-seen the red marks, they're warm, and the $9,700 needs to be on
+seen the red marks, they're warm, and the $10,000 needs to be on
 the table so serious operators self-segment, the $997 looks small
 by anchor, and you don't trap a manufacturer in the wrong motion.
 
@@ -111,7 +111,7 @@ But — if your bottleneck isn't getting leads, it's REPLYING to
 leads — answering the phone at 9pm, following up with the people
 who didn't book, sorting the tire-kickers from the real buyers —
 we have a full AI Marketing System that runs your funnel for you.
-$9,700 setup, monthly after that. That's a different conversation."
+$10,000 setup, monthly after that. That's a different conversation."
 
 [75-90s — CTA · Ben on camera, real footage]
 "Pick the path that fits. Three buttons right below this video —

@@ -31,7 +31,7 @@ export const HOOK_STRUCTURES: Record<
       "Open with something startling that has a stake — money lost, deal almost killed, mistake caught. Algorithm-friendly because the brain can't ignore loss.",
     template: "i [VERB-LOSS] $[NUMBER] yesterday because of [SPECIFIC THING]",
     examples: [
-      "i lost a $9,700 deal yesterday because of one missing email",
+      "i lost a $10,000 deal yesterday because of one missing email",
       "my client almost shut down their ads — here's what i caught",
       "this $4k/mo leak was hiding in plain sight",
     ],
@@ -76,7 +76,7 @@ export const HOOK_STRUCTURES: Record<
     template: "i just [SHIPPED THING] in [TIME]. here's how it [VALUE].",
     examples: [
       "i just shipped per-tenant cost attribution in 4 hours. here's how it saves my clients $200/mo",
-      "this client closed $9,700 — here's the EXACT email that got the meeting",
+      "this client closed $10,000 — here's the EXACT email that got the meeting",
       "we built a Madie sales scoreboard in 3 hours. she booked 5 demos that week.",
     ],
   },

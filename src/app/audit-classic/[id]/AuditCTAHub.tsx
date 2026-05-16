@@ -176,7 +176,7 @@ export default function AuditCTAHub({
 
           {/* right: price + CTA */}
           <div className="flex-shrink-0 text-center md:text-right">
-            <p className="text-2xl font-bold text-white">$9,700</p>
+            <p className="text-2xl font-bold text-white">$10,000</p>
             <p className="text-xs text-emerald-400 mb-0.5">save $300 paying in full</p>
             <p className="text-xs text-slate-400 mb-0.5">or split 3 payments of $3,500 / $3,500 / $3,000</p>
             <p className="text-xs text-violet-300 mb-4">+ $500–1,000/mo ongoing</p>
@@ -202,7 +202,7 @@ export default function AuditCTAHub({
 
         {/* Funnel preview · "see it before you pay" for the AI Package
             tier. Mirrors the website's free-preview magic for the
-            $9,700 product so prospects can experience the offering
+            $10,000 product so prospects can experience the offering
             before committing. Added 2026-05-07 per Ben — single
             biggest pre-purchase trust unlock for the high-ticket tier. */}
         <a

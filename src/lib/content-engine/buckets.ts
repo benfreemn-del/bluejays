@@ -84,7 +84,7 @@ export async function getClientOutcomeCandidates(): Promise<BucketCandidate[]> {
     .limit(3);
   for (const p of paid ?? []) {
     if (!p.business_name) continue;
-    const dollars = p.pricing_tier === "fullsystem" ? 9700 : 997;
+    const dollars = p.pricing_tier === "fullsystem" ? 10000 : 997;
     out.push({
       bucket: "client_outcomes",
       seed: `${p.business_name} closed $${dollars.toLocaleString()}`,

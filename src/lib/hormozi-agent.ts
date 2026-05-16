@@ -50,6 +50,13 @@ export interface DiagnosticInput {
   /** Prospect row to attach the run to (optional) */
   prospectId?: string;
   /**
+   * Top-10 structured stats. When present, they're folded into the user
+   * prompt as a clean numbers block so Claude diagnoses against actual
+   * data instead of inferring from free text. Sourced from the manual-
+   * entry panel OR from the per-prospect diagnosis_metrics row.
+   */
+  metrics?: DiagnosticMetrics;
+  /**
    * Optional attachments — screenshots of their site / GBP, P&L PDFs,
    * ad-account snapshots, etc. Each entry carries the raw base64 bytes
    * so we can forward them to Claude as image or document blocks.
@@ -57,6 +64,30 @@ export interface DiagnosticInput {
    * the bytes are dropped after the API call.
    */
   files?: AttachedFile[];
+}
+
+export interface DiagnosticMetrics {
+  industry?: string | null;
+  monthly_revenue?: number | null;
+  active_customers?: number | null;
+  average_order_value?: number | null;
+  gross_margin_pct?: number | null;
+  churn_monthly_pct?: number | null;
+  customer_acquisition_cost?: number | null;
+  /** Top-of-funnel + capacity extras (round out to 10 stats total) */
+  monthly_leads?: number | null;
+  close_rate_pct?: number | null;
+  monthly_ad_spend?: number | null;
+  team_size?: number | null;
+  /** Derived values (LTV, LTV:CAC, payback, lifespan, health) — optional */
+  derived?: {
+    ltv?: number | null;
+    ltv_cac_ratio?: number | null;
+    payback_months?: number | null;
+    avg_lifespan_months?: number | null;
+    arpu_monthly?: number | null;
+    health_score?: string | null;
+  } | null;
 }
 
 export interface AttachedFile {
@@ -125,6 +156,13 @@ function buildUserPrompt(input: DiagnosticInput): string {
   if (input.currentOffer) lines.push(`Current offer: ${input.currentOffer}`);
   if (input.pricing) lines.push(`Pricing: ${input.pricing}`);
   if (input.topComplaint) lines.push(`Top complaint: ${input.topComplaint}`);
+
+  const metricsBlock = formatMetricsBlock(input.metrics);
+  if (metricsBlock) {
+    lines.push("");
+    lines.push(metricsBlock);
+  }
+
   if (input.files && input.files.length > 0) {
     lines.push("");
     lines.push(
@@ -142,6 +180,38 @@ function buildUserPrompt(input: DiagnosticInput): string {
   lines.push("");
   lines.push("Run the diagnosis. Respond ONLY with the JSON object specified.");
   return lines.join("\n");
+}
+
+function formatMetricsBlock(m?: DiagnosticMetrics): string | null {
+  if (!m) return null;
+  const rows: Array<[string, string]> = [];
+  const usd = (n: number) =>
+    `$${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  const num = (n: number) => n.toLocaleString();
+  const pct = (n: number) => `${n}%`;
+  if (m.industry) rows.push(["Industry", m.industry]);
+  if (m.monthly_revenue != null) rows.push(["Monthly revenue", usd(m.monthly_revenue)]);
+  if (m.active_customers != null) rows.push(["Active customers", num(m.active_customers)]);
+  if (m.average_order_value != null) rows.push(["Avg order value", usd(m.average_order_value)]);
+  if (m.gross_margin_pct != null) rows.push(["Gross margin", pct(m.gross_margin_pct)]);
+  if (m.churn_monthly_pct != null) rows.push(["Monthly churn", pct(m.churn_monthly_pct)]);
+  if (m.customer_acquisition_cost != null) rows.push(["CAC", usd(m.customer_acquisition_cost)]);
+  if (m.monthly_leads != null) rows.push(["Monthly leads", num(m.monthly_leads)]);
+  if (m.close_rate_pct != null) rows.push(["Close rate", pct(m.close_rate_pct)]);
+  if (m.monthly_ad_spend != null) rows.push(["Monthly ad spend", usd(m.monthly_ad_spend)]);
+  if (m.team_size != null) rows.push(["Team size", num(m.team_size)]);
+  if (m.derived) {
+    const d = m.derived;
+    if (d.ltv != null) rows.push(["LTV (derived)", usd(d.ltv)]);
+    if (d.ltv_cac_ratio != null) rows.push(["LTV:CAC (derived)", `${d.ltv_cac_ratio.toFixed(1)}×`]);
+    if (d.payback_months != null) rows.push(["Payback (derived)", `${d.payback_months.toFixed(1)} mo`]);
+    if (d.avg_lifespan_months != null) rows.push(["Lifespan (derived)", `${d.avg_lifespan_months.toFixed(1)} mo`]);
+    if (d.arpu_monthly != null) rows.push(["ARPU/mo (derived)", usd(d.arpu_monthly)]);
+    if (d.health_score) rows.push(["Health score", d.health_score]);
+  }
+  if (rows.length === 0) return null;
+  const body = rows.map(([k, v]) => `  - ${k}: ${v}`).join("\n");
+  return `STRUCTURED METRICS (use these numbers — don't restate them, build the diagnosis ON them):\n${body}`;
 }
 
 const RESPONSE_SCHEMA_INSTRUCTIONS = `

@@ -46,6 +46,7 @@ import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
 import CalculatorStatsCard from "@/components/dashboard/CalculatorStatsCard";
 import InFlightBuildsCard from "@/components/dashboard/InFlightBuildsCard";
 import AIActivityCard from "@/components/dashboard/AIActivityCard";
+import CloserBreakdownCard from "@/components/dashboard/CloserBreakdownCard";
 import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
 import DashboardTopNav, {
   type NavTabId,
@@ -344,6 +345,12 @@ export default function DashboardPage() {
                     on a sales call without scrolling past the operator-
                     flavor cron heartbeat. */}
                 <InFlightBuildsCard />
+                {/* H6 (Hormozi "No Data Daddy") Tier 1 — Pipeline 1
+                    closer split. Mounted directly under InFlightBuilds
+                    because both are Day-19 FB-launch visibility cards:
+                    one shows what we're building, the other shows who's
+                    closing. */}
+                <CloserBreakdownCard />
                 <AIActivityCard />
                 <AutomationDailyDigest />
                 <MadieProductivity mode="tile" partnerLabel="Today's velocity" />

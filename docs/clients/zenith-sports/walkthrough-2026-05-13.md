@@ -29,20 +29,12 @@ WHERE client_slug='zenith-sports' ORDER BY service;
 I synced the handoff doc's Claude line to live config (**Pro $149**,
 not the stale Starter $49 the doc had).
 
-**Still unresolved:** the doc says AI System is **$9,700 in 4
-quarterly installments**, but memory + Stripe show Tekky is on a
-**$2,500/mo recurring sub** (sub_1TTcUrRuVfGvONwtu4l9SZY2, active,
-**$0 paid lifetime**, zero charge attempts). I didn't touch that line
-— it's a contract reconciliation, not a doc fix.
-
-Decide before sending the handoff:
-- Was the agreement $9,700/yr split quarterly, or $2,500/mo
-  ($30k/yr)?
-- Is the $2,500/mo sub the right structure, or does it need to flip
-  to a one-time $9,700 in quarterly invoices?
-- Either way: WHY has $0 been collected over 8+ days? Surface
-  payment-collection on the call today if any silence about it
-  feels weird.
+**Resolved 2026-05-16:** AI System is **$10,000 base price, 4
+quarterly installments of $2,500 each**. Tekky is on the
+4-installment plan (pay-in-full discount of $300 not applied). The
+$2,500/mo recurring sub (sub_1TTcUrRuVfGvONwtu4l9SZY2) gets
+cancelled in the Sunday cutover and replaced with a $2,500 one-time
+Stripe Payment Link for Q1.
 
 ---
 
@@ -250,9 +242,9 @@ zenith-tekky-handoff.pdf` (or just paste into the body of an email).
   the 10am meeting. Paul → `tekky-walkthrough-paul-2026`,
   Philip → `tekky-walkthrough-philip-2026`. If either fails, run
   the emergency reset block below. ⏱️ 60 sec.
-- **Reconcile the $9,700/yr-quarterly vs $2,500/mo billing
-  structure** before handing them the handoff doc — see Pricing
-  Reconciliation section above. ⏱️ 2–5 min.
+- **Billing reconciled 2026-05-16:** $10,000 base in 4 installments
+  of $2,500. Sunday cutover cancels the $2,500/mo sub and replaces
+  with a one-time $2,500 Stripe Payment Link for Q1.
 - **Daily habits** — LinkedIn post, IG post, 20 min warm outreach,
   affiliate replies, pipeline review. Don't skip Day 15. Demo prep
   is not an excuse — the habits run forever.

@@ -1,4 +1,4 @@
--- BlueJays AI Marketing System — full-stack agency offer ($9,700).
+-- BlueJays AI Marketing System — full-stack agency offer ($10,000 base; $300 off pay-in-full = $9,700).
 --
 -- Two tables:
 --   agency_applications — pre-customer applications from /agency/apply

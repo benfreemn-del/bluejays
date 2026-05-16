@@ -198,7 +198,7 @@ function blank() {
 function revenueFor(pricingTier: string | null): number {
   switch (pricingTier) {
     case "fullsystem":
-      return 970000;
+      return 1000000;
     case "custom":
       return 10000;
     case "free":

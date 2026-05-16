@@ -78,7 +78,7 @@ vertical 9:16 video — out of scope for v1.
 ## AUDIENCE 2 — Manufacturer (parallel $10k validation)
 
 **Why parallel:** locked manufacturer-niche motion per Q9. We're not
-expecting cold-paid-traffic to close $9,700 directly — but the audit
+expecting cold-paid-traffic to close $10,000 directly — but the audit
 + post-audit video DO surface the AI System tier, so we measure
 discovery-call books from this audience as a leading indicator.
 

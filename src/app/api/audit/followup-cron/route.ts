@@ -67,10 +67,23 @@ export async function POST(request?: NextRequest) {
     .limit(200);
 
   if (error) {
-    // If `audit_email_step` column doesn't exist yet, silent no-op
+    // If `audit_email_step` column doesn't exist yet, silent no-op.
+    // BUT log a heartbeat so a rolled-back migration doesn't silently
+    // spin wheels forever — without this trail, the cron returns 200
+    // every day with sent=0 and Ben has no signal that something's
+    // wrong. Heartbeat status=skipped surfaces in the daily digest.
     if (/column.*audit_email_step.*does not exist/i.test(error.message || "")) {
+      await logHeartbeat(
+        "audit_followup",
+        {
+          reason: "audit_email_step_column_missing",
+          migration: "20260426_audit_email_tracking.sql",
+        },
+        "skipped",
+      );
       return NextResponse.json({
-        message: "Migration 20260426_audit_email_tracking.sql not yet applied — silent no-op",
+        message:
+          "Migration 20260426_audit_email_tracking.sql not yet applied — silent no-op (heartbeat logged)",
         sent: 0,
       });
     }
@@ -185,7 +198,10 @@ export async function POST(request?: NextRequest) {
         template = getAuditEmail3({ businessName, category: audit.business_category, auditUrl, bookUrl });
         break;
       case 4:
-        template = getAuditEmail4({ businessName, auditUrl, bookUrl });
+        // Category passed in 2026-05-16 so Email 4 can branch
+        // product-ICP (top-3 AI System objections) vs service-business
+        // ($997 site objection trio). See `isProductIcp` in audit-emails.ts.
+        template = getAuditEmail4({ businessName, category: audit.business_category, auditUrl, bookUrl });
         break;
       case 5:
         template = getAuditEmail5({ businessName, auditUrl, bookUrl });

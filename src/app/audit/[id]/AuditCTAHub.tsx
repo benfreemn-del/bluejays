@@ -123,7 +123,17 @@ export default function AuditCTAHub({
   }
 
   return (
-    <section id="pick-your-move" className="bg-gradient-to-b from-slate-900 to-slate-950">
+    <section
+      id="pick-your-move"
+      // scroll-mt-16 / sm:scroll-mt-20 sets the scroll offset so that
+      // when AuditFaqVideos (or any other in-page link) navigates to
+      // #pick-your-move, the section header lands BELOW any sticky
+      // top-bar instead of getting tucked under it. Matters most on
+      // mobile where viewport is small and the section H2 ends up
+      // partly hidden without the offset. Fixed 2026-05-16 functionality
+      // review.
+      className="bg-gradient-to-b from-slate-900 to-slate-950 scroll-mt-16 sm:scroll-mt-20"
+    >
       <div className="mx-auto max-w-4xl px-6 py-16 md:py-20">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Pick your move.</h2>
@@ -176,7 +186,7 @@ export default function AuditCTAHub({
 
           {/* right: price + CTA */}
           <div className="flex-shrink-0 text-center md:text-right">
-            <p className="text-2xl font-bold text-white">$9,700</p>
+            <p className="text-2xl font-bold text-white">$10,000</p>
             <p className="text-xs text-emerald-400 mb-0.5">save $300 paying in full</p>
             <p className="text-xs text-slate-400 mb-0.5">or split 3 payments of $3,500 / $3,500 / $3,000</p>
             <p className="text-xs text-violet-300 mb-4">+ $500–1,000/mo ongoing</p>
@@ -202,7 +212,7 @@ export default function AuditCTAHub({
 
         {/* Funnel preview · "see it before you pay" for the AI Package
             tier. Mirrors the website's free-preview magic for the
-            $9,700 product so prospects can experience the offering
+            $10,000 product so prospects can experience the offering
             before committing. Added 2026-05-07 per Ben — single
             biggest pre-purchase trust unlock for the high-ticket tier. */}
         <a

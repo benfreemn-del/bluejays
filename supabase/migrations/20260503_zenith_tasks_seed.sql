@@ -122,7 +122,7 @@ begin
 
   ('zenith-sports',
    'Add Zenith to recurring_costs table when funnel goes live',
-   E'AI Package = $9,700 one-time + $500–1,000/mo ongoing. Once Twilio + ad accounts are live and lead-flow starts, add the recurring revenue line so MRR tracks.',
+   E'AI Package = $10,000 one-time + $500–1,000/mo ongoing (Tekky is on the 4-installment plan = $2,500/qtr; pay-in-full discount of $300 not applied). Once Twilio + ad accounts are live and lead-flow starts, add the recurring revenue line so MRR tracks.',
    'pending', 'low', 'reminder', 'ben', null);
 
   raise notice 'Seeded % zenith-sports tasks', (select count(*) from public.client_tasks where client_slug = 'zenith-sports');

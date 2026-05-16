@@ -31,7 +31,7 @@ Once Paul flips nameservers Sunday morning, Vercel auto-verifies in 5-60 min.
 Stripe dashboard → Payment Links → New:
 
 - **Product:** "TEKKY AI Marketing System — Q1 of 4" (one-time)
-- **Price:** $2,425.00 USD, one-time
+- **Price:** $2,500.00 USD, one-time
 - **Description on receipt:** "Quarterly installment 1 of 4 — AI Marketing System buildout for Tekky / Zenith Sports."
 - **Collect customer info:** name + email
 - **After payment:** Custom thank-you message: "Q1 received. Cutover proceeding — Ben will be in touch within the hour."
@@ -116,7 +116,7 @@ End the walkthrough with: *"Any final tweaks before we lock it?"*
 
 ### 9:15 AM PT — collect Q1 payment (Ben, ~5 min)
 
-> "Quick housekeeping. First quarterly installment is $2,425. I'm
+> "Quick housekeeping. First quarterly installment is $2,500. I'm
 > sending you the payment link right now — takes 30 seconds. Once
 > that clears I'll flip the domain and we watch it go live together."
 
@@ -125,7 +125,7 @@ Paste the Stripe Payment Link into Signal/iMessage/email. **Wait for
 
 If they balk:
 > "I get it. Look — the work is done, the site is sitting on a server
-> right now waiting. We agreed $9,700 in 4 quarterly installments
+> right now waiting. We agreed $10,000 in 4 quarterly installments
 > back in May. Q1 is what unlocks the DNS flip. Worst case we
 > reschedule to Tuesday after the card lands. What feels right?"
 
@@ -231,11 +231,11 @@ they got it before ending.
 2. **`memory/active_commitments.md`** — strike the Tekky-walkthrough
    migration line. Add Phase A kickoff items if you've got specifics.
 3. **`memory/recent_locked_decisions.md`** — log "Tekky LIVE
-   2026-05-17, Q1 $2,425 collected, switched from $2,500/mo to
-   $2,425 quarterly".
+   2026-05-17, Q1 $2,500 collected, switched from $2,500/mo to
+   $2,500 quarterly".
 4. **CLAUDE.md "Client Tenant Status" table** — update Zenith Sports
    row notes: change "4-qtr $10K AI plan" to "LIVE 2026-05-17 ·
-   $2,425/qtr × 4".
+   $2,500/qtr × 4".
 5. **LinkedIn post + IG post** — Day 19 of the ramp. Tekky launch is
    your content for the day. Write it before you do anything else
    non-essential.

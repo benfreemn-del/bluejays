@@ -272,7 +272,7 @@ const BRANCHES: Branch[] = [
         name: "AI Package Welcome",
         emoji: "🎁",
         kind: "agent",
-        desc: "$9,700 close → 5-email welcome arc: kickoff, what's-built, what's-coming, here's-your-portal, here's-your-first-results-summary.",
+        desc: "$10,000 close → 5-email welcome arc: kickoff, what's-built, what's-coming, here's-your-portal, here's-your-first-results-summary.",
         files: [
           "src/lib/ai-package-welcome-emails.ts",
           "src/app/api/cron/ai-package-welcome/route.ts",

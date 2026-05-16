@@ -198,7 +198,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Demo the mock-backend pattern (Meyer-style /portal-demo) to 5 qualified $10k prospects.",
       skill: "Deploy the mock backend · password-gate it · run the live walkthrough",
-      commission: "🎯 Setter tier · sets up the $9,700 close motion · every $1,000 setter commission lands here",
+      commission: "🎯 Setter tier · sets up the $10,000 close motion · every $1,000 setter commission lands here",
       status:
         currentLevel > 4
           ? "completed"
@@ -228,7 +228,7 @@ export default function MadieRaceTrack() {
       title: "Closer",
       subtitle: "Cash in the bank · streaks · leaderboard top",
       unlockCriterion: "First paid close YOU ran end-to-end. Then the second. Then the streak.",
-      skill: "$400 per $997 website · $2,000 per AI System ($9,700+) — top tier",
+      skill: "$400 per $997 website · $2,000 per AI System ($10,000+) — top tier",
       commission: "💎 10 closes/month at $10k tier = $20k/mo for you · the prize",
       status:
         currentLevel >= 6

@@ -80,6 +80,38 @@ interface FormData extends OnboardingPrefillData {
   languagesOther: string;
   specialRequests: string;
   anythingElse: string;
+  // Step 3 — Marketing context (added 2026-05-16, Phase 1 ESP demand
+  // capture + Hormozi onboarding chunk 23 customer-goals signal). All
+  // optional — persist into form_data JSONB on submit. No schema
+  // migration needed.
+  currentEspTool:
+    | "mailchimp"
+    | "klaviyo"
+    | "convertkit"
+    | "activecampaign"
+    | "hubspot"
+    | "other"
+    | "none"
+    | "";
+  currentEspToolOther: string;
+  successVision90Days: string;
+  biggestConstraint:
+    | "lead_volume"
+    | "lead_quality"
+    | "close_rate"
+    | "fulfillment"
+    | "not_sure"
+    | "";
+  bestMarketingChannel:
+    | "paid_ads"
+    | "seo_organic"
+    | "email"
+    | "partner_referrals"
+    | "cold_outreach"
+    | "word_of_mouth"
+    | "none"
+    | "";
+  emailCadencePreference: "autopilot" | "manual_override" | "mix" | "";
   // Service agreement acceptance — required to submit Step 3
   serviceAgreementAccepted: boolean;
 }
@@ -108,6 +140,12 @@ const initialFormData: FormData = {
   themePreference: "",
   languages: "",
   languagesOther: "",
+  currentEspTool: "",
+  currentEspToolOther: "",
+  successVision90Days: "",
+  biggestConstraint: "",
+  bestMarketingChannel: "",
+  emailCadencePreference: "",
   specialRequests: "",
   anythingElse: "",
   serviceAgreementAccepted: false,
@@ -404,6 +442,15 @@ export default function OnboardingPage() {
       // server side (the API merges with existing form_data, but if any
       // of these fields haven't been seen yet they need to land here).
       socialLinks: data.socialLinks,
+      // Marketing context (Phase 1 demand capture, 2026-05-16). Persists
+      // into form_data JSONB. Phase 2 will backfill client_esp_interest
+      // from currentEspTool answers when prospects become paid clients.
+      currentEspTool: data.currentEspTool,
+      currentEspToolOther: data.currentEspToolOther,
+      successVision90Days: data.successVision90Days,
+      biggestConstraint: data.biggestConstraint,
+      bestMarketingChannel: data.bestMarketingChannel,
+      emailCadencePreference: data.emailCadencePreference,
       // Click-wrap acceptance of the BlueJays Service Agreement.
       // API persists this with timestamp + version into
       // prospect.scraped_data.serviceAgreement so we have a permanent
@@ -1213,6 +1260,167 @@ function Step3({
         onBlur={handleBlur}
         rows={3}
       />
+
+      {/* ──────────────────────────────────────────────────────────
+          Marketing context (added 2026-05-16, Phase 1 demand capture).
+          All optional — frame as "skip if you're pressed for time."
+          Persists to form_data JSONB. The currentEspTool answer feeds
+          the multi-ESP integration priority decision (Phase 2).
+          ────────────────────────────────────────────────────────── */}
+      <div className="rounded-xl border border-sky-500/20 bg-sky-500/[0.03] p-4 sm:p-5 space-y-5">
+        <div>
+          <p className="text-xs uppercase tracking-wider text-sky-300 font-semibold mb-1">
+            Marketing context (optional)
+          </p>
+          <p className="text-sm text-slate-300">
+            5 quick questions. Helps me build the right thing for you. Skip
+            any if you&apos;re pressed for time.
+          </p>
+        </div>
+
+        {/* Q1 — Current email tool (feeds ESP integration priority) */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            What email tool do you currently use? <span className="text-slate-500 font-normal">(optional)</span>
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { v: "mailchimp" as const, label: "Mailchimp" },
+              { v: "klaviyo" as const, label: "Klaviyo" },
+              { v: "convertkit" as const, label: "ConvertKit" },
+              { v: "activecampaign" as const, label: "ActiveCampaign" },
+              { v: "hubspot" as const, label: "HubSpot" },
+              { v: "other" as const, label: "Other" },
+              { v: "none" as const, label: "None / not yet" },
+            ].map((opt) => (
+              <button
+                key={opt.v}
+                type="button"
+                onClick={() => updateField("currentEspTool", opt.v)}
+                className={[
+                  "h-10 rounded-lg border text-xs font-medium transition px-2",
+                  data.currentEspTool === opt.v
+                    ? "border-blue-electric bg-blue-electric/10 text-foreground"
+                    : "border-border bg-surface text-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {data.currentEspTool === "other" && (
+            <Field
+              label=""
+              name="currentEspToolOther"
+              value={data.currentEspToolOther}
+              onChange={(e) => updateField("currentEspToolOther", e.target.value)}
+              onBlur={handleBlur}
+              placeholder="Which tool? (Brevo, Constant Contact, Customer.io, etc.)"
+            />
+          )}
+        </div>
+
+        {/* Q2 — 90-day success vision (activation point + Madie call notes) */}
+        <TextArea
+          label="What does 'this is working' look like 90 days from now?"
+          helper="Optional. Be specific — '20 inbound RFQs/month' beats 'more leads.' Helps me build toward your actual goal, not a vague one."
+          name="successVision90Days"
+          value={data.successVision90Days}
+          onChange={(e) => updateField("successVision90Days", e.target.value)}
+          onBlur={handleBlur}
+          rows={2}
+        />
+
+        {/* Q3 — Biggest constraint (lead-with-pain framing for follow-ups) */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            What&apos;s the biggest thing holding you back right now? <span className="text-slate-500 font-normal">(optional)</span>
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {[
+              { v: "lead_volume" as const, label: "Not enough leads" },
+              { v: "lead_quality" as const, label: "Leads are low-quality" },
+              { v: "close_rate" as const, label: "Can't close them" },
+              { v: "fulfillment" as const, label: "Can't deliver fast enough" },
+              { v: "not_sure" as const, label: "Not sure yet" },
+            ].map((opt) => (
+              <button
+                key={opt.v}
+                type="button"
+                onClick={() => updateField("biggestConstraint", opt.v)}
+                className={[
+                  "h-10 rounded-lg border text-xs font-medium transition px-2",
+                  data.biggestConstraint === opt.v
+                    ? "border-blue-electric bg-blue-electric/10 text-foreground"
+                    : "border-border bg-surface text-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Q4 — Best current channel (informs which integrations to build) */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Best customer source today? <span className="text-slate-500 font-normal">(optional)</span>
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { v: "paid_ads" as const, label: "Paid ads" },
+              { v: "seo_organic" as const, label: "SEO / organic" },
+              { v: "email" as const, label: "Email list" },
+              { v: "partner_referrals" as const, label: "Partners / dealers" },
+              { v: "cold_outreach" as const, label: "Cold outreach" },
+              { v: "word_of_mouth" as const, label: "Word of mouth" },
+              { v: "none" as const, label: "None yet" },
+            ].map((opt) => (
+              <button
+                key={opt.v}
+                type="button"
+                onClick={() => updateField("bestMarketingChannel", opt.v)}
+                className={[
+                  "h-10 rounded-lg border text-xs font-medium transition px-2",
+                  data.bestMarketingChannel === opt.v
+                    ? "border-blue-electric bg-blue-electric/10 text-foreground"
+                    : "border-border bg-surface text-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Q5 — Manual vs autopilot preference for the funnel */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            How hands-on do you want to be with emails? <span className="text-slate-500 font-normal">(optional)</span>
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {[
+              { v: "autopilot" as const, label: "Full autopilot — system handles it" },
+              { v: "manual_override" as const, label: "I want to write + send manually" },
+              { v: "mix" as const, label: "Mix — autopilot with my override" },
+            ].map((opt) => (
+              <button
+                key={opt.v}
+                type="button"
+                onClick={() => updateField("emailCadencePreference", opt.v)}
+                className={[
+                  "h-10 rounded-lg border text-xs font-medium transition px-2",
+                  data.emailCadencePreference === opt.v
+                    ? "border-blue-electric bg-blue-electric/10 text-foreground"
+                    : "border-border bg-surface text-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ──────────────────────────────────────────────────────────
           Service Agreement — click-wrap acceptance.

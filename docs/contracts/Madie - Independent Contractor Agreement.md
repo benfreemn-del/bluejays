@@ -14,7 +14,9 @@ appointments and refer prospective customers to BlueJays for the sale of:
 - (a) **Custom website services** (the "Website Product"), priced at
   approximately $997 + $100/year maintenance.
 - (b) **AI Marketing System / backend buildouts** (the "AI System
-  Product"), priced at approximately $9,700 one-time.
+  Product"), priced at approximately $10,000 one-time ($300 pay-in-full
+  discount available, bringing it to $9,700 for clients who pay the full
+  program up front; installment-plan clients pay the full $10,000).
 
 Contractor's role is **appointment-setting only**. Contractor does NOT
 have authority to bind BlueJays to any agreement, modify pricing, accept
@@ -46,7 +48,7 @@ or hourly wage.
 | Closed sale type | Madie's commission |
 |---|---|
 | Website Product close ($997) | **$200** per closed sale |
-| AI System Product close ($9,700) | **$1,000** per closed sale |
+| AI System Product close ($10,000 / $9,700 pay-in-full) | **$1,000** per closed sale |
 
 A "closed sale" means: the prospect signs the BlueJays Service Agreement
 **and** the corresponding payment (full payment OR the first installment

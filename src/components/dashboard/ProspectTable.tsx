@@ -870,7 +870,7 @@ export default function ProspectTable({
                       {prospect.pricingTier === "fullsystem" && (
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-extrabold tracking-wider border border-purple-400/40 uppercase"
-                          title="Full System / Agency Replacement inbound — $9,700 + $500-1k/mo target"
+                          title="Full System / Agency Replacement inbound — $10,000 + $500-1k/mo target"
                         >
                           AGENCY $10K
                         </span>
@@ -895,13 +895,13 @@ export default function ProspectTable({
                           See CLAUDE.md "Approval & Pricing Rules" + "Custom
                           Pricing Tier Rules". */}
                       {prospect.pricingTier === "fullsystem" ? (
-                        // Gold-tier badge for AI Package buyers ($9,700
+                        // Gold-tier badge for AI Package buyers ($10,000
                         // + $500–1k/mo). Larger + brighter than the
                         // other tiers so paid AI-system clients pop in
                         // the table at a glance.
                         <span
                           className="text-base px-2.5 py-1 rounded-md bg-gradient-to-b from-amber-300 to-yellow-500 text-amber-950 font-black tracking-tight border border-amber-200/70 shadow-[0_0_12px_rgba(251,191,36,0.55)]"
-                          title="Full AI System — $9,700 + $500–1,000/mo · Custom AI Marketing Funnel"
+                          title="Full AI System — $10,000 + $500–1,000/mo · Custom AI Marketing Funnel"
                         >
                           $
                         </span>

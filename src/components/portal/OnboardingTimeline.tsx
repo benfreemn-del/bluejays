@@ -5,7 +5,7 @@
  * the portal Overview tab for clients in their first 14 days post-
  * purchase.
  *
- * Reduces day-1 anxiety on the AI Package: client just spent $9,700,
+ * Reduces day-1 anxiety on the AI Package: client just spent $10,000,
  * gets a Stripe receipt, then... silence until kickoff. Timeline
  * shows them exactly what's happening day-by-day for the first two
  * weeks so they can see progress against expectations.

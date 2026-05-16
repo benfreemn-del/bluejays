@@ -41,7 +41,8 @@ const REGISTRY: OnboardDoc[] = [
     description:
       "Welcome packet for Paul — portal access, tab tour, ownership " +
       "matrix, pricing breakdown, account-creation permissions, and " +
-      "card-on-file policy. Read through and confirm below.",
+      "card-on-file policy. Read through and confirm below. " +
+      "Note: Phase A build work begins the business day Q1 payment clears.",
     extraQuestions: [
       {
         id: "account_creation_permission",
@@ -64,6 +65,58 @@ const REGISTRY: OnboardDoc[] = [
         id: "preferred_ai_email",
         label: "Preferred contact email for AI-drafted replies",
         placeholder: "paul@zenithsports.org",
+      },
+      {
+        id: "twilio_number_style",
+        label:
+          "Twilio number preference — local Pacific NW area code, or a vanity number (e.g. 1-855-TEKKY-01)?",
+        placeholder: "local PNW · vanity 1-855-TEKKY-01 · no preference",
+      },
+      {
+        id: "fourth_audience",
+        label:
+          "Want a 4th audience added before Phase A launches (e.g. 'trainer' or 'academy'), or stick with parent / coach / player / club?",
+        placeholder: "stick with 4 · add 'trainer' · add 'academy' · etc.",
+      },
+      {
+        id: "owner_cell",
+        label:
+          "Your direct cell number — used for owner SMS alerts (new leads, urgent funnel issues, AI flags).",
+        placeholder: "e.g. (360) 555-1234",
+      },
+      {
+        id: "philip_contact",
+        label:
+          "Philip's best cell + email — backup contact when you're unreachable.",
+        placeholder: "(360) 555-9876 · philip@zenithsports.org",
+      },
+      {
+        id: "existing_accounts",
+        label:
+          "What accounts already exist that I should take over instead of creating fresh? (Shopify admin, Google Business Profile, Meta Business Manager, Google Ads, Mailchimp / ConvertKit / Klaviyo, anything else)",
+        placeholder:
+          "Shopify yes (zenithsports.org) · GBP no · Meta BM no · Google Ads no · email tool: none",
+      },
+      {
+        id: "customer_list",
+        label:
+          "Do you have an existing customer or email list I can import (CSV / Shopify export / Mailchimp / Klaviyo)? If yes, roughly how many contacts and what segments (parents / coaches / players / past buyers)?",
+        placeholder:
+          "Shopify: ~120 past buyers · email newsletter: ~400 parents",
+      },
+      {
+        id: "ad_geography",
+        label:
+          "Where should paid ads run first? National, Pacific NW only, specific clubs / states / metros?",
+        placeholder:
+          "Pacific NW first (WA, OR, ID) · then expand national after 30 days",
+      },
+      {
+        id: "business_hours",
+        label:
+          "Business hours — when should the AI auto-reply switch into 'after hours' tone? Also: any days closed?",
+        placeholder:
+          "Mon-Fri 8a-6p PT, Sat 9a-2p, closed Sun · after-hours = AI promises reply next morning",
       },
     ],
   },

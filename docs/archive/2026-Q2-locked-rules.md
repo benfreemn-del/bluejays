@@ -256,15 +256,41 @@ Landing page is live at `/agency`. This block covers the paid ad campaigns that 
 - Location: Start with Washington, Oregon, Idaho (expand to all US once profitable)
 - Lookalike: Upload your existing paid client emails as a custom audience → create 1% lookalike
 
+<!-- Creative rewrite 2026-05-16 — ad-to-page-congruence fix.
+     Prior version led with savings ("If you're paying an agency right
+     now"). New /agency hero (rewritten same day) leads with the
+     100-leads-in-90-days guarantee. Per landing_page_optimizer skill
+     frameworks_video_03 chunk 15 — ad and hero must read like the same
+     conversation. New copy leads with the guarantee (matches the hero
+     headline verbatim) and retains the savings frame as proof in the
+     body. Old copy preserved below in an HTML comment for reference. -->
+
 **Meta Ads creative brief (give to a designer or build in Canva):**
 - Format: Static image + short-form video (Reel)
-- Hook text on image: "If you're paying an agency right now, read this."
+- Hook text on image: "100 real leads in 90 days — for less than your agency's monthly retainer."
 - Visual: Split screen — agency invoice ($4,800) on left, BlueJays summary ($750/mo) on right
-- Body copy: "Agencies charge $3,000–$8,000/month. Same playbook for every client. You own nothing. BlueJays builds you a custom AI system — Google Ads, Meta Ads, email, text, voicemail, SEO. One setup fee. You own it forever. Cancel the monthly support anytime."
-- CTA: "See how much you'd save" → /agency
+- Body copy: "Agencies charge $3,000–$8,000/month for templates and rotating junior reps. BlueJays builds you a custom AI marketing system — Google Ads, Meta Ads, email, texts, voicemails, SEO — once. $750/mo all-in including ad spend. **Guaranteed 100 real leads in 90 days, or we keep working free.** You own everything. Cancel anytime."
+- CTA: "See if you qualify" → /agency
 
 **Video script (30-second Reel — record on phone, no production needed):**
-"If you're paying a marketing agency right now, I want to show you something. [Show the math: $4,000 × 12 = $48,000/year] For $48,000 a year, they're running the same campaigns they run for every other client. Same templates. Same targeting. Junior reps who rotate every 6 months. Here's what I do instead: I build you a custom AI marketing system — Google Ads, Meta Ads, email, texts, voicemails, SEO — all connected, all learning from your real customers. One setup fee. You own it. Get your free audit at bluejayportfolio.com/agency."
+"If you're paying a marketing agency right now, I want to show you something. [Show the math: $4,000 × 12 = $48,000/year] For $48,000 a year, they're running the same campaigns they run for every other client. Same templates. Same targeting. Junior reps who rotate every 6 months. **And guess what — no guarantee.** Here's what I do instead: I build you a custom AI marketing system — Google Ads, Meta Ads, email, texts, voicemails, SEO — all connected, all learning from your real customers. **100 real leads in 90 days, or I keep working for free.** You own it. Get your free audit at bluejayportfolio.com/agency."
+
+<!-- ARCHIVED — pre-2026-05-16 ad copy (savings-led, did not match new
+     hero). Kept here so future copy iterations can A/B against it.
+
+     Hook text on image: "If you're paying an agency right now, read this."
+     Body copy: "Agencies charge $3,000–$8,000/month. Same playbook for
+       every client. You own nothing. BlueJays builds you a custom AI
+       system — Google Ads, Meta Ads, email, text, voicemail, SEO. One
+       setup fee. You own it forever. Cancel the monthly support
+       anytime."
+     CTA: "See how much you'd save" → /agency
+
+     Video script line removed in 2026-05-16 rewrite:
+       "One setup fee. You own it." (replaced with the guarantee line
+       and "no guarantee" agitation per the same chunk 15 fix.)
+-->
+
 
 **Retargeting:**
 - [ ] Once `/agency` has traffic, create a retargeting audience of everyone who visited `/agency` but didn't book a call

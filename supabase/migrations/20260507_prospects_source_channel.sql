@@ -1,6 +1,6 @@
 -- Lead-source attribution on prospects.
 --
--- Without this, a closed $9,700 deal can't tell us if it came from:
+-- Without this, a closed $10,000 deal can't tell us if it came from:
 --   madie-cold-call · audit-inbound · agency-replacement-ad ·
 --   partner:hector · website-direct · scout-mfg-icp · etc.
 --
