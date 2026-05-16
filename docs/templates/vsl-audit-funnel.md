@@ -72,9 +72,9 @@ competitor with worse photos is somehow getting the order and
 you're not."
 
 [15-25s — REFRAME · perceived-likelihood up]
-"We've audited 200+ sites — manufacturers, local trades, indie
-brands. The fixes are almost always the same 6 things. You don't
-need a developer for any of them."
+"We've audited thousands of sites — manufacturers, local trades,
+indie brands. The fixes are almost always the same 6 things. You
+don't need a developer for any of them."
 
 [25-30s — BRIDGE · effort/sacrifice down + scroll-trigger]
 "Your audit's about to land — scroll in a second and I'll show
@@ -87,6 +87,35 @@ you exactly what to fix first."
 - Authentic > produced. Truck, desk, garage — not a studio.
 - Two takes minimum; pick the one with more energy, not more polish.
 - Hard cut at exactly 30.0 sec.
+
+### Indoor vs outdoor — Ben's call (added 2026-05-16)
+
+**Outdoor is better for authenticity, BUT only if you control three things.**
+
+- ✅ **Why outdoor wins:** signals real-operator, not studio-agency. Free
+  daylight is the best softbox money can't buy. Differentiates you from
+  every other talking-head in the algorithm.
+- ⚠️ **The three things to control or it backfires:**
+  1. **Wind on the mic = unusable audio.** Phone mic picks up every gust
+     as a thud. Either (a) shoot on a no-wind day, (b) use a lav mic with
+     a foam windscreen, or (c) shoot in a corner / against a wall that
+     blocks wind.
+  2. **Direct sun makes you squint.** Shoot in open shade — under an
+     awning, on a covered porch, in the shadow of your truck. Back to the
+     sun is fine; sun in your face on camera is not.
+  3. **Background can't distract from the message.** Busy parking lot
+     with cars moving = viewer's eye tracks the cars, not you. Quiet
+     porch / parked truck cab / against a garage door / industrial wall
+     = viewer stays on your face. Pick ONE outdoor spot and reuse for
+     all 5 clips in a batch — consistency = brand identity.
+
+**Recommended for Ben:** parked truck cab with the driver door open
+(controls wind, gives you mid-shadow, distinctive backdrop). OR your
+garage/workshop doorway with you stepping outside one step.
+
+**Skip outdoor on:** windy days, days with strong direct sun and no
+shade, or if you only have 15 min between calls (setup risk too high).
+Default to a consistent indoor spot on those days.
 
 ---
 
