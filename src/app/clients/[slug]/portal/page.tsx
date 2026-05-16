@@ -28,6 +28,7 @@ import {
 import ZenithSpotlight from "@/components/portal/ZenithSpotlight";
 import SignatureBuilder from "@/components/portal/SignatureBuilder";
 import LeadContextEditor from "@/components/portal/LeadContextEditor";
+import ClientDocsTab from "./ClientDocsTab";
 import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
 import {
   filterBySearch,
@@ -238,6 +239,8 @@ type Tab =
   | "ai-skills"
   | "ads"
   | "calendar"
+  | "routes"
+  | "docs"
   | "account";
 
 type Campaign = {
@@ -905,6 +908,17 @@ export default function PortalPage({
               ...(getPortalConfig(slug)?.tabs.calendar
                 ? [{ id: "calendar" as Tab, label: "Calendar", emoji: "📅" }]
                 : []),
+              // 🚚 Routes tab — recurring-service Route Ops (crews +
+              // ordered stops + RQS). Phase 1 alpha = landscaping. Per
+              // portal-configs.tabs.routes.
+              ...(getPortalConfig(slug)?.tabs.routes
+                ? [{ id: "routes" as Tab, label: "Routes", emoji: "🚚" }]
+                : []),
+              // 🗂 Docs — always visible. Onboarding PDFs, voicemail
+              // scripts, signed acknowledgments. Per CLAUDE.md
+              // "Shareable Client Doc Pattern" + the per-client
+              // client-facing extension (added 2026-05-15).
+              { id: "docs", label: "Docs", emoji: "🗂" },
               { id: "account", label: "Account", emoji: "⚙️" },
             ] as { id: Tab; label: string; emoji: string }[]
           ).map((t) => (
@@ -997,6 +1011,10 @@ export default function PortalPage({
         {tab === "calendar" && getPortalConfig(slug)?.tabs.calendar && slug === "olympic-inspections" && (
           <OitCalendarTab />
         )}
+        {tab === "routes" && getPortalConfig(slug)?.tabs.routes && (
+          <RoutesTab slug={slug} />
+        )}
+        {tab === "docs" && <ClientDocsTab slug={slug} />}
         {tab === "account" && (
           <AccountTab owner={owner} subs={subs} onLogout={logout} />
         )}
@@ -6722,6 +6740,96 @@ function MapTab({ slug }: { slug: string }) {
       <p className="text-sm text-slate-400 max-w-md mx-auto">
         Per-tenant geographic targeting wires up on a per-client basis.
       </p>
+    </div>
+  );
+}
+
+/**
+ * Routes — Route Ops Phase 1 placeholder. Alpha vertical is landscaping
+ * (Hector + Mt View + Elite Hardscapes). The full implementation
+ * (crew + vehicle + ordered customer stops + day-of-week sort + Google
+ * Maps view + auto-saved live-stats sidebar + RQS) is specced in
+ * `aios/PRO_SYNTHESIS.md` (2026-05-12 row) and ships in a follow-up
+ * session. This placeholder keeps the tab live so owners see what's
+ * coming and gives ops a single mount point to swap the real component
+ * into when Phase 1 lands.
+ */
+function RoutesTab({ slug }: { slug: string }) {
+  const RQS_DIMENSIONS = [
+    {
+      key: "density",
+      label: "Density",
+      desc: "Stops per square mile per crew per day.",
+    },
+    {
+      key: "rev_per_hr",
+      label: "Revenue per hour",
+      desc: "Crew-hour gross divided by total drive + service hours.",
+    },
+    {
+      key: "fuel",
+      label: "Fuel efficiency",
+      desc: "Drive miles between stops vs. cluster diameter.",
+    },
+    {
+      key: "predictability",
+      label: "Predictability",
+      desc: "Variance of actual vs. scheduled stop time, last 4 weeks.",
+    },
+    {
+      key: "crew_pref",
+      label: "Crew preference",
+      desc: "Soft weighting from crew preferred-customer / preferred-area tags.",
+    },
+  ];
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl bg-slate-900/60 border border-white/[0.06] p-5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-base">🚚</span>
+          <h2 className="text-lg font-bold tracking-tight">Route Ops</h2>
+          <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-amber-300/90 bg-amber-500/10 border border-amber-400/20 px-2 py-0.5 rounded">
+            Phase 1 · landing soon
+          </span>
+        </div>
+        <p className="text-sm text-slate-400 max-w-2xl">
+          Recurring-service route operations for {slug.replace(/-/g, " ")}.
+          Crews + vehicles + ordered customer stops + day-of-week sort +
+          live Google Maps view + auto-saved live-stats sidebar. Routes
+          get scored against five dimensions every time you re-sequence.
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-slate-900/40 border border-white/[0.06] p-5">
+        <h3 className="text-sm font-bold tracking-tight mb-3 text-slate-200">
+          Route Quality Score — five dimensions
+        </h3>
+        <ul className="space-y-2.5">
+          {RQS_DIMENSIONS.map((d) => (
+            <li key={d.key} className="flex items-start gap-3 text-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+              <div>
+                <span className="font-semibold text-slate-200">
+                  {d.label}
+                </span>
+                <span className="text-slate-500"> — {d.desc}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p className="text-[11px] text-slate-600 mt-4 leading-relaxed">
+          Per-vertical weight presets ship with Phase 1 (landscape defaults
+          favor density + rev/hr; pool routes favor predictability). Per-crew
+          overrides on top.
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-slate-900/40 border border-white/[0.06] p-5 text-xs text-slate-500 leading-relaxed">
+        Full spec lives in <code className="text-slate-300">aios/PRO_SYNTHESIS.md</code>{" "}
+        (Route Ops · 2026-05-12). Alpha vertical: lawn maintenance
+        (Hector). Expansion verticals queued: cleaning, pool, HVAC,
+        pest, detail, dog walking, snow, mobile mechanics, pet sitting.
+      </div>
     </div>
   );
 }

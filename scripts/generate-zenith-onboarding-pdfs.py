@@ -1139,10 +1139,95 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
 
     flow.append(PageBreak())
 
+    # ── Section: Voicemail scripts ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("08 · VOICEMAIL SCRIPTS", s["eyebrow"]))
+    flow.append(Paragraph("Three clips. Your voice. Brand-aligned.", s["h1"]))
+    flow.append(
+        Paragraph(
+            "When you sit down to record the three voicemail clips, read "
+            "these scripts as-written. They're 18-22 seconds each, "
+            "calibrated to Tekky's brand voice (specific, coach-like, no "
+            "hype). Use Voice Memos (iOS) or Recorder (Android), then "
+            "email the three <font face='Courier'>.m4a</font> files to "
+            "<b>bluejaycontactme@gmail.com</b> — Ben uploads them to your "
+            "Twilio account.",
+            s["body"],
+        )
+    )
+    flow.append(Spacer(1, 14))
+
+    flow.append(Paragraph("Recording tips", s["h3"]))
+    for tip in [
+        "Quiet room. Phone speaker face-down on a folded towel.",
+        "Stand up. Voice comes through firmer than sitting.",
+        "Smile on Clip 1 and 2 — it actually changes the tone.",
+        "If you flub a line, restart the whole take. Editing splices "
+        "are audible.",
+    ]:
+        flow.append(Paragraph(f"• {tip}", s["bullet"]))
+
+    flow.append(Spacer(1, 14))
+    flow.append(Paragraph("Clip 1 — Welcome / Main greeting", s["h3"]))
+    flow.append(Paragraph("Target length: 18-22 sec", s["body_small"]))
+    flow.append(
+        Paragraph(
+            "“Hey, this is Paul over at Zenith Sports and Tekky. "
+            "Thanks for calling. Quickest way to reach me is to leave "
+            "your name, what your player's working on, and your number. "
+            "I'll get back to you the same day. If you want training "
+            "tips or to grab a Tekky ball, head to tekky.org. Talk "
+            "soon.”",
+            s["quote_amber"],
+        )
+    )
+
+    flow.append(Spacer(1, 10))
+    flow.append(Paragraph("Clip 2 — Missed call callback", s["h3"]))
+    flow.append(Paragraph("Target length: 18-22 sec", s["body_small"]))
+    flow.append(
+        Paragraph(
+            "“Hey, Paul from Tekky here. Sorry I missed your call "
+            "— I'm probably with a player on the field. Drop me your "
+            "name, what your player needs help with, and the best "
+            "number to reach you back, and I'll call you the same day. "
+            "If you want to grab the ball or see drills, that's at "
+            "tekky.org. Talk soon.”",
+            s["quote_amber"],
+        )
+    )
+
+    flow.append(Spacer(1, 10))
+    flow.append(Paragraph("Clip 3 — After hours", s["h3"]))
+    flow.append(Paragraph("Target length: 18-22 sec", s["body_small"]))
+    flow.append(
+        Paragraph(
+            "“You've reached Paul at Tekky. We're closed for the "
+            "evening — I check messages first thing in the morning. "
+            "Leave your name, your player's age, and what you're "
+            "working on, and I'll get back to you tomorrow. For drills "
+            "or the Tekky ball, head to tekky.org anytime. Have a good "
+            "one.”",
+            s["quote_amber"],
+        )
+    )
+
+    flow.append(Spacer(1, 12))
+    flow.append(
+        Paragraph(
+            "You can also read these scripts in your portal — Docs tab, "
+            "always available on your phone when you sit down to record.",
+            s["body_muted"],
+        )
+    )
+
+    flow.append(PageBreak())
+
     # ── Section: Feedback channels ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("08 · HOW WE COMMUNICATE", s["eyebrow"]))
+    flow.append(Paragraph("09 · HOW WE COMMUNICATE", s["eyebrow"]))
     flow.append(Paragraph("Two channels. Both fast.", s["h1"]))
     flow.append(Spacer(1, 8))
 
