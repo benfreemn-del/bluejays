@@ -46,6 +46,7 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
+from svglib.svglib import svg2rlg
 
 
 # ── Brand tokens (match Zenith showcase page) ────────────────────────
@@ -66,6 +67,27 @@ ROOT = Path(__file__).resolve().parent.parent
 # /clients/zenith-sports/pdfs/<file>.pdf
 OUT = ROOT / "public" / "clients" / "zenith-sports" / "pdfs"
 OUT.mkdir(parents=True, exist_ok=True)
+
+# Logo asset (vector SVG sourced from src/components/BluejayLogo.tsx,
+# saved as a standalone file for ReportLab embedding via svglib).
+LOGO_SVG = Path(__file__).resolve().parent / "assets" / "bluejay-logo.svg"
+
+
+def make_logo_drawing(target_height: float = 32, fill: colors.Color = None):
+    """Load the Bluejay SVG and scale it to a target height (points).
+
+    Returns a Drawing flowable that can be appended to a Platypus story.
+    Pass fill=WHITE for dark backgrounds, NAVY/LIME for light.
+    """
+    drawing = svg2rlg(str(LOGO_SVG))
+    if drawing is None:
+        return None
+    # Source viewBox is 100×100 → scale by target_height/100.
+    scale = target_height / 100.0
+    drawing.width = 100 * scale
+    drawing.height = 100 * scale
+    drawing.scale(scale, scale)
+    return drawing
 
 
 # ── Styles ───────────────────────────────────────────────────────────
@@ -233,10 +255,23 @@ def make_styles() -> dict[str, ParagraphStyle]:
 
 
 # ── Custom flowables ─────────────────────────────────────────────────
-class FillLine(Flowable):
-    """A labeled horizontal blank line that users can write into.
+# Counter for generating unique AcroForm field names. PDF AcroForm
+# requires every field name to be unique within the document.
+_FIELD_SEQ = [0]
 
-    Label sits flush-left in bold; the line extends to the right edge.
+
+def _next_field_name(prefix: str) -> str:
+    _FIELD_SEQ[0] += 1
+    return f"{prefix}_{_FIELD_SEQ[0]}"
+
+
+class FillLine(Flowable):
+    """A labeled horizontal blank line + an overlay AcroForm text field.
+
+    Visually: label flush-left in bold, hairline rule on the right.
+    Functionally: a real fillable PDF text field overlaid on the line,
+    so the user can click and type in Preview/Acrobat/Edge AND printed
+    copies look correct.
     """
 
     def __init__(
@@ -246,6 +281,7 @@ class FillLine(Flowable):
         height: float = 22,
         label_width: float = 1.6 * inch,
         sublabel: str = "",
+        field_name: str | None = None,
     ) -> None:
         super().__init__()
         self.label = label
@@ -253,6 +289,7 @@ class FillLine(Flowable):
         self.width = width
         self.height = height
         self.label_width = label_width
+        self.field_name = field_name or _next_field_name("text")
 
     def wrap(self, avail_width: float, avail_height: float) -> tuple[float, float]:
         self.width = avail_width
@@ -268,18 +305,38 @@ class FillLine(Flowable):
             c.setFont("Helvetica", 8)
             c.setFillColor(SLATE)
             c.drawString(0, -4, self.sublabel)
-        # Line
+        # Hairline rule (for printed copies and visual reference)
         line_start = self.label_width
         line_end = self.width
         c.setStrokeColor(colors.HexColor("#94a3b8"))
         c.setLineWidth(0.6)
         c.line(line_start, 4, line_end, 4)
+        # Overlay AcroForm text field (clickable in any PDF reader)
+        try:
+            c.acroForm.textfield(
+                name=self.field_name,
+                tooltip=self.label,
+                x=line_start,
+                y=2,
+                width=line_end - line_start,
+                height=self.height - 4,
+                fontSize=11,
+                fillColor=colors.transparent,
+                borderColor=colors.transparent,
+                textColor=INK,
+                forceBorder=False,
+            )
+        except Exception:
+            # Older ReportLab versions or weird canvas state — fall back
+            # to just the visible line. Field still works on print.
+            pass
 
 
 class Checkbox(Flowable):
-    """A visible square + label, suitable for handwrite or PDF-editor click.
+    """A visible square + label that is ALSO a real AcroForm checkbox.
 
-    Sits as a single line: [ ] label text here ......
+    Click in any PDF reader to toggle; prints as a plain square so it
+    works on paper too.
     """
 
     def __init__(
@@ -288,12 +345,14 @@ class Checkbox(Flowable):
         size: float = 10,
         font_size: float = 10,
         bold: bool = False,
+        field_name: str | None = None,
     ) -> None:
         super().__init__()
         self.label = label
         self.size = size
         self.font_size = font_size
         self.bold = bold
+        self.field_name = field_name or _next_field_name("check")
 
     def wrap(self, avail_width: float, avail_height: float) -> tuple[float, float]:
         self.width = avail_width
@@ -301,9 +360,27 @@ class Checkbox(Flowable):
 
     def draw(self) -> None:  # type: ignore[override]
         c = self.canv
-        c.setStrokeColor(NAVY)
-        c.setLineWidth(0.8)
-        c.rect(0, 1, self.size, self.size, stroke=1, fill=0)
+        # Real AcroForm checkbox (renders its own visible box).
+        try:
+            c.acroForm.checkbox(
+                name=self.field_name,
+                tooltip=self.label,
+                x=0,
+                y=1,
+                size=self.size,
+                checked=False,
+                buttonStyle="check",
+                borderColor=NAVY,
+                fillColor=WHITE,
+                textColor=NAVY,
+                forceBorder=True,
+            )
+        except Exception:
+            # Fallback: plain rectangle if acroForm.checkbox fails.
+            c.setStrokeColor(NAVY)
+            c.setLineWidth(0.8)
+            c.rect(0, 1, self.size, self.size, stroke=1, fill=0)
+        # Label to the right of the box.
         c.setFont(
             "Helvetica-Bold" if self.bold else "Helvetica",
             self.font_size,
@@ -351,16 +428,24 @@ class AccentBar(Flowable):
 
 
 class WriteBox(Flowable):
-    """A bordered multi-line box for free-form writing.
+    """A bordered multi-line box that's ALSO a real AcroForm textarea.
 
-    Renders as a labeled box with N lines of writable space inside.
+    Click and type to fill digitally; prints with light guide lines
+    for handwriting.
     """
 
-    def __init__(self, label: str, lines: int = 4, line_height: float = 18) -> None:
+    def __init__(
+        self,
+        label: str,
+        lines: int = 4,
+        line_height: float = 18,
+        field_name: str | None = None,
+    ) -> None:
         super().__init__()
         self.label = label
         self.lines = lines
         self.line_height = line_height
+        self.field_name = field_name or _next_field_name("textarea")
 
     def wrap(self, avail_width: float, avail_height: float) -> tuple[float, float]:
         self.width = avail_width
@@ -371,11 +456,12 @@ class WriteBox(Flowable):
     def draw(self) -> None:  # type: ignore[override]
         c = self.canv
         # Label above box
-        c.setFont("Helvetica-Bold", 10)
-        c.setFillColor(NAVY)
-        c.drawString(0, self.height - 12, self.label)
-        # Box border
-        box_top = self.height - 18
+        if self.label:
+            c.setFont("Helvetica-Bold", 10)
+            c.setFillColor(NAVY)
+            c.drawString(0, self.height - 12, self.label)
+        # Box border + guide lines (for printed copies)
+        box_top = self.height - 18 if self.label else self.height - 4
         box_bottom = 4
         c.setStrokeColor(colors.HexColor("#cbd5e1"))
         c.setLineWidth(0.6)
@@ -387,12 +473,29 @@ class WriteBox(Flowable):
             stroke=1,
             fill=0,
         )
-        # Horizontal write lines
         c.setStrokeColor(colors.HexColor("#e2e8f0"))
         c.setLineWidth(0.4)
         for i in range(1, self.lines):
             y = box_bottom + i * self.line_height
             c.line(6, y, self.width - 6, y)
+        # Overlay AcroForm multi-line text field
+        try:
+            c.acroForm.textfield(
+                name=self.field_name,
+                tooltip=self.label or "Notes",
+                x=2,
+                y=box_bottom + 2,
+                width=self.width - 4,
+                height=(box_top - box_bottom) - 4,
+                fontSize=10,
+                fieldFlags="multiline",
+                fillColor=colors.transparent,
+                borderColor=colors.transparent,
+                textColor=INK,
+                forceBorder=False,
+            )
+        except Exception:
+            pass
 
 
 # ── Page decorations ─────────────────────────────────────────────────
@@ -409,10 +512,36 @@ def on_page_branded(doc_title: str, footer_note: str):
         canvas.setFont("Helvetica", 9)
         canvas.setFillColor(SLATE)
         canvas.drawRightString(w - 0.6 * inch, h - 22, doc_title)
-        # Footer
+        # Footer: tiny logo + brand text + page #
+        try:
+            from reportlab.graphics import renderPDF as _renderPDF
+            logo = make_logo_drawing(target_height=14)
+            if logo is not None:
+                _renderPDF.draw(logo, canvas, 0.6 * inch - 2, 0.32 * inch)
+                canvas.setFont("Helvetica-Bold", 8)
+                canvas.setFillColor(NAVY)
+                canvas.drawString(
+                    0.6 * inch + 18,
+                    0.4 * inch,
+                    "BlueJays",
+                )
+                canvas.setFont("Helvetica", 8)
+                canvas.setFillColor(SLATE)
+                canvas.drawString(
+                    0.6 * inch + 18 + 42,
+                    0.4 * inch,
+                    f"·  {footer_note}",
+                )
+            else:
+                canvas.setFont("Helvetica", 8)
+                canvas.setFillColor(SLATE)
+                canvas.drawString(0.6 * inch, 0.4 * inch, footer_note)
+        except Exception:
+            canvas.setFont("Helvetica", 8)
+            canvas.setFillColor(SLATE)
+            canvas.drawString(0.6 * inch, 0.4 * inch, footer_note)
         canvas.setFont("Helvetica", 8)
         canvas.setFillColor(SLATE)
-        canvas.drawString(0.6 * inch, 0.4 * inch, footer_note)
         canvas.drawRightString(
             w - 0.6 * inch,
             0.4 * inch,
@@ -465,24 +594,30 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow: list = []
 
     # ── Cover ──
-    flow.append(Spacer(1, 1.4 * inch))
-    flow.append(AccentBar())
+    flow.append(Spacer(1, 0.9 * inch))
+    # BlueJays logo
+    logo = make_logo_drawing(target_height=48)
+    if logo is not None:
+        flow.append(logo)
     flow.append(Spacer(1, 16))
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 14))
     flow.append(Paragraph("OWNER ONBOARDING PACKET", s["cover_eyebrow"]))
     flow.append(Paragraph("Welcome to your<br/>AI Marketing System.", s["cover_title"]))
     flow.append(Spacer(1, 8))
     flow.append(
         Paragraph(
-            "Everything Paul and Philip need to operate the Tekky portal "
-            "from day one — credentials, tab tour, what's automated, what's "
-            "on you, and the pricing reference for your records.",
+            "Everything Paul needs to operate the Tekky portal from day "
+            "one — credentials, tab tour, what's automated, what's on you, "
+            "pricing breakdown, account-creation permissions, and our "
+            "card-on-file policy.",
             s["cover_subtitle"],
         )
     )
     flow.append(Spacer(1, 22))
     flow.append(
         Paragraph(
-            "Prepared for: <b>Paul Hanson · Philip Lund</b>",
+            "Prepared for: <b>Paul Hanson</b>",
             s["cover_meta"],
         )
     )
@@ -503,7 +638,8 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Spacer(1, 10))
     flow.append(
         Paragraph(
-            "<b>Confirm receipt online:</b><br/>"
+            "<b>Confirm receipt online (click + type to fill, or print + "
+            "handwrite):</b><br/>"
             "<font face='Courier' size='10'>"
             "bluejayportfolio.com/sign/zenith-sports/handoff"
             "</font>",
@@ -525,21 +661,13 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     )
     flow.append(Spacer(1, 14))
 
-    flow.append(Paragraph("Your login credentials", s["h2"]))
+    flow.append(Paragraph("Your login credential", s["h2"]))
     cred_data = [
         [
             Paragraph("<b>Paul Hanson</b>", s["body"]),
             Paragraph(
                 "Email: paul@zenithsports.org<br/>"
                 "Temp password: <font face='Courier'>tekky-walkthrough-paul-2026</font>",
-                s["body_muted"],
-            ),
-        ],
-        [
-            Paragraph("<b>Philip Lund</b>", s["body"]),
-            Paragraph(
-                "Email: philip@zenithsports.org<br/>"
-                "Temp password: <font face='Courier'>tekky-walkthrough-philip-2026</font>",
                 s["body_muted"],
             ),
         ],
@@ -554,7 +682,6 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
                 ("BACKGROUND", (0, 0), (-1, -1), LIGHT),
                 ("LINEABOVE", (0, 0), (-1, 0), 0.4, colors.HexColor("#cbd5e1")),
                 ("LINEBELOW", (0, -1), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
-                ("LINEABOVE", (0, 1), (-1, 1), 0.3, colors.HexColor("#e2e8f0")),
                 ("LEFTPADDING", (0, 0), (-1, -1), 10),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 10),
                 ("TOPPADDING", (0, 0), (-1, -1), 10),
@@ -570,22 +697,20 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         Paragraph(
             "⚠ <b>Change your password as soon as you log in.</b> Click "
             "the avatar in the upper-right of the portal → \"Change "
-            "password.\" The temp passwords above stop working once you "
+            "password.\" The temp password above stops working once you "
             "set a permanent one.",
             s["quote_amber"],
         )
     )
 
     flow.append(Spacer(1, 10))
-    flow.append(Paragraph("Set your new password (fill below)", s["h3"]))
+    flow.append(Paragraph("Set your new password (click to type, or print + handwrite)", s["h3"]))
     flow.append(FillLine("Paul — new password:", label_width=2.1 * inch))
-    flow.append(Spacer(1, 8))
-    flow.append(FillLine("Philip — new password:", label_width=2.1 * inch))
-    flow.append(Spacer(1, 8))
+    flow.append(Spacer(1, 10))
     flow.append(
         Paragraph(
-            "Never share the new passwords over Slack or email. "
-            "Pass them verbally or via a password manager.",
+            "Never share the new password over Slack or email. "
+            "Pass it verbally or via a password manager.",
             s["body_small"],
         )
     )
@@ -745,7 +870,10 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
             Paragraph("one-time", s["body_muted"]),
             Paragraph(
                 "<b>4 quarterly installments of $2,425.</b> "
-                "Q1 due at launch.",
+                "Q1 due at launch. Each installment includes ~$36 "
+                "reserved for WA state Business &amp; Occupation tax "
+                "(1.5% of service revenue), remitted by BlueJays directly "
+                "to the state — no extra charge to you.",
                 s["body_muted"],
             ),
         ],
@@ -809,6 +937,15 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Spacer(1, 12))
 
     flow.append(Paragraph("Quarterly installment schedule", s["h3"]))
+    flow.append(
+        Paragraph(
+            "Each installment: <b>$2,389</b> services + <b>$36</b> WA "
+            "B&amp;O tax reserve = <b>$2,425</b> total. Total program: "
+            "$9,555 services + $145 tax reserve = $9,700.",
+            s["body_muted"],
+        )
+    )
+    flow.append(Spacer(1, 4))
     flow.append(Paragraph("• Q1 — $2,425 at launch (Sunday 2026-05-17)", s["bullet"]))
     flow.append(Paragraph("• Q2 — $2,425 on 2026-08-17", s["bullet"]))
     flow.append(Paragraph("• Q3 — $2,425 on 2026-11-17", s["bullet"]))
@@ -828,18 +965,150 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
 
     flow.append(PageBreak())
 
+    # ── Section: Account creation permissions ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("05 · ACCOUNT CREATION", s["eyebrow"]))
+    flow.append(Paragraph("Authority to spin up accounts on your behalf.", s["h1"]))
+    flow.append(
+        Paragraph(
+            "Phase A involves standing up several third-party accounts for "
+            "TEKKY — Twilio (SMS), Meta Business Manager (ads), Google Ads, "
+            "SendGrid (email), Calendly, and one or two others depending on "
+            "scope. Some of these require an email + verification on TEKKY's "
+            "behalf. Before any account is created I need your written "
+            "permission and the email username you want me to use.",
+            s["body"],
+        )
+    )
+
+    flow.append(Spacer(1, 12))
+    flow.append(Paragraph("Authorization", s["h3"]))
+    flow.append(
+        Checkbox(
+            "I authorize BlueJays (Ben Freeman) to create accounts on TEKKY's "
+            "behalf for the Phase A buildout — Twilio, Meta Business Manager, "
+            "Google Ads, SendGrid, Calendly, and any other vendor required to "
+            "complete the AI System scope.",
+            bold=False,
+            font_size=10,
+        )
+    )
+    flow.append(Spacer(1, 6))
+    flow.append(
+        Checkbox(
+            "All accounts created remain owned by TEKKY. Ownership transfers "
+            "to TEKKY-managed billing during Phase B handoff (target 30 days "
+            "post-launch). Until then BlueJays operates them on your card / "
+            "credit on file (see next section).",
+            bold=False,
+            font_size=10,
+        )
+    )
+
+    flow.append(Spacer(1, 14))
+    flow.append(Paragraph("Email login for new accounts", s["h3"]))
+    flow.append(
+        Paragraph(
+            "When I create a new account, what email address should I use? "
+            "Either pick one of the options below or give me a specific one "
+            "you'd prefer.",
+            s["body_muted"],
+        )
+    )
+    flow.append(Spacer(1, 8))
+    flow.append(
+        Checkbox(
+            "Create accounts under a brand-new alias I should set up "
+            "(e.g. info@tekky.org · accounts@tekky.org · admin@tekky.org)",
+            bold=False,
+            font_size=10,
+        )
+    )
+    flow.append(Spacer(1, 4))
+    flow.append(
+        Checkbox(
+            "Use an existing email login you'll give me access to",
+            bold=False,
+            font_size=10,
+        )
+    )
+    flow.append(Spacer(1, 10))
+    flow.append(
+        FillLine(
+            "Specific email I should use:",
+            label_width=2.4 * inch,
+        )
+    )
+    flow.append(Spacer(1, 8))
+    flow.append(
+        FillLine(
+            "Login password for that email (if existing):",
+            label_width=3.1 * inch,
+            sublabel="Optional — only if you're sharing an existing inbox.",
+        )
+    )
+
+    flow.append(PageBreak())
+
+    # ── Section: Card on file policy ──
+    flow.append(AccentBar())
+    flow.append(Spacer(1, 6))
+    flow.append(Paragraph("06 · CARD ON FILE", s["eyebrow"]))
+    flow.append(Paragraph("Our spending rules. Locked in writing.", s["h1"]))
+    flow.append(
+        Paragraph(
+            "Several Phase A accounts (Twilio, Meta Ads, Google Ads, SendGrid "
+            "paid tiers, etc.) require a payment method on file to function. "
+            "Rather than asking you for your card every time we hit a "
+            "subscription gate, you can leave one card on file with me and "
+            "I'll use it strictly under these rules:",
+            s["body"],
+        )
+    )
+
+    flow.append(Spacer(1, 12))
+    flow.append(Paragraph("BlueJays card-on-file commitments", s["h3"]))
+    for line in [
+        "I will <b>always ask you before</b> charging any card or "
+        "entering card details into a new piece of software.",
+        "Cards are entered <b>directly into the vendor's secure form</b> "
+        "(Twilio, Meta, Google, etc.) — never stored in a BlueJays system, "
+        "spreadsheet, or chat thread.",
+        "I will give you a <b>cost estimate first</b> for any account that "
+        "charges more than $0/month, and confirm before activation.",
+        "You can <b>revoke this permission at any time</b> in writing — "
+        "we'll switch to per-charge approval immediately.",
+        "Monthly spend on managed-account vendors gets reported in your "
+        "weekly Reports tab, with a line item per vendor.",
+    ]:
+        flow.append(Paragraph(f"• {line}", s["bullet"]))
+
+    flow.append(Spacer(1, 14))
+    flow.append(Paragraph("Acknowledgment", s["h3"]))
+    flow.append(
+        Checkbox(
+            "I've read and understand the card-on-file policy above. Ben "
+            "will always ask me before charging a card or entering one "
+            "into any new software.",
+            bold=False,
+            font_size=10,
+        )
+    )
+
+    flow.append(PageBreak())
+
     # ── Section: Your action items ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("05 · ACTION ITEMS", s["eyebrow"]))
+    flow.append(Paragraph("07 · ACTION ITEMS", s["eyebrow"]))
     flow.append(Paragraph("What's on you. Check off as you go.", s["h1"]))
     flow.append(Spacer(1, 8))
 
     flow.append(Paragraph("Within 24 hours of launch", s["h3"]))
     for item in [
-        "Log in and change your password (Paul)",
-        "Log in and change your password (Philip)",
-        "Bookmark the portal URL on both phones + both laptops",
+        "Log in and change your password",
+        "Bookmark the portal URL on phone + laptop",
         "Add bluejaycontactme@gmail.com to your safe-senders list",
     ]:
         flow.append(Checkbox(item))
@@ -873,7 +1142,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     # ── Section: Feedback channels ──
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
-    flow.append(Paragraph("06 · HOW WE COMMUNICATE", s["eyebrow"]))
+    flow.append(Paragraph("08 · HOW WE COMMUNICATE", s["eyebrow"]))
     flow.append(Paragraph("Two channels. Both fast.", s["h1"]))
     flow.append(Spacer(1, 8))
 
@@ -916,17 +1185,16 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Paragraph("Sign-off", s["h2"]))
     flow.append(
         Paragraph(
-            "By signing below, Paul + Philip acknowledge receipt of the "
-            "portal, login credentials, and Phase A scope as described in "
-            "this packet. Sign-off doesn't lock you into anything — it's "
-            "the milestone marker for the start of Phase A.",
+            "By signing below, Paul acknowledges receipt of the portal, "
+            "login credential, Phase A scope, account-creation authorization, "
+            "and card-on-file policy as described in this packet. Sign-off "
+            "doesn't lock you into anything — it's the milestone marker for "
+            "the start of Phase A.",
             s["body_muted"],
         )
     )
     flow.append(Spacer(1, 18))
     flow.append(FillLine("Paul Hanson — signature:", label_width=2.6 * inch))
-    flow.append(Spacer(1, 10))
-    flow.append(FillLine("Philip Lund — signature:", label_width=2.6 * inch))
     flow.append(Spacer(1, 10))
     flow.append(FillLine("Date:", label_width=2.6 * inch))
 
@@ -947,7 +1215,11 @@ def build_walkthrough_prep(s: dict[str, ParagraphStyle]) -> None:
     flow: list = []
 
     # Cover
-    flow.append(Spacer(1, 1.2 * inch))
+    flow.append(Spacer(1, 0.9 * inch))
+    logo = make_logo_drawing(target_height=44)
+    if logo is not None:
+        flow.append(logo)
+    flow.append(Spacer(1, 14))
     flow.append(AccentBar(AMBER))
     flow.append(Spacer(1, 14))
     flow.append(Paragraph("WALKTHROUGH PREP SHEET", s["cover_eyebrow"]))
@@ -1149,7 +1421,11 @@ def build_brand_voice(s: dict[str, ParagraphStyle]) -> None:
     flow: list = []
 
     # Cover
-    flow.append(Spacer(1, 1.4 * inch))
+    flow.append(Spacer(1, 0.9 * inch))
+    logo = make_logo_drawing(target_height=48)
+    if logo is not None:
+        flow.append(logo)
+    flow.append(Spacer(1, 16))
     flow.append(AccentBar(LIME))
     flow.append(Spacer(1, 14))
     flow.append(Paragraph("BRAND VOICE REFERENCE", s["cover_eyebrow"]))
@@ -1158,15 +1434,23 @@ def build_brand_voice(s: dict[str, ParagraphStyle]) -> None:
     flow.append(
         Paragraph(
             "The locked voice rules every email, SMS, ad, and AI-drafted "
-            "reply follows when it goes out in TEKKY's name. Read these "
-            "once. Flag anything that drifts.",
+            "reply follows when it goes out in TEKKY's name. Read once. "
+            "Flag anything that drifts.",
             s["cover_subtitle"],
         )
     )
     flow.append(Spacer(1, 18))
     flow.append(
         Paragraph(
-            "<b>Confirm receipt online:</b><br/>"
+            "Prepared for: <b>Paul Hanson</b>",
+            s["cover_meta"],
+        )
+    )
+    flow.append(Spacer(1, 14))
+    flow.append(
+        Paragraph(
+            "<b>Confirm receipt online (click + type to fill, or print + "
+            "handwrite):</b><br/>"
             "<font face='Courier' size='10'>"
             "bluejayportfolio.com/sign/zenith-sports/brand-voice"
             "</font>",
@@ -1354,19 +1638,17 @@ def build_brand_voice(s: dict[str, ParagraphStyle]) -> None:
     flow.append(Paragraph("Confirm voice ownership.", s["h1"]))
     flow.append(
         Paragraph(
-            "Sign below to confirm Paul + Philip have reviewed these voice "
-            "rules. Any copy that ships in Tekky's name from this date "
-            "forward follows them. Updates to the voice come through this "
-            "doc — never inline in email threads.",
+            "Sign below to confirm Paul has reviewed these voice rules. "
+            "Any copy that ships in Tekky's name from this date forward "
+            "follows them. Updates to the voice come through this doc — "
+            "never inline in email threads.",
             s["body_muted"],
         )
     )
     flow.append(Spacer(1, 24))
-    flow.append(FillLine("Paul Hanson — initials:", label_width=2.4 * inch))
+    flow.append(FillLine("Paul Hanson — signature:", label_width=2.6 * inch))
     flow.append(Spacer(1, 10))
-    flow.append(FillLine("Philip Lund — initials:", label_width=2.4 * inch))
-    flow.append(Spacer(1, 10))
-    flow.append(FillLine("Date:", label_width=2.4 * inch))
+    flow.append(FillLine("Date:", label_width=2.6 * inch))
 
     doc.build(flow)
     print(f"  [ok] {out.name}")
@@ -1385,7 +1667,11 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
     flow: list = []
 
     # Cover
-    flow.append(Spacer(1, 1.2 * inch))
+    flow.append(Spacer(1, 0.9 * inch))
+    logo = make_logo_drawing(target_height=44)
+    if logo is not None:
+        flow.append(logo)
+    flow.append(Spacer(1, 14))
     flow.append(AccentBar(ROSE))
     flow.append(Spacer(1, 14))
     flow.append(Paragraph("SUNDAY CUTOVER RUNBOOK", s["cover_eyebrow"]))

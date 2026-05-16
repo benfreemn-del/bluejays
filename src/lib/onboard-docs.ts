@@ -39,19 +39,31 @@ const REGISTRY: OnboardDoc[] = [
     pdfPath: "/clients/zenith-sports/pdfs/tekky-onboarding-handoff.pdf",
     alertSubject: "Tekky onboarding signed",
     description:
-      "Welcome packet for Tekky founders — portal credentials, tab tour, " +
-      "ownership matrix, pricing reference, and sign-off. Read through " +
-      "and confirm below.",
+      "Welcome packet for Paul — portal access, tab tour, ownership " +
+      "matrix, pricing breakdown, account-creation permissions, and " +
+      "card-on-file policy. Read through and confirm below.",
     extraQuestions: [
       {
+        id: "account_creation_permission",
+        label:
+          "Do I have your permission to create accounts on TEKKY's behalf? (yes / no)",
+        placeholder: "yes — proceed with Phase A account stand-up",
+      },
+      {
+        id: "preferred_email_for_accounts",
+        label:
+          "Preferred email username for new accounts (or give me a login you already have)",
+        placeholder: "info@tekky.org · admin@zenithsports.org · etc.",
+      },
+      {
         id: "voicemail_date",
-        label: "When can Philip block 30 min to record voicemail clips?",
+        label: "When can you block 30 min to record voicemail clips?",
         placeholder: "e.g. Tuesday 2pm PT",
       },
       {
         id: "preferred_ai_email",
         label: "Preferred contact email for AI-drafted replies",
-        placeholder: "philip@zenithsports.org",
+        placeholder: "paul@zenithsports.org",
       },
     ],
   },

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import BluejayLogo from "@/components/BluejayLogo";
 import { getOnboardDoc } from "@/lib/onboard-docs";
 import SignForm from "./SignForm";
 
@@ -123,8 +124,13 @@ export default async function SignPage({
         </section>
 
         {/* Footer */}
-        <footer className="mt-10 pt-6 border-t border-slate-800/60 text-xs text-slate-500 flex items-center justify-between">
-          <p>BlueJays · bluejaycontactme@gmail.com</p>
+        <footer className="mt-10 pt-6 border-t border-slate-800/60 text-xs text-slate-500 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <BluejayLogo size={22} className="text-sky-400" />
+            <p className="font-semibold text-slate-300">BlueJays</p>
+            <span className="text-slate-600">·</span>
+            <p>bluejaycontactme@gmail.com</p>
+          </div>
           <p>Confidential — do not share this link publicly.</p>
         </footer>
       </div>
