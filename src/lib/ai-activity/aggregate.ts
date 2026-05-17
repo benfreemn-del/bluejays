@@ -62,6 +62,18 @@ export type TopCall = {
   action?: string;
 };
 
+export type RecentSkillRun = {
+  id: string;
+  skill: string;
+  triggeredBy: string;
+  summary: string;
+  ok: boolean;
+  noWork: boolean;
+  costUsd: number;
+  latencyMs: number;
+  createdAt: string;
+};
+
 export type FullStats = {
   windowHours: number;
   generatedAt: string;
@@ -78,6 +90,7 @@ export type FullStats = {
   caps: CapStatus[];
   skillStats: SkillRunStats;
   topCalls: TopCall[];
+  recentSkillRuns: RecentSkillRun[];
 };
 
 // ───────────────────────────────────────────────────────────────
@@ -292,18 +305,57 @@ export async function topCalls(
   }));
 }
 
+/** Last N skill runs across all skills — used by the dashboard's
+ *  "Recent skill outputs" widget. Reads ai_skill_runs directly so the
+ *  summary text is shown verbatim. */
+export async function recentSkillRuns(limit: number): Promise<RecentSkillRun[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await supabase
+    .from("ai_skill_runs")
+    .select(
+      "id, skill, triggered_by, summary, ok, no_work, cost_usd, latency_ms, created_at",
+    )
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  type Row = {
+    id: string;
+    skill: string;
+    triggered_by: string;
+    summary: string;
+    ok: boolean;
+    no_work: boolean;
+    cost_usd: number | string;
+    latency_ms: number;
+    created_at: string;
+  };
+  return (data as Row[]).map((r) => ({
+    id: r.id,
+    skill: r.skill,
+    triggeredBy: r.triggered_by,
+    summary: r.summary,
+    ok: r.ok,
+    noWork: r.no_work,
+    costUsd: Number(r.cost_usd) || 0,
+    latencyMs: r.latency_ms || 0,
+    createdAt: r.created_at,
+  }));
+}
+
 /** Compose everything into one payload (used by the API + CLI). */
 export async function getFullStats(
   windowHours: number,
   trendDays: number,
 ): Promise<FullStats> {
-  const [byService, trend, caps, skillStats, topCallsRows] = await Promise.all([
-    rollupByService(windowHours),
-    dailyBurnTrend(trendDays),
-    capsStatus(),
-    skillRunStats(windowHours),
-    topCalls(10, windowHours),
-  ]);
+  const [byService, trend, caps, skillStats, topCallsRows, recentRuns] =
+    await Promise.all([
+      rollupByService(windowHours),
+      dailyBurnTrend(trendDays),
+      capsStatus(),
+      skillRunStats(windowHours),
+      topCalls(10, windowHours),
+      recentSkillRuns(15),
+    ]);
   const byCategory = rollupByCategory(byService);
 
   const aiCompute =
@@ -330,5 +382,6 @@ export async function getFullStats(
     caps,
     skillStats,
     topCalls: topCallsRows,
+    recentSkillRuns: recentRuns,
   };
 }

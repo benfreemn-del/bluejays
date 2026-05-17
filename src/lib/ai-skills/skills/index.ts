@@ -16,10 +16,12 @@
  */
 
 import { echoSkill } from "./echo";
+import { briefSkill } from "./brief";
 import type { Skill } from "../types";
 
 export const SKILL_REGISTRY: Record<string, Skill> = {
   echo: echoSkill,
+  brief: briefSkill,
 };
 
 export function listSkillNames(): string[] {

@@ -227,6 +227,27 @@ export async function runSkill<T = unknown>(
     } catch {
       // Signal-emit failure shouldn't fail the skill run.
     }
+
+    // Owner notifications for high-priority skill outputs.
+    // Convention: when emitSignal.target is one of the well-known
+    // Ben-facing targets ("morning-brief", "daily-triage",
+    // "weekly-review"), pipe the summary to sendOwnerAlert so Ben
+    // gets it on SMS + email without opening the dashboard. The
+    // skill's summary field is already constrained to ~280 chars
+    // for single-SMS delivery.
+    const SMS_TARGETS = new Set([
+      "morning-brief",
+      "daily-triage",
+      "weekly-review",
+    ]);
+    if (SMS_TARGETS.has(skill.manifest.emitSignal.target)) {
+      try {
+        const { sendOwnerAlert } = await import("@/lib/alerts");
+        await sendOwnerAlert(summary);
+      } catch {
+        // Alert delivery failure shouldn't fail the skill run.
+      }
+    }
   }
 
   return persistAndReturn<T>({

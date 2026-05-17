@@ -163,6 +163,10 @@
     {
       "path": "/api/cron/seo-blog-write",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/ai-skills/run?skill=brief",
+      "schedule": "0 14 * * 1-5"
     }
   ],
   "functions": {

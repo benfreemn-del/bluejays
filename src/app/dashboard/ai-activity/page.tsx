@@ -247,6 +247,76 @@ export default async function AiActivityPage({
           </section>
         )}
 
+        {/* ── Recent bj ai skill runs ─────────────────────────── */}
+        {stats.recentSkillRuns.length > 0 && (
+          <section className="rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10">
+              <h2 className="text-base font-semibold text-white">
+                Recent bj ai skill outputs
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Last 15 invocations. Successful runs show the skill&apos;s
+                summary line; no-work runs show why the skill exited early;
+                failures show the error.
+              </p>
+            </div>
+            <ul className="divide-y divide-white/[0.04]">
+              {stats.recentSkillRuns.map((run) => {
+                const statusDot = run.noWork
+                  ? "bg-slate-500"
+                  : run.ok
+                    ? "bg-emerald-500"
+                    : "bg-rose-500";
+                const triggerLabel =
+                  run.triggeredBy === "cron"
+                    ? "⏰"
+                    : run.triggeredBy === "signal"
+                      ? "📡"
+                      : "⌨";
+                return (
+                  <li
+                    key={run.id}
+                    className="px-6 py-3 hover:bg-white/[0.02] flex items-start gap-3"
+                  >
+                    <span
+                      className={`mt-2 inline-block w-2 h-2 rounded-full flex-shrink-0 ${statusDot}`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 mb-0.5">
+                        <span className="text-xs font-mono text-slate-400">
+                          {new Date(run.createdAt).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        <span className="text-xs font-mono text-white">
+                          {triggerLabel} {run.skill}
+                        </span>
+                        <span className="text-[10px] text-slate-600 tabular-nums ml-auto">
+                          {run.latencyMs}ms · ${fmt(run.costUsd)}
+                        </span>
+                      </div>
+                      <p
+                        className={`text-sm leading-relaxed ${
+                          run.noWork
+                            ? "text-slate-500 italic"
+                            : run.ok
+                              ? "text-white"
+                              : "text-rose-300"
+                        }`}
+                      >
+                        {run.summary}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
         {/* ── Top calls table ─────────────────────────────────── */}
         {stats.topCalls.length > 0 && (
           <section className="rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden">
