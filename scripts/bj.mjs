@@ -42,6 +42,12 @@
  *   bj digest preview
  *       Render today's daily digest without sending the SMS.
  *
+ *   bj ai <skill> [--arg value]... [--json]
+ *       Invoke a bj ai agentic skill (manual trigger). Skills live at
+ *       .claude/skills/ai-<skill>/. Output: skill's `summary` line plus
+ *       cost/latency footer. Pass --json to print the full SkillResult.
+ *       Added 2026-05-17 (Day 1 of the agentic skill layer).
+ *
  * Output convention: short, human-readable, one row per line. No JSON
  * dumps unless --json is passed. Default stays under ~500 chars per
  * invocation so the agent context stays clean.
@@ -269,6 +275,72 @@ const commands = {
       j.drafted,
     ].join("\n");
   },
+
+  /**
+   * bj ai <skill> [--arg value]... [--json]
+   *
+   * Day 1 of the agentic skill layer (2026-05-17). Posts to
+   * /api/ai-skills/run with manual triggeredBy + the parsed args.
+   * Skill folder shape + runner behavior documented in
+   * src/lib/ai-skills/runner.ts.
+   *
+   * Output:
+   *   - default: skill's `summary` line + 1-line cost/latency footer
+   *   - --json:  full SkillResult printed as pretty JSON
+   *
+   * Auth: uses ADMIN_PASSWORD from .env.local as the Bearer token.
+   */
+  async "ai"(args, positional) {
+    const [skill] = positional;
+    if (!skill) {
+      return "usage: bj ai <skill> [--arg value]... [--json]";
+    }
+    if (!ADMIN_TOKEN) {
+      return "error: ADMIN_PASSWORD not set in .env.local";
+    }
+
+    // Build the args payload from --flags (skip --json which is a
+    // local-only output flag).
+    /** @type {Record<string, unknown>} */
+    const skillArgs = {};
+    for (const [k, v] of Object.entries(args)) {
+      if (k === "--json") continue;
+      // Strip the leading -- and coerce simple numerics
+      const key = k.replace(/^--/, "");
+      if (typeof v === "string" && /^-?\d+(\.\d+)?$/.test(v)) {
+        skillArgs[key] = parseFloat(v);
+      } else {
+        skillArgs[key] = v;
+      }
+    }
+
+    const r = await fetch(`${BASE_URL}/api/ai-skills/run`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify({
+        skill,
+        triggeredBy: "manual",
+        args: skillArgs,
+      }),
+    });
+    const j = await r.json();
+
+    if (args["--json"]) {
+      return JSON.stringify(j, null, 2);
+    }
+
+    if (!j.ok) {
+      return `✗ ${skill} · ${j.error || j.summary || "unknown error"}`;
+    }
+    if (j.noWork) {
+      return `· ${skill} · ${j.summary} (${j.latencyMs}ms)`;
+    }
+    const footer = `[${j.latencyMs}ms · ${j.tokensIn || 0}+${j.tokensOut || 0}tok · $${(j.costUsd || 0).toFixed(4)}]`;
+    return `${j.summary}\n${footer}`;
+  },
 };
 
 // ─── Arg parser (no dep) ───
@@ -308,12 +380,17 @@ async function main() {
   bj digest preview
   bj social list [--filter open|all]
   bj social capture <url-or-text>
+  bj ai <skill> [--arg value]... [--json]
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
   }
 
   // Build subcommand key: "leads list" → "leads:list"
+  // ai stays a flat subcommand ("ai" + positional skill name) since
+  // the skill folders are themselves an enumeration — adding "ai" to
+  // groups would force "bj ai:echo" which is uglier and harder to
+  // type than "bj ai echo".
   const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social"];
   let key, rest;
   if (groups.includes(argv[0])) {
