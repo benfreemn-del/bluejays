@@ -75,9 +75,34 @@ export default function ProcessingClient({
   const [pollCount, setPollCount] = useState(0);
   const [failedReason, setFailedReason] = useState<string | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
+  const [unmuted, setUnmuted] = useState(false);
+  const [vslEnded, setVslEnded] = useState(false);
   const startedAtRef = useRef<number>(Date.now());
   const redirectedRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const embedUrl = useMemo(() => toEmbedUrl(videoUrl), [videoUrl]);
+
+  // Track when the VSL finishes its first watch so we can let the
+  // ready-redirect through without cutting Ben off mid-pitch. Hormozi:
+  // never interrupt a closing pitch. The video says its piece, THEN
+  // we hand off.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    const onEnded = () => setVslEnded(true);
+    el.addEventListener("ended", onEnded);
+    return () => el.removeEventListener("ended", onEnded);
+  }, [embedUrl]);
+
+  const unmuteVideo = () => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = false;
+    el.volume = 1;
+    // Some browsers reset playback on .muted change — guarantee it's playing.
+    void el.play().catch(() => {});
+    setUnmuted(true);
+  };
 
   // Tick every 1s for smooth progress-bar animation. Cap at 95% until
   // status flips to 'ready' so we never falsely claim done.
@@ -121,11 +146,12 @@ export default function ProcessingClient({
         setPollCount((c) => c + 1);
 
         if (s === "ready" && !redirectedRef.current) {
-          redirectedRef.current = true;
-          // Brief pause so user sees the "ready" state, then redirect
-          setTimeout(() => {
-            window.location.href = `/audit/${auditId}`;
-          }, 1200);
+          // Don't redirect immediately — the VSL might be mid-pitch.
+          // Auto-redirect only fires after the video ends OR after a
+          // 30s grace window (covers the case where the user paused
+          // the video and walked away). Manual CTA button covers the
+          // "I want it now" path. See the ready-state render below.
+          // redirectedRef is flipped by the redirect handler, not here.
           return;
         }
         if (s === "failed" || s === "cancelled") return;
@@ -143,6 +169,30 @@ export default function ProcessingClient({
       if (timeout) clearTimeout(timeout);
     };
   }, [auditId]);
+
+  // Auto-redirect logic — fires when EITHER (a) the audit is ready
+  // AND the VSL has finished its first watch, OR (b) the audit is
+  // ready AND 30s has elapsed since ready (in case the user paused
+  // the video). Never cuts off the pitch mid-stream.
+  useEffect(() => {
+    if (status !== "ready" || redirectedRef.current) return;
+    if (vslEnded) {
+      redirectedRef.current = true;
+      const t = setTimeout(() => {
+        window.location.href = `/audit/${auditId}`;
+      }, 600);
+      return () => clearTimeout(t);
+    }
+    // Grace window: if the audit is ready but the VSL never ends
+    // (user paused or no VSL), still hand off after 30s so the
+    // prospect doesn't stare at a stale "ready" state forever.
+    const grace = setTimeout(() => {
+      if (redirectedRef.current) return;
+      redirectedRef.current = true;
+      window.location.href = `/audit/${auditId}`;
+    }, 30_000);
+    return () => clearTimeout(grace);
+  }, [status, vslEnded, auditId]);
 
   // Cycle the "what's happening now" copy every 8 seconds.
   // Tone: 3rd-grade, no model names — visitors shouldn't see "Claude" or
@@ -175,21 +225,41 @@ export default function ProcessingClient({
             </p>
             {embedUrl.startsWith("direct:") ? (
               // Direct mp4 path — VSL-style vertical 9:16 source. Autoplay
-              // muted+loop runs the video continuously for the full audit
-              // wait (~120s), no click required. Browsers allow muted
-              // autoplay so the captions do the heavy lifting until the
-              // visitor unmutes. max-h-[60vh] keeps the player from
-              // dominating the page above the progress tracker.
-              <video
-                src={embedUrl.replace(/^direct:/, "")}
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                preload="auto"
-                className="mx-auto block max-h-[60vh] rounded-2xl bg-black shadow-2xl"
-              />
+              // muted is the only thing browsers allow without a prior
+              // user gesture, so we ALWAYS start muted then surface a
+              // huge "tap for sound" overlay until the prospect unmutes.
+              // No loop — the pitch plays once; when it ends we hand off
+              // to the audit results (see vslEnded effect above).
+              <div className="relative mx-auto w-fit">
+                <video
+                  ref={videoRef}
+                  src={embedUrl.replace(/^direct:/, "")}
+                  autoPlay
+                  muted
+                  playsInline
+                  controls
+                  preload="auto"
+                  className="mx-auto block max-h-[60vh] rounded-2xl bg-black shadow-2xl"
+                />
+                {!unmuted && (
+                  <button
+                    type="button"
+                    onClick={unmuteVideo}
+                    aria-label="Tap to hear Ben"
+                    className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-black/50 backdrop-blur-[2px] transition-opacity hover:bg-black/55 cursor-pointer"
+                  >
+                    <span className="flex h-20 w-20 items-center justify-center rounded-full bg-amber-400 text-amber-950 text-3xl shadow-2xl shadow-amber-500/50 ring-4 ring-amber-300/40 animate-pulse">
+                      🔊
+                    </span>
+                    <span className="mt-4 text-base sm:text-lg font-bold text-white uppercase tracking-wider drop-shadow-lg">
+                      Tap for sound
+                    </span>
+                    <span className="mt-1 text-xs text-amber-200/90 font-medium">
+                      Ben is talking — hear him out
+                    </span>
+                  </button>
+                )}
+              </div>
             ) : (
               // Loom / YouTube iframe path — always horizontal 16:9.
               <div className="rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-2xl">
@@ -274,7 +344,17 @@ export default function ProcessingClient({
                 </svg>
               </div>
               <h1 className="text-2xl font-bold mb-3 text-emerald-300">Your audit is ready</h1>
-              <p className="text-slate-300">Redirecting you now…</p>
+              <p className="text-slate-300 mb-6">
+                {vslEnded
+                  ? "Loading your results…"
+                  : "Finish the 60-sec walkthrough, or jump in now."}
+              </p>
+              <a
+                href={`/audit/${auditId}`}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 px-6 py-3 text-base font-bold text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-shadow"
+              >
+                See my results →
+              </a>
             </>
           )}
 

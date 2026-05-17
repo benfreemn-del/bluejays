@@ -45,10 +45,20 @@ export default function ProductAuditVideoBlock({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [unmuted, setUnmuted] = useState(false);
   // Treat both "no videoSrc provided" and "file 404'd" as missing.
   // The page now passes videoSrc only when the file is confirmed on
   // disk, so the most common state until Ben uploads is "missing".
   const [videoMissing, setVideoMissing] = useState(!videoSrc);
+
+  const unmuteVideo = () => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = false;
+    el.volume = 1;
+    void el.play().catch(() => {});
+    setUnmuted(true);
+  };
 
   // Listen for the native `ended` event AND a safety timer (90s)
   // so even if the file is missing or the user mutes-and-scrubs,
@@ -87,23 +97,19 @@ export default function ProductAuditVideoBlock({
   return (
     <div className="rounded-3xl border-2 border-amber-500/30 bg-gradient-to-b from-amber-500/[0.05] to-transparent overflow-hidden">
       {/* Pitch banner above the player */}
-      <div className="px-5 py-3 border-b border-amber-500/20 bg-amber-500/[0.06]">
+      <div className="px-6 py-4 border-b border-amber-500/20 bg-amber-500/[0.06]">
         <p className="text-xs uppercase tracking-wider text-amber-300 font-bold flex items-center gap-2">
           <span className="text-base">🎁</span>
-          Free for audit takers · $300 value
+          Free for audit takers
         </p>
       </div>
 
-      <div className="p-5 md:p-7">
-        <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-2">
-          Watch this 60-second walkthrough.
+      <div className="p-6 md:p-10">
+        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4 md:mb-5">
+          Watch this first.
         </h3>
-        <p className="text-slate-300 text-sm md:text-base mb-5 leading-relaxed">
-          I&apos;ll show you the{" "}
-          <span className="text-white font-semibold">two paths</span> most
-          operators take from here — the $997 site rebuild, or the full AI
-          marketing system. The right one&apos;s obvious once you see it.
-          Hit play.
+        <p className="text-slate-300 text-base md:text-lg mb-8 md:mb-10 leading-relaxed">
+          60 seconds. Two paths. The right one&apos;s obvious.
         </p>
 
         {/* Video player. Aspect ratio adapts: horizontal = 16:9 box (legacy
@@ -122,15 +128,34 @@ export default function ProductAuditVideoBlock({
             }
           >
             {!videoMissing ? (
-              <video
-                ref={videoRef}
-                src={videoSrc ?? undefined}
-                poster={posterUrl}
-                controls
-                playsInline
-                preload="metadata"
-                className="w-full h-full object-cover bg-black"
-              />
+              <>
+                <video
+                  ref={videoRef}
+                  src={videoSrc ?? undefined}
+                  poster={posterUrl}
+                  autoPlay
+                  muted
+                  controls
+                  playsInline
+                  preload="auto"
+                  className="w-full h-full object-cover bg-black"
+                />
+                {!unmuted && (
+                  <button
+                    type="button"
+                    onClick={unmuteVideo}
+                    aria-label="Tap to hear Ben"
+                    className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/45 backdrop-blur-[2px] transition-opacity hover:bg-black/55 cursor-pointer"
+                  >
+                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-400 text-amber-950 text-2xl shadow-2xl shadow-amber-500/50 ring-4 ring-amber-300/40 animate-pulse">
+                      🔊
+                    </span>
+                    <span className="mt-3 text-sm font-bold text-white uppercase tracking-wider drop-shadow-lg">
+                      Tap for sound
+                    </span>
+                  </button>
+                )}
+              </>
             ) : (
               // File missing → fallback poster + scarcity text + manual "Book a call" button
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950 text-center p-6">
@@ -155,21 +180,18 @@ export default function ProductAuditVideoBlock({
 
         {/* Calendly handoff — surfaces on video end OR fallback button */}
         {showCalendar && (
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/[0.06] p-4 md:p-5">
-              <p className="text-emerald-300 text-xs uppercase tracking-wider font-bold mb-1.5">
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/[0.06] p-6 md:p-7">
+              <p className="text-emerald-300 text-xs uppercase tracking-wider font-bold mb-3">
                 ✓ Next step
               </p>
-              <p className="text-white text-base md:text-lg font-semibold leading-snug">
-                If you&apos;d like to be one of the{" "}
-                <span className="text-amber-300">5 businesses</span> I&apos;ll
-                be building custom software for this month, let&apos;s see
-                if we&apos;re a good fit.
+              <p className="text-white text-lg md:text-xl font-semibold leading-snug">
+                Grab one of the{" "}
+                <span className="text-amber-300">5 spots</span> open this
+                month.
               </p>
-              <p className="text-slate-300 text-sm mt-1.5">
-                Pick a 30-min slot below. I&apos;ll come to the call having
-                already reviewed your audit + drafted a rough plan for the
-                free mock build.
+              <p className="text-slate-300 text-sm md:text-base mt-3 leading-relaxed">
+                30-min call. I&apos;ll have your audit reviewed beforehand.
               </p>
             </div>
             <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-slate-950">
