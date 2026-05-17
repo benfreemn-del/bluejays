@@ -293,10 +293,15 @@ const commands = {
   async "ai"(args, positional) {
     const [skill] = positional;
     if (!skill) {
-      return "usage: bj ai <skill> [--arg value]... [--json]";
+      return "usage: bj ai <skill> [--arg value]... [--json]\n       bj ai stats [--hours N] [--days N] [--json]";
     }
     if (!ADMIN_TOKEN) {
       return "error: ADMIN_PASSWORD not set in .env.local";
+    }
+
+    // ── Special subcommand: `bj ai stats` ──
+    if (skill === "stats") {
+      return await runAiStats(args);
     }
 
     // Build the args payload from --flags (skip --json which is a
@@ -342,6 +347,102 @@ const commands = {
     return `${j.summary}\n${footer}`;
   },
 };
+
+/**
+ * `bj ai stats` — terminal-formatted dump of /api/ai-activity/stats.
+ *
+ * Output stays under ~80 lines so the agent context doesn't bloat
+ * when this is called in a loop. Pass --json for the raw payload.
+ */
+async function runAiStats(args) {
+  const hours = args["--hours"] || "24";
+  const days = args["--days"] || "14";
+  const url = `${BASE_URL}/api/ai-activity/stats?hours=${hours}&days=${days}`;
+
+  const r = await fetch(url, {
+    headers: { authorization: `Bearer ${ADMIN_TOKEN}` },
+  });
+  const j = await r.json();
+  if (!j.ok) {
+    return `error: ${j.error || `HTTP ${r.status}`}`;
+  }
+  if (args["--json"]) {
+    return JSON.stringify(j.stats, null, 2);
+  }
+
+  const s = j.stats;
+  const $ = (n) => `$${Number(n).toFixed(4).padStart(8)}`;
+  const lines = [];
+
+  lines.push(`═══ AI Activity · last ${s.windowHours}h ═══`);
+  lines.push("");
+  lines.push(
+    `Total: ${$(s.totals.grandTotalUsd)} (${s.totals.callCount} calls)`,
+  );
+  if (s.totals.aiComputeUsd > 0)
+    lines.push(`  · AI compute:     ${$(s.totals.aiComputeUsd)}`);
+  if (s.totals.infrastructureUsd > 0)
+    lines.push(`  · Infrastructure: ${$(s.totals.infrastructureUsd)}`);
+  if (s.totals.otherUsd > 0)
+    lines.push(`  · Other:          ${$(s.totals.otherUsd)}`);
+  lines.push("");
+
+  if (s.byService.length > 0) {
+    lines.push(`By service (top 10):`);
+    for (const row of s.byService.slice(0, 10)) {
+      const tag = row.category === "ai_compute" ? "🤖" : row.category === "infrastructure" ? "🔧" : "  ";
+      lines.push(
+        `  ${tag} ${$(row.costUsd)} · ${String(row.callCount).padStart(4)}× · ${row.label}`,
+      );
+    }
+    lines.push("");
+  }
+
+  if (s.caps.length > 0) {
+    lines.push(`Skill caps today:`);
+    for (const c of s.caps) {
+      const bar =
+        "█".repeat(Math.min(20, Math.round(c.pct / 5))).padEnd(20, "·");
+      const hitFlag = c.capHitsToday > 0 ? ` ⚠ ${c.capHitsToday} hits` : "";
+      lines.push(
+        `  ${c.skill.padEnd(18)} ${$(c.spentTodayUsd)} / ${$(c.dailyCapUsd).trim()}  [${bar}] ${c.pct.toFixed(0)}%${hitFlag}`,
+      );
+    }
+    lines.push("");
+  }
+
+  if (s.skillStats.successful + s.skillStats.failed + s.skillStats.noWork > 0) {
+    lines.push(
+      `bj ai runs · ${s.skillStats.successful} ok · ${s.skillStats.failed} failed · ${s.skillStats.noWork} no-work`,
+    );
+    if (s.skillStats.avgLatencyMs > 0) {
+      lines.push(
+        `             avg ${s.skillStats.avgLatencyMs}ms · p95 ${s.skillStats.p95LatencyMs}ms`,
+      );
+    }
+    lines.push("");
+  }
+
+  // Trend — compact sparkline-style mini-chart
+  if (s.trend.length > 0) {
+    const max = Math.max(...s.trend.map((d) => d.costUsd), 0.0001);
+    const sparkChars = ["·", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
+    const spark = s.trend
+      .map((d) => {
+        const ratio = max > 0 ? d.costUsd / max : 0;
+        const idx = Math.min(sparkChars.length - 1, Math.floor(ratio * sparkChars.length));
+        return sparkChars[idx];
+      })
+      .join("");
+    const totalWindow = s.trend.reduce((a, d) => a + d.costUsd, 0);
+    lines.push(`${s.trend.length}-day trend: ${spark}`);
+    lines.push(
+      `             ${$(totalWindow)} total · avg ${$(totalWindow / s.trend.length).trim()}/day · peak ${$(max).trim()}`,
+    );
+  }
+
+  return lines.join("\n");
+}
 
 // ─── Arg parser (no dep) ───
 function parseArgs(argv) {

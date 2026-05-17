@@ -171,6 +171,7 @@ const PUBLIC_API_PATHS = [
   "/api/voicemail/status", // Twilio status callback
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
   "/api/ai-skills/",                   // bj ai skill layer — Bearer auth (CRON_SECRET or ADMIN_PASSWORD) checked in the route. Vercel cron + bj.mjs CLI both hit this. Day-1 of agentic CLI build, 2026-05-17.
+  "/api/ai-activity/",                 // AI Activity stats endpoint — same Bearer-auth pattern. Backs /dashboard/ai-activity + `bj ai stats` CLI.
   "/api/onboarding-reminders/process", // Vercel cron — gated by CRON_SECRET in the handler
   "/api/funnel/run",                   // Vercel cron (daily 08:00 UTC) — gated by CRON_SECRET
   "/api/funnel/feedback",              // Owner-portal funnel-edit feedback (SMS+email Ben — read-only, no auth required, mock-safe)
