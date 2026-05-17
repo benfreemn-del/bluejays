@@ -337,12 +337,13 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* Above-the-fold dual CTA — Hormozi many-to-one funnel.
-              Two front doors: $997 website (local-service path) +
-              $10K AI growth system (product-brand / manufacturer path,
-              lives at /agency per the 2026-05-14 vertical-split decision).
-              Both route into the same trust apparatus below. */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* Single primary CTA — $997 is the locked gate to the $10K AI
+              System per the offer-ladder rule. AI System becomes an under-
+              CTA text link so AI-System-curious visitors still have a path
+              without splitting the primary attention. Second guarantee
+              strip removed — the 100-leads badge in the trust strip above
+              already carries the AI System risk-reversal. */}
+          <div className="mt-8 flex flex-col items-center justify-center gap-3">
             <a
               href="/get-started"
               className="group inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_45px_rgba(14,165,233,0.55)] active:scale-[0.97] transition-all duration-300"
@@ -352,44 +353,16 @@ export default function Hero() {
                 <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
-            <a
-              href="/agency"
-              className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full border border-sky-500/40 bg-sky-500/[0.04] text-sky-200 hover:bg-sky-500/10 hover:border-sky-400/70 hover:text-white text-base font-semibold transition-all duration-300"
-            >
-              Or build the full AI system →
-            </a>
+            <p className="text-sm text-white/55">
+              Already running ads?{" "}
+              <a
+                href="/agency"
+                className="text-sky-300 hover:text-sky-200 underline underline-offset-2 font-medium transition-colors"
+              >
+                See the full AI marketing system →
+              </a>
+            </p>
           </div>
-
-          {/* Two-guarantee strip — Hormozi review #3 + #4 (2026-05-14). The
-              big guarantee belongs above the fold, not buried in AgencySection.
-              Two distinct promises, two paths, side-by-side so both buyers
-              see their risk-reversal in one glance. */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs md:text-sm">
-            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-sky-500/25 bg-sky-500/[0.05] text-sky-200">
-              <span className="text-base">🛡</span>
-              <span className="font-medium">$997 website: pay nothing until you love it</span>
-            </span>
-            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/[0.06] text-emerald-200">
-              <span className="text-base">💪</span>
-              <span className="font-medium">$10K system: 100 leads in 90 days or we work free</span>
-            </span>
-          </div>
-
-          {/* Tertiary calculator link — Hormozi review #6 (2026-05-14). The
-              /cut-my-agency calculator is the highest-intent funnel for
-              agency-firers; surfacing it above the fold (not just inside
-              AgencySection) captures shopping-around visitors before they
-              bounce. Plain text link to keep visual hierarchy clean — the
-              two CTAs stay primary. */}
-          <p className="mt-5 text-sm text-white/45">
-            Not sure which?{" "}
-            <a
-              href="/cut-my-agency"
-              className="text-amber-300 hover:text-amber-200 underline underline-offset-2 font-medium transition-colors"
-            >
-              See what an agency would charge you →
-            </a>
-          </p>
 
           {/* Urgency / scarcity line — Hormozi review #7 (2026-05-14).
               Live slot count via /api/agency/slots-remaining (review A2,

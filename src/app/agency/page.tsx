@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import TrustBar from "@/components/TrustBar";
-import {
-  INCLUDED_UNIVERSAL,
-  INCLUDED_MFG,
-  INCLUDED_AUTHOR,
-} from "@/lib/agency-included";
 
 const BASE_URL = "https://bluejayportfolio.com";
 
@@ -90,13 +85,6 @@ const PROCESS_TESTIMONIALS: Array<{
     ],
   },
 ];
-
-// Deliverables stacks moved to `src/lib/agency-included.ts` 2026-05-14
-// (Phase 2 of niche-down) so /manufacturers + /authors landers can
-// import the same single source of truth without copy-paste. The three
-// arrays (INCLUDED_UNIVERSAL, INCLUDED_MFG, INCLUDED_AUTHOR) are now
-// imported at top of file. /agency renders all 3; /manufacturers
-// renders Universal + Mfg; /authors renders Universal + Author.
 
 const FAQS = [
   {
@@ -470,94 +458,13 @@ export default function AgencyPage() {
         </div>
       </section>
 
-      {/* ── WHAT'S INCLUDED ───────────────────────────────────────────────────── */}
-      <section className="px-6 py-16 max-w-4xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">
-          Everything in the Full System
-        </h2>
-        <p className="text-slate-400 text-center text-lg mb-10">
-          One connected loop — every piece feeds data back to every other piece.
-          Then your vertical adds its own bonus modules on top.
-        </p>
-
-        {/* Universal stack — every $10k client gets these 17 */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="inline-block bg-sky-500/15 text-sky-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
-              Every system gets
-            </span>
-            <span className="text-slate-500 text-xs">Universal — 17 modules</span>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {INCLUDED_UNIVERSAL.map((item) => (
-              <div
-                key={item.title}
-                className="flex gap-4 items-start bg-white/[0.04] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-              >
-                <div className="text-3xl flex-shrink-0">{item.icon}</div>
-                <div>
-                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
-                  <p className="text-sm text-slate-400">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Manufacturer vertical bonus stack */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="inline-block bg-amber-500/15 text-amber-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
-              Product manufacturers also get
-            </span>
-            <span className="text-slate-500 text-xs">Tekky · ITC pattern — 4 modules</span>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {INCLUDED_MFG.map((item) => (
-              <div
-                key={item.title}
-                className="flex gap-4 items-start bg-amber-500/[0.03] border border-amber-500/20 rounded-xl p-5 hover:border-amber-500/40 transition-colors"
-              >
-                <div className="text-3xl flex-shrink-0">{item.icon}</div>
-                <div>
-                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
-                  <p className="text-sm text-slate-400">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Indie author vertical bonus stack */}
-        <div className="mb-4">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="inline-block bg-violet-500/15 text-violet-300 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
-              Indie authors also get
-            </span>
-            <span className="text-slate-500 text-xs">Bloodlines pattern — 5 modules</span>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {INCLUDED_AUTHOR.map((item) => (
-              <div
-                key={item.title}
-                className="flex gap-4 items-start bg-violet-500/[0.03] border border-violet-500/20 rounded-xl p-5 hover:border-violet-500/40 transition-colors"
-              >
-                <div className="text-3xl flex-shrink-0">{item.icon}</div>
-                <div>
-                  <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
-                  <p className="text-sm text-slate-400">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <p className="text-center text-slate-500 text-xs mt-8 max-w-2xl mx-auto">
-          Same $10k. Your vertical&apos;s bonus stack is included automatically
-          based on what you sell — manufacturers get the dealer-network modules,
-          authors get the series-funnel modules. No upcharge.
-        </p>
-      </section>
+      {/* "What's Included" 26-card section removed 2026-05-17. The Value
+          Stack section below already does the deliverable-by-deliverable
+          breakdown with $ values — Hormozi's stack mechanic. The 26-card
+          version was redundant + buried the strongest proof block in
+          cognitive overwhelm. INCLUDED_UNIVERSAL / INCLUDED_MFG /
+          INCLUDED_AUTHOR still imported by /manufacturers and /authors
+          landers (single source of truth in src/lib/agency-included.ts). */}
 
       {/* ── THE TECH ─────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 bg-gradient-to-b from-slate-900/50 to-transparent">
