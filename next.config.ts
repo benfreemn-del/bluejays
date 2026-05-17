@@ -147,33 +147,69 @@ const nextConfig: NextConfig = {
     // TODO: Add style prop to all local GlassCard definitions to fix properly
     ignoreBuildErrors: true,
   },
-  // Next.js's file tracer doesn't include native binary assets by default
-  // (it only traces JS imports). The ffmpeg-static package ships a compiled
-  // `ffmpeg` binary next to its index.js; at build time the import resolves
-  // to a fully-qualified path like `/ROOT/node_modules/.pnpm/ffmpeg-static@*/
-  // node_modules/ffmpeg-static/ffmpeg` which then gets baked into the
-  // serverless function. Without outputFileTracingIncludes, that binary
-  // is never copied into the function bundle, causing ENOENT at runtime.
+  // 2026-05-16: deploys started failing with "A Serverless Function has
+  // exceeded the unzipped maximum size of 250 MB" after we shipped
+  // VSL #1 + VSL #2. Diagnosis: Turbopack was bundling @sparticuz/chromium
+  // (~50MB) AND ffmpeg-static (~80MB binary) into the serverless functions
+  // for several API routes that transitively import video-generator.ts
+  // (videos/batch, funnel/enroll, funnel/run, followup-scheduler,
+  // inbound/email, inbound/sms, replies/process). Lazy imports inside
+  // video-generator.ts didn't help — Turbopack traces dynamic imports too.
   //
-  // Also excluding @sparticuz/chromium — we moved Chrome off the function
-  // to Browserless.io so we don't need the ~63MB chromium bin anymore.
-  outputFileTracingIncludes: {
-    // Route key matches the App Router path for this API endpoint.
-    // Pattern intentionally avoids `@` (breaks Next.js glob in some versions).
-    // Matches the pnpm-hoisted ffmpeg binary at
-    //   node_modules/.pnpm/ffmpeg-static@5.3.0/node_modules/ffmpeg-static/ffmpeg
-    // via the `ffmpeg-static*` wildcard, plus the top-level symlink path
-    // if pnpm/npm chooses to hoist it.
+  // Fix: explicitly exclude both heavy binaries from EVERY affected route.
+  // ffmpeg-static binary isn't actually needed in the bundle anyway —
+  // video-generator.ts's ensureFfmpegAvailable() downloads its own ffmpeg
+  // to /tmp at runtime (see comment in src/lib/video-generator.ts:30-65).
+  // Chromium binary is also unused — we proxy headless Chrome through
+  // Browserless.io.
+  outputFileTracingExcludes: {
     "/api/videos/[id]": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
       "./node_modules/.pnpm/ffmpeg-static*/**",
       "./node_modules/ffmpeg-static/**",
     ],
-  },
-  outputFileTracingExcludes: {
-    // We moved Chrome to Browserless.io, so the 63MB @sparticuz/chromium
-    // bin directory doesn't need to ship with the function anymore.
-    "/api/videos/[id]": [
+    "/api/videos/batch": [
       "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/funnel/enroll": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/funnel/run": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/followup-scheduler": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/inbound/email": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/inbound/sms": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/replies/process": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
     ],
   },
 };
