@@ -12,10 +12,31 @@
 //   - Top-center alignment, MarginV 220 (sky zone above head)
 //   - Sky-blue (#38bdf8 → BGR &HF8BD38&) on emphasis words
 
+// CLI / env-driven so the script is reusable across VSLs and content clips.
+//
+// Usage:
+//   node scripts/video-editor/generate-karaoke-ass.mjs \
+//     --in edit-cache/vsl-2-transcript.json \
+//     --out edit-cache/vsl-2-captions.ass \
+//     --emphasis "200,operators;997;runs,itself"
+//
+// Or via env vars: TRANSCRIPT_IN, ASS_OUT, EMPHASIS.
+// Defaults match VSL #1 for backwards compatibility.
+
 import fs from "node:fs";
 
-const TRANSCRIPT_PATH = "edit-cache/vsl-1-transcript.json";
-const OUT_PATH = "edit-cache/vsl-1-captions.ass";
+const argv = process.argv.slice(2);
+function arg(flag) {
+  const i = argv.indexOf(flag);
+  return i >= 0 ? argv[i + 1] : null;
+}
+
+const TRANSCRIPT_PATH =
+  arg("--in") || process.env.TRANSCRIPT_IN || "edit-cache/vsl-1-transcript.json";
+const OUT_PATH =
+  arg("--out") || process.env.ASS_OUT || "edit-cache/vsl-1-captions.ass";
+const EMPHASIS_RAW =
+  arg("--emphasis") || process.env.EMPHASIS || "47,things;nine;thousands;scroll";
 
 const MAX_WORDS_PER_CARD = 5;
 const MAX_DURATION_PER_CARD = 1.8;
@@ -34,13 +55,12 @@ const CONNECTOR_WORDS = new Set([
 ]);
 
 // Emphasis phrases — first occurrence of each phrase gets sky-blue.
-// Multi-word phrases (like "47 things") emphasize both words in sequence.
-const EMPHASIS_PHRASES = [
-  ["47", "things"],
-  ["nine"],
-  ["thousands"],
-  ["scroll"],
-];
+// Parsed from EMPHASIS_RAW: semicolons separate phrases, commas separate
+// words within a phrase. e.g. "47,things;nine;thousands;scroll" →
+// [["47","things"],["nine"],["thousands"],["scroll"]].
+const EMPHASIS_PHRASES = EMPHASIS_RAW.split(";")
+  .map((p) => p.trim().split(",").map((w) => w.trim().toLowerCase()).filter(Boolean))
+  .filter((p) => p.length > 0);
 
 const transcript = JSON.parse(fs.readFileSync(TRANSCRIPT_PATH, "utf8"));
 const words = transcript.words;
@@ -48,6 +68,24 @@ const text = transcript.text || "";
 if (!words || !words.length) {
   console.error("No words array in transcript JSON");
   process.exit(1);
+}
+
+// Post-process Whisper tokenization quirk: large numbers like "$10,000"
+// or "$1,000,000" get split into separate words ["10","000"] which
+// then land on different cards ("10" flashes, then "000 FULL SYSTEM"
+// reads as a bug). Merge them back. Prepend $ since BlueJays VSLs
+// only mention thousand-separator numbers in dollar-amount contexts.
+for (let i = words.length - 2; i >= 0; i--) {
+  const a = (words[i].word || "").replace(/[^0-9]/g, "");
+  const b = (words[i + 1].word || "").replace(/[^0-9]/g, "");
+  if (/^[0-9]{1,3}$/.test(a) && b === "000") {
+    words[i] = {
+      word: "$" + a + "," + b,
+      start: words[i].start,
+      end: words[i + 1].end,
+    };
+    words.splice(i + 1, 1);
+  }
 }
 
 // Walk each word's position in the text field so we can detect when a word

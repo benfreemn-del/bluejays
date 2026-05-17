@@ -222,9 +222,13 @@ export default async function ProductAuditResultsPage({
         <div className="mx-auto max-w-3xl px-6 py-10 md:py-14">
           <ProductAuditVideoBlock
             calendlyUrl={CALENDLY_URL}
+            aspect="vertical"
             videoSrc={
-              existsSync(join(process.cwd(), "public", "videos", "audit-followup-pitch.mp4"))
-                ? "/videos/audit-followup-pitch.mp4"
+              // VSL #2 — phone-recorded 9:16 selfie at /public/audit-assets/vsl-2.mp4.
+              // existsSync guards keep prod from rendering a broken <video> if the
+              // file ever gets removed. Same pattern as VSL #1 on the processing page.
+              existsSync(join(process.cwd(), "public", "audit-assets", "vsl-2.mp4"))
+                ? "/audit-assets/vsl-2.mp4"
                 : null
             }
           />

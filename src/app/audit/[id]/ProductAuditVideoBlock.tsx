@@ -29,12 +29,18 @@ type Props = {
    *  the default so the page never shows a 404'd <video> element on
    *  prod (server passes videoSrc only when the file is confirmed). */
   videoSrc?: string | null;
+  /** Video aspect ratio. "horizontal" = 16:9 (the original Loom/YT
+   *  format), "vertical" = 9:16 (VSL #2 phone-recorded selfie).
+   *  Vertical uses object-contain + max-h so the video doesn't
+   *  stretch and centers within the player surface. */
+  aspect?: "horizontal" | "vertical";
 };
 
 export default function ProductAuditVideoBlock({
   calendlyUrl,
-  posterUrl = "/videos/audit-followup-pitch-poster.jpg",
+  posterUrl,
   videoSrc,
+  aspect = "horizontal",
 }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -90,21 +96,31 @@ export default function ProductAuditVideoBlock({
 
       <div className="p-5 md:p-7">
         <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-2">
-          Watch this 2-minute pitch.
+          Watch this 60-second walkthrough.
         </h3>
         <p className="text-slate-300 text-sm md:text-base mb-5 leading-relaxed">
-          I&apos;ll walk you through exactly why your product page is leaking,
-          then offer to build you a{" "}
-          <span className="text-white font-semibold">
-            free mock website + backend system
-          </span>{" "}
-          so you can see what the fixes look like before paying a cent. I just
-          need 24 hours to put it together.
+          I&apos;ll show you the{" "}
+          <span className="text-white font-semibold">two paths</span> most
+          operators take from here — the $997 site rebuild, or the full AI
+          marketing system. The right one&apos;s obvious once you see it.
+          Hit play.
         </p>
 
-        {/* Video player */}
+        {/* Video player. Aspect ratio adapts: horizontal = 16:9 box (legacy
+            Loom/YT format), vertical = phone-shot 9:16 contained in a max-
+            height box and centered so it doesn't stretch. */}
         {!showCalendar && (
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black aspect-video">
+          <div
+            className={
+              aspect === "vertical"
+                // Vertical 9:16: container is sized to hug the video itself
+                // (no letterbox bars). aspect-[9/16] forces 9:16 ratio,
+                // max-h-[70vh] caps height on tall viewports, max-w-[min(...)]
+                // caps width so the container doesn't outgrow the video.
+                ? "relative rounded-2xl overflow-hidden border border-white/10 bg-black mx-auto w-full aspect-[9/16] max-h-[70vh] max-w-[315px]"
+                : "relative rounded-2xl overflow-hidden border border-white/10 bg-black aspect-video"
+            }
+          >
             {!videoMissing ? (
               <video
                 ref={videoRef}
@@ -113,7 +129,7 @@ export default function ProductAuditVideoBlock({
                 controls
                 playsInline
                 preload="metadata"
-                className="w-full h-full"
+                className="w-full h-full object-cover bg-black"
               />
             ) : (
               // File missing → fallback poster + scarcity text + manual "Book a call" button
