@@ -4,15 +4,20 @@ import path from "path";
 import { spawn } from "child_process";
 import { readFile, rm, writeFile } from "fs/promises";
 
-// @sparticuz/chromium and ffmpeg-static are lazy-imported inside the
-// async functions that use them (ensureFfmpegAvailable, launch logic
-// below). Keeping them out of the static import graph stops Turbopack
-// from tracing their dynamic node_modules paths into every route that
-// transitively reaches this file via shared utils — was causing 5
-// "Encountered unexpected file in NFT list" warnings on each build.
-import { parseFile } from "music-metadata";
+// ALL heavy deps are lazy-loaded inside the async functions that use them.
+// Earlier passes lazy-loaded chromium + ffmpeg-static; THIS pass adds
+// puppeteer-core (~70MB) and music-metadata (~10MB). Reason: deploys
+// kept hitting Vercel's 250MB serverless function cap because Turbopack
+// pulled all of these into every route that transitively reaches this
+// file via shared utils.
+//
+// Routes that DON'T actually generate videos (funnel/enroll, inbound/sms,
+// replies/process, etc.) get a tiny stub bundle. Routes that DO call
+// generateProspectVideo pay the runtime import cost only when invoked.
 import OpenAI from "openai";
-import puppeteer, { type Browser } from "puppeteer-core";
+
+// Type-only import of Browser so we don't pull puppeteer-core's runtime.
+import type { Browser } from "puppeteer-core";
 
 import type { GeneratedSiteData } from "./generator";
 import { getAllProspects, getProspect, getScrapedData } from "./store";
@@ -243,6 +248,8 @@ async function launchCaptureBrowser(): Promise<Browser> {
       // so our screen captures don't get blocked by prospect sites that
       // reject obvious headless Chrome user-agents.
       `&stealth=true`;
+    // Lazy-load puppeteer-core. See module-top note re: bundle size.
+    const { default: puppeteer } = await import("puppeteer-core");
     return puppeteer.connect({
       browserWSEndpoint: wsEndpoint,
       defaultViewport: {
@@ -254,8 +261,9 @@ async function launchCaptureBrowser(): Promise<Browser> {
   }
 
   const executablePath = await getBrowserExecutablePath();
-  // Lazy-load @sparticuz/chromium. See module-top note re: NFT tracing.
+  // Lazy-load @sparticuz/chromium + puppeteer-core. See module-top note re: NFT tracing.
   const { default: chromium } = await import("@sparticuz/chromium");
+  const { default: puppeteer } = await import("puppeteer-core");
 
   return puppeteer.launch({
     executablePath,
@@ -381,6 +389,8 @@ async function synthesizeNarration(script: string, outputPath: string) {
   const arrayBuffer = await speech.arrayBuffer();
   await writeFile(outputPath, Buffer.from(arrayBuffer));
 
+  // Lazy-load music-metadata. See module-top note re: bundle size.
+  const { parseFile } = await import("music-metadata");
   const metadata = await parseFile(outputPath);
   const duration = metadata.format.duration;
   if (!duration || Number.isNaN(duration)) {

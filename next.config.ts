@@ -165,6 +165,7 @@ const nextConfig: NextConfig = {
     "@sparticuz/chromium",
     "ffmpeg-static",
     "puppeteer-core",
+    "music-metadata",
   ],
   // 2026-05-16: deploys started failing with "A Serverless Function has
   // exceeded the unzipped maximum size of 250 MB" after we shipped
