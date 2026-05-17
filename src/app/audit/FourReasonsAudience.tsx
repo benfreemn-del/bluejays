@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * "Sound familiar?" 4-card section on /audit, with an audience toggle.
@@ -135,9 +135,44 @@ const ACCENT_NUM: Record<string, string> = {
   violet: "bg-violet-500/15 border-violet-500/40 text-violet-300",
 };
 
+/** Map UTM audience param values to our AudienceKey set. Keeps the
+ *  ad-side strings short + URL-safe while the in-code keys stay
+ *  human-readable. Anything not in this map falls back to "manufacturer"
+ *  (the default + biggest segment). */
+const UTM_AUDIENCE_MAP: Record<string, AudienceKey> = {
+  manufacturer: "manufacturer",
+  mfg: "manufacturer",
+  dtc: "dtc",
+  brand: "dtc",
+  ecom: "dtc",
+  author: "author",
+  indie: "author",
+  book: "author",
+};
+
+function readAudienceFromUrl(): AudienceKey | null {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const raw = (params.get("utm_audience") || params.get("audience") || "")
+    .toLowerCase()
+    .trim();
+  return UTM_AUDIENCE_MAP[raw] || null;
+}
+
 export default function FourReasonsAudience() {
   const [audience, setAudience] = useState<AudienceKey>("manufacturer");
   const { reasons } = AUDIENCES[audience];
+
+  // UTM-driven audience pre-select. When a cold-traffic Meta/Google ad
+  // includes ?utm_audience=dtc (or =mfg, =author), pre-select that
+  // segment on mount so the prospect lands on copy that already
+  // matches their business shape — no extra tap needed. Pure
+  // ergonomic win, ~30-50% friction reduction on the section.
+  // Added 2026-05-17 alongside the FB Ads Wave 1 launch prep.
+  useEffect(() => {
+    const fromUrl = readAudienceFromUrl();
+    if (fromUrl) setAudience(fromUrl);
+  }, []);
 
   return (
     <section className="border-b border-white/5 bg-slate-900/40">

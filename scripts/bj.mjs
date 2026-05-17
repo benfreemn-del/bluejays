@@ -48,6 +48,17 @@
  *       cost/latency footer. Pass --json to print the full SkillResult.
  *       Added 2026-05-17 (Day 1 of the agentic skill layer).
  *
+ *   bj ads checklist
+ *       Print the Wave-1 FB Ads pre-launch checklist + manual
+ *       steps Ben must do (Meta BM setup, image gen, upload).
+ *       Pure stdout — no API calls. Lives in this CLI so Ben can
+ *       run it on his phone via terminal-share.
+ *
+ *   bj ads urls
+ *       Print all 12 Wave-1 ad destination URLs (3 audiences ×
+ *       4 hooks) ready to paste into Meta Ads Manager. Each URL
+ *       includes the correct utm_audience + utm_content tags.
+ *
  * Output convention: short, human-readable, one row per line. No JSON
  * dumps unless --json is passed. Default stays under ~500 chars per
  * invocation so the agent context stays clean.
@@ -255,6 +266,101 @@ const commands = {
         return `${flag} ${l.platform.padEnd(9)} ${(l.intent || "?").padEnd(18)} ${summary}`;
       })
       .join("\n");
+  },
+
+  /**
+   * `bj ads checklist` — pure-stdout printout of the FB Ads Wave-1
+   * pre-launch checklist + manual steps. No API calls, no auth
+   * required. Lives in this CLI so Ben can run it from his phone via
+   * terminal-share without opening the doc.
+   */
+  async "ads:checklist"() {
+    return [
+      "═══ FB Ads Wave 1 — Launch Checklist ═══",
+      "",
+      "Manual setup (Ben — must be done in browser, ~30 min):",
+      "  1. Meta Business Manager → Add System User 'BlueJays Hyperloop'",
+      "     → Generate token w/ ads_read + ads_management scopes",
+      "  2. Vercel env vars (Settings → Environment Variables):",
+      "       NEXT_PUBLIC_META_PIXEL_ID  = <16-digit pixel id>",
+      "       META_ADS_SYSTEM_TOKEN      = <EAAxxxx... from step 1>",
+      "       META_ADS_ACCOUNT_ID        = act_<your ad account id>",
+      "  3. Trigger a Vercel redeploy after env vars land",
+      "",
+      "Pre-launch verify (8 items — see docs/templates/cold-traffic-ad-creatives.md):",
+      "  1. Pixel set on Vercel              [ ]",
+      "  2. PageView fires on /audit         [ ]",
+      "  3. Lead fires on form submit        [ ]",
+      "  4. Events Manager sees them         [ ]",
+      "  5. Campaign optimizes for Lead      [ ]",
+      "  6. All 12 ad URLs route correctly   [ ]",
+      "  7. utm_audience pre-selects toggle  [ ]",
+      "     test: /audit?utm_audience=dtc → 'I run a DTC brand' selected",
+      "  8. 24 HyperAgent images ready       [ ] (1:1 + 9:16 per Feed hook)",
+      "",
+      "Asset prep (Ben + HyperAgent, ~1-2 hrs):",
+      "  · Image prompts: see the doc, 8 Feed prompts (4 hooks × 2 ICPs of static)",
+      "  · Trim VSL #2 to 15-sec Story version (use ffmpeg cut at 0:00-0:15)",
+      "  · VSL #1 (19MB, 9:16) uploads as-is to Reels — already in /public/audit-assets/",
+      "",
+      "Upload sequence (Meta Ads Manager, ~1 hr):",
+      "  · Campaign objective: Conversions",
+      "  · Conversion event: Lead",
+      "  · Budget: $15/day × 3 audiences = $45/day · 7 days = $315 total",
+      "  · 3 ad sets (mfg / dtc / author) — see doc for targeting",
+      "  · 4 ads per ad set:",
+      "      2 Feed (static image, hook 1 + hook 2)",
+      "      1 Reels (VSL #1 + headline overlay)",
+      "      1 Stories (VSL #2 15-sec trim)",
+      "  · 12 destination URLs: bj ads urls",
+      "",
+      "Then: submit for review. Meta takes 24-48hr to approve.",
+      "Day-by-day post-launch playbook lives in the doc (Days 1-7).",
+    ].join("\n");
+  },
+
+  /**
+   * `bj ads urls` — print all 12 ad destination URLs ready to paste
+   * into Meta Ads Manager. Each URL carries utm_audience +
+   * utm_content tags that the dashboard reads for per-hook
+   * attribution + the /audit page reads to pre-select the matching
+   * audience toggle.
+   */
+  async "ads:urls"() {
+    const base = "https://bluejayportfolio.com/audit";
+    const campaign = "wave1-2026-05-17";
+    const audiences = /** @type {const} */ (["mfg", "dtc", "author"]);
+    const hooks = /** @type {const} */ ([
+      { id: "pain", label: "Hook 1 — pain-led (Feed, static)" },
+      { id: "distributor", label: "Hook 2 — second pain (Feed, static)" },
+      { id: "vsl1", label: "Hook 3 — VSL #1 (Reels)" },
+      { id: "vsl2", label: "Hook 4 — VSL #2 (Stories, 15-sec trim)" },
+    ]);
+    const hookLabelMap = /** @type {Record<string, string>} */ ({
+      mfg: "Manufacturer",
+      dtc: "DTC Brand",
+      author: "Indie Author",
+    });
+    const lines = [];
+    for (const aud of audiences) {
+      lines.push(`── ${hookLabelMap[aud]} (utm_audience=${aud}) ─────────`);
+      for (const h of hooks) {
+        // For author audience, hook 2 ID is "silence" (not "distributor")
+        // to match the doc; for dtc, hook 2 is "retarget". Map per-audience.
+        const hookId =
+          h.id === "distributor" && aud === "dtc"
+            ? "retarget"
+            : h.id === "distributor" && aud === "author"
+              ? "silence"
+              : h.id;
+        const content = `${aud}-${hookId}`;
+        const url = `${base}?utm_source=meta&utm_medium=cpc&utm_campaign=${campaign}&utm_audience=${aud}&utm_content=${content}`;
+        lines.push(`  ${h.label}`);
+        lines.push(`  ${url}`);
+        lines.push("");
+      }
+    }
+    return lines.join("\n").trim();
   },
 
   async "social:capture"(_args, positional) {
@@ -482,6 +588,8 @@ async function main() {
   bj social list [--filter open|all]
   bj social capture <url-or-text>
   bj ai <skill> [--arg value]... [--json]
+  bj ads checklist
+  bj ads urls
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
@@ -492,7 +600,7 @@ Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
   // the skill folders are themselves an enumeration — adding "ai" to
   // groups would force "bj ai:echo" which is uglier and harder to
   // type than "bj ai echo".
-  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social"];
+  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social", "ads"];
   let key, rest;
   if (groups.includes(argv[0])) {
     key = `${argv[0]}:${argv[1]}`;
