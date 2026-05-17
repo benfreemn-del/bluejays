@@ -4,8 +4,12 @@ import path from "path";
 import { spawn } from "child_process";
 import { readFile, rm, writeFile } from "fs/promises";
 
-import chromium from "@sparticuz/chromium";
-import ffmpegBinary from "ffmpeg-static";
+// @sparticuz/chromium and ffmpeg-static are lazy-imported inside the
+// async functions that use them (ensureFfmpegAvailable, launch logic
+// below). Keeping them out of the static import graph stops Turbopack
+// from tracing their dynamic node_modules paths into every route that
+// transitively reaches this file via shared utils — was causing 5
+// "Encountered unexpected file in NFT list" warnings on each build.
 import { parseFile } from "music-metadata";
 import OpenAI from "openai";
 import puppeteer, { type Browser } from "puppeteer-core";
@@ -38,6 +42,8 @@ const FFMPEG_RUNTIME_URL = "https://github.com/eugeneware/ffmpeg-static/releases
 const FFMPEG_RUNTIME_PATH = "/tmp/ffmpeg-bluejays";
 
 async function ensureFfmpegAvailable(): Promise<string> {
+  // Lazy-load ffmpeg-static. See module-top note re: NFT tracing.
+  const { default: ffmpegBinary } = await import("ffmpeg-static");
   // If the package's own ffmpeg path resolves AND exists (local dev / future
   // Vercel fix), use it. Skips the ~5s /tmp download on local dev.
   if (ffmpegBinary && fs.existsSync(ffmpegBinary)) {
@@ -204,6 +210,8 @@ async function getBrowserExecutablePath() {
   if (process.env.CHROME_EXECUTABLE_PATH) return process.env.CHROME_EXECUTABLE_PATH;
 
   try {
+    // Lazy-load @sparticuz/chromium. See module-top note re: NFT tracing.
+    const { default: chromium } = await import("@sparticuz/chromium");
     const executablePath = await chromium.executablePath();
     if (executablePath) return executablePath;
   } catch (error) {
@@ -246,6 +254,8 @@ async function launchCaptureBrowser(): Promise<Browser> {
   }
 
   const executablePath = await getBrowserExecutablePath();
+  // Lazy-load @sparticuz/chromium. See module-top note re: NFT tracing.
+  const { default: chromium } = await import("@sparticuz/chromium");
 
   return puppeteer.launch({
     executablePath,

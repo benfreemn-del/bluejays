@@ -167,12 +167,10 @@
   ],
   "functions": {
     "src/app/api/videos/[id]/route.ts": {
-      "maxDuration": 300,
-      "memory": 3008
+      "maxDuration": 300
     },
     "src/app/api/audit/generate/[id]/route.ts": {
-      "maxDuration": 300,
-      "memory": 1024
+      "maxDuration": 300
     }
   }
 }
