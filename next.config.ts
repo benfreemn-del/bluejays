@@ -211,6 +211,28 @@ const nextConfig: NextConfig = {
       "./node_modules/.pnpm/ffmpeg-static*/**",
       "./node_modules/ffmpeg-static/**",
     ],
+    "/api/funnel/enroll-batch": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    "/api/inbound/vonage-sms": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
+    // Belt-and-suspenders wildcard: applies to ALL routes per Next.js docs.
+    // Without this, Turbopack's chunk grouping can taint NEW routes on each
+    // build (we hit funnel/enroll-batch + inbound/vonage-sms after thinking
+    // we'd covered all of them). The "*" key catches anything we miss.
+    "*": [
+      "./node_modules/@sparticuz/chromium/bin/**",
+      "./node_modules/.pnpm/@sparticuz+chromium*/**",
+      "./node_modules/.pnpm/ffmpeg-static*/**",
+      "./node_modules/ffmpeg-static/**",
+    ],
   },
 };
 
