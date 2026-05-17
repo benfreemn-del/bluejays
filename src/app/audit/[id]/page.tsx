@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { existsSync } from "fs";
-import { join } from "path";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { AuditContent, AuditFinding } from "@/lib/site-audit";
 import RetargetingPixels from "@/components/RetargetingPixels";
@@ -223,14 +221,15 @@ export default async function ProductAuditResultsPage({
           <ProductAuditVideoBlock
             calendlyUrl={CALENDLY_URL}
             aspect="vertical"
-            videoSrc={
-              // VSL #2 — phone-recorded 9:16 selfie at /public/audit-assets/vsl-2.mp4.
-              // existsSync guards keep prod from rendering a broken <video> if the
-              // file ever gets removed. Same pattern as VSL #1 on the processing page.
-              existsSync(join(process.cwd(), "public", "audit-assets", "vsl-2.mp4"))
-                ? "/audit-assets/vsl-2.mp4"
-                : null
-            }
+            // VSL #2 — phone-recorded 9:16 selfie at /public/audit-assets/vsl-2.mp4.
+            // Always wire the path; do NOT existsSync at runtime — that would
+            // make Next's NFT tracer bundle the ENTIRE /public/ directory into
+            // every serverless function that shares a chunk with this page,
+            // blowing past the 250 MB function size cap (cost us 5 failed
+            // deploys on 2026-05-16 before we found the diagnostic). If the
+            // file is missing, the <video> element gets a 404 on src and the
+            // component's `videoMissing` state fallback kicks in cleanly.
+            videoSrc="/audit-assets/vsl-2.mp4"
           />
         </div>
       </section>
