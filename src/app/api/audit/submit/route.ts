@@ -95,6 +95,17 @@ export async function POST(request: NextRequest) {
     ownerName?: string;
     biggestFrustration?: string;
     timeline?: string;
+    /** BANT qualifier — typical monthly order volume. Range string
+     *  from the optional dropdown on AuditForm: "<10" | "10-50" |
+     *  "50-200" | "200-1000" | "1000+". Stamped on the audit row's
+     *  metadata so Madie's follow-up can size the conversation
+     *  ($997 vs $10K) before the first touch. */
+    ordersPerMonth?: string;
+    /** BANT qualifier — whether the prospect is already running paid
+     *  ads. "yes-google" | "yes-meta" | "yes-both" | "no". Signals
+     *  whether the $10K AI System is an immediate fit (already-ads-
+     *  running prospects can plug into Hyperloop on day 1). */
+    runningAds?: string;
     utm?: Record<string, string>;
     /** Partner referral code from bj_partner_ref cookie (forwarded by
      *  AuditForm) — attributed at audit-submit time so the Stripe
@@ -298,6 +309,8 @@ export async function POST(request: NextRequest) {
         targetBusinessName,
         ...(body.biggestFrustration ? { biggestFrustration: body.biggestFrustration.trim().slice(0, 500) } : {}),
         ...(body.timeline ? { timeline: body.timeline } : {}),
+        ...(body.ordersPerMonth ? { ordersPerMonth: body.ordersPerMonth } : {}),
+        ...(body.runningAds ? { runningAds: body.runningAds } : {}),
         ...(body.utm || {}),
       },
     },

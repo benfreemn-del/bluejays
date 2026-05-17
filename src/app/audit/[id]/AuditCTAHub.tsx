@@ -184,16 +184,21 @@ export default function AuditCTAHub({
             ))}
           </div>
 
-          {/* right: price + CTA */}
+          {/* right: price + CTA. Locked offer-ladder rules:
+              - Base $10,000
+              - Pay-in-full $9,700 ($300 off)
+              - Installments: 4 quarterly × $2,500 (pay the full $10K)
+              - $500/mo management is DELIBERATELY unadvertised here
+                (preserves the autopilot pitch — Rule 65, see CLAUDE.md
+                "Offer ladder — two public tiers + autopilot rule") */}
           <div className="flex-shrink-0 text-center md:text-right">
             <p className="text-2xl font-bold text-white">$10,000</p>
             <p className="text-xs text-emerald-400 mb-0.5">save $300 paying in full</p>
-            <p className="text-xs text-slate-400 mb-0.5">or split 3 payments of $3,500 / $3,500 / $3,000</p>
-            <p className="text-xs text-violet-300 mb-4">+ $500–1,000/mo ongoing</p>
+            <p className="text-xs text-slate-400 mb-4">or 4 quarterly payments of $2,500</p>
             {/* agency comparison — Hormozi: cut the middleman, show the savings */}
             <p className="text-[10px] text-slate-500 mb-3 leading-relaxed">
               Agencies charge $3–8K/mo for this.<br/>
-              You pay once + a fraction monthly.<br/>
+              You pay once. No retainer.<br/>
               Saves you $25,000+ in year one alone.
             </p>
             {/* Real scarcity: BlueJays caps backend builds at 10/month —

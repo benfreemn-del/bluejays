@@ -7,6 +7,7 @@ import PartnerRefCapture from "@/components/PartnerRefCapture";
 import ProductAuditVideoBlock from "./ProductAuditVideoBlock";
 import AuditFaqVideos from "./AuditFaqVideos";
 import AuditCTAHub from "./AuditCTAHub";
+import StickyBookCallPill from "./StickyBookCallPill";
 
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
@@ -160,6 +161,13 @@ export default async function ProductAuditResultsPage({
     <main className="min-h-screen bg-slate-950 text-white">
       <RetargetingPixels />
       <PartnerRefCapture />
+      {/* Sticky bottom-right "Book my call" pill — fights the 5-decision
+          gap between peak score-reveal emotion and the Calendly handoff
+          at the bottom of the page. Auto-hides when AuditCTAHub
+          (id="pick-your-move") scrolls into view to avoid double-CTA. */}
+      <StickyBookCallPill
+        scheduleUrl={`/schedule/${a.prospect_id}?type=fullsystem&source=audit-pill`}
+      />
 
       {/* Header */}
       <header className="border-b border-white/5">

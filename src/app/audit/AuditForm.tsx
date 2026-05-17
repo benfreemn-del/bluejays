@@ -92,6 +92,12 @@ export default function AuditForm({
   const [businessName, setBusinessName] = useState("");
   const [biggestFrustration, setBiggestFrustration] = useState("");
   const [timeline, setTimeline] = useState("");
+  // BANT qualifiers added 2026-05-17 per Hormozi review. Two short
+  // dropdowns let Madie walk into every audit follow-up knowing the
+  // room — $997 conversation vs $10K conversation — without
+  // increasing form friction (both are visible but not required).
+  const [ordersPerMonth, setOrdersPerMonth] = useState("");
+  const [runningAds, setRunningAds] = useState("");
   const [state, setState] = useState<SubmitState>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -114,6 +120,8 @@ export default function AuditForm({
           businessName: businessName.trim() || undefined,
           biggestFrustration: biggestFrustration.trim() || undefined,
           timeline: timeline || undefined,
+          ordersPerMonth: ordersPerMonth || undefined,
+          runningAds: runningAds || undefined,
           // Attribution captured on FIRST page load (utm_*, gclid, fbclid,
           // msclkid, ttclid, referrer). Survives internal navigation +
           // 30-day return visits. parseUtmFromQuery is the legacy live-URL
@@ -282,6 +290,51 @@ export default function AuditForm({
           title="Enter a real phone number — 10+ digits, formatting OK."
           className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
         />
+      </div>
+
+      {/* BANT qualifiers — visible by default (not behind <details>) so
+          Madie gets size-of-prize signal on EVERY submission. Both are
+          optional so they don't reintroduce form friction. Per the
+          2026-05-17 Hormozi review: "Madie walks into every call
+          knowing what room the lead is in." */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-left">
+        <div>
+          <label htmlFor="ordersPerMonth" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            Orders / month <span className="normal-case text-slate-500 font-normal">(optional)</span>
+          </label>
+          <select
+            id="ordersPerMonth"
+            value={ordersPerMonth}
+            onChange={(e) => setOrdersPerMonth(e.target.value)}
+            disabled={state === "submitting"}
+            className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+          >
+            <option value="">Pick a range…</option>
+            <option value="<10">Under 10</option>
+            <option value="10-50">10 – 50</option>
+            <option value="50-200">50 – 200</option>
+            <option value="200-1000">200 – 1,000</option>
+            <option value="1000+">1,000+</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="runningAds" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            Running paid ads? <span className="normal-case text-slate-500 font-normal">(optional)</span>
+          </label>
+          <select
+            id="runningAds"
+            value={runningAds}
+            onChange={(e) => setRunningAds(e.target.value)}
+            disabled={state === "submitting"}
+            className="w-full rounded-md bg-slate-950/80 border border-slate-700 px-4 py-3 text-base text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+          >
+            <option value="">Pick one…</option>
+            <option value="yes-google">Yes — Google Ads</option>
+            <option value="yes-meta">Yes — Meta / Instagram</option>
+            <option value="yes-both">Yes — both</option>
+            <option value="no">Not yet</option>
+          </select>
+        </div>
       </div>
 
       <details className="text-left text-xs text-slate-500">

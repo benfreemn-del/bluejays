@@ -4,6 +4,7 @@ import AuditForm from "./AuditForm";
 import AuditTestimonials from "./AuditTestimonials";
 import SocialProofCounter from "./SocialProofCounter";
 import ExitIntentPopup from "./ExitIntentPopup";
+import FourReasonsAudience from "./FourReasonsAudience";
 import AuditLiveSlots from "@/components/AuditLiveSlots";
 import PartnerRefCapture from "@/components/PartnerRefCapture";
 import { jsonLdString, auditToolLd, breadcrumbLd } from "@/lib/json-ld";
@@ -53,46 +54,6 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const FOUR_REASONS = [
-  {
-    n: 1,
-    title: "Your product page is a brochure, not a buy-button.",
-    body: "Pretty photos. Spec sheet. No clear path to purchase, no urgency, no social proof above the fold. Visitors come, nod, leave.",
-    accent: "rose",
-  },
-  {
-    n: 2,
-    title: "Your distributor owns the customer relationship — you don't.",
-    body: "You make the product. They take the order, email, repeat purchase, and LTV. You're a vendor on someone else's audience. Cap on growth, cap on margin.",
-    accent: "amber",
-  },
-  {
-    n: 3,
-    title: "You can't retarget the people who almost bought.",
-    body: "No email capture. No Meta pixel. No SMS list. Every visitor who didn't convert is gone forever. You're paying for the same lead twice.",
-    accent: "sky",
-  },
-  {
-    n: 4,
-    title: "Your funnel doesn't speak to the buyer who actually decides.",
-    body: "Parents buy for kids. Coaches recommend to parents. Dealers resell to end-users. One blanket message for three audiences = converts none of them well.",
-    accent: "violet",
-  },
-] as const;
-
-const ACCENT_RING: Record<string, string> = {
-  rose: "border-rose-500/30 bg-rose-500/[0.04]",
-  amber: "border-amber-500/30 bg-amber-500/[0.04]",
-  sky: "border-sky-500/30 bg-sky-500/[0.04]",
-  violet: "border-violet-500/30 bg-violet-500/[0.04]",
-};
-const ACCENT_NUM: Record<string, string> = {
-  rose: "bg-rose-500/15 border-rose-500/40 text-rose-300",
-  amber: "bg-amber-500/15 border-amber-500/40 text-amber-300",
-  sky: "bg-sky-500/15 border-sky-500/40 text-sky-300",
-  violet: "bg-violet-500/15 border-violet-500/40 text-violet-300",
-};
-
 export default function ProductAuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -140,6 +101,23 @@ export default function ProductAuditLandingPage() {
                 No signup to see the result.
               </span>
             </p>
+            {/* Founder-trust chip — above-the-fold "you're dealing with a
+                real person." Originally the trust signal lived ~5 sections
+                deep at the "Meet Ben" card where most cold visitors had
+                already bounced. Hoisting it here per the 2026-05-17
+                Hormozi review (every-funnel-step-loses-50% → trust above
+                the fold). Clicking jumps to the full founder bio for the
+                visitors who want more proof. */}
+            <a
+              href="#meet-ben"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/[0.06] px-4 py-1.5 text-xs md:text-sm text-sky-200 hover:border-sky-400/60 hover:bg-sky-500/[0.10] transition-colors"
+            >
+              <span className="text-sky-300">👋</span>
+              <span>
+                Real person — Ben texts you within{" "}
+                <span className="font-semibold text-white">1 hour</span>
+              </span>
+            </a>
           </div>
 
           {/* Above-the-fold form card */}
@@ -222,69 +200,19 @@ export default function ProductAuditLandingPage() {
         </div>
       </section>
 
-      {/* ── 4 REASONS — proof-of-pain ─────────────────────────────── */}
-      <section className="border-b border-white/5 bg-slate-900/40">
-        <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
-          <div className="text-center mb-10 md:mb-12">
-            <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold mb-2">
-              Sound familiar?
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Most product brands lose orders in the same 4 places.
-            </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              The audit confirms which of these are leaking on YOUR site —
-              ranked by dollar impact.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5">
-            {FOUR_REASONS.map((r) => (
-              <div
-                key={r.n}
-                className={`rounded-2xl border ${ACCENT_RING[r.accent]} p-6 md:p-7`}
-              >
-                <div className="flex items-start gap-4">
-                  <span
-                    className={`flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-full border text-base font-black ${ACCENT_NUM[r.accent]}`}
-                  >
-                    {r.n}
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-lg md:text-xl font-bold text-white mb-2 leading-snug">
-                      {r.title}
-                    </h3>
-                    <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                      {r.body}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Anchor CTA — bounces back up to the hero form for visitors
-              who scrolled before converting. Avoids a redundant second
-              form (would split focus + hurt analytics). */}
-          <div className="mt-10 md:mt-12 text-center">
-            <a
-              href="#audit-top"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-amber-950 font-bold text-base hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] active:scale-[0.97] transition-all"
-            >
-              Audit my product →
-            </a>
-            <p className="mt-3 text-xs text-slate-500">
-              60 seconds. No signup to see the result.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* ── 4 REASONS — proof-of-pain, with audience toggle ────────
+            Per the 2026-05-17 Hormozi review: avatar sprawl was killing
+            the section ("which of these is for me?"). FourReasonsAudience
+            now ships 3 separate leak sets (manufacturer / DTC / author)
+            and lets the visitor pick. ── */}
+      <FourReasonsAudience />
 
       {/* ── TESTIMONIALS ───────────────────────────────────────────── */}
       <AuditTestimonials />
 
-      {/* ── MEET BEN — compact ─────────────────────────────────────── */}
-      <section className="border-b border-white/5 bg-slate-950/60 relative overflow-hidden">
+      {/* ── MEET BEN — compact. Anchor target for the above-the-fold
+            trust chip ("Real person — Ben texts you within 1 hour"). ─ */}
+      <section id="meet-ben" className="border-b border-white/5 bg-slate-950/60 relative overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-[10%] -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-sky-500/[0.04] blur-[120px]" />
           <div className="absolute top-1/2 right-[15%] -translate-y-1/2 w-[260px] h-[260px] rounded-full bg-emerald-500/[0.04] blur-[100px]" />
