@@ -147,6 +147,25 @@ const nextConfig: NextConfig = {
     // TODO: Add style prop to all local GlassCard definitions to fix properly
     ignoreBuildErrors: true,
   },
+  // Treat heavy native-binary deps as EXTERNAL packages — don't bundle
+  // them into any serverless function. Required because Turbopack's NFT
+  // tracer pulls @sparticuz/chromium (~50MB) and ffmpeg-static (~80MB
+  // binary) into every route that transitively reaches video-generator.ts
+  // via shared utils, which kept blowing past the 250MB function size
+  // cap. outputFileTracingExcludes (below) wasn't enough on its own
+  // because Turbopack's chunk grouping shifts between builds + the "*"
+  // wildcard key isn't honored in Next 16.
+  //
+  // At runtime: video-generator.ts already downloads its own ffmpeg
+  // binary to /tmp (see ensureFfmpegAvailable), and Chrome runs through
+  // Browserless.io — so externalizing these is safe. The serverless
+  // function loads them as plain Node requires at runtime IF the route
+  // calls video-generator, otherwise they're never touched.
+  serverExternalPackages: [
+    "@sparticuz/chromium",
+    "ffmpeg-static",
+    "puppeteer-core",
+  ],
   // 2026-05-16: deploys started failing with "A Serverless Function has
   // exceeded the unzipped maximum size of 250 MB" after we shipped
   // VSL #1 + VSL #2. Diagnosis: Turbopack was bundling @sparticuz/chromium
