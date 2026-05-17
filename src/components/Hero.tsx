@@ -300,14 +300,22 @@ export default function Hero() {
       <div
         className="relative z-10 w-full max-w-6xl px-6 pt-24"
       >
-        {/* Value prop headline — visible from page load */}
+        {/* Value prop headline — pain-led, ICP-specific (2026-05-17).
+            Previous "Your business deserves to be the obvious choice"
+            was service-business-era soft aspirational copy. The locked
+            ICP is now product makers + DTC brands + indie authors — and
+            the customer-eye review flagged the homepage hero as the
+            weakest point in the funnel vs the /audit page's sharp
+            "4 Reasons Your Product Isn't Selling." This rewrite
+            mirrors the /agency page's "real thing" callback so the hook
+            is consistent across the cold-traffic surfaces. */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            Your business deserves to be{" "}
-            <span className="text-sky-400 block">the obvious choice — online.</span>
+            You make a real thing.{" "}
+            <span className="text-sky-400 block">Your site isn&apos;t built to sell it.</span>
           </h1>
           <p className="text-white/65 text-lg md:text-xl mt-5 max-w-2xl mx-auto leading-relaxed">
-            A premium website in 48 hours, or the full AI marketing system — site, ads, funnel, customer machine — built in weeks.
+            A premium product site in 48 hours, or the full AI marketing system — ads, funnel, customer machine — built in weeks. For product makers, DTC brands, and indie authors competing with $10K/mo agency budgets.
           </p>
           {/* Trust strip — Hormozi review #14 (2026-05-14). 3rd badge swapped
               from generic "100% risk-free" to the $10K-tier guarantee so a

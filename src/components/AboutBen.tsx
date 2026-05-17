@@ -128,13 +128,13 @@ export default function AboutBen() {
                 Hi, I&apos;m Ben. I live in Quilcene, Washington with my wife &mdash; that&apos;s us in the photo.
               </p>
               <p>
-                I&apos;ve spent my career in law enforcement. That work taught me one thing every single day: people remember when someone shows up, and they remember when someone disappears.
+                I&apos;ve spent my career in law enforcement. Show up. Do the work. Don&apos;t disappear. That&apos;s the whole job.
               </p>
               <p>
-                I started BlueJays because I watched too many local owners get burned by web designers who sold slick promises, dropped a generic template on them, and vanished the moment the invoice cleared. The people I knew deserved better. So did the towns they served.
+                So when I watched local owners &mdash; people I knew &mdash; get burned by web designers who sold slick promises, dropped a generic template on them, and vanished the moment the invoice cleared, I decided to build the version they should&apos;ve been getting all along. <span className="text-white/90 font-medium">Same values, different work.</span>
               </p>
               <p>
-                That&apos;s why this exists. I build modern, premium websites for the small businesses and non-profits that actually hold communities together. Fair prices. I answer my phone. I don&apos;t disappear after launch.
+                That&apos;s why this exists. I build modern, premium websites for the product brands, indie authors, and local businesses that actually hold communities together. Fair prices. I answer my phone. I don&apos;t disappear after launch.
               </p>
               <p className="text-white/85 font-medium">
                 When you work with BlueJays, you&apos;re working with me. Not a project manager. Not a chatbot. Not someone overseas who&apos;ll never meet you. That&apos;s the deal.
