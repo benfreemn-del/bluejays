@@ -69,5 +69,3 @@ content-assets/broll/**/*.MOV
 
 .env*.local
 
-# Large video assets — host on Supabase Storage instead
-public/audit-assets/*.mp4
