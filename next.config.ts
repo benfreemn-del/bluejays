@@ -247,11 +247,21 @@ const nextConfig: NextConfig = {
     // Without this, Turbopack's chunk grouping can taint NEW routes on each
     // build (we hit funnel/enroll-batch + inbound/vonage-sms after thinking
     // we'd covered all of them). The "*" key catches anything we miss.
+    //
+    // 2026-05-16: ALSO exclude /public/** from every function. /public is
+    // served by Vercel's static CDN — it is NEVER needed inside a
+    // serverless function bundle. Without this, Next 16's NFT tracer pulls
+    // the entire /public dir (358 MB: avatars 87 MB, clients 154 MB,
+    // audit-assets 35 MB, content 28 MB, images 27 MB) into 15 functions
+    // that share a chunk with anything that even references a /public/...
+    // path string, blowing past the 250 MB cap. Vercel build-analyze
+    // confirmed /public/avatars/tekky 86.74 MB in api/inbound/sms et al.
     "*": [
       "./node_modules/@sparticuz/chromium/bin/**",
       "./node_modules/.pnpm/@sparticuz+chromium*/**",
       "./node_modules/.pnpm/ffmpeg-static*/**",
       "./node_modules/ffmpeg-static/**",
+      "./public/**",
     ],
   },
 };
