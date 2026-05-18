@@ -352,7 +352,14 @@ async function createAdSet(args: {
       billing_event: "IMPRESSIONS",
       optimization_goal: "OFFSITE_CONVERSIONS",
       promoted_object,
-      targeting: JSON.stringify(adSet.targeting),
+      // Meta requires advantage_audience to be explicitly set (1 or 0).
+      // We default to 0 (disabled) so Ben refines targeting manually in
+      // Ads Manager before unpausing — auto-expansion would override the
+      // hand-tuned interest seeds.
+      targeting: JSON.stringify({
+        ...adSet.targeting,
+        targeting_automation: { advantage_audience: 0 },
+      }),
       bid_strategy: "LOWEST_COST_WITHOUT_CAP",
       // Required when status=PAUSED + budget: declare start time
       start_time: new Date().toISOString(),
