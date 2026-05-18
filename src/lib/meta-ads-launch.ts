@@ -975,6 +975,48 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** Fetch the Meta-generated thumbnail URL for a processed video.
+ *  Meta auto-generates ~6-10 thumbnails after processing completes
+ *  and exposes them at GET /{video_id}/thumbnails. One is flagged
+ *  `is_preferred: true` — we pick that one (or fall back to the
+ *  first if none are preferred).
+ *
+ *  Used by createAdCreative to satisfy Meta's "video_data must
+ *  specify image_hash or image_url" requirement (subcode 1443226).
+ */
+async function getVideoThumbnailUrl(
+  cfg: ReturnType<typeof getCfg>,
+  videoId: string,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const url = `${META_BASE_URL_PHASE2}/${cfg.apiVersion}/${videoId}/thumbnails?fields=uri,is_preferred&access_token=${encodeURIComponent(cfg.token)}`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) {
+      const errText = await r.text().catch(() => "");
+      return { ok: false, error: `HTTP ${r.status}: ${errText.slice(0, 200)}` };
+    }
+    type ThumbResp = {
+      data?: Array<{ uri?: string; is_preferred?: boolean }>;
+    };
+    const data = (await r.json()) as ThumbResp;
+    const thumbs = data.data || [];
+    if (thumbs.length === 0) {
+      return { ok: false, error: "no thumbnails returned by Meta" };
+    }
+    const preferred = thumbs.find((t) => t.is_preferred && t.uri);
+    const chosen = preferred?.uri || thumbs.find((t) => t.uri)?.uri;
+    if (!chosen) {
+      return { ok: false, error: "thumbnails returned but none had a uri" };
+    }
+    return { ok: true, url: chosen };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
 // ── Creative + Ad creation ────────────────────────────────────────
 
 type CreativeOk = { ok: true; id: string };
@@ -1003,6 +1045,11 @@ async function createAdCreative(args: {
     video_id: string;
     title: string;
     message: string;
+    /** Meta requires one of image_hash | image_url as the thumbnail
+     *  on every video creative. We auto-fetch a Meta-generated
+     *  thumbnail URL after video processing completes. Required since
+     *  May 2025 — previously Meta would auto-attach the first frame. */
+    image_url?: string;
     call_to_action: { type: string; value: { link: string } };
   };
   type StorySpec = {
@@ -1027,10 +1074,18 @@ async function createAdCreative(args: {
     };
   } else {
     if (!videoId) return { ok: false, error: "missing video_id" };
+    // Fetch a Meta-generated thumbnail. Required field on every
+    // video creative since May 2025 — the API rejects video_data
+    // without image_url or image_hash with subcode 1443226.
+    const thumbResult = await getVideoThumbnailUrl(cfg, videoId);
+    if (!thumbResult.ok) {
+      return { ok: false, error: `thumbnail: ${thumbResult.error}` };
+    }
     storySpec.video_data = {
       video_id: videoId,
       title: adSpec.headline,
       message: adSpec.primary_text,
+      image_url: thumbResult.url,
       call_to_action: { type: adSpec.cta, value: { link } },
     };
   }
