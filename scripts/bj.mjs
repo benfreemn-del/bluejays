@@ -143,6 +143,32 @@ async function sb(path, opts = {}) {
   return r.json();
 }
 
+/**
+ * Safe JSON fetcher — wraps `await r.json()` in a try/catch so a
+ * non-JSON response (Vercel bot-challenge HTML, deploy-in-progress
+ * 404 page, gateway 502, etc.) surfaces a clear error instead of an
+ * "Unexpected token '<'" JSON-parse exception.
+ */
+async function fetchJson(url, opts = {}) {
+  const r = await fetch(url, opts);
+  const text = await r.text();
+  let j;
+  try {
+    j = JSON.parse(text);
+  } catch {
+    const looksLikeHtml = text.trim().startsWith("<");
+    const hint = looksLikeHtml
+      ? r.status === 404
+        ? "endpoint not on this deploy yet — wait 30-60s for Vercel to finish rolling"
+        : "looks like Vercel's bot-challenge or a gateway error — retry in 30s"
+      : "response wasn't JSON";
+    throw new Error(
+      `non-JSON response (HTTP ${r.status}) · ${hint} · first 80 chars: ${text.slice(0, 80).replace(/\s+/g, " ")}`,
+    );
+  }
+  return { status: r.status, j };
+}
+
 // ─── Subcommands ───
 const commands = {
   async "leads:list"(args) {
@@ -359,12 +385,11 @@ const commands = {
 
     // --status: read meta_launches row, don't trigger any creates
     if (args["--status"]) {
-      const r = await fetch(
+      const { status, j } = await fetchJson(
         `${BASE_URL}/api/meta/launch?wave=${encodeURIComponent(wave)}`,
         { headers: { authorization: `Bearer ${ADMIN_TOKEN}` } },
       );
-      const j = await r.json();
-      if (!j.ok) return `✗ ${j.error || `HTTP ${r.status}`}`;
+      if (!j.ok) return `✗ ${j.error || `HTTP ${status}`}`;
       if (!j.row) return `· no launch row for ${wave} yet — run bj meta launch ${wave}`;
       const lines = [];
       lines.push(`Launch ${j.row.wave} · ${j.row.phase} · ${j.row.status}`);
@@ -385,7 +410,7 @@ const commands = {
 
     const phase = args["--phase"] || "skeleton";
 
-    const r = await fetch(`${BASE_URL}/api/meta/launch`, {
+    const { j } = await fetchJson(`${BASE_URL}/api/meta/launch`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -393,7 +418,6 @@ const commands = {
       },
       body: JSON.stringify({ wave, phase }),
     });
-    const j = await r.json();
     if (!j.ok && j.error) {
       const extra = j.available_waves
         ? `\n  available: ${j.available_waves.join(", ")}`
