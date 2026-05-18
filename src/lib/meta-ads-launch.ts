@@ -23,12 +23,15 @@
  * creative review).
  */
 
+import { readFile } from "fs/promises";
+import path from "path";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { logCost } from "@/lib/cost-logger";
 import {
   buildAdDestinationUrl,
   type WaveSpec,
   type AdSetSpec,
+  type AdSpec,
 } from "./ads-spec/wave-1";
 
 const META_BASE_URL = "https://graph.facebook.com";
@@ -39,6 +42,18 @@ const DEFAULT_API_VERSION = "v21.0";
 export type LaunchPhase = "skeleton" | "ads" | "complete";
 export type LaunchStatus = "in_progress" | "complete" | "failed";
 
+/** Per-hook Phase-2 progress state. Persisted in
+ *  meta_launches.ads_state JSONB keyed by hook_id. */
+export type AdState = {
+  image_hash?: string;
+  video_id?: string;
+  video_status?: string;
+  creative_id?: string;
+  ad_id?: string;
+  status?: "complete" | "video_processing" | "failed";
+  last_error?: string;
+};
+
 export type LaunchRow = {
   id: string;
   wave: string;
@@ -48,6 +63,7 @@ export type LaunchRow = {
   ad_ids: Array<{ hook_id: string; id: string }>;
   image_hashes: Record<string, string>;
   video_ids: Record<string, string>;
+  ads_state: Record<string, AdState>;
   phase: LaunchPhase;
   status: LaunchStatus;
   notes: string | null;
@@ -66,6 +82,28 @@ export type SkeletonResult = {
   errors: string[];
 };
 
+export type AdsResultEntry = {
+  hook_id: string;
+  audience: string;
+  outcome: "created" | "skipped" | "failed" | "video_processing";
+  creative_id?: string;
+  ad_id?: string;
+  error?: string;
+};
+
+export type AdsResult = {
+  ok: boolean;
+  wave: string;
+  /** Per-ad outcome. Length always equals total ads in the spec. */
+  results: AdsResultEntry[];
+  /** Summary counts. */
+  created: number;
+  skipped: number;
+  failed: number;
+  video_processing: number;
+  errors: string[];
+};
+
 // ── Config helpers ─────────────────────────────────────────────────
 
 function getCfg(): {
@@ -73,18 +111,32 @@ function getCfg(): {
   accountId: string;
   apiVersion: string;
   pageId: string;
+  instagramActorId: string;
 } {
   const token = (process.env.META_ADS_SYSTEM_TOKEN || "").trim();
   const rawAccount = (process.env.META_ADS_ACCOUNT_ID || "").trim();
   const apiVersion = (process.env.META_ADS_API_VERSION || DEFAULT_API_VERSION).trim();
   const pageId = (process.env.META_ADS_PAGE_ID || "").trim();
+  const instagramActorId = (process.env.META_ADS_INSTAGRAM_ACTOR_ID || "").trim();
   const accountId = rawAccount.startsWith("act_") ? rawAccount : `act_${rawAccount}`;
   if (!token || !rawAccount) {
     throw new Error(
       "Meta env not configured: need META_ADS_SYSTEM_TOKEN + META_ADS_ACCOUNT_ID",
     );
   }
-  return { token, accountId, apiVersion, pageId };
+  return { token, accountId, apiVersion, pageId, instagramActorId };
+}
+
+/** Phase 2 requires META_ADS_PAGE_ID (creative.object_story_spec.page_id
+ *  is mandatory). META_ADS_INSTAGRAM_ACTOR_ID is recommended but
+ *  optional (without it, Meta still serves on FB but not as a native
+ *  IG post — it'll render as a "FB cross-post" on IG placements). */
+function assertPhase2Env(cfg: ReturnType<typeof getCfg>): void {
+  if (!cfg.pageId) {
+    throw new Error(
+      "Phase 2 requires META_ADS_PAGE_ID — set the FB Page ID that ads will publish under.",
+    );
+  }
 }
 
 // ── Persistence helpers ───────────────────────────────────────────
@@ -119,6 +171,7 @@ async function patchLaunchRow(
     ad_ids: Array<{ hook_id: string; id: string }>;
     image_hashes: Record<string, string>;
     video_ids: Record<string, string>;
+    ads_state: Record<string, AdState>;
     phase: LaunchPhase;
     status: LaunchStatus;
     notes: string;
@@ -383,27 +436,645 @@ async function createAdSet(args: {
 
 // ── Phase 2: ads (image upload + creatives + ads) ─────────────────
 //
-// Deferred to a follow-up commit. Spec is already in
-// src/lib/ads-spec/wave-1.ts — the orchestrator will:
-//   1. For each ad whose creative.kind === "image":
-//      - Read the file from disk (asset_path is relative to repo root)
-//      - POST /act_X/adimages with the binary, get back image_hash
-//   2. For each ad whose creative.kind === "video":
-//      - POST /act_X/advideos with the file, get back video_id
-//      - Poll video processing status until READY
-//   3. For each of the 12 ads:
-//      - POST /act_X/adcreatives with object_story_spec referencing
-//        the image_hash OR video_id + headline + body + CTA + URL
-//      - POST /act_X/ads with creative_id + adset_id + name + PAUSED
-//   4. Update meta_launches row: phase="ads", record all IDs
+// Reads the wave spec + the existing meta_launches row, then for each
+// of the 12 ads:
+//   1. If image: POST /act_X/adimages with the file binary → image_hash
+//      If video: POST /act_X/advideos with the file binary → video_id,
+//                then poll GET /<video_id>?fields=status until ready.
+//   2. POST /act_X/adcreatives with object_story_spec referencing the
+//      image_hash OR video_id + headline + body + CTA + URL.
+//   3. POST /act_X/ads with creative_id + adset_id + name + PAUSED.
+//   4. Persist per-hook progress into meta_launches.ads_state JSONB
+//      keyed by hook_id so the next run skips completed hooks.
 //
-// Phase 2 lands once HyperAgent images exist at the spec'd
-// asset_path locations + the VSL #2 Stories trim is generated.
+// Failure isolation: a single ad failing (image upload, creative
+// rejection, ad create error) records last_error on that hook's
+// ads_state entry and continues to the next ad. End-of-run summary
+// counts created / skipped / failed / video_processing.
 //
-// The buildAdDestinationUrl(spec, ad) helper from ads-spec/wave-1.ts
-// composes the destination URL with UTM tags during ad-creative
-// creation.
+// Idempotency: an ad whose ads_state[hook_id].ad_id is already set
+// is skipped wholesale. Partially-progressed hooks (image_hash set
+// but ad_id not) resume from wherever they left off.
+//
+// Video-processing ceiling: 5 minutes of polling. Videos that
+// haven't finished processing record status="video_processing" and
+// keep their video_id, so the next invocation picks them up.
+//
+// Re-export the URL builder so callers don't need a second import.
 export { buildAdDestinationUrl };
+
+const META_BASE_URL_PHASE2 = META_BASE_URL;
+
+/**
+ * Phase 2 entry point. Creates one creative + one ad per AdSpec in
+ * the wave, in PAUSED state. Requires Phase 1 to have completed —
+ * errors if meta_launches has no campaign_id / ad_set_ids yet.
+ */
+export async function launchAds(spec: WaveSpec): Promise<AdsResult> {
+  const cfg = getCfg();
+  assertPhase2Env(cfg);
+
+  const errors: string[] = [];
+  const results: AdsResultEntry[] = [];
+
+  const row = await getLaunchStatus(spec.wave);
+  if (!row) {
+    return {
+      ok: false,
+      wave: spec.wave,
+      results: [],
+      created: 0,
+      skipped: 0,
+      failed: 0,
+      video_processing: 0,
+      errors: [
+        `no meta_launches row for ${spec.wave} — run Phase 1 first (bj meta launch ${spec.wave} --phase skeleton)`,
+      ],
+    };
+  }
+  if (!row.campaign_id) {
+    return {
+      ok: false,
+      wave: spec.wave,
+      results: [],
+      created: 0,
+      skipped: 0,
+      failed: 0,
+      video_processing: 0,
+      errors: [
+        `meta_launches.${spec.wave} has no campaign_id — Phase 1 did not complete`,
+      ],
+    };
+  }
+
+  const adSetByAudience = new Map<string, { id: string; name: string }>();
+  for (const a of row.ad_set_ids || []) {
+    adSetByAudience.set(a.audience, { id: a.id, name: a.name });
+  }
+
+  const adsState: Record<string, AdState> = { ...(row.ads_state || {}) };
+
+  for (const adSetSpec of spec.ad_sets) {
+    const adSet = adSetByAudience.get(adSetSpec.audience);
+    if (!adSet) {
+      const err = `no ad set found for audience=${adSetSpec.audience} — Phase 1 did not create it`;
+      errors.push(err);
+      for (const ad of adSetSpec.ads) {
+        results.push({
+          hook_id: ad.hook_id,
+          audience: ad.audience,
+          outcome: "failed",
+          error: err,
+        });
+      }
+      continue;
+    }
+
+    for (const adSpec of adSetSpec.ads) {
+      const entry = await processAd({
+        cfg,
+        spec,
+        adSpec,
+        adSet,
+        state: adsState[adSpec.hook_id] || {},
+      });
+      adsState[adSpec.hook_id] = entry.state;
+      results.push(entry.result);
+      if (entry.result.outcome === "failed" && entry.result.error) {
+        errors.push(`${adSpec.hook_id}: ${entry.result.error}`);
+      }
+    }
+  }
+
+  const created = results.filter((r) => r.outcome === "created").length;
+  const skipped = results.filter((r) => r.outcome === "skipped").length;
+  const failed = results.filter((r) => r.outcome === "failed").length;
+  const video_processing = results.filter(
+    (r) => r.outcome === "video_processing",
+  ).length;
+
+  // Persist the merged ads_state back. Phase flips to "ads" regardless
+  // of whether every hook completed — partial progress is the whole
+  // point of the JSONB column.
+  await patchLaunchRow(spec.wave, {
+    ads_state: adsState,
+    ad_ids: extractAdIds(adsState),
+    phase: "ads",
+    status: failed === 0 && video_processing === 0 ? "in_progress" : "failed",
+    notes: errors.length > 0 ? errors.slice(0, 10).join(" · ") : "",
+  });
+
+  return {
+    ok: failed === 0,
+    wave: spec.wave,
+    results,
+    created,
+    skipped,
+    failed,
+    video_processing,
+    errors,
+  };
+}
+
+function extractAdIds(
+  adsState: Record<string, AdState>,
+): Array<{ hook_id: string; id: string }> {
+  const out: Array<{ hook_id: string; id: string }> = [];
+  for (const [hook_id, s] of Object.entries(adsState)) {
+    if (s.ad_id) out.push({ hook_id, id: s.ad_id });
+  }
+  return out;
+}
+
+/** Per-ad pipeline. Walks the state machine
+ *  upload → creative → ad and short-circuits on any failure. */
+async function processAd(args: {
+  cfg: ReturnType<typeof getCfg>;
+  spec: WaveSpec;
+  adSpec: AdSpec;
+  adSet: { id: string; name: string };
+  state: AdState;
+}): Promise<{ state: AdState; result: AdsResultEntry }> {
+  const { cfg, spec, adSpec, adSet } = args;
+  const state: AdState = { ...args.state };
+
+  // Already done — short-circuit.
+  if (state.ad_id) {
+    return {
+      state,
+      result: {
+        hook_id: adSpec.hook_id,
+        audience: adSpec.audience,
+        outcome: "skipped",
+        creative_id: state.creative_id,
+        ad_id: state.ad_id,
+      },
+    };
+  }
+
+  // ── 1) Asset upload ──
+  if (adSpec.creative.kind === "image" && !state.image_hash) {
+    const r = await uploadImage(cfg, adSpec.creative.asset_path);
+    if (!r.ok) {
+      state.status = "failed";
+      state.last_error = `image upload: ${r.error}`;
+      return {
+        state,
+        result: {
+          hook_id: adSpec.hook_id,
+          audience: adSpec.audience,
+          outcome: "failed",
+          error: state.last_error,
+        },
+      };
+    }
+    state.image_hash = r.hash;
+  }
+
+  if (adSpec.creative.kind === "video") {
+    if (!state.video_id) {
+      const r = await uploadVideo(cfg, adSpec.creative.asset_path);
+      if (!r.ok) {
+        state.status = "failed";
+        state.last_error = `video upload: ${r.error}`;
+        return {
+          state,
+          result: {
+            hook_id: adSpec.hook_id,
+            audience: adSpec.audience,
+            outcome: "failed",
+            error: state.last_error,
+          },
+        };
+      }
+      state.video_id = r.id;
+    }
+
+    if (state.video_status !== "ready") {
+      const r = await pollVideoReady(cfg, state.video_id);
+      state.video_status = r.status;
+      if (!r.ok) {
+        // Could be still-processing OR errored. Either way, surface
+        // and let the next invocation retry the poll.
+        if (r.status === "processing") {
+          state.status = "video_processing";
+          return {
+            state,
+            result: {
+              hook_id: adSpec.hook_id,
+              audience: adSpec.audience,
+              outcome: "video_processing",
+              error: `video ${state.video_id} still processing after 5min`,
+            },
+          };
+        }
+        state.status = "failed";
+        state.last_error = `video processing: ${r.error || r.status}`;
+        return {
+          state,
+          result: {
+            hook_id: adSpec.hook_id,
+            audience: adSpec.audience,
+            outcome: "failed",
+            error: state.last_error,
+          },
+        };
+      }
+    }
+  }
+
+  // ── 2) Creative ──
+  if (!state.creative_id) {
+    const r = await createAdCreative({
+      cfg,
+      spec,
+      adSpec,
+      imageHash: state.image_hash,
+      videoId: state.video_id,
+    });
+    if (!r.ok) {
+      state.status = "failed";
+      state.last_error = `creative: ${r.error}`;
+      return {
+        state,
+        result: {
+          hook_id: adSpec.hook_id,
+          audience: adSpec.audience,
+          outcome: "failed",
+          error: state.last_error,
+        },
+      };
+    }
+    state.creative_id = r.id;
+  }
+
+  // ── 3) Ad ──
+  const r = await createAd({
+    cfg,
+    adSpec,
+    adSetId: adSet.id,
+    creativeId: state.creative_id,
+  });
+  if (!r.ok) {
+    state.status = "failed";
+    state.last_error = `ad: ${r.error}`;
+    return {
+      state,
+      result: {
+        hook_id: adSpec.hook_id,
+        audience: adSpec.audience,
+        outcome: "failed",
+        error: state.last_error,
+      },
+    };
+  }
+  state.ad_id = r.id;
+  state.status = "complete";
+  delete state.last_error;
+  return {
+    state,
+    result: {
+      hook_id: adSpec.hook_id,
+      audience: adSpec.audience,
+      outcome: "created",
+      creative_id: state.creative_id,
+      ad_id: state.ad_id,
+    },
+  };
+}
+
+// ── Phase 2 Graph API helpers ─────────────────────────────────────
+
+/** Read a file relative to the repo root. asset_path comes from the
+ *  spec and is intentionally repo-root-relative (e.g.
+ *  `public/ad-assets/wave-1/mfg-pain-1x1.jpg`). */
+async function readAssetBytes(assetPath: string): Promise<Buffer> {
+  // process.cwd() is the bluejays project root when the API route runs
+  // (next dev / next start both cd into the project). The spec paths
+  // already start with `public/` so a simple join works.
+  const abs = path.isAbsolute(assetPath)
+    ? assetPath
+    : path.join(process.cwd(), assetPath);
+  return readFile(abs);
+}
+
+function mimeFromPath(p: string): string {
+  const ext = p.toLowerCase().split(".").pop() || "";
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "gif":
+      return "image/gif";
+    case "webp":
+      return "image/webp";
+    case "mp4":
+      return "video/mp4";
+    case "mov":
+      return "video/quicktime";
+    case "webm":
+      return "video/webm";
+    default:
+      return "application/octet-stream";
+  }
+}
+
+type UploadImageOk = { ok: true; hash: string };
+type UploadImageErr = { ok: false; error: string };
+
+async function uploadImage(
+  cfg: ReturnType<typeof getCfg>,
+  assetPath: string,
+): Promise<UploadImageOk | UploadImageErr> {
+  let bytes: Buffer;
+  try {
+    bytes = await readAssetBytes(assetPath);
+  } catch (err) {
+    return {
+      ok: false,
+      error: `read ${assetPath}: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const filename = path.basename(assetPath);
+  const url = `${META_BASE_URL_PHASE2}/${cfg.apiVersion}/${cfg.accountId}/adimages?access_token=${encodeURIComponent(cfg.token)}`;
+  const form = new FormData();
+  // Meta keys the response by the form-field name (which it expects
+  // to equal the filename) — that's why we pass `filename` twice.
+  form.append(
+    filename,
+    new Blob([new Uint8Array(bytes)], { type: mimeFromPath(filename) }),
+    filename,
+  );
+
+  try {
+    const r = await fetch(url, { method: "POST", body: form });
+    if (!r.ok) {
+      const errText = await r.text().catch(() => "");
+      return { ok: false, error: `HTTP ${r.status}: ${errText.slice(0, 300)}` };
+    }
+    type ImagesResp = {
+      images?: Record<string, { hash?: string; url?: string }>;
+    };
+    const data = (await r.json()) as ImagesResp;
+    const entry = data.images && data.images[filename];
+    if (!entry || !entry.hash) {
+      // Meta sometimes keys by a sanitized version of the filename —
+      // fall back to the first entry.
+      const first = data.images
+        ? Object.values(data.images).find((v) => v.hash)
+        : undefined;
+      if (first && first.hash) {
+        await logCost({
+          service: "meta_ads",
+          action: "uploadImage",
+          costUsd: 0,
+          metadata: { asset: filename, hash: first.hash },
+        }).catch(() => {});
+        return { ok: true, hash: first.hash };
+      }
+      return {
+        ok: false,
+        error: `no hash in response: ${JSON.stringify(data).slice(0, 200)}`,
+      };
+    }
+    await logCost({
+      service: "meta_ads",
+      action: "uploadImage",
+      costUsd: 0,
+      metadata: { asset: filename, hash: entry.hash },
+    }).catch(() => {});
+    return { ok: true, hash: entry.hash };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
+type UploadVideoOk = { ok: true; id: string };
+type UploadVideoErr = { ok: false; error: string };
+
+async function uploadVideo(
+  cfg: ReturnType<typeof getCfg>,
+  assetPath: string,
+): Promise<UploadVideoOk | UploadVideoErr> {
+  let bytes: Buffer;
+  try {
+    bytes = await readAssetBytes(assetPath);
+  } catch (err) {
+    return {
+      ok: false,
+      error: `read ${assetPath}: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const filename = path.basename(assetPath);
+  const url = `${META_BASE_URL_PHASE2}/${cfg.apiVersion}/${cfg.accountId}/advideos?access_token=${encodeURIComponent(cfg.token)}`;
+  const form = new FormData();
+  form.append(
+    "source",
+    new Blob([new Uint8Array(bytes)], { type: mimeFromPath(filename) }),
+    filename,
+  );
+
+  try {
+    const r = await fetch(url, { method: "POST", body: form });
+    if (!r.ok) {
+      const errText = await r.text().catch(() => "");
+      return { ok: false, error: `HTTP ${r.status}: ${errText.slice(0, 300)}` };
+    }
+    type VideoResp = { id?: string };
+    const data = (await r.json()) as VideoResp;
+    if (!data.id) {
+      return {
+        ok: false,
+        error: `no id in response: ${JSON.stringify(data).slice(0, 200)}`,
+      };
+    }
+    await logCost({
+      service: "meta_ads",
+      action: "uploadVideo",
+      costUsd: 0,
+      metadata: { asset: filename, video_id: data.id },
+    }).catch(() => {});
+    return { ok: true, id: data.id };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
+const VIDEO_POLL_INTERVAL_MS = 5_000;
+const VIDEO_POLL_MAX_ATTEMPTS = 60; // ~5 min ceiling
+
+type PollVideoResult =
+  | { ok: true; status: "ready" }
+  | { ok: false; status: "processing" | "error"; error?: string };
+
+async function pollVideoReady(
+  cfg: ReturnType<typeof getCfg>,
+  videoId: string,
+): Promise<PollVideoResult> {
+  for (let attempt = 0; attempt < VIDEO_POLL_MAX_ATTEMPTS; attempt++) {
+    const url = `${META_BASE_URL_PHASE2}/${cfg.apiVersion}/${videoId}?fields=status&access_token=${encodeURIComponent(cfg.token)}`;
+    try {
+      const r = await fetch(url);
+      if (!r.ok) {
+        const errText = await r.text().catch(() => "");
+        return {
+          ok: false,
+          status: "error",
+          error: `HTTP ${r.status}: ${errText.slice(0, 200)}`,
+        };
+      }
+      type StatusResp = {
+        status?: { video_status?: string };
+      };
+      const data = (await r.json()) as StatusResp;
+      const vs = data.status?.video_status || "";
+      if (vs === "ready") return { ok: true, status: "ready" };
+      if (vs === "error") {
+        return { ok: false, status: "error", error: "Meta returned status=error" };
+      }
+      // "processing" / "uploading" / empty — keep polling.
+    } catch (err) {
+      return {
+        ok: false,
+        status: "error",
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+    await sleep(VIDEO_POLL_INTERVAL_MS);
+  }
+  return { ok: false, status: "processing" };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ── Creative + Ad creation ────────────────────────────────────────
+
+type CreativeOk = { ok: true; id: string };
+type CreativeErr = { ok: false; error: string };
+
+async function createAdCreative(args: {
+  cfg: ReturnType<typeof getCfg>;
+  spec: WaveSpec;
+  adSpec: AdSpec;
+  imageHash?: string;
+  videoId?: string;
+}): Promise<CreativeOk | CreativeErr> {
+  const { cfg, spec, adSpec, imageHash, videoId } = args;
+  const link = buildAdDestinationUrl(spec, adSpec);
+
+  // object_story_spec varies by media kind.
+  type LinkData = {
+    link: string;
+    image_hash?: string;
+    message: string;
+    name: string;
+    description?: string;
+    call_to_action: { type: string; value: { link: string } };
+  };
+  type VideoData = {
+    video_id: string;
+    title: string;
+    message: string;
+    call_to_action: { type: string; value: { link: string } };
+  };
+  type StorySpec = {
+    page_id: string;
+    instagram_actor_id?: string;
+    link_data?: LinkData;
+    video_data?: VideoData;
+  };
+
+  const storySpec: StorySpec = { page_id: cfg.pageId };
+  if (cfg.instagramActorId) storySpec.instagram_actor_id = cfg.instagramActorId;
+
+  if (adSpec.creative.kind === "image") {
+    if (!imageHash) return { ok: false, error: "missing image_hash" };
+    storySpec.link_data = {
+      link,
+      image_hash: imageHash,
+      message: adSpec.primary_text,
+      name: adSpec.headline,
+      description: adSpec.description,
+      call_to_action: { type: adSpec.cta, value: { link } },
+    };
+  } else {
+    if (!videoId) return { ok: false, error: "missing video_id" };
+    storySpec.video_data = {
+      video_id: videoId,
+      title: adSpec.headline,
+      message: adSpec.primary_text,
+      call_to_action: { type: adSpec.cta, value: { link } },
+    };
+  }
+
+  type CreativeResp = { id: string };
+  const r = await graphPost<CreativeResp>({
+    apiVersion: cfg.apiVersion,
+    path: `${cfg.accountId}/adcreatives`,
+    token: cfg.token,
+    body: {
+      name: `${adSpec.hook_id}-creative`,
+      object_story_spec: JSON.stringify(storySpec),
+    },
+  });
+  if (!r.ok) return { ok: false, error: r.error };
+
+  await logCost({
+    service: "meta_ads",
+    action: "createAdCreative",
+    costUsd: 0,
+    metadata: { hook_id: adSpec.hook_id, creative_id: r.data.id },
+  }).catch(() => {});
+
+  return { ok: true, id: r.data.id };
+}
+
+type AdOk = { ok: true; id: string };
+type AdErr = { ok: false; error: string };
+
+async function createAd(args: {
+  cfg: ReturnType<typeof getCfg>;
+  adSpec: AdSpec;
+  adSetId: string;
+  creativeId: string;
+}): Promise<AdOk | AdErr> {
+  const { cfg, adSpec, adSetId, creativeId } = args;
+
+  type AdResp = { id: string };
+  const r = await graphPost<AdResp>({
+    apiVersion: cfg.apiVersion,
+    path: `${cfg.accountId}/ads`,
+    token: cfg.token,
+    body: {
+      name: `${adSpec.hook_id}`,
+      adset_id: adSetId,
+      creative: JSON.stringify({ creative_id: creativeId }),
+      status: "PAUSED",
+    },
+  });
+  if (!r.ok) return { ok: false, error: r.error };
+
+  await logCost({
+    service: "meta_ads",
+    action: "createAd",
+    costUsd: 0,
+    metadata: { hook_id: adSpec.hook_id, ad_id: r.data.id },
+  }).catch(() => {});
+
+  return { ok: true, id: r.data.id };
+}
 
 // ── Public query: read launch state ────────────────────────────────
 

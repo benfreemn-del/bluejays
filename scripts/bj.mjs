@@ -77,14 +77,16 @@
  *       per check. Use after rotating the system user token or
  *       any META_ADS_* env var change.
  *
- *   bj meta launch <wave-name> [--phase skeleton|ads|reset] [--status]
- *       Programmatic Meta Marketing API launcher. Phase 1
- *       (skeleton, default) creates campaign + 3 ad sets in PAUSED
- *       state. Phase 2 (ads) uploads creatives + creates ads — lands
- *       after HyperAgent images are in /public/ad-assets/<wave>/.
+ *   bj meta launch <wave-name> [--phase skeleton|ads|all|reset] [--status]
+ *       Programmatic Meta Marketing API launcher. Default (no --phase)
+ *       runs both phases: skeleton (campaign + 3 ad sets) then ads
+ *       (12 creatives + 12 ads). --phase skeleton stops after Phase 1.
+ *       --phase ads only runs Phase 2 (requires Phase 1 to be done).
  *       --phase reset deletes the campaign + clears the row, useful
  *       when the spec changes objective and Meta locks reuse.
  *       --status reads the meta_launches row without running.
+ *       All resources land in PAUSED state — Ben unpauses in Ads
+ *       Manager after a manual sanity check.
  *       Idempotent — safe to re-run after partial failures.
  *
  * Output convention: short, human-readable, one row per line. No JSON
@@ -394,7 +396,7 @@ const commands = {
     if (!ADMIN_TOKEN) return "error: ADMIN_PASSWORD not set in .env.local";
     const [wave] = positional;
     if (!wave) {
-      return "usage: bj meta launch <wave-name> [--phase skeleton|ads] [--status]";
+      return "usage: bj meta launch <wave-name> [--phase skeleton|ads|all|reset] [--status]";
     }
 
     // --status: read meta_launches row, don't trigger any creates
@@ -422,7 +424,10 @@ const commands = {
       return lines.join("\n");
     }
 
-    const phase = args["--phase"] || "skeleton";
+    // Default = "all" → run Phase 1 then auto-flow into Phase 2.
+    // Explicit --phase skeleton / ads / reset still bypasses the
+    // auto-flow.
+    const phase = args["--phase"] || "all";
 
     const { j } = await fetchJson(`${BASE_URL}/api/meta/launch`, {
       method: "POST",
@@ -432,40 +437,107 @@ const commands = {
       },
       body: JSON.stringify({ wave, phase }),
     });
-    if (!j.ok && j.error) {
+    if (!j.ok && j.error && !j.phase) {
       const extra = j.available_waves
         ? `\n  available: ${j.available_waves.join(", ")}`
         : "";
       return `✗ ${j.error}${extra}`;
     }
 
-    if (j.phase === "skeleton") {
+    const renderSkeleton = (sk) => {
       const lines = [];
-      const status = j.ok ? "✓" : "⚠";
-      lines.push(`${status} Wave ${j.wave} skeleton`);
+      const status = sk.ok ? "✓" : "⚠";
+      lines.push(`${status} Wave ${sk.wave} skeleton`);
       lines.push("");
-      const c = j.campaign;
+      const c = sk.campaign;
       lines.push(
         `  Campaign: ${c.id} · ${c.name}${c.created ? " (CREATED)" : " (existing)"}`,
       );
-      for (const a of j.ad_sets) {
+      for (const a of sk.ad_sets) {
         lines.push(
           `  Ad set:   ${a.id} · ${a.name}${a.created ? " (CREATED)" : " (existing)"}`,
         );
       }
-      if (j.errors && j.errors.length > 0) {
+      if (sk.errors && sk.errors.length > 0) {
         lines.push("");
         lines.push("Errors:");
-        for (const err of j.errors) lines.push(`  ✗ ${err}`);
+        for (const err of sk.errors) lines.push(`  ✗ ${err}`);
       }
+      return lines.join("\n");
+    };
+
+    const renderAds = (ads) => {
+      const lines = [];
+      const status = ads.ok ? "✓" : "⚠";
+      lines.push(`${status} Wave ${ads.wave} ads`);
       lines.push("");
-      lines.push(
+      for (const r of ads.results || []) {
+        const tag =
+          r.outcome === "created"
+            ? "(CREATED)"
+            : r.outcome === "skipped"
+            ? "(existing)"
+            : r.outcome === "video_processing"
+            ? "(video processing — re-run)"
+            : "(FAILED)";
+        const ids =
+          r.creative_id && r.ad_id
+            ? `creative=${r.creative_id} ad=${r.ad_id}`
+            : r.creative_id
+            ? `creative=${r.creative_id}`
+            : "";
+        lines.push(
+          `  Ad ${r.hook_id.padEnd(18)} ${tag}${ids ? " · " + ids : ""}`,
+        );
+        if (r.error) lines.push(`    ↳ ${r.error}`);
+      }
+      const summary =
+        `created=${ads.created || 0} · skipped=${ads.skipped || 0} ` +
+        `· failed=${ads.failed || 0}` +
+        (ads.video_processing
+          ? ` · video_processing=${ads.video_processing}`
+          : "");
+      lines.push("");
+      lines.push(`  ${summary}`);
+      if (ads.errors && ads.errors.length > 0) {
+        lines.push("");
+        lines.push("Errors:");
+        for (const err of ads.errors) lines.push(`  ✗ ${err}`);
+      }
+      return lines.join("\n");
+    };
+
+    if (j.phase === "skeleton") {
+      const out = [renderSkeleton(j), ""];
+      out.push(
         `All resources are PAUSED. Open Ads Manager, refine targeting (Meta autocomplete is better than IDs), then unpause when ready.`,
       );
-      return lines.join("\n");
+      return out.join("\n");
     }
     if (j.phase === "ads") {
-      return `· ${j.error || "Phase 2 not implemented yet"}`;
+      if (!j.results && j.error) return `✗ ${j.error}`;
+      const out = [renderAds(j), ""];
+      out.push(
+        `All ads are PAUSED. Review creative + ad copy in Ads Manager, then unpause when ready.`,
+      );
+      return out.join("\n");
+    }
+    if (j.phase === "all") {
+      const out = [];
+      if (j.skeleton) out.push(renderSkeleton(j.skeleton));
+      out.push("");
+      if (j.ads) {
+        out.push(renderAds(j.ads));
+      } else if (j.error) {
+        out.push(`⚠ Phase 2 skipped: ${j.error}`);
+      } else if (j.skeleton_error) {
+        out.push(`✗ Phase 1 threw: ${j.skeleton_error}`);
+      }
+      out.push("");
+      out.push(
+        `All resources are PAUSED. Open Ads Manager, refine targeting + review creative, then unpause when ready.`,
+      );
+      return out.join("\n");
     }
     if (j.phase === "reset") {
       const lines = [];
@@ -900,7 +972,7 @@ async function main() {
   bj outbox approve <short_code>
   bj outbox reject <short_code>
   bj meta status
-  bj meta launch <wave-name> [--phase skeleton|ads] [--status]
+  bj meta launch <wave-name> [--phase skeleton|ads|all|reset] [--status]
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;

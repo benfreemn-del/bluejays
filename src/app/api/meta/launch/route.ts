@@ -23,6 +23,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidBearer, describeBearerEnv } from "@/lib/admin-auth";
 import {
   launchSkeleton,
+  launchAds,
   getLaunchStatus,
   resetLaunch,
 } from "@/lib/meta-ads-launch";
@@ -30,7 +31,9 @@ import { WAVES } from "@/lib/ads-spec/wave-1";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120; // Meta API + Supabase round-trips for 3 ad sets
+// Phase 2 polls video processing up to 5min per video (4 videos at most
+// in wave-1), so 800s is the worst-case ceiling. Vercel Pro caps at 900.
+export const maxDuration = 800;
 
 export async function POST(request: NextRequest) {
   if (!isValidBearer(request)) {
@@ -44,7 +47,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { wave?: string; phase?: "skeleton" | "ads" | "reset" };
+  let body: {
+    wave?: string;
+    phase?: "skeleton" | "ads" | "reset" | "all";
+  };
   try {
     body = await request.json();
   } catch {
@@ -77,7 +83,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const phase = body.phase || "skeleton";
+  // Default phase = "all" — runs skeleton then auto-flows into ads
+  // when skeleton succeeds. Matches the CLI default so a single
+  // `bj meta launch wave-1` invocation drives the full pipeline.
+  const phase = body.phase || "all";
 
   if (phase === "skeleton") {
     try {
@@ -93,11 +102,53 @@ export async function POST(request: NextRequest) {
   }
 
   if (phase === "ads") {
+    try {
+      const result = await launchAds(spec);
+      return NextResponse.json({ phase: "ads", ...result });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return NextResponse.json(
+        { ok: false, phase: "ads", error: msg },
+        { status: 200 },
+      );
+    }
+  }
+
+  if (phase === "all") {
+    let skeleton: Awaited<ReturnType<typeof launchSkeleton>>;
+    try {
+      skeleton = await launchSkeleton(spec);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return NextResponse.json(
+        { ok: false, phase: "all", skeleton_error: msg },
+        { status: 200 },
+      );
+    }
+    if (!skeleton.ok) {
+      // Don't proceed to Phase 2 if Phase 1 has unresolved errors —
+      // ads can't attach to ad sets that weren't created.
+      return NextResponse.json({
+        phase: "all",
+        skeleton,
+        ads: null,
+        ok: false,
+        error: "Phase 1 had errors — skipping Phase 2. Resolve and re-run.",
+      });
+    }
+    let ads: Awaited<ReturnType<typeof launchAds>> | null = null;
+    let adsError: string | undefined;
+    try {
+      ads = await launchAds(spec);
+    } catch (err) {
+      adsError = err instanceof Error ? err.message : String(err);
+    }
     return NextResponse.json({
-      ok: false,
-      phase: "ads",
-      error:
-        "Phase 2 (ads + creatives + image upload) not implemented yet. Lands after HyperAgent images are in /public/ad-assets/wave-1/.",
+      phase: "all",
+      skeleton,
+      ads,
+      ok: !!(ads && ads.ok),
+      error: adsError,
     });
   }
 
