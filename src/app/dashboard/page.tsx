@@ -21,6 +21,7 @@ import PaymentLinksPanel from "@/components/dashboard/PaymentLinksPanel";
 import BusinessSetupChecklist from "@/components/dashboard/BusinessSetupChecklist";
 import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
 import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
+import SLA60SecondChip from "@/components/dashboard/SLA60SecondChip";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import LeadsSearchBar from "@/components/shared/LeadsSearchBar";
 import {
@@ -294,7 +295,11 @@ export default function DashboardPage() {
               so "why does X look like Y" is diagnosable in 1 second.
               Same component on every dashboard surface — see
               src/components/dashboard/RoleBadge.tsx. */}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {/* Annie 60-sec SLA chip — real-time hit-rate on the
+                reception-funnel rule. Updates every 60s. Hides itself
+                when there are no audit_lead intakes to measure. */}
+            <SLA60SecondChip />
             <RoleBadge />
           </div>
         </div>

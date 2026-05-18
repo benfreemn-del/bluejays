@@ -6,6 +6,8 @@ import type { Prospect } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import DomainCard from "@/components/dashboard/DomainCard";
+import TouchButtons from "@/components/dashboard/TouchButtons";
+import TouchTimeline from "@/components/dashboard/TouchTimeline";
 
 interface TimelineEvent {
   id: string;
@@ -28,6 +30,7 @@ export default function LeadPage() {
   const [savingNote, setSavingNote] = useState(false);
   const [dismissReason, setDismissReason] = useState("");
   const [showDismiss, setShowDismiss] = useState(false);
+  const [touchRefreshKey, setTouchRefreshKey] = useState(0);
   const [showCosts, setShowCosts] = useState(false);
   const [costs, setCosts] = useState<{ emailCost: number; smsCost: number; aiCost: number; totalCost: number; emailCount: number; smsCount: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -384,6 +387,25 @@ export default function LeadPage() {
         </div>
       </header>
 
+      {/* Touch logging — Phase 1 Lead Interaction System. Every call /
+          text / email / voice-memo Ben or Madie does on this lead gets
+          logged here, surfacing in the timeline below. Replaces the
+          prior admin_notes text-blob append. See
+          docs/playbooks/lead-interaction-system-master-plan.md. */}
+      <div className="border-b border-border bg-surface/50 px-6 py-3">
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center gap-3">
+          <span className="text-xs uppercase tracking-wider text-muted font-semibold">
+            Log interaction:
+          </span>
+          <TouchButtons
+            prospectId={prospect.id}
+            byUser="ben"
+            size="md"
+            onLogged={() => setTouchRefreshKey((k) => k + 1)}
+          />
+        </div>
+      </div>
+
       {/* Dismiss panel */}
       {showDismiss && (
         <div className="border-b border-red-500/20 bg-red-500/5 px-6 py-4">
@@ -522,6 +544,20 @@ export default function LeadPage() {
                 );
               })}
             </div>
+          </div>
+
+          {/* New Lead Interaction System touches — Phase 1.
+              Surfaces every call/text/email/voice-memo logged via the
+              TouchButtons in the header above. Sits ABOVE the legacy
+              relationship timeline so the operator sees the recent
+              human activity first. */}
+          <div className="mb-6">
+            <h2 className="font-semibold text-lg mb-3">Recent Touches</h2>
+            <TouchTimeline
+              prospectId={prospect.id}
+              refreshKey={touchRefreshKey}
+              limit={20}
+            />
           </div>
 
           <h2 className="font-semibold text-lg mb-4">Relationship Timeline</h2>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { logTouch } from "@/lib/prospect-touches";
 
 /**
  * POST /api/prospects/[id]/log-call
@@ -102,6 +103,21 @@ export async function POST(
       { status: 500 },
     );
   }
+
+  // Phase 1 Lead Interaction System bridge — also record this call as a
+  // structured prospect_touches row so the new TouchTimeline + 60-sec SLA
+  // chip see it. Fire-and-forget; if it fails we still succeed because
+  // the legacy column updates are what existing surfaces depend on.
+  void logTouch({
+    prospectId: id,
+    kind: "call",
+    direction: "outbound",
+    by_user: "ben",
+    notes: note || undefined,
+    occurred_at: now,
+  }).catch((err) =>
+    console.error("[log-call] bridge to prospect_touches failed:", err),
+  );
 
   return NextResponse.json({
     ok: true,
