@@ -53,6 +53,7 @@ import {
 import StickyNav from "./sticky-nav";
 import AIOSContactForm from "./contact-form";
 import AIOSMark from "./aios-mark";
+import HouseAnimation from "./house-animation";
 import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS DATA ───────────────────────── */
@@ -167,19 +168,42 @@ const INK_SOFT = "rgba(26, 22, 18, 0.75)";
 const INK_DIM = "rgba(26, 22, 18, 0.50)";
 const RULE = "rgba(26, 22, 18, 0.12)";
 
-// ── Tier 2: Accent (trade) ───────────────────────────────────────
-const ACCENT = "#d97706";       // Copper — primary identity
-const ACCENT_DARK = "#92400e";  // Burnt copper — text + hover on cream
-const ACCENT_LIGHT = "#fbbf24"; // Bright gold — gradient mid
-const ACCENT_GOLD = "#fcd34d";  // Light gold — gradient top
-const ACCENT_DIM = "rgba(217, 119, 6, 0.20)";
-const COPPER_GRAD = `linear-gradient(135deg, ${ACCENT_LIGHT} 0%, ${ACCENT} 55%, ${ACCENT_DARK} 100%)`;
+// ── Tier 2: Accent — PNW Heritage v4 (locked 2026-05-18) ─────────
+//
+// Ben's brief: drop copper as the dominant. Trade industries all
+// use it. Make this look like a $500K-kitchen remodel brand, not a
+// road-paving crew. Replace primary with deep evergreen (the actual
+// color of the Olympic Peninsula). Demote copper to a single
+// intentional moment (hero CTA + h1 highlight).
+//
+// MOSS does the heavy lifting: section numbers, badges, icons, links,
+// hover states, accent text. COPPER kept only for the "buy now"
+// moments where warmth = urgency.
+const MOSS = "#2d4a35";        // Deep evergreen — PRIMARY accent
+const MOSS_LIGHT = "#3d6b48";  // Mid moss — gradient end
+const MOSS_DEEP = "#1f3525";   // Almost-black green
+const MOSS_DIM = "rgba(45, 74, 53, 0.20)";
+const MOSS_GRAD = `linear-gradient(135deg, ${MOSS_LIGHT} 0%, ${MOSS} 55%, ${MOSS_DEEP} 100%)`;
 
-const BLUEPRINT = "#0e7490";        // Petrol — secondary accent (blueprint)
-const BLUEPRINT_LIGHT = "#06b6d4";  // Cyan — gradient end
-const BLUEPRINT_PALE = "#cffafe";
-const BLUEPRINT_DIM = "rgba(14, 116, 144, 0.22)";
-const BLUEPRINT_GRAD = `linear-gradient(135deg, ${BLUEPRINT_LIGHT} 0%, ${BLUEPRINT} 100%)`;
+// COPPER — demoted. Used ONLY on the hero CTA button + h1 highlight
+// gradient + the door in the house animation. Three intentional
+// moments. NOT a general-purpose accent anymore.
+const ACCENT = "#b45309";       // Burnt copper (deeper than before)
+const ACCENT_DARK = "#7c2d12";  // Mahogany
+const ACCENT_LIGHT = "#d97706"; // Mid copper
+const ACCENT_GOLD = "#fbbf24";  // Pop gold (h1 highlight only)
+const ACCENT_DIM = "rgba(180, 83, 9, 0.20)";
+const COPPER_GRAD = `linear-gradient(135deg, ${ACCENT_GOLD} 0%, ${ACCENT_LIGHT} 55%, ${ACCENT_DARK} 100%)`;
+
+// Backward-compat aliases — sections still reference these names.
+// Most BLUEPRINT_* usages now resolve to MOSS_* equivalents so the
+// page reads as a unified palette (moss + cream + espresso, with
+// copper as a single bright moment).
+const BLUEPRINT = MOSS;
+const BLUEPRINT_LIGHT = MOSS_LIGHT;
+const BLUEPRINT_PALE = "#dce7d8";
+const BLUEPRINT_DIM = MOSS_DIM;
+const BLUEPRINT_GRAD = MOSS_GRAD;
 
 // ── Tier 3: Bookends (used ONLY on hero + footer) ────────────────
 const DARK_BG = "#1c1917";          // Stone-black — hero, footer
@@ -278,7 +302,7 @@ function BeforeAfter({
           style={{
             background: "rgba(13, 10, 7, 0.75)",
             backdropFilter: "blur(8px)",
-            color: ACCENT_LIGHT,
+            color: MOSS,
             border: `1px solid ${ACCENT_DIM}`,
             fontFamily: FONT_HEAD,
           }}
@@ -303,7 +327,7 @@ function BeforeAfter({
         </div>
         <span
           className="text-[11px] uppercase tracking-[0.20em] font-semibold whitespace-nowrap"
-          style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+          style={{ color: MOSS, fontFamily: FONT_HEAD }}
         >
           {location}
         </span>
@@ -408,7 +432,7 @@ function PullQuote({ children, by }: { children: React.ReactNode; by: string }) 
       </p>
       <p
         className="mt-3 text-[12px] uppercase tracking-[0.22em] font-semibold"
-        style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+        style={{ color: MOSS, fontFamily: FONT_HEAD }}
       >
         — {by}
       </p>
@@ -581,7 +605,7 @@ export default function AllInOneServicesPage() {
                   style={{
                     background: "rgba(217, 119, 6, 0.10)",
                     border: `1px solid ${ACCENT_DIM}`,
-                    color: ACCENT_DARK,
+                    color: MOSS,
                     fontFamily: FONT_HEAD,
                   }}
                 >
@@ -640,7 +664,7 @@ export default function AllInOneServicesPage() {
                     className="inline-flex items-center gap-2 text-[15px] font-semibold transition-opacity hover:opacity-70"
                     style={{ color: INK, fontFamily: FONT_HEAD }}
                   >
-                    <Phone size={15} weight="fill" style={{ color: ACCENT_DARK }} />
+                    <Phone size={15} weight="fill" style={{ color: MOSS }} />
                     {BUSINESS.phoneDisplay}
                   </a>
                 </div>
@@ -650,41 +674,47 @@ export default function AllInOneServicesPage() {
                   style={{ color: INK_DIM, fontFamily: FONT_HEAD, borderColor: RULE }}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_DARK }} />
+                    <ShieldCheck size={14} weight="fill" style={{ color: MOSS }} />
                     $1M Insured
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_DARK }} />
+                    <ShieldCheck size={14} weight="fill" style={{ color: MOSS }} />
                     $12K Bonded
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <Trophy size={14} weight="fill" style={{ color: ACCENT_DARK }} />
+                    <Trophy size={14} weight="fill" style={{ color: MOSS }} />
                     BuildZoom Top 7% WA
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <Star size={14} weight="fill" style={{ color: ACCENT_DARK }} />
+                    <Star size={14} weight="fill" style={{ color: MOSS }} />
                     4.6★ · 18 reviews
                   </span>
                 </div>
               </motion.div>
 
-              {/* Hero feature photo — Soldate Shower (real Kyle work) */}
+              {/* Hero feature — Soldate Shower photo on mobile, animated
+                  craftsman house on desktop. The animation does heavy
+                  visual lifting above-the-fold for desktop visitors
+                  (where remodel research happens); mobile keeps the
+                  real-work photo since the animation would be cramped. */}
+
+              {/* Mobile / tablet: real-work photo */}
               <motion.div
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.15 }}
-                className="relative"
+                className="relative lg:hidden"
               >
                 <div
                   className="absolute -inset-4 rounded-2xl pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, rgba(217, 119, 6, 0) 65%)",
+                      "radial-gradient(circle, rgba(45, 74, 53, 0.18) 0%, rgba(45, 74, 53, 0) 65%)",
                   }}
                 />
                 <div
                   className="relative aspect-[4/5] sm:aspect-[3/4] rounded-xl overflow-hidden border"
-                  style={{ borderColor: "rgba(217, 119, 6, 0.30)" }}
+                  style={{ borderColor: MOSS_DIM }}
                 >
                   <img
                     src={PHOTOS.heroSoldate}
@@ -707,19 +737,41 @@ export default function AllInOneServicesPage() {
                     </div>
                     <div
                       className="text-[22px] font-bold leading-tight"
-                      style={{ color: INK, fontFamily: FONT_HEAD }}
+                      style={{ color: "#fef6e8", fontFamily: FONT_HEAD }}
                     >
                       Soldate Shower
                     </div>
                     <div
                       className="text-[13px] mt-0.5"
-                      style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                      style={{ color: "rgba(254, 246, 232, 0.78)", fontFamily: FONT_BODY }}
                     >
                       Custom tile · matte black trim · Sequim, WA
                     </div>
                   </div>
                 </div>
               </motion.div>
+
+              {/* Desktop: animated craftsman cottage drawing itself */}
+              <div className="hidden lg:block relative">
+                <div
+                  className="absolute -inset-8 rounded-3xl pointer-events-none"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(45, 74, 53, 0.16) 0%, rgba(45, 74, 53, 0) 65%)",
+                  }}
+                  aria-hidden="true"
+                />
+                <div className="relative">
+                  <HouseAnimation />
+                </div>
+                <div
+                  className="mt-5 text-center text-[11px] uppercase tracking-[0.28em] font-semibold"
+                  style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+                >
+                  <span style={{ color: MOSS }}>Foundation</span> · Frame ·{" "}
+                  <span style={{ color: MOSS }}>Finish</span> · Move-in
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -740,7 +792,7 @@ export default function AllInOneServicesPage() {
                 >
                   One family-run crew.
                   <br />
-                  <span style={{ color: ACCENT_DARK }}>
+                  <span style={{ color: MOSS }}>
                     Ten years on the Peninsula.
                   </span>
                 </h2>
@@ -776,7 +828,7 @@ export default function AllInOneServicesPage() {
                   </p>
                   <p
                     className="mt-3 text-[12px] uppercase tracking-[0.22em] font-semibold"
-                    style={{ color: ACCENT_DARK, fontFamily: FONT_HEAD }}
+                    style={{ color: MOSS, fontFamily: FONT_HEAD }}
                   >
                     — Bill Bryant · verified Birdeye review · 5★
                   </p>
@@ -815,7 +867,7 @@ export default function AllInOneServicesPage() {
                 >
                   Real jobs.
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>Same room, different decade.</span>
+                  <span style={{ color: MOSS }}>Same room, different decade.</span>
                 </h2>
               </div>
               <p
@@ -900,7 +952,7 @@ export default function AllInOneServicesPage() {
                   </div>
                   <span
                     className="text-[11px] uppercase tracking-[0.20em] font-semibold whitespace-nowrap"
-                    style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                    style={{ color: MOSS, fontFamily: FONT_HEAD }}
                   >
                     Olympic Peninsula
                   </span>
@@ -966,7 +1018,7 @@ export default function AllInOneServicesPage() {
                   </div>
                   <span
                     className="text-[11px] uppercase tracking-[0.20em] font-semibold whitespace-nowrap"
-                    style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                    style={{ color: MOSS, fontFamily: FONT_HEAD }}
                   >
                     Clallam County
                   </span>
@@ -995,7 +1047,7 @@ export default function AllInOneServicesPage() {
                   }}
                 >
                   Selected work
-                  <span style={{ color: ACCENT_DARK }}> from the shop.</span>
+                  <span style={{ color: MOSS }}> from the shop.</span>
                 </h2>
               </div>
               <p
@@ -1078,7 +1130,7 @@ export default function AllInOneServicesPage() {
                 >
                   How the
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>work holds up.</span>
+                  <span style={{ color: MOSS }}>work holds up.</span>
                 </h2>
                 <p
                   className="mt-6 text-[15px] sm:text-[16px] leading-relaxed"
@@ -1102,7 +1154,7 @@ export default function AllInOneServicesPage() {
                   >
                     <div
                       className="text-[10px] uppercase tracking-[0.22em] font-bold mb-2"
-                      style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                      style={{ color: MOSS, fontFamily: FONT_HEAD }}
                     >
                       {String(i + 1).padStart(2, "0")} · {m.label}
                     </div>
@@ -1139,7 +1191,7 @@ export default function AllInOneServicesPage() {
                 >
                   One crew.
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>
+                  <span style={{ color: MOSS }}>
                     Everything inside the four walls.
                   </span>
                 </h2>
@@ -1155,7 +1207,7 @@ export default function AllInOneServicesPage() {
                 <a
                   href="#estimate"
                   className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.16em] transition-colors hover:brightness-125"
-                  style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                  style={{ color: MOSS, fontFamily: FONT_HEAD }}
                 >
                   See if your project fits
                   <ArrowRight size={13} weight="bold" />
@@ -1170,7 +1222,7 @@ export default function AllInOneServicesPage() {
                   >
                     <span
                       className="text-[12px] uppercase tracking-[0.22em] font-bold tabular-nums"
-                      style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                      style={{ color: MOSS, fontFamily: FONT_HEAD }}
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -1192,7 +1244,7 @@ export default function AllInOneServicesPage() {
                       size={16}
                       weight="bold"
                       className="hidden sm:block opacity-50"
-                      style={{ color: ACCENT_LIGHT }}
+                      style={{ color: MOSS }}
                     />
                   </li>
                 ))}
@@ -1221,7 +1273,7 @@ export default function AllInOneServicesPage() {
                 >
                   What a remodel
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>actually looks like.</span>
+                  <span style={{ color: MOSS }}>actually looks like.</span>
                 </h2>
               </div>
               <p
@@ -1250,7 +1302,7 @@ export default function AllInOneServicesPage() {
                     </div>
                     <div
                       className="text-[14px] sm:text-[16px] font-bold whitespace-nowrap"
-                      style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                      style={{ color: MOSS, fontFamily: FONT_HEAD }}
                     >
                       {t.range}
                     </div>
@@ -1292,7 +1344,7 @@ export default function AllInOneServicesPage() {
               }}
             >
               The numbers
-              <span style={{ color: ACCENT_DARK }}> that actually matter.</span>
+              <span style={{ color: MOSS }}> that actually matter.</span>
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-12">
@@ -1334,7 +1386,7 @@ export default function AllInOneServicesPage() {
                 <Certificate
                   size={28}
                   weight="duotone"
-                  style={{ color: ACCENT_DARK }}
+                  style={{ color: MOSS }}
                   className="mb-4"
                 />
                 <h3
@@ -1370,7 +1422,7 @@ export default function AllInOneServicesPage() {
                 <Trophy
                   size={28}
                   weight="duotone"
-                  style={{ color: ACCENT_DARK }}
+                  style={{ color: MOSS }}
                   className="mb-4"
                 />
                 <h3
@@ -1379,7 +1431,7 @@ export default function AllInOneServicesPage() {
                 >
                   Top 7% of every
                   <br />
-                  <span style={{ color: ACCENT_DARK }}>WA contractor.</span>
+                  <span style={{ color: MOSS }}>WA contractor.</span>
                 </h3>
                 <p
                   className="text-[14px] sm:text-[15px] leading-relaxed mb-4"
@@ -1397,7 +1449,7 @@ export default function AllInOneServicesPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors hover:brightness-125"
-                  style={{ color: ACCENT_DARK, fontFamily: FONT_HEAD }}
+                  style={{ color: MOSS, fontFamily: FONT_HEAD }}
                 >
                   Verify on BuildZoom
                   <ArrowRight size={13} weight="bold" />
@@ -1424,7 +1476,7 @@ export default function AllInOneServicesPage() {
               }}
             >
               Five-star reviews.
-              <span style={{ color: ACCENT_LIGHT }}> Real names attached.</span>
+              <span style={{ color: MOSS }}> Real names attached.</span>
             </h2>
 
             <div className="grid sm:grid-cols-2 gap-5 max-w-5xl">
@@ -1437,7 +1489,7 @@ export default function AllInOneServicesPage() {
                   <Quotes
                     size={26}
                     weight="fill"
-                    style={{ color: ACCENT_LIGHT, opacity: 0.5 }}
+                    style={{ color: MOSS, opacity: 0.5 }}
                     className="mb-3"
                   />
                   <p
@@ -1467,7 +1519,7 @@ export default function AllInOneServicesPage() {
                           key={i}
                           size={13}
                           weight="fill"
-                          style={{ color: ACCENT_LIGHT }}
+                          style={{ color: MOSS }}
                         />
                       ))}
                     </div>
@@ -1482,7 +1534,7 @@ export default function AllInOneServicesPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.16em] transition-colors hover:brightness-125"
-                style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                style={{ color: MOSS, fontFamily: FONT_HEAD }}
               >
                 Read all 18+ reviews on Birdeye
                 <ArrowRight size={14} weight="bold" />
@@ -1511,7 +1563,7 @@ export default function AllInOneServicesPage() {
                 >
                   The Olympic
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>Peninsula.</span>
+                  <span style={{ color: MOSS }}>Peninsula.</span>
                 </h2>
                 <p
                   className="mt-6 text-[15px] sm:text-[16px] leading-relaxed"
@@ -1529,7 +1581,7 @@ export default function AllInOneServicesPage() {
                   <MapPin
                     size={18}
                     weight="fill"
-                    style={{ color: ACCENT_LIGHT, marginTop: 4 }}
+                    style={{ color: MOSS, marginTop: 4 }}
                   />
                   <span>
                     <span
@@ -1557,7 +1609,7 @@ export default function AllInOneServicesPage() {
                       className="inline-flex items-center px-3.5 py-1.5 rounded-full text-[12px] font-semibold"
                       style={{
                         background: "rgba(217, 119, 6, 0.08)",
-                        color: ACCENT_LIGHT,
+                        color: MOSS,
                         border: `1px solid ${ACCENT_DIM}`,
                         fontFamily: FONT_HEAD,
                       }}
@@ -1580,7 +1632,7 @@ export default function AllInOneServicesPage() {
                       <CheckCircle
                         size={15}
                         weight="fill"
-                        style={{ color: ACCENT_LIGHT }}
+                        style={{ color: MOSS }}
                       />
                       <span className="font-semibold" style={{ color: INK }}>
                         {c}
@@ -1632,7 +1684,7 @@ export default function AllInOneServicesPage() {
                 >
                   Send the sketch.
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>
+                  <span style={{ color: MOSS }}>
                     We&apos;ll price it honest.
                   </span>
                 </h2>
@@ -1926,7 +1978,7 @@ function ContactRow({
         className="shrink-0 flex items-center justify-center w-10 h-10 rounded-md"
         style={{
           background: "rgba(217, 119, 6, 0.12)",
-          color: ACCENT_LIGHT,
+          color: MOSS,
         }}
       >
         {icon}
@@ -2019,7 +2071,7 @@ function FooterExt({ href, label }: { href: string; label: string }) {
         target="_blank"
         rel="noopener noreferrer"
         className="transition-colors hover:text-white"
-        style={{ color: ACCENT_LIGHT }}
+        style={{ color: MOSS }}
       >
         {label}
       </a>
