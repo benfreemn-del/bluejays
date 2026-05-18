@@ -136,9 +136,9 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={0}
-            className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70"
+            className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.28em] text-[#0a3a36]"
           >
-            <span className="inline-block h-px w-10 bg-[#0d4f4a]/40" />
+            <span className="inline-block h-px w-10 bg-[#d97706]" />
             Sequim, Washington · Olympic Peninsula
           </motion.div>
 
@@ -147,13 +147,13 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={1}
-            className="mt-8 font-[Fraunces] text-[clamp(3.6rem,9vw,9.5rem)] font-light leading-[0.92] tracking-[-0.035em] text-[#0d4f4a]"
-            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+            className="mt-6 font-[Fraunces] text-[clamp(3rem,7vw,7rem)] leading-[0.95] tracking-[-0.025em] text-[#0d4f4a]"
+            style={{ fontWeight: 500 }}
           >
             Hope,
             <br />
             breaking{" "}
-            <em className="font-normal italic" style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+            <em className="italic" style={{ fontWeight: 400 }}>
               like dawn.
             </em>
           </motion.h1>
@@ -163,12 +163,12 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={2}
-            className="mt-10 max-w-xl text-lg leading-relaxed text-[#1a1a1a]/75 sm:text-xl"
+            className="mt-6 max-w-xl text-lg leading-relaxed text-[#1a1a1a]/80 sm:text-xl"
           >
             A community church for imperfect people on the mission with Jesus,
             bringing hope and healing to the Olympic Peninsula — and beyond.
-            <span className="mt-3 block font-[Fraunces] italic text-[#0d4f4a]">
-              You're invited home. Sundays at 10:30.
+            <span className="mt-2 block font-[Fraunces] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
+              You&rsquo;re invited home. Sundays at 10:30.
             </span>
           </motion.p>
 
@@ -178,7 +178,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={3}
-            className="mt-12 flex flex-wrap items-center gap-4"
+            className="mt-8 flex flex-wrap items-center gap-4"
           >
             <Link
               href="#visit"
@@ -208,19 +208,19 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={4}
-            className="mt-16 inline-flex max-w-md flex-col gap-2 border-l-2 border-[#d97706] pl-6"
+            className="mt-10 inline-flex max-w-md flex-col gap-2 border-l-2 border-[#d97706] pl-5"
           >
-            <span className="text-[10px] font-semibold uppercase tracking-[0.34em] text-[#d97706]">
+            <span className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#d97706]">
               Sunday Gathering
             </span>
-            <span className="font-[Fraunces] text-2xl text-[#0d4f4a] sm:text-3xl">
+            <span className="font-[Fraunces] text-xl text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               10:30 a.m. — in person or livestream
             </span>
             <Link
               href={ADDRESS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-[#1a1a1a]/75 underline-offset-4 hover:text-[#0d4f4a] hover:underline"
+              className="text-[15px] text-[#1a1a1a]/80 underline-offset-4 hover:text-[#0d4f4a] hover:underline"
             >
               {ADDRESS}
             </Link>
@@ -242,16 +242,16 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={5}
-            className="absolute -bottom-6 left-2 right-2 mx-auto max-w-sm bg-[#fbf7ee]/95 px-6 py-5 shadow-[0_30px_60px_-30px_rgba(13,79,74,0.35)] backdrop-blur-sm sm:-bottom-10 sm:left-6"
+            className="absolute -bottom-8 left-2 right-2 mx-auto max-w-md bg-[#fbf7ee]/95 px-7 py-6 shadow-[0_30px_60px_-30px_rgba(13,79,74,0.35)] backdrop-blur-sm sm:-bottom-12 sm:left-4"
           >
-            <span className="absolute -top-3 left-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-2xl leading-none text-[#d97706]">
+            <span className="absolute -top-4 left-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-4xl leading-none text-[#d97706]">
               &ldquo;
             </span>
-            <blockquote className="font-[Fraunces] text-base italic leading-snug text-[#0d4f4a]">
+            <blockquote className="font-[Fraunces] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               The light shines in the darkness, and the darkness has not
               overcome it.
             </blockquote>
-            <figcaption className="mt-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#1a1a1a]/50">
+            <figcaption className="mt-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
               John 1:5
             </figcaption>
           </motion.figure>
@@ -486,12 +486,12 @@ function TaglineSpread() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="mt-10 font-[Fraunces] text-[clamp(2.6rem,7vw,7.5rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#0d4f4a]"
-          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+          style={{ fontWeight: 500 }}
         >
           Imperfect people <br className="hidden sm:block" />
           <em
             className="italic"
-            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+            style={{ fontWeight: 500 }}
           >
             becoming
           </em>{" "}
@@ -561,13 +561,13 @@ function WhatToExpect() {
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-12">
           <div className="lg:col-span-5 lg:sticky lg:top-32 lg:self-start">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               First Sunday
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               Here's what
               <br />
@@ -655,7 +655,7 @@ function LatestSermon() {
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid items-end gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#d97706]">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#fbbf24]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Latest Sermon
             </div>
@@ -664,7 +664,7 @@ function LatestSermon() {
             </p>
             <h2
               className="mt-3 font-[Fraunces] text-[clamp(2.6rem,5.8vw,5.5rem)] font-light leading-[0.95] tracking-[-0.025em]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               What does it
               <br />
@@ -789,13 +789,13 @@ function ConnectSection() {
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Connect Card
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               Let's start
               <br />a <em className="italic">conversation</em>.
@@ -836,7 +836,17 @@ function ConnectSection() {
 /*                       MINISTRIES GRID                           */
 /* ============================================================== */
 function MinistriesGrid() {
-  const ministries = [
+  const ministries: Array<{
+    tag: string;
+    name: string;
+    tagline: string;
+    body: string;
+    icon: typeof Users;
+    cta: string;
+    accent: string;
+    href: string;
+    external?: boolean;
+  }> = [
     {
       tag: "01",
       name: "Thrive Groups",
@@ -845,6 +855,7 @@ function MinistriesGrid() {
       icon: Users,
       cta: "Find a group",
       accent: "from-[#fdebbf] to-[#fbf7ee]",
+      href: "/clients/thrive-church-sequim/volunteer",
     },
     {
       tag: "02",
@@ -854,6 +865,7 @@ function MinistriesGrid() {
       icon: Baby,
       cta: "Kids ministry",
       accent: "from-[#fef3c7] to-[#fbf7ee]",
+      href: "#connect",
     },
     {
       tag: "03",
@@ -863,6 +875,7 @@ function MinistriesGrid() {
       icon: HandHeart,
       cta: "Youth ministry",
       accent: "from-[#fdebbf] to-[#f5ede0]",
+      href: "#connect",
     },
     {
       tag: "04",
@@ -872,7 +885,8 @@ function MinistriesGrid() {
       icon: BookOpen,
       cta: "Enroll now",
       accent: "from-[#fef3c7] to-[#fdebbf]",
-      external: PRESCHOOL_URL,
+      href: PRESCHOOL_URL,
+      external: true,
     },
   ];
   return (
@@ -880,13 +894,13 @@ function MinistriesGrid() {
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Ministries
             </div>
             <h2
               className="mt-6 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               Find your <em className="italic">people</em>.
             </h2>
@@ -897,20 +911,15 @@ function MinistriesGrid() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-sm bg-[#0d4f4a]/15 sm:grid-cols-2">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-sm bg-[#0d4f4a]/15 sm:grid-cols-2">
           {ministries.map((m, i) => {
             const Icon = m.icon;
-            const Wrapper: React.ElementType = m.external ? "a" : "div";
-            const wrapperProps = m.external
-              ? {
-                  href: m.external,
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                }
-              : {};
             return (
-              <motion.div
+              <motion.a
                 key={m.name}
+                href={m.href}
+                target={m.external ? "_blank" : undefined}
+                rel={m.external ? "noopener noreferrer" : undefined}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -919,11 +928,8 @@ function MinistriesGrid() {
                   delay: i * 0.08,
                   ease: [0.22, 1, 0.36, 1],
                 }}
+                className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-10 transition-all duration-500 hover:bg-[#0d4f4a] sm:p-12 lg:p-14`}
               >
-                <Wrapper
-                  {...wrapperProps}
-                  className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-10 transition-all duration-500 hover:bg-[#0d4f4a] sm:p-12 lg:p-14`}
-                >
                   {/* Tag */}
                   <div className="flex items-start justify-between">
                     <span className="font-[Fraunces] text-sm tracking-[0.2em] text-[#d97706] transition-colors duration-500 group-hover:text-[#fdebbf]">
@@ -938,7 +944,7 @@ function MinistriesGrid() {
 
                   <h3
                     className="mt-14 font-[Fraunces] text-3xl leading-tight tracking-tight text-[#0d4f4a] transition-colors duration-500 group-hover:text-[#fbf7ee] sm:text-4xl lg:text-5xl"
-                    style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+                    style={{ fontWeight: 500 }}
                   >
                     {m.name}
                   </h3>
@@ -949,16 +955,15 @@ function MinistriesGrid() {
                     {m.body}
                   </p>
 
-                  <div className="mt-10 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#0d4f4a] transition-colors duration-500 group-hover:text-[#d97706]">
-                    {m.cta}
-                    <ArrowUpRight
-                      size={14}
-                      weight="bold"
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </div>
-                </Wrapper>
-              </motion.div>
+                <div className="mt-10 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.22em] text-[#0d4f4a] transition-colors duration-500 group-hover:text-[#fbbf24]">
+                  {m.cta}
+                  <ArrowUpRight
+                    size={14}
+                    weight="bold"
+                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </div>
+              </motion.a>
             );
           })}
         </div>
@@ -1010,7 +1015,7 @@ function PreschoolSpotlight() {
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.6rem,6vw,6rem)] font-light leading-[0.96] tracking-[-0.025em] text-[#fbf7ee]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               A preschool
               <br />
@@ -1062,7 +1067,7 @@ function PreschoolSpotlight() {
                 >
                   <p
                     className="font-[Fraunces] text-3xl font-light leading-none text-[#fbbf24] sm:text-4xl"
-                    style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+                    style={{ fontWeight: 500 }}
                   >
                     {s.stat}
                   </p>
@@ -1109,17 +1114,17 @@ function BeliefsSpread() {
       id="beliefs"
       className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22"
     >
-      <ChristianMotifs variant="scatter" opacity={0.06} />
+      <ChristianMotifs variant="scatter" />
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Beliefs
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               What we
               <br />
@@ -1152,18 +1157,14 @@ function BeliefsSpread() {
                 >
                   <span
                     className="font-[Fraunces] text-[clamp(3rem,8vw,7rem)] font-light leading-none text-[#d97706] transition-transform duration-500 group-hover:-translate-y-1"
-                    style={{
-                      fontVariationSettings: '"opsz" 144, "SOFT" 100',
-                    }}
+                    style={{ fontWeight: 500 }}
                   >
                     {t.numeral}
                   </span>
                   <div className="pt-2">
                     <h3
                       className="font-[Fraunces] text-3xl text-[#0d4f4a] sm:text-4xl"
-                      style={{
-                        fontVariationSettings: '"opsz" 144, "SOFT" 100',
-                      }}
+                      style={{ fontWeight: 500 }}
                     >
                       {t.name}
                     </h3>
@@ -1280,21 +1281,21 @@ function Outreach() {
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid items-end gap-6 sm:grid-cols-2">
           <div>
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#d97706]">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#fbbf24]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Outreach
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               Three <em className="italic">directions</em>.<br />
               One mission.
             </h2>
           </div>
-          <p className="max-w-md text-base leading-relaxed text-[#fbf7ee]/70 sm:justify-self-end">
-            The mission isn't in here. It's out there — and our work fans out
-            in three directions.
+          <p className="max-w-md text-lg leading-relaxed text-[#fbf7ee]/85 sm:justify-self-end sm:text-xl">
+            The mission isn&rsquo;t in here. It&rsquo;s out there — and our
+            work fans out in three directions.
           </p>
         </div>
 
@@ -1302,8 +1303,9 @@ function Outreach() {
           {fronts.map((f, i) => {
             const Icon = f.icon;
             return (
-              <motion.div
+              <motion.a
                 key={f.label}
+                href="#connect"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -1312,38 +1314,42 @@ function Outreach() {
                   delay: i * 0.1,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="group relative bg-[#0d4f4a] p-10 transition-colors duration-500 hover:bg-[#0a3d39] sm:p-12"
+                className="group relative block bg-[#0d4f4a] p-10 transition-colors duration-500 hover:bg-[#0a3d39] sm:p-12"
               >
                 <div className="flex items-start justify-between border-b border-[#fbf7ee]/20 pb-6">
                   <span
-                    className="font-[Fraunces] text-7xl font-light leading-none text-[#d97706]"
-                    style={{
-                      fontVariationSettings: '"opsz" 144, "SOFT" 100',
-                    }}
+                    className="font-[Fraunces] text-7xl font-light leading-none text-[#fbbf24]"
+                    style={{ fontWeight: 500 }}
                   >
                     {f.bearing}
                   </span>
                   <Icon
-                    size={32}
+                    size={36}
                     weight="duotone"
-                    className="text-[#fbf7ee]/60 transition-all duration-500 group-hover:scale-110 group-hover:text-[#d97706]"
+                    className="text-[#fbbf24]/80 transition-all duration-500 group-hover:scale-110 group-hover:text-[#d97706]"
                   />
                 </div>
                 <h3
-                  className="mt-10 font-[Fraunces] text-3xl tracking-tight"
-                  style={{
-                    fontVariationSettings: '"opsz" 144, "SOFT" 100',
-                  }}
+                  className="mt-10 font-[Fraunces] text-3xl tracking-tight sm:text-4xl"
+                  style={{ fontWeight: 500 }}
                 >
                   {f.label}
                 </h3>
-                <p className="mt-2 font-[Fraunces] text-base italic text-[#d97706]">
+                <p className="mt-3 font-[Fraunces] text-lg italic text-[#fbbf24] sm:text-xl">
                   {f.tagline}
                 </p>
-                <p className="mt-6 text-sm leading-relaxed text-[#fbf7ee]/70">
+                <p className="mt-5 text-base leading-relaxed text-[#fbf7ee]/85 sm:text-lg">
                   {f.body}
                 </p>
-              </motion.div>
+                <span className="mt-7 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24] transition-colors group-hover:text-[#d97706]">
+                  Learn more
+                  <ArrowUpRight
+                    size={14}
+                    weight="bold"
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
+              </motion.a>
             );
           })}
         </div>
@@ -1369,15 +1375,15 @@ function Generosity() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto max-w-4xl text-center"
         >
-          <div className="flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
-            <span className="inline-block h-px w-10 bg-[#d97706]" />
+          <div className="flex items-center justify-center gap-3 text-[14px] font-bold uppercase tracking-[0.26em] text-[#92400e]">
+            <span className="inline-block h-px w-12 bg-[#d97706]" />
             Generosity
-            <span className="inline-block h-px w-10 bg-[#d97706]" />
+            <span className="inline-block h-px w-12 bg-[#d97706]" />
           </div>
 
           <h2
             className="mt-8 font-[Fraunces] text-[clamp(2.6rem,7vw,7rem)] font-light leading-[0.95] tracking-[-0.03em] text-[#0d4f4a]"
-            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+            style={{ fontWeight: 500 }}
           >
             Generosity
             <br />
@@ -1431,13 +1437,13 @@ function PrayerSection() {
           </div>
 
           <div className="lg:col-span-5 lg:order-1">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Prayer Request
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               We'll <em className="italic">pray</em>
               <br />
@@ -1472,18 +1478,18 @@ function PrayerSection() {
 function VisitUs() {
   return (
     <section id="visit" className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
-      <ChristianMotifs variant="left" opacity={0.055} />
+      <ChristianMotifs variant="left" />
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Postcard-style info card */}
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
+            <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Visit Us
             </div>
             <h2
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              style={{ fontWeight: 500 }}
             >
               See you
               <br />
@@ -1657,15 +1663,15 @@ function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.34em] text-[#d97706]">
-            <span className="inline-block h-px w-10 bg-[#d97706]" />
-            We'd love to meet you
-            <span className="inline-block h-px w-10 bg-[#d97706]" />
+          <div className="flex items-center justify-center gap-3 text-[13px] font-bold uppercase tracking-[0.28em] text-[#fbbf24]">
+            <span className="inline-block h-px w-12 bg-[#fbbf24]" />
+            We&rsquo;d love to meet you
+            <span className="inline-block h-px w-12 bg-[#fbbf24]" />
           </div>
 
           <h2
             className="mt-10 font-[Fraunces] text-[clamp(3rem,9vw,10rem)] font-light leading-[0.92] tracking-[-0.035em]"
-            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+            style={{ fontWeight: 500 }}
           >
             We'll save
             <br />
@@ -1845,7 +1851,7 @@ function SiteFooter() {
             <span className="text-[11px] uppercase tracking-[0.24em]">
               Built by
             </span>
-            <BluejayLogo className="h-4 w-auto text-[#fbbf24] opacity-95 transition-opacity group-hover:opacity-100" />
+            <BluejayLogo className="h-5 w-auto text-[#5b9cf6] transition-colors group-hover:text-[#93c5fd]" />
             <span className="text-[11px] uppercase tracking-[0.24em]">
               · Free site audit →
             </span>

@@ -44,7 +44,7 @@ export default function VolunteerPage() {
 
       {/* ── HERO ── */}
       <section className="relative isolate overflow-hidden pt-20 sm:pt-24 lg:pt-28">
-        <ChristianMotifs variant="corners" opacity={0.06} />
+        <ChristianMotifs variant="corners" />
         <div className="relative mx-auto max-w-[1280px] px-6 pb-12 sm:px-10 sm:pb-16">
           <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
             <span className="inline-block h-px w-10 bg-[#d97706]" />
@@ -69,7 +69,7 @@ export default function VolunteerPage() {
       {/* ── ON-RAMP CHOICE ── */}
       {mode === "choose" && (
         <section className="relative bg-[#f5ede0] py-16 sm:py-20">
-          <ChristianMotifs variant="right" opacity={0.055} />
+          <ChristianMotifs variant="right" />
           <div className="relative mx-auto max-w-[1280px] px-6 sm:px-10">
             <div className="grid gap-6 sm:grid-cols-2">
               {/* Quiz card */}
@@ -154,7 +154,7 @@ export default function VolunteerPage() {
       {/* ── QUIZ MODE ── */}
       {mode === "quiz" && (
         <section className="relative bg-[#f5ede0] py-16 sm:py-20">
-          <ChristianMotifs variant="scatter" opacity={0.05} />
+          <ChristianMotifs variant="scatter" />
           <div className="relative mx-auto max-w-[920px] px-6 sm:px-10">
             <button
               type="button"
@@ -172,7 +172,7 @@ export default function VolunteerPage() {
       {/* ── SIGN-UP MODE ── */}
       {mode === "signup" && (
         <section className="relative bg-[#f5ede0] py-16 sm:py-20">
-          <ChristianMotifs variant="left" opacity={0.05} />
+          <ChristianMotifs variant="left" />
           <div className="relative mx-auto max-w-[920px] px-6 sm:px-10">
             <button
               type="button"
@@ -189,7 +189,7 @@ export default function VolunteerPage() {
 
       {/* ── WHY SERVE? ── */}
       <section className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
-        <ChristianMotifs variant="scatter" opacity={0.05} />
+        <ChristianMotifs variant="scatter" />
         <div className="relative mx-auto max-w-[1280px] px-6 sm:px-10">
           <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div>
