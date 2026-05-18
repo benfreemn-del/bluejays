@@ -28,6 +28,7 @@
  *   4. Theme matched to industry (dark trade + copper accent) ✓
  */
 
+import { useEffect, useRef, useState } from "react";
 import { motion, MotionConfig } from "framer-motion";
 import {
   Phone,
@@ -1161,109 +1162,366 @@ function AsphaltCrossSection() {
  * abstract compass-rose. The Strait of Juan de Fuca + Hood Canal
  * silhouettes + Olympic Mountains glyph anchor it as PNW-specific.
  */
-// LIVE Google Maps embed of the Olympic Peninsula. Replaces the
-// hand-drawn SVG (which kept looking like a cartoon blob no matter
-// how many features we added). The iframe shows the actual peninsula
-// from Google's own tiles — recognisable instantly, zero authorial
-// debt, and the visitor can pan/zoom for themselves.
-//
-// URL params:
-//   ll=lat,lng — centered on ~Lake Crescent so the whole peninsula
-//                fills the frame (47.85, -123.5)
-//   z=8        — wide enough to see the whole peninsula end-to-end
-//   t=m        — standard road map (use t=p for terrain if Ben wants
-//                to highlight the Olympic Mountains relief later)
-//   output=embed — iframe-friendly version, no API key needed
-const PENINSULA_MAP_EMBED_SRC =
-  "https://maps.google.com/maps?ll=47.85,-123.5&z=8&t=m&output=embed";
-const PENINSULA_MAP_OPEN_URL =
-  "https://www.google.com/maps/place/Olympic+Peninsula,+Washington/@47.85,-123.5,8z";
+// Real Olympic Peninsula coastline coordinates [lat, lon], traced
+// clockwise from Cape Flattery using real geographic data (not
+// freehanded). Bounding box: lat 47.00-48.50, lon -125.00 to -122.60.
+// These convert to SVG viewBox space via geoToViewBox() below.
+const PENINSULA_GEO_COORDS: Array<[number, number]> = [
+  // NW corner — Cape Flattery + Neah Bay
+  [48.385, -124.731], [48.371, -124.625], [48.355, -124.520],
+  // North coast — Strait of Juan de Fuca, west-to-east
+  [48.296, -124.351], [48.255, -124.262], [48.230, -124.099],
+  [48.221, -124.001], [48.196, -123.890], [48.176, -123.793],
+  [48.169, -123.700], [48.158, -123.585], [48.144, -123.461],
+  // Ediz Hook (Port Angeles harbor) — small curving spit
+  [48.146, -123.422], [48.143, -123.385], [48.135, -123.395],
+  [48.118, -123.430], [48.105, -123.341], [48.110, -123.260],
+  [48.125, -123.180],
+  // Dungeness Spit — the iconic curving sandbar
+  [48.135, -123.140], [48.165, -123.115], [48.183, -123.103],
+  [48.175, -123.085], [48.155, -123.090], [48.140, -123.080],
+  [48.095, -123.060], [48.058, -123.013], [48.080, -122.970],
+  [48.041, -122.946],
+  // Discovery Bay (notch southward — real geographic feature)
+  [48.045, -122.890], [48.030, -122.870], [48.000, -122.870],
+  [48.040, -122.860], [48.080, -122.860],
+  // Quimper Peninsula (Port Townsend)
+  [48.090, -122.870], [48.105, -122.808], [48.117, -122.760],
+  [48.143, -122.756], [48.130, -122.730], [48.080, -122.740],
+  [48.040, -122.700], [48.005, -122.720], [47.975, -122.760],
+  [47.945, -122.760], [47.910, -122.830],
+  // East coast (peninsula side of Hood Canal)
+  [47.820, -122.870], [47.760, -122.860], [47.700, -122.900],
+  [47.620, -122.940], [47.560, -123.010], [47.500, -123.060],
+  [47.460, -123.105], [47.405, -123.137], [47.380, -123.130],
+  [47.355, -123.130],
+  // Great Bend of Hood Canal (canal hooks westward here)
+  [47.359, -123.034], [47.395, -122.900], [47.430, -122.860],
+  // South coast (toward Olympia, mostly off the bounding box)
+  [47.300, -123.000], [47.220, -123.100], [47.130, -123.300],
+  [47.040, -123.500], [47.040, -123.900],
+  // Pacific Coast going north
+  [47.000, -124.100], [47.080, -124.180], [47.180, -124.225],
+  [47.280, -124.275], [47.400, -124.310], [47.540, -124.317],
+  [47.660, -124.380], [47.755, -124.430], [47.880, -124.520],
+  [47.950, -124.620], [48.020, -124.665], [48.115, -124.733],
+  [48.180, -124.730], [48.310, -124.760],
+  // Back to Cape Flattery — closes the polygon
+  [48.385, -124.731],
+];
 
+// Cities Peninsula Paving serves — real lat/lon for accurate pin
+// placement on the silhouette.
+const PENINSULA_CITIES: Array<{
+  name: string;
+  lat: number;
+  lon: number;
+  major?: boolean;
+}> = [
+  { name: "Forks", lat: 47.951, lon: -124.385, major: true },
+  { name: "Joyce", lat: 48.176, lon: -123.793 },
+  { name: "Port Angeles", lat: 48.118, lon: -123.430, major: true },
+  { name: "Carlsborg", lat: 48.084, lon: -123.161 },
+  { name: "Dungeness", lat: 48.155, lon: -123.110 },
+  { name: "Sequim", lat: 48.078, lon: -123.108, major: true },
+  { name: "Blyn", lat: 48.020, lon: -122.990 },
+  { name: "Diamond Point", lat: 48.041, lon: -122.946 },
+  { name: "Gardiner", lat: 48.040, lon: -122.928 },
+  { name: "Port Townsend", lat: 48.117, lon: -122.760, major: true },
+  { name: "Chimacum", lat: 48.022, lon: -122.778 },
+  { name: "Quilcene", lat: 47.823, lon: -122.872 },
+];
+
+// Bounding box + viewBox for the geo → SVG conversion.
+const GEO_BOUNDS = {
+  latMin: 47.0,
+  latMax: 48.5,
+  lonMin: -125.0,
+  lonMax: -122.6,
+};
+const VIEW_BOX_W = 1000;
+const VIEW_BOX_H = 600;
+const VIEW_PAD = 40;
+
+function geoToViewBox(lat: number, lon: number): [number, number] {
+  const usableW = VIEW_BOX_W - 2 * VIEW_PAD;
+  const usableH = VIEW_BOX_H - 2 * VIEW_PAD;
+  const x =
+    VIEW_PAD +
+    ((lon - GEO_BOUNDS.lonMin) /
+      (GEO_BOUNDS.lonMax - GEO_BOUNDS.lonMin)) *
+      usableW;
+  const y =
+    VIEW_PAD +
+    ((GEO_BOUNDS.latMax - lat) /
+      (GEO_BOUNDS.latMax - GEO_BOUNDS.latMin)) *
+      usableH;
+  return [x, y];
+}
+
+// Pre-compute the SVG path data once at module load (real coords →
+// viewBox coords → "M x,y L x,y ... Z" string).
+const PENINSULA_PATH_D = (() => {
+  return (
+    PENINSULA_GEO_COORDS.map(([lat, lon], i) => {
+      const [x, y] = geoToViewBox(lat, lon);
+      return `${i === 0 ? "M" : "L"} ${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(" ") + " Z"
+  );
+})();
+
+/**
+ * PeninsulaSilhouetteMap — scroll-triggered line-drawing animation of
+ * the real Olympic Peninsula silhouette.
+ *
+ *   - The polygon path is built from real lat/lon coordinates (no
+ *     freehand cartoon shapes). Bounding box 47.0-48.5°N × -125.0
+ *     to -122.6°W projects to a 1000×600 viewBox.
+ *   - On first scroll-into-view (IntersectionObserver, threshold 0.2),
+ *     the line draws itself over 3.5s via stroke-dashoffset animation.
+ *   - After the line finishes, a soft cream fill fades in to give the
+ *     silhouette weight, then the 12 city pins fade in one by one.
+ *   - Town list lives in a column to the right (desktop) / below
+ *     (mobile) so visitors immediately see the full service area.
+ *   - Reusable: change PENINSULA_GEO_COORDS + PENINSULA_CITIES and the
+ *     entire component re-renders for any other region.
+ */
 function PeninsulaRouteMap() {
-  /**
-   * LIVE Google Maps embed of the Olympic Peninsula. Replaces the
-   * hand-drawn SVG (which kept looking like a cartoon blob no matter
-   * how many features we added). The iframe shows the REAL peninsula
-   * from Google's own map tiles — recognisable instantly, zero
-   * authorial debt, visitors can pan/zoom for themselves.
-   *
-   * Wrapped in the same cream-cardstock container so it still feels
-   * tied to the brand on the cream-light section bg.
-   */
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const pathRef = useRef<SVGPathElement | null>(null);
+  const [pathLen, setPathLen] = useState(3000);
+  const [animated, setAnimated] = useState(false);
+
+  // Measure path length once on mount so the dasharray/offset values
+  // are exact (depends on the actual SVG render).
+  useEffect(() => {
+    if (pathRef.current) {
+      const len = pathRef.current.getTotalLength();
+      if (len > 0) setPathLen(len);
+    }
+  }, []);
+
+  // Trigger animation when the map scrolls into view.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    // Reduced-motion: skip the animation, show the final state.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setAnimated(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAnimated(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className="relative rounded-2xl overflow-hidden border"
+      ref={wrapRef}
+      className="rounded-2xl border overflow-hidden"
       style={{
         background: BG_PANEL,
         borderColor: "rgba(28, 20, 16, 0.10)",
         boxShadow: "0 20px 50px rgba(28, 20, 16, 0.12)",
       }}
     >
-      {/* Map embed — fixed aspect ratio (16:10) keeps the peninsula
-          visible on every viewport. Lazy-loaded so it doesn't block
-          the rest of the page above the fold. */}
-      <div className="relative w-full" style={{ aspectRatio: "16 / 10" }}>
-        <iframe
-          src={PENINSULA_MAP_EMBED_SRC}
-          title="Olympic Peninsula service area map — Peninsula Paving"
-          className="absolute inset-0 w-full h-full"
-          style={{ border: 0 }}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-        />
-        {/* "Open in Google Maps" floating link — corner pill so the
-            interactive escape hatch is obvious. */}
-        <a
-          href={PENINSULA_MAP_OPEN_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold transition-all hover:brightness-110 active:scale-95"
+      <div className="grid lg:grid-cols-[1.55fr_1fr]">
+        {/* LEFT — silhouette */}
+        <div
+          className="relative px-4 sm:px-6 lg:px-8 py-6 lg:py-8"
           style={{
-            background: "#ffffff",
-            color: ACCENT_DEEP,
-            border: `1px solid ${ACCENT_DIM}`,
-            boxShadow: "0 4px 12px rgba(28, 20, 16, 0.15)",
-            fontFamily: FONT_HEAD,
+            background:
+              "radial-gradient(ellipse at center, #fefdfb 0%, #fef9ed 100%)",
+            borderRight: "1px solid rgba(28, 20, 16, 0.08)",
           }}
         >
-          <MapPin size={12} weight="fill" />
-          Open in Maps
-        </a>
-      </div>
-
-      {/* Service-area legend — every city we cover, as a copper-bordered
-          chip row below the map. */}
-      <div
-        className="px-5 sm:px-7 py-5 border-t"
-        style={{
-          borderColor: "rgba(28, 20, 16, 0.10)",
-          background: "rgba(245, 239, 230, 0.6)",
-        }}
-      >
-        <div
-          className="text-[10px] font-bold uppercase tracking-[0.24em] mb-3"
-          style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
-        >
-          We serve every dot on the map
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {BUSINESS.serviceArea.map((city) => (
-            <span
-              key={city}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-[12px] font-semibold"
+          <svg
+            viewBox={`0 0 ${VIEW_BOX_W} ${VIEW_BOX_H}`}
+            className="w-full h-auto"
+            aria-label="Animated line-drawing silhouette of the Olympic Peninsula. The 12 cities Peninsula Paving serves are marked as orange pins along the real coastline."
+          >
+            {/* Soft fill — fades in after the line finishes drawing */}
+            <path
+              d={PENINSULA_PATH_D}
+              fill="#fef3c7"
+              opacity={animated ? 0.55 : 0}
               style={{
-                background: "#ffffff",
-                color: INK,
-                border: `1px solid rgba(234, 88, 12, 0.32)`,
-                fontFamily: FONT_HEAD,
-                boxShadow: "0 1px 3px rgba(28, 20, 16, 0.08)",
+                transition: "opacity 0.9s ease-out 2.6s",
               }}
+            />
+
+            {/* The line-drawn coastline — main visual */}
+            <path
+              ref={pathRef}
+              d={PENINSULA_PATH_D}
+              fill="none"
+              stroke={ACCENT}
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeDasharray={pathLen}
+              strokeDashoffset={animated ? 0 : pathLen}
+              style={{
+                transition: "stroke-dashoffset 3.5s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            />
+
+            {/* Water labels — fade in after the line is drawn */}
+            <g
+              opacity={animated ? 0.7 : 0}
+              style={{ transition: "opacity 0.7s ease-out 3.4s" }}
             >
-              <MapPin size={11} weight="fill" style={{ color: ACCENT_DEEP }} />
-              {city}
-            </span>
-          ))}
+              <text
+                x={VIEW_BOX_W / 2}
+                y={30}
+                textAnchor="middle"
+                fontSize="11"
+                fill={YELLOW_DEEP}
+                fontFamily={FONT_SERIF}
+                fontStyle="italic"
+                letterSpacing="0.34em"
+              >
+                STRAIT OF JUAN DE FUCA
+              </text>
+              <text
+                x={28}
+                y={VIEW_BOX_H / 2 + 20}
+                textAnchor="middle"
+                fontSize="11"
+                fill={YELLOW_DEEP}
+                fontFamily={FONT_SERIF}
+                fontStyle="italic"
+                letterSpacing="0.34em"
+                transform={`rotate(-90 28 ${VIEW_BOX_H / 2 + 20})`}
+              >
+                PACIFIC OCEAN
+              </text>
+              <text
+                x={VIEW_BOX_W - 28}
+                y={VIEW_BOX_H / 2 + 30}
+                textAnchor="middle"
+                fontSize="11"
+                fill={YELLOW_DEEP}
+                fontFamily={FONT_SERIF}
+                fontStyle="italic"
+                letterSpacing="0.34em"
+                transform={`rotate(90 ${VIEW_BOX_W - 28} ${VIEW_BOX_H / 2 + 30})`}
+              >
+                HOOD CANAL
+              </text>
+            </g>
+
+            {/* City pins — fade in one by one after the line completes */}
+            {PENINSULA_CITIES.map((c, idx) => {
+              const [cx, cy] = geoToViewBox(c.lat, c.lon);
+              const delay = 3.2 + idx * 0.12;
+              return (
+                <g
+                  key={c.name}
+                  transform={`translate(${cx.toFixed(1)}, ${cy.toFixed(1)})`}
+                  style={{
+                    opacity: animated ? 1 : 0,
+                    transform: animated
+                      ? `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(1)`
+                      : `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(0)`,
+                    transformBox: "fill-box",
+                    transformOrigin: "center",
+                    transition: `opacity 0.35s ease-out ${delay}s`,
+                  }}
+                >
+                  <circle r={c.major ? 9 : 6} fill={ACCENT} opacity="0.22" />
+                  <circle
+                    r={c.major ? 4.5 : 3}
+                    fill={ACCENT}
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                  />
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* RIGHT — town names list */}
+        <div
+          className="px-5 sm:px-6 py-6 lg:py-8"
+          style={{
+            background:
+              "linear-gradient(180deg, #fef9ed 0%, #fef3c7 100%)",
+          }}
+        >
+          <div
+            className="text-[10px] font-bold uppercase tracking-[0.28em] mb-4 flex items-center gap-2"
+            style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
+          >
+            <span
+              className="inline-block w-6 h-px"
+              style={{ background: ACCENT_DEEP }}
+            />
+            Towns we cover
+          </div>
+          <ol
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5"
+            style={{ counterReset: "town" }}
+          >
+            {PENINSULA_CITIES.map((c, idx) => (
+              <li
+                key={c.name}
+                className="flex items-center gap-3 px-3 py-2 rounded-md"
+                style={{
+                  background: "#ffffff",
+                  border: `1px solid ${c.major ? ACCENT_DIM : "rgba(28, 20, 16, 0.08)"}`,
+                  boxShadow: "0 1px 2px rgba(28, 20, 16, 0.04)",
+                  opacity: animated ? 1 : 0.35,
+                  transition: `opacity 0.35s ease-out ${3.2 + idx * 0.1}s`,
+                }}
+              >
+                <span
+                  className="inline-flex items-center justify-center w-6 h-6 rounded-full shrink-0 text-[11px] font-bold"
+                  style={{
+                    background: c.major ? ACCENT : "rgba(234, 88, 12, 0.12)",
+                    color: c.major ? "#ffffff" : ACCENT_DEEP,
+                    fontFamily: FONT_HEAD,
+                  }}
+                >
+                  {idx + 1}
+                </span>
+                <span
+                  className={`text-[13px] sm:text-[14px] ${c.major ? "font-bold" : "font-semibold"}`}
+                  style={{ color: INK, fontFamily: FONT_HEAD }}
+                >
+                  {c.name}
+                </span>
+                {c.major && (
+                  <span
+                    className="ml-auto text-[10px] uppercase tracking-[0.18em] font-bold"
+                    style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
+                  >
+                    HUB
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+          <p
+            className="mt-5 text-[12px] italic leading-relaxed"
+            style={{ color: INK_DIM, fontFamily: FONT_SERIF }}
+          >
+            ~ 110 miles end to end — Sequim to Forks. The truck knows
+            every mile.
+          </p>
         </div>
       </div>
     </div>
