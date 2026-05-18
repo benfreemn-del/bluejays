@@ -261,127 +261,278 @@ function Hero() {
   );
 }
 
-/* Custom SVG: sunrise over Olympic ridgelines */
+/* Custom SVG: sunrise over the Olympic Mountains as seen from Sequim.
+ *
+ * Animated reveal — Genesis-1-style sequential creation. The viewer
+ * loads, and the illustration assembles in front of them:
+ *
+ *   1. Sky brightens (dawn gradient fades in)
+ *   2. Mist hangs in the valleys
+ *   3. Distant Olympic peaks rise from below (snow-capped — Mt. Olympus
+ *      profile-ish)
+ *   4. Mid-range forested ridge rises
+ *   5. Sun crests behind the peaks
+ *   6. Foreground conifer tree-line drops in
+ *   7. Birds fly across
+ *   8. "And there was light." (Gen 1:3) caption fades in
+ *
+ * Total run ~3 seconds, then everything stays in place. The whole thing
+ * is in the hero so it animates on initial paint.
+ */
 function SunriseIllustration() {
+  const sky = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 1.0, ease: "easeOut" } },
+  };
+  const mist = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 1.2, delay: 0.6, ease: "easeOut" } },
+  };
+  // Each ridge "rises" — clip from below using a clip-path animation.
+  const ridge = (delay: number) => ({
+    hidden: { y: 60, opacity: 0 },
+    show: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] },
+    },
+  });
+  const sun = {
+    hidden: { y: 90, opacity: 0, scale: 0.85 },
+    show: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 1.6, delay: 1.6, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+  const sunHalo = {
+    hidden: { opacity: 0, scale: 0.7 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 1.8, delay: 1.7, ease: "easeOut" },
+    },
+  };
+  const trees = {
+    hidden: { y: 30, opacity: 0 },
+    show: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.9, delay: 2.0, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+  const birds = {
+    hidden: { opacity: 0, x: -40 },
+    show: {
+      opacity: 0.75,
+      x: 0,
+      transition: { duration: 1.2, delay: 2.4, ease: "easeOut" },
+    },
+  };
+  const label = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 1.0, delay: 2.8 } },
+  };
+
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#fdebbf]/40">
-      <svg
-        viewBox="0 0 600 750"
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40">
+      <motion.svg
+        viewBox="0 0 600 450"
         className="absolute inset-0 h-full w-full"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
+        initial="hidden"
+        animate="show"
       >
         <defs>
+          {/* Warm dawn sky — peach → cream */}
+          <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#fde68a" />
+            <stop offset="40%" stopColor="#fdebbf" />
+            <stop offset="80%" stopColor="#fef3c7" />
+            <stop offset="100%" stopColor="#faf3df" />
+          </linearGradient>
+          {/* Sun halo */}
           <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#fde68a" stopOpacity="0.95" />
-            <stop offset="35%" stopColor="#fbbf24" stopOpacity="0.55" />
-            <stop offset="75%" stopColor="#d97706" stopOpacity="0.18" />
+            <stop offset="30%" stopColor="#fbbf24" stopOpacity="0.6" />
+            <stop offset="70%" stopColor="#d97706" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#fef3c7" />
-            <stop offset="55%" stopColor="#fdebbf" />
-            <stop offset="100%" stopColor="#fbf7ee" />
-          </linearGradient>
+          {/* Atmospheric mist hanging in the valleys */}
           <linearGradient id="mistGrad" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="#fbf7ee" stopOpacity="0" />
-            <stop offset="100%" stopColor="#fbf7ee" stopOpacity="0.85" />
+            <stop offset="55%" stopColor="#fbf7ee" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#fbf7ee" stopOpacity="0.92" />
           </linearGradient>
+          {/* Snow cap gradient — pure white at top, fading into the rock teal */}
+          <linearGradient id="snowCap" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+          {/* Clip path for sun — sun rises BEHIND the back ridge */}
+          <clipPath id="aboveBackRidge">
+            <rect x="0" y="0" width="600" height="250" />
+          </clipPath>
         </defs>
 
-        {/* Sky */}
-        <rect width="600" height="750" fill="url(#sky)" />
-
-        {/* Sun halo + disk */}
-        <circle cx="380" cy="320" r="260" fill="url(#sunGlow)" />
-        <circle cx="380" cy="320" r="78" fill="#d97706" />
-        {/* light flare */}
-        <ellipse cx="380" cy="320" rx="180" ry="2" fill="#fde68a" opacity="0.5" />
-
-        {/* Far ridge */}
-        <path
-          d="M0,460 Q90,420 180,440 T360,420 T540,408 L600,418 L600,750 L0,750 Z"
-          fill="#0d4f4a"
-          opacity="0.22"
-        />
-        {/* Mid-far ridge */}
-        <path
-          d="M0,510 L60,490 L130,505 L200,470 L280,485 L350,455 L430,475 L500,450 L570,470 L600,460 L600,750 L0,750 Z"
-          fill="#0d4f4a"
-          opacity="0.4"
+        {/* 1. SKY */}
+        <motion.rect
+          width="600"
+          height="450"
+          fill="url(#sky)"
+          variants={sky}
         />
 
-        {/* Mist band */}
-        <rect x="0" y="430" width="600" height="160" fill="url(#mistGrad)" />
+        {/* 5. SUN — rises behind the distant peaks */}
+        <motion.g variants={sunHalo}>
+          <circle cx="370" cy="195" r="170" fill="url(#sunGlow)" />
+        </motion.g>
+        <motion.g variants={sun} style={{ transformOrigin: "370px 200px" }}>
+          {/* Sun disc — clipped so the back peaks occlude the bottom edge */}
+          <circle cx="370" cy="200" r="56" fill="#e0832b" clipPath="url(#aboveBackRidge)" />
+          {/* Light flare across horizon */}
+          <ellipse
+            cx="370"
+            cy="200"
+            rx="150"
+            ry="1.5"
+            fill="#fde68a"
+            opacity="0.55"
+          />
+        </motion.g>
 
-        {/* Mid ridge — the iconic Olympic profile */}
-        <path
-          d="M0,565 L40,545 L90,558 L140,520 L195,540 L240,495 L300,520 L355,485 L410,510 L470,478 L520,498 L575,485 L600,492 L600,750 L0,750 Z"
-          fill="#0d4f4a"
-          opacity="0.7"
+        {/* 3a. DISTANT OLYMPIC PEAKS — snow-capped, rise from below
+            The profile here is a rugged, multi-peak silhouette inspired by
+            the Olympic Range as seen from Sequim (Mt. Olympus + The
+            Brothers + Mt. Constance roughly center-frame). */}
+        <motion.g variants={ridge(0.9)}>
+          {/* Back ridge body */}
+          <path
+            d="M0,260
+               L25,235 L45,250 L75,210 L100,235
+               L130,195 L155,225 L180,200 L210,238
+               L240,205 L265,228 L295,180 L320,215
+               L355,170 L390,210 L420,185 L450,220
+               L485,200 L515,230 L545,210 L575,225
+               L600,215 L600,260 Z"
+            fill="#5a8a85"
+            opacity="0.85"
+          />
+          {/* Snow caps on the highest peaks */}
+          <path
+            d="M125,200 L130,195 L155,225 L150,225 Z"
+            fill="url(#snowCap)"
+          />
+          <path
+            d="M290,185 L295,180 L320,215 L312,215 Z"
+            fill="url(#snowCap)"
+          />
+          <path
+            d="M350,176 L355,170 L390,210 L380,210 Z"
+            fill="url(#snowCap)"
+          />
+          {/* Highlight: warm dawn light hitting east-facing slopes */}
+          <path
+            d="M295,180 L320,215 L312,210 Z"
+            fill="#fcd34d"
+            opacity="0.4"
+          />
+          <path
+            d="M355,170 L390,210 L378,205 Z"
+            fill="#fcd34d"
+            opacity="0.45"
+          />
+        </motion.g>
+
+        {/* 2. MIST band — hangs between the distant peaks and the mid ridge */}
+        <motion.rect
+          x="0"
+          y="230"
+          width="600"
+          height="90"
+          fill="url(#mistGrad)"
+          variants={mist}
         />
 
-        {/* Front ridge — solid */}
-        <path
-          d="M0,640 L70,620 L150,635 L230,605 L320,625 L400,600 L480,620 L560,605 L600,612 L600,750 L0,750 Z"
-          fill="#0d4f4a"
-        />
+        {/* Subtle mist lines */}
+        <motion.g variants={mist}>
+          <line x1="70" y1="265" x2="220" y2="262" stroke="#fbf7ee" strokeOpacity="0.7" strokeWidth="1.2" />
+          <line x1="280" y1="278" x2="430" y2="275" stroke="#fbf7ee" strokeOpacity="0.55" strokeWidth="1.2" />
+          <line x1="110" y1="295" x2="350" y2="293" stroke="#fbf7ee" strokeOpacity="0.4" strokeWidth="1" />
+          <line x1="380" y1="305" x2="540" y2="302" stroke="#fbf7ee" strokeOpacity="0.45" strokeWidth="1" />
+        </motion.g>
 
-        {/* Mist lines (drawn) */}
-        <line
-          x1="60"
-          y1="490"
-          x2="280"
-          y2="485"
-          stroke="#fbf7ee"
-          strokeOpacity="0.7"
-          strokeWidth="1.2"
-        />
-        <line
-          x1="340"
-          y1="505"
-          x2="540"
-          y2="498"
-          stroke="#fbf7ee"
-          strokeOpacity="0.55"
-          strokeWidth="1.2"
-        />
-        <line
-          x1="120"
-          y1="558"
-          x2="380"
-          y2="552"
-          stroke="#fbf7ee"
-          strokeOpacity="0.4"
-          strokeWidth="1.2"
-        />
+        {/* 3b. MID RIDGE — forested foothills */}
+        <motion.g variants={ridge(1.2)}>
+          <path
+            d="M0,335
+               L40,318 L80,328 L130,300 L175,315 L220,288
+               L265,308 L310,278 L355,302 L400,280 L445,300
+               L490,285 L535,302 L575,290 L600,298
+               L600,360 L0,360 Z"
+            fill="#2d5e57"
+            opacity="0.9"
+          />
+        </motion.g>
 
-        {/* Tiny birds */}
-        <g
+        {/* 6. FOREGROUND CONIFER TREE LINE — solid darkest teal */}
+        <motion.g variants={trees}>
+          {/* Base ground */}
+          <path
+            d="M0,390 L0,450 L600,450 L600,395 Z"
+            fill="#0a3a36"
+          />
+          {/* Conifer silhouettes — triangle clusters */}
+          {[
+            { x: 40, h: 38 }, { x: 75, h: 28 }, { x: 110, h: 45 },
+            { x: 145, h: 32 }, { x: 175, h: 40 }, { x: 215, h: 26 },
+            { x: 248, h: 42 }, { x: 285, h: 35 }, { x: 320, h: 48 },
+            { x: 358, h: 30 }, { x: 392, h: 44 }, { x: 428, h: 28 },
+            { x: 462, h: 38 }, { x: 498, h: 32 }, { x: 532, h: 46 },
+            { x: 568, h: 30 },
+          ].map((t, i) => (
+            <path
+              key={i}
+              d={`M${t.x - 9},${395} L${t.x},${395 - t.h} L${t.x + 9},${395} Z`}
+              fill="#0a3a36"
+            />
+          ))}
+          {/* A few taller hero conifers */}
+          <path d="M195,395 L208,335 L221,395 Z" fill="#0a3a36" />
+          <path d="M375,395 L390,325 L405,395 Z" fill="#0a3a36" />
+        </motion.g>
+
+        {/* 7. BIRDS — small flock crossing the sky */}
+        <motion.g
+          variants={birds}
           fill="none"
           stroke="#0d4f4a"
-          strokeWidth="1.5"
+          strokeWidth="1.6"
           strokeLinecap="round"
-          opacity="0.7"
         >
-          <path d="M200,220 q6,-8 12,0 q6,-8 12,0" />
-          <path d="M250,180 q5,-7 10,0 q5,-7 10,0" />
-          <path d="M170,260 q4,-6 8,0 q4,-6 8,0" />
-        </g>
+          <path d="M165,90 q6,-8 12,0 q6,-8 12,0" />
+          <path d="M210,75 q5,-7 10,0 q5,-7 10,0" />
+          <path d="M195,115 q5,-6 10,0 q5,-6 10,0" />
+          <path d="M240,98 q4,-5 8,0 q4,-5 8,0" />
+        </motion.g>
 
-        {/* Hand label */}
-        <g transform="translate(40,712)">
+        {/* 8. CAPTION — "And there was light." */}
+        <motion.g variants={label}>
           <text
+            x="32"
+            y="438"
             fontFamily="Fraunces, serif"
             fontStyle="italic"
-            fontSize="14"
-            fill="#0d4f4a"
-            opacity="0.75"
+            fontSize="13"
+            fill="#fbf7ee"
+            opacity="0.85"
           >
-            sunrise over the olympics
+            And there was light.  ·  Gen 1:3
           </text>
-        </g>
-      </svg>
+        </motion.g>
+      </motion.svg>
     </div>
   );
 }
