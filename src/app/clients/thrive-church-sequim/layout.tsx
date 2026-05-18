@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import VerseOfDayPopup from "./verse-popup";
 
 /**
  * Layout for /clients/thrive-church-sequim — Thrive Church, Sequim WA.
@@ -247,6 +248,12 @@ export default function ThriveChurchLayout({
       />
       <ClientTrackingScripts slug="thrive-church-sequim" />
       {children}
+      {/* Floating "Verse of the Day" signup — appears 10s after page
+          load, anchored bottom-right. Per-session dismissal so it
+          doesn't nag, but re-shows on future visits. Mounts inside the
+          /clients/thrive-church-sequim layout so it appears across the
+          whole tenant subtree (home + /volunteer + any future pages). */}
+      <VerseOfDayPopup />
     </>
   );
 }

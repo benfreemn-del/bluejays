@@ -124,11 +124,11 @@ function PaperGrain() {
 /* ============================================================== */
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pt-6 sm:pt-8 lg:pt-10">
+    <section className="relative isolate overflow-hidden pt-6 sm:pt-8 lg:pt-10 xl:pt-14 2xl:pt-20">
       {/* Topographic background */}
       <TopoLines />
 
-      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-6 px-6 pb-6 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-6">
+      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-6 px-6 pb-6 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-6 xl:pb-10 xl:max-w-[1640px] xl:gap-x-14 2xl:pb-14">
         {/* TEXT BLOCK */}
         <div className="lg:col-span-7 lg:pt-2">
           <motion.div
@@ -147,7 +147,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={1}
-            className="mt-4 font-[Fraunces] text-[clamp(2.2rem,4.5vw,4.2rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
+            className="mt-4 font-[Fraunces] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             Hope, breaking{" "}
@@ -161,7 +161,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={2}
-            className="mt-4 max-w-xl text-base leading-relaxed text-[#1a1a1a]/80"
+            className="mt-4 max-w-xl text-base leading-relaxed text-[#1a1a1a]/80 xl:text-lg 2xl:text-xl"
           >
             A community church for imperfect people on the mission with Jesus,
             bringing hope and healing to the Olympic Peninsula — and beyond.
@@ -211,7 +211,7 @@ function Hero() {
             <span className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#d97706]">
               Sunday Gathering
             </span>
-            <span className="font-[Fraunces] text-xl text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
+            <span className="font-[Fraunces] text-xl text-[#0d4f4a] sm:text-2xl xl:text-3xl" style={{ fontWeight: 500 }}>
               10:30 a.m. — in person or livestream
             </span>
             <Link
@@ -459,7 +459,7 @@ function TaglineSpread() {
   return (
     <section
       id="mission"
-      className="relative overflow-hidden bg-[#fbf7ee] py-20 sm:py-28"
+      className="relative overflow-hidden bg-[#fbf7ee] py-14 sm:py-20"
     >
       {/* Watermark mark */}
       <div className="pointer-events-none absolute -right-20 -top-20 opacity-[0.05] sm:-right-10 sm:-top-10">
