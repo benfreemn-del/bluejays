@@ -39,6 +39,7 @@ import StickyNav from "./sticky-nav";
 import ConnectCardForm from "./connect-card";
 import PrayerRequestForm from "./prayer-form";
 import ThriveMark from "./thrive-mark";
+import ChristianMotifs from "./christian-motifs";
 import BluejayLogo from "@/components/BluejayLogo";
 
 /* ---------- constants ---------- */
@@ -123,11 +124,11 @@ function PaperGrain() {
 /* ============================================================== */
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pt-28 sm:pt-32 lg:pt-40">
+    <section className="relative isolate overflow-hidden pt-20 sm:pt-24 lg:pt-28">
       {/* Topographic background */}
       <TopoLines />
 
-      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-12 px-6 pb-20 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-32">
+      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-10 px-6 pb-14 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-20">
         {/* TEXT BLOCK */}
         <div className="lg:col-span-7 lg:pt-8">
           <motion.div
@@ -458,7 +459,7 @@ function TaglineSpread() {
   return (
     <section
       id="mission"
-      className="relative overflow-hidden bg-[#fbf7ee] py-32 sm:py-44"
+      className="relative overflow-hidden bg-[#fbf7ee] py-20 sm:py-28"
     >
       {/* Watermark mark */}
       <div className="pointer-events-none absolute -right-20 -top-20 opacity-[0.05] sm:-right-10 sm:-top-10">
@@ -499,15 +500,8 @@ function TaglineSpread() {
           on the mission with Jesus,
           <br className="hidden sm:block" />
           bringing{" "}
-          <span className="relative inline-block">
-            <span className="relative z-10 text-[#d97706]">hope</span>
-            <span className="absolute -bottom-1 left-0 right-0 h-3 bg-[#fdebbf]/80" />
-          </span>{" "}
-          and{" "}
-          <span className="relative inline-block">
-            <span className="relative z-10 text-[#d97706]">healing</span>
-            <span className="absolute -bottom-1 left-0 right-0 h-3 bg-[#fdebbf]/80" />
-          </span>{" "}
+          <span className="text-[#d97706]">hope</span> and{" "}
+          <span className="text-[#d97706]">healing</span>{" "}
           to the world.
         </motion.h2>
 
@@ -562,8 +556,9 @@ function WhatToExpect() {
     },
   ];
   return (
-    <section id="expect" className="relative bg-[#fbf7ee] py-24 sm:py-32">
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+    <section id="expect" className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
+      <ChristianMotifs variant="right" />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-12">
           <div className="lg:col-span-5 lg:sticky lg:top-32 lg:self-start">
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
@@ -790,7 +785,7 @@ function LatestSermon() {
 /* ============================================================== */
 function ConnectSection() {
   return (
-    <section id="connect" className="relative bg-[#f5ede0] py-24 sm:py-32">
+    <section id="connect" className="relative bg-[#f5ede0] py-16 sm:py-22">
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-5">
@@ -827,17 +822,8 @@ function ConnectSection() {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="relative">
-              {/* Decorative corner mark */}
-              <span
-                aria-hidden
-                className="absolute -left-3 -top-3 font-[Fraunces] text-6xl leading-none text-[#d97706]/30"
-              >
-                +
-              </span>
-              <div className="relative rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-8 shadow-[0_30px_60px_-30px_rgba(13,79,74,0.25)] sm:p-10 lg:p-12">
-                <ConnectCardForm />
-              </div>
+            <div className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-7 shadow-[0_24px_50px_-30px_rgba(13,79,74,0.25)] sm:p-9 lg:p-11">
+              <ConnectCardForm />
             </div>
           </div>
         </div>
@@ -890,7 +876,7 @@ function MinistriesGrid() {
     },
   ];
   return (
-    <section id="ministries" className="relative bg-[#fbf7ee] py-24 sm:py-32">
+    <section id="ministries" className="relative bg-[#fbf7ee] py-16 sm:py-22">
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -1121,9 +1107,10 @@ function BeliefsSpread() {
   return (
     <section
       id="beliefs"
-      className="relative overflow-hidden bg-[#fbf7ee] py-24 sm:py-32"
+      className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22"
     >
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+      <ChristianMotifs variant="scatter" opacity={0.06} />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-[#0d4f4a]/70">
@@ -1372,7 +1359,7 @@ function Generosity() {
   return (
     <section
       id="give"
-      className="relative overflow-hidden bg-[#fbf7ee] py-24 sm:py-32"
+      className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22"
     >
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <motion.div
@@ -1434,20 +1421,12 @@ function Generosity() {
 /* ============================================================== */
 function PrayerSection() {
   return (
-    <section id="prayer" className="relative bg-[#f5ede0] py-24 sm:py-32">
+    <section id="prayer" className="relative bg-[#f5ede0] py-16 sm:py-22">
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-7 lg:order-2">
-            <div className="relative">
-              <span
-                aria-hidden
-                className="absolute -right-3 -top-3 font-[Fraunces] text-6xl leading-none text-[#d97706]/30"
-              >
-                +
-              </span>
-              <div className="relative rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-8 shadow-[0_30px_60px_-30px_rgba(13,79,74,0.25)] sm:p-10 lg:p-12">
-                <PrayerRequestForm />
-              </div>
+            <div className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-7 shadow-[0_24px_50px_-30px_rgba(13,79,74,0.25)] sm:p-9 lg:p-11">
+              <PrayerRequestForm />
             </div>
           </div>
 
@@ -1492,8 +1471,9 @@ function PrayerSection() {
 /* ============================================================== */
 function VisitUs() {
   return (
-    <section id="visit" className="relative bg-[#fbf7ee] py-24 sm:py-32">
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+    <section id="visit" className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
+      <ChristianMotifs variant="left" opacity={0.055} />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Postcard-style info card */}
           <div className="lg:col-span-5">
@@ -1730,7 +1710,7 @@ function FinalCTA() {
 /* ============================================================== */
 function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[#0a3d39] py-16 text-[#fbf7ee]">
+    <footer className="relative overflow-hidden bg-[#0a3d39] py-11 text-[#fbf7ee]">
       {/* Subtle amber wash in the top-right — echoes the FinalCTA glow
           so the page closes with one continuous dark "movement" rather
           than two unrelated dark sections. */}

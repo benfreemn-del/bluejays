@@ -14,13 +14,18 @@ import ThriveMark from "./thrive-mark";
  * and re-keyed to Thrive's section anchors.
  */
 
+// Absolute paths so the nav works from sub-pages (e.g. /volunteer)
+// as well as the homepage — browser handles same-page anchor scroll
+// vs cross-page navigate-and-scroll cleanly with the absolute form.
+const HOME = "/clients/thrive-church-sequim";
 const NAV_LINKS = [
-  { href: "#visit", label: "Plan a Visit" },
-  { href: "#watch", label: "Watch" },
-  { href: "#ministries", label: "Ministries" },
-  { href: "#preschool", label: "Preschool" },
-  { href: "#beliefs", label: "Beliefs" },
-  { href: "#give", label: "Give" },
+  { href: `${HOME}#visit`, label: "Plan a Visit" },
+  { href: `${HOME}#watch`, label: "Watch" },
+  { href: `${HOME}#ministries`, label: "Ministries" },
+  { href: `${HOME}#preschool`, label: "Preschool" },
+  { href: `${HOME}#beliefs`, label: "Beliefs" },
+  { href: `${HOME}/volunteer`, label: "Volunteer" },
+  { href: `${HOME}#give`, label: "Give" },
 ];
 
 const PHONE_DISPLAY = "(360) 683-7981";
@@ -61,7 +66,7 @@ export default function StickyNav() {
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
           <a
-            href="#top"
+            href={HOME}
             className="flex items-center gap-3 min-w-0"
             aria-label="Thrive Church Sequim"
           >
@@ -109,7 +114,7 @@ export default function StickyNav() {
               <span>{PHONE_DISPLAY}</span>
             </a>
             <a
-              href="#connect"
+              href={`${HOME}#connect`}
               className="hidden sm:inline-flex items-center gap-2 px-5 h-10 rounded-full font-semibold text-[13px] uppercase tracking-wide transition-all hover:brightness-110 active:scale-95"
               style={{
                 background: TEAL,
@@ -203,7 +208,7 @@ export default function StickyNav() {
               {PHONE_DISPLAY}
             </a>
             <a
-              href="#connect"
+              href={`${HOME}#connect`}
               onClick={() => setOpen(false)}
               className="flex items-center justify-center gap-2 h-14 rounded-full font-bold uppercase tracking-wide"
               style={{
