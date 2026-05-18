@@ -754,7 +754,7 @@ export default function AllInOneServicesPage() {
                     color: INK,
                   }}
                 >
-                  Real Kyle jobs.
+                  Real jobs.
                   <br />
                   <span style={{ color: ACCENT_LIGHT }}>Same room, different decade.</span>
                 </h2>
