@@ -2278,11 +2278,15 @@ export default function PeninsulaPavingPage() {
             <AsphaltCrossSection />
 
             <p
-              className="mt-10 text-center text-[14px] italic max-w-2xl mx-auto"
-              style={{ color: INK_DIM, fontFamily: FONT_SERIF }}
+              className="mt-12 sm:mt-14 text-center text-[22px] sm:text-[30px] lg:text-[38px] leading-[1.25] italic max-w-3xl mx-auto"
+              style={{ color: INK, fontFamily: FONT_SERIF }}
             >
-              &ldquo;Cheap paving is mostly invisible. So is good paving — but
-              one shows up in five years and the other doesn&apos;t.&rdquo;
+              &ldquo;Cheap paving is mostly invisible. So is good paving &mdash;
+              but one shows up in{" "}
+              <span style={{ color: ACCENT_DEEP, fontWeight: 600 }}>
+                five years
+              </span>{" "}
+              and the other doesn&apos;t.&rdquo;
             </p>
           </div>
         </section>
