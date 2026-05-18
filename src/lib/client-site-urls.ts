@@ -59,6 +59,20 @@ const CLIENT_SITES: Record<string, ClientSite> = {
   },
   // Meyer Electric — Snohomish, WA. Custom-tier mock-backend showcase.
   "meyer-electric": { kind: "internal", href: "/clients/meyer-electric" },
+  // All In One Service's LLC — Sequim WA. Custom-tier bespoke build for
+  // Kyle Fritz's family-operated GC. Meyer Electric twin pattern,
+  // copper-amber palette. Built 2026-05-17.
+  "all-in-one-services": {
+    kind: "internal",
+    href: "/clients/all-in-one-services",
+  },
+  // Peninsula Paving & Excavating — Sequim, WA. Bespoke premium pitch
+  // piece for the $10k AI System sales motion. 41-year family paving
+  // crew, no existing website. Mock backend at /portal-demo (gate: 1212).
+  "peninsula-paving": {
+    kind: "internal",
+    href: "/clients/peninsula-paving",
+  },
   // The Oregon Appraisers — bespoke real-estate appraisal showcase.
   "theoregonappraisers": {
     kind: "internal",
