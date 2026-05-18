@@ -54,23 +54,24 @@ export default function StickyNav({
     };
   }, [open]);
 
-  // Header bg is pure white to match the logo's baked-in white
-  // background — no more visible square. Border keeps definition
-  // against the page content below.
+  // Logo background blend (locked 2026-05-18 — Ben polish #3):
+  // The Squarespace JPG has a baked-in pure-white (255,255,255)
+  // background. The header was bg-white/95 (95% opaque white over
+  // dark page bg) which gave it a slightly grayish tint — visibly
+  // different from the logo's pure white = "logo on a square" effect.
   //
-  // Logo color-match (locked 2026-05-18 per Ben polish request):
-  // The raw Squarespace JPG has a brighter forest green ink than the
-  // header text color (#1a2e1a). To make them visually agree we apply
-  // a subtle CSS filter chain: slight contrast bump + saturation
-  // reduction + a small hue rotation that nudges the logo green toward
-  // the header dark-green ink. Imperfect (since the JPG bakes pixels)
-  // but visibly tighter than raw. The right long-term fix is replacing
-  // the JPG with an SVG wordmark per recolor_client_logo skill.
+  // Fix: header bg-white (fully opaque) + mix-blend-mode: multiply
+  // on the logo. Multiply blends each logo pixel × header pixel:
+  //   - white pixels (255) × white header = white (invisible)
+  //   - dark green pixels × white = dark green (visible)
+  // Net result: logo white background disappears entirely, only the
+  // brand mark renders. Pixel-perfect color match, no JPG transparency
+  // needed. Same trick used for product logos on white promo banners.
   //
-  // Logo size bumped 2x (h-10/12 → h-14/18/22) for hero brand presence.
-  // Height taller = wordmark caption needs to grow proportionally.
+  // Filter kept: nudges logo green toward header dark-green #1a2e1a.
+  // Logo size: h-14/16/20 (40-80px) — bumped from h-10/12 in polish #1.
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-[#1a2e1a]/10">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white border-b border-[#1a2e1a]/10">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 sm:h-24 flex items-center justify-between gap-6">
         <a
           href="#top"
@@ -82,9 +83,10 @@ export default function StickyNav({
             alt={businessName}
             className="h-14 sm:h-16 lg:h-20 w-auto"
             style={{
-              // Nudges the logo green toward header dark-green #1a2e1a.
-              // Slight contrast + reduced saturation + tiny hue rotate
-              // = visible color-tightening without crushing the mark.
+              // Multiply blend = logo's white bg becomes invisible
+              // against the white header. Filter chain nudges green
+              // toward header dark-green #1a2e1a.
+              mixBlendMode: "multiply",
               filter: "contrast(1.05) saturate(0.85) hue-rotate(-8deg)",
             }}
           />
@@ -157,7 +159,10 @@ export default function StickyNav({
                 src={logoSrc}
                 alt={businessName}
                 className="h-14 w-auto"
-                style={{ filter: "contrast(1.05) saturate(0.85) hue-rotate(-8deg)" }}
+                style={{
+                  mixBlendMode: "multiply",
+                  filter: "contrast(1.05) saturate(0.85) hue-rotate(-8deg)",
+                }}
               />
               <span className="font-serif text-[16px] tracking-tight text-[#1a2e1a]">
                 Hector Landscaping

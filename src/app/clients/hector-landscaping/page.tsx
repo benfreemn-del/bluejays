@@ -91,10 +91,27 @@ const LOGO =
    Older Squarespace URLs don't accept ?format= so they're rendered as
    originals. */
 const PHOTOS = {
+  // ─── ERIK PORTRAIT ─── Founder-first hero (locked 2026-05-18 per Ben).
+  // Sourced from /04 Marketing Assets/, optimized via sharp → JPEG
+  // 2000px-max wide, quality 82 mozjpeg. Self-hosted at
+  // /clients/hector-landscaping/photos/meet-erik.jpg so we control the
+  // asset (vs Squarespace CDN dependency for hero brand image).
+  //
+  // Note on CLAUDE.md "Bespoke Client Showcase reference standard"
+  // (Meyer Electric pattern, locked 2026-05-16): the standard says
+  // hero should show OUTCOME not trade-person. Founder-first hero is
+  // an explicit override for Hector — Ben's call given the
+  // small-family-business brand. Trust badges (Licensed & Insured,
+  // Owner-Operated Since 2018) right next to the portrait support
+  // the founder-as-trust-anchor read.
+  erikPortrait: "/clients/hector-landscaping/photos/meet-erik.jpg",
+
   // ─── HERO ─── Strongest portfolio shot: side-yard with stepping
   // stones, dark mulch beds, plantings, cedar privacy fence + bollard
   // light. Real Hector phone capture — 1.9MB native, beats every
   // Squarespace-cropped web shot in resolution + composition.
+  // (Was the landing image pre-2026-05-18; now used in Meet Erik
+  // section if needed.)
   hero: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
 
   // ─── REAL PORTFOLIO — Hector's Phone Captures (1.5–2.1MB each) ───
@@ -749,9 +766,9 @@ export default function HectorLandscapingLandscapingPage() {
               style={{ minHeight: 400 }}
             >
               <img
-                src={PHOTOS.fullYard}
-                alt="Hector Landscaping — full backyard transformation: patio, dry creek, curved beds, fresh lawn — Renton WA"
-                className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                src={PHOTOS.erikPortrait}
+                alt="Erik — owner of Hector Landscaping & Design, Renton WA. Family-run since 2018."
+                className="absolute inset-0 w-full h-full object-cover object-top rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0f1a0f]/60 rounded-2xl" />
             </motion.div>
@@ -955,7 +972,11 @@ export default function HectorLandscapingLandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={PHOTOS.hero} alt="Hector Landscaping — side-yard pathway, dark mulch beds, plantings, cedar privacy fence with bollard light" className="w-full h-full object-cover" />
+              <img
+                src={PHOTOS.fullYard}
+                alt="Hector Landscaping — full backyard transformation: patio, dry creek, curved beds, fresh lawn — Renton WA"
+                className="w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-5 py-3 flex items-center gap-3">
