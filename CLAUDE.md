@@ -122,7 +122,7 @@ every slug.
 | `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |
 | `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) · Owner-Editable Site enabled 2026-05-12 (needs GITHUB_TOKEN + ANTHROPIC_API_KEY env vars on Vercel) |
 | `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
-| `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
+| `lewis-county-autism` | ✓ (bespoke, no AI) | ✗ | ✗ | Nonprofit owner portal at `/clients/lewis-county-autism/portal` (URL-as-secret) — site status + form-inbox links + Claude Code editing protocol + mission-dashboard preview link. Mock backend at `/clients/lewis-county-autism/portal-demo` (1212) is the first nonprofit-config install — see `docs/mock-backends/nonprofit.md`. LCAC site itself is a separate static-HTML repo at `Lewis County Austim Coalition/`; DNS still on Wix as of 2026-05-18. |
 | `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |
 | `thrive-church-sequim` | ✗ | ✗ | ✗ | Thrive Church · Sequim WA · custom-tier bespoke build · warm-cream + deep teal + amber palette · Connect Card + Prayer Request forms route to office@thrivesequim.com · launched 2026-05-18 |
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
