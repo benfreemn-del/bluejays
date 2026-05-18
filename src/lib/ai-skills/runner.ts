@@ -250,6 +250,21 @@ export async function runSkill<T = unknown>(
     }
   }
 
+  // Optional per-skill post-run hook (used by qualify to cache the
+  // result on prospects.ai_qualification). Failures here are logged
+  // but never fail the run — the persisted ai_skill_runs row is
+  // the source of truth regardless.
+  if (skill.afterRun) {
+    try {
+      await skill.afterRun(parsed, runArgs.args || {});
+    } catch (err) {
+      console.error(
+        `[ai-skills] afterRun hook failed for ${skill.manifest.name}:`,
+        err,
+      );
+    }
+  }
+
   return persistAndReturn<T>({
     skill: skill.manifest.name,
     triggeredBy: runArgs.triggeredBy,

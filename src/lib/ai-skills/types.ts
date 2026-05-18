@@ -89,6 +89,14 @@ export type Skill = {
   /** Context-gathering function. Returns either {noWork:true} (skip
    *  the Claude call) or {noWork:false, context:{...}} (proceed). */
   gather: (args: Record<string, unknown>) => Promise<ContextResult>;
+  /** Optional post-success side effect. Runner calls this AFTER the
+   *  ai_skill_runs row is persisted and spend is recorded. Used by
+   *  qualify to cache its output on prospects.ai_qualification.
+   *  Errors here are logged but don't fail the run. */
+  afterRun?: (
+    output: unknown,
+    args: Record<string, unknown>,
+  ) => Promise<void>;
 };
 
 /** What the runner returns to the caller (CLI / cron / signal handler). */

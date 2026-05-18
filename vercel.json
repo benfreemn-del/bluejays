@@ -167,6 +167,10 @@
     {
       "path": "/api/ai-skills/run?skill=brief",
       "schedule": "0 14 * * 1-5"
+    },
+    {
+      "path": "/api/ai-skills/run?skill=triage",
+      "schedule": "0 15 * * 1-5"
     }
   ],
   "functions": {
