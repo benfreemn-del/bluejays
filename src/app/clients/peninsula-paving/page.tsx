@@ -2174,20 +2174,33 @@ export default function PeninsulaPavingPage() {
                       </div>
                       {/* Brand logo — mirrors the compass on the
                           opposite corner, balances the badge with the
-                          real circular brand mark. */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/clients/peninsula-paving/logo.jpeg"
-                        alt="Peninsula Paving & Excavating"
-                        width={56}
-                        height={56}
-                        className="shrink-0 rounded-full"
+                          real circular brand mark. Wrapped in
+                          overflow-hidden + scaled 1.22× so the badge
+                          fills the circle edge-to-edge (source JPEG
+                          has whitespace padding around the artwork). */}
+                      <div
+                        className="shrink-0 rounded-full relative overflow-hidden"
                         style={{
-                          objectFit: "contain",
+                          width: 56,
+                          height: 56,
                           boxShadow:
                             "0 1px 2px rgba(28, 20, 16, 0.08), 0 0 0 1px rgba(234, 88, 12, 0.18)",
                         }}
-                      />
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/clients/peninsula-paving/logo.jpeg"
+                          alt="Peninsula Paving & Excavating"
+                          width={56}
+                          height={56}
+                          className="block w-full h-full"
+                          style={{
+                            objectFit: "cover",
+                            transform: "scale(1.22)",
+                            transformOrigin: "center center",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2535,20 +2548,33 @@ export default function PeninsulaPavingPage() {
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
               <div className="flex items-start gap-4">
-                {/* Big circular brand logo — anchor in the footer */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/clients/peninsula-paving/logo.jpeg"
-                  alt="Peninsula Paving & Excavating"
-                  width={84}
-                  height={84}
-                  className="rounded-full shrink-0"
+                {/* Big circular brand logo — anchor in the footer.
+                    Wrapped + scaled 1.22× so the badge maxes out the
+                    circle frame edge-to-edge (source JPEG has padding
+                    around the artwork). */}
+                <div
+                  className="rounded-full shrink-0 relative overflow-hidden"
                   style={{
-                    objectFit: "contain",
+                    width: 84,
+                    height: 84,
                     boxShadow:
                       "0 2px 4px rgba(28, 20, 16, 0.10), 0 0 0 1px rgba(234, 88, 12, 0.18)",
                   }}
-                />
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/clients/peninsula-paving/logo.jpeg"
+                    alt="Peninsula Paving & Excavating"
+                    width={84}
+                    height={84}
+                    className="block w-full h-full"
+                    style={{
+                      objectFit: "cover",
+                      transform: "scale(1.22)",
+                      transformOrigin: "center center",
+                    }}
+                  />
+                </div>
                 <div>
                   <div
                     className="text-[18px] font-bold text-[#1c1410] tracking-wide mb-2"

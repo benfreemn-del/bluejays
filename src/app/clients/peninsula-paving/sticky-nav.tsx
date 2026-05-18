@@ -29,26 +29,37 @@ const LOGO_SRC = "/clients/peninsula-paving/logo.jpeg";
 
 function PavingMark({ size = 36, flat = false }: { size?: number; flat?: boolean }) {
   // Real JPEG brand logo — circular badge with PP monogram, arc text
-  // "PENINSULA PAVING & EXCAVATING / EST. 1985 · SEQUIM, WA", and a
-  // horizontal yellow road-stripe slashing through the monogram.
-  // Logo file: /public/clients/peninsula-paving/logo.jpeg
+  // "PENINSULA PAVING & EXCAVATING / EST. 1985 · SEQUIM, WA".
+  //
+  // The source JPEG has whitespace padding around the badge artwork.
+  // Wrapping in overflow-hidden + scaling the image up by 1.22× pushes
+  // that whitespace outside the visible circle so the badge maxes
+  // out the rounded frame edge-to-edge.
   return (
-    <img
-      src={LOGO_SRC}
-      width={size}
-      height={size}
-      alt={flat ? "" : "Peninsula Paving & Excavating"}
-      aria-hidden={flat ? true : undefined}
-      className="block rounded-full"
+    <div
+      className="rounded-full shrink-0 relative overflow-hidden"
       style={{
-        objectFit: "contain",
-        // Slight ring shadow so the logo's cream background blends into
-        // the nav's warm-white bg cleanly when shown inline.
+        width: size,
+        height: size,
         boxShadow: flat
           ? "none"
-          : "0 1px 2px rgba(28, 20, 16, 0.08), 0 0 0 1px rgba(234, 88, 12, 0.12)",
+          : "0 1px 2px rgba(28, 20, 16, 0.08), 0 0 0 1px rgba(234, 88, 12, 0.18)",
       }}
-    />
+    >
+      <img
+        src={LOGO_SRC}
+        alt={flat ? "" : "Peninsula Paving & Excavating"}
+        aria-hidden={flat ? true : undefined}
+        width={size}
+        height={size}
+        className="block w-full h-full"
+        style={{
+          objectFit: "cover",
+          transform: "scale(1.22)",
+          transformOrigin: "center center",
+        }}
+      />
+    </div>
   );
 }
 
