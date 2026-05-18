@@ -1,17 +1,17 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- single brand logo, no LCP win from <Image>. */
+
 import { useState, useEffect } from "react";
 import { Phone, ArrowRight, List, X } from "@phosphor-icons/react/dist/ssr";
 
 /**
  * StickyNav — Peninsula Paving & Excavating site header.
  *
- * Dark variant: pure near-black bg with a thin copper accent border on
- * scroll. Inline asphalt-roller SVG mark (copper) + PENINSULA PAVING
- * wordmark (white). Mobile hamburger pattern carried over from
- * meyer-electric/sticky-nav (lessons-learned: menu overlay must be a
- * SIBLING of <header> because backdrop-blur creates a stacking context
- * that traps fixed children).
+ * Uses the real JPEG brand logo (circular badge with PP monogram +
+ * "PENINSULA PAVING & EXCAVATING / EST 1985 · SEQUIM, WA" arc text +
+ * yellow road-stripe slash) instead of an SVG mark. Logo lives at
+ * /clients/peninsula-paving/logo.jpeg.
  */
 
 const NAV_LINKS = [
@@ -25,100 +25,30 @@ const NAV_LINKS = [
 const PHONE_DISPLAY = "(360) 477-7015";
 const PHONE_HREF = "tel:+13604777015";
 const ACCENT = "#ea580c";
+const LOGO_SRC = "/clients/peninsula-paving/logo.jpeg";
 
 function PavingMark({ size = 36, flat = false }: { size?: number; flat?: boolean }) {
-  // PP MONOGRAM MARK — highway-shield-style badge with the PP initials
-  // inside + a yellow road-stripe accent along the bottom. The shield
-  // shape ties to the Hwy 101 / Hwy 20 signs used on the route map,
-  // and the road-stripe segment reads as paving DNA at a glance.
-  // Clean, scales well at 32-36px in the nav, and reads instantly as
-  // a brand mark rather than "another circle icon."
-  const unique = flat ? "flat" : "lit";
-  // Slightly wider than tall — same proportions as a US highway shield.
+  // Real JPEG brand logo — circular badge with PP monogram, arc text
+  // "PENINSULA PAVING & EXCAVATING / EST. 1985 · SEQUIM, WA", and a
+  // horizontal yellow road-stripe slashing through the monogram.
+  // Logo file: /public/clients/peninsula-paving/logo.jpeg
   return (
-    <svg
+    <img
+      src={LOGO_SRC}
       width={size}
-      height={size * (48 / 56)}
-      viewBox="0 0 56 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        {!flat && (
-          <radialGradient id={`pp-mark-glow-${unique}`} cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stopColor="#fb923c" stopOpacity="0.45" />
-            <stop offset="60%" stopColor="#ea580c" stopOpacity="0.14" />
-            <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
-          </radialGradient>
-        )}
-        <linearGradient id={`pp-mark-shield-${unique}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#fef3c7" />
-        </linearGradient>
-      </defs>
-
-      {!flat && (
-        <ellipse cx="28" cy="24" rx="28" ry="22" fill={`url(#pp-mark-glow-${unique})`} />
-      )}
-
-      {/* Shield — US-highway-style: flat top, curved bottom that
-          tapers to a point at the centre. The shape signals "road
-          sign" without any explanatory ink. */}
-      <path
-        d="
-          M 6,6
-          L 50,6
-          L 50,20
-          Q 50,38 28,44
-          Q 6,38 6,20
-          Z
-        "
-        fill={`url(#pp-mark-shield-${unique})`}
-        stroke="#ea580c"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-
-      {/* Inner stroke for that stamped-metal road-sign feel */}
-      <path
-        d="
-          M 9.5,9
-          L 46.5,9
-          L 46.5,20
-          Q 46.5,35.5 28,40.8
-          Q 9.5,35.5 9.5,20
-          Z
-        "
-        fill="none"
-        stroke="#ea580c"
-        strokeOpacity="0.35"
-        strokeWidth="0.8"
-        strokeLinejoin="round"
-      />
-
-      {/* PP monogram, centered. Heavy Space Grotesk @ 22 with negative
-          letter-spacing so the two P's read as a single sculpted form. */}
-      <text
-        x="28"
-        y="29"
-        textAnchor="middle"
-        fontFamily="'Space Grotesk', sans-serif"
-        fontWeight="800"
-        fontSize="20"
-        letterSpacing="-1.2"
-        fill="#c2410c"
-      >
-        PP
-      </text>
-
-      {/* Yellow road-stripe accent — 3 short dashes along the bottom
-          of the shield, like a road centerline running across the
-          badge. The visual hook that says "we pave roads." */}
-      <rect x="14" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
-      <rect x="25" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
-      <rect x="36" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
-    </svg>
+      height={size}
+      alt={flat ? "" : "Peninsula Paving & Excavating"}
+      aria-hidden={flat ? true : undefined}
+      className="block rounded-full"
+      style={{
+        objectFit: "contain",
+        // Slight ring shadow so the logo's cream background blends into
+        // the nav's warm-white bg cleanly when shown inline.
+        boxShadow: flat
+          ? "none"
+          : "0 1px 2px rgba(28, 20, 16, 0.08), 0 0 0 1px rgba(234, 88, 12, 0.12)",
+      }}
+    />
   );
 }
 

@@ -59,11 +59,20 @@ export const metadata: Metadata = {
     siteName: "Peninsula Paving & Excavating",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: `${SITE_URL}/clients/peninsula-paving/logo.jpeg`,
+        width: 1024,
+        height: 1024,
+        alt: "Peninsula Paving & Excavating — circular PP monogram badge, Est. 1985, Sequim WA",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    images: [`${SITE_URL}/clients/peninsula-paving/logo.jpeg`],
   },
 };
 
@@ -88,6 +97,8 @@ const peninsulaSchema = {
   description:
     "Family-owned asphalt paving + excavation contractor serving the Olympic Peninsula since 1985. Driveways, parking lots, roads, seal coating, line striping, grading, demolition.",
   url: PAGE_URL,
+  image: `${SITE_URL}/clients/peninsula-paving/logo.jpeg`,
+  logo: `${SITE_URL}/clients/peninsula-paving/logo.jpeg`,
   telephone: "+1-360-477-7015",
   priceRange: "$$",
   foundingDate: "1985",
