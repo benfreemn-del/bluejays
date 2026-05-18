@@ -27,8 +27,12 @@ const PHONE_HREF = "tel:+13604777015";
 const ACCENT = "#ea580c";
 
 function PavingMark({ size = 36, flat = false }: { size?: number; flat?: boolean }) {
-  // Stylized asphalt-roller mark — circle "drum" with horizontal
-  // motion lines representing fresh paving. Copper on dark.
+  // Bespoke paving mark — a perspective road (top-down view of asphalt
+  // receding into the distance) with center stripes + copper edge
+  // highlights. Tells the brand story in one glance, distinct from any
+  // generic trade-business circle-icon. The whole point of Peninsula
+  // Paving is roads, so the logo IS a road.
+  const unique = flat ? "flat" : "lit";
   return (
     <svg
       width={size}
@@ -38,32 +42,91 @@ function PavingMark({ size = 36, flat = false }: { size?: number; flat?: boolean
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {!flat && (
-        <defs>
-          <radialGradient id="pp-mark-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fb923c" stopOpacity="0.4" />
+      <defs>
+        {!flat && (
+          <radialGradient id={`pp-mark-glow-${unique}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fb923c" stopOpacity="0.5" />
+            <stop offset="60%" stopColor="#ea580c" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
           </radialGradient>
-        </defs>
+        )}
+        <linearGradient id={`pp-mark-asphalt-${unique}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1c1917" />
+          <stop offset="100%" stopColor="#0c0908" />
+        </linearGradient>
+      </defs>
+
+      {!flat && (
+        <circle cx="24" cy="24" r="22" fill={`url(#pp-mark-glow-${unique})`} />
       )}
-      {!flat && <circle cx="24" cy="24" r="22" fill="url(#pp-mark-glow)" />}
-      {/* Roller drum */}
-      <circle
-        cx="24"
-        cy="20"
-        r="11"
+
+      {/* Asphalt road — perspective trapezoid. Narrow top (vanishing
+          point at the top of the badge), wide bottom (foreground). */}
+      <path
+        d="M 18,7 L 30,7 L 42,41 L 6,41 Z"
+        fill={`url(#pp-mark-asphalt-${unique})`}
         stroke={ACCENT}
-        strokeWidth="2.5"
-        fill="none"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
       />
-      {/* Drum inner ring */}
-      <circle cx="24" cy="20" r="5" stroke={ACCENT} strokeWidth="1.5" fill="none" />
-      {/* Center dot */}
-      <circle cx="24" cy="20" r="1.5" fill={ACCENT} />
-      {/* Fresh asphalt lines below */}
-      <rect x="6" y="35" width="36" height="2" rx="1" fill={ACCENT} opacity="0.9" />
-      <rect x="10" y="40" width="28" height="1.5" rx="0.75" fill={ACCENT} opacity="0.55" />
-      <rect x="14" y="44" width="20" height="1.2" rx="0.6" fill={ACCENT} opacity="0.3" />
+
+      {/* Copper edge highlight strips — paint inside the road edges,
+          parallel to the asphalt sides. Reads as the warm sunset light
+          catching the curb. */}
+      <path
+        d="M 19,10 L 10,38"
+        stroke="#fb923c"
+        strokeWidth="0.9"
+        strokeLinecap="round"
+        opacity="0.85"
+      />
+      <path
+        d="M 29,10 L 38,38"
+        stroke="#fb923c"
+        strokeWidth="0.9"
+        strokeLinecap="round"
+        opacity="0.85"
+      />
+
+      {/* Center-line stripes — three white dashes, tapered for
+          perspective so the eye reads "road receding into distance".
+          Widths: 2 → 3.5 → 5 from far to near. */}
+      <rect
+        x="22.75"
+        y="11.5"
+        width="2.5"
+        height="3"
+        rx="0.3"
+        fill="#f8fafc"
+        opacity="0.95"
+      />
+      <rect
+        x="22.2"
+        y="18.5"
+        width="3.6"
+        height="4"
+        rx="0.4"
+        fill="#f8fafc"
+        opacity="0.95"
+      />
+      <rect
+        x="21.4"
+        y="27"
+        width="5.2"
+        height="5"
+        rx="0.5"
+        fill="#f8fafc"
+        opacity="0.95"
+      />
+      <rect
+        x="20.4"
+        y="35.5"
+        width="7.2"
+        height="4.5"
+        rx="0.6"
+        fill="#f8fafc"
+        opacity="0.92"
+      />
     </svg>
   );
 }

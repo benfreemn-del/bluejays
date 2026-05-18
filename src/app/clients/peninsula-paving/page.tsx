@@ -592,44 +592,67 @@ function OlympicHeroIllustration() {
         })}
       </g>
 
-      {/* Asphalt — freshly-paved driveway curving to vanishing point */}
+      {/* Asphalt — freshly-paved driveway, perspective trapezoid.
+          Wide foreground (200 → 700 at y=600), narrow vanishing point
+          centered at (400, 400) where it meets the mountain foothills.
+          Centerline runs straight up the middle at x=400, so the
+          center stripes below sit ON the road (not floating off it). */}
       <path
-        d="M0,600 L0,540 Q150,490 350,460 Q480,442 500,400 L530,400 Q510,455 380,500 Q220,540 80,600 Z"
+        d="M 200,600 L 700,600 L 430,400 L 370,400 Z"
         fill="url(#pp-asphalt)"
       />
-      {/* Glossy fresh-asphalt highlight */}
+
+      {/* Glossy wet-asphalt highlight — narrower trapezoid inset on the
+          left half, reads as sunset reflecting off the surface. */}
       <path
-        d="M0,560 Q200,510 380,478 Q480,460 500,420 L495,418 Q470,455 350,495 Q190,535 0,580 Z"
+        d="M 220,600 L 480,600 L 410,420 L 380,420 Z"
         fill="#1c1917"
-        opacity="0.6"
+        opacity="0.55"
       />
 
-      {/* Center line stripe — bright copper, perspective-tapered */}
-      <g fill={ACCENT}>
-        <polygon points="245,600 255,600 320,540 314,540" opacity="0.95" />
-        <polygon points="340,520 348,520 388,485 383,485" opacity="0.85" />
-        <polygon points="400,475 406,475 432,450 428,450" opacity="0.75" />
-        <polygon points="438,445 442,445 458,425 455,425" opacity="0.6" />
-        <polygon points="463,422 466,422 476,408 474,408" opacity="0.45" />
-      </g>
-
-      {/* Edge stripes (left + right) — white */}
-      <g fill="#f8fafc" opacity="0.7">
-        <path
-          d="M0,600 L0,584 Q150,540 340,510 L340,514 Q150,544 0,588 Z"
-          opacity="0.6"
-        />
-        <path
-          d="M495,420 Q470,460 360,498 L362,502 Q472,464 500,422 Z"
-          opacity="0.4"
-        />
-      </g>
-
-      {/* Subtle warm light kiss on the asphalt edge */}
+      {/* Warm sunset glow on the right edge of the road */}
       <path
-        d="M0,540 Q150,490 350,460 Q480,442 500,400 L502,400 Q480,445 350,464 Q150,494 0,544 Z"
+        d="M 700,600 L 660,600 L 415,410 L 430,400 Z"
         fill={ACCENT}
-        opacity="0.15"
+        opacity="0.16"
+      />
+
+      {/* Center line dashed stripes — bright white, perspective-tapered.
+          Centerline of road is at x=400 (geometric center of trapezoid),
+          stripes get narrower toward the vanishing point. */}
+      <g fill="#f8fafc">
+        {/* Stripe 1 — foreground (closest, biggest) */}
+        <polygon points="386,600 414,600 408,560 392,560" opacity="0.95" />
+        {/* Stripe 2 */}
+        <polygon points="393,540 407,540 405,500 395,500" opacity="0.9" />
+        {/* Stripe 3 */}
+        <polygon points="396,480 404,480 403,450 397,450" opacity="0.85" />
+        {/* Stripe 4 */}
+        <polygon points="397.5,440 402.5,440 402,420 398,420" opacity="0.7" />
+        {/* Stripe 5 (vanishing) */}
+        <polygon points="398.5,415 401.5,415 401.2,405 398.8,405" opacity="0.5" />
+      </g>
+
+      {/* Solid white edge stripes — parallel to the road sides */}
+      <g fill="#f8fafc">
+        {/* Left edge stripe */}
+        <polygon
+          points="200,600 215,600 378,400 372,400"
+          opacity="0.85"
+        />
+        {/* Right edge stripe */}
+        <polygon
+          points="685,600 700,600 428,400 422,400"
+          opacity="0.85"
+        />
+      </g>
+
+      {/* Subtle copper sunset wash on the asphalt — reads as PNW
+          golden-hour light kissing the road surface. */}
+      <path
+        d="M 200,600 L 700,600 L 430,400 L 370,400 Z"
+        fill={ACCENT}
+        opacity="0.06"
       />
     </svg>
   );
