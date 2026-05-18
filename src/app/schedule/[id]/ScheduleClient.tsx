@@ -254,45 +254,65 @@ export default function ScheduleClient({
             </div>
 
             {/* Day grid */}
-            <div className="grid grid-cols-7 gap-y-1">
-              {/* Empty cells before first day */}
-              {Array.from({ length: firstDayOfWeek }).map((_, i) => (
-                <div key={`empty-${i}`} />
-              ))}
-
-              {/* Days */}
-              {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
-                const dateStr = toDateStr(viewYear, viewMonth, day);
-                const isToday = dateStr === todayStr;
-                const isAvailable = availableDays.has(dateStr);
-                const isPast = dateStr < todayStr;
-
-                return (
-                  <button
+            {/* While the availability API loads (~2-3s on cold prospects),
+             *  render skeleton-pulse circles instead of fully-disabled
+             *  day buttons. Previous UX was: every day rendered grayed-
+             *  out with a tiny "Loading availability..." text below,
+             *  which prospects misread as "this calendar is broken / no
+             *  dates available" and bounced. Skeleton-pulse is the
+             *  industry-standard "data inflight" affordance.
+             */}
+            {loadingDays ? (
+              <div className="grid grid-cols-7 gap-y-1" aria-label="Loading availability">
+                {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                  <div key={`empty-${i}`} />
+                ))}
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
+                  <div
                     key={day}
-                    onClick={() => isAvailable && !isPast && selectDate(dateStr)}
-                    disabled={!isAvailable || isPast || loadingDays}
-                    className={[
-                      "relative flex items-center justify-center h-9 w-full rounded-full text-sm font-medium transition-all",
-                      isAvailable && !isPast
-                        ? "hover:opacity-90 cursor-pointer text-white"
-                        : "text-gray-300 cursor-not-allowed",
-                      isToday && !isAvailable ? "ring-2 ring-inset ring-gray-300 text-gray-500" : "",
-                    ].join(" ")}
-                    style={
-                      isAvailable && !isPast
-                        ? { background: accentColor }
-                        : undefined
-                    }
+                    className="h-9 w-full flex items-center justify-center"
                   >
-                    {day}
-                  </button>
-                );
-              })}
-            </div>
+                    <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-7 gap-y-1">
+                {/* Empty cells before first day */}
+                {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                  <div key={`empty-${i}`} />
+                ))}
 
-            {loadingDays && (
-              <p className="text-center text-xs text-gray-400 mt-3">Loading availability...</p>
+                {/* Days */}
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+                  const dateStr = toDateStr(viewYear, viewMonth, day);
+                  const isToday = dateStr === todayStr;
+                  const isAvailable = availableDays.has(dateStr);
+                  const isPast = dateStr < todayStr;
+
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => isAvailable && !isPast && selectDate(dateStr)}
+                      disabled={!isAvailable || isPast}
+                      className={[
+                        "relative flex items-center justify-center h-9 w-full rounded-full text-sm font-medium transition-all",
+                        isAvailable && !isPast
+                          ? "hover:opacity-90 cursor-pointer text-white"
+                          : "text-gray-300 cursor-not-allowed",
+                        isToday && !isAvailable ? "ring-2 ring-inset ring-gray-300 text-gray-500" : "",
+                      ].join(" ")}
+                      style={
+                        isAvailable && !isPast
+                          ? { background: accentColor }
+                          : undefined
+                      }
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
+              </div>
             )}
 
             {!loadingDays && availableDays.size === 0 && !isPastMonth && (
