@@ -278,20 +278,15 @@ Per AIOS pattern, the Phase 2 + 3 work crystallizes into a reusable skill at `ai
 
 This is the skill BlueJays Pro tier-3 clients will eventually inherit. Build it for BlueJays internal first → productize for Pro tier later. Captured note appended to `aios/PRO_SYNTHESIS.md` once Phase 1 ships.
 
-## 6. Decisions Ben needs to make before I kick off Phase 1
+## 6. Ben's decisions — LOCKED 2026-05-18
 
-Five decisions, each tight:
+All 5 decisions confirmed. Phase 1 spec is execute-only.
 
-1. **Approve the `kind` enum** (touch types): `call / voicemail / text / email / dm / in_person / note`. Add or remove any?
-2. **Approve the `outcome` enum**: `connected / no_answer / left_voicemail / declined / replied / no_reply / sent / received / meeting_booked / meeting_held / meeting_no_show`. Add or remove any?
-3. **Voice memo capture** — should Phase 1 include the Whisper-transcribe-voice-memo button? Adds ~30 min build + needs $OPENAI_API_KEY (already set). Big mobile UX win. Recommend YES.
-4. **Backfill from admin_notes** — worth 20 min build? Recommend YES — recovers historical context for the 75 inbound leads so the timeline isn't blank on day 1.
-5. **Phase 2 priority order** — after Phase 1 ships, which Phase 2 piece first?
-   - (a) AI-drafted next-touch suggestion (highest brain-budget win)
-   - (b) Auto-fire damaging admission (highest qualification win)
-   - (c) 5-step outreach sequences (highest consistency win)
-   - (d) Loss-reason forcing function (highest data win)
-   - (e) Workflow auto-routing (highest Madie-Ben coordination win)
+1. **`kind` enum:** ✅ Approved as-is — `call / voicemail / text / email / dm / in_person / note`
+2. **`outcome` enum:** ✅ Approved as-is — `connected / no_answer / left_voicemail / declined / replied / no_reply / sent / received / meeting_booked / meeting_held / meeting_no_show`
+3. **Voice memo (Whisper) in Phase 1:** ✅ YES — biggest mobile UX win, removes the #1 friction (typing after calls)
+4. **Backfill from `admin_notes`:** ✅ YES — parse `[Date call]` entries, seed touches table so the 75 inbound leads have at-least-partial history on day 1
+5. **Phase 2 first piece:** ✅ AI-drafted next-touch suggestion — Claude reads history, drafts next text/email, operator taps Send-as-me. 3x brain budget. Lands ~7 days post-Phase-1.
 
 ## 7. Why this is the right move now (Hormozi case in 4 lines)
 
