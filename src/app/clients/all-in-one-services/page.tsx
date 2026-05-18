@@ -545,7 +545,7 @@ export default function AllInOneServicesPage() {
                 </div>
 
                 <h1
-                  className="font-bold tracking-tight leading-[0.95] mb-6"
+                  className="font-bold tracking-tight leading-[0.95] mb-6 uppercase"
                   style={{
                     fontFamily: FONT_HEAD,
                     fontSize: "clamp(44px, 7vw, 84px)",
