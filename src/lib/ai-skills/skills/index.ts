@@ -19,6 +19,7 @@ import { echoSkill } from "./echo";
 import { briefSkill } from "./brief";
 import { qualifySkill } from "./qualify";
 import { triageSkill } from "./triage";
+import { draftTouchSkill } from "./draft-touch";
 import type { Skill } from "../types";
 
 export const SKILL_REGISTRY: Record<string, Skill> = {
@@ -26,6 +27,7 @@ export const SKILL_REGISTRY: Record<string, Skill> = {
   brief: briefSkill,
   qualify: qualifySkill,
   triage: triageSkill,
+  "draft-touch": draftTouchSkill,
 };
 
 export function listSkillNames(): string[] {

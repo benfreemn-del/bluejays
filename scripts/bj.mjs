@@ -59,6 +59,17 @@
  *       4 hooks) ready to paste into Meta Ads Manager. Each URL
  *       includes the correct utm_audience + utm_content tags.
  *
+ *   bj outbox list [--limit N]
+ *       List pending bj ai draft-touch drafts waiting for approval.
+ *       One row per draft: short_code, age, business, subject preview.
+ *
+ *   bj outbox approve <short_code>
+ *       Approve + send a pending draft. Same code path as the
+ *       dashboard one-tap button + SMS reply "YES <code>".
+ *
+ *   bj outbox reject <short_code>
+ *       Reject a pending draft. Terminal — can't be un-rejected.
+ *
  * Output convention: short, human-readable, one row per line. No JSON
  * dumps unless --json is passed. Default stays under ~500 chars per
  * invocation so the agent context stays clean.
@@ -317,6 +328,62 @@ const commands = {
       "Then: submit for review. Meta takes 24-48hr to approve.",
       "Day-by-day post-launch playbook lives in the doc (Days 1-7).",
     ].join("\n");
+  },
+
+  // ── Outbox subcommands ─────────────────────────────────────────
+  // bj ai Day-4 outbox helpers. Hit the public bj-style endpoints
+  // (admin-gated via /api/outbox/ in middleware). ADMIN_TOKEN is the
+  // cookie-equivalent for CLI access — the dashboard route uses the
+  // session cookie set by /api/auth/login.
+
+  async "outbox:list"(args) {
+    const limit = args["--limit"] || "20";
+    // Use the Supabase REST helper since the dashboard doesn't expose
+    // a list endpoint — direct read is faster + tighter.
+    const rows = await sb(
+      `outbox?select=short_code,prospect_id,channel,subject,body,status,created_at&status=eq.pending&order=created_at.desc&limit=${limit}`,
+    );
+    if (rows.length === 0) return "no pending drafts";
+    return rows
+      .map((r) => {
+        const age = Math.floor(
+          (Date.now() - new Date(r.created_at).getTime()) / 60_000,
+        );
+        const ageStr = age < 60 ? `${age}m` : `${Math.floor(age / 60)}h`;
+        const subj = (r.subject || "").slice(0, 40);
+        return `${r.short_code} · ${ageStr.padStart(4)} · ${r.channel.padEnd(5)} · ${subj}`;
+      })
+      .join("\n");
+  },
+
+  async "outbox:approve"(_args, positional) {
+    const [code] = positional;
+    if (!code) return "usage: bj outbox approve <short_code>";
+    const r = await fetch(
+      `${BASE_URL}/api/outbox/${encodeURIComponent(code)}/approve`,
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${ADMIN_TOKEN}` },
+      },
+    );
+    const j = await r.json();
+    if (j.ok) return `✓ sent ${code} · ${j.row?.sent_via || "ok"}`;
+    return `✗ ${j.error || `HTTP ${r.status}`}`;
+  },
+
+  async "outbox:reject"(_args, positional) {
+    const [code] = positional;
+    if (!code) return "usage: bj outbox reject <short_code>";
+    const r = await fetch(
+      `${BASE_URL}/api/outbox/${encodeURIComponent(code)}/reject`,
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${ADMIN_TOKEN}` },
+      },
+    );
+    const j = await r.json();
+    if (j.ok) return `✓ rejected ${code}`;
+    return `✗ ${j.error || `HTTP ${r.status}`}`;
   },
 
   /**
@@ -590,6 +657,9 @@ async function main() {
   bj ai <skill> [--arg value]... [--json]
   bj ads checklist
   bj ads urls
+  bj outbox list [--limit N]
+  bj outbox approve <short_code>
+  bj outbox reject <short_code>
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
@@ -600,7 +670,7 @@ Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
   // the skill folders are themselves an enumeration — adding "ai" to
   // groups would force "bj ai:echo" which is uglier and harder to
   // type than "bj ai echo".
-  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social", "ads"];
+  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social", "ads", "outbox"];
   let key, rest;
   if (groups.includes(argv[0])) {
     key = `${argv[0]}:${argv[1]}`;

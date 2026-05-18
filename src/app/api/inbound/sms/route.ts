@@ -50,13 +50,60 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Inbound SMS] Received from ${fromPhone}: "${body.substring(0, 80)}"`);
 
-    // Social-lead capture — runs FIRST and is gated to Ben's phone.
-    // When Ben texts a Facebook/X/LinkedIn URL (or pastes post text)
-    // from his own phone, we classify the post + draft a personalized
-    // opener and SMS it back to him. Same Twilio number; different
-    // intent path.
+    // Owner-phone routes — these all gate on `isFromOwner`. Order:
+    //   1. Outbox approval (YES/NO <short_code>) — bj ai Day-4
+    //   2. Social-lead capture (URL or pasted post text)
+    // Anything else from owner falls through to the prospect-lookup
+    // path below.
     const ownerPhone = (process.env.OWNER_PHONE_NUMBER || "").trim();
     const isFromOwner = ownerPhone && fromPhone === ownerPhone;
+
+    if (isFromOwner) {
+      // 1. Outbox approval / rejection — "YES <code>" or "NO <code>"
+      // (case-insensitive, whitespace-tolerant). Short codes are
+      // 8-char lowercase alphanumeric per src/lib/outbox.ts.
+      const outboxMatch = body
+        .trim()
+        .toLowerCase()
+        .match(/^(yes|no|y|n)\s+([a-z0-9]{8})\b/);
+      if (outboxMatch) {
+        const verb = outboxMatch[1].startsWith("y") ? "approve" : "reject";
+        const code = outboxMatch[2];
+        try {
+          if (verb === "approve") {
+            const { approveOutboxDraft } = await import("@/lib/outbox");
+            const result = await approveOutboxDraft(code, "sms");
+            if (!result) {
+              return twimlResponse(`✗ no draft with code ${code}`);
+            }
+            if (result.status === "not_pending") {
+              return twimlResponse(
+                `· draft ${code} already ${result.row.status}`,
+              );
+            }
+            if (!result.ok) {
+              return twimlResponse(
+                `✗ send failed: ${result.error.slice(0, 120)}`,
+              );
+            }
+            return twimlResponse(`✓ sent ${code} via ${result.row.sent_via}`);
+          } else {
+            const { rejectOutboxDraft } = await import("@/lib/outbox");
+            const row = await rejectOutboxDraft(code);
+            if (!row) return twimlResponse(`✗ no draft with code ${code}`);
+            return twimlResponse(`✓ rejected ${code}`);
+          }
+        } catch (err) {
+          console.error("[Inbound SMS] outbox approval failed:", err);
+          return twimlResponse(`✗ outbox error — check Vercel logs`);
+        }
+      }
+    }
+
+    // Social-lead capture — gated to Ben's phone. When Ben texts a
+    // Facebook/X/LinkedIn URL (or pastes post text) from his own
+    // phone, we classify the post + draft a personalized opener and
+    // SMS it back to him. Same Twilio number; different intent path.
     if (isFromOwner && looksLikeSocialCapture(body)) {
       console.log(`[Inbound SMS] Routing to social-lead capture (from owner)`);
       try {

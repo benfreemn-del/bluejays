@@ -135,6 +135,7 @@ const PROTECTED_PATHS = [
   "/api/warming",
   "/api/postcards",
   "/api/domains",
+  "/api/outbox",          // bj ai Day-4 outbox approval endpoints — admin-only
   "/funnel-tracker",
 ];
 
@@ -213,6 +214,8 @@ const PUBLIC_API_PATHS = [
   "/api/oauth/cal_com/callback",                   // OAuth callback (Cal.com) — reserved (Cal.com uses API key, not OAuth)
   "/api/cut-my-agency/submit",                     // Public Hormozi calculator funnel submit (Action 2 of 2026-05-05 $10k validation play)
   "/api/sell-direct/submit",                       // Public Hormozi calculator funnel submit — manufacturer DTC angle (Action 3 of 2026-05-05 $10k validation play)
+  "/api/v1/clients/",                              // Public client-facing API (bearer-token auth in the route handler — middleware just passes through)
+  "/api/clients/bloodlines/reader-capture",        // Public reader email-capture on the Bloodlines bespoke showcase (anonymous readers — Series-LTV Reader Funnel)
 ];
 
 /**
