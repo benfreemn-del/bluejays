@@ -37,22 +37,30 @@ scripts/onboarding/
 2. Add the Stripe Payment Link env vars to Vercel + `.env.local`
    matching the `envVar` strings in the config (e.g.
    `STRIPE_PAYMENT_LINK_<SLUG_UPPER>_FULL`).
-3. Until `generate-client-pdfs.py` lands:
-   - Copy `generate-zenith-onboarding-pdfs.py` to
-     `generate-<slug>-onboarding-pdfs.py`.
-   - Hand-replace every Zenith-specific block with values from the
-     new client config (search for `ZENITH`, `Tekky`, `Paul`,
-     `Caleb`, `#84cc16`, `#0a0f1e`).
-   - Run from repo root: `python scripts/generate-<slug>-onboarding-pdfs.py`.
-   - PDFs land at `public/clients/<slug>/pdfs/`.
+3. Run the generic generator:
+   ```
+   python scripts/onboarding/generate-client-pdfs.py --client <slug>
+   ```
+   - Dependencies: `pip install reportlab` (one-time per environment).
+   - PDFs land at `public/clients/<slug>/pdfs/<slug>-{handoff,brand-voice,sla,value-proof}.pdf`.
+   - Same flow ships any new AI System client in 30 seconds.
 
-This is the same flow Tekky shipped on. ITC will run the same way
-the day Jake signs — the config in `clients/itc-quick-attach.json`
-is the pre-built source of truth.
+The generic generator covers the four standard PDFs at portable
+polish. For a client who needs Tekky-level visual polish, copy
+`generate-zenith-onboarding-pdfs.py` to a per-client script and
+hand-tune from there — the generic generator handles every default
+case; the per-client script is the escape hatch.
 
-## Migration plan (when there's bandwidth)
+ITC will run the same way the day Jake signs — the config in
+`clients/itc-quick-attach.json` is the pre-built source of truth.
 
-Refactor `generate-zenith-onboarding-pdfs.py` into a generic generator:
+## Future polish (when there's bandwidth)
+
+The generic generator covers the four standard PDFs at portable
+polish. If we want the generic output to match Tekky's exact visual
+fidelity (logo embed, custom illustrations, animated frames, more
+elaborate tables), refactor `generate-zenith-onboarding-pdfs.py` into
+the generic generator's builder functions:
 
 1. Extract the ReportLab helpers (`make_styles`, `FillLine`, header /
    footer page templates, table builders) into a shared module at

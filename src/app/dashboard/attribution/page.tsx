@@ -1,10 +1,26 @@
 import Link from "next/link";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import {
+  UNIVERSAL_CLOSE_LADDER,
+  getCloseStageAt,
+  type CloseStage,
+} from "@/lib/bluejays-funnels";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const WINDOW_DAYS = 90;
+
+const CLOSE_STAGE_ORDER: Record<CloseStage, number> = {
+  "stack-slide": 1,
+  "mock-backend": 2,
+  "card-on-hand": 3,
+  "payment-link": 4,
+};
+
+const CLOSE_STAGE_LABEL: Record<CloseStage, string> = Object.fromEntries(
+  UNIVERSAL_CLOSE_LADDER.map((p) => [p.stage, p.label]),
+) as Record<CloseStage, string>;
 
 interface RowAgg {
   source: string;
@@ -13,6 +29,8 @@ interface RowAgg {
   booked: number;
   paid: number;
   revenueUsd: number;
+  furthestStage: CloseStage | null;
+  prospectsAtLadder: number;
 }
 
 type ProspectRow = {
@@ -90,6 +108,8 @@ async function loadAttribution(): Promise<{
         booked: 0,
         paid: 0,
         revenueUsd: 0,
+        furthestStage: null,
+        prospectsAtLadder: 0,
       };
       buckets.set(source, agg);
     }
@@ -99,6 +119,16 @@ async function loadAttribution(): Promise<{
     if (p.status === "paid" || p.paid_at) {
       agg.paid += 1;
       agg.revenueUsd += centsToUsd(p.amount_paid_cents) || inferRevenue(p);
+    }
+    const stage = inferProspectCloseStage(p);
+    if (stage) {
+      agg.prospectsAtLadder += 1;
+      if (
+        !agg.furthestStage ||
+        CLOSE_STAGE_ORDER[stage] > CLOSE_STAGE_ORDER[agg.furthestStage]
+      ) {
+        agg.furthestStage = stage;
+      }
     }
   }
 
@@ -114,6 +144,27 @@ async function loadAttribution(): Promise<{
     windowStart,
     configured: true,
   };
+}
+
+function segmentFromSource(sc: string | null): "inbound-audit" | "cold-scouted" | "mfg-lookalike" | null {
+  if (!sc) return null;
+  const s = sc.toLowerCase();
+  if (s.includes("audit-inbound") || s.includes("inbound")) return "inbound-audit";
+  if (s.includes("mfg") || s.includes("dream")) return "mfg-lookalike";
+  if (s.includes("scout") || s.includes("cold") || s.includes("apollo")) return "cold-scouted";
+  return null;
+}
+
+function inferProspectCloseStage(p: ProspectRow): CloseStage | null {
+  const segment = segmentFromSource(p.source_channel);
+  if (!segment) return null;
+  const startMs = new Date(p.created_at).getTime();
+  if (isNaN(startMs)) return null;
+  const endMs = p.paid_at
+    ? new Date(p.paid_at).getTime()
+    : Date.now();
+  const day = Math.max(0, Math.floor((endMs - startMs) / 86_400_000));
+  return getCloseStageAt(segment, day);
 }
 
 function canonicalSource(p: ProspectRow): string {
@@ -231,6 +282,7 @@ export default async function AttributionDashboardPage() {
                       <th className="px-3 py-3 text-right">Booked</th>
                       <th className="px-3 py-3 text-right">Paid</th>
                       <th className="px-3 py-3 text-right">Close %</th>
+                      <th className="px-3 py-3 text-left">Furthest stage</th>
                       <th className="px-4 py-3 text-right">Revenue</th>
                     </tr>
                   </thead>
@@ -262,6 +314,21 @@ export default async function AttributionDashboardPage() {
                         <td className="px-3 py-3 text-right text-xs text-slate-400">
                           {pct(r.paid, r.prospects)}
                         </td>
+                        <td className="px-3 py-3 text-left">
+                          {r.furthestStage ? (
+                            <span
+                              className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300"
+                              title={`${r.prospectsAtLadder} prospect(s) at the ladder`}
+                            >
+                              {CLOSE_STAGE_LABEL[r.furthestStage]}
+                              <span className="text-violet-500/70 tabular-nums">
+                                · {r.prospectsAtLadder}
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-slate-600">—</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-right tabular-nums text-emerald-400 font-semibold">
                           ${r.revenueUsd.toLocaleString()}
                         </td>
@@ -280,7 +347,13 @@ export default async function AttributionDashboardPage() {
               Revenue uses <code className="text-slate-400">amount_paid_cents</code>{" "}
               when set, otherwise infers from <code className="text-slate-400">pricing_tier</code>{" "}
               (fullsystem=$9,700 · standard=$997 · free=$30 · custom=$100/yr).
-              Close rate is paid / prospects.
+              Close rate is paid / prospects. <b>Furthest stage</b> uses the
+              UNIVERSAL_CLOSE_LADDER seam from <code className="text-slate-400">bluejays-funnels.ts</code>{" "}
+              — maps each prospect's source_channel to a segment, computes day
+              count from created_at→paid_at (or now), then returns the latest
+              ladder phase reached (stack-slide · mock-backend · card-on-hand ·
+              payment-link). The trailing number is how many prospects in that
+              source bucket reached the ladder.
             </p>
           </>
         )}
