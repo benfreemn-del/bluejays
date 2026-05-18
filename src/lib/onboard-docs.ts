@@ -153,11 +153,15 @@ const REGISTRY: OnboardDoc[] = [
         placeholder: "Shopify: ~120 past buyers · newsletter: ~400 parents",
       },
       {
-        id: "card_on_file",
+        id: "vendor_card_setup",
         label:
-          "Card on file for future quarterly installments + managed services (Twilio, ad spend). Q1 is already paid — this is for what comes after.",
-        placeholder: "Use my Q1 card · send me the Stripe link · will get later",
-        presets: ["Use the same card I paid Q1 with", "Will get later"],
+          "Third-party vendor accounts (Twilio · Meta ad spend · Google Ads · SendGrid paid tiers) each need their own card entered directly into the vendor — Stripe's PCI rules don't let me re-use the Q1 card for those. Q2-Q4 Stripe installments auto-charge the Q1 card; this question is just about the vendor side. How do you want to handle it?",
+        placeholder: "screenshare during setup · send me the URLs · will get later",
+        presets: [
+          "Screenshare with me when you set them up",
+          "Send the URLs, I'll enter myself",
+          "Will get later",
+        ],
       },
     ],
     paymentLinks: [
