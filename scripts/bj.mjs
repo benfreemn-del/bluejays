@@ -70,6 +70,13 @@
  *   bj outbox reject <short_code>
  *       Reject a pending draft. Terminal — can't be un-rejected.
  *
+ *   bj meta status
+ *       Verify the Meta Marketing API connection end-to-end:
+ *       env vars set → token valid → ad account reachable →
+ *       last-7d insights pull → pixel resolves. One-line summary
+ *       per check. Use after rotating the system user token or
+ *       any META_ADS_* env var change.
+ *
  * Output convention: short, human-readable, one row per line. No JSON
  * dumps unless --json is passed. Default stays under ~500 chars per
  * invocation so the agent context stays clean.
@@ -328,6 +335,78 @@ const commands = {
       "Then: submit for review. Meta takes 24-48hr to approve.",
       "Day-by-day post-launch playbook lives in the doc (Days 1-7).",
     ].join("\n");
+  },
+
+  // ── Meta verification ──────────────────────────────────────────
+  // bj meta status — calls /api/meta/status which hits Graph API
+  // with the server-side META_ADS_* env vars. Use after a deploy or
+  // env-var change to confirm Ben's ads account is actually reachable.
+
+  async "meta:status"() {
+    if (!ADMIN_TOKEN) return "error: ADMIN_PASSWORD not set in .env.local";
+    const r = await fetch(`${BASE_URL}/api/meta/status`, {
+      headers: { authorization: `Bearer ${ADMIN_TOKEN}` },
+    });
+    const j = await r.json();
+    if (j.stage === "env_check") {
+      return [
+        `✗ env vars missing (Vercel → Settings → Environment Variables):`,
+        ...j.missing.map((m) => `   · ${m}`),
+        ``,
+        `Hint: ${j.hint}`,
+      ].join("\n");
+    }
+    if (j.stage === "token_check") {
+      return [
+        `✗ system user token rejected by Meta Graph API`,
+        `   ${j.error}`,
+        j.code ? `   code: ${j.code}` : "",
+        ``,
+        `If code=190: token expired — regenerate in Business Manager → System Users`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+    }
+    if (j.stage === "account_check") {
+      return [
+        `✗ ad account not reachable`,
+        `   ${j.error}`,
+        j.code ? `   code: ${j.code}` : "",
+        j.hint ? `` : "",
+        j.hint || "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+    }
+    if (!j.ok) {
+      return `✗ ${j.error || `unknown error (stage: ${j.stage})`}`;
+    }
+    // Success — pretty-print the verification report
+    const lines = [];
+    lines.push(`✓ Meta Marketing API · v${j.apiVersion}`);
+    lines.push("");
+    lines.push(`  System user: ${j.systemUser.name} (${j.systemUser.id})`);
+    lines.push(
+      `  Ad account:  ${j.adAccount.id} · ${j.adAccount.name} (${j.adAccount.currency}, ${j.adAccount.timezone})`,
+    );
+    if (j.insightsLast7d) {
+      const s = j.insightsLast7d;
+      if (s.note) {
+        lines.push(`  Last 7d:     ${s.note}`);
+      } else {
+        lines.push(
+          `  Last 7d:     $${s.spend} spent · ${s.impressions} impressions · ${s.clicks} clicks`,
+        );
+      }
+    }
+    if (j.pixel) {
+      lines.push(
+        j.pixel.reachable
+          ? `  Pixel:       ${j.pixel.name} (${j.pixel.id}) ✓`
+          : `  Pixel:       ${j.pixel.id} ✗ ${j.pixel.error}`,
+      );
+    }
+    return lines.join("\n");
   },
 
   // ── Outbox subcommands ─────────────────────────────────────────
@@ -660,6 +739,7 @@ async function main() {
   bj outbox list [--limit N]
   bj outbox approve <short_code>
   bj outbox reject <short_code>
+  bj meta status
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
@@ -670,7 +750,7 @@ Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
   // the skill folders are themselves an enumeration — adding "ai" to
   // groups would force "bj ai:echo" which is uglier and harder to
   // type than "bj ai echo".
-  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social", "ads", "outbox"];
+  const groups = ["leads", "tasks", "costs", "signals", "watchdog", "digest", "social", "ads", "outbox", "meta"];
   let key, rest;
   if (groups.includes(argv[0])) {
     key = `${argv[0]}:${argv[1]}`;
