@@ -2107,78 +2107,169 @@ export default function PeninsulaPavingPage() {
                 </div>
               </div>
 
-              {/* Right visual — big stat cluster */}
+              {/* Right visual — refined stat cluster card */}
               <div className="relative">
                 <div
-                  className="relative aspect-square rounded-2xl overflow-hidden p-8 sm:p-10"
+                  className="relative aspect-square rounded-2xl overflow-hidden p-7 sm:p-9"
                   style={{
-                    background: `radial-gradient(circle at 50% 30%, ${ACCENT_DIM} 0%, rgba(10, 10, 10, 0) 60%), linear-gradient(180deg, ${BG_PANEL} 0%, ${BG} 100%)`,
-                    border: `1px solid ${ACCENT_DIM}`,
-                    boxShadow: "0 24px 70px rgba(0, 0, 0, 0.6)",
+                    background: `radial-gradient(circle at 75% 25%, rgba(251, 191, 36, 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(234, 88, 12, 0.10) 0%, transparent 50%), linear-gradient(180deg, #ffffff 0%, #fef9ed 100%)`,
+                    border: `1px solid rgba(234, 88, 12, 0.25)`,
+                    boxShadow:
+                      "0 24px 70px rgba(28, 20, 16, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
                   }}
                 >
-                  {/* Subtle grid pattern */}
+                  {/* Topo-line pattern overlay (the brand's signature) */}
                   <svg
-                    className="absolute inset-0 w-full h-full opacity-[0.06]"
+                    className="absolute inset-0 w-full h-full opacity-[0.10]"
                     aria-hidden="true"
+                    preserveAspectRatio="none"
                   >
                     <defs>
                       <pattern
-                        id="pp-stat-grid"
-                        width="40"
-                        height="40"
+                        id="pp-stat-topo"
+                        width="160"
+                        height="36"
                         patternUnits="userSpaceOnUse"
                       >
                         <path
-                          d="M 40 0 L 0 0 0 40"
+                          d="M0 18 Q40 6 80 18 T160 18"
                           fill="none"
-                          stroke={ACCENT}
-                          strokeWidth="0.5"
+                          stroke={ACCENT_DEEP}
+                          strokeWidth="0.7"
                         />
                       </pattern>
                     </defs>
-                    <rect width="100%" height="100%" fill="url(#pp-stat-grid)" />
+                    <rect width="100%" height="100%" fill="url(#pp-stat-topo)" />
                   </svg>
 
+                  {/* Decorative copper corner accent — top right */}
+                  <div
+                    className="absolute top-0 right-0 pointer-events-none"
+                    style={{
+                      width: "120px",
+                      height: "120px",
+                      background: `radial-gradient(circle at 100% 0%, ${ACCENT_DIM} 0%, transparent 70%)`,
+                    }}
+                    aria-hidden="true"
+                  />
+
                   <div className="relative h-full flex flex-col">
-                    <div
-                      className="text-[10px] font-bold uppercase tracking-[0.28em] mb-3"
-                      style={{ color: ACCENT, fontFamily: FONT_HEAD }}
-                    >
-                      By the Numbers
+                    {/* Eyebrow — with leading + trailing copper rules */}
+                    <div className="flex items-center gap-3 mb-6">
+                      <span
+                        className="inline-block w-8 h-px"
+                        style={{ background: ACCENT_DEEP }}
+                      />
+                      <div
+                        className="text-[10px] font-bold uppercase tracking-[0.32em]"
+                        style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
+                      >
+                        By the Numbers
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 flex-1 content-center">
-                      <Stat number="41" label="Years on the Peninsula" />
-                      <Stat number="6" label="Core Services" />
-                      <Stat number="12+" label="Cities Served" />
+                    {/* 2x2 stat grid */}
+                    <div className="grid grid-cols-2 gap-x-7 gap-y-7 flex-1">
+                      <Stat
+                        number="41"
+                        label="Years on the Peninsula"
+                        icon={<Clock size={14} weight="fill" />}
+                      />
+                      <Stat
+                        number="6"
+                        label="Core Services"
+                        icon={<Wrench size={14} weight="fill" />}
+                      />
+                      <Stat
+                        number="12+"
+                        label="Cities Served"
+                        icon={<MapPin size={14} weight="fill" />}
+                      />
                       <Stat
                         number="1"
                         label="Family-Run Crew · Start to Finish"
+                        icon={<HandWaving size={14} weight="fill" />}
                       />
                     </div>
 
-                    <div className="mt-auto pt-6 border-t border-white/10">
-                      <div className="flex items-center gap-2.5">
-                        <CompassRose size={48} />
-                        <div>
-                          <div
-                            className="text-[13px] font-bold text-[#1c1410]"
-                            style={{ fontFamily: FONT_HEAD }}
-                          >
-                            Sequim, WA
-                          </div>
-                          <div
-                            className="text-[11px] tracking-[0.16em] uppercase"
-                            style={{
-                              color: INK_DIM,
-                              fontFamily: FONT_HEAD,
-                            }}
-                          >
-                            Olympic Peninsula
-                          </div>
+                    {/* Bottom badge — bigger compass + tagline + a small
+                        perspective-road tile on the right to fill the
+                        previously-empty corner. */}
+                    <div
+                      className="mt-auto pt-5 border-t flex items-center gap-3"
+                      style={{ borderColor: "rgba(28, 20, 16, 0.12)" }}
+                    >
+                      <CompassRose size={54} />
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="text-[15px] font-bold leading-tight"
+                          style={{ color: INK, fontFamily: FONT_HEAD }}
+                        >
+                          Sequim, WA
+                        </div>
+                        <div
+                          className="text-[10px] tracking-[0.22em] uppercase font-bold mt-0.5"
+                          style={{
+                            color: ACCENT_DEEP,
+                            fontFamily: FONT_HEAD,
+                          }}
+                        >
+                          Olympic Peninsula
                         </div>
                       </div>
+                      {/* Tiny perspective-road tile — brand DNA in the
+                          bottom-right corner that used to sit empty. */}
+                      <svg
+                        width="64"
+                        height="40"
+                        viewBox="0 0 64 40"
+                        className="shrink-0"
+                        aria-hidden="true"
+                      >
+                        {/* Asphalt trapezoid */}
+                        <path
+                          d="M 4,36 L 60,36 L 40,4 L 24,4 Z"
+                          fill="#1c1410"
+                        />
+                        {/* Copper edge highlights */}
+                        <path
+                          d="M 4,36 L 24,4"
+                          stroke={ACCENT_HOT}
+                          strokeWidth="0.6"
+                          opacity="0.7"
+                        />
+                        <path
+                          d="M 60,36 L 40,4"
+                          stroke={ACCENT_HOT}
+                          strokeWidth="0.6"
+                          opacity="0.7"
+                        />
+                        {/* Yellow center-line stripes, perspective-tapered */}
+                        <rect
+                          x="30.5"
+                          y="6"
+                          width="3"
+                          height="3"
+                          rx="0.5"
+                          fill={YELLOW_HOT}
+                        />
+                        <rect
+                          x="30"
+                          y="14"
+                          width="4"
+                          height="4"
+                          rx="0.5"
+                          fill={YELLOW_HOT}
+                        />
+                        <rect
+                          x="29"
+                          y="24"
+                          width="6"
+                          height="6"
+                          rx="0.5"
+                          fill={YELLOW_HOT}
+                        />
+                      </svg>
                     </div>
                   </div>
                 </div>
@@ -2624,24 +2715,40 @@ export default function PeninsulaPavingPage() {
 }
 
 /* ───────────────────────── STAT COMPONENT ───────────────────────── */
-function Stat({ number, label }: { number: string; label: string }) {
+function Stat({
+  number,
+  label,
+  icon,
+}: {
+  number: string;
+  label: string;
+  icon?: React.ReactNode;
+}) {
   return (
-    <div>
+    <div className="relative">
+      {/* Small copper icon badge — gives each stat a glyph anchor */}
+      {icon && (
+        <div
+          className="inline-flex items-center justify-center w-7 h-7 rounded-md mb-2"
+          style={{
+            background: "rgba(234, 88, 12, 0.12)",
+            color: ACCENT_DEEP,
+            border: "1px solid rgba(234, 88, 12, 0.22)",
+          }}
+        >
+          {icon}
+        </div>
+      )}
+      {/* Big stat number — solid copper for max punch on the cream bg */}
       <div
-        className="text-[44px] sm:text-[56px] font-bold leading-none tracking-tight mb-2"
-        style={{
-          background: FIRE_GRAD,
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          fontFamily: FONT_HEAD,
-        }}
+        className="text-[48px] sm:text-[60px] font-bold leading-none tracking-tight mb-2"
+        style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
       >
         {number}
       </div>
       <div
-        className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.16em] leading-snug"
-        style={{ color: INK_SOFT, fontFamily: FONT_HEAD }}
+        className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.14em] leading-snug"
+        style={{ color: INK, fontFamily: FONT_HEAD }}
       >
         {label}
       </div>
