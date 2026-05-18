@@ -730,56 +730,55 @@ function OlympicHeroIllustration() {
       </g>
 
       {/* Asphalt — freshly-paved driveway, perspective trapezoid.
-          Wide foreground (200 → 700 at y=600), narrow vanishing point
-          centered at (400, 400) where it meets the mountain foothills.
-          Centerline runs straight up the middle at x=400, so the
-          center stripes below sit ON the road (not floating off it). */}
+          Shifted RIGHT 60px from the geometric center so the road
+          sits visually right-of-center under the hero copy on the
+          left. New bottom 260-760, vanishing point centered at 460. */}
       <path
-        d="M 200,600 L 700,600 L 430,400 L 370,400 Z"
+        d="M 260,600 L 760,600 L 490,400 L 430,400 Z"
         fill="url(#pp-asphalt)"
       />
 
-      {/* Glossy wet-asphalt highlight — narrower trapezoid inset on the
-          left half, reads as sunset reflecting off the surface. */}
+      {/* Glossy wet-asphalt highlight — narrower trapezoid inset,
+          reads as sunset reflecting off the surface. */}
       <path
-        d="M 220,600 L 480,600 L 410,420 L 380,420 Z"
+        d="M 280,600 L 540,600 L 470,420 L 440,420 Z"
         fill="#1c1917"
         opacity="0.55"
       />
 
       {/* Warm sunset glow on the right edge of the road */}
       <path
-        d="M 700,600 L 660,600 L 415,410 L 430,400 Z"
+        d="M 760,600 L 720,600 L 475,410 L 490,400 Z"
         fill={ACCENT}
         opacity="0.16"
       />
 
       {/* Center line dashed stripes — bright white, perspective-tapered.
-          Centerline of road is at x=400 (geometric center of trapezoid),
+          Centerline at x=460 (geometric center of the shifted trapezoid),
           stripes get narrower toward the vanishing point. */}
       <g fill="#f8fafc">
         {/* Stripe 1 — foreground (closest, biggest) */}
-        <polygon points="386,600 414,600 408,560 392,560" opacity="0.95" />
+        <polygon points="446,600 474,600 468,560 452,560" opacity="0.95" />
         {/* Stripe 2 */}
-        <polygon points="393,540 407,540 405,500 395,500" opacity="0.9" />
+        <polygon points="453,540 467,540 465,500 455,500" opacity="0.9" />
         {/* Stripe 3 */}
-        <polygon points="396,480 404,480 403,450 397,450" opacity="0.85" />
+        <polygon points="456,480 464,480 463,450 457,450" opacity="0.85" />
         {/* Stripe 4 */}
-        <polygon points="397.5,440 402.5,440 402,420 398,420" opacity="0.7" />
+        <polygon points="457.5,440 462.5,440 462,420 458,420" opacity="0.7" />
         {/* Stripe 5 (vanishing) */}
-        <polygon points="398.5,415 401.5,415 401.2,405 398.8,405" opacity="0.5" />
+        <polygon points="458.5,415 461.5,415 461.2,405 458.8,405" opacity="0.5" />
       </g>
 
       {/* Solid white edge stripes — parallel to the road sides */}
       <g fill="#f8fafc">
         {/* Left edge stripe */}
         <polygon
-          points="200,600 215,600 378,400 372,400"
+          points="260,600 275,600 438,400 432,400"
           opacity="0.85"
         />
         {/* Right edge stripe */}
         <polygon
-          points="685,600 700,600 428,400 422,400"
+          points="745,600 760,600 488,400 482,400"
           opacity="0.85"
         />
       </g>
@@ -787,7 +786,7 @@ function OlympicHeroIllustration() {
       {/* Subtle copper sunset wash on the asphalt — reads as PNW
           golden-hour light kissing the road surface. */}
       <path
-        d="M 200,600 L 700,600 L 430,400 L 370,400 Z"
+        d="M 260,600 L 760,600 L 490,400 L 430,400 Z"
         fill={ACCENT}
         opacity="0.06"
       />
