@@ -300,132 +300,158 @@ function SunriseIllustration() {
             <stop offset="80%" stopColor="#fef3c7" />
             <stop offset="100%" stopColor="#faf3df" />
           </linearGradient>
-          {/* Sun halo */}
+          {/* Sun halo — wide soft warm glow */}
           <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fde68a" stopOpacity="0.95" />
-            <stop offset="30%" stopColor="#fbbf24" stopOpacity="0.6" />
-            <stop offset="70%" stopColor="#d97706" stopOpacity="0.18" />
+            <stop offset="0%" stopColor="#fde68a" stopOpacity="0.85" />
+            <stop offset="35%" stopColor="#fbbf24" stopOpacity="0.45" />
+            <stop offset="75%" stopColor="#d97706" stopOpacity="0.12" />
             <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
           </radialGradient>
-          {/* Atmospheric mist hanging in the valleys */}
-          <linearGradient id="mistGrad" x1="0" x2="0" y1="0" y2="1">
+          {/* Sun disc — subtle gradient gives it some dimension */}
+          <radialGradient id="sunDisc" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#c2410c" />
+          </radialGradient>
+          {/* Atmospheric haze — used to soften the back ridge into the
+              mid ridge so the transition reads as distance, not as a
+              hard horizontal band. */}
+          <linearGradient id="haze" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="#fbf7ee" stopOpacity="0" />
-            <stop offset="55%" stopColor="#fbf7ee" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#fbf7ee" stopOpacity="0.92" />
+            <stop offset="100%" stopColor="#fbf7ee" stopOpacity="0.7" />
           </linearGradient>
-          {/* Snow cap gradient — pure white at top, fading into the rock teal */}
-          <linearGradient id="snowCap" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-          </linearGradient>
-          {/* Clip path for sun — sun rises BEHIND the back ridge */}
-          <clipPath id="aboveBackRidge">
-            <rect x="0" y="0" width="600" height="250" />
-          </clipPath>
         </defs>
 
-        {/* 1. SKY — fades in immediately */}
+        {/* 1. SKY */}
         <rect width="600" height="450" fill="url(#sky)" />
 
-        {/* 5. SUN — halo + disc, rises behind the peaks (clipped) */}
+        {/* 5. SUN — halo (wide soft) + disc (above the mountains, no
+            clipping needed). Layered BEFORE the mountains so the back
+            ridge naturally covers the sun's lower edge where they meet. */}
         <g className="thrive-sun">
-          <circle cx="370" cy="195" r="170" fill="url(#sunGlow)" />
-          <circle cx="370" cy="200" r="56" fill="#e0832b" clipPath="url(#aboveBackRidge)" />
-          <ellipse cx="370" cy="200" rx="150" ry="1.5" fill="#fde68a" opacity="0.55" />
+          <circle cx="380" cy="170" r="150" fill="url(#sunGlow)" />
+          <circle cx="380" cy="170" r="42" fill="url(#sunDisc)" />
+          {/* Horizon light flare just below the sun */}
+          <ellipse cx="380" cy="218" rx="160" ry="2" fill="#fde68a" opacity="0.6" />
         </g>
 
-        {/* 3a. DISTANT OLYMPIC PEAKS — snow-capped, rise from below
-            The profile here is a rugged, multi-peak silhouette inspired by
-            the Olympic Range as seen from Sequim (Mt. Olympus + The
-            Brothers + Mt. Constance roughly center-frame). */}
+        {/* 3a. DISTANT OLYMPIC PEAKS — softened, more organic ridgeline
+            with snow-capped highest peaks. Lighter teal gives the
+            atmospheric perspective of distance. */}
         <g className="thrive-ridge-back">
-          {/* Back ridge body */}
           <path
-            d="M0,260
-               L25,235 L45,250 L75,210 L100,235
-               L130,195 L155,225 L180,200 L210,238
-               L240,205 L265,228 L295,180 L320,215
-               L355,170 L390,210 L420,185 L450,220
-               L485,200 L515,230 L545,210 L575,225
-               L600,215 L600,260 Z"
-            fill="#5a8a85"
-            opacity="0.85"
+            d="M -10 270
+               Q 20 260, 40 252
+               Q 55 248, 70 245
+               L 95 220
+               L 115 245
+               L 135 215
+               L 158 245
+               L 180 225
+               L 205 250
+               L 232 220
+               L 260 250
+               L 290 200
+               L 320 245
+               L 348 195
+               L 378 240
+               L 408 215
+               L 438 250
+               L 472 225
+               L 502 250
+               L 538 235
+               L 575 250
+               L 610 245
+               L 610 270 Z"
+            fill="#6b9a94"
+            opacity="0.78"
           />
-          {/* Snow caps on the highest peaks */}
-          <path
-            d="M125,200 L130,195 L155,225 L150,225 Z"
-            fill="url(#snowCap)"
-          />
-          <path
-            d="M290,185 L295,180 L320,215 L312,215 Z"
-            fill="url(#snowCap)"
-          />
-          <path
-            d="M350,176 L355,170 L390,210 L380,210 Z"
-            fill="url(#snowCap)"
-          />
-          {/* Highlight: warm dawn light hitting east-facing slopes */}
-          <path
-            d="M295,180 L320,215 L312,210 Z"
-            fill="#fcd34d"
-            opacity="0.4"
-          />
-          <path
-            d="M355,170 L390,210 L378,205 Z"
-            fill="#fcd34d"
-            opacity="0.45"
-          />
+          {/* Snow caps on the three highest peaks (Mt. Olympus center) */}
+          <path d="M 280 215 L 290 200 L 305 220 Z" fill="#ffffff" opacity="0.65" />
+          <path d="M 338 210 L 348 195 L 365 218 Z" fill="#ffffff" opacity="0.75" />
+          <path d="M 128 225 L 135 215 L 145 228 Z" fill="#ffffff" opacity="0.55" />
+          {/* Warm dawn light catching east-facing slopes (right side of peaks) */}
+          <path d="M 290 200 L 320 245 L 308 240 Z" fill="#fcd34d" opacity="0.35" />
+          <path d="M 348 195 L 378 240 L 365 235 Z" fill="#fcd34d" opacity="0.4" />
         </g>
 
-        {/* 2. MIST band */}
-        <rect x="0" y="230" width="600" height="90" fill="url(#mistGrad)" className="thrive-mist" />
+        {/* 2. ATMOSPHERIC HAZE — overlays the lower part of the back
+            ridge with a cream gradient so the ridge fades into the
+            sky/horizon plane. No more visible band. */}
+        <rect
+          className="thrive-mist"
+          x="0"
+          y="240"
+          width="600"
+          height="60"
+          fill="url(#haze)"
+        />
 
-        {/* Subtle mist lines */}
-        <g className="thrive-mist">
-          <line x1="70" y1="265" x2="220" y2="262" stroke="#fbf7ee" strokeOpacity="0.7" strokeWidth="1.2" />
-          <line x1="280" y1="278" x2="430" y2="275" stroke="#fbf7ee" strokeOpacity="0.55" strokeWidth="1.2" />
-          <line x1="110" y1="295" x2="350" y2="293" stroke="#fbf7ee" strokeOpacity="0.4" strokeWidth="1" />
-          <line x1="380" y1="305" x2="540" y2="302" stroke="#fbf7ee" strokeOpacity="0.45" strokeWidth="1" />
-        </g>
-
-        {/* 3b. MID RIDGE — forested foothills */}
+        {/* 3b. MID RIDGE — closer foothills, deeper teal, more defined */}
         <g className="thrive-ridge-mid">
           <path
-            d="M0,335
-               L40,318 L80,328 L130,300 L175,315 L220,288
-               L265,308 L310,278 L355,302 L400,280 L445,300
-               L490,285 L535,302 L575,290 L600,298
-               L600,360 L0,360 Z"
-            fill="#2d5e57"
-            opacity="0.9"
+            d="M -10 345
+               Q 20 335, 50 332
+               L 90 305
+               Q 110 312, 130 315
+               L 160 290
+               Q 185 298, 210 300
+               L 240 278
+               Q 270 290, 300 290
+               L 335 268
+               Q 365 280, 395 282
+               L 425 265
+               Q 455 278, 485 275
+               L 520 260
+               Q 555 272, 590 275
+               L 610 280
+               L 610 360 L -10 360 Z"
+            fill="#1f4d47"
+            opacity="0.95"
           />
         </g>
 
-        {/* 6. FOREGROUND CONIFER TREE LINE — solid darkest teal */}
+        {/* 6. FOREGROUND CONIFER TREE LINE — sloping ground with
+            naturally-varied tree heights. Trees feel like a real PNW
+            tree-line, not a row of identical triangles. */}
         <g className="thrive-trees">
-          {/* Base ground */}
+          {/* Ground — slight curve so it feels like a real forest floor */}
           <path
-            d="M0,390 L0,450 L600,450 L600,395 Z"
+            d="M 0 405
+               Q 150 392, 300 398
+               Q 450 404, 600 395
+               L 600 450 L 0 450 Z"
             fill="#0a3a36"
           />
-          {/* Conifer silhouettes — triangle clusters */}
+          {/* Distant smaller conifers — back row */}
           {[
-            { x: 40, h: 38 }, { x: 75, h: 28 }, { x: 110, h: 45 },
-            { x: 145, h: 32 }, { x: 175, h: 40 }, { x: 215, h: 26 },
-            { x: 248, h: 42 }, { x: 285, h: 35 }, { x: 320, h: 48 },
-            { x: 358, h: 30 }, { x: 392, h: 44 }, { x: 428, h: 28 },
-            { x: 462, h: 38 }, { x: 498, h: 32 }, { x: 532, h: 46 },
-            { x: 568, h: 30 },
+            { x: 30, h: 22, y: 402 }, { x: 65, h: 18, y: 401 },
+            { x: 100, h: 25, y: 400 }, { x: 135, h: 20, y: 399 },
+            { x: 178, h: 24, y: 397 }, { x: 218, h: 19, y: 397 },
+            { x: 258, h: 22, y: 397 }, { x: 298, h: 26, y: 398 },
+            { x: 338, h: 20, y: 399 }, { x: 378, h: 24, y: 400 },
+            { x: 418, h: 18, y: 401 }, { x: 458, h: 23, y: 402 },
+            { x: 498, h: 20, y: 402 }, { x: 538, h: 25, y: 400 },
+            { x: 575, h: 22, y: 398 },
           ].map((t, i) => (
             <path
-              key={i}
-              d={`M${t.x - 9},${395} L${t.x},${395 - t.h} L${t.x + 9},${395} Z`}
+              key={"b" + i}
+              d={`M${t.x - 5},${t.y} L${t.x},${t.y - t.h} L${t.x + 5},${t.y} Z`}
+              fill="#0a3a36"
+              opacity="0.85"
+            />
+          ))}
+          {/* Hero conifers — taller front-row, varied heights */}
+          {[
+            { x: 55, h: 50 }, { x: 130, h: 65 }, { x: 200, h: 78 },
+            { x: 270, h: 58 }, { x: 360, h: 85 }, { x: 430, h: 62 },
+            { x: 510, h: 72 }, { x: 565, h: 55 },
+          ].map((t, i) => (
+            <path
+              key={"f" + i}
+              d={`M${t.x - 8},${405} L${t.x},${405 - t.h} L${t.x + 8},${405} Z`}
               fill="#0a3a36"
             />
           ))}
-          {/* A few taller hero conifers */}
-          <path d="M195,395 L208,335 L221,395 Z" fill="#0a3a36" />
-          <path d="M375,395 L390,325 L405,395 Z" fill="#0a3a36" />
         </g>
 
         {/* 7. BIRDS — small flock crossing the sky */}
@@ -433,13 +459,13 @@ function SunriseIllustration() {
           className="thrive-birds"
           fill="none"
           stroke="#0d4f4a"
-          strokeWidth="1.6"
+          strokeWidth="1.8"
           strokeLinecap="round"
         >
-          <path d="M165,90 q6,-8 12,0 q6,-8 12,0" />
-          <path d="M210,75 q5,-7 10,0 q5,-7 10,0" />
-          <path d="M195,115 q5,-6 10,0 q5,-6 10,0" />
-          <path d="M240,98 q4,-5 8,0 q4,-5 8,0" />
+          <path d="M165 90 q6 -8 12 0 q6 -8 12 0" />
+          <path d="M210 75 q5 -7 10 0 q5 -7 10 0" />
+          <path d="M195 115 q5 -6 10 0 q5 -6 10 0" />
+          <path d="M148 110 q4 -5 8 0 q4 -5 8 0" />
         </g>
 
         {/* 8. CAPTION — "And there was light." */}
