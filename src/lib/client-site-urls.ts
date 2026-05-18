@@ -84,6 +84,15 @@ const CLIENT_SITES: Record<string, ClientSite> = {
     kind: "internal",
     href: "/clients/family-care-cleaning",
   },
+  // Thrive Church — Sequim WA. Custom-tier bespoke build for the
+  // Olympic Peninsula's modern non-denominational church. Warm-light
+  // cream + deep teal + amber palette. Connect Card + Prayer Request
+  // forms route to office@thrivesequim.com via /api/clients/inquire.
+  // Built 2026-05-18.
+  "thrive-church-sequim": {
+    kind: "internal",
+    href: "/clients/thrive-church-sequim",
+  },
   // WAYS Executive Sedan — luxury chauffeur service.
   "ways-executive-sedan": {
     kind: "internal",
