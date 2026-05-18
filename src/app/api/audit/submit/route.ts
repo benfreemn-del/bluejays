@@ -4,6 +4,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { sendOwnerAlert } from "@/lib/alerts";
 import { deriveSourceChannel } from "@/lib/source-attribution";
+import { fireMetaCapi } from "@/lib/server-conversions";
 
 /**
  * POST /api/audit/submit
@@ -425,6 +426,51 @@ export async function POST(request: NextRequest) {
       }
     }
   });
+
+  // Meta Conversions API — server-side Lead event for ad attribution.
+  // Pairs with the client-side `fbq('track', 'Lead')` in ClientTrackingScripts
+  // (deduped via event_id = audit ID + minute-bucketed timestamp on Meta's
+  // side). Catches the 20-40% of conversions client-side Pixel loses to
+  // ad-blockers + iOS 14+ ITP. Fires fire-and-forget so a Meta API outage
+  // never blocks the submit response.
+  //
+  // utm_audience (mfg/dtc/author) + utm_content (hook_id) flow into
+  // custom_data so Meta's optimizer can correlate which wave-1 hook
+  // converted — improves bidding quality for the surviving creatives
+  // post-kill-decision on Day 3.
+  const utm = (body.utm || {}) as Record<string, string>;
+  const fbpCookie = request.cookies.get("_fbp")?.value;
+  const fbcCookie = request.cookies.get("_fbc")?.value;
+  // If fbclid was passed but no _fbc cookie has been set yet (Pixel
+  // blocked / first-visit edge), construct fbc per Meta's spec:
+  // fb.1.{timestamp_ms}.{fbclid}. Subdomain index = 1 for apex+single sub.
+  const derivedFbc =
+    fbcCookie ||
+    (utm.fbclid ? `fb.1.${Date.now()}.${utm.fbclid}` : undefined);
+  const clientIp =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    request.headers.get("x-real-ip") ||
+    undefined;
+  const clientUa = request.headers.get("user-agent") || undefined;
+  void fireMetaCapi({
+    eventName: "Lead",
+    eventId: finalAuditId, // stable for client-side dedup
+    eventSourceUrl: `https://bluejayportfolio.com/audit`,
+    userData: {
+      email,
+      phone: phone || undefined,
+      fbc: derivedFbc,
+      fbp: fbpCookie,
+      clientIpAddress: clientIp,
+      clientUserAgent: clientUa,
+    },
+    customData: {
+      content_category: businessCategory,
+      ...(utm.utm_audience ? { utm_audience: utm.utm_audience } : {}),
+      ...(utm.utm_content ? { utm_content: utm.utm_content } : {}),
+      ...(utm.utm_campaign ? { utm_campaign: utm.utm_campaign } : {}),
+    },
+  }).catch(() => {});
 
   // Hot-lead alert — fire immediately (not inside after()) so Ben gets
   // the SMS before we even respond to the client.

@@ -414,7 +414,7 @@ function parseUtmFromQuery(): Record<string, string> {
   if (typeof window === "undefined") return {};
   const params = new URLSearchParams(window.location.search);
   const out: Record<string, string> = {};
-  ["utm_source", "utm_medium", "utm_campaign", "utm_content"].forEach((k) => {
+  ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_audience"].forEach((k) => {
     const v = params.get(k);
     if (v) out[k] = v;
   });

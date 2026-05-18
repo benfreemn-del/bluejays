@@ -44,6 +44,7 @@ const TRACKED_PARAMS = [
   "utm_campaign",
   "utm_content",
   "utm_term",
+  "utm_audience", // BlueJays-internal — audience segment tag (mfg/dtc/author/etc.)
   "gclid",      // Google Ads auto-tag
   "fbclid",     // Meta / Facebook
   "msclkid",    // Microsoft / Bing Ads
