@@ -95,7 +95,7 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
   if (status === "ok") {
     return (
       <div
-        className="border p-10 sm:p-12 rounded-xl"
+        className="border p-7 sm:p-8 rounded-xl"
         style={{
           background: "#ffffff",
           borderColor: "rgba(234, 88, 12, 0.35)",
@@ -130,7 +130,7 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
   return (
     <form
       onSubmit={handleSubmit}
-      className="border p-7 sm:p-10 rounded-xl"
+      className="border p-5 sm:p-7 rounded-xl"
       style={{
         background: "#ffffff",
         borderColor: "rgba(234, 88, 12, 0.22)",

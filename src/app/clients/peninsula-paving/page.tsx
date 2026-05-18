@@ -381,7 +381,7 @@ function SectionHeader({
 }) {
   const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
   return (
-    <div className={`max-w-3xl ${alignClass} mb-10 sm:mb-12`}>
+    <div className={`max-w-3xl ${alignClass} mb-7 sm:mb-8`}>
       {eyebrow && (
         <div
           className="inline-flex items-center gap-3 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
@@ -522,7 +522,7 @@ function ServiceCard({
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <div className="relative p-7 sm:p-8">
+      <div className="relative p-5 sm:p-6">
         <span
           className="inline-flex items-center justify-center w-12 h-12 rounded-md shadow-lg mb-5"
           style={{
@@ -1509,7 +1509,7 @@ function PeninsulaRouteMap() {
       {/* Caption below — display-size italic so it actually lands as
           the closing line, not a forgettable footnote. */}
       <p
-        className="mt-8 sm:mt-10 text-center text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.3] italic max-w-3xl mx-auto"
+        className="mt-8 sm:mt-7 text-center text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.3] italic max-w-3xl mx-auto"
         style={{
           color: INK,
           fontFamily: FONT_SERIF,
@@ -1681,7 +1681,7 @@ export default function PeninsulaPavingPage() {
             />
           </div>
 
-          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-24">
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-8 sm:py-10 lg:py-16">
             <div className="max-w-2xl">
               <motion.div
                 initial="hidden"
@@ -1794,8 +1794,8 @@ export default function PeninsulaPavingPage() {
             borderColor: "rgba(255,255,255,0.06)",
           }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-5 sm:py-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-10 items-center">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-3.5 sm:py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-7 items-center">
               <TrustBadge
                 icon={<Clock size={22} weight="fill" />}
                 label="Since 1985"
@@ -1845,8 +1845,8 @@ export default function PeninsulaPavingPage() {
             <rect width="100%" height="100%" fill="url(#pp-founder-topo)" />
           </svg>
 
-          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-7 sm:py-8">
-            <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-5 sm:gap-8">
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-3.5 sm:py-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-4 sm:gap-6">
               {/* Monogram + Est. block */}
               <div className="flex items-center gap-4 shrink-0">
                 <div
@@ -1920,7 +1920,7 @@ export default function PeninsulaPavingPage() {
         {/* ─────────────── SERVICES ─────────────── */}
         <section
           id="services"
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{ background: BG }}
         >
           {/* Subtle road-stripe pattern background */}
@@ -1957,7 +1957,7 @@ export default function PeninsulaPavingPage() {
         {/* ─────────────── PROCESS ─────────────── */}
         <section
           id="process"
-          className="py-20 sm:py-24 lg:py-32"
+          className="py-14 sm:py-16 lg:py-20"
           style={{ background: BG_ALT }}
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -2030,11 +2030,11 @@ export default function PeninsulaPavingPage() {
         {/* ─────────────── WHY US ─────────────── */}
         <section
           id="why-us"
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{ background: BG }}
         >
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
               <div>
                 <SectionHeader
                   eyebrow="Why Peninsula"
@@ -2082,7 +2082,7 @@ export default function PeninsulaPavingPage() {
               {/* Right visual — refined stat cluster card */}
               <div className="relative">
                 <div
-                  className="relative aspect-square rounded-2xl overflow-hidden p-7 sm:p-9"
+                  className="relative aspect-square rounded-2xl overflow-hidden p-5 sm:p-6"
                   style={{
                     background: `radial-gradient(circle at 75% 25%, rgba(251, 191, 36, 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(234, 88, 12, 0.10) 0%, transparent 50%), linear-gradient(180deg, #ffffff 0%, #fef9ed 100%)`,
                     border: `1px solid rgba(234, 88, 12, 0.25)`,
@@ -2259,7 +2259,7 @@ export default function PeninsulaPavingPage() {
             complaint without losing the trade-dress weight. */}
         <section
           id="service-area"
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{
             background: `radial-gradient(ellipse at top, ${BG_CREAM} 0%, ${BG_CREAM_ALT} 100%)`,
           }}
@@ -2290,7 +2290,7 @@ export default function PeninsulaPavingPage() {
 
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
             {/* Light-theme section header (override the dark default) */}
-            <div className="max-w-3xl text-center mx-auto mb-10 sm:mb-12">
+            <div className="max-w-3xl text-center mx-auto mb-7 sm:mb-8">
               <div
                 className="inline-flex items-center gap-3 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
                 style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
@@ -2352,7 +2352,7 @@ export default function PeninsulaPavingPage() {
             paving-native. Uses warm coffee-brown bg so it differentiates
             from the surrounding charcoal sections. */}
         <section
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{
             background: `radial-gradient(ellipse at 50% 0%, ${BG_WARM} 0%, ${BG} 70%)`,
           }}
@@ -2368,7 +2368,7 @@ export default function PeninsulaPavingPage() {
             <AsphaltCrossSection />
 
             <p
-              className="mt-12 sm:mt-14 text-center text-[22px] sm:text-[30px] lg:text-[38px] leading-[1.25] italic max-w-3xl mx-auto"
+              className="mt-8 sm:mt-7 text-center text-[22px] sm:text-[30px] lg:text-[38px] leading-[1.25] italic max-w-3xl mx-auto"
               style={{ color: INK, fontFamily: FONT_SERIF }}
             >
               &ldquo;Cheap paving is mostly invisible. So is good paving &mdash;
@@ -2390,7 +2390,7 @@ export default function PeninsulaPavingPage() {
             voice reads warm + generational instead of trade-dress bold.
             Subtle olive underline anchors it to the PNW thread. */}
         <section
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{ background: BG_ALT }}
         >
           {/* Faint olive topo behind the quote */}
@@ -2448,7 +2448,7 @@ export default function PeninsulaPavingPage() {
         {/* ─────────────── CONTACT ─────────────── */}
         <section
           id="contact"
-          className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
+          className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
           style={{ background: BG }}
         >
           {/* Glow */}
