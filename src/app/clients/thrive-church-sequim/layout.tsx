@@ -209,13 +209,14 @@ export default function ThriveChurchLayout({
           __html: `
             html, body {
               scrollbar-color: #d97706 #fbf7ee !important;
-              scrollbar-width: thin !important;
+              scrollbar-width: auto !important;
+              overflow-y: scroll !important;
             }
             html::-webkit-scrollbar,
             body::-webkit-scrollbar,
             ::-webkit-scrollbar {
-              width: 12px !important;
-              height: 12px !important;
+              width: 14px !important;
+              height: 14px !important;
               background: #fbf7ee !important;
             }
             html::-webkit-scrollbar-track,

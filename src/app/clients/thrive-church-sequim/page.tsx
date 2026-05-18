@@ -124,13 +124,13 @@ function PaperGrain() {
 /* ============================================================== */
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pt-20 sm:pt-24 lg:pt-28">
+    <section className="relative isolate overflow-hidden pt-6 sm:pt-8 lg:pt-10">
       {/* Topographic background */}
       <TopoLines />
 
-      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-10 px-6 pb-14 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-20">
+      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-6 px-6 pb-6 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-6">
         {/* TEXT BLOCK */}
-        <div className="lg:col-span-7 lg:pt-8">
+        <div className="lg:col-span-7 lg:pt-2">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -147,12 +147,10 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={1}
-            className="mt-6 font-[Fraunces] text-[clamp(3rem,7vw,7rem)] leading-[0.95] tracking-[-0.025em] text-[#0d4f4a]"
+            className="mt-4 font-[Fraunces] text-[clamp(2.2rem,4.5vw,4.2rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
-            Hope,
-            <br />
-            breaking{" "}
+            Hope, breaking{" "}
             <em className="italic" style={{ fontWeight: 400 }}>
               like dawn.
             </em>
@@ -163,11 +161,11 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={2}
-            className="mt-6 max-w-xl text-lg leading-relaxed text-[#1a1a1a]/80 sm:text-xl"
+            className="mt-4 max-w-xl text-base leading-relaxed text-[#1a1a1a]/80"
           >
             A community church for imperfect people on the mission with Jesus,
             bringing hope and healing to the Olympic Peninsula — and beyond.
-            <span className="mt-2 block font-[Fraunces] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
+            <span className="mt-1.5 block font-[Fraunces] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
               You&rsquo;re invited home. Sundays at 10:30.
             </span>
           </motion.p>
@@ -178,7 +176,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={3}
-            className="mt-8 flex flex-wrap items-center gap-4"
+            className="mt-6 flex flex-wrap items-center gap-4"
           >
             <Link
               href="#visit"
@@ -208,7 +206,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={4}
-            className="mt-10 inline-flex max-w-md flex-col gap-2 border-l-2 border-[#d97706] pl-5"
+            className="mt-5 inline-flex max-w-md flex-col gap-1 border-l-2 border-[#d97706] pl-4"
           >
             <span className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#d97706]">
               Sunday Gathering
@@ -236,13 +234,15 @@ function Hero() {
         >
           <SunriseIllustration />
 
-          {/* Pull quote floating over illustration */}
+          {/* Pull quote — sits inside the illustration frame so it
+              doesn't add to the section's overall height (keeps the
+              marquee above the fold on initial landing). */}
           <motion.figure
             variants={fadeUp}
             initial="hidden"
             animate="show"
             custom={5}
-            className="absolute -bottom-8 left-2 right-2 mx-auto max-w-md bg-[#fbf7ee]/95 px-7 py-6 shadow-[0_30px_60px_-30px_rgba(13,79,74,0.35)] backdrop-blur-sm sm:-bottom-12 sm:left-4"
+            className="absolute bottom-3 left-3 right-3 max-w-md bg-[#fbf7ee]/95 px-6 py-4 shadow-[0_18px_40px_-18px_rgba(13,79,74,0.4)] backdrop-blur-sm sm:bottom-4 sm:left-4 sm:right-auto sm:px-7 sm:py-5"
           >
             <span className="absolute -top-4 left-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-4xl leading-none text-[#d97706]">
               &ldquo;
@@ -264,7 +264,7 @@ function Hero() {
 /* Custom SVG: sunrise over Olympic ridgelines */
 function SunriseIllustration() {
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-[#fdebbf]/40">
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#fdebbf]/40">
       <svg
         viewBox="0 0 600 750"
         className="absolute inset-0 h-full w-full"
