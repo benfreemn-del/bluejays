@@ -368,17 +368,31 @@ class Checkbox(Flowable):
         self.field_name = field_name or _next_field_name("check")
 
     def wrap(self, avail_width: float, avail_height: float) -> tuple[float, float]:
+        from reportlab.lib.utils import simpleSplit
         self.width = avail_width
-        return avail_width, max(self.size, self.font_size) + 6
+        font_name = "Helvetica-Bold" if self.bold else "Helvetica"
+        # Reserve space for the checkbox + 6pt gap before the text starts
+        text_max_width = avail_width - self.size - 6
+        self._lines = simpleSplit(
+            self.label, font_name, self.font_size, text_max_width,
+        ) or [self.label]
+        # Line leading = font_size + 2pt
+        text_block_height = len(self._lines) * (self.font_size + 2)
+        # Height = max(checkbox size, wrapped text block) + 4pt bottom pad
+        self._height = max(self.size, text_block_height) + 4
+        return avail_width, self._height
 
     def draw(self) -> None:  # type: ignore[override]
         c = self.canv
+        # Anchor the checkbox to the TOP of the flowable so multi-line
+        # labels grow downward beside it, not below it.
+        box_y = self._height - self.size - 1
         # Real AcroForm checkbox (renders its own visible box). Uses
         # absolute page coordinates — translate via current canvas
         # transform.
         placed_box = False
         try:
-            abs_x, abs_y = c.absolutePosition(0, 1)
+            abs_x, abs_y = c.absolutePosition(0, box_y)
             c.acroForm.checkbox(
                 name=self.field_name,
                 tooltip=self.label,
@@ -402,14 +416,22 @@ class Checkbox(Flowable):
         if not placed_box:
             c.setStrokeColor(NAVY)
             c.setLineWidth(0.8)
-            c.rect(0, 1, self.size, self.size, stroke=1, fill=0)
-        # Label to the right of the box.
+            c.rect(0, box_y, self.size, self.size, stroke=1, fill=0)
+        # Label to the right of the box — wrap long lines so they don't
+        # bleed past the page margin. First line sits aligned with the
+        # checkbox top; subsequent lines stack downward.
         c.setFont(
             "Helvetica-Bold" if self.bold else "Helvetica",
             self.font_size,
         )
         c.setFillColor(INK)
-        c.drawString(self.size + 6, 3, self.label)
+        line_leading = self.font_size + 2
+        # First text baseline = top of checkbox - small offset so text
+        # visually aligns with the box top.
+        first_baseline_y = self._height - self.font_size - 1
+        for i, line in enumerate(self._lines):
+            y = first_baseline_y - (i * line_leading)
+            c.drawString(self.size + 6, y, line)
 
 
 class Divider(Flowable):

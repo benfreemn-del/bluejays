@@ -228,7 +228,7 @@ export default function SignForm({
     "w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 " +
     "focus:outline-none focus:border-lime-500/60 focus:ring-1 focus:ring-lime-500/30";
   const labelCls =
-    "block text-sm font-semibold text-slate-100 mb-1.5";
+    "block text-sm font-semibold text-slate-100 mb-1.5 break-words";
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -351,9 +351,9 @@ export default function SignForm({
           type="checkbox"
           checked={acknowledged}
           onChange={(e) => setAcknowledged(e.target.checked)}
-          className="mt-1 h-5 w-5 rounded border-slate-600 bg-slate-950 text-lime-500 focus:ring-lime-500/40"
+          className="shrink-0 mt-1 h-5 w-5 rounded border-slate-600 bg-slate-950 text-lime-500 focus:ring-lime-500/40"
         />
-        <span>
+        <span className="leading-snug">
           I&apos;ve read the document above and acknowledge receipt.
         </span>
       </label>
