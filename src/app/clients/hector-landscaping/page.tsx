@@ -176,6 +176,12 @@ const EARTH = "#a3845b";
 const EARTH_DARK = "#7c6340";
 const PRIMARY_GLOW = "rgba(22, 163, 74, 0.15)";
 const EARTH_GLOW = "rgba(163, 132, 91, 0.12)";
+// Third palette color — locked 2026-05-18 per Ben polish request.
+// Used for trust signals (verified-checkmark eyebrow, "Licensed &
+// Insured" badge, any new "credential" indicator). Matches the
+// Twitter-verified-blue convention so the trust read is instant.
+const BLUE_TRUST = "#1d9bf0";
+const BLUE_TRUST_GLOW = "rgba(29, 155, 240, 0.14)";
 
 /* ───────────────────────── FLOATING LEAF SVG BG ───────────────────────── */
 function FloatingLeaves() {
@@ -642,7 +648,7 @@ export default function HectorLandscapingLandscapingPage() {
                       <SealCheck
                         size={18}
                         weight="fill"
-                        style={{ color: "#1d9bf0" }}
+                        style={{ color: BLUE_TRUST }}
                         aria-label="Verified 5-star reputation"
                       />
                     </span>
@@ -687,22 +693,41 @@ export default function HectorLandscapingLandscapingPage() {
                     </a>
                   </motion.div>
 
-                  {/* Badge below CTAs — family-owned signal. Recurring-
-                      maintenance badge removed 2026-05-06 since Hector
-                      doesn't sell maintenance plans as a structured
-                      service. Reinstate when/if that changes. */}
+                  {/* Trust-badges row — locked 2026-05-18 per Ben polish:
+                      Since 2018 bumped from text-xs/px-4/py-2 → text-sm/
+                      px-5/py-2.5 with bigger icon (14→18), AND added a
+                      blue "Licensed & Insured" badge for credential
+                      signal. Both badges now read as visibly substantial
+                      trust markers rather than micro-tags. Family-owned
+                      + credentialed = the two-prong trust read every
+                      paving/landscape buyer wants above the fold. */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ ...spring, delay: 1.0 }}
-                    className="flex flex-wrap gap-3 pt-2"
+                    className="flex flex-wrap gap-2.5 pt-2"
                   >
                     <span
-                      className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white"
-                      style={{ background: EARTH_GLOW, border: `1px solid ${EARTH}44` }}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+                      style={{ background: EARTH_GLOW, border: `1px solid ${EARTH}55` }}
                     >
-                      <Certificate size={14} weight="bold" style={{ color: EARTH }} />
+                      <Certificate size={18} weight="bold" style={{ color: EARTH }} />
                       Owner-operated since 2018
+                    </span>
+                    <span
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+                      style={{
+                        background: BLUE_TRUST_GLOW,
+                        border: `1px solid ${BLUE_TRUST}66`,
+                      }}
+                    >
+                      <SealCheck
+                        size={18}
+                        weight="fill"
+                        style={{ color: BLUE_TRUST }}
+                        aria-hidden="true"
+                      />
+                      Licensed &amp; Insured
                     </span>
                   </motion.div>
                 </div>
@@ -740,14 +765,17 @@ export default function HectorLandscapingLandscapingPage() {
           <GlassCard className="p-5 md:p-6">
             <motion.div className="flex flex-wrap justify-center gap-6 md:gap-10 text-sm" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
               {[
-                { icon: Medal, label: `${yearsInBusiness}+ Years in the Region` },
-                { icon: Certificate, label: "Owner-Operated Since 2018" },
-                { icon: CheckCircle, label: "Every Discipline In-House" },
-                { icon: SealCheck, label: "Licensed & Insured (WA)" },
-                { icon: Recycle, label: "Native & Climate-Smart Planting" },
+                { icon: Medal, label: `${yearsInBusiness}+ Years in the Region`, color: PRIMARY_LIGHT },
+                { icon: Certificate, label: "Owner-Operated Since 2018", color: PRIMARY_LIGHT },
+                { icon: CheckCircle, label: "Every Discipline In-House", color: PRIMARY_LIGHT },
+                // Locked 2026-05-18: Licensed & Insured uses BLUE_TRUST to
+                // anchor the blue-credential motif introduced in the hero
+                // badge. Repeat-reinforcement of the trust signal.
+                { icon: SealCheck, label: "Licensed & Insured (WA)", color: BLUE_TRUST },
+                { icon: Recycle, label: "Native & Climate-Smart Planting", color: PRIMARY_LIGHT },
               ].map((item, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-2 text-slate-300">
-                  <item.icon size={18} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                  <item.icon size={18} weight="duotone" style={{ color: item.color }} />
                   <span className="whitespace-nowrap">{item.label}</span>
                 </motion.div>
               ))}
@@ -947,14 +975,17 @@ export default function HectorLandscapingLandscapingPage() {
               </div>
               <div className="mt-8 grid grid-cols-2 gap-4">
                 {[
-                  { icon: Certificate, label: "Owner-Operated Since 2018" },
-                  { icon: ShieldCheck, label: "Licensed & Insured (WA)" },
-                  { icon: Recycle, label: "Climate-Smart Planting" },
-                  { icon: Heart, label: "Locally Run" },
+                  { icon: Certificate, label: "Owner-Operated Since 2018", color: PRIMARY_LIGHT, bg: PRIMARY_GLOW },
+                  // Licensed & Insured anchors blue trust-motif here too
+                  // (locked 2026-05-18 per Ben polish — repeat the
+                  // credential signal so it lands across the page).
+                  { icon: ShieldCheck, label: "Licensed & Insured (WA)", color: BLUE_TRUST, bg: BLUE_TRUST_GLOW },
+                  { icon: Recycle, label: "Climate-Smart Planting", color: PRIMARY_LIGHT, bg: PRIMARY_GLOW },
+                  { icon: Heart, label: "Locally Run", color: PRIMARY_LIGHT, bg: PRIMARY_GLOW },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
-                      <item.icon size={16} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: item.bg }}>
+                      <item.icon size={16} weight="duotone" style={{ color: item.color }} />
                     </div>
                     <span className="text-sm text-slate-300">{item.label}</span>
                   </div>

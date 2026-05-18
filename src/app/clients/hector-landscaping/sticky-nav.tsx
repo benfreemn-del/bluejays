@@ -57,20 +57,38 @@ export default function StickyNav({
   // Header bg is pure white to match the logo's baked-in white
   // background — no more visible square. Border keeps definition
   // against the page content below.
+  //
+  // Logo color-match (locked 2026-05-18 per Ben polish request):
+  // The raw Squarespace JPG has a brighter forest green ink than the
+  // header text color (#1a2e1a). To make them visually agree we apply
+  // a subtle CSS filter chain: slight contrast bump + saturation
+  // reduction + a small hue rotation that nudges the logo green toward
+  // the header dark-green ink. Imperfect (since the JPG bakes pixels)
+  // but visibly tighter than raw. The right long-term fix is replacing
+  // the JPG with an SVG wordmark per recolor_client_logo skill.
+  //
+  // Logo size bumped 2x (h-10/12 → h-14/18/22) for hero brand presence.
+  // Height taller = wordmark caption needs to grow proportionally.
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-[#1a2e1a]/10">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 sm:h-24 flex items-center justify-between gap-6">
         <a
           href="#top"
-          className="flex items-center gap-3 min-w-0"
+          className="flex items-center gap-3 sm:gap-4 min-w-0"
           aria-label={businessName}
         >
           <img
             src={logoSrc}
             alt={businessName}
-            className="h-10 sm:h-12 w-auto"
+            className="h-14 sm:h-16 lg:h-20 w-auto"
+            style={{
+              // Nudges the logo green toward header dark-green #1a2e1a.
+              // Slight contrast + reduced saturation + tiny hue rotate
+              // = visible color-tightening without crushing the mark.
+              filter: "contrast(1.05) saturate(0.85) hue-rotate(-8deg)",
+            }}
           />
-          <span className="hidden sm:block font-serif text-[14px] sm:text-[16px] tracking-tight text-[#1a2e1a] leading-tight whitespace-nowrap">
+          <span className="hidden sm:block font-serif text-[15px] sm:text-[17px] tracking-tight text-[#1a2e1a] leading-tight whitespace-nowrap">
             Hector Landscaping
             <br />
             <span className="text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] font-sans">
@@ -133,10 +151,15 @@ export default function StickyNav({
       {/* Mobile menu overlay — full-screen list when open */}
       {open && (
         <div className="lg:hidden fixed inset-0 z-[60] bg-[#f8f5ef] flex flex-col">
-          <div className="h-16 sm:h-20 px-5 sm:px-8 flex items-center justify-between border-b border-[#1a2e1a]/10">
+          <div className="h-20 sm:h-24 px-5 sm:px-8 flex items-center justify-between border-b border-[#1a2e1a]/10">
             <a href="#top" onClick={() => setOpen(false)} className="flex items-center gap-3" aria-label={businessName}>
-              <img src={logoSrc} alt={businessName} className="h-10 w-auto" />
-              <span className="font-serif text-[15px] tracking-tight text-[#1a2e1a]">
+              <img
+                src={logoSrc}
+                alt={businessName}
+                className="h-14 w-auto"
+                style={{ filter: "contrast(1.05) saturate(0.85) hue-rotate(-8deg)" }}
+              />
+              <span className="font-serif text-[16px] tracking-tight text-[#1a2e1a]">
                 Hector Landscaping
               </span>
             </a>
