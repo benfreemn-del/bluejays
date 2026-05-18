@@ -105,6 +105,14 @@ const SLUG_CONFIG: Record<
     clientEmail: "familycarecleaning@gmail.com",
     emoji: "🍋",
   },
+  "thrive-church-sequim": {
+    // Modern non-denominational church · 640 N Sequim Ave · Sundays 10:30am.
+    // Inbound from the bespoke preview at /clients/thrive-church-sequim.
+    // Handles both connect_card + prayer_request form_type submissions.
+    businessLabel: "Thrive Church (Sequim, WA)",
+    clientEmail: "office@thrivesequim.com",
+    emoji: "🌅",
+  },
   "elite-hardscapes-and-landscapes": {
     // Tyler Fritz · $1k bespoke · Port Angeles WA · Olympic Peninsula.
     // Email TBD — routing to Ben's inbox until Tyler shares one.
@@ -350,16 +358,37 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Fan-out to client portal owners that have opted into INSTANT email
-  // alerts. Owners on "digest" wait for the daily roll-up; "off" gets
-  // nothing. This is the system that lets Philip get a ping the moment
-  // a parent submits a Camp Finder lead — without spamming Ben for it.
+  // Direct send to the canonical client email from SLUG_CONFIG.
+  // Unconditional — every slug in SLUG_CONFIG auto-routes to its
+  // clientEmail without requiring a client_owners row to be seeded.
+  // This is what guarantees the client always gets the lead the moment
+  // a form is submitted (Hector, Pine & Particle, every future entry).
+  // Ben keeps getting his own copy via sendOwnerEmail() below.
   const clientOwnerSends: Promise<unknown>[] = [];
+  const clientEmailLower = cfg.clientEmail.toLowerCase();
+  clientOwnerSends.push(
+    sendEmailTo({
+      to: cfg.clientEmail,
+      subject: `${cfg.emoji} New lead — ${name}`,
+      body: fullMessage,
+      fromName: `${cfg.businessLabel} Alerts`,
+      clientSlug: slug,
+    }).catch((err) =>
+      console.error("[clients/inquire] direct client email failed:", err),
+    ),
+  );
+
+  // Additional fan-out to client portal owners that have opted into
+  // INSTANT email alerts (co-owners, partners, etc. with their own
+  // client_owners row). Owners on "digest" wait for the daily roll-up;
+  // "off" gets nothing. Skip the canonical clientEmail to avoid
+  // double-sending — that's already handled by the direct send above.
   if (isSupabaseConfigured()) {
     try {
       const owners = await listOwnersWithPrefsForClient(slug);
       const audience = detectAudience(slug, body);
       for (const o of owners) {
+        if (o.email.toLowerCase() === clientEmailLower) continue; // dedupe
         const filter = o.prefs.instant_audience_filter ?? [];
         if (filter.length > 0 && audience && !filter.includes(audience)) {
           continue; // owner only wants specific audiences
