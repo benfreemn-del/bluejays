@@ -31,6 +31,8 @@ import {
   DoorOpen,
   Plant,
   Leaf,
+  BookBookmark,
+  BookOpenText,
 } from "@phosphor-icons/react";
 
 type Variant =
@@ -75,6 +77,8 @@ type Icon =
   | "praisingHands"
   | "door"
   | "heart"
+  | "bible"        // closed Bible with bookmark ribbon
+  | "bibleOpen"    // open Bible with text lines
   | "omega";
 
 type Motif = {
@@ -143,10 +147,13 @@ const layouts: Record<Variant, Motif[]> = {
   ],
 
   beliefs: [
-    // Three-tier symbols
-    { icon: "oliveBranch", size: 140, top: "8%", left: "2%", rotate: -8, color: VINE },
-    { icon: "anchor", size: 130, top: "42%", right: "4%", rotate: 4, color: TEAL_DEEP },
-    { icon: "flame", size: 140, bottom: "8%", left: "16%", color: AMBER },
+    // Three-tier symbols + open Bible foundation
+    { icon: "oliveBranch", size: 140, top: "6%", left: "2%", rotate: -8, color: VINE },
+    { icon: "anchor", size: 130, top: "40%", right: "4%", rotate: 4, color: TEAL_DEEP },
+    { icon: "flame", size: 140, bottom: "10%", left: "16%", color: AMBER },
+    // Bible — theology rests on scripture (Sola Scriptura)
+    { icon: "bibleOpen", size: 200, bottom: "8%", right: "8%", rotate: 4, color: TEAL, weight: 0.95 },
+    { icon: "bible", size: 110, top: "16%", right: "26%", rotate: -8, color: BREAD, weight: 0.85 },
   ],
 
   generosity: [
@@ -166,15 +173,16 @@ const layouts: Record<Variant, Motif[]> = {
   visit: [
     { icon: "door", size: 200, top: "10%", left: "4%", color: TEAL_DEEP },
     { icon: "heart", size: 55, top: "30%", left: "26%", color: AMBER, weight: 0.85 },
-    { icon: "cross", size: 90, bottom: "12%", right: "8%", rotate: 6, color: TEAL, weight: 0.85 },
+    { icon: "bible", size: 130, bottom: "10%", right: "8%", rotate: 6, color: TEAL, weight: 0.9 },
     { icon: "dove", size: 140, top: "18%", right: "6%", rotate: -8, color: DOVE_BLUE, weight: 0.85 },
   ],
 
   mission: [
-    // Single Ω watermark upper-right + dove drifting mid-right (Alpha
-    // removed per Ben 2026-05-18).
+    // Single Ω watermark upper-right + dove drifting mid-right + open
+    // Bible lower-left ("Your word is a lamp to my feet" — Ps 119:105).
     { icon: "omega", size: 180, top: "6%", right: "4%", color: AMBER, weight: 0.65 },
     { icon: "dove", size: 120, top: "44%", right: "14%", rotate: -6, color: DOVE_BLUE, weight: 0.85 },
+    { icon: "bibleOpen", size: 180, bottom: "8%", left: "4%", rotate: -4, color: TEAL, weight: 0.9 },
   ],
 
   // ── Generic layouts ────────────────────────────────
@@ -220,6 +228,8 @@ function iconFor(name: Icon, size: number) {
     case "praisingHands": return <HandsPraying {...props} />;
     case "door": return <DoorOpen {...props} />;
     case "heart": return <Heart {...props} />;
+    case "bible": return <BookBookmark {...props} />;
+    case "bibleOpen": return <BookOpenText {...props} />;
     case "omega": return <OmegaText size={size} />;
   }
 }
