@@ -151,10 +151,31 @@ async function graphPost<T>(args: {
       body: form.toString(),
     });
     if (!r.ok) {
-      type ErrPayload = { error?: { message?: string; code?: number } };
+      // Meta error envelope: { error: { message, type, code,
+      // error_subcode, error_user_title, error_user_msg, fbtrace_id } }
+      // Surface code + subcode + user_msg verbatim so the CLI shows
+      // Ben exactly which permission/operation is rejected (not just
+      // the generic "Permissions error" message).
+      type ErrPayload = {
+        error?: {
+          message?: string;
+          code?: number;
+          error_subcode?: number;
+          error_user_msg?: string;
+          error_user_title?: string;
+          fbtrace_id?: string;
+        };
+      };
       const errBody = (await r.json().catch(() => ({}))) as ErrPayload;
-      const msg = errBody.error?.message || `HTTP ${r.status}`;
-      return { ok: false, error: msg };
+      const err = errBody.error || {};
+      const parts: string[] = [];
+      parts.push(err.message || `HTTP ${r.status}`);
+      if (err.code !== undefined) parts.push(`code=${err.code}`);
+      if (err.error_subcode !== undefined)
+        parts.push(`subcode=${err.error_subcode}`);
+      if (err.error_user_msg) parts.push(`details: ${err.error_user_msg}`);
+      if (err.fbtrace_id) parts.push(`fbtrace=${err.fbtrace_id}`);
+      return { ok: false, error: parts.join(" · ") };
     }
     return { ok: true, data: (await r.json()) as T };
   } catch (err) {
