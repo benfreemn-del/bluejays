@@ -240,8 +240,16 @@ export default function BluejaysFunnelsTab() {
           return (
             <div
               key={f.segment}
-              className={`relative rounded-2xl border p-5 transition-shadow ${f.cardClass}`}
+              className={`relative rounded-2xl border p-5 pl-6 overflow-hidden transition-shadow ${f.cardClass}`}
             >
+              {/* 4px accent stripe on the left edge — matches the modal's
+                  per-step accent stripe so cards + modal feel unified
+                  across the funnel viz. */}
+              <div
+                aria-hidden
+                className={`absolute left-0 top-0 bottom-0 w-1 ${f.accentText}`}
+                style={{ background: "currentColor", opacity: 0.55 }}
+              />
               {/* + Note pill */}
               <button
                 type="button"
@@ -323,8 +331,21 @@ export default function BluejaysFunnelsTab() {
                         key={i}
                         className="relative rounded-md bg-black/30 border border-white/[0.04] px-1.5 py-1.5"
                       >
-                        <div className={`text-[10px] font-black ${f.accentText} mb-0.5`}>
-                          D{s.day}
+                        {/* Stage number + day, side-by-side. Matches the
+                            modal's "1/2/3..." anchor so the card → modal
+                            transition tracks visually. */}
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <span
+                            className={`inline-flex items-center justify-center w-4 h-4 rounded-full bg-black/60 border border-white/15 text-[9px] font-black tabular-nums ${f.accentText}`}
+                            aria-hidden
+                          >
+                            {i + 1}
+                          </span>
+                          <span
+                            className={`text-[10px] font-black ${f.accentText} tabular-nums`}
+                          >
+                            D{s.day}
+                          </span>
                         </div>
                         <div className="text-[9px] text-slate-500 mb-0.5 whitespace-nowrap">
                           {glyph} {s.channel}

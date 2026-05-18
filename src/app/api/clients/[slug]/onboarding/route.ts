@@ -7,6 +7,8 @@ import {
   type OnboardingStep,
   type StepPayload,
 } from "@/lib/client-onboarding";
+import { encryptCredential } from "@/lib/crypto-creds";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * GET  /api/clients/[slug]/onboarding
@@ -66,11 +68,82 @@ export async function POST(
     return NextResponse.json({ ok: false, error: "data required" }, { status: 400 });
   }
 
+  // Special handling for the `accounts` step: if the client supplied
+  // delegated-access credentials, encrypt the password into the
+  // `client_credentials` vault BEFORE persisting the step. The plaintext
+  // password is stripped from `data` so it never touches the JSONB
+  // onboarding column. Per CLAUDE.md "Per-Client Docs + Credentials
+  // Pattern" — passwords live exactly one place.
+  let dataToSave = body.data as Record<string, unknown>;
+  if (step === "accounts" && dataToSave) {
+    const email =
+      typeof dataToSave.delegated_email === "string"
+        ? dataToSave.delegated_email.trim()
+        : "";
+    const username =
+      typeof dataToSave.delegated_username === "string"
+        ? dataToSave.delegated_username.trim()
+        : "";
+    const password =
+      typeof dataToSave.delegated_password === "string"
+        ? dataToSave.delegated_password
+        : "";
+    const credNotes =
+      typeof dataToSave.delegated_notes === "string"
+        ? dataToSave.delegated_notes.trim()
+        : "";
+
+    // Persist a credential row when we have ANY of email / username / password.
+    // Empty password is OK — sometimes Ben just needs the login URL + email
+    // and the client will provide the password by another channel.
+    if (isSupabaseConfigured() && (email || username || password)) {
+      try {
+        const password_enc = password ? encryptCredential(password) : null;
+        await supabase.from("client_credentials").insert({
+          client_slug: slug,
+          title: "Delegated account access (onboarding)",
+          category: "delegated_access",
+          username: email || username || null,
+          password_enc,
+          login_url: null,
+          notes:
+            credNotes ||
+            "Captured from onboarding wizard — use for standing up Twilio / Google Ads / Meta / Calendly / SendGrid accounts during 30-day onboarding window.",
+        });
+      } catch (e) {
+        // If the credentials write fails, fail the whole save — we don't
+        // want a partial state where the form thinks it saved but Ben
+        // can't find the password.
+        return NextResponse.json(
+          {
+            ok: false,
+            error: `Couldn't save delegated credentials: ${(e as Error).message}`,
+          },
+          { status: 500 },
+        );
+      }
+    }
+
+    // Strip plaintext password from the JSONB payload — keep the email +
+    // username + notes (those are operational metadata Ben needs alongside
+    // the rest of the accounts step). A `delegated_password_saved_at`
+    // breadcrumb tells the wizard the password is on file.
+    dataToSave = {
+      ...dataToSave,
+      delegated_password: undefined,
+      delegated_password_saved_at: password ? new Date().toISOString() : null,
+    };
+    delete (dataToSave as Record<string, unknown>).delegated_password;
+  }
+
   try {
     // The lib enforces shape downstream by typing; the API trusts the
     // wizard since both are first-party. Real validation lives in the
     // form components (required fields, etc.).
-    const row = await saveStep(slug, { step, data: body.data } as StepPayload);
+    const row = await saveStep(slug, {
+      step,
+      data: dataToSave,
+    } as StepPayload);
     return NextResponse.json({ ok: true, row });
   } catch (e) {
     return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 500 });

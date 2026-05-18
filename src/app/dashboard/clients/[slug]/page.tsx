@@ -12,6 +12,16 @@ import type {
 } from "@/lib/client-tasks";
 import { clientSiteFor } from "@/lib/client-site-urls";
 import { useRole } from "@/lib/use-role";
+import WorkLogPanel from "@/components/dashboard/WorkLogPanel";
+import RevenueTile from "@/components/portal/RevenueTile";
+import ApiKeysPanel from "@/components/dashboard/ApiKeysPanel";
+import AmazonAdsTile from "@/components/author/AmazonAdsTile";
+
+// Slugs treated as indie-author tier — they pick up the author-specific
+// tiles (Amazon Ads optimizer, ARC CRM link, etc.) on the admin
+// dashboard. Add new author clients here when they onboard at the
+// $10k AI System tier.
+const AUTHOR_SLUGS = new Set(["bloodlines"]);
 
 /**
  * /dashboard/clients/[slug]
@@ -157,6 +167,35 @@ export default function ClientTasksPage({
             (2026-05-16) — now persistent across every per-client tab,
             not just Tasks. */}
       </div>
+
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 mb-3">
+        <RevenueTile slug={slug} mode="admin" />
+      </section>
+
+      {AUTHOR_SLUGS.has(slug) && (
+        <section className="mx-auto max-w-3xl px-4 sm:px-6 mb-3 space-y-3">
+          <AmazonAdsTile slug={slug} />
+          <Link
+            href={`/dashboard/clients/${slug}/arc`}
+            className="block rounded-2xl border border-amber-500/30 bg-amber-950/15 p-4 hover:bg-amber-950/25 transition-colors"
+          >
+            <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-amber-300">
+              📚 ARC Reader / Street Team CRM
+            </p>
+            <p className="text-sm font-bold text-white mt-0.5">
+              Manage launch-week reviewers →
+            </p>
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              Kanban for applicants &middot; copy distribution &middot; review-URL
+              tracking. First-2-weeks-post-launch is the Amazon algorithmic
+              window — this is the launchpad.
+            </p>
+          </Link>
+        </section>
+      )}
+
+      <WorkLogPanel slug={slug} />
+      <ApiKeysPanel slug={slug} />
 
       <main className="mx-auto max-w-3xl px-4 sm:px-6 py-5 pb-32">
         {/* Filters + add */}

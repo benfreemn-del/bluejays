@@ -238,22 +238,31 @@ export default function MeyerPortalDemo() {
             </span>
           </div>
         </div>
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-                tab === t.id
-                  ? "border-yellow-400 text-white"
-                  : "border-transparent text-slate-500 hover:text-slate-300"
-              }`}
-            >
-              <span className="text-base">{t.emoji}</span>
-              {t.label}
-            </button>
-          ))}
-        </nav>
+        <div className="relative">
+          <nav className="mx-auto max-w-7xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto scrollbar-thin">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`py-2.5 px-3 sm:px-4 border-b-2 transition font-semibold flex items-center gap-1.5 whitespace-nowrap ${
+                  tab === t.id
+                    ? "border-yellow-400 text-white"
+                    : "border-transparent text-slate-500 hover:text-slate-300"
+                }`}
+              >
+                <span className="text-base">{t.emoji}</span>
+                {t.label}
+              </button>
+            ))}
+          </nav>
+          {/* Right-edge fade — signals horizontal scroll exists on phones
+              where 4-5 tabs overflow off-screen. Pre-2026-05-18 audit
+              "discoverability fails" #1. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-950/95 to-transparent lg:hidden"
+          />
+        </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 pb-32">
@@ -264,6 +273,7 @@ export default function MeyerPortalDemo() {
             setStatusOverride={setStatusOverride}
             bulkSetStatus={bulkSetStatus}
             setDismissedFor={setDismissedFor}
+            onTabChange={setTab}
           />
         )}
         {tab === "leads" && (
@@ -737,7 +747,8 @@ function OverviewTab({
   setStatusOverride,
   bulkSetStatus,
   setDismissedFor,
-}: LeadMarksProps) {
+  onTabChange,
+}: LeadMarksProps & { onTabChange: (tab: Tab) => void }) {
   // Sort + selection state for the Overview hot-leads list. Lives in
   // the tab so the user's "I sorted by customer type while looking
   // at the dashboard" preference doesn't bleed into Leads tab (which
@@ -945,12 +956,13 @@ function OverviewTab({
         </div>
       </section>
 
-      {/* Quick links */}
+      {/* Quick links — wired to setTab so live demos actually navigate
+          (was a no-op pre-2026-05-18; sales-call credibility leak). */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <QuickAction emoji="📥" label="View all leads" tab="leads" />
-        <QuickAction emoji="🗺️" label="See heatmap" tab="map" />
-        <QuickAction emoji="🎯" label="Funnel analytics" tab="funnels" />
-        <QuickAction emoji="🤝" label="Partner network" tab="affiliates" />
+        <QuickAction emoji="📥" label="View all leads" tab="leads" onClick={onTabChange} />
+        <QuickAction emoji="🗺️" label="See heatmap" tab="map" onClick={onTabChange} />
+        <QuickAction emoji="🎯" label="Funnel analytics" tab="funnels" onClick={onTabChange} />
+        <QuickAction emoji="🤝" label="Partner network" tab="affiliates" onClick={onTabChange} />
       </div>
     </div>
   );
@@ -974,15 +986,22 @@ function StatCard({ label, value, sub, tone }: { label: string; value: string; s
   );
 }
 
-function QuickAction({ emoji, label }: { emoji: string; label: string; tab: Tab }) {
+function QuickAction({
+  emoji,
+  label,
+  tab,
+  onClick,
+}: {
+  emoji: string;
+  label: string;
+  tab: Tab;
+  onClick: (tab: Tab) => void;
+}) {
   return (
     <button
       type="button"
       className="rounded-xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.04] hover:border-yellow-400/30 transition p-4 text-left"
-      onClick={() => {
-        // Note: these QuickActions are illustrative. The real navigation
-        // lives in the tab bar above. Click here is a no-op for the demo.
-      }}
+      onClick={() => onClick(tab)}
     >
       <div className="text-2xl">{emoji}</div>
       <div className="mt-2 text-sm font-semibold">{label}</div>
@@ -1899,11 +1918,13 @@ function MapTab() {
               {focused.county} County · {focused.zip}
             </span>
           </h3>
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Focused-town stats — 3 actionable metrics (Coordinates
+              tile dropped 2026-05-18 audit: lat/lng is decoration,
+              not signal). */}
+          <div className="mt-3 grid grid-cols-3 gap-3">
             <StatCard label="Lead Score" value={String(focused.score)} sub="0-100" tone="yellow" />
             <StatCard label="Active Leads" value={String(focused.active_leads)} sub="In pipeline" tone="emerald" />
             <StatCard label="YTD Jobs" value={String(focused.closed_jobs_ytd)} sub="Closed" tone="orange" />
-            <StatCard label="Coordinates" value={`${focused.lat.toFixed(3)}°N`} sub={`${focused.lng.toFixed(3)}°W`} tone="slate" />
           </div>
           {focused.notes && (
             <p className="mt-4 text-sm text-slate-400 leading-relaxed">{focused.notes}</p>
@@ -2189,8 +2210,16 @@ function FunnelsTab() {
           return (
             <div
               key={f.id}
-              className={`relative rounded-2xl border p-5 transition-shadow ${t.borderClass} ${t.bgClass}`}
+              className={`relative rounded-2xl border p-5 pl-6 overflow-hidden transition-shadow ${t.borderClass} ${t.bgClass}`}
             >
+              {/* 4px accent stripe — matches the funnel modal's per-step
+                  accent stripe so the card → modal transition feels
+                  unified. */}
+              <div
+                aria-hidden
+                className={`absolute left-0 top-0 bottom-0 w-1 ${t.accent}`}
+                style={{ background: "currentColor", opacity: 0.55 }}
+              />
               {/* + Note pill — top-right corner. Opens the modal with
                   note panel pre-expanded so Ben gets a free-form change
                   request without the owner having to scan all steps. */}
@@ -2241,8 +2270,20 @@ function FunnelsTab() {
                         key={s.step}
                         className="relative rounded-md bg-black/30 border border-white/[0.04] px-1.5 py-1.5"
                       >
-                        <div className={`text-[10px] font-black ${t.accent} mb-0.5`}>
-                          D{s.day_offset}
+                        {/* Stage number + day — matches the modal's
+                            "1/2/3..." anchor for card → modal continuity. */}
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <span
+                            className={`inline-flex items-center justify-center w-4 h-4 rounded-full bg-black/60 border border-white/15 text-[9px] font-black tabular-nums ${t.accent}`}
+                            aria-hidden
+                          >
+                            {i + 1}
+                          </span>
+                          <span
+                            className={`text-[10px] font-black ${t.accent} tabular-nums`}
+                          >
+                            D{s.day_offset}
+                          </span>
                         </div>
                         <div className="text-[9px] text-slate-500 mb-0.5 whitespace-nowrap">
                           {glyph} {s.channel === "site_visit" ? "visit" : s.channel}

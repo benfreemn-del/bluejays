@@ -1,4 +1,5 @@
 "use client";
+// Funnel visualization modal — redesigned 2026-05-17 for legibility.
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -443,7 +444,14 @@ export default function FunnelVisualModal({
               const finalReach = reachSeq[reachSeq.length - 1] ?? 0;
               return mergedSteps.map((step, i) => {
                 const reachPct = Math.round(reachSeq[i] ?? 0);
-                const widthPct = 92 - i * 9; // taper visually
+                // Gentler taper — old 92 − i*9 ran out of legible width
+                // at step 5 (47%) and crushed step 8 to 29%. New curve
+                // 96 − i*4 keeps every step at ≥ 60% width through ~10
+                // steps, so the funnel SHAPE is preserved but the box
+                // contents stay readable end-to-end. Mixpanel /
+                // Looker / GA-funnels-style: shrinking trapezoid for
+                // the at-a-glance shape, full-readable content within.
+                const widthPct = Math.max(60, 96 - i * 4);
                 const reachCount = Math.round(enrolled * (reachSeq[i] ?? 0) / 100);
                 // Drop-off from previous step (positive number = pp dropped).
                 const dropPct =
@@ -481,13 +489,18 @@ export default function FunnelVisualModal({
               });
             })()}
 
-            {/* Conversion exit */}
-            <div className="mt-2 mb-1 text-slate-600 text-xl">↓</div>
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-3 text-center">
+            {/* Conversion exit — width matches the deepest step so
+                the funnel "closes" at the same width it tapered to,
+                preserving the trapezoid feel. */}
+            <div className="mt-1 mb-0.5 text-slate-600 text-base leading-none">↓</div>
+            <div
+              className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-2.5 text-center"
+              style={{ width: `${Math.max(60, 96 - mergedSteps.length * 4)}%` }}
+            >
               <div className="text-[10px] uppercase tracking-widest text-emerald-300 font-bold mb-0.5">
                 Won · converted
               </div>
-              <div className="text-2xl font-black text-emerald-200 tabular-nums">
+              <div className="text-2xl font-black text-emerald-200 tabular-nums leading-none">
                 {counts.wonCount}
               </div>
             </div>
@@ -629,30 +642,89 @@ function FunnelStepRow({
   const label = channelLabel(step.channel);
   const isVoicemail = step.channel === "voicemail";
 
+  // Depth tint — each step picks up a tiny bit of emerald (the "won"
+  // color) as you go down the funnel. Mixpanel-style: deeper = closer
+  // to conversion = greener. Subtle so white text stays readable.
+  const emeraldTint = Math.min(0.09, index * 0.012);
+
+  // Drop-off severity tiering — was always rose. Now: severe drops
+  // (>20pp) get rose, moderate (10-20pp) get amber, mild (<10pp) get
+  // a muted slate so the eye picks up where the REAL bleeds are.
+  const dropTone =
+    dropPct >= 20
+      ? "text-rose-300 bg-rose-500/[0.10] border-rose-500/30"
+      : dropPct >= 10
+        ? "text-amber-300 bg-amber-500/[0.10] border-amber-500/30"
+        : "text-slate-400 bg-slate-500/[0.08] border-slate-500/20";
+
+  // Left accent strip — 4px colored stripe per BlueJays "audience color"
+  // convention (CLAUDE.md owner-portal rule #8). Intensifies with depth.
+  const stripeOpacity = Math.min(0.85, 0.35 + index * 0.07);
+
   return (
     <div className="w-full flex flex-col items-center">
-      {/* connector */}
-      <div className="text-slate-700 text-xl my-1">↓</div>
+      {/* connector — slimmer than before so the entire funnel fits
+          on one screen without scroll for typical 5-8 step funnels */}
+      <div className="text-slate-700 text-base leading-none my-0.5">↓</div>
 
       <div
-        className={`rounded-xl border bg-slate-900/70 transition-all ${
+        className={`relative rounded-xl border transition-all overflow-hidden ${
           isEdited
             ? "border-amber-500/60"
             : isOpen
               ? "border-amber-400/40"
               : "border-white/10 hover:border-amber-500/30"
         }`}
-        style={{ width: `${widthPct}%` }}
+        style={{
+          width: `${widthPct}%`,
+          background: `linear-gradient(180deg, rgba(15, 23, 42, 0.70), rgba(16, 185, 129, ${emeraldTint}))`,
+        }}
       >
-        {/* Compact summary row — always visible */}
-        <button
-          type="button"
+        {/* 4px left accent strip — anchors the eye and reinforces
+            stage depth. Uses the funnel's accent color via currentColor
+            so each audience funnel (amber / sky / lime / etc.) keeps
+            its visual identity here. */}
+        <div
+          aria-hidden
+          className={`absolute left-0 top-0 bottom-0 w-1 ${accentText}`}
+          style={{ background: "currentColor", opacity: stripeOpacity }}
+        />
+        {/* Compact summary — restructured 2026-05-17 for legibility.
+            Old layout crammed 5+ items per row × 3 rows × shrinking
+            widths → unreadable by step 5. New layout: ONE meta row
+            (stage # + day + channel + big % on right), ONE message
+            row (the human-readable label, the soul of the step),
+            ONE bar row, ONE footer row with compact pills. Mixpanel /
+            Looker-style: trapezoid for shape, full-width data inside.
+
+            Container is a <div role="button"> not <button> — the day
+            +/− nudgers nest inside, and HTML forbids nested <button>.
+            Same keyboard semantics via tabIndex + onKeyDown. */}
+        <div
+          role={editable ? "button" : undefined}
+          tabIndex={editable ? 0 : undefined}
           onClick={editable ? onToggleOpen : undefined}
-          className={`w-full text-left px-4 py-3 ${editable ? "cursor-pointer" : "cursor-default"}`}
+          onKeyDown={
+            editable
+              ? (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onToggleOpen();
+                  }
+                }
+              : undefined
+          }
+          className={`w-full text-left pl-5 pr-4 py-2.5 ${editable ? "cursor-pointer" : "cursor-default"}`}
         >
+          {/* Row 1: stage # + day + channel · BIG reach % on right */}
           <div className="flex items-center justify-between gap-3 mb-1.5">
             <div className="flex items-center gap-2 min-w-0">
-              {/* Day with up/down arrows when editable */}
+              <span
+                className={`inline-flex items-center justify-center w-7 h-7 rounded-full bg-black/60 border border-white/15 text-[12px] font-black tabular-nums ${accentText} shrink-0`}
+                aria-hidden
+              >
+                {index + 1}
+              </span>
               {editable ? (
                 <span
                   className="inline-flex items-center gap-0.5 rounded-md bg-black/40 border border-white/10 px-1 py-0.5 shrink-0"
@@ -685,8 +757,8 @@ function FunnelStepRow({
                   D{step.day}
                 </span>
               )}
-              <span className="text-base shrink-0">{emoji}</span>
-              <span className="text-xs font-bold text-white shrink-0">
+              <span className="text-base shrink-0" aria-hidden>{emoji}</span>
+              <span className="text-[11px] font-semibold text-slate-300 shrink-0 hidden sm:inline">
                 {label}
               </span>
               {isEdited && (
@@ -695,67 +767,59 @@ function FunnelStepRow({
                 </span>
               )}
             </div>
-            <div className="text-[10px] text-slate-500 shrink-0">
-              <span className="text-white font-bold tabular-nums">
-                ~{reachCount}
-              </span>{" "}
-              leads
-            </div>
+            {/* Big readable reach % — the at-a-glance signal */}
+            <span className="text-lg font-black tabular-nums text-white shrink-0 leading-none">
+              {reachPct}%
+            </span>
           </div>
-          <p className="text-xs text-slate-300 leading-snug">{step.label}</p>
 
-          {/* Cumulative-reach bar — REQUIRED on every step row per
-              CLAUDE.md Rule 74. Shows what % of the original 100%
-              reaches this step, with a yellow→orange gradient fill.
-              Bars are guaranteed monotonic (data went through
-              monotonizeReach upstream) so they only ever scale down.
-              Drop-off pill on the right shows pp lost from previous
-              step — the visual answer to "where am I losing people?". */}
-          <div className="mt-2.5">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-[9px] uppercase tracking-[0.16em] text-slate-500 font-semibold">
-                {index === 0 ? "Cumulative reach" : "Reach"}
-                {!isMeasured && (
-                  <span className="ml-1 normal-case tracking-normal text-slate-600 italic font-normal">
-                    · est. baseline
-                  </span>
-                )}
+          {/* Row 2: message / step label (the soul of the step) */}
+          <p className="text-[13px] text-slate-200 leading-snug mb-2">
+            {step.label}
+          </p>
+
+          {/* Row 3: bar (no clutter above it — labels moved to footer) */}
+          <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+            <div
+              className="h-full rounded-full transition-[width] duration-300"
+              style={{
+                width: `${Math.max(0, Math.min(100, reachPct))}%`,
+                background: "linear-gradient(90deg, #facc15 0%, #f97316 100%)",
+              }}
+            />
+          </div>
+
+          {/* Row 4: compact footer — lead count · drop · close pill ·
+              optional est-baseline tag. All metadata in one tidy line
+              so the box stays scannable end-to-end. */}
+          <div className="mt-1.5 flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2 text-[10px] text-slate-500 min-w-0">
+              <span className="tabular-nums">
+                <span className="text-slate-300 font-bold">~{reachCount}</span> leads
               </span>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {dropPct > 0 && (
-                  <span className="text-[10px] tabular-nums font-bold text-rose-300/90 bg-rose-500/[0.08] border border-rose-500/20 px-1.5 py-0.5 rounded">
-                    −{dropPct} pp
-                  </span>
-                )}
-                {/* Close-rate pill — REQUIRED on every step row per
-                    CLAUDE.md Rule 74. Shows what % of people who
-                    reached THIS step eventually closed. Naturally
-                    monotonically non-decreasing across steps (deeper =
-                    higher-quality lead); last step always 100%. */}
-                <span className="text-[10px] tabular-nums font-bold text-emerald-300/90 bg-emerald-500/[0.08] border border-emerald-500/25 px-1.5 py-0.5 rounded">
-                  → {closeRatePct}% close
+              {!isMeasured && (
+                <span className="italic text-slate-600 hidden sm:inline">
+                  · est. baseline
                 </span>
-                <span className="text-xs font-black tabular-nums text-white">
-                  {reachPct}%
-                </span>
-              </div>
+              )}
             </div>
-            <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
-              <div
-                className="h-full rounded-full transition-[width] duration-300"
-                style={{
-                  width: `${Math.max(0, Math.min(100, reachPct))}%`,
-                  background: "linear-gradient(90deg, #facc15 0%, #f97316 100%)",
-                }}
-              />
+            <div className="flex items-center gap-1.5 shrink-0">
+              {dropPct > 0 && (
+                <span className={`text-[10px] tabular-nums font-bold ${dropTone} border px-1.5 py-0.5 rounded`}>
+                  −{dropPct} pp
+                </span>
+              )}
+              <span className="text-[10px] tabular-nums font-bold text-emerald-300/90 bg-emerald-500/[0.08] border border-emerald-500/25 px-1.5 py-0.5 rounded">
+                → {closeRatePct}% close
+              </span>
             </div>
           </div>
-        </button>
+        </div>
 
         {/* Inline editor — opens on click when editable */}
         {editable && isOpen && (
           <div
-            className="px-4 pb-4 pt-1 border-t border-white/5 space-y-3"
+            className="pl-5 pr-4 pb-4 pt-1 border-t border-white/5 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Channel selector — pill row */}

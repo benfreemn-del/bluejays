@@ -531,6 +531,16 @@ interface AccountsData {
   domain_name: string;
   domain_registrar: string;
   notes: string;
+  // Delegated account creation — optional. When the client fills these in,
+  // the server-side handler encrypts `delegated_password` via
+  // `encryptCredential()` and writes the row into `client_credentials`
+  // BEFORE persisting step_accounts (which only keeps the email + a flag
+  // so plaintext never sits in JSONB). Bench: CLAUDE.md "Per-Client Docs +
+  // Credentials Pattern" (encryption boundary rule).
+  delegated_email: string;
+  delegated_username: string;
+  delegated_password: string;
+  delegated_notes: string;
 }
 
 function AccountsForm({ initial, onSubmit, saving }: { initial: Partial<AccountsData> | null; onSubmit: (d: Record<string, unknown>) => void; saving: boolean }) {
@@ -543,6 +553,10 @@ function AccountsForm({ initial, onSubmit, saving }: { initial: Partial<Accounts
     domain_name: initial?.domain_name ?? "",
     domain_registrar: initial?.domain_registrar ?? "",
     notes: initial?.notes ?? "",
+    delegated_email: initial?.delegated_email ?? "",
+    delegated_username: initial?.delegated_username ?? "",
+    delegated_password: "", // Never echo back — it's encrypted server-side
+    delegated_notes: initial?.delegated_notes ?? "",
   });
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(d as unknown as Record<string, unknown>); }} className="space-y-4">
@@ -563,6 +577,52 @@ function AccountsForm({ initial, onSubmit, saving }: { initial: Partial<Accounts
         </Two>
       )}
       <Textarea label="Anything else?" value={d.notes} onChange={(v) => setD({ ...d, notes: v })} />
+
+      {/* Delegated account access — lets BlueJays stand up Twilio /
+          Google Ads / Meta / Calendly / SendGrid / etc. on the client's
+          behalf during the 30-day onboarding window. Optional. The
+          password field is encrypted server-side (AES-256-GCM) and
+          stored in the per-client credentials vault — plaintext never
+          touches the onboarding JSONB column. */}
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.05] p-4 mt-2 space-y-3">
+        <div>
+          <H3>🔑 Delegated account access (optional but speeds setup ~5×)</H3>
+          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            Give BlueJays a working business email + a password we can use to
+            create the accounts you don&apos;t have yet (Twilio number, Google
+            Ads, Meta Ads, Calendly, SendGrid, etc.). Everything stays in
+            <span className="font-semibold text-slate-200"> your name</span> —
+            we just do the verification heavy-lifting. Password is encrypted
+            (AES-256-GCM) and only Ben can decrypt it.
+          </p>
+        </div>
+        <Input
+          label="Business email"
+          type="email"
+          value={d.delegated_email}
+          onChange={(v) => setD({ ...d, delegated_email: v })}
+          placeholder="info@yourbusiness.com"
+        />
+        <Input
+          label="Username (if different from email)"
+          value={d.delegated_username}
+          onChange={(v) => setD({ ...d, delegated_username: v })}
+          placeholder="Leave blank to use the email"
+        />
+        <Input
+          label="Password"
+          type="password"
+          value={d.delegated_password}
+          onChange={(v) => setD({ ...d, delegated_password: v })}
+          placeholder={initial?.delegated_email ? "Leave blank to keep existing password" : "We'll encrypt this before saving"}
+        />
+        <Textarea
+          label="Anything we should know about this account?"
+          value={d.delegated_notes}
+          onChange={(v) => setD({ ...d, delegated_notes: v })}
+          placeholder="e.g. 2FA on this number, recovery email is X, this email is a Google Workspace alias…"
+        />
+      </div>
       <SubmitButton saving={saving}>Save & continue</SubmitButton>
     </form>
   );

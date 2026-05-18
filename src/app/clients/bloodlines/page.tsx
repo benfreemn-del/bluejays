@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Image from "next/image";
+import ReaderEmailCaptureModal from "@/components/author/ReaderEmailCaptureModal";
 
 /**
  * /clients/bloodlines — Bespoke author showcase for Preston James
@@ -5874,6 +5875,12 @@ function FactionPreviewGrid() {
 function FactionSelectorBlock() {
   const [step, setStep] = useState<number>(0); // 0 = intro, 1-4 = q's, 5 = result
   const [answers, setAnswers] = useState<string[]>([]);
+  // Series-LTV reader-funnel hook (locked 2026-05-18 — finally builds
+  // what /agency INCLUDED_AUTHOR[2] claims). Result screen now offers
+  // the faction-specific backstory chapter for an email. Captures land
+  // in client_leads tagged source='reader:faction_quiz' so Preston's
+  // welcome sequence can branch on faction.
+  const [showCapture, setShowCapture] = useState(false);
 
   const result = useMemo(() => {
     if (answers.length < QUIZ_QUESTIONS.length) return null;
@@ -6063,6 +6070,22 @@ function FactionSelectorBlock() {
                 >
                   <BookIcon /> Read Lineage of Fire
                 </a>
+                {/* Series-LTV email capture — the actual built version of
+                    INCLUDED_AUTHOR[2]. Offers faction-specific backstory
+                    chapter for an email, tags lead with source. */}
+                <button
+                  type="button"
+                  onClick={() => setShowCapture(true)}
+                  className="px-6 py-3 font-semibold tracking-wide rounded-sm transition-all duration-300 hover:scale-[1.02]"
+                  style={{
+                    border: `2px solid ${result.color}`,
+                    background: `${result.color}22`,
+                    color: result.color,
+                    fontFamily: "'Cinzel', serif",
+                  }}
+                >
+                  Claim Your Backstory Chapter
+                </button>
                 <button
                   type="button"
                   onClick={reset}
@@ -6080,6 +6103,14 @@ function FactionSelectorBlock() {
           )}
         </div>
       </div>
+      <ReaderEmailCaptureModal
+        slug="bloodlines"
+        source="faction_quiz"
+        context={result ? { faction: result.name } : undefined}
+        isOpen={showCapture}
+        onClose={() => setShowCapture(false)}
+        lure="backstory chapter"
+      />
     </section>
   );
 }
