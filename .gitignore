@@ -69,3 +69,12 @@ content-assets/broll/**/*.MOV
 
 .env*.local
 
+# Per-user Claude Code settings (machine-local overrides) — never commit
+.claude/settings.local.json
+
+# HyperAgent intermediate staging — pre-renamed asset dumps that should
+# NEVER ship to git. After picking renders to ship, copy/rename them
+# into public/ad-assets/<wave>/ and commit those instead.
+public/hyperagent facebook photos/
+public/hyperagent_facebook_photos/
+
