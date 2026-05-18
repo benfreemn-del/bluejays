@@ -131,6 +131,36 @@ const REGISTRY: OnboardDoc[] = [
       "The locked voice rules every Tekky email, SMS, ad, and AI-drafted " +
       "reply follows. Read once, then acknowledge below.",
   },
+  // BlueJays SLA — same PDF, registered per slug so each AI System
+  // client gets /sign/[slug]/sla and Ben gets a separate ack row in
+  // onboarding_acks per signature. Add a new row when onboarding a
+  // new AI System ($10k tier) client.
+  {
+    slug: "zenith-sports",
+    doc: "sla",
+    title: "Service-Level Agreement",
+    brand: "TEKKY · Zenith Sports",
+    pdfPath: "/onboarding/bluejays-sla.pdf",
+    alertSubject: "Tekky acknowledged BlueJays SLA",
+    description:
+      "Working contract between you and BlueJays — response times, " +
+      "what's included every month, what's out of scope, and the " +
+      "escalation order when something feels off. Read once, acknowledge " +
+      "below.",
+  },
+  {
+    slug: "itc-quick-attach",
+    doc: "sla",
+    title: "Service-Level Agreement",
+    brand: "ITC Quick-Attach",
+    pdfPath: "/onboarding/bluejays-sla.pdf",
+    alertSubject: "ITC acknowledged BlueJays SLA",
+    description:
+      "Working contract between you and BlueJays — response times, " +
+      "what's included every month, what's out of scope, and the " +
+      "escalation order when something feels off. Read once, acknowledge " +
+      "below.",
+  },
 ];
 
 export function getOnboardDoc(slug: string, doc: string): OnboardDoc | null {

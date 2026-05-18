@@ -7,6 +7,7 @@
  */
 
 import { getSupabase } from "./supabase";
+import { notifyOwnerOfNewLead } from "./client-lead-notify";
 
 /**
  * ClientLeadAudience — open string type. Per-tenant valid audience
@@ -257,7 +258,15 @@ export async function createClientLead(
     .select("*")
     .single();
   if (error) throw new Error(`createClientLead: ${error.message}`);
-  return data as ClientLead;
+  const row = data as ClientLead;
+
+  // Fire owner SMS notification (the production "push" path until Web
+  // Push lands). Never blocks the insert — fire-and-forget.
+  void notifyOwnerOfNewLead(row).catch((err) =>
+    console.error("[client-leads] notify failed:", err),
+  );
+
+  return row;
 }
 
 export async function listClientLeads(

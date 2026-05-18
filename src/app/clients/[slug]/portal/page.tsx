@@ -5,6 +5,8 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import FunnelVisualModal from "@/components/portal/FunnelVisualModal";
+import RevenueTile from "@/components/portal/RevenueTile";
+import PWAInstallBanner from "@/components/portal/PWAInstallBanner";
 import FunnelEnrollPicker, {
   type FunnelOption,
 } from "@/components/portal/FunnelEnrollPicker";
@@ -865,12 +867,17 @@ export default function PortalPage({
           </div>
           <button
             onClick={logout}
-            className="text-[11px] tracking-wider uppercase font-bold text-slate-400 hover:text-white border border-slate-700 px-2.5 py-1 rounded"
+            className="text-[11px] tracking-wider uppercase font-bold text-rose-300/80 hover:text-rose-200 border border-rose-500/30 hover:border-rose-500/60 bg-rose-500/[0.04] hover:bg-rose-500/[0.08] px-2.5 py-1 rounded transition-colors"
+            title="Sign out of the owner portal — your public site stays live."
           >
             Sign out
           </button>
         </div>
-        {/* TAB BAR */}
+        {/* TAB BAR — wrapped in a relative container so the right-edge
+            fade indicator can sit on top of the overflow scroll. Audit
+            2026-05-18: "12-14 tabs on iPhone, ~7 visible, no signal
+            more exists past the visible set." */}
+        <div className="relative">
         <nav className="mx-auto max-w-6xl px-4 sm:px-6 flex gap-1 sm:gap-2 text-sm overflow-x-auto">
           {(
             [
@@ -937,6 +944,11 @@ export default function PortalPage({
             </button>
           ))}
         </nav>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#070a13]/85 to-transparent lg:hidden"
+        />
+        </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 pb-32">
@@ -1071,6 +1083,12 @@ function OverviewTab({
 
   return (
     <div className="space-y-6">
+      {/* PWA install banner — mounted ONCE on the Overview tab. Registers
+          /sw.js + injects <link rel="manifest">. Discreet install prompt
+          on Chrome/Android, iOS Safari hint, dismissable, auto-hides
+          once installed. Per CLAUDE.md "Mobile-First Portal Rules". */}
+      <PWAInstallBanner slug={slug} />
+
       {/* 14-day onboarding timeline — visible to clients in their first
           two weeks post-purchase. Reduces day-1-anxiety and gives them
           a concrete "what's happening this week" anchor. Auto-hides
@@ -1085,6 +1103,11 @@ function OverviewTab({
           signals tagged with this client_slug. Hides itself when
           there's nothing to show (zero crons + zero signals). */}
       <AutomationDailyDigest clientSlug={slug} />
+
+      {/* Closed-revenue tile — closes the ROI loop. Reads
+          client_revenue_attributions (manual + future Stripe-Connect
+          auto). Period switches 7d / 30d / 90d / YTD. */}
+      <RevenueTile slug={slug} mode="portal" />
 
       {/* Live AI activity banner — outcome readout, not feature list */}
       {aiBannerActive && (
@@ -5811,8 +5834,16 @@ function FunnelsTab({
           return (
             <div
               key={f.segment}
-              className={`relative rounded-2xl border p-5 ${f.cardClass}`}
+              className={`relative rounded-2xl border p-5 pl-6 overflow-hidden ${f.cardClass}`}
             >
+              {/* 4px accent stripe on the left edge — matches the modal's
+                  per-step accent stripe so cards + modal feel unified
+                  across the funnel viz. */}
+              <div
+                aria-hidden
+                className={`absolute left-0 top-0 bottom-0 w-1 ${f.accentText}`}
+                style={{ background: "currentColor", opacity: 0.55 }}
+              />
               {/* + Note pill — top-right corner. Opens the modal with the
                   note panel pre-expanded so the owner can write a request
                   to Ben without first scanning all steps. */}
@@ -5867,10 +5898,21 @@ function FunnelsTab({
                         key={i}
                         className={`relative rounded-md bg-black/30 border border-white/[0.04] px-1.5 py-1.5`}
                       >
-                        <div
-                          className={`text-[10px] font-black ${f.accentText} mb-0.5`}
-                        >
-                          D{s.day}
+                        {/* Stage number + day, side-by-side. Matches the
+                            modal's "1/2/3..." anchor so the card → modal
+                            transition tracks visually. */}
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <span
+                            className={`inline-flex items-center justify-center w-4 h-4 rounded-full bg-black/60 border border-white/15 text-[9px] font-black tabular-nums ${f.accentText}`}
+                            aria-hidden
+                          >
+                            {i + 1}
+                          </span>
+                          <span
+                            className={`text-[10px] font-black ${f.accentText} tabular-nums`}
+                          >
+                            D{s.day}
+                          </span>
                         </div>
                         <div className="text-[9px] text-slate-500 mb-0.5 whitespace-nowrap">
                           {channelLabel}
