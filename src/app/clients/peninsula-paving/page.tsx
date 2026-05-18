@@ -706,17 +706,28 @@ function AsphaltCrossSection() {
   const DIAGRAM_LEFT = 60;
   const DIAGRAM_RIGHT = 500;
   const DIAGRAM_WIDTH = DIAGRAM_RIGHT - DIAGRAM_LEFT;
-  const SKY_HEIGHT = 90; // top sky/roller strip
-  const LABEL_RAIL_X = 560; // where the label pointer lines bend up
-  const LABEL_X = 580; // where the label text starts (anchor=start)
+  const SKY_HEIGHT = 110;
+  const LABEL_BEND_X = 542; // where the leader line bends vertically
+  const LABEL_RAIL_X = 582; // dot position on the right rail
+  const LABEL_X = 602; // where the label text starts (anchor=start)
+  const LABEL_PITCH = 50; // vertical spacing between rows (each row gets 50px)
+  const LABEL_RAIL_START = SKY_HEIGHT + 18;
 
   let cumY = SKY_HEIGHT;
-  const bands = ASPHALT_LAYERS.map((l) => {
-    const band = { ...l, y: cumY };
+  const bands = ASPHALT_LAYERS.map((l, i) => {
+    const layerMidY = cumY + l.height / 2;
+    // EVERY label gets evenly-distributed rail Y, regardless of how
+    // thin the actual layer is. Bent leader line connects the rail
+    // position back to the layer mid-Y (which may be 4-10px apart
+    // for the top thin layers — they don't crowd the labels anymore).
+    const labelY = LABEL_RAIL_START + i * LABEL_PITCH;
+    const band = { ...l, y: cumY, layerMidY, labelY };
     cumY += l.height;
     return band;
   });
-  const totalH = cumY + 40;
+  const labelsBottom =
+    LABEL_RAIL_START + (ASPHALT_LAYERS.length - 1) * LABEL_PITCH + 32;
+  const totalH = Math.max(cumY, labelsBottom) + 50;
 
   return (
     <div className="relative">
@@ -815,7 +826,7 @@ function AsphaltCrossSection() {
           <ellipse cx="36" cy="70" rx="40" ry="2.5" fill="rgba(28, 20, 16, 0.25)" />
         </g>
 
-        {/* Each asphalt layer + its label on the right-side rail */}
+        {/* Each asphalt layer band (drawn in the diagram column) */}
         {bands.map((b) => {
           let fill: string = b.color;
           if (b.name === "Aggregate Base") fill = "url(#pp-xsec-aggregate)";
@@ -825,12 +836,8 @@ function AsphaltCrossSection() {
           else if (b.name === "Wearing Course") fill = "url(#pp-xsec-wear)";
           else if (b.name === "Seal Coat") fill = "url(#pp-xsec-seal)";
 
-          const midY = b.y + b.height / 2;
-
           return (
-            <g key={b.name}>
-              {/* Layer band — confined to the diagram column (left
-                  half). Right half stays clean for labels. */}
+            <g key={`band-${b.name}`}>
               <rect
                 x={DIAGRAM_LEFT}
                 y={b.y}
@@ -838,7 +845,6 @@ function AsphaltCrossSection() {
                 height={b.height}
                 fill={fill}
               />
-
               {/* Line-striping layer — paint dashes across the top */}
               {b.name === "Line Striping" && (
                 <>
@@ -872,25 +878,49 @@ function AsphaltCrossSection() {
                   />
                 </>
               )}
+            </g>
+          );
+        })}
 
-              {/* Pointer line from layer mid-edge to the label rail */}
-              <line
-                x1={DIAGRAM_RIGHT}
-                y1={midY}
-                x2={LABEL_RAIL_X}
-                y2={midY}
+        {/* Labels — distributed evenly on a right-side rail with bent
+            leader lines back to the actual layer center. This is the
+            architectural-drawing "callout" pattern: each label gets the
+            same vertical breathing room (LABEL_PITCH px), and the
+            leader line bends to reach a layer that may be packed
+            tightly with others. */}
+        {bands.map((b) => {
+          const layerEdgeX = DIAGRAM_RIGHT;
+          const leaderD = `M ${layerEdgeX} ${b.layerMidY} L ${LABEL_BEND_X} ${b.layerMidY} L ${LABEL_BEND_X} ${b.labelY} L ${LABEL_RAIL_X} ${b.labelY}`;
+
+          return (
+            <g key={`label-${b.name}`}>
+              {/* Bent leader line */}
+              <path
+                d={leaderD}
+                fill="none"
                 stroke={ACCENT}
                 strokeWidth="1"
                 strokeDasharray="3 3"
-                opacity="0.6"
+                opacity="0.65"
+                strokeLinejoin="round"
+                strokeLinecap="round"
               />
-              <circle cx={LABEL_RAIL_X} cy={midY} r="3" fill={ACCENT} />
+              {/* Dot at the layer (where the leader starts) */}
+              <circle
+                cx={layerEdgeX}
+                cy={b.layerMidY}
+                r="2.5"
+                fill={ACCENT}
+                stroke="#ffffff"
+                strokeWidth="1"
+              />
+              {/* Dot at the label rail */}
+              <circle cx={LABEL_RAIL_X} cy={b.labelY} r="3" fill={ACCENT} />
 
-              {/* Label text — anchored LEFT (text-start), all on the
-                  right rail. Dark on light bg = max contrast. */}
+              {/* Label text */}
               <text
                 x={LABEL_X}
-                y={midY - 3}
+                y={b.labelY - 4}
                 textAnchor="start"
                 fontSize="15"
                 fontWeight="700"
@@ -901,7 +931,7 @@ function AsphaltCrossSection() {
               </text>
               <text
                 x={LABEL_X}
-                y={midY + 14}
+                y={b.labelY + 14}
                 textAnchor="start"
                 fontSize="12"
                 fill={INK_SOFT}
@@ -1008,9 +1038,8 @@ function PeninsulaRouteMap() {
    * Reads like a real National Park Service trail map.
    */
 
-  // Cities at REAL geographic positions (Olympic Peninsula lat/long
-  // mapped to the 1000x600 viewBox). `labelDx`/`labelDy` offsets the
-  // text away from the pin to avoid crashes.
+  // Cities at REAL geographic positions, mapped to the new 1000x700
+  // viewBox so they sit INSIDE the redrawn realistic coastline.
   const cities: Array<{
     name: string;
     x: number;
@@ -1021,21 +1050,21 @@ function PeninsulaRouteMap() {
     major?: boolean;
   }> = [
     // Major hubs
-    { name: "Forks", x: 200, y: 290, labelDx: 0, labelDy: 22, anchor: "middle", major: true },
-    { name: "Port Angeles", x: 415, y: 160, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
-    { name: "Sequim", x: 555, y: 175, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
-    { name: "Port Townsend", x: 825, y: 150, labelDx: 16, labelDy: 4, anchor: "start", major: true },
-    // Strait towns north of Sequim
-    { name: "Dungeness", x: 570, y: 125, labelDx: -8, labelDy: -6, anchor: "end" },
-    { name: "Joyce", x: 300, y: 165, labelDx: 0, labelDy: -10, anchor: "middle" },
-    // Inland / east-of-Sequim cluster — spread the labels out
+    { name: "Forks", x: 178, y: 320, labelDx: 14, labelDy: 4, anchor: "start", major: true },
+    { name: "Port Angeles", x: 415, y: 162, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
+    { name: "Sequim", x: 565, y: 178, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
+    { name: "Port Townsend", x: 845, y: 185, labelDx: 14, labelDy: 4, anchor: "start", major: true },
+    // Strait towns north of Sequim — Dungeness sits at the base of the spit
+    { name: "Dungeness", x: 588, y: 152, labelDx: -8, labelDy: -8, anchor: "end" },
+    { name: "Joyce", x: 320, y: 160, labelDx: 0, labelDy: -10, anchor: "middle" },
+    // Inland / east-of-Sequim cluster
     { name: "Carlsborg", x: 510, y: 195, labelDx: -10, labelDy: 4, anchor: "end" },
-    { name: "Diamond Point", x: 625, y: 192, labelDx: 12, labelDy: -2, anchor: "start" },
-    { name: "Blyn", x: 610, y: 222, labelDx: 0, labelDy: 16, anchor: "middle" },
-    { name: "Gardiner", x: 668, y: 175, labelDx: 12, labelDy: 4, anchor: "start" },
-    // Quimper / Hood Canal south
-    { name: "Chimacum", x: 778, y: 215, labelDx: 12, labelDy: 4, anchor: "start" },
-    { name: "Quilcene", x: 728, y: 325, labelDx: 14, labelDy: 4, anchor: "start" },
+    { name: "Diamond Point", x: 635, y: 178, labelDx: 12, labelDy: -2, anchor: "start" },
+    { name: "Blyn", x: 615, y: 220, labelDx: 0, labelDy: 16, anchor: "middle" },
+    { name: "Gardiner", x: 685, y: 195, labelDx: 14, labelDy: 4, anchor: "start" },
+    // Quimper Peninsula + Hood Canal
+    { name: "Chimacum", x: 790, y: 245, labelDx: 14, labelDy: 4, anchor: "start" },
+    { name: "Quilcene", x: 738, y: 368, labelDx: 16, labelDy: 4, anchor: "start" },
   ];
 
   return (
@@ -1048,10 +1077,10 @@ function PeninsulaRouteMap() {
       }}
     >
       <svg
-        viewBox="0 0 1000 600"
+        viewBox="0 0 1000 700"
         className="w-full h-auto"
         xmlns="http://www.w3.org/2000/svg"
-        aria-label="Realistic map of the Olympic Peninsula showing the 12 cities Peninsula Paving serves, the Strait of Juan de Fuca, the Pacific Ocean, Hood Canal, the Olympic Mountains, and Highway 101's actual route."
+        aria-label="Realistic map of the Olympic Peninsula with the 12 cities Peninsula Paving serves, the Strait of Juan de Fuca, the Pacific Ocean, Hood Canal with the Great Bend, the Quimper Peninsula, Dungeness Spit, the Olympic Mountains, and Highway 101's actual U-shaped route."
       >
         <defs>
           {/* Light cream-blue water — Strait, Pacific, Hood Canal */}
@@ -1081,21 +1110,19 @@ function PeninsulaRouteMap() {
           </linearGradient>
         </defs>
 
-        {/* WATER BACKGROUND — fills the entire viewBox, land is then
-            drawn on top. This way water shows wherever land doesn't. */}
-        <rect width="1000" height="600" fill="url(#pp-water-light)" />
-        <rect width="1000" height="600" fill="url(#pp-waves)" opacity="0.6" />
+        {/* WATER BACKGROUND fills the whole viewBox */}
+        <rect width="1000" height="700" fill="url(#pp-water-light)" />
+        <rect width="1000" height="700" fill="url(#pp-waves)" opacity="0.6" />
 
-        {/* Vancouver Island silhouette across the strait (top edge,
-            partly off-canvas — just a contextual hint). */}
+        {/* Vancouver Island silhouette (north across the strait) */}
         <path
-          d="M 0,0 L 1000,0 L 1000,55 Q 880,52 740,58 Q 580,65 420,55 Q 240,45 80,58 L 0,55 Z"
+          d="M 0,0 L 1000,0 L 1000,50 Q 880,48 740,55 Q 580,62 420,52 Q 240,42 80,55 L 0,52 Z"
           fill="#fde9b8"
           opacity="0.7"
         />
         <text
           x="500"
-          y="32"
+          y="30"
           textAnchor="middle"
           fontSize="10"
           fill={INK_DIM}
@@ -1103,87 +1130,264 @@ function PeninsulaRouteMap() {
           fontStyle="italic"
           letterSpacing="0.32em"
         >
-          VANCOUVER ISLAND
+          VANCOUVER ISLAND (CANADA)
         </text>
 
-        {/* OLYMPIC PENINSULA landmass — realistic outline.
-            NW corner (Cape Flattery) ~ (165, 90)
-            North coast curves east to Quimper Peninsula at (~870, 130)
-            Quimper Pen sticks NE; PT is near (~825, 150)
-            East coast curves SW from PT down toward Hood Canal narrow
-            at the south (~770, 460)
-            Off-map at the south
-            West coast (Pacific) curves NW from (~190, 540) up to NW. */}
+        {/* Kitsap Peninsula — thin strip on the east edge, gives Hood
+            Canal a "this is a channel between two landmasses" feel
+            rather than just "a notch in our peninsula". */}
         <path
           d="
-            M 165,90
-            Q 240,82 320,98
-            Q 410,115 480,108
-            Q 560,100 640,115
-            Q 730,128 810,128
-            L 855,135
-            Q 880,148 870,178
-            Q 850,200 820,200
-            Q 800,210 790,235
-            Q 780,275 775,330
-            Q 770,400 790,460
-            L 815,540
-            L 815,600
-            L 180,600
-            L 175,540
-            Q 155,460 145,400
-            Q 130,330 125,265
-            Q 122,200 130,150
-            Q 138,110 165,90 Z
+            M 960,165
+            L 1000,160 L 1000,700 L 870,700
+            Q 855,640 855,590
+            Q 855,520 870,470
+            Q 885,420 910,380
+            Q 935,330 945,275
+            Q 955,220 960,165 Z
           "
           fill="url(#pp-land)"
           stroke={ACCENT_DEEP}
-          strokeWidth="1.2"
-          strokeOpacity="0.35"
+          strokeWidth="1"
+          strokeOpacity="0.3"
+        />
+        <text
+          x="970"
+          y="445"
+          textAnchor="middle"
+          fontSize="9"
+          fill={INK_DIM}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.25em"
+          transform="rotate(90 970 445)"
+        >
+          KITSAP PEN.
+        </text>
+
+        {/* OLYMPIC PENINSULA — realistic outline with:
+              * Cape Flattery NW corner with the small Neah Bay jut
+              * Discovery Bay notch (real N-S inlet between Sequim area
+                and the Quimper Peninsula)
+              * Quimper Peninsula (Port Townsend's sub-peninsula),
+                attached via a narrow neck
+              * Hood Canal Great Bend at the SE — peninsula's south
+                edge hooks WESTWARD around the canal's elbow
+              * Pacific coast with major river indentations
+              * Olympic Mountains live INSIDE this outline */}
+        <path
+          d="
+            M 96,150
+            L 118,138 L 145,142 L 168,138 L 195,148
+            Q 240,152 285,152
+            L 320,158
+            Q 365,162 410,156
+            L 442,151
+            L 470,156
+            Q 505,160 540,158
+            L 562,156
+            L 595,155
+            Q 620,150 645,162
+            L 660,158
+            L 670,168
+            L 668,195
+            L 668,225
+            L 678,250
+            L 700,245
+            L 715,220
+            L 720,195
+            L 728,175
+            Q 750,168 775,168
+            L 800,168
+            L 825,165
+            L 850,170
+            L 870,182
+            L 878,205
+            L 870,230
+            L 850,245
+            L 815,250
+            L 790,258
+            L 770,280
+            Q 758,330 760,380
+            Q 762,430 770,478
+            Q 778,520 790,555
+            L 798,580
+            Q 790,615 745,628
+            Q 690,640 620,640
+            Q 530,635 440,628
+            Q 350,618 270,605
+            L 230,595
+            L 205,565
+            L 195,520
+            L 180,490
+            L 162,470
+            L 152,440
+            L 148,408
+            L 138,378
+            L 128,348
+            L 122,318
+            L 130,288
+            L 142,260
+            L 150,232
+            L 142,205
+            L 128,182
+            L 115,165
+            L 96,150 Z
+          "
+          fill="url(#pp-land)"
+          stroke={ACCENT_DEEP}
+          strokeWidth="1.4"
+          strokeOpacity="0.45"
           strokeLinejoin="round"
         />
 
-        {/* Hood Canal — the narrow water body separating the peninsula
-            from Kitsap. Drawn as a thin curving channel on the east. */}
+        {/* Dungeness Spit — the iconic 5-mile sandbar curving NORTH
+            from the coast at Dungeness into the Strait of Juan de Fuca.
+            A separate thin shape drawn on top of the strait water. */}
         <path
           d="
-            M 870,180
-            Q 882,215 875,260
-            Q 865,315 858,375
-            Q 853,435 870,500
-            Q 880,545 895,600
-            L 935,600
-            Q 920,540 910,475
-            Q 905,400 912,330
-            Q 920,260 915,200
-            Q 905,178 870,180 Z
+            M 562,155
+            Q 580,135 605,118
+            Q 625,108 632,122
+            Q 626,136 612,148
+            Q 595,156 580,158
+            Z
           "
+          fill="url(#pp-land)"
+          stroke={ACCENT_DEEP}
+          strokeWidth="0.8"
+          strokeOpacity="0.35"
+        />
+        <text
+          x="615"
+          y="105"
+          textAnchor="middle"
+          fontSize="8"
+          fill={INK_DIM}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.12em"
+        >
+          Dungeness Spit
+        </text>
+
+        {/* Ediz Hook — small curving sand spit east of Port Angeles */}
+        <path
+          d="M 415,148 Q 440,138 462,148 Q 458,154 432,156 Q 422,154 415,148 Z"
+          fill="url(#pp-land)"
+          stroke={ACCENT_DEEP}
+          strokeWidth="0.7"
+          strokeOpacity="0.3"
+        />
+
+        {/* Lake Crescent — major NW interior lake */}
+        <ellipse
+          cx="285"
+          cy="240"
+          rx="32"
+          ry="9"
           fill="url(#pp-water-light)"
           stroke={SKY_DEEP}
           strokeWidth="0.6"
-          strokeOpacity="0.4"
+          strokeOpacity="0.45"
         />
+        <text
+          x="285"
+          y="220"
+          textAnchor="middle"
+          fontSize="8"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.08em"
+          opacity="0.8"
+        >
+          Lake Crescent
+        </text>
+
+        {/* Lake Quinault — major SW interior lake */}
+        <ellipse
+          cx="218"
+          cy="538"
+          rx="22"
+          ry="9"
+          fill="url(#pp-water-light)"
+          stroke={SKY_DEEP}
+          strokeWidth="0.6"
+          strokeOpacity="0.45"
+        />
+        <text
+          x="218"
+          y="558"
+          textAnchor="middle"
+          fontSize="7"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.08em"
+          opacity="0.8"
+        >
+          Lake Quinault
+        </text>
+
+        {/* Hood Canal — the iconic L-shaped fjord with the GREAT BEND
+            at its southern end where it hooks 90° westward. This is
+            literally the most recognizable shape of the peninsula's
+            geography and the old map missed it entirely. */}
         <path
           d="
-            M 870,180
-            Q 882,215 875,260
-            Q 865,315 858,375
-            Q 853,435 870,500
-            Q 880,545 895,600
+            M 880,205
+            Q 895,260 890,320
+            Q 880,390 870,455
+            Q 862,515 855,565
+            Q 850,610 800,635
+            Q 730,655 660,650
+            L 660,675
+            Q 745,680 815,655
+            Q 880,625 895,560
+            Q 905,485 910,415
+            Q 915,335 905,260
+            Q 898,215 880,205 Z
+          "
+          fill="url(#pp-water-light)"
+          stroke={SKY_DEEP}
+          strokeWidth="0.8"
+          strokeOpacity="0.5"
+        />
+        {/* Hood Canal wave detail */}
+        <path
+          d="
+            M 880,220 Q 895,290 885,360
+            Q 875,440 865,520 Q 855,580 820,615
           "
           fill="none"
           stroke="#60a5fa"
-          strokeWidth="0.5"
-          opacity="0.5"
+          strokeWidth="0.6"
+          opacity="0.55"
           strokeDasharray="2 4"
         />
 
-        {/* Water labels */}
+        {/* "Great Bend" label — the canal's distinctive 90° hook */}
         <text
-          x="500"
+          x="755"
+          y="668"
+          textAnchor="middle"
+          fontSize="8"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.18em"
+          opacity="0.85"
+        >
+          GREAT BEND
+        </text>
+
+        {/* Water labels — adjusted for 1000x700 viewBox */}
+        <text
+          x="430"
           y="92"
           textAnchor="middle"
-          fontSize="13"
+          fontSize="14"
           fill={SKY_DEEP}
           fontFamily={FONT_SERIF}
           fontStyle="italic"
@@ -1193,67 +1397,67 @@ function PeninsulaRouteMap() {
           STRAIT OF JUAN DE FUCA
         </text>
         <text
-          x="55"
-          y="380"
+          x="42"
+          y="420"
           textAnchor="middle"
-          fontSize="13"
+          fontSize="14"
           fill={SKY_DEEP}
           fontFamily={FONT_SERIF}
           fontStyle="italic"
           letterSpacing="0.34em"
           opacity="0.85"
-          transform="rotate(-90 55 380)"
+          transform="rotate(-90 42 420)"
         >
           PACIFIC OCEAN
         </text>
         <text
-          x="950"
-          y="380"
+          x="930"
+          y="430"
           textAnchor="middle"
-          fontSize="10"
+          fontSize="11"
           fill={SKY_DEEP}
           fontFamily={FONT_SERIF}
           fontStyle="italic"
           letterSpacing="0.3em"
           opacity="0.85"
-          transform="rotate(90 950 380)"
+          transform="rotate(90 930 430)"
         >
           HOOD CANAL
         </text>
 
-        {/* OLYMPIC MOUNTAINS — central peninsula, multiple ridged peaks
-            with shading + a snowcap. This is the real geographic centre
-            of the peninsula. */}
+        {/* OLYMPIC MOUNTAINS — central peninsula. Coords moved INSIDE
+            the new realistic landmass (no longer poking through coast). */}
         <g>
           {/* Back ridge */}
           <path
-            d="M 240,360 L 290,290 L 345,320 L 410,250 L 470,300 L 530,235 L 595,290 L 650,260 L 705,310 L 740,360 L 240,360 Z"
+            d="M 220,400 L 275,320 L 335,355 L 400,275 L 470,330 L 540,260 L 605,320 L 660,290 L 715,335 L 745,395 L 220,395 Z"
             fill="url(#pp-mtn-shadow)"
             opacity="0.9"
           />
-          {/* Front ridge (slightly lighter) */}
+          {/* Front ridge */}
           <path
-            d="M 220,400 L 270,340 L 320,375 L 380,320 L 440,365 L 500,300 L 555,355 L 620,325 L 680,370 L 730,400 L 220,400 Z"
+            d="M 200,455 L 260,395 L 320,425 L 385,370 L 450,415 L 515,355 L 575,405 L 635,375 L 695,420 L 740,455 L 200,455 Z"
             fill="#fed7aa"
             opacity="0.85"
           />
           {/* Snowcap on Mt. Olympus (tallest peak) */}
           <path
-            d="M 510,260 L 530,235 L 555,265 L 540,272 L 525,270 Z"
+            d="M 520,290 L 540,260 L 565,295 L 548,302 L 532,300 Z"
             fill="#ffffff"
             opacity="0.95"
           />
           <path
-            d="M 525,235 L 530,235 L 540,255 L 533,255 Z"
+            d="M 535,260 L 540,260 L 552,283 L 542,283 Z"
             fill="#cbd5e1"
             opacity="0.6"
           />
-          {/* Peak labels */}
+          {/* Peak labels — re-positioned for new mountain coords */}
           <text
-            x="530"
-            y="225"
+            x="540"
+            y="250"
             textAnchor="middle"
             fontSize="9"
+            fontWeight="700"
             fill={INK_DIM}
             fontFamily={FONT_HEAD}
             letterSpacing="0.1em"
@@ -1261,99 +1465,83 @@ function PeninsulaRouteMap() {
             Mt. Olympus
           </text>
           <text
-            x="450"
-            y="445"
+            x="475"
+            y="500"
             textAnchor="middle"
-            fontSize="11"
+            fontSize="12"
             fill={INK_DIM}
             fontFamily={FONT_SERIF}
             fontStyle="italic"
-            letterSpacing="0.28em"
+            letterSpacing="0.32em"
           >
             OLYMPIC MOUNTAINS
           </text>
         </g>
 
-        {/* HIGHWAY 101 — the real U-shape route around the peninsula.
-            Yellow halo (highway shield colour) under an orange ribbon. */}
-        {/* Halo glow */}
-        <path
-          d="
-            M 815,580
-            Q 800,540 790,490
-            Q 778,430 778,370
-            Q 778,310 790,265
-            Q 800,235 820,215
-            Q 800,200 770,200
-            Q 720,195 670,185
-            Q 620,175 580,175
-            Q 555,175 510,180
-            Q 460,182 415,162
-            Q 360,150 305,165
-            Q 250,180 210,210
-            Q 175,250 178,290
-            Q 185,360 200,420
-            Q 215,490 235,580
-          "
-          fill="none"
-          stroke={YELLOW_HOT}
-          strokeWidth="9"
-          strokeLinecap="round"
-          opacity="0.55"
-        />
-        {/* Highway 101 ribbon */}
-        <path
-          d="
-            M 815,580
-            Q 800,540 790,490
-            Q 778,430 778,370
-            Q 778,310 790,265
-            Q 800,235 820,215
-            Q 800,200 770,200
-            Q 720,195 670,185
-            Q 620,175 580,175
-            Q 555,175 510,180
-            Q 460,182 415,162
-            Q 360,150 305,165
-            Q 250,180 210,210
-            Q 175,250 178,290
-            Q 185,360 200,420
-            Q 215,490 235,580
-          "
-          fill="none"
-          stroke={ACCENT}
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        {/* Highway dashes (white centerline) */}
-        <path
-          d="
-            M 815,580
-            Q 800,540 790,490
-            Q 778,430 778,370
-            Q 778,310 790,265
-            Q 800,235 820,215
-            Q 800,200 770,200
-            Q 720,195 670,185
-            Q 620,175 580,175
-            Q 555,175 510,180
-            Q 460,182 415,162
-            Q 360,150 305,165
-            Q 250,180 210,210
-            Q 175,250 178,290
-            Q 185,360 200,420
-            Q 215,490 235,580
-          "
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="0.8"
-          strokeLinecap="round"
-          strokeDasharray="4 6"
-        />
+        {/* HIGHWAY 101 — traces the real U-route around the peninsula.
+            Enters from off-map SE (Olympia direction), runs north up
+            the east side along Hood Canal (on the peninsula side, not
+            in the water), curves west around Discovery Bay, west
+            along the strait through Sequim/PA/Joyce, then curves
+            south down the Pacific coast through Forks, off-map SW. */}
+        {(() => {
+          const hwy101 = `
+            M 600,680
+            Q 660,650 720,610
+            Q 750,560 750,500
+            Q 752,430 745,360
+            Q 738,290 730,235
+            Q 720,210 705,200
+            Q 670,195 635,195
+            Q 605,200 580,180
+            Q 540,180 510,195
+            Q 475,195 440,180
+            Q 420,168 410,162
+            Q 380,160 350,165
+            Q 320,158 290,168
+            Q 250,180 215,205
+            Q 185,235 175,275
+            Q 168,320 175,360
+            Q 175,410 160,455
+            Q 152,505 165,560
+            Q 180,615 215,680
+          `;
+          return (
+            <>
+              {/* Halo glow under the ribbon */}
+              <path
+                d={hwy101}
+                fill="none"
+                stroke={YELLOW_HOT}
+                strokeWidth="9"
+                strokeLinecap="round"
+                opacity="0.55"
+              />
+              {/* Orange ribbon */}
+              <path
+                d={hwy101}
+                fill="none"
+                stroke={ACCENT}
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
+              {/* White centerline dashes */}
+              <path
+                d={hwy101}
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                strokeDasharray="4 6"
+              />
+            </>
+          );
+        })()}
 
-        {/* Highway 20 spur to Port Townsend */}
+        {/* Highway 20 spur — branches off 101 near Discovery Bay and
+            runs east to Port Townsend on the Quimper Peninsula. */}
         <path
-          d="M 770,200 Q 790,178 820,158"
+          d="M 720,215 Q 770,200 820,188"
           fill="none"
           stroke={YELLOW_DEEP}
           strokeWidth="2.5"
@@ -1361,8 +1549,9 @@ function PeninsulaRouteMap() {
           opacity="0.85"
         />
 
-        {/* Highway 101 shield label (mid-route) */}
-        <g transform="translate(260, 195)">
+        {/* Highway 101 shield label (positioned along the new route,
+            on the eastern Hood-Canal-side stretch) */}
+        <g transform="translate(770, 470)">
           <rect
             x="-16"
             y="-12"
@@ -1386,8 +1575,8 @@ function PeninsulaRouteMap() {
           </text>
         </g>
 
-        {/* Highway 20 shield */}
-        <g transform="translate(802, 185)">
+        {/* Highway 20 shield — on the spur out to Port Townsend */}
+        <g transform="translate(785, 205)">
           <rect
             x="-13"
             y="-10"
@@ -1461,8 +1650,8 @@ function PeninsulaRouteMap() {
           </g>
         ))}
 
-        {/* Compass rose — lower-left, on water */}
-        <g transform="translate(70, 510)">
+        {/* Compass rose — lower-left, on the Pacific Ocean water */}
+        <g transform="translate(60, 640)">
           <circle
             cx="0"
             cy="0"
@@ -1470,7 +1659,7 @@ function PeninsulaRouteMap() {
             fill="#ffffff"
             stroke={ACCENT}
             strokeWidth="1.2"
-            opacity="0.9"
+            opacity="0.95"
           />
           <polygon points="0,-22 -4,0 0,-3 4,0" fill={ACCENT} />
           <polygon points="0,22 -4,0 0,3 4,0" fill={INK_DIM} opacity="0.5" />
@@ -1487,16 +1676,16 @@ function PeninsulaRouteMap() {
           </text>
         </g>
 
-        {/* Mile annotation */}
+        {/* Mile annotation — bottom-right, on the strait */}
         <text
-          x="850"
-          y="495"
+          x="950"
+          y="120"
           textAnchor="end"
           fontSize="10"
           fontStyle="italic"
-          fill={OLIVE}
+          fill={ACCENT_DEEP}
           fontFamily={FONT_SERIF}
-          letterSpacing="0.1em"
+          letterSpacing="0.12em"
         >
           ~ 110 miles Sequim &mdash;&gt; Forks
         </text>
