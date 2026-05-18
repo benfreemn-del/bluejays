@@ -1787,7 +1787,19 @@ export default function AllInOneServicesPage() {
                 rights reserved.
               </div>
               <div className="inline-flex items-center gap-2">
-                <BluejayLogo size={16} />
+                {/* BlueJay bird = hidden "owner entrance" to Kyle's private
+                    portal demo. Blue brand color, password-gated. The
+                    "BlueJays" text continues to drive the network-effect
+                    /audit link per CLAUDE.md footer rule. */}
+                <a
+                  href="/clients/all-in-one-services/portal-demo"
+                  aria-label="Owner portal — Kyle's private dashboard"
+                  className="transition-opacity hover:opacity-75"
+                  style={{ color: "#2563eb" }}
+                  title="Owner portal · password required"
+                >
+                  <BluejayLogo size={16} />
+                </a>
                 <span>
                   Built by{" "}
                   <a
