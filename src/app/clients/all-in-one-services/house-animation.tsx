@@ -39,8 +39,16 @@ const COPPER = "#b45309";       // door
 const COPPER_LIGHT = "#d97706";
 const BRICK = "#8b5a3c";        // chimney
 const BRICK_LIGHT = "#a06d4a";
-const GLOW = "#fbbf24";         // lit windows
-const SKY_HAZE = "#fef9f0";     // smoke
+const GLOW = "#fbbf24";         // lit windows + sun
+const SKY_HAZE = "#ffffff";     // smoke (pops against blue)
+
+// Sky palette — golden-hour PNW morning, blends with cream horizon
+const SKY_TOP = "#7fb3d4";      // soft blue at the top
+const SKY_MID = "#b4d4e3";      // pale sky
+const SKY_HORIZON = "#fde7c1";  // warm peach glow above horizon
+const SUN_CORE = "#fcd34d";     // warm yellow
+const SUN_HALO = "#fde68a";     // soft outer halo
+const CLOUD = "#ffffff";        // tiny puffy clouds
 
 export default function HouseAnimation() {
   return (
@@ -52,6 +60,24 @@ export default function HouseAnimation() {
       >
         {/* ── Gradient defs ── */}
         <defs>
+          {/* Sky — soft blue → pale → peach horizon */}
+          <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={SKY_TOP} />
+            <stop offset="50%" stopColor={SKY_MID} />
+            <stop offset="88%" stopColor={SKY_HORIZON} />
+            <stop offset="100%" stopColor={CREAM} />
+          </linearGradient>
+          {/* Sun — bright core fading to warm halo */}
+          <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fef3c7" />
+            <stop offset="40%" stopColor={SUN_CORE} />
+            <stop offset="100%" stopColor="#f59e0b" />
+          </radialGradient>
+          <radialGradient id="sun-halo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={SUN_HALO} stopOpacity="0.6" />
+            <stop offset="60%" stopColor={SUN_HALO} stopOpacity="0.2" />
+            <stop offset="100%" stopColor={SUN_HALO} stopOpacity="0" />
+          </radialGradient>
           <linearGradient id="roof-grad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={MOSS_LIGHT} />
             <stop offset="100%" stopColor={MOSS_DEEP} />
@@ -81,6 +107,108 @@ export default function HouseAnimation() {
             <feGaussianBlur stdDeviation="2.5" />
           </filter>
         </defs>
+
+        {/* ── SKY ── fades in first, sets the dawn-light mood ── */}
+        <motion.rect
+          x="0"
+          y="0"
+          width="600"
+          height="400"
+          fill="url(#sky-grad)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.05 }}
+        />
+
+        {/* ── SUN ── rises from below the horizon during the build ── */}
+        {/* Outer halo (soft glow) */}
+        <motion.circle
+          r="65"
+          fill="url(#sun-halo)"
+          initial={{ cx: 440, cy: 420, opacity: 0 }}
+          animate={{ cx: 440, cy: 130, opacity: 0.85 }}
+          transition={{ duration: 2.5, delay: 0.8, ease: [0.34, 1.1, 0.64, 1] }}
+        />
+        {/* Sun core — bright disc */}
+        <motion.circle
+          r="22"
+          fill="url(#sun-grad)"
+          initial={{ cx: 440, cy: 420, opacity: 0 }}
+          animate={{ cx: 440, cy: 130, opacity: 1 }}
+          transition={{ duration: 2.5, delay: 0.8, ease: [0.34, 1.1, 0.64, 1] }}
+        />
+        {/* Soft inner highlight on sun */}
+        <motion.circle
+          r="10"
+          fill="#fef9c3"
+          initial={{ cx: 434, cy: 420, opacity: 0 }}
+          animate={{ cx: 434, cy: 124, opacity: 0.7 }}
+          transition={{ duration: 2.5, delay: 0.8, ease: [0.34, 1.1, 0.64, 1] }}
+        />
+
+        {/* ── CLOUDS ── tiny puffy clouds drifting slowly across the sky ── */}
+        {/* Cloud 1 — left side, mid sky */}
+        <motion.g
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 0.9, x: 0 }}
+          transition={{ duration: 1.2, delay: 1.2 }}
+        >
+          <motion.g
+            animate={{ x: [0, 25, 0] }}
+            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ellipse cx="90" cy="110" rx="22" ry="10" fill={CLOUD} opacity="0.9" />
+            <ellipse cx="78" cy="106" rx="13" ry="8" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="103" cy="106" rx="14" ry="8" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="90" cy="100" rx="11" ry="7" fill={CLOUD} opacity="0.9" />
+          </motion.g>
+        </motion.g>
+        {/* Cloud 2 — center-left, higher up */}
+        <motion.g
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 0.85, x: 0 }}
+          transition={{ duration: 1.2, delay: 1.4 }}
+        >
+          <motion.g
+            animate={{ x: [0, 35, 0] }}
+            transition={{ duration: 36, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ellipse cx="220" cy="60" rx="18" ry="8" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="210" cy="57" rx="11" ry="7" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="230" cy="57" rx="12" ry="7" fill={CLOUD} opacity="0.85" />
+          </motion.g>
+        </motion.g>
+        {/* Cloud 3 — right side, low (near sun) */}
+        <motion.g
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 0.85, x: 0 }}
+          transition={{ duration: 1.2, delay: 1.6 }}
+        >
+          <motion.g
+            animate={{ x: [0, -22, 0] }}
+            transition={{ duration: 32, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ellipse cx="520" cy="175" rx="20" ry="9" fill={CLOUD} opacity="0.88" />
+            <ellipse cx="508" cy="172" rx="12" ry="7" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="532" cy="172" rx="13" ry="7" fill={CLOUD} opacity="0.85" />
+            <ellipse cx="520" cy="167" rx="10" ry="6" fill={CLOUD} opacity="0.88" />
+          </motion.g>
+        </motion.g>
+        {/* Cloud 4 — far-right, small + high */}
+        <motion.g
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 0.8, x: 0 }}
+          transition={{ duration: 1.2, delay: 1.8 }}
+        >
+          <motion.g
+            animate={{ x: [0, -30, 0] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ellipse cx="380" cy="40" rx="14" ry="6" fill={CLOUD} opacity="0.8" />
+            <ellipse cx="372" cy="38" rx="9" ry="5" fill={CLOUD} opacity="0.8" />
+            <ellipse cx="388" cy="38" rx="9" ry="5" fill={CLOUD} opacity="0.8" />
+          </motion.g>
+        </motion.g>
 
         {/* ── Soft ambient glow under house (always present, subtle) ── */}
         <ellipse
