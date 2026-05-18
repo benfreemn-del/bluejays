@@ -179,7 +179,7 @@ function Hero() {
             className="mt-6 flex flex-wrap items-center gap-4"
           >
             <Link
-              href="#visit"
+              href="#connect"
               className="group inline-flex items-center gap-3 rounded-full bg-[#0d4f4a] px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-[#fbf7ee] transition-all duration-300 hover:bg-[#0a3d39] hover:shadow-[0_18px_40px_-12px_rgba(13,79,74,0.5)]"
             >
               Plan a Visit
@@ -1869,7 +1869,7 @@ function SiteFooter() {
             </p>
             <ul className="mt-5 space-y-3 text-sm text-[#fbf7ee]/85">
               <li>
-                <Link href="#expect" className="transition-colors hover:text-[#d97706]">
+                <Link href="#connect" className="transition-colors hover:text-[#d97706]">
                   Plan a Visit
                 </Link>
               </li>

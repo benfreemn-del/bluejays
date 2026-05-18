@@ -19,7 +19,7 @@ import ThriveMark from "./thrive-mark";
 // vs cross-page navigate-and-scroll cleanly with the absolute form.
 const HOME = "/clients/thrive-church-sequim";
 const NAV_LINKS = [
-  { href: `${HOME}#visit`, label: "Plan a Visit" },
+  { href: `${HOME}#connect`, label: "Plan a Visit" },
   { href: `${HOME}#watch`, label: "Watch" },
   { href: `${HOME}#ministries`, label: "Ministries" },
   { href: `${HOME}#preschool`, label: "Preschool" },
