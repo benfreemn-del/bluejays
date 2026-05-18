@@ -19,6 +19,13 @@ alter table public.client_leads
       'parent', 'coach', 'player', 'club', 'unknown',
       -- ITC Quick Attach tractor-accessory audiences
       'hobbyist', 'forester', 'tym', 'hunter', 'dealer', 'community',
+      -- Olympic Inspections / inspection-services + naturopath + realtor
+      -- audiences. These were already in production before this migration
+      -- ran — listed explicitly here so a fresh-DB bootstrap doesn't
+      -- choke on existing rows. (Discovered during 2026-05-18 apply.)
+      'naturopath', 'realtor', 'well-services', 'property-mgmt',
+      'mold-remediator', 'septic-services', 'restoration',
+      'radon-mitigation', 'homeowner',
       -- Indie-author client audience — reader captures from the
       -- bespoke showcase (faction quiz / world map / parchment / etc).
       'reader'
