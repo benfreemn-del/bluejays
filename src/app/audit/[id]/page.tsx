@@ -48,20 +48,6 @@ type Audit = {
 
 type Prospect = { business_name: string };
 
-const FOUR_REASONS_RECAP = [
-  { n: 1, accent: "rose", title: "Your product page is a brochure, not a buy-button." },
-  { n: 2, accent: "amber", title: "Your distributor owns the customer relationship — you don't." },
-  { n: 3, accent: "sky", title: "You can't retarget the people who almost bought." },
-  { n: 4, accent: "violet", title: "Your funnel doesn't speak to the buyer who actually decides." },
-] as const;
-
-const RECAP_RING: Record<string, string> = {
-  rose: "border-rose-500/30 bg-rose-500/[0.04] text-rose-300",
-  amber: "border-amber-500/30 bg-amber-500/[0.04] text-amber-300",
-  sky: "border-sky-500/30 bg-sky-500/[0.04] text-sky-300",
-  violet: "border-violet-500/30 bg-violet-500/[0.04] text-violet-300",
-};
-
 async function getViewCount(id: string): Promise<number> {
   if (!isSupabaseConfigured()) return 0;
   const { data } = await supabase
@@ -307,34 +293,13 @@ export default async function ProductAuditResultsPage({
         </div>
       </section>
 
-      {/* ── 4 REASONS RECAP ────────────────────────────────────────── */}
-      <section className="border-b border-white/5">
-        <div className="mx-auto max-w-4xl px-6 py-12 md:py-14">
-          <div className="text-center mb-8">
-            <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">
-              The 4 things every product brand gets wrong
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold">
-              Which of these is yours?
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {FOUR_REASONS_RECAP.map((r) => (
-              <div
-                key={r.n}
-                className={`rounded-xl border ${RECAP_RING[r.accent]} p-4 flex items-start gap-3`}
-              >
-                <span className="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/[0.04] border border-white/10 text-sm font-bold">
-                  {r.n}
-                </span>
-                <p className="text-sm font-medium text-white leading-snug">
-                  {r.title}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* 4 Reasons Recap section removed 2026-05-17 — the same 4 reasons
+          render on the /audit landing via <FourReasonsAudience />, and
+          re-displaying them here between "Top 5 fixes" (the deliverable)
+          and "Everything else" (the rest of the deliverable) broke the
+          reader's mental flow ("why are you re-asking what's wrong when
+          I already submitted?"). FOUR_REASONS_RECAP + RECAP_RING constants
+          removed alongside. */}
 
       {/* ── EVERYTHING ELSE — smaller, ranked, requires scroll ─────── */}
       <section className="border-b border-white/5 bg-slate-950/60">
