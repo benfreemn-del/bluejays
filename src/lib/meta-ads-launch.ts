@@ -23,7 +23,6 @@
  * creative review).
  */
 
-import { readFile } from "fs/promises";
 import path from "path";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { logCost } from "@/lib/cost-logger";
@@ -745,17 +744,34 @@ async function processAd(args: {
 
 // ── Phase 2 Graph API helpers ─────────────────────────────────────
 
-/** Read a file relative to the repo root. asset_path comes from the
- *  spec and is intentionally repo-root-relative (e.g.
- *  `public/ad-assets/wave-1/mfg-pain-1x1.jpg`). */
+/** Fetch a static asset over HTTPS from the deployed site.
+ *
+ *  Vercel's next.config.ts excludes `public/**` from the function
+ *  bundle (outputFileTracingExcludes — keeps the deploy under 250MB
+ *  per CLAUDE.md's "Exclude /public from Vercel function trace" rule).
+ *  That means at function runtime, /var/task/public/... doesn't exist
+ *  — the assets are served by Vercel's CDN, not bundled with the
+ *  function code. So we fetch from the public URL instead of
+ *  reading from disk.
+ *
+ *  Base URL is hardcoded per the NEXT_PUBLIC env unreliability rule.
+ *  Local dev (next dev) hits the same hosted URL; running Phase 2
+ *  against an unreachable hostname errors clearly via the fetch.
+ */
 async function readAssetBytes(assetPath: string): Promise<Buffer> {
-  // process.cwd() is the bluejays project root when the API route runs
-  // (next dev / next start both cd into the project). The spec paths
-  // already start with `public/` so a simple join works.
-  const abs = path.isAbsolute(assetPath)
-    ? assetPath
-    : path.join(process.cwd(), assetPath);
-  return readFile(abs);
+  // Spec paths start with `public/` — strip it for the URL.
+  const publicPath = assetPath.replace(/^public\//, "").replace(/^\/+/, "");
+  const baseUrl = "https://bluejayportfolio.com";
+  const url = `${baseUrl}/${publicPath}`;
+  const r = await fetch(url);
+  if (!r.ok) {
+    throw new Error(`asset fetch ${url} → HTTP ${r.status}`);
+  }
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (buf.length === 0) {
+    throw new Error(`asset fetch ${url} → empty body`);
+  }
+  return buf;
 }
 
 function mimeFromPath(p: string): string {
