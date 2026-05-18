@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 import VerseOfDayPopup from "./verse-popup";
+import BackToTopButton from "./back-to-top";
 
 /**
  * Layout for /clients/thrive-church-sequim — Thrive Church, Sequim WA.
@@ -254,6 +255,9 @@ export default function ThriveChurchLayout({
           /clients/thrive-church-sequim layout so it appears across the
           whole tenant subtree (home + /volunteer + any future pages). */}
       <VerseOfDayPopup />
+      {/* Floating back-to-top button on the bottom-left. Hidden until
+          the visitor scrolls past the Connect Card section. */}
+      <BackToTopButton />
     </>
   );
 }

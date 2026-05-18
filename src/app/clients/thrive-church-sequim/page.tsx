@@ -11,6 +11,7 @@
  *   classes below resolve via @next/font in the root layout.
  */
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -279,10 +280,79 @@ function Hero() {
  * Total run ~3 seconds, then everything stays in place. The whole thing
  * is in the hero so it animates on initial paint.
  */
+/**
+ * React-state-driven timeline. The Claude preview Chromium variant
+ * disables both CSS keyframes AND SMIL animations for headless reasons,
+ * so we drive the reveal via requestAnimationFrame + setState — works
+ * in every real browser and the preview tool.
+ */
+function useGenesisTimeline(totalMs = 4400) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const start = performance.now();
+    let raf = 0;
+    let fallback = 0;
+    const tick = () => {
+      const t = performance.now() - start;
+      setElapsed(t);
+      if (t < totalMs) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    // Fallback: if RAF gets paused (hidden tab, throttled browser),
+    // setTimeout still fires and snaps the timeline to its end state
+    // so the illustration is never stuck invisible.
+    fallback = window.setTimeout(() => {
+      cancelAnimationFrame(raf);
+      setElapsed(totalMs);
+    }, totalMs + 800);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(fallback);
+    };
+  }, [totalMs]);
+  return elapsed;
+}
+
+/** ease-out cubic for smoother fade-ins. */
+function easeOut(x: number) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+/** Returns opacity for an element that begins at `begin` ms,
+ *  takes `dur` ms to reach `max` opacity. */
+function fade(elapsed: number, begin: number, dur: number, max = 1) {
+  if (elapsed < begin) return 0;
+  const t = Math.min((elapsed - begin) / dur, 1);
+  return easeOut(t) * max;
+}
+
 function SunriseIllustration() {
-  // Inline initial/animate/transition per element — no variant indirection
-  // (variant inheritance through SVG was unreliable in this setup).
-  const ease = [0.22, 1, 0.36, 1] as const;
+  const elapsed = useGenesisTimeline();
+
+  // Genesis-1 creation order:
+  //   Day 1 — Light          (sky)                0.0s, 0.9s
+  //   Day 2 — Waters above   (atmospheric haze)   0.5s, 1.2s
+  //   Day 3a — Land          (distant mountains)  1.2s, 1.0s
+  //   Day 3b — More land     (mid ridge)          1.4s, 1.0s
+  //   Day 3c — Waters below  (sea/bay)            1.6s, 1.0s
+  //   Day 3d — Vegetation    (trees + shore)      1.8s, 1.0s
+  //   Day 4 — Sun + lights   (sun halo + disc)    2.2s, 1.4s
+  //   Day 4 (cont.) — slope warmth                2.4s, 1.2s
+  //   Day 5 — Sea life       (water ripples)      2.8s, 1.2s, max 0.55
+  //   Day 5 — Birds                               2.8s, 1.2s, max 0.75
+  //   Caption                                     3.4s, 1.0s, max 0.85
+  const skyOp = fade(elapsed, 0, 900);
+  const hazeOp = fade(elapsed, 500, 1200);
+  const peaksOp = fade(elapsed, 1200, 1000);
+  const midRidgeOp = fade(elapsed, 1400, 1000);
+  const waterOp = fade(elapsed, 1600, 1000);
+  const treesOp = fade(elapsed, 1800, 1000);
+  const sunOp = fade(elapsed, 2200, 1400);
+  const slopeOp = fade(elapsed, 2400, 1200);
+  const ripplesOp = fade(elapsed, 2800, 1200, 0.55);
+  const birdsOp = fade(elapsed, 2800, 1200, 0.75);
+  const captionOp = fade(elapsed, 3400, 1000, 0.85);
 
   return (
     <div className="relative aspect-[21/9] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40 sm:aspect-[4/3]">
@@ -319,25 +389,39 @@ function SunriseIllustration() {
             <stop offset="0%" stopColor="#fbf7ee" stopOpacity="0" />
             <stop offset="100%" stopColor="#fbf7ee" stopOpacity="0.7" />
           </linearGradient>
+          {/* Water — Strait of Juan de Fuca / Sequim Bay at dawn.
+              Top is reflection of the dawn sky (lighter), bottom is
+              deeper teal. */}
+          <linearGradient id="water" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#a4c5c0" />
+            <stop offset="25%" stopColor="#6b9a94" />
+            <stop offset="100%" stopColor="#1f4d47" />
+          </linearGradient>
+          {/* Warm sunrise glow on the water — where the sun's reflection
+              hits the surface. */}
+          <radialGradient id="waterGlow" cx="63%" cy="0%" r="70%">
+            <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.42" />
+            <stop offset="60%" stopColor="#fbbf24" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
-        {/* 1. SKY */}
-        <rect width="600" height="450" fill="url(#sky)" />
+        {/* ── DAY 1 — LIGHT (sky fades in) ── */}
+        <g opacity={skyOp}>
+          <rect width="600" height="450" fill="url(#sky)" />
+        </g>
 
-        {/* 5. SUN — halo (wide soft) + disc (above the mountains, no
-            clipping needed). Layered BEFORE the mountains so the back
-            ridge naturally covers the sun's lower edge where they meet. */}
-        <g className="thrive-sun">
+        {/* ── DAY 4 — SUN (halo + disc, layered behind the mountains
+            so the back ridge naturally covers the sun's lower edge). ── */}
+        <g opacity={sunOp}>
           <circle cx="380" cy="170" r="150" fill="url(#sunGlow)" />
           <circle cx="380" cy="170" r="42" fill="url(#sunDisc)" />
-          {/* Horizon light flare just below the sun */}
           <ellipse cx="380" cy="218" rx="160" ry="2" fill="#fde68a" opacity="0.6" />
         </g>
 
-        {/* 3a. DISTANT OLYMPIC PEAKS — softened, more organic ridgeline
-            with snow-capped highest peaks. Lighter teal gives the
-            atmospheric perspective of distance. */}
-        <g className="thrive-ridge-back">
+        {/* ── DAY 3a — DISTANT OLYMPIC PEAKS rise from the deep
+            ("Let dry ground appear"). Softened, organic ridgeline with
+            snow-capped highest peaks. ── */}
+        <g opacity={peaksOp}>
           <path
             d="M -10 270
                Q 20 260, 40 252
@@ -369,25 +453,23 @@ function SunriseIllustration() {
           <path d="M 280 215 L 290 200 L 305 220 Z" fill="#ffffff" opacity="0.65" />
           <path d="M 338 210 L 348 195 L 365 218 Z" fill="#ffffff" opacity="0.75" />
           <path d="M 128 225 L 135 215 L 145 228 Z" fill="#ffffff" opacity="0.55" />
-          {/* Warm dawn light catching east-facing slopes (right side of peaks) */}
-          <path d="M 290 200 L 320 245 L 308 240 Z" fill="#fcd34d" opacity="0.35" />
-          <path d="M 348 195 L 378 240 L 365 235 Z" fill="#fcd34d" opacity="0.4" />
         </g>
 
-        {/* 2. ATMOSPHERIC HAZE — overlays the lower part of the back
-            ridge with a cream gradient so the ridge fades into the
-            sky/horizon plane. No more visible band. */}
-        <rect
-          className="thrive-mist"
-          x="0"
-          y="240"
-          width="600"
-          height="60"
-          fill="url(#haze)"
-        />
+        {/* ── DAY 4 (cont.) — slope highlights: the sun's light catches
+            east-facing slopes. Appears WITH the sun. ── */}
+        <g opacity={slopeOp}>
+          <path d="M 290 200 L 320 245 L 308 240 Z" fill="#fcd34d" opacity="0.55" />
+          <path d="M 348 195 L 378 240 L 365 235 Z" fill="#fcd34d" opacity="0.6" />
+        </g>
 
-        {/* 3b. MID RIDGE — closer foothills, deeper teal, more defined */}
-        <g className="thrive-ridge-mid">
+        {/* ── DAY 2 — WATERS ABOVE (atmospheric haze, "the firmament
+            between the waters"). ── */}
+        <g opacity={hazeOp}>
+          <rect x="0" y="240" width="600" height="60" fill="url(#haze)" />
+        </g>
+
+        {/* ── DAY 3b — MID RIDGE / forested foothills appear ── */}
+        <g opacity={midRidgeOp}>
           <path
             d="M -10 345
                Q 20 335, 50 332
@@ -410,10 +492,27 @@ function SunriseIllustration() {
           />
         </g>
 
-        {/* 6. FOREGROUND CONIFER TREE LINE — sloping ground with
-            naturally-varied tree heights. Trees feel like a real PNW
-            tree-line, not a row of identical triangles. */}
-        <g className="thrive-trees">
+        {/* ── DAY 3c — WATERS GATHERED ("Let the water under the sky
+            be gathered to one place"). Sequim Bay between the mountains
+            and the near shore, with a warm dawn reflection where the
+            sun will land. ── */}
+        <g opacity={waterOp}>
+          <rect x="0" y="360" width="600" height="45" fill="url(#water)" />
+          <rect x="0" y="360" width="600" height="45" fill="url(#waterGlow)" />
+          <rect x="0" y="360" width="600" height="14" fill="#6b9a94" opacity="0.22" />
+        </g>
+
+        {/* ── DAY 5 — SEA LIFE: water ripples ── */}
+        <g opacity={ripplesOp}>
+          <line x1="40" y1="376" x2="190" y2="376" stroke="#fbf7ee" strokeWidth="0.8" />
+          <line x1="220" y1="382" x2="340" y2="382" stroke="#fbf7ee" strokeWidth="0.7" />
+          <line x1="380" y1="378" x2="540" y2="378" stroke="#fbf7ee" strokeWidth="0.8" />
+          <line x1="80" y1="392" x2="280" y2="392" stroke="#fbf7ee" strokeWidth="0.6" />
+          <line x1="320" y1="396" x2="500" y2="396" stroke="#fbf7ee" strokeWidth="0.6" />
+        </g>
+
+        {/* ── DAY 3d — VEGETATION: near-shore + conifer tree-line ── */}
+        <g opacity={treesOp}>
           {/* Ground — slight curve so it feels like a real forest floor */}
           <path
             d="M 0 405
@@ -454,9 +553,9 @@ function SunriseIllustration() {
           ))}
         </g>
 
-        {/* 7. BIRDS — small flock crossing the sky */}
+        {/* ── DAY 5 — BIRDS crossing the sky ── */}
         <g
-          className="thrive-birds"
+          opacity={birdsOp}
           fill="none"
           stroke="#0d4f4a"
           strokeWidth="1.8"
@@ -468,32 +567,20 @@ function SunriseIllustration() {
           <path d="M148 110 q4 -5 8 0 q4 -5 8 0" />
         </g>
 
-        {/* 8. CAPTION — "And there was light." */}
-        <g className="thrive-caption">
+        {/* ── CAPTION — "And there was light." settles in last. ── */}
+        <g opacity={captionOp}>
           <text
             x="32"
-            y="438"
+            y="442"
             fontFamily="Fraunces, serif"
             fontStyle="italic"
             fontSize="13"
             fill="#fbf7ee"
-            opacity="0.85"
           >
             And there was light.  ·  Gen 1:3
           </text>
         </g>
       </svg>
-      {/* Static for now — sequential CSS animation was unreliable with
-          SVG transforms in this build. The illustration reads beautifully
-          static; revisit with proper SVG SMIL or a Lottie/JSON keyframe
-          approach later if Ben wants the Genesis reveal back. */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .thrive-birds { opacity: 0.75; }
-          `,
-        }}
-      />
     </div>
   );
 }
@@ -1298,23 +1385,32 @@ function BeliefsSpread() {
 /*  Three fronts presented as compass bearings.                    */
 /* ============================================================== */
 function Outreach() {
+  // Three arms of the cross — replaces the compass analogy 2026-05-18
+  // per Ben. Each "front" is one direction the cross reaches:
+  //   ↑ BEYOND — vertical-up arm (the gospel reaching past Sequim)
+  //   ↔ ACROSS — horizontal arm (loving our neighbors face-to-face)
+  //   ↓ AMONG  — vertical-down arm (rooted, where the cross meets the
+  //              ground and everyone has a seat at the table)
   const fronts = [
     {
-      bearing: "N",
+      bearing: "BEYOND",
+      arrow: "↑",
       label: "Around the World",
       tagline: "Global mission partners.",
       body: "Supporting missionaries and indigenous leaders across continents — sharing the gospel, planting churches, and meeting practical needs in some of the hardest places.",
       icon: Globe,
     },
     {
-      bearing: "E",
+      bearing: "ACROSS",
+      arrow: "↔",
       label: "Across the Street",
       tagline: "Loving our neighbors first.",
       body: "Sequim is our parish. We partner with local schools, recovery ministries, food banks, and the Sequim community — because the gospel travels best on first-name terms.",
       icon: House,
     },
     {
-      bearing: "S",
+      bearing: "AMONG",
+      arrow: "↓",
       label: "Table of Grace",
       tagline: "Community meals, no questions.",
       body: "A free hot meal served regularly to anyone who shows up — no signups, no sermons, no strings. Just food, warmth, and people who'll remember your name next time.",
@@ -1326,62 +1422,37 @@ function Outreach() {
       id="outreach"
       className="relative overflow-hidden bg-[#0d4f4a] py-24 text-[#fbf7ee] sm:py-32"
     >
-      {/* Compass watermark */}
+      {/* Cross watermark — Latin cross with the three reach-labels at
+          each visible arm tip. Replaces the prior compass. */}
       <svg
         aria-hidden
-        viewBox="0 0 600 600"
-        className="pointer-events-none absolute -right-32 top-1/2 hidden h-[520px] w-[520px] -translate-y-1/2 opacity-[0.06] lg:block"
+        viewBox="0 0 600 700"
+        className="pointer-events-none absolute -right-32 top-1/2 hidden h-[600px] w-[520px] -translate-y-1/2 opacity-[0.07] lg:block"
       >
         <g
           fill="none"
           stroke="#fbf7ee"
-          strokeWidth="1"
-          transform="translate(300,300)"
+          strokeWidth="14"
+          strokeLinecap="round"
+          transform="translate(300,350)"
         >
-          <circle r="240" />
-          <circle r="180" />
-          <circle r="120" />
-          <line x1="-260" y1="0" x2="260" y2="0" />
-          <line x1="0" y1="-260" x2="0" y2="260" />
-          <line x1="-184" y1="-184" x2="184" y2="184" />
-          <line x1="-184" y1="184" x2="184" y2="-184" />
-          <text
-            fontFamily="Fraunces, serif"
-            fontSize="20"
-            fill="#fbf7ee"
-            textAnchor="middle"
-            y="-250"
-          >
-            N
-          </text>
-          <text
-            fontFamily="Fraunces, serif"
-            fontSize="20"
-            fill="#fbf7ee"
-            textAnchor="middle"
-            y="270"
-          >
-            S
-          </text>
-          <text
-            fontFamily="Fraunces, serif"
-            fontSize="20"
-            fill="#fbf7ee"
-            textAnchor="middle"
-            x="265"
-            y="6"
-          >
-            E
-          </text>
-          <text
-            fontFamily="Fraunces, serif"
-            fontSize="20"
-            fill="#fbf7ee"
-            textAnchor="middle"
-            x="-265"
-            y="6"
-          >
-            W
+          {/* Vertical bar of the cross */}
+          <line x1="0" y1="-300" x2="0" y2="300" />
+          {/* Horizontal bar (crossbar) — upper-third per Latin cross */}
+          <line x1="-180" y1="-100" x2="180" y2="-100" />
+        </g>
+        <g
+          fill="#fbf7ee"
+          fontFamily="Fraunces, serif"
+          fontWeight="600"
+          textAnchor="middle"
+          transform="translate(300,350)"
+        >
+          {/* Three arm labels */}
+          <text x="0" y="-320" fontSize="22" letterSpacing="6">BEYOND</text>
+          <text x="0" y="332" fontSize="22" letterSpacing="6">AMONG</text>
+          <text x="220" y="-93" fontSize="22" letterSpacing="6" textAnchor="start">
+            ACROSS
           </text>
         </g>
       </svg>
@@ -1397,13 +1468,15 @@ function Outreach() {
               className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em]"
               style={{ fontWeight: 500 }}
             >
-              Three <em className="italic">directions</em>.<br />
-              One mission.
+              One <em className="italic">cross</em>.<br />
+              Three reaches.
             </h2>
           </div>
           <p className="max-w-md text-lg leading-relaxed text-[#fbf7ee]/85 sm:justify-self-end sm:text-xl">
-            The mission isn&rsquo;t in here. It&rsquo;s out there — and our
-            work fans out in three directions.
+            The mission isn&rsquo;t in here. It&rsquo;s out there — and the
+            cross reaches three ways at once: <em className="italic">beyond</em>{" "}
+            us, <em className="italic">across</em> the street, and{" "}
+            <em className="italic">among</em> us.
           </p>
         </div>
 
@@ -1425,12 +1498,20 @@ function Outreach() {
                 className="group relative block bg-[#0d4f4a] p-7 transition-colors duration-500 hover:bg-[#0a3d39] sm:p-12"
               >
                 <div className="flex items-start justify-between border-b border-[#fbf7ee]/20 pb-6">
-                  <span
-                    className="font-[Fraunces] text-7xl font-light leading-none text-[#fbbf24]"
-                    style={{ fontWeight: 500 }}
-                  >
-                    {f.bearing}
-                  </span>
+                  <div className="flex items-baseline gap-3">
+                    <span
+                      className="font-[Fraunces] text-6xl font-light leading-none text-[#fbbf24]"
+                      style={{ fontWeight: 500 }}
+                      aria-hidden
+                    >
+                      {f.arrow}
+                    </span>
+                    <span
+                      className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#fbbf24]"
+                    >
+                      {f.bearing}
+                    </span>
+                  </div>
                   <Icon
                     size={36}
                     weight="duotone"
