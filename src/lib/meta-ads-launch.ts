@@ -224,6 +224,12 @@ export async function launchSkeleton(spec: WaveSpec): Promise<SkeletonResult> {
         special_ad_categories: "[]",
         // OUTCOME-prefixed objectives need a buying type — AUCTION is default
         buying_type: "AUCTION",
+        // Required for campaigns that use AD-SET-level budgets instead
+        // of Campaign Budget Optimization. False = each ad set's daily
+        // budget is independent (what we want for A/B testing audiences
+        // cleanly). True would let Meta shift 20% across ad sets, which
+        // hurts attribution per-audience until a winner is locked in.
+        is_adset_budget_sharing_enabled: "false",
       },
     });
     if (!r.ok) {
