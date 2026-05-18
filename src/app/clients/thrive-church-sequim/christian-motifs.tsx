@@ -235,31 +235,35 @@ function IchthysIcon() {
 }
 
 function BreadIcon() {
+  // Communion loaf — round-top dome with scored cross PUNCHED OUT
+  // (using evenodd fill-rule for visible notches at low opacity instead
+  // of white overlays which vanish).
   return (
-    <svg viewBox="0 0 64 48" fill="currentColor" className="h-full w-full">
-      <path d="M8 24 Q8 10, 22 8 Q32 6, 42 8 Q56 10, 56 24 L56 40 Q56 42, 54 42 L10 42 Q8 42, 8 40 Z" />
-      <path d="M8 24 Q8 10, 22 8 Q32 6, 42 8 Q56 10, 56 24 L56 28 L8 28 Z" fill="white" opacity="0.15" />
-      <g stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.55">
-        <line x1="20" y1="20" x2="44" y2="20" />
-        <line x1="32" y1="12" x2="32" y2="28" />
-      </g>
+    <svg viewBox="0 0 64 48" fill="currentColor" fillRule="evenodd" className="h-full w-full">
+      <path d="M8 24 Q8 10, 22 8 Q32 6, 42 8 Q56 10, 56 24 L56 40 Q56 42, 54 42 L10 42 Q8 42, 8 40 Z
+               M 32 14 L 36 14 L 36 22 L 44 22 L 44 26 L 36 26 L 36 34 L 32 34 L 32 26 L 24 26 L 24 22 L 32 22 Z" />
     </svg>
   );
 }
 
 function DoveIcon() {
+  // Stylized dove in flight — solid silhouette with a single sweeping
+  // wing curve. Built as ONE solid path so it reads cleanly at low
+  // opacity (was multiple overlapping paths before which looked muddy).
   return (
-    <svg viewBox="0 0 72 48" fill="currentColor" className="h-full w-full">
-      <path d="M8 32 Q22 14, 42 18 Q56 22, 64 32 Q48 34, 32 34 Q18 34, 8 32 Z" />
-      <path d="M22 22 Q30 4, 44 16 Q34 22, 26 26 Z" fill="currentColor" opacity="0.78" />
-      <path d="M28 30 Q34 38, 50 32 Q40 32, 30 30 Z" fill="currentColor" opacity="0.55" />
-      <circle cx="60" cy="28" r="4" />
-      <path d="M64 28 L70 26 L64 31 Z" />
-      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none">
-        <path d="M58 32 L52 40" />
-        <ellipse cx="54" cy="36" rx="2.2" ry="1" transform="rotate(-50 54 36)" fill="currentColor" />
-        <ellipse cx="55.5" cy="33" rx="2.2" ry="1" transform="rotate(-50 55.5 33)" fill="currentColor" />
-      </g>
+    <svg viewBox="0 0 80 56" fill="currentColor" className="h-full w-full">
+      <path d="M 10 34
+               C 18 30, 28 28, 38 28
+               L 30 18 C 28 14, 32 10, 36 14
+               L 44 22
+               C 52 20, 60 22, 66 26
+               L 72 22 C 74 21, 75 24, 73 25 L 70 28
+               C 72 30, 71 32, 68 32
+               C 60 36, 50 38, 42 38
+               C 36 44, 30 46, 24 44
+               C 18 42, 14 40, 10 34 Z" />
+      {/* Eye dot (punched-style negative shape) */}
+      <circle cx="64" cy="27" r="1.4" fill="#fbf7ee" opacity="0.6" />
     </svg>
   );
 }
@@ -328,32 +332,49 @@ function VineIcon() {
   );
 }
 
-/** Anchor — Hebrews 6:19. */
+/** Anchor — Hebrews 6:19. Thicker strokes for low-opacity legibility. */
 function AnchorIcon() {
   return (
-    <svg viewBox="0 0 64 80" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="h-full w-full">
-      {/* Ring + crossbar */}
-      <circle cx="32" cy="14" r="7" />
-      <line x1="32" y1="21" x2="32" y2="64" />
-      <line x1="20" y1="28" x2="44" y2="28" />
-      {/* Hook curves */}
-      <path d="M8 52 Q8 70, 32 70 Q56 70, 56 52" />
-      {/* Hook barbs */}
-      <path d="M8 52 L4 44" />
-      <path d="M8 52 L14 56" />
-      <path d="M56 52 L60 44" />
-      <path d="M56 52 L50 56" />
+    <svg
+      viewBox="0 0 64 80"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-full w-full"
+    >
+      {/* Ring (solid filled circle for strong silhouette) */}
+      <circle cx="32" cy="12" r="8" fill="currentColor" stroke="none" />
+      <circle cx="32" cy="12" r="4" fill="#fbf7ee" opacity="0.4" stroke="none" />
+      {/* Shaft */}
+      <line x1="32" y1="20" x2="32" y2="62" />
+      {/* Crossbar */}
+      <line x1="18" y1="28" x2="46" y2="28" />
+      {/* Hook arc — solid stroke arc */}
+      <path d="M 8 52 Q 8 72, 32 72 Q 56 72, 56 52" />
+      {/* Barb spikes */}
+      <path d="M 8 52 L 4 42" />
+      <path d="M 8 52 L 16 58" />
+      <path d="M 56 52 L 60 42" />
+      <path d="M 56 52 L 48 58" />
     </svg>
   );
 }
 
-/** Flame — Holy Spirit / Pentecost. */
+/** Flame — Holy Spirit / Pentecost. Solid silhouette, no white inner
+ *  (which vanishes at low opacity). */
 function FlameIcon() {
   return (
     <svg viewBox="0 0 48 72" fill="currentColor" className="h-full w-full">
-      <path d="M24 4 Q14 22, 14 36 Q14 50, 24 50 Q34 50, 34 36 Q34 22, 24 4 Z" />
-      <path d="M24 18 Q18 30, 18 40 Q18 48, 24 48 Q30 48, 30 40 Q30 30, 24 18 Z" fill="white" opacity="0.35" />
-      <ellipse cx="24" cy="64" rx="14" ry="3" opacity="0.5" />
+      {/* Outer flame — pointed taper */}
+      <path d="M 24 2
+               C 16 14, 10 22, 10 38
+               C 10 52, 18 60, 24 60
+               C 30 60, 38 52, 38 38
+               C 38 22, 32 14, 24 2 Z" />
+      {/* Base saucer */}
+      <ellipse cx="24" cy="66" rx="12" ry="2.5" />
     </svg>
   );
 }
@@ -396,20 +417,29 @@ function OliveBranchIcon() {
   );
 }
 
-/** Single Fish — feeding-the-5000 motif (paired with bread). */
+/** Fish — instantly-recognizable side-view silhouette pointing right
+ *  with a deeply-forked tail. Built as a single closed path so it
+ *  reads as a solid fish at low opacity (the prior almond + triangle
+ *  combo looked like a blob with a fin per Ben's feedback 2026-05-18). */
 function FishIcon() {
   return (
-    <svg viewBox="0 0 80 36" fill="currentColor" className="h-full w-full">
-      {/* Body */}
-      <path d="M4 18 Q24 4, 56 18 Q24 32, 4 18 Z" />
-      {/* Tail */}
-      <path d="M56 18 L74 6 L70 18 L74 30 Z" />
-      {/* Eye */}
-      <circle cx="22" cy="16" r="2" fill="white" opacity="0.85" />
-      {/* Body curve highlight */}
-      <path d="M16 12 Q30 8, 50 12" stroke="white" strokeWidth="1" fill="none" opacity="0.5" />
-      {/* Gill */}
-      <path d="M30 12 Q28 18, 30 24" stroke="white" strokeWidth="1.2" fill="none" opacity="0.5" />
+    <svg viewBox="0 0 100 50" fill="currentColor" className="h-full w-full">
+      {/* Single path: forked tail on the LEFT → body teardrop with
+          dorsal fin bump on top → rounded head pointing RIGHT, eye
+          punched out via evenodd. */}
+      <path
+        fillRule="evenodd"
+        d="M 2 8 L 22 22 L 22 28
+           L 2 42 L 6 25 Z
+           M 22 22 L 22 28
+           C 28 32, 40 38, 60 38
+           C 78 38, 92 30, 96 25
+           C 92 20, 78 12, 60 12
+           C 50 12, 44 13, 40 14
+           L 38 6 C 38 2, 44 2, 46 6 L 48 14
+           C 44 15, 30 19, 22 22 Z
+           M 80 22 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z"
+      />
     </svg>
   );
 }
@@ -451,22 +481,26 @@ function CandleIcon() {
   );
 }
 
-/** Open welcome door / arched threshold. */
+/** Open welcome door / arched threshold — SOLID silhouette so it
+ *  reads at low opacity. Door slightly ajar, light spills out as a
+ *  triangular wedge from the threshold. */
 function DoorIcon() {
   return (
-    <svg viewBox="0 0 64 96" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="h-full w-full">
-      {/* Arched frame */}
-      <path d="M6 90 L6 32 Q6 8, 32 8 Q58 8, 58 32 L58 90" />
-      {/* Door — slightly ajar, with warm light spilling out */}
-      <path d="M14 90 L14 36 Q14 16, 32 16 L32 90 Z" fill="currentColor" opacity="0.18" stroke="currentColor" />
-      <path d="M32 90 L32 16 Q50 16, 50 36 L50 90 Z" stroke="currentColor" opacity="0.45" />
-      {/* Light spilling out from the open crack */}
-      <line x1="32" y1="90" x2="32" y2="16" stroke="currentColor" strokeWidth="1.5" opacity="0.4" strokeDasharray="3 3" />
-      {/* Door handles */}
-      <circle cx="24" cy="56" r="1.8" fill="currentColor" />
-      <circle cx="40" cy="56" r="1.8" fill="currentColor" />
-      {/* Welcome mat suggestion */}
-      <line x1="2" y1="90" x2="62" y2="90" strokeWidth="2.5" />
+    <svg viewBox="0 0 64 96" fill="currentColor" className="h-full w-full">
+      {/* Arched door frame — solid silhouette, lighter inner cutout to
+          show the doorway opening using evenodd fill rule. */}
+      <path
+        fillRule="evenodd"
+        d="M 2 92 L 2 32 Q 2 4, 32 4 Q 62 4, 62 32 L 62 92 L 54 92 L 54 32 Q 54 12, 32 12 Q 10 12, 10 32 L 10 92 Z"
+      />
+      {/* The actual door (ajar) — a tilted slab spanning the doorway */}
+      <path d="M 12 92 L 30 90 L 32 14 Q 14 16, 12 30 Z" />
+      {/* Door knob */}
+      <circle cx="22" cy="58" r="2" fill="#fbf7ee" opacity="0.55" />
+      {/* Light wedge spilling out from the open side */}
+      <path d="M 32 14 L 54 14 L 54 92 L 32 92 Z" opacity="0.22" />
+      {/* Welcome mat slab at the threshold */}
+      <rect x="-2" y="90" width="68" height="4" />
     </svg>
   );
 }
