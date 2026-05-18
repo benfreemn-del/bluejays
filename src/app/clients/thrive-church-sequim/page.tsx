@@ -124,11 +124,11 @@ function PaperGrain() {
 /* ============================================================== */
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pt-6 sm:pt-8 lg:pt-10 xl:pt-14 2xl:pt-20">
+    <section className="relative isolate overflow-hidden pt-3 sm:pt-8 lg:pt-10 xl:pt-14 2xl:pt-20">
       {/* Topographic background */}
       <TopoLines />
 
-      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-6 px-6 pb-6 sm:px-10 lg:grid-cols-12 lg:gap-x-10 lg:pb-6 xl:pb-10 xl:max-w-[1640px] xl:gap-x-14 2xl:pb-14">
+      <div className="relative z-10 mx-auto grid max-w-[1480px] grid-cols-1 gap-y-4 px-6 pb-3 sm:gap-y-6 sm:px-10 sm:pb-6 lg:grid-cols-12 lg:gap-x-10 lg:pb-6 xl:pb-10 xl:max-w-[1640px] xl:gap-x-14 2xl:pb-14">
         {/* TEXT BLOCK */}
         <div className="lg:col-span-7 lg:pt-2">
           <motion.div
@@ -193,7 +193,7 @@ function Hero() {
               href={LATEST_SERMON_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 text-sm font-medium uppercase tracking-[0.18em] text-[#0d4f4a] transition-colors hover:text-[#d97706]"
+              className="group inline-flex min-h-[44px] items-center gap-3 px-2 py-2 text-sm font-medium uppercase tracking-[0.18em] text-[#0d4f4a] transition-colors hover:text-[#d97706]"
             >
               <PlayCircle size={28} weight="duotone" />
               Watch live
@@ -218,7 +218,7 @@ function Hero() {
               href={ADDRESS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[15px] text-[#1a1a1a]/80 underline-offset-4 hover:text-[#0d4f4a] hover:underline"
+              className="inline-flex min-h-[44px] items-center py-2 text-[15px] text-[#1a1a1a]/80 underline-offset-4 hover:text-[#0d4f4a] hover:underline"
             >
               {ADDRESS}
             </Link>
@@ -285,7 +285,7 @@ function SunriseIllustration() {
   const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40">
+    <div className="relative aspect-[21/9] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40 sm:aspect-[4/3]">
       <svg
         viewBox="0 0 600 450"
         className="absolute inset-0 h-full w-full"
@@ -687,7 +687,7 @@ function WhatToExpect() {
             </p>
             <Link
               href="#connect"
-              className="mt-10 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-[#0d4f4a] underline decoration-[#d97706] decoration-2 underline-offset-[6px] transition-colors hover:text-[#d97706]"
+              className="mt-10 inline-flex min-h-[44px] items-center gap-2 py-2 text-sm font-medium uppercase tracking-[0.18em] text-[#0d4f4a] underline decoration-[#d97706] decoration-2 underline-offset-[6px] transition-colors hover:text-[#d97706]"
             >
               Tell us you're coming
               <ArrowUpRight size={14} weight="bold" />
@@ -796,7 +796,7 @@ function LatestSermon() {
                 href={YOUTUBE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm uppercase tracking-[0.18em] text-[#fbf7ee]/70 underline-offset-4 hover:text-[#fbf7ee] hover:underline"
+                className="inline-flex min-h-[44px] items-center py-2 text-sm uppercase tracking-[0.18em] text-[#fbf7ee]/70 underline-offset-4 hover:text-[#fbf7ee] hover:underline"
               >
                 Sermon archive →
               </Link>
@@ -1036,7 +1036,7 @@ function MinistriesGrid() {
                   delay: i * 0.08,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-10 transition-all duration-500 hover:bg-[#0d4f4a] sm:p-12 lg:p-14`}
+                className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-6 transition-all duration-500 hover:bg-[#0d4f4a] sm:p-10 lg:p-14`}
               >
                   {/* Tag */}
                   <div className="flex items-start justify-between">
@@ -1153,7 +1153,7 @@ function PreschoolSpotlight() {
               </Link>
               <Link
                 href={`mailto:${EMAIL}?subject=Preschool%20Question`}
-                className="text-sm uppercase tracking-[0.18em] text-[#fbf7ee]/70 underline-offset-4 hover:text-[#fbbf24] hover:underline"
+                className="inline-flex min-h-[44px] items-center py-2 text-sm uppercase tracking-[0.18em] text-[#fbf7ee]/70 underline-offset-4 hover:text-[#fbbf24] hover:underline"
               >
                 Have questions? →
               </Link>
@@ -1261,7 +1261,7 @@ function BeliefsSpread() {
                     delay: i * 0.12,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="group grid grid-cols-[auto_1fr] gap-8 bg-[#fbf7ee] p-8 transition-colors duration-300 hover:bg-[#f5ede0] sm:p-12"
+                  className="group grid grid-cols-[auto_1fr] gap-5 bg-[#fbf7ee] p-6 transition-colors duration-300 hover:bg-[#f5ede0] sm:gap-8 sm:p-12"
                 >
                   <span
                     className="font-[Fraunces] text-[clamp(3rem,8vw,7rem)] font-light leading-none text-[#d97706] transition-transform duration-500 group-hover:-translate-y-1"
@@ -1422,7 +1422,7 @@ function Outreach() {
                   delay: i * 0.1,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="group relative block bg-[#0d4f4a] p-10 transition-colors duration-500 hover:bg-[#0a3d39] sm:p-12"
+                className="group relative block bg-[#0d4f4a] p-7 transition-colors duration-500 hover:bg-[#0a3d39] sm:p-12"
               >
                 <div className="flex items-start justify-between border-b border-[#fbf7ee]/20 pb-6">
                   <span
@@ -1809,7 +1809,7 @@ function FinalCTA() {
               href={ADDRESS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 text-sm font-medium uppercase tracking-[0.18em] text-[#fbf7ee]/80 transition-colors hover:text-[#d97706]"
+              className="group inline-flex min-h-[44px] items-center gap-3 px-2 py-2 text-sm font-medium uppercase tracking-[0.18em] text-[#fbf7ee]/80 transition-colors hover:text-[#d97706]"
             >
               <MapPin size={20} weight="duotone" />
               Get directions
@@ -1870,7 +1870,7 @@ function SiteFooter() {
             <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
               Sundays
             </p>
-            <ul className="mt-5 space-y-3 text-sm text-[#fbf7ee]/85">
+            <ul className="mt-5 space-y-1 text-sm text-[#fbf7ee]/85 [&_a]:inline-flex [&_a]:items-center [&_a]:py-2">
               <li>
                 <Link href="#connect" className="transition-colors hover:text-[#d97706]">
                   Plan a Visit
@@ -1903,7 +1903,7 @@ function SiteFooter() {
             <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
               Connect
             </p>
-            <ul className="mt-5 space-y-3 text-sm text-[#fbf7ee]/85">
+            <ul className="mt-5 space-y-1 text-sm text-[#fbf7ee]/85 [&_a]:inline-flex [&_a]:items-center [&_a]:py-2">
               <li>
                 <a
                   href={ADDRESS_URL}
@@ -1951,10 +1951,22 @@ function SiteFooter() {
 
         {/* Bottom rail */}
         <div className="mt-14 flex flex-col items-start justify-between gap-6 border-t border-[#fbf7ee]/15 pt-8 text-[13px] text-[#fbf7ee]/72 sm:flex-row sm:items-center">
-          <p>
-            © {new Date().getFullYear()} Thrive Church Sequim. All rights
-            reserved.
-          </p>
+          <div className="flex items-center gap-4">
+            <p>
+              © {new Date().getFullYear()} Thrive Church Sequim. All rights
+              reserved.
+            </p>
+            {/* Secret backend-demo entry — small low-opacity bluejay
+                icon. Only people who know to click can find it. */}
+            <Link
+              href="/clients/thrive-church-sequim/portal-demo"
+              aria-label="Staff portal demo"
+              title="Staff portal demo"
+              className="inline-flex h-6 w-6 items-center justify-center rounded-full opacity-30 transition-opacity hover:opacity-100"
+            >
+              <BluejayLogo className="h-3 w-auto text-[#5b9cf6]" />
+            </Link>
+          </div>
           <Link
             href={AUDIT_URL}
             target="_blank"
