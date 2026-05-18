@@ -93,7 +93,19 @@ export async function POST(request: NextRequest) {
       const result = await launchSkeleton(spec);
       return NextResponse.json({ phase: "skeleton", ...result });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const msg =
+        err instanceof Error
+          ? `${err.message}${err.stack ? `\n  at ${(err.stack.split("\n")[1] || "").trim()}` : ""}`
+          : typeof err === "string"
+          ? err
+          : (() => {
+              try {
+                return JSON.stringify(err);
+              } catch {
+                return String(err);
+              }
+            })();
+      console.error("[meta/launch] caught:", err);
       return NextResponse.json(
         { ok: false, phase: "skeleton", error: msg },
         { status: 200 },
@@ -106,7 +118,19 @@ export async function POST(request: NextRequest) {
       const result = await launchAds(spec);
       return NextResponse.json({ phase: "ads", ...result });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const msg =
+        err instanceof Error
+          ? `${err.message}${err.stack ? `\n  at ${(err.stack.split("\n")[1] || "").trim()}` : ""}`
+          : typeof err === "string"
+          ? err
+          : (() => {
+              try {
+                return JSON.stringify(err);
+              } catch {
+                return String(err);
+              }
+            })();
+      console.error("[meta/launch] caught:", err);
       return NextResponse.json(
         { ok: false, phase: "ads", error: msg },
         { status: 200 },
@@ -119,7 +143,19 @@ export async function POST(request: NextRequest) {
     try {
       skeleton = await launchSkeleton(spec);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const msg =
+        err instanceof Error
+          ? `${err.message}${err.stack ? `\n  at ${(err.stack.split("\n")[1] || "").trim()}` : ""}`
+          : typeof err === "string"
+          ? err
+          : (() => {
+              try {
+                return JSON.stringify(err);
+              } catch {
+                return String(err);
+              }
+            })();
+      console.error("[meta/launch] caught:", err);
       return NextResponse.json(
         { ok: false, phase: "all", skeleton_error: msg },
         { status: 200 },
