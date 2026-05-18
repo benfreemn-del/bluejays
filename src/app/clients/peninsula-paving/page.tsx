@@ -2172,59 +2172,22 @@ export default function PeninsulaPavingPage() {
                           Olympic Peninsula
                         </div>
                       </div>
-                      {/* Tiny perspective-road tile — brand DNA in the
-                          bottom-right corner that used to sit empty. */}
-                      <svg
-                        width="64"
-                        height="40"
-                        viewBox="0 0 64 40"
-                        className="shrink-0"
-                        aria-hidden="true"
-                      >
-                        {/* Asphalt trapezoid */}
-                        <path
-                          d="M 4,36 L 60,36 L 40,4 L 24,4 Z"
-                          fill="#1c1410"
-                        />
-                        {/* Copper edge highlights */}
-                        <path
-                          d="M 4,36 L 24,4"
-                          stroke={ACCENT_HOT}
-                          strokeWidth="0.6"
-                          opacity="0.7"
-                        />
-                        <path
-                          d="M 60,36 L 40,4"
-                          stroke={ACCENT_HOT}
-                          strokeWidth="0.6"
-                          opacity="0.7"
-                        />
-                        {/* Yellow center-line stripes, perspective-tapered */}
-                        <rect
-                          x="30.5"
-                          y="6"
-                          width="3"
-                          height="3"
-                          rx="0.5"
-                          fill={YELLOW_HOT}
-                        />
-                        <rect
-                          x="30"
-                          y="14"
-                          width="4"
-                          height="4"
-                          rx="0.5"
-                          fill={YELLOW_HOT}
-                        />
-                        <rect
-                          x="29"
-                          y="24"
-                          width="6"
-                          height="6"
-                          rx="0.5"
-                          fill={YELLOW_HOT}
-                        />
-                      </svg>
+                      {/* Brand logo — mirrors the compass on the
+                          opposite corner, balances the badge with the
+                          real circular brand mark. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/clients/peninsula-paving/logo.jpeg"
+                        alt="Peninsula Paving & Excavating"
+                        width={56}
+                        height={56}
+                        className="shrink-0 rounded-full"
+                        style={{
+                          objectFit: "contain",
+                          boxShadow:
+                            "0 1px 2px rgba(28, 20, 16, 0.08), 0 0 0 1px rgba(234, 88, 12, 0.18)",
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -2571,20 +2534,36 @@ export default function PeninsulaPavingPage() {
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
-              <div>
-                <div
-                  className="text-[18px] font-bold text-[#1c1410] tracking-wide mb-2"
-                  style={{ fontFamily: FONT_HEAD }}
-                >
-                  PENINSULA PAVING
+              <div className="flex items-start gap-4">
+                {/* Big circular brand logo — anchor in the footer */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/clients/peninsula-paving/logo.jpeg"
+                  alt="Peninsula Paving & Excavating"
+                  width={84}
+                  height={84}
+                  className="rounded-full shrink-0"
+                  style={{
+                    objectFit: "contain",
+                    boxShadow:
+                      "0 2px 4px rgba(28, 20, 16, 0.10), 0 0 0 1px rgba(234, 88, 12, 0.18)",
+                  }}
+                />
+                <div>
+                  <div
+                    className="text-[18px] font-bold text-[#1c1410] tracking-wide mb-2"
+                    style={{ fontFamily: FONT_HEAD }}
+                  >
+                    PENINSULA PAVING
+                  </div>
+                  <p
+                    className="text-[13px] leading-relaxed max-w-xs"
+                    style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                  >
+                    Family-owned asphalt paving + excavation on the Olympic
+                    Peninsula since 1985.
+                  </p>
                 </div>
-                <p
-                  className="text-[13px] leading-relaxed max-w-xs"
-                  style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
-                >
-                  Family-owned asphalt paving + excavation on the Olympic
-                  Peninsula since 1985.
-                </p>
               </div>
 
               <div>
@@ -2643,9 +2622,23 @@ export default function PeninsulaPavingPage() {
                 © {new Date().getFullYear()} Peninsula Paving &amp;
                 Excavating. All rights reserved.
               </div>
-              {/* Required network-effect footer per CLAUDE.md */}
+              {/* Required network-effect footer per CLAUDE.md.
+                  BlueJay bird icon is now blue + click-targets the
+                  password-gated owner backend (portal-demo). Operator-
+                  facing — visitors never click it, but Ben (or the
+                  prospect, after the password reveal on the sales
+                  call) can jump straight from the public page into
+                  the backend tour. */}
               <div className="flex items-center gap-2">
-                <BluejayLogo className="w-4 h-4" />
+                <a
+                  href="/clients/peninsula-paving/portal-demo"
+                  aria-label="Open Peninsula Paving owner backend (password required)"
+                  title="Owner backend — password required"
+                  className="inline-flex items-center justify-center rounded-md transition-transform hover:scale-110"
+                  style={{ color: "#0ea5e9" }}
+                >
+                  <BluejayLogo className="w-5 h-5" />
+                </a>
                 <span
                   className="text-[12px]"
                   style={{ color: INK_DIM, fontFamily: FONT_BODY }}

@@ -84,7 +84,7 @@ export default function StickyNav() {
             className="flex items-center gap-3 min-w-0"
             aria-label="Peninsula Paving & Excavating"
           >
-            <PavingMark size={36} />
+            <PavingMark size={52} />
             <span
               className="flex flex-col leading-tight"
               style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1c1410" }}
@@ -163,7 +163,7 @@ export default function StickyNav() {
               className="flex items-center gap-3"
               style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1c1410" }}
             >
-              <PavingMark size={32} flat />
+              <PavingMark size={44} flat />
               <span className="text-[15px] font-bold tracking-wide">
                 PENINSULA PAVING
               </span>
