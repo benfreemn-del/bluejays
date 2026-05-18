@@ -144,7 +144,7 @@ export default function ConnectCardForm() {
           <HandHeart size={18} weight="fill" />
         </span>
         <span
-          className="text-[11px] tracking-[0.24em] uppercase font-semibold"
+          className="text-[13px] tracking-[0.22em] uppercase font-bold"
           style={{ color: TEAL, fontFamily: "'Inter', sans-serif" }}
         >
           Connect Card
@@ -288,7 +288,7 @@ function Field({
   return (
     <label className="block">
       <span
-        className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
+        className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
         style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
       >
         {label}
@@ -332,7 +332,7 @@ function Select({
   return (
     <label className="block">
       <span
-        className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
+        className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
         style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
       >
         {label}
@@ -370,7 +370,7 @@ function Textarea({
   return (
     <label className="block">
       <span
-        className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
+        className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
         style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
       >
         {label}

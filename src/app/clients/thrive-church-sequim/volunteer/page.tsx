@@ -245,7 +245,7 @@ export default function VolunteerPage() {
             serve others, as faithful stewards of God&rsquo;s grace in its
             various forms.&rdquo;
           </p>
-          <p className="mt-5 text-[11px] uppercase tracking-[0.28em] text-[#fbbf24]">
+          <p className="mt-5 text-[13px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
             1 Peter 4:10
           </p>
           <Link

@@ -488,16 +488,14 @@ function TaglineSpread() {
           className="mt-10 font-[Fraunces] text-[clamp(2.6rem,7vw,7.5rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#0d4f4a]"
           style={{ fontWeight: 500 }}
         >
-          Imperfect people <br className="hidden sm:block" />
-          <em
-            className="italic"
-            style={{ fontWeight: 500 }}
-          >
+          Imperfect people{" "}
+          <br className="hidden sm:block" />
+          <em className="italic" style={{ fontWeight: 500 }}>
             becoming
           </em>{" "}
-          the church,
+          the church,{" "}
           <br className="hidden sm:block" />
-          on the mission with Jesus,
+          on the mission with Jesus,{" "}
           <br className="hidden sm:block" />
           bringing{" "}
           <span className="text-[#d97706]">hope</span> and{" "}
@@ -1071,7 +1069,7 @@ function PreschoolSpotlight() {
                   >
                     {s.stat}
                   </p>
-                  <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#fbf7ee]/80">
+                  <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.18em] text-[#fbf7ee]/85">
                     {s.label}
                   </p>
                 </div>
@@ -1510,7 +1508,7 @@ function VisitUs() {
                   className="mt-1 shrink-0 text-[#d97706]"
                 />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#1a1a1a]/72">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Address
                   </p>
                   <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
@@ -1535,7 +1533,7 @@ function VisitUs() {
                   className="mt-1 shrink-0 text-[#d97706]"
                 />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#1a1a1a]/72">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Phone
                   </p>
                   <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
@@ -1554,7 +1552,7 @@ function VisitUs() {
                   className="mt-1 shrink-0 text-[#d97706]"
                 />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#1a1a1a]/72">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Email
                   </p>
                   <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
@@ -1564,7 +1562,7 @@ function VisitUs() {
               </a>
 
               <div className="bg-[#fbf7ee] p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#1a1a1a]/72">
+                <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                   Follow Along
                 </p>
                 <div className="mt-4 flex items-center gap-3">
@@ -1598,7 +1596,7 @@ function VisitUs() {
               {/* Pin overlay */}
               <div className="pointer-events-none absolute bottom-6 left-6 right-6 flex items-end justify-between">
                 <div className="pointer-events-auto rounded-sm bg-[#fbf7ee] px-5 py-4 shadow-lg">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#d97706]">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#d97706]">
                     Sundays · 10:30 AM
                   </p>
                   <p className="mt-1 font-[Fraunces] text-lg text-[#0d4f4a]">
@@ -1741,7 +1739,7 @@ function SiteFooter() {
                 <p className="font-[Fraunces] text-2xl text-[#fbf7ee]">
                   Thrive Church
                 </p>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#fbbf24]">
+                <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
                   Sequim, Washington
                 </p>
               </div>
@@ -1754,7 +1752,7 @@ function SiteFooter() {
 
           {/* Nav columns */}
           <div className="sm:col-span-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#fbbf24]">
+            <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
               Sundays
             </p>
             <ul className="mt-5 space-y-3 text-sm text-[#fbf7ee]/85">
@@ -1787,7 +1785,7 @@ function SiteFooter() {
           </div>
 
           <div className="sm:col-span-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#fbbf24]">
+            <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
               Connect
             </p>
             <ul className="mt-5 space-y-3 text-sm text-[#fbf7ee]/85">
@@ -1848,11 +1846,11 @@ function SiteFooter() {
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2 text-[#fbf7ee]/78 transition-colors hover:text-[#fbf7ee]"
           >
-            <span className="text-[11px] uppercase tracking-[0.24em]">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.2em]">
               Built by
             </span>
             <BluejayLogo className="h-5 w-auto text-[#5b9cf6] transition-colors group-hover:text-[#93c5fd]" />
-            <span className="text-[11px] uppercase tracking-[0.24em]">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.2em]">
               · Free site audit →
             </span>
           </Link>

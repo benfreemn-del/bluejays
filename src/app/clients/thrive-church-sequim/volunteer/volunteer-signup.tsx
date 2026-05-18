@@ -218,7 +218,7 @@ function Field({
   return (
     <label className="block">
       <span
-        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.22em]"
+        className="mb-2 block text-[12px] font-bold uppercase tracking-[0.18em]"
         style={{ color: TEAL_DEEP }}
       >
         {label}
@@ -248,7 +248,7 @@ function Select({
   return (
     <label className="block">
       <span
-        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.22em]"
+        className="mb-2 block text-[12px] font-bold uppercase tracking-[0.18em]"
         style={{ color: TEAL_DEEP }}
       >
         {label}
@@ -282,7 +282,7 @@ function Textarea({
   return (
     <label className="block">
       <span
-        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.22em]"
+        className="mb-2 block text-[12px] font-bold uppercase tracking-[0.18em]"
         style={{ color: TEAL_DEEP }}
       >
         {label}
