@@ -1,0 +1,50 @@
+{
+  "slug": "zenith-sports",
+  "businessName": "Zenith Sports",
+  "internalName": "Tekky",
+  "contact": {
+    "primaryName": "Paul",
+    "primaryEmail": "paul@zenithsports.com",
+    "primaryRole": "Owner / GM",
+    "secondaryName": "Caleb",
+    "secondaryEmail": "caleb@zenithsports.com",
+    "secondaryRole": "Operations / Soccer Programs"
+  },
+  "pricing": {
+    "totalUsd": 10000,
+    "planLabel": "4-quarter",
+    "installmentUsd": 2500,
+    "installmentDueDates": ["2026-05-18", "2026-08-18", "2026-11-18", "2027-02-18"]
+  },
+  "brand": {
+    "primaryHex": "#0a0f1e",
+    "accentHex": "#84cc16",
+    "secondaryHex": "#475569",
+    "positioning": "The intelligence layer for elite youth soccer programs."
+  },
+  "liveSiteUrl": "https://bluejayportfolio.com/clients/zenith-sports",
+  "paymentLinks": {
+    "primary": { "label": "Pay Q1 — $2,500", "envVar": "STRIPE_PAYMENT_LINK_ZENITH_SPORTS_Q1" },
+    "secondary": [
+      { "label": "Pay In Full — $9,700", "envVar": "STRIPE_PAYMENT_LINK_ZENITH_SPORTS_FULL" }
+    ]
+  },
+  "featureFlags": {
+    "aiOperator": true,
+    "hyperloopWeekly": true,
+    "affiliatePipeline": true,
+    "weeklyReports": true,
+    "verticalExtras": ["drill-of-week", "tournament-leaderboard", "parent/coach/player audiences"]
+  },
+  "schedule": {
+    "signedAt": "2026-05-15",
+    "onboardingStartsAt": "2026-05-16",
+    "goLiveAt": "2026-05-18"
+  },
+  "signDocs": {
+    "handoff": true,
+    "brandVoice": true,
+    "sla": true,
+    "valueProof": true
+  }
+}

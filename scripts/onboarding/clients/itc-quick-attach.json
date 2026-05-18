@@ -1,0 +1,45 @@
+{
+  "slug": "itc-quick-attach",
+  "businessName": "ITC Quick Attach",
+  "internalName": "ITC",
+  "contact": {
+    "primaryName": "Jake",
+    "primaryEmail": "jake@itcquickattach.com",
+    "primaryRole": "Owner"
+  },
+  "pricing": {
+    "totalUsd": 9700,
+    "planLabel": "pay-in-full"
+  },
+  "brand": {
+    "primaryHex": "#1a1a1a",
+    "accentHex": "#f59e0b",
+    "secondaryHex": "#475569",
+    "positioning": "The smarter way to spec, sell, and ship tractor attachments."
+  },
+  "liveSiteUrl": "https://bluejayportfolio.com/clients/itc-quick-attach",
+  "paymentLinks": {
+    "primary": { "label": "Pay In Full — $9,700", "envVar": "STRIPE_PAYMENT_LINK_ITC_QUICK_ATTACH_FULL" },
+    "secondary": [
+      { "label": "Quarterly Plan — $2,500 / qtr", "envVar": "STRIPE_PAYMENT_LINK_ITC_QUICK_ATTACH_Q1" }
+    ]
+  },
+  "featureFlags": {
+    "aiOperator": true,
+    "hyperloopWeekly": true,
+    "affiliatePipeline": true,
+    "weeklyReports": true,
+    "verticalExtras": ["TYM-tractor compat lookup", "dealer affiliate map", "spec-quote configurator"]
+  },
+  "schedule": {
+    "signedAt": "TBD",
+    "onboardingStartsAt": "TBD",
+    "goLiveAt": "TBD"
+  },
+  "signDocs": {
+    "handoff": true,
+    "brandVoice": true,
+    "sla": true,
+    "valueProof": true
+  }
+}
