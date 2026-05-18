@@ -144,13 +144,25 @@ async function sb(path, opts = {}) {
 }
 
 /**
+ * Default headers — User-Agent + Accept hint help bypass Vercel's
+ * default WAF rules that flag undici/node-fetch UAs as bot traffic.
+ * Adds these only if the caller hasn't already set them.
+ */
+const DEFAULT_HEADERS = {
+  "user-agent":
+    "BlueJaysCLI/1.0 (Node.js; +https://bluejayportfolio.com/dashboard/ai-activity)",
+  accept: "application/json",
+};
+
+/**
  * Safe JSON fetcher — wraps `await r.json()` in a try/catch so a
  * non-JSON response (Vercel bot-challenge HTML, deploy-in-progress
  * 404 page, gateway 502, etc.) surfaces a clear error instead of an
  * "Unexpected token '<'" JSON-parse exception.
  */
 async function fetchJson(url, opts = {}) {
-  const r = await fetch(url, opts);
+  const headers = { ...DEFAULT_HEADERS, ...(opts.headers || {}) };
+  const r = await fetch(url, { ...opts, headers });
   const text = await r.text();
   let j;
   try {
