@@ -104,6 +104,133 @@ export type BluejaysFunnel = FunnelDefLite & {
   frameworks?: readonly string[];
 };
 
+/**
+ * UNIVERSAL_CLOSE_LADDER — the 4 close phases every $10k AI System
+ * close walks through, regardless of which segment funnel fed it.
+ *
+ * Inbound-audit (funnel 1) reaches the ladder at Day 2 (Madie
+ * discovery → stack slide). Dream-100 (funnel 3) reaches it at
+ * Day 10 (stack-slide email drop). Cold-scouted $997 buyers
+ * (funnel 2) reach it at Day 45 via the second-yes ladder.
+ *
+ * Centralizing the ladder lets the attribution dashboard, win/loss
+ * analytics, and Madie's close-rate pill all group prospects by
+ * "what universal close phase did they reach?" without each consumer
+ * re-encoding the segment-specific copy.
+ *
+ * NOT a runtime state machine — the close itself is human-driven
+ * (Ben + Madie on calls). This is the seam for code that NEEDS to
+ * know which phase a prospect is at: dashboards, attribution,
+ * cohort analysis, the future close-rate pill.
+ *
+ * Framework attribution per phase lives in the `frameworks` field
+ * so a future skill can introspect "which Hormozi / Brunson move
+ * fires at this phase?" without re-reading the funnel transcripts.
+ */
+export type CloseStage =
+  | "stack-slide"
+  | "mock-backend"
+  | "card-on-hand"
+  | "payment-link";
+
+export interface CloseLadderPhase {
+  stage: CloseStage;
+  label: string;
+  /** One-sentence description of what fires at this phase */
+  fires: string;
+  /** Codified frameworks driving this phase (greppable into memory refs) */
+  frameworks: readonly string[];
+  /** Which segments reach this phase, and roughly when */
+  reachedBy: ReadonlyArray<{
+    segment: "inbound-audit" | "cold-scouted" | "mfg-lookalike";
+    aroundDay: number;
+  }>;
+}
+
+export const UNIVERSAL_CLOSE_LADDER: readonly CloseLadderPhase[] = [
+  {
+    stage: "stack-slide",
+    label: "Stack Slide + Belief Rewrite",
+    fires:
+      "17 Universal + 4 Manufacturer (or 5 Author) modules with explicit $ values per module; total > $50k vs the $10k price. Belief-rewrite via TRUMP stories on the prospect's top 2 objections.",
+    frameworks: [
+      "Brunson chunk 17 (belief-rewrite)",
+      "Brunson chunk 18+19 (stack slide)",
+      "Hormozi CLOSER (`reference_hormozi_sales_training.md`)",
+    ],
+    reachedBy: [
+      { segment: "inbound-audit", aroundDay: 2 },
+      { segment: "mfg-lookalike", aroundDay: 10 },
+      { segment: "cold-scouted", aroundDay: 47 },
+    ],
+  },
+  {
+    stage: "mock-backend",
+    label: "Mock Backend Showcase",
+    fires:
+      "Live tour at /clients/<slug>/portal (footer feather + 1212 password). Prospect sees the AI System backend they'd actually get. Ben drives for $10k+ closes; Madie drives for $997 second-yes upgrades.",
+    frameworks: [
+      "Brunson stack-slide visualization layer",
+      "Hormozi sell-at-greatest-deprivation",
+      "BlueJays mock-backend skill (`aios/.claude/skills/mock_backend/SKILL.md`)",
+    ],
+    reachedBy: [
+      { segment: "inbound-audit", aroundDay: 3 },
+      { segment: "mfg-lookalike", aroundDay: 20 },
+      { segment: "cold-scouted", aroundDay: 50 },
+    ],
+  },
+  {
+    stage: "card-on-hand",
+    label: "Card-on-Hand Close",
+    fires:
+      "$200 move-forward discount pre-framed during discovery so the close-call payment ask feels like a thank-you, not a discount-grab. BAM-FAM follow-through.",
+    frameworks: [
+      "Luis $200 move-forward (`reference_hormozi_luis_frameworks.md`)",
+      "Annie default-close + BAM-FAM (`reference_hormozi_annie_frameworks.md`)",
+      "Hormozi closer-or-further decision frame",
+    ],
+    reachedBy: [
+      { segment: "inbound-audit", aroundDay: 3 },
+      { segment: "mfg-lookalike", aroundDay: 25 },
+      { segment: "cold-scouted", aroundDay: 52 },
+    ],
+  },
+  {
+    stage: "payment-link",
+    label: "Stripe Payment Link",
+    fires:
+      "Stripe Payment Link generated mid-call. Q1 installment ($2,500) for installment plans; $9,700 pay-in-full link with the $300 discount for full-pay. Card-on-file ask immediately after to lock the remaining quarterly installments.",
+    frameworks: [
+      "Pay-in-full $300 discount (`project_ai_system_pricing.md`)",
+      "Brunson LTV philosophy (never the last sale)",
+      "BlueJays pricing-alignment rule (CLAUDE.md handoff PDFs)",
+    ],
+    reachedBy: [
+      { segment: "inbound-audit", aroundDay: 3 },
+      { segment: "mfg-lookalike", aroundDay: 25 },
+      { segment: "cold-scouted", aroundDay: 52 },
+    ],
+  },
+];
+
+/**
+ * Given a segment + day, return the close phase the prospect is at (or
+ * null if they haven't reached the ladder yet). Used by dashboards and
+ * the attribution stack — never by the funnel cron (close is manual).
+ */
+export function getCloseStageAt(
+  segment: "inbound-audit" | "cold-scouted" | "mfg-lookalike",
+  day: number,
+): CloseStage | null {
+  let current: CloseStage | null = null;
+  for (const phase of UNIVERSAL_CLOSE_LADDER) {
+    const reach = phase.reachedBy.find((r) => r.segment === segment);
+    if (reach && day >= reach.aroundDay) current = phase.stage;
+  }
+  return current;
+}
+
 export const BLUEJAYS_FUNNELS: BluejaysFunnel[] = [
   // ─────────────────────────────────────────────────────────────────
   // FUNNEL 1 — PRIMARY: Inbound Audit → $10k AI System
