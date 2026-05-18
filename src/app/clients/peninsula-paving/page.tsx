@@ -327,6 +327,44 @@ const ASPHALT_LAYERS = [
 
 /* ───────────────────────── REUSABLE COMPONENTS ───────────────────────── */
 
+/**
+ * RoadStripe — decorative section divider that reads as a "road
+ * centerline." Yellow + copper dashes on a thin asphalt-band, used
+ * between sections to add personality + brand consistency. Costs ~0
+ * vertical space (just 14px tall).
+ */
+function RoadStripe({ flip = false }: { flip?: boolean }) {
+  return (
+    <div className="relative w-full" aria-hidden="true">
+      <svg
+        viewBox="0 0 1200 14"
+        className="w-full h-[14px]"
+        preserveAspectRatio="none"
+        style={flip ? { transform: "scaleX(-1)" } : undefined}
+      >
+        {/* Thin asphalt band */}
+        <rect x="0" y="4" width="1200" height="6" rx="3" fill="#1c1410" opacity="0.85" />
+        {/* Yellow center-line dashes */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <rect
+            key={`yellow-${i}`}
+            x={20 + i * 100}
+            y="6"
+            width="42"
+            height="2"
+            rx="1"
+            fill="#fbbf24"
+          />
+        ))}
+        {/* Copper edge stripe — top */}
+        <rect x="0" y="3" width="1200" height="1" fill="#ea580c" opacity="0.55" />
+        {/* Copper edge stripe — bottom */}
+        <rect x="0" y="10" width="1200" height="1" fill="#ea580c" opacity="0.55" />
+      </svg>
+    </div>
+  );
+}
+
 function SectionHeader({
   eyebrow,
   title,
@@ -569,15 +607,27 @@ function OlympicHeroIllustration() {
           <stop offset="50%" stopColor="#18181b" />
           <stop offset="100%" stopColor="#0a0a0a" />
         </linearGradient>
-        {/* Mountain front-range — warm gray-brown silhouette */}
-        <linearGradient id="pp-mtn-front" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#78716c" />
-          <stop offset="100%" stopColor="#44403c" />
-        </linearGradient>
-        {/* Mountain back-range (further Olympics ridge) — softer */}
+        {/* Mountain back-range — distant Olympics ridge with sky-blue
+            atmospheric haze. Further mountains read bluer because the
+            atmosphere scatters the light (real PNW look). */}
         <linearGradient id="pp-mtn-back" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#a8a29e" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#78716c" />
+          <stop offset="0%" stopColor="#94a3b8" />
+          <stop offset="55%" stopColor="#7c8ea6" />
+          <stop offset="100%" stopColor="#475569" />
+        </linearGradient>
+        {/* Mountain front-range — closer, warmer, more saturated.
+            Slight slate-blue tint in the shadows. */}
+        <linearGradient id="pp-mtn-front" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#64748b" />
+          <stop offset="60%" stopColor="#4b5563" />
+          <stop offset="100%" stopColor="#1e293b" />
+        </linearGradient>
+        {/* Forest treeline — Olympic National Park evergreen. Light
+            green at top, deep forest at base. */}
+        <linearGradient id="pp-trees" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#22c55e" />
+          <stop offset="50%" stopColor="#16a34a" />
+          <stop offset="100%" stopColor="#14532d" />
         </linearGradient>
       </defs>
 
@@ -586,26 +636,68 @@ function OlympicHeroIllustration() {
       {/* Sun glow */}
       <circle cx="480" cy="320" r="180" fill="url(#pp-sun)" />
 
-      {/* Olympic Mountains — back range (Mt. Constance / The Brothers vibe) */}
+      {/* Olympic Mountains — back range (Mt. Constance / The Brothers
+          vibe). Slate-blue gradient. */}
       <path
         d="M0,330 L80,260 L140,290 L200,210 L260,250 L310,200 L370,240 L430,180 L500,230 L560,210 L630,260 L700,220 L770,250 L800,240 L800,380 L0,380 Z"
         fill="url(#pp-mtn-back)"
       />
-      {/* Front range — closer, darker */}
+
+      {/* SNOWCAPS — white peaks on the tallest back-range mountains.
+          Visually anchors the Olympic Mountains identity (real Olympics
+          peaks ARE snowcapped most of the year). Coordinates trace the
+          top 8-10 vertical pixels of the highest peaks in the back-
+          range path above. */}
+      <g fill="#ffffff" opacity="0.95">
+        {/* Peak at x=200, y=210 — The Brothers */}
+        <polygon points="190,222 200,210 210,222 206,224 200,222 194,224" />
+        {/* Peak at x=310, y=200 — Mt. Constance */}
+        <polygon points="298,213 310,200 322,213 316,215 310,213 304,215" />
+        {/* Peak at x=430, y=180 — Mt. Olympus (the tallest) */}
+        <polygon points="416,194 430,180 444,194 437,197 430,194 423,197" />
+        {/* Peak at x=560, y=210 — Hurricane Ridge area */}
+        <polygon points="550,222 560,210 570,222 566,224 560,222 554,224" />
+        {/* Peak at x=700, y=220 — eastern ridge */}
+        <polygon points="691,231 700,220 709,231 705,232 700,231 695,232" />
+      </g>
+      {/* Snow shadows (cool blue) — adds depth to the snowcaps */}
+      <g fill="#cbd5e1" opacity="0.7">
+        <polygon points="200,222 206,224 200,224" />
+        <polygon points="310,213 316,215 310,215" />
+        <polygon points="430,194 437,197 430,197" />
+        <polygon points="560,222 566,224 560,224" />
+      </g>
+
+      {/* Front range — closer, darker slate */}
       <path
         d="M0,360 L60,320 L130,345 L180,310 L240,335 L310,300 L380,330 L450,295 L520,325 L590,305 L670,335 L730,315 L800,330 L800,400 L0,400 Z"
         fill="url(#pp-mtn-front)"
       />
 
-      {/* Tree line silhouette */}
-      <g fill="#000000" opacity="0.6">
-        {Array.from({ length: 24 }).map((_, i) => {
-          const x = i * 36 - 10;
-          const h = 16 + ((i * 7) % 14);
+      {/* FOREST TREELINE — Olympic National Park evergreen silhouette.
+          Greens replace the old black silhouettes. Slight variation in
+          height + opacity for visual depth. */}
+      <g fill="url(#pp-trees)">
+        {Array.from({ length: 32 }).map((_, i) => {
+          const x = i * 27 - 8;
+          const h = 18 + ((i * 11) % 16);
           return (
             <polygon
-              key={i}
-              points={`${x},395 ${x + 6},${395 - h} ${x + 12},395`}
+              key={`tree-${i}`}
+              points={`${x},398 ${x + 7},${398 - h} ${x + 14},398`}
+              opacity={0.85 + ((i % 3) * 0.05)}
+            />
+          );
+        })}
+        {/* Second row of trees behind, slightly smaller for depth */}
+        {Array.from({ length: 28 }).map((_, i) => {
+          const x = i * 31 + 4;
+          const h = 12 + ((i * 7) % 10);
+          return (
+            <polygon
+              key={`tree2-${i}`}
+              points={`${x},393 ${x + 5},${393 - h} ${x + 10},393`}
+              opacity="0.55"
             />
           );
         })}
@@ -732,7 +824,7 @@ function AsphaltCrossSection() {
   return (
     <div className="relative">
       <svg
-        viewBox={`0 0 980 ${totalH}`}
+        viewBox={`0 0 1140 ${totalH}`}
         className="w-full h-auto"
         xmlns="http://www.w3.org/2000/svg"
         aria-label="Light-theme cutaway showing the six layers Peninsula Paving installs under every driveway: line striping, seal coat, wearing course, binder course, aggregate base, and compacted sub-grade."
@@ -803,8 +895,69 @@ function AsphaltCrossSection() {
 
         {/* Sun in the sky — soft cream-orange disc. Positioned far
             from where the roller will sit so they don't overlap. */}
-        <circle cx={DIAGRAM_LEFT + 65} cy="35" r="20" fill={YELLOW_HOT} opacity="0.65" />
-        <circle cx={DIAGRAM_LEFT + 65} cy="35" r="12" fill="#ffffff" opacity="0.75" />
+        <circle cx={DIAGRAM_LEFT + 50} cy="38" r="18" fill={YELLOW_HOT} opacity="0.65" />
+        <circle cx={DIAGRAM_LEFT + 50} cy="38" r="11" fill="#ffffff" opacity="0.75" />
+
+        {/* Vehicles driving on the road — wheels sit at the road
+            surface (y = SKY_HEIGHT). A small orange sedan + a yellow
+            pickup so the page reads as "this is what gets to drive on
+            it." */}
+        {/* Sedan (orange) — leftmost on the road */}
+        <g transform={`translate(${DIAGRAM_LEFT + 95}, ${SKY_HEIGHT - 32})`}>
+          {/* Shadow */}
+          <ellipse cx="24" cy="33" rx="24" ry="1.8" fill="rgba(28, 20, 16, 0.22)" />
+          {/* Body */}
+          <path
+            d="M 2,26 L 6,16 L 12,10 L 36,10 L 42,16 L 46,26 L 46,30 L 2,30 Z"
+            fill={ACCENT}
+          />
+          {/* Roof tint */}
+          <path
+            d="M 12,10 L 16,4 L 32,4 L 36,10 Z"
+            fill={ACCENT_DEEP}
+          />
+          {/* Windshield + windows (cream tint, brand-aligned) */}
+          <path d="M 14,9 L 17,5 L 22,5 L 22,9 Z" fill="#fef3c7" opacity="0.92" />
+          <path d="M 24,9 L 24,5 L 30,5 L 33,9 Z" fill="#fef3c7" opacity="0.92" />
+          {/* Belt-line trim */}
+          <rect x="6" y="18" width="38" height="1" fill={YELLOW_HOT} opacity="0.7" />
+          {/* Wheels */}
+          <circle cx="12" cy="30" r="4" fill="#1c1410" />
+          <circle cx="12" cy="30" r="1.6" fill="#a8a29e" />
+          <circle cx="36" cy="30" r="4" fill="#1c1410" />
+          <circle cx="36" cy="30" r="1.6" fill="#a8a29e" />
+          {/* Headlight glint (facing right) */}
+          <circle cx="45" cy="22" r="1.2" fill={YELLOW_HOT} />
+        </g>
+
+        {/* Pickup truck (yellow) — middle of the road */}
+        <g transform={`translate(${DIAGRAM_LEFT + 200}, ${SKY_HEIGHT - 34})`}>
+          {/* Shadow */}
+          <ellipse cx="28" cy="35" rx="30" ry="2" fill="rgba(28, 20, 16, 0.22)" />
+          {/* Truck bed (rear, lower) */}
+          <path d="M 26,14 L 54,14 L 56,32 L 26,32 Z" fill={YELLOW} />
+          {/* Bed rim */}
+          <rect x="26" y="14" width="30" height="2" fill={YELLOW_DEEP} />
+          {/* Cab body */}
+          <path
+            d="M 2,26 L 6,12 L 12,4 L 26,4 L 26,32 L 2,32 Z"
+            fill={YELLOW_HOT}
+          />
+          {/* Cab roof */}
+          <path d="M 12,4 L 14,2 L 24,2 L 26,4 Z" fill={YELLOW_DEEP} />
+          {/* Windshield + side window */}
+          <path d="M 8,12 L 13,5 L 22,5 L 22,12 Z" fill="#fef3c7" opacity="0.92" />
+          <path d="M 23,12 L 23,5 L 25,5 L 25,12 Z" fill="#fef3c7" opacity="0.92" />
+          {/* Door line */}
+          <line x1="22" y1="12" x2="22" y2="30" stroke={YELLOW_DEEP} strokeWidth="0.8" />
+          {/* Wheels */}
+          <circle cx="12" cy="32" r="4.5" fill="#1c1410" />
+          <circle cx="12" cy="32" r="1.8" fill="#a8a29e" />
+          <circle cx="46" cy="32" r="4.5" fill="#1c1410" />
+          <circle cx="46" cy="32" r="1.8" fill="#a8a29e" />
+          {/* Headlight */}
+          <rect x="3" y="20" width="3" height="2" rx="0.5" fill={ACCENT_HOT} />
+        </g>
 
         {/* Asphalt-roller silhouette — parked on the wearing course at
             the right side of the diagram so it's NOT overlapping any
@@ -1502,6 +1655,11 @@ export default function PeninsulaPavingPage() {
           </div>
         </section>
 
+        {/* Road-stripe divider — the Frick-founders section was about
+            family + history, so a road stripe before the services
+            grid reads as "OK, now let's get to what we lay down." */}
+        <RoadStripe />
+
         {/* ─────────────── SERVICES ─────────────── */}
         <section
           id="services"
@@ -1607,6 +1765,10 @@ export default function PeninsulaPavingPage() {
             </div>
           </div>
         </section>
+
+        {/* Road-stripe divider — between process steps and the brag-
+            section. Flipped so the dashes run the other way for variety. */}
+        <RoadStripe flip />
 
         {/* ─────────────── WHY US ─────────────── */}
         <section
@@ -1866,6 +2028,10 @@ export default function PeninsulaPavingPage() {
             </p>
           </div>
         </section>
+
+        {/* Road-stripe divider before the founder quote — gives the
+            "Cheap paving is mostly invisible" sub-quote space to land. */}
+        <RoadStripe />
 
         {/* ─────────────── FOUNDER QUOTE ─────────────── */}
         {/* Set in Cormorant Garamond — a humanist serif — so the family

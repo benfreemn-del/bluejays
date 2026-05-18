@@ -27,106 +27,97 @@ const PHONE_HREF = "tel:+13604777015";
 const ACCENT = "#ea580c";
 
 function PavingMark({ size = 36, flat = false }: { size?: number; flat?: boolean }) {
-  // Bespoke paving mark — a perspective road (top-down view of asphalt
-  // receding into the distance) with center stripes + copper edge
-  // highlights. Tells the brand story in one glance, distinct from any
-  // generic trade-business circle-icon. The whole point of Peninsula
-  // Paving is roads, so the logo IS a road.
+  // PP MONOGRAM MARK — highway-shield-style badge with the PP initials
+  // inside + a yellow road-stripe accent along the bottom. The shield
+  // shape ties to the Hwy 101 / Hwy 20 signs used on the route map,
+  // and the road-stripe segment reads as paving DNA at a glance.
+  // Clean, scales well at 32-36px in the nav, and reads instantly as
+  // a brand mark rather than "another circle icon."
   const unique = flat ? "flat" : "lit";
+  // Slightly wider than tall — same proportions as a US highway shield.
   return (
     <svg
       width={size}
-      height={size}
-      viewBox="0 0 48 48"
+      height={size * (48 / 56)}
+      viewBox="0 0 56 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
       <defs>
         {!flat && (
-          <radialGradient id={`pp-mark-glow-${unique}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fb923c" stopOpacity="0.5" />
-            <stop offset="60%" stopColor="#ea580c" stopOpacity="0.18" />
+          <radialGradient id={`pp-mark-glow-${unique}`} cx="50%" cy="50%" r="55%">
+            <stop offset="0%" stopColor="#fb923c" stopOpacity="0.45" />
+            <stop offset="60%" stopColor="#ea580c" stopOpacity="0.14" />
             <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
           </radialGradient>
         )}
-        <linearGradient id={`pp-mark-asphalt-${unique}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1c1917" />
-          <stop offset="100%" stopColor="#0c0908" />
+        <linearGradient id={`pp-mark-shield-${unique}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#fef3c7" />
         </linearGradient>
       </defs>
 
       {!flat && (
-        <circle cx="24" cy="24" r="22" fill={`url(#pp-mark-glow-${unique})`} />
+        <ellipse cx="28" cy="24" rx="28" ry="22" fill={`url(#pp-mark-glow-${unique})`} />
       )}
 
-      {/* Asphalt road — perspective trapezoid. Narrow top (vanishing
-          point at the top of the badge), wide bottom (foreground). */}
+      {/* Shield — US-highway-style: flat top, curved bottom that
+          tapers to a point at the centre. The shape signals "road
+          sign" without any explanatory ink. */}
       <path
-        d="M 18,7 L 30,7 L 42,41 L 6,41 Z"
-        fill={`url(#pp-mark-asphalt-${unique})`}
-        stroke={ACCENT}
-        strokeWidth="1.6"
+        d="
+          M 6,6
+          L 50,6
+          L 50,20
+          Q 50,38 28,44
+          Q 6,38 6,20
+          Z
+        "
+        fill={`url(#pp-mark-shield-${unique})`}
+        stroke="#ea580c"
+        strokeWidth="2"
         strokeLinejoin="round"
       />
 
-      {/* Copper edge highlight strips — paint inside the road edges,
-          parallel to the asphalt sides. Reads as the warm sunset light
-          catching the curb. */}
+      {/* Inner stroke for that stamped-metal road-sign feel */}
       <path
-        d="M 19,10 L 10,38"
-        stroke="#fb923c"
-        strokeWidth="0.9"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-      <path
-        d="M 29,10 L 38,38"
-        stroke="#fb923c"
-        strokeWidth="0.9"
-        strokeLinecap="round"
-        opacity="0.85"
+        d="
+          M 9.5,9
+          L 46.5,9
+          L 46.5,20
+          Q 46.5,35.5 28,40.8
+          Q 9.5,35.5 9.5,20
+          Z
+        "
+        fill="none"
+        stroke="#ea580c"
+        strokeOpacity="0.35"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
       />
 
-      {/* Center-line stripes — three white dashes, tapered for
-          perspective so the eye reads "road receding into distance".
-          Widths: 2 → 3.5 → 5 from far to near. */}
-      <rect
-        x="22.75"
-        y="11.5"
-        width="2.5"
-        height="3"
-        rx="0.3"
-        fill="#f8fafc"
-        opacity="0.95"
-      />
-      <rect
-        x="22.2"
-        y="18.5"
-        width="3.6"
-        height="4"
-        rx="0.4"
-        fill="#f8fafc"
-        opacity="0.95"
-      />
-      <rect
-        x="21.4"
-        y="27"
-        width="5.2"
-        height="5"
-        rx="0.5"
-        fill="#f8fafc"
-        opacity="0.95"
-      />
-      <rect
-        x="20.4"
-        y="35.5"
-        width="7.2"
-        height="4.5"
-        rx="0.6"
-        fill="#f8fafc"
-        opacity="0.92"
-      />
+      {/* PP monogram, centered. Heavy Space Grotesk @ 22 with negative
+          letter-spacing so the two P's read as a single sculpted form. */}
+      <text
+        x="28"
+        y="29"
+        textAnchor="middle"
+        fontFamily="'Space Grotesk', sans-serif"
+        fontWeight="800"
+        fontSize="20"
+        letterSpacing="-1.2"
+        fill="#c2410c"
+      >
+        PP
+      </text>
+
+      {/* Yellow road-stripe accent — 3 short dashes along the bottom
+          of the shield, like a road centerline running across the
+          badge. The visual hook that says "we pave roads." */}
+      <rect x="14" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
+      <rect x="25" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
+      <rect x="36" y="37" width="6" height="1.6" rx="0.5" fill="#fbbf24" />
     </svg>
   );
 }
