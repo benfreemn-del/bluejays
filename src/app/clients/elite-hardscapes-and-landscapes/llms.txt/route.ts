@@ -3,7 +3,7 @@ export const revalidate = 3600;
 
 const body = `# Elite Hardscapes & Landscapes — Hardscape, Landscape & Property Maintenance · Port Angeles WA
 
-> Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula. Retaining walls, paver patios, fences, hydroseed lawns, plantings, and weekly mowing routes from Forks to Port Townsend. Owner-operated by Tyler Fritz since 2023.
+> Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula. Retaining walls, paver patios, fences, hydroseed lawns, plantings, and weekly mowing routes from Forks to Port Townsend. Owner-operated by Tyler Fritz since 2022.
 
 ## Services
 
@@ -13,7 +13,7 @@ const body = `# Elite Hardscapes & Landscapes — Hardscape, Landscape & Propert
 
 ## Service Area
 
-Port Angeles · Sequim · Carlsborg · Port Townsend · Joyce · Diamond Point · Forks · Clallam County
+Sequim · Port Angeles · Carlsborg · Port Townsend · Joyce · Diamond Point · Forks · Clallam County
 
 ## Contact
 

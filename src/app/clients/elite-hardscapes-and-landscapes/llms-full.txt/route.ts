@@ -3,11 +3,11 @@ export const revalidate = 3600;
 
 const body = `# Elite Hardscapes & Landscapes — Hardscape, Landscape & Property Maintenance · Port Angeles WA
 
-> Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula since 2023. Owner-operated by Tyler Fritz from Port Angeles, WA. In-house crew, fully insured, no subcontractors. Hardscape first — retaining walls, paver patios, walkways, cedar fencing, fire pits. Landscape design, install, hydroseed lawns. Weekly maintenance routes Port Angeles through Forks.
+> Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula since 2022. Owner-operated by Tyler Fritz. Fully insured. Hardscape first — retaining walls, paver patios, walkways, cedar fencing, fire pits. Landscape design, install, hydroseed lawns. Weekly maintenance routes Sequim through Forks.
 
 ## About
 
-Elite Hardscapes & Landscapes is a small, owner-operated outdoor contractor on the Olympic Peninsula. Founded in 2023 by Tyler Fritz and based in Port Angeles, Washington. The company specializes in hardscape construction (retaining walls, paver work, fencing) and landscape design and install, with a year-round property-maintenance route covering Clallam County. Every job is run with in-house crew — no subcontractors. Tyler is the single point of contact from quote through walk-off.
+Elite Hardscapes & Landscapes is a small, owner-operated outdoor contractor on the Olympic Peninsula. Founded in 2022 by Tyler Fritz. The company specializes in hardscape construction (retaining walls, paver work, fencing) and landscape design and install, with a year-round property-maintenance route covering Clallam County. Tyler is the single point of contact from quote through walk-off.
 
 ## Services
 
@@ -52,15 +52,15 @@ Weekly and bi-weekly route service across the Peninsula:
 1. **Call or text Tyler** at (360) 797-4448 with a brief description of your property and what you're picturing.
 2. **Free walkthrough** scheduled within the same week. Tyler walks the site, measures, and talks through options.
 3. **Written estimate** delivered within a few days — fixed-price for hardscape and design/install, route pricing for maintenance.
-4. **Build / install** runs in-house. You talk to the owner the whole way through, not a project manager.
+4. **Build / install** kicks off on the agreed date. You talk to the owner the whole way through, not a project manager.
 5. **Walk-off** at completion. Maintenance starts on the next visit cycle if you've signed up for ongoing care.
 
 ## Service Area
 
 Working the entire Olympic Peninsula. Most active in:
 
-- Port Angeles
 - Sequim
+- Port Angeles
 - Carlsborg
 - Port Townsend
 - Joyce
@@ -97,8 +97,8 @@ Free estimates always. No deposit pressure, no high-pressure sales.
 
 - Licensed and fully insured in Washington State
 - Locally owned, owner-operator (Tyler Fritz)
-- In-house crew — no subcontractors
-- Established 2023, working the Olympic Peninsula full-time
+- Owner is your single point of contact from quote through walk-off
+- Established 2022, working the Olympic Peninsula full-time
 
 ---
 

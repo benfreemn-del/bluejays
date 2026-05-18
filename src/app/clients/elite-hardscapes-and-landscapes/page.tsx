@@ -57,6 +57,23 @@ const GOOGLE_REVIEW_URL =
     "Elite Hardscapes and Landscapes 9321 Old Olympic Hwy Port Angeles WA reviews",
   );
 
+// Live Google reviews flow through /api/clients/elite-hardscapes-and-
+// landscapes/google-reviews (Places Details API, hourly cache). The
+// page fetches on mount + populates the marquee below the FAQ.
+// Section auto-HIDES when the endpoint returns empty (no fake data
+// ever per CLAUDE.md "Social proof overlays MUST use real data").
+//
+// To turn it on: set ELITE_GOOGLE_PLACE_ID + GOOGLE_PLACES_API_KEY
+// env vars on Vercel. The Place ID is in Tyler's Google Business
+// Profile URL after `?cid=` or via the Place ID finder.
+type GoogleReview = {
+  author: string;
+  rating: number;             // 1-5
+  text: string;
+  relativeTime: string;       // "2 months ago", "a year ago", etc.
+  profilePhoto?: string | null;
+};
+
 const BRAND = {
   name: "Elite",
   suffix: "Hardscapes & Landscapes",
@@ -71,7 +88,7 @@ const BRAND = {
   phoneRaw: "+13607974448",
   // Routes to Ben's inbox for now (Tyler's email TBD — Ben forwards via text).
   email: "bluejaycontactme@gmail.com",
-  estYear: "2023",
+  estYear: "2022",
   logo: `${PHOTO_BASE}/9BC866E7-33A3-4704-B978-7D3BED20191C.png`,
 };
 
@@ -100,6 +117,30 @@ const PALETTE = {
 };
 
 const PORTFOLIO = [
+  {
+    src: `${PHOTO_BASE}/2026-05-16-front-yard-blue-house.jpg`,
+    title: "Curbside Bed Refresh",
+    tag: "Landscape · Curved bed, lilac, mulch, fresh edging",
+    ratio: "aspect-[4/3]",
+  },
+  {
+    src: `${PHOTO_BASE}/2026-05-16-red-ornamental-bed.jpg`,
+    title: "Front-Bed Color Pop",
+    tag: "Landscape · Japanese maple + mulch install",
+    ratio: "aspect-[3/4]",
+  },
+  {
+    src: `${PHOTO_BASE}/2026-05-16-boulder-feature.jpg`,
+    title: "Driveway Boulder Feature",
+    tag: "Hardscape · Stone accent + mulch bed shaping",
+    ratio: "aspect-[3/4]",
+  },
+  {
+    src: `${PHOTO_BASE}/2026-05-12-excavator-jobsite.jpg`,
+    title: "Site Prep · Yanmar on Jobsite",
+    tag: "Capability · Excavator + dump trailer on a Peninsula build",
+    ratio: "aspect-[3/4]",
+  },
   {
     src: `${PHOTO_BASE}/IMG_7199.jpg`,
     title: "Carlsborg Retaining Wall",
@@ -190,8 +231,8 @@ const SERVICES = [
 ];
 
 const SERVICE_AREA = [
-  "Port Angeles",
   "Sequim",
+  "Port Angeles",
   "Carlsborg",
   "Port Townsend",
   "Joyce",
@@ -252,7 +293,7 @@ const SEASONAL = [
 const FAQS = [
   {
     q: "What's your service area?",
-    a: "We cover the Olympic Peninsula — Port Angeles, Sequim, Carlsborg, Port Townsend, Joyce, Diamond Point, Forks and the rest of Clallam County. If you're close to the edge and not sure, call. We'll tell you straight.",
+    a: "We cover the Olympic Peninsula — Sequim, Port Angeles, Carlsborg, Port Townsend, Joyce, Diamond Point, Forks and the rest of Clallam County. If you're close to the edge and not sure, call. We'll tell you straight.",
   },
   {
     q: "Are estimates really free?",
@@ -391,7 +432,7 @@ function FloatingLeaves() {
    Small floating badge that slides in from the bottom-left after a
    2s delay. Dismissable. Click-through to a Google search that
    surfaces Tyler's GBP. Numbers are real (provided by Tyler). */
-function GoogleReviewBadge() {
+function GoogleReviewBadge({ hasOnPageReviews }: { hasOnPageReviews: boolean }) {
   const [shown, setShown] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -405,12 +446,29 @@ function GoogleReviewBadge() {
   const rating = GOOGLE_RATING.toFixed(1);
   const fillPct = Math.max(0, Math.min(100, (GOOGLE_RATING / 5) * 100));
 
+  // When the on-page marquee has reviews, the chip scroll-targets it
+  // instead of bouncing the visitor out to Google. Falls back to the
+  // Google search URL until the API returns review content.
+  const linkProps = hasOnPageReviews
+    ? {
+        href: "#google-reviews",
+        onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+          e.preventDefault();
+          const target = document.getElementById("google-reviews");
+          if (target)
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        },
+      }
+    : {
+        href: GOOGLE_REVIEW_URL,
+        target: "_blank" as const,
+        rel: "noopener noreferrer",
+      };
+
   return (
     <a
-      href={GOOGLE_REVIEW_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${rating} stars on Google — ${GOOGLE_REVIEW_COUNT} reviews`}
+      {...linkProps}
+      aria-label={`${rating} stars on Google — ${GOOGLE_REVIEW_COUNT} reviews${hasOnPageReviews ? " (jump to reviews)" : ""}`}
       className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-40 group inline-flex items-center gap-3 pl-3 pr-2 py-2 transition-all hover:gap-3.5 hover:-translate-y-0.5"
       style={{
         background: "rgba(0,0,0,0.85)",
@@ -511,6 +569,135 @@ function GoogleReviewBadge() {
   );
 }
 
+/* ───────────── Google reviews marquee ─────────────
+   Auto-scrolling row of review cards. Pauses on hover (CSS). Lives
+   right under the FAQ section. The bottom-left GoogleReviewBadge
+   scroll-targets this section's id. Duplicates the review list once
+   so the keyframe can translate -50% and feel like infinite scroll.
+   Only renders when GOOGLE_REVIEWS has entries (no fake data ever). */
+function GoogleReviewMarquee({ reviews }: { reviews: GoogleReview[] }) {
+  if (reviews.length === 0) return null;
+  // Two copies of the list back-to-back lets the keyframe glide -50%
+  // and visually loop. Slower (~50s) for longer lists; min 30s.
+  const duration = Math.max(30, reviews.length * 6);
+  const doubled = [...reviews, ...reviews];
+  return (
+    <div className="relative w-full">
+      {/* Edge fades — soften the loop seam */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10"
+        style={{
+          background: `linear-gradient(90deg, ${PALETTE.inkSoft} 0%, transparent 100%)`,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10"
+        style={{
+          background: `linear-gradient(270deg, ${PALETTE.inkSoft} 0%, transparent 100%)`,
+        }}
+      />
+      <div
+        className="flex gap-4 md:gap-5"
+        style={{
+          width: "max-content",
+          animation: `elite-reviews-scroll ${duration}s linear infinite`,
+        }}
+      >
+        {doubled.map((r, i) => (
+          <article
+            key={i}
+            className="shrink-0 w-[280px] md:w-[340px] p-5 flex flex-col"
+            style={{
+              background: PALETTE.steel,
+              border: `1px solid ${PALETTE.steelLine}`,
+              borderRadius: "12px",
+              minHeight: "180px",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              {/* Google G icon */}
+              <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden>
+                <path
+                  fill="#FFC107"
+                  d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4C12.9 4 4 12.9 4 24s8.9 20 20 20s20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
+                />
+                <path
+                  fill="#FF3D00"
+                  d="m6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4C16.3 4 9.6 8.3 6.3 14.7z"
+                />
+                <path
+                  fill="#4CAF50"
+                  d="M24 44c5.5 0 10.5-2.1 14.2-5.6l-6.6-5.4c-2 1.5-4.6 2.5-7.6 2.5c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"
+                />
+                <path
+                  fill="#1976D2"
+                  d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.8l6.6 5.4C41.4 36 44 30.5 44 24c0-1.3-.1-2.3-.4-3.5z"
+                />
+              </svg>
+              <span
+                className="inline-flex items-center gap-0.5"
+                aria-label={`${r.rating} of 5 stars`}
+              >
+                {[0, 1, 2, 3, 4].map((s) => (
+                  <Star
+                    key={s}
+                    size={13}
+                    weight="fill"
+                    color={s < r.rating ? "#FBBF24" : "#3f3f46"}
+                  />
+                ))}
+              </span>
+            </div>
+            <p
+              className="text-sm leading-relaxed flex-1 mb-3"
+              style={{ color: PALETTE.chromeBright }}
+            >
+              {r.text}
+            </p>
+            <div className="flex items-center justify-between gap-2">
+              <span
+                className="text-[13px] font-semibold"
+                style={{ color: PALETTE.bone }}
+              >
+                {r.author}
+              </span>
+              <span
+                className="text-[11px]"
+                style={{ color: PALETTE.chrome }}
+              >
+                {r.relativeTime}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+      {/* Keyframe + pause-on-hover for the row */}
+      <style jsx>{`
+        div:hover > div[style*="animation"] {
+          animation-play-state: paused !important;
+        }
+      `}</style>
+      <style jsx global>{`
+        @keyframes elite-reviews-scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [style*="elite-reviews-scroll"] {
+            animation: none !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 /* ───────────── scroll-reveal hook ───────────── */
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -565,11 +752,41 @@ export default function Site() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Live Google reviews — fetched once on mount from the per-client
+  // Places Details endpoint. Empty array hides the marquee section
+  // entirely (never shows fake data) and falls the badge back to the
+  // external Google search URL.
+  const [reviews, setReviews] = useState<GoogleReview[]>([]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(
+          "/api/clients/elite-hardscapes-and-landscapes/google-reviews",
+          { cache: "force-cache" },
+        );
+        const j = (await r.json()) as {
+          ok: boolean;
+          reviews?: GoogleReview[];
+        };
+        if (!cancelled && j.ok && Array.isArray(j.reviews)) {
+          setReviews(j.reviews);
+        }
+      } catch {
+        // Endpoint unreachable / env var missing — empty array keeps
+        // the marquee hidden and the chip in fallback mode.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const navItems = [
@@ -585,7 +802,7 @@ export default function Site() {
       style={{ background: PALETTE.ink, color: PALETTE.bone }}
     >
       <FloatingLeaves />
-      <GoogleReviewBadge />
+      <GoogleReviewBadge hasOnPageReviews={reviews.length > 0} />
       {/* CSS via dangerouslySetInnerHTML — avoids Turbopack 16.2.2
           optimized-build hang on large <style>{`...`}</style> blocks
           in client components (CLAUDE.md NON-NEGOTIABLE). */}
@@ -826,7 +1043,7 @@ export default function Site() {
               style={{ color: PALETTE.boneDim }}
             >
               Hardscape, landscape, and property maintenance for homes
-              across Port Angeles, Sequim, and the rest of the Olympic
+              across Sequim, Port Angeles, and the rest of the Olympic
               Peninsula. Hands-on, fully insured, and honest about what
               your yard actually needs.
             </p>
@@ -911,12 +1128,12 @@ export default function Site() {
               {
                 icon: Hammer,
                 label: "Hardscape Crew",
-                sub: "In-house, no subs",
+                sub: "Walls, patios, fences",
               },
               {
                 icon: MapPin,
                 label: "Olympic Peninsula",
-                sub: "Port Angeles to Forks",
+                sub: "Sequim to Forks",
               },
               {
                 icon: Star,
@@ -994,7 +1211,7 @@ export default function Site() {
                 Three trades.
                 <br />
                 <span style={{ color: PALETTE.crimsonHot }}>
-                  Done in-house.
+                  One callback.
                 </span>
               </h2>
             </div>
@@ -1344,10 +1561,10 @@ export default function Site() {
                 >
                   <p>
                     Elite Hardscapes & Landscapes is owned and operated by{" "}
-                    {BRAND.owner} out of Port Angeles, Washington. We
-                    handle hardscape, landscape design and install, and
-                    weekly property maintenance — all in-house, no
-                    subcontractors.
+                    {BRAND.owner} on the Olympic Peninsula. We handle
+                    hardscape, landscape design and install, and weekly
+                    property maintenance — end-to-end on every project,
+                    and you talk to the owner from quote through walk-off.
                   </p>
                   <p>
                     Since {BRAND.estYear}, we&apos;ve been building
@@ -1526,6 +1743,88 @@ export default function Site() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════ GOOGLE REVIEWS MARQUEE ═══════════════
+          Sits right under FAQ. The bottom-left GoogleReviewBadge
+          scroll-targets this section's id. Auto-hides when the
+          /api/clients/.../google-reviews endpoint returns empty —
+          never ship fake data per CLAUDE.md. */}
+      {reviews.length > 0 && (
+        <section
+          id="google-reviews"
+          className="relative py-16 md:py-20 overflow-hidden"
+          style={{ background: PALETTE.inkSoft }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6 md:px-10 mb-10 md:mb-12">
+            <Reveal>
+              <div className="text-center">
+                <div className="inline-flex items-center gap-3 mb-6">
+                  <div
+                    className="w-8 h-px"
+                    style={{ background: PALETTE.bronze }}
+                  />
+                  <span
+                    className="text-[11px] uppercase tracking-[0.3em]"
+                    style={{ color: PALETTE.bronze, fontWeight: 600 }}
+                  >
+                    Verified on Google
+                  </span>
+                  <div
+                    className="w-8 h-px"
+                    style={{ background: PALETTE.bronze }}
+                  />
+                </div>
+                <h2
+                  className="font-display uppercase tracking-tightest leading-[0.98] text-4xl md:text-5xl lg:text-6xl mb-4"
+                  style={{ color: PALETTE.bone, fontWeight: 700 }}
+                >
+                  What our neighbors{" "}
+                  <span style={{ color: PALETTE.crimsonHot }}>say.</span>
+                </h2>
+                <div className="inline-flex items-center gap-3 mt-2">
+                  <span
+                    className="text-2xl md:text-3xl font-semibold tabular-nums"
+                    style={{ color: PALETTE.bone }}
+                  >
+                    {GOOGLE_RATING.toFixed(1)}
+                  </span>
+                  <span className="inline-flex items-center gap-0.5">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <Star
+                        key={i}
+                        size={20}
+                        weight="fill"
+                        color={i < Math.round(GOOGLE_RATING) ? "#FBBF24" : "#3f3f46"}
+                      />
+                    ))}
+                  </span>
+                  <span
+                    className="text-sm"
+                    style={{ color: PALETTE.chrome }}
+                  >
+                    · {GOOGLE_REVIEW_COUNT} Google reviews
+                  </span>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          <GoogleReviewMarquee reviews={reviews} />
+
+          <div className="max-w-[1400px] mx-auto px-6 md:px-10 mt-10 text-center">
+            <a
+              href={GOOGLE_REVIEW_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm transition-colors hover:opacity-80"
+              style={{ color: PALETTE.chromeBright, fontWeight: 600 }}
+            >
+              <span>Read every review on Google</span>
+              <span aria-hidden>→</span>
+            </a>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════ CTA / CONTACT ═══════════════ */}
       <section

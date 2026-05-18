@@ -19,7 +19,7 @@ const HERO_PHOTO_URL =
 const TITLE =
   "Elite Hardscapes & Landscapes · Port Angeles WA · Pavers, Walls, Lawn Care";
 const DESCRIPTION =
-  "Olympic Peninsula's hands-on hardscape + landscape crew. Retaining walls, paver patios, fences, hydroseed, plantings, and weekly property maintenance — Port Angeles, Sequim, Port Townsend, Forks. Locally owned, fully insured. Owner-operated by Tyler Fritz.";
+  "Olympic Peninsula's hands-on hardscape + landscape crew. Retaining walls, paver patios, fences, hydroseed, plantings, and weekly property maintenance — Sequim, Port Angeles, Port Townsend, Forks. Locally owned, fully insured. Owner-operated by Tyler Fritz.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -68,7 +68,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   description: DESCRIPTION,
   telephone: "+1-360-797-4448",
   founder: { "@type": "Person", name: "Tyler Fritz" },
-  foundingDate: "2023",
+  foundingDate: "2022",
   address: {
     "@type": "PostalAddress",
     streetAddress: "9321 Old Olympic Hwy",
@@ -77,8 +77,8 @@ const LOCAL_BUSINESS_SCHEMA = {
     addressCountry: "US",
   },
   areaServed: [
-    "Port Angeles, WA",
     "Sequim, WA",
+    "Port Angeles, WA",
     "Carlsborg, WA",
     "Port Townsend, WA",
     "Joyce, WA",
