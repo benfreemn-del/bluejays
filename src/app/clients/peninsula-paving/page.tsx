@@ -701,11 +701,13 @@ function OlympicHeroIllustration() {
       />
 
       {/* FOREST TREELINE — Olympic National Park evergreen silhouette.
-          Greens replace the old black silhouettes. Slight variation in
-          height + opacity for visual depth. */}
+          Trees in the x=485 to x=555 range are SKIPPED — that's where
+          the asphalt roller sits at the road's vanishing point. */}
       <g fill="url(#pp-trees)">
         {Array.from({ length: 32 }).map((_, i) => {
           const x = i * 27 - 8;
+          // Skip the section directly behind the roller (footprint x=490-550)
+          if (x + 14 > 482 && x < 558) return null;
           const h = 18 + ((i * 11) % 16);
           return (
             <polygon
@@ -718,6 +720,7 @@ function OlympicHeroIllustration() {
         {/* Second row of trees behind, slightly smaller for depth */}
         {Array.from({ length: 28 }).map((_, i) => {
           const x = i * 31 + 4;
+          if (x + 10 > 482 && x < 558) return null;
           const h = 12 + ((i * 7) % 10);
           return (
             <polygon
@@ -730,55 +733,54 @@ function OlympicHeroIllustration() {
       </g>
 
       {/* Asphalt — freshly-paved driveway, perspective trapezoid.
-          Shifted RIGHT 60px from the geometric center so the road
-          sits visually right-of-center under the hero copy on the
-          left. New bottom 260-760, vanishing point centered at 460. */}
+          Shifted RIGHT 120px total from the geometric center so the
+          road sits well right-of-center under the hero copy. New
+          bottom 320-820, vanishing point centered at 520. */}
       <path
-        d="M 260,600 L 760,600 L 490,400 L 430,400 Z"
+        d="M 320,600 L 820,600 L 550,400 L 490,400 Z"
         fill="url(#pp-asphalt)"
       />
 
       {/* Glossy wet-asphalt highlight — narrower trapezoid inset,
           reads as sunset reflecting off the surface. */}
       <path
-        d="M 280,600 L 540,600 L 470,420 L 440,420 Z"
+        d="M 340,600 L 600,600 L 530,420 L 500,420 Z"
         fill="#1c1917"
         opacity="0.55"
       />
 
       {/* Warm sunset glow on the right edge of the road */}
       <path
-        d="M 760,600 L 720,600 L 475,410 L 490,400 Z"
+        d="M 820,600 L 780,600 L 535,410 L 550,400 Z"
         fill={ACCENT}
         opacity="0.16"
       />
 
       {/* Center line dashed stripes — bright white, perspective-tapered.
-          Centerline at x=460 (geometric center of the shifted trapezoid),
-          stripes get narrower toward the vanishing point. */}
+          Centerline at x=520 (geometric center of the shifted trapezoid). */}
       <g fill="#f8fafc">
         {/* Stripe 1 — foreground (closest, biggest) */}
-        <polygon points="446,600 474,600 468,560 452,560" opacity="0.95" />
+        <polygon points="506,600 534,600 528,560 512,560" opacity="0.95" />
         {/* Stripe 2 */}
-        <polygon points="453,540 467,540 465,500 455,500" opacity="0.9" />
+        <polygon points="513,540 527,540 525,500 515,500" opacity="0.9" />
         {/* Stripe 3 */}
-        <polygon points="456,480 464,480 463,450 457,450" opacity="0.85" />
+        <polygon points="516,480 524,480 523,450 517,450" opacity="0.85" />
         {/* Stripe 4 */}
-        <polygon points="457.5,440 462.5,440 462,420 458,420" opacity="0.7" />
+        <polygon points="517.5,440 522.5,440 522,420 518,420" opacity="0.7" />
         {/* Stripe 5 (vanishing) */}
-        <polygon points="458.5,415 461.5,415 461.2,405 458.8,405" opacity="0.5" />
+        <polygon points="518.5,415 521.5,415 521.2,405 518.8,405" opacity="0.5" />
       </g>
 
       {/* Solid white edge stripes — parallel to the road sides */}
       <g fill="#f8fafc">
         {/* Left edge stripe */}
         <polygon
-          points="260,600 275,600 438,400 432,400"
+          points="320,600 335,600 498,400 492,400"
           opacity="0.85"
         />
         {/* Right edge stripe */}
         <polygon
-          points="745,600 760,600 488,400 482,400"
+          points="805,600 820,600 548,400 542,400"
           opacity="0.85"
         />
       </g>
@@ -786,10 +788,40 @@ function OlympicHeroIllustration() {
       {/* Subtle copper sunset wash on the asphalt — reads as PNW
           golden-hour light kissing the road surface. */}
       <path
-        d="M 260,600 L 760,600 L 490,400 L 430,400 Z"
+        d="M 320,600 L 820,600 L 550,400 L 490,400 Z"
         fill={ACCENT}
         opacity="0.06"
       />
+
+      {/* ASPHALT ROLLER parked at the far end of the road — sits on
+          the vanishing point where the road meets the tree line.
+          Replaces the section of trees behind that spot (handled by
+          the skip-range in the tree loop above). Small enough to read
+          as "distant" but recognisable as a real piece of paving
+          equipment. */}
+      <g transform="translate(490, 358)">
+        {/* Ground shadow */}
+        <ellipse cx="30" cy="44" rx="32" ry="2.5" fill="rgba(0,0,0,0.35)" />
+        {/* Front drum (big steel cylinder that compacts the asphalt) */}
+        <rect x="2" y="28" width="56" height="16" rx="3" fill="#1c1917" />
+        <rect x="2" y="28" width="56" height="3" rx="1" fill="#52525b" />
+        <rect x="2" y="38" width="56" height="1" fill="#71717a" opacity="0.6" />
+        {/* Drum end-cap detail */}
+        <circle cx="6" cy="36" r="3.5" fill="#1c1917" stroke="#52525b" strokeWidth="0.6" />
+        <circle cx="54" cy="36" r="3.5" fill="#1c1917" stroke="#52525b" strokeWidth="0.6" />
+        {/* Cab body — orange copper */}
+        <rect x="14" y="12" width="32" height="18" rx="2" fill={ACCENT} />
+        {/* Yellow safety stripe along the cab */}
+        <rect x="14" y="20" width="32" height="2" fill={YELLOW_HOT} />
+        {/* Cab roof — darker copper */}
+        <rect x="18" y="4" width="24" height="9" rx="1.5" fill={ACCENT_DEEP} />
+        {/* Windshield + side windows — cream tint */}
+        <rect x="20" y="6" width="20" height="7" rx="1" fill="#fef3c7" opacity="0.92" />
+        {/* Headlight on the front (right side) */}
+        <circle cx="48" cy="26" r="1.6" fill={YELLOW_HOT} />
+        {/* Exhaust pipe rising from the cab */}
+        <rect x="40" y="0" width="2" height="6" rx="0.5" fill="#27272a" />
+      </g>
     </svg>
   );
 }
