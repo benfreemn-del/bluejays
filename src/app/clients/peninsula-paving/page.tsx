@@ -1252,8 +1252,14 @@ const PENINSULA_CITIES: Array<{
   { name: "Joyce", lat: 48.176, lon: -123.793, labelDx: 0, labelDy: -14, anchor: "middle" },
   { name: "Port Angeles", lat: 48.118, lon: -123.430, major: true, labelDx: 0, labelDy: -16, anchor: "middle" },
   { name: "Sequim", lat: 48.078, lon: -123.108, major: true, labelDx: 0, labelDy: 22, anchor: "middle" },
-  { name: "Port Townsend", lat: 48.117, lon: -122.760, major: true, labelDx: 18, labelDy: 6, anchor: "start" },
-  { name: "Quilcene", lat: 47.823, lon: -122.872, labelDx: 18, labelDy: 6, anchor: "start" },
+  // Port Townsend sits near the right edge — label has to go ABOVE
+  // the dot (centered) instead of to the right, or "Townsend" gets
+  // clipped by the viewBox edge.
+  { name: "Port Townsend", lat: 48.117, lon: -122.760, major: true, labelDx: 0, labelDy: -16, anchor: "middle" },
+  // Quilcene's label also goes ABOVE the dot — it's nearly as far
+  // east as Port Townsend, so "Quilcene" starting at x+18 would
+  // bump the right edge too.
+  { name: "Quilcene", lat: 47.823, lon: -122.872, labelDx: 0, labelDy: -14, anchor: "middle" },
 ];
 
 // Bounding box + viewBox — cropped to the TOP HALF of the peninsula
