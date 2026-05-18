@@ -19,6 +19,39 @@ type ChangeRequestPayload = {
   requestText?: string;
 };
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function GET(request: NextRequest) {
+  const prospectId = request.nextUrl.searchParams.get("prospectId")?.trim();
+  if (!prospectId) {
+    return NextResponse.json({ error: "Missing prospectId" }, { status: 400 });
+  }
+  if (!UUID_RE.test(prospectId)) {
+    return NextResponse.json({ error: "Invalid prospectId" }, { status: 400 });
+  }
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ requests: [] });
+  }
+
+  const { data, error } = await supabase
+    .from("change_requests")
+    .select(
+      "id, customer_name, customer_email, customer_phone, request_text, status, created_at, updated_at",
+    )
+    .eq("prospect_id", prospectId)
+    .order("created_at", { ascending: false })
+    .limit(25);
+
+  if (error) {
+    console.error("[Change Requests] GET failed:", error);
+    return NextResponse.json({ requests: [] });
+  }
+
+  return NextResponse.json({ requests: data ?? [] });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as ChangeRequestPayload;

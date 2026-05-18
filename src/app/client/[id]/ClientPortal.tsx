@@ -18,6 +18,7 @@ import type {
   MissedCallRow,
   ReviewRow,
   AppointmentRow,
+  ChangeRequestRow,
 } from "@/lib/customer-metrics";
 
 export interface RecentInvoice {
@@ -38,6 +39,7 @@ export interface RenewalInfo {
 }
 
 interface Props {
+  prospectId: string;
   businessName: string;
   liveSiteUrl: string;
   contactEmail: string;
@@ -45,15 +47,17 @@ interface Props {
   missedCalls: MissedCallRow[];
   reviews: ReviewRow[];
   appointments: AppointmentRow[];
+  changeRequests: ChangeRequestRow[];
   renewal: RenewalInfo;
   pricingTier: string;
 }
 
-type TabId = "leads" | "reviews" | "renewal";
+type TabId = "leads" | "reviews" | "requests" | "renewal";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "leads", label: "Leads" },
   { id: "reviews", label: "Reviews" },
+  { id: "requests", label: "Requests" },
   { id: "renewal", label: "Renewal" },
 ];
 
@@ -116,6 +120,7 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export default function ClientPortal({
+  prospectId,
   businessName,
   liveSiteUrl,
   contactEmail,
@@ -123,10 +128,12 @@ export default function ClientPortal({
   missedCalls,
   reviews,
   appointments,
+  changeRequests: initialRequests,
   renewal,
   pricingTier,
 }: Props) {
   const [tab, setTab] = useState<TabId>("leads");
+  const [changeRequests, setChangeRequests] = useState<ChangeRequestRow[]>(initialRequests);
 
   const totalLeads = leads.length + missedCalls.length + appointments.length;
 
@@ -207,6 +214,15 @@ export default function ClientPortal({
           />
         )}
         {tab === "reviews" && <ReviewsTab reviews={reviews} contactEmail={contactEmail} />}
+        {tab === "requests" && (
+          <RequestsTab
+            prospectId={prospectId}
+            businessName={businessName}
+            contactEmail={contactEmail}
+            requests={changeRequests}
+            onSubmitted={(row) => setChangeRequests((prev) => [row, ...prev])}
+          />
+        )}
         {tab === "renewal" && (
           <RenewalTab renewal={renewal} contactEmail={contactEmail} pricingTier={pricingTier} />
         )}
@@ -540,7 +556,190 @@ function ReviewsTab({
   );
 }
 
-// ─── Tab 3: Renewal ───────────────────────────────────────────────────────
+// ─── Tab 3: Change Requests ───────────────────────────────────────────────
+
+const REQUEST_STATUS_LABEL: Record<string, string> = {
+  pending: "Pending",
+  in_progress: "In progress",
+  done: "Done",
+  cancelled: "Cancelled",
+};
+
+const REQUEST_STATUS_TONE: Record<string, string> = {
+  pending: "bg-amber-100 text-amber-800",
+  in_progress: "bg-sky-100 text-sky-800",
+  done: "bg-emerald-100 text-emerald-800",
+  cancelled: "bg-slate-200 text-slate-700",
+};
+
+function RequestsTab({
+  prospectId,
+  businessName,
+  contactEmail,
+  requests,
+  onSubmitted,
+}: {
+  prospectId: string;
+  businessName: string;
+  contactEmail: string;
+  requests: ChangeRequestRow[];
+  onSubmitted: (row: ChangeRequestRow) => void;
+}) {
+  const [text, setText] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!text.trim()) {
+      setError("Tell us what you'd like changed.");
+      return;
+    }
+    if (!email.trim()) {
+      setError("Add an email so Ben can follow up.");
+      return;
+    }
+    setError(null);
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/change-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prospectId,
+          customerName: name,
+          customerEmail: email,
+          requestText: text,
+        }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus("error");
+        setError(j.error || "Couldn't submit just yet — try again in a moment.");
+        return;
+      }
+      const stored = j.changeRequest as ChangeRequestRow | undefined;
+      if (stored) onSubmitted(stored);
+      setText("");
+      setName("");
+      setEmail("");
+      setStatus("ok");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Network error");
+    }
+  };
+
+  return (
+    <div className="space-y-6" role="tabpanel">
+      <form
+        onSubmit={submit}
+        className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm space-y-3"
+      >
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">
+            Send Ben a change request
+          </h2>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Anything you want updated on {businessName}&apos;s site — copy
+            tweaks, new photos, hours, a new section. He&apos;ll reply within a
+            business day.
+          </p>
+        </div>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={4}
+          placeholder="What would you like updated?"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name (optional)"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email (so Ben can reply)"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {status === "submitting" ? "Sending…" : "Send request"}
+          </button>
+          {status === "ok" && (
+            <span className="text-xs font-medium text-emerald-700">
+              Sent — Ben got the alert.
+            </span>
+          )}
+          {error && (
+            <span className="text-xs font-medium text-rose-700">{error}</span>
+          )}
+        </div>
+      </form>
+
+      {requests.length === 0 ? (
+        <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+          No requests yet. Anything you submit above will show up here so you
+          can track its status.
+        </div>
+      ) : (
+        <ul className="space-y-3">
+          {requests.map((r) => {
+            const label =
+              REQUEST_STATUS_LABEL[r.status] ?? r.status ?? "Pending";
+            const tone =
+              REQUEST_STATUS_TONE[r.status] ?? "bg-slate-200 text-slate-700";
+            return (
+              <li
+                key={r.id}
+                className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <span
+                    className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${tone}`}
+                  >
+                    {label}
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    {formatDate(r.created_at)}
+                  </span>
+                </div>
+                <p className="text-sm text-slate-800 whitespace-pre-wrap">
+                  {r.request_text}
+                </p>
+                {(r.customer_name || r.customer_email) && (
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    From {r.customer_name || "you"}
+                    {r.customer_email ? ` · ${r.customer_email}` : ""}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <p className="text-xs text-slate-500 text-center">
+        Prefer email? <a className="underline" href={`mailto:${contactEmail}`}>{contactEmail}</a>
+      </p>
+    </div>
+  );
+}
+
+// ─── Tab 4: Renewal ───────────────────────────────────────────────────────
 
 function RenewalTab({
   renewal,

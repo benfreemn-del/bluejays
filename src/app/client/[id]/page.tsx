@@ -30,6 +30,7 @@ import {
   listRecentMissedCalls,
   listRecentReviews,
   listRecentAppointments,
+  listRecentChangeRequests,
 } from "@/lib/customer-metrics";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { getBillingPortalUrl } from "@/lib/email-templates";
@@ -133,16 +134,18 @@ export default async function ClientPortalPage({
   const liveSiteUrl =
     prospect.generatedSiteUrl || `${BASE_URL}/preview/${prospect.id}`;
 
-  const [leads, missedCalls, reviews, appointments, renewal] = await Promise.all([
+  const [leads, missedCalls, reviews, appointments, changeRequests, renewal] = await Promise.all([
     listRecentLeads(id, 50),
     listRecentMissedCalls(id, 20),
     listRecentReviews(id, 50),
     listRecentAppointments(id, 50),
+    listRecentChangeRequests(id, 25),
     getRenewalInfo(prospect.mgmtSubscriptionId),
   ]);
 
   return (
     <ClientPortal
+      prospectId={id}
       businessName={prospect.businessName}
       liveSiteUrl={liveSiteUrl}
       contactEmail={CONTACT_EMAIL}
@@ -150,6 +153,7 @@ export default async function ClientPortalPage({
       missedCalls={missedCalls}
       reviews={reviews}
       appointments={appointments}
+      changeRequests={changeRequests}
       renewal={renewal}
       pricingTier={(prospect as { pricingTier?: string }).pricingTier || "standard"}
     />

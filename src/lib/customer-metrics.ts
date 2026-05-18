@@ -273,6 +273,38 @@ export interface AppointmentRow {
   created_at: string;
 }
 
+export interface ChangeRequestRow {
+  id: string;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
+  request_text: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function listRecentChangeRequests(
+  prospectId: string,
+  limit = 25,
+): Promise<ChangeRequestRow[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await supabase
+      .from("change_requests")
+      .select(
+        "id, customer_name, customer_email, customer_phone, request_text, status, created_at, updated_at",
+      )
+      .eq("prospect_id", prospectId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error || !data) return [];
+    return data as ChangeRequestRow[];
+  } catch {
+    return [];
+  }
+}
+
 export async function listRecentAppointments(
   prospectId: string,
   limit = 50,
