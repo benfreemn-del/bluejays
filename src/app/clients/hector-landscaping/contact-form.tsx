@@ -7,8 +7,9 @@ import { ArrowRight, CheckCircle, Warning } from "@phosphor-icons/react";
  * Hector Landscaping customer-facing estimate request form.
  *
  * Posts to /api/clients/inquire which forwards to
- * Hector Landscaping (mtviewlandscapeonline@gmail.com) and pings Ben so he can
- * verify deliverability.
+ * Hector Landscaping (hectorlandscapingonline@gmail.com) and pings Ben so he
+ * can verify deliverability. (Email destination canonicalized in SLUG_CONFIG
+ * inside /api/clients/inquire/route.ts — that's the single source of truth.)
  */
 export default function HectorLandscapingContactForm({
   services,
