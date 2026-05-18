@@ -143,44 +143,63 @@ const PHOTOS = {
   kitchenDining: `${CDN}/8659d1ea-6f9c-446c-a6e4-ad5a7a8e7c65/Kitchen+dining+-+cropped.JPG?format=1500w`,
 } as const;
 
-/* ───────────────────────── COLORS — warmer than Meyer ───────────────────────── */
-const BG = "#0d0a07"; // deep warm-black (not Meyer's cold #0a0a0a)
-const BG_ALT = "#13100c"; // warm-tinted alt panel
-const BG_PANEL = "#1a1612"; // cream-warmed panel
-const INK = "#fef6e8"; // warm cream ink (not stark white)
-const INK_SOFT = "rgba(254, 246, 232, 0.78)";
-const INK_DIM = "rgba(254, 246, 232, 0.50)";
-const RULE = "rgba(254, 246, 232, 0.10)";
+/* ───────────────────────── COLORS — locked palette v3 (cream-default) ─────────────────────────
+ *
+ * Ben's rework brief (2026-05-18): the all-dark page felt heavy, the
+ * alternating dark/cream felt jarring. New rule: cream is the page,
+ * dark is the bookends. Hero opens with drama. Every content section
+ * reads like magazine paper. Footer closes with gravity. Two cream
+ * tones alternate for rhythm — never two dark/light flips in a row.
+ *
+ * Three tiers — every color on the page is one of these:
+ *
+ *   Tier 1  Surface  (cream)     BG / BG_ALT / BG_PANEL + INK
+ *   Tier 2  Accent   (trade)     Copper + Blueprint
+ *   Tier 3  Bookends (dark)      DARK_BG only on hero + footer
+ */
 
-const ACCENT = "#d97706"; // copper-amber — primary trade color
-const ACCENT_DARK = "#92400e";
-const ACCENT_LIGHT = "#fbbf24";
-const ACCENT_GOLD = "#fcd34d";
+// ── Tier 1: Surface ──────────────────────────────────────────────
+const BG = "#f5ede0";          // Paper  — warm cream, primary section bg
+const BG_ALT = "#ebe1d0";      // Stone  — deeper cream, alternating bg
+const BG_PANEL = "#fbf6ec";    // Panel  — brightest cream, cards
+const INK = "#1a1612";         // Espresso text
+const INK_SOFT = "rgba(26, 22, 18, 0.75)";
+const INK_DIM = "rgba(26, 22, 18, 0.50)";
+const RULE = "rgba(26, 22, 18, 0.12)";
+
+// ── Tier 2: Accent (trade) ───────────────────────────────────────
+const ACCENT = "#d97706";       // Copper — primary identity
+const ACCENT_DARK = "#92400e";  // Burnt copper — text + hover on cream
+const ACCENT_LIGHT = "#fbbf24"; // Bright gold — gradient mid
+const ACCENT_GOLD = "#fcd34d";  // Light gold — gradient top
 const ACCENT_DIM = "rgba(217, 119, 6, 0.20)";
 const COPPER_GRAD = `linear-gradient(135deg, ${ACCENT_LIGHT} 0%, ${ACCENT} 55%, ${ACCENT_DARK} 100%)`;
 
-// 3rd color — petrol blue. The blueprint counterpoint to copper.
-// Construction/engineering coded, sits opposite copper on the color
-// wheel, used for: alternating section numbers, "before" badges,
-// credential rule lines, link hover states.
-const BLUEPRINT = "#0e7490"; // teal-700
-const BLUEPRINT_LIGHT = "#06b6d4"; // cyan-500
-const BLUEPRINT_PALE = "#cffafe"; // cyan-100
+const BLUEPRINT = "#0e7490";        // Petrol — secondary accent (blueprint)
+const BLUEPRINT_LIGHT = "#06b6d4";  // Cyan — gradient end
+const BLUEPRINT_PALE = "#cffafe";
 const BLUEPRINT_DIM = "rgba(14, 116, 144, 0.22)";
 const BLUEPRINT_GRAD = `linear-gradient(135deg, ${BLUEPRINT_LIGHT} 0%, ${BLUEPRINT} 100%)`;
 
-// CREAM / LIGHT THEME — used on alternating sections (Manifesto,
-// Named Projects, Credentials) for magazine-editorial rhythm. Breaks
-// up the all-dark visual that read as "one big black page" and gives
-// the page the feel of a print spread — dark pages, then cream pages,
-// then dark pages.
-const CREAM_BG = "#f5ede0"; // warm magazine paper
-const CREAM_ALT = "#ebe1d0"; // slightly deeper cream — panels on cream sections
-const CREAM_PANEL = "#fbf6ec"; // brighter cream — feature cards on cream sections
-const CREAM_INK = "#1a1612"; // dark text on cream
-const CREAM_INK_SOFT = "rgba(26, 22, 18, 0.78)";
-const CREAM_INK_DIM = "rgba(26, 22, 18, 0.55)";
-const CREAM_RULE = "rgba(26, 22, 18, 0.12)";
+// ── Tier 3: Bookends (used ONLY on hero + footer) ────────────────
+const DARK_BG = "#1c1917";          // Stone-black — hero, footer
+const DARK_BG_PANEL = "#292524";    // Stone-gray — dark cards
+const DARK_INK = "#fef6e8";         // Warm cream on dark
+const DARK_INK_SOFT = "rgba(254, 246, 232, 0.78)";
+const DARK_INK_DIM = "rgba(254, 246, 232, 0.55)";
+const DARK_RULE = "rgba(254, 246, 232, 0.10)";
+
+// ── Backward-compat aliases ──────────────────────────────────────
+// Sections 02 / 04 / 08 still reference CREAM_* from the prior
+// rework. After v3, "cream" and "default" mean the same thing —
+// these aliases let existing JSX work without a sweeping rename.
+const CREAM_BG = BG;
+const CREAM_ALT = BG_ALT;
+const CREAM_PANEL = BG_PANEL;
+const CREAM_INK = INK;
+const CREAM_INK_SOFT = INK_SOFT;
+const CREAM_INK_DIM = INK_DIM;
+const CREAM_RULE = RULE;
 
 const FONT_HEAD = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
@@ -560,9 +579,9 @@ export default function AllInOneServicesPage() {
                 <div
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.22em] mb-6"
                   style={{
-                    background: "rgba(217, 119, 6, 0.12)",
+                    background: "rgba(217, 119, 6, 0.10)",
                     border: `1px solid ${ACCENT_DIM}`,
-                    color: ACCENT_LIGHT,
+                    color: ACCENT_DARK,
                     fontFamily: FONT_HEAD,
                   }}
                 >
@@ -618,10 +637,10 @@ export default function AllInOneServicesPage() {
                   </a>
                   <a
                     href={BUSINESS.phoneHref}
-                    className="inline-flex items-center gap-2 text-[15px] font-semibold transition-colors hover:text-white"
+                    className="inline-flex items-center gap-2 text-[15px] font-semibold transition-opacity hover:opacity-70"
                     style={{ color: INK, fontFamily: FONT_HEAD }}
                   >
-                    <Phone size={15} weight="fill" style={{ color: ACCENT_LIGHT }} />
+                    <Phone size={15} weight="fill" style={{ color: ACCENT_DARK }} />
                     {BUSINESS.phoneDisplay}
                   </a>
                 </div>
@@ -631,19 +650,19 @@ export default function AllInOneServicesPage() {
                   style={{ color: INK_DIM, fontFamily: FONT_HEAD, borderColor: RULE }}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />
+                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_DARK }} />
                     $1M Insured
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />
+                    <ShieldCheck size={14} weight="fill" style={{ color: ACCENT_DARK }} />
                     $12K Bonded
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <Trophy size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />
+                    <Trophy size={14} weight="fill" style={{ color: ACCENT_DARK }} />
                     BuildZoom Top 7% WA
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <Star size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />
+                    <Star size={14} weight="fill" style={{ color: ACCENT_DARK }} />
                     4.6★ · 18 reviews
                   </span>
                 </div>
@@ -1661,10 +1680,10 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── FOOTER ────────────────────── */}
+        {/* ────────────────────── FOOTER (dark bookend) ────────────────────── */}
         <footer
           className="relative pt-14 pb-8 border-t"
-          style={{ background: "#080605", borderColor: ACCENT_DIM }}
+          style={{ background: DARK_BG, borderColor: ACCENT_DIM }}
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
@@ -1673,7 +1692,7 @@ export default function AllInOneServicesPage() {
                   <AIOSMark size={36} flat />
                   <div
                     className="flex flex-col leading-tight"
-                    style={{ color: INK, fontFamily: FONT_HEAD }}
+                    style={{ color: DARK_INK, fontFamily: FONT_HEAD }}
                   >
                     <span className="text-[15px] font-bold tracking-wide">
                       ALL IN ONE SERVICES
@@ -1688,7 +1707,7 @@ export default function AllInOneServicesPage() {
                 </div>
                 <p
                   className="text-[13px] leading-relaxed mb-4"
-                  style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+                  style={{ color: DARK_INK_DIM, fontFamily: FONT_BODY }}
                 >
                   Family-operated general contractor serving Clallam and
                   Jefferson Counties since 2016.
@@ -1721,7 +1740,7 @@ export default function AllInOneServicesPage() {
                   <a
                     href={BUSINESS.phoneHref}
                     className="inline-flex items-center gap-2 transition-colors hover:text-white"
-                    style={{ color: INK_DIM }}
+                    style={{ color: DARK_INK_DIM }}
                   >
                     <Phone
                       size={13}
@@ -1737,7 +1756,7 @@ export default function AllInOneServicesPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-start gap-2 transition-colors hover:text-white"
-                    style={{ color: INK_DIM }}
+                    style={{ color: DARK_INK_DIM }}
                   >
                     <MapPin
                       size={13}
@@ -1758,8 +1777,8 @@ export default function AllInOneServicesPage() {
             <div
               className="pt-7 mt-3 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px]"
               style={{
-                borderColor: RULE,
-                color: INK_DIM,
+                borderColor: DARK_RULE,
+                color: DARK_INK_DIM,
                 fontFamily: FONT_BODY,
               }}
             >
@@ -1956,13 +1975,13 @@ function FooterCol({
     <div>
       <div
         className="text-[12px] uppercase tracking-[0.22em] font-bold mb-4"
-        style={{ color: INK, fontFamily: FONT_HEAD }}
+        style={{ color: DARK_INK, fontFamily: FONT_HEAD }}
       >
         {title}
       </div>
       <ul
         className="space-y-2.5 text-[13px]"
-        style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+        style={{ color: DARK_INK_DIM, fontFamily: FONT_BODY }}
       >
         {children}
       </ul>
