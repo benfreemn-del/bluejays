@@ -630,6 +630,14 @@ function OlympicHeroIllustration() {
           <stop offset="50%" stopColor="#16a34a" />
           <stop offset="100%" stopColor="#14532d" />
         </linearGradient>
+        {/* Snowcap shading — white on the sun-lit side (top-left)
+            fading to cool blue-gray on the shadow side (bottom-right).
+            Gives the snow real depth instead of flat white. */}
+        <linearGradient id="pp-snow" x1="0.1" y1="0" x2="0.9" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="55%" stopColor="#f1f5f9" />
+          <stop offset="100%" stopColor="#bcc8d6" />
+        </linearGradient>
       </defs>
 
       {/* Sky */}
@@ -644,29 +652,46 @@ function OlympicHeroIllustration() {
         fill="url(#pp-mtn-back)"
       />
 
-      {/* SNOWCAPS — white peaks on the tallest back-range mountains.
-          Visually anchors the Olympic Mountains identity (real Olympics
-          peaks ARE snowcapped most of the year). Coordinates trace the
-          top 8-10 vertical pixels of the highest peaks in the back-
-          range path above. */}
-      <g fill="#ffffff" opacity="0.95">
-        {/* Peak at x=200, y=210 — The Brothers */}
-        <polygon points="190,222 200,210 210,222 206,224 200,222 194,224" />
-        {/* Peak at x=310, y=200 — Mt. Constance */}
-        <polygon points="298,213 310,200 322,213 316,215 310,213 304,215" />
-        {/* Peak at x=430, y=180 — Mt. Olympus (the tallest) */}
-        <polygon points="416,194 430,180 444,194 437,197 430,194 423,197" />
-        {/* Peak at x=560, y=210 — Hurricane Ridge area */}
-        <polygon points="550,222 560,210 570,222 566,224 560,222 554,224" />
-        {/* Peak at x=700, y=220 — eastern ridge */}
-        <polygon points="691,231 700,220 709,231 705,232 700,231 695,232" />
+      {/* SNOWCAPS — proper triangular caps spanning the upper third of
+          each tallest back-range peak. Each cap traces from a base on
+          the left slope, up to the peak point, down to a base on the
+          right slope, then a gently wavy snowline back across the
+          bottom. White-to-cool-blue gradient gives natural shading
+          (sun-lit left, shadow right). */}
+      <g fill="url(#pp-snow)" opacity="0.96">
+        {/* The Brothers — peak (200, 210), bases at (179, 238) and (242, 238) */}
+        <path d="M 179,238 L 200,210 L 242,238 Q 225,242 210,238 Q 198,235 188,240 Q 182,241 179,238 Z" />
+        {/* Mt. Constance — peak (310, 200), bases at (282, 228) and (352, 228) */}
+        <path d="M 282,228 L 310,200 L 352,228 Q 335,232 320,228 Q 305,225 295,230 Q 287,231 282,228 Z" />
+        {/* Mt. Olympus — peak (430, 180), bases at (398, 212) and (475, 212).
+            The tallest peak, so the snowcap reaches deepest down. */}
+        <path d="M 398,212 L 430,180 L 475,212 Q 460,218 445,213 Q 432,210 420,215 Q 408,217 398,212 Z" />
+        {/* Hurricane Ridge — peak (560, 210), bases at (500, 230) and (599, 238).
+            Left side hits the shoulder so snow runs all the way down that side. */}
+        <path d="M 500,230 L 560,210 L 599,238 Q 583,242 570,236 Q 555,233 540,237 Q 520,234 500,230 Z" />
+        {/* Eastern ridge — peak (700, 220), bases at (658, 244) and (756, 244) */}
+        <path d="M 658,244 L 700,220 L 756,244 Q 738,248 722,243 Q 708,240 695,245 Q 678,246 658,244 Z" />
       </g>
-      {/* Snow shadows (cool blue) — adds depth to the snowcaps */}
-      <g fill="#cbd5e1" opacity="0.7">
-        <polygon points="200,222 206,224 200,224" />
-        <polygon points="310,213 316,215 310,215" />
-        <polygon points="430,194 437,197 430,197" />
-        <polygon points="560,222 566,224 560,224" />
+
+      {/* Peak highlights — bright white at the very tip of each peak,
+          like late-afternoon sun catching the very top of the snow. */}
+      <g fill="#ffffff" opacity="0.85">
+        <ellipse cx="200" cy="213" rx="2.4" ry="3" />
+        <ellipse cx="310" cy="203" rx="2.4" ry="3" />
+        <ellipse cx="430" cy="183" rx="2.8" ry="3.5" />
+        <ellipse cx="560" cy="213" rx="2.4" ry="3" />
+        <ellipse cx="700" cy="223" rx="2.2" ry="2.8" />
+      </g>
+
+      {/* Snowline shadow — thin slate-blue band right beneath each
+          snowcap, so the white doesn't read as a flat sticker pasted
+          on top. */}
+      <g fill="#7c8ea6" opacity="0.35">
+        <path d="M 184,240 Q 200,236 215,240 Q 230,242 240,240 L 238,242 Q 220,244 200,242 Q 188,243 184,240 Z" />
+        <path d="M 286,230 Q 305,226 320,230 Q 340,232 350,230 L 348,232 Q 320,234 296,232 Q 290,232 286,230 Z" />
+        <path d="M 402,214 Q 420,212 440,214 Q 460,216 472,214 L 470,216 Q 445,218 420,216 Q 408,216 402,214 Z" />
+        <path d="M 530,234 Q 555,232 575,236 Q 590,238 596,237 L 594,239 Q 570,240 545,238 Q 535,237 530,234 Z" />
+        <path d="M 662,246 Q 685,242 705,246 Q 730,248 753,246 L 751,248 Q 720,250 695,248 Q 675,248 662,246 Z" />
       </g>
 
       {/* Front range — closer, darker slate */}
