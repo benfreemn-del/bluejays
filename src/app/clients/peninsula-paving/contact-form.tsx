@@ -97,9 +97,10 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
       <div
         className="border p-10 sm:p-12 rounded-xl"
         style={{
-          background: "rgba(255, 255, 255, 0.04)",
-          borderColor: "rgba(234, 88, 12, 0.4)",
+          background: "#ffffff",
+          borderColor: "rgba(234, 88, 12, 0.35)",
           fontFamily: "'Inter', sans-serif",
+          boxShadow: "0 10px 30px rgba(28, 20, 16, 0.08)",
         }}
       >
         <CheckCircle
@@ -109,14 +110,14 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
           className="mb-5"
         />
         <h3
-          className="text-[28px] sm:text-[34px] text-white tracking-tight mb-3 font-bold"
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          className="text-[28px] sm:text-[34px] tracking-tight mb-3 font-bold"
+          style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1c1410" }}
         >
           Estimate request received.
         </h3>
         <p
           className="text-[16px] leading-relaxed max-w-md"
-          style={{ color: "rgba(255, 255, 255, 0.75)" }}
+          style={{ color: "rgba(28, 20, 16, 0.78)" }}
         >
           Thanks. A Frick crew member will be in touch within one business
           day to set up a site walk and price the job. For anything
@@ -131,9 +132,10 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
       onSubmit={handleSubmit}
       className="border p-7 sm:p-10 rounded-xl"
       style={{
-        background: "rgba(255, 255, 255, 0.03)",
-        borderColor: "rgba(234, 88, 12, 0.18)",
+        background: "#ffffff",
+        borderColor: "rgba(234, 88, 12, 0.22)",
         fontFamily: "'Inter', sans-serif",
+        boxShadow: "0 10px 30px rgba(28, 20, 16, 0.06)",
       }}
       noValidate
     >
@@ -206,7 +208,7 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
       <div className="mt-7 flex flex-wrap items-center justify-between gap-4">
         <p
           className="text-[12px] max-w-xs"
-          style={{ color: "rgba(255, 255, 255, 0.5)" }}
+          style={{ color: "rgba(28, 20, 16, 0.58)" }}
         >
           Free estimate. No obligation. Site walks usually scheduled within
           a week.
@@ -214,10 +216,9 @@ export default function PeninsulaPavingContactForm({ prospectId, services }: Pro
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center gap-2 px-7 py-3.5 text-[13px] font-bold tracking-[0.14em] uppercase transition-all disabled:opacity-60 disabled:cursor-wait rounded-md hover:brightness-110 active:scale-95"
+          className="inline-flex items-center gap-2 px-7 py-3.5 text-[13px] font-bold tracking-[0.14em] uppercase transition-all disabled:opacity-60 disabled:cursor-wait rounded-md hover:brightness-110 active:scale-95 text-white"
           style={{
             background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DEEP} 100%)`,
-            color: "#0a0a0a",
             fontFamily: "'Space Grotesk', sans-serif",
             boxShadow: "0 4px 14px rgba(234, 88, 12, 0.4)",
           }}
@@ -249,11 +250,11 @@ function Field({
     <label className="block">
       <span
         className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
-        style={{ color: ACCENT, fontFamily: "'Space Grotesk', sans-serif" }}
+        style={{ color: ACCENT_DEEP, fontFamily: "'Space Grotesk', sans-serif" }}
       >
         {label}
         {required && (
-          <span style={{ color: "#f87171" }} className="ml-1">
+          <span style={{ color: "#dc2626" }} className="ml-1">
             *
           </span>
         )}
@@ -264,8 +265,13 @@ function Field({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px] text-white placeholder:opacity-30 transition-colors focus:border-white"
-        style={{ borderColor: "rgba(234, 88, 12, 0.25)" }}
+        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px] placeholder:opacity-40 transition-colors"
+        style={{
+          borderColor: "rgba(234, 88, 12, 0.35)",
+          color: "#1c1410",
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = ACCENT_DEEP; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(234, 88, 12, 0.35)"; }}
       />
     </label>
   );
@@ -284,21 +290,26 @@ function Select({
     <label className="block">
       <span
         className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
-        style={{ color: ACCENT, fontFamily: "'Space Grotesk', sans-serif" }}
+        style={{ color: ACCENT_DEEP, fontFamily: "'Space Grotesk', sans-serif" }}
       >
         {label}
       </span>
       <select
         name={name}
         defaultValue={options[0]}
-        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px] text-white focus:border-white"
-        style={{ borderColor: "rgba(234, 88, 12, 0.25)" }}
+        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px]"
+        style={{
+          borderColor: "rgba(234, 88, 12, 0.35)",
+          color: "#1c1410",
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = ACCENT_DEEP; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(234, 88, 12, 0.35)"; }}
       >
         {options.map((o) => (
           <option
             key={o}
             value={o}
-            style={{ background: "#0a0a0a", color: "white" }}
+            style={{ background: "#ffffff", color: "#1c1410" }}
           >
             {o}
           </option>
@@ -323,11 +334,11 @@ function Textarea({
     <label className="block">
       <span
         className="block text-[10px] tracking-[0.22em] uppercase mb-2 font-semibold"
-        style={{ color: ACCENT, fontFamily: "'Space Grotesk', sans-serif" }}
+        style={{ color: ACCENT_DEEP, fontFamily: "'Space Grotesk', sans-serif" }}
       >
         {label}
         {required && (
-          <span style={{ color: "#f87171" }} className="ml-1">
+          <span style={{ color: "#dc2626" }} className="ml-1">
             *
           </span>
         )}
@@ -337,8 +348,13 @@ function Textarea({
         required={required}
         placeholder={placeholder}
         rows={5}
-        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px] text-white placeholder:opacity-30 transition-colors focus:border-white resize-y"
-        style={{ borderColor: "rgba(234, 88, 12, 0.25)" }}
+        className="w-full bg-transparent border-b outline-none py-2.5 text-[15px] placeholder:opacity-40 transition-colors resize-y"
+        style={{
+          borderColor: "rgba(234, 88, 12, 0.35)",
+          color: "#1c1410",
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = ACCENT_DEEP; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(234, 88, 12, 0.35)"; }}
       />
     </label>
   );

@@ -68,7 +68,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#fefdfb",
   width: "device-width",
   initialScale: 1,
 };
@@ -219,35 +219,36 @@ export default function PeninsulaPavingLayout({
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap"
         rel="stylesheet"
       />
-      {/* Peninsula-specific scrollbar — vertical gradient amber→copper
-          over near-black. Matches the asphalt+road-flare brand. */}
+      {/* Peninsula-specific scrollbar — light cream track + warm
+          yellow→copper gradient thumb. Matches the light theme. */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
             html, body {
-              scrollbar-color: #ea580c #0a0a0a !important;
+              scrollbar-color: #ea580c #fef9ed !important;
               scrollbar-width: thin !important;
+              background: #fefdfb !important;
             }
             html::-webkit-scrollbar,
             body::-webkit-scrollbar,
             ::-webkit-scrollbar {
               width: 12px !important;
               height: 12px !important;
-              background: #0a0a0a !important;
+              background: #fef9ed !important;
             }
             html::-webkit-scrollbar-track,
             body::-webkit-scrollbar-track,
             ::-webkit-scrollbar-track {
-              background: #0a0a0a !important;
+              background: #fef9ed !important;
             }
             html::-webkit-scrollbar-thumb,
             body::-webkit-scrollbar-thumb,
             ::-webkit-scrollbar-thumb {
-              background: linear-gradient(180deg, #fb923c 0%, #ea580c 50%, #c2410c 100%) !important;
+              background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 35%, #ea580c 80%, #c2410c 100%) !important;
               border-radius: 6px !important;
-              border: 2px solid #0a0a0a !important;
+              border: 2px solid #fef9ed !important;
             }
-            ::-webkit-scrollbar-corner { background: #0a0a0a !important; }
+            ::-webkit-scrollbar-corner { background: #fef9ed !important; }
           `,
         }}
       />

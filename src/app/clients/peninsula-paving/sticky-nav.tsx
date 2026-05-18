@@ -152,8 +152,8 @@ export default function StickyNav() {
       <header
         className="sticky top-0 z-50 backdrop-blur-md border-b"
         style={{
-          background: "rgba(10, 10, 10, 0.92)",
-          borderColor: "rgba(234, 88, 12, 0.18)",
+          background: "rgba(254, 253, 251, 0.92)",
+          borderColor: "rgba(234, 88, 12, 0.20)",
           fontFamily: "'Inter', sans-serif",
         }}
       >
@@ -165,13 +165,16 @@ export default function StickyNav() {
           >
             <PavingMark size={36} />
             <span
-              className="flex flex-col leading-tight text-white"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              className="flex flex-col leading-tight"
+              style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1c1410" }}
             >
               <span className="text-[15px] sm:text-[17px] font-bold tracking-wide">
                 PENINSULA PAVING
               </span>
-              <span className="hidden sm:block text-[10px] sm:text-[10px] tracking-[0.24em] uppercase font-medium text-white/55">
+              <span
+                className="hidden sm:block text-[10px] sm:text-[10px] tracking-[0.24em] uppercase font-medium"
+                style={{ color: "rgba(28, 20, 16, 0.55)" }}
+              >
                 Olympic Peninsula · Since 1985
               </span>
             </span>
@@ -182,7 +185,10 @@ export default function StickyNav() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-sm font-medium transition-colors"
+                style={{ color: "rgba(28, 20, 16, 0.78)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "#1c1410"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(28, 20, 16, 0.78)"; }}
               >
                 {link.label}
               </a>
@@ -192,14 +198,15 @@ export default function StickyNav() {
           <div className="flex items-center gap-2 sm:gap-4">
             <a
               href={PHONE_HREF}
-              className="hidden sm:inline-flex items-center gap-2 text-white/85 hover:text-white text-[14px] font-semibold transition-colors"
+              className="hidden sm:inline-flex items-center gap-2 text-[14px] font-semibold transition-colors"
+              style={{ color: "#1c1410" }}
             >
               <Phone size={16} weight="fill" style={{ color: ACCENT }} />
               <span>{PHONE_DISPLAY}</span>
             </a>
             <a
               href="#contact"
-              className="hidden sm:inline-flex items-center gap-2 px-5 h-10 rounded-md font-bold text-[13px] uppercase tracking-wide text-black transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(234,88,12,0.35)]"
+              className="hidden sm:inline-flex items-center gap-2 px-5 h-10 rounded-md font-bold text-[13px] uppercase tracking-wide text-white transition-all hover:brightness-110 active:scale-95 shadow-[0_4px_14px_rgba(234,88,12,0.35)]"
               style={{
                 background: ACCENT,
                 fontFamily: "'Space Grotesk', sans-serif",
@@ -211,7 +218,8 @@ export default function StickyNav() {
 
             <button
               type="button"
-              className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-md text-white/90 hover:bg-white/10 transition-colors"
+              className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-md transition-colors"
+              style={{ color: "#1c1410" }}
               aria-label="Open menu"
               onClick={() => setOpen(true)}
             >
@@ -224,12 +232,15 @@ export default function StickyNav() {
       {open && (
         <div
           className="lg:hidden fixed inset-0 z-[60] backdrop-blur-md flex flex-col"
-          style={{ background: "rgba(5, 5, 5, 0.97)" }}
+          style={{ background: "rgba(254, 253, 251, 0.98)" }}
         >
-          <div className="flex items-center justify-between px-5 sm:px-8 h-16 sm:h-20 border-b border-white/10">
+          <div
+            className="flex items-center justify-between px-5 sm:px-8 h-16 sm:h-20 border-b"
+            style={{ borderColor: "rgba(28, 20, 16, 0.08)" }}
+          >
             <span
-              className="flex items-center gap-3 text-white"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              className="flex items-center gap-3"
+              style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1c1410" }}
             >
               <PavingMark size={32} flat />
               <span className="text-[15px] font-bold tracking-wide">
@@ -238,7 +249,8 @@ export default function StickyNav() {
             </span>
             <button
               type="button"
-              className="inline-flex items-center justify-center w-11 h-11 rounded-md text-white/90 hover:bg-white/10"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-md"
+              style={{ color: "#1c1410" }}
               aria-label="Close menu"
               onClick={() => setOpen(false)}
             >
@@ -252,19 +264,30 @@ export default function StickyNav() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="block py-4 text-2xl font-semibold text-white border-b border-white/10"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                className="block py-4 text-2xl font-semibold border-b"
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  color: "#1c1410",
+                  borderColor: "rgba(28, 20, 16, 0.10)",
+                }}
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="p-6 space-y-3 border-t border-white/10">
+          <div
+            className="p-6 space-y-3 border-t"
+            style={{ borderColor: "rgba(28, 20, 16, 0.10)" }}
+          >
             <a
               href={PHONE_HREF}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 h-14 rounded-md text-white border border-white/15 hover:bg-white/5 font-semibold"
+              className="flex items-center justify-center gap-2 h-14 rounded-md border font-semibold"
+              style={{
+                color: "#1c1410",
+                borderColor: "rgba(28, 20, 16, 0.15)",
+              }}
             >
               <Phone size={18} weight="fill" style={{ color: ACCENT }} />
               {PHONE_DISPLAY}
@@ -272,7 +295,7 @@ export default function StickyNav() {
             <a
               href="#contact"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 h-14 rounded-md font-bold uppercase tracking-wide text-black"
+              className="flex items-center justify-center gap-2 h-14 rounded-md font-bold uppercase tracking-wide text-white"
               style={{ background: ACCENT, fontFamily: "'Space Grotesk', sans-serif" }}
             >
               Free Estimate

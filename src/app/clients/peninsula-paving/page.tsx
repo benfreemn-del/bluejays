@@ -92,54 +92,70 @@ const BUSINESS = {
   owners: ["Cyril Frick", "Ella Frick"],
 } as const;
 
-/* ───────────────────────── COLORS ───────────────────────── */
-// FOUR-color palette built around the paving + Pacific Northwest
-// story: copper (fresh asphalt at sunset), olive (PNW forest +
-// rooted), sky (Strait of Juan de Fuca + Olympic sky), and warm
-// cream (the light surfaces asphalt sits against — driveway gravel,
-// concrete curbs, sea-spray sand). Adds chromatic variety to break
-// the all-dark fatigue without losing the trade-dress weight.
-const BG = "#0c0908";          // warm near-black (not pure #0a — brown undertone)
-const BG_ALT = "#161210";      // warmer charcoal panel
-const BG_PANEL = "#1e1814";    // distinctly warmer brown-black for cards (was #161412)
-const BG_WARM = "#221a14";     // alt section bg — coffee-brown for variety
-// Warm-cream light section background — used on the Route Map section
-// so the page has at least one daylight breath. Reads like an NPS park
-// map. Dark text on cream returns 12:1+ contrast, biggest readability
-// win on the page.
-const BG_CREAM = "#f5efe6";
-const BG_CREAM_ALT = "#eee4d3";
+/* ───────────────────────── COLORS — LIGHT THEME ─────────────────────────
+ * Rewritten 2026-05-17 per Ben review: "lighten up the color palette,
+ * white + orange + yellow 3-color scheme."
+ *
+ * Strict 3-color discipline:
+ *   1. WHITE (warm white + cream variations) — base surface
+ *   2. ORANGE (copper #ea580c family) — primary accent / CTAs / hero
+ *   3. YELLOW (amber #f59e0b family) — secondary accent / highlights /
+ *      sunset gradients
+ *
+ * Dark warm-charcoal #1c1410 is used as TEXT and the footer only —
+ * not as a section background. Everything else breathes white/cream.
+ */
 
-const ACCENT = "#ea580c";        // orange-600 — primary copper (fresh-laid asphalt)
-const ACCENT_HOT = "#fb923c";    // orange-400 — highlight
-const ACCENT_DEEP = "#c2410c";   // orange-700 — depth
-const ACCENT_DIM = "rgba(234, 88, 12, 0.22)";   // was 0.18 — slightly punchier
-const ACCENT_DIM_2 = "rgba(234, 88, 12, 0.12)"; // was 0.10
+// Surfaces (warm whites + creams — never pure flat white)
+const BG = "#fefdfb";            // softest warm white — primary section bg
+const BG_ALT = "#fef9ed";        // warm cream — alt section
+const BG_PANEL = "#ffffff";      // pure white — cards (against cream bg)
+const BG_WARM = "#fef3c7";       // amber-100 — daylight cream for hero variations
+const BG_CREAM = "#fdf6e3";      // route map section
+const BG_CREAM_ALT = "#fbecc7";  // route map gradient
+const BG_DEEP = "#1c1410";       // dark warm-black — text + footer only
 
-const INK = "#f8fafc";
-// Text opacity floors lifted for legibility on the dark+warm bg.
-// Was 0.78 → 0.86 for body. Was 0.55 → 0.72 for captions. Bigger
-// readability win than any palette change.
-const INK_SOFT = "rgba(255, 255, 255, 0.86)";
-const INK_DIM = "rgba(255, 255, 255, 0.72)";
-// Ink tokens for the cream light section
-const INK_DARK = "#1c1410";       // dark text on cream — coffee-black
-const INK_DARK_SOFT = "rgba(28, 20, 16, 0.82)";
-const INK_DARK_DIM = "rgba(28, 20, 16, 0.62)";
+// ORANGE — primary accent (was already brand-locked)
+const ACCENT = "#ea580c";        // orange-600 — primary
+const ACCENT_HOT = "#f97316";    // orange-500 — bright on white
+const ACCENT_DEEP = "#c2410c";   // orange-700 — depth + text-on-white
+const ACCENT_DIM = "rgba(234, 88, 12, 0.18)";
+const ACCENT_TINT = "rgba(234, 88, 12, 0.08)";   // for soft amber wash backgrounds
 
-const FIRE_GRAD = `linear-gradient(135deg, ${ACCENT_HOT} 0%, ${ACCENT} 50%, ${ACCENT_DEEP} 100%)`;
+// YELLOW — third color (replaces olive + sky as secondary accent)
+const YELLOW = "#f59e0b";        // amber-500 — secondary accent
+const YELLOW_HOT = "#fbbf24";    // amber-400 — bright highlight
+const YELLOW_DEEP = "#d97706";   // amber-600 — depth
+const YELLOW_DIM = "rgba(245, 158, 11, 0.22)";
+const YELLOW_TINT = "rgba(245, 158, 11, 0.10)"; // soft yellow wash
 
-// Olive — PNW grounding tone. Forest + rooted-here vibe.
-const OLIVE = "#84cc16";       // lime-500 — brighter sage (was 600/#65a30d)
-const OLIVE_DEEP = "#4d7c0f";  // olive-700 — darker tone for cream bg
-const OLIVE_DIM = "rgba(132, 204, 22, 0.22)";
+// Text on light bg (dark warm-black for max contrast on warm white)
+const INK = BG_DEEP;
+const INK_SOFT = "rgba(28, 20, 16, 0.82)";
+const INK_DIM = "rgba(28, 20, 16, 0.62)";
 
-// Sky — Strait of Juan de Fuca + Olympic sky. Third color so the page
-// isn't copper-vs-olive only. Used sparingly: route map water, stat
-// numbers, accent glows on the route map.
-const SKY = "#38bdf8";          // sky-400 — Olympic sky
-const SKY_DEEP = "#0284c7";     // sky-600 — for cream-bg
-const SKY_DIM = "rgba(56, 189, 248, 0.18)";
+// Legacy tokens preserved so existing inline-style references keep
+// compiling. Repointed to light-theme values so nothing renders
+// invisibly during the section sweep.
+const INK_DARK = INK;
+const INK_DARK_SOFT = INK_SOFT;
+const INK_DARK_DIM = INK_DIM;
+
+// Sunset gradient — orange-to-yellow only (the 2 brand colors blending).
+// Used on hero, primary CTAs, badges. Reads as "freshly-laid asphalt
+// caught in golden-hour Sequim sun."
+const FIRE_GRAD = `linear-gradient(135deg, ${YELLOW_HOT} 0%, ${YELLOW} 35%, ${ACCENT_HOT} 65%, ${ACCENT} 100%)`;
+const SUNSET_GRAD = `linear-gradient(180deg, ${YELLOW_HOT} 0%, ${ACCENT_HOT} 60%, ${ACCENT} 100%)`;
+
+// Legacy olive/sky tokens repointed to yellow so any orphaned reference
+// resolves to a brand color, not the removed sage/sky. Will be deleted
+// after the section sweep flushes the last references.
+const OLIVE = YELLOW;
+const OLIVE_DEEP = YELLOW_DEEP;
+const OLIVE_DIM = YELLOW_DIM;
+const SKY = YELLOW_HOT;
+const SKY_DEEP = YELLOW_DEEP;
+const SKY_DIM = YELLOW_DIM;
 
 const FONT_HEAD = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
@@ -344,7 +360,7 @@ function SectionHeader({
         </div>
       )}
       <h2
-        className="text-[32px] sm:text-[44px] lg:text-[54px] font-bold tracking-tight leading-[1.05] text-white"
+        className="text-[32px] sm:text-[44px] lg:text-[54px] font-bold tracking-tight leading-[1.05] text-[#1c1410]"
         style={{ fontFamily: FONT_HEAD }}
       >
         {title}
@@ -382,7 +398,7 @@ function HeroPill({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-2 text-[13px] sm:text-[14px] font-semibold text-white/85"
+      className="inline-flex items-center gap-2 text-[13px] sm:text-[14px] font-semibold text-[#1c1410]/85"
       style={{ fontFamily: FONT_HEAD }}
     >
       <span style={{ color: ACCENT }}>{icon}</span>
@@ -405,7 +421,7 @@ function TrustBadge({
       <span
         className="shrink-0 flex items-center justify-center w-11 h-11 rounded-md"
         style={{
-          background: ACCENT_DIM_2,
+          background: ACCENT_TINT,
           color: ACCENT,
           border: `1px solid ${ACCENT_DIM}`,
         }}
@@ -414,7 +430,7 @@ function TrustBadge({
       </span>
       <div className="leading-tight">
         <div
-          className="text-[13px] sm:text-[14px] font-bold uppercase tracking-wide text-white"
+          className="text-[13px] sm:text-[14px] font-bold uppercase tracking-wide text-[#1c1410]"
           style={{ fontFamily: FONT_HEAD }}
         >
           {label}
@@ -450,7 +466,7 @@ function ServiceCard({
       className="group relative overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:border-white/15"
       style={{
         background: BG_PANEL,
-        borderColor: "rgba(255, 255, 255, 0.08)",
+        borderColor: "rgba(28, 20, 16, 0.10)",
       }}
     >
       {/* Decorative number in corner — bumped visibility so the
@@ -479,7 +495,7 @@ function ServiceCard({
           {icon}
         </span>
         <h3
-          className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight mb-3 leading-snug"
+          className="text-[20px] sm:text-[22px] font-bold text-[#1c1410] tracking-tight mb-3 leading-snug"
           style={{ fontFamily: FONT_HEAD }}
         >
           {title}
@@ -529,36 +545,39 @@ function OlympicHeroIllustration() {
       aria-hidden="true"
     >
       <defs>
-        {/* Sunset sky gradient */}
+        {/* Daytime golden-hour sky — orange + yellow brand gradient
+            from warm sunset at top down to cream at the horizon. Light
+            theme. */}
         <linearGradient id="pp-sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1a0f08" />
-          <stop offset="40%" stopColor="#2a1810" />
-          <stop offset="70%" stopColor="#7c2d12" stopOpacity="0.8" />
-          <stop offset="90%" stopColor="#ea580c" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#fb923c" stopOpacity="0.25" />
+          <stop offset="0%" stopColor="#fef3c7" />
+          <stop offset="35%" stopColor="#fde68a" />
+          <stop offset="65%" stopColor="#fbbf24" stopOpacity="0.65" />
+          <stop offset="90%" stopColor="#f97316" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#fb923c" stopOpacity="0.15" />
         </linearGradient>
-        {/* Sun glow */}
+        {/* Sun — soft cream-orange disc */}
         <radialGradient id="pp-sun" cx="60%" cy="62%" r="22%">
-          <stop offset="0%" stopColor="#fed7aa" stopOpacity="0.95" />
-          <stop offset="35%" stopColor="#fb923c" stopOpacity="0.7" />
-          <stop offset="70%" stopColor="#ea580c" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="35%" stopColor="#fde68a" stopOpacity="0.85" />
+          <stop offset="70%" stopColor="#fbbf24" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
         </radialGradient>
-        {/* Asphalt gradient */}
+        {/* Asphalt — factually dark. Stays dark even on light theme
+            because that's what fresh asphalt LOOKS like. */}
         <linearGradient id="pp-asphalt" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1c1917" />
-          <stop offset="50%" stopColor="#0c0a09" />
-          <stop offset="100%" stopColor="#000000" />
+          <stop offset="0%" stopColor="#27272a" />
+          <stop offset="50%" stopColor="#18181b" />
+          <stop offset="100%" stopColor="#0a0a0a" />
         </linearGradient>
-        {/* Mountain front-range */}
+        {/* Mountain front-range — warm gray-brown silhouette */}
         <linearGradient id="pp-mtn-front" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1c1917" />
-          <stop offset="100%" stopColor="#0c0a09" />
+          <stop offset="0%" stopColor="#78716c" />
+          <stop offset="100%" stopColor="#44403c" />
         </linearGradient>
-        {/* Mountain back-range (Olympics silhouette) */}
+        {/* Mountain back-range (further Olympics ridge) — softer */}
         <linearGradient id="pp-mtn-back" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#44403c" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="#1c1917" />
+          <stop offset="0%" stopColor="#a8a29e" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#78716c" />
         </linearGradient>
       </defs>
 
@@ -665,155 +684,289 @@ function OlympicHeroIllustration() {
  * 5 years or 25. Educational diagram that doubles as a trust signal.
  */
 function AsphaltCrossSection() {
-  // Compute cumulative y-offsets for each band so labels line up.
-  let cumY = 60; // start below sky/header
+  /**
+   * Rewritten 2026-05-17 per Ben review:
+   *   - Roller WAS overlapping the "Seal Coat" label at the top of
+   *     the old diagram. Moved roller to its own dedicated row above
+   *     the asphalt stack — sits cleanly on the wearing-course surface
+   *     with no label nearby.
+   *   - Old design had labels alternating left-right which crashed
+   *     into adjacent layers. New design parks ALL labels on a single
+   *     right-side rail with thin pointer lines back to the bands.
+   *     Reads top-to-bottom like a spec sheet.
+   *   - Dark sky stripe replaced with a LIGHT cream-orange-yellow
+   *     sunset wash so the whole diagram reads as a cross-section
+   *     sitting in daylight, not at night.
+   *   - Diagram now occupies the LEFT 55% of the viewBox; labels live
+   *     in the right 45%. Lots of breathing room.
+   */
+
+  // Asphalt-layer geometry — layers stack top-to-bottom inside the
+  // diagram column (x = 60 → 500).
+  const DIAGRAM_LEFT = 60;
+  const DIAGRAM_RIGHT = 500;
+  const DIAGRAM_WIDTH = DIAGRAM_RIGHT - DIAGRAM_LEFT;
+  const SKY_HEIGHT = 90; // top sky/roller strip
+  const LABEL_RAIL_X = 560; // where the label pointer lines bend up
+  const LABEL_X = 580; // where the label text starts (anchor=start)
+
+  let cumY = SKY_HEIGHT;
   const bands = ASPHALT_LAYERS.map((l) => {
     const band = { ...l, y: cumY };
     cumY += l.height;
     return band;
   });
-  const totalH = cumY + 40; // padding at bottom
+  const totalH = cumY + 40;
 
   return (
     <div className="relative">
       <svg
-        viewBox={`0 0 900 ${totalH}`}
+        viewBox={`0 0 980 ${totalH}`}
         className="w-full h-auto"
         xmlns="http://www.w3.org/2000/svg"
-        aria-label="Cutaway diagram of the six layers in a 25-year asphalt driveway"
+        aria-label="Light-theme cutaway showing the six layers Peninsula Paving installs under every driveway: line striping, seal coat, wearing course, binder course, aggregate base, and compacted sub-grade."
       >
         <defs>
-          <linearGradient id="pp-xsec-sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1a0f08" />
-            <stop offset="100%" stopColor="#2a1810" />
+          {/* Daytime sunset sky — orange + yellow blend, the brand
+              palette earning its keep at the top of the diagram. */}
+          <linearGradient id="pp-xsec-sky-light" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={YELLOW_HOT} stopOpacity="0.32" />
+            <stop offset="60%" stopColor={ACCENT_HOT} stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
-          <pattern id="pp-xsec-aggregate" width="14" height="14" patternUnits="userSpaceOnUse">
-            <rect width="14" height="14" fill="#57534e" />
-            <circle cx="3" cy="4" r="1.8" fill="#78716c" />
-            <circle cx="10" cy="7" r="2.2" fill="#a8a29e" />
-            <circle cx="5" cy="11" r="1.4" fill="#78716c" />
-            <circle cx="12" cy="12" r="1.6" fill="#a8a29e" />
+          {/* Aggregate base — crushed-rock texture (warm grays) */}
+          <pattern
+            id="pp-xsec-aggregate"
+            width="14"
+            height="14"
+            patternUnits="userSpaceOnUse"
+          >
+            <rect width="14" height="14" fill="#a8a29e" />
+            <circle cx="3" cy="4" r="1.8" fill="#d6d3d1" />
+            <circle cx="10" cy="7" r="2.2" fill="#e7e5e4" />
+            <circle cx="5" cy="11" r="1.4" fill="#d6d3d1" />
+            <circle cx="12" cy="12" r="1.6" fill="#e7e5e4" />
           </pattern>
-          <pattern id="pp-xsec-subgrade" width="20" height="20" patternUnits="userSpaceOnUse">
-            <rect width="20" height="20" fill="#44403c" />
-            <path d="M0 5 L20 4 M0 12 L20 11 M0 18 L20 17" stroke="#57534e" strokeWidth="0.6" />
-            <circle cx="5" cy="8" r="0.6" fill="#78716c" />
-            <circle cx="14" cy="15" r="0.5" fill="#78716c" />
+          {/* Sub-grade — compacted soil (warm brown texture) */}
+          <pattern
+            id="pp-xsec-subgrade"
+            width="20"
+            height="20"
+            patternUnits="userSpaceOnUse"
+          >
+            <rect width="20" height="20" fill="#a16207" />
+            <path
+              d="M0 5 L20 4 M0 12 L20 11 M0 18 L20 17"
+              stroke="#854d0e"
+              strokeWidth="0.6"
+            />
+            <circle cx="5" cy="8" r="0.6" fill="#713f12" />
+            <circle cx="14" cy="15" r="0.5" fill="#713f12" />
           </pattern>
+          {/* Binder course — dark asphalt (factually correct — asphalt IS dark) */}
           <linearGradient id="pp-xsec-binder" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1c1917" />
-            <stop offset="100%" stopColor="#0c0a09" />
+            <stop offset="0%" stopColor="#27272a" />
+            <stop offset="100%" stopColor="#18181b" />
           </linearGradient>
+          {/* Wearing course — slightly darker asphalt */}
           <linearGradient id="pp-xsec-wear" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0c0a09" />
+            <stop offset="0%" stopColor="#18181b" />
+            <stop offset="100%" stopColor="#0a0a0a" />
+          </linearGradient>
+          {/* Seal coat — thin shiny black band */}
+          <linearGradient id="pp-xsec-seal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1c1917" />
             <stop offset="100%" stopColor="#000000" />
           </linearGradient>
         </defs>
 
-        {/* Sky strip (0 → 60) */}
-        <rect x="0" y="0" width="900" height="60" fill="url(#pp-xsec-sky)" />
-        {/* Sun glow */}
-        <circle cx="750" cy="65" r="40" fill="#fb923c" opacity="0.18" />
-        <circle cx="750" cy="65" r="22" fill="#fed7aa" opacity="0.3" />
+        {/* SKY band — cream/sunset gradient at the top of the diagram.
+            This is the "above ground" zone where the roller sits. */}
+        <rect
+          x={DIAGRAM_LEFT}
+          y="0"
+          width={DIAGRAM_WIDTH}
+          height={SKY_HEIGHT}
+          fill="url(#pp-xsec-sky-light)"
+        />
 
-        {/* Stylized roller silhouette on top of the wearing course */}
-        <g transform="translate(140, 22)">
-          <rect x="0" y="6" width="60" height="28" rx="3" fill={ACCENT_DEEP} />
-          <rect x="6" y="0" width="48" height="10" rx="2" fill={ACCENT} />
-          <circle cx="14" cy="38" r="10" fill="#1c1917" stroke={ACCENT} strokeWidth="1.5" />
-          <circle cx="14" cy="38" r="3" fill={ACCENT} />
-          <circle cx="46" cy="38" r="10" fill="#1c1917" stroke={ACCENT} strokeWidth="1.5" />
-          <circle cx="46" cy="38" r="3" fill={ACCENT} />
+        {/* Sun in the sky — soft cream-orange disc. Positioned far
+            from where the roller will sit so they don't overlap. */}
+        <circle cx={DIAGRAM_LEFT + 65} cy="35" r="20" fill={YELLOW_HOT} opacity="0.65" />
+        <circle cx={DIAGRAM_LEFT + 65} cy="35" r="12" fill="#ffffff" opacity="0.75" />
+
+        {/* Asphalt-roller silhouette — parked on the wearing course at
+            the right side of the diagram so it's NOT overlapping any
+            label line on the right rail. */}
+        <g transform={`translate(${DIAGRAM_LEFT + DIAGRAM_WIDTH - 110}, 22)`}>
+          {/* Drum (front) */}
+          <rect x="6" y="38" width="56" height="22" rx="3" fill={ACCENT_DEEP} />
+          <rect x="6" y="38" width="56" height="22" rx="3" fill={ACCENT} opacity="0.65" />
+          {/* Cab body */}
+          <rect x="14" y="18" width="44" height="22" rx="3" fill={ACCENT} />
+          {/* Cab roof */}
+          <rect x="20" y="6" width="32" height="14" rx="2" fill={YELLOW_DEEP} />
+          {/* Windshield */}
+          <rect x="22" y="10" width="28" height="9" rx="1" fill="#fef3c7" opacity="0.9" />
+          {/* Drum highlight (the actual paving drum at front) */}
+          <ellipse cx="36" cy="60" rx="34" ry="6" fill="#27272a" />
+          <ellipse cx="36" cy="60" rx="34" ry="3" fill="#52525b" opacity="0.5" />
+          {/* Shadow */}
+          <ellipse cx="36" cy="70" rx="40" ry="2.5" fill="rgba(28, 20, 16, 0.25)" />
         </g>
 
-        {/* Each layer band + label */}
-        {bands.map((b, i) => {
+        {/* Each asphalt layer + its label on the right-side rail */}
+        {bands.map((b) => {
           let fill: string = b.color;
           if (b.name === "Aggregate Base") fill = "url(#pp-xsec-aggregate)";
-          else if (b.name === "Compacted Sub-grade") fill = "url(#pp-xsec-subgrade)";
+          else if (b.name === "Compacted Sub-grade")
+            fill = "url(#pp-xsec-subgrade)";
           else if (b.name === "Binder Course") fill = "url(#pp-xsec-binder)";
           else if (b.name === "Wearing Course") fill = "url(#pp-xsec-wear)";
+          else if (b.name === "Seal Coat") fill = "url(#pp-xsec-seal)";
 
-          const labelX = i % 2 === 0 ? 870 : 30;
-          const labelAnchor: "start" | "end" = i % 2 === 0 ? "end" : "start";
-          const lineX1 = i % 2 === 0 ? 870 : 30;
-          const lineX2 = i % 2 === 0 ? 700 : 200;
           const midY = b.y + b.height / 2;
 
           return (
             <g key={b.name}>
-              {/* Layer fill */}
-              <rect x="0" y={b.y} width="900" height={b.height} fill={fill} />
-              {/* Top edge highlight (for "Line Striping" white only) */}
+              {/* Layer band — confined to the diagram column (left
+                  half). Right half stays clean for labels. */}
+              <rect
+                x={DIAGRAM_LEFT}
+                y={b.y}
+                width={DIAGRAM_WIDTH}
+                height={b.height}
+                fill={fill}
+              />
+
+              {/* Line-striping layer — paint dashes across the top */}
               {b.name === "Line Striping" && (
                 <>
-                  <rect x="200" y={b.y + 1} width="60" height="2" fill="#f8fafc" />
-                  <rect x="320" y={b.y + 1} width="60" height="2" fill="#f8fafc" />
-                  <rect x="440" y={b.y + 1} width="60" height="2" fill={ACCENT} />
-                  <rect x="560" y={b.y + 1} width="60" height="2" fill="#f8fafc" />
-                  <rect x="680" y={b.y + 1} width="60" height="2" fill="#f8fafc" />
+                  <rect
+                    x={DIAGRAM_LEFT + 40}
+                    y={b.y + 1}
+                    width="50"
+                    height="2"
+                    fill="#ffffff"
+                  />
+                  <rect
+                    x={DIAGRAM_LEFT + 130}
+                    y={b.y + 1}
+                    width="50"
+                    height="2"
+                    fill="#ffffff"
+                  />
+                  <rect
+                    x={DIAGRAM_LEFT + 220}
+                    y={b.y + 1}
+                    width="50"
+                    height="2"
+                    fill={YELLOW_HOT}
+                  />
+                  <rect
+                    x={DIAGRAM_LEFT + 310}
+                    y={b.y + 1}
+                    width="50"
+                    height="2"
+                    fill="#ffffff"
+                  />
                 </>
               )}
-              {/* Sealcoat sheen highlight */}
-              {b.name === "Seal Coat" && (
-                <rect x="0" y={b.y} width="900" height="2" fill={ACCENT_DEEP} opacity="0.5" />
-              )}
 
-              {/* Label pointer line */}
+              {/* Pointer line from layer mid-edge to the label rail */}
               <line
-                x1={lineX1}
+                x1={DIAGRAM_RIGHT}
                 y1={midY}
-                x2={lineX2}
+                x2={LABEL_RAIL_X}
                 y2={midY}
                 stroke={ACCENT}
                 strokeWidth="1"
-                strokeDasharray="2 3"
-                opacity="0.65"
+                strokeDasharray="3 3"
+                opacity="0.6"
               />
-              {/* Label dot */}
-              <circle cx={lineX2} cy={midY} r="3" fill={ACCENT} />
+              <circle cx={LABEL_RAIL_X} cy={midY} r="3" fill={ACCENT} />
 
-              {/* Label text — bumped contrast for readability */}
+              {/* Label text — anchored LEFT (text-start), all on the
+                  right rail. Dark on light bg = max contrast. */}
               <text
-                x={labelX}
-                y={midY - 4}
-                textAnchor={labelAnchor}
+                x={LABEL_X}
+                y={midY - 3}
+                textAnchor="start"
                 fontSize="15"
                 fontWeight="700"
-                fill="#ffffff"
+                fill={INK}
                 fontFamily={FONT_HEAD}
               >
                 {b.name}
               </text>
               <text
-                x={labelX}
-                y={midY + 13}
-                textAnchor={labelAnchor}
+                x={LABEL_X}
+                y={midY + 14}
+                textAnchor="start"
                 fontSize="12"
-                fill="rgba(248, 250, 252, 0.85)"
+                fill={INK_SOFT}
                 fontFamily={FONT_HEAD}
-                dangerouslySetInnerHTML={{ __html: b.spec.replace(/&middot;/g, "·") }}
+                dangerouslySetInnerHTML={{
+                  __html: b.spec.replace(/&middot;/g, "·"),
+                }}
               />
             </g>
           );
         })}
 
-        {/* Bottom "you are here" marker */}
-        <g transform={`translate(450, ${totalH - 28})`}>
-          <line x1="0" y1="-200" x2="0" y2="-4" stroke={OLIVE} strokeWidth="0.5" strokeDasharray="2 4" opacity="0.3" />
+        {/* Depth bracket on the LEFT edge — shows ~8" total depth */}
+        <g>
+          <line
+            x1={DIAGRAM_LEFT - 12}
+            y1={SKY_HEIGHT}
+            x2={DIAGRAM_LEFT - 12}
+            y2={cumY}
+            stroke={ACCENT}
+            strokeWidth="1"
+          />
+          <line
+            x1={DIAGRAM_LEFT - 16}
+            y1={SKY_HEIGHT}
+            x2={DIAGRAM_LEFT - 8}
+            y2={SKY_HEIGHT}
+            stroke={ACCENT}
+            strokeWidth="1"
+          />
+          <line
+            x1={DIAGRAM_LEFT - 16}
+            y1={cumY}
+            x2={DIAGRAM_LEFT - 8}
+            y2={cumY}
+            stroke={ACCENT}
+            strokeWidth="1"
+          />
           <text
-            x="0"
-            y="0"
-            textAnchor="middle"
-            fontSize="11"
-            fill={OLIVE}
-            fontFamily={FONT_HEAD}
+            x={DIAGRAM_LEFT - 22}
+            y={(SKY_HEIGHT + cumY) / 2 + 4}
+            textAnchor="end"
+            fontSize="13"
             fontWeight="700"
-            letterSpacing="0.18em"
+            fill={ACCENT_DEEP}
+            fontFamily={FONT_HEAD}
+            letterSpacing="0.1em"
           >
-            FROM 8&quot; DOWN, EVERYTHING WE DO
+            ~ 8&quot;
           </text>
         </g>
+
+        {/* Bottom annotation */}
+        <text
+          x={DIAGRAM_LEFT + DIAGRAM_WIDTH / 2}
+          y={totalH - 10}
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="700"
+          fill={ACCENT_DEEP}
+          fontFamily={FONT_HEAD}
+          letterSpacing="0.22em"
+        >
+          FROM 8&quot; DOWN, EVERYTHING WE DO
+        </text>
       </svg>
     </div>
   );
@@ -826,198 +979,504 @@ function AsphaltCrossSection() {
  * silhouettes + Olympic Mountains glyph anchor it as PNW-specific.
  */
 function PeninsulaRouteMap() {
-  // Approximate normalized positions for each city along the highway
-  // route. Coordinates in viewBox space (0-900 wide × 0-520 tall).
-  const cities: Array<{ name: string; x: number; y: number; major?: boolean }> = [
-    { name: "Sequim", x: 560, y: 235, major: true },
-    { name: "Carlsborg", x: 510, y: 245 },
-    { name: "Dungeness", x: 570, y: 195 },
-    { name: "Diamond Point", x: 620, y: 240 },
-    { name: "Blyn", x: 640, y: 270 },
-    { name: "Gardiner", x: 670, y: 245 },
-    { name: "Port Townsend", x: 760, y: 230, major: true },
-    { name: "Chimacum", x: 740, y: 290 },
-    { name: "Quilcene", x: 700, y: 360 },
-    { name: "Port Angeles", x: 410, y: 230, major: true },
-    { name: "Joyce", x: 290, y: 220 },
-    { name: "Forks", x: 130, y: 320, major: true },
+  /**
+   * Realistic Olympic Peninsula route map. Per Ben review 2026-05-17:
+   * "the map isn't realistic looking at all" — rewritten with proper
+   * geography:
+   *
+   *   - Peninsula has its actual diamond-ish outline (Cape Flattery NW,
+   *     Quimper Peninsula / Port Townsend NE, narrowing south-east, off-
+   *     map at the south).
+   *   - Strait of Juan de Fuca runs ALONG THE NORTH coast (correct).
+   *   - Pacific Ocean fills the WEST side (was missing — peninsula was
+   *     just bottom-half of rectangle before).
+   *   - Hood Canal is the east-side fjord, drawn as a thin curving body
+   *     of water between the peninsula and Kitsap (correct shape now).
+   *   - Vancouver Island silhouette at the very top edge (across the
+   *     strait) for geographic context.
+   *   - Olympic Mountains in the CENTRE of the peninsula (not at the
+   *     south edge), with multiple ridged peaks + a snowcap on Mt.
+   *     Olympus + a labeled named peak.
+   *   - Hwy 101 traces its actual U-shape: up east side, west along
+   *     strait, south-west down the Pacific coast.
+   *   - Hwy 20 spur to Port Townsend.
+   *   - City labels staggered above/below/left/right of pins to stop
+   *     overlapping. Crowded cluster near Sequim now uses an outer
+   *     "label ring" with tiny leader lines to keep pins readable.
+   *
+   * Light-theme: cream-paper landmass, light-blue water, dark text.
+   * Reads like a real National Park Service trail map.
+   */
+
+  // Cities at REAL geographic positions (Olympic Peninsula lat/long
+  // mapped to the 1000x600 viewBox). `labelDx`/`labelDy` offsets the
+  // text away from the pin to avoid crashes.
+  const cities: Array<{
+    name: string;
+    x: number;
+    y: number;
+    labelDx: number;
+    labelDy: number;
+    anchor: "start" | "middle" | "end";
+    major?: boolean;
+  }> = [
+    // Major hubs
+    { name: "Forks", x: 200, y: 290, labelDx: 0, labelDy: 22, anchor: "middle", major: true },
+    { name: "Port Angeles", x: 415, y: 160, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
+    { name: "Sequim", x: 555, y: 175, labelDx: 0, labelDy: -14, anchor: "middle", major: true },
+    { name: "Port Townsend", x: 825, y: 150, labelDx: 16, labelDy: 4, anchor: "start", major: true },
+    // Strait towns north of Sequim
+    { name: "Dungeness", x: 570, y: 125, labelDx: -8, labelDy: -6, anchor: "end" },
+    { name: "Joyce", x: 300, y: 165, labelDx: 0, labelDy: -10, anchor: "middle" },
+    // Inland / east-of-Sequim cluster — spread the labels out
+    { name: "Carlsborg", x: 510, y: 195, labelDx: -10, labelDy: 4, anchor: "end" },
+    { name: "Diamond Point", x: 625, y: 192, labelDx: 12, labelDy: -2, anchor: "start" },
+    { name: "Blyn", x: 610, y: 222, labelDx: 0, labelDy: 16, anchor: "middle" },
+    { name: "Gardiner", x: 668, y: 175, labelDx: 12, labelDy: 4, anchor: "start" },
+    // Quimper / Hood Canal south
+    { name: "Chimacum", x: 778, y: 215, labelDx: 12, labelDy: 4, anchor: "start" },
+    { name: "Quilcene", x: 728, y: 325, labelDx: 14, labelDy: 4, anchor: "start" },
   ];
 
   return (
     <div
       className="relative rounded-2xl overflow-hidden border"
       style={{
-        background: `radial-gradient(circle at 50% 30%, rgba(101, 163, 13, 0.06) 0%, rgba(10, 10, 10, 0) 60%), linear-gradient(180deg, ${BG_PANEL} 0%, ${BG} 100%)`,
-        borderColor: "rgba(255, 255, 255, 0.08)",
-        boxShadow: "0 24px 70px rgba(0, 0, 0, 0.55)",
+        background: BG_PANEL,
+        borderColor: "rgba(28, 20, 16, 0.10)",
+        boxShadow: "0 20px 50px rgba(28, 20, 16, 0.12)",
       }}
     >
       <svg
-        viewBox="0 0 900 520"
+        viewBox="0 0 1000 600"
         className="w-full h-auto"
         xmlns="http://www.w3.org/2000/svg"
-        aria-label="Hand-drawn map of the Olympic Peninsula with the 12 cities Peninsula Paving serves"
+        aria-label="Realistic map of the Olympic Peninsula showing the 12 cities Peninsula Paving serves, the Strait of Juan de Fuca, the Pacific Ocean, Hood Canal, the Olympic Mountains, and Highway 101's actual route."
       >
         <defs>
-          <pattern id="pp-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke={ACCENT} strokeWidth="0.4" />
-          </pattern>
-          {/* Sky-blue water gradient — Strait of Juan de Fuca + Hood Canal
-              read as PNW saltwater, not dead-black gap. Third color in
-              the palette earns its keep here. */}
-          <linearGradient id="pp-map-water" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0c4a6e" stopOpacity="0.95" />
-            <stop offset="50%" stopColor="#075985" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#0c1f1a" stopOpacity="0.7" />
+          {/* Light cream-blue water — Strait, Pacific, Hood Canal */}
+          <linearGradient id="pp-water-light" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#dbeafe" />
+            <stop offset="100%" stopColor="#bfdbfe" />
           </linearGradient>
-          {/* Wave detail pattern */}
-          <pattern id="pp-map-waves" width="40" height="8" patternUnits="userSpaceOnUse">
-            <path d="M0 4 Q10 1 20 4 T40 4" fill="none" stroke={SKY} strokeWidth="0.5" opacity="0.4" />
+          {/* Subtle wave texture */}
+          <pattern id="pp-waves" width="36" height="10" patternUnits="userSpaceOnUse">
+            <path
+              d="M0 5 Q9 2 18 5 T36 5"
+              fill="none"
+              stroke="#60a5fa"
+              strokeWidth="0.5"
+              opacity="0.35"
+            />
           </pattern>
+          {/* Land — warm paper cream */}
+          <linearGradient id="pp-land" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#fef9ed" />
+            <stop offset="100%" stopColor="#fde9b8" />
+          </linearGradient>
+          {/* Mountain shadow */}
+          <linearGradient id="pp-mtn-shadow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fed7aa" />
+            <stop offset="100%" stopColor="#fdba74" />
+          </linearGradient>
         </defs>
 
-        {/* Subtle grid */}
-        <rect width="900" height="520" fill="url(#pp-map-grid)" opacity="0.25" />
+        {/* WATER BACKGROUND — fills the entire viewBox, land is then
+            drawn on top. This way water shows wherever land doesn't. */}
+        <rect width="1000" height="600" fill="url(#pp-water-light)" />
+        <rect width="1000" height="600" fill="url(#pp-waves)" opacity="0.6" />
 
-        {/* Strait of Juan de Fuca — water mass north of the peninsula */}
+        {/* Vancouver Island silhouette across the strait (top edge,
+            partly off-canvas — just a contextual hint). */}
         <path
-          d="M0,0 L900,0 L900,170 Q780,150 670,160 Q540,168 410,172 Q280,180 130,168 Q60,158 0,160 Z"
-          fill="url(#pp-map-water)"
-        />
-        {/* Wave overlay */}
-        <path
-          d="M0,0 L900,0 L900,170 Q780,150 670,160 Q540,168 410,172 Q280,180 130,168 Q60,158 0,160 Z"
-          fill="url(#pp-map-waves)"
+          d="M 0,0 L 1000,0 L 1000,55 Q 880,52 740,58 Q 580,65 420,55 Q 240,45 80,58 L 0,55 Z"
+          fill="#fde9b8"
           opacity="0.7"
         />
-        {/* Hood Canal (east side water) */}
+        <text
+          x="500"
+          y="32"
+          textAnchor="middle"
+          fontSize="10"
+          fill={INK_DIM}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.32em"
+        >
+          VANCOUVER ISLAND
+        </text>
+
+        {/* OLYMPIC PENINSULA landmass — realistic outline.
+            NW corner (Cape Flattery) ~ (165, 90)
+            North coast curves east to Quimper Peninsula at (~870, 130)
+            Quimper Pen sticks NE; PT is near (~825, 150)
+            East coast curves SW from PT down toward Hood Canal narrow
+            at the south (~770, 460)
+            Off-map at the south
+            West coast (Pacific) curves NW from (~190, 540) up to NW. */}
         <path
-          d="M870,170 L900,170 L900,520 L800,520 Q760,440 740,370 Q720,310 760,250 Q800,200 870,170 Z"
-          fill="url(#pp-map-water)"
-          opacity="0.85"
+          d="
+            M 165,90
+            Q 240,82 320,98
+            Q 410,115 480,108
+            Q 560,100 640,115
+            Q 730,128 810,128
+            L 855,135
+            Q 880,148 870,178
+            Q 850,200 820,200
+            Q 800,210 790,235
+            Q 780,275 775,330
+            Q 770,400 790,460
+            L 815,540
+            L 815,600
+            L 180,600
+            L 175,540
+            Q 155,460 145,400
+            Q 130,330 125,265
+            Q 122,200 130,150
+            Q 138,110 165,90 Z
+          "
+          fill="url(#pp-land)"
+          stroke={ACCENT_DEEP}
+          strokeWidth="1.2"
+          strokeOpacity="0.35"
+          strokeLinejoin="round"
         />
+
+        {/* Hood Canal — the narrow water body separating the peninsula
+            from Kitsap. Drawn as a thin curving channel on the east. */}
+        <path
+          d="
+            M 870,180
+            Q 882,215 875,260
+            Q 865,315 858,375
+            Q 853,435 870,500
+            Q 880,545 895,600
+            L 935,600
+            Q 920,540 910,475
+            Q 905,400 912,330
+            Q 920,260 915,200
+            Q 905,178 870,180 Z
+          "
+          fill="url(#pp-water-light)"
+          stroke={SKY_DEEP}
+          strokeWidth="0.6"
+          strokeOpacity="0.4"
+        />
+        <path
+          d="
+            M 870,180
+            Q 882,215 875,260
+            Q 865,315 858,375
+            Q 853,435 870,500
+            Q 880,545 895,600
+          "
+          fill="none"
+          stroke="#60a5fa"
+          strokeWidth="0.5"
+          opacity="0.5"
+          strokeDasharray="2 4"
+        />
+
         {/* Water labels */}
-        <text x="450" y="90" textAnchor="middle" fontSize="11" fontStyle="italic" fill={SKY} fontFamily={FONT_SERIF} letterSpacing="0.3em" opacity="0.8">
+        <text
+          x="500"
+          y="92"
+          textAnchor="middle"
+          fontSize="13"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.34em"
+          opacity="0.85"
+        >
           STRAIT OF JUAN DE FUCA
         </text>
-        <text x="845" y="340" textAnchor="middle" fontSize="9" fontStyle="italic" fill={SKY} fontFamily={FONT_SERIF} letterSpacing="0.25em" opacity="0.7" transform="rotate(90 845 340)">
+        <text
+          x="55"
+          y="380"
+          textAnchor="middle"
+          fontSize="13"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.34em"
+          opacity="0.85"
+          transform="rotate(-90 55 380)"
+        >
+          PACIFIC OCEAN
+        </text>
+        <text
+          x="950"
+          y="380"
+          textAnchor="middle"
+          fontSize="10"
+          fill={SKY_DEEP}
+          fontFamily={FONT_SERIF}
+          fontStyle="italic"
+          letterSpacing="0.3em"
+          opacity="0.85"
+          transform="rotate(90 950 380)"
+        >
           HOOD CANAL
         </text>
 
-        {/* Peninsula landmass — rough hand-drawn coast outline */}
-        <path
-          d="M0,168 Q60,162 130,168 Q260,176 410,172 Q540,168 670,160 Q780,150 870,170 Q800,205 765,250 Q725,310 740,370 Q760,440 800,520 L0,520 Z"
-          fill="#0c0a09"
-          stroke="rgba(234, 88, 12, 0.18)"
-          strokeWidth="0.8"
-        />
-
-        {/* Olympic Mountains glyph — south-central */}
-        <g opacity="0.55">
+        {/* OLYMPIC MOUNTAINS — central peninsula, multiple ridged peaks
+            with shading + a snowcap. This is the real geographic centre
+            of the peninsula. */}
+        <g>
+          {/* Back ridge */}
           <path
-            d="M180,420 L240,360 L290,395 L350,335 L410,380 L470,330 L530,375 L590,355 L650,400 L660,420 Z"
-            fill="rgba(255, 255, 255, 0.05)"
-            stroke="rgba(255, 255, 255, 0.18)"
-            strokeWidth="0.8"
+            d="M 240,360 L 290,290 L 345,320 L 410,250 L 470,300 L 530,235 L 595,290 L 650,260 L 705,310 L 740,360 L 240,360 Z"
+            fill="url(#pp-mtn-shadow)"
+            opacity="0.9"
           />
+          {/* Front ridge (slightly lighter) */}
+          <path
+            d="M 220,400 L 270,340 L 320,375 L 380,320 L 440,365 L 500,300 L 555,355 L 620,325 L 680,370 L 730,400 L 220,400 Z"
+            fill="#fed7aa"
+            opacity="0.85"
+          />
+          {/* Snowcap on Mt. Olympus (tallest peak) */}
+          <path
+            d="M 510,260 L 530,235 L 555,265 L 540,272 L 525,270 Z"
+            fill="#ffffff"
+            opacity="0.95"
+          />
+          <path
+            d="M 525,235 L 530,235 L 540,255 L 533,255 Z"
+            fill="#cbd5e1"
+            opacity="0.6"
+          />
+          {/* Peak labels */}
           <text
-            x="420"
-            y="465"
+            x="530"
+            y="225"
             textAnchor="middle"
             fontSize="9"
-            fill="rgba(255, 255, 255, 0.35)"
+            fill={INK_DIM}
+            fontFamily={FONT_HEAD}
+            letterSpacing="0.1em"
+          >
+            Mt. Olympus
+          </text>
+          <text
+            x="450"
+            y="445"
+            textAnchor="middle"
+            fontSize="11"
+            fill={INK_DIM}
             fontFamily={FONT_SERIF}
             fontStyle="italic"
-            letterSpacing="0.2em"
+            letterSpacing="0.28em"
           >
             OLYMPIC MOUNTAINS
           </text>
         </g>
 
-        {/* Hwy 101 — the loop from Sequim around to Forks */}
+        {/* HIGHWAY 101 — the real U-shape route around the peninsula.
+            Yellow halo (highway shield colour) under an orange ribbon. */}
+        {/* Halo glow */}
         <path
-          d="M130,320 Q220,260 290,220 Q350,205 410,230 Q470,250 510,245 Q535,243 560,235 Q595,225 620,240 Q635,250 640,270 Q655,255 670,245 Q715,235 760,230 Q745,260 740,290 Q720,325 700,360"
+          d="
+            M 815,580
+            Q 800,540 790,490
+            Q 778,430 778,370
+            Q 778,310 790,265
+            Q 800,235 820,215
+            Q 800,200 770,200
+            Q 720,195 670,185
+            Q 620,175 580,175
+            Q 555,175 510,180
+            Q 460,182 415,162
+            Q 360,150 305,165
+            Q 250,180 210,210
+            Q 175,250 178,290
+            Q 185,360 200,420
+            Q 215,490 235,580
+          "
+          fill="none"
+          stroke={YELLOW_HOT}
+          strokeWidth="9"
+          strokeLinecap="round"
+          opacity="0.55"
+        />
+        {/* Highway 101 ribbon */}
+        <path
+          d="
+            M 815,580
+            Q 800,540 790,490
+            Q 778,430 778,370
+            Q 778,310 790,265
+            Q 800,235 820,215
+            Q 800,200 770,200
+            Q 720,195 670,185
+            Q 620,175 580,175
+            Q 555,175 510,180
+            Q 460,182 415,162
+            Q 360,150 305,165
+            Q 250,180 210,210
+            Q 175,250 178,290
+            Q 185,360 200,420
+            Q 215,490 235,580
+          "
           fill="none"
           stroke={ACCENT}
-          strokeWidth="2"
+          strokeWidth="3.5"
           strokeLinecap="round"
         />
-        {/* Hwy 101 highlight glow */}
+        {/* Highway dashes (white centerline) */}
         <path
-          d="M130,320 Q220,260 290,220 Q350,205 410,230 Q470,250 510,245 Q535,243 560,235 Q595,225 620,240 Q635,250 640,270 Q655,255 670,245 Q715,235 760,230"
+          d="
+            M 815,580
+            Q 800,540 790,490
+            Q 778,430 778,370
+            Q 778,310 790,265
+            Q 800,235 820,215
+            Q 800,200 770,200
+            Q 720,195 670,185
+            Q 620,175 580,175
+            Q 555,175 510,180
+            Q 460,182 415,162
+            Q 360,150 305,165
+            Q 250,180 210,210
+            Q 175,250 178,290
+            Q 185,360 200,420
+            Q 215,490 235,580
+          "
           fill="none"
-          stroke={ACCENT_HOT}
-          strokeWidth="0.6"
+          stroke="#ffffff"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+          strokeDasharray="4 6"
+        />
+
+        {/* Highway 20 spur to Port Townsend */}
+        <path
+          d="M 770,200 Q 790,178 820,158"
+          fill="none"
+          stroke={YELLOW_DEEP}
+          strokeWidth="2.5"
           strokeLinecap="round"
           opacity="0.85"
         />
 
-        {/* Highway shield label */}
-        <g transform="translate(330, 250)">
+        {/* Highway 101 shield label (mid-route) */}
+        <g transform="translate(260, 195)">
           <rect
-            x="-14"
-            y="-10"
-            width="28"
-            height="20"
-            rx="3"
-            fill={BG_PANEL}
+            x="-16"
+            y="-12"
+            width="32"
+            height="24"
+            rx="4"
+            fill="#ffffff"
             stroke={ACCENT}
-            strokeWidth="1"
+            strokeWidth="1.5"
           />
           <text
             x="0"
-            y="4"
+            y="5"
             textAnchor="middle"
-            fontSize="10"
-            fontWeight="700"
-            fill={ACCENT}
+            fontSize="13"
+            fontWeight="800"
+            fill={ACCENT_DEEP}
             fontFamily={FONT_HEAD}
           >
             101
           </text>
         </g>
 
-        {/* City pins — bumped contrast: major labels white, minor 0.9 */}
+        {/* Highway 20 shield */}
+        <g transform="translate(802, 185)">
+          <rect
+            x="-13"
+            y="-10"
+            width="26"
+            height="20"
+            rx="3"
+            fill="#ffffff"
+            stroke={YELLOW_DEEP}
+            strokeWidth="1.2"
+          />
+          <text
+            x="0"
+            y="4"
+            textAnchor="middle"
+            fontSize="11"
+            fontWeight="800"
+            fill={YELLOW_DEEP}
+            fontFamily={FONT_HEAD}
+          >
+            20
+          </text>
+        </g>
+
+        {/* CITY PINS — staggered labels so they don't overlap */}
         {cities.map((c) => (
           <g key={c.name} transform={`translate(${c.x}, ${c.y})`}>
             {/* Pin shadow */}
-            <ellipse cx="0" cy="3" rx={c.major ? 6 : 4} ry="1.5" fill="rgba(0,0,0,0.55)" />
+            <ellipse
+              cx="0"
+              cy="3"
+              rx={c.major ? 5 : 3}
+              ry="1.2"
+              fill="rgba(28, 20, 16, 0.20)"
+            />
             {/* Outer halo */}
-            <circle cx="0" cy="0" r={c.major ? 10 : 7} fill={ACCENT_DIM} />
-            {/* Inner dot */}
             <circle
               cx="0"
               cy="0"
-              r={c.major ? 5 : 3.5}
+              r={c.major ? 8 : 5.5}
+              fill={ACCENT}
+              opacity="0.20"
+            />
+            {/* Inner pin */}
+            <circle
+              cx="0"
+              cy="0"
+              r={c.major ? 4 : 2.8}
               fill={ACCENT}
               stroke="#ffffff"
-              strokeWidth="1.5"
+              strokeWidth="1.4"
             />
-            {/* Label with text shadow for readability over any bg */}
+            {/* Label */}
             <text
-              x="0"
-              y={c.major ? -15 : -11}
-              textAnchor="middle"
+              x={c.labelDx}
+              y={c.labelDy}
+              textAnchor={c.anchor}
               fontSize={c.major ? 13 : 11}
               fontWeight={c.major ? 700 : 600}
-              fill="#ffffff"
-              opacity={c.major ? 1 : 0.92}
+              fill={INK}
               fontFamily={FONT_HEAD}
-              letterSpacing="0.04em"
-              style={{ paintOrder: "stroke", stroke: "rgba(0,0,0,0.6)", strokeWidth: "3px", strokeLinejoin: "round" }}
+              letterSpacing="0.02em"
+              style={{
+                paintOrder: "stroke",
+                stroke: "rgba(255, 255, 255, 0.85)",
+                strokeWidth: "3px",
+                strokeLinejoin: "round",
+              }}
             >
               {c.name}
             </text>
           </g>
         ))}
 
-        {/* Compass rose — small, lower-left, replaces the giant one */}
-        <g transform="translate(60, 470)" opacity="0.85">
-          <circle cx="0" cy="0" r="22" fill="none" stroke={ACCENT} strokeWidth="0.6" opacity="0.5" />
+        {/* Compass rose — lower-left, on water */}
+        <g transform="translate(70, 510)">
+          <circle
+            cx="0"
+            cy="0"
+            r="24"
+            fill="#ffffff"
+            stroke={ACCENT}
+            strokeWidth="1.2"
+            opacity="0.9"
+          />
           <polygon points="0,-22 -4,0 0,-3 4,0" fill={ACCENT} />
+          <polygon points="0,22 -4,0 0,3 4,0" fill={INK_DIM} opacity="0.5" />
           <text
             x="0"
-            y="-26"
+            y="-27"
             textAnchor="middle"
             fontSize="9"
             fontWeight="700"
@@ -1049,7 +1508,7 @@ function PeninsulaRouteMap() {
       <div
         className="px-5 sm:px-7 py-5 border-t"
         style={{
-          borderColor: "rgba(255, 255, 255, 0.08)",
+          borderColor: "rgba(28, 20, 16, 0.10)",
           background: "rgba(245, 239, 230, 0.03)",
         }}
       >
@@ -1208,22 +1667,24 @@ export default function PeninsulaPavingPage() {
           className="relative overflow-hidden"
           style={{ background: BG }}
         >
-          {/* Illustrated hero background (asphalt driveway → Olympics) */}
+          {/* Illustrated hero background (asphalt driveway → Olympics).
+              Light-theme legibility overlay: cream → transparent so dark
+              text on the left stays readable over the illustration's
+              sunset gradient + mountain silhouettes on the right. */}
           <div className="absolute inset-0 pointer-events-none">
             <OlympicHeroIllustration />
-            {/* Left-side legibility gradient over the illustration */}
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(10,10,10,0.94) 0%, rgba(10,10,10,0.78) 38%, rgba(10,10,10,0.35) 70%, rgba(10,10,10,0.15) 100%)",
+                  "linear-gradient(90deg, rgba(254,253,251,0.92) 0%, rgba(254,253,251,0.78) 38%, rgba(254,253,251,0.40) 65%, rgba(254,253,251,0.10) 100%)",
               }}
             />
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0) 28%, rgba(10,10,10,0) 70%, rgba(10,10,10,0.5) 100%)",
+                  "linear-gradient(180deg, rgba(254,253,251,0.40) 0%, rgba(254,253,251,0) 28%, rgba(254,253,251,0) 70%, rgba(254,253,251,0.5) 100%)",
               }}
             />
           </div>
@@ -1255,7 +1716,7 @@ export default function PeninsulaPavingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.05 }}
-                className="text-[44px] sm:text-[64px] lg:text-[80px] font-bold leading-[0.98] tracking-tight text-white"
+                className="text-[44px] sm:text-[64px] lg:text-[80px] font-bold leading-[0.98] tracking-tight text-[#1c1410]"
                 style={{ fontFamily: FONT_HEAD }}
               >
                 DRIVEWAYS BUILT
@@ -1319,7 +1780,7 @@ export default function PeninsulaPavingPage() {
                 </a>
                 <a
                   href={BUSINESS.phoneHref}
-                  className="inline-flex items-center justify-center gap-2 px-7 h-14 rounded-md font-bold uppercase tracking-wide text-[14px] text-white border-2 transition-all hover:bg-white/[0.06] active:scale-[0.97]"
+                  className="inline-flex items-center justify-center gap-2 px-7 h-14 rounded-md font-bold uppercase tracking-wide text-[14px] text-[#1c1410] border-2 transition-all hover:bg-[#1c1410]/[0.04] active:scale-[0.97]"
                   style={{
                     borderColor: "rgba(255, 255, 255, 0.2)",
                     fontFamily: FONT_HEAD,
@@ -1373,8 +1834,8 @@ export default function PeninsulaPavingPage() {
           style={{
             background:
               `linear-gradient(90deg, rgba(101, 163, 13, 0.05) 0%, rgba(234, 88, 12, 0.03) 50%, rgba(101, 163, 13, 0.05) 100%)`,
-            borderTopColor: "rgba(255, 255, 255, 0.04)",
-            borderBottomColor: "rgba(255, 255, 255, 0.06)",
+            borderTopColor: "rgba(28, 20, 16, 0.06)",
+            borderBottomColor: "rgba(28, 20, 16, 0.08)",
             borderTopWidth: 1,
           }}
         >
@@ -1423,7 +1884,7 @@ export default function PeninsulaPavingPage() {
                     Est. 1985
                   </div>
                   <div
-                    className="text-[22px] sm:text-[24px] font-medium italic mt-0.5 text-white/90"
+                    className="text-[22px] sm:text-[24px] font-medium italic mt-0.5 text-[#1c1410]"
                     style={{ fontFamily: FONT_SERIF }}
                   >
                     The Frick Family
@@ -1440,7 +1901,7 @@ export default function PeninsulaPavingPage() {
               {/* Separator on desktop */}
               <div
                 className="hidden sm:block w-px self-stretch"
-                style={{ background: "rgba(255, 255, 255, 0.08)" }}
+                style={{ background: "rgba(28, 20, 16, 0.10)" }}
               />
 
               {/* Narrative */}
@@ -1547,7 +2008,7 @@ export default function PeninsulaPavingPage() {
                       Step {step.n}
                     </div>
                     <h3
-                      className="text-[18px] sm:text-[20px] font-bold text-white tracking-tight mb-2"
+                      className="text-[18px] sm:text-[20px] font-bold text-[#1c1410] tracking-tight mb-2"
                       style={{ fontFamily: FONT_HEAD }}
                     >
                       {step.title}
@@ -1591,7 +2052,7 @@ export default function PeninsulaPavingPage() {
                       <span
                         className="shrink-0 flex items-center justify-center w-12 h-12 rounded-md"
                         style={{
-                          background: ACCENT_DIM_2,
+                          background: ACCENT_TINT,
                           color: ACCENT,
                           border: `1px solid ${ACCENT_DIM}`,
                         }}
@@ -1600,7 +2061,7 @@ export default function PeninsulaPavingPage() {
                       </span>
                       <div>
                         <h3
-                          className="text-[18px] sm:text-[20px] font-bold text-white tracking-tight mb-1.5 leading-snug"
+                          className="text-[18px] sm:text-[20px] font-bold text-[#1c1410] tracking-tight mb-1.5 leading-snug"
                           style={{ fontFamily: FONT_HEAD }}
                         >
                           {item.title}
@@ -1673,7 +2134,7 @@ export default function PeninsulaPavingPage() {
                         <CompassRose size={48} />
                         <div>
                           <div
-                            className="text-[13px] font-bold text-white"
+                            className="text-[13px] font-bold text-[#1c1410]"
                             style={{ fontFamily: FONT_HEAD }}
                           >
                             Sequim, WA
@@ -1854,7 +2315,7 @@ export default function PeninsulaPavingPage() {
               className="mx-auto mb-6"
             />
             <p
-              className="text-[28px] sm:text-[36px] lg:text-[44px] leading-[1.2] tracking-tight text-white mb-8 font-medium italic"
+              className="text-[28px] sm:text-[36px] lg:text-[44px] leading-[1.2] tracking-tight text-[#1c1410] mb-8 font-medium italic"
               style={{ fontFamily: FONT_SERIF }}
             >
               &ldquo;We started in 1985 paving driveways for our neighbors. Forty-
@@ -1928,7 +2389,7 @@ export default function PeninsulaPavingPage() {
                   </div>
                   <a
                     href={BUSINESS.phoneHref}
-                    className="block text-[28px] sm:text-[34px] font-bold text-white hover:text-orange-400 transition-colors tracking-tight"
+                    className="block text-[28px] sm:text-[34px] font-bold text-[#1c1410] hover:text-orange-700 transition-colors tracking-tight"
                     style={{ fontFamily: FONT_HEAD }}
                   >
                     {BUSINESS.phoneDisplay}
@@ -1962,7 +2423,7 @@ export default function PeninsulaPavingPage() {
                     className="block group"
                   >
                     <div
-                      className="text-[18px] font-bold text-white group-hover:text-orange-400 transition-colors mb-1"
+                      className="text-[18px] font-bold text-[#1c1410] group-hover:text-orange-700 transition-colors mb-1"
                       style={{ fontFamily: FONT_HEAD }}
                     >
                       Sequim, WA 98382
@@ -2002,9 +2463,9 @@ export default function PeninsulaPavingPage() {
                         key={city}
                         className="inline-block px-2.5 py-1 rounded text-[11px] font-medium"
                         style={{
-                          background: "rgba(255, 255, 255, 0.04)",
+                          background: "rgba(28, 20, 16, 0.06)",
                           color: INK_SOFT,
-                          border: "1px solid rgba(255, 255, 255, 0.06)",
+                          border: "1px solid rgba(28, 20, 16, 0.08)",
                         }}
                       >
                         {city}
@@ -2022,14 +2483,14 @@ export default function PeninsulaPavingPage() {
           className="border-t pt-12 pb-8"
           style={{
             background: BG_ALT,
-            borderColor: "rgba(255, 255, 255, 0.06)",
+            borderColor: "rgba(28, 20, 16, 0.08)",
           }}
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
               <div>
                 <div
-                  className="text-[18px] font-bold text-white tracking-wide mb-2"
+                  className="text-[18px] font-bold text-[#1c1410] tracking-wide mb-2"
                   style={{ fontFamily: FONT_HEAD }}
                 >
                   PENINSULA PAVING
@@ -2052,7 +2513,7 @@ export default function PeninsulaPavingPage() {
                 </div>
                 <a
                   href={BUSINESS.phoneHref}
-                  className="block text-[14px] text-white hover:text-orange-400 transition-colors mb-1.5"
+                  className="block text-[14px] text-[#1c1410] hover:text-orange-700 transition-colors mb-1.5"
                 >
                   {BUSINESS.phoneDisplay}
                 </a>
@@ -2060,7 +2521,7 @@ export default function PeninsulaPavingPage() {
                   href={BUSINESS.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-[13px] hover:text-white transition-colors"
+                  className="block text-[13px] hover:text-[#1c1410] transition-colors"
                   style={{ color: INK_SOFT }}
                 >
                   {BUSINESS.address.full}
@@ -2090,7 +2551,7 @@ export default function PeninsulaPavingPage() {
 
             <div
               className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4"
-              style={{ borderColor: "rgba(255, 255, 255, 0.06)" }}
+              style={{ borderColor: "rgba(28, 20, 16, 0.08)" }}
             >
               <div
                 className="text-[12px]"
@@ -2109,7 +2570,7 @@ export default function PeninsulaPavingPage() {
                   Built by{" "}
                   <a
                     href="https://bluejayportfolio.com/audit"
-                    className="hover:text-white transition-colors underline-offset-2 hover:underline"
+                    className="hover:text-[#1c1410] transition-colors underline-offset-2 hover:underline"
                     style={{ color: ACCENT }}
                   >
                     BlueJays
