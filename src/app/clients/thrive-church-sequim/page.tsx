@@ -962,7 +962,7 @@ function MinistriesGrid() {
       icon: Users,
       cta: "Find a group",
       accent: "from-[#fdebbf] to-[#fbf7ee]",
-      href: "/clients/thrive-church-sequim/volunteer",
+      href: "#connect",
     },
     {
       tag: "02",
@@ -1085,7 +1085,7 @@ function MinistriesGrid() {
 /* ============================================================== */
 function PreschoolSpotlight() {
   return (
-    <section className="relative overflow-hidden bg-[#1a1612] py-24 text-[#fbf7ee] sm:py-32">
+    <section id="preschool" className="relative overflow-hidden bg-[#1a1612] py-24 text-[#fbf7ee] sm:py-32">
       {/* Warm amber glow — kid-friendly warmth on the dark backdrop */}
       <div
         aria-hidden
@@ -1843,7 +1843,10 @@ function SiteFooter() {
         <div className="grid gap-12 sm:grid-cols-12">
           {/* Brand */}
           <div className="sm:col-span-5">
-            <Link href="/" className="inline-flex items-center gap-3">
+            <Link
+              href="/clients/thrive-church-sequim"
+              className="inline-flex items-center gap-3"
+            >
               <span className="h-12 w-12 text-[#fbbf24]">
                 <ThriveMark flat />
               </span>
