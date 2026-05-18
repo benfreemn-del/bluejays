@@ -988,25 +988,8 @@ function AsphaltCrossSection() {
           <rect x="3" y="20" width="3" height="2" rx="0.5" fill={ACCENT_HOT} />
         </g>
 
-        {/* Asphalt-roller silhouette — parked on the wearing course at
-            the right side of the diagram so it's NOT overlapping any
-            label line on the right rail. */}
-        <g transform={`translate(${DIAGRAM_LEFT + DIAGRAM_WIDTH - 110}, 22)`}>
-          {/* Drum (front) */}
-          <rect x="6" y="38" width="56" height="22" rx="3" fill={ACCENT_DEEP} />
-          <rect x="6" y="38" width="56" height="22" rx="3" fill={ACCENT} opacity="0.65" />
-          {/* Cab body */}
-          <rect x="14" y="18" width="44" height="22" rx="3" fill={ACCENT} />
-          {/* Cab roof */}
-          <rect x="20" y="6" width="32" height="14" rx="2" fill={YELLOW_DEEP} />
-          {/* Windshield */}
-          <rect x="22" y="10" width="28" height="9" rx="1" fill="#fef3c7" opacity="0.9" />
-          {/* Drum highlight (the actual paving drum at front) */}
-          <ellipse cx="36" cy="60" rx="34" ry="6" fill="#27272a" />
-          <ellipse cx="36" cy="60" rx="34" ry="3" fill="#52525b" opacity="0.5" />
-          {/* Shadow */}
-          <ellipse cx="36" cy="70" rx="40" ry="2.5" fill="rgba(28, 20, 16, 0.25)" />
-        </g>
+        {/* (Orange asphalt-roller silhouette removed per Ben — the
+            yellow pickup truck is the only vehicle on the road now.) */}
 
         {/* Each asphalt layer band (drawn in the diagram column) */}
         {bands.map((b) => {
