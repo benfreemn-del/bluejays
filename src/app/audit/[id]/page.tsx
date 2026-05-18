@@ -226,6 +226,34 @@ export default async function ProductAuditResultsPage({
         </div>
       </section>
 
+      {/* ── MOCK BACKEND DASHBOARD CTA ──────────────────────────────── */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-emerald-950/20 to-transparent print:hidden">
+        <div className="mx-auto max-w-4xl px-6 py-8 md:py-10">
+          <div className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/[0.06] p-6 md:p-8 text-center">
+            <p className="text-xs uppercase tracking-wider text-emerald-400 font-bold mb-2">
+              Bonus · already running for you
+            </p>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">
+              Your AI System dashboard is live.
+            </h2>
+            <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto mb-5 leading-relaxed">
+              The same operator dashboard our $10k clients log into every
+              morning — mocked with {businessName}&apos;s industry signals + your
+              service area + a 30-lead pipeline. Demo code: <span className="font-mono text-emerald-300">1212</span>.
+            </p>
+            <Link
+              href={`/audit/${id}/dashboard`}
+              className="inline-flex items-center px-5 py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/20"
+            >
+              Open your dashboard preview →
+            </Link>
+            <p className="text-[11px] text-slate-500 mt-3">
+              Mock data · resets on reload · what BlueJays builds you would run on real leads
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── VIDEO + CALENDAR HANDOFF ───────────────────────────────── */}
       {/* Server-side check: pass videoSrc only when the file actually
           exists on disk. The component renders a clean "video coming

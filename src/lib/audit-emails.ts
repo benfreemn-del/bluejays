@@ -184,6 +184,8 @@ export function getAuditEmail1(args: {
       ? `\nIf you want to talk through what I'd fix first, book 15 minutes here. I'll tell you in the first 5 minutes if it's worth your time or not.\n\n${bookUrl}\n`
       : "";
 
+  const dashboardUrl = `${auditUrl.replace(/\/+$/, "")}/dashboard`;
+
   const body = `Here's the audit you asked for.
 
 Quick heads-up before you read it. I scored ${businessName}'s site honestly — I'd rather lose a sale than send you a fluffed-up report.
@@ -194,7 +196,9 @@ The thing I'd fix first is on the audit page, ranked #1.
 
 ${auditUrl}
 
-Want a clean copy to share with your team? Hit "Save as PDF" at the top of that page — strips the videos and CTAs, keeps just the score + the ranked fix list.
+While you're at it — I already spun up a preview of the dashboard you'd log into if you ran our $10k AI Marketing System. Real lead-scoring, real funnels, your service area on the map. Demo code is 1212.
+
+${dashboardUrl}
 ${callCta}
 Reply with the word "rebuild" if you want a custom mockup of what your new site could look like. I'll send one over — free, no pressure.${FOOTER}`;
 
