@@ -955,40 +955,12 @@ function AsphaltCrossSection() {
         <circle cx={DIAGRAM_LEFT + 50} cy="38" r="18" fill={YELLOW_HOT} opacity="0.65" />
         <circle cx={DIAGRAM_LEFT + 50} cy="38" r="11" fill="#ffffff" opacity="0.75" />
 
-        {/* Vehicles driving on the road — wheels sit at the road
-            surface (y = SKY_HEIGHT). A small orange sedan + a yellow
-            pickup so the page reads as "this is what gets to drive on
-            it." */}
-        {/* Sedan (orange) — leftmost on the road */}
-        <g transform={`translate(${DIAGRAM_LEFT + 95}, ${SKY_HEIGHT - 32})`}>
-          {/* Shadow */}
-          <ellipse cx="24" cy="33" rx="24" ry="1.8" fill="rgba(28, 20, 16, 0.22)" />
-          {/* Body */}
-          <path
-            d="M 2,26 L 6,16 L 12,10 L 36,10 L 42,16 L 46,26 L 46,30 L 2,30 Z"
-            fill={ACCENT}
-          />
-          {/* Roof tint */}
-          <path
-            d="M 12,10 L 16,4 L 32,4 L 36,10 Z"
-            fill={ACCENT_DEEP}
-          />
-          {/* Windshield + windows (cream tint, brand-aligned) */}
-          <path d="M 14,9 L 17,5 L 22,5 L 22,9 Z" fill="#fef3c7" opacity="0.92" />
-          <path d="M 24,9 L 24,5 L 30,5 L 33,9 Z" fill="#fef3c7" opacity="0.92" />
-          {/* Belt-line trim */}
-          <rect x="6" y="18" width="38" height="1" fill={YELLOW_HOT} opacity="0.7" />
-          {/* Wheels */}
-          <circle cx="12" cy="30" r="4" fill="#1c1410" />
-          <circle cx="12" cy="30" r="1.6" fill="#a8a29e" />
-          <circle cx="36" cy="30" r="4" fill="#1c1410" />
-          <circle cx="36" cy="30" r="1.6" fill="#a8a29e" />
-          {/* Headlight glint (facing right) */}
-          <circle cx="45" cy="22" r="1.2" fill={YELLOW_HOT} />
-        </g>
-
-        {/* Pickup truck (yellow) — middle of the road */}
-        <g transform={`translate(${DIAGRAM_LEFT + 200}, ${SKY_HEIGHT - 34})`}>
+        {/* Single yellow pickup truck driving on the road — wheels sit
+            on the road surface (y = SKY_HEIGHT). The orange sedan that
+            used to sit on its left was removed per Ben — one vehicle
+            reads cleaner than two competing for attention next to the
+            asphalt roller. */}
+        <g transform={`translate(${DIAGRAM_LEFT + 150}, ${SKY_HEIGHT - 34})`}>
           {/* Shadow */}
           <ellipse cx="28" cy="35" rx="30" ry="2" fill="rgba(28, 20, 16, 0.22)" />
           {/* Truck bed (rear, lower) */}
