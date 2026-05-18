@@ -409,3 +409,105 @@ export async function getLaunchStatus(wave: string): Promise<LaunchRow | null> {
     .maybeSingle();
   return (data as LaunchRow | null) ?? null;
 }
+
+// ── Reset a launch (delete campaign + clear row) ──────────────────
+
+/** Reset a launch — delete the campaign on Meta's side (which
+ *  cascades to ad sets + ads automatically) AND clear the
+ *  meta_launches row. After running this, `bj meta launch <wave>`
+ *  starts from a clean slate.
+ *
+ *  Used when:
+ *    - Campaign objective needs to change (Meta locks objective on
+ *      create; deletion + recreate is the only path)
+ *    - Initial launch failed halfway and you want a fresh attempt
+ *      without manually editing Supabase
+ *    - You want to flip the spec materially and re-test from zero
+ */
+export type ResetResult = {
+  ok: boolean;
+  wave: string;
+  campaign_deleted: boolean;
+  campaign_id_was: string | null;
+  row_cleared: boolean;
+  error?: string;
+};
+
+export async function resetLaunch(wave: string): Promise<ResetResult> {
+  const cfg = getCfg();
+  const row = await getLaunchStatus(wave);
+  if (!row) {
+    return {
+      ok: true,
+      wave,
+      campaign_deleted: false,
+      campaign_id_was: null,
+      row_cleared: false,
+      error: "no launch row to reset",
+    };
+  }
+
+  let campaignDeleted = false;
+  if (row.campaign_id) {
+    // DELETE /{campaign_id} — Meta cascades to child ad sets + ads
+    const url = `${META_BASE_URL}/${cfg.apiVersion}/${row.campaign_id}?access_token=${encodeURIComponent(cfg.token)}`;
+    try {
+      const r = await fetch(url, { method: "DELETE" });
+      if (r.ok) {
+        campaignDeleted = true;
+      } else {
+        // If the campaign was already deleted in the UI, Meta returns
+        // a "Cannot delete" or 100 error — treat as "already gone" and
+        // proceed to clear the row.
+        const errText = await r.text().catch(() => "");
+        const looksLikeAlreadyGone =
+          /does not exist|cannot delete|invalid.*campaign/i.test(errText);
+        if (!looksLikeAlreadyGone) {
+          return {
+            ok: false,
+            wave,
+            campaign_deleted: false,
+            campaign_id_was: row.campaign_id,
+            row_cleared: false,
+            error: `Meta delete failed: ${errText.slice(0, 200)}`,
+          };
+        }
+      }
+    } catch (err) {
+      return {
+        ok: false,
+        wave,
+        campaign_deleted: false,
+        campaign_id_was: row.campaign_id,
+        row_cleared: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+    await logCost({
+      service: "meta_ads",
+      action: "deleteCampaign",
+      costUsd: 0,
+      metadata: { wave, campaign_id: row.campaign_id },
+    }).catch(() => {});
+  }
+
+  // Wipe the row entirely so the next launch starts from zero. We
+  // DELETE rather than zero-out columns so the unique constraint on
+  // wave doesn't trip when launching fresh.
+  let rowCleared = false;
+  if (isSupabaseConfigured()) {
+    const { error } = await supabase
+      .from("meta_launches")
+      .delete()
+      .eq("wave", wave);
+    rowCleared = !error;
+  }
+
+  return {
+    ok: true,
+    wave,
+    campaign_deleted: campaignDeleted,
+    campaign_id_was: row.campaign_id,
+    row_cleared: rowCleared,
+  };
+}

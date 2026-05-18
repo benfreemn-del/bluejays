@@ -91,7 +91,14 @@ const US_ONLY: AdSetTargeting["geo_locations"] = { countries: ["US"] };
 export const WAVE_1: WaveSpec = {
   wave: "wave-1",
   campaign_name: "BlueJays Wave 1 — Cold Audit Validation",
-  campaign_objective: "OUTCOME_SALES",
+  // OUTCOME_LEADS is the correct objective when optimizing the ad set
+  // for a Lead pixel event (which our /audit form fires). OUTCOME_SALES
+  // is for purchase/checkout events and rejects Lead with subcode
+  // 2446814: "This conversion event isn't available with the objective
+  // you selected." Meta locks objective at campaign create, so changing
+  // this requires `bj meta reset wave-1` to delete the old campaign
+  // before re-launch.
+  campaign_objective: "OUTCOME_LEADS",
   optimization_event: "Lead",
   destination_base_url: "https://bluejayportfolio.com/audit",
   utm_campaign: "wave1-2026-05-17",

@@ -77,11 +77,13 @@
  *       per check. Use after rotating the system user token or
  *       any META_ADS_* env var change.
  *
- *   bj meta launch <wave-name> [--phase skeleton|ads] [--status]
+ *   bj meta launch <wave-name> [--phase skeleton|ads|reset] [--status]
  *       Programmatic Meta Marketing API launcher. Phase 1
  *       (skeleton, default) creates campaign + 3 ad sets in PAUSED
  *       state. Phase 2 (ads) uploads creatives + creates ads — lands
  *       after HyperAgent images are in /public/ad-assets/<wave>/.
+ *       --phase reset deletes the campaign + clears the row, useful
+ *       when the spec changes objective and Meta locks reuse.
  *       --status reads the meta_launches row without running.
  *       Idempotent — safe to re-run after partial failures.
  *
@@ -464,6 +466,24 @@ const commands = {
     }
     if (j.phase === "ads") {
       return `· ${j.error || "Phase 2 not implemented yet"}`;
+    }
+    if (j.phase === "reset") {
+      const lines = [];
+      if (j.ok) {
+        lines.push(`✓ Reset wave ${j.wave}`);
+        lines.push(
+          `  campaign ${j.campaign_deleted ? "deleted" : "already gone"}${j.campaign_id_was ? ` (was ${j.campaign_id_was})` : ""}`,
+        );
+        lines.push(
+          `  row ${j.row_cleared ? "cleared" : "no row to clear"}`,
+        );
+        if (j.error) lines.push(`  note: ${j.error}`);
+        lines.push("");
+        lines.push(`Next: bj meta launch ${j.wave}`);
+      } else {
+        lines.push(`✗ Reset failed: ${j.error}`);
+      }
+      return lines.join("\n");
     }
     return JSON.stringify(j, null, 2);
   },

@@ -21,7 +21,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { isValidBearer, describeBearerEnv } from "@/lib/admin-auth";
-import { launchSkeleton, getLaunchStatus } from "@/lib/meta-ads-launch";
+import {
+  launchSkeleton,
+  getLaunchStatus,
+  resetLaunch,
+} from "@/lib/meta-ads-launch";
 import { WAVES } from "@/lib/ads-spec/wave-1";
 
 export const runtime = "nodejs";
@@ -40,7 +44,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { wave?: string; phase?: "skeleton" | "ads" };
+  let body: { wave?: string; phase?: "skeleton" | "ads" | "reset" };
   try {
     body = await request.json();
   } catch {
@@ -95,6 +99,14 @@ export async function POST(request: NextRequest) {
       error:
         "Phase 2 (ads + creatives + image upload) not implemented yet. Lands after HyperAgent images are in /public/ad-assets/wave-1/.",
     });
+  }
+
+  // The "reset" pseudo-phase deletes the campaign + clears the row.
+  // After running this, the next `bj meta launch <wave>` starts
+  // from a clean slate.
+  if (phase === "reset") {
+    const result = await resetLaunch(waveName);
+    return NextResponse.json({ phase: "reset", ...result });
   }
 
   return NextResponse.json(
