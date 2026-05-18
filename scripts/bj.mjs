@@ -77,6 +77,14 @@
  *       per check. Use after rotating the system user token or
  *       any META_ADS_* env var change.
  *
+ *   bj meta launch <wave-name> [--phase skeleton|ads] [--status]
+ *       Programmatic Meta Marketing API launcher. Phase 1
+ *       (skeleton, default) creates campaign + 3 ad sets in PAUSED
+ *       state. Phase 2 (ads) uploads creatives + creates ads — lands
+ *       after HyperAgent images are in /public/ad-assets/<wave>/.
+ *       --status reads the meta_launches row without running.
+ *       Idempotent — safe to re-run after partial failures.
+ *
  * Output convention: short, human-readable, one row per line. No JSON
  * dumps unless --json is passed. Default stays under ~500 chars per
  * invocation so the agent context stays clean.
@@ -335,6 +343,93 @@ const commands = {
       "Then: submit for review. Meta takes 24-48hr to approve.",
       "Day-by-day post-launch playbook lives in the doc (Days 1-7).",
     ].join("\n");
+  },
+
+  // ── Meta launch orchestrator ──────────────────────────────────
+  // bj meta launch <wave> [--phase skeleton|ads] [--status]
+  // Creates campaign + ad sets (skeleton) or ads + creatives (ads).
+  // All resources land in PAUSED state — Ben unpauses in Ads Manager
+  // after sanity-checking targeting + creative.
+  async "meta:launch"(args, positional) {
+    if (!ADMIN_TOKEN) return "error: ADMIN_PASSWORD not set in .env.local";
+    const [wave] = positional;
+    if (!wave) {
+      return "usage: bj meta launch <wave-name> [--phase skeleton|ads] [--status]";
+    }
+
+    // --status: read meta_launches row, don't trigger any creates
+    if (args["--status"]) {
+      const r = await fetch(
+        `${BASE_URL}/api/meta/launch?wave=${encodeURIComponent(wave)}`,
+        { headers: { authorization: `Bearer ${ADMIN_TOKEN}` } },
+      );
+      const j = await r.json();
+      if (!j.ok) return `✗ ${j.error || `HTTP ${r.status}`}`;
+      if (!j.row) return `· no launch row for ${wave} yet — run bj meta launch ${wave}`;
+      const lines = [];
+      lines.push(`Launch ${j.row.wave} · ${j.row.phase} · ${j.row.status}`);
+      if (j.row.campaign_id) {
+        lines.push(`  campaign:  ${j.row.campaign_id} · ${j.row.campaign_name || ""}`);
+      }
+      const adSets = j.row.ad_set_ids || [];
+      for (const a of adSets) {
+        lines.push(`  ad set:    ${a.id} · ${a.name}`);
+      }
+      const ads = j.row.ad_ids || [];
+      for (const ad of ads) {
+        lines.push(`  ad:        ${ad.id} · ${ad.hook_id}`);
+      }
+      if (j.row.notes) lines.push(`  notes:     ${j.row.notes}`);
+      return lines.join("\n");
+    }
+
+    const phase = args["--phase"] || "skeleton";
+
+    const r = await fetch(`${BASE_URL}/api/meta/launch`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify({ wave, phase }),
+    });
+    const j = await r.json();
+    if (!j.ok && j.error) {
+      const extra = j.available_waves
+        ? `\n  available: ${j.available_waves.join(", ")}`
+        : "";
+      return `✗ ${j.error}${extra}`;
+    }
+
+    if (j.phase === "skeleton") {
+      const lines = [];
+      const status = j.ok ? "✓" : "⚠";
+      lines.push(`${status} Wave ${j.wave} skeleton`);
+      lines.push("");
+      const c = j.campaign;
+      lines.push(
+        `  Campaign: ${c.id} · ${c.name}${c.created ? " (CREATED)" : " (existing)"}`,
+      );
+      for (const a of j.ad_sets) {
+        lines.push(
+          `  Ad set:   ${a.id} · ${a.name}${a.created ? " (CREATED)" : " (existing)"}`,
+        );
+      }
+      if (j.errors && j.errors.length > 0) {
+        lines.push("");
+        lines.push("Errors:");
+        for (const err of j.errors) lines.push(`  ✗ ${err}`);
+      }
+      lines.push("");
+      lines.push(
+        `All resources are PAUSED. Open Ads Manager, refine targeting (Meta autocomplete is better than IDs), then unpause when ready.`,
+      );
+      return lines.join("\n");
+    }
+    if (j.phase === "ads") {
+      return `· ${j.error || "Phase 2 not implemented yet"}`;
+    }
+    return JSON.stringify(j, null, 2);
   },
 
   // ── Meta verification ──────────────────────────────────────────
@@ -740,6 +835,7 @@ async function main() {
   bj outbox approve <short_code>
   bj outbox reject <short_code>
   bj meta status
+  bj meta launch <wave-name> [--phase skeleton|ads] [--status]
 
 Set BJ_BASE_URL=https://bluejayportfolio.com to hit prod.`);
     return;
