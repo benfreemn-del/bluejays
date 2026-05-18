@@ -169,6 +169,19 @@ const BLUEPRINT_PALE = "#cffafe"; // cyan-100
 const BLUEPRINT_DIM = "rgba(14, 116, 144, 0.22)";
 const BLUEPRINT_GRAD = `linear-gradient(135deg, ${BLUEPRINT_LIGHT} 0%, ${BLUEPRINT} 100%)`;
 
+// CREAM / LIGHT THEME — used on alternating sections (Manifesto,
+// Named Projects, Credentials) for magazine-editorial rhythm. Breaks
+// up the all-dark visual that read as "one big black page" and gives
+// the page the feel of a print spread — dark pages, then cream pages,
+// then dark pages.
+const CREAM_BG = "#f5ede0"; // warm magazine paper
+const CREAM_ALT = "#ebe1d0"; // slightly deeper cream — panels on cream sections
+const CREAM_PANEL = "#fbf6ec"; // brighter cream — feature cards on cream sections
+const CREAM_INK = "#1a1612"; // dark text on cream
+const CREAM_INK_SOFT = "rgba(26, 22, 18, 0.78)";
+const CREAM_INK_DIM = "rgba(26, 22, 18, 0.55)";
+const CREAM_RULE = "rgba(26, 22, 18, 0.12)";
+
 const FONT_HEAD = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
 
@@ -185,13 +198,17 @@ function SectionNumber({
   n,
   label,
   tone = "copper",
+  theme = "dark",
 }: {
   n: string;
   label: string;
   /** Alternating tone — odd sections copper, even sections blueprint. */
   tone?: "copper" | "blueprint";
+  /** Section background — "dark" uses cream label, "cream" uses dark label. */
+  theme?: "dark" | "cream";
 }) {
   const grad = tone === "blueprint" ? BLUEPRINT_GRAD : COPPER_GRAD;
+  const labelColor = theme === "cream" ? CREAM_INK_DIM : INK_DIM;
   return (
     <div className="flex items-baseline gap-4 mb-6">
       <span
@@ -209,7 +226,7 @@ function SectionNumber({
       </span>
       <span
         className="text-[11px] sm:text-[12px] uppercase tracking-[0.28em] font-semibold"
-        style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+        style={{ color: labelColor, fontFamily: FONT_HEAD }}
       >
         {label}
       </span>
@@ -283,6 +300,7 @@ function NamedProject({
   location,
   body,
   highlight,
+  theme = "dark",
 }: {
   photo: string;
   name: string;
@@ -290,11 +308,19 @@ function NamedProject({
   location: string;
   body: string;
   highlight?: string;
+  theme?: "dark" | "cream";
 }) {
+  const isCream = theme === "cream";
+  const cardBg = isCream ? CREAM_PANEL : BG_PANEL;
+  const cardBorder = isCream ? CREAM_RULE : RULE;
+  const titleColor = isCream ? CREAM_INK : INK;
+  const subtleColor = isCream ? CREAM_INK_SOFT : INK_SOFT;
+  const dimColor = isCream ? CREAM_INK_DIM : INK_DIM;
+  const accentText = isCream ? ACCENT_DARK : ACCENT_LIGHT;
   return (
     <article
       className="grid sm:grid-cols-2 gap-6 sm:gap-8 items-center p-5 sm:p-7 rounded-xl border"
-      style={{ background: BG_PANEL, borderColor: RULE }}
+      style={{ background: cardBg, borderColor: cardBorder }}
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-md">
         <img
@@ -307,26 +333,26 @@ function NamedProject({
       <div>
         <div
           className="text-[10px] uppercase tracking-[0.22em] font-bold mb-2"
-          style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+          style={{ color: accentText, fontFamily: FONT_HEAD }}
         >
           {type}
         </div>
         <h3
           className="text-[24px] sm:text-[28px] font-bold tracking-tight leading-[1.1] mb-2"
-          style={{ color: INK, fontFamily: FONT_HEAD }}
+          style={{ color: titleColor, fontFamily: FONT_HEAD }}
         >
           {name}
         </h3>
         <div
           className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-4"
-          style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+          style={{ color: dimColor, fontFamily: FONT_HEAD }}
         >
           <MapPin size={12} weight="fill" />
           {location}
         </div>
         <p
           className="text-[14px] sm:text-[15px] leading-relaxed"
-          style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+          style={{ color: subtleColor, fontFamily: FONT_BODY }}
         >
           {body}
         </p>
@@ -336,7 +362,7 @@ function NamedProject({
             style={{
               background: "rgba(217, 119, 6, 0.10)",
               border: `1px solid ${ACCENT_DIM}`,
-              color: ACCENT_LIGHT,
+              color: accentText,
               fontFamily: FONT_HEAD,
             }}
           >
@@ -527,7 +553,7 @@ export default function AllInOneServicesPage() {
             />
           </div>
 
-          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-14 sm:pt-20 lg:pt-28 pb-14 sm:pb-20">
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-10 sm:pt-14 lg:pt-20 pb-10 sm:pb-14">
             <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-16 items-center">
               {/* Hero copy */}
               <motion.div initial="hidden" animate="show" variants={fadeUp}>
@@ -679,10 +705,10 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 02 · MANIFESTO ────────────────────── */}
-        <section className="relative border-t" style={{ borderColor: RULE }}>
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-16 sm:py-24">
-            <SectionNumber n="02" label="Who builds your project" tone="blueprint" />
+        {/* ────────────────────── 02 · MANIFESTO (cream) ────────────────────── */}
+        <section className="relative" style={{ background: CREAM_BG }}>
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+            <SectionNumber n="02" label="Who builds your project" tone="blueprint" theme="cream" />
             <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16">
               <div>
                 <h2
@@ -690,18 +716,18 @@ export default function AllInOneServicesPage() {
                   style={{
                     fontFamily: FONT_HEAD,
                     fontSize: "clamp(32px, 5vw, 56px)",
-                    color: INK,
+                    color: CREAM_INK,
                   }}
                 >
                   One family-run crew.
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>
+                  <span style={{ color: ACCENT_DARK }}>
                     Ten years on the Peninsula.
                   </span>
                 </h2>
                 <p
                   className="mt-6 text-[15px] uppercase tracking-[0.20em] font-semibold"
-                  style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+                  style={{ color: CREAM_INK_DIM, fontFamily: FONT_HEAD }}
                 >
                   Kyle &amp; Abi Fritz · Sequim, WA
                 </p>
@@ -709,7 +735,7 @@ export default function AllInOneServicesPage() {
               <div>
                 <p
                   className="text-[18px] sm:text-[20px] leading-relaxed mb-6"
-                  style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                  style={{ color: CREAM_INK_SOFT, fontFamily: FONT_BODY }}
                 >
                   Kyle started this business from the ground up &mdash;
                   literally. The first jobs were weeding, repairs, minor
@@ -718,13 +744,27 @@ export default function AllInOneServicesPage() {
                   second-story additions, commercial buildouts, and the
                   specialty projects most contractors send to someone else.
                 </p>
-                <PullQuote by="Bill Bryant · verified Birdeye review · 5★">
-                  Code compliant, high level of craftsmanship and the
-                  ability to follow through to the end.
-                </PullQuote>
+                <div
+                  className="border-l-2 pl-5 sm:pl-7 py-2 my-7"
+                  style={{ borderColor: ACCENT }}
+                >
+                  <p
+                    className="text-[20px] sm:text-[26px] leading-snug font-medium"
+                    style={{ color: CREAM_INK, fontFamily: FONT_HEAD }}
+                  >
+                    &ldquo;Code compliant, high level of craftsmanship and the
+                    ability to follow through to the end.&rdquo;
+                  </p>
+                  <p
+                    className="mt-3 text-[12px] uppercase tracking-[0.22em] font-semibold"
+                    style={{ color: ACCENT_DARK, fontFamily: FONT_HEAD }}
+                  >
+                    — Bill Bryant · verified Birdeye review · 5★
+                  </p>
+                </div>
                 <p
                   className="text-[15px] leading-relaxed"
-                  style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                  style={{ color: CREAM_INK_SOFT, fontFamily: FONT_BODY }}
                 >
                   Family-operated means the same people who walked the scope
                   with you are the people on site. No bait-and-switch with a
@@ -742,7 +782,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
               <div className="max-w-2xl">
                 <SectionNumber n="03" label="The transformations" />
@@ -917,31 +957,31 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 04 · NAMED PROJECTS ────────────────────── */}
+        {/* ────────────────────── 04 · NAMED PROJECTS (cream) ────────────────────── */}
         <section
           id="projects"
-          className="relative border-t"
-          style={{ borderColor: RULE }}
+          className="relative"
+          style={{ background: CREAM_BG }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
-            <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
               <div className="max-w-2xl">
-                <SectionNumber n="04" label="Named projects" tone="blueprint" />
+                <SectionNumber n="04" label="Named projects" tone="blueprint" theme="cream" />
                 <h2
                   className="font-bold tracking-tight leading-[1.02]"
                   style={{
                     fontFamily: FONT_HEAD,
                     fontSize: "clamp(32px, 5vw, 56px)",
-                    color: INK,
+                    color: CREAM_INK,
                   }}
                 >
                   Selected work
-                  <span style={{ color: ACCENT_LIGHT }}> from the shop.</span>
+                  <span style={{ color: ACCENT_DARK }}> from the shop.</span>
                 </h2>
               </div>
               <p
                 className="max-w-md text-[15px] sm:text-[16px] leading-relaxed"
-                style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                style={{ color: CREAM_INK_SOFT, fontFamily: FONT_BODY }}
               >
                 Five jobs that show range &mdash; baths, additions, custom
                 builds, commercial. All on the Olympic Peninsula. All by the
@@ -951,6 +991,7 @@ export default function AllInOneServicesPage() {
 
             <div className="space-y-6">
               <NamedProject
+                theme="cream"
                 photo={PHOTOS.soldateShower}
                 name="Soldate Shower"
                 type="Custom tile shower"
@@ -959,6 +1000,7 @@ export default function AllInOneServicesPage() {
                 highlight="Schluter / Kerdi waterproofing system"
               />
               <NamedProject
+                theme="cream"
                 photo={PHOTOS.delGuzzi}
                 name="710 Del Guzzi Drive"
                 type="Bathroom remodel"
@@ -967,6 +1009,7 @@ export default function AllInOneServicesPage() {
                 highlight="Lighted vanity mirror"
               />
               <NamedProject
+                theme="cream"
                 photo={PHOTOS.jaySakas}
                 name="Jay Sakas Addition"
                 type="Room addition"
@@ -975,6 +1018,7 @@ export default function AllInOneServicesPage() {
                 highlight="Vaulted ceiling + dual skylights"
               />
               <NamedProject
+                theme="cream"
                 photo={PHOTOS.brodyOffice}
                 name="Brody Office Conversion"
                 type="Commercial buildout"
@@ -983,6 +1027,7 @@ export default function AllInOneServicesPage() {
                 highlight="ADA-compliant + on schedule"
               />
               <NamedProject
+                theme="cream"
                 photo={PHOTOS.wineCellar}
                 name="Wine Cellar / Lounge"
                 type="Custom specialty build"
@@ -1000,7 +1045,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="05" label="The craft" />
             <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
               <div>
@@ -1061,7 +1106,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="06" label="What we build" tone="blueprint" />
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16">
               <div>
@@ -1143,7 +1188,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
               <div className="max-w-2xl">
                 <SectionNumber n="07" label="The timeline" />
@@ -1211,46 +1256,50 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 08 · CREDENTIALS ────────────────────── */}
+        {/* ────────────────────── 08 · CREDENTIALS (cream) ────────────────────── */}
         <section
           id="credentials"
-          className="relative border-t"
-          style={{ borderColor: RULE }}
+          className="relative"
+          style={{ background: CREAM_BG }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
-            <SectionNumber n="08" label="Receipts, not slogans" tone="blueprint" />
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+            <SectionNumber n="08" label="Receipts, not slogans" tone="blueprint" theme="cream" />
             <h2
               className="font-bold tracking-tight leading-[1.02] mb-10 max-w-3xl"
               style={{
                 fontFamily: FONT_HEAD,
                 fontSize: "clamp(32px, 5vw, 56px)",
-                color: INK,
+                color: CREAM_INK,
               }}
             >
               The numbers
-              <span style={{ color: ACCENT_LIGHT }}> that actually matter.</span>
+              <span style={{ color: ACCENT_DARK }}> that actually matter.</span>
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-12">
               <CredStat
+                theme="cream"
                 label="WA Contractor Score"
                 value="106"
                 sub="Top 7% of 128,670"
                 source="BuildZoom"
               />
               <CredStat
+                theme="cream"
                 label="Avg permit value"
                 value={BUSINESS.avgPermitValue}
                 sub="Per L&I records"
                 source="WA L&I"
               />
               <CredStat
+                theme="cream"
                 label="Years in business"
                 value="10"
                 sub="Since March 2016"
                 source="WA Sec. of State"
               />
               <CredStat
+                theme="cream"
                 label="Customer rating"
                 value={`${BUSINESS.rating}★`}
                 sub={`${BUSINESS.reviewCount} verified reviews`}
@@ -1261,17 +1310,17 @@ export default function AllInOneServicesPage() {
             <div className="grid lg:grid-cols-2 gap-5">
               <div
                 className="p-7 sm:p-9 rounded-xl border"
-                style={{ background: BG_PANEL, borderColor: RULE }}
+                style={{ background: CREAM_PANEL, borderColor: CREAM_RULE }}
               >
                 <Certificate
                   size={28}
                   weight="duotone"
-                  style={{ color: ACCENT_LIGHT }}
+                  style={{ color: ACCENT_DARK }}
                   className="mb-4"
                 />
                 <h3
                   className="text-[22px] sm:text-[24px] font-bold tracking-tight mb-4"
-                  style={{ color: INK, fontFamily: FONT_HEAD }}
+                  style={{ color: CREAM_INK, fontFamily: FONT_HEAD }}
                 >
                   Licensed · Bonded · Insured.
                 </h3>
@@ -1279,45 +1328,47 @@ export default function AllInOneServicesPage() {
                   className="space-y-3 text-[14px] sm:text-[15px]"
                   style={{ fontFamily: FONT_BODY }}
                 >
-                  <CredRow label="WA L&I License #" value={BUSINESS.license} />
+                  <CredRow theme="cream" label="WA L&I License #" value={BUSINESS.license} />
                   <CredRow
+                    theme="cream"
                     label="General Liability"
                     value={`${BUSINESS.insurance} · Ohio Security`}
                   />
                   <CredRow
+                    theme="cream"
                     label="Surety Bond"
                     value={`${BUSINESS.bond} · Western Surety`}
                   />
-                  <CredRow label="USDOT" value="3515033" />
-                  <CredRow label="BBB Rating" value={`${BUSINESS.bbbRating} (since 2017)`} />
+                  <CredRow theme="cream" label="USDOT" value="3515033" />
+                  <CredRow theme="cream" label="BBB Rating" value={`${BUSINESS.bbbRating} (since 2017)`} />
                 </dl>
               </div>
 
               <div
                 className="p-7 sm:p-9 rounded-xl border"
-                style={{ background: BG_PANEL, borderColor: RULE }}
+                style={{ background: CREAM_PANEL, borderColor: CREAM_RULE }}
               >
                 <Trophy
                   size={28}
                   weight="duotone"
-                  style={{ color: ACCENT_LIGHT }}
+                  style={{ color: ACCENT_DARK }}
                   className="mb-4"
                 />
                 <h3
                   className="text-[22px] sm:text-[24px] font-bold tracking-tight mb-3"
-                  style={{ color: INK, fontFamily: FONT_HEAD }}
+                  style={{ color: CREAM_INK, fontFamily: FONT_HEAD }}
                 >
                   Top 7% of every
                   <br />
-                  <span style={{ color: ACCENT_LIGHT }}>WA contractor.</span>
+                  <span style={{ color: ACCENT_DARK }}>WA contractor.</span>
                 </h3>
                 <p
                   className="text-[14px] sm:text-[15px] leading-relaxed mb-4"
-                  style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                  style={{ color: CREAM_INK_SOFT, fontFamily: FONT_BODY }}
                 >
                   BuildZoom — the largest independent contractor index in the
                   US — scores All In One Service&apos;s LLC at{" "}
-                  <strong style={{ color: INK }}>106</strong>, in the 93rd
+                  <strong style={{ color: CREAM_INK }}>106</strong>, in the 93rd
                   percentile of 128,670 Washington licensed contractors. The
                   score factors permits pulled, clean inspections, insurance
                   posture, and verified client feedback.
@@ -1327,7 +1378,7 @@ export default function AllInOneServicesPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors hover:brightness-125"
-                  style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+                  style={{ color: ACCENT_DARK, fontFamily: FONT_HEAD }}
                 >
                   Verify on BuildZoom
                   <ArrowRight size={13} weight="bold" />
@@ -1343,7 +1394,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="09" label="What Kyle's customers say" />
             <h2
               className="font-bold tracking-tight leading-[1.02] mb-12 max-w-3xl"
@@ -1427,7 +1478,7 @@ export default function AllInOneServicesPage() {
           className="relative border-t"
           style={{ borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="10" label="Where we build" tone="blueprint" />
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16 items-start">
               <div>
@@ -1548,7 +1599,7 @@ export default function AllInOneServicesPage() {
               }}
             />
           </div>
-          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-20 sm:py-28">
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14">
               <div>
                 <SectionNumber n="11" label="Free estimate" />
@@ -1747,39 +1798,45 @@ function CredStat({
   value,
   sub,
   source,
+  theme = "dark",
 }: {
   label: string;
   value: string;
   sub: string;
   source: string;
+  theme?: "dark" | "cream";
 }) {
+  const isCream = theme === "cream";
   return (
     <div
       className="p-5 sm:p-6 rounded-xl border"
-      style={{ background: BG_PANEL, borderColor: RULE }}
+      style={{
+        background: isCream ? CREAM_PANEL : BG_PANEL,
+        borderColor: isCream ? CREAM_RULE : RULE,
+      }}
     >
       <div
         className="text-[10px] uppercase tracking-[0.20em] font-semibold mb-2"
-        style={{ color: ACCENT_LIGHT, fontFamily: FONT_HEAD }}
+        style={{ color: isCream ? ACCENT_DARK : ACCENT_LIGHT, fontFamily: FONT_HEAD }}
       >
         {label}
       </div>
       <div
         className="text-[32px] sm:text-[40px] font-bold leading-none mb-2 tracking-tight"
-        style={{ color: INK, fontFamily: FONT_HEAD }}
+        style={{ color: isCream ? CREAM_INK : INK, fontFamily: FONT_HEAD }}
       >
         {value}
       </div>
       <div
         className="text-[12px] sm:text-[13px]"
-        style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+        style={{ color: isCream ? CREAM_INK_SOFT : INK_SOFT, fontFamily: FONT_BODY }}
       >
         {sub}
       </div>
       <div
         className="text-[10px] uppercase tracking-[0.18em] mt-3 pt-3 border-t"
         style={{
-          color: BLUEPRINT_LIGHT,
+          color: BLUEPRINT,
           fontFamily: FONT_HEAD,
           borderColor: BLUEPRINT_DIM,
         }}
@@ -1790,18 +1847,30 @@ function CredStat({
   );
 }
 
-function CredRow({ label, value }: { label: string; value: string }) {
+function CredRow({
+  label,
+  value,
+  theme = "dark",
+}: {
+  label: string;
+  value: string;
+  theme?: "dark" | "cream";
+}) {
+  const isCream = theme === "cream";
   return (
-    <div className="flex items-center justify-between gap-4 py-1.5 border-b last:border-0" style={{ borderColor: RULE }}>
+    <div
+      className="flex items-center justify-between gap-4 py-1.5 border-b last:border-0"
+      style={{ borderColor: isCream ? CREAM_RULE : RULE }}
+    >
       <dt
         className="text-[11px] uppercase tracking-[0.18em] font-semibold"
-        style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+        style={{ color: isCream ? CREAM_INK_DIM : INK_DIM, fontFamily: FONT_HEAD }}
       >
         {label}
       </dt>
       <dd
         className="text-[13px] sm:text-[14px] font-bold tabular-nums"
-        style={{ color: INK, fontFamily: FONT_HEAD }}
+        style={{ color: isCream ? CREAM_INK : INK, fontFamily: FONT_HEAD }}
       >
         {value}
       </dd>
