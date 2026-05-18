@@ -520,6 +520,15 @@ const commands = {
     lines.push(
       `  Ad account:  ${j.adAccount.id} · ${j.adAccount.name} (${j.adAccount.currency}, ${j.adAccount.timezone})`,
     );
+    if (j.assignment) {
+      const flag = j.assignment.can_create_ads ? "✓" : "✗";
+      lines.push(
+        `  Tasks:       ${flag} [${(j.assignment.tasks || []).join(", ") || "(none)"}]`,
+      );
+      if (!j.assignment.can_create_ads) {
+        lines.push(`               ${j.assignment.diagnosis}`);
+      }
+    }
     if (j.insightsLast7d) {
       const s = j.insightsLast7d;
       if (s.note) {

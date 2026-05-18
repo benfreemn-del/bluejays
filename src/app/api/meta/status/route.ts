@@ -136,6 +136,45 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // ── 2b) WHICH TASKS does the system user actually have? ──
+  // Hits /me/assigned_ad_accounts which returns the list of ad
+  // accounts assigned to THIS system user + the per-account task
+  // permissions. Definitively answers "can the system user create
+  // campaigns" without UI guesswork. Empty tasks array OR missing
+  // MANAGE = the create-ads call will fail with subcode 1815066.
+  type AssignedAdAccountsResp = {
+    data: Array<{
+      id: string;
+      name?: string;
+      tasks?: string[];
+      account_status?: number;
+    }>;
+  };
+  const assignments = await graphGet<AssignedAdAccountsResp>(
+    "me/assigned_ad_accounts?fields=id,name,tasks,account_status&limit=100",
+    token,
+    apiVersion,
+  );
+  let assignedTasks: string[] = [];
+  let assignmentFound = false;
+  if (assignments.ok) {
+    const match = assignments.data.data.find(
+      (a) => a.id === acct.data.id || a.id === accountPath,
+    );
+    if (match) {
+      assignmentFound = true;
+      assignedTasks = match.tasks || [];
+    }
+  }
+  const canCreateAds = assignedTasks.includes("MANAGE");
+  const taskDiagnosis = !assignmentFound
+    ? "system user has NO assignment on this ad account — must add via Settings → Ad Accounts → click account → Add People → System Users → BlueJays Hyperloop"
+    : assignedTasks.length === 0
+      ? "system user is assigned but with EMPTY tasks — edit assignment → tick 'Manage ad account' / 'Manage Campaigns'"
+      : canCreateAds
+        ? "ad-account tasks include MANAGE — system user can create ads"
+        : `ad-account tasks = [${assignedTasks.join(", ")}] — missing MANAGE. Edit assignment → tick 'Manage ad account' (read-only tasks like ADVERTISE/ANALYZE/DRAFT aren't enough to create campaigns).`;
+
   // ── 3) Insights pull (last 7d spend + impressions) ──
   type InsightsResponse = {
     data: Array<{
@@ -175,6 +214,12 @@ export async function GET(request: NextRequest) {
       currency: acct.data.currency || "—",
       status: acct.data.account_status,
       timezone: acct.data.timezone_name || "—",
+    },
+    assignment: {
+      found: assignmentFound,
+      tasks: assignedTasks,
+      can_create_ads: canCreateAds,
+      diagnosis: taskDiagnosis,
     },
     insightsLast7d: insightsRow
       ? {
