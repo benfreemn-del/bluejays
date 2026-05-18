@@ -855,7 +855,7 @@ export default function Site() {
             <img
               src={BRAND.logo}
               alt="Elite Hardscapes & Landscapes"
-              className="h-16 md:h-24 w-auto transition-transform group-hover:scale-105"
+              className="h-20 md:h-24 w-auto transition-transform group-hover:scale-105"
             />
             <div className="hidden sm:block leading-none">
               <div
