@@ -358,6 +358,55 @@ Every premium feature mandated for new V2 category templates. Read on demand whe
 - **Turbopack 16.2.2 build-hang triggers (NON-NEGOTIABLE — added 2026-05-07)** — in `"use client"` components NEVER (a) inject `<link rel="stylesheet" href="...fonts.googleapis.com...">` directly into JSX (load fonts via root `layout.tsx` server component or `next/font/google`), and (b) use `<style jsx global>{...}</style>` for large CSS blocks (use `<style dangerouslySetInnerHTML={{ __html: \`...\` }} />` instead). Both hang the optimized production build silently for 15+ min — the build process exits without error output and Vercel queues every subsequent commit behind the stuck one. Discovered when the Oregon Appraisers showcase deploy `2bf0c21` froze the queue with `402156c` and `0ca5876` stacked behind it; fix landed in `d9c5fe6`.
 - **Vercel firewall + build-cache gotchas — see docs/playbooks/vercel-firewall-and-build-cache.md** *(added 2026-05-18)*. Two infra-level traps that make code look broken: (a) Vercel's System Rule firewall (DDoS Mitigation + Bot Protection) can challenge YOUR OWN home IP if you hit any single path more than ~300 times in 15 min — fix is a Custom Rule allowlisting either IP or the `BlueJaysCLI` User-Agent at the TOP of the firewall rules list; (b) Vercel's build cache occasionally serves stale compiled function code even after a successful deploy — detect by mismatched error format (old code path) vs current source, fix by Dashboard → Deployments → ... → Redeploy → UNCHECK "Use existing Build Cache". Read the playbook before debugging any `Cannot fetch /api/...` or `error: non-JSON response (HTTP 403)` problem.
 
+## Rule 68 — Detect Silent Client-Email Failures (NON-NEGOTIABLE — locked 2026-05-18)
+
+**The bug this prevents:** A customer-facing email send fails silently — SendGrid returns 4xx OR the recipient is on SendGrid's auto-suppression list (Rule 42) OR the network throws — and the caller never knows. Our route logs the error to Vercel and returns `{ok: true}` to the form. The customer fills the form, sees the success message, expects the business to reach out. The business never receives the email. Days pass. Trust breaks.
+
+**The exact failure 2026-05-18:** Hector Landscaping's contact form forwarded 4 real leads (Wendy Wen, Blake Walsh, David Logan, plus 1 spam from GetDandy) to `hectorlandscapingonline@gmail.com`. SendGrid had silently added that address to a suppression list at some point. Every send returned `false`. The route caught only thrown errors via `.catch()`, missed the returned-false branch entirely. Zero alerts fired. Erik lost 3 hot landscape jobs for a day.
+
+### The rule (applies to EVERY tenant, EVERY future client, EVERY new endpoint)
+
+**Every customer-facing email send MUST use `sendEmailToWithAlert()` from `@/lib/alerts`, NOT raw `sendEmailTo()`.**
+
+- "Customer-facing" = a lead, a customer, a client owner — any non-Ben recipient.
+- The wrapper inspects the boolean return from `sendEmailTo()`. On `false`, it fires `sendOwnerAlert()` SMS to Ben immediately, with the `alertContext` label so Ben knows what failed and what to manually forward.
+- Pattern: `await sendEmailToWithAlert({ to, subject, body, fromName, clientSlug, alertContext })`.
+- `alertContext` is REQUIRED — short label describing the send (`"🌿 Hector new-lead forward (lead abc)"`, `"🛠 OIT booking confirmation to customer …"`). Surfaces in the failure SMS body.
+
+### When raw `sendEmailTo()` is acceptable
+
+ONLY for batch/internal/high-volume sends with their OWN retry logic:
+- `src/lib/client-campaigns.ts` (campaign blast loop — aggregates failures separately into the `client_email_sends` table for operator review)
+- `src/app/api/zenith/drill-of-week/route.ts` (broadcast to parent list — individual failures expected at scale, batched into `error_count`)
+
+Anything outside these explicit cases — every inquiry forward, booking confirmation, signup acknowledgment, weekly digest, task-reassign email, every new `/api/clients/*` route — uses the wrapper. No exceptions.
+
+### Audit pattern when adding any new email-sending route
+
+```bash
+# Find every sendEmailTo callsite
+grep -rn "sendEmailTo\b" src/
+
+# Every match outside src/lib/client-campaigns.ts + src/app/api/zenith/drill-of-week/
+# MUST be sendEmailToWithAlert(). If it isn't, that's a regression.
+```
+
+### Currently using the wrapper (locked 2026-05-18)
+
+- `/api/clients/inquire` (all 15+ slugs route through this — every bespoke client showcase contact form)
+- `/api/clients/olympic-inspections/bookings` (owner alert + customer confirmation)
+- `/api/clients/zenith-sports/camp-signup` (owner alert + customer confirmation)
+
+### Deferred to follow-up audit (still using raw `sendEmailTo`)
+
+- `/api/client-portal/tasks` — internal portal use, lower customer-impact
+- `/api/client-reports` — weekly digest cron, has its own failure handling
+- These should migrate to the wrapper next sprint. Not customer-blocking; flagged for cleanup.
+
+### Bucket A (universal — per principle 25 in aios/CLAUDE.md)
+
+When BlueJays Pro client backends ship, this rule SHIPS WITH THE PER-CLIENT INSTALL — every Pro client's AIOS inherits Rule 68 + the `sendEmailToWithAlert` wrapper. Their own customer-facing sends get the same silent-failure guard automatically. Major differentiator: no generic AI tool gives a small-business owner a silent-failure detector for their own contact form.
+
 ## Meta Marketing API Launch Rules (NON-NEGOTIABLE — added 2026-05-18)
 
 When launching a new cold-paid Meta ad wave via `bj meta launch <wave>` OR adding any new Meta-API surface (Pixel, CAPI, ad orchestrator): **read `docs/playbooks/meta-ads-launch-playbook.md` first.** The playbook captures the 8 specific gotchas from the wave-1 launch — together they took ~4 hours to debug the first time. Don't relearn them. Highlights:

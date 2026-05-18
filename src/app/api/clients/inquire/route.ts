@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOwnerAlert, sendOwnerEmail, sendEmailTo } from "@/lib/alerts";
+import { sendOwnerAlert, sendOwnerEmail, sendEmailToWithAlert } from "@/lib/alerts";
 import {
   createClientLead,
   detectAudience,
@@ -365,47 +365,24 @@ export async function POST(request: NextRequest) {
   // a form is submitted (Hector, Pine & Particle, every future entry).
   // Ben keeps getting his own copy via sendOwnerEmail() below.
   //
-  // Failure handling (locked 2026-05-18 after Hector silent-drop bug):
-  // sendEmailTo returns false on SendGrid 400 / suppression / network
-  // failure — does NOT throw. We MUST check the return value and fire
-  // an owner-SMS alert if delivery failed, otherwise the lead silently
-  // vanishes from the client's inbox (today's exact root cause was an
-  // unrelated bounce putting hectorlandscapingonline@gmail.com on
-  // SendGrid's auto-suppression list — fix-failed: 0 errors, 0 alerts,
-  // 4 leads silently lost). Same pattern Rule 67 enforces for owner-
-  // facing email, now extended to client-facing email.
+  // Uses sendEmailToWithAlert (Rule 68, locked 2026-05-18 after Hector
+  // silent-drop bug) — the wrapper fires sendOwnerAlert SMS automatically
+  // if the send returns false (SendGrid suppression / 4xx / network).
+  // Without this wrapper, silent failures route 0 alerts → 0 visibility
+  // → lost leads.
   const clientOwnerSends: Promise<unknown>[] = [];
   const clientEmailLower = cfg.clientEmail.toLowerCase();
   clientOwnerSends.push(
-    sendEmailTo({
+    sendEmailToWithAlert({
       to: cfg.clientEmail,
       subject: `${cfg.emoji} New lead — ${name}`,
       body: fullMessage,
       fromName: `${cfg.businessLabel} Alerts`,
       clientSlug: slug,
-    })
-      .then(async (ok) => {
-        if (!ok) {
-          // Fire-and-forget owner SMS so Ben can manually forward
-          // within minutes. Includes lead ID so he can pull the full
-          // raw_payload from client_leads if needed.
-          await sendOwnerAlert(
-            `❌ ${cfg.emoji} ${cfg.businessLabel} — auto-forward to client FAILED.\n` +
-              `Lead from ${name} <${email}> needs MANUAL forward to ${cfg.clientEmail}.\n` +
-              `Lead ID: ${leadId ?? "(unsaved)"}\n` +
-              `Likely: SendGrid suppression list — check /Bounces/Blocks.`,
-            { clientSlug: slug },
-          ).catch((err) =>
-            console.error(
-              "[clients/inquire] owner SMS for client-send-failure failed:",
-              err,
-            ),
-          );
-        }
-      })
-      .catch((err) =>
-        console.error("[clients/inquire] direct client email threw:", err),
-      ),
+      alertContext: `${cfg.emoji} ${cfg.businessLabel} new-lead forward (lead ${leadId ?? "unsaved"})`,
+    }).catch((err) =>
+      console.error("[clients/inquire] direct client email threw:", err),
+    ),
   );
 
   // Additional fan-out to client portal owners that have opted into
@@ -424,36 +401,18 @@ export async function POST(request: NextRequest) {
           continue; // owner only wants specific audiences
         }
         if (o.prefs.new_lead_email === "instant") {
-          // Same failure-detection pattern as the canonical send above:
-          // sendEmailTo returns false on silent SendGrid failure — must
-          // fire owner SMS so Ben knows to manually forward.
           const ownerEmail = o.email;
           clientOwnerSends.push(
-            sendEmailTo({
+            sendEmailToWithAlert({
               to: ownerEmail,
               subject: `${cfg.emoji} New lead — ${name}`,
               body: fullMessage,
               fromName: `${cfg.businessLabel} Alerts`,
               clientSlug: slug,
-            })
-              .then(async (ok) => {
-                if (!ok) {
-                  await sendOwnerAlert(
-                    `❌ ${cfg.emoji} ${cfg.businessLabel} — auto-forward to co-owner FAILED.\n` +
-                      `Lead from ${name} <${email}> needs MANUAL forward to ${ownerEmail}.\n` +
-                      `Lead ID: ${leadId ?? "(unsaved)"}`,
-                    { clientSlug: slug },
-                  ).catch((err) =>
-                    console.error(
-                      "[clients/inquire] owner SMS for co-owner-send-failure failed:",
-                      err,
-                    ),
-                  );
-                }
-              })
-              .catch((err) =>
-                console.error("[clients/inquire] client-owner email threw:", err),
-              ),
+              alertContext: `${cfg.emoji} ${cfg.businessLabel} co-owner forward (lead ${leadId ?? "unsaved"})`,
+            }).catch((err) =>
+              console.error("[clients/inquire] client-owner email threw:", err),
+            ),
           );
         }
         // SMS fan-out is intentionally skipped here — owners' personal

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
-import { sendEmailTo, sendOwnerAlert } from "@/lib/alerts";
+import { sendEmailToWithAlert, sendOwnerAlert } from "@/lib/alerts";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 import {
   getServiceClient,
@@ -275,12 +275,13 @@ export async function POST(req: NextRequest) {
       for (const o of owners) {
         if (o.prefs.new_lead_email === "instant") {
           ownerSends.push(
-            sendEmailTo({
+            sendEmailToWithAlert({
               to: o.email,
               subject: `🛠 New booking — ${name}`,
               body: fullMessage,
               fromName: "Olympic Inspections — Booking Alert",
               clientSlug: SLUG,
+              alertContext: `🛠 OIT booking alert to owner ${o.email}`,
             }).catch((err) =>
               console.error("[oit-bookings] owner email failed:", err),
             ),
@@ -403,12 +404,13 @@ export async function PATCH(req: NextRequest) {
             slotIso: slot?.start_at || null,
             customerAddress: row.customer_address || null,
           });
-          await sendEmailTo({
+          await sendEmailToWithAlert({
             to: row.customer_email,
             subject,
             body: confirmBody,
             fromName: `${config.ownerSignature.split("\n")[0]} · ${config.businessShortName}`,
             clientSlug: SLUG,
+            alertContext: `🛠 OIT booking confirmation to customer ${row.customer_email}`,
           });
         }
       }

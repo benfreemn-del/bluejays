@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
-import { sendEmailTo, sendOwnerAlert } from "@/lib/alerts";
+import { sendEmailToWithAlert, sendOwnerAlert } from "@/lib/alerts";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 import {
   getServiceClient,
@@ -183,12 +183,13 @@ export async function POST(req: NextRequest) {
     const owners = await listOwnersWithPrefsForClient(SLUG);
     for (const o of owners) {
       if (o.prefs.new_lead_email === "instant") {
-        await sendEmailTo({
+        await sendEmailToWithAlert({
           to: o.email,
           subject: `⚽ Camp signup — ${name}`,
           body: summary,
           fromName: `${config?.businessShortName ?? "Zenith Sports"} — Camp Signup`,
           clientSlug: SLUG,
+          alertContext: `⚽ Zenith camp-signup alert to owner ${o.email}`,
         }).catch((err) =>
           console.error("[zenith-camp-signup] owner email failed:", err),
         );
@@ -210,12 +211,13 @@ export async function POST(req: NextRequest) {
             ? `${campRow.city}, ${campRow.state}`
             : null,
       });
-      await sendEmailTo({
+      await sendEmailToWithAlert({
         to: email,
         subject,
         body: confirmBody,
         fromName: `${config.ownerFirstName} · ${config.businessShortName}`,
         clientSlug: SLUG,
+        alertContext: `⚽ Zenith camp-signup confirmation to customer ${email}`,
       }).catch((err) =>
         console.error("[zenith-camp-signup] confirmation email failed:", err),
       );

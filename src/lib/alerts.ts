@@ -260,6 +260,68 @@ export async function sendEmailTo(args: {
   }
 }
 
+/**
+ * CLAUDE.md Rule 68 wrapper — locked 2026-05-18 after Hector silent-drop bug.
+ *
+ * EVERY customer-facing send (lead notifications, booking confirmations,
+ * inquiry forwards, signup acknowledgments, anything where a customer or
+ * client is the recipient) MUST go through THIS function, not raw
+ * `sendEmailTo()`.
+ *
+ * Why: `sendEmailTo()` returns `false` on SendGrid 4xx / suppression /
+ * network failure but does NOT throw. Callers that only `.catch()` thrown
+ * errors miss the silent-failure case. Hector's contact form lost 4 leads
+ * on 2026-05-18 to exactly this — `hectorlandscapingonline@gmail.com` was
+ * on SendGrid's hard-bounce suppression list, every send returned false,
+ * no error visible to operator, no SMS alert, no email delivery.
+ *
+ * This wrapper fires `sendOwnerAlert()` SMS to Ben the moment the send
+ * fails, so manual forwarding can happen within minutes instead of days.
+ *
+ * Use raw `sendEmailTo()` ONLY for batch/internal sends with their own
+ * retry logic (e.g. campaign blasts where individual failures are
+ * expected and aggregated separately).
+ */
+export async function sendEmailToWithAlert(args: {
+  to: string;
+  subject: string;
+  body: string;
+  fromName?: string;
+  clientSlug?: string;
+  /**
+   * Short label describing what this send is for. Appears in the owner
+   * SMS so Ben knows what failed and what to manually forward.
+   * Examples:
+   *   "🌿 Hector Landscaping new-lead forward"
+   *   "🛠 Olympic Inspections booking confirmation"
+   *   "⚽ Zenith Sports camp signup confirmation"
+   */
+  alertContext: string;
+}): Promise<boolean> {
+  const ok = await sendEmailTo({
+    to: args.to,
+    subject: args.subject,
+    body: args.body,
+    fromName: args.fromName,
+    clientSlug: args.clientSlug,
+  });
+  if (!ok) {
+    // Fire-and-forget owner SMS so caller doesn't have to await.
+    // Swallowed errors here are intentional — alerting Ben is best-effort.
+    sendOwnerAlert(
+      `❌ ${args.alertContext}\n` +
+        `Auto-send to ${args.to} FAILED.\n` +
+        `Subject: ${args.subject}\n` +
+        `Likely: SendGrid suppression — check Bounces/Blocks lists.\n` +
+        `Manual-forward needed.`,
+      { clientSlug: args.clientSlug },
+    ).catch((err) =>
+      console.error("[sendEmailToWithAlert] owner SMS failed:", err),
+    );
+  }
+  return ok;
+}
+
 export async function alertHighValueLead(prospect: Prospect) {
   // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
   const BASE_URL = "https://bluejayportfolio.com";
