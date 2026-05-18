@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { listOnboardDocs } from "@/lib/onboard-docs";
 import {
@@ -8,6 +8,15 @@ import {
   type VoicemailClip,
   type VoicemailKit,
 } from "@/lib/voicemail-scripts";
+
+type SignStatus = {
+  doc: string;
+  title: string;
+  signed: boolean;
+  signedBy: string | null;
+  signedAt: string | null;
+  totalSignatures: number;
+};
 
 /**
  * Per-client portal Docs tab — client-facing read-only view.
@@ -28,16 +37,53 @@ type Props = { slug: string };
 export default function ClientDocsTab({ slug }: Props) {
   const docs = listOnboardDocs(slug);
   const vmKit = getVoicemailKit(slug);
+  const [statusByDoc, setStatusByDoc] = useState<Record<string, SignStatus>>({});
+  const [statusLoaded, setStatusLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const r = await fetch(
+          `/api/clients/${encodeURIComponent(slug)}/docs/sign-status`,
+          { cache: "no-store" },
+        );
+        const j = (await r.json()) as { ok: boolean; status: SignStatus[] };
+        if (!cancelled && j.ok) {
+          const map: Record<string, SignStatus> = {};
+          for (const s of j.status) map[s.doc] = s;
+          setStatusByDoc(map);
+        }
+      } catch {
+        // Network/API error — leave statusByDoc empty so cards render
+        // as "Not yet signed" rather than crashing the tab.
+      } finally {
+        if (!cancelled) setStatusLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  const signedCount = Object.values(statusByDoc).filter((s) => s.signed).length;
 
   return (
     <div className="space-y-10">
       <header>
         <h2 className="text-2xl font-bold text-white">Your docs</h2>
-        <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+        <p className="text-sm text-slate-300 mt-1 max-w-2xl">
           Everything BlueJays delivered for {slug.replace(/-/g, " ")},
           all in one place. Open any PDF to read or print, or click the
           sign link to fill it out online.
         </p>
+        {statusLoaded && docs.length > 0 && (
+          <p className="text-sm text-lime-300 mt-2 font-semibold">
+            {signedCount === docs.length
+              ? `✓ All ${docs.length} docs signed — you're fully onboarded.`
+              : `${signedCount} of ${docs.length} signed · ${docs.length - signedCount} still to go`}
+          </p>
+        )}
       </header>
 
       {/* ── Onboarding PDFs ── */}
@@ -45,9 +91,10 @@ export default function ClientDocsTab({ slug }: Props) {
         <h3 className="text-lg font-bold text-white mb-1">
           📨 Onboarding packet
         </h3>
-        <p className="text-xs text-slate-500 mb-4">
+        <p className="text-xs text-slate-400 mb-4">
           Click any link to open the PDF in a new tab. The sign URL lets
           you fill it out and submit — Ben gets a text + email when you do.
+          Once signed, the doc is logged here for your records.
         </p>
         {docs.length === 0 ? (
           <p className="text-sm text-slate-500">
@@ -56,7 +103,12 @@ export default function ClientDocsTab({ slug }: Props) {
         ) : (
           <ul className="space-y-3">
             {docs.map((d) => (
-              <DocCard key={`${d.slug}-${d.doc}`} doc={d} />
+              <DocCard
+                key={`${d.slug}-${d.doc}`}
+                doc={d}
+                status={statusByDoc[d.doc]}
+                loaded={statusLoaded}
+              />
             ))}
           </ul>
         )}
@@ -101,27 +153,58 @@ export default function ClientDocsTab({ slug }: Props) {
 
 function DocCard({
   doc,
+  status,
+  loaded,
 }: {
   doc: ReturnType<typeof listOnboardDocs>[number];
+  status?: SignStatus;
+  loaded: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const signUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/sign/${doc.slug}/${doc.doc}`
       : `/sign/${doc.slug}/${doc.doc}`;
+  const isSigned = !!status?.signed;
+  // Outer card border tints green when signed so the whole list scans
+  // at a glance — Paul + Philip can see what's left to do without
+  // reading every card.
+  const cardCls = isSigned
+    ? "rounded-xl border border-lime-500/40 bg-lime-500/[0.06] p-4"
+    : "rounded-xl border border-slate-800 bg-slate-900/40 p-4";
   return (
-    <li className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+    <li className={cardCls}>
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <h4 className="font-bold text-white">{doc.title}</h4>
-          <p className="text-xs text-slate-500 mt-0.5">{doc.brand}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{doc.brand}</p>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-200 border border-sky-500/30">
-          {doc.doc}
-        </span>
+        {loaded && (
+          <span
+            className={
+              isSigned
+                ? "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-200 border border-lime-500/40"
+                : "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-200 border border-amber-500/40"
+            }
+          >
+            {isSigned ? "✓ Signed" : "Not yet signed"}
+          </span>
+        )}
       </div>
       {doc.description && (
-        <p className="mt-2 text-sm text-slate-300">{doc.description}</p>
+        <p className="mt-2 text-sm text-slate-200">{doc.description}</p>
+      )}
+      {isSigned && status?.signedAt && (
+        <p className="mt-2 text-xs text-lime-300">
+          Signed by <span className="font-semibold">{status.signedBy}</span> on{" "}
+          <time>{new Date(status.signedAt).toLocaleString()}</time>
+          {status.totalSignatures > 1 && (
+            <span className="text-lime-400">
+              {" "}
+              · {status.totalSignatures} signatures on file
+            </span>
+          )}
+        </p>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <a
@@ -136,9 +219,13 @@ function DocCard({
           href={signUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-lime-500 text-slate-950 font-bold hover:bg-lime-400 transition-colors"
+          className={
+            isSigned
+              ? "inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-lime-500/60 bg-lime-500/[0.10] text-lime-200 font-semibold hover:bg-lime-500/[0.18] transition-colors"
+              : "inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-lime-500 text-slate-950 font-bold hover:bg-lime-400 transition-colors"
+          }
         >
-          ✍ Fill &amp; sign online
+          {isSigned ? "✍ Re-sign" : "✍ Fill & sign online"}
         </a>
         <button
           type="button"
