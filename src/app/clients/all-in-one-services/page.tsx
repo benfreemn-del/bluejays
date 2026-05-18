@@ -785,11 +785,11 @@ export default function AllInOneServicesPage() {
               {/* Island house before/after as a manual pair */}
               <div>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border" style={{ borderColor: RULE }}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border flex items-center justify-center" style={{ borderColor: RULE, background: BG_PANEL }}>
                     <img
                       src={PHOTOS.islandBefore}
                       alt="Sequim cottage exterior — before refresh"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain"
                       loading="lazy"
                     />
                     <span
@@ -803,11 +803,11 @@ export default function AllInOneServicesPage() {
                       Before
                     </span>
                   </div>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border" style={{ borderColor: ACCENT_DIM }}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border flex items-center justify-center" style={{ borderColor: ACCENT_DIM, background: BG_PANEL }}>
                     <img
                       src={PHOTOS.islandAfter}
                       alt="Sequim cottage exterior — after exterior + porch refresh by All In One Service's LLC"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain"
                       loading="lazy"
                     />
                     <span
@@ -851,11 +851,11 @@ export default function AllInOneServicesPage() {
               {/* 2nd-story addition pair */}
               <div>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border" style={{ borderColor: RULE }}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border flex items-center justify-center" style={{ borderColor: RULE, background: BG_PANEL }}>
                     <img
                       src={PHOTOS.additionBefore}
                       alt="Single-story ranch home — before 2nd-story addition, crew on roof framing"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain"
                       loading="lazy"
                     />
                     <span
@@ -869,11 +869,11 @@ export default function AllInOneServicesPage() {
                       In Progress
                     </span>
                   </div>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border" style={{ borderColor: ACCENT_DIM }}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border flex items-center justify-center" style={{ borderColor: ACCENT_DIM, background: BG_PANEL }}>
                     <img
                       src={PHOTOS.additionAfter}
                       alt="Finished 2nd-story addition — yellow craftsman home, completed by All In One Service's LLC"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain"
                       loading="lazy"
                     />
                     <span
