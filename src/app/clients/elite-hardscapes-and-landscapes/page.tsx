@@ -47,25 +47,19 @@ import BluejayFeather from "@/components/BluejayFeather";
 
 const PHOTO_BASE = "/clients/elite-hardscapes-and-landscapes/photos";
 
-// Real Google Business Profile snapshot (provided by Ben 2026-05-12).
-// Update these two numbers when Tyler's GBP gains/loses reviews.
-const GOOGLE_RATING = 4.6;
-const GOOGLE_REVIEW_COUNT = 11;
+// Real Google Business Profile snapshot — scraped 2026-05-17 from
+// Tyler's actual GBP "Elite Hardscapes & Landscaping" (Google listing
+// name differs from website brand by one letter — Landscaping vs
+// Landscapes). Update when Tyler gains/loses reviews.
+const GOOGLE_RATING = 4.7;
+const GOOGLE_REVIEW_COUNT = 13;
+// Search URL is the chip's external fallback (only used if STATIC_REVIEWS
+// is somehow empty — currently impossible). Searches the Google listing
+// directly by name + Sequim so result hits Tyler's GBP first.
 const GOOGLE_REVIEW_URL =
   "https://www.google.com/search?q=" +
-  encodeURIComponent(
-    "Elite Hardscapes and Landscapes 9321 Old Olympic Hwy Port Angeles WA reviews",
-  );
+  encodeURIComponent("Elite Hardscapes Landscaping Port Angeles reviews");
 
-// Live Google reviews flow through /api/clients/elite-hardscapes-and-
-// landscapes/google-reviews (Places Details API, hourly cache). The
-// page fetches on mount + populates the marquee below the FAQ.
-// Section auto-HIDES when the endpoint returns empty (no fake data
-// ever per CLAUDE.md "Social proof overlays MUST use real data").
-//
-// To turn it on: set ELITE_GOOGLE_PLACE_ID + GOOGLE_PLACES_API_KEY
-// env vars on Vercel. The Place ID is in Tyler's Google Business
-// Profile URL after `?cid=` or via the Place ID finder.
 type GoogleReview = {
   author: string;
   rating: number;             // 1-5
@@ -73,6 +67,41 @@ type GoogleReview = {
   relativeTime: string;       // "2 months ago", "a year ago", etc.
   profilePhoto?: string | null;
 };
+
+// STATIC_REVIEWS — the three most-recent 5-star reviews from Tyler's
+// GBP, scraped 2026-05-17 (Elliot Witecki, David Overbaugh, Melissa
+// Moss). The page seeds the marquee with these so it ALWAYS shows real
+// social proof even when the Places API isn't wired up. The optional
+// /api/clients/.../google-reviews fetch (below) can overwrite this list
+// once a Place ID + API key are configured — it only overwrites if the
+// API returns >= 1 review, so static reviews never get blanked.
+//
+// David's review is trimmed at the natural sentence break — Google's
+// front-end truncates the full text server-side and requires a trusted
+// click to expand. Ending at "stress-free." is cleaner than ending at
+// the "...gets the job" cut Google ships.
+const STATIC_REVIEWS: GoogleReview[] = [
+  {
+    author: "Elliot Witecki",
+    rating: 5,
+    text: "Excellent work on my retaining wall backyard project.",
+    relativeTime: "a week ago",
+  },
+  {
+    author: "David Overbaugh",
+    rating: 5,
+    text:
+      "I had a great experience working with Tyler on my project. He communicates clearly and keeps you informed every step of the way, which made the whole process smooth and stress-free.",
+    relativeTime: "2 weeks ago",
+  },
+  {
+    author: "Melissa Moss",
+    rating: 5,
+    text:
+      "I highly recommend Tyler! He always communicates with you and gets back to you quickly. He always does what I ask and makes my yard beautiful. He always shows up when he says and works hard.",
+    relativeTime: "3 weeks ago",
+  },
+];
 
 const BRAND = {
   name: "Elite",
@@ -230,15 +259,21 @@ const SERVICES = [
   },
 ];
 
-const SERVICE_AREA = [
-  "Sequim",
-  "Port Angeles",
-  "Carlsborg",
-  "Port Townsend",
-  "Joyce",
-  "Diamond Point",
-  "Forks",
-  "Clallam County",
+// Service area cities with per-city context. Order is intentional —
+// Sequim leads (home base, most work), then west-to-Forks, then east-
+// to-Port-Townsend, then the county catch-all. Each `note` field is one
+// short line per city: what work happens there OR how close it is to
+// Tyler's base. Used by the redesigned WHERE WE WORK section AND the
+// footer's compact city list (which only reads .name).
+const SERVICE_AREA_CITIES: { name: string; note: string; isBase?: boolean }[] = [
+  { name: "Sequim", note: "Home base · most weekly routes start here", isBase: true },
+  { name: "Carlsborg", note: "Walls, paver patios, fresh bed installs" },
+  { name: "Port Angeles", note: "Hardscape + property maintenance routes" },
+  { name: "Joyce", note: "Brush clearing, storm prep, larger lots" },
+  { name: "Forks", note: "Out-of-area builds — quote required" },
+  { name: "Diamond Point", note: "Lakefront landscapes + waterfront yards" },
+  { name: "Port Townsend", note: "Hardscape-heavy patio + fence builds" },
+  { name: "Clallam County", note: "Anywhere in the county — we'll come look" },
 ];
 
 // Seasonal calendar — PNW timing. Each season gets its own accent so
@@ -752,11 +787,13 @@ export default function Site() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  // Live Google reviews — fetched once on mount from the per-client
-  // Places Details endpoint. Empty array hides the marquee section
-  // entirely (never shows fake data) and falls the badge back to the
-  // external Google search URL.
-  const [reviews, setReviews] = useState<GoogleReview[]>([]);
+  // Seeded with the 3 real GBP reviews scraped 2026-05-17 (STATIC_REVIEWS).
+  // The Places API fetch below CAN overwrite this list once a Place ID
+  // is wired up — but only if it returns >= 1 review, so static reviews
+  // never get blanked by an empty API response. Floating Google chip
+  // checks reviews.length > 0 to decide whether to scroll-target the
+  // on-page marquee (always true here) vs. open Google search.
+  const [reviews, setReviews] = useState<GoogleReview[]>(STATIC_REVIEWS);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -776,7 +813,10 @@ export default function Site() {
           ok: boolean;
           reviews?: GoogleReview[];
         };
-        if (!cancelled && j.ok && Array.isArray(j.reviews)) {
+        // Only overwrite static reviews if the API returned >= 1 review —
+        // an empty API response (e.g. missing Place ID env var) must not
+        // blank the marquee.
+        if (!cancelled && j.ok && Array.isArray(j.reviews) && j.reviews.length > 0) {
           setReviews(j.reviews);
         }
       } catch {
@@ -1613,38 +1653,148 @@ export default function Site() {
         </div>
       </section>
 
-      {/* ═══════════════ SERVICE AREA STRIP ═══════════════ */}
+      {/* ═══════════════ WHERE WE WORK — SERVICE AREA SHOWCASE ═══════════════
+          Replaces the old single-line "Serving →" strip. Best-in-class
+          contractor sites (Bahler Bros, Cornell Landscape, Belgard
+          dealer pages) treat the service area as a proof surface, not
+          a city list — each city tile carries one specific note about
+          what Tyler actually does there, so prospects in that town see
+          themselves on the page. HQ (Sequim) gets a bronze accent +
+          "HQ" badge. Bottom CTA tile handles edge-cases warmly. */}
       <section
-        className="relative py-10 md:py-14 overflow-hidden grain"
+        id="service-area"
+        className="relative py-20 md:py-24 lg:py-28 overflow-hidden grain"
         style={{
-          background: PALETTE.steel,
+          background: PALETTE.inkSoft,
           borderTop: `1px solid ${PALETTE.steelLine}`,
           borderBottom: `1px solid ${PALETTE.steelLine}`,
         }}
       >
         <div className="relative max-w-[1400px] mx-auto px-6 md:px-10">
+          {/* heading */}
           <Reveal>
-            <div className="flex flex-wrap items-center gap-x-10 gap-y-4 justify-center">
-              <div
-                className="font-display uppercase text-2xl md:text-3xl tracking-tightest"
+            <div className="text-center mb-12 md:mb-16">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.bronze }}
+                />
+                <span
+                  className="text-[11px] uppercase tracking-[0.3em]"
+                  style={{ color: PALETTE.bronze, fontWeight: 600 }}
+                >
+                  Where We Work
+                </span>
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.bronze }}
+                />
+              </div>
+              <h2
+                className="font-display uppercase tracking-tightest leading-[0.98] text-4xl md:text-5xl lg:text-6xl"
                 style={{ color: PALETTE.bone, fontWeight: 700 }}
               >
-                Serving
-                <span
-                  style={{ color: PALETTE.bronze, marginLeft: "0.5rem" }}
-                >
-                  →
-                </span>
-              </div>
-              {SERVICE_AREA.map((s) => (
+                From Sequim{" "}
+                <span style={{ color: PALETTE.crimsonHot }}>to Forks.</span>
+              </h2>
+              <p
+                className="mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
+                style={{ color: PALETTE.boneDim }}
+              >
+                Olympic Peninsula coverage end to end — Diamond Point
+                and Port Townsend in the east, Joyce and Forks in the
+                west, and every town in between. Most weekly routes run
+                out of Sequim.
+              </p>
+            </div>
+          </Reveal>
+
+          {/* city grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {SERVICE_AREA_CITIES.map((city, i) => {
+              const accent = city.isBase ? PALETTE.bronze : PALETTE.crimson;
+              return (
+                <Reveal key={city.name} delay={i * 50}>
+                  <div
+                    className="group relative p-5 md:p-6 transition-all hover:-translate-y-0.5 h-full"
+                    style={{
+                      background: PALETTE.steel,
+                      border: `1px solid ${PALETTE.steelLine}`,
+                    }}
+                  >
+                    {/* left accent strip */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-1 transition-all group-hover:w-1.5"
+                      style={{ background: accent }}
+                    />
+                    {city.isBase && (
+                      <div
+                        className="absolute right-3 top-3 text-[9px] uppercase tracking-[0.25em] px-2 py-1"
+                        style={{
+                          color: PALETTE.bronze,
+                          border: `1px solid ${PALETTE.bronzeDeep}`,
+                          background: "rgba(212, 168, 90, 0.05)",
+                        }}
+                      >
+                        HQ
+                      </div>
+                    )}
+                    <div className="pl-3">
+                      <div
+                        className="font-display uppercase text-xl md:text-2xl tracking-tightest mb-2"
+                        style={{ color: PALETTE.bone, fontWeight: 700 }}
+                      >
+                        {city.name}
+                      </div>
+                      <div
+                        className="text-xs md:text-[13px] leading-relaxed"
+                        style={{ color: PALETTE.chromeBright }}
+                      >
+                        {city.note}
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          {/* don't-see-your-town CTA tile */}
+          <Reveal delay={450}>
+            <div
+              className="mt-4 md:mt-5 p-6 md:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5 md:gap-6 text-center md:text-left"
+              style={{
+                background: PALETTE.steel,
+                border: `1px dashed ${PALETTE.bronzeDeep}`,
+              }}
+            >
+              <div className="md:max-w-2xl">
                 <div
-                  key={s}
-                  className="font-display uppercase text-lg md:text-xl tracking-display"
-                  style={{ color: PALETTE.chromeBright, fontWeight: 600 }}
+                  className="font-display uppercase text-xl md:text-2xl tracking-tightest"
+                  style={{ color: PALETTE.bone, fontWeight: 700 }}
                 >
-                  {s}
+                  Don't see your town?
                 </div>
-              ))}
+                <div
+                  className="text-sm mt-2 leading-relaxed"
+                  style={{ color: PALETTE.chromeBright }}
+                >
+                  If you're close enough to the Peninsula, we'll quote
+                  the drive too. Call or text and we'll tell you straight.
+                </div>
+              </div>
+              <a
+                href={`tel:${BRAND.phoneRaw}`}
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3 shrink-0"
+                style={{
+                  background: PALETTE.crimson,
+                  color: PALETTE.bone,
+                  fontWeight: 600,
+                }}
+              >
+                <Phone size={16} weight="bold" />
+                {BRAND.phone}
+              </a>
             </div>
           </Reveal>
         </div>
@@ -2160,9 +2310,9 @@ export default function Site() {
                 Service Area
               </div>
               <ul className="space-y-2 text-sm">
-                {SERVICE_AREA.map((s) => (
-                  <li key={s} style={{ color: PALETTE.boneDim }}>
-                    {s}
+                {SERVICE_AREA_CITIES.map((c) => (
+                  <li key={c.name} style={{ color: PALETTE.boneDim }}>
+                    {c.name}
                   </li>
                 ))}
               </ul>
