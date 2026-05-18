@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import type { ContentBrief } from "@/lib/content-engine/briefs";
 import { validateHook } from "@/lib/content-engine/hooks";
+import {
+  generatePlatformDrafts,
+  type Platform,
+} from "@/lib/content-engine/platforms";
 
 /**
  * /dashboard/content — morning content brief.
@@ -24,6 +28,8 @@ export default function ContentBriefPage() {
   const [chosenHook, setChosenHook] = useState<number | null>(null);
   const [scriptOverride, setScriptOverride] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [activePlatform, setActivePlatform] = useState<Platform>("x");
+  const [copiedPlatform, setCopiedPlatform] = useState<Platform | null>(null);
 
   useEffect(() => {
     fetch("/api/content/brief")
@@ -67,6 +73,9 @@ export default function ContentBriefPage() {
   const hookText = scriptOverride.trim() || hook.text;
   const hookIssues = validateHook(hookText);
   const finalScript = renderFinalScript(brief, hookText);
+  const platformDrafts = generatePlatformDrafts(brief, hookText);
+  const activeDraft =
+    platformDrafts.find((d) => d.platform === activePlatform) ?? platformDrafts[0];
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-200 p-6 sm:p-10 max-w-4xl mx-auto">
@@ -197,6 +206,94 @@ export default function ContentBriefPage() {
             screen-record the linked surface (capcut · quicktime · OBS) at
             1080×1920 vertical. phase-3 cron will auto-render these.
           </p>
+        </div>
+      </section>
+
+      {/* Multi-platform kaleidoscope */}
+      <section className="mb-7">
+        <h2 className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-2">
+          kaleidoscope · one brief → four drafts
+        </h2>
+        <div className="rounded-lg border border-slate-800 bg-slate-900/40 overflow-hidden">
+          <div className="flex border-b border-slate-800 bg-slate-950/40">
+            {platformDrafts.map((d) => {
+              const isActive = d.platform === activePlatform;
+              const over = d.charCount > d.charBudget;
+              return (
+                <button
+                  key={d.platform}
+                  onClick={() => setActivePlatform(d.platform)}
+                  className={`flex-1 px-3 py-2.5 text-[11px] font-bold tracking-[0.16em] uppercase transition border-r border-slate-800 last:border-r-0 ${
+                    isActive
+                      ? "bg-slate-900 text-white"
+                      : "text-slate-500 hover:text-slate-300 hover:bg-slate-900/40"
+                  }`}
+                >
+                  <span>{d.label}</span>
+                  <span
+                    className={`ml-1.5 font-mono text-[10px] tracking-normal ${
+                      over ? "text-rose-400" : isActive ? "text-emerald-400" : "text-slate-600"
+                    }`}
+                  >
+                    {d.charCount}/{d.charBudget}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {activeDraft && (
+            <div className="p-4">
+              {activeDraft.title && (
+                <div className="mb-3">
+                  <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-slate-500 mb-1">
+                    {activeDraft.platform === "newsletter" ? "subject" : "hook label"}
+                  </div>
+                  <div className="text-sm text-white font-medium">{activeDraft.title}</div>
+                </div>
+              )}
+              <pre className="font-mono text-[13px] leading-relaxed whitespace-pre-wrap text-slate-100 bg-slate-950/60 border border-slate-800 rounded-md p-3 mb-3">
+                {activeDraft.body}
+              </pre>
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(activeDraft.body);
+                    setCopiedPlatform(activeDraft.platform);
+                    setTimeout(() => setCopiedPlatform(null), 1500);
+                  }}
+                  className="text-[11px] font-bold px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white"
+                >
+                  {copiedPlatform === activeDraft.platform ? "copied ✓" : `copy ${activeDraft.label}`}
+                </button>
+                {activeDraft.hashtags && activeDraft.hashtags.length > 0 && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText(activeDraft.hashtags!.join(" "));
+                    }}
+                    className="text-[11px] font-bold px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200"
+                  >
+                    copy hashtags
+                  </button>
+                )}
+              </div>
+              {activeDraft.hashtags && activeDraft.hashtags.length > 0 && (
+                <div className="text-[11px] text-slate-500 mb-2">
+                  <span className="font-bold tracking-[0.16em] uppercase text-slate-600 mr-2">
+                    tags
+                  </span>
+                  {activeDraft.hashtags.join(" ")}
+                </div>
+              )}
+              {activeDraft.attachmentHint && (
+                <p className="text-[11px] text-slate-500 leading-relaxed pt-2 border-t border-slate-800">
+                  <span className="font-bold tracking-[0.16em] uppercase text-slate-600 mr-1.5">
+                    attach
+                  </span>
+                  {activeDraft.attachmentHint}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
