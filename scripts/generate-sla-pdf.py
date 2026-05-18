@@ -244,7 +244,7 @@ def build():
 
     story.append(Paragraph(
         "This SLA is the working contract between BlueJays and every AI System "
-        "(<b>$10,000 + $500&ndash;1,000/mo</b>) client. It defines how fast we respond, "
+        "(<b>$10,000 one-time</b>) client. It defines how fast we respond, "
         "when we're available, and what's in or out of scope. Read once, "
         "acknowledge, and keep it handy — these are the numbers we hold ourselves to.",
         BODY,
@@ -321,8 +321,8 @@ def build():
         BODY,
     ))
     bullets = [
-        "<b>Weekly 20-minute strategy call</b> during the 30-day install rollout, "
-        "then once per month after — recorded, shareable with your team.",
+        "<b>Weekly 20-minute strategy call</b> during the 30-day install rollout. "
+        "After install we communicate as needed — no forced cadence.",
         "<b>2 SMS lifelines</b> per month (define above).",
         "<b>Weekly progress email</b> every Friday (8a PT) showing what shipped, "
         "what's in flight, and the leads/funnel numbers for the week.",
@@ -349,17 +349,79 @@ def build():
         "<b>Third-party platform outages</b> (Meta, Google, Twilio, Stripe, "
         "Supabase, Vercel). We escalate on your behalf and report ETA; we "
         "can't promise fix times for systems we don't control.",
-        "<b>Same-day emergency code changes</b> outside the fire-drill lanes. "
-        "Available as a $500/incident expedited slot &mdash; usually unnecessary.",
-        "<b>Ad spend</b> &mdash; you pay the platforms directly (Meta / Google / "
-        "LinkedIn / Lob). We manage the accounts; the spend isn't part of the "
-        "$500&ndash;1,000/mo fee.",
+        "<b>Ad spend + AI infrastructure (Claude, etc.)</b> &mdash; you pay "
+        "the vendors directly. We set up + manage the accounts during install; "
+        "ongoing usage charges aren't part of the $10,000 program fee.",
+        "<b>Optional managed-operations retainer ($500/mo)</b> &mdash; if you "
+        "want BlueJays to keep actively overseeing your funnel, ads, and "
+        "AI Operator after the 30-day install window (rather than the "
+        "as-needed updates model). Not promoted publicly &mdash; available "
+        "on request only.",
         "<b>Data exports / migrations</b> to your own systems beyond the "
         "standard API (read-only at <font color='#0ea5e9'>"
         "bluejayportfolio.com/api/v1/clients/[slug]/leads</font>) are billed "
         "at our hourly rate.",
     ]
     for b in out_bullets:
+        story.append(Paragraph(f"&bull;&nbsp; {b}", BODY))
+
+    # ── What continues after the 4-installment program ───────────
+    story.append(Paragraph(
+        "What continues after the 4-installment program",
+        H2,
+    ))
+    story.append(Paragraph(
+        "The $10,000 covers a one-time AI Marketing System buildout paid in "
+        "4 quarterly installments. Once the 4th installment lands, here's "
+        "what stays on and what changes:",
+        BODY,
+    ))
+    after_bullets = [
+        "<b>The system is yours.</b> Site, portal, funnel definitions, ad "
+        "library, brand-voice configuration, and lead data all stay live "
+        "under your account and your domain.",
+        "<b>AI replies continue.</b> Lead Reply Drafter, Audience Detector, "
+        "and Drill of Week broadcasts keep running because you pay the "
+        "underlying AI vendor (Claude / OpenAI) directly on your card. "
+        "BlueJays doesn't gate that.",
+        "<b>BlueJays steps back to as-needed.</b> No more scheduled cadence. "
+        "I'm available for updates, fixes, and questions on the same SLA "
+        "response times — you reach out when you need me.",
+        "<b>Optional ongoing oversight ($500/mo).</b> If you want me actively "
+        "managing weekly ad iteration, funnel optimization, and weekly "
+        "strategy calls beyond the 30-day install window, we add the "
+        "$500/mo managed-operations retainer. Available on request only "
+        "&mdash; not promoted publicly.",
+    ]
+    for b in after_bullets:
+        story.append(Paragraph(f"&bull;&nbsp; {b}", BODY))
+
+    # ── Data ownership ───────────────────────────────────────────
+    story.append(Paragraph("Data ownership", H2))
+    story.append(Paragraph(
+        "Everything generated under your slug is yours, period.",
+        BODY,
+    ))
+    data_bullets = [
+        "<b>Lead lists, customer data, ad performance metrics, brand "
+        "voice configs, funnel content, voicemail recordings, weekly "
+        "reports</b> &mdash; owned by you. BlueJays is the operator, not "
+        "the owner.",
+        "<b>Export anytime.</b> Standard CSV export from the portal "
+        "Leads tab is one click. Full-database exports (everything "
+        "across every table tied to your slug) are available on request "
+        "&mdash; 1 business day turnaround, no fee while you're an "
+        "active client, $250 one-time fee for ex-clients.",
+        "<b>If you cancel or non-renew the optional $500/mo retainer</b>, "
+        "your data stays exactly where it is. You keep portal access, "
+        "lead data, and the site. BlueJays just stops actively managing "
+        "iteration work.",
+        "<b>Source code + custom assets</b> built specifically for TEKKY "
+        "(your bespoke site code, your funnel JSON, your ad creative "
+        "files) are yours on request. The underlying BlueJays platform "
+        "(shared portal infrastructure, generic templates) stays our IP.",
+    ]
+    for b in data_bullets:
         story.append(Paragraph(f"&bull;&nbsp; {b}", BODY))
 
     # ── Escalation path ───────────────────────────────────────────

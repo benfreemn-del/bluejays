@@ -203,6 +203,22 @@ const REGISTRY: OnboardDoc[] = [
       "escalation order when something feels off. Read once, acknowledge " +
       "below.",
   },
+  // Formal Service Agreement — the actual contract behind the $10k AI System.
+  // Pair with the SLA: SLA = day-to-day response commitments; Agreement = the
+  // legal contract (deliverables, IP, refund, data ownership, termination).
+  {
+    slug: "zenith-sports",
+    doc: "agreement",
+    title: "Service Agreement (AI Marketing System)",
+    brand: "TEKKY · Zenith Sports",
+    pdfPath: "/onboarding/bluejays-service-agreement.pdf",
+    alertSubject: "Tekky acknowledged BlueJays Service Agreement",
+    description:
+      "The formal contract for your $10,000 AI Marketing System — deliverables, " +
+      "payment terms (4 quarterly installments of $2,500 or $9,700 pay-in-full), " +
+      "refund policy, data ownership, IP, what continues after the 4-installment " +
+      "program ends, and the optional $500/mo retainer. Read once, acknowledge below.",
+  },
   {
     slug: "itc-quick-attach",
     doc: "sla",

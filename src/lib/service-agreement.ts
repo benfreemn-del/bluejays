@@ -28,8 +28,8 @@
  *   5. Identifiable consenter (prospect.email + prospect.id)
  */
 
-export const SERVICE_AGREEMENT_VERSION = "1.1.0";
-export const SERVICE_AGREEMENT_EFFECTIVE_DATE = "2026-04-30";
+export const SERVICE_AGREEMENT_VERSION = "1.2.0";
+export const SERVICE_AGREEMENT_EFFECTIVE_DATE = "2026-05-18";
 
 export type ServiceAgreementPlan =
   | "standard"     // $997 one-time + $100/yr starting year 2
@@ -66,9 +66,9 @@ function planVars(plan: ServiceAgreementPlan): AgreementVars {
       return {
         plan,
         planLabel: "AI Marketing System (Agency)",
-        upfrontTotal: "$9,700 USD one-time (save $300) OR three (3) milestone payments totaling $10,000",
+        upfrontTotal: "$10,000 USD total — paid as four (4) quarterly installments of $2,500, OR $9,700 paid in full at signing (save $300)",
         paymentSchedule:
-          "Two payment options: (a) $9,700 USD paid in full upon acceptance of this Agreement; OR (b) three milestone payments — $3,500 upon acceptance, $3,500 at Day 30 of the engagement, $3,000 at Day 60 ($10,000 total). Optional ongoing retainer of $497 USD per month begins on Day 91, billed monthly via Stripe Subscriptions, cancellable any time with thirty (30) days’ notice.",
+          "Two payment options: (a) $9,700 USD paid in full upon acceptance of this Agreement (the $300 pay-in-full discount); OR (b) four (4) quarterly installments of $2,500 USD each ($10,000 total) — first installment due upon acceptance of this Agreement (the launch payment), subsequent installments charged automatically every 90 days via a Stripe subscription that auto-cancels after the 4th payment. Optional ongoing managed-operations retainer of $500 USD per month is available on request after the 30-day install window — not promoted publicly. Retainer is billed monthly via Stripe Subscriptions, cancellable any time with thirty (30) days’ written notice.",
       };
     case "standard":
     default:
@@ -315,7 +315,7 @@ function buildAgencyAgreement(): AgreementSection[] {
         `Plan: ${v.planLabel}.`,
         `Total Project Fee: ${v.upfrontTotal}.`,
         `Payment Schedule: ${v.paymentSchedule}`,
-        "Optional Ongoing Retainer: Beginning Day 91 of the engagement, Client may elect to retain Provider for ongoing optimization and management at four hundred ninety-seven dollars ($497 USD) per month, billed monthly via Stripe Subscriptions. The retainer covers continued ad management, sequence iteration, AI tuning, monthly reporting, and Provider’s direct availability. Client may cancel the retainer at any time with thirty (30) days’ written notice; cancellation does not entitle Client to a refund of any prepaid retainer fees but does entitle Client to retain ownership of the System per Section 10.",
+        "Optional Ongoing Retainer: After the 30-day install window, Client may elect (on request — this option is not promoted publicly) to retain Provider for ongoing oversight, weekly ad iteration, and active management at five hundred dollars ($500 USD) per month, billed monthly via Stripe Subscriptions. The retainer covers continued ad management, sequence iteration, AI tuning, weekly reporting, and Provider’s direct availability. Client may cancel the retainer at any time with thirty (30) days’ written notice; cancellation does not entitle Client to a refund of any prepaid retainer fees but does entitle Client to retain ownership of the System per Section 10. Absent the retainer, Provider remains available for as-needed updates and fixes per the response-time commitments in the companion Service-Level Agreement.",
         "Payments are processed via Stripe. Failed payments will be retried per Stripe’s standard dunning schedule. Repeated failure may result in suspension of services until current.",
         "All fees are stated in U.S. Dollars and are exclusive of any applicable taxes, which Client is responsible for.",
       ],
