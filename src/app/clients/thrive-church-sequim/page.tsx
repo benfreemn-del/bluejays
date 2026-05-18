@@ -280,70 +280,17 @@ function Hero() {
  * is in the hero so it animates on initial paint.
  */
 function SunriseIllustration() {
-  const sky = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { duration: 1.0, ease: "easeOut" } },
-  };
-  const mist = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { duration: 1.2, delay: 0.6, ease: "easeOut" } },
-  };
-  // Each ridge "rises" — clip from below using a clip-path animation.
-  const ridge = (delay: number) => ({
-    hidden: { y: 60, opacity: 0 },
-    show: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] },
-    },
-  });
-  const sun = {
-    hidden: { y: 90, opacity: 0, scale: 0.85 },
-    show: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 1.6, delay: 1.6, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
-  const sunHalo = {
-    hidden: { opacity: 0, scale: 0.7 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 1.8, delay: 1.7, ease: "easeOut" },
-    },
-  };
-  const trees = {
-    hidden: { y: 30, opacity: 0 },
-    show: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.9, delay: 2.0, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
-  const birds = {
-    hidden: { opacity: 0, x: -40 },
-    show: {
-      opacity: 0.75,
-      x: 0,
-      transition: { duration: 1.2, delay: 2.4, ease: "easeOut" },
-    },
-  };
-  const label = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { duration: 1.0, delay: 2.8 } },
-  };
+  // Inline initial/animate/transition per element — no variant indirection
+  // (variant inheritance through SVG was unreliable in this setup).
+  const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40">
-      <motion.svg
+      <svg
         viewBox="0 0 600 450"
         className="absolute inset-0 h-full w-full"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
-        initial="hidden"
-        animate="show"
       >
         <defs>
           {/* Warm dawn sky — peach → cream */}
@@ -377,37 +324,21 @@ function SunriseIllustration() {
           </clipPath>
         </defs>
 
-        {/* 1. SKY */}
-        <motion.rect
-          width="600"
-          height="450"
-          fill="url(#sky)"
-          variants={sky}
-        />
+        {/* 1. SKY — fades in immediately */}
+        <rect width="600" height="450" fill="url(#sky)" />
 
-        {/* 5. SUN — rises behind the distant peaks */}
-        <motion.g variants={sunHalo}>
+        {/* 5. SUN — halo + disc, rises behind the peaks (clipped) */}
+        <g className="thrive-sun">
           <circle cx="370" cy="195" r="170" fill="url(#sunGlow)" />
-        </motion.g>
-        <motion.g variants={sun} style={{ transformOrigin: "370px 200px" }}>
-          {/* Sun disc — clipped so the back peaks occlude the bottom edge */}
           <circle cx="370" cy="200" r="56" fill="#e0832b" clipPath="url(#aboveBackRidge)" />
-          {/* Light flare across horizon */}
-          <ellipse
-            cx="370"
-            cy="200"
-            rx="150"
-            ry="1.5"
-            fill="#fde68a"
-            opacity="0.55"
-          />
-        </motion.g>
+          <ellipse cx="370" cy="200" rx="150" ry="1.5" fill="#fde68a" opacity="0.55" />
+        </g>
 
         {/* 3a. DISTANT OLYMPIC PEAKS — snow-capped, rise from below
             The profile here is a rugged, multi-peak silhouette inspired by
             the Olympic Range as seen from Sequim (Mt. Olympus + The
             Brothers + Mt. Constance roughly center-frame). */}
-        <motion.g variants={ridge(0.9)}>
+        <g className="thrive-ridge-back">
           {/* Back ridge body */}
           <path
             d="M0,260
@@ -444,28 +375,21 @@ function SunriseIllustration() {
             fill="#fcd34d"
             opacity="0.45"
           />
-        </motion.g>
+        </g>
 
-        {/* 2. MIST band — hangs between the distant peaks and the mid ridge */}
-        <motion.rect
-          x="0"
-          y="230"
-          width="600"
-          height="90"
-          fill="url(#mistGrad)"
-          variants={mist}
-        />
+        {/* 2. MIST band */}
+        <rect x="0" y="230" width="600" height="90" fill="url(#mistGrad)" className="thrive-mist" />
 
         {/* Subtle mist lines */}
-        <motion.g variants={mist}>
+        <g className="thrive-mist">
           <line x1="70" y1="265" x2="220" y2="262" stroke="#fbf7ee" strokeOpacity="0.7" strokeWidth="1.2" />
           <line x1="280" y1="278" x2="430" y2="275" stroke="#fbf7ee" strokeOpacity="0.55" strokeWidth="1.2" />
           <line x1="110" y1="295" x2="350" y2="293" stroke="#fbf7ee" strokeOpacity="0.4" strokeWidth="1" />
           <line x1="380" y1="305" x2="540" y2="302" stroke="#fbf7ee" strokeOpacity="0.45" strokeWidth="1" />
-        </motion.g>
+        </g>
 
         {/* 3b. MID RIDGE — forested foothills */}
-        <motion.g variants={ridge(1.2)}>
+        <g className="thrive-ridge-mid">
           <path
             d="M0,335
                L40,318 L80,328 L130,300 L175,315 L220,288
@@ -475,10 +399,10 @@ function SunriseIllustration() {
             fill="#2d5e57"
             opacity="0.9"
           />
-        </motion.g>
+        </g>
 
         {/* 6. FOREGROUND CONIFER TREE LINE — solid darkest teal */}
-        <motion.g variants={trees}>
+        <g className="thrive-trees">
           {/* Base ground */}
           <path
             d="M0,390 L0,450 L600,450 L600,395 Z"
@@ -502,11 +426,11 @@ function SunriseIllustration() {
           {/* A few taller hero conifers */}
           <path d="M195,395 L208,335 L221,395 Z" fill="#0a3a36" />
           <path d="M375,395 L390,325 L405,395 Z" fill="#0a3a36" />
-        </motion.g>
+        </g>
 
         {/* 7. BIRDS — small flock crossing the sky */}
-        <motion.g
-          variants={birds}
+        <g
+          className="thrive-birds"
           fill="none"
           stroke="#0d4f4a"
           strokeWidth="1.6"
@@ -516,10 +440,10 @@ function SunriseIllustration() {
           <path d="M210,75 q5,-7 10,0 q5,-7 10,0" />
           <path d="M195,115 q5,-6 10,0 q5,-6 10,0" />
           <path d="M240,98 q4,-5 8,0 q4,-5 8,0" />
-        </motion.g>
+        </g>
 
         {/* 8. CAPTION — "And there was light." */}
-        <motion.g variants={label}>
+        <g className="thrive-caption">
           <text
             x="32"
             y="438"
@@ -531,8 +455,19 @@ function SunriseIllustration() {
           >
             And there was light.  ·  Gen 1:3
           </text>
-        </motion.g>
-      </motion.svg>
+        </g>
+      </svg>
+      {/* Static for now — sequential CSS animation was unreliable with
+          SVG transforms in this build. The illustration reads beautifully
+          static; revisit with proper SVG SMIL or a Lottie/JSON keyframe
+          approach later if Ben wants the Genesis reveal back. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .thrive-birds { opacity: 0.75; }
+          `,
+        }}
+      />
     </div>
   );
 }
