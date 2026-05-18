@@ -2,12 +2,26 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
-type ExtraQuestion = { id: string; label: string; placeholder?: string };
+type ExtraQuestion = {
+  id: string;
+  label: string;
+  placeholder?: string;
+  presets?: string[];
+};
+
+type PaymentLink = {
+  label: string;
+  url: string;
+  description?: string;
+  badge?: string;
+  primary?: boolean;
+};
 
 type Props = {
   slug: string;
   doc: string;
   extraQuestions: ExtraQuestion[];
+  paymentLinks?: PaymentLink[];
 };
 
 type SubmitState =
@@ -30,7 +44,12 @@ function draftKey(slug: string, doc: string): string {
   return `bluejays:sign-draft:${slug}:${doc}`;
 }
 
-export default function SignForm({ slug, doc, extraQuestions }: Props) {
+export default function SignForm({
+  slug,
+  doc,
+  extraQuestions,
+  paymentLinks = [],
+}: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
@@ -165,15 +184,42 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
   }
 
   if (state.kind === "success") {
+    const primaryPayment = paymentLinks.find((p) => p.primary && p.url);
     return (
-      <div className="rounded-xl border border-lime-500/30 bg-lime-500/[0.08] p-6">
-        <p className="text-lime-200 font-bold text-lg mb-1">
-          ✓ Got it. Ben has been notified.
-        </p>
-        <p className="text-slate-300 text-sm">
-          You can close this tab. Ben will reach out within a business day if
-          anything needs follow-up.
-        </p>
+      <div className="space-y-4">
+        <div className="rounded-xl border border-lime-500/30 bg-lime-500/[0.08] p-6">
+          <p className="text-lime-200 font-bold text-lg mb-1">
+            ✓ Got it. Ben has been notified.
+          </p>
+          <p className="text-slate-300 text-sm">
+            {primaryPayment
+              ? "Last step — clear the launch payment below to unlock Phase A build work."
+              : "You can close this tab. Ben will reach out within a business day if anything needs follow-up."}
+          </p>
+        </div>
+        {primaryPayment && (
+          <a
+            href={primaryPayment.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-2xl border border-lime-500/60 bg-lime-500/[0.10] p-5 hover:bg-lime-500/[0.18] transition-colors"
+          >
+            {primaryPayment.badge && (
+              <p className="text-[10px] font-bold uppercase tracking-wider text-lime-400 mb-1">
+                {primaryPayment.badge}
+              </p>
+            )}
+            <p className="text-2xl font-extrabold text-white">
+              {primaryPayment.label}
+              <span className="ml-2 text-lime-300">→</span>
+            </p>
+            {primaryPayment.description && (
+              <p className="mt-1.5 text-sm text-slate-300">
+                {primaryPayment.description}
+              </p>
+            )}
+          </a>
+        )}
       </div>
     );
   }
@@ -182,7 +228,7 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
     "w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 " +
     "focus:outline-none focus:border-lime-500/60 focus:ring-1 focus:ring-lime-500/30";
   const labelCls =
-    "block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5";
+    "block text-sm font-semibold text-slate-100 mb-1.5";
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -246,9 +292,9 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
       </div>
 
       {extraQuestions.length > 0 && (
-        <div className="space-y-4 pt-2 border-t border-slate-800">
-          <p className="text-xs font-bold uppercase tracking-wider text-lime-400 pt-2">
-            Quick answers
+        <div className="space-y-5 pt-3 border-t border-slate-800">
+          <p className="text-sm font-bold uppercase tracking-wider text-lime-400 pt-2">
+            Quick answers ({extraQuestions.length} questions · ~2 min)
           </p>
           {extraQuestions.map((q) => (
             <div key={q.id}>
@@ -265,6 +311,22 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
                 className={inputCls}
                 placeholder={q.placeholder}
               />
+              {q.presets && q.presets.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {q.presets.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() =>
+                        setReplies((r) => ({ ...r, [q.id]: preset }))
+                      }
+                      className="text-xs px-3 py-1 rounded-full border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-lime-500/60 hover:text-white transition-colors"
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -284,12 +346,12 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
         />
       </div>
 
-      <label className="flex items-start gap-3 text-sm text-slate-300 cursor-pointer select-none">
+      <label className="flex items-start gap-3 text-base text-slate-100 cursor-pointer select-none">
         <input
           type="checkbox"
           checked={acknowledged}
           onChange={(e) => setAcknowledged(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-slate-950 text-lime-500 focus:ring-lime-500/40"
+          className="mt-1 h-5 w-5 rounded border-slate-600 bg-slate-950 text-lime-500 focus:ring-lime-500/40"
         />
         <span>
           I&apos;ve read the document above and acknowledge receipt.
@@ -302,22 +364,33 @@ export default function SignForm({ slug, doc, extraQuestions }: Props) {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={state.kind === "submitting"}
-          className="w-full sm:w-auto h-12 px-8 rounded-full bg-lime-500 text-slate-950 font-bold text-sm hover:bg-lime-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {state.kind === "submitting"
-            ? "Submitting…"
-            : "Submit & notify Ben"}
-        </button>
-        <p className="text-xs text-slate-500 sm:ml-2">
-          {draftSavedAt
-            ? `Saved automatically. Close the tab anytime — pick up here later.`
-            : `No pressure to finish now. Your progress auto-saves as you type.`}
-        </p>
-      </div>
+      {(() => {
+        const canSubmit =
+          !!name.trim() && acknowledged && state.kind !== "submitting";
+        const missingHints: string[] = [];
+        if (!name.trim()) missingHints.push("your name");
+        if (!acknowledged) missingHints.push("the acknowledgment checkbox");
+        return (
+          <div className="pt-4 border-t border-slate-800 space-y-3">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="w-full h-14 px-8 rounded-full bg-lime-500 text-slate-950 font-bold text-base hover:bg-lime-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed transition-colors"
+            >
+              {state.kind === "submitting"
+                ? "Submitting…"
+                : "✓ Completed — submit & notify Ben"}
+            </button>
+            <p className="text-xs text-center text-slate-500">
+              {!canSubmit && missingHints.length > 0
+                ? `Fill in ${missingHints.join(" and ")} to enable submit.`
+                : draftSavedAt
+                  ? "Saved automatically. Close the tab anytime — pick up here later."
+                  : "No pressure to finish now. Your progress auto-saves as you type."}
+            </p>
+          </div>
+        );
+      })()}
     </form>
   );
 }

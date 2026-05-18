@@ -197,6 +197,15 @@ def make_styles() -> dict[str, ParagraphStyle]:
         leading=12,
         textColor=SLATE,
     )
+    s["body_head"] = ParagraphStyle(
+        "body_head",
+        parent=base["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=10.5,
+        leading=15,
+        textColor=WHITE,
+        spaceAfter=0,
+    )
     s["bullet"] = ParagraphStyle(
         "bullet",
         parent=base["Normal"],
@@ -217,7 +226,7 @@ def make_styles() -> dict[str, ParagraphStyle]:
         textColor=NAVY,
         leftIndent=14,
         rightIndent=14,
-        spaceBefore=4,
+        spaceBefore=14,
         spaceAfter=8,
         backColor=colors.HexColor("#fef3c7"),
         borderColor=AMBER,
@@ -639,8 +648,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     )
     flow.append(
         Paragraph(
-            f"Delivered: <b>{date.today().isoformat()}</b> &nbsp;·&nbsp; "
-            "Live walkthrough: <b>Sunday 2026-05-17, 9:00 AM PT</b>",
+            f"Delivered: <b>{date.today().isoformat()}</b>",
             s["cover_meta"],
         )
     )
@@ -829,23 +837,28 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
     flow.append(AccentBar())
     flow.append(Spacer(1, 6))
     flow.append(Paragraph("03 · WHAT'S INCLUDED", s["eyebrow"]))
-    flow.append(Paragraph("Everything already running for you.", s["h1"]))
+    flow.append(Paragraph("Built and ready for you.", s["h1"]))
     flow.append(
         Paragraph(
             "Beyond the portal you just toured, the AI System ships with "
-            "the website, funnel engine, and the tracking layer that makes "
-            "the whole thing get smarter over time. Quick reference list — "
-            "scan it once so nothing gets forgotten.",
+            "the website (preview live · final tekky.org launch + Shopify "
+            "integration this week, on Ben), funnel engine, and the "
+            "tracking layer that makes the whole thing get smarter over "
+            "time. Quick reference list — scan it once so nothing gets "
+            "forgotten.",
             s["body"],
         )
     )
     flow.append(Spacer(1, 14))
 
-    flow.append(Paragraph("Your website", s["h3"]))
+    flow.append(Paragraph("Your website (preview live, final launch this week)", s["h3"]))
     for b in [
-        "Bespoke showcase at <b>tekky.org</b> — built ground-up to TEKKY's brand, not a template.",
-        "Built-in Shop page routes to your Zenith Sports Shopify checkout — no double-billing, no separate cart.",
-        "Interactive Build-Your-Player tool — parents pick age + position, get a personalized training plan.",
+        "Bespoke showcase built ground-up to TEKKY's brand — not a template. "
+        "Preview live at <b>bluejayportfolio.com/clients/zenith-sports</b>.",
+        "<b>Pending this week (on Ben):</b> tekky.org domain flip "
+        "+ Shopify shop integration so the Shop page routes cleanly to your "
+        "Zenith Sports checkout. No action needed from you — Ben handles both.",
+        "Interactive Build-Your-Player tool — parents pick age + position, get a personalized training plan. Already live in the preview.",
     ]:
         flow.append(Paragraph(f"• {b}", s["bullet"]))
 
@@ -878,6 +891,19 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         "Custom event tracking on every CTA (shop, training drills, contact form, build-your-player).",
     ]:
         flow.append(Paragraph(f"• {b}", s["bullet"]))
+
+    flow.append(Spacer(1, 8))
+    seo_block: list = [
+        Paragraph("SEO that compounds (the long-tail engine)", s["h3"]),
+    ]
+    for b in [
+        "<b>llms.txt + JSON-LD structured data</b> ship with every page — ChatGPT, Claude, Perplexity, Gemini, and Bing AI parse TEKKY cleanly when someone asks for soccer training in your area.",
+        "<b>Lead-gen data feeds back into the site</b> — anonymized lead counts, audience-mix snapshots, and recent-activity badges store on-site as fresh, indexable signal that search engines re-crawl.",
+        "<b>Sitemap + internal linking auto-regenerate</b> as new audience pages, drills, and case studies land — every funnel addition becomes another SEO surface.",
+        "Result: search rank compounds month over month. Most agencies treat SEO as a separate $1.5k/mo line item; here it's the byproduct of the funnel running.",
+    ]:
+        seo_block.append(Paragraph(f"• {b}", s["bullet"]))
+    flow.append(KeepTogether(seo_block))
 
     flow.append(Spacer(1, 10))
     flow.append(
@@ -941,10 +967,10 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
 
     pricing_data = [
         [
-            Paragraph("<b>Service</b>", s["body"]),
-            Paragraph("<b>Tier</b>", s["body"]),
-            Paragraph("<b>Price</b>", s["body"]),
-            Paragraph("<b>Status</b>", s["body"]),
+            Paragraph("Service", s["body_head"]),
+            Paragraph("Tier", s["body_head"]),
+            Paragraph("Price", s["body_head"]),
+            Paragraph("Status", s["body_head"]),
         ],
         [
             Paragraph("AI System buildout", s["body_muted"]),
@@ -1035,7 +1061,7 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         )
     )
     flow.append(Spacer(1, 4))
-    flow.append(Paragraph("• Q1 — $2,500 at launch (Sunday 2026-05-17)", s["bullet"]))
+    flow.append(Paragraph("• Q1 — $2,500 at launch (Monday 2026-05-18)", s["bullet"]))
     flow.append(Paragraph("• Q2 — $2,500 on 2026-08-17", s["bullet"]))
     flow.append(Paragraph("• Q3 — $2,500 on 2026-11-17", s["bullet"]))
     flow.append(Paragraph("• Q4 — $2,500 on 2027-02-17", s["bullet"]))
@@ -1290,16 +1316,17 @@ def build_onboarding_handoff(s: dict[str, ParagraphStyle]) -> None:
         flow.append(Checkbox(item))
         flow.append(Spacer(1, 4))
 
-    flow.append(Spacer(1, 10))
-    flow.append(FillLine("Voicemail recording date scheduled:", label_width=2.6 * inch))
-    flow.append(Spacer(1, 8))
-    flow.append(FillLine("Calendly / Google Calendar email:", label_width=2.6 * inch))
-    flow.append(Spacer(1, 8))
-    flow.append(FillLine("Preferred contact email for AI replies:", label_width=2.6 * inch))
-
     flow.append(Spacer(1, 16))
-    flow.append(Paragraph("Notes / questions for Ben", s["h3"]))
-    flow.append(WriteBox("", lines=5))
+    flow.append(
+        Paragraph(
+            "<b>Answer the quick-start questions online</b> at "
+            "<font face='Courier'>bluejayportfolio.com/sign/zenith-sports/handoff</font> "
+            "— Ben gets your replies via text + email the moment you submit. "
+            "(Don't fill answers here in the PDF — the online form is the "
+            "single source we operate from.)",
+            s["body_muted"],
+        )
+    )
 
     flow.append(PageBreak())
 
@@ -1925,7 +1952,7 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
     flow.append(AccentBar(ROSE))
     flow.append(Spacer(1, 14))
     flow.append(Paragraph("SUNDAY CUTOVER RUNBOOK", s["cover_eyebrow"]))
-    flow.append(Paragraph("Tekky goes live<br/>2026-05-17, 9:00 AM PT.", s["cover_title"]))
+    flow.append(Paragraph("Tekky goes live<br/>2026-05-18, 9:00 AM PT.", s["cover_title"]))
     flow.append(Spacer(1, 6))
     flow.append(
         Paragraph(
@@ -2179,8 +2206,8 @@ def build_sunday_cutover(s: dict[str, ParagraphStyle]) -> None:
 
     emerg_data = [
         [
-            Paragraph("<b>Symptom</b>", s["body"]),
-            Paragraph("<b>Fix</b>", s["body"]),
+            Paragraph("Symptom", s["body_head"]),
+            Paragraph("Fix", s["body_head"]),
         ],
         [
             Paragraph("tekky.org still hits old registrar after 30 min", s["body_muted"]),

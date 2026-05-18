@@ -25,6 +25,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (
     BaseDocTemplate,
+    Flowable,
     Frame,
     HRFlowable,
     PageBreak,
@@ -81,6 +82,11 @@ BODY = ParagraphStyle(
     fontSize=10, leading=14, textColor=INK,
     spaceAfter=6,
 )
+BODY_HEAD = ParagraphStyle(
+    "BodyHead", parent=styles["Normal"],
+    fontSize=10, leading=14, textColor=WHITE,
+    fontName="Helvetica-Bold", spaceAfter=0,
+)
 SMALL = ParagraphStyle(
     "Small", parent=styles["Normal"],
     fontSize=9, leading=12, textColor=SLATE,
@@ -110,8 +116,8 @@ def chip(text: str, bg=SKY) -> Table:
 def commitment_table(rows):
     """Two-column commitment table: lane | response window."""
     data = [
-        [Paragraph("<b>Channel / scenario</b>", BODY),
-         Paragraph("<b>Our commitment</b>", BODY)],
+        [Paragraph("Channel / scenario", BODY_HEAD),
+         Paragraph("Our commitment", BODY_HEAD)],
     ]
     for left, right in rows:
         data.append([Paragraph(left, BODY), Paragraph(right, BODY)])
@@ -132,23 +138,79 @@ def commitment_table(rows):
     return t
 
 
+_FIELD_SEQ = [0]
+
+
+def _next_field_name(prefix: str) -> str:
+    _FIELD_SEQ[0] += 1
+    return f"{prefix}_{_FIELD_SEQ[0]}"
+
+
+class FillLine(Flowable):
+    """Labeled blank line with an overlay AcroForm text field.
+
+    Click + type in any PDF reader (Preview, Acrobat, Edge, Chrome).
+    Printed copies show a hairline rule, so it works on paper too.
+    """
+
+    def __init__(self, label: str, label_width: float = 1.6 * inch,
+                 height: float = 22) -> None:
+        super().__init__()
+        self.label = label
+        self.label_width = label_width
+        self.height = height
+        self.width = 0.0
+        self.field_name = _next_field_name("text")
+
+    def wrap(self, avail_width: float, avail_height: float):
+        self.width = avail_width
+        return avail_width, self.height
+
+    def draw(self) -> None:
+        c = self.canv
+        c.setFont("Helvetica-Bold", 10)
+        c.setFillColor(INK)
+        c.drawString(0, 7, self.label)
+        line_start = self.label_width
+        line_end = self.width
+        c.setStrokeColor(colors.HexColor("#94a3b8"))
+        c.setLineWidth(0.6)
+        c.line(line_start, 4, line_end, 4)
+        try:
+            abs_x, abs_y = c.absolutePosition(line_start, 0)
+            c.acroForm.textfield(
+                name=self.field_name,
+                tooltip=self.label,
+                x=abs_x,
+                y=abs_y,
+                width=line_end - line_start,
+                height=self.height - 4,
+                fontSize=11,
+                fillColor=colors.transparent,
+                borderColor=colors.transparent,
+                textColor=INK,
+                forceBorder=False,
+            )
+        except Exception:
+            pass
+
+
 def signature_block():
-    data = [
-        [Paragraph("<b>Client signature</b>", BODY), Paragraph("<b>Date</b>", BODY)],
-        [Paragraph("&nbsp;", BODY), Paragraph("&nbsp;", BODY)],
-        [Paragraph("<b>Printed name</b>", BODY), Paragraph("<b>Title</b>", BODY)],
-        [Paragraph("&nbsp;", BODY), Paragraph("&nbsp;", BODY)],
+    """Stacked fillable fields: signature, date, printed name, title.
+
+    Each line is a real AcroForm text field — Paul or Philip can click
+    and type directly in their PDF reader. Hairline rule below each
+    label keeps printed copies usable too.
+    """
+    return [
+        FillLine("Client signature:", label_width=2.0 * inch),
+        Spacer(1, 10),
+        FillLine("Date:", label_width=2.0 * inch),
+        Spacer(1, 10),
+        FillLine("Printed name:", label_width=2.0 * inch),
+        Spacer(1, 10),
+        FillLine("Title:", label_width=2.0 * inch),
     ]
-    t = Table(data, colWidths=[3.4 * inch, 3.4 * inch])
-    t.setStyle(TableStyle([
-        ("LINEBELOW", (0, 1), (-1, 1), 0.6, INK),
-        ("LINEBELOW", (0, 3), (-1, 3), 0.6, INK),
-        ("LEFTPADDING", (0, 0), (-1, -1), 0),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 18),
-    ]))
-    return t
 
 
 def build():
@@ -259,7 +321,8 @@ def build():
         BODY,
     ))
     bullets = [
-        "<b>1 strategy call per month</b> (30 min, recorded, shareable with your team).",
+        "<b>Weekly 20-minute strategy call</b> during the 30-day install rollout, "
+        "then once per month after — recorded, shareable with your team.",
         "<b>2 SMS lifelines</b> per month (define above).",
         "<b>Weekly progress email</b> every Friday (8a PT) showing what shipped, "
         "what's in flight, and the leads/funnel numbers for the week.",
@@ -336,8 +399,9 @@ def build():
         "<font color='#0ea5e9'>bluejayportfolio.com/onboarding/bluejays-sla.pdf</font>.",
         BODY,
     ))
-    story.append(Spacer(1, 30))
-    story.append(signature_block())
+    story.append(Spacer(1, 24))
+    for el in signature_block():
+        story.append(el)
 
     story.append(Spacer(1, 24))
     story.append(HRFlowable(width="100%", thickness=0.6, color=SLATE))

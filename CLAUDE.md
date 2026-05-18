@@ -124,6 +124,7 @@ every slug.
 | `mountain-view-landscape` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `lewis-county-autism` | ✗ | ✗ | ✗ | Inquire-only routing |
 | `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |
+| `thrive-church-sequim` | ✗ | ✗ | ✗ | Thrive Church · Sequim WA · custom-tier bespoke build · warm-cream + deep teal + amber palette · Connect Card + Prayer Request forms route to office@thrivesequim.com · launched 2026-05-18 |
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
 
 **Rules when adding a tenant-facing feature:**
@@ -2755,6 +2756,130 @@ with a "Start fresh" reset link.
 Don't ship any new client-facing acknowledgment / sign-off form without
 the same auto-save behavior. The bigger-picture rule: anything that
 asks a client to fill 5+ fields in one shot needs draft persistence.
+
+### Value-proof strip + payment CTA + form UX (locked 2026-05-18 after Tekky launch)
+
+Three extensions added to `OnboardDoc` after the first AI System
+($10k tier) launch. These turn the sign page from "paperwork to scroll
+past" into "value reinforcement that closes the loop." Every AI System
+client's `handoff` doc MUST use all three. Brand-voice + SLA entries
+skip them (those are ack-only).
+
+**1. `valueProof` (renders above the PDF embed):**
+
+```typescript
+valueProof: {
+  headline: "Everything already running for [BRAND]",
+  subhead: "Live on [domain] today ([date]). The site, funnel engine, ad library, and SEO layer all shipped before you read this.",
+  bullets: [
+    { title: string, detail: string },  // 5-6 outcomes
+  ],
+}
+```
+
+Renders as the FIRST thing under the page header — eyebrow "Already
+running for you" → headline → subhead → 2-column grid of bullet cards.
+First impression must be VALUE, not paperwork. ALWAYS include the SEO
+bullet ("SEO that compounds (the long-tail engine)" — llms.txt +
+JSON-LD + lead-gen feedback loop framed as a "$1.5k/mo byproduct" vs
+the typical agency line-item). Customize the other bullets per
+client's vertical, lead count, ad creative count, and audience colors.
+
+**2. `paymentLinks` (renders below the sign-off form + reinforced in success state):**
+
+```typescript
+paymentLinks: [
+  {
+    label: "Pay Q1 — $2,500",  // amount MUST mirror PDF pricing table
+    url: process.env.STRIPE_PAYMENT_LINK_[CLIENT]_Q1 || "",
+    description: "Quarterly installment 1 of 4 — ...",
+    badge: "Due at launch ([date])",
+    primary: true,
+  },
+]
+```
+
+- Empty `url` → placeholder card ("Ben will text you the link
+  directly during the call") — never a broken button.
+- When set, renders as a clickable lime CTA opening Stripe in a new
+  tab.
+- The `primary: true` link is ALSO surfaced in the SignForm's success
+  state (post-submit) so clients can't lose the payment path after
+  acknowledging.
+- **Pricing-alignment rule (NON-NEGOTIABLE):** The amount in every
+  `paymentLinks[].label` MUST match the pricing table inside the PDF
+  exactly. The PDF is single source of truth; the in-page CTAs mirror
+  it. If you change one, update the other in the same commit.
+
+**3. Preset chips on `extraQuestions`:**
+
+```typescript
+extraQuestions: [
+  {
+    id: "card_on_file",
+    label: "Card on file for future quarterly installments...",
+    placeholder: "Use my Q1 card · send me the Stripe link · will get later",
+    presets: ["Use the same card I paid Q1 with", "Will get later"],
+  },
+]
+```
+
+Renders as click-to-prefill pill buttons under the input. **Action-
+oriented option goes FIRST**, punt option ("Will get later") goes
+SECOND. Two presets is the sweet spot for forcing-function decisions;
+more than three dilutes.
+
+**Sign-form UX rules (apply to every `/sign/[slug]/[doc]` page):**
+
+1. Submit button disabled until required fields filled (name + ack
+   checkbox). Disabled hint: "Fill in your name and the acknowledgment
+   checkbox to enable submit."
+2. Button text: **"✓ Completed — submit & notify Ben"** (not just
+   "Submit").
+3. Autosave + restore (already documented above) is mandatory.
+4. Success state reinforces the primary payment CTA — never leave a
+   client with "thanks, close the tab" when there's still a payment to
+   collect.
+
+**Stripe Payment Link env-var convention:**
+
+```
+STRIPE_PAYMENT_LINK_[CLIENT_SLUG_UPPER]_Q1   = https://buy.stripe.com/...
+STRIPE_PAYMENT_LINK_[CLIENT_SLUG_UPPER]_FULL = https://buy.stripe.com/...
+```
+
+Set on Vercel Production AND in `.env.local`. Created in Stripe
+Dashboard → Payment Links (NOT Checkout sessions — Payment Links are
+the simpler share-the-URL flow). Receipt text: `Quarterly installment
+N of 4 — AI Marketing System buildout for [BRAND]`.
+
+**ReportLab PDF generator gotchas (NON-NEGOTIABLE):**
+
+When extending or cloning the per-client PDF generator script, four
+ReportLab traps will silently break the output:
+
+1. **Table headers on dark backgrounds need a dedicated white-text
+   `ParagraphStyle`.** `TableStyle("TEXTCOLOR", ..., WHITE)` does NOT
+   override a Paragraph's baked-in `textColor`. The dark-on-dark bug
+   that ate Tekky's SLA tables came from this. Pattern: define
+   `BODY_HEAD` / `s["body_head"]` with `textColor=WHITE` +
+   `fontName="Helvetica-Bold"`, use for every header cell on a NAVY/
+   dark background.
+2. **`quote_amber` (or any styled callout with `borderPadding`) needs
+   `spaceBefore >= borderPadding + 4`.** Tekky shipped with
+   `spaceBefore=4` against `borderPadding=10` — amber box top edge
+   covered the line above by 6pt. Rule: any style with
+   `borderPadding=N` sets `spaceBefore >= N + 4`.
+3. **Wrap multi-bullet subsections in `KeepTogether`** to prevent the
+   header from orphaning on the previous page with bullets stranded
+   on the next. Apply to any h3 + 3+ bullets block.
+4. **Reuse the `FillLine` Flowable** for any clickable signature/date
+   field — works in Preview/Acrobat/Edge/Chrome AND prints with a
+   hairline rule. Don't re-implement.
+
+For the full per-client onboarding checklist (4 PDFs + 3 sign URLs +
+launch-date sync + visual verification workflow), see
+`docs/AI_PACKAGE_PLAYBOOK.md` → "Launch-day artifacts" subsection.
 
 ---
 

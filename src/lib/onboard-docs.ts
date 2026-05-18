@@ -27,7 +27,43 @@ export type OnboardDoc = {
   /** Optional one-line description shown to the signer. */
   description?: string;
   /** Extra free-form questions appended to the sign-off form. */
-  extraQuestions?: { id: string; label: string; placeholder?: string }[];
+  extraQuestions?: {
+    id: string;
+    label: string;
+    placeholder?: string;
+    /** Optional click-to-prefill chips shown beneath the input. */
+    presets?: string[];
+  }[];
+  /**
+   * Optional "what's already running for you" value-proof strip rendered
+   * above the PDF embed. Bold headline + bullet list. First impression =
+   * value, not paperwork.
+   */
+  valueProof?: {
+    headline: string;
+    subhead?: string;
+    bullets: { title: string; detail: string }[];
+  };
+  /**
+   * Optional Stripe Payment Links shown at the bottom of the sign page
+   * (and reinforced in the post-submit success state). Numbers MUST match
+   * the pricing table inside the PDF — single source of truth lives in the
+   * PDF generator, mirrored here for the in-page CTAs.
+   *
+   * Set `url` to "" when the Stripe Payment Link hasn't been created yet —
+   * the UI renders a clear placeholder ("Ben will text you the link")
+   * instead of a broken button.
+   */
+  paymentLinks?: {
+    label: string;
+    /** Stripe Payment Link URL. Empty string = placeholder state. */
+    url: string;
+    description?: string;
+    /** Short badge above the label, e.g. "Due at launch". */
+    badge?: string;
+    /** Style the first/primary CTA larger + lime; others neutral. */
+    primary?: boolean;
+  }[];
 };
 
 const REGISTRY: OnboardDoc[] = [
@@ -43,80 +79,95 @@ const REGISTRY: OnboardDoc[] = [
       "matrix, pricing breakdown, account-creation permissions, and " +
       "card-on-file policy. Read through and confirm below. " +
       "Note: Phase A build work begins the business day Q1 payment clears.",
+    valueProof: {
+      headline: "What's already built for TEKKY",
+      subhead:
+        "Preview-ready as of Monday 2026-05-18. The funnel engine, ad library, " +
+        "SEO layer, and portal cockpit are built and waiting. Final " +
+        "tekky.org domain flip + Shopify shop integration come this week — " +
+        "those are on Ben, no work needed from you.",
+      bullets: [
+        {
+          title: "Bespoke TEKKY website (preview live)",
+          detail:
+            "Built ground-up to the TEKKY brand — not a template. Preview live at bluejayportfolio.com/clients/zenith-sports. Final tekky.org domain flip + Shopify shop integration come this week — Ben handling.",
+        },
+        {
+          title: "986 leads pre-loaded + color-coded",
+          detail:
+            "Parent / coach / player / club audiences with Cmd-K search and bulk-action toolbar in your portal.",
+        },
+        {
+          title: "43 ad creatives + 6-touch funnels",
+          detail:
+            "Meta Feed/Reels/Stories, Google Search/PMax/YouTube, Lob direct mail — paired with audience-specific email sequences that fire on day offsets.",
+        },
+        {
+          title: "SEO that compounds (the long-tail engine)",
+          detail:
+            "llms.txt + JSON-LD structured data ship with every page so ChatGPT, Claude, Perplexity, Gemini, and Bing AI parse TEKKY cleanly. Every lead captured feeds back into the site as fresh on-page signal — search rank quietly compounds month over month. Most agencies bill this as a separate $1.5k/mo line item; here it's the byproduct of the funnel running.",
+        },
+        {
+          title: "Tracking layer already firing",
+          detail:
+            "Microsoft Clarity heatmaps, Meta Pixel, GA4 — every click, scroll depth, and conversion event captured from day one. You'll have audience-specific conversion rates by week 2.",
+        },
+        {
+          title: "AI Reply Drafter + Drill of Week (Phase A)",
+          detail:
+            "Personalized email drafts in your voice (you hit send) and an auto-broadcast drill to your coach list every Tuesday 9am PT — already LIVE.",
+        },
+      ],
+    },
     extraQuestions: [
       {
         id: "account_creation_permission",
         label:
           "Do I have your permission to create accounts on TEKKY's behalf? (yes / no)",
         placeholder: "yes — proceed with Phase A account stand-up",
+        presets: ["Yes — proceed", "Wait — let's discuss first"],
       },
       {
         id: "preferred_email_for_accounts",
         label:
-          "Preferred email username for new accounts (or give me a login you already have)",
-        placeholder: "info@tekky.org · admin@zenithsports.org · etc.",
-      },
-      {
-        id: "voicemail_date",
-        label: "When can you block 30 min to record voicemail clips?",
-        placeholder: "e.g. Tuesday 2pm PT",
-      },
-      {
-        id: "preferred_ai_email",
-        label: "Preferred contact email for AI-drafted replies",
-        placeholder: "paul@zenithsports.org",
-      },
-      {
-        id: "twilio_number_style",
-        label:
-          "Twilio number preference — local Pacific NW area code, or a vanity number (e.g. 1-855-TEKKY-01)?",
-        placeholder: "local PNW · vanity 1-855-TEKKY-01 · no preference",
-      },
-      {
-        id: "fourth_audience",
-        label:
-          "Want a 4th audience added before Phase A launches (e.g. 'trainer' or 'academy'), or stick with parent / coach / player / club?",
-        placeholder: "stick with 4 · add 'trainer' · add 'academy' · etc.",
+          "Preferred email for new accounts (or a login you already have)",
+        placeholder: "info@tekky.org · admin@zenithsports.org",
       },
       {
         id: "owner_cell",
         label:
-          "Your direct cell number — used for owner SMS alerts (new leads, urgent funnel issues, AI flags).",
-        placeholder: "e.g. (360) 555-1234",
-      },
-      {
-        id: "philip_contact",
-        label:
-          "Philip's best cell + email — backup contact when you're unreachable.",
-        placeholder: "(360) 555-9876 · philip@zenithsports.org",
+          "Your direct cell — used for owner SMS alerts (new leads, AI flags, urgent funnel issues).",
+        placeholder: "(360) 555-1234",
       },
       {
         id: "existing_accounts",
         label:
-          "What accounts already exist that I should take over instead of creating fresh? (Shopify admin, Google Business Profile, Meta Business Manager, Google Ads, Mailchimp / ConvertKit / Klaviyo, anything else)",
+          "Existing accounts I should take over instead of creating fresh (Shopify · GBP · Meta BM · Google Ads · email tool)",
         placeholder:
           "Shopify yes (zenithsports.org) · GBP no · Meta BM no · Google Ads no · email tool: none",
       },
       {
         id: "customer_list",
         label:
-          "Do you have an existing customer or email list I can import (CSV / Shopify export / Mailchimp / Klaviyo)? If yes, roughly how many contacts and what segments (parents / coaches / players / past buyers)?",
-        placeholder:
-          "Shopify: ~120 past buyers · email newsletter: ~400 parents",
+          "Customer or email list to import? Rough size + segments (parents / coaches / past buyers)",
+        placeholder: "Shopify: ~120 past buyers · newsletter: ~400 parents",
       },
       {
-        id: "ad_geography",
+        id: "card_on_file",
         label:
-          "Where should paid ads run first? National, Pacific NW only, specific clubs / states / metros?",
-        placeholder:
-          "Pacific NW first (WA, OR, ID) · then expand national after 30 days",
+          "Card on file for future quarterly installments + managed services (Twilio, ad spend). Q1 is already paid — this is for what comes after.",
+        placeholder: "Use my Q1 card · send me the Stripe link · will get later",
+        presets: ["Use the same card I paid Q1 with", "Will get later"],
       },
+    ],
+    paymentLinks: [
       {
-        id: "business_hours",
-        label:
-          "Business hours — when should the AI auto-reply switch into 'after hours' tone? Also: any days closed?",
-        placeholder:
-          "Mon-Fri 8a-6p PT, Sat 9a-2p, closed Sun · after-hours = AI promises reply next morning",
+        label: "Pay Q1 — $2,500",
+        url: process.env.STRIPE_PAYMENT_LINK_TEKKY_Q1 || "",
+        description:
+          "Quarterly installment 1 of 4 — the launch payment. Unlocks Phase A build work the business day funds clear.",
+        badge: "Due at launch (Monday 2026-05-18)",
+        primary: true,
       },
     ],
   },
