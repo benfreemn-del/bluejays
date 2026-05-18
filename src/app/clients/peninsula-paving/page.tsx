@@ -1244,17 +1244,15 @@ const PENINSULA_CITIES: Array<{
   labelDy: number;
   anchor: "start" | "middle" | "end";
 }> = [
+  // Trimmed to 6 well-spaced hubs so labels don't crash into each
+  // other. The smaller towns (Carlsborg, Dungeness, Blyn, Diamond
+  // Point, Gardiner, Chimacum) are still covered — they live in the
+  // BUSINESS.serviceArea chip list rendered in the Contact section.
   { name: "Forks", lat: 47.951, lon: -124.385, major: true, labelDx: 18, labelDy: 5, anchor: "start" },
   { name: "Joyce", lat: 48.176, lon: -123.793, labelDx: 0, labelDy: -14, anchor: "middle" },
   { name: "Port Angeles", lat: 48.118, lon: -123.430, major: true, labelDx: 0, labelDy: -16, anchor: "middle" },
-  { name: "Dungeness", lat: 48.155, lon: -123.110, labelDx: -14, labelDy: -8, anchor: "end" },
-  { name: "Carlsborg", lat: 48.084, lon: -123.161, labelDx: -16, labelDy: 18, anchor: "end" },
   { name: "Sequim", lat: 48.078, lon: -123.108, major: true, labelDx: 0, labelDy: 22, anchor: "middle" },
-  { name: "Blyn", lat: 48.020, lon: -122.990, labelDx: 0, labelDy: 22, anchor: "middle" },
-  { name: "Diamond Point", lat: 48.041, lon: -122.946, labelDx: 16, labelDy: -10, anchor: "start" },
-  { name: "Gardiner", lat: 48.040, lon: -122.928, labelDx: 18, labelDy: 6, anchor: "start" },
   { name: "Port Townsend", lat: 48.117, lon: -122.760, major: true, labelDx: 18, labelDy: 6, anchor: "start" },
-  { name: "Chimacum", lat: 48.022, lon: -122.778, labelDx: 18, labelDy: 6, anchor: "start" },
   { name: "Quilcene", lat: 47.823, lon: -122.872, labelDx: 18, labelDy: 6, anchor: "start" },
 ];
 
@@ -1474,11 +1472,12 @@ function PeninsulaRouteMap() {
         })}
       </svg>
 
-      {/* Caption below — appears after everything else lands. */}
+      {/* Caption below — display-size italic so it actually lands as
+          the closing line, not a forgettable footnote. */}
       <p
-        className="mt-5 text-center text-[13px] sm:text-[14px] italic"
+        className="mt-8 sm:mt-10 text-center text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.3] italic max-w-3xl mx-auto"
         style={{
-          color: INK_DIM,
+          color: INK,
           fontFamily: FONT_SERIF,
           opacity: animated ? 1 : 0,
           transition: `opacity 0.6s ease-out ${
@@ -1486,8 +1485,9 @@ function PeninsulaRouteMap() {
           }s`,
         }}
       >
-        ~ 110 miles end to end. The truck knows every mile from Sequim
-        to Forks.
+        ~ 110 miles end to end. The truck knows{" "}
+        <span style={{ color: ACCENT_DEEP, fontWeight: 600 }}>every mile</span>{" "}
+        from Sequim to Forks.
       </p>
     </div>
   );
