@@ -93,25 +93,53 @@ const BUSINESS = {
 } as const;
 
 /* ───────────────────────── COLORS ───────────────────────── */
-// Dark asphalt + warm copper. Distinct from Meyer Electric's yellow.
-const BG = "#0a0a0a";
-const BG_ALT = "#111111";
-const BG_PANEL = "#161412";
-const ACCENT = "#ea580c"; // orange-600 — primary copper
-const ACCENT_HOT = "#fb923c"; // orange-400 — highlights
-const ACCENT_DEEP = "#c2410c"; // orange-700 — depth
-const ACCENT_DIM = "rgba(234, 88, 12, 0.18)";
-const ACCENT_DIM_2 = "rgba(234, 88, 12, 0.10)";
+// FOUR-color palette built around the paving + Pacific Northwest
+// story: copper (fresh asphalt at sunset), olive (PNW forest +
+// rooted), sky (Strait of Juan de Fuca + Olympic sky), and warm
+// cream (the light surfaces asphalt sits against — driveway gravel,
+// concrete curbs, sea-spray sand). Adds chromatic variety to break
+// the all-dark fatigue without losing the trade-dress weight.
+const BG = "#0c0908";          // warm near-black (not pure #0a — brown undertone)
+const BG_ALT = "#161210";      // warmer charcoal panel
+const BG_PANEL = "#1e1814";    // distinctly warmer brown-black for cards (was #161412)
+const BG_WARM = "#221a14";     // alt section bg — coffee-brown for variety
+// Warm-cream light section background — used on the Route Map section
+// so the page has at least one daylight breath. Reads like an NPS park
+// map. Dark text on cream returns 12:1+ contrast, biggest readability
+// win on the page.
+const BG_CREAM = "#f5efe6";
+const BG_CREAM_ALT = "#eee4d3";
+
+const ACCENT = "#ea580c";        // orange-600 — primary copper (fresh-laid asphalt)
+const ACCENT_HOT = "#fb923c";    // orange-400 — highlight
+const ACCENT_DEEP = "#c2410c";   // orange-700 — depth
+const ACCENT_DIM = "rgba(234, 88, 12, 0.22)";   // was 0.18 — slightly punchier
+const ACCENT_DIM_2 = "rgba(234, 88, 12, 0.12)"; // was 0.10
+
 const INK = "#f8fafc";
-const INK_SOFT = "rgba(255, 255, 255, 0.78)";
-const INK_DIM = "rgba(255, 255, 255, 0.55)";
+// Text opacity floors lifted for legibility on the dark+warm bg.
+// Was 0.78 → 0.86 for body. Was 0.55 → 0.72 for captions. Bigger
+// readability win than any palette change.
+const INK_SOFT = "rgba(255, 255, 255, 0.86)";
+const INK_DIM = "rgba(255, 255, 255, 0.72)";
+// Ink tokens for the cream light section
+const INK_DARK = "#1c1410";       // dark text on cream — coffee-black
+const INK_DARK_SOFT = "rgba(28, 20, 16, 0.82)";
+const INK_DARK_DIM = "rgba(28, 20, 16, 0.62)";
+
 const FIRE_GRAD = `linear-gradient(135deg, ${ACCENT_HOT} 0%, ${ACCENT} 50%, ${ACCENT_DEEP} 100%)`;
-// Olive — PNW grounding tone. Used on Frick family / founder card +
-// Peninsula route map background to anchor the "rooted here" thread
-// alongside the asphalt-copper trade-dress. Distinguishes Peninsula
-// Paving from the surrounding electrical/HVAC/etc trade clones.
-const OLIVE = "#65a30d";       // lime-600 — sage/olive
-const OLIVE_DIM = "rgba(101, 163, 13, 0.18)";
+
+// Olive — PNW grounding tone. Forest + rooted-here vibe.
+const OLIVE = "#84cc16";       // lime-500 — brighter sage (was 600/#65a30d)
+const OLIVE_DEEP = "#4d7c0f";  // olive-700 — darker tone for cream bg
+const OLIVE_DIM = "rgba(132, 204, 22, 0.22)";
+
+// Sky — Strait of Juan de Fuca + Olympic sky. Third color so the page
+// isn't copper-vs-olive only. Used sparingly: route map water, stat
+// numbers, accent glows on the route map.
+const SKY = "#38bdf8";          // sky-400 — Olympic sky
+const SKY_DEEP = "#0284c7";     // sky-600 — for cream-bg
+const SKY_DIM = "rgba(56, 189, 248, 0.18)";
 
 const FONT_HEAD = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
@@ -425,10 +453,16 @@ function ServiceCard({
         borderColor: "rgba(255, 255, 255, 0.08)",
       }}
     >
-      {/* Decorative number in corner */}
+      {/* Decorative number in corner — bumped visibility so the
+          numbering reads as intentional, not invisible. */}
       <span
-        className="absolute top-5 right-5 text-[64px] font-bold leading-none opacity-[0.07] pointer-events-none select-none"
-        style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+        className="absolute top-5 right-5 text-[72px] font-bold leading-none pointer-events-none select-none"
+        style={{
+          color: ACCENT,
+          opacity: 0.18,
+          fontFamily: FONT_HEAD,
+          fontStyle: "italic",
+        }}
       >
         {String(index + 1).padStart(2, "0")}
       </span>
@@ -716,24 +750,24 @@ function AsphaltCrossSection() {
               {/* Label dot */}
               <circle cx={lineX2} cy={midY} r="3" fill={ACCENT} />
 
-              {/* Label text */}
+              {/* Label text — bumped contrast for readability */}
               <text
                 x={labelX}
                 y={midY - 4}
                 textAnchor={labelAnchor}
-                fontSize="14"
+                fontSize="15"
                 fontWeight="700"
-                fill="#f8fafc"
+                fill="#ffffff"
                 fontFamily={FONT_HEAD}
               >
                 {b.name}
               </text>
               <text
                 x={labelX}
-                y={midY + 12}
+                y={midY + 13}
                 textAnchor={labelAnchor}
-                fontSize="11"
-                fill="rgba(248, 250, 252, 0.6)"
+                fontSize="12"
+                fill="rgba(248, 250, 252, 0.85)"
                 fontFamily={FONT_HEAD}
                 dangerouslySetInnerHTML={{ __html: b.spec.replace(/&middot;/g, "·") }}
               />
@@ -805,10 +839,18 @@ function PeninsulaRouteMap() {
           <pattern id="pp-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M 40 0 L 0 0 0 40" fill="none" stroke={ACCENT} strokeWidth="0.4" />
           </pattern>
+          {/* Sky-blue water gradient — Strait of Juan de Fuca + Hood Canal
+              read as PNW saltwater, not dead-black gap. Third color in
+              the palette earns its keep here. */}
           <linearGradient id="pp-map-water" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0c1f1a" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#0a0a0a" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#0c4a6e" stopOpacity="0.95" />
+            <stop offset="50%" stopColor="#075985" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#0c1f1a" stopOpacity="0.7" />
           </linearGradient>
+          {/* Wave detail pattern */}
+          <pattern id="pp-map-waves" width="40" height="8" patternUnits="userSpaceOnUse">
+            <path d="M0 4 Q10 1 20 4 T40 4" fill="none" stroke={SKY} strokeWidth="0.5" opacity="0.4" />
+          </pattern>
         </defs>
 
         {/* Subtle grid */}
@@ -818,14 +860,26 @@ function PeninsulaRouteMap() {
         <path
           d="M0,0 L900,0 L900,170 Q780,150 670,160 Q540,168 410,172 Q280,180 130,168 Q60,158 0,160 Z"
           fill="url(#pp-map-water)"
-          opacity="0.75"
+        />
+        {/* Wave overlay */}
+        <path
+          d="M0,0 L900,0 L900,170 Q780,150 670,160 Q540,168 410,172 Q280,180 130,168 Q60,158 0,160 Z"
+          fill="url(#pp-map-waves)"
+          opacity="0.7"
         />
         {/* Hood Canal (east side water) */}
         <path
           d="M870,170 L900,170 L900,520 L800,520 Q760,440 740,370 Q720,310 760,250 Q800,200 870,170 Z"
           fill="url(#pp-map-water)"
-          opacity="0.6"
+          opacity="0.85"
         />
+        {/* Water labels */}
+        <text x="450" y="90" textAnchor="middle" fontSize="11" fontStyle="italic" fill={SKY} fontFamily={FONT_SERIF} letterSpacing="0.3em" opacity="0.8">
+          STRAIT OF JUAN DE FUCA
+        </text>
+        <text x="845" y="340" textAnchor="middle" fontSize="9" fontStyle="italic" fill={SKY} fontFamily={FONT_SERIF} letterSpacing="0.25em" opacity="0.7" transform="rotate(90 845 340)">
+          HOOD CANAL
+        </text>
 
         {/* Peninsula landmass — rough hand-drawn coast outline */}
         <path
@@ -900,32 +954,34 @@ function PeninsulaRouteMap() {
           </text>
         </g>
 
-        {/* City pins */}
+        {/* City pins — bumped contrast: major labels white, minor 0.9 */}
         {cities.map((c) => (
           <g key={c.name} transform={`translate(${c.x}, ${c.y})`}>
             {/* Pin shadow */}
-            <ellipse cx="0" cy="3" rx={c.major ? 6 : 4} ry="1.5" fill="rgba(0,0,0,0.5)" />
+            <ellipse cx="0" cy="3" rx={c.major ? 6 : 4} ry="1.5" fill="rgba(0,0,0,0.55)" />
             {/* Outer halo */}
-            <circle cx="0" cy="0" r={c.major ? 9 : 6} fill={ACCENT_DIM} />
+            <circle cx="0" cy="0" r={c.major ? 10 : 7} fill={ACCENT_DIM} />
             {/* Inner dot */}
             <circle
               cx="0"
               cy="0"
-              r={c.major ? 4.5 : 3}
+              r={c.major ? 5 : 3.5}
               fill={ACCENT}
-              stroke={BG}
+              stroke="#ffffff"
               strokeWidth="1.5"
             />
-            {/* Label */}
+            {/* Label with text shadow for readability over any bg */}
             <text
               x="0"
-              y={c.major ? -14 : -10}
+              y={c.major ? -15 : -11}
               textAnchor="middle"
-              fontSize={c.major ? 12 : 10}
+              fontSize={c.major ? 13 : 11}
               fontWeight={c.major ? 700 : 600}
-              fill={c.major ? "#f8fafc" : "rgba(248, 250, 252, 0.7)"}
+              fill="#ffffff"
+              opacity={c.major ? 1 : 0.92}
               fontFamily={FONT_HEAD}
               letterSpacing="0.04em"
+              style={{ paintOrder: "stroke", stroke: "rgba(0,0,0,0.6)", strokeWidth: "3px", strokeLinejoin: "round" }}
             >
               {c.name}
             </text>
@@ -964,22 +1020,30 @@ function PeninsulaRouteMap() {
         </text>
       </svg>
 
-      {/* City chip list (mobile-friendly fallback) — also reads as a
-          "we serve here" legend on desktop. */}
-      <div className="px-5 sm:px-7 py-5 border-t" style={{ borderColor: "rgba(255, 255, 255, 0.06)" }}>
+      {/* City chip list — sits below the dark map on the cream section.
+          Cream-toned chips with copper pins so they tie to the section's
+          warm light palette. */}
+      <div
+        className="px-5 sm:px-7 py-5 border-t"
+        style={{
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          background: "rgba(245, 239, 230, 0.03)",
+        }}
+      >
         <div className="flex flex-wrap gap-1.5">
           {BUSINESS.serviceArea.map((city) => (
             <span
               key={city}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[12px] font-semibold"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-[12px] font-semibold"
               style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                color: "#e2e8f0",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                background: "rgba(245, 239, 230, 0.95)",
+                color: INK_DARK,
+                border: `1px solid rgba(234, 88, 12, 0.3)`,
                 fontFamily: FONT_HEAD,
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.25)",
               }}
             >
-              <MapPin size={11} weight="fill" style={{ color: ACCENT }} />
+              <MapPin size={11} weight="fill" style={{ color: ACCENT_DEEP }} />
               {city}
             </span>
           ))}
@@ -1611,37 +1675,91 @@ export default function PeninsulaPavingPage() {
         </section>
 
         {/* ─────────────── SERVICE AREA — PENINSULA ROUTE MAP ─────────────── */}
-        {/* Bespoke hand-drawn-feeling map of the Olympic Peninsula with
-            the 12 cities pinned along Hwy 101 + the Strait of Juan de Fuca
-            coastline. Replaces the abstract compass-rose (too generic).
-            Olive sage water + copper road + city pins read as "the truck
-            knows these roads" — a paving brand telling its own story. */}
+        {/* WARM CREAM LIGHT SECTION — the only daylight breath on a
+            mostly-dark page. Hand-drawn Peninsula route map reads
+            like an NPS park guide on cream, dark text returns
+            >12:1 contrast, and the section gives the eye a rest after
+            ~6 dark sections in a row. Resolves Ben's "way too dark"
+            complaint without losing the trade-dress weight. */}
         <section
           id="service-area"
           className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
-          style={{ background: BG_ALT }}
+          style={{
+            background: `radial-gradient(ellipse at top, ${BG_CREAM} 0%, ${BG_CREAM_ALT} 100%)`,
+          }}
         >
+          {/* Faint topo lines on the cream bg */}
+          <svg
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern
+                id="pp-area-topo"
+                width="200"
+                height="80"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M0 40 Q50 20 100 40 T200 40 M0 60 Q50 40 100 60 T200 60"
+                  fill="none"
+                  stroke={OLIVE_DEEP}
+                  strokeWidth="0.7"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#pp-area-topo)" />
+          </svg>
+
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-            <SectionHeader
-              eyebrow="Service Area"
-              title="Every paved mile from"
-              highlight="Sequim to Forks."
-              subtitle="If you're on the Olympic Peninsula &mdash; Clallam, Jefferson, or northern Mason County &mdash; we'll come walk the site. The truck knows these roads."
-            />
+            {/* Light-theme section header (override the dark default) */}
+            <div className="max-w-3xl text-center mx-auto mb-10 sm:mb-12">
+              <div
+                className="inline-flex items-center gap-3 text-[11px] tracking-[0.28em] uppercase font-semibold mb-5"
+                style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
+              >
+                <span
+                  className="inline-block w-8 h-px"
+                  style={{ background: ACCENT_DEEP }}
+                />
+                Service Area
+                <span
+                  className="inline-block w-8 h-px"
+                  style={{ background: ACCENT_DEEP }}
+                />
+              </div>
+              <h2
+                className="text-[32px] sm:text-[44px] lg:text-[54px] font-bold tracking-tight leading-[1.05]"
+                style={{ color: INK_DARK, fontFamily: FONT_HEAD }}
+              >
+                Every paved mile from{" "}
+                <span style={{ color: ACCENT_DEEP }}>Sequim to Forks.</span>
+              </h2>
+              <p
+                className="mt-4 sm:mt-5 text-[16px] sm:text-[18px] leading-relaxed max-w-2xl mx-auto"
+                style={{ color: INK_DARK_SOFT, fontFamily: FONT_BODY }}
+              >
+                If you&apos;re on the Olympic Peninsula &mdash; Clallam,
+                Jefferson, or northern Mason County &mdash; we&apos;ll come
+                walk the site. The truck knows these roads.
+              </p>
+            </div>
 
             <PeninsulaRouteMap />
 
             <div className="mt-12 text-center">
               <p
                 className="text-[14px] mb-4"
-                style={{ color: INK_DIM, fontFamily: FONT_BODY }}
+                style={{ color: INK_DARK_DIM, fontFamily: FONT_BODY }}
               >
-                Outside this list? Call us anyway &mdash; we may still come out.
+                Outside this list? Call us anyway &mdash; we may still come
+                out.
               </p>
               <a
                 href={BUSINESS.phoneHref}
-                className="inline-flex items-center gap-2 px-6 h-12 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-95"
-                style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+                className="inline-flex items-center gap-2 px-6 h-12 rounded-md font-bold uppercase tracking-wide text-[13px] text-white transition-all hover:brightness-110 active:scale-95 shadow-[0_4px_14px_rgba(234,88,12,0.4)]"
+                style={{ background: ACCENT_DEEP, fontFamily: FONT_HEAD }}
               >
                 <Phone size={14} weight="fill" />
                 {BUSINESS.phoneDisplay}
@@ -1655,11 +1773,13 @@ export default function PeninsulaPavingPage() {
             comparison table. A labeled cutaway showing the four asphalt
             layers + sealcoat + striping — the actual engineering that
             separates a 25-year driveway from a 5-year one. Educational +
-            paving-native. Most paving sites just show finished asphalt
-            photos. This shows what's underneath. */}
+            paving-native. Uses warm coffee-brown bg so it differentiates
+            from the surrounding charcoal sections. */}
         <section
           className="py-20 sm:py-24 lg:py-32 relative overflow-hidden"
-          style={{ background: BG }}
+          style={{
+            background: `radial-gradient(ellipse at 50% 0%, ${BG_WARM} 0%, ${BG} 70%)`,
+          }}
         >
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
             <SectionHeader
