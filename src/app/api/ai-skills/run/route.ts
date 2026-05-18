@@ -29,22 +29,14 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { runSkill } from "@/lib/ai-skills/runner";
+import { isValidBearer } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // some skills (weekly-review on Opus) can take ~60s
 
 function authorize(req: NextRequest): { ok: boolean; reason?: string } {
-  const auth = req.headers.get("authorization") || "";
-  const bearer = auth.toLowerCase().startsWith("bearer ")
-    ? auth.slice(7).trim()
-    : "";
-  const adminToken = process.env.ADMIN_PASSWORD || "";
-  const cronSecret = process.env.CRON_SECRET || "";
-
-  // Vercel injects the cron secret automatically when cron fires.
-  if (cronSecret && bearer === cronSecret) return { ok: true };
-  if (adminToken && bearer === adminToken) return { ok: true };
+  if (isValidBearer(req)) return { ok: true };
   return { ok: false, reason: "missing or invalid bearer token" };
 }
 

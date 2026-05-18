@@ -26,23 +26,12 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { isValidBearer, describeBearerEnv } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const GRAPH_BASE = "https://graph.facebook.com";
-
-function authorize(req: NextRequest): boolean {
-  const auth = req.headers.get("authorization") || "";
-  const bearer = auth.toLowerCase().startsWith("bearer ")
-    ? auth.slice(7).trim()
-    : "";
-  const adminToken = process.env.ADMIN_PASSWORD || "";
-  const cronSecret = process.env.CRON_SECRET || "";
-  if (cronSecret && bearer === cronSecret) return true;
-  if (adminToken && bearer === adminToken) return true;
-  return false;
-}
 
 type GraphErrorResponse = {
   error?: { code?: number; message?: string; type?: string };
@@ -72,9 +61,13 @@ async function graphGet<T>(
 }
 
 export async function GET(request: NextRequest) {
-  if (!authorize(request)) {
+  if (!isValidBearer(request)) {
     return NextResponse.json(
-      { ok: false, error: "missing or invalid bearer token" },
+      {
+        ok: false,
+        error: "missing or invalid bearer token",
+        env_check: describeBearerEnv(),
+      },
       { status: 401 },
     );
   }
