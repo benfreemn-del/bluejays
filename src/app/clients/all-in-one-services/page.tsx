@@ -54,6 +54,8 @@ import StickyNav from "./sticky-nav";
 import AIOSContactForm from "./contact-form";
 import AIOSMark from "./aios-mark";
 import HouseAnimation from "./house-animation";
+import ScrollProgress from "./scroll-progress";
+import GoogleReviewBadge from "./google-review-badge";
 import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS DATA ───────────────────────── */
@@ -236,6 +238,56 @@ const fadeUp = {
 };
 
 /* ───────────────────────── REUSABLE COMPONENTS ───────────────────────── */
+
+/**
+ * SectionTint — a subtle colored radial-gradient atmosphere layer
+ * placed inside each section to give it its own visual identity
+ * without breaking the cream/stone alternation. Soft opacity so the
+ * effect is felt, not seen.
+ *
+ * Use one per section, positioned at a corner or edge. The section
+ * must have `relative overflow-hidden` for the tint to clip cleanly.
+ */
+function SectionTint({
+  color,
+  position = "tl",
+  size = 720,
+  opacity = 0.10,
+}: {
+  /** Hex or rgb. The opacity prop layers on top. */
+  color: string;
+  position?: "tl" | "tr" | "bl" | "br" | "center";
+  size?: number;
+  opacity?: number;
+}) {
+  const pos: Record<string, React.CSSProperties> = {
+    tl: { top: -size / 3, left: -size / 3 },
+    tr: { top: -size / 3, right: -size / 3 },
+    bl: { bottom: -size / 3, left: -size / 3 },
+    br: { bottom: -size / 3, right: -size / 3 },
+    center: { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
+  };
+  // Convert hex to rgba with opacity
+  let rgba = color;
+  if (color.startsWith("#") && color.length === 7) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    rgba = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        ...pos[position],
+        width: size,
+        height: size,
+        background: `radial-gradient(circle, ${rgba} 0%, transparent 70%)`,
+      }}
+      aria-hidden="true"
+    />
+  );
+}
 
 function SectionNumber({
   n,
@@ -571,7 +623,9 @@ export default function AllInOneServicesPage() {
         className="min-h-screen"
         style={{ background: BG, color: INK, fontFamily: FONT_BODY }}
       >
+        <ScrollProgress />
         <StickyNav />
+        <GoogleReviewBadge />
 
         {/* ────────────────────── 01 · HERO (editorial split) ────────────────────── */}
         <section className="relative">
@@ -776,9 +830,10 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 02 · MANIFESTO (cream) ────────────────────── */}
-        <section className="relative" style={{ background: CREAM_BG }}>
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+        {/* ────────────────────── 02 · MANIFESTO (Paper + moss tint) ────────────────────── */}
+        <section className="relative overflow-hidden" style={{ background: CREAM_BG }}>
+          <SectionTint color={MOSS} position="tl" opacity={0.08} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="02" label="Who builds your project" tone="blueprint" theme="cream" />
             <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16">
               <div>
@@ -847,13 +902,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 03 · THE TRANSFORMATIONS ────────────────────── */}
+        {/* ────────────────────── 03 · THE TRANSFORMATIONS (Stone + copper) ────────────────────── */}
         <section
           id="transformations"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={ACCENT} position="tr" opacity={0.07} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
               <div className="max-w-2xl">
                 <SectionNumber n="03" label="The transformations" />
@@ -1028,13 +1084,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 04 · NAMED PROJECTS (cream) ────────────────────── */}
+        {/* ────────────────────── 04 · NAMED PROJECTS (Paper + moss BR) ────────────────────── */}
         <section
           id="projects"
-          className="relative"
+          className="relative overflow-hidden"
           style={{ background: CREAM_BG }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={MOSS_LIGHT} position="br" opacity={0.10} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
               <div className="max-w-2xl">
                 <SectionNumber n="04" label="Named projects" tone="blueprint" theme="cream" />
@@ -1110,13 +1167,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 05 · MATERIALS / THE CRAFT ────────────────────── */}
+        {/* ────────────────────── 05 · THE CRAFT (Stone + copper TL) ────────────────────── */}
         <section
           id="craft"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.08} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="05" label="The craft" />
             <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
               <div>
@@ -1171,13 +1229,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 06 · WHAT WE BUILD ────────────────────── */}
+        {/* ────────────────────── 06 · WHAT WE BUILD (Paper + moss TR) ────────────────────── */}
         <section
           id="services"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={MOSS} position="tr" opacity={0.09} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="06" label="What we build" tone="blueprint" />
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16">
               <div>
@@ -1253,13 +1312,15 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 07 · THE TIMELINE ────────────────────── */}
+        {/* ────────────────────── 07 · TIMELINE (Stone + gold TL) ────────────────────── */}
         <section
           id="timeline"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={ACCENT_GOLD} position="tl" opacity={0.08} />
+          <SectionTint color={MOSS_LIGHT} position="br" opacity={0.06} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
               <div className="max-w-2xl">
                 <SectionNumber n="07" label="The timeline" />
@@ -1327,13 +1388,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 08 · CREDENTIALS (cream) ────────────────────── */}
+        {/* ────────────────────── 08 · CREDENTIALS (Paper + moss center) ────────────────────── */}
         <section
           id="credentials"
-          className="relative"
+          className="relative overflow-hidden"
           style={{ background: CREAM_BG }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={MOSS} position="center" opacity={0.07} size={900} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="08" label="Receipts, not slogans" tone="blueprint" theme="cream" />
             <h2
               className="font-bold tracking-tight leading-[1.02] mb-10 max-w-3xl"
@@ -1459,13 +1521,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 09 · VOICES ────────────────────── */}
+        {/* ────────────────────── 09 · VOICES (Stone + copper BL) ────────────────────── */}
         <section
           id="voices"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={ACCENT} position="bl" opacity={0.08} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="09" label="What Kyle's customers say" />
             <h2
               className="font-bold tracking-tight leading-[1.02] mb-12 max-w-3xl"
@@ -1543,13 +1606,15 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 10 · WHERE WE BUILD ────────────────────── */}
+        {/* ────────────────────── 10 · COVERAGE (Paper + moss BR) ────────────────────── */}
         <section
           id="coverage"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ borderColor: RULE }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
+          <SectionTint color={MOSS_LIGHT} position="br" opacity={0.09} />
+          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.05} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="10" label="Where we build" tone="blueprint" />
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16 items-start">
               <div>
@@ -1645,31 +1710,14 @@ export default function AllInOneServicesPage() {
           </div>
         </section>
 
-        {/* ────────────────────── 11 · ESTIMATE ────────────────────── */}
+        {/* ────────────────────── 11 · ESTIMATE (Stone + double copper energy) ────────────────────── */}
         <section
           id="estimate"
-          className="relative border-t"
+          className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            aria-hidden="true"
-          >
-            <div
-              className="absolute -left-40 top-1/4 w-[520px] h-[520px] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(217, 119, 6, 0.14) 0%, rgba(217, 119, 6, 0) 70%)",
-              }}
-            />
-            <div
-              className="absolute -right-40 bottom-0 w-[480px] h-[480px] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(252, 211, 77, 0.10) 0%, rgba(252, 211, 77, 0) 70%)",
-              }}
-            />
-          </div>
+          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.10} size={800} />
+          <SectionTint color={ACCENT_GOLD} position="br" opacity={0.08} size={800} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14">
               <div>
