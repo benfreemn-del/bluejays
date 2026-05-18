@@ -26,6 +26,13 @@ export type OnboardDoc = {
   alertSubject: string;
   /** Optional one-line description shown to the signer. */
   description?: string;
+  /**
+   * Display ordering inside the per-client portal Docs tab. Lower
+   * numbers render first. Entries without `displayOrder` fall to the
+   * end in registry order. Use round numbers (10/20/30) so future docs
+   * can slot between without renumbering.
+   */
+  displayOrder?: number;
   /** Extra free-form questions appended to the sign-off form. */
   extraQuestions?: {
     id: string;
@@ -70,6 +77,7 @@ const REGISTRY: OnboardDoc[] = [
   {
     slug: "zenith-sports",
     doc: "handoff",
+    displayOrder: 20,
     title: "Owner Onboarding Packet",
     brand: "TEKKY · Zenith Sports",
     pdfPath: "/clients/zenith-sports/pdfs/tekky-onboarding-handoff.pdf",
@@ -178,6 +186,7 @@ const REGISTRY: OnboardDoc[] = [
   {
     slug: "zenith-sports",
     doc: "brand-voice",
+    displayOrder: 40,
     title: "Brand Voice Reference",
     brand: "TEKKY · Zenith Sports",
     pdfPath: "/clients/zenith-sports/pdfs/tekky-brand-voice.pdf",
@@ -193,6 +202,7 @@ const REGISTRY: OnboardDoc[] = [
   {
     slug: "zenith-sports",
     doc: "sla",
+    displayOrder: 30,
     title: "Service-Level Agreement",
     brand: "TEKKY · Zenith Sports",
     pdfPath: "/onboarding/bluejays-sla.pdf",
@@ -209,6 +219,7 @@ const REGISTRY: OnboardDoc[] = [
   {
     slug: "zenith-sports",
     doc: "agreement",
+    displayOrder: 10,
     title: "Service Agreement (AI Marketing System)",
     brand: "TEKKY · Zenith Sports",
     pdfPath: "/onboarding/bluejays-service-agreement.pdf",
@@ -239,6 +250,13 @@ export function getOnboardDoc(slug: string, doc: string): OnboardDoc | null {
 }
 
 export function listOnboardDocs(slug?: string): OnboardDoc[] {
-  if (!slug) return [...REGISTRY];
-  return REGISTRY.filter((d) => d.slug === slug);
+  const items = slug ? REGISTRY.filter((d) => d.slug === slug) : [...REGISTRY];
+  // Sort by displayOrder ascending; entries without displayOrder fall to
+  // the end in registry order (preserves backward compatibility for any
+  // tenant that hasn't been explicitly ordered yet).
+  return items.sort((a, b) => {
+    const ao = a.displayOrder ?? Number.POSITIVE_INFINITY;
+    const bo = b.displayOrder ?? Number.POSITIVE_INFINITY;
+    return ao - bo;
+  });
 }
