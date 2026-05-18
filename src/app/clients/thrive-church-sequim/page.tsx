@@ -547,12 +547,8 @@ function TaglineSpread() {
       id="mission"
       className="relative overflow-hidden bg-[#fbf7ee] py-14 sm:py-20"
     >
-      {/* Watermark mark */}
-      <div className="pointer-events-none absolute -right-20 -top-20 opacity-[0.05] sm:-right-10 sm:-top-10">
-        <div className="h-[420px] w-[420px]">
-          <ThriveMark />
-        </div>
-      </div>
+      {/* Alpha + Omega watermark + dove — Christ as beginning and end. */}
+      <ChristianMotifs variant="mission" />
 
       <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
         <motion.div
@@ -869,8 +865,9 @@ function LatestSermon() {
 /* ============================================================== */
 function ConnectSection() {
   return (
-    <section id="connect" className="relative bg-[#f5ede0] py-16 sm:py-22">
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+    <section id="connect" className="relative overflow-hidden bg-[#f5ede0] py-16 sm:py-22">
+      <ChristianMotifs variant="connect" />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-5">
             <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
@@ -974,8 +971,9 @@ function MinistriesGrid() {
     },
   ];
   return (
-    <section id="ministries" className="relative bg-[#fbf7ee] py-16 sm:py-22">
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+    <section id="ministries" className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
+      <ChristianMotifs variant="ministries" />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em] text-[#0a3a36]">
@@ -1198,7 +1196,7 @@ function BeliefsSpread() {
       id="beliefs"
       className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22"
     >
-      <ChristianMotifs variant="scatter" />
+      <ChristianMotifs variant="beliefs" />
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -1451,7 +1449,8 @@ function Generosity() {
       id="give"
       className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22"
     >
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+      <ChristianMotifs variant="generosity" />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -1511,8 +1510,9 @@ function Generosity() {
 /* ============================================================== */
 function PrayerSection() {
   return (
-    <section id="prayer" className="relative bg-[#f5ede0] py-16 sm:py-22">
-      <div className="mx-auto max-w-[1480px] px-6 sm:px-10">
+    <section id="prayer" className="relative overflow-hidden bg-[#f5ede0] py-16 sm:py-22">
+      <ChristianMotifs variant="prayer" />
+      <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <div className="lg:col-span-7 lg:order-2">
             <div className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-7 shadow-[0_24px_50px_-30px_rgba(13,79,74,0.25)] sm:p-9 lg:p-11">
@@ -1562,7 +1562,7 @@ function PrayerSection() {
 function VisitUs() {
   return (
     <section id="visit" className="relative overflow-hidden bg-[#fbf7ee] py-16 sm:py-22">
-      <ChristianMotifs variant="left" />
+      <ChristianMotifs variant="visit" />
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Postcard-style info card */}
