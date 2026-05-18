@@ -193,6 +193,8 @@ ${verdict}
 The thing I'd fix first is on the audit page, ranked #1.
 
 ${auditUrl}
+
+Want a clean copy to share with your team? Hit "Save as PDF" at the top of that page — strips the videos and CTAs, keeps just the score + the ranked fix list.
 ${callCta}
 Reply with the word "rebuild" if you want a custom mockup of what your new site could look like. I'll send one over — free, no pressure.${FOOTER}`;
 

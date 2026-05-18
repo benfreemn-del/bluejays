@@ -8,6 +8,26 @@ import ProductAuditVideoBlock from "./ProductAuditVideoBlock";
 import AuditFaqVideos from "./AuditFaqVideos";
 import AuditCTAHub from "./AuditCTAHub";
 import StickyBookCallPill from "./StickyBookCallPill";
+import PrintPdfButton from "./PrintPdfButton";
+
+const PRINT_CSS = `@media print {
+  @page { margin: 0.5in; size: letter; }
+  html, body { background: #fff !important; color: #111 !important; }
+  main, section, header, div, article, h1, h2, h3, h4, p, span, a, li, ul, ol {
+    color: #111 !important;
+    background: transparent !important;
+    border-color: #e5e5e5 !important;
+  }
+  .print-hide, .print\\:hidden { display: none !important; }
+  .border-b, .border-t, .border-2, .border, .border-amber-500\\/30 {
+    border-color: #e5e5e5 !important;
+  }
+  a { text-decoration: none !important; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.7em; color: #555 !important; }
+  a[href^="#"]::after, a[href^="/"]::after { content: ""; }
+  section { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2 { break-after: avoid; }
+}`;
 
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluejayportfolio.com";
@@ -145,28 +165,31 @@ export default async function ProductAuditResultsPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <RetargetingPixels />
-      <PartnerRefCapture />
-      {/* Sticky bottom-right "Book my call" pill — fights the 5-decision
-          gap between peak score-reveal emotion and the Calendly handoff
-          at the bottom of the page. Auto-hides when AuditCTAHub
-          (id="pick-your-move") scrolls into view to avoid double-CTA. */}
-      <StickyBookCallPill
-        scheduleUrl={`/schedule/${a.prospect_id}?type=fullsystem&source=audit-pill`}
-      />
+      <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
+      <div className="print:hidden">
+        <RetargetingPixels />
+        <PartnerRefCapture />
+      </div>
+      <div className="print:hidden">
+        <StickyBookCallPill
+          scheduleUrl={`/schedule/${a.prospect_id}?type=fullsystem&source=audit-pill`}
+        />
+      </div>
 
-      {/* Header */}
       <header className="border-b border-white/5">
-        <div className="mx-auto max-w-4xl px-6 py-5 flex items-center justify-between">
+        <div className="mx-auto max-w-4xl px-6 py-5 flex items-center justify-between gap-3">
           <Link
             href={SITE_ORIGIN}
             className="text-sm text-slate-400 hover:text-white transition-colors"
           >
             ← BlueJays
           </Link>
-          <span className="text-xs text-slate-500 font-mono hidden sm:inline">
-            {id.slice(0, 8)}
-          </span>
+          <div className="flex items-center gap-3">
+            <PrintPdfButton />
+            <span className="text-xs text-slate-500 font-mono hidden sm:inline">
+              {id.slice(0, 8)}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -210,7 +233,7 @@ export default async function ProductAuditResultsPage({
           <video> player we saw in the 2026-05-15 live review. Auto-
           enables when Ben drops the file at the expected path; no
           code changes required. */}
-      <section className="border-b border-white/5">
+      <section className="border-b border-white/5 print:hidden">
         <div className="mx-auto max-w-3xl px-6 py-10 md:py-14">
           <ProductAuditVideoBlock
             calendlyUrl={CALENDLY_URL}
@@ -235,7 +258,9 @@ export default async function ProductAuditResultsPage({
           accordion cards with script fallback until Loom URLs land
           in `src/lib/audit-faq-data.ts`. Recording protocol +
           scripts in `docs/playbooks/audit-faq-videos.md`. */}
-      <AuditFaqVideos />
+      <div className="print:hidden">
+        <AuditFaqVideos />
+      </div>
 
       {/* ── TOP 5 BIGGEST THINGS ───────────────────────────────────── */}
       <section className="border-b border-white/5 bg-slate-900/40">
@@ -388,12 +413,27 @@ export default async function ProductAuditResultsPage({
           Checkout URLs go through /claim/[prospectId] which handles
           Stripe session creation. Schedule fork goes through
           /schedule/[prospectId] which renders the Calendly embed. */}
-      <AuditCTAHub
-        auditId={a.id}
-        prospectId={a.prospect_id}
-        primaryButtonUrl={`/claim/${a.prospect_id}?plan=installment&source=audit`}
-        secondaryButtonUrl={`/claim/${a.prospect_id}?plan=full&source=audit`}
-      />
+      <div className="print:hidden">
+        <AuditCTAHub
+          auditId={a.id}
+          prospectId={a.prospect_id}
+          primaryButtonUrl={`/claim/${a.prospect_id}?plan=installment&source=audit`}
+          secondaryButtonUrl={`/claim/${a.prospect_id}?plan=full&source=audit`}
+        />
+      </div>
+      <div className="hidden print:block">
+        <section className="border-t border-b border-slate-300 my-8">
+          <div className="mx-auto max-w-4xl px-6 py-6 text-center">
+            <p className="text-sm font-semibold text-slate-800">
+              Built by BlueJays — get your free product audit at
+              bluejayportfolio.com/audit
+            </p>
+            <p className="text-xs text-slate-600 mt-1">
+              Questions? ben@bluejayportfolio.com
+            </p>
+          </div>
+        </section>
+      </div>
 
       <footer className="border-t border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500 space-y-2">
