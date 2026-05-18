@@ -620,7 +620,7 @@ export default function HectorLandscapingLandscapingPage() {
       </div>
 
       {/* ═══════════════ 1. HERO — OVERLAPPING CARD (plumber-template style) ═══════════════ */}
-      <section id="top" className="relative min-h-[100dvh] flex items-center pt-28 pb-16 z-10 overflow-hidden">
+      <section id="top" className="relative min-h-[100dvh] flex items-center pt-20 pb-12 z-10 overflow-hidden">
         {/* Background gradients — subtler than the floating-cards version */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -760,7 +760,7 @@ export default function HectorLandscapingLandscapingPage() {
       </section>
 
       {/* ═══════════════ 2. TRUST BAR ═══════════════ */}
-      <SectionReveal className="relative z-10 pb-8">
+      <SectionReveal className="relative z-10 pb-6">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <GlassCard className="p-5 md:p-6">
             <motion.div className="flex flex-wrap justify-center gap-6 md:gap-10 text-sm" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -792,7 +792,7 @@ export default function HectorLandscapingLandscapingPage() {
            maintenance offering. */}
 
       {/* ═══════════════ 3. SERVICES — 6 ACCORDION CARDS ═══════════════ */}
-      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="services" className="relative z-10 py-10 md:py-16">
         <LeafPattern opacity={0.025} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
@@ -865,7 +865,7 @@ export default function HectorLandscapingLandscapingPage() {
            Warm color wash added 2026-05-02: subtle radial gradient
            combining PRIMARY_GLOW + EARTH_GLOW. Breaks up the dark
            monochromatic stretch between Services and Process. */}
-      <SectionReveal className="relative z-10 py-12 md:py-20 overflow-hidden">
+      <SectionReveal className="relative z-10 py-8 md:py-14 overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -902,7 +902,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 5. PROCESS — 5 STEPS ═══════════════ */}
-      <SectionReveal id="process" className="relative z-10 py-16 md:py-24 overflow-hidden">
+      <SectionReveal id="process" className="relative z-10 py-10 md:py-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
           <svg width="100%" height="100%"><pattern id="land-dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill={PRIMARY_LIGHT} /></pattern><rect width="100%" height="100%" fill="url(#land-dots)" /></svg>
         </div>
@@ -948,7 +948,7 @@ export default function HectorLandscapingLandscapingPage() {
           the photo-screening rule (the team-portrait + "unnamed (14)" are
           excluded). Spotlight uses a Hector Landscaping landscape photo as the
           feature image instead — keeps the section but stays honest. */}
-      <SectionReveal id="about" className="relative z-10 py-20 md:py-32">
+      <SectionReveal id="about" className="relative z-10 py-14 md:py-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
         </div>
@@ -997,7 +997,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 7. PROJECT PORTFOLIO — STAGGERED MASONRY ═══════════════ */}
-      <SectionReveal id="work" className="relative z-10 py-20 md:py-32">
+      <SectionReveal id="work" className="relative z-10 py-14 md:py-20">
         <LeafPattern opacity={0.02} />
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center mb-14">
@@ -1059,7 +1059,7 @@ export default function HectorLandscapingLandscapingPage() {
            Sage band added 2026-05-02. Different texture from the cream
            Maintenance band — paler, more meadow-toned. Cards stay
            neutral white with forest-ink type for contrast. */}
-      <SectionReveal className="relative z-10 py-20 md:py-32 overflow-hidden" style={{ background: BG_SAGE }}>
+      <SectionReveal className="relative z-10 py-14 md:py-20 overflow-hidden" style={{ background: BG_SAGE }}>
         {/* Soft fade-in from the dark portfolio above */}
         <div
           className="absolute inset-x-0 top-0 h-20 pointer-events-none"
@@ -1111,7 +1111,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 9. YARD QUIZ ═══════════════ */}
-      <SectionReveal className="relative z-10 py-12 md:py-20">
+      <SectionReveal className="relative z-10 py-8 md:py-14">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <ShimmerBorder>
             <div className="p-8 md:p-12">
@@ -1134,7 +1134,7 @@ export default function HectorLandscapingLandscapingPage() {
                   >
                     <div className="w-3 h-3 rounded-full mb-3" style={{ background: opt.color }} />
                     <div className="text-white font-semibold">{opt.label}</div>
-                    <div className="text-xs text-slate-500 mt-1">{opt.desc}</div>
+                    <div className="text-[13px] text-slate-400 mt-1 leading-snug">{opt.desc}</div>
                   </button>
                 ))}
               </div>
@@ -1153,7 +1153,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 10. ECO / CLIMATE-SMART SECTION ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      <SectionReveal className="relative z-10 py-10 md:py-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-0 left-1/4 w-[600px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.06, filter: "blur(100px)" }} />
         </div>
@@ -1176,7 +1176,7 @@ export default function HectorLandscapingLandscapingPage() {
                       </div>
                       <div>
                         <h4 className="text-sm font-semibold text-white">{eco.title}</h4>
-                        <p className="text-xs text-slate-500 leading-relaxed mt-1">{eco.desc}</p>
+                        <p className="text-[13px] text-slate-400 leading-relaxed mt-1">{eco.desc}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -1203,7 +1203,7 @@ export default function HectorLandscapingLandscapingPage() {
           carousel built on CSS scroll-snap so it works the same on
           mobile (swipe) and desktop (prev/next arrows). View All
           link points back to the live GMB listing. */}
-      <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="reviews" className="relative z-10 py-10 md:py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2" style={{ color: EARTH }}>
@@ -1228,7 +1228,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 12. COMPETITOR COMPARISON ═══════════════ */}
-      <SectionReveal className="relative z-10 py-12 md:py-20">
+      <SectionReveal className="relative z-10 py-8 md:py-14">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Why Hector Landscaping</p>
@@ -1276,7 +1276,7 @@ export default function HectorLandscapingLandscapingPage() {
           this section can come back. */}
 
       {/* ═══════════════ 14. CONTACT — uses HectorLandscapingContactForm ═══════════════ */}
-      <SectionReveal id="contact" className="relative z-10 py-20 md:py-32">
+      <SectionReveal id="contact" className="relative z-10 py-14 md:py-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.05, filter: "blur(100px)" }} />
         </div>
@@ -1329,7 +1329,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 15. SERVICE AREA ═══════════════ */}
-      <SectionReveal id="service-area" className="relative z-10 py-16 md:py-24">
+      <SectionReveal id="service-area" className="relative z-10 py-10 md:py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-14">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Where We Work</p>
@@ -1382,7 +1382,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 16. FAQ ═══════════════ */}
-      <SectionReveal className="relative z-10 py-12 md:py-20">
+      <SectionReveal className="relative z-10 py-8 md:py-14">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>Common Questions</p>
@@ -1415,7 +1415,7 @@ export default function HectorLandscapingLandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 17. FOOTER ═══════════════ */}
-      <footer className="relative z-10 border-t border-white/8 py-12">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             {/* Brand */}

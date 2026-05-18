@@ -73,12 +73,12 @@ export default function HectorLandscapingContactForm({
 
   if (status === "ok") {
     return (
-      <div className="bg-white border border-[#1a2e1a]/15 p-10 sm:p-12">
+      <div className="bg-white border border-[#1a2e1a]/15 p-7 sm:p-8">
         <CheckCircle size={40} weight="duotone" className="text-[#1a2e1a] mb-5" />
         <h3 className="font-serif text-[28px] sm:text-[32px] text-[#1a1612] tracking-tight mb-3">
           Thanks &mdash; we&rsquo;ve got it.
         </h3>
-        <p className="text-[16px] leading-relaxed text-[#1a1612]/75 max-w-md">
+        <p className="text-[16px] leading-relaxed text-[#1a1612]/85 max-w-md">
           A note just landed in our inbox. We typically respond within 24 hours
           and will reach out by your preferred method to set up an estimate.
         </p>
@@ -89,7 +89,7 @@ export default function HectorLandscapingContactForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border border-[#1a2e1a]/15 p-7 sm:p-10"
+      className="bg-white border border-[#1a2e1a]/15 p-5 sm:p-7"
       noValidate
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -141,14 +141,14 @@ export default function HectorLandscapingContactForm({
         </div>
       )}
 
-      <div className="mt-7 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-[12px] text-[#1a1612]/55 max-w-xs">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <p className="text-[13px] text-[#1a1612]/75 max-w-xs leading-snug">
           Free estimate. No obligation. We typically respond within 24 hours.
         </p>
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center gap-2 bg-[#1a2e1a] text-[#f8f5ef] px-7 py-3.5 text-[14px] font-medium tracking-wide hover:bg-[#0d1a0d] transition disabled:opacity-60 disabled:cursor-wait"
+          className="inline-flex items-center gap-2 bg-[#1a2e1a] text-[#f8f5ef] px-7 py-3.5 text-[15px] font-semibold tracking-wide hover:bg-[#0d1a0d] transition disabled:opacity-60 disabled:cursor-wait"
         >
           {status === "sending" ? "Sending…" : "Send to Hector Landscaping"}
           {status !== "sending" && <ArrowRight size={16} weight="bold" />}
@@ -175,7 +175,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+      <span className="block text-[12px] tracking-[0.16em] uppercase text-[#1a2e1a]/85 font-semibold mb-2">
         {label}
         {required && <span className="text-[#7a1f1f] ml-1">*</span>}
       </span>
@@ -185,7 +185,7 @@ function Field({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612] placeholder:text-[#1a1612]/35 transition-colors"
+        className="w-full bg-transparent border-b border-[#1a2e1a]/30 focus:border-[#1a2e1a] outline-none py-2.5 text-[16px] text-[#1a1612] placeholder:text-[#1a1612]/55 transition-colors"
       />
     </label>
   );
@@ -202,13 +202,13 @@ function Select({
 }) {
   return (
     <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+      <span className="block text-[12px] tracking-[0.16em] uppercase text-[#1a2e1a]/85 font-semibold mb-2">
         {label}
       </span>
       <select
         name={name}
         defaultValue={options[0]}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612]"
+        className="w-full bg-transparent border-b border-[#1a2e1a]/30 focus:border-[#1a2e1a] outline-none py-2.5 text-[16px] text-[#1a1612]"
       >
         {options.map((o) => (
           <option key={o} value={o}>
@@ -233,7 +233,7 @@ function Textarea({
 }) {
   return (
     <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+      <span className="block text-[12px] tracking-[0.16em] uppercase text-[#1a2e1a]/85 font-semibold mb-2">
         {label}
         {required && <span className="text-[#7a1f1f] ml-1">*</span>}
       </span>
@@ -242,7 +242,7 @@ function Textarea({
         required={required}
         placeholder={placeholder}
         rows={5}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612] placeholder:text-[#1a1612]/35 transition-colors resize-y"
+        className="w-full bg-transparent border-b border-[#1a2e1a]/30 focus:border-[#1a2e1a] outline-none py-2.5 text-[16px] text-[#1a1612] placeholder:text-[#1a1612]/55 transition-colors resize-y"
       />
     </label>
   );
