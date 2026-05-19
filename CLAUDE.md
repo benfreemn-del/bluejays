@@ -180,7 +180,7 @@ Every AI API call must follow these rules to minimize cost:
 - **Match theme darkness to the industry's vibe** — feminine/elegant businesses (salon, florist, daycare, photography, interior-design, catering) should use LIGHT themes (white/cream backgrounds, dark text). Masculine/trade businesses (electrician, plumber, roofing, auto-repair, towing, construction) should use DARK themes. Medical/professional (dental, law, insurance, accounting) can go either way but lean light for trust. This is a fundamental design principle — a salon site shouldn't look like a garage.
 - **Each template must SCREAM its industry** — Real Estate screams luxury. Dental screams trust. Law screams authority. Landscaping screams nature. Salon screams beauty. If it could be any industry, it's not good enough.
 - **$997 is the base price** — firm, no negotiation for agents. It includes custom website design, domain registration, and hosting setup. The ongoing maintenance plan is $100/year and covers domain renewal, hosting, ongoing maintenance, and support.
-- **All generated sites and templates must use the network-effect footer credit** (Hormozi review #10) — `Built by BlueJays — get your free site audit`, with `BlueJays` rendered as a clickable link to `https://bluejayportfolio.com/audit`. The BluejayLogo bird icon stays before "Built by". Never use BlueJay Business Solutions wording or any other footer variation. Goal: every customer's site footer pulls free audit-funnel traffic — at customer #100 we have 100 backlinks driving to /audit.
+- **All generated sites and templates must use the network-effect footer credit** (Hormozi review #10) — `Built by BlueJays — get your free site audit`, with `BlueJays` rendered as a clickable link to `https://bluejayportfolio.com` (the portfolio root, NOT `/audit` — Ben prefers visitors land on the full portfolio and discover the audit CTA from there; locked 2026-05-19). The BluejayLogo bird icon stays before "Built by". Never use BlueJay Business Solutions wording or any other footer variation. Goal: every customer's site footer pulls portfolio-funnel traffic — at customer #100 we have 100 backlinks driving to bluejayportfolio.com.
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
@@ -229,7 +229,7 @@ When manually reviewing/upgrading a preview from the dashboard:
 5. **Every site must be visually reviewed** — actually open it in a browser on desktop AND mobile (375px). Don't just check the data.
 6. **Compare against the business's real website** for brand colors, services, and tone.
 7. **Before/after sections only for transformation businesses** (landscaping, painting, cleaning, pressure washing) — remove for law firms, accounting, dental, insurance, etc.
-8. **Footer must say "Built by BlueJays — get your free site audit"** linking to `/audit` (network-effect drive). NOT "Created by bluejayportfolio.com" anymore (changed 2026-04-26 per Hormozi review #10), NOT "BlueJay Business Solutions" or any other variation.
+8. **Footer must say "Built by BlueJays — get your free site audit"** linking to `https://bluejayportfolio.com` (the portfolio root — updated 2026-05-19, Ben prefers visitors land on the portfolio over the audit page). NOT "Created by bluejayportfolio.com" anymore (changed 2026-04-26 per Hormozi review #10), NOT "BlueJay Business Solutions" or any other variation.
 9. **No hallucinated Unsplash URLs** — only use known working photo IDs or search the Unsplash API. Never guess a photo ID.
 10. **About text must name the business and reference what they actually do** — no generic placeholder copy.
 11. **Services must match the business's real offerings** from their actual website.
@@ -2041,8 +2041,8 @@ AI-discoverable so when someone asks ChatGPT for [your service] in
    - Contact info (phone, email, address)
    - Service area
    - Key URLs (link to every important page)
-4. **"Built by"** footer linking to https://bluejayportfolio.com/audit
-   (network-effect rule — same as the visible footer credit)
+4. **"Built by"** footer linking to https://bluejayportfolio.com
+   (network-effect rule — same as the visible footer credit, portfolio root not /audit)
 
 ### Required when building any new site (NON-NEGOTIABLE checklist)
 

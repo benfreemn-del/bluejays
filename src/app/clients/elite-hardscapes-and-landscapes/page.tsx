@@ -26,8 +26,6 @@ import {
   EnvelopeSimple,
   MapPin,
   Clock,
-  InstagramLogo,
-  FacebookLogo,
   ArrowUpRight,
   List as MenuIcon,
   X as CloseIcon,
@@ -891,7 +889,14 @@ export default function Site() {
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 flex items-center justify-between h-24 md:h-28">
           {/* logo */}
-          <a href="#" className="flex items-center gap-4 group">
+          <a
+            href="#top"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center gap-4 group"
+          >
             <img
               src={BRAND.logo}
               alt="Elite Hardscapes & Landscapes"
@@ -1119,6 +1124,36 @@ export default function Site() {
             </div>
           </Reveal>
 
+          {/* Above-fold believability pills — Meyer rule #3 (3 markers
+              visible at first paint: license + insurance + tenure). */}
+          <Reveal delay={520}>
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+              {[
+                { icon: ShieldCheck, label: "Licensed in WA", tone: PALETTE.crimsonHot },
+                { icon: Medal, label: "Fully Insured", tone: PALETTE.bronze },
+                { icon: Star, label: `Est. ${BRAND.estYear} · Owner-operated`, tone: PALETTE.navyBright },
+              ].map((m, i) => (
+                <div
+                  key={i}
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5"
+                  style={{
+                    background: "rgba(0,0,0,0.55)",
+                    border: `1px solid ${PALETTE.steelLine}`,
+                    backdropFilter: "blur(4px)",
+                  }}
+                >
+                  <m.icon size={14} weight="bold" color={m.tone} />
+                  <span
+                    className="text-[11px] uppercase tracking-[0.18em]"
+                    style={{ color: PALETTE.bone, fontWeight: 600 }}
+                  >
+                    {m.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
           {/* corner mark */}
           <Reveal delay={600}>
             <div
@@ -1224,7 +1259,7 @@ export default function Site() {
       </section>
 
       {/* ═══════════════ SERVICES ═══════════════ */}
-      <section id="services" className="py-16 md:py-20 relative">
+      <section id="services" className="py-20 sm:py-24 lg:py-32 relative">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <Reveal>
             <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
@@ -1351,7 +1386,7 @@ export default function Site() {
       {/* ═══════════════ PORTFOLIO ═══════════════ */}
       <section
         id="work"
-        className="py-16 md:py-20 relative"
+        className="py-20 sm:py-24 lg:py-32 relative"
         style={{ background: PALETTE.inkSoft }}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-10">
@@ -1440,7 +1475,7 @@ export default function Site() {
       {/* ═══════════════ SEASONAL CALENDAR ═══════════════ */}
       <section
         id="seasonal"
-        className="py-16 md:py-20 relative"
+        className="py-20 sm:py-24 lg:py-32 relative"
         style={{ background: PALETTE.inkSoft }}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-10">
@@ -1530,7 +1565,7 @@ export default function Site() {
       </section>
 
       {/* ═══════════════ ABOUT / TYLER ═══════════════ */}
-      <section id="about" className="py-16 md:py-20 relative">
+      <section id="about" className="py-20 sm:py-24 lg:py-32 relative">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="grid lg:grid-cols-[1.05fr_1fr] gap-14 lg:gap-20 items-center">
             <Reveal>
@@ -1663,7 +1698,7 @@ export default function Site() {
           "HQ" badge. Bottom CTA tile handles edge-cases warmly. */}
       <section
         id="service-area"
-        className="relative py-20 md:py-24 lg:py-28 overflow-hidden grain"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden grain"
         style={{
           background: PALETTE.inkSoft,
           borderTop: `1px solid ${PALETTE.steelLine}`,
@@ -1801,7 +1836,7 @@ export default function Site() {
       </section>
 
       {/* ═══════════════ FAQ ═══════════════ */}
-      <section id="faq" className="py-16 md:py-20 relative">
+      <section id="faq" className="py-20 sm:py-24 lg:py-32 relative">
         <div className="max-w-3xl mx-auto px-6 md:px-10">
           <Reveal>
             <div className="text-center mb-14 md:mb-16">
@@ -1902,7 +1937,7 @@ export default function Site() {
       {reviews.length > 0 && (
         <section
           id="google-reviews"
-          className="relative py-16 md:py-20 overflow-hidden"
+          className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
           style={{ background: PALETTE.inkSoft }}
         >
           <div className="max-w-[1400px] mx-auto px-6 md:px-10 mb-10 md:mb-12">
@@ -1982,7 +2017,7 @@ export default function Site() {
         className="relative overflow-hidden stripe"
         style={{ background: PALETTE.ink, color: PALETTE.bone }}
       >
-        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-16 md:py-20">
+        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-20 sm:py-24 lg:py-32">
           <div className="grid lg:grid-cols-[1fr_1.1fr] gap-14 lg:gap-20 items-start">
             {/* left: pitch */}
             <Reveal>
@@ -2283,22 +2318,6 @@ export default function Site() {
                 Locally-owned hardscape + landscape crew working the
                 Olympic Peninsula since {BRAND.estYear}.
               </p>
-              <div className="flex items-center gap-3">
-                {[InstagramLogo, FacebookLogo].map((Icon, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    aria-label="social"
-                    className="w-10 h-10 flex items-center justify-center transition-all hover:scale-105"
-                    style={{
-                      background: PALETTE.steel,
-                      border: `1px solid ${PALETTE.steelLine}`,
-                    }}
-                  >
-                    <Icon size={16} weight="bold" color={PALETTE.bone} />
-                  </a>
-                ))}
-              </div>
             </div>
 
             {/* service area */}
@@ -2310,11 +2329,19 @@ export default function Site() {
                 Service Area
               </div>
               <ul className="space-y-2 text-sm">
-                {SERVICE_AREA_CITIES.map((c) => (
+                {SERVICE_AREA_CITIES.filter(
+                  (c) => c.name !== "Clallam County",
+                ).map((c) => (
                   <li key={c.name} style={{ color: PALETTE.boneDim }}>
                     {c.name}
                   </li>
                 ))}
+                <li
+                  className="pt-1 text-[12px]"
+                  style={{ color: PALETTE.chrome }}
+                >
+                  + the rest of Clallam County
+                </li>
               </ul>
             </div>
 

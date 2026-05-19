@@ -1576,7 +1576,7 @@ export default function MtViewLandscapingPage() {
             <p className="text-xs text-slate-600 flex items-center gap-1.5">
               Built by{" "}
               <a
-                href="https://bluejayportfolio.com/audit"
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-slate-400 transition-colors"

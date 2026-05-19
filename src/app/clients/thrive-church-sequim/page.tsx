@@ -58,7 +58,7 @@ const FACEBOOK_URL = "https://www.facebook.com/ThriveSequim";
 const INSTAGRAM_URL = "https://www.instagram.com/Thrive_Sequim/";
 const GIVE_URL = "https://thrivesequim.com/generosity";
 const PRESCHOOL_URL = "https://thrivesequim.breezechms.com/form/21d24b6151";
-const AUDIT_URL = "https://bluejayportfolio.com/audit";
+const AUDIT_URL = "https://bluejayportfolio.com";
 
 /* ---------- motion helpers ---------- */
 const fadeUp = {

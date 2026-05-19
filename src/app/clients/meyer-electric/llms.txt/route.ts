@@ -45,7 +45,7 @@ Sequim · Port Angeles · Port Townsend · Forks · Clallam Bay · Sekiu · Chim
 
 ---
 
-Built by [BlueJays](https://bluejayportfolio.com/audit) — get your free site audit.
+Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit.
 `;
 
 export function GET() {

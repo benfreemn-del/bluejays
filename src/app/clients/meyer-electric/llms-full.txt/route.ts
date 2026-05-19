@@ -131,7 +131,7 @@ Tesla Powerwall + Generac dual certification, in-house excavation (no subcontrac
 
 ---
 
-Built by [BlueJays](https://bluejayportfolio.com/audit) — get your free site audit.
+Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit.
 `;
 
 export function GET() {

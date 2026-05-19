@@ -1883,7 +1883,7 @@ function DashboardFooter() {
           <span className="font-semibold">Unlock the full system →</span>
         </Link>
         <a
-          href="https://bluejayportfolio.com/audit"
+          href="https://bluejayportfolio.com"
           target="_blank"
           rel="noopener noreferrer"
           className="font-semibold transition-opacity hover:opacity-70"

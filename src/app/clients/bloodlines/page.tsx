@@ -6565,7 +6565,7 @@ function FooterBlock() {
           </a>
           <span>—</span>
           <a
-            href="https://bluejayportfolio.com/audit"
+            href="https://bluejayportfolio.com"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:underline"

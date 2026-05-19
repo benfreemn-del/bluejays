@@ -2186,7 +2186,7 @@ export default function MeyerElectricPage() {
             </div>
             <div className="inline-flex items-center gap-3">
               <a
-                href="https://bluejayportfolio.com/audit"
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-[12px] hover:text-white transition-colors"

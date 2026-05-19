@@ -1628,7 +1628,7 @@ export default function FamilyCareCleaningPage() {
               <span>
                 Built by{" "}
                 <a
-                  href="https://bluejayportfolio.com/audit"
+                  href="https://bluejayportfolio.com"
                   className="font-bold hover:opacity-100"
                   style={{ color: "#7dd3fc" }}
                 >

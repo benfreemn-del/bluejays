@@ -2671,7 +2671,7 @@ export default function PeninsulaPavingPage() {
                 >
                   Built by{" "}
                   <a
-                    href="https://bluejayportfolio.com/audit"
+                    href="https://bluejayportfolio.com"
                     className="hover:text-[#1c1410] transition-colors underline-offset-2 hover:underline"
                     style={{ color: ACCENT }}
                   >

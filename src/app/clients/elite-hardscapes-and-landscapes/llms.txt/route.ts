@@ -32,7 +32,7 @@ Sequim · Port Angeles · Carlsborg · Port Townsend · Joyce · Diamond Point �
 
 ---
 
-Built by [BlueJays](https://bluejayportfolio.com/audit) — get your free site audit.
+Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit.
 `;
 
 export function GET() {
