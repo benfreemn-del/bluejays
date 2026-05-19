@@ -52,7 +52,7 @@ export default function StickyNav({
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#F5F1E8]/85 border-b border-[#1C1F1A]/8">
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 h-20 sm:h-24 flex items-center justify-between gap-6">
+      <div className="mx-auto max-w-[1700px] px-6 sm:px-10 h-20 sm:h-24 flex items-center justify-between gap-6">
         {/* Wordmark — promoted to give the brand more presence in the header. */}
         <a href="#top" className="flex items-center gap-3 sm:gap-4 min-w-0 group">
           <img
