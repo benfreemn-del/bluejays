@@ -219,7 +219,15 @@ export default function ThrivePortalDemo() {
           />
         )}
         {tab === "inbox" && (
-          <InboxTab inbox={inboxItems} usingDemoData={usingDemoData} />
+          <InboxTab
+            inbox={inboxItems}
+            usingDemoData={usingDemoData}
+            onItemUpdate={(updated) =>
+              setInboxItems((prev) =>
+                prev.map((i) => (i.id === updated.id ? updated : i)),
+              )
+            }
+          />
         )}
         {tab === "members" && <MembersTab />}
         {tab === "groups" && <GroupsTab />}
@@ -620,14 +628,21 @@ function OverviewTab({
 function InboxTab({
   inbox,
   usingDemoData,
+  onItemUpdate,
 }: {
   inbox: InboxItem[];
   usingDemoData: boolean;
+  onItemUpdate: (updated: InboxItem) => void;
 }) {
   const [filter, setFilter] = useState<"all" | InboxType>("all");
   const [statusFilter, setStatusFilter] = useState<"all" | InboxStatus>("all");
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<InboxItem | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Track selected by ID (not snapshot) so it always reflects the latest
+  // state after mutations.
+  const selected = selectedId
+    ? (inbox.find((i) => i.id === selectedId) ?? null)
+    : null;
 
   const filtered = useMemo(() => {
     return inbox.filter((i) => {
@@ -664,14 +679,9 @@ function InboxTab({
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-[12px]" style={{ borderColor: TEAL_BORDER, color: CREAM }}>
-            <Funnel size={14} weight="fill" /> Filters
-          </button>
-          <button className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold" style={{ background: AMBER, color: CREAM }}>
-            <Plus size={14} weight="bold" /> Add note
-          </button>
-        </div>
+        {/* Header action buttons removed — filter chips below cover
+            filtering, and notes attach per-item (via the detail panel),
+            not at the tab level. Avoids dead-button UX. */}
       </div>
 
       {/* Type filter chips */}
@@ -742,7 +752,7 @@ function InboxTab({
               <InboxRow
                 key={item.id}
                 item={item}
-                onClick={() => setSelected(item)}
+                onClick={() => setSelectedId(item.id)}
                 active={selected?.id === item.id}
               />
             ))}
@@ -756,7 +766,11 @@ function InboxTab({
               Pick a form submission on the left to see all fields, history, and reply options.
             </p>
           ) : (
-            <InboxDetail item={selected} />
+            <InboxDetail
+              item={selected}
+              usingDemoData={usingDemoData}
+              onUpdate={onItemUpdate}
+            />
           )}
         </Panel>
       </div>
@@ -809,7 +823,84 @@ function InboxRow({
   );
 }
 
-function InboxDetail({ item }: { item: InboxItem }) {
+function InboxDetail({
+  item,
+  usingDemoData,
+  onUpdate,
+}: {
+  item: InboxItem;
+  usingDemoData: boolean;
+  onUpdate: (updated: InboxItem) => void;
+}) {
+  const [noteDraft, setNoteDraft] = useState("");
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [pending, setPending] = useState<null | "status" | "note">(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Re-open the note draft to the current item's notes when switching items.
+  useEffect(() => {
+    setNoteDraft(item.notes ?? "");
+    setNoteOpen(false);
+    setError(null);
+  }, [item.id, item.notes]);
+
+  async function patch(body: Record<string, unknown>): Promise<boolean> {
+    if (usingDemoData) {
+      // Demo mode: skip the API entirely, mutation is purely local so
+      // the sales-call demo still feels live.
+      return true;
+    }
+    try {
+      const res = await fetch(
+        `/api/clients/thrive-church-sequim/inbox/${item.id}?gate=${encodeURIComponent("thrive2026")}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!res.ok || data.ok === false) {
+        setError(data.error || "Update failed");
+        return false;
+      }
+      return true;
+    } catch {
+      setError("Network error");
+      return false;
+    }
+  }
+
+  async function handleMarkReplied() {
+    if (item.status === "replied") return;
+    setPending("status");
+    setError(null);
+    const ok = await patch({ funnel_status: "replied" });
+    setPending(null);
+    if (ok) onUpdate({ ...item, status: "replied" });
+  }
+
+  async function handleSaveNote() {
+    const next = noteDraft.trim();
+    setPending("note");
+    setError(null);
+    const ok = await patch({ notes: next });
+    setPending(null);
+    if (ok) {
+      onUpdate({ ...item, notes: next });
+      setNoteOpen(false);
+    }
+  }
+
+  const replyHref = item.email
+    ? `mailto:${item.email}?subject=${encodeURIComponent(`Re: your ${item.type === "prayer" ? "prayer request" : "note"} to Thrive Church`)}`
+    : item.phone
+      ? `tel:${item.phone.replace(/\D/g, "")}`
+      : null;
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">
@@ -874,15 +965,137 @@ function InboxDetail({ item }: { item: InboxItem }) {
         </dl>
       )}
 
+      {/* Notes — saved verbatim to client_leads.notes. Shows existing
+          notes; "Add note" opens an inline textarea to append/replace. */}
+      {item.notes && !noteOpen && (
+        <div
+          className="rounded-lg border px-4 py-3"
+          style={{
+            borderColor: "rgba(251, 191, 36, 0.25)",
+            background: "rgba(251, 191, 36, 0.06)",
+          }}
+        >
+          <p
+            className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em]"
+            style={{ color: AMBER_LIGHT }}
+          >
+            Pastoral notes
+          </p>
+          <p
+            className="whitespace-pre-wrap text-[13px] leading-relaxed"
+            style={{ color: "rgba(251, 247, 238, 0.88)" }}
+          >
+            {item.notes}
+          </p>
+        </div>
+      )}
+
+      {noteOpen && (
+        <div
+          className="space-y-2 rounded-lg border p-3"
+          style={{ borderColor: TEAL_BORDER, background: "rgba(10, 58, 54, 0.6)" }}
+        >
+          <label
+            className="block text-[10px] font-bold uppercase tracking-[0.18em]"
+            style={{ color: AMBER_LIGHT }}
+          >
+            {item.notes ? "Edit note" : "Add a note"}
+          </label>
+          <textarea
+            value={noteDraft}
+            onChange={(e) => setNoteDraft(e.target.value)}
+            rows={3}
+            placeholder="e.g. Called Tue — voicemail. Trying again Thu."
+            className="w-full resize-y rounded-md border bg-transparent px-3 py-2 text-[13px] leading-relaxed outline-none"
+            style={{ borderColor: TEAL_BORDER, color: CREAM }}
+            autoFocus
+          />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleSaveNote}
+              disabled={pending !== null}
+              className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em] transition-all disabled:opacity-50"
+              style={{ background: AMBER, color: CREAM }}
+            >
+              {pending === "note" ? "Saving…" : "Save note"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setNoteOpen(false);
+                setNoteDraft(item.notes ?? "");
+                setError(null);
+              }}
+              disabled={pending !== null}
+              className="inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+              style={{ borderColor: TEAL_BORDER, color: CREAM }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p
+          className="rounded-md border px-3 py-2 text-[12px]"
+          style={{
+            borderColor: "rgba(220, 107, 107, 0.4)",
+            background: "rgba(220, 107, 107, 0.1)",
+            color: ROSE,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
       <div className="flex flex-wrap gap-2 pt-2">
-        <button className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em]" style={{ background: AMBER, color: CREAM }}>
-          <ChatCircleText size={12} weight="fill" /> Reply
+        {replyHref ? (
+          <a
+            href={replyHref}
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] transition-all hover:brightness-110"
+            style={{ background: AMBER, color: CREAM }}
+          >
+            <ChatCircleText size={12} weight="fill" />
+            Reply{item.email ? " by email" : " by phone"}
+          </a>
+        ) : (
+          <button
+            type="button"
+            disabled
+            title="No contact info — reply directly via the prayer team channel."
+            className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] opacity-50"
+            style={{ background: AMBER, color: CREAM }}
+          >
+            <ChatCircleText size={12} weight="fill" /> No contact info
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={handleMarkReplied}
+          disabled={pending !== null || item.status === "replied"}
+          className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors disabled:opacity-50"
+          style={{ borderColor: TEAL_BORDER, color: CREAM }}
+        >
+          <CheckCircle size={12} weight="fill" />
+          {pending === "status"
+            ? "Saving…"
+            : item.status === "replied"
+              ? "Marked replied"
+              : "Mark replied"}
         </button>
-        <button className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em]" style={{ borderColor: TEAL_BORDER, color: CREAM }}>
-          <CheckCircle size={12} weight="fill" /> Mark replied
-        </button>
-        <button className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[12px]" style={{ borderColor: TEAL_BORDER, color: "rgba(251,247,238,0.65)" }}>
-          Assign to team…
+        <button
+          type="button"
+          onClick={() => {
+            setNoteOpen(true);
+            setError(null);
+          }}
+          disabled={pending !== null}
+          className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+          style={{ borderColor: TEAL_BORDER, color: CREAM }}
+        >
+          <Plus size={12} weight="bold" /> {item.notes ? "Edit note" : "Add note"}
         </button>
       </div>
     </div>
@@ -974,8 +1187,14 @@ function MembersTab() {
               style={{ color: CREAM }}
             />
           </div>
-          <button className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold" style={{ background: AMBER, color: CREAM }}>
-            <Plus size={14} weight="bold" /> Add
+          <button
+            type="button"
+            disabled
+            title="Member CRUD ships in v2 — for now this view is read-only."
+            className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold opacity-50"
+            style={{ background: AMBER, color: CREAM }}
+          >
+            <Plus size={14} weight="bold" /> Add member <span className="ml-1 text-[10px] opacity-80">(v2)</span>
           </button>
         </div>
       </div>
@@ -1062,8 +1281,14 @@ function GroupsTab() {
             {GROUPS.length} active groups · {GROUPS.reduce((s, g) => s + g.current, 0)} people connected
           </p>
         </div>
-        <button className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold" style={{ background: AMBER, color: CREAM }}>
-          <Plus size={14} weight="bold" /> Start a new group
+        <button
+          type="button"
+          disabled
+          title="Group CRUD ships in v2 — for now this view is read-only."
+          className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold opacity-50"
+          style={{ background: AMBER, color: CREAM }}
+        >
+          <Plus size={14} weight="bold" /> Start a new group <span className="ml-1 text-[10px] opacity-80">(v2)</span>
         </button>
       </div>
 
@@ -1243,8 +1468,14 @@ function SermonsTab() {
             {SERMONS.filter((s) => s.status === "archived" || s.status === "live").length} published · {SERMONS.filter((s) => s.status === "draft").length} in draft
           </p>
         </div>
-        <button className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold" style={{ background: AMBER, color: CREAM }}>
-          <Plus size={14} weight="bold" /> New sermon entry
+        <button
+          type="button"
+          disabled
+          title="Sermon CRUD ships in v2 — for now this view is read-only."
+          className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold opacity-50"
+          style={{ background: AMBER, color: CREAM }}
+        >
+          <Plus size={14} weight="bold" /> New sermon entry <span className="ml-1 text-[10px] opacity-80">(v2)</span>
         </button>
       </div>
 
@@ -1287,7 +1518,13 @@ function SermonsTab() {
                   {s.youtubeViews.toLocaleString()}
                 </div>
               </div>
-              <button className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.14em]" style={{ color: AMBER_LIGHT }}>
+              <button
+                type="button"
+                disabled
+                title="Edit ships in v2."
+                className="inline-flex cursor-not-allowed items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.14em] opacity-40"
+                style={{ color: AMBER_LIGHT }}
+              >
                 Edit <CaretRight size={12} weight="bold" />
               </button>
             </li>
@@ -1586,7 +1823,13 @@ function ActionItem({
           {detail}
         </p>
       </div>
-      <button className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: AMBER_LIGHT }}>
+      <button
+        type="button"
+        disabled
+        title="Action workflows ship in v2."
+        className="cursor-not-allowed text-[11px] font-semibold uppercase tracking-[0.14em] opacity-40"
+        style={{ color: AMBER_LIGHT }}
+      >
         Take action
       </button>
     </li>
