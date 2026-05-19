@@ -330,28 +330,30 @@ function fade(elapsed: number, begin: number, dur: number, max = 1) {
 function SunriseIllustration() {
   const elapsed = useGenesisTimeline();
 
-  // Genesis-1 creation order:
-  //   Day 1 — Light          (sky)                0.0s, 0.9s
+  // Genesis-1 creation order (locked 2026-05-18 — Ben):
+  // "Sun be first because God said let there be light."
+  //   Day 1 — Light + Sun    (sky + sun)          0.0s, 0.9s   ← rises FIRST
   //   Day 2 — Waters above   (atmospheric haze)   0.5s, 1.2s
   //   Day 3a — Land          (distant mountains)  1.2s, 1.0s
   //   Day 3b — More land     (mid ridge)          1.4s, 1.0s
-  //   Day 3c — Waters below  (sea/bay)            1.6s, 1.0s
-  //   Day 3d — Vegetation    (trees + shore)      1.8s, 1.0s
-  //   Day 4 — Sun + lights   (sun halo + disc)    2.2s, 1.4s
-  //   Day 4 (cont.) — slope warmth                2.4s, 1.2s
+  //   Day 3c — Strait        (water btwn ridges)  1.5s, 1.0s   ← new: Strait of Juan de Fuca
+  //   Day 3d — Waters below  (sea/bay)            1.6s, 1.0s
+  //   Day 3e — Vegetation    (trees + shore)      1.8s, 1.0s
+  //   Day 4 — Slope warmth                        2.4s, 1.2s
   //   Day 5 — Sea life       (water ripples)      2.8s, 1.2s, max 0.55
-  //   Day 5 — Birds                               2.8s, 1.2s, max 0.75
+  //   Day 5 — Birds (10, spread)                  2.8s, 1.4s, max 0.75
   //   Caption                                     3.4s, 1.0s, max 0.85
   const skyOp = fade(elapsed, 0, 900);
+  const sunOp = fade(elapsed, 0, 900);
   const hazeOp = fade(elapsed, 500, 1200);
   const peaksOp = fade(elapsed, 1200, 1000);
   const midRidgeOp = fade(elapsed, 1400, 1000);
+  const straitOp = fade(elapsed, 1500, 1000);
   const waterOp = fade(elapsed, 1600, 1000);
   const treesOp = fade(elapsed, 1800, 1000);
-  const sunOp = fade(elapsed, 2200, 1400);
   const slopeOp = fade(elapsed, 2400, 1200);
   const ripplesOp = fade(elapsed, 2800, 1200, 0.55);
-  const birdsOp = fade(elapsed, 2800, 1200, 0.75);
+  const birdsOp = fade(elapsed, 2800, 1400, 0.75);
   const captionOp = fade(elapsed, 3400, 1000, 0.85);
 
   return (
@@ -398,11 +400,18 @@ function SunriseIllustration() {
             <stop offset="100%" stopColor="#1f4d47" />
           </linearGradient>
           {/* Warm sunrise glow on the water — where the sun's reflection
-              hits the surface. */}
-          <radialGradient id="waterGlow" cx="63%" cy="0%" r="70%">
+              hits the surface. cx tracks the sun position (now at 79%). */}
+          <radialGradient id="waterGlow" cx="79%" cy="0%" r="70%">
             <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.42" />
             <stop offset="60%" stopColor="#fbbf24" stopOpacity="0" />
           </radialGradient>
+          {/* Strait/bay between the mountain ranges — slightly lighter
+              than the foreground water since it's farther away and
+              catches more sky reflection. */}
+          <linearGradient id="strait" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#bcd6d1" />
+            <stop offset="100%" stopColor="#7ba89f" />
+          </linearGradient>
         </defs>
 
         {/* ── DAY 1 — LIGHT (sky fades in) ── */}
@@ -410,12 +419,17 @@ function SunriseIllustration() {
           <rect width="600" height="450" fill="url(#sky)" />
         </g>
 
-        {/* ── DAY 4 — SUN (halo + disc, layered behind the mountains
-            so the back ridge naturally covers the sun's lower edge). ── */}
+        {/* ── DAY 1 — SUN (rises first per Ben's Gen-1:3 brief).
+            Moved up + right (cx 475 / cy 100) so it sits clearly in
+            the upper-right sky rather than half-hidden by the back
+            mountain ridge. Halo + disc + a soft warm wash across
+            the lower sky. ── */}
         <g opacity={sunOp}>
-          <circle cx="380" cy="170" r="150" fill="url(#sunGlow)" />
-          <circle cx="380" cy="170" r="42" fill="url(#sunDisc)" />
-          <ellipse cx="380" cy="218" rx="160" ry="2" fill="#fde68a" opacity="0.6" />
+          <circle cx="475" cy="100" r="170" fill="url(#sunGlow)" />
+          <circle cx="475" cy="100" r="38" fill="url(#sunDisc)" />
+          {/* Sun-side warm halo wash on the right edge of the sky */}
+          <ellipse cx="475" cy="100" r="0" />
+          <ellipse cx="475" cy="220" rx="220" ry="6" fill="#fde68a" opacity="0.32" />
         </g>
 
         {/* ── DAY 3a — DISTANT OLYMPIC PEAKS rise from the deep
@@ -466,6 +480,25 @@ function SunriseIllustration() {
             between the waters"). ── */}
         <g opacity={hazeOp}>
           <rect x="0" y="240" width="600" height="60" fill="url(#haze)" />
+        </g>
+
+        {/* ── DAY 3c — STRAIT BETWEEN THE RANGES — Strait of Juan de
+            Fuca as seen from Sequim, sitting between the distant
+            Olympic peaks and the near-shore mid ridge. Drawn BEFORE
+            the mid ridge so the ridge's jagged top edge naturally
+            covers the water where the ridge rises above y=275,
+            leaving water visible where the ridge dips lower. Soft
+            sun-side wash on the right matches the new sun position. ── */}
+        <g opacity={straitOp}>
+          <rect x="0" y="272" width="600" height="75" fill="url(#strait)" />
+          {/* Sun-side dawn shimmer on the strait — concentrates the
+              warmth under where the sun sits at cx=475. */}
+          <ellipse cx="475" cy="280" rx="180" ry="20" fill="#fde68a" opacity="0.32" />
+          {/* A few tiny ripples on the strait surface */}
+          <line x1="50" y1="296" x2="140" y2="296" stroke="#ffffff" strokeWidth="0.6" opacity="0.5" />
+          <line x1="180" y1="304" x2="270" y2="304" stroke="#ffffff" strokeWidth="0.6" opacity="0.45" />
+          <line x1="320" y1="298" x2="420" y2="298" stroke="#ffffff" strokeWidth="0.6" opacity="0.5" />
+          <line x1="450" y1="310" x2="555" y2="310" stroke="#ffffff" strokeWidth="0.6" opacity="0.4" />
         </g>
 
         {/* ── DAY 3b — MID RIDGE / forested foothills appear ── */}
@@ -553,18 +586,30 @@ function SunriseIllustration() {
           ))}
         </g>
 
-        {/* ── DAY 5 — BIRDS crossing the sky ── */}
+        {/* ── DAY 5 — BIRDS crossing the sky ──
+            10 birds spread across the canvas per Ben 2026-05-18.
+            Sized in three tiers (close / mid / distant) so the eye
+            reads depth. Positioned to AVOID the sun disc at
+            (475, 100) — birds fly AROUND it, not in front. */}
         <g
           opacity={birdsOp}
           fill="none"
           stroke="#0d4f4a"
-          strokeWidth="1.8"
           strokeLinecap="round"
         >
-          <path d="M165 90 q6 -8 12 0 q6 -8 12 0" />
-          <path d="M210 75 q5 -7 10 0 q5 -7 10 0" />
-          <path d="M195 115 q5 -6 10 0 q5 -6 10 0" />
-          <path d="M148 110 q4 -5 8 0 q4 -5 8 0" />
+          {/* Close birds (foreground) — strongest stroke */}
+          <path d="M70 95 q7 -9 14 0 q7 -9 14 0" strokeWidth="2" />
+          <path d="M555 145 q7 -9 14 0 q7 -9 14 0" strokeWidth="2" />
+          <path d="M205 135 q6 -8 12 0 q6 -8 12 0" strokeWidth="1.9" />
+          {/* Mid-distance birds */}
+          <path d="M120 65 q5 -7 10 0 q5 -7 10 0" strokeWidth="1.6" />
+          <path d="M255 88 q5 -7 10 0 q5 -7 10 0" strokeWidth="1.6" />
+          <path d="M340 165 q5 -7 10 0 q5 -7 10 0" strokeWidth="1.6" />
+          <path d="M390 70 q5 -7 10 0 q5 -7 10 0" strokeWidth="1.6" />
+          {/* Distant birds — thinnest stroke, smaller arcs */}
+          <path d="M165 175 q4 -5 8 0 q4 -5 8 0" strokeWidth="1.3" opacity="0.85" />
+          <path d="M295 50 q4 -5 8 0 q4 -5 8 0" strokeWidth="1.3" opacity="0.85" />
+          <path d="M520 60 q4 -5 8 0 q4 -5 8 0" strokeWidth="1.3" opacity="0.8" />
         </g>
 
         {/* ── CAPTION — "And there was light." settles in last. ── */}
