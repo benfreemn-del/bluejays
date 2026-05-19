@@ -91,6 +91,7 @@ const BUSINESS = {
     "Forks",
   ],
   owners: ["Cyril Frick", "Ella Frick"],
+  license: "PENINPE885KW",
 } as const;
 
 /* ───────────────────────── COLORS — LIGHT THEME ─────────────────────────
@@ -450,34 +451,75 @@ function TrustBadge({
   icon,
   label,
   sublabel,
+  primary = false,
 }: {
   icon: React.ReactNode;
   label: string;
   sublabel?: string;
+  /** Heavier styling for a load-bearing credential (license #, cert, etc.). */
+  primary?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3.5 sm:gap-4">
+    <div
+      className={
+        primary
+          ? "flex items-center gap-4 sm:gap-5 rounded-lg px-4 py-3 sm:px-5 sm:py-3.5"
+          : "flex items-center gap-3.5 sm:gap-4"
+      }
+      style={
+        primary
+          ? {
+              background: ACCENT_TINT,
+              border: `1.5px solid ${ACCENT_DIM}`,
+              boxShadow: "0 4px 14px rgba(234, 88, 12, 0.10)",
+            }
+          : undefined
+      }
+    >
       <span
-        className="shrink-0 flex items-center justify-center w-11 h-11 rounded-md"
-        style={{
-          background: ACCENT_TINT,
-          color: ACCENT,
-          border: `1px solid ${ACCENT_DIM}`,
-        }}
+        className={
+          primary
+            ? "shrink-0 flex items-center justify-center w-14 h-14 rounded-md"
+            : "shrink-0 flex items-center justify-center w-11 h-11 rounded-md"
+        }
+        style={
+          primary
+            ? {
+                background: FIRE_GRAD,
+                color: "#1c1410",
+                boxShadow: "0 4px 14px rgba(234, 88, 12, 0.35)",
+              }
+            : {
+                background: ACCENT_TINT,
+                color: ACCENT,
+                border: `1px solid ${ACCENT_DIM}`,
+              }
+        }
       >
         {icon}
       </span>
-      <div className="leading-tight">
+      <div className="leading-tight min-w-0">
         <div
-          className="text-[13px] sm:text-[14px] font-bold uppercase tracking-wide text-[#1c1410]"
+          className={
+            primary
+              ? "text-[14px] sm:text-[15px] font-bold uppercase tracking-wide text-[#1c1410]"
+              : "text-[13px] sm:text-[14px] font-bold uppercase tracking-wide text-[#1c1410]"
+          }
           style={{ fontFamily: FONT_HEAD }}
         >
           {label}
         </div>
         {sublabel && (
           <div
-            className="text-[11px] sm:text-[12px] uppercase tracking-[0.18em] mt-0.5"
-            style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
+            className={
+              primary
+                ? "text-[14px] sm:text-[16px] font-bold tracking-[0.06em] mt-1 font-mono"
+                : "text-[11px] sm:text-[12px] uppercase tracking-[0.18em] mt-0.5"
+            }
+            style={{
+              color: primary ? ACCENT_DEEP : INK_DIM,
+              fontFamily: primary ? "ui-monospace, 'SF Mono', monospace" : FONT_HEAD,
+            }}
           >
             {sublabel}
           </div>
@@ -1777,7 +1819,7 @@ export default function PeninsulaPavingPage() {
             borderColor: "rgba(28, 20, 16, 0.08)",
           }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-3.5 sm:py-4">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-5 sm:py-7">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-7 items-center">
               <TrustBadge
                 icon={<Clock size={22} weight="fill" />}
@@ -1790,9 +1832,10 @@ export default function PeninsulaPavingPage() {
                 sublabel="Cyril &amp; Ella Frick"
               />
               <TrustBadge
-                icon={<Truck size={22} weight="fill" />}
-                label="Excavation + Paving"
-                sublabel="One in-house crew"
+                icon={<ShieldCheck size={26} weight="fill" />}
+                label="Licensed · Bonded · Insured"
+                sublabel={`L&I #${BUSINESS.license}`}
+                primary
               />
             </div>
           </div>
@@ -2617,6 +2660,17 @@ export default function PeninsulaPavingPage() {
                 >
                   {BUSINESS.address.full}
                 </a>
+                <div
+                  className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded text-[11px] font-bold tracking-wide font-mono"
+                  style={{
+                    background: ACCENT_TINT,
+                    color: ACCENT_DEEP,
+                    border: `1px solid ${ACCENT_DIM}`,
+                  }}
+                >
+                  <ShieldCheck size={11} weight="fill" />
+                  L&amp;I #{BUSINESS.license}
+                </div>
               </div>
 
               <div>
