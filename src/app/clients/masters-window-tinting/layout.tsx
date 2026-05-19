@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/masters-window-tinting — Masters Window Tinting
@@ -45,6 +46,7 @@ export default function MastersWindowTintingLayout({
       />
       <ClientTrackingScripts slug="masters-window-tinting" />
       {children}
+      <BackToTopButton bg="#0066cc" fg="#ffffff" />
     </>
   );
 }

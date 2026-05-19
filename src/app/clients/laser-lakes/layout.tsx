@@ -1,4 +1,5 @@
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/laser-lakes/* — Nate's bespoke marketing front.
@@ -43,6 +44,7 @@ export default function LaserLakesLayout({
       />
       <ClientTrackingScripts slug="laser-lakes" />
       {children}
+      <BackToTopButton bg="#d99f58" fg="#f6f1e8" />
     </>
   );
 }

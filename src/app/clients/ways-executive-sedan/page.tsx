@@ -60,6 +60,7 @@ import {
   CheckSquare,
 } from "@phosphor-icons/react";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 
 // ─── Real Ways brand assets ────────────────────────────────────────
 // Pulled directly from wayscs.com WordPress uploads.
@@ -367,6 +368,7 @@ export default function WaysExecutiveSedanPage() {
   );
 
   return (
+    <>
     <main className="relative min-h-screen overflow-x-hidden" style={{ background: BG, color: INK }}>
       {/* ── NAV ──────────────────────────────────────────────────── */}
       <nav
@@ -1158,5 +1160,7 @@ export default function WaysExecutiveSedanPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#c9a24a" fg="#0a0e1a" />
+    </>
   );
 }

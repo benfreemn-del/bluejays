@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/family-care-cleaning. Houses metadata that the page
@@ -53,6 +54,7 @@ export default function FamilyCareCleaningLayout({
       />
       <ClientTrackingScripts slug="family-care-cleaning" />
       {children}
+      <BackToTopButton bg="#f5b826" fg="#0f1a0f" />
     </>
   );
 }

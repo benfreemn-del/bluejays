@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/peninsula-paving — Peninsula Paving & Excavating,
@@ -269,6 +270,7 @@ export default function PeninsulaPavingLayout({
       />
       <ClientTrackingScripts slug="peninsula-paving" />
       {children}
+      <BackToTopButton bg="#ea580c" fg="#fefdfb" />
     </>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/bloodlines — Preston James Hunsaker's Bloodlines
@@ -264,6 +265,7 @@ export default function BloodlinesLayout({
       />
       <ClientTrackingScripts slug="bloodlines" />
       {children}
+      <BackToTopButton bg="#d4a853" fg="#09090b" />
     </>
   );
 }

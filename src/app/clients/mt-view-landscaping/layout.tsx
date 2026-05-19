@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/mt-view-landscaping. Houses metadata that the page
@@ -22,5 +23,10 @@ export default function MtViewLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      {children}
+      <BackToTopButton bg="#16a34a" fg="#ffffff" />
+    </>
+  );
 }

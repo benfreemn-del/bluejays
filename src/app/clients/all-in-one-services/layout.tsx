@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/all-in-one-services — All In One Service's LLC, Sequim WA.
@@ -371,6 +372,7 @@ export default function AllInOneServicesLayout({
       />
       <ClientTrackingScripts slug="all-in-one-services" />
       {children}
+      <BackToTopButton bg="#d97706" fg="#0a0a0a" />
     </>
   );
 }

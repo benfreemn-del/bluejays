@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export const metadata: Metadata = {
   title:
@@ -16,5 +17,10 @@ export default function RivIncLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      {children}
+      <BackToTopButton bg="#7af0d4" fg="#070a13" />
+    </>
+  );
 }

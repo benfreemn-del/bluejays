@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Elite Hardscapes & Landscapes — Tyler Fritz, Port Angeles WA.
@@ -179,6 +180,7 @@ export default function EliteLayout({
       />
       <ClientTrackingScripts slug="elite-hardscapes-and-landscapes" />
       {children}
+      <BackToTopButton bg="#c2410c" fg="#fbf7ee" />
     </>
   );
 }

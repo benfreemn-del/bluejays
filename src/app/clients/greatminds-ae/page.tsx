@@ -65,6 +65,7 @@ import {
 
 import StickyNav from "./sticky-nav";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -458,6 +459,7 @@ function HairlineRule({ color = NAVY }: { color?: string }) {
 /* ───────────────────────── PAGE ───────────────────────── */
 export default function GreatMindsPage() {
   return (
+    <>
     <main
       id="top"
       className="min-h-screen font-sans"
@@ -2021,5 +2023,7 @@ export default function GreatMindsPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#b56240" fg="#f7f3ec" />
+    </>
   );
 }

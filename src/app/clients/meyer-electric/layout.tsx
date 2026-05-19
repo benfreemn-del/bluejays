@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/meyer-electric — Meyer Electric LLC, Sequim WA.
@@ -280,6 +281,7 @@ export default function MeyerElectricLayout({
       />
       <ClientTrackingScripts slug="meyer-electric" />
       {children}
+      <BackToTopButton bg="#facc15" fg="#0a0a0a" />
     </>
   );
 }

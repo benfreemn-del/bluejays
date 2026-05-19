@@ -69,6 +69,7 @@ import {
   TiktokLogo,
 } from "@phosphor-icons/react";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 
 // ─── Real ITC brand assets (verified live) ─────────────────────────
 const ITC_LOGO =
@@ -494,6 +495,7 @@ export default function ITCQuickAttachPage() {
   );
 
   return (
+    <>
     <main
       className="relative min-h-screen overflow-x-hidden"
       style={{ background: BG, color: INK }}
@@ -1993,5 +1995,7 @@ export default function ITCQuickAttachPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#dc2626" fg="#ffffff" />
+    </>
   );
 }

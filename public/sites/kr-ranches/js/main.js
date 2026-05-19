@@ -781,3 +781,29 @@
       });
   });
 })();
+
+
+/* ─── Back-to-top button: show after scrolling past 1/3 of the page ─── */
+(function () {
+  var btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  function update() {
+    var doc = document.documentElement;
+    var total = doc.scrollHeight - window.innerHeight;
+    if (total <= 0) {
+      btn.classList.remove('is-visible');
+      return;
+    }
+    if (window.scrollY > total * 0.33) {
+      btn.classList.add('is-visible');
+    } else {
+      btn.classList.remove('is-visible');
+    }
+  }
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();

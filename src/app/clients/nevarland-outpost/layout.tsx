@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/nevarland-outpost — Christopher's handmade
@@ -198,6 +199,7 @@ export default function NevarlandOutpostLayout({
       />
       <ClientTrackingScripts slug="nevarland-outpost" />
       {children}
+      <BackToTopButton bg="#a06b3c" fg="#ffffff" />
     </>
   );
 }

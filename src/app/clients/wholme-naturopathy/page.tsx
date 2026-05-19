@@ -61,6 +61,7 @@ import {
 
 import StickyNav from "./sticky-nav";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /* ───────────────────────── BUSINESS ───────────────────────── */
 const BUSINESS = {
@@ -321,6 +322,7 @@ function HairlineRule({ color = SAGE }: { color?: string }) {
 /* ───────────────────────── PAGE ───────────────────────── */
 export default function WholmePage() {
   return (
+    <>
     <main
       id="top"
       className="min-h-screen font-sans"
@@ -1442,5 +1444,7 @@ export default function WholmePage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#3d4f3a" fg="#f7f1e8" />
+    </>
   );
 }

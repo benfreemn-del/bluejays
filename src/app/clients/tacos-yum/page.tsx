@@ -25,6 +25,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 import {
   motion,
   useMotionValue,
@@ -320,6 +321,7 @@ export default function TacosYumPage() {
   );
 
   return (
+    <>
     <main className="relative min-h-screen" style={{ background: BG, color: INK }}>
       {/* ── NAV ──────────────────────────────────────────────────── */}
       <nav
@@ -933,5 +935,7 @@ export default function TacosYumPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#c8362d" fg="#ffffff" />
+    </>
   );
 }

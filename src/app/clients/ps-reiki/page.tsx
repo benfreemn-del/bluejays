@@ -25,6 +25,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 import {
   motion,
   useMotionValue,
@@ -415,6 +416,7 @@ export default function PsReikiPage() {
   );
 
   return (
+    <>
     <main className="relative min-h-screen" style={{ background: BG, color: INK }}>
       {/* ── NAV ──────────────────────────────────────────────────── */}
       <nav
@@ -1160,5 +1162,7 @@ export default function PsReikiPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#c8867e" fg="#fdfaf6" />
+    </>
   );
 }

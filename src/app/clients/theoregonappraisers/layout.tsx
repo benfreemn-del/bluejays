@@ -23,6 +23,7 @@
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import BackToTopButton from "@/components/BackToTopButton";
 
 const SITE_URL = "https://bluejayportfolio.com";
 const PAGE_PATH = "/clients/theoregonappraisers";
@@ -263,6 +264,7 @@ export default function TheOregonAppraisersLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {children}
+      <BackToTopButton bg="#b8860b" fg="#faf6f0" />
     </>
   );
 }

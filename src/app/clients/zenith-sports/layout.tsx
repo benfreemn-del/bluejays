@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/zenith-sports. Houses metadata that the page
@@ -77,6 +78,7 @@ export default function ZenithSportsLayout({
       `}</style>
       <ClientTrackingScripts slug="zenith-sports" />
       <div className="zenith-root">{children}</div>
+      <BackToTopButton bg="#a3e635" fg="#0a1832" />
     </>
   );
 }

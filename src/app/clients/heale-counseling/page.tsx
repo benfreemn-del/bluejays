@@ -31,6 +31,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 import {
   motion,
   useMotionValue,
@@ -475,6 +476,7 @@ export default function HealeCounselingPage() {
   );
 
   return (
+    <>
     <main className="relative min-h-screen" style={{ background: BG, color: INK }}>
       {/* ── NAV ──────────────────────────────────────────────────── */}
       <nav
@@ -1179,5 +1181,7 @@ export default function HealeCounselingPage() {
         </div>
       </footer>
     </main>
+    <BackToTopButton bg="#c8867e" fg="#fdfaf6" />
+    </>
   );
 }

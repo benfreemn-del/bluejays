@@ -23,6 +23,7 @@
  */
 
 import InquiryForm from "@/components/clients/InquiryForm";
+import BackToTopButton from "@/components/BackToTopButton";
 import {
   InstagramLogo,
   FacebookLogo,
@@ -202,6 +203,7 @@ const MONTHS: { m: string; line: string; badge?: string }[] = [
 // ─── Page ─────────────────────────────────────────────────────────
 export default function VisitMarfaPage() {
   return (
+    <>
     <main
       style={{
         background: BG,
@@ -1354,5 +1356,7 @@ export default function VisitMarfaPage() {
       </footer>
 
     </main>
+    <BackToTopButton bg="#c46a4d" fg="#faf6f0" />
+    </>
   );
 }

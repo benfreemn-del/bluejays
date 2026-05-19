@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
+import BackToTopButton from "@/components/BackToTopButton";
 
 /**
  * Layout for /clients/hector-landscaping. Houses metadata that the page
@@ -54,6 +55,7 @@ export default function HectorLandscapingLayout({
       />
       <ClientTrackingScripts slug="hector-landscaping" />
       {children}
+      <BackToTopButton bg="#16a34a" fg="#ffffff" />
     </>
   );
 }
