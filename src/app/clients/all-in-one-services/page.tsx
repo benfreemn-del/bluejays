@@ -923,7 +923,7 @@ export default function AllInOneServicesPage() {
               {/* Hero copy */}
               <motion.div initial="hidden" animate="show" variants={fadeUp}>
                 <div
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.22em] mb-6"
+                  className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.20em] mb-6"
                   style={{
                     background: "rgba(217, 119, 6, 0.10)",
                     border: `1px solid ${ACCENT_DIM}`,
@@ -931,7 +931,7 @@ export default function AllInOneServicesPage() {
                     fontFamily: FONT_HEAD,
                   }}
                 >
-                  <Certificate size={12} weight="fill" />
+                  <Certificate size={16} weight="fill" />
                   Sequim, WA · Since 2016 · WA L&I {BUSINESS.license}
                 </div>
 
@@ -1547,37 +1547,45 @@ export default function AllInOneServicesPage() {
               </div>
               <ul className="divide-y" style={{ borderColor: RULE }}>
                 {SERVICES_LIST.map((s, i) => (
-                  <li
-                    key={s.name}
-                    className="py-5 sm:py-6 grid grid-cols-[auto_1fr] sm:grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 items-baseline"
-                    style={{ borderColor: RULE }}
-                  >
-                    <span
-                      className="text-[12px] uppercase tracking-[0.22em] font-bold tabular-nums"
-                      style={{ color: MOSS, fontFamily: FONT_HEAD }}
+                  <li key={s.name} style={{ borderColor: RULE }}>
+                    <a
+                      href="#estimate"
+                      aria-label={`Get an estimate for ${s.name}`}
+                      className="group py-5 sm:py-6 grid grid-cols-[auto_1fr] sm:grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 items-baseline rounded-md transition-colors hover:bg-black/[0.025] -mx-3 px-3"
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div>
-                      <div
-                        className="text-[20px] sm:text-[22px] font-bold tracking-tight"
-                        style={{ color: INK, fontFamily: FONT_HEAD }}
+                      <span
+                        className="text-[12px] uppercase tracking-[0.22em] font-bold tabular-nums"
+                        style={{ color: MOSS, fontFamily: FONT_HEAD }}
                       >
-                        {s.name}
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <div
+                          className="text-[20px] sm:text-[22px] font-bold tracking-tight transition-colors group-hover:text-[color:var(--moss)]"
+                          style={
+                            {
+                              color: INK,
+                              fontFamily: FONT_HEAD,
+                              "--moss": MOSS,
+                            } as React.CSSProperties
+                          }
+                        >
+                          {s.name}
+                        </div>
+                        <div
+                          className="mt-1 text-[13px] sm:text-[14px]"
+                          style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                        >
+                          {s.sub}
+                        </div>
                       </div>
-                      <div
-                        className="mt-1 text-[13px] sm:text-[14px]"
-                        style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
-                      >
-                        {s.sub}
-                      </div>
-                    </div>
-                    <ArrowRight
-                      size={16}
-                      weight="bold"
-                      className="hidden sm:block opacity-50"
-                      style={{ color: MOSS }}
-                    />
+                      <ArrowRight
+                        size={16}
+                        weight="bold"
+                        className="hidden sm:block opacity-40 transition-all group-hover:opacity-100 group-hover:translate-x-1"
+                        style={{ color: MOSS }}
+                      />
+                    </a>
                   </li>
                 ))}
               </ul>
