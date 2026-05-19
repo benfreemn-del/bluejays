@@ -49,7 +49,7 @@ const CLIENT_SITES: Record<string, ClientSite> = {
     kind: "internal",
     href: "/clients/masters-window-tinting",
   },
-  // Elite Hardscapes & Landscapes — Tyler Fritz, Port Angeles WA.
+  // Elite Hardscapes & Landscaping — Tyler Fritz, Port Angeles WA.
   // $1k bespoke custom-tier hardscape + landscape crew. Olympic
   // Peninsula. No portal backend (No-Backend Client Pattern) —
   // leads via mailto + tel/sms.

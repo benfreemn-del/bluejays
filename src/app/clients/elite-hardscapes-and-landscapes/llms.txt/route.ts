@@ -1,7 +1,7 @@
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-const body = `# Elite Hardscapes & Landscapes — Hardscape, Landscape & Property Maintenance · Port Angeles WA
+const body = `# Elite Hardscapes & Landscaping — Hardscape, Landscape & Property Maintenance · Port Angeles WA
 
 > Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula. Retaining walls, paver patios, fences, hydroseed lawns, plantings, and weekly mowing routes from Forks to Port Townsend. Owner-operated by Tyler Fritz since 2022.
 

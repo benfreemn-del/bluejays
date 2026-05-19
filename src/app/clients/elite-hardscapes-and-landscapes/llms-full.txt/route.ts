@@ -1,13 +1,13 @@
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-const body = `# Elite Hardscapes & Landscapes — Hardscape, Landscape & Property Maintenance · Port Angeles WA
+const body = `# Elite Hardscapes & Landscaping — Hardscape, Landscape & Property Maintenance · Port Angeles WA
 
 > Locally owned hardscape, landscape, and property-maintenance crew working the Olympic Peninsula since 2022. Owner-operated by Tyler Fritz. Fully insured. Hardscape first — retaining walls, paver patios, walkways, cedar fencing, fire pits. Landscape design, install, hydroseed lawns. Weekly maintenance routes Sequim through Forks.
 
 ## About
 
-Elite Hardscapes & Landscapes is a small, owner-operated outdoor contractor on the Olympic Peninsula. Founded in 2022 by Tyler Fritz. The company specializes in hardscape construction (retaining walls, paver work, fencing) and landscape design and install, with a year-round property-maintenance route covering Clallam County. Tyler is the single point of contact from quote through walk-off.
+Elite Hardscapes & Landscaping is a small, owner-operated outdoor contractor on the Olympic Peninsula. Founded in 2022 by Tyler Fritz. The company specializes in hardscape construction (retaining walls, paver work, fencing) and landscape design and install, with a year-round property-maintenance route covering Clallam County. Tyler is the single point of contact from quote through walk-off.
 
 ## Services
 

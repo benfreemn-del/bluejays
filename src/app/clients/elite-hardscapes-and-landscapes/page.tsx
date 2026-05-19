@@ -46,9 +46,8 @@ import BluejayFeather from "@/components/BluejayFeather";
 const PHOTO_BASE = "/clients/elite-hardscapes-and-landscapes/photos";
 
 // Real Google Business Profile snapshot — scraped 2026-05-17 from
-// Tyler's actual GBP "Elite Hardscapes & Landscaping" (Google listing
-// name differs from website brand by one letter — Landscaping vs
-// Landscapes). Update when Tyler gains/loses reviews.
+// Tyler's actual GBP "Elite Hardscapes & Landscaping". Site brand
+// aligned to GBP on 2026-05-19. Update when Tyler gains/loses reviews.
 const GOOGLE_RATING = 4.7;
 const GOOGLE_REVIEW_COUNT = 13;
 // Search URL is the chip's external fallback (only used if STATIC_REVIEWS
@@ -103,7 +102,7 @@ const STATIC_REVIEWS: GoogleReview[] = [
 
 const BRAND = {
   name: "Elite",
-  suffix: "Hardscapes & Landscapes",
+  suffix: "Hardscapes & Landscaping",
   owner: "Tyler Fritz",
   location: "Port Angeles, Washington",
   region: "Olympic Peninsula",
@@ -899,7 +898,7 @@ export default function Site() {
           >
             <img
               src={BRAND.logo}
-              alt="Elite Hardscapes & Landscapes"
+              alt="Elite Hardscapes & Landscaping"
               className="h-20 md:h-24 w-auto transition-transform group-hover:scale-105"
             />
             <div className="hidden sm:block leading-none">
@@ -913,7 +912,7 @@ export default function Site() {
                 className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] mt-1.5"
                 style={{ color: PALETTE.chrome }}
               >
-                Hardscapes & Landscapes
+                Hardscapes & Landscaping
               </div>
             </div>
           </a>
@@ -1575,7 +1574,7 @@ export default function Site() {
               >
                 <img
                   src={`${PHOTO_BASE}/IMG_6672.jpg`}
-                  alt={`${BRAND.owner}, owner of Elite Hardscapes & Landscapes`}
+                  alt={`${BRAND.owner}, owner of Elite Hardscapes & Landscaping`}
                   className="w-full h-full object-cover object-top"
                   style={{ filter: "saturate(0.95) contrast(1.05)" }}
                 />
@@ -1635,7 +1634,7 @@ export default function Site() {
                   style={{ color: PALETTE.chromeBright }}
                 >
                   <p>
-                    Elite Hardscapes & Landscapes is owned and operated by{" "}
+                    Elite Hardscapes & Landscaping is owned and operated by{" "}
                     {BRAND.owner} on the Olympic Peninsula. We handle
                     hardscape, landscape design and install, and weekly
                     property maintenance — end-to-end on every project,
@@ -2293,7 +2292,7 @@ export default function Site() {
               <div className="flex items-center gap-3 mb-5">
                 <img
                   src={BRAND.logo}
-                  alt="Elite Hardscapes & Landscapes"
+                  alt="Elite Hardscapes & Landscaping"
                   className="h-14 w-auto"
                 />
                 <div className="leading-none">
@@ -2307,7 +2306,7 @@ export default function Site() {
                     className="text-[10px] uppercase tracking-[0.25em] mt-1"
                     style={{ color: PALETTE.chrome }}
                   >
-                    Hardscapes & Landscapes
+                    Hardscapes & Landscaping
                   </div>
                 </div>
               </div>

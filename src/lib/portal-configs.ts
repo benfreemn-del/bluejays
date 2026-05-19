@@ -387,7 +387,7 @@ const NEVARLAND_OUTPOST: PortalConfig = {
 };
 
 const ELITE_HARDSCAPES: PortalConfig = {
-  displayName: "Elite Hardscapes & Landscapes",
+  displayName: "Elite Hardscapes & Landscaping",
   audiences: [],
   audienceSourceKeywords: [],
   pipelineValueOptIn: false,

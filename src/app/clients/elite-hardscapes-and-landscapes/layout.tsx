@@ -3,7 +3,7 @@ import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 import BackToTopButton from "@/components/BackToTopButton";
 
 /**
- * Elite Hardscapes & Landscapes — Tyler Fritz, Port Angeles WA.
+ * Elite Hardscapes & Landscaping — Tyler Fritz, Port Angeles WA.
  * Custom-tier bespoke build ($1k). Rugged American craftsman aesthetic:
  * matte-black background, steel-chrome details, crimson accents.
  *
@@ -18,7 +18,7 @@ const HERO_PHOTO_URL =
   "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/RenderedImage.jpg";
 
 const TITLE =
-  "Elite Hardscapes & Landscapes · Port Angeles WA · Pavers, Walls, Lawn Care";
+  "Elite Hardscapes & Landscaping · Port Angeles WA · Pavers, Walls, Lawn Care";
 const DESCRIPTION =
   "Olympic Peninsula's hands-on hardscape + landscape crew. Retaining walls, paver patios, fences, hydroseed, plantings, and weekly property maintenance — Sequim, Port Angeles, Port Townsend, Forks. Locally owned, fully insured. Owner-operated by Tyler Fritz.";
 
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "Elite Hardscapes & Landscapes",
+    siteName: "Elite Hardscapes & Landscaping",
     title: TITLE,
     description: DESCRIPTION,
     images: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
         url: HERO_PHOTO_URL,
         width: 1800,
         height: 2400,
-        alt: "Elite Hardscapes & Landscapes — Olympic Peninsula property maintenance",
+        alt: "Elite Hardscapes & Landscaping — Olympic Peninsula property maintenance",
       },
     ],
   },
@@ -62,7 +62,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "@id": SITE_URL,
-  name: "Elite Hardscapes & Landscapes",
+  name: "Elite Hardscapes & Landscaping",
   url: SITE_URL,
   image: HERO_PHOTO_URL,
   logo: "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/9BC866E7-33A3-4704-B978-7D3BED20191C.png",
