@@ -39,6 +39,7 @@ type InboxItem = {
   status: InboxStatus;
   preview: string;
   meta?: Record<string, string>;
+  notes?: string;
 };
 
 export async function GET(request: NextRequest) {
@@ -77,6 +78,7 @@ function mapLeadToInboxItem(lead: {
   funnel_status: string;
   responded_at: string | null;
   raw_payload: Record<string, unknown>;
+  notes: string | null;
   created_at: string;
 }): InboxItem {
   const payload = lead.raw_payload || {};
@@ -105,6 +107,7 @@ function mapLeadToInboxItem(lead: {
     status,
     preview,
     meta,
+    notes: lead.notes ?? undefined,
   };
 }
 

@@ -28,6 +28,7 @@ export type InboxItem = {
   status: InboxStatus;
   preview: string;
   meta?: Record<string, string>;
+  notes?: string;
 };
 
 export const INBOX: InboxItem[] = [

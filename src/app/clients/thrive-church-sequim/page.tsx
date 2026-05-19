@@ -2323,20 +2323,22 @@ function SiteFooter() {
 
         {/* Bottom rail */}
         <div className="mt-14 flex flex-col items-start justify-between gap-6 border-t border-[#fbf7ee]/15 pt-8 text-[13px] text-[#fbf7ee]/72 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <p>
               © {new Date().getFullYear()} Thrive Church Sequim. All rights
               reserved.
             </p>
-            {/* Secret backend-demo entry — small low-opacity bluejay
-                icon. Only people who know to click can find it. */}
+            {/* Staff sign-in — the BlueJay icon doubles as the portal
+                entry. Discreet pill styling so public visitors aren't
+                distracted, clear enough that staff know where to click. */}
             <Link
               href="/clients/thrive-church-sequim/portal-demo"
-              aria-label="Staff portal demo"
-              title="Staff portal demo"
-              className="inline-flex h-6 w-6 items-center justify-center rounded-full opacity-30 transition-opacity hover:opacity-100"
+              aria-label="Staff sign in"
+              title="Staff sign in"
+              className="group inline-flex items-center gap-1.5 rounded-full border border-[#fbf7ee]/15 bg-[#fbf7ee]/[0.04] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#fbf7ee]/65 transition-all hover:border-[#5b9cf6]/40 hover:bg-[#5b9cf6]/10 hover:text-[#fbf7ee]"
             >
-              <BluejayLogo className="h-3 w-auto text-[#5b9cf6]" />
+              <BluejayLogo className="h-3.5 w-auto text-[#5b9cf6] transition-colors group-hover:text-[#93c5fd]" />
+              <span>Staff Sign in</span>
             </Link>
           </div>
           <Link
