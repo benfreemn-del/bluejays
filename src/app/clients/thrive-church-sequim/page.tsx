@@ -1495,8 +1495,8 @@ function PreschoolSpotlight() {
       <div className="relative mx-auto max-w-[1480px] px-6 sm:px-10">
         <div className="grid items-center gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <div className="inline-flex -rotate-2 items-center gap-2 rounded-full border-2 border-[#fbbf24] bg-[#fdebbf] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-[#1a1612]">
-              <span className="block h-1.5 w-1.5 rounded-full bg-[#d97706]" />
+            <div className="inline-flex -rotate-2 items-center gap-3 rounded-full border-2 border-[#fbbf24] bg-[#fdebbf] px-7 py-3 text-sm font-bold uppercase tracking-[0.26em] text-[#1a1612] sm:text-base">
+              <span className="block h-2 w-2 rounded-full bg-[#d97706]" />
               Now Enrolling · 2026 / 2027
             </div>
             <h2
