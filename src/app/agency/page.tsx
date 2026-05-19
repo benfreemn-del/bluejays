@@ -72,18 +72,9 @@ const PROCESS_TESTIMONIALS: Array<{
       { when: "Day 90 target", what: "100 qualified soccer-parent leads via Meta + Google Ads — covered by the 100-lead guarantee", done: false },
     ],
   },
-  {
-    client: "ITC Quick Attach — Jake",
-    vertical: "Manufacturer · tractor accessories",
-    status: "Just closed — build kicking off",
-    icon: "🚜",
-    accent: "sky",
-    timeline: [
-      { when: "Week 1", what: "Site rebuild + dealer-network audit + 6-audience taxonomy (dealer / hunter / forester / arborist / homeowner / fleet)", done: false },
-      { when: "Weeks 4–6", what: "TYM/Kioti configurator quiz, Lob postcard sequences (dealer catalog, hunter pre-season card)", done: false },
-      { when: "Day 90 target", what: "100 qualified dealer + end-buyer leads — covered by the 100-lead guarantee", done: false },
-    ],
-  },
+  // ITC Quick Attach card removed from public agency page 2026-05-19
+  // per Ben — keeping all customer-facing surfaces scrubbed in sync
+  // with the homepage portfolio change.
 ];
 
 const FAQS = [

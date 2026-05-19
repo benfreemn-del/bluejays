@@ -42,7 +42,9 @@ const ACTIVE_CLIENT_SHOWCASES = [
   "masters-window-tinting",  // Auto + ceramic + PPF · West Babylon NY
   "kr-ranches",              // Farm-direct beef · Prosser WA
   "olympic-inspections",     // Home inspections (formerly P&P)
-  "itc-quick-attach",        // Tractor parts manufacturer · DTC ($10K AI System)
+  // "itc-quick-attach" — removed from public sitemap 2026-05-19 per Ben.
+  // The /clients/itc-quick-attach page still exists for Jake's direct use,
+  // just no longer indexed/featured publicly.
   "zenith-sports",           // Soccer training balls · TEKKY brand ($10K AI System)
   "laser-lakes",             // Custom lake-map wood art
   "lcac",                    // Lewis County Autism Coalition

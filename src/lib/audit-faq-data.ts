@@ -65,7 +65,7 @@ export const AUDIT_FAQ_ENTRIES: readonly AuditFaqEntry[] = [
       "This is an AI System. The website is one of 21 modules. The math: 17 universal modules — " +
       "custom site + AI inbound responder + customer-portal backend + missed-call auto-texter + " +
       "review funnel + lead-scoring + content engine — each $2k-$5k standalone. " +
-      "Manufacturers like Jake at ITC Quick Attach or Philip at Tekky get 4 bonus modules on top: " +
+      "Manufacturers like Philip at Tekky get 4 bonus modules on top: " +
       "distributor portal, B2B quote system, custom-order intake, inventory sync. " +
       "That's ~$50k of value at $10k. " +
       "Most agencies sell you a $10k brochure. We sell you a $10k machine that keeps making your money back. " +
@@ -123,9 +123,9 @@ export const AUDIT_FAQ_ENTRIES: readonly AuditFaqEntry[] = [
       "If you're a product manufacturer — yes. If you're a service business — maybe not, " +
       "and I'll tell you that straight on the call. " +
       "The AI System has a 3-anchor ICP: niche manufacturers, indie authors, B2B product companies. " +
-      "ITC Quick Attach builds tractor accessories — works there. " +
       "Tekky / Zenith Sports does soccer training equipment — works there. " +
       "Bloodlines is a fantasy series by an indie author — works there. " +
+      "KR Ranches sells farm-direct beef DTC — works there. " +
       "Three radically different industries, same mechanics. " +
       "What it doesn't work for: pure local service — landscaping, HVAC, electricians. " +
       "Those get a $997 site instead. Different product, different price. " +
@@ -150,7 +150,7 @@ export const AUDIT_FAQ_ENTRIES: readonly AuditFaqEntry[] = [
       "12 months ago I was a beginner dev who saw the pattern: small businesses getting " +
       "overcharged for underbuilt websites by agencies that treated them as side-clients. " +
       "I built BlueJays for the businesses agencies don't actually care about. " +
-      "Tekky's running it. ITC signed for it. Hector's site is live. The work speaks. " +
+      "Tekky's running it. Hector's site is live. Bloodlines launched. The work speaks. " +
       "If you want a 50-person agency — go get one. If you want it built right by someone " +
       "who'll actually answer the phone, schedule a call. Worst case you waste 15 minutes. " +
       "Best case you save $30k and 5 months of agency-onboarding hell.",
