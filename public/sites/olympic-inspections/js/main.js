@@ -567,10 +567,9 @@
         setFieldError("bookPhone", "bookPhoneError", "Please enter a valid phone number (at least 10 digits).");
         hasError = true;
       }
-      if (!email) {
-        setFieldError("bookEmail", "bookEmailError", "Email is required.");
-        hasError = true;
-      } else if (!EMAIL_RE.test(email)) {
+      // Email is OPTIONAL — only validate format if the user provided one.
+      // Phone is the required contact channel; the API requires (email OR phone).
+      if (email && !EMAIL_RE.test(email)) {
         setFieldError("bookEmail", "bookEmailError", "Please enter a valid email address.");
         hasError = true;
       }

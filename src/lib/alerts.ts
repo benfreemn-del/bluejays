@@ -121,11 +121,14 @@ export async function sendOwnerEmail(args: {
   prospectId?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  // Rule 67 (locked 2026-05-12): FROM_EMAIL MUST be hardcoded. Reading
-  // from env caused silent SendGrid 403s when sender-auth on the env
-  // value broke — the Meyer-Electric 90-min debug. Same root cause
-  // was suppressing OIT booking emails to Luke through 2026-05-16.
-  const FROM_EMAIL = "bluejaycontactme@gmail.com";
+  // Rule 67 (updated 2026-05-19): FROM_EMAIL hardcoded to alerts@bluejayportfolio.com.
+  // Why: previous value bluejaycontactme@gmail.com was silently Gmail-spam-filtered.
+  // Gmail's strict DMARC policy on @gmail.com From addresses sent through 3rd-party
+  // SMTP (SendGrid) = automatic spam quarantine. alerts@bluejayportfolio.com is
+  // DMARC-aligned via the authenticated bluejayportfolio.com domain.
+  // Reply-To = bluejaycontactme@gmail.com so replies still land in Ben's Gmail.
+  const FROM_EMAIL = "alerts@bluejayportfolio.com";
+  const REPLY_TO = "bluejaycontactme@gmail.com";
   const OWNER_EMAIL = process.env.OWNER_EMAIL || "ben@bluejayportfolio.com";
 
   if (!SENDGRID_API_KEY) {
@@ -153,6 +156,7 @@ export async function sendOwnerEmail(args: {
       body: JSON.stringify({
         personalizations: [{ to: [{ email: OWNER_EMAIL }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Alerts" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: args.subject,
         content: [
           { type: "text/plain", value: args.body },
@@ -205,11 +209,17 @@ export async function sendEmailTo(args: {
   clientSlug?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  // Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL. This function is
-  // the OIT booking-form's email fan-out path to Luke — the env-var
-  // fallback was the silent-drop root cause for the 2026-05-09 and
-  // 2026-05-16 bookings.
-  const FROM_EMAIL = "bluejaycontactme@gmail.com";
+  // Rule 67 (updated 2026-05-19): FROM_EMAIL hardcoded to alerts@bluejayportfolio.com.
+  // Why: previous value bluejaycontactme@gmail.com was silently Gmail-spam-filtered.
+  // SendGrid Activity Feed showed "Delivered" for 15 OIT booking emails on 2026-05-19
+  // morning, but none landed in any inbox or spam folder (Ben confirmed). Gmail's
+  // strict DMARC policy on @gmail.com From addresses sent through 3rd-party SMTP =
+  // silent spam quarantine OR hard-drop. alerts@bluejayportfolio.com is DMARC-aligned
+  // via the authenticated bluejayportfolio.com domain. Reply-To keeps replies coming
+  // to Ben's Gmail. THIS is the path the OIT booking-form's customer-facing email
+  // fan-out flows through (sendEmailToWithAlert calls sendEmailTo).
+  const FROM_EMAIL = "alerts@bluejayportfolio.com";
+  const REPLY_TO = "bluejaycontactme@gmail.com";
   if (!SENDGRID_API_KEY) {
     console.log(`  🔔 [ALERT - would email ${args.to}]: ${args.subject}\n${args.body}`);
     return false;
@@ -229,6 +239,7 @@ export async function sendEmailTo(args: {
       body: JSON.stringify({
         personalizations: [{ to: [{ email: args.to }] }],
         from: { email: FROM_EMAIL, name: args.fromName || "BlueJays Alerts" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: args.subject,
         content: [
           { type: "text/plain", value: args.body },

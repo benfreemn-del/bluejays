@@ -1230,6 +1230,15 @@ section {
   font-weight: 700;
   margin-left: 2px;
 }
+/* Optional-field hint: muted "(optional)" badge next to label text. */
+.book-form .label-optional {
+  font-weight: 400;
+  font-size: 0.74rem;
+  color: rgba(250, 246, 238, 0.65);
+  margin-left: 6px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
 .book-form-required-note {
   font-size: 0.78rem;
   color: rgba(250, 246, 238, 0.6);
