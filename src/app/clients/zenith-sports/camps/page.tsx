@@ -1477,6 +1477,16 @@ function ResultsStep({
         </p>
       )}
 
+      {!submitting && !submitError && (
+        <p
+          className="text-emerald-300 text-center text-sm mb-4 bg-emerald-500/10 border border-emerald-500/30 rounded-md px-3 py-2 max-w-md mx-auto"
+          role="status"
+          aria-live="polite"
+        >
+          ✓ Your request was saved — check {state.email} for the welcome email.
+        </p>
+      )}
+
       <div className="text-center mb-8">
         <div className="text-5xl mb-3">🎯</div>
         <h1 className="text-3xl sm:text-4xl font-black mb-2">

@@ -160,8 +160,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             of them to open the lightbox at the matching index. */}
         <PhotoZoom
           images={[
-            { src: product.hero, alt: product.name },
-            ...product.thumbs.map((t) => ({ src: t, alt: product.name })),
+            { src: product.hero, alt: `${product.name} — ${product.tagline}` },
+            ...product.thumbs.map((t, i) => ({
+              src: t,
+              alt: `${product.name} — alternate view ${i + 1}`,
+            })),
           ]}
         >
           <div className="relative bg-[#f5f3ee] aspect-[4/3] lg:aspect-auto lg:[direction:ltr]">
@@ -172,7 +175,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             >
               <img
                 src={product.hero}
-                alt={product.name}
+                alt={`${product.name} — ${product.tagline}`}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 style={{ filter: "saturate(1.06) contrast(1.04)" }}
               />

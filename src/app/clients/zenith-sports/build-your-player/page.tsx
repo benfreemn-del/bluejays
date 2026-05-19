@@ -258,11 +258,30 @@ export default function BuildYourPlayerPage() {
             error={submitError}
           />
         )}
+        {step === "plan" && (!plan || !state.role) && (
+          <div className="mx-auto max-w-md text-center rounded-xl border border-rose-500/40 bg-rose-500/10 p-8">
+            <div className="text-4xl mb-3">⚠️</div>
+            <h2 className="text-xl font-black text-white mb-2">
+              We couldn&apos;t generate your plan.
+            </h2>
+            <p className="text-sm text-white/70 mb-5 leading-relaxed">
+              Looks like a step got skipped. Restart the builder and we&apos;ll
+              walk through it again — 90 seconds, tops.
+            </p>
+            <button
+              type="button"
+              onClick={() => setStep("role")}
+              className="inline-flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-3 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
+            >
+              Start over
+            </button>
+          </div>
+        )}
       </div>
 
       <footer className="border-t border-white/10 py-6 mt-12">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 text-center text-[10px] tracking-[0.22em] uppercase text-white/30">
-          © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] -ml-px top-[-0.45em]">®</sup>{" "}
+          © 2025–2026 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] -ml-px top-[-0.45em]">®</sup>{" "}
           is a registered trademark · Patent Pending
         </div>
       </footer>
@@ -955,7 +974,7 @@ function PlanStep({
           </div>
         </div>
         <a
-          href="/clients/zenith-sports/shop"
+          href="/clients/zenith-sports/shop?from=plan-kit"
           className="mt-6 flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
         >
           <ShoppingCart size={16} weight="bold" />

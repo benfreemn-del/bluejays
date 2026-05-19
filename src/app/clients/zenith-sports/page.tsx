@@ -1596,7 +1596,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.collect1}
-              alt="Zenith Sports training session"
+              alt="Youth players training on the TEKKY ball during a Zenith Sports session"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
@@ -1604,7 +1604,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.slide2}
-              alt="Player training with the TEKKY"
+              alt="Young player executing a close-control drill with the TEKKY training ball"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
@@ -1612,7 +1612,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.product08}
-              alt="The TEKKY ball detail"
+              alt="Close-up of the TEKKY ball surface showing bumped texture and white panel detail"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
