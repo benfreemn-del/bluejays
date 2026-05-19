@@ -10,7 +10,7 @@
  * Per-section variants:
  *   connect       → HandHeart + Heart (welcome / hospitality)
  *   ministries    → Plant + Cross (John 15:5 vine + cross)
- *   beliefs       → Leaf + Anchor + Flame (three tiers)
+ *   beliefs       → Leaf + Boat + Bread + open Bible (gospel symbols)
  *   generosity    → Bread + Fish (feeding miracle)
  *   prayer        → HandsPraying + Flame + Heart (intercession)
  *   visit         → Door + Heart + Dove + Cross (come home)
@@ -23,6 +23,7 @@ import {
   Fish,
   Bread,
   Bird,
+  Boat,
   HandHeart,
   HandsPraying,
   Heart,
@@ -71,6 +72,7 @@ type Icon =
   | "handHeart"
   | "vine"
   | "anchor"
+  | "boat"
   | "flame"
   | "oliveBranch"
   | "fish"
@@ -147,10 +149,12 @@ const layouts: Record<Variant, Motif[]> = {
   ],
 
   beliefs: [
-    // Three-tier symbols + open Bible foundation
+    // Three-tier symbols + open Bible foundation. Boat = sailing on
+    // the gospel; bread = the bread of life (John 6); olive branch =
+    // shalom; open Bible = scripture as foundation (Sola Scriptura).
     { icon: "oliveBranch", size: 140, top: "6%", left: "2%", rotate: -8, color: VINE },
-    { icon: "anchor", size: 130, top: "40%", right: "4%", rotate: 4, color: TEAL_DEEP },
-    { icon: "flame", size: 140, bottom: "10%", left: "16%", color: AMBER },
+    { icon: "boat", size: 140, top: "40%", right: "4%", rotate: -6, color: TEAL_DEEP },
+    { icon: "bread", size: 150, bottom: "10%", left: "16%", rotate: -4, color: BREAD },
     // Bible — theology rests on scripture (Sola Scriptura)
     { icon: "bibleOpen", size: 200, bottom: "8%", right: "8%", rotate: 4, color: TEAL, weight: 0.95 },
     { icon: "bible", size: 110, top: "16%", right: "26%", rotate: -8, color: BREAD, weight: 0.85 },
@@ -222,6 +226,7 @@ function iconFor(name: Icon, size: number) {
     case "handHeart": return <HandHeart {...props} />;
     case "vine": return <Plant {...props} />;
     case "anchor": return <Anchor {...props} />;
+    case "boat": return <Boat {...props} />;
     case "flame": return <Flame {...props} />;
     case "oliveBranch": return <Leaf {...props} />;
     case "fish": return <Fish {...props} />;
