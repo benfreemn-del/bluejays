@@ -152,7 +152,7 @@ function Hero() {
             style={{ fontWeight: 500 }}
           >
             We are{" "}
-            <em className="italic" style={{ fontWeight: 400 }}>
+            <em className="italic text-[#d97706]" style={{ fontWeight: 400 }}>
               Thrive.
             </em>
           </motion.h1>
