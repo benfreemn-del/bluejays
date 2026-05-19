@@ -3,19 +3,17 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useEffect } from "react";
-import { Phone, ArrowRight, List, X } from "@phosphor-icons/react/dist/ssr";
+import { Phone, List, X } from "@phosphor-icons/react/dist/ssr";
 
 /**
- * StickyNav — Mt View's site header with mobile hamburger.
+ * StickyNav — Mt View's minimal editorial header.
  *
- * Was a server component with `lg:hidden` on the 5 anchor links —
- * meant phones / tablets had no way to jump to Services / Work /
- * About / Service Area / Contact mid-scroll. Visual review (2026-05-02)
- * flagged this as the single biggest "Wix-template" feel on the page.
- *
- * This client-component version adds a hamburger that toggles a stacked
- * mobile menu. Closes on link tap and on ESC.
+ * v4 redesign (2026-05-19): no filled CTA, no green accent. Wordmark on
+ * the left, 4 anchors center on desktop, phone on the right. Hamburger
+ * collapses the same 4 anchors below lg. Underlined hover state in
+ * Moss. Pure typography header — the page itself does the selling.
  */
+
 type Props = {
   businessName: string;
   logoSrc: string;
@@ -23,11 +21,11 @@ type Props = {
   phoneHref: string;
 };
 
+// Editorial nav — 4 items max. "Work" first to signal portfolio framing.
 const NAV_LINKS = [
-  { href: "#services", label: "Services" },
   { href: "#work", label: "Work" },
+  { href: "#practice", label: "Practice" },
   { href: "#about", label: "About" },
-  { href: "#service-area", label: "Service Area" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -39,14 +37,12 @@ export default function StickyNav({
 }: Props) {
   const [open, setOpen] = useState(false);
 
-  // ESC closes mobile menu
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKey);
-    // Lock body scroll while menu is open
     document.body.style.overflow = "hidden";
     return () => {
       window.removeEventListener("keydown", onKey);
@@ -55,81 +51,74 @@ export default function StickyNav({
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#f8f5ef]/85 border-b border-[#1a2e1a]/10">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
-        <a href="#top" className="flex items-center gap-3 min-w-0">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#F5F1E8]/85 border-b border-[#1C1F1A]/8">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 h-16 sm:h-20 flex items-center justify-between gap-6">
+        {/* Wordmark — quiet, small. The page is the brand, not the header. */}
+        <a href="#top" className="flex items-center gap-3 min-w-0 group">
           <img
             src={logoSrc}
             alt={businessName}
-            className="h-9 sm:h-11 w-auto"
+            className="h-8 sm:h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity"
           />
-          <span className="hidden md:block font-serif text-[15px] tracking-tight text-[#1a2e1a] leading-tight">
+          <span className="hidden md:block font-[family-name:var(--font-fraunces)] text-[16px] tracking-tight text-[#1C1F1A] leading-[1.05]">
             Mountain View
-            <br />
-            <span className="text-[12px] tracking-[0.18em] uppercase text-[#5a6a4f]">
+            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#A8A294] font-[family-name:var(--font-inter)] font-medium mt-0.5">
               Landscape &amp; Design
             </span>
           </span>
         </a>
 
-        {/* Desktop anchor links — visible from lg up */}
-        <nav className="hidden lg:flex items-center gap-8 text-[13px] tracking-wide text-[#1a1612]/80">
+        {/* Desktop anchors — quiet underline hover */}
+        <nav className="hidden lg:flex items-center gap-10 font-[family-name:var(--font-inter)] text-[13px] tracking-wide text-[#1C1F1A]/75">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="hover:text-[#1a2e1a] transition"
+              className="relative hover:text-[#1C1F1A] transition-colors after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-px after:bg-[#3E4A36] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left"
             >
               {l.label}
             </a>
           ))}
         </nav>
 
-        {/* Right rail — phone, primary CTA, hamburger (mobile only) */}
-        <div className="flex items-center gap-3">
-          {/* Icon-only phone tap below sm — keeps the primary CTA reachable
-              in one tap on iPhone SE-width devices instead of buried in the
-              hamburger menu. */}
+        {/* Right rail — just the phone, no filled CTA */}
+        <div className="flex items-center gap-2">
           <a
             href={phoneHref}
-            className="sm:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-[#1a2e1a] hover:bg-[#1a2e1a]/5 transition rounded-full"
+            className="sm:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-[#1C1F1A] hover:bg-[#1C1F1A]/5 transition rounded-full"
             aria-label={`Call ${phoneDisplay}`}
           >
-            <Phone size={18} weight="fill" />
+            <Phone size={17} weight="duotone" />
           </a>
           <a
             href={phoneHref}
-            className="hidden sm:inline-flex items-center gap-2 text-[13px] font-medium text-[#1a2e1a] hover:opacity-80"
+            className="hidden sm:inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-medium text-[#1C1F1A] hover:text-[#3E4A36] transition-colors"
           >
-            <Phone size={16} weight="fill" />
+            <Phone size={15} weight="duotone" />
             {phoneDisplay}
           </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-1.5 bg-[#1a2e1a] text-[#f8f5ef] px-4 py-2 text-[13px] font-medium tracking-wide hover:bg-[#0d1a0d] transition"
-          >
-            Get an estimate
-            <ArrowRight size={14} weight="bold" />
-          </a>
-          {/* Hamburger — only shown below lg, where the desktop nav is hidden */}
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open menu"
-            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 text-[#1a2e1a] hover:bg-[#1a2e1a]/5 transition"
+            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 text-[#1C1F1A] hover:bg-[#1C1F1A]/5 transition"
           >
             <List size={22} weight="bold" />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu overlay — full-screen list when open */}
+      {/* Mobile full-screen menu — editorial typographic stack */}
       {open && (
-        <div className="lg:hidden fixed inset-0 z-[60] bg-[#f8f5ef] flex flex-col">
-          <div className="h-16 sm:h-20 px-5 sm:px-8 flex items-center justify-between border-b border-[#1a2e1a]/10">
-            <a href="#top" onClick={() => setOpen(false)} className="flex items-center gap-3">
-              <img src={logoSrc} alt={businessName} className="h-9 w-auto" />
-              <span className="font-serif text-[15px] tracking-tight text-[#1a2e1a]">
+        <div className="lg:hidden fixed inset-0 z-[60] bg-[#F5F1E8] flex flex-col">
+          <div className="h-16 sm:h-20 px-6 sm:px-10 flex items-center justify-between border-b border-[#1C1F1A]/10">
+            <a
+              href="#top"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3"
+            >
+              <img src={logoSrc} alt={businessName} className="h-8 w-auto" />
+              <span className="font-[family-name:var(--font-fraunces)] text-[16px] tracking-tight text-[#1C1F1A]">
                 Mountain View
               </span>
             </a>
@@ -137,39 +126,38 @@ export default function StickyNav({
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="inline-flex items-center justify-center w-10 h-10 -mr-2 text-[#1a2e1a] hover:bg-[#1a2e1a]/5 transition"
+              className="inline-flex items-center justify-center w-10 h-10 -mr-2 text-[#1C1F1A] hover:bg-[#1C1F1A]/5 transition"
             >
               <X size={22} weight="bold" />
             </button>
           </div>
-          <nav className="flex-1 flex flex-col px-5 sm:px-8 py-8 gap-1">
+          <nav className="flex-1 flex flex-col px-6 sm:px-10 py-10 gap-1">
             {NAV_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="font-serif text-[28px] sm:text-[34px] text-[#1a2e1a] py-3 border-b border-[#1a2e1a]/10 hover:text-[#5a6a4f] transition"
+                className="font-[family-name:var(--font-fraunces)] font-light text-[44px] sm:text-[56px] text-[#1C1F1A] py-3 border-b border-[#1C1F1A]/10 hover:text-[#3E4A36] transition-colors leading-none tracking-tight"
               >
                 {l.label}
               </a>
             ))}
           </nav>
-          <div className="px-5 sm:px-8 pb-10 pt-6 border-t border-[#1a2e1a]/10 space-y-3">
+          <div className="px-6 sm:px-10 pb-10 pt-8 border-t border-[#1C1F1A]/10 space-y-4">
             <a
               href={phoneHref}
               onClick={() => setOpen(false)}
-              className="inline-flex items-center gap-2 text-[15px] font-medium text-[#1a2e1a]"
+              className="inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[15px] font-medium text-[#1C1F1A]"
             >
-              <Phone size={16} weight="fill" />
+              <Phone size={16} weight="duotone" />
               {phoneDisplay}
             </a>
             <a
               href="#contact"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 bg-[#1a2e1a] text-[#f8f5ef] px-6 py-4 text-[14px] font-medium tracking-wide hover:bg-[#0d1a0d] transition"
+              className="block font-[family-name:var(--font-inter)] text-[14px] tracking-wide text-[#3E4A36] underline underline-offset-4 decoration-1"
             >
-              Get a free estimate
-              <ArrowRight size={16} weight="bold" />
+              Request a site visit →
             </a>
           </div>
         </div>

@@ -4,11 +4,15 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle, Warning } from "@phosphor-icons/react";
 
 /**
- * Mt View customer-facing estimate request form.
+ * Mt View customer-facing estimate request form — editorial restyle.
+ *
+ * v4 redesign (2026-05-19): no card chrome, no surrounding box. Inputs
+ * are bare with a thin Stone bottom-border that thickens to Moss on
+ * focus. The submit button is the ONLY filled button on the entire
+ * site — Bark color, the visual exclamation point.
  *
  * Posts to /api/clients/mt-view-landscaping/contact which forwards to
- * Mt View (mtviewlandscapeonline@gmail.com) and pings Ben so he can
- * verify deliverability.
+ * the Hunsakers' gmail + CCs info@mountainviewlandscape.com.
  */
 export default function MtViewContactForm({
   services,
@@ -71,26 +75,22 @@ export default function MtViewContactForm({
 
   if (status === "ok") {
     return (
-      <div className="bg-white border border-[#1a2e1a]/15 p-10 sm:p-12">
-        <CheckCircle size={40} weight="duotone" className="text-[#1a2e1a] mb-5" />
-        <h3 className="font-serif text-[28px] sm:text-[32px] text-[#1a1612] tracking-tight mb-3">
-          Thanks &mdash; we&rsquo;ve got it.
+      <div className="bg-[#FBF8F1] border-l-2 border-[#3E4A36] px-8 py-12 sm:px-12 sm:py-16">
+        <CheckCircle size={36} weight="duotone" className="text-[#3E4A36] mb-6" />
+        <h3 className="font-[family-name:var(--font-fraunces)] font-light text-[34px] sm:text-[44px] text-[#1C1F1A] tracking-tight leading-[1.05] mb-4">
+          Thanks — we&rsquo;ve got it.
         </h3>
-        <p className="text-[16px] leading-relaxed text-[#1a1612]/75 max-w-md">
+        <p className="font-[family-name:var(--font-inter)] text-[17px] leading-[1.65] text-[#1C1F1A]/70 max-w-md">
           A note just landed in our inbox. We typically respond within 24 hours
-          and will reach out by your preferred method to set up an estimate.
+          and will reach out by your preferred method to set up a site visit.
         </p>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white border border-[#1a2e1a]/15 p-7 sm:p-10"
-      noValidate
-    >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <form onSubmit={handleSubmit} noValidate className="space-y-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8">
         <Field label="Your name" name="name" required autoComplete="name" />
         <Field
           label="Email"
@@ -113,49 +113,52 @@ export default function MtViewContactForm({
           placeholder="Where is the work?"
         />
 
-        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Select label="Service" name="service" options={["Not sure yet", ...services]} />
-          <Select
-            label="Preferred contact"
-            name="preferred_contact"
-            options={["Either", "Email", "Phone call", "Text message"]}
-          />
-        </div>
+        <Select
+          label="Service"
+          name="service"
+          options={["Not sure yet", ...services]}
+        />
+        <Select
+          label="Preferred contact"
+          name="preferred_contact"
+          options={["Either", "Email", "Phone call", "Text message"]}
+        />
 
         <div className="sm:col-span-2">
           <Textarea
             label="Tell us about your project"
             name="message"
             required
-            placeholder="Yard size, what you&rsquo;re hoping to do, any timeline you have in mind."
+            placeholder="Yard size, what you're hoping to do, any timeline you have in mind."
           />
         </div>
       </div>
 
       {status === "err" && (
-        <div className="mt-5 flex items-start gap-2 text-[14px] text-[#7a1f1f] bg-[#fbeaea] border border-[#7a1f1f]/15 px-4 py-3">
-          <Warning size={18} weight="fill" className="mt-0.5 shrink-0" />
+        <div className="flex items-start gap-3 font-[family-name:var(--font-inter)] text-[14px] text-[#6B5A3E] border-l-2 border-[#6B5A3E] pl-4 py-2">
+          <Warning size={18} weight="duotone" className="mt-0.5 shrink-0" />
           <span>{errMsg}</span>
         </div>
       )}
 
-      <div className="mt-7 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-[12px] text-[#1a1612]/55 max-w-xs">
+      <div className="flex flex-wrap items-center justify-between gap-6 pt-4">
+        <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#A8A294] max-w-xs">
           Free estimate. No obligation. We typically respond within 24 hours.
         </p>
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center gap-2 bg-[#1a2e1a] text-[#f8f5ef] px-7 py-3.5 text-[14px] font-medium tracking-wide hover:bg-[#0d1a0d] transition disabled:opacity-60 disabled:cursor-wait"
+          className="inline-flex items-center gap-2 bg-[#6B5A3E] hover:bg-[#1C1F1A] text-[#F5F1E8] px-9 py-4 font-[family-name:var(--font-inter)] text-[13px] font-medium tracking-[0.08em] uppercase transition-colors duration-200 disabled:opacity-60 disabled:cursor-wait"
         >
           {status === "sending" ? "Sending…" : "Send to Mt View"}
-          {status !== "sending" && <ArrowRight size={16} weight="bold" />}
+          {status !== "sending" && <ArrowRight size={15} weight="bold" />}
         </button>
       </div>
     </form>
   );
 }
 
+/** Bare-input field with thin Stone bottom-border that thickens to Moss on focus. */
 function Field({
   label,
   name,
@@ -172,10 +175,10 @@ function Field({
   autoComplete?: string;
 }) {
   return (
-    <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+    <label className="block group">
+      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
-        {required && <span className="text-[#7a1f1f] ml-1">*</span>}
+        {required && <span className="text-[#6B5A3E] ml-1">*</span>}
       </span>
       <input
         type={type}
@@ -183,7 +186,7 @@ function Field({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612] placeholder:text-[#1a1612]/35 transition-colors"
+        className="w-full bg-transparent border-0 border-b border-[#A8A294]/40 focus:border-[#3E4A36] focus:border-b-2 outline-none pb-2 font-[family-name:var(--font-inter)] text-[16px] text-[#1C1F1A] placeholder:text-[#1C1F1A]/30 transition-all"
       />
     </label>
   );
@@ -199,14 +202,14 @@ function Select({
   options: string[];
 }) {
   return (
-    <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+    <label className="block group">
+      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
       </span>
       <select
         name={name}
         defaultValue={options[0]}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612]"
+        className="w-full bg-transparent border-0 border-b border-[#A8A294]/40 focus:border-[#3E4A36] focus:border-b-2 outline-none pb-2 font-[family-name:var(--font-inter)] text-[16px] text-[#1C1F1A]"
       >
         {options.map((o) => (
           <option key={o} value={o}>
@@ -230,17 +233,17 @@ function Textarea({
   placeholder?: string;
 }) {
   return (
-    <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[#5a6a4f] mb-2">
+    <label className="block group">
+      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
-        {required && <span className="text-[#7a1f1f] ml-1">*</span>}
+        {required && <span className="text-[#6B5A3E] ml-1">*</span>}
       </span>
       <textarea
         name={name}
         required={required}
         placeholder={placeholder}
         rows={5}
-        className="w-full bg-transparent border-b border-[#1a2e1a]/25 focus:border-[#1a2e1a] outline-none py-2.5 text-[15px] text-[#1a1612] placeholder:text-[#1a1612]/35 transition-colors resize-y"
+        className="w-full bg-transparent border-0 border-b border-[#A8A294]/40 focus:border-[#3E4A36] focus:border-b-2 outline-none pb-2 font-[family-name:var(--font-inter)] text-[16px] text-[#1C1F1A] placeholder:text-[#1C1F1A]/30 transition-all resize-y"
       />
     </label>
   );
