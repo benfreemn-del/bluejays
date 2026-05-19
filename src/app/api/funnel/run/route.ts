@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runDailyFunnel, enrollInFunnel } from "@/lib/funnel-manager";
+import { runDailyFunnel, enrollInFunnel, isColdFunnelEnabled } from "@/lib/funnel-manager";
 import { runAutoResumeCheck } from "@/lib/followup-scheduler";
 import { sendDailyDigest } from "@/lib/alerts";
 import { getWarmingStatus } from "@/lib/domain-warming";
@@ -28,6 +28,32 @@ export async function POST(request?: NextRequest) {
     }
   }
   console.log("\n[Funnel] Running funnel processor...\n");
+
+  // KILL SWITCH — see funnel-manager.ts `isColdFunnelEnabled()`.
+  // If cold outreach is paused, short-circuit the whole cron: no
+  // auto-enroll, no advancement, no SMS/email/voicemail. Heartbeat
+  // still logs so we know the cron is alive.
+  if (!isColdFunnelEnabled()) {
+    console.log(
+      "[Funnel] SKIPPED ENTIRE RUN — COLD_FUNNEL_ENABLED env var is not 'true'.",
+    );
+    try {
+      await logHeartbeat("funnel-run", {
+        skipped: true,
+        reason: "cold_funnel_disabled",
+      });
+    } catch {
+      /* heartbeat is best-effort */
+    }
+    return NextResponse.json({
+      ok: true,
+      killSwitch: true,
+      message:
+        "Cold funnel is PAUSED. Set COLD_FUNNEL_ENABLED=true on Vercel + .env.local to re-enable.",
+      autoEnroll: { requested: 0, enrolled: 0, skipped: 0, capacity: 0, activeBefore: 0 },
+      processor: { processed: 0, sent: [], paused: [], queued: [] },
+    });
+  }
 
   // Step 0: Auto-enroll approved prospects to fill today's warming capacity.
   // Per CLAUDE.md Rule 47, the cron MUST top up the funnel from the approved

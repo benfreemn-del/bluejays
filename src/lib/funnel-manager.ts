@@ -37,6 +37,36 @@ const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
 
+/**
+ * Cold-outreach kill switch (added 2026-05-19 after an inbound lead
+ * asked to stop receiving emails — Ben's cold infra isn't ready for
+ * production blasting yet).
+ *
+ * DEFAULT = OFF. The cold-email funnel only runs when
+ * `COLD_FUNNEL_ENABLED=true` is set on Vercel + .env.local.
+ *
+ * Scope of the pause — this disables:
+ *   - Auto-enrollment of approved prospects (cron Step 0)
+ *   - Manual `enrollInFunnel(id)` calls from the dashboard
+ *   - The daily processor that advances existing enrollments
+ *     (pitch emails, follow-ups, voicemail drops, cold SMS)
+ *
+ * Scope of what STILL works (NOT affected by this switch):
+ *   - Welcome / handoff / onboarding-reminder emails (paid customers)
+ *   - NPS surveys + promoter referral asks
+ *   - Renewal-reminder + payment-failed emails
+ *   - Contact-form auto-replies (inbound)
+ *   - AI responder for inbound replies
+ *   - Domain renewal cron
+ *
+ * To re-enable cold outreach: set `COLD_FUNNEL_ENABLED=true` on Vercel
+ * (Settings → Environment Variables) AND in local `.env.local`. Then
+ * `vercel --prod` to deploy or wait for the next push.
+ */
+export function isColdFunnelEnabled(): boolean {
+  return (process.env.COLD_FUNNEL_ENABLED || "").toLowerCase() === "true";
+}
+
 export interface FunnelEnrollment {
   prospectId: string;
   enrolledAt: string;
@@ -536,6 +566,15 @@ export function getAllEnrollments(): FunnelEnrollment[] {
  * Immediately attempts Day 0 with resilient channel fallback.
  */
 export async function enrollInFunnel(prospectId: string): Promise<{ success: boolean; message: string }> {
+  // Cold-outreach kill switch — see `isColdFunnelEnabled()` doc above.
+  if (!isColdFunnelEnabled()) {
+    return {
+      success: false,
+      message:
+        "Cold funnel is PAUSED (COLD_FUNNEL_ENABLED env var is not 'true'). Set it on Vercel + .env.local to re-enable.",
+    };
+  }
+
   const prospect = await getProspect(prospectId);
   if (!prospect) return { success: false, message: "Prospect not found" };
   if (!prospect.generatedSiteUrl) return { success: false, message: "No preview site — generate one first" };
@@ -644,7 +683,18 @@ export async function runDailyFunnel(): Promise<{
   sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[];
   paused: { name: string; reason: string }[];
   queued: { name: string; step: string; retryId: string; reason: string }[];
+  killSwitch?: boolean;
 }> {
+  // Cold-outreach kill switch — see `isColdFunnelEnabled()` doc above.
+  // Returns an empty result set so the cron heartbeat still pings (so
+  // we know the cron is alive) but no emails/SMS/voicemails fire.
+  if (!isColdFunnelEnabled()) {
+    console.log(
+      "[Funnel] SKIPPED — cold funnel is PAUSED (COLD_FUNNEL_ENABLED env var is not 'true').",
+    );
+    return { processed: 0, sent: [], paused: [], queued: [], killSwitch: true };
+  }
+
   const enrollments = await loadEnrollmentsAsync();
   const sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[] = [];
   const paused: { name: string; reason: string }[] = [];
