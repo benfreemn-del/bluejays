@@ -130,7 +130,7 @@ const SHOWCASES: Showcase[] = [
   },
   {
     slug: "elite-hardscapes-and-landscapes",
-    name: "Elite Hardscapes & Landscapes",
+    name: "Elite Hardscapes & Landscaping",
     industry: "Hardscape + Landscape (Port Angeles WA)",
     category: "landscaping",
     highlight:

@@ -989,7 +989,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               <span>
                 Built by{" "}
                 <a
-                  href="https://bluejayportfolio.com/audit"
+                  href="https://bluejayportfolio.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: "underline" }}

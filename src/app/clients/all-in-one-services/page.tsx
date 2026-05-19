@@ -1903,7 +1903,7 @@ export default function AllInOneServicesPage() {
                 <span>
                   Built by{" "}
                   <a
-                    href="https://bluejayportfolio.com/audit"
+                    href="https://bluejayportfolio.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-semibold transition-colors hover:text-white"

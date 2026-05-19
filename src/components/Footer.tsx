@@ -92,7 +92,7 @@ export default function Footer() {
               <BluejayLogo size={16} className="text-sky-500" />
               Built by{" "}
               <a
-                href="https://bluejayportfolio.com/audit"
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-sky-400 transition-colors underline underline-offset-2"

@@ -243,7 +243,7 @@ export default function TemplateLayout({
             <p className="text-muted/40 text-xs">
               Built by{" "}
               <a
-                href="https://bluejayportfolio.com/audit"
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-blue-electric/80 transition-colors underline underline-offset-2"

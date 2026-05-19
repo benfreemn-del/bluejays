@@ -541,7 +541,7 @@ export default function LaserLakesPage() {
               footer credit on every client site uses this exact phrase
               + format so each new customer becomes a backlink to /audit. */}
           <a
-            href="https://bluejayportfolio.com/audit"
+            href="https://bluejayportfolio.com"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 hover:opacity-100 transition-opacity"

@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -58,10 +58,10 @@ const FACEBOOK_URL = "https://www.facebook.com/ThriveSequim";
 const INSTAGRAM_URL = "https://www.instagram.com/Thrive_Sequim/";
 const GIVE_URL = "https://thrivesequim.com/generosity";
 const PRESCHOOL_URL = "https://thrivesequim.breezechms.com/form/21d24b6151";
-const AUDIT_URL = "https://bluejayportfolio.com/audit";
+const AUDIT_URL = "https://bluejayportfolio.com";
 
 /* ---------- motion helpers ---------- */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   show: (i = 0) => ({
     opacity: 1,
@@ -70,7 +70,7 @@ const fadeUp = {
   }),
 };
 
-const reveal = {
+const reveal: Variants = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { duration: 1.2, ease: "easeOut" } },
 };

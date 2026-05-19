@@ -625,7 +625,7 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "service" },
   { name: "Hector Landscaping", category: "Landscape design", color: "#0d1a0a", href: "/clients/hector-landscaping", icon: "🌿", tagline: "Lawn care + property maintenance · Sequim WA", group: "service" },
   { name: "Mountain View Landscaping", category: "Landscape design", color: "#0f1a14", href: "/clients/mt-view-landscaping", icon: "🏞️", tagline: "Full-service landscape design · Sequim WA", group: "service" },
-  { name: "Elite Hardscapes & Landscapes", category: "Hardscape + landscape", color: "#1a1410", href: "/clients/elite-hardscapes-and-landscapes", icon: "🪨", tagline: "Patios, walls, drainage · Port Angeles WA", group: "service" },
+  { name: "Elite Hardscapes & Landscaping", category: "Hardscape + landscape", color: "#1a1410", href: "/clients/elite-hardscapes-and-landscapes", icon: "🪨", tagline: "Patios, walls, drainage · Port Angeles WA", group: "service" },
   { name: "Pine & Particle Co.", category: "Home inspections", color: "#15211a", href: "/sites/olympic-inspections/index.html", icon: "🌲", tagline: "Olympic Peninsula home inspections + testing", group: "service" },
   { name: "Lewis County Autism Coalition", category: "Nonprofit", color: "#0f1a2e", href: "/sites/lcac/index.html", icon: "🧩", tagline: "Family-focused nonprofit · Lewis County WA", group: "service" },
   { name: "Meyer Electric", category: "Electrician", color: "#1e1407", href: "/clients/meyer-electric", icon: "⚡", tagline: "Residential + commercial electrician · Snohomish WA", group: "service" },

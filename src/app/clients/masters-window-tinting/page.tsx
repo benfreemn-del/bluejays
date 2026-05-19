@@ -1794,7 +1794,7 @@ export default function MastersWindowTintingPage() {
               © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
             </p>
             <a
-              href="https://bluejayportfolio.com/audit"
+              href="https://bluejayportfolio.com"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-[12px] hover:opacity-80 transition-opacity"

@@ -1989,7 +1989,7 @@ export default function ZenithSportsPage() {
               </a>
               Built by{" "}
               <a
-                href="https://bluejayportfolio.com/audit"
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-[#a3e635] transition underline underline-offset-2"
