@@ -1451,7 +1451,7 @@ export default function AllInOneServicesPage() {
           style={{ background: BG_ALT, borderColor: RULE }}
         >
           <GrainStripes color={ACCENT} opacity={0.04} />
-          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.08} />
+          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.06} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="05" label="The craft" />
             <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
@@ -1606,7 +1606,7 @@ export default function AllInOneServicesPage() {
           style={{ background: BG_ALT, borderColor: RULE }}
         >
           <BlueprintGrid color={SOUND} opacity={0.04} />
-          <SectionTint color={ACCENT_GOLD} position="tl" opacity={0.08} />
+          <SectionTint color={ACCENT_GOLD} position="tl" opacity={0.05} />
           <SectionTint color={MOSS_LIGHT} position="br" opacity={0.06} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
@@ -1817,7 +1817,7 @@ export default function AllInOneServicesPage() {
           style={{ background: BG_ALT, borderColor: RULE }}
         >
           <GiantQuoteMark color={SOUND} position="tl" opacity={0.07} />
-          <SectionTint color={ACCENT} position="bl" opacity={0.08} />
+          <SectionTint color={ACCENT} position="bl" opacity={0.06} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="09" label="What Kyle's customers say" />
             <h2
@@ -2006,9 +2006,8 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
-          <BlueprintGrid color={ACCENT} opacity={0.05} />
-          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.10} size={800} />
-          <SectionTint color={ACCENT_GOLD} position="br" opacity={0.08} size={800} />
+          <BlueprintGrid color={SOUND} opacity={0.04} />
+          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.06} size={800} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14">
               <div>
