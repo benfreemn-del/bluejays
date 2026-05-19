@@ -63,7 +63,7 @@ export default function GoogleReviewBadge() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`See all ${REVIEW_COUNT} Google reviews — ${RATING} stars`}
-      className="fixed left-4 sm:left-6 bottom-4 sm:bottom-6 z-[55] transition-all duration-500 ease-out"
+      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-[55] transition-all duration-500 ease-out"
       style={{
         transform: visible ? "translateY(0)" : "translateY(120%)",
         opacity: visible ? 1 : 0,
