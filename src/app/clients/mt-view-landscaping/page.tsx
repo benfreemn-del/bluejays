@@ -508,7 +508,7 @@ function Hero() {
 
 function Practice() {
   return (
-    <section id="practice" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="practice" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="01" />
       <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
         {/* Left: massive photo, full-bleed to left edge */}
@@ -517,7 +517,7 @@ function Practice() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 1.0, ease: "easeOut" }}
-          className="lg:col-span-7 relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto lg:h-[85vh] lg:-ml-10 overflow-hidden"
+          className="lg:col-span-7 relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto lg:h-[68vh] lg:-ml-10 overflow-hidden"
         >
           <img
             src={PHOTOS.olanoLead}
@@ -596,9 +596,9 @@ function Practice() {
 
 function SelectedWork() {
   return (
-    <section id="work" className="relative bg-[#F5F1E8] pt-16 sm:pt-20 lg:pt-28 pb-12 sm:pb-16 overflow-hidden">
+    <section id="work" className="relative bg-[#F5F1E8] pt-12 sm:pt-14 lg:pt-18 pb-10 sm:pb-12 overflow-hidden">
       <SectionMark number="02" />
-      <header className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10 mb-16 sm:mb-24">
+      <header className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10 mb-10 sm:mb-14">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -619,7 +619,7 @@ function SelectedWork() {
         </motion.h2>
       </header>
 
-      <div className="space-y-24 sm:space-y-32 lg:space-y-44">
+      <div className="space-y-14 sm:space-y-20 lg:space-y-24">
         {PROJECTS.map((p, idx) => (
           <ProjectMonograph key={p.slug} project={p} index={idx} />
         ))}
@@ -749,7 +749,11 @@ function ProcessHorizontal() {
       id="process"
       ref={containerRef}
       className="bg-[#F5F1E8] relative"
-      style={{ height: "500vh" }}
+      // Pinned scroll height — 320vh gives each of 5 panels ~64vh of
+      // scroll, deliberate without being painful. Was 500vh originally
+      // which burned 5 full viewports for 5 cards (per Ben's "dead
+      // space" review 2026-05-19).
+      style={{ height: "320vh" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col relative">
         <SectionMark number="03" />
@@ -835,7 +839,7 @@ function ProcessProgressRail({
 
 function ProcessVertical() {
   return (
-    <section id="process" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="process" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="03" />
       <div className="relative z-10 mx-auto max-w-[1100px] px-6 sm:px-10">
         <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
@@ -929,17 +933,17 @@ const TIERS = [
 
 function MaintenancePlans() {
   return (
-    <section id="maintenance" className="relative bg-[#E4E6DC] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="maintenance" className="relative bg-[#E4E6DC] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="04" />
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         {/* Centered header */}
-        <div className="text-center max-w-[640px] mx-auto mb-16 sm:mb-20">
+        <div className="text-center max-w-[760px] mx-auto mb-10 sm:mb-14">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4"
           >
             Maintenance Plans
           </motion.p>
@@ -1056,7 +1060,7 @@ function Hunsakers() {
   };
 
   return (
-    <section id="about" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="about" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark
         number="05"
         glyph={<span className="italic">&amp;</span>}
@@ -1069,7 +1073,7 @@ function Hunsakers() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 1.1, ease: "easeOut" }}
-          className="lg:col-span-6 relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto lg:h-[90vh] lg:-ml-10 overflow-hidden"
+          className="lg:col-span-6 relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto lg:h-[72vh] lg:-ml-10 overflow-hidden"
         >
           <img
             src={PHOTOS.kirseEntry}
@@ -1173,7 +1177,7 @@ function Hunsakers() {
 
 function ClimateSmart() {
   return (
-    <section id="climate" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="climate" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark
         number="06"
         glyph={
@@ -1196,13 +1200,17 @@ function ClimateSmart() {
         }
         glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 text-[#1C1F1A]"
       />
-      <div className="relative z-10 mx-auto max-w-[900px] px-6 sm:px-10">
+      {/* Restructured 2026-05-19: was a narrow centered single-column
+          (max-w-900px) which left ~270px of cream void on each side at
+          1440px. Now a 6/6 split — photo left (full-bleed to edge),
+          headline + 4 climate blocks right — fills the screen. */}
+      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, scale: 1.04 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative aspect-[16/9] sm:aspect-[2/1] overflow-hidden mb-14 sm:mb-20"
+          transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:col-span-6 relative aspect-[4/3] lg:aspect-[5/6] lg:-ml-10 overflow-hidden"
         >
           <img
             src={PHOTOS.climate}
@@ -1212,13 +1220,13 @@ function ClimateSmart() {
           />
         </motion.div>
 
-        <div className="text-center max-w-[640px] mx-auto mb-12 sm:mb-16">
+        <div className="lg:col-span-6 px-6 lg:px-0 lg:pr-12">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4"
           >
             Climate-Smart by Default
           </motion.p>
@@ -1227,7 +1235,7 @@ function ClimateSmart() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8 }}
-            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,60px)]"
+            className="font-[family-name:var(--font-playfair)] font-normal text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(34px,4.5vw,56px)]"
           >
             Plants that belong here.
           </motion.h2>
@@ -1236,35 +1244,35 @@ function ClimateSmart() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.15, duration: 0.7 }}
-            className="mt-6 font-[family-name:var(--font-inter)] text-[16px] sm:text-[17px] leading-[1.65] text-[#1C1F1A]/72"
+            className="mt-5 font-[family-name:var(--font-inter)] text-[16px] sm:text-[17px] leading-[1.6] text-[#1C1F1A]/72 max-w-[480px]"
           >
             Native and climate-adapted species are the default — chosen so a yard costs
             less to keep alive past its second winter.
           </motion.p>
-        </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 sm:gap-y-14"
-        >
-          {CLIMATE_BLOCKS.map((b) => (
-            <motion.div
-              key={b.name}
-              variants={fadeUp}
-              className="border-t border-[#A8A294]/40 pt-5"
-            >
-              <h3 className="font-[family-name:var(--font-playfair)] font-medium text-[20px] sm:text-[22px] tracking-[-0.012em] text-[#1C1F1A]">
-                {b.name}
-              </h3>
-              <p className="mt-3 font-[family-name:var(--font-inter)] text-[14px] sm:text-[15px] leading-[1.65] text-[#1C1F1A]/72">
-                {b.body}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-7"
+          >
+            {CLIMATE_BLOCKS.map((b) => (
+              <motion.div
+                key={b.name}
+                variants={fadeUp}
+                className="border-t border-[#A8A294]/40 pt-4"
+              >
+                <h3 className="font-[family-name:var(--font-playfair)] font-medium text-[18px] sm:text-[20px] tracking-[-0.012em] text-[#1C1F1A]">
+                  {b.name}
+                </h3>
+                <p className="mt-2 font-[family-name:var(--font-inter)] text-[14px] leading-[1.6] text-[#1C1F1A]/72">
+                  {b.body}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -1278,7 +1286,7 @@ function ClimateSmart() {
 
 function Voices() {
   return (
-    <section id="voices" className="relative bg-[#E4E6DC] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="voices" className="relative bg-[#E4E6DC] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark
         number="07"
         glyph={<span>&ldquo;</span>}
@@ -1286,7 +1294,7 @@ function Voices() {
       />
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         {/* Header */}
-        <div className="text-center max-w-[760px] mx-auto mb-16 sm:mb-20">
+        <div className="text-center max-w-[860px] mx-auto mb-10 sm:mb-14">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1311,7 +1319,7 @@ function Voices() {
         <ReviewsCarousel reviews={REVIEWS as unknown as Review[]} viewAllUrl={GOOGLE_REVIEWS_URL} />
 
         {/* Service area — typography IS the map */}
-        <div className="mt-24 sm:mt-32 max-w-[1100px]">
+        <div className="mt-16 sm:mt-20">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1349,8 +1357,11 @@ function Voices() {
           </p>
         </div>
 
-        {/* FAQ — quiet accordion */}
-        <div className="mt-24 sm:mt-32 max-w-[800px]">
+        {/* FAQ — 2-column grid on lg+ to fill the section width. Was a
+            narrow max-w-800px single column which left huge cream voids
+            on either side at 1300px. Now 6 FAQs split 3-and-3 across
+            the section width. */}
+        <div className="mt-16 sm:mt-20">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1377,41 +1388,49 @@ type Review = {
 
 function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
+  // 2-column grid on lg+ (3 FAQs per column) so the section fills its
+  // 1300px width instead of leaving cream voids on either side of a
+  // narrow 800px stack. Single column stays on mobile.
   return (
-    <ul className="divide-y divide-[#A8A294]/35">
-      {FAQ_ITEMS.map((item, i) => {
-        const isOpen = open === i;
-        return (
-          <li key={item.q}>
-            <button
-              type="button"
-              onClick={() => setOpen(isOpen ? null : i)}
-              className="w-full flex items-baseline justify-between gap-6 py-5 text-left group"
-              aria-expanded={isOpen}
-            >
-              <span className="font-[family-name:var(--font-playfair)] font-normal text-[19px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors tracking-[-0.01em]">
-                {item.q}
-              </span>
-              <CaretDown
-                size={18}
-                weight="bold"
-                className={`text-[#3E4A36] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
-              />
-            </button>
-            <motion.div
-              initial={false}
-              animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden"
-            >
-              <p className="pb-6 pr-10 font-[family-name:var(--font-inter)] text-[15px] leading-[1.7] text-[#1C1F1A]/72">
-                {item.a}
-              </p>
-            </motion.div>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+      {[0, 1].map((col) => (
+        <ul key={col} className="divide-y divide-[#A8A294]/35">
+          {FAQ_ITEMS.filter((_, i) => i % 2 === col).map((item) => {
+            const i = FAQ_ITEMS.indexOf(item);
+            const isOpen = open === i;
+            return (
+              <li key={item.q}>
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full flex items-baseline justify-between gap-6 py-5 text-left group"
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-[family-name:var(--font-playfair)] font-normal text-[18px] sm:text-[20px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors tracking-[-0.01em]">
+                    {item.q}
+                  </span>
+                  <CaretDown
+                    size={18}
+                    weight="bold"
+                    className={`text-[#3E4A36] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
+                  />
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden"
+                >
+                  <p className="pb-5 pr-6 font-[family-name:var(--font-inter)] text-[14px] sm:text-[15px] leading-[1.65] text-[#1C1F1A]/72">
+                    {item.a}
+                  </p>
+                </motion.div>
+              </li>
+            );
+          })}
+        </ul>
+      ))}
+    </div>
   );
 }
 
@@ -1424,7 +1443,7 @@ function FaqAccordion() {
 function Contact() {
   const addressEncoded = encodeURIComponent(BUSINESS.address.full);
   return (
-    <section id="contact" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+    <section id="contact" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark
         number="08"
         glyph={<span>→</span>}
