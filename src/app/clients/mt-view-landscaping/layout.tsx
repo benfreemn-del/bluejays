@@ -17,9 +17,13 @@ import BackToTopButton from "@/components/BackToTopButton";
  * root BlueJays ProfessionalService schema.
  */
 
+// Variable font: omit `weight` (or set to "variable") when specifying `axes`.
+// Next/font enforces this — see https://nextjs.org/docs/app/api-reference/components/font.
+// Omitting weight gives us the full variable axis (100-900), which is what
+// the design spec wants anyway (light at 300 for hero, regular at 400 for
+// body H2s, medium at 500 for emphasis).
 const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
   axes: ["SOFT", "opsz"],
   variable: "--font-fraunces",
   display: "swap",
