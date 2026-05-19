@@ -479,13 +479,34 @@ function FloatingLeaves() {
 function GoogleReviewBadge({ hasOnPageReviews }: { hasOnPageReviews: boolean }) {
   const [shown, setShown] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Auto-fade once user scrolls past ~1/3 of the page (same threshold
+  // the BackToTopButton uses to appear). Both are bottom-left + can't
+  // share the same pixels, so the badge hands the slot over once the
+  // back-to-top reveal kicks in.
+  const [scrolledPast, setScrolledPast] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setShown(true), 2000);
     return () => clearTimeout(t);
   }, []);
 
-  if (dismissed) return null;
+  useEffect(() => {
+    const update = () => {
+      const doc = document.documentElement;
+      const totalScrollable = doc.scrollHeight - window.innerHeight;
+      if (totalScrollable <= 0) return;
+      setScrolledPast(window.scrollY > totalScrollable * 0.33);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  if (dismissed || scrolledPast) return null;
 
   const rating = GOOGLE_RATING.toFixed(1);
   const fillPct = Math.max(0, Math.min(100, (GOOGLE_RATING / 5) * 100));

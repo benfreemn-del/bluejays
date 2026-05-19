@@ -267,7 +267,9 @@ export default function EliteLayout({
       />
       <ClientTrackingScripts slug="elite-hardscapes-and-landscapes" />
       {children}
-      <BackToTopButton bg="#c2410c" fg="#fbf7ee" />
+      {/* bg = PALETTE.crimsonHot · matches the hero red + service-card
+          accents. border = PALETTE.crimson for a 1.5px ring of depth. */}
+      <BackToTopButton bg="#dc2626" fg="#f5f5f4" border="#b91c1c" />
     </>
   );
 }
