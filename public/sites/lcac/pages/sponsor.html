@@ -179,7 +179,10 @@
     gtag("js", new Date());
     gtag("config", "[[GA4_MEASUREMENT_ID]]", { "anonymize_ip": true });
   </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=[[GA4_MEASUREMENT_ID]]"></script>
+  <!-- GA4 disabled until Michelle provides GA4_MEASUREMENT_ID.
+       To re-enable: (1) replace [[GA4_MEASUREMENT_ID]] with the real G-XXXXXXX id
+       in the gtag("config", ...) call above, AND (2) uncomment the gtag.js loader below. -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=[[GA4_MEASUREMENT_ID]]"></script> -->
 
 </head>
 <body>
@@ -338,7 +341,7 @@
         <p class="section-subtitle">Fill out the form below and our team will be in touch to finalize your sponsorship.</p>
       </div>
       <form class="sponsor-form fade-in" action="https://api.web3forms.com/submit" method="POST" data-form-name="Sponsor">
-          <input type="hidden" name="access_key" value="[[WEB3FORMS_ACCESS_KEY]]">
+          <input type="hidden" name="access_key" value="c7341c41-b260-4ef0-a8c3-69180da5de8f">
           <input type="hidden" name="subject" value="New sponsorship inquiry — LCAC website">
           <input type="hidden" name="from_name" value="LCAC Website">
           <input type="hidden" name="redirect" value="false">
@@ -492,7 +495,7 @@
 
       <div class="footer__credit">
         <svg width="16" height="16" viewBox="0 0 100 100" fill="currentColor"><path d="M52 18 C56 12, 62 8, 60 4 C58 2, 54 6, 52 10 C50 6, 46 2, 44 4 C42 8, 48 12, 52 18Z"/><ellipse cx="50" cy="24" rx="12" ry="11"/><ellipse cx="54" cy="22" rx="2.5" ry="2.5" fill="#0a0a0a"/><ellipse cx="54.5" cy="21.5" rx="1" ry="1" fill="white"/><path d="M62 25 L74 23 L62 27Z"/><path d="M40 32 Q50 38, 60 32 Q58 36, 50 38 Q42 36, 40 32Z" opacity="0.3"/><ellipse cx="46" cy="50" rx="18" ry="20"/><path d="M34 40 C28 48, 26 58, 30 68 L36 66 C32 58, 32 48, 36 42Z" opacity="0.7"/><path d="M32 52 L28 54" stroke="currentColor" stroke-width="1.5" opacity="0.4"/><path d="M31 56 L27 58" stroke="currentColor" stroke-width="1.5" opacity="0.4"/><path d="M30 60 L26 62" stroke="currentColor" stroke-width="1.5" opacity="0.4"/><path d="M36 66 C28 72, 20 80, 12 90 L18 90 C24 82, 30 74, 38 68Z"/><path d="M38 68 C32 74, 26 82, 20 92 L26 92 C30 84, 34 76, 40 70Z" opacity="0.8"/><path d="M44 68 L42 78 L38 80 M42 78 L44 80 M42 78 L46 80" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/><path d="M50 68 L52 78 L48 80 M52 78 L54 80 M52 78 L56 80" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/><ellipse cx="48" cy="55" rx="8" ry="10" opacity="0.15"/></svg>
-        Created by&nbsp;<a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">bluejayportfolio.com</a>
+        Built by&nbsp;<a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">BlueJays</a>&nbsp;— get your free site audit
       </div>
     </div>
   </footer>
