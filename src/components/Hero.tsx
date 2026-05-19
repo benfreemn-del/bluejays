@@ -601,28 +601,30 @@ export default function Hero() {
 
 /* ───────────────────────── Default Cards ───────────────────────── */
 
-// ICP niche-down portfolio — locked 2026-05-14 per memory/recent_locked_decisions.md.
-// Five product-seller anchors lead. Two verticals: manufacturer (Tekky,
-// ITC, KR Ranches, Laser Lakes) + indie author (Bloodlines). Each card
-// points to a REAL client build, not a V2 template showcase. The 23 legacy
-// service-trade cards are archived in git history pre-15510bdf — V2
-// templates remain on disk for inbound but no longer surface on the
-// homepage (per "Optimize for the Customer You Already Have" Luis-validated
-// framework — show prospects what their version will look like, not 23
-// versions of someone else's industry).
+// ICP niche-down portfolio — locked 2026-05-14, updated 2026-05-19.
+// Four featured-brand anchors lead: three product manufacturers (Tekky,
+// KR Ranches, Laser Lakes) + Bloodlines (indie author, promoted from
+// the custom-builds dropdown 2026-05-19 when ITC Quick Attach was
+// pulled from the homepage). Each card points to a REAL client build,
+// not a V2 template showcase. The 23 legacy service-trade cards are
+// archived in git history pre-15510bdf — V2 templates remain on disk
+// for inbound but no longer surface on the homepage (per "Optimize for
+// the Customer You Already Have" Luis-validated framework — show
+// prospects what their version will look like, not 23 versions of
+// someone else's industry).
 const defaultSiteCards: SiteCard[] = [
-  // ── Manufacturer (always visible, 4 cards) ──────────────────────────
+  // ── Featured Brands (always visible, 4 cards) ───────────────────────
   { name: "Zenith Sports / TEKKY", category: "Sports manufacturer", color: "#0a0f1e", href: "/clients/zenith-sports", icon: "⚽", tagline: "Full AI marketing system — soccer training brand", group: "manufacturer" },
-  { name: "ITC Quick Attach", category: "Ag-equipment manufacturer", color: "#0f1a0a", href: "/clients/itc-quick-attach", icon: "🚜", tagline: "DTC funnel + dealer network — tractor accessories", group: "manufacturer" },
+  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "manufacturer" },
   { name: "KR Ranches", category: "DTC food manufacturer", color: "#1a0f0a", href: "/sites/kr-ranches/index.html", icon: "🥩", tagline: "Farm-direct meat — direct-to-consumer brand", group: "manufacturer" },
   { name: "Laser Lakes", category: "Shopify product brand", color: "#0a151e", href: "/clients/laser-lakes", icon: "🎨", tagline: "Custom marketing front — Shopify-powered storefront", group: "manufacturer" },
   // ── Custom Builds (collapsed dropdown, expanded 2026-05-15) ─────────
-  // All non-manufacturer bespoke client builds collected under one
+  // All non-featured bespoke client builds collected under one
   // collapsible <details> so the homepage stays tight at first glance
-  // (4 product builds visible) but every real custom build is one click
-  // away. Order: highest-recognition first (Bloodlines indie author),
-  // then proven income-generating local clients, then specialty.
-  { name: "Bloodlines", category: "Indie author", color: "#09090b", href: "/clients/bloodlines", icon: "📖", tagline: "Bespoke fantasy showcase — world map, magic system, faction quiz", group: "service" },
+  // (4 featured brand builds visible) but every real custom build is
+  // one click away. Order: proven income-generating local clients
+  // first, then specialty. (Bloodlines was promoted to the Featured
+  // Brands row on 2026-05-19.)
   { name: "Hector Landscaping", category: "Landscape design", color: "#0d1a0a", href: "/clients/hector-landscaping", icon: "🌿", tagline: "Lawn care + property maintenance · Sequim WA", group: "service" },
   { name: "Mountain View Landscaping", category: "Landscape design", color: "#0f1a14", href: "/clients/mt-view-landscaping", icon: "🏞️", tagline: "Full-service landscape design · Sequim WA", group: "service" },
   { name: "Elite Hardscapes & Landscaping", category: "Hardscape + landscape", color: "#1a1410", href: "/clients/elite-hardscapes-and-landscapes", icon: "🪨", tagline: "Patios, walls, drainage · Port Angeles WA", group: "service" },
@@ -638,8 +640,13 @@ const defaultSiteCards: SiteCard[] = [
 
 const GROUP_META: Record<SiteGroup, { label: string; eyebrow: string; accent: string; ring: string }> = {
   manufacturer: {
-    label: "Product Manufacturers",
-    eyebrow: "🏭",
+    // Renamed 2026-05-19 — group now mixes 3 product manufacturers +
+    // Bloodlines (indie author). "Featured Brands" is the common
+    // denominator: every site in this row is a polished product brand
+    // build, whether the product is a tractor accessory, a steak, a
+    // soccer course, or a fantasy novel.
+    label: "Featured Brands",
+    eyebrow: "⭐",
     accent: "text-amber-300",
     ring: "border-amber-500/20 bg-amber-500/5",
   },
