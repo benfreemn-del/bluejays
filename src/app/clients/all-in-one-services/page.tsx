@@ -341,7 +341,7 @@ function BeforeAfter({
   location: string;
 }) {
   return (
-    <article className="group">
+    <article className="group max-w-2xl sm:max-w-3xl mx-auto">
       <div className="relative overflow-hidden rounded-lg border" style={{ borderColor: RULE }}>
         <img
           src={photo}
