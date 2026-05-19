@@ -35,6 +35,7 @@ import {
 import StickyNav from "../sticky-nav";
 import { PhotoZoom, ZoomTrigger } from "../photo-zoom";
 import EmailCapture from "../email-capture";
+import { getZenithCheckoutUrl } from "@/lib/shopify-express-checkout";
 
 export const metadata: Metadata = {
   title:
@@ -91,6 +92,17 @@ const SHOP_URLS = {
     "https://zenithsports.org/products/the-tekky-advanced-youth-training-ball",
   socks: "https://zenithsports.org/products/tekky-grip-socks",
   shirt: "https://zenithsports.org/products/high-performance-tekky-t-white-copy",
+} as const;
+
+/* Express-checkout URLs — auto-upgrade to one-click checkout (Apple Pay
+ * / Shop Pay / Google Pay) when the per-product env var is set on
+ * Vercel. Until then, falls through to the product page URL above with
+ * Shopify Analytics attribution params appended. See
+ * src/lib/shopify-express-checkout.ts for the resolver + setup notes. */
+const CHECKOUT_URLS = {
+  tekkyBall: getZenithCheckoutUrl("ball", SHOP_URLS.tekkyBall),
+  socks: getZenithCheckoutUrl("socks", SHOP_URLS.socks),
+  shirt: getZenithCheckoutUrl("shirt", SHOP_URLS.shirt),
 } as const;
 
 /* ───────────────────────── PROMO MARQUEE ───────────────────────── */
@@ -338,7 +350,7 @@ export default function ZenithSportsShopPage() {
         "Engineered for ages 5 through high school",
         "Feels effortless on the regulation ball after",
       ],
-      shopUrl: SHOP_URLS.tekkyBall,
+      shopUrl: CHECKOUT_URLS.tekkyBall,
       badge: { label: "Bestseller" },
     },
     {
@@ -359,7 +371,7 @@ export default function ZenithSportsShopPage() {
         "$5 off your second pair — auto-applied at checkout",
       ],
       variants: "2 colors: White · Black",
-      shopUrl: SHOP_URLS.socks,
+      shopUrl: CHECKOUT_URLS.socks,
     },
     {
       id: "performance-tee",
@@ -379,7 +391,7 @@ export default function ZenithSportsShopPage() {
         "Currently 30% off across all colors",
       ],
       variants: "4 colors available",
-      shopUrl: SHOP_URLS.shirt,
+      shopUrl: CHECKOUT_URLS.shirt,
       badge: { label: "30% Off", color: AMBER },
     },
   ];
@@ -487,7 +499,7 @@ export default function ZenithSportsShopPage() {
             automatically at checkout.
           </span>
           <a
-            href={SHOP_URLS.shirt}
+            href={CHECKOUT_URLS.shirt}
             target="_blank"
             rel="noopener noreferrer"
             className="sm:ml-auto inline-flex items-center gap-2 bg-[#0a1832] text-white px-5 py-3 text-[11px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition"
@@ -566,7 +578,7 @@ export default function ZenithSportsShopPage() {
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <a
-              href={SHOP_URLS.shirt}
+              href={CHECKOUT_URLS.shirt}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[12px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition"
@@ -576,7 +588,7 @@ export default function ZenithSportsShopPage() {
               <ArrowUpRight size={14} weight="bold" />
             </a>
             <a
-              href={SHOP_URLS.socks}
+              href={CHECKOUT_URLS.socks}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border-2 border-white text-white px-7 py-4 text-[12px] font-extrabold tracking-[0.22em] uppercase hover:bg-white/10 transition"
