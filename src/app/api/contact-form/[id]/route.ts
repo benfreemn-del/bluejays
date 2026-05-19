@@ -51,6 +51,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
+// Ben-CC pattern — every contact-form lead also fires an owner email
+// + SMS to Ben so he never silently misses a lead when a client's own
+// inbox forwarding isn't set up (added 2026-05-19 after the Meyer
+// catch-all-vs-system-CC audit). Aliased to disambiguate from the
+// local sendOwnerEmail() defined below which sends TO the client.
+import {
+  sendOwnerEmail as sendBenEmail,
+  sendOwnerAlert as sendBenSmsAlert,
+} from "@/lib/alerts";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // FROM_EMAIL hardcoded per CLAUDE.md Rule 16 — SendGrid was rejecting
@@ -176,27 +185,52 @@ export async function POST(
   const scheduleUrl = `${BASE_URL}/schedule/${id}?${scheduleParams.toString()}`;
 
   // Email the business owner about the new inquiry
-  if (prospect.email) {
-    const emailLines = [
-      `New contact form submission for ${prospect.businessName}`,
-      ``,
-      `Name: ${name}`,
-      phone ? `Phone: ${phone}` : null,
-      email ? `Email: ${email}` : null,
-      service ? `Service requested: ${service}` : null,
-      message ? `Message:\n"${message}"` : null,
-      ``,
-      `The customer was shown the scheduling calendar to book immediately.`,
-      ``,
-      `— BlueJays Contact System`,
-    ].filter(Boolean).join("\n");
+  const emailLines = [
+    `New contact form submission for ${prospect.businessName}`,
+    ``,
+    `Name: ${name}`,
+    phone ? `Phone: ${phone}` : null,
+    email ? `Email: ${email}` : null,
+    service ? `Service requested: ${service}` : null,
+    message ? `Message:\n"${message}"` : null,
+    ``,
+    `The customer was shown the scheduling calendar to book immediately.`,
+    ``,
+    `— BlueJays Contact System`,
+  ].filter(Boolean).join("\n");
+  const emailSubject = `New inquiry from ${name} — ${prospect.businessName}`;
 
+  if (prospect.email) {
     await sendOwnerEmail(
       prospect.email,
-      `New inquiry from ${name} — ${prospect.businessName}`,
-      emailLines
+      emailSubject,
+      emailLines,
     ).catch(() => {});
   }
+
+  // Ben-CC — fire-and-forget owner email + SMS so Ben gets a copy of
+  // every lead even when the client's own forwarding setup isn't
+  // configured (the Meyer Electric Zoho catch-all was masking this gap
+  // for months — clients without that forwarding lose leads silently).
+  // Errors are swallowed so a Ben-CC failure never blocks the
+  // client-facing success response.
+  void sendBenEmail({
+    subject: `🔔 Lead copy — ${prospect.businessName}: ${name}`,
+    body: emailLines,
+    prospectId: id,
+  }).catch((err) =>
+    console.error(`[contact-form] Ben-CC email failed for ${id}:`, err),
+  );
+
+  const smsLines = [
+    `🔔 New lead — ${prospect.businessName}`,
+    `${name}${phone ? ` · ${phone}` : ""}${email ? ` · ${email}` : ""}`,
+    service ? `Wants: ${service}` : null,
+    message ? `"${message.slice(0, 120)}${message.length > 120 ? "…" : ""}"` : null,
+  ].filter(Boolean).join("\n");
+  void sendBenSmsAlert(smsLines, { prospectId: id }).catch((err) =>
+    console.error(`[contact-form] Ben-CC SMS failed for ${id}:`, err),
+  );
 
   return NextResponse.json({
     ok: true,
