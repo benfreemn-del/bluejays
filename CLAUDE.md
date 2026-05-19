@@ -125,6 +125,7 @@ every slug.
 | `lewis-county-autism` | ✓ (bespoke, no AI) | ✗ | ✗ | Nonprofit owner portal at `/clients/lewis-county-autism/portal` (URL-as-secret) — site status + form-inbox links + Claude Code editing protocol + mission-dashboard preview link. Mock backend at `/clients/lewis-county-autism/portal-demo` (1212) is the first nonprofit-config install — see `docs/mock-backends/nonprofit.md`. LCAC site itself is a separate static-HTML repo at `Lewis County Austim Coalition/`; DNS still on Wix as of 2026-05-18. |
 | `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |
 | `thrive-church-sequim` | ✗ | ✗ | ✗ | Thrive Church · Sequim WA · custom-tier bespoke build · warm-cream + deep teal + amber palette · Connect Card + Prayer Request forms route to office@thrivesequim.com · launched 2026-05-18 |
+| `elite-hardscapes-and-landscapes` | ✗ | ✗ | ✗ | Tyler Fritz · Port Angeles WA · $1k bespoke (PAID 2026-05-19, year 1 free on $100/yr mgmt) · No-Backend Client Pattern (mailto + tel/sms) · prospect UUID `4e9c89b4-d321-4d9c-91bd-1dc071cf847a` short_code `04cfd510` · pending: Tyler's email + GBP Place ID + custom domain + Twilio number. Two helper scripts: `scripts/setup-elite-mgmt-sub.mjs` (deferred Stripe sub) + `scripts/lookup-elite-place-id.mjs` (live Google reviews). |
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
 
 **Rules when adding a tenant-facing feature:**
