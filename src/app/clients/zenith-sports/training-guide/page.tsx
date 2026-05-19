@@ -465,13 +465,13 @@ export default function TrainingGuidePage() {
           <div className="mt-10 grid sm:grid-cols-3 gap-3 text-sm">
             <div className="bg-[#0a1832] text-white p-4 rounded">
               <div className="text-[9px] tracking-wider uppercase font-extrabold text-[#a3e635]">
-                Request a club demo
+                Request a Club Demo
               </div>
               <div className="mt-1 text-[13px]">
                 30 min, in person if you&apos;re in WA, video anywhere else.
               </div>
               <a
-                href="https://bluejayportfolio.com/clients/zenith-sports#contact"
+                href="/clients/zenith-sports#contact"
                 className="mt-2 inline-block text-[11px] font-bold underline"
               >
                 bluejayportfolio.com/clients/zenith-sports#contact
@@ -485,7 +485,7 @@ export default function TrainingGuidePage() {
                 Club discount available on roster orders.
               </div>
               <a
-                href="https://bluejayportfolio.com/clients/zenith-sports/shop"
+                href="/clients/zenith-sports/shop"
                 className="mt-2 inline-block text-[11px] font-bold underline text-[#1d4ed8]"
               >
                 Shop the TEKKY®
@@ -508,7 +508,7 @@ export default function TrainingGuidePage() {
           </div>
 
           <div className="mt-10 pt-5 border-t border-slate-200 text-center text-[10px] tracking-wider uppercase text-slate-500">
-            © 2025 Zenith Sports, LLC · TEKKY® is a registered trademark · Patent Pending · Building Better Players, One Touch at a Time.
+            © 2025–2026 Zenith Sports, LLC · TEKKY® is a registered trademark · Patent Pending · Building Better Players, One Touch at a Time.
           </div>
         </section>
       </article>

@@ -1064,7 +1064,7 @@ export default function ZenithSportsPage() {
                   href="#contact"
                   className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
                 >
-                  Request a club demo
+                  Request a Club Demo
                   <ArrowRight
                     size={16}
                     weight="bold"
@@ -1346,8 +1346,7 @@ export default function ZenithSportsPage() {
                         "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
                     }}
                   >
-                    With over 40 years in the game — collegiate play through
-                    post-collegiate competition — {BUSINESS.founders.paul.quote.toLowerCase()}
+                    {BUSINESS.founders.paul.quote}
                   </p>
                 </div>
               </div>

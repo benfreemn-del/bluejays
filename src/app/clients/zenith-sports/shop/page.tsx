@@ -34,6 +34,7 @@ import {
 
 import StickyNav from "../sticky-nav";
 import { PhotoZoom, ZoomTrigger } from "../photo-zoom";
+import EmailCapture from "../email-capture";
 
 export const metadata: Metadata = {
   title:
@@ -667,24 +668,17 @@ export default function ZenithSportsShopPage() {
                 next generation of players.
               </p>
 
-              <form
-                className="mt-8 flex max-w-md border border-white/15 bg-white/[0.04]"
-                action="mailto:info@zenithsports.org"
-                method="get"
-              >
-                <input
-                  type="email"
-                  name="body"
-                  placeholder="Email for TEKKY® drops + drills"
-                  className="flex-1 px-4 py-3 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+              <div className="mt-8 max-w-md">
+                <EmailCapture
+                  variant="lime"
+                  intent="Newsletter — Shop Footer"
+                  headline="TEKKY® drops + drills, in your inbox."
+                  body="One email a week — new gear releases, drill of the week, and the occasional discount."
+                  cta="Join"
+                  successHeadline="You're on the list."
+                  successBody="Next drop hits your inbox soon."
                 />
-                <button
-                  type="submit"
-                  className="px-5 bg-[#a3e635] text-[#0a1832] text-[11px] font-extrabold uppercase tracking-[0.2em] hover:bg-white transition"
-                >
-                  Join
-                </button>
-              </form>
+              </div>
             </div>
 
             <div className="lg:col-span-3">
