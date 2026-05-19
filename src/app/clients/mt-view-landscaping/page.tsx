@@ -126,7 +126,32 @@ const DISCIPLINES = [
 
 const SERVICES_FOR_FORM = DISCIPLINES.map((d) => d.name);
 
+// Order matters — leading with the most colorful, complete landscape
+// projects (lush greenery + flowering + mature plantings) makes the
+// strongest first impression for a landscape designer's portfolio.
+// Hardscape-only feats come later. Olano (half-acre full transformation)
+// is the strongest "landscape company" showcase; Aquavista's naturalistic
+// stream + planting is second; Kirse is full-yard install with paver
+// hardscape; Stoneworks closes as the engineered-build chapter.
 const PROJECTS = [
+  {
+    slug: "olano",
+    name: "Olano Property",
+    meta: ["Snohomish County", "Full-Yard Transformation", "2009"],
+    caption:
+      "Half-acre overhaul — grade work, hardscape, full planting plan, irrigation, lawn renovation. Multiple disciplines in one frame. The kind of build that earns the maintenance plan, season after season.",
+    primary: PHOTOS.olanoLead,
+    details: [PHOTOS.olanoYard, PHOTOS.summer],
+  },
+  {
+    slug: "aquavista",
+    name: "Aquavista",
+    meta: ["King County", "Water Feature · Naturalistic Stream", "2008"],
+    caption:
+      "Naturalistic stream-and-pool feature woven into an existing planting plan. Still maintained on the route eighteen seasons in — same plant palette, same flow, same family checking on it.",
+    primary: PHOTOS.aquaLead,
+    details: [PHOTOS.aquaWater, PHOTOS.nightLead],
+  },
   {
     slug: "kirse",
     name: "Kirse Residence",
@@ -144,24 +169,6 @@ const PROJECTS = [
       "Engineered tiered retaining system holding back a hillside. Drainage built behind the wall before a single block went down. Capped, planted, lit.",
     primary: PHOTOS.stoneLead,
     details: [PHOTOS.stoneWide, PHOTOS.stoneTiered],
-  },
-  {
-    slug: "aquavista",
-    name: "Aquavista",
-    meta: ["King County", "Water Feature · Naturalistic Stream", "2008"],
-    caption:
-      "Naturalistic stream-and-pool feature integrated into an existing planting plan. Still maintained on the route — fifteen seasons in.",
-    primary: PHOTOS.aquaLead,
-    details: [PHOTOS.aquaWater],
-  },
-  {
-    slug: "olano",
-    name: "Olano Property",
-    meta: ["Snohomish County", "Full-Yard Transformation", "2009"],
-    caption:
-      "Half-acre overhaul — grade work, hardscape, full planting plan, irrigation. Multiple disciplines in one frame. The kind of build that earns the maintenance plan.",
-    primary: PHOTOS.olanoLead,
-    details: [PHOTOS.olanoYard, PHOTOS.nightLead],
   },
 ] as const;
 
@@ -328,6 +335,49 @@ function useIsAtLeast(minWidth = 1024) {
   return is;
 }
 
+/* ───────────────────── SECTION MARK ─────────────────────
+ * Per-section background ornament. Two layers:
+ *   1. A huge faded chapter NUMBER anchored upper-right (consistent
+ *      treatment across every section — gives the page editorial
+ *      magazine pagination feel).
+ *   2. An OPTIONAL thematic glyph in another corner (ampersand for
+ *      the Hunsakers, quote mark for Voices, arrow for Contact, etc.)
+ *      — gives each section a unique decorative fingerprint.
+ *
+ * Both layers are tinted to 4-7% Ink opacity so they read as a paper
+ * watermark, never compete with foreground content. `aria-hidden` and
+ * `select-none pointer-events-none` so they never trip a screen reader
+ * or text selection. Parent section must be `relative overflow-hidden`.
+ */
+function SectionMark({
+  number,
+  glyph,
+  glyphClass,
+}: {
+  number: string;
+  glyph?: React.ReactNode;
+  glyphClass?: string;
+}) {
+  return (
+    <>
+      <span
+        aria-hidden
+        className="absolute top-4 right-4 sm:top-8 sm:right-8 lg:top-12 lg:right-12 font-[family-name:var(--font-playfair)] font-light leading-none text-[#1C1F1A]/[0.05] select-none pointer-events-none text-[110px] sm:text-[180px] lg:text-[260px] z-0"
+      >
+        {number}
+      </span>
+      {glyph && (
+        <span
+          aria-hidden
+          className={`absolute select-none pointer-events-none text-[#1C1F1A]/[0.05] leading-none z-0 ${glyphClass ?? ""}`}
+        >
+          {glyph}
+        </span>
+      )}
+    </>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    SECTION 1 — HERO / COVER
    ═══════════════════════════════════════════════════════════════════ */
@@ -345,7 +395,7 @@ function Hero() {
       ref={heroRef}
       className="relative bg-[#F5F1E8] overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20 sm:pb-28">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 pt-6 sm:pt-10 pb-14 sm:pb-20">
         {/* Layout: mobile stacks photo above type. Desktop overlays type
             in lower-left third over photo. */}
         <div className="lg:relative">
@@ -394,7 +444,7 @@ function Hero() {
               initial="hidden"
               animate="show"
               variants={stagger}
-              className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[0.95] tracking-[-0.025em] text-[clamp(48px,8vw,108px)]"
+              className="font-[family-name:var(--font-playfair)] font-normal text-[#1C1F1A] leading-[1.0] tracking-[-0.02em] text-[clamp(40px,6.5vw,88px)]"
             >
               {"Custom landscapes,".split(" ").map((w, i) => (
                 <motion.span key={`a-${i}`} variants={fadeUp} className="inline-block mr-[0.18em]">
@@ -402,7 +452,7 @@ function Hero() {
                 </motion.span>
               ))}
               <br />
-              <em className="not-italic font-[family-name:var(--font-fraunces)]">
+              <em className="not-italic font-[family-name:var(--font-playfair)]">
                 {"kept for life.".split(" ").map((w, i) => (
                   <motion.span key={`b-${i}`} variants={fadeUp} className="inline-block mr-[0.18em] italic">
                     {w}
@@ -458,8 +508,9 @@ function Hero() {
 
 function Practice() {
   return (
-    <section id="practice" className="relative bg-[#F5F1E8] py-24 sm:py-32 lg:py-44 overflow-hidden">
-      <div className="mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+    <section id="practice" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark number="01" />
+      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
         {/* Left: massive photo, full-bleed to left edge */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -492,7 +543,7 @@ function Practice() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,68px)]"
+            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,68px)]"
           >
             Eight disciplines.<br />
             One crew. One drawing.
@@ -519,7 +570,7 @@ function Practice() {
             {DISCIPLINES.map((d) => (
               <motion.li key={d.name} variants={fadeUp} className="py-5 group">
                 <div className="flex items-baseline gap-4">
-                  <span className="font-[family-name:var(--font-fraunces)] font-medium text-[20px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors duration-300">
+                  <span className="font-[family-name:var(--font-playfair)] font-medium text-[20px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors duration-300">
                     {d.name}
                   </span>
                 </div>
@@ -545,8 +596,9 @@ function Practice() {
 
 function SelectedWork() {
   return (
-    <section id="work" className="bg-[#F5F1E8] pt-24 sm:pt-32 lg:pt-44 pb-12 sm:pb-20">
-      <header className="mx-auto max-w-[1400px] px-6 sm:px-10 mb-16 sm:mb-24">
+    <section id="work" className="relative bg-[#F5F1E8] pt-16 sm:pt-20 lg:pt-28 pb-12 sm:pb-16 overflow-hidden">
+      <SectionMark number="02" />
+      <header className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10 mb-16 sm:mb-24">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -561,7 +613,7 @@ function SelectedWork() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.8 }}
-          className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(40px,5.5vw,76px)]"
+          className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(40px,5.5vw,76px)]"
         >
           2008 — present.
         </motion.h2>
@@ -631,7 +683,7 @@ function ProjectMonograph({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ delay: 0.35, duration: 0.7 }}
-          className="mt-5 font-[family-name:var(--font-fraunces)] font-normal text-[20px] sm:text-[22px] lg:text-[24px] leading-[1.45] text-[#1C1F1A]/85 max-w-[64ch]"
+          className="mt-5 font-[family-name:var(--font-playfair)] font-normal text-[20px] sm:text-[22px] lg:text-[24px] leading-[1.45] text-[#1C1F1A]/85 max-w-[64ch]"
         >
           {project.caption}
         </motion.p>
@@ -699,13 +751,14 @@ function ProcessHorizontal() {
       className="bg-[#F5F1E8] relative"
       style={{ height: "500vh" }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col">
+      <div className="sticky top-0 h-screen overflow-hidden flex flex-col relative">
+        <SectionMark number="03" />
         {/* Header — fixed at top of pinned viewport */}
         <header className="px-12 pt-16 pb-8 max-w-[1400px] mx-auto w-full">
           <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
             The Process
           </p>
-          <h2 className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[52px]">
+          <h2 className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[52px]">
             How a project unfolds.
           </h2>
           <p className="mt-3 font-[family-name:var(--font-inter)] text-[15px] text-[#1C1F1A]/65 max-w-[480px]">
@@ -733,7 +786,7 @@ function ProcessHorizontal() {
                   <p className="font-[family-name:var(--font-inter)] text-[11px] tracking-[0.24em] uppercase text-[#A8A294]">
                     Step {step.n}
                   </p>
-                  <h3 className="mt-3 font-[family-name:var(--font-fraunces)] font-light text-[44px] leading-[1.05] tracking-[-0.02em] text-[#1C1F1A]">
+                  <h3 className="mt-3 font-[family-name:var(--font-playfair)] font-light text-[44px] leading-[1.05] tracking-[-0.02em] text-[#1C1F1A]">
                     {step.name}
                   </h3>
                   <p className="mt-5 font-[family-name:var(--font-inter)] text-[16px] leading-[1.65] text-[#1C1F1A]/72 max-w-[42ch]">
@@ -782,12 +835,13 @@ function ProcessProgressRail({
 
 function ProcessVertical() {
   return (
-    <section id="process" className="bg-[#F5F1E8] py-24 sm:py-32">
-      <div className="mx-auto max-w-[1100px] px-6 sm:px-10">
+    <section id="process" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark number="03" />
+      <div className="relative z-10 mx-auto max-w-[1100px] px-6 sm:px-10">
         <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
           The Process
         </p>
-        <h2 className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(40px,5.5vw,68px)]">
+        <h2 className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(40px,5.5vw,68px)]">
           How a project unfolds.
         </h2>
         <p className="mt-4 font-[family-name:var(--font-inter)] text-[16px] text-[#1C1F1A]/65 max-w-[500px]">
@@ -808,7 +862,7 @@ function ProcessVertical() {
               <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#A8A294]">
                 Step {step.n}
               </p>
-              <h3 className="mt-2 font-[family-name:var(--font-fraunces)] font-light text-[30px] sm:text-[36px] leading-[1.1] tracking-[-0.018em] text-[#1C1F1A]">
+              <h3 className="mt-2 font-[family-name:var(--font-playfair)] font-light text-[30px] sm:text-[36px] leading-[1.1] tracking-[-0.018em] text-[#1C1F1A]">
                 {step.name}
               </h3>
               <div className="relative mt-5 aspect-[16/10] overflow-hidden">
@@ -875,8 +929,9 @@ const TIERS = [
 
 function MaintenancePlans() {
   return (
-    <section id="maintenance" className="bg-[#E4E6DC] py-24 sm:py-32 lg:py-40">
-      <div className="mx-auto max-w-[1300px] px-6 sm:px-10">
+    <section id="maintenance" className="relative bg-[#E4E6DC] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark number="04" />
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         {/* Centered header */}
         <div className="text-center max-w-[640px] mx-auto mb-16 sm:mb-20">
           <motion.p
@@ -893,7 +948,7 @@ function MaintenancePlans() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8 }}
-            className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(38px,5vw,64px)]"
+            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(38px,5vw,64px)]"
           >
             We maintain what we build.
           </motion.h2>
@@ -940,7 +995,7 @@ function MaintenancePlans() {
                 </>
               )}
 
-              <h3 className="font-[family-name:var(--font-fraunces)] font-medium text-[28px] sm:text-[32px] tracking-[-0.018em] text-[#1C1F1A]">
+              <h3 className="font-[family-name:var(--font-playfair)] font-medium text-[28px] sm:text-[32px] tracking-[-0.018em] text-[#1C1F1A]">
                 {t.name}
               </h3>
               <p className="mt-3 font-[family-name:var(--font-inter)] text-[14px] text-[#A8A294] leading-[1.55]">
@@ -1001,8 +1056,13 @@ function Hunsakers() {
   };
 
   return (
-    <section id="about" className="bg-[#F5F1E8] py-24 sm:py-32 lg:py-44 overflow-hidden">
-      <div className="mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-11 gap-12 lg:gap-16 items-start">
+    <section id="about" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark
+        number="05"
+        glyph={<span className="italic">&amp;</span>}
+        glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 font-[family-name:var(--font-playfair)] font-light text-[160px] sm:text-[260px] lg:text-[360px]"
+      />
+      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-11 gap-12 lg:gap-16 items-start">
         {/* Left: house photo, full-bleed to left edge on desktop */}
         <motion.div
           initial={{ opacity: 0.6 }}
@@ -1035,7 +1095,7 @@ function Hunsakers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8 }}
-            className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(34px,4.8vw,56px)]"
+            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(34px,4.8vw,56px)]"
           >
             Same family. Same crew.<br />
             <em className="not-italic">Since 1976.</em>
@@ -1082,7 +1142,7 @@ function Hunsakers() {
             whileInView="show"
             viewport={{ once: true, amount: 0.5 }}
             variants={quoteContainer}
-            className="mt-14 sm:mt-16 font-[family-name:var(--font-fraunces)] font-light text-[32px] sm:text-[40px] lg:text-[44px] leading-[1.18] tracking-[-0.018em] text-[#1C1F1A]"
+            className="mt-14 sm:mt-16 font-[family-name:var(--font-playfair)] font-light text-[32px] sm:text-[40px] lg:text-[44px] leading-[1.18] tracking-[-0.018em] text-[#1C1F1A]"
           >
             <span className="text-[#3E4A36] mr-1">&ldquo;</span>
             {PULL_QUOTE_WORDS.map((word, i) => (
@@ -1113,8 +1173,30 @@ function Hunsakers() {
 
 function ClimateSmart() {
   return (
-    <section id="climate" className="bg-[#F5F1E8] py-24 sm:py-32 lg:py-40">
-      <div className="mx-auto max-w-[900px] px-6 sm:px-10">
+    <section id="climate" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark
+        number="06"
+        glyph={
+          // Faded botanical line glyph — a sprig of leaves. Reinforces
+          // the "Plants that belong here" theme without competing.
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 120 200"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            className="w-[180px] sm:w-[260px] lg:w-[340px] h-auto"
+          >
+            <path d="M60 195 V18" />
+            <path d="M60 50 C90 40, 105 55, 110 75 C95 80, 75 70, 60 60" />
+            <path d="M60 90 C30 80, 15 95, 10 115 C25 120, 45 110, 60 100" />
+            <path d="M60 130 C90 120, 105 135, 110 155 C95 160, 75 150, 60 140" />
+          </svg>
+        }
+        glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 text-[#1C1F1A]"
+      />
+      <div className="relative z-10 mx-auto max-w-[900px] px-6 sm:px-10">
         <motion.div
           initial={{ opacity: 0, scale: 1.04 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -1145,7 +1227,7 @@ function ClimateSmart() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8 }}
-            className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,60px)]"
+            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,60px)]"
           >
             Plants that belong here.
           </motion.h2>
@@ -1174,7 +1256,7 @@ function ClimateSmart() {
               variants={fadeUp}
               className="border-t border-[#A8A294]/40 pt-5"
             >
-              <h3 className="font-[family-name:var(--font-fraunces)] font-medium text-[20px] sm:text-[22px] tracking-[-0.012em] text-[#1C1F1A]">
+              <h3 className="font-[family-name:var(--font-playfair)] font-medium text-[20px] sm:text-[22px] tracking-[-0.012em] text-[#1C1F1A]">
                 {b.name}
               </h3>
               <p className="mt-3 font-[family-name:var(--font-inter)] text-[14px] sm:text-[15px] leading-[1.65] text-[#1C1F1A]/72">
@@ -1196,8 +1278,13 @@ function ClimateSmart() {
 
 function Voices() {
   return (
-    <section id="voices" className="bg-[#E4E6DC] py-24 sm:py-32 lg:py-40">
-      <div className="mx-auto max-w-[1300px] px-6 sm:px-10">
+    <section id="voices" className="relative bg-[#E4E6DC] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark
+        number="07"
+        glyph={<span>&ldquo;</span>}
+        glyphClass="bottom-2 left-4 sm:bottom-6 sm:left-10 lg:bottom-10 lg:left-16 font-[family-name:var(--font-playfair)] font-normal text-[200px] sm:text-[340px] lg:text-[440px]"
+      />
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         {/* Header */}
         <div className="text-center max-w-[760px] mx-auto mb-16 sm:mb-20">
           <motion.p
@@ -1214,7 +1301,7 @@ function Voices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8 }}
-            className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,64px)]"
+            className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,5vw,64px)]"
           >
             Five stars. Fifty years. Four counties.
           </motion.h2>
@@ -1242,7 +1329,7 @@ function Voices() {
               hidden: {},
               show: { transition: { staggerChildren: 0.03 } },
             }}
-            className="font-[family-name:var(--font-fraunces)] font-normal text-[#1C1F1A] tracking-[-0.012em] leading-[1.35] text-[clamp(24px,3.4vw,38px)]"
+            className="font-[family-name:var(--font-playfair)] font-normal text-[#1C1F1A] tracking-[-0.012em] leading-[1.35] text-[clamp(24px,3.4vw,38px)]"
           >
             {CITIES.map((city, i) => (
               <motion.span
@@ -1302,7 +1389,7 @@ function FaqAccordion() {
               className="w-full flex items-baseline justify-between gap-6 py-5 text-left group"
               aria-expanded={isOpen}
             >
-              <span className="font-[family-name:var(--font-fraunces)] font-normal text-[19px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors tracking-[-0.01em]">
+              <span className="font-[family-name:var(--font-playfair)] font-normal text-[19px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors tracking-[-0.01em]">
                 {item.q}
               </span>
               <CaretDown
@@ -1337,8 +1424,13 @@ function FaqAccordion() {
 function Contact() {
   const addressEncoded = encodeURIComponent(BUSINESS.address.full);
   return (
-    <section id="contact" className="bg-[#F5F1E8] py-24 sm:py-32 lg:py-40">
-      <div className="mx-auto max-w-[1300px] px-6 sm:px-10">
+    <section id="contact" className="relative bg-[#F5F1E8] py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <SectionMark
+        number="08"
+        glyph={<span>→</span>}
+        glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 font-[family-name:var(--font-playfair)] font-light text-[180px] sm:text-[300px] lg:text-[420px]"
+      />
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           {/* Left rail */}
           <div className="lg:col-span-5">
@@ -1356,7 +1448,7 @@ function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.8 }}
-              className="font-[family-name:var(--font-fraunces)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,4.8vw,56px)]"
+              className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(36px,4.8vw,56px)]"
             >
               Tell the Hunsakers about your yard.
             </motion.h2>
@@ -1377,7 +1469,7 @@ function Contact() {
                 <dd>
                   <a
                     href={BUSINESS.phoneHref}
-                    className="inline-flex items-center gap-2 font-[family-name:var(--font-fraunces)] font-normal text-[28px] sm:text-[32px] tracking-[-0.018em] text-[#1C1F1A] underline underline-offset-[6px] decoration-1 hover:decoration-2 hover:text-[#3E4A36] transition-all"
+                    className="inline-flex items-center gap-2 font-[family-name:var(--font-playfair)] font-normal text-[28px] sm:text-[32px] tracking-[-0.018em] text-[#1C1F1A] underline underline-offset-[6px] decoration-1 hover:decoration-2 hover:text-[#3E4A36] transition-all"
                   >
                     <Phone size={22} weight="duotone" className="text-[#3E4A36]" />
                     {BUSINESS.phoneDisplay}
@@ -1449,7 +1541,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20">
           {/* Brand column */}
           <div>
-            <p className="font-[family-name:var(--font-fraunces)] font-normal text-[26px] tracking-[-0.012em] leading-[1.05] text-[#F5F1E8]">
+            <p className="font-[family-name:var(--font-playfair)] font-normal text-[26px] tracking-[-0.012em] leading-[1.05] text-[#F5F1E8]">
               Mountain View
               <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] font-medium mt-2">
                 Landscape &amp; Design

@@ -58,7 +58,7 @@ export default function ReviewsCarousel({ reviews, viewAllUrl }: Props) {
           weight="duotone"
           className="text-[#3E4A36] mb-6 opacity-70"
         />
-        <blockquote className="font-[family-name:var(--font-fraunces)] font-light text-[28px] sm:text-[34px] lg:text-[38px] leading-[1.25] tracking-[-0.015em] text-[#1C1F1A]">
+        <blockquote className="font-[family-name:var(--font-playfair)] font-light text-[28px] sm:text-[34px] lg:text-[38px] leading-[1.25] tracking-[-0.015em] text-[#1C1F1A]">
           &ldquo;{featured?.text}&rdquo;
         </blockquote>
         <figcaption className="mt-8 flex items-center gap-4">
