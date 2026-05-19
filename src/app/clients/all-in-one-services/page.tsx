@@ -601,6 +601,51 @@ function SectionNumber({
   );
 }
 
+/**
+ * MidPageCta — a between-sections nudge to the estimate form.
+ * Centered horizontal strip with a tagline + copper pill button.
+ * Drop one inside any section just before its closing wrapper to
+ * cap the section with a "ready?" moment.
+ */
+function MidPageCta({
+  tagline,
+  cta = "Free estimate",
+  theme = "cream",
+}: {
+  tagline: string;
+  cta?: string;
+  /** "cream" = INK text + RULE border. "dark" = DARK_INK + DARK_RULE. */
+  theme?: "cream" | "dark";
+}) {
+  const textColor = theme === "dark" ? DARK_INK_SOFT : INK_SOFT;
+  const borderColor = theme === "dark" ? DARK_RULE : RULE;
+  return (
+    <div
+      className="mt-14 sm:mt-16 pt-10 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-7 border-t"
+      style={{ borderColor }}
+    >
+      <p
+        className="text-[16px] sm:text-[17px] text-center sm:text-left max-w-md"
+        style={{ color: textColor, fontFamily: FONT_BODY }}
+      >
+        {tagline}
+      </p>
+      <a
+        href="#estimate"
+        className="inline-flex items-center gap-2 px-6 h-12 rounded-md font-bold text-[12px] uppercase tracking-[0.18em] text-black transition-all hover:brightness-110 active:scale-95 whitespace-nowrap"
+        style={{
+          background: COPPER_GRAD,
+          fontFamily: FONT_HEAD,
+          boxShadow: "0 4px 18px rgba(217, 119, 6, 0.35)",
+        }}
+      >
+        {cta}
+        <ArrowRight size={13} weight="bold" />
+      </a>
+    </div>
+  );
+}
+
 function BeforeAfter({
   photo,
   title,
@@ -1357,6 +1402,7 @@ export default function AllInOneServicesPage() {
                 </div>
               </div>
             </div>
+            <MidPageCta tagline="Want to be the next room on this list? Send the rough idea — Kyle prices it itemized." />
           </div>
         </section>
 
@@ -1673,6 +1719,7 @@ export default function AllInOneServicesPage() {
                 </div>
               ))}
             </div>
+            <MidPageCta tagline="Ready to put your project on this calendar? Drop the scope and we'll schedule a site walk." />
           </div>
         </section>
 
@@ -1893,6 +1940,7 @@ export default function AllInOneServicesPage() {
                 <ArrowRight size={14} weight="bold" />
               </a>
             </div>
+            <MidPageCta tagline="Hear what 18 neighbors already know. Get Kyle on your project — no charge, no pressure." />
           </div>
         </section>
 
