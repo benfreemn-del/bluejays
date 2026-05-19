@@ -395,7 +395,7 @@ function Hero() {
       ref={heroRef}
       className="relative bg-[#F5F1E8] overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 pt-6 sm:pt-10 pb-14 sm:pb-20">
+      <div className="mx-auto max-w-[1700px] px-6 sm:px-10 pt-6 sm:pt-10 pb-14 sm:pb-20">
         {/* Layout: mobile stacks photo above type. Desktop overlays type
             in lower-left third over photo. */}
         <div className="lg:relative">
@@ -510,7 +510,7 @@ function Practice() {
   return (
     <section id="practice" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="01" />
-      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <div className="relative z-10 mx-auto max-w-[1700px] grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
         {/* Left: massive photo, full-bleed to left edge */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -598,7 +598,7 @@ function SelectedWork() {
   return (
     <section id="work" className="relative bg-[#F5F1E8] pt-12 sm:pt-14 lg:pt-18 pb-10 sm:pb-12 overflow-hidden">
       <SectionMark number="02" />
-      <header className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10 mb-10 sm:mb-14">
+      <header className="relative z-10 mx-auto max-w-[1700px] px-6 sm:px-10 mb-10 sm:mb-14">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -637,7 +637,7 @@ function ProjectMonograph({
 }) {
   const reducedMotion = useReducedMotion();
   return (
-    <article className="mx-auto max-w-[1400px]">
+    <article className="mx-auto max-w-[1700px]">
       {/* Primary image — clip-path reveal signature moment */}
       <motion.div
         initial={reducedMotion ? { opacity: 0 } : { clipPath: "inset(8% 8% 8% 8%)", opacity: 0 }}
@@ -758,7 +758,7 @@ function ProcessHorizontal() {
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col relative">
         <SectionMark number="03" />
         {/* Header — fixed at top of pinned viewport */}
-        <header className="px-12 pt-16 pb-8 max-w-[1400px] mx-auto w-full">
+        <header className="px-12 pt-16 pb-8 max-w-[1700px] mx-auto w-full">
           <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
             The Process
           </p>
@@ -816,7 +816,7 @@ function ProcessProgressRail({
 }) {
   const width = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   return (
-    <div className="pb-10 px-12 max-w-[1400px] mx-auto w-full">
+    <div className="pb-10 px-12 max-w-[1700px] mx-auto w-full">
       <div className="flex items-center justify-between mb-2">
         {PROCESS_STEPS.map((s) => (
           <span
@@ -841,7 +841,7 @@ function ProcessVertical() {
   return (
     <section id="process" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="03" />
-      <div className="relative z-10 mx-auto max-w-[1100px] px-6 sm:px-10">
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
         <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
           The Process
         </p>
@@ -935,7 +935,7 @@ function MaintenancePlans() {
   return (
     <section id="maintenance" className="relative bg-[#E4E6DC] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="04" />
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
+      <div className="relative z-10 mx-auto max-w-[1700px] px-6 sm:px-10">
         {/* Centered header */}
         <div className="text-center max-w-[760px] mx-auto mb-10 sm:mb-14">
           <motion.p
@@ -1066,7 +1066,7 @@ function Hunsakers() {
         glyph={<span className="italic">&amp;</span>}
         glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 font-[family-name:var(--font-playfair)] font-light text-[160px] sm:text-[260px] lg:text-[360px]"
       />
-      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-11 gap-12 lg:gap-16 items-start">
+      <div className="relative z-10 mx-auto max-w-[1700px] grid grid-cols-1 lg:grid-cols-11 gap-12 lg:gap-16 items-start">
         {/* Left: house photo, full-bleed to left edge on desktop */}
         <motion.div
           initial={{ opacity: 0.6 }}
@@ -1204,7 +1204,7 @@ function ClimateSmart() {
           (max-w-900px) which left ~270px of cream void on each side at
           1440px. Now a 6/6 split — photo left (full-bleed to edge),
           headline + 4 climate blocks right — fills the screen. */}
-      <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div className="relative z-10 mx-auto max-w-[1700px] grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, scale: 1.04 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -1292,7 +1292,7 @@ function Voices() {
         glyph={<span>&ldquo;</span>}
         glyphClass="bottom-2 left-4 sm:bottom-6 sm:left-10 lg:bottom-10 lg:left-16 font-[family-name:var(--font-playfair)] font-normal text-[200px] sm:text-[340px] lg:text-[440px]"
       />
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
+      <div className="relative z-10 mx-auto max-w-[1700px] px-6 sm:px-10">
         {/* Header */}
         <div className="text-center max-w-[860px] mx-auto mb-10 sm:mb-14">
           <motion.p
@@ -1449,7 +1449,7 @@ function Contact() {
         glyph={<span>→</span>}
         glyphClass="bottom-6 left-6 sm:bottom-12 sm:left-12 font-[family-name:var(--font-playfair)] font-light text-[180px] sm:text-[300px] lg:text-[420px]"
       />
-      <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
+      <div className="relative z-10 mx-auto max-w-[1700px] px-6 sm:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           {/* Left rail */}
           <div className="lg:col-span-5">
@@ -1556,7 +1556,7 @@ function Contact() {
 function Footer() {
   return (
     <footer className="bg-[#1C1F1A] text-[#F5F1E8]/85 pt-20 pb-10 mt-0">
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
+      <div className="mx-auto max-w-[1700px] px-6 sm:px-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20">
           {/* Brand column */}
           <div>
