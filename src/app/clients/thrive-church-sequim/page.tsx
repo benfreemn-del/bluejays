@@ -250,7 +250,7 @@ function Hero() {
             </span>
             <blockquote className="font-[Fraunces] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               The light shines in the darkness, and the darkness has not
-              overcome it.&rdquo;
+              overcome it.<span className="not-italic text-[#d97706]">&rdquo;</span>
             </blockquote>
             <figcaption className="mt-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
               John 1:5
@@ -286,7 +286,7 @@ function Hero() {
  * so we drive the reveal via requestAnimationFrame + setState — works
  * in every real browser and the preview tool.
  */
-function useGenesisTimeline(totalMs = 10800) {
+function useGenesisTimeline(totalMs = 7200) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -330,36 +330,37 @@ function fade(elapsed: number, begin: number, dur: number, max = 1) {
 function SunriseIllustration() {
   const elapsed = useGenesisTimeline();
 
-  // Genesis-1 creation order (locked 2026-05-18 — Ben slow-pass).
-  // Timeline expanded from ~4.4s → ~10.6s so each Day reads as its
-  // own distinct moment instead of all of Day 3 appearing in a 600ms
-  // blur. Each step starts 600-900ms after the previous one started
-  // so the eye has time to register each piece arriving.
+  // Genesis-1 creation order (locked 2026-05-18 — Ben 7-second pass).
+  // Compressed from 10.6s → 7s. Each Day still reads distinct
+  // because the relative gaps between steps were preserved while
+  // overall pace tightened. Each step starts 400-800ms after the
+  // previous one started so the eye still has time to register each
+  // piece arriving without dragging the whole sequence out.
   //
-  //   Day 1 — Light          (sky fades up)          0.0s → 1.3s
-  //   Day 1 — Sun            (rises in upper-right)  0.4s → 2.1s
-  //   Day 2 — Firmament      (atmospheric haze)      1.6s → 3.0s
-  //   Day 3a — Land          (distant Olympics)      2.8s → 4.2s
-  //   Day 3b — More land     (forested mid ridge)    3.8s → 5.2s
-  //   Day 3c — Waters btwn   (Strait of Juan de F.)  4.7s → 6.0s
-  //   Day 3d — Waters below  (Sequim Bay foreground) 5.3s → 6.6s
-  //   Day 3e — Vegetation    (trees + shore)         6.1s → 7.5s
-  //   Day 4 — Sun warms      (slope highlights)      7.0s → 8.5s
-  //   Day 5 — Sea life       (water ripples)         7.8s → 9.3s, max 0.55
-  //   Day 5 — Birds          (10, spread, depth)     8.2s → 10.0s, max 0.75
-  //   Caption                ("And there was light") 9.4s → 10.6s, max 0.85
-  const skyOp = fade(elapsed, 0, 1300);
-  const sunOp = fade(elapsed, 400, 1700);
-  const hazeOp = fade(elapsed, 1600, 1400);
-  const peaksOp = fade(elapsed, 2800, 1400);
-  const midRidgeOp = fade(elapsed, 3800, 1400);
-  const straitOp = fade(elapsed, 4700, 1300);
-  const waterOp = fade(elapsed, 5300, 1300);
-  const treesOp = fade(elapsed, 6100, 1400);
-  const slopeOp = fade(elapsed, 7000, 1500);
-  const ripplesOp = fade(elapsed, 7800, 1500, 0.55);
-  const birdsOp = fade(elapsed, 8200, 1800, 0.75);
-  const captionOp = fade(elapsed, 9400, 1200, 0.85);
+  //   Day 1 — Light          (sky fades up)          0.00s → 0.85s
+  //   Day 1 — Sun            (rises in upper-right)  0.25s → 1.40s
+  //   Day 2 — Firmament      (atmospheric haze)      1.05s → 2.00s
+  //   Day 3a — Land          (distant Olympics)      1.85s → 2.80s
+  //   Day 3b — More land     (forested mid ridge)    2.50s → 3.45s
+  //   Day 3c — Waters btwn   (Strait of Juan de F.)  3.10s → 4.00s
+  //   Day 3d — Waters below  (Sequim Bay foreground) 3.50s → 4.40s
+  //   Day 3e — Vegetation    (trees + shore)         4.05s → 5.00s
+  //   Day 4 — Sun warms      (slope highlights)      4.60s → 5.60s
+  //   Day 5 — Sea life       (water ripples)         5.15s → 6.15s, max 0.55
+  //   Day 5 — Birds          (10, spread, depth)     5.40s → 6.60s, max 0.75
+  //   Caption                ("And there was light") 6.20s → 7.00s, max 0.85
+  const skyOp = fade(elapsed, 0, 850);
+  const sunOp = fade(elapsed, 250, 1150);
+  const hazeOp = fade(elapsed, 1050, 950);
+  const peaksOp = fade(elapsed, 1850, 950);
+  const midRidgeOp = fade(elapsed, 2500, 950);
+  const straitOp = fade(elapsed, 3100, 900);
+  const waterOp = fade(elapsed, 3500, 900);
+  const treesOp = fade(elapsed, 4050, 950);
+  const slopeOp = fade(elapsed, 4600, 1000);
+  const ripplesOp = fade(elapsed, 5150, 1000, 0.55);
+  const birdsOp = fade(elapsed, 5400, 1200, 0.75);
+  const captionOp = fade(elapsed, 6200, 800, 0.85);
 
   return (
     <div className="relative aspect-[21/9] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40 sm:aspect-[4/3]">
