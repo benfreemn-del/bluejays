@@ -151,9 +151,9 @@ function Hero() {
             className="mt-4 font-[Fraunces] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
-            Hope, breaking{" "}
+            We are{" "}
             <em className="italic" style={{ fontWeight: 400 }}>
-              like dawn.
+              Thrive.
             </em>
           </motion.h1>
 
