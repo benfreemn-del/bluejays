@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Inter } from "next/font/google";
 import BackToTopButton from "@/components/BackToTopButton";
 
 /**
@@ -6,15 +7,30 @@ import BackToTopButton from "@/components/BackToTopButton";
  * (Auburn, WA). Custom-tier bespoke build for the Hunsaker family's 49-year-old
  * landscape firm serving King, Pierce, Snohomish, and Kittitas counties.
  *
- * SEO HARDENING (audit 2026-05-19, launch-prep):
- *   - Full metadata override on canonical / Open Graph / Twitter so social
- *     shares + Google index Mt View-specific content (root layout otherwise
- *     leaks BlueJays homepage values into every page).
- *   - Mt View-specific og-image points at the tiered-stairs hero photo.
- *   - Landscaper + LocalBusiness JSON-LD schema injected for rich-result
- *     eligibility on Google. Coexists additively with the root BlueJays
- *     ProfessionalService schema — Google treats multiple LD blocks fine.
+ * v4 redesign (2026-05-19): editorial monograph treatment — Fraunces display +
+ * Inter body, warm-paper background, restrained motion. Spec lives in
+ * docs (uploaded). Reference world: Olson Kundig project pages, Aman
+ * resort microsites, Cereal Magazine.
+ *
+ * SEO HARDENING (audit 2026-05-19, launch-prep): full metadata override,
+ * Landscaper + LocalBusiness JSON-LD schema. Coexists additively with the
+ * root BlueJays ProfessionalService schema.
  */
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  axes: ["SOFT", "opsz"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const SITE_URL = "https://bluejayportfolio.com";
 const PAGE_PATH = "/clients/mt-view-landscaping";
@@ -49,9 +65,7 @@ export const metadata: Metadata = {
     "family owned landscaper Washington",
   ],
   robots: { index: true, follow: true },
-  alternates: {
-    canonical: PAGE_URL,
-  },
+  alternates: { canonical: PAGE_URL },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
@@ -77,31 +91,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f1a0f",
+  themeColor: "#F5F1E8",
   width: "device-width",
   initialScale: 1,
 };
 
-/**
- * Landscaper + LocalBusiness JSON-LD schema for Google rich results.
- * Injected as a string-typed <script> so Next.js doesn't try to interpret
- * it as a React component.
- *
- * Why "LocalBusiness" with industry sub-type: schema.org doesn't have a
- * "Landscaper" type proper — closest is HomeAndConstructionBusiness. The
- * additionalType property points at the Wikidata entity for landscape
- * contractor (Q1064538) so structured-data parsers can resolve the niche.
- *
- * priceRange "$$" — maintenance plans start at $180/mo, install projects
- * typically $5K-$50K range. Mid-tier residential pricing.
- */
 const mtViewSchema = {
   "@context": "https://schema.org",
   "@type": "HomeAndConstructionBusiness",
   "@id": `${PAGE_URL}#business`,
   additionalType: "https://www.wikidata.org/wiki/Q1064538",
   name: "Mountain View Landscape & Design",
-  alternateName: ["Mountain View Landscape", "Mt View Landscape", "Mountain View Landscape & Design Inc."],
+  alternateName: [
+    "Mountain View Landscape",
+    "Mt View Landscape",
+    "Mountain View Landscape & Design Inc.",
+  ],
   description:
     "Family-owned landscape design, installation, and maintenance firm founded by Tim Hunsaker in 1976 (originally Shamrock Landscaping). Bonnie Hunsaker runs the maintenance side. Every discipline in-house: hardscapes, water features, retaining walls, irrigation, sod, native planting, night lighting, and year-round maintenance plans.",
   url: PAGE_URL,
@@ -119,27 +124,12 @@ const mtViewSchema = {
     postalCode: "98092",
     addressCountry: "US",
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 47.3207062,
-    longitude: -122.0984311,
-  },
+  geo: { "@type": "GeoCoordinates", latitude: 47.3207062, longitude: -122.0984311 },
   areaServed: [
-    "Auburn, WA",
-    "Seattle, WA",
-    "Bellevue, WA",
-    "Kent, WA",
-    "Renton, WA",
-    "Federal Way, WA",
-    "Tacoma, WA",
-    "Puyallup, WA",
-    "Bonney Lake, WA",
-    "Gig Harbor, WA",
-    "Everett, WA",
-    "Lynnwood, WA",
-    "Bothell, WA",
-    "Ellensburg, WA",
-    "Cle Elum, WA",
+    "Auburn, WA", "Seattle, WA", "Bellevue, WA", "Kent, WA", "Renton, WA",
+    "Federal Way, WA", "Tacoma, WA", "Puyallup, WA", "Bonney Lake, WA",
+    "Gig Harbor, WA", "Everett, WA", "Lynnwood, WA", "Bothell, WA",
+    "Ellensburg, WA", "Cle Elum, WA",
   ].map((city) => ({ "@type": "City", name: city })),
   openingHoursSpecification: [
     {
@@ -157,67 +147,18 @@ const mtViewSchema = {
     "@type": "OfferCatalog",
     name: "Landscape Services",
     itemListElement: [
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Custom Landscape Design & Installation",
-          description:
-            "End-to-end residential and commercial landscape design and installation — from site survey through final planting. Every discipline in-house: design, hardscape, planting, irrigation, lighting.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Hardscapes & Stoneworks",
-          description:
-            "Retaining walls, patios, walkways, fire features, and decorative stoneworks. 49 years of regional materials experience.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Water Features",
-          description:
-            "Ponds, waterfalls, streams, and fountain installations — engineered for Pacific Northwest climate and built to last.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Irrigation Systems",
-          description:
-            "Smart irrigation design and installation — water-efficient zones tuned to plant needs and Puget Sound rainfall patterns.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Sod & Native Planting",
-          description:
-            "Premium sod installation and native-plant landscaping tuned to Pacific Northwest soils, climate, and ecology.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Landscape Lighting",
-          description:
-            "Path lights, accent lighting, security illumination, and architectural night lighting — low-voltage, energy-efficient designs.",
-        },
-      },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Landscape Design & Installation", description: "End-to-end residential and commercial design and installation. Every discipline in-house." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Hardscapes & Stoneworks", description: "Retaining walls, patios, walkways, fire features, decorative stoneworks." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Water Features", description: "Ponds, waterfalls, streams, and fountain installations." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Irrigation Systems", description: "Smart irrigation design and installation tuned to Puget Sound rainfall." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sod & Native Planting", description: "Premium sod installation and native-plant landscaping." } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Landscape Lighting", description: "Low-voltage LED path, accent, security, and architectural lighting." } },
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
           name: "Year-Round Maintenance Plans",
-          description:
-            "Three-tier recurring maintenance — Essentials, Full Care (most popular), and Estate. Starting at $180/mo. Mowing, bed work, seasonal cleanup, pruning, irrigation tune-ups, and year-round route service.",
+          description: "Three-tier recurring maintenance: Essentials, Full Care (most popular), Estate. Starting at $180/mo.",
           offers: {
             "@type": "AggregateOffer",
             priceCurrency: "USD",
@@ -234,18 +175,11 @@ const mtViewSchema = {
     ],
   },
   knowsAbout: [
-    "Landscape design",
-    "Hardscape construction",
-    "Retaining wall engineering",
-    "Water feature installation",
-    "Irrigation systems",
-    "Sod installation",
-    "Native plant landscaping",
-    "Pacific Northwest horticulture",
-    "Landscape lighting design",
-    "Year-round landscape maintenance",
-    "Seasonal pruning",
-    "Climate-smart planting",
+    "Landscape design", "Hardscape construction", "Retaining wall engineering",
+    "Water feature installation", "Irrigation systems", "Sod installation",
+    "Native plant landscaping", "Pacific Northwest horticulture",
+    "Landscape lighting design", "Year-round landscape maintenance",
+    "Seasonal pruning", "Climate-smart planting",
   ],
   aggregateRating: {
     "@type": "AggregateRating",
@@ -266,13 +200,13 @@ export default function MtViewLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className={`${fraunces.variable} ${inter.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(mtViewSchema) }}
       />
       {children}
-      <BackToTopButton bg="#16a34a" fg="#ffffff" />
-    </>
+      <BackToTopButton bg="#3E4A36" fg="#F5F1E8" />
+    </div>
   );
 }
