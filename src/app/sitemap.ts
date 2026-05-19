@@ -48,6 +48,7 @@ const ACTIVE_CLIENT_SHOWCASES = [
   "lcac",                    // Lewis County Autism Coalition
   "bloodlines",              // Preston James Hunsaker · indie-author · Bloodlines fantasy series
   "theoregonappraisers",     // Robert (Bob) Rochefort · Salem OR · estate/divorce/IRS appraisals
+  "mt-view-landscaping",     // Mountain View Landscape & Design · Tim + Bonnie Hunsaker · Auburn WA · since 1976
 ];
 
 /**

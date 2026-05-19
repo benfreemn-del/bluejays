@@ -126,8 +126,15 @@ const SLUG_CONFIG: Record<
     emoji: "🧩",
   },
   "mt-view-landscaping": {
+    // Primary inbox is the gmail the Hunsakers check daily — locked
+    // 2026-05-19 launch prep. The brand inbox info@mountainviewlandscape.com
+    // is CC'd by the dedicated contact route at
+    // /api/clients/mt-view-landscaping/contact (CLIENT_CC_EMAILS), which
+    // is what the showcase form actually posts to. This SLUG_CONFIG
+    // entry only fires as a fallback if something ever wires Mt View
+    // into the generic /inquire path.
     businessLabel: "Mountain View Landscape",
-    clientEmail: "info@mountainviewlandscape.com",
+    clientEmail: "mtviewlandscapeonline@gmail.com",
     emoji: "⛰️",
   },
   "pine-and-particle": {
