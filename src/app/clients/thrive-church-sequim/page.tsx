@@ -250,11 +250,14 @@ function Hero() {
             </span>
             <blockquote className="font-[Fraunces] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               The light shines in the darkness, and the darkness has not
-              overcome it.<span className="not-italic text-[#d97706]">&rdquo;</span>
+              overcome it.
             </blockquote>
             <figcaption className="mt-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
               John 1:5
             </figcaption>
+            <span className="absolute -bottom-4 right-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-4xl leading-none text-[#d97706]">
+              &rdquo;
+            </span>
           </motion.figure>
         </motion.div>
       </div>
@@ -1220,7 +1223,7 @@ function MinistriesGrid() {
                   delay: i * 0.08,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-6 transition-all duration-500 hover:bg-[#0d4f4a] sm:p-10 lg:p-14`}
+                className={`group relative block h-full overflow-hidden bg-gradient-to-br ${m.accent} p-6 transition-all duration-500 hover:from-[#0d4f4a] hover:to-[#0a3a36] hover:shadow-[0_24px_60px_-20px_rgba(13,79,74,0.55)] sm:p-10 lg:p-14`}
               >
                   {/* Tag */}
                   <div className="flex items-start justify-between">
@@ -1295,6 +1298,197 @@ function PreschoolSpotlight() {
             d="M20,60 Q60,0 100,60 T180,60 T260,60 T340,60 T420,60"
             opacity="0.4"
           />
+        </g>
+      </svg>
+
+      {/* Cartoonish stacking blocks — bottom-right corner, desktop only */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute bottom-8 right-8 hidden w-[280px] lg:block xl:w-[340px]"
+        viewBox="0 0 340 280"
+      >
+        {/* soft glow behind the stack */}
+        <ellipse
+          cx="170"
+          cy="248"
+          rx="120"
+          ry="14"
+          fill="#fbbf24"
+          opacity="0.18"
+        />
+
+        {/* Block 1 — bottom, biggest, teal "T" */}
+        <g transform="translate(60 168) rotate(-3)">
+          <rect width="120" height="72" rx="10" fill="#0d4f4a" />
+          <rect
+            x="2"
+            y="2"
+            width="116"
+            height="68"
+            rx="8"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.35"
+          />
+          <text
+            x="60"
+            y="50"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="42"
+            fontWeight="700"
+            fill="#fbf7ee"
+          >
+            T
+          </text>
+        </g>
+
+        {/* Block 2 — second tier, amber "H" */}
+        <g transform="translate(78 102) rotate(2)">
+          <rect width="92" height="68" rx="9" fill="#fbbf24" />
+          <rect
+            x="2"
+            y="2"
+            width="88"
+            height="64"
+            rx="7"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.4"
+          />
+          <text
+            x="46"
+            y="48"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="38"
+            fontWeight="700"
+            fill="#1a1612"
+          >
+            H
+          </text>
+        </g>
+
+        {/* Block 3 — third tier, cream/coral "R" */}
+        <g transform="translate(92 44) rotate(-4)">
+          <rect width="74" height="62" rx="8" fill="#fbf7ee" />
+          <rect
+            x="2"
+            y="2"
+            width="70"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.45"
+          />
+          <text
+            x="37"
+            y="44"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="34"
+            fontWeight="700"
+            fill="#d97706"
+          >
+            R
+          </text>
+        </g>
+
+        {/* Block 4 — tippy-top, orange "I" tilted */}
+        <g transform="translate(186 122) rotate(14)">
+          <rect width="54" height="54" rx="7" fill="#d97706" />
+          <rect
+            x="2"
+            y="2"
+            width="50"
+            height="50"
+            rx="5"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.4"
+          />
+          <text
+            x="27"
+            y="40"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="34"
+            fontWeight="700"
+            fill="#fbf7ee"
+          >
+            I
+          </text>
+        </g>
+
+        {/* Small "V" block tipped on its side next to the stack */}
+        <g transform="translate(214 196) rotate(22)">
+          <rect width="46" height="46" rx="6" fill="#0d4f4a" />
+          <rect
+            x="2"
+            y="2"
+            width="42"
+            height="42"
+            rx="4"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.4"
+          />
+          <text
+            x="23"
+            y="33"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="28"
+            fontWeight="700"
+            fill="#fbbf24"
+          >
+            V
+          </text>
+        </g>
+
+        {/* Tiny "E" cube on the ground, cream */}
+        <g transform="translate(34 212) rotate(-8)">
+          <rect width="38" height="38" rx="5" fill="#fbf7ee" />
+          <rect
+            x="2"
+            y="2"
+            width="34"
+            height="34"
+            rx="3"
+            fill="none"
+            stroke="#1a1612"
+            strokeWidth="2"
+            opacity="0.4"
+          />
+          <text
+            x="19"
+            y="27"
+            textAnchor="middle"
+            fontFamily="Fraunces, Georgia, serif"
+            fontSize="22"
+            fontWeight="700"
+            fill="#0d4f4a"
+          >
+            E
+          </text>
+        </g>
+
+        {/* Sparkle accents — playful kid energy */}
+        <g fill="#fbbf24" opacity="0.85">
+          <circle cx="30" cy="60" r="3" />
+          <circle cx="290" cy="80" r="2.5" />
+          <circle cx="310" cy="160" r="3" />
+          <circle cx="20" cy="160" r="2" />
+        </g>
+        <g fill="#fbf7ee" opacity="0.6">
+          <circle cx="270" cy="40" r="2" />
+          <circle cx="50" cy="20" r="2" />
         </g>
       </svg>
 

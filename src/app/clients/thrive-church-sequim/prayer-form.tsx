@@ -204,7 +204,7 @@ export default function PrayerRequestForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center gap-2 px-6 py-3 text-[13px] font-bold tracking-[0.12em] uppercase transition-all disabled:opacity-60 disabled:cursor-wait rounded-full hover:brightness-110 active:scale-95"
+          className="inline-flex cursor-pointer items-center gap-2 px-6 py-3 text-[13px] font-bold tracking-[0.12em] uppercase transition-all disabled:cursor-wait disabled:opacity-60 rounded-full hover:brightness-110 active:scale-95"
           style={{
             background: AMBER,
             color: "#ffffff",

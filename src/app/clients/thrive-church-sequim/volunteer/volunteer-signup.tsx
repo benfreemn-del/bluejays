@@ -190,7 +190,7 @@ export default function VolunteerSignup() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center gap-2 rounded-full bg-[#0d4f4a] px-7 py-3.5 text-[12px] font-bold uppercase tracking-[0.16em] text-[#fbf7ee] transition-all hover:bg-[#0a3a36] hover:shadow-[0_14px_36px_-14px_rgba(13,79,74,0.55)] disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#0d4f4a] px-7 py-3.5 text-[12px] font-bold uppercase tracking-[0.16em] text-[#fbf7ee] transition-all hover:bg-[#0a3a36] hover:shadow-[0_14px_36px_-14px_rgba(13,79,74,0.55)] disabled:cursor-wait disabled:opacity-60"
         >
           {status === "sending" ? "Sending…" : "Sign me up"}
           {status !== "sending" && <ArrowRight size={14} weight="bold" />}
