@@ -25,6 +25,12 @@ export const runtime = "nodejs";
 
 const CLIENT_EMAIL = "mtviewlandscapeonline@gmail.com";
 const CLIENT_NAME = "Mountain View Landscape & Design";
+// CC the professional-facing inbox on every lead so nothing falls
+// through if either address goes quiet (gmail = working inbox the
+// Hunsakers check daily; info@ = canonical brand-facing address on
+// the domain). Locked 2026-05-19 — see CLAUDE.md "BOTH addresses"
+// answer when this site went live.
+const CLIENT_CC_EMAILS = ["info@mountainviewlandscape.com"];
 
 // in-memory rate limit — resets on deploy, fine for low-volume contact form
 const recentByIp = new Map<string, number[]>();
@@ -69,8 +75,12 @@ async function sendToClient(args: {
 
   const personalization: {
     to: { email: string; name?: string }[];
+    cc?: { email: string; name?: string }[];
   } = {
     to: [{ email: CLIENT_EMAIL, name: CLIENT_NAME }],
+    ...(CLIENT_CC_EMAILS.length > 0
+      ? { cc: CLIENT_CC_EMAILS.map((e) => ({ email: e })) }
+      : {}),
   };
 
   const body: Record<string, unknown> = {
@@ -240,6 +250,9 @@ export async function POST(request: NextRequest) {
     `Address: ${propertyAddress || "(none)"}`,
     ``,
     `Forwarded to: ${CLIENT_EMAIL}${clientOk ? " ✓" : " ✗"}`,
+    ...(CLIENT_CC_EMAILS.length > 0
+      ? [`CC:           ${CLIENT_CC_EMAILS.join(", ")}${clientOk ? " ✓" : " ✗"}`]
+      : []),
   ].join("\n");
 
   await Promise.allSettled([
