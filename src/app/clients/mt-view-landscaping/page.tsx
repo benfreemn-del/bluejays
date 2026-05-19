@@ -362,6 +362,21 @@ function Hero() {
               style={{ y: photoY }}
               className="absolute inset-0 w-full h-full object-cover"
             />
+            {/* Soft paper-tinted scrim anchored at lower-left so the Ink type
+                column overlay reads cleanly against the darker fence + planting
+                area in that quadrant of the photo. Desktop-only (mobile stacks
+                type below the photo on Paper, no scrim needed). Spec said
+                "no overlay tint" — this is a tonal gradient mask under the
+                type column ONLY, not a global tint, so the upper-right focal
+                point (red wall + steps + golden-hour foliage) stays untouched. */}
+            <div
+              aria-hidden
+              className="hidden lg:block absolute inset-0 pointer-events-none bg-gradient-to-tr from-[#F5F1E8]/85 via-[#F5F1E8]/35 to-transparent"
+              style={{
+                background:
+                  "radial-gradient(ellipse 70% 80% at 18% 78%, rgba(245, 241, 232, 0.92) 0%, rgba(245, 241, 232, 0.55) 38%, rgba(245, 241, 232, 0) 72%)",
+              }}
+            />
           </motion.div>
 
           {/* Type column — overlay on desktop, below photo on mobile */}
