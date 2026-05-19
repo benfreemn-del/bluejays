@@ -83,6 +83,9 @@ type QuizState = {
   phone: string;
   playerName: string;
   notifyOptIn: boolean;
+  /** TCPA gate — optional unchecked SMS-consent checkbox in the
+   *  notify step. Funnel runner only sends SMS when true. */
+  smsConsent: boolean;
 };
 
 const INITIAL: QuizState = {
@@ -98,6 +101,7 @@ const INITIAL: QuizState = {
   phone: "",
   playerName: "",
   notifyOptIn: true,
+  smsConsent: false,
 };
 
 // Q1 — Age group. Drives camp matching most directly.
@@ -319,6 +323,7 @@ export default function CampFinderPage() {
           timings: state.timings,
           playerName: state.playerName || null,
           notifyOptIn: state.notifyOptIn,
+          smsConsent: state.smsConsent,
         }),
       });
       const j = (await r.json().catch(() => ({}))) as {
@@ -1447,6 +1452,30 @@ function NotifyStep({
             </span>
           </span>
         </label>
+
+        {/* TCPA — optional, unchecked, consent NOT required to submit */}
+        <label
+          className={`flex items-start gap-3 mt-3 cursor-pointer p-4 rounded-xl border-2 transition-colors ${
+            state.smsConsent
+              ? "bg-lime-300/10 border-lime-300/40"
+              : "bg-white/[0.03] border-white/10 hover:border-white/20"
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={state.smsConsent}
+            onChange={(e) => update("smsConsent", e.target.checked)}
+            className="mt-0.5 w-5 h-5 accent-lime-400 cursor-pointer"
+          />
+          <span className="text-sm leading-relaxed">
+            <strong className="text-white">Optional — text me</strong> camp
+            drops + drill of the week.
+            <span className="block text-xs text-white/50 mt-1">
+              Msg &amp; data rates may apply. Reply STOP to opt out. Consent
+              is not required to submit this form.
+            </span>
+          </span>
+        </label>
       </div>
     </div>
   );
@@ -1477,6 +1506,16 @@ function ResultsStep({
         </p>
       )}
 
+      {!submitting && !submitError && (
+        <p
+          className="text-emerald-300 text-center text-sm mb-4 bg-emerald-500/10 border border-emerald-500/30 rounded-md px-3 py-2 max-w-md mx-auto"
+          role="status"
+          aria-live="polite"
+        >
+          ✓ Your request was saved — check {state.email} for the welcome email.
+        </p>
+      )}
+
       <div className="text-center mb-8">
         <div className="text-5xl mb-3">🎯</div>
         <h1 className="text-3xl sm:text-4xl font-black mb-2">
@@ -1500,7 +1539,16 @@ function ResultsStep({
       {hasMatches ? (
         <div className="grid sm:grid-cols-2 gap-3">
           {matchedCamps.map((camp) => (
-            <CampCard key={camp.id} camp={camp} />
+            <CampCard
+              key={camp.id}
+              camp={camp}
+              parentName={state.parentName}
+              parentEmail={state.email}
+              parentPhone={state.phone}
+              playerName={state.playerName}
+              playerAge={state.ageGroups.join(" / ")}
+              smsConsent={state.smsConsent}
+            />
           ))}
         </div>
       ) : (
@@ -1555,10 +1603,61 @@ function ResultsStep({
   );
 }
 
-function CampCard({ camp }: { camp: Camp }) {
+function CampCard({
+  camp,
+  parentName,
+  parentEmail,
+  parentPhone,
+  playerName,
+  playerAge,
+  smsConsent,
+}: {
+  camp: Camp;
+  parentName: string;
+  parentEmail: string;
+  parentPhone: string;
+  playerName: string;
+  playerAge: string;
+  smsConsent: boolean;
+}) {
+  const [regStatus, setRegStatus] = useState<
+    "idle" | "submitting" | "registered" | "error"
+  >("idle");
+  const [regError, setRegError] = useState<string | null>(null);
+
+  async function handleRegister() {
+    if (regStatus === "submitting" || regStatus === "registered") return;
+    setRegStatus("submitting");
+    setRegError(null);
+    try {
+      const r = await fetch("/api/clients/zenith-sports/camp-signup", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          campId: camp.id,
+          parentName,
+          parentEmail,
+          parentPhone,
+          playerName,
+          playerAge,
+          smsConsent,
+        }),
+      });
+      const j = (await r.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!j.ok) throw new Error(j.error || "Registration failed");
+      setRegStatus("registered");
+    } catch (e) {
+      setRegError(e instanceof Error ? e.message : "Couldn't register — try again?");
+      setRegStatus("error");
+    }
+  }
+
   return (
     <div
-      className="rounded-xl p-5"
+      className="rounded-xl p-5 flex flex-col"
       style={{ backgroundColor: IVORY, color: NAVY_DEEP }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -1573,16 +1672,44 @@ function CampCard({ camp }: { camp: Camp }) {
         {camp.city}, {camp.state} · {camp.format} · {camp.ageRange}
       </p>
       {camp.blurb && <p className="text-xs text-slate-600 leading-relaxed mb-3">{camp.blurb}</p>}
-      {camp.url && (
-        <a
-          href={camp.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block text-[11px] uppercase tracking-wider font-bold"
-          style={{ color: ELECTRIC }}
-        >
-          Camp page ↗
-        </a>
+
+      <div className="mt-auto pt-2 flex items-center justify-between gap-3 flex-wrap">
+        {regStatus === "registered" ? (
+          <span
+            className="text-xs font-bold inline-flex items-center gap-1.5"
+            role="status"
+            aria-live="polite"
+            style={{ color: "#15803d" }}
+          >
+            ✓ Registered — Philip will be in touch
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={handleRegister}
+            disabled={regStatus === "submitting" || !parentName || !parentEmail}
+            className="text-[11px] uppercase tracking-wider font-extrabold px-3 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: NAVY_DEEP, color: "#fff" }}
+          >
+            {regStatus === "submitting"
+              ? "Registering…"
+              : "Register for this camp"}
+          </button>
+        )}
+        {camp.url && (
+          <a
+            href={camp.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] uppercase tracking-wider font-bold"
+            style={{ color: ELECTRIC }}
+          >
+            Camp page ↗
+          </a>
+        )}
+      </div>
+      {regError && (
+        <p className="mt-2 text-[11px] text-rose-600">{regError}</p>
       )}
     </div>
   );

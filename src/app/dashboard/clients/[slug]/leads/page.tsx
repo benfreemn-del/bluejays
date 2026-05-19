@@ -36,11 +36,15 @@ const AUDIENCE_LABEL: Record<ClientLeadAudience, string> = {
   dealer: "🤝 Dealer",
   community: "🏆 Community",
 };
+// Zenith audiences (parent/coach/player/club) aligned with the owner
+// portal palette per CLAUDE.md Owner Portal Rule 8 — so the same lead
+// has the same color whether Ben opens the admin board or Philip + Paul
+// open their portal. Other clients keep their bespoke palettes.
 const AUDIENCE_COLOR: Record<ClientLeadAudience, string> = {
-  parent: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  coach: "bg-violet-500/15 text-violet-300 border-violet-500/30",
-  player: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  club: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  parent: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  coach: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  player: "bg-lime-500/15 text-lime-300 border-lime-500/30",
+  club: "bg-violet-500/15 text-violet-300 border-violet-500/30",
   unknown: "bg-slate-700/40 text-slate-400 border-slate-600",
   hobbyist: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   forester: "bg-lime-500/15 text-lime-300 border-lime-500/30",

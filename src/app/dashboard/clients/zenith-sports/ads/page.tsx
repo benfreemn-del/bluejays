@@ -121,7 +121,7 @@ export default function ZenithAdsPage() {
         {/* Iteration nudges — powered by paid_ads_iteration skill.
             Mock data for now; hydrates from real ROAS once Meta +
             Google APIs are delegated. Same nudges show on the owner-
-            facing portal Ads tab so Ben + Caleb/Philip see the same
+            facing portal Ads tab so Ben + Philip + Paul see the same
             recommendations. Per AIOS principle 18 (cross-project
             ripples) — UI mirrors the skill's 6-step decision algo. */}
         <section className="mb-10">

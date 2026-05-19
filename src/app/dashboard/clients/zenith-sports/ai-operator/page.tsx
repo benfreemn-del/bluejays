@@ -6,7 +6,7 @@ import Link from "next/link";
  * Skeleton UI for the per-client AI Operator (per AI_PACKAGE_PLAYBOOK
  * Phase 9 + AIOS PRO_SYNTHESIS row 2026-05-06). Shipped 2026-05-08
  * ahead of the 2026-05-09 final delivery walkthrough so Ben can show
- * Caleb/Philip "the AI brain" exists rather than describing it
+ * Philip + Paul "the AI brain" exists rather than describing it
  * verbally.
  *
  * Five skills, customized for the Zenith soccer-niche use case:

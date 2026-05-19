@@ -58,6 +58,9 @@ type Step = "role" | "builder" | "goals" | "identity" | "plan";
 type State = Omit<BuilderInputs, "role" | "gender"> & {
   role: BuilderInputs["role"] | null;
   gender: BuilderInputs["gender"] | null;
+  /** TCPA gate — optional unchecked SMS-consent checkbox in the
+   *  identity step. Funnel runner only sends SMS when true. */
+  smsConsent: boolean;
 };
 
 const INITIAL: State = {
@@ -71,6 +74,7 @@ const INITIAL: State = {
   skillLevel: 2,
   currentWeeklyHours: 2,
   goals: [],
+  smsConsent: false,
 };
 
 export default function BuildYourPlayerPage() {
@@ -115,6 +119,7 @@ export default function BuildYourPlayerPage() {
             name: state.firstName,
             email: state.email,
             phone: state.phone,
+            smsConsent: state.smsConsent,
             intent: "Build Your Player",
             source: "lead-gen-builder",
             // Stash the full builder snapshot + the generated plan so the
@@ -258,11 +263,30 @@ export default function BuildYourPlayerPage() {
             error={submitError}
           />
         )}
+        {step === "plan" && (!plan || !state.role) && (
+          <div className="mx-auto max-w-md text-center rounded-xl border border-rose-500/40 bg-rose-500/10 p-8">
+            <div className="text-4xl mb-3">⚠️</div>
+            <h2 className="text-xl font-black text-white mb-2">
+              We couldn&apos;t generate your plan.
+            </h2>
+            <p className="text-sm text-white/70 mb-5 leading-relaxed">
+              Looks like a step got skipped. Restart the builder and we&apos;ll
+              walk through it again — 90 seconds, tops.
+            </p>
+            <button
+              type="button"
+              onClick={() => setStep("role")}
+              className="inline-flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-3 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
+            >
+              Start over
+            </button>
+          </div>
+        )}
       </div>
 
       <footer className="border-t border-white/10 py-6 mt-12">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 text-center text-[10px] tracking-[0.22em] uppercase text-white/30">
-          © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] -ml-px top-[-0.45em]">®</sup>{" "}
+          © 2025–2026 Zenith Sports, LLC · TEKKY<sup className="text-[0.7em] -ml-px top-[-0.45em]">®</sup>{" "}
           is a registered trademark · Patent Pending
         </div>
       </footer>
@@ -451,6 +475,30 @@ function IdentityStep({
             placeholder="(555) 555-5555"
           />
         </Field>
+
+        {/* TCPA — optional, unchecked, consent NOT required to submit */}
+        <label
+          className={`flex items-start gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
+            state.smsConsent
+              ? "border-[#a3e635] bg-[#a3e635]/10"
+              : "border-white/10 bg-white/[0.03] hover:border-white/20"
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={state.smsConsent}
+            onChange={(e) => update("smsConsent", e.target.checked)}
+            className="mt-0.5 flex-shrink-0 accent-[#a3e635]"
+          />
+          <div className="text-[11px] leading-relaxed text-white/70">
+            <span className="font-semibold text-white">
+              Optional — text me drill of the week.
+            </span>{" "}
+            Consent to receive occasional SMS at the number above. Msg
+            &amp; data rates may apply. Reply STOP to opt out. Consent
+            is not required to submit this form.
+          </div>
+        </label>
 
         <div className="pt-3">
           <NextButton
@@ -955,7 +1003,7 @@ function PlanStep({
           </div>
         </div>
         <a
-          href="/clients/zenith-sports/shop"
+          href="/clients/zenith-sports/shop?from=plan-kit"
           className="mt-6 flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
         >
           <ShoppingCart size={16} weight="bold" />

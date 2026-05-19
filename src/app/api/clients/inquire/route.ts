@@ -321,6 +321,12 @@ export async function POST(request: NextRequest) {
       // "source": "email-capture" field; main inquiry forms don't.
       const source = (body.source as string) || "main-inquiry-form";
       const phone = (body.phone as string) || (body.tel as string) || null;
+      // TCPA gate (Rule: migration 20260519). Forms surface an OPTIONAL
+      // unchecked SMS-consent checkbox. The funnel runner only sends
+      // SMS touches when sms_consent === true. Phone alone is NOT
+      // consent — a parent can give us their number for callbacks while
+      // still opting out of marketing texts.
+      const smsConsent = body.smsConsent === true || body.sms_consent === true;
       const newLead: NewClientLead = {
         client_slug: slug,
         audience_segment: audience,
@@ -330,6 +336,9 @@ export async function POST(request: NextRequest) {
         intent: (body.intent as string) || null,
         source,
         raw_payload: body,
+        sms_consent: smsConsent,
+        sms_consent_at: smsConsent ? new Date().toISOString() : null,
+        sms_consent_source: smsConsent ? "form_checkbox" : null,
       };
       const created = await createClientLead(newLead);
       leadId = created.id;

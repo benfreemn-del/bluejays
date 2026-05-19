@@ -81,7 +81,7 @@ CHANNEL RULES:
   - "wait": no clear signal — collect more data first
 
 DRAFTED MESSAGE RULES (these are non-negotiable):
-  - Ben's voice: lowercase greetings ("Hi Caleb"), no marketing
+  - Ben's voice: lowercase greetings ("Hi Jake"), no marketing
     fluff, ~80 words max, ONE link only (the prospect's preview URL),
     zero pricing mentions, no booking CTAs in cold-first-touch.
   - References specific audit findings ("saw your score landed at 48

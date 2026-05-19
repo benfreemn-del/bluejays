@@ -65,6 +65,18 @@ export type ClientLead = {
    *  written by the Shopify webhook once that's wired. Null when the
    *  lead hasn't converted or wasn't tagged with a value. */
   conversion_value_cents: number | null;
+  // ── TCPA gate (added 2026-05-19 per migration 20260519) ──
+  /** True only when the lead explicitly ticked an OPTIONAL SMS
+   *  consent checkbox at form submit. Funnel runner skips SMS touches
+   *  when false. Default false on insert. */
+  sms_consent: boolean;
+  sms_consent_at: string | null;
+  sms_consent_source:
+    | "form_checkbox"
+    | "opt_in_page"
+    | "manual"
+    | "inferred"
+    | null;
   created_at: string;
   updated_at: string;
 };
@@ -81,6 +93,9 @@ export type NewClientLead = Pick<ClientLead, "client_slug"> &
       | "source"
       | "raw_payload"
       | "notes"
+      | "sms_consent"
+      | "sms_consent_at"
+      | "sms_consent_source"
     >
   >;
 

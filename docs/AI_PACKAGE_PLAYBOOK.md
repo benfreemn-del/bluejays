@@ -221,6 +221,46 @@ fills in parallel with the showcase build:
 - Confirm storefront URL
 - Once connected, portal Insights tab shows live revenue/AOV/repeat-rate
 
+**Shopify — Express checkout (one-click on the showcase shop page):**
+The Buy buttons on `/clients/{slug}/shop` resolve through
+`src/lib/shopify-express-checkout.ts`. Two states, picked
+automatically at render time:
+
+1. **Pre-launch (env unset):** button links to the public product
+   page on the storefront with `?channel=buy_button&utm_source=
+   bluejays` appended so Shopify Analytics attributes the click.
+2. **Live (env set):** button links to a Shopify cart-permalink
+   `https://STORE.com/cart/VARIANT_ID:1/checkout` — ONE click from
+   our showcase straight to Shopify's hosted checkout page, with
+   Apple Pay / Shop Pay / Google Pay automatic (assuming the store
+   enabled them in Shopify Payments → Wallets).
+
+What to collect from the client (5 sec per variant, no API token
+needed):
+1. Open Shopify Admin → Products → [pick product] → Variants
+2. Click the variant — admin URL becomes
+   `/admin/products/PRODUCT_ID/variants/VARIANT_ID`
+3. The trailing number is the variant ID. Paste into the URL
+   template `https://STORE.com/cart/VARIANT_ID:1/checkout`.
+
+Set on Vercel (per-product):
+```
+NEXT_PUBLIC_{SLUG}_SHOPIFY_BALL_CHECKOUT_URL  = https://STORE.com/cart/.../checkout
+NEXT_PUBLIC_{SLUG}_SHOPIFY_SOCKS_CHECKOUT_URL = https://STORE.com/cart/.../checkout
+NEXT_PUBLIC_{SLUG}_SHOPIFY_SHIRT_CHECKOUT_URL = https://STORE.com/cart/.../checkout
+```
+Currently wired only for Zenith (3 SKUs). Pattern is reusable for any
+future Shopify-backed client — add a sibling `get<Slug>CheckoutUrl()`
+helper following the existing shape.
+
+Also remind the client (FREE Shopify Admin toggles, no code):
+- Settings → Payments → Wallets → enable **Shop Pay** (~10% conv lift)
+- Settings → Payments → Wallets → enable **Apple Pay** (mobile)
+- Settings → Payments → Wallets → enable **Google Pay** (Android)
+
+These show automatically on the Shopify checkout page once enabled —
+no code wiring needed on our side.
+
 **Stripe (optional):**
 - Only if processing payments through us. Add Ben as account user OR
   share a Stripe Connect account ID + restricted key.

@@ -31,210 +31,7 @@
 
 import Link from "next/link";
 import PrintButton from "./print-button";
-
-/* ────────────────────────── DRILL LIBRARY ──────────────────────────
- * NOTE: this array is duplicated in src/data/zenith-drills.ts which
- * powers the Drill of the Week email broadcast. Keep them in sync
- * when adding a new drill — TODO: unify once the page is converted
- * to render from the shared data file.
- */
-
-type CurriculumDrill = {
-  id: string; // YouTube id
-  name: string;
-  why: string;
-  cue: string;
-};
-
-type CurriculumTier = {
-  label: string;
-  ageRange: string;
-  intro: string;
-  drills: CurriculumDrill[];
-};
-
-const TIERS: CurriculumTier[] = [
-  {
-    label: "Warm Up",
-    ageRange: "All ages · 8–12 min",
-    intro:
-      "Wake up the ankle, the hip, the eye-on-ball. Every session opens here. The TEKKY's smaller surface means warm-up reps actively re-train the foot — not just heart-rate work.",
-    drills: [
-      {
-        id: "bX-HMzizdxU",
-        name: "Instep Touch",
-        why: "Re-tunes the laces-to-ball relationship after time off. Smaller surface forces the player to find the sweet spot every rep.",
-        cue: "Soft knee. Eyes down then up.",
-      },
-      {
-        id: "Wzlr9RpBNs4",
-        name: "Outside-Foot Gather, Instep Pass",
-        why: "First-touch redirection. The combo of trap + change-of-direction + pass in one motion is the bedrock of possession soccer.",
-        cue: "Outside catches — laces release.",
-      },
-      {
-        id: "g28gQ2aZ-0k",
-        name: "1 Touch Instep Pass",
-        why: "No second chance. Forces composure under low pressure so high-pressure reps later are familiar.",
-        cue: "One-time. Plant foot pointed.",
-      },
-      {
-        id: "mukre9VRGx4",
-        name: "1 Touch Outside Foot Pass",
-        why: "Develops the under-used outside-of-foot pass. Small surface area amplifies the technique demand.",
-        cue: "Toe down, ankle locked.",
-      },
-      {
-        id: "qXGWT_-_yF4",
-        name: "Laces Gather and Pass",
-        why: "Cushion + redirect with the laces. Builds the soft first-touch parents always say is missing in U.S. youth soccer.",
-        cue: "Cushion — don't kill it.",
-      },
-      {
-        id: "nyGSAw-4Xw0",
-        name: "1 Touch Laces",
-        why: "The hardest of the 1-touch series. Composure on the half-volley. Trains the player to read trajectory before the ball arrives.",
-        cue: "See it early. Strike through.",
-      },
-      {
-        id: "68vbXVsSKes",
-        name: "Instep Trap, Outside Touch, Instep Pass",
-        why: "Sequential change-of-foot reps. Builds the muscle memory of using both surfaces in the same possession.",
-        cue: "In, out, in — flow.",
-      },
-      {
-        id: "G8aa_34JpFg",
-        name: "Sole Trap, Instep Pass",
-        why: "Sole control + redirect. The sole-of-foot is the unsung hero of close control under pressure.",
-        cue: "Sole stops, laces sends.",
-      },
-      {
-        id: "rab0LPa33VI",
-        name: "Sole Trap, Outside Foot Pass",
-        why: "Trains the deceptive outside-foot pass off a stop. Useful in tight wing channels.",
-        cue: "Disguise the line.",
-      },
-      {
-        id: "hWQGlKbx0HM",
-        name: "Sole Trap, Cross Body Drag, Instep Pass",
-        why: "Three-touch combination. Closer to a real game movement. The drag fakes a defender, the pass exits the line they were defending.",
-        cue: "Drag late. Pass committed.",
-      },
-    ],
-  },
-  {
-    label: "Beginner",
-    ageRange: "U8–U12 · 15–20 min after warm-up",
-    intro:
-      "The first shapes of close control. Players get reps on the basic ball-mastery moves used by every European academy in the first 10 years of a player's life. We focus on cleanness here — speed comes later.",
-    drills: [
-      {
-        id: "l40Cq1RJ_QI",
-        name: "La Croqueta",
-        why: "Iniesta's signature. Shifts the ball laterally between feet under pressure. The smaller surface forces precision on the first touch — no slop.",
-        cue: "Inside — inside. Push through.",
-      },
-      {
-        id: "074-lKwl9kI",
-        name: "La Croqueta + 2-Touch Shift",
-        why: "Builds repetition. The player has to chain the croqueta into a shift so it becomes a habit, not a party trick.",
-        cue: "Repeat the rhythm.",
-      },
-      {
-        id: "n4625BwqiU0",
-        name: "Push Pull",
-        why: "Sole-of-foot push, sole-of-foot pull. The fundamental rhythm of every elite player's close control.",
-        cue: "Sole stays light.",
-      },
-      {
-        id: "v4bHgBiPW6I",
-        name: "Inside · Outside",
-        why: "Two-surface control of the same foot. Trains the ankle to switch instantly.",
-        cue: "Inside, outside — same foot.",
-      },
-      {
-        id: "Lnny2pLZmiI",
-        name: "Sole Drag",
-        why: "Decoy + escape. Pulls the ball backward to break a defender's line.",
-        cue: "Drag ball INTO body.",
-      },
-      {
-        id: "ojviCQ0mrsY",
-        name: "V-Cut",
-        why: "Change of direction in one touch. The shape of every cut a winger makes.",
-        cue: "V — short, sharp, gone.",
-      },
-      {
-        id: "nPzYPHHwgGU",
-        name: "L-Drag",
-        why: "Combines the sole drag with a change of direction. Creates the L shape that breaks parallel-line defending.",
-        cue: "Drag, then 90-degrees out.",
-      },
-      {
-        id: "2h1hwvVDTXI",
-        name: "Inside · Outside Combo",
-        why: "Adds a second touch to inside/outside. Builds the rhythm needed for sequencing under pressure.",
-        cue: "Two touches, one purpose.",
-      },
-      {
-        id: "Kaj6ymLWsB8",
-        name: "Scissors · Outside Push",
-        why: "Body-feint into outside-foot exit. Trains deception + acceleration in the same rep.",
-        cue: "Sell the scissor. Mean the push.",
-      },
-      {
-        id: "6mCwL9xHfLk",
-        name: "Double Scissors · Outside Push",
-        why: "Two scissors before the exit. Players who own this can beat any U10 defender in a 1v1.",
-        cue: "Scissor, scissor, GO.",
-      },
-    ],
-  },
-  {
-    label: "Intermediate",
-    ageRange: "U12+ · 20–25 min after Beginner reps",
-    intro:
-      "Layered combinations. Each move stacks on a Beginner-tier pattern. By the time a player can run these clean on the TEKKY, they own the regulation ball.",
-    drills: [
-      {
-        id: "aLWVJfbAn9I",
-        name: "Tap Tap Drag · La Croqueta · Drag",
-        why: "Six-touch combo. Builds the kind of close-quarter solving that turns U13 academy players into U15 first-team prospects.",
-        cue: "Tap tap. Drag. Croquet. Drag.",
-      },
-      {
-        id: "2mqCyIdrlBs",
-        name: "Push Pull U-Drag with Cone",
-        why: "Adds a real obstacle. The cone forces the player to commit to spacing — no fudging.",
-        cue: "Stay tight to the cone.",
-      },
-      {
-        id: "p7k4AF7piT4",
-        name: "L-Drag Roll",
-        why: "Sole-roll through the L. Develops the rolling-sole control that's the hardest skill to coach.",
-        cue: "Roll. Don't kick.",
-      },
-      {
-        id: "9frnJdNJW9o",
-        name: "Roll · Stepover [The Jay Jay]",
-        why: "Stepover off a roll. Pure deception under tight space.",
-        cue: "Roll first, sell the stepover.",
-      },
-      {
-        id: "ldiRz5W-Mjo",
-        name: "Single-Leg V-Cut to L-Drag",
-        why: "One-foot patterning. Forces both feet to work independently — a hallmark of two-footed pros.",
-        cue: "Same foot. Don't switch.",
-      },
-      {
-        id: "fydguVA6Fzw",
-        name: "Touch In · Scissors · Touch Out",
-        why: "Three-touch deception sequence. Closest move in the library to a real-game 1v1.",
-        cue: "In, scissor, OUT.",
-      },
-    ],
-  },
-];
+import { DRILL_TIERS } from "@/data/zenith-drills";
 
 /* ────────────────────── 4-WEEK STARTER PLAN ──────────────────────
  * Adapted from the brand voice doc's weekly content rhythm — translated
@@ -489,7 +286,7 @@ export default function TrainingGuidePage() {
             combos. Every drill links to a video.
           </p>
 
-          {TIERS.map((tier, ti) => (
+          {DRILL_TIERS.map((tier, ti) => (
             <div
               key={tier.label}
               className={
@@ -668,13 +465,13 @@ export default function TrainingGuidePage() {
           <div className="mt-10 grid sm:grid-cols-3 gap-3 text-sm">
             <div className="bg-[#0a1832] text-white p-4 rounded">
               <div className="text-[9px] tracking-wider uppercase font-extrabold text-[#a3e635]">
-                Request a club demo
+                Request a Club Demo
               </div>
               <div className="mt-1 text-[13px]">
                 30 min, in person if you&apos;re in WA, video anywhere else.
               </div>
               <a
-                href="https://bluejayportfolio.com/clients/zenith-sports#contact"
+                href="/clients/zenith-sports#contact"
                 className="mt-2 inline-block text-[11px] font-bold underline"
               >
                 bluejayportfolio.com/clients/zenith-sports#contact
@@ -688,7 +485,7 @@ export default function TrainingGuidePage() {
                 Club discount available on roster orders.
               </div>
               <a
-                href="https://bluejayportfolio.com/clients/zenith-sports/shop"
+                href="/clients/zenith-sports/shop"
                 className="mt-2 inline-block text-[11px] font-bold underline text-[#1d4ed8]"
               >
                 Shop the TEKKY®
@@ -711,7 +508,7 @@ export default function TrainingGuidePage() {
           </div>
 
           <div className="mt-10 pt-5 border-t border-slate-200 text-center text-[10px] tracking-wider uppercase text-slate-500">
-            © 2025 Zenith Sports, LLC · TEKKY® is a registered trademark · Patent Pending · Building Better Players, One Touch at a Time.
+            © 2025–2026 Zenith Sports, LLC · TEKKY® is a registered trademark · Patent Pending · Building Better Players, One Touch at a Time.
           </div>
         </section>
       </article>

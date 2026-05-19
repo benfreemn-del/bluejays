@@ -1064,7 +1064,7 @@ export default function ZenithSportsPage() {
                   href="#contact"
                   className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
                 >
-                  Request a club demo
+                  Request a Club Demo
                   <ArrowRight
                     size={16}
                     weight="bold"
@@ -1346,8 +1346,7 @@ export default function ZenithSportsPage() {
                         "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
                     }}
                   >
-                    With over 40 years in the game — collegiate play through
-                    post-collegiate competition — {BUSINESS.founders.paul.quote.toLowerCase()}
+                    {BUSINESS.founders.paul.quote}
                   </p>
                 </div>
               </div>
@@ -1597,7 +1596,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.collect1}
-              alt="Zenith Sports training session"
+              alt="Youth players training on the TEKKY ball during a Zenith Sports session"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
@@ -1605,7 +1604,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.slide2}
-              alt="Player training with the TEKKY"
+              alt="Young player executing a close-control drill with the TEKKY training ball"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
@@ -1613,7 +1612,7 @@ export default function ZenithSportsPage() {
           <div className="relative aspect-square overflow-hidden">
             <img
               src={PHOTOS.product08}
-              alt="The TEKKY ball detail"
+              alt="Close-up of the TEKKY ball surface showing bumped texture and white panel detail"
               className="absolute inset-0 w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
               style={{ filter: "saturate(1.06)" }}
             />
@@ -1773,6 +1772,7 @@ export default function ZenithSportsPage() {
                 submitLabel="Send my inquiry"
                 successHeading="Got it — Philip and Paul will be in touch."
                 successBody="You'll hear back within one business day. In the meantime, the shop is open at /clients/zenith-sports/shop."
+                showSmsConsent={true}
                 fields={[
                   {
                     type: "text",

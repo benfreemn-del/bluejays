@@ -67,7 +67,7 @@ Rules:
   - prospect_id MUST be the exact uuid from the input. Triage doesn't
     invent identifiers — that breaks the downstream qualify flow.
   - summary: ≤200 chars for SMS visibility. Lead with the count.
-  - next_action: explicit verb-first. "Phone Caleb within 1hr."
+  - next_action: explicit verb-first. "Phone Philip within 1hr."
     "Email reply with $997 site pitch." NOT "Consider following up."
 
 No prose. No markdown fences. JSON only.`;

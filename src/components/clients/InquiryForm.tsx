@@ -48,6 +48,10 @@ export type InquiryFormProps = {
   initialValues?: Record<string, string>;
   /** Optional font family for headings (e.g. "Georgia, serif"). */
   serif?: string;
+  /** When true, surface an OPTIONAL unchecked SMS-consent checkbox
+   *  below the form. Required for TCPA-compliant SMS funnel touches
+   *  (per migration 20260519 + funnel-runner gate). Default false. */
+  showSmsConsent?: boolean;
 };
 
 export default function InquiryForm({
@@ -63,6 +67,7 @@ export default function InquiryForm({
   inkSoft = "#5d6f6c",
   initialValues = {},
   serif,
+  showSmsConsent = false,
 }: InquiryFormProps) {
   const accentText = accentDeep || accent;
   const [values, setValues] = useState<Record<string, string>>(() => {
@@ -72,6 +77,7 @@ export default function InquiryForm({
     }
     return init;
   });
+  const [smsConsent, setSmsConsent] = useState(false);
   const [status, setStatus] = useState<
     | { kind: "idle" }
     | { kind: "submitting" }
@@ -101,7 +107,7 @@ export default function InquiryForm({
       const res = await fetch("/api/clients/inquire", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, ...values }),
+        body: JSON.stringify({ slug, ...values, smsConsent }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.ok) {
@@ -253,6 +259,32 @@ export default function InquiryForm({
           </div>
         ))}
       </div>
+
+      {showSmsConsent && (
+        <label
+          className="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors"
+          style={{
+            background: smsConsent ? `${accent}10` : "#fff",
+            borderColor: smsConsent ? accent : `${accent}25`,
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-0.5 flex-shrink-0"
+            style={{ accentColor: accent }}
+          />
+          <div className="text-xs leading-relaxed" style={{ color: inkSoft }}>
+            <span className="font-semibold" style={{ color: ink }}>
+              Optional — text me updates.
+            </span>{" "}
+            Consent to receive occasional SMS at the number above (drill of
+            the week, camp drops, follow-ups). Msg &amp; data rates may apply.
+            Reply STOP to opt out. Consent is not required to submit this form.
+          </div>
+        </label>
+      )}
 
       {status.kind === "error" && (
         <div

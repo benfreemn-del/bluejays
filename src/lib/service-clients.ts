@@ -183,8 +183,11 @@ const ZENITH_SPORTS: ServiceClientConfig = {
   kind: "sports",
   businessName: "Zenith Sports / TEKKY",
   businessShortName: "Zenith Sports",
+  // Philip is the primary day-to-day voice in customer-facing emails;
+  // Paul Hanson is co-founder + legal contract signer. Both have portal
+  // access + receive alert fan-out via client_owners.
   ownerFirstName: "Philip",
-  ownerSignature: "Philip Lund\nZenith Sports / TEKKY",
+  ownerSignature: "Philip Lund + Paul Hanson\nZenith Sports / TEKKY",
   ownerPhone: "", // owner uses Zenith Twilio number for outbound
   publicSiteUrl: "https://bluejayportfolio.com/clients/zenith-sports",
   serviceArea: "USA + Canada (soccer-program coverage)",

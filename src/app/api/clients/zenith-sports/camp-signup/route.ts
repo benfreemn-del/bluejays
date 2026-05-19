@@ -47,6 +47,10 @@ type SignupBody = {
   parentName?: string;
   parentEmail?: string;
   parentPhone?: string;
+  /** OPTIONAL TCPA SMS-consent checkbox (default false). Funnel runner
+   *  only fires SMS to leads where this is true. Phone alone is NOT
+   *  consent — parent can give callback number without opting in. */
+  smsConsent?: boolean;
   playerName?: string;
   playerAge?: string;
   notes?: string;
@@ -146,6 +150,7 @@ export async function POST(req: NextRequest) {
       player_age: body.playerAge,
     };
     const audience = detectAudience(SLUG, audiencePayload);
+    const smsConsent = body.smsConsent === true;
     await createClientLead({
       client_slug: SLUG,
       audience_segment: audience,
@@ -155,6 +160,9 @@ export async function POST(req: NextRequest) {
       intent: "camp-signup",
       source: "camp-signup",
       raw_payload: audiencePayload,
+      sms_consent: smsConsent,
+      sms_consent_at: smsConsent ? new Date().toISOString() : null,
+      sms_consent_source: smsConsent ? "form_checkbox" : null,
     });
   } catch (e) {
     console.error(

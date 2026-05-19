@@ -7,7 +7,7 @@ import HyperloopTransparency from "./HyperloopTransparency";
  * AISkillsTab — universal owner-portal panel showing every AI capability
  * the BlueJays AI Marketing System runs on the tenant's behalf.
  *
- * Designed for live walkthroughs: when Caleb / Jake / Nate / Hector asks
+ * Designed for live walkthroughs: when Philip / Jake / Nate / Hector asks
  * "what does my AI actually do?", this is the single screen that answers
  * it without making them dig through 10 tabs.
  *
