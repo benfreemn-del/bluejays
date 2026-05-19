@@ -472,8 +472,95 @@
     // Native OIT booking endpoint — atomically claims the slot + creates booking
     var endpoint = "/api/clients/olympic-inspections/bookings";
 
+    // ── Validation helpers ─────────────────────────────────────────────
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Phone: at least 10 digits when stripped of formatting.
+    var PHONE_RE = /^\+?[\d\s().\-]{10,}$/;
+
+    function setFieldError(inputId, errorId, message) {
+      var input = document.getElementById(inputId);
+      var err = document.getElementById(errorId);
+      if (input) input.classList.add("is-invalid");
+      if (err) {
+        err.textContent = message;
+        err.hidden = false;
+      }
+    }
+    function clearFieldError(inputId, errorId) {
+      var input = document.getElementById(inputId);
+      var err = document.getElementById(errorId);
+      if (input) input.classList.remove("is-invalid");
+      if (err) {
+        err.textContent = "";
+        err.hidden = true;
+      }
+    }
+    function showBanner(message) {
+      var b = document.getElementById("bookFormError");
+      if (!b) return;
+      b.textContent = message;
+      b.hidden = false;
+    }
+    function hideBanner() {
+      var b = document.getElementById("bookFormError");
+      if (!b) return;
+      b.textContent = "";
+      b.hidden = true;
+    }
+
+    // Live-clear field errors as the user types so they get instant feedback.
+    [
+      ["bookName", "bookNameError"],
+      ["bookPhone", "bookPhoneError"],
+      ["bookEmail", "bookEmailError"],
+    ].forEach(function (pair) {
+      var input = document.getElementById(pair[0]);
+      if (input) {
+        input.addEventListener("input", function () {
+          clearFieldError(pair[0], pair[1]);
+        });
+      }
+    });
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      hideBanner();
+
+      // ── Client-side validation ──
+      var name = (form.elements.name.value || "").trim();
+      var phone = (form.elements.phone.value || "").trim();
+      var email = (form.elements.email.value || "").trim();
+      var hasError = false;
+
+      clearFieldError("bookName", "bookNameError");
+      clearFieldError("bookPhone", "bookPhoneError");
+      clearFieldError("bookEmail", "bookEmailError");
+
+      if (name.length < 2) {
+        setFieldError("bookName", "bookNameError", "Please enter your name.");
+        hasError = true;
+      }
+      if (!phone) {
+        setFieldError("bookPhone", "bookPhoneError", "Phone is required.");
+        hasError = true;
+      } else if (!PHONE_RE.test(phone)) {
+        setFieldError("bookPhone", "bookPhoneError", "Please enter a valid phone number (at least 10 digits).");
+        hasError = true;
+      }
+      if (!email) {
+        setFieldError("bookEmail", "bookEmailError", "Email is required.");
+        hasError = true;
+      } else if (!EMAIL_RE.test(email)) {
+        setFieldError("bookEmail", "bookEmailError", "Please enter a valid email address.");
+        hasError = true;
+      }
+
+      if (hasError) {
+        // Focus the first invalid field
+        var firstInvalid = form.querySelector(".is-invalid");
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
 
       var btn = form.querySelector(".book-submit");
       if (btn) {
@@ -511,9 +598,9 @@
 
       var payload = {
         slotId: slotId || null,
-        name: (fd.get("name") || "").toString(),
-        phone: (fd.get("phone") || "").toString(),
-        email: (fd.get("email") || "").toString(),
+        name: name,
+        phone: phone,
+        email: email,
         address: (fd.get("address") || "").toString(),
         propertySize: (fd.get("propertySize") || "").toString(),
         addons: (fd.get("addons") || "").toString(),
@@ -522,39 +609,57 @@
         notes: combinedNotes,
       };
 
+      function resetButton() {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Request my inspection";
+        }
+      }
+
       fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
         .then(function (r) {
-          return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; });
+          return r.text().then(function (text) {
+            var body = null;
+            try { body = text ? JSON.parse(text) : null; } catch (_e) { body = null; }
+            return { ok: r.ok, status: r.status, body: body, raw: text };
+          });
         })
         .then(function (res) {
           if (res.ok && res.body && res.body.ok) {
             form.style.display = "none";
             if (success) success.classList.add("show");
-          } else if (res.status === 409) {
+            return;
+          }
+          if (res.status === 409) {
             // Slot got claimed by someone else — refresh picker
-            if (btn) {
-              btn.disabled = false;
-              btn.textContent = "Request my inspection";
-            }
-            alert(
+            resetButton();
+            showBanner(
               (res.body && res.body.message) ||
                 "That slot was just booked by someone else. Please pick another time."
             );
             initSlotPicker();
-          } else {
-            throw new Error("save_failed");
+            return;
           }
+          // Surface the actual error message + status so failures are diagnosable.
+          var serverError = (res.body && (res.body.message || res.body.error)) || "";
+          var msg = "We couldn't submit your request";
+          if (res.status) msg += " (status " + res.status + ")";
+          if (serverError) msg += ": " + serverError;
+          msg += ". Please try again or call (360) 670-3367.";
+          console.error("[oit-booking] submit failed:", res);
+          resetButton();
+          showBanner(msg);
         })
-        .catch(function () {
-          if (btn) {
-            btn.disabled = false;
-            btn.textContent = "Request my inspection";
-          }
-          alert("Something went wrong sending your request. Please call (360) 670-3367 directly or try again.");
+        .catch(function (err) {
+          console.error("[oit-booking] network error:", err);
+          resetButton();
+          showBanner(
+            "Network error — couldn't reach the booking server. Please check your connection or call (360) 670-3367."
+          );
         });
     });
   }

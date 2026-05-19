@@ -900,18 +900,21 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="bookName">Your name</label>
-                            <input type="text" id="bookName" name="name" placeholder="Jane Smith" required>
+                            <label for="bookName">Your name <span class="required-mark" aria-hidden="true">*</span></label>
+                            <input type="text" id="bookName" name="name" placeholder="Jane Smith" required aria-required="true">
+                            <p class="field-error" id="bookNameError" hidden></p>
                         </div>
                         <div class="form-group">
-                            <label for="bookPhone">Phone</label>
-                            <input type="tel" id="bookPhone" name="phone" placeholder="(360) 555-0123" required>
+                            <label for="bookPhone">Phone <span class="required-mark" aria-hidden="true">*</span></label>
+                            <input type="tel" id="bookPhone" name="phone" placeholder="(360) 555-0123" required aria-required="true">
+                            <p class="field-error" id="bookPhoneError" hidden></p>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="bookEmail">Email</label>
-                        <input type="email" id="bookEmail" name="email" placeholder="you@email.com" required>
+                        <label for="bookEmail">Email <span class="required-mark" aria-hidden="true">*</span></label>
+                        <input type="email" id="bookEmail" name="email" placeholder="you@email.com" required aria-required="true">
+                        <p class="field-error" id="bookEmailError" hidden></p>
                     </div>
 
                     <div class="form-group">
@@ -954,6 +957,8 @@
                     <input type="hidden" id="bookEstimate" name="estimate" value="150">
                     <input type="hidden" id="bookAddons" name="addons" value="">
 
+                    <p class="book-form-required-note"><span class="required-mark" aria-hidden="true">*</span> Required fields</p>
+                    <div class="form-error-banner" id="bookFormError" hidden role="alert"></div>
                     <button type="submit" class="book-submit">Request my inspection</button>
                     <p class="book-form-note">We will reply within one business day to confirm your slot. No deposit required for the booking request.</p>
                 </form>
