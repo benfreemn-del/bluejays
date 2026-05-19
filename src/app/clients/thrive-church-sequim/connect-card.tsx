@@ -103,7 +103,7 @@ export default function ConnectCardForm() {
           background: "#ffffff",
           borderColor: "rgba(13, 79, 74, 0.25)",
           boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.45)",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-thrive-body), sans-serif",
         }}
       >
         <div
@@ -116,7 +116,7 @@ export default function ConnectCardForm() {
           className="text-[28px] sm:text-[34px] tracking-tight mb-3"
           style={{
             color: INK,
-            fontFamily: "'Fraunces', serif",
+            fontFamily: "var(--font-thrive-display), serif",
             fontWeight: 600,
           }}
         >
@@ -142,7 +142,7 @@ export default function ConnectCardForm() {
         background: "#ffffff",
         borderColor: "rgba(13, 79, 74, 0.18)",
         boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.4)",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-thrive-body), sans-serif",
       }}
       noValidate
     >
@@ -180,7 +180,7 @@ export default function ConnectCardForm() {
         </span>
         <span
           className="text-[13px] tracking-[0.22em] uppercase font-bold"
-          style={{ color: TEAL, fontFamily: "'Inter', sans-serif" }}
+          style={{ color: TEAL, fontFamily: "var(--font-thrive-body), sans-serif" }}
         >
           Connect Card
         </span>
@@ -293,7 +293,7 @@ export default function ConnectCardForm() {
           style={{
             background: TEAL,
             color: CREAM,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-thrive-body), sans-serif",
             boxShadow: "0 8px 24px -10px rgba(13, 79, 74, 0.6)",
           }}
         >
@@ -324,7 +324,7 @@ function Field({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (
@@ -368,7 +368,7 @@ function Select({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
       </span>
@@ -406,7 +406,7 @@ function Textarea({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (

@@ -134,7 +134,7 @@ export default function VerseOfDayPopup() {
           style={{
             background: TEAL,
             color: CREAM,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-thrive-body), sans-serif",
             border: `1.5px solid ${AMBER}`,
           }}
         >
@@ -159,7 +159,7 @@ export default function VerseOfDayPopup() {
             className="fixed bottom-5 right-5 z-[60] w-[calc(100vw-2.5rem)] max-w-[340px] rounded-2xl border bg-[#fbf7ee] p-5 shadow-[0_30px_70px_-20px_rgba(13,79,74,0.55)] sm:bottom-7 sm:right-7 sm:p-6"
             style={{
               borderColor: "rgba(13, 79, 74, 0.25)",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "var(--font-thrive-body), sans-serif",
             }}
           >
             {/* Header row */}
@@ -182,7 +182,7 @@ export default function VerseOfDayPopup() {
                     Weekly Devotional
                   </p>
                   <p
-                    className="font-[Fraunces] text-lg text-[#0d4f4a]"
+                    className="font-[family-name:var(--font-thrive-display)] text-lg text-[#0d4f4a]"
                     style={{ fontWeight: 600 }}
                   >
                     Verse of the Week
@@ -214,7 +214,7 @@ export default function VerseOfDayPopup() {
                   <div>
                     <p
                       className="text-[14px] font-bold"
-                      style={{ color: TEAL, fontFamily: "'Inter', sans-serif" }}
+                      style={{ color: TEAL, fontFamily: "var(--font-thrive-body), sans-serif" }}
                     >
                       You&rsquo;re on the list.
                     </p>
@@ -280,7 +280,7 @@ export default function VerseOfDayPopup() {
                   style={{
                     background: AMBER,
                     color: "#ffffff",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "var(--font-thrive-body), sans-serif",
                     boxShadow: "0 12px 28px -10px rgba(217, 119, 6, 0.55)",
                   }}
                 >

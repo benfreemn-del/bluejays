@@ -5,10 +5,10 @@
  * Concept: "Where Light Breaks" — a dawn-over-the-Olympics editorial.
  * Cream paper · Evergreen ink · Sunrise amber.
  *
- * Typography: Fraunces (display serif) + Instrument Sans (body).
- *   Tailwind classes assume font-display = Fraunces, font-sans = Instrument Sans.
- *   If unconfigured, the arbitrary `font-[Fraunces]` / `font-[Instrument_Sans]`
- *   classes below resolve via @next/font in the root layout.
+ * Typography: Newsreader (display serif) + Inter (body). Swapped from
+ *   Fraunces 2026-05-19 — Fraunces' canonical F/J letterforms read as
+ *   "weird" at display sizes. Newsreader keeps the warm editorial feel
+ *   with conventional letterforms.
  */
 
 import { useEffect, useState } from "react";
@@ -80,7 +80,7 @@ const reveal: Variants = {
 /* ============================================================== */
 export default function ThriveChurchSequimPage() {
   return (
-    <main className="relative min-h-screen overflow-x-clip bg-[#fbf7ee] font-[Instrument_Sans] text-[#1a1a1a] antialiased selection:bg-[#0d4f4a] selection:text-[#fbf7ee]">
+    <main className="relative min-h-screen overflow-x-clip bg-[#fbf7ee] font-[family-name:var(--font-thrive-body)] text-[#1a1a1a] antialiased selection:bg-[#0d4f4a] selection:text-[#fbf7ee]">
       {/* Subtle paper grain — applied everywhere */}
       <PaperGrain />
       <StickyNav />
@@ -148,7 +148,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={1}
-            className="mt-4 font-[Fraunces] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
+            className="mt-4 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             We are{" "}
@@ -166,7 +166,7 @@ function Hero() {
           >
             A community church for imperfect people on the mission with Jesus,
             bringing hope and healing to the Olympic Peninsula — and beyond.
-            <span className="mt-1.5 block font-[Fraunces] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
+            <span className="mt-1.5 block font-[family-name:var(--font-thrive-display)] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
               You&rsquo;re invited home. Sundays at 10:30.
             </span>
           </motion.p>
@@ -212,7 +212,7 @@ function Hero() {
             <span className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#d97706]">
               Sunday Gathering
             </span>
-            <span className="font-[Fraunces] text-xl text-[#0d4f4a] sm:text-2xl xl:text-3xl" style={{ fontWeight: 500 }}>
+            <span className="font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a] sm:text-2xl xl:text-3xl" style={{ fontWeight: 500 }}>
               10:30 a.m. — in person or livestream
             </span>
             <Link
@@ -245,17 +245,17 @@ function Hero() {
             custom={5}
             className="absolute bottom-3 left-3 right-3 max-w-md bg-[#fbf7ee]/95 px-6 py-4 shadow-[0_18px_40px_-18px_rgba(13,79,74,0.4)] backdrop-blur-sm sm:bottom-4 sm:left-4 sm:right-auto sm:px-7 sm:py-5"
           >
-            <span className="absolute -top-4 left-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-4xl leading-none text-[#d97706]">
+            <span className="absolute -top-4 left-6 bg-[#fbf7ee] px-2 font-[family-name:var(--font-thrive-display)] text-4xl leading-none text-[#d97706]">
               &ldquo;
             </span>
-            <blockquote className="font-[Fraunces] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
+            <blockquote className="font-[family-name:var(--font-thrive-display)] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               The light shines in the darkness, and the darkness has not
               overcome it.
             </blockquote>
             <figcaption className="mt-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
               John 1:5
             </figcaption>
-            <span className="absolute -bottom-4 right-6 bg-[#fbf7ee] px-2 font-[Fraunces] text-4xl leading-none text-[#d97706]">
+            <span className="absolute -bottom-4 right-6 bg-[#fbf7ee] px-2 font-[family-name:var(--font-thrive-display)] text-4xl leading-none text-[#d97706]">
               &rdquo;
             </span>
           </motion.figure>
@@ -669,7 +669,7 @@ function SunriseIllustration() {
           <text
             x="32"
             y="442"
-            fontFamily="Fraunces, serif"
+            fontFamily="var(--font-thrive-display), serif"
             fontStyle="italic"
             fontSize="13"
             fill="#fbf7ee"
@@ -777,7 +777,7 @@ function TaglineSpread() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="mt-10 font-[Fraunces] text-[clamp(2.6rem,7vw,7.5rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#0d4f4a]"
+          className="mt-10 font-[family-name:var(--font-thrive-display)] text-[clamp(2.6rem,7vw,7.5rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#0d4f4a]"
           style={{ fontWeight: 500 }}
         >
           Imperfect people{" "}
@@ -802,7 +802,7 @@ function TaglineSpread() {
           transition={{ duration: 0.9, delay: 0.4 }}
           className="mt-16 grid gap-10 border-t border-[#0d4f4a]/15 pt-10 sm:grid-cols-3"
         >
-          <p className="font-[Fraunces] text-lg italic leading-relaxed text-[#0d4f4a]">
+          <p className="font-[family-name:var(--font-thrive-display)] text-lg italic leading-relaxed text-[#0d4f4a]">
             We don't pretend to have it all together.
           </p>
           <p className="text-base leading-relaxed text-[#1a1a1a]/70">
@@ -856,7 +856,7 @@ function WhatToExpect() {
               First Sunday
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               Here's what
@@ -896,7 +896,7 @@ function WhatToExpect() {
                     className="group grid grid-cols-[auto_1fr] gap-6 py-8 sm:gap-10 sm:py-10"
                   >
                     <div className="flex items-start gap-4">
-                      <span className="font-[Fraunces] text-xl text-[#d97706]">
+                      <span className="font-[family-name:var(--font-thrive-display)] text-xl text-[#d97706]">
                         0{i + 1}
                       </span>
                       <Icon
@@ -906,7 +906,7 @@ function WhatToExpect() {
                       />
                     </div>
                     <div>
-                      <h3 className="font-[Fraunces] text-2xl text-[#0d4f4a] sm:text-3xl">
+                      <h3 className="font-[family-name:var(--font-thrive-display)] text-2xl text-[#0d4f4a] sm:text-3xl">
                         {item.label}
                       </h3>
                       <p className="mt-3 text-base leading-relaxed text-[#1a1a1a]/70">
@@ -949,11 +949,11 @@ function LatestSermon() {
               <span className="inline-block h-px w-10 bg-[#d97706]" />
               Latest Sermon
             </div>
-            <p className="mt-8 font-[Fraunces] text-sm uppercase tracking-[0.3em] text-[#fbf7ee]/75">
+            <p className="mt-8 font-[family-name:var(--font-thrive-display)] text-sm uppercase tracking-[0.3em] text-[#fbf7ee]/75">
               Sunday — recent
             </p>
             <h2
-              className="mt-3 font-[Fraunces] text-[clamp(2.6rem,5.8vw,5.5rem)] font-light leading-[0.95] tracking-[-0.025em]"
+              className="mt-3 font-[family-name:var(--font-thrive-display)] text-[clamp(2.6rem,5.8vw,5.5rem)] font-light leading-[0.95] tracking-[-0.025em]"
               style={{ fontWeight: 500 }}
             >
               What does it
@@ -1054,7 +1054,7 @@ function LatestSermon() {
 
               {/* Bottom rail */}
               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-[#fbf7ee]/20 bg-[#063432]/60 px-6 py-4 backdrop-blur-sm">
-                <span className="font-[Fraunces] text-sm italic text-[#fbf7ee]/80">
+                <span className="font-[family-name:var(--font-thrive-display)] text-sm italic text-[#fbf7ee]/80">
                   Now playing
                 </span>
                 <span className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#d97706]">
@@ -1085,7 +1085,7 @@ function ConnectSection() {
               Connect Card
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               Let's start
@@ -1194,7 +1194,7 @@ function MinistriesGrid() {
               Ministries
             </div>
             <h2
-              className="mt-6 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-6 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               Find your <em className="italic">people</em>.
@@ -1227,7 +1227,7 @@ function MinistriesGrid() {
               >
                   {/* Tag */}
                   <div className="flex items-start justify-between">
-                    <span className="font-[Fraunces] text-sm tracking-[0.2em] text-[#d97706] transition-colors duration-500 group-hover:text-[#fdebbf]">
+                    <span className="font-[family-name:var(--font-thrive-display)] text-sm tracking-[0.2em] text-[#d97706] transition-colors duration-500 group-hover:text-[#fdebbf]">
                       {m.tag}
                     </span>
                     <Icon
@@ -1238,12 +1238,12 @@ function MinistriesGrid() {
                   </div>
 
                   <h3
-                    className="mt-14 font-[Fraunces] text-3xl leading-tight tracking-tight text-[#0d4f4a] transition-colors duration-500 group-hover:text-[#fbf7ee] sm:text-4xl lg:text-5xl"
+                    className="mt-14 font-[family-name:var(--font-thrive-display)] text-3xl leading-tight tracking-tight text-[#0d4f4a] transition-colors duration-500 group-hover:text-[#fbf7ee] sm:text-4xl lg:text-5xl"
                     style={{ fontWeight: 500 }}
                   >
                     {m.name}
                   </h3>
-                  <p className="mt-3 font-[Fraunces] text-lg italic text-[#0d4f4a]/70 transition-colors duration-500 group-hover:text-[#fdebbf]/85">
+                  <p className="mt-3 font-[family-name:var(--font-thrive-display)] text-lg italic text-[#0d4f4a]/70 transition-colors duration-500 group-hover:text-[#fdebbf]/85">
                     {m.tagline}
                   </p>
                   <p className="mt-6 max-w-md text-base leading-relaxed text-[#1a1a1a]/70 transition-colors duration-500 group-hover:text-[#fbf7ee]/80">
@@ -1335,7 +1335,7 @@ function PreschoolSpotlight() {
             x="60"
             y="50"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="42"
             fontWeight="700"
             fill="#fbf7ee"
@@ -1362,7 +1362,7 @@ function PreschoolSpotlight() {
             x="46"
             y="48"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="38"
             fontWeight="700"
             fill="#1a1612"
@@ -1389,7 +1389,7 @@ function PreschoolSpotlight() {
             x="37"
             y="44"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="34"
             fontWeight="700"
             fill="#d97706"
@@ -1416,7 +1416,7 @@ function PreschoolSpotlight() {
             x="27"
             y="40"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="34"
             fontWeight="700"
             fill="#fbf7ee"
@@ -1443,7 +1443,7 @@ function PreschoolSpotlight() {
             x="23"
             y="33"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="28"
             fontWeight="700"
             fill="#fbbf24"
@@ -1470,7 +1470,7 @@ function PreschoolSpotlight() {
             x="19"
             y="27"
             textAnchor="middle"
-            fontFamily="Fraunces, Georgia, serif"
+            fontFamily="var(--font-thrive-display), Georgia, serif"
             fontSize="22"
             fontWeight="700"
             fill="#0d4f4a"
@@ -1500,7 +1500,7 @@ function PreschoolSpotlight() {
               Now Enrolling · 2026 / 2027
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.6rem,6vw,6rem)] font-light leading-[0.96] tracking-[-0.025em] text-[#fbf7ee]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.6rem,6vw,6rem)] font-light leading-[0.96] tracking-[-0.025em] text-[#fbf7ee]"
               style={{ fontWeight: 500 }}
             >
               A preschool
@@ -1552,7 +1552,7 @@ function PreschoolSpotlight() {
                   className="bg-[#1a1612] p-8 transition-colors duration-300 hover:bg-[#251e18]"
                 >
                   <p
-                    className="font-[Fraunces] text-3xl font-light leading-none text-[#fbbf24] sm:text-4xl"
+                    className="font-[family-name:var(--font-thrive-display)] text-3xl font-light leading-none text-[#fbbf24] sm:text-4xl"
                     style={{ fontWeight: 500 }}
                   >
                     {s.stat}
@@ -1609,7 +1609,7 @@ function BeliefsSpread() {
               Beliefs
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               What we
@@ -1642,19 +1642,19 @@ function BeliefsSpread() {
                   className="group grid grid-cols-[auto_1fr] gap-5 bg-[#fbf7ee] p-6 transition-colors duration-300 hover:bg-[#f5ede0] sm:gap-8 sm:p-12"
                 >
                   <span
-                    className="font-[Fraunces] text-[clamp(3rem,8vw,7rem)] font-light leading-none text-[#d97706] transition-transform duration-500 group-hover:-translate-y-1"
+                    className="font-[family-name:var(--font-thrive-display)] text-[clamp(3rem,8vw,7rem)] font-light leading-none text-[#d97706] transition-transform duration-500 group-hover:-translate-y-1"
                     style={{ fontWeight: 500 }}
                   >
                     {t.numeral}
                   </span>
                   <div className="pt-2">
                     <h3
-                      className="font-[Fraunces] text-3xl text-[#0d4f4a] sm:text-4xl"
+                      className="font-[family-name:var(--font-thrive-display)] text-3xl text-[#0d4f4a] sm:text-4xl"
                       style={{ fontWeight: 500 }}
                     >
                       {t.name}
                     </h3>
-                    <p className="mt-2 font-[Fraunces] text-lg italic text-[#0d4f4a]/70">
+                    <p className="mt-2 font-[family-name:var(--font-thrive-display)] text-lg italic text-[#0d4f4a]/70">
                       {t.summary}
                     </p>
                     <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#1a1a1a]/75">
@@ -1734,7 +1734,7 @@ function Outreach() {
         </g>
         <g
           fill="#fbf7ee"
-          fontFamily="Fraunces, serif"
+          fontFamily="var(--font-thrive-display), serif"
           fontWeight="600"
           textAnchor="middle"
           transform="translate(300,350)"
@@ -1756,7 +1756,7 @@ function Outreach() {
               Outreach
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em]"
               style={{ fontWeight: 500 }}
             >
               One <em className="italic">cross</em>.<br />
@@ -1791,7 +1791,7 @@ function Outreach() {
                 <div className="flex items-start justify-between border-b border-[#fbf7ee]/20 pb-6">
                   <div className="flex items-baseline gap-3">
                     <span
-                      className="font-[Fraunces] text-6xl font-light leading-none text-[#fbbf24]"
+                      className="font-[family-name:var(--font-thrive-display)] text-6xl font-light leading-none text-[#fbbf24]"
                       style={{ fontWeight: 500 }}
                       aria-hidden
                     >
@@ -1810,12 +1810,12 @@ function Outreach() {
                   />
                 </div>
                 <h3
-                  className="mt-10 font-[Fraunces] text-3xl tracking-tight sm:text-4xl"
+                  className="mt-10 font-[family-name:var(--font-thrive-display)] text-3xl tracking-tight sm:text-4xl"
                   style={{ fontWeight: 500 }}
                 >
                   {f.label}
                 </h3>
-                <p className="mt-3 font-[Fraunces] text-lg italic text-[#fbbf24] sm:text-xl">
+                <p className="mt-3 font-[family-name:var(--font-thrive-display)] text-lg italic text-[#fbbf24] sm:text-xl">
                   {f.tagline}
                 </p>
                 <p className="mt-5 text-base leading-relaxed text-[#fbf7ee]/85 sm:text-lg">
@@ -1863,7 +1863,7 @@ function Generosity() {
           </div>
 
           <h2
-            className="mt-8 font-[Fraunces] text-[clamp(2.6rem,7vw,7rem)] font-light leading-[0.95] tracking-[-0.03em] text-[#0d4f4a]"
+            className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.6rem,7vw,7rem)] font-light leading-[0.95] tracking-[-0.03em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             Generosity
@@ -1894,7 +1894,7 @@ function Generosity() {
             />
           </Link>
 
-          <p className="mt-8 font-[Fraunces] text-base italic text-[#0d4f4a]/70">
+          <p className="mt-8 font-[family-name:var(--font-thrive-display)] text-base italic text-[#0d4f4a]/70">
             Secure giving via Thrive Sequim Generosity.
           </p>
         </motion.div>
@@ -1924,7 +1924,7 @@ function PrayerSection() {
               Prayer Request
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.4vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               We'll <em className="italic">pray</em>
@@ -1970,7 +1970,7 @@ function VisitUs() {
               Visit Us
             </div>
             <h2
-              className="mt-8 font-[Fraunces] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
+              className="mt-8 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.5vw,5rem)] font-light leading-[0.98] tracking-[-0.025em] text-[#0d4f4a]"
               style={{ fontWeight: 500 }}
             >
               See you
@@ -1995,10 +1995,10 @@ function VisitUs() {
                   <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Address
                   </p>
-                  <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
+                  <p className="mt-1 font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a]">
                     640 N Sequim Ave
                   </p>
-                  <p className="font-[Fraunces] text-xl text-[#0d4f4a]">
+                  <p className="font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a]">
                     Sequim, WA 98382
                   </p>
                   <p className="mt-2 text-sm text-[#0d4f4a]/70 underline-offset-4 group-hover:underline">
@@ -2020,7 +2020,7 @@ function VisitUs() {
                   <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Phone
                   </p>
-                  <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
+                  <p className="mt-1 font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a]">
                     {PHONE_DISPLAY}
                   </p>
                 </div>
@@ -2039,7 +2039,7 @@ function VisitUs() {
                   <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#1a1a1a]/82">
                     Email
                   </p>
-                  <p className="mt-1 font-[Fraunces] text-xl text-[#0d4f4a]">
+                  <p className="mt-1 font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a]">
                     {EMAIL}
                   </p>
                 </div>
@@ -2083,7 +2083,7 @@ function VisitUs() {
                   <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#d97706]">
                     Sundays · 10:30 AM
                   </p>
-                  <p className="mt-1 font-[Fraunces] text-lg text-[#0d4f4a]">
+                  <p className="mt-1 font-[family-name:var(--font-thrive-display)] text-lg text-[#0d4f4a]">
                     Thrive Church Sequim
                   </p>
                 </div>
@@ -2152,7 +2152,7 @@ function FinalCTA() {
           </div>
 
           <h2
-            className="mt-10 font-[Fraunces] text-[clamp(3rem,9vw,10rem)] font-light leading-[0.92] tracking-[-0.035em]"
+            className="mt-10 font-[family-name:var(--font-thrive-display)] text-[clamp(3rem,9vw,10rem)] font-light leading-[0.92] tracking-[-0.035em]"
             style={{ fontWeight: 500 }}
           >
             We'll save
@@ -2223,7 +2223,7 @@ function SiteFooter() {
                 <ThriveMark flat />
               </span>
               <div className="leading-tight">
-                <p className="font-[Fraunces] text-2xl text-[#fbf7ee]">
+                <p className="font-[family-name:var(--font-thrive-display)] text-2xl text-[#fbf7ee]">
                   Thrive Church
                 </p>
                 <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#fbbf24]">
@@ -2231,7 +2231,7 @@ function SiteFooter() {
                 </p>
               </div>
             </Link>
-            <p className="mt-6 max-w-sm font-[Fraunces] text-base italic leading-relaxed text-[#fbf7ee]/80">
+            <p className="mt-6 max-w-sm font-[family-name:var(--font-thrive-display)] text-base italic leading-relaxed text-[#fbf7ee]/80">
               Imperfect people becoming the church, on the mission with Jesus,
               bringing hope and healing to the world.
             </p>

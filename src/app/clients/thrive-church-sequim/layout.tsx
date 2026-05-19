@@ -1,7 +1,31 @@
 import type { Metadata, Viewport } from "next";
+import { Newsreader, Inter } from "next/font/google";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 import VerseOfDayPopup from "./verse-popup";
 import BackToTopButton from "./back-to-top";
+
+/**
+ * Fonts loaded via next/font/google (Next 16 + Turbopack strips raw
+ * `<link rel="stylesheet">` to fonts.googleapis.com down to preload-only
+ * hints — they never become active stylesheets. That's why the page used
+ * to render in the browser's fallback serif, which is where the "weird
+ * F's and J's" came from. With next/font/google the TTF is bundled and
+ * served from /_next/static/media with @font-face baked into the global
+ * CSS, so the fonts actually render.
+ */
+const displayFont = Newsreader({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-thrive-display",
+});
+const bodyFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-thrive-body",
+});
 
 /**
  * Layout for /clients/thrive-church-sequim — Thrive Church, Sequim WA.
@@ -21,9 +45,11 @@ import BackToTopButton from "./back-to-top";
  * Family Care = green/citrus cleaning) so the local cluster doesn't
  * collide visually.
  *
- * Fonts: Fraunces (display serif — premium, warm, ecclesiastical
+ * Fonts: Newsreader (display serif — warm, editorial, ecclesiastical
  * without being stuffy) + Inter (body) — pairing chosen for the
- * "modern church that still feels reverent" voice.
+ * "modern church that still feels reverent" voice. Swapped from
+ * Fraunces 2026-05-19 because Fraunces' F/J letterforms read as
+ * "weird" at the large display sizes used across the page.
  *
  * Meets the Meyer Electric reference standard (CLAUDE.md ship-gate):
  * 1. Hero shows OUTCOME (warm worshipful gathering moment) — not a
@@ -189,20 +215,7 @@ export default function ThriveChurchLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      {/* Google Fonts: Fraunces (display serif) + Inter (body). The
-          Fraunces face carries the brand voice — warm, classical,
-          ecclesiastical without feeling antique. */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin=""
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
+    <div className={`${displayFont.variable} ${bodyFont.variable}`}>
       {/* Thrive-specific scrollbar — warm amber→teal gradient over a
           cream track. Scoped to this subtree by Next; doesn't leak to
           other tenant pages. */}
@@ -258,6 +271,6 @@ export default function ThriveChurchLayout({
       {/* Floating back-to-top button on the bottom-left. Hidden until
           the visitor scrolls past the Connect Card section. */}
       <BackToTopButton />
-    </>
+    </div>
   );
 }

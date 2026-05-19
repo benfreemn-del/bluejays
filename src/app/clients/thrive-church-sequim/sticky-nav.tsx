@@ -61,7 +61,7 @@ export default function StickyNav() {
         style={{
           background: "rgba(251, 247, 238, 0.88)",
           borderColor: "rgba(13, 79, 74, 0.14)",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-thrive-body), sans-serif",
         }}
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
@@ -73,14 +73,14 @@ export default function StickyNav() {
             <ThriveMark size={40} className="shrink-0" />
             <span
               className="flex flex-col leading-tight"
-              style={{ fontFamily: "'Fraunces', serif", color: INK }}
+              style={{ fontFamily: "var(--font-thrive-display), serif", color: INK }}
             >
               <span className="text-[18px] sm:text-[22px] font-semibold tracking-tight">
                 THRIVE
               </span>
               <span
                 className="hidden sm:block text-[10px] tracking-[0.28em] uppercase font-medium"
-                style={{ color: TEAL, fontFamily: "'Inter', sans-serif" }}
+                style={{ color: TEAL, fontFamily: "var(--font-thrive-body), sans-serif" }}
               >
                 Sequim, WA
               </span>
@@ -120,7 +120,7 @@ export default function StickyNav() {
                 background: TEAL,
                 color: CREAM,
                 boxShadow: "0 6px 20px -8px rgba(13, 79, 74, 0.55)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-thrive-body), sans-serif",
               }}
             >
               I'm New
@@ -155,7 +155,7 @@ export default function StickyNav() {
           >
             <span
               className="flex items-center gap-3"
-              style={{ fontFamily: "'Fraunces', serif", color: INK }}
+              style={{ fontFamily: "var(--font-thrive-display), serif", color: INK }}
             >
               <ThriveMark size={34} flat />
               <span className="text-[18px] font-semibold tracking-tight">
@@ -183,7 +183,7 @@ export default function StickyNav() {
                 style={{
                   color: INK,
                   borderColor: "rgba(13, 79, 74, 0.12)",
-                  fontFamily: "'Fraunces', serif",
+                  fontFamily: "var(--font-thrive-display), serif",
                 }}
               >
                 {link.label}
@@ -214,7 +214,7 @@ export default function StickyNav() {
               style={{
                 background: TEAL,
                 color: CREAM,
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-thrive-body), sans-serif",
               }}
             >
               I'm New

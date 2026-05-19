@@ -94,11 +94,11 @@ export default function VolunteerSignup() {
     return (
       <div
         className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-8 sm:p-10"
-        style={{ fontFamily: "'Inter', sans-serif" }}
+        style={{ fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         <CheckCircle size={36} weight="duotone" style={{ color: TEAL }} />
         <h3
-          className="mt-5 font-[Fraunces] text-3xl tracking-tight text-[#0d4f4a]"
+          className="mt-5 font-[family-name:var(--font-thrive-display)] text-3xl tracking-tight text-[#0d4f4a]"
           style={{ fontWeight: 600 }}
         >
           Welcome to the team.
@@ -115,7 +115,7 @@ export default function VolunteerSignup() {
     <form
       onSubmit={handleSubmit}
       className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-7 sm:p-9 lg:p-11"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      style={{ fontFamily: "var(--font-thrive-body), sans-serif" }}
       noValidate
     >
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
