@@ -286,7 +286,7 @@ function Hero() {
  * so we drive the reveal via requestAnimationFrame + setState — works
  * in every real browser and the preview tool.
  */
-function useGenesisTimeline(totalMs = 4400) {
+function useGenesisTimeline(totalMs = 10800) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -330,31 +330,36 @@ function fade(elapsed: number, begin: number, dur: number, max = 1) {
 function SunriseIllustration() {
   const elapsed = useGenesisTimeline();
 
-  // Genesis-1 creation order (locked 2026-05-18 — Ben):
-  // "Sun be first because God said let there be light."
-  //   Day 1 — Light + Sun    (sky + sun)          0.0s, 0.9s   ← rises FIRST
-  //   Day 2 — Waters above   (atmospheric haze)   0.5s, 1.2s
-  //   Day 3a — Land          (distant mountains)  1.2s, 1.0s
-  //   Day 3b — More land     (mid ridge)          1.4s, 1.0s
-  //   Day 3c — Strait        (water btwn ridges)  1.5s, 1.0s   ← new: Strait of Juan de Fuca
-  //   Day 3d — Waters below  (sea/bay)            1.6s, 1.0s
-  //   Day 3e — Vegetation    (trees + shore)      1.8s, 1.0s
-  //   Day 4 — Slope warmth                        2.4s, 1.2s
-  //   Day 5 — Sea life       (water ripples)      2.8s, 1.2s, max 0.55
-  //   Day 5 — Birds (10, spread)                  2.8s, 1.4s, max 0.75
-  //   Caption                                     3.4s, 1.0s, max 0.85
-  const skyOp = fade(elapsed, 0, 900);
-  const sunOp = fade(elapsed, 0, 900);
-  const hazeOp = fade(elapsed, 500, 1200);
-  const peaksOp = fade(elapsed, 1200, 1000);
-  const midRidgeOp = fade(elapsed, 1400, 1000);
-  const straitOp = fade(elapsed, 1500, 1000);
-  const waterOp = fade(elapsed, 1600, 1000);
-  const treesOp = fade(elapsed, 1800, 1000);
-  const slopeOp = fade(elapsed, 2400, 1200);
-  const ripplesOp = fade(elapsed, 2800, 1200, 0.55);
-  const birdsOp = fade(elapsed, 2800, 1400, 0.75);
-  const captionOp = fade(elapsed, 3400, 1000, 0.85);
+  // Genesis-1 creation order (locked 2026-05-18 — Ben slow-pass).
+  // Timeline expanded from ~4.4s → ~10.6s so each Day reads as its
+  // own distinct moment instead of all of Day 3 appearing in a 600ms
+  // blur. Each step starts 600-900ms after the previous one started
+  // so the eye has time to register each piece arriving.
+  //
+  //   Day 1 — Light          (sky fades up)          0.0s → 1.3s
+  //   Day 1 — Sun            (rises in upper-right)  0.4s → 2.1s
+  //   Day 2 — Firmament      (atmospheric haze)      1.6s → 3.0s
+  //   Day 3a — Land          (distant Olympics)      2.8s → 4.2s
+  //   Day 3b — More land     (forested mid ridge)    3.8s → 5.2s
+  //   Day 3c — Waters btwn   (Strait of Juan de F.)  4.7s → 6.0s
+  //   Day 3d — Waters below  (Sequim Bay foreground) 5.3s → 6.6s
+  //   Day 3e — Vegetation    (trees + shore)         6.1s → 7.5s
+  //   Day 4 — Sun warms      (slope highlights)      7.0s → 8.5s
+  //   Day 5 — Sea life       (water ripples)         7.8s → 9.3s, max 0.55
+  //   Day 5 — Birds          (10, spread, depth)     8.2s → 10.0s, max 0.75
+  //   Caption                ("And there was light") 9.4s → 10.6s, max 0.85
+  const skyOp = fade(elapsed, 0, 1300);
+  const sunOp = fade(elapsed, 400, 1700);
+  const hazeOp = fade(elapsed, 1600, 1400);
+  const peaksOp = fade(elapsed, 2800, 1400);
+  const midRidgeOp = fade(elapsed, 3800, 1400);
+  const straitOp = fade(elapsed, 4700, 1300);
+  const waterOp = fade(elapsed, 5300, 1300);
+  const treesOp = fade(elapsed, 6100, 1400);
+  const slopeOp = fade(elapsed, 7000, 1500);
+  const ripplesOp = fade(elapsed, 7800, 1500, 0.55);
+  const birdsOp = fade(elapsed, 8200, 1800, 0.75);
+  const captionOp = fade(elapsed, 9400, 1200, 0.85);
 
   return (
     <div className="relative aspect-[21/9] w-full overflow-hidden rounded-sm bg-[#fef3c7]/40 sm:aspect-[4/3]">
