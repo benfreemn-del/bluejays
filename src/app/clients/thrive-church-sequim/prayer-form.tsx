@@ -174,7 +174,7 @@ export default function PrayerRequestForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Name (optional)" name="name" autoComplete="name" />
         <Field
-          label="Email or phone (optional)"
+          label="Email (optional)"
           name="email"
           type="email"
           autoComplete="email"
