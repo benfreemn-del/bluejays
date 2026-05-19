@@ -72,6 +72,9 @@ import {
   type InboxItem,
   type InboxType,
   type InboxStatus,
+  type Member,
+  type Group,
+  type Sermon,
 } from "./mock-data";
 
 const PASSWORD = "thrive2026";
@@ -208,7 +211,16 @@ export default function ThrivePortalDemo() {
         fontFamily: "var(--font-thrive-body), sans-serif",
       }}
     >
-      <TopBar />
+      <TopBar
+        inbox={inboxItems}
+        onJumpToInbox={() => setTab("inbox")}
+        onSignOut={() => {
+          setUnlocked(false);
+          try {
+            window.sessionStorage.removeItem("thrive_portal_unlocked");
+          } catch {}
+        }}
+      />
       <TabNav tab={tab} setTab={setTab} inbox={inboxItems} />
       <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 sm:py-10">
         {tab === "overview" && (
@@ -339,7 +351,30 @@ function GateScreen({
 
 /* ════════════════════════ TOP BAR ════════════════════════ */
 
-function TopBar() {
+function TopBar({
+  inbox,
+  onJumpToInbox,
+  onSignOut,
+}: {
+  inbox: InboxItem[];
+  onJumpToInbox: () => void;
+  onSignOut: () => void;
+}) {
+  const [bellOpen, setBellOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const newItems = inbox.filter((i) => i.status === "new");
+
+  // Click outside to close any open popover.
+  useEffect(() => {
+    if (!bellOpen && !avatarOpen) return;
+    function onDocClick() {
+      setBellOpen(false);
+      setAvatarOpen(false);
+    }
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [bellOpen, avatarOpen]);
+
   return (
     <div
       className="sticky top-0 z-50 border-b backdrop-blur-md"
@@ -370,25 +405,140 @@ function TopBar() {
             <span className="block h-1.5 w-1.5 rounded-full" style={{ background: VINE }} />
             Live • Last sync 2m ago
           </span>
-          <button
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border"
-            style={{ borderColor: TEAL_BORDER, color: CREAM }}
-            aria-label="Notifications"
-          >
-            <Bell size={16} weight="fill" />
-            <span
-              className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold"
-              style={{ background: ROSE, color: CREAM }}
+          {/* Bell — popover shows recent new submissions, click any to
+              jump to the Inbox tab. */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setBellOpen((v) => !v);
+                setAvatarOpen(false);
+              }}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors hover:bg-white/[0.06]"
+              style={{ borderColor: TEAL_BORDER, color: CREAM }}
+              aria-label={`${newItems.length} new notifications`}
+              aria-expanded={bellOpen}
             >
-              4
-            </span>
-          </button>
-          <span
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[12px] font-bold"
-            style={{ background: AMBER, color: CREAM }}
-          >
-            DL
-          </span>
+              <Bell size={16} weight="fill" />
+              {newItems.length > 0 && (
+                <span
+                  className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold"
+                  style={{ background: ROSE, color: CREAM }}
+                >
+                  {newItems.length > 9 ? "9+" : newItems.length}
+                </span>
+              )}
+            </button>
+            {bellOpen && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-12 z-50 w-80 rounded-xl border shadow-2xl"
+                style={{ background: TEAL_PANEL, borderColor: TEAL_BORDER }}
+              >
+                <div
+                  className="flex items-center justify-between border-b px-4 py-3"
+                  style={{ borderColor: TEAL_BORDER }}
+                >
+                  <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: AMBER_LIGHT }}>
+                    Notifications
+                  </p>
+                  <span className="text-[11px]" style={{ color: "rgba(251,247,238,0.55)" }}>
+                    {newItems.length} new
+                  </span>
+                </div>
+                <ul
+                  className="max-h-72 divide-y overflow-y-auto"
+                  style={{ borderColor: TEAL_BORDER }}
+                >
+                  {newItems.length === 0 ? (
+                    <li className="px-4 py-6 text-center text-[13px]" style={{ color: "rgba(251,247,238,0.55)" }}>
+                      All caught up — no new submissions.
+                    </li>
+                  ) : (
+                    newItems.slice(0, 6).map((item) => (
+                      <li
+                        key={item.id}
+                        className="cursor-pointer px-4 py-3 transition-colors hover:bg-white/[0.04]"
+                        onClick={() => {
+                          setBellOpen(false);
+                          onJumpToInbox();
+                        }}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="truncate text-[13px] font-semibold" style={{ color: CREAM }}>
+                            {item.name}
+                          </p>
+                          <span className="shrink-0 text-[10px]" style={{ color: "rgba(251,247,238,0.5)" }}>
+                            {item.receivedAt}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 truncate text-[12px]" style={{ color: "rgba(251,247,238,0.65)" }}>
+                          {item.preview}
+                        </p>
+                      </li>
+                    ))
+                  )}
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBellOpen(false);
+                    onJumpToInbox();
+                  }}
+                  className="block w-full border-t px-4 py-3 text-center text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors hover:bg-white/[0.04]"
+                  style={{ borderColor: TEAL_BORDER, color: AMBER_LIGHT }}
+                >
+                  Open full inbox →
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Avatar — dropdown with sign-out. */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setAvatarOpen((v) => !v);
+                setBellOpen(false);
+              }}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-[12px] font-bold transition-all hover:brightness-110"
+              style={{ background: AMBER, color: CREAM }}
+              aria-label="Account menu"
+              aria-expanded={avatarOpen}
+            >
+              DL
+            </button>
+            {avatarOpen && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-12 z-50 w-56 rounded-xl border shadow-2xl"
+                style={{ background: TEAL_PANEL, borderColor: TEAL_BORDER }}
+              >
+                <div className="border-b px-4 py-3" style={{ borderColor: TEAL_BORDER }}>
+                  <p className="text-[13px] font-semibold" style={{ color: CREAM }}>
+                    Pastor Dave Lyke
+                  </p>
+                  <p className="text-[11px]" style={{ color: "rgba(251,247,238,0.55)" }}>
+                    Lead Pastor · Demo session
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAvatarOpen(false);
+                    onSignOut();
+                  }}
+                  className="block w-full px-4 py-3 text-left text-[13px] transition-colors hover:bg-white/[0.04]"
+                  style={{ color: CREAM }}
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -1151,15 +1301,223 @@ function labelFor(t: string) {
   return t;
 }
 
+/* ════════════════════════ INLINE ADD FORM (shared) ════════════════════════ */
+
+type FieldDef = {
+  key: string;
+  label: string;
+  type?: "text" | "textarea" | "select";
+  required?: boolean;
+  placeholder?: string;
+  options?: string[];
+  wide?: boolean;
+};
+
+function InlineAddForm({
+  title,
+  fields,
+  onSave,
+  onCancel,
+  submitLabel = "Add",
+}: {
+  title: string;
+  fields: FieldDef[];
+  onSave: (values: Record<string, string>) => void;
+  onCancel: () => void;
+  submitLabel?: string;
+}) {
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    for (const f of fields) init[f.key] = f.options?.[0] ?? "";
+    return init;
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    for (const f of fields) {
+      if (f.required && !values[f.key]?.trim()) {
+        setError(`${f.label} is required.`);
+        return;
+      }
+    }
+    setError(null);
+    onSave(values);
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mb-5 rounded-xl border p-4 sm:p-5"
+      style={{
+        background: TEAL_PANEL,
+        borderColor: "rgba(217, 119, 6, 0.35)",
+      }}
+    >
+      <div className="mb-4 flex items-center gap-2">
+        <Plus size={14} weight="bold" style={{ color: AMBER_LIGHT }} />
+        <p
+          className="text-[11px] font-bold uppercase tracking-[0.2em]"
+          style={{ color: AMBER_LIGHT }}
+        >
+          {title}
+        </p>
+        <span
+          className="ml-auto text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: "rgba(251, 247, 238, 0.45)" }}
+        >
+          Demo — not persisted
+        </span>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {fields.map((f) => (
+          <label
+            key={f.key}
+            className={f.wide || f.type === "textarea" ? "sm:col-span-2" : ""}
+          >
+            <span
+              className="mb-1 block text-[10px] font-bold uppercase tracking-[0.16em]"
+              style={{ color: "rgba(251, 247, 238, 0.55)" }}
+            >
+              {f.label}
+              {f.required && (
+                <span style={{ color: ROSE }} className="ml-1">
+                  *
+                </span>
+              )}
+            </span>
+            {f.type === "textarea" ? (
+              <textarea
+                value={values[f.key] ?? ""}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                }
+                rows={3}
+                placeholder={f.placeholder}
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
+                style={{ borderColor: TEAL_BORDER, color: CREAM }}
+              />
+            ) : f.type === "select" ? (
+              <select
+                value={values[f.key] ?? ""}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                }
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
+                style={{ borderColor: TEAL_BORDER, color: CREAM }}
+              >
+                {f.options?.map((o) => (
+                  <option key={o} value={o} style={{ color: "#000" }}>
+                    {o}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={values[f.key] ?? ""}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                }
+                placeholder={f.placeholder}
+                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
+                style={{ borderColor: TEAL_BORDER, color: CREAM }}
+              />
+            )}
+          </label>
+        ))}
+      </div>
+      {error && (
+        <p
+          className="mt-3 rounded-md border px-3 py-2 text-[12px]"
+          style={{
+            borderColor: "rgba(220, 107, 107, 0.4)",
+            background: "rgba(220, 107, 107, 0.1)",
+            color: ROSE,
+          }}
+        >
+          {error}
+        </p>
+      )}
+      <div className="mt-4 flex gap-2">
+        <button
+          type="submit"
+          className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em] transition-all hover:brightness-110"
+          style={{ background: AMBER, color: CREAM }}
+        >
+          {submitLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.14em]"
+          style={{ borderColor: TEAL_BORDER, color: CREAM }}
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function AddMemberForm({
+  onSave,
+  onCancel,
+}: {
+  onSave: (m: Omit<Member, "id">) => void;
+  onCancel: () => void;
+}) {
+  return (
+    <InlineAddForm
+      title="Add a new member"
+      submitLabel="Add member"
+      fields={[
+        { key: "name", label: "Name", required: true, placeholder: "Jane Smith" },
+        { key: "email", label: "Email", placeholder: "jane@example.com" },
+        { key: "phone", label: "Phone", placeholder: "(360) 555-0100" },
+        { key: "role", label: "Role", required: true, placeholder: "Member · Group Leader · Elder" },
+        { key: "household", label: "Household / family name", placeholder: "Smith" },
+        { key: "joined", label: "Joined (yr or yyyy-mm)", placeholder: "2026" },
+      ]}
+      onSave={(v) =>
+        onSave({
+          name: v.name,
+          email: v.email || "",
+          phone: v.phone || undefined,
+          household: v.household || v.name.split(" ").slice(-1)[0] || "",
+          role: v.role || "Member",
+          groups: [],
+          joined: v.joined || String(new Date().getFullYear()),
+        })
+      }
+      onCancel={onCancel}
+    />
+  );
+}
+
 /* ════════════════════════ MEMBERS TAB ════════════════════════ */
 
 function MembersTab() {
+  const [members, setMembers] = useState<Member[]>(MEMBERS);
   const [search, setSearch] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
   const filtered = useMemo(
     () =>
-      MEMBERS.filter((m) => !search || `${m.name} ${m.role} ${m.groups.join(" ")}`.toLowerCase().includes(search.toLowerCase())),
-    [search],
+      members.filter(
+        (m) =>
+          !search ||
+          `${m.name} ${m.role} ${m.groups.join(" ")}`
+            .toLowerCase()
+            .includes(search.toLowerCase()),
+      ),
+    [members, search],
   );
+
+  function handleAdd(draft: Omit<Member, "id">) {
+    const id = `m_local_${Date.now()}`;
+    setMembers((prev) => [{ id, ...draft }, ...prev]);
+    setAddOpen(false);
+  }
 
   return (
     <>
@@ -1169,7 +1527,7 @@ function MembersTab() {
             Members
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
-            {MEMBERS.length} families · {MEMBERS.filter((m) => m.serving && m.serving.length > 0).length} serving on a team
+            {members.length} families · {members.filter((m) => m.serving && m.serving.length > 0).length} serving on a team
           </p>
         </div>
         <div className="flex flex-1 items-center gap-2 sm:max-w-md">
@@ -1189,15 +1547,16 @@ function MembersTab() {
           </div>
           <button
             type="button"
-            disabled
-            title="Member CRUD ships in v2 — for now this view is read-only."
-            className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold opacity-50"
+            onClick={() => setAddOpen((v) => !v)}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold transition-all hover:brightness-110"
             style={{ background: AMBER, color: CREAM }}
           >
-            <Plus size={14} weight="bold" /> Add member <span className="ml-1 text-[10px] opacity-80">(v2)</span>
+            <Plus size={14} weight="bold" /> Add member
           </button>
         </div>
       </div>
+
+      {addOpen && <AddMemberForm onSave={handleAdd} onCancel={() => setAddOpen(false)} />}
 
       <Panel>
         <div className="overflow-x-auto">
@@ -1270,6 +1629,9 @@ function initials(name: string) {
 /* ════════════════════════ GROUPS TAB ════════════════════════ */
 
 function GroupsTab() {
+  const [groups, setGroups] = useState<Group[]>(GROUPS);
+  const [addOpen, setAddOpen] = useState(false);
+
   return (
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -1278,22 +1640,62 @@ function GroupsTab() {
             Thrive Groups
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
-            {GROUPS.length} active groups · {GROUPS.reduce((s, g) => s + g.current, 0)} people connected
+            {groups.length} active groups · {groups.reduce((s, g) => s + g.current, 0)} people connected
           </p>
         </div>
         <button
           type="button"
-          disabled
-          title="Group CRUD ships in v2 — for now this view is read-only."
-          className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold opacity-50"
+          onClick={() => setAddOpen((v) => !v)}
+          className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold transition-all hover:brightness-110"
           style={{ background: AMBER, color: CREAM }}
         >
-          <Plus size={14} weight="bold" /> Start a new group <span className="ml-1 text-[10px] opacity-80">(v2)</span>
+          <Plus size={14} weight="bold" /> Start a new group
         </button>
       </div>
 
+      {addOpen && (
+        <InlineAddForm
+          title="Start a new Thrive Group"
+          submitLabel="Add group"
+          fields={[
+            { key: "name", label: "Group name", required: true, placeholder: "Wednesday Young Adults" },
+            { key: "leaders", label: "Leader(s)", required: true, placeholder: "Naomi Greaves" },
+            {
+              key: "day",
+              label: "Meeting day",
+              type: "select",
+              options: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            },
+            { key: "time", label: "Time", placeholder: "7:00 pm" },
+            { key: "location", label: "Location", placeholder: "Sequim — N 5th Ave" },
+            { key: "audience", label: "Audience", placeholder: "Couples · Men · 20s/30s" },
+            { key: "capacity", label: "Capacity", placeholder: "12" },
+          ]}
+          onSave={(v) => {
+            const cap = Math.max(1, parseInt(v.capacity, 10) || 12);
+            setGroups((prev) => [
+              {
+                id: `g_local_${Date.now()}`,
+                name: v.name,
+                leaders: v.leaders,
+                day: v.day || "Wednesday",
+                time: v.time || "7:00 pm",
+                location: v.location || "TBD",
+                audience: v.audience || "Mixed adults",
+                capacity: cap,
+                current: 0,
+                status: "open",
+              },
+              ...prev,
+            ]);
+            setAddOpen(false);
+          }}
+          onCancel={() => setAddOpen(false)}
+        />
+      )}
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {GROUPS.map((g) => {
+        {groups.map((g) => {
           const full = g.current >= g.capacity;
           const pct = (g.current / g.capacity) * 100;
           return (
@@ -1457,6 +1859,10 @@ function Hourglass({ size = 16 }: { size?: number; weight?: string }) {
 /* ════════════════════════ SERMONS TAB ════════════════════════ */
 
 function SermonsTab() {
+  const [sermons, setSermons] = useState<Sermon[]>(SERMONS);
+  const [addOpen, setAddOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   return (
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -1465,70 +1871,140 @@ function SermonsTab() {
             Sermon Archive
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
-            {SERMONS.filter((s) => s.status === "archived" || s.status === "live").length} published · {SERMONS.filter((s) => s.status === "draft").length} in draft
+            {sermons.filter((s) => s.status === "archived" || s.status === "live").length} published · {sermons.filter((s) => s.status === "draft").length} in draft
           </p>
         </div>
         <button
           type="button"
-          disabled
-          title="Sermon CRUD ships in v2 — for now this view is read-only."
-          className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold opacity-50"
+          onClick={() => setAddOpen((v) => !v)}
+          className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold transition-all hover:brightness-110"
           style={{ background: AMBER, color: CREAM }}
         >
-          <Plus size={14} weight="bold" /> New sermon entry <span className="ml-1 text-[10px] opacity-80">(v2)</span>
+          <Plus size={14} weight="bold" /> New sermon entry
         </button>
       </div>
 
+      {addOpen && (
+        <InlineAddForm
+          title="New sermon entry"
+          submitLabel="Add sermon"
+          fields={[
+            { key: "title", label: "Title", required: true, placeholder: "The Garden + The Cross" },
+            { key: "series", label: "Series", placeholder: "We Are Thrive" },
+            { key: "scripture", label: "Scripture", placeholder: "Luke 22:39-46" },
+            { key: "speaker", label: "Speaker", placeholder: "Pastor Dave Lyke" },
+            { key: "date", label: "Date", placeholder: "May 26, 2026" },
+            { key: "durationMin", label: "Duration (min)", placeholder: "35" },
+            { key: "status", label: "Status", type: "select", options: ["draft", "live", "archived"] },
+          ]}
+          onSave={(v) => {
+            setSermons((prev) => [
+              {
+                id: `s_local_${Date.now()}`,
+                title: v.title,
+                series: v.series || "—",
+                scripture: v.scripture || "—",
+                speaker: v.speaker || "Pastor Dave Lyke",
+                date: v.date || new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+                durationMin: Math.max(1, parseInt(v.durationMin, 10) || 35),
+                youtubeViews: 0,
+                status: (v.status as Sermon["status"]) || "draft",
+              },
+              ...prev,
+            ]);
+            setAddOpen(false);
+          }}
+          onCancel={() => setAddOpen(false)}
+        />
+      )}
+
       <Panel>
         <ul className="divide-y" style={{ borderColor: TEAL_BORDER }}>
-          {SERMONS.map((s) => (
-            <li key={s.id} className="flex flex-col gap-3 px-3 py-4 sm:flex-row sm:items-center sm:gap-5">
-              <span
-                className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: `${TEAL}aa`, color: AMBER_LIGHT }}
-              >
-                <BookBookmark size={20} weight="fill" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start gap-2">
-                  <h3 className="font-[family-name:var(--font-thrive-display)] text-[16px]" style={{ color: CREAM, fontWeight: 600 }}>
-                    {s.title}
-                  </h3>
-                  {s.status === "draft" && (
-                    <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em]" style={{ background: `${AMBER_LIGHT}1f`, color: AMBER_LIGHT }}>
-                      Draft
-                    </span>
-                  )}
-                  {s.status === "live" && (
-                    <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em]" style={{ background: `${VINE}1f`, color: VINE }}>
-                      Newest
-                    </span>
-                  )}
+          {sermons.map((s) =>
+            editingId === s.id ? (
+              <li key={s.id} className="px-3 py-4">
+                <InlineAddForm
+                  title={`Edit · ${s.title}`}
+                  submitLabel="Save"
+                  fields={[
+                    { key: "title", label: "Title", required: true },
+                    { key: "series", label: "Series" },
+                    { key: "scripture", label: "Scripture" },
+                    { key: "speaker", label: "Speaker" },
+                    { key: "date", label: "Date" },
+                    { key: "durationMin", label: "Duration (min)" },
+                    { key: "status", label: "Status", type: "select", options: ["draft", "live", "archived"] },
+                  ]}
+                  onSave={(v) => {
+                    setSermons((prev) =>
+                      prev.map((row) =>
+                        row.id === s.id
+                          ? {
+                              ...row,
+                              title: v.title || row.title,
+                              series: v.series || row.series,
+                              scripture: v.scripture || row.scripture,
+                              speaker: v.speaker || row.speaker,
+                              date: v.date || row.date,
+                              durationMin: parseInt(v.durationMin, 10) || row.durationMin,
+                              status: (v.status as Sermon["status"]) || row.status,
+                            }
+                          : row,
+                      ),
+                    );
+                    setEditingId(null);
+                  }}
+                  onCancel={() => setEditingId(null)}
+                />
+              </li>
+            ) : (
+              <li key={s.id} className="flex flex-col gap-3 px-3 py-4 sm:flex-row sm:items-center sm:gap-5">
+                <span
+                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg"
+                  style={{ background: `${TEAL}aa`, color: AMBER_LIGHT }}
+                >
+                  <BookBookmark size={20} weight="fill" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start gap-2">
+                    <h3 className="font-[family-name:var(--font-thrive-display)] text-[16px]" style={{ color: CREAM, fontWeight: 600 }}>
+                      {s.title}
+                    </h3>
+                    {s.status === "draft" && (
+                      <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em]" style={{ background: `${AMBER_LIGHT}1f`, color: AMBER_LIGHT }}>
+                        Draft
+                      </span>
+                    )}
+                    {s.status === "live" && (
+                      <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em]" style={{ background: `${VINE}1f`, color: VINE }}>
+                        Newest
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px]" style={{ color: AMBER_LIGHT }}>
+                    {s.series} · {s.scripture}
+                  </p>
+                  <p className="mt-1 text-[12px]" style={{ color: "rgba(251, 247, 238, 0.55)" }}>
+                    {s.speaker} · {s.date} · {s.durationMin} min
+                  </p>
                 </div>
-                <p className="text-[12px]" style={{ color: AMBER_LIGHT }}>
-                  {s.series} · {s.scripture}
-                </p>
-                <p className="mt-1 text-[12px]" style={{ color: "rgba(251, 247, 238, 0.55)" }}>
-                  {s.speaker} · {s.date} · {s.durationMin} min
-                </p>
-              </div>
-              <div className="flex items-center gap-3 text-[12px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
-                <div className="flex items-center gap-1">
-                  <YoutubeLogo size={14} weight="fill" />
-                  {s.youtubeViews.toLocaleString()}
+                <div className="flex items-center gap-3 text-[12px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
+                  <div className="flex items-center gap-1">
+                    <YoutubeLogo size={14} weight="fill" />
+                    {s.youtubeViews.toLocaleString()}
+                  </div>
                 </div>
-              </div>
-              <button
-                type="button"
-                disabled
-                title="Edit ships in v2."
-                className="inline-flex cursor-not-allowed items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.14em] opacity-40"
-                style={{ color: AMBER_LIGHT }}
-              >
-                Edit <CaretRight size={12} weight="bold" />
-              </button>
-            </li>
-          ))}
+                <button
+                  type="button"
+                  onClick={() => setEditingId(s.id)}
+                  className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-white"
+                  style={{ color: AMBER_LIGHT }}
+                >
+                  Edit <CaretRight size={12} weight="bold" />
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       </Panel>
     </>
@@ -1798,6 +2274,8 @@ function ActionItem({
   detail: string;
   urgent?: boolean;
 }) {
+  const [done, setDone] = useState(false);
+  if (done) return null;
   return (
     <li
       className="flex items-start gap-3 rounded-lg border p-4"
@@ -1825,12 +2303,12 @@ function ActionItem({
       </div>
       <button
         type="button"
-        disabled
-        title="Action workflows ship in v2."
-        className="cursor-not-allowed text-[11px] font-semibold uppercase tracking-[0.14em] opacity-40"
+        onClick={() => setDone(true)}
+        title="Mark this action done"
+        className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-white"
         style={{ color: AMBER_LIGHT }}
       >
-        Take action
+        <CheckCircle size={12} weight="fill" /> Done
       </button>
     </li>
   );
