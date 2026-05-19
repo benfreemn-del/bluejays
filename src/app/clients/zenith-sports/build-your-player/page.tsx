@@ -58,6 +58,9 @@ type Step = "role" | "builder" | "goals" | "identity" | "plan";
 type State = Omit<BuilderInputs, "role" | "gender"> & {
   role: BuilderInputs["role"] | null;
   gender: BuilderInputs["gender"] | null;
+  /** TCPA gate — optional unchecked SMS-consent checkbox in the
+   *  identity step. Funnel runner only sends SMS when true. */
+  smsConsent: boolean;
 };
 
 const INITIAL: State = {
@@ -71,6 +74,7 @@ const INITIAL: State = {
   skillLevel: 2,
   currentWeeklyHours: 2,
   goals: [],
+  smsConsent: false,
 };
 
 export default function BuildYourPlayerPage() {
@@ -115,6 +119,7 @@ export default function BuildYourPlayerPage() {
             name: state.firstName,
             email: state.email,
             phone: state.phone,
+            smsConsent: state.smsConsent,
             intent: "Build Your Player",
             source: "lead-gen-builder",
             // Stash the full builder snapshot + the generated plan so the
@@ -470,6 +475,30 @@ function IdentityStep({
             placeholder="(555) 555-5555"
           />
         </Field>
+
+        {/* TCPA — optional, unchecked, consent NOT required to submit */}
+        <label
+          className={`flex items-start gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
+            state.smsConsent
+              ? "border-[#a3e635] bg-[#a3e635]/10"
+              : "border-white/10 bg-white/[0.03] hover:border-white/20"
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={state.smsConsent}
+            onChange={(e) => update("smsConsent", e.target.checked)}
+            className="mt-0.5 flex-shrink-0 accent-[#a3e635]"
+          />
+          <div className="text-[11px] leading-relaxed text-white/70">
+            <span className="font-semibold text-white">
+              Optional — text me drill of the week.
+            </span>{" "}
+            Consent to receive occasional SMS at the number above. Msg
+            &amp; data rates may apply. Reply STOP to opt out. Consent
+            is not required to submit this form.
+          </div>
+        </label>
 
         <div className="pt-3">
           <NextButton

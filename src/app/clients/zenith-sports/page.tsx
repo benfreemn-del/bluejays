@@ -1772,6 +1772,7 @@ export default function ZenithSportsPage() {
                 submitLabel="Send my inquiry"
                 successHeading="Got it — Philip and Paul will be in touch."
                 successBody="You'll hear back within one business day. In the meantime, the shop is open at /clients/zenith-sports/shop."
+                showSmsConsent={true}
                 fields={[
                   {
                     type: "text",

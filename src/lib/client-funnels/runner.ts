@@ -317,6 +317,21 @@ async function deliverTouch(
       await markSkipped(lead, stepIndex, "sms", touch.templateId, "no phone on file");
       return;
     }
+    // TCPA gate (migration 20260519). Phone alone is NOT consent —
+    // the form must surface an explicit unchecked SMS-consent checkbox
+    // and the API route must persist sms_consent=true. Without it,
+    // skip the SMS touch silently (lead still gets email/voicemail
+    // touches per the funnel definition).
+    if (!lead.sms_consent) {
+      await markSkipped(
+        lead,
+        stepIndex,
+        "sms",
+        touch.templateId,
+        "no SMS consent (TCPA gate)",
+      );
+      return;
+    }
     if (!cfg.sms.from) {
       await markSkipped(
         lead,
