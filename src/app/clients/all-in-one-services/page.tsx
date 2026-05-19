@@ -405,17 +405,21 @@ function GrainStripes({ color = MOSS, opacity = 0.05 }: { color?: string; opacit
 function FloorPlanOutlines({
   color = SOUND,
   opacity = 0.09,
+  side = "left",
 }: {
   color?: string;
   opacity?: number;
+  side?: "left" | "right";
 }) {
+  const sideStyle: React.CSSProperties =
+    side === "right" ? { top: 60, right: -80 } : { top: 60, left: -80 };
   return (
     <svg
       className="absolute pointer-events-none"
       width="640"
       height="480"
       viewBox="0 0 640 480"
-      style={{ top: 60, right: -80, opacity }}
+      style={{ ...sideStyle, opacity }}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
@@ -896,7 +900,7 @@ export default function AllInOneServicesPage() {
         <GoogleReviewBadge />
 
         {/* ────────────────────── 01 · HERO (editorial split) ────────────────────── */}
-        <section className="relative">
+        <section className="relative overflow-hidden">
           {/* Soft copper radial glow behind hero */}
           <div
             className="absolute inset-0 pointer-events-none"
@@ -917,6 +921,8 @@ export default function AllInOneServicesPage() {
               }}
             />
           </div>
+          {/* Olympic Peninsula contour lines — "ground" under the editorial scene */}
+          <TopoContours color={MOSS} position="bl" opacity={0.05} />
 
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-10 sm:pt-14 lg:pt-20 pb-10 sm:pb-14">
             <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-16 items-center">
@@ -1507,7 +1513,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ borderColor: RULE }}
         >
-          <FloorPlanOutlines color={SOUND} opacity={0.09} />
+          <FloorPlanOutlines color={SOUND} opacity={0.06} side="left" />
           <SectionTint color={MOSS} position="tr" opacity={0.09} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="06" label="What we build" tone="blueprint" />
@@ -1898,7 +1904,6 @@ export default function AllInOneServicesPage() {
         >
           <TopoContours color={SOUND} position="bl" opacity={0.10} />
           <SectionTint color={MOSS_LIGHT} position="br" opacity={0.09} />
-          <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.05} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="10" label="Where we build" tone="blueprint" />
             <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16 items-start">
@@ -2068,10 +2073,12 @@ export default function AllInOneServicesPage() {
 
         {/* ────────────────────── FOOTER (dark bookend) ────────────────────── */}
         <footer
-          className="relative pt-14 pb-8 border-t"
+          className="relative overflow-hidden pt-14 pb-8 border-t"
           style={{ background: DARK_BG, borderColor: ACCENT_DIM }}
         >
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          {/* Warm-copper horizon line at the top of the dark footer */}
+          <TopoContours color={ACCENT_LIGHT} position="tl" opacity={0.06} />
+          <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
               <div>
                 <div className="flex items-center gap-3 mb-4">
