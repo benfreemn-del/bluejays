@@ -508,7 +508,25 @@
       b.hidden = true;
     }
 
-    // Live-clear field errors as the user types so they get instant feedback.
+    // ── Submit-button gate ────────────────────────────────────────────
+    // Submit stays disabled until name + phone + email all pass validation.
+    // Re-checked live on every keystroke so the button enables the moment
+    // the form is complete.
+    var submitBtn = form.querySelector(".book-submit");
+
+    function isFormValid() {
+      var n = (form.elements.name.value || "").trim();
+      var p = (form.elements.phone.value || "").trim();
+      var em = (form.elements.email.value || "").trim();
+      return n.length >= 2 && PHONE_RE.test(p) && EMAIL_RE.test(em);
+    }
+    function refreshSubmitState() {
+      if (!submitBtn) return;
+      submitBtn.disabled = !isFormValid();
+    }
+    refreshSubmitState();
+
+    // Live-clear field errors + refresh submit button as the user types.
     [
       ["bookName", "bookNameError"],
       ["bookPhone", "bookPhoneError"],
@@ -518,7 +536,9 @@
       if (input) {
         input.addEventListener("input", function () {
           clearFieldError(pair[0], pair[1]);
+          refreshSubmitState();
         });
+        input.addEventListener("blur", refreshSubmitState);
       }
     });
 

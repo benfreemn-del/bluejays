@@ -1472,9 +1472,16 @@ html {
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.book-submit:hover {
+.book-submit:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 14px 28px -6px rgba(212, 168, 58, 0.55);
+}
+.book-submit:disabled {
+  background: rgba(250, 246, 238, 0.18);
+  color: rgba(250, 246, 238, 0.55);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 .book-form-note {
   margin-top: 18px;
