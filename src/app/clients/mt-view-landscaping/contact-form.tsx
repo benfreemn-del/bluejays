@@ -77,7 +77,7 @@ export default function MtViewContactForm({
     return (
       <div className="bg-[#FBF8F1] border-l-2 border-[#3E4A36] px-8 py-12 sm:px-12 sm:py-16">
         <CheckCircle size={36} weight="duotone" className="text-[#3E4A36] mb-6" />
-        <h3 className="font-[family-name:var(--font-fraunces)] font-light text-[34px] sm:text-[44px] text-[#1C1F1A] tracking-tight leading-[1.05] mb-4">
+        <h3 className="font-[family-name:var(--font-playfair)] font-light text-[34px] sm:text-[44px] text-[#1C1F1A] tracking-tight leading-[1.05] mb-4">
           Thanks — we&rsquo;ve got it.
         </h3>
         <p className="font-[family-name:var(--font-inter)] text-[17px] leading-[1.65] text-[#1C1F1A]/70 max-w-md">

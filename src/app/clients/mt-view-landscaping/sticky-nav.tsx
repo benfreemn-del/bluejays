@@ -52,17 +52,17 @@ export default function StickyNav({
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#F5F1E8]/85 border-b border-[#1C1F1A]/8">
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 h-16 sm:h-20 flex items-center justify-between gap-6">
-        {/* Wordmark — quiet, small. The page is the brand, not the header. */}
-        <a href="#top" className="flex items-center gap-3 min-w-0 group">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-10 h-20 sm:h-24 flex items-center justify-between gap-6">
+        {/* Wordmark — promoted to give the brand more presence in the header. */}
+        <a href="#top" className="flex items-center gap-3 sm:gap-4 min-w-0 group">
           <img
             src={logoSrc}
             alt={businessName}
-            className="h-8 sm:h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity"
+            className="h-12 sm:h-16 w-auto opacity-95 group-hover:opacity-100 transition-opacity"
           />
-          <span className="hidden md:block font-[family-name:var(--font-fraunces)] text-[16px] tracking-tight text-[#1C1F1A] leading-[1.05]">
+          <span className="hidden md:block font-[family-name:var(--font-playfair)] text-[20px] sm:text-[22px] tracking-tight text-[#1C1F1A] leading-[1.05]">
             Mountain View
-            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#A8A294] font-[family-name:var(--font-inter)] font-medium mt-0.5">
+            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#A8A294] font-[family-name:var(--font-inter)] font-medium mt-1">
               Landscape &amp; Design
             </span>
           </span>
@@ -111,14 +111,14 @@ export default function StickyNav({
       {/* Mobile full-screen menu — editorial typographic stack */}
       {open && (
         <div className="lg:hidden fixed inset-0 z-[60] bg-[#F5F1E8] flex flex-col">
-          <div className="h-16 sm:h-20 px-6 sm:px-10 flex items-center justify-between border-b border-[#1C1F1A]/10">
+          <div className="h-20 sm:h-24 px-6 sm:px-10 flex items-center justify-between border-b border-[#1C1F1A]/10">
             <a
               href="#top"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3"
             >
-              <img src={logoSrc} alt={businessName} className="h-8 w-auto" />
-              <span className="font-[family-name:var(--font-fraunces)] text-[16px] tracking-tight text-[#1C1F1A]">
+              <img src={logoSrc} alt={businessName} className="h-12 w-auto" />
+              <span className="font-[family-name:var(--font-playfair)] text-[16px] tracking-tight text-[#1C1F1A]">
                 Mountain View
               </span>
             </a>
@@ -137,7 +137,7 @@ export default function StickyNav({
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="font-[family-name:var(--font-fraunces)] font-light text-[44px] sm:text-[56px] text-[#1C1F1A] py-3 border-b border-[#1C1F1A]/10 hover:text-[#3E4A36] transition-colors leading-none tracking-tight"
+                className="font-[family-name:var(--font-playfair)] font-light text-[44px] sm:text-[56px] text-[#1C1F1A] py-3 border-b border-[#1C1F1A]/10 hover:text-[#3E4A36] transition-colors leading-none tracking-tight"
               >
                 {l.label}
               </a>

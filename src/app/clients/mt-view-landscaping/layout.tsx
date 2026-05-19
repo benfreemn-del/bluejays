@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import BackToTopButton from "@/components/BackToTopButton";
 
 /**
@@ -7,25 +7,27 @@ import BackToTopButton from "@/components/BackToTopButton";
  * (Auburn, WA). Custom-tier bespoke build for the Hunsaker family's 49-year-old
  * landscape firm serving King, Pierce, Snohomish, and Kittitas counties.
  *
- * v4 redesign (2026-05-19): editorial monograph treatment — Fraunces display +
- * Inter body, warm-paper background, restrained motion. Spec lives in
- * docs (uploaded). Reference world: Olson Kundig project pages, Aman
- * resort microsites, Cereal Magazine.
+ * v4 redesign (2026-05-19): editorial monograph treatment — high-contrast
+ * Playfair Display headlines + Inter body, warm-paper background, restrained
+ * motion. Original spec called for Fraunces but the soft-axis variant read
+ * mushy on real photos at scale; Playfair's higher contrast (thick/thin
+ * stroke) holds its own against the hero image. Reference world: Olson
+ * Kundig project pages, Aman resort microsites, Cereal Magazine.
  *
  * SEO HARDENING (audit 2026-05-19, launch-prep): full metadata override,
  * Landscaper + LocalBusiness JSON-LD schema. Coexists additively with the
  * root BlueJays ProfessionalService schema.
  */
 
-// Variable font: omit `weight` (or set to "variable") when specifying `axes`.
-// Next/font enforces this — see https://nextjs.org/docs/app/api-reference/components/font.
-// Omitting weight gives us the full variable axis (100-900), which is what
-// the design spec wants anyway (light at 300 for hero, regular at 400 for
-// body H2s, medium at 500 for emphasis).
-const fraunces = Fraunces({
+// Playfair Display — classic high-contrast modern serif. Editorial weight,
+// holds its own at large display sizes (hero h1 ~88px) without the rounded
+// "soft" feel that Fraunces gave us. Weights: 400 (regular h2/body-serif),
+// 500 (h3/emphasis), 700 (h1 hero / strong moments).
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  axes: ["SOFT", "opsz"],
-  variable: "--font-fraunces",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -204,7 +206,7 @@ export default function MtViewLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${fraunces.variable} ${inter.variable}`}>
+    <div className={`${playfair.variable} ${inter.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(mtViewSchema) }}
