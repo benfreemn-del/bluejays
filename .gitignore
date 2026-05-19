@@ -10,6 +10,8 @@ package-lock.json
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+# project uses pnpm — npm-generated lockfile is a session-start hook artifact
+package-lock.json
 
 # testing
 /coverage
