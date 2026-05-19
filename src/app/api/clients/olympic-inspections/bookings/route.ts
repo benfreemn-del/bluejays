@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import { detectAudience, createClientLead } from "@/lib/client-leads";
-import { sendEmailToWithAlert, sendOwnerAlert } from "@/lib/alerts";
+import { sendEmailToWithAlert, sendOwnerAlert, sendOwnerEmail } from "@/lib/alerts";
 import { listOwnersWithPrefsForClient } from "@/lib/client-owner-preferences";
 import {
   getServiceClient,
@@ -294,6 +294,17 @@ export async function POST(req: NextRequest) {
     // against OIT.
     await sendOwnerAlert(smsMessage, { clientSlug: SLUG }).catch((err) =>
       console.error("[oit-bookings] owner SMS failed:", err),
+    );
+    // Ben also gets the FULL detailed email (separate from the terse
+    // owner-alert email so he sees the same content Luke does). Subject
+    // mirrors the OIT-owner subject so it's filterable. Fire-and-forget;
+    // failure logs to Vercel but doesn't block.
+    sendOwnerEmail({
+      subject: `🛠 OIT booking — ${name}`,
+      body: fullMessage,
+      clientSlug: SLUG,
+    }).catch((err) =>
+      console.error("[oit-bookings] ben detailed-email failed:", err),
     );
   } catch (e) {
     console.error("[oit-bookings] owner alert fan-out failed (non-blocking):", e);
