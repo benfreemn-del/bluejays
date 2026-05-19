@@ -1544,8 +1544,8 @@ function PreschoolSpotlight() {
               {[
                 { stat: "Ages 3–5", label: "Play-based learning" },
                 { stat: "≤12 / class", label: "Small class sizes" },
-                { stat: "M / W / F", label: "Three-day program" },
-                { stat: "9 mo.", label: "School year" },
+                { stat: "9 AM – 12 PM", label: "M · W · F mornings" },
+                { stat: "9 mo.", label: "Full school year" },
               ].map((s) => (
                 <div
                   key={s.stat}
