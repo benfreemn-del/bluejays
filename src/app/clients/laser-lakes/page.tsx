@@ -540,20 +540,32 @@ export default function LaserLakesPage() {
               to Ben's portfolio + free audit funnel. Per CLAUDE.md the
               footer credit on every client site uses this exact phrase
               + format so each new customer becomes a backlink to /audit. */}
-          <a
-            href="https://bluejayportfolio.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 hover:opacity-100 transition-opacity"
-          >
-            <BluejayFeather size={14} className="shrink-0" />
+          {/* Built-by-BlueJays credit — split into two anchors per
+              CLAUDE.md (locked 2026-05-19) + Owner-Portal entry rule:
+              • bird icon → /clients/laser-lakes/portal (owner shortcut)
+              • "BlueJays" text → bluejayportfolio.com (network-effect) */}
+          <span className="inline-flex items-center gap-1.5">
+            <a
+              href="/clients/laser-lakes/portal"
+              title="Owner sign-in"
+              aria-label="Owner sign-in to the Laser Lakes portal"
+              className="hover:opacity-100 transition-opacity"
+            >
+              <BluejayFeather size={14} className="shrink-0" />
+            </a>
             <span>
               Built by{" "}
-              <span className="underline decoration-dotted underline-offset-2">
+              <a
+                href="https://bluejayportfolio.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-dotted underline-offset-2 hover:opacity-100 transition-opacity"
+              >
                 BlueJays
-              </span>
+              </a>{" "}
+              — get your free site audit
             </span>
-          </a>
+          </span>
         </div>
       </footer>
     </main>
