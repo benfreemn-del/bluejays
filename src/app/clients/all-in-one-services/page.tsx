@@ -227,6 +227,22 @@ const CREAM_INK_SOFT = INK_SOFT;
 const CREAM_INK_DIM = INK_DIM;
 const CREAM_RULE = RULE;
 
+// ── Tier 2b: SOUND BLUE — the maritime cool counterpoint (locked 2026-05-19)
+//
+// The page had two warm accents (moss + copper). Color theory said add
+// a cool tone to complete a triadic-ish balance. Geographic theory said
+// it has to belong here — and Sequim sits on Sequim Bay between Puget
+// Sound and the Strait of Juan de Fuca. So: slate / Strait blue.
+//
+// Used as the "blueprint" color it has been pretending to be — drafting
+// grid, floor-plan outlines, oversized quote marks, topographic contours,
+// timeline rails. Cool counterpoint to copper, complement-ish to moss.
+const SOUND = "#3b5266";
+const SOUND_LIGHT = "#5a7186";
+const SOUND_DEEP = "#243443";
+const SOUND_DIM = "rgba(59, 82, 102, 0.20)";
+const SOUND_GRAD = `linear-gradient(135deg, ${SOUND_LIGHT} 0%, ${SOUND} 55%, ${SOUND_DEEP} 100%)`;
+
 const FONT_HEAD = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
 
@@ -286,6 +302,258 @@ function SectionTint({
       }}
       aria-hidden="true"
     />
+  );
+}
+
+/* ───────────────────────── BACKGROUND MOTIFS ─────────────────────────
+ * Per-section atmosphere library. Each motif is an absolutely-positioned,
+ * pointer-events-none SVG layer. Layer ONE motif behind a section to give
+ * it its own visual identity. SectionTint can still be layered above for
+ * a colored corner-glow on top of the motif.
+ *
+ * Opacity is intentionally low (0.04-0.10) — felt, not seen.
+ */
+
+/** BlueprintGrid — 40px drafting grid with crosshair intersections.
+ *  Use on: §03 transformations, §07 timeline, §11 estimate (technical). */
+function BlueprintGrid({ color = SOUND, opacity = 0.07 }: { color?: string; opacity?: number }) {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <pattern id="bp-grid-40" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke={color} strokeWidth="0.6" />
+          <circle cx="0" cy="0" r="1.2" fill={color} />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bp-grid-40)" />
+    </svg>
+  );
+}
+
+/** TopoContours — concentric wavy lines like a topographic survey map.
+ *  Use on: §04 named projects, §10 coverage (place / territory). */
+function TopoContours({
+  color = SOUND,
+  opacity = 0.10,
+  position = "br",
+}: {
+  color?: string;
+  opacity?: number;
+  position?: "tl" | "tr" | "bl" | "br";
+}) {
+  const pos: Record<string, React.CSSProperties> = {
+    tl: { top: -240, left: -200 },
+    tr: { top: -240, right: -200 },
+    bl: { bottom: -240, left: -200 },
+    br: { bottom: -240, right: -200 },
+  };
+  return (
+    <svg
+      className="absolute pointer-events-none"
+      width="900"
+      height="700"
+      viewBox="0 0 900 700"
+      style={{ ...pos[position], opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g fill="none" stroke={color} strokeWidth="1.2">
+        <path d="M-50,350 C150,250 350,420 540,310 C720,210 850,360 950,300" />
+        <path d="M-50,400 C160,300 360,470 550,360 C730,260 860,410 950,350" />
+        <path d="M-50,450 C170,350 370,520 560,410 C740,310 870,460 950,400" />
+        <path d="M-50,500 C180,400 380,570 570,460 C750,360 880,510 950,450" />
+        <path d="M-50,550 C190,450 390,620 580,510 C760,410 890,560 950,500" />
+        <path d="M-50,600 C200,500 400,670 590,560 C770,460 900,610 950,550" />
+        <path d="M-50,650 C210,550 410,720 600,610 C780,510 910,660 950,600" />
+        <path d="M-50,300 C140,200 340,370 530,260 C710,160 840,310 950,250" />
+        <path d="M-50,250 C130,150 330,320 520,210 C700,110 830,260 950,200" />
+      </g>
+    </svg>
+  );
+}
+
+/** GrainStripes — soft vertical bands evoking wood grain or fabric weave.
+ *  Use on: §02 manifesto, §05 craft (family / craft personality). */
+function GrainStripes({ color = MOSS, opacity = 0.05 }: { color?: string; opacity?: number }) {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <pattern id="grain-stripes" width="90" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 12 0 L 12 60" stroke={color} strokeWidth="0.5" />
+          <path d="M 34 0 L 34 60" stroke={color} strokeWidth="1.1" />
+          <path d="M 58 0 L 58 60" stroke={color} strokeWidth="0.4" />
+          <path d="M 74 0 L 74 60" stroke={color} strokeWidth="0.8" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grain-stripes)" />
+    </svg>
+  );
+}
+
+/** FloorPlanOutlines — schematic room outlines with door swings + a label.
+ *  Use on: §06 services (the "what we build" plan). */
+function FloorPlanOutlines({
+  color = SOUND,
+  opacity = 0.09,
+}: {
+  color?: string;
+  opacity?: number;
+}) {
+  return (
+    <svg
+      className="absolute pointer-events-none"
+      width="640"
+      height="480"
+      viewBox="0 0 640 480"
+      style={{ top: 60, right: -80, opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g fill="none" stroke={color} strokeWidth="1.5">
+        {/* Outer wall */}
+        <rect x="40" y="40" width="560" height="400" />
+        {/* Inner walls */}
+        <line x1="40" y1="220" x2="320" y2="220" />
+        <line x1="320" y1="40" x2="320" y2="440" />
+        <line x1="320" y1="280" x2="600" y2="280" />
+        {/* Door swing arcs */}
+        <path d="M 200 220 A 40 40 0 0 1 240 260" />
+        <path d="M 320 160 A 40 40 0 0 1 360 200" strokeDasharray="0" />
+        <path d="M 480 280 A 40 40 0 0 1 520 320" />
+        {/* Dimension ticks */}
+        <line x1="40" y1="20" x2="600" y2="20" strokeDasharray="4 4" strokeWidth="0.6" />
+        <line x1="40" y1="14" x2="40" y2="26" strokeWidth="0.6" />
+        <line x1="600" y1="14" x2="600" y2="26" strokeWidth="0.6" />
+      </g>
+      <text
+        x="320"
+        y="14"
+        textAnchor="middle"
+        fontSize="9"
+        fontFamily={FONT_HEAD}
+        fill={color}
+        letterSpacing="2"
+      >
+        FLOOR PLAN · 32&apos; 0&quot;
+      </text>
+    </svg>
+  );
+}
+
+/** GiantQuoteMark — oversized opening quotation mark behind testimonials.
+ *  Use on: §09 voices (customer quotes). */
+function GiantQuoteMark({
+  color = SOUND,
+  opacity = 0.07,
+  position = "tl",
+}: {
+  color?: string;
+  opacity?: number;
+  position?: "tl" | "tr";
+}) {
+  const pos: React.CSSProperties =
+    position === "tr" ? { top: 20, right: 40 } : { top: 20, left: 40 };
+  return (
+    <svg
+      className="absolute pointer-events-none"
+      width="420"
+      height="420"
+      viewBox="0 0 100 100"
+      style={{ ...pos, opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <text
+        x="50"
+        y="78"
+        textAnchor="middle"
+        fontSize="120"
+        fontFamily="Georgia, serif"
+        fontWeight="700"
+        fill={color}
+      >
+        &ldquo;
+      </text>
+    </svg>
+  );
+}
+
+/** SealStamp — faded official-seal circle with rotating text border.
+ *  Use on: §08 credentials (license / bond / insurance proof). */
+function SealStamp({
+  color = MOSS,
+  opacity = 0.08,
+  position = "tr",
+}: {
+  color?: string;
+  opacity?: number;
+  position?: "tl" | "tr" | "bl" | "br";
+}) {
+  const pos: Record<string, React.CSSProperties> = {
+    tl: { top: 60, left: 60 },
+    tr: { top: 60, right: 60 },
+    bl: { bottom: 60, left: 60 },
+    br: { bottom: 60, right: 60 },
+  };
+  return (
+    <svg
+      className="absolute pointer-events-none"
+      width="320"
+      height="320"
+      viewBox="0 0 200 200"
+      style={{ ...pos[position], opacity }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <path
+          id="seal-curve"
+          d="M 100,100 m -75,0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0"
+        />
+      </defs>
+      <g fill="none" stroke={color}>
+        <circle cx="100" cy="100" r="90" strokeWidth="2" />
+        <circle cx="100" cy="100" r="78" strokeWidth="1" />
+        <circle cx="100" cy="100" r="58" strokeWidth="0.8" strokeDasharray="3 3" />
+      </g>
+      <text fontSize="10" fontFamily={FONT_HEAD} fill={color} letterSpacing="4">
+        <textPath href="#seal-curve" startOffset="0">
+          ALL IN ONE SERVICES · LICENSED · BONDED · INSURED ·
+        </textPath>
+      </text>
+      <g fill={color}>
+        <text
+          x="100"
+          y="92"
+          textAnchor="middle"
+          fontSize="9"
+          fontFamily={FONT_HEAD}
+          letterSpacing="3"
+        >
+          EST.
+        </text>
+        <text
+          x="100"
+          y="118"
+          textAnchor="middle"
+          fontSize="28"
+          fontFamily={FONT_HEAD}
+          fontWeight="700"
+        >
+          2016
+        </text>
+      </g>
+    </svg>
   );
 }
 
@@ -832,6 +1100,7 @@ export default function AllInOneServicesPage() {
 
         {/* ────────────────────── 02 · MANIFESTO (Paper + moss tint) ────────────────────── */}
         <section className="relative overflow-hidden" style={{ background: CREAM_BG }}>
+          <GrainStripes color={MOSS} opacity={0.05} />
           <SectionTint color={MOSS} position="tl" opacity={0.08} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="02" label="Who builds your project" tone="blueprint" theme="cream" />
@@ -908,6 +1177,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
+          <BlueprintGrid color={SOUND} opacity={0.07} />
           <SectionTint color={ACCENT} position="tr" opacity={0.07} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
@@ -962,7 +1232,7 @@ export default function AllInOneServicesPage() {
                     <span
                       className="absolute top-3 left-3 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-[0.20em]"
                       style={{
-                        background: BLUEPRINT_GRAD,
+                        background: SOUND_GRAD,
                         color: "#fef6e8",
                         fontFamily: FONT_HEAD,
                       }}
@@ -1028,7 +1298,7 @@ export default function AllInOneServicesPage() {
                     <span
                       className="absolute top-3 left-3 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-[0.20em]"
                       style={{
-                        background: BLUEPRINT_GRAD,
+                        background: SOUND_GRAD,
                         color: "#fef6e8",
                         fontFamily: FONT_HEAD,
                       }}
@@ -1090,6 +1360,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden"
           style={{ background: CREAM_BG }}
         >
+          <TopoContours color={MOSS} position="br" opacity={0.09} />
           <SectionTint color={MOSS_LIGHT} position="br" opacity={0.10} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
@@ -1173,6 +1444,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
+          <GrainStripes color={ACCENT} opacity={0.04} />
           <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.08} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="05" label="The craft" />
@@ -1235,6 +1507,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ borderColor: RULE }}
         >
+          <FloorPlanOutlines color={SOUND} opacity={0.09} />
           <SectionTint color={MOSS} position="tr" opacity={0.09} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="06" label="What we build" tone="blueprint" />
@@ -1318,6 +1591,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
+          <BlueprintGrid color={SOUND} opacity={0.04} />
           <SectionTint color={ACCENT_GOLD} position="tl" opacity={0.08} />
           <SectionTint color={MOSS_LIGHT} position="br" opacity={0.06} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
@@ -1394,6 +1668,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden"
           style={{ background: CREAM_BG }}
         >
+          <SealStamp color={MOSS} position="tr" opacity={0.08} />
           <SectionTint color={MOSS} position="center" opacity={0.07} size={900} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="08" label="Receipts, not slogans" tone="blueprint" theme="cream" />
@@ -1527,6 +1802,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
+          <GiantQuoteMark color={SOUND} position="tl" opacity={0.07} />
           <SectionTint color={ACCENT} position="bl" opacity={0.08} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
             <SectionNumber n="09" label="What Kyle's customers say" />
@@ -1612,6 +1888,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ borderColor: RULE }}
         >
+          <TopoContours color={SOUND} position="bl" opacity={0.10} />
           <SectionTint color={MOSS_LIGHT} position="br" opacity={0.09} />
           <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.05} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
@@ -1716,6 +1993,7 @@ export default function AllInOneServicesPage() {
           className="relative overflow-hidden border-t"
           style={{ background: BG_ALT, borderColor: RULE }}
         >
+          <BlueprintGrid color={ACCENT} opacity={0.05} />
           <SectionTint color={ACCENT_LIGHT} position="tl" opacity={0.10} size={800} />
           <SectionTint color={ACCENT_GOLD} position="br" opacity={0.08} size={800} />
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 lg:py-20">
