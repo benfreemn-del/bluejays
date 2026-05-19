@@ -133,12 +133,29 @@ export default function LCACOwnerPortal() {
     <main style={pageWrap}>
       <header style={headerStyle}>
         <div style={headerInner}>
-          <div>
-            <p style={kicker}>Owner Portal · Lewis County Autism Coalition</p>
-            <h1 style={h1}>Welcome, Michelle.</h1>
-            <p style={subhead}>
-              Your one-page dashboard for the coalition — programs, events, inboxes, and how to edit anything yourself.
-            </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/sites/lcac/assets/images/logo.png"
+              alt="Lewis County Autism Coalition"
+              width={64}
+              height={64}
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                objectFit: "contain",
+                flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(13,148,136,0.18)",
+              }}
+            />
+            <div style={{ minWidth: 0 }}>
+              <p style={kicker}>Owner Portal · Lewis County Autism Coalition</p>
+              <h1 style={h1}>Welcome, Michelle.</h1>
+              <p style={subhead}>
+                Your one-page dashboard for the coalition — programs, events, inboxes, and how to edit anything yourself.
+              </p>
+            </div>
           </div>
           <Link href="https://lcautism-coalition.vercel.app/" target="_blank" style={primaryBtn}>
             ↗ Open the live site
@@ -434,7 +451,24 @@ function FutureTab() {
       ...cardLight(),
       background: `linear-gradient(135deg, rgba(13,148,136,0.06), rgba(245,158,11,0.05))`,
       borderColor: `${ACCENT}33`,
+      position: "relative",
+      overflow: "hidden",
     }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/sites/lcac/assets/images/logo.png"
+        alt=""
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: -28,
+          right: -28,
+          width: 160,
+          height: 160,
+          opacity: 0.08,
+          pointerEvents: "none",
+        }}
+      />
       <p style={smallLabel}>Preview · what the next level could feel like</p>
       <h2 style={h2}>The Mission Dashboard</h2>
       <p style={lead}>
