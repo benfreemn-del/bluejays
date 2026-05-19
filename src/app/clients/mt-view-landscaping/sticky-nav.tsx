@@ -60,21 +60,21 @@ export default function StickyNav({
             alt={businessName}
             className="h-12 sm:h-16 w-auto opacity-95 group-hover:opacity-100 transition-opacity"
           />
-          <span className="hidden md:block font-[family-name:var(--font-playfair)] text-[20px] sm:text-[22px] tracking-tight text-[#1C1F1A] leading-[1.05]">
+          <span className="hidden md:block font-[family-name:var(--font-playfair)] text-[24px] sm:text-[28px] tracking-tight text-[#1C1F1A] leading-[1.05]">
             Mountain View
-            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#A8A294] font-[family-name:var(--font-inter)] font-medium mt-1">
+            <span className="block text-[11px] sm:text-[12px] tracking-[0.22em] uppercase text-[#A8A294] font-[family-name:var(--font-inter)] font-medium mt-1">
               Landscape &amp; Design
             </span>
           </span>
         </a>
 
         {/* Desktop anchors — quiet underline hover */}
-        <nav className="hidden lg:flex items-center gap-10 font-[family-name:var(--font-inter)] text-[13px] tracking-wide text-[#1C1F1A]/75">
+        <nav className="hidden lg:flex items-center gap-10 font-[family-name:var(--font-inter)] text-[15px] tracking-wide text-[#1C1F1A]/80 font-medium">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="relative hover:text-[#1C1F1A] transition-colors after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-px after:bg-[#3E4A36] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left"
+              className="relative hover:text-[#1C1F1A] transition-colors after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#15803d] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left"
             >
               {l.label}
             </a>
@@ -92,9 +92,9 @@ export default function StickyNav({
           </a>
           <a
             href={phoneHref}
-            className="hidden sm:inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[13px] font-medium text-[#1C1F1A] hover:text-[#3E4A36] transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[15px] font-semibold text-[#1C1F1A] hover:text-[#15803d] transition-colors"
           >
-            <Phone size={15} weight="duotone" />
+            <Phone size={17} weight="duotone" className="text-[#15803d]" />
             {phoneDisplay}
           </a>
           <button

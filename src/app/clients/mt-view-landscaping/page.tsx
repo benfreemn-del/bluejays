@@ -299,6 +299,86 @@ const REVIEWS = [
 const GOOGLE_REVIEWS_URL =
   "https://www.google.com/maps/place/Mountain+View+Landscape+%26+Design/@47.3207062,-122.0984311,17z/data=!4m8!3m7!1s0x5490f596db529cf5:0x8182c072f204747f!8m2!3d47.3207062!4d-122.0984311!9m1!1b1";
 
+/* ───────────────────── ACCENT COLORS ─────────────────────
+ * Adding back some saturated greenery + autumn warmth on top of the
+ * editorial Paper/Ink base. Original v4 spec banned saturated greens
+ * (too "trade contractor") but the all-paper page reads too monochrome
+ * — these accents punch through just enough to make the page feel alive
+ * without losing the editorial restraint.
+ */
+const ACCENT_GREEN = "#15803d";   // forest green — for CTA underlines, badges
+const ACCENT_GREEN_BRIGHT = "#22c55e"; // brighter — for status dots, hover
+const ACCENT_AUTUMN = "#c2410c";  // warm autumn — for leaf accent color
+const ACCENT_MOSS_DEEP = "#2f3a28"; // deeper moss — for richer text accents
+
+/* ───────────────────── FLOATING LEAVES ─────────────────────
+ * Ambient organic motion across the page background. Brought back per
+ * Ben's review — the original spec called for removing them as
+ * "small-business-y" but the page reads dead without organic motion.
+ * This version: fewer leaves (10), varied autumn + green colors,
+ * subtle (22-32% opacity), slow drift (16-26s per cycle), fixed
+ * positioning so they're always visible. Hidden under reduced motion
+ * + on mobile (perf + visual noise on small screens).
+ */
+function FloatingLeaves() {
+  const reducedMotion = useReducedMotion();
+  if (reducedMotion) return null;
+
+  const leaves = Array.from({ length: 10 }, (_, i) => ({
+    id: i,
+    x: 5 + Math.random() * 90,
+    delay: Math.random() * 14,
+    duration: 16 + Math.random() * 10,
+    size: 20 + Math.random() * 14,
+    opacity: 0.22 + Math.random() * 0.1,
+    rotation: Math.random() * 360,
+    sway: 40 + Math.random() * 60,
+    color:
+      i % 4 === 0
+        ? ACCENT_AUTUMN
+        : i % 4 === 1
+          ? ACCENT_GREEN
+          : i % 4 === 2
+            ? ACCENT_MOSS_DEEP
+            : "#6B5A3E",
+  }));
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden lg:block">
+      {leaves.map((l) => (
+        <motion.svg
+          key={l.id}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill={l.color}
+          className="absolute"
+          style={{
+            left: `${l.x}%`,
+            width: `${l.size}px`,
+            height: `${l.size}px`,
+            opacity: l.opacity,
+            willChange: "transform",
+          }}
+          animate={{
+            y: ["-8vh", "108vh"],
+            x: [-l.sway / 2, l.sway / 2, -l.sway / 2],
+            rotate: [l.rotation, l.rotation + 360],
+            opacity: [0, l.opacity, l.opacity, 0],
+          }}
+          transition={{
+            y: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            x: { duration: l.duration / 3, repeat: Infinity, delay: l.delay, ease: "easeInOut" },
+            rotate: { duration: l.duration, repeat: Infinity, delay: l.delay, ease: "linear" },
+            opacity: { duration: l.duration, repeat: Infinity, delay: l.delay, times: [0, 0.08, 0.9, 1] },
+          }}
+        >
+          {/* Hand-drawn leaf silhouette — narrow oval with a stem */}
+          <path d="M12 2 C 17 5, 19 11, 17 17 C 14 21, 9 21, 7 17 C 5 11, 7 5, 12 2 Z M12 4 L 12 19" stroke={l.color} strokeWidth="0.5" />
+        </motion.svg>
+      ))}
+    </div>
+  );
+}
 
 /* ───────────────────── ANIMATION VARIANTS ───────────────────── */
 
@@ -362,14 +442,14 @@ function SectionMark({
     <>
       <span
         aria-hidden
-        className="absolute top-4 right-4 sm:top-8 sm:right-8 lg:top-12 lg:right-12 font-[family-name:var(--font-playfair)] font-light leading-none text-[#1C1F1A]/[0.05] select-none pointer-events-none text-[110px] sm:text-[180px] lg:text-[260px] z-0"
+        className="absolute top-4 right-4 sm:top-8 sm:right-8 lg:top-12 lg:right-12 font-[family-name:var(--font-playfair)] font-light leading-none text-[#15803d]/[0.09] select-none pointer-events-none text-[110px] sm:text-[180px] lg:text-[260px] z-0"
       >
         {number}
       </span>
       {glyph && (
         <span
           aria-hidden
-          className={`absolute select-none pointer-events-none text-[#1C1F1A]/[0.05] leading-none z-0 ${glyphClass ?? ""}`}
+          className={`absolute select-none pointer-events-none text-[#15803d]/[0.08] leading-none z-0 ${glyphClass ?? ""}`}
         >
           {glyph}
         </span>
@@ -410,7 +490,7 @@ function Hero() {
               src={PHOTOS.hero}
               alt="Tiered red-block retaining wall with stone steps, mature plantings, and path-light bollards at golden hour — a Mountain View Landscape & Design project"
               style={{ y: photoY }}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover object-[center_55%]"
             />
             {/* Soft paper-tinted radial scrim anchored at lower-left so the Ink
                 type column overlay reads cleanly against the darker fence +
@@ -435,7 +515,7 @@ function Hero() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="font-[family-name:var(--font-inter)] text-[10px] sm:text-[11px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+              className="font-[family-name:var(--font-inter)] text-[10px] sm:text-[11px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
             >
               A Pacific Northwest practice · est. 1976
             </motion.p>
@@ -479,10 +559,10 @@ function Hero() {
             >
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 self-start font-[family-name:var(--font-inter)] text-[14px] tracking-wide text-[#1C1F1A] underline underline-offset-[6px] decoration-1 hover:decoration-2 hover:text-[#3E4A36] transition-all"
+                className="inline-flex items-center gap-2 self-start font-[family-name:var(--font-inter)] text-[15px] font-medium tracking-wide text-[#15803d] underline underline-offset-[6px] decoration-2 hover:decoration-[3px] hover:text-[#0e5a2c] transition-all"
               >
                 Request a site visit
-                <ArrowRight size={14} weight="bold" />
+                <ArrowRight size={15} weight="bold" />
               </a>
               <a
                 href={BUSINESS.phoneHref}
@@ -522,7 +602,7 @@ function Practice() {
           <img
             src={PHOTOS.olanoLead}
             alt="Half-acre landscape transformation by Mountain View — multiple disciplines (planting, hardscape, lawn, lighting) in one frame"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
             loading="lazy"
           />
         </motion.div>
@@ -534,7 +614,7 @@ function Practice() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
           >
             The Practice
           </motion.p>
@@ -567,14 +647,21 @@ function Practice() {
             variants={stagger}
             className="mt-12 divide-y divide-[#A8A294]/30"
           >
-            {DISCIPLINES.map((d) => (
-              <motion.li key={d.name} variants={fadeUp} className="py-5 group">
-                <div className="flex items-baseline gap-4">
-                  <span className="font-[family-name:var(--font-playfair)] font-medium text-[20px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#3E4A36] transition-colors duration-300">
+            {DISCIPLINES.map((d, i) => (
+              <motion.li
+                key={d.name}
+                variants={fadeUp}
+                className="py-5 group cursor-default"
+              >
+                <div className="flex items-baseline gap-5">
+                  <span className="font-[family-name:var(--font-inter)] text-[11px] font-semibold tracking-[0.18em] text-[#15803d] tabular-nums w-7 shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-[family-name:var(--font-playfair)] font-medium text-[20px] sm:text-[22px] text-[#1C1F1A] group-hover:text-[#15803d] transition-colors duration-300">
                     {d.name}
                   </span>
                 </div>
-                <p className="mt-1.5 font-[family-name:var(--font-inter)] text-[14px] text-[#1C1F1A]/65 leading-[1.6]">
+                <p className="mt-1.5 ml-12 font-[family-name:var(--font-inter)] text-[14px] text-[#1C1F1A]/65 leading-[1.6]">
                   {d.desc}
                 </p>
               </motion.li>
@@ -604,7 +691,7 @@ function SelectedWork() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.6 }}
-          className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+          className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
         >
           Selected Work
         </motion.p>
@@ -653,7 +740,7 @@ function ProjectMonograph({
         <img
           src={project.primary}
           alt={`${project.name} — primary view`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
           loading={index === 0 ? "eager" : "lazy"}
         />
       </motion.div>
@@ -707,7 +794,7 @@ function ProjectMonograph({
               <img
                 src={src}
                 alt={`${project.name} — detail ${i + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
                 loading="lazy"
               />
             </motion.div>
@@ -759,7 +846,7 @@ function ProcessHorizontal() {
         <SectionMark number="03" />
         {/* Header — fixed at top of pinned viewport */}
         <header className="px-12 pt-16 pb-8 max-w-[1700px] mx-auto w-full">
-          <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
+          <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-4">
             The Process
           </p>
           <h2 className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[52px]">
@@ -782,7 +869,7 @@ function ProcessHorizontal() {
                   <img
                     src={step.photo}
                     alt={`Step ${step.n} — ${step.name}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                     loading="lazy"
                   />
                 </div>
@@ -842,7 +929,7 @@ function ProcessVertical() {
     <section id="process" className="relative bg-[#F5F1E8] py-12 sm:py-14 lg:py-18 overflow-hidden">
       <SectionMark number="03" />
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 sm:px-10">
-        <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4">
+        <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-4">
           The Process
         </p>
         <h2 className="font-[family-name:var(--font-playfair)] font-light text-[#1C1F1A] leading-[1.05] tracking-[-0.022em] text-[clamp(40px,5.5vw,68px)]">
@@ -870,7 +957,7 @@ function ProcessVertical() {
                 {step.name}
               </h3>
               <div className="relative mt-5 aspect-[16/10] overflow-hidden">
-                <img src={step.photo} alt={`Step ${step.n}`} className="w-full h-full object-cover" loading="lazy" />
+                <img src={step.photo} alt={`Step ${step.n}`} className="w-full h-full object-cover object-center" loading="lazy" />
               </div>
               <p className="mt-5 font-[family-name:var(--font-inter)] text-[15px] leading-[1.65] text-[#1C1F1A]/72 max-w-[58ch]">
                 {step.body}
@@ -943,7 +1030,7 @@ function MaintenancePlans() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-4"
           >
             Maintenance Plans
           </motion.p>
@@ -980,7 +1067,11 @@ function MaintenancePlans() {
             <motion.article
               key={t.name}
               variants={fadeUp}
-              className="relative bg-[#FBF8F1] border border-[#A8A294]/35 p-8 sm:p-9 lg:p-10 flex flex-col"
+              className={`relative border p-8 sm:p-9 lg:p-10 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#15803d]/10 ${
+                t.accent
+                  ? "bg-gradient-to-b from-[#FBF8F1] to-[#F0EBDC] border-[#15803d]/30"
+                  : "bg-[#FBF8F1] border-[#A8A294]/35"
+              }`}
             >
               {/* Full Care: 4px Bark bar on top + eyebrow */}
               {t.accent && (
@@ -991,9 +1082,9 @@ function MaintenancePlans() {
                     viewport={{ once: true, amount: 0.6 }}
                     transition={{ delay: 0.4, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                     style={{ originX: 0 }}
-                    className="absolute top-0 left-0 right-0 h-1 bg-[#6B5A3E]"
+                    className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#15803d] via-[#22c55e] to-[#15803d]"
                   />
-                  <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#6B5A3E] mb-3">
+                  <p className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-3 font-semibold">
                     Most chosen
                   </p>
                 </>
@@ -1090,7 +1181,7 @@ function Hunsakers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
           >
             The Hunsakers
           </motion.p>
@@ -1215,7 +1306,7 @@ function ClimateSmart() {
           <img
             src={PHOTOS.climate}
             alt="Climate-adapted plantings woven into a hardscape — a Mountain View Landscape & Design installation"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
             loading="lazy"
           />
         </motion.div>
@@ -1226,7 +1317,7 @@ function ClimateSmart() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-4"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-4"
           >
             Climate-Smart by Default
           </motion.p>
@@ -1300,7 +1391,7 @@ function Voices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
           >
             Reviews · Service Area · FAQ
           </motion.p>
@@ -1325,7 +1416,7 @@ function Voices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-6"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-6"
           >
             Where we work
           </motion.p>
@@ -1367,7 +1458,7 @@ function Voices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.6 }}
-            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-6"
+            className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-6"
           >
             Frequently asked
           </motion.p>
@@ -1458,7 +1549,7 @@ function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ duration: 0.6 }}
-              className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#3E4A36] mb-5"
+              className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.24em] uppercase text-[#15803d] mb-5"
             >
               Get in touch
             </motion.p>
@@ -1532,8 +1623,11 @@ function Contact() {
               </div>
             </dl>
 
-            <p className="mt-10 inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[12px] tracking-[0.14em] uppercase text-[#3E4A36]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3E4A36] animate-pulse" />
+            <p className="mt-10 inline-flex items-center gap-2 font-[family-name:var(--font-inter)] text-[12px] tracking-[0.14em] uppercase text-[#15803d] font-semibold">
+              <span className="relative flex w-2 h-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#15803d]" />
+              </span>
               Now booking spring &amp; summer projects
             </p>
           </div>
@@ -1655,7 +1749,8 @@ function Footer() {
 
 export default function MtViewLandscapingPage() {
   return (
-    <main className="bg-[#F5F1E8] text-[#1C1F1A] min-h-screen antialiased font-[family-name:var(--font-inter)]">
+    <main className="relative bg-[#F5F1E8] text-[#1C1F1A] min-h-screen antialiased font-[family-name:var(--font-inter)]">
+      <FloatingLeaves />
       <StickyNav
         businessName={BUSINESS.name}
         logoSrc={LOGO}
