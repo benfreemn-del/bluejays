@@ -5627,7 +5627,7 @@ const ZENITH_FUNNELS: FunnelDef[] = [
     accentText: "text-blue-300",
     steps: [
       { day: 0, channel: "email", label: "Coach guide PDF" },
-      { day: 2, channel: "voicemail", label: "Caleb VM · saw you grabbed the guide" },
+      { day: 2, channel: "voicemail", label: "Philip VM · saw you grabbed the guide" },
       { day: 5, channel: "email", label: "Free club demo offer + drill bundle" },
       { day: 10, channel: "sms", label: "SMS demo confirmation + calendar link" },
       {

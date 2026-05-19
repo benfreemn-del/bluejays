@@ -310,7 +310,7 @@ export function getAuditEmail3(args: {
 
     const body = `Quick case study before I let you get on with your day.
 
-Caleb runs Tekky / Zenith Sports — manufacturer, builds soccer training equipment. He took the same audit you took. Scored similar. Had the same skepticism you might be having right now ("$10k for a website? That's insane").
+Philip runs Tekky / Zenith Sports — manufacturer, builds soccer training equipment. He took the same audit you took. Scored similar. Had the same skepticism you might be having right now ("$10k for a website? That's insane").
 
 He paid $10,000 in February. First month with the AI System running, his inbound inquiries doubled.
 

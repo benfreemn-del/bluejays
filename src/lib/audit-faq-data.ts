@@ -65,7 +65,7 @@ export const AUDIT_FAQ_ENTRIES: readonly AuditFaqEntry[] = [
       "This is an AI System. The website is one of 21 modules. The math: 17 universal modules — " +
       "custom site + AI inbound responder + customer-portal backend + missed-call auto-texter + " +
       "review funnel + lead-scoring + content engine — each $2k-$5k standalone. " +
-      "Manufacturers like Jake at ITC Quick Attach or Caleb at Tekky get 4 bonus modules on top: " +
+      "Manufacturers like Jake at ITC Quick Attach or Philip at Tekky get 4 bonus modules on top: " +
       "distributor portal, B2B quote system, custom-order intake, inventory sync. " +
       "That's ~$50k of value at $10k. " +
       "Most agencies sell you a $10k brochure. We sell you a $10k machine that keeps making your money back. " +

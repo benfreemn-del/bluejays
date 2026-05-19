@@ -116,7 +116,7 @@ every slug.
 
 | Slug | Owner-Portal Backend | AI Marketing System | Sales Portal (commission program) | Notes |
 |---|---|---|---|---|
-| `zenith-sports` | ✓ | ✓ | ✓ | TEKKY · 4-qtr $10K AI plan · soccer, Caleb + Philip + Paul |
+| `zenith-sports` | ✓ | ✓ | ✓ | TEKKY · 4-qtr $10K AI plan · soccer, Philip + Paul |
 | `itc-quick-attach` | ✓ | ✓ (queued) | ✓ | Jake · $9.7K AI System · tractor accessories · signing later |
 | `laser-lakes` | ✓ | ✗ | ✗ | Nate · custom site + Customers/Email tab ONLY · explicitly NO AI features |
 | `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |

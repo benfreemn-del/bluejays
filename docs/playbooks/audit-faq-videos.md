@@ -76,7 +76,7 @@ you the math really quick: 17 universal modules — your custom site
 plus an AI inbound responder, customer-portal backend, missed-call
 auto-texter, review funnel, lead-scoring, content engine, the whole
 thing — those are each $2k-$5k standalone. Then if you're a manufacturer
-like Jake at ITC Quick Attach or Caleb at Tekky, you get 4 more bonus
+like Jake at ITC Quick Attach or Philip at Tekky, you get 4 more bonus
 modules: distributor portal, B2B quote system, custom-order intake,
 inventory sync. That's about $50k of value, $10k price. The website is
 the wrapper; the AI System is the engine.
