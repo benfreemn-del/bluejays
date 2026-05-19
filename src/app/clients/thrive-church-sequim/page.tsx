@@ -250,7 +250,7 @@ function Hero() {
             </span>
             <blockquote className="font-[Fraunces] text-xl italic leading-snug text-[#0d4f4a] sm:text-2xl" style={{ fontWeight: 500 }}>
               The light shines in the darkness, and the darkness has not
-              overcome it.
+              overcome it.&rdquo;
             </blockquote>
             <figcaption className="mt-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
               John 1:5
