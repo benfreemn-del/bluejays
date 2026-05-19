@@ -15,12 +15,12 @@ import BackToTopButton from "@/components/BackToTopButton";
 const SITE_URL =
   "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes";
 const HERO_PHOTO_URL =
-  "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/RenderedImage.jpg";
+  "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula.jpg";
 
-const TITLE =
-  "Elite Hardscapes & Landscaping · Port Angeles WA · Pavers, Walls, Lawn Care";
+// SEO-tight: title ≤60 chars (Google SERP truncate), description ≤155 chars.
+const TITLE = "Elite Hardscapes & Landscaping — Port Angeles WA";
 const DESCRIPTION =
-  "Olympic Peninsula's hands-on hardscape + landscape crew. Retaining walls, paver patios, fences, hydroseed, plantings, and weekly property maintenance — Sequim, Port Angeles, Port Townsend, Forks. Locally owned, fully insured. Owner-operated by Tyler Fritz.";
+  "Tyler Fritz's owner-operated hardscape + landscape crew on the Olympic Peninsula. Retaining walls, paver patios, hydroseed, weekly maintenance.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -65,7 +65,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   name: "Elite Hardscapes & Landscaping",
   url: SITE_URL,
   image: HERO_PHOTO_URL,
-  logo: "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/9BC866E7-33A3-4704-B978-7D3BED20191C.png",
+  logo: "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/logo-elite-hardscapes.png",
   description: DESCRIPTION,
   telephone: "+1-360-797-4448",
   founder: { "@type": "Person", name: "Tyler Fritz" },
@@ -153,6 +153,89 @@ const LOCAL_BUSINESS_SCHEMA = {
       },
     ],
   },
+  // Inline Review objects — paired with aggregateRating above, these give
+  // Google the actual quote text + author so the SERP rich snippet can
+  // show real review snippets for Tyler instead of just the star count.
+  // Mirrors STATIC_REVIEWS in page.tsx — keep them in sync.
+  review: [
+    {
+      "@type": "Review",
+      author: { "@type": "Person", name: "Elliot Witecki" },
+      reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
+      reviewBody: "Excellent work on my retaining wall backyard project.",
+    },
+    {
+      "@type": "Review",
+      author: { "@type": "Person", name: "David Overbaugh" },
+      reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
+      reviewBody:
+        "I had a great experience working with Tyler on my project. He communicates clearly and keeps you informed every step of the way, which made the whole process smooth and stress-free.",
+    },
+    {
+      "@type": "Review",
+      author: { "@type": "Person", name: "Melissa Moss" },
+      reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
+      reviewBody:
+        "I highly recommend Tyler! He always communicates with you and gets back to you quickly. He always does what I ask and makes my yard beautiful. He always shows up when he says and works hard.",
+    },
+  ],
+};
+
+// FAQPage JSON-LD — gets Google's expandable "People also ask" rich result
+// when the page ranks for question-shaped queries. Mirrors FAQS in page.tsx.
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What's your service area?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We cover the Olympic Peninsula — Sequim, Port Angeles, Carlsborg, Port Townsend, Joyce, Diamond Point, Forks and the rest of Clallam County. If you're close to the edge and not sure, call. We'll tell you straight.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are estimates really free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. We come out, walk the property, and put a written estimate together within a few days. No deposit pressure, no high-pressure sales, no obligation to book.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are you licensed and insured?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes — licensed in Washington State and fully insured. Documentation available on request, and we're happy to confirm before the walkthrough if that's important to you.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How fast can you start?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Maintenance routes usually within one to two weeks. Hardscape and design/install projects depend on scope and weather — PNW rain windows matter. We give a realistic timeline at the walkthrough, not a hopeful one.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you take small jobs or just big ones?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Both. A single front bed refresh, a fence repair, a one-off cleanup — same crew, same standard. Big multi-week installs are where we shine, but small jobs keep the routes balanced and the neighbors happy.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When's the best season to start a project?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Spring and early fall are the sweet spots for plantings and hydroseed in the PNW. Hardscape can run most of the year as long as we're not pouring rain. Book your walkthrough 2-4 weeks before you want install to begin.",
+      },
+    },
+  ],
 };
 
 export default function EliteLayout({
@@ -177,6 +260,10 @@ export default function EliteLayout({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(LOCAL_BUSINESS_SCHEMA),
         }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <ClientTrackingScripts slug="elite-hardscapes-and-landscapes" />
       {children}

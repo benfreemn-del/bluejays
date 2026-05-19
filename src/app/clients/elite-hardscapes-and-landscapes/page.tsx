@@ -115,7 +115,7 @@ const BRAND = {
   // Routes to Ben's inbox for now (Tyler's email TBD — Ben forwards via text).
   email: "bluejaycontactme@gmail.com",
   estYear: "2022",
-  logo: `${PHOTO_BASE}/9BC866E7-33A3-4704-B978-7D3BED20191C.png`,
+  logo: `${PHOTO_BASE}/logo-elite-hardscapes.png`,
 };
 
 const PALETTE = {
@@ -144,75 +144,87 @@ const PALETTE = {
 
 const PORTFOLIO = [
   {
-    src: `${PHOTO_BASE}/2026-05-16-front-yard-blue-house.jpg`,
+    src: `${PHOTO_BASE}/curbside-bed-refresh-sequim.jpg`,
     title: "Curbside Bed Refresh",
     tag: "Landscape · Curved bed, lilac, mulch, fresh edging",
+    alt: "Curved curbside landscape bed with lilac plantings, mulch, and fresh edging in front of a blue house in Sequim, Washington",
     ratio: "aspect-[4/3]",
   },
   {
-    src: `${PHOTO_BASE}/2026-05-16-red-ornamental-bed.jpg`,
+    src: `${PHOTO_BASE}/front-bed-japanese-maple-port-angeles.jpg`,
     title: "Front-Bed Color Pop",
     tag: "Landscape · Japanese maple + mulch install",
+    alt: "Front-yard ornamental bed with red Japanese maple, fresh mulch, and accent plantings — Port Angeles, WA install",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/2026-05-16-boulder-feature.jpg`,
+    src: `${PHOTO_BASE}/driveway-boulder-feature-clallam-county.jpg`,
     title: "Driveway Boulder Feature",
     tag: "Hardscape · Stone accent + mulch bed shaping",
+    alt: "Driveway boulder feature with shaped mulch bed and ornamental plantings — Clallam County, WA",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/2026-05-12-excavator-jobsite.jpg`,
+    src: `${PHOTO_BASE}/yanmar-excavator-jobsite-peninsula.jpg`,
     title: "Site Prep · Yanmar on Jobsite",
     tag: "Capability · Excavator + dump trailer on a Peninsula build",
+    alt: "Yanmar mini excavator and dump trailer working a hardscape jobsite on the Olympic Peninsula",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_7199.jpg`,
+    src: `${PHOTO_BASE}/carlsborg-retaining-wall.jpg`,
     title: "Carlsborg Retaining Wall",
     tag: "Hardscape · Stack-block wall + walkway",
+    alt: "Stack-block retaining wall with paver walkway and step transitions installed in Carlsborg, Washington",
     ratio: "aspect-[4/3]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_0045.jpg`,
+    src: `${PHOTO_BASE}/paver-patio-grass-joints.jpg`,
     title: "Paver Patio · Grass Joints",
     tag: "Hardscape · Custom under-deck patio",
+    alt: "Custom paver patio with grass-filled joints set beneath a residential deck — Olympic Peninsula",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_9499.jpg`,
+    src: `${PHOTO_BASE}/sequim-front-yard-refresh.jpg`,
     title: "Sequim Front Yard Refresh",
     tag: "Landscape · Beds, mulch, walkway",
+    alt: "Sequim, WA front yard landscape refresh with fresh beds, mulch, and a new walkway",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_9330.jpg`,
+    src: `${PHOTO_BASE}/fern-garden-stone-path-steps.jpg`,
     title: "Fern Garden Path",
     tag: "Hardscape · Natural-stone + tie steps",
+    alt: "Natural-stone garden path with rough-timber tie steps through a fern garden — Peninsula hardscape build",
     ratio: "aspect-[4/5]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_6481.jpg`,
+    src: `${PHOTO_BASE}/hydroseed-lawn-install.jpg`,
     title: "Hydroseed Lawn Install",
     tag: "Landscape · Fresh hydroseed application",
+    alt: "Freshly applied green hydroseed lawn install across a graded yard — Olympic Peninsula property",
     ratio: "aspect-[4/3]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_1974.jpg`,
+    src: `${PHOTO_BASE}/cedar-privacy-fence-port-angeles.jpg`,
     title: "Cedar Privacy Fence",
     tag: "Hardscape · New-build cedar fence",
+    alt: "New-build cedar privacy fence along a residential property line — Port Angeles, WA",
     ratio: "aspect-[3/4]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_0877.jpg`,
+    src: `${PHOTO_BASE}/greenhouse-gravel-pad.jpg`,
     title: "Greenhouse Pad",
     tag: "Site work · Gravel pad + greenhouse",
+    alt: "Compacted gravel pad foundation with a residential greenhouse set on top — Peninsula site work",
     ratio: "aspect-[4/3]",
   },
   {
-    src: `${PHOTO_BASE}/IMG_5918.jpg`,
+    src: `${PHOTO_BASE}/rhododendron-bed-mulch-refresh.jpg`,
     title: "Rhododendron Bed",
     tag: "Landscape · Mulch refresh",
+    alt: "Rhododendron bed after a seasonal mulch refresh and edging — Olympic Peninsula landscape",
     ratio: "aspect-[3/4]",
   },
 ];
@@ -784,6 +796,34 @@ export default function Site() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Lightbox: index of the portfolio photo currently zoomed (null = closed).
+  // Esc closes; arrow keys page prev/next. Photo loops circularly so users
+  // can scroll through the whole portfolio without dead-ends.
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const closeLightbox = () => setLightboxIndex(null);
+  const showPrev = () =>
+    setLightboxIndex((i) =>
+      i === null ? null : (i - 1 + PORTFOLIO.length) % PORTFOLIO.length,
+    );
+  const showNext = () =>
+    setLightboxIndex((i) => (i === null ? null : (i + 1) % PORTFOLIO.length));
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") showPrev();
+      else if (e.key === "ArrowRight") showNext();
+    };
+    window.addEventListener("keydown", onKey);
+    // Lock scroll while lightbox is open so the page behind doesn't drift
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [lightboxIndex]);
   // Seeded with the 3 real GBP reviews scraped 2026-05-17 (STATIC_REVIEWS).
   // The Places API fetch below CAN overwrite this list once a Place ID
   // is wired up — but only if it returns >= 1 review, so static reviews
@@ -898,7 +938,7 @@ export default function Site() {
           >
             <img
               src={BRAND.logo}
-              alt="Elite Hardscapes & Landscaping"
+              alt="Elite Hardscapes & Landscaping — Olympic Peninsula hardscape and landscape contractor logo"
               className="h-20 md:h-24 w-auto transition-transform group-hover:scale-105"
             />
             <div className="hidden sm:block leading-none">
@@ -1017,8 +1057,8 @@ export default function Site() {
         {/* bg image */}
         <div className="absolute inset-0">
           <img
-            src={`${PHOTO_BASE}/RenderedImage.jpg`}
-            alt="Property maintenance on the Olympic Peninsula"
+            src={`${PHOTO_BASE}/hero-property-maintenance-peninsula.jpg`}
+            alt="Finished hardscape and landscape property maintained by Elite Hardscapes & Landscaping on the Olympic Peninsula — Sequim, Port Angeles, Washington"
             className="w-full h-full object-cover"
             style={{ filter: "saturate(0.95) brightness(0.7) contrast(1.05)" }}
           />
@@ -1257,6 +1297,212 @@ export default function Site() {
         </div>
       </section>
 
+      {/* ═══════════════ FEATURED TESTIMONIAL ═══════════════
+          Pulls David Overbaugh's full GBP quote (the longest + most
+          process-focused of the 3 static reviews) into a prominent
+          single-card position right after the trust strip. The
+          Google-reviews marquee at the bottom of the page still shows
+          all 3 reviews — this just gives the strongest one second-fold
+          weight. Sits BEFORE the Process section so the proof comes
+          first, then the explanation. */}
+      <section
+        id="featured-testimonial"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
+        style={{ background: PALETTE.inkSoft }}
+      >
+        <div className="relative max-w-[1100px] mx-auto px-6 md:px-10">
+          <Reveal>
+            <div className="text-center mb-10 md:mb-12">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.crimson }}
+                />
+                <span
+                  className="text-[11px] uppercase tracking-[0.3em]"
+                  style={{ color: PALETTE.crimsonHot, fontWeight: 600 }}
+                >
+                  From a real customer
+                </span>
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.crimson }}
+                />
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <figure
+              className="relative p-8 md:p-12 lg:p-14"
+              style={{
+                background: PALETTE.steel,
+                border: `1px solid ${PALETTE.steelLine}`,
+              }}
+            >
+              {/* large crimson quote-mark in upper-left as a visual anchor */}
+              <div
+                className="absolute -top-4 left-6 md:left-10 font-display leading-none select-none pointer-events-none"
+                style={{
+                  color: PALETTE.crimson,
+                  fontSize: "8rem",
+                  fontWeight: 700,
+                  opacity: 0.25,
+                }}
+                aria-hidden
+              >
+                &ldquo;
+              </div>
+
+              {/* 5 stars */}
+              <div className="flex items-center gap-1 mb-6 relative">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} size={20} weight="fill" color="#FBBF24" />
+                ))}
+              </div>
+
+              <blockquote
+                className="font-display text-2xl md:text-3xl lg:text-4xl leading-snug tracking-tightest relative"
+                style={{ color: PALETTE.bone, fontWeight: 500 }}
+              >
+                I had a great experience working with Tyler on my project.
+                He communicates clearly and keeps you informed every step
+                of the way, which made the whole process smooth and
+                stress-free.
+              </blockquote>
+
+              <figcaption className="mt-8 flex items-center gap-4">
+                <div
+                  className="w-10 h-px"
+                  style={{ background: PALETTE.crimsonHot }}
+                />
+                <div>
+                  <div
+                    className="text-sm uppercase tracking-[0.18em]"
+                    style={{ color: PALETTE.bone, fontWeight: 700 }}
+                  >
+                    David Overbaugh
+                  </div>
+                  <div
+                    className="text-[12px] mt-0.5"
+                    style={{ color: PALETTE.chrome }}
+                  >
+                    Verified Google review · 5 stars
+                  </div>
+                </div>
+              </figcaption>
+            </figure>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ═══════════════ PROCESS ═══════════════
+          4-step strip — reduces "how does this work" anxiety + builds
+          trust. Sits between Trust Strip and Services so prospects see
+          the FULL arc (proof → process → services → portfolio).
+          Pattern: numbered cards with bronze→crimson→navy→bronze tone
+          cycle (mirrors the rest of the Americana palette). */}
+      <section id="process" className="py-20 sm:py-24 lg:py-32 relative">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+          <Reveal>
+            <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.bronze }}
+                />
+                <span
+                  className="text-[11px] uppercase tracking-[0.3em]"
+                  style={{ color: PALETTE.bronze, fontWeight: 600 }}
+                >
+                  How We Work
+                </span>
+                <div
+                  className="w-8 h-px"
+                  style={{ background: PALETTE.bronze }}
+                />
+              </div>
+              <h2
+                className="font-display uppercase tracking-tightest leading-[0.98] text-4xl md:text-5xl lg:text-6xl"
+                style={{ color: PALETTE.bone, fontWeight: 700 }}
+              >
+                Four steps.{" "}
+                <span style={{ color: PALETTE.crimsonHot }}>No surprises.</span>
+              </h2>
+              <p
+                className="mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
+                style={{ color: PALETTE.boneDim }}
+              >
+                Every project runs the same way — quote, plan, build, walk-off.
+                You talk to the owner from first call to final cleanup.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {[
+              {
+                step: "01",
+                title: "Walkthrough",
+                body: "Call or text — we set a time to walk the property together. Free, no pressure, no deposit.",
+                accent: PALETTE.bronze,
+              },
+              {
+                step: "02",
+                title: "Written Estimate",
+                body: "Within a few days you get a written scope + price. No verbal-only quotes, no surprise change orders.",
+                accent: PALETTE.crimsonHot,
+              },
+              {
+                step: "03",
+                title: "Install",
+                body: "Same crew on your project from day one to walk-off. Real timelines built around PNW rain windows.",
+                accent: PALETTE.navyBright,
+              },
+              {
+                step: "04",
+                title: "Walk-Off",
+                body: "Property is left clean. We walk the finished work with you and follow up after the first big rain.",
+                accent: PALETTE.bronze,
+              },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div
+                  className="group h-full p-6 md:p-7 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden"
+                  style={{
+                    background: PALETTE.steel,
+                    border: `1px solid ${PALETTE.steelLine}`,
+                  }}
+                >
+                  <div
+                    className="absolute top-0 left-0 h-1 w-12 transition-all group-hover:w-full duration-500"
+                    style={{ background: s.accent }}
+                  />
+                  <div
+                    className="font-display text-4xl md:text-5xl mb-5 mt-2"
+                    style={{ color: s.accent, fontWeight: 700 }}
+                  >
+                    {s.step}
+                  </div>
+                  <h3
+                    className="font-display uppercase text-xl md:text-2xl tracking-display leading-tight mb-3"
+                    style={{ color: PALETTE.bone, fontWeight: 700 }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p
+                    className="text-[14px] leading-relaxed"
+                    style={{ color: PALETTE.chromeBright }}
+                  >
+                    {s.body}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════ SERVICES ═══════════════ */}
       <section id="services" className="py-20 sm:py-24 lg:py-32 relative">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10">
@@ -1431,26 +1677,32 @@ export default function Site() {
           <div className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6">
             {PORTFOLIO.map((p, i) => (
               <Reveal key={i} delay={(i % 3) * 100}>
-                <div
-                  className={`group relative block mb-5 md:mb-6 overflow-hidden break-inside-avoid ${p.ratio}`}
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(i)}
+                  aria-label={`Open ${p.title} — ${p.tag}`}
+                  className={`group relative block w-full mb-5 md:mb-6 overflow-hidden break-inside-avoid ${p.ratio} cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-offset-2`}
                   style={{
                     border: `1px solid ${PALETTE.steelLine}`,
                   }}
                 >
                   <img
                     src={p.src}
-                    alt={p.title}
+                    alt={p.alt}
                     className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                     style={{ filter: "saturate(0.9) contrast(1.05)" }}
                   />
+                  {/* Bottom gradient — ALWAYS visible on mobile (touch
+                      devices can't hover), reveal-on-hover on md+. */}
                   <div
-                    className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
+                    className="absolute inset-0 transition-opacity duration-500 opacity-100 md:opacity-0 md:group-hover:opacity-100"
                     style={{
                       background:
                         "linear-gradient(180deg, transparent 35%, rgba(10,10,10,0.92) 100%)",
                     }}
                   />
-                  <div className="absolute left-5 right-5 bottom-5 translate-y-2 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                  {/* Title + tag — ALWAYS visible on mobile, reveal on md+ hover. */}
+                  <div className="absolute left-5 right-5 bottom-5 translate-y-0 opacity-100 transition-all duration-500 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                     <div
                       className="text-[10px] uppercase tracking-[0.25em] mb-1"
                       style={{ color: PALETTE.crimsonHot, fontWeight: 600 }}
@@ -1464,7 +1716,7 @@ export default function Site() {
                       {p.title}
                     </div>
                   </div>
-                </div>
+                </button>
               </Reveal>
             ))}
           </div>
@@ -1573,8 +1825,8 @@ export default function Site() {
                 style={{ border: `1px solid ${PALETTE.steelLine}` }}
               >
                 <img
-                  src={`${PHOTO_BASE}/IMG_6672.jpg`}
-                  alt={`${BRAND.owner}, owner of Elite Hardscapes & Landscaping`}
+                  src={`${PHOTO_BASE}/owner-tyler-fritz-port-angeles.jpg`}
+                  alt={`Portrait of ${BRAND.owner}, owner-operator of Elite Hardscapes & Landscaping — Port Angeles, WA`}
                   className="w-full h-full object-cover object-top"
                   style={{ filter: "saturate(0.95) contrast(1.05)" }}
                 />
@@ -2461,6 +2713,105 @@ export default function Site() {
           </div>
         </div>
       </footer>
+
+      {/* ═══════════════ LIGHTBOX ═══════════════
+          Renders when lightboxIndex is non-null. Photo + caption +
+          prev/next arrows + ESC-to-close + tap-outside-to-close +
+          loops circularly. Mobile: swipe-equivalent via arrow buttons
+          (touch-friendly large hit targets). */}
+      {lightboxIndex !== null && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Portfolio photo — ${PORTFOLIO[lightboxIndex].title}`}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-8"
+          onClick={closeLightbox}
+        >
+          {/* close button */}
+          <button
+            type="button"
+            onClick={closeLightbox}
+            aria-label="Close photo"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 flex items-center justify-center text-white/90 hover:text-white transition-colors"
+            style={{
+              background: "rgba(0,0,0,0.6)",
+              border: `1px solid ${PALETTE.steelLine}`,
+            }}
+          >
+            <CloseIcon size={22} weight="bold" />
+          </button>
+
+          {/* prev */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              showPrev();
+            }}
+            aria-label="Previous photo"
+            className="absolute left-2 sm:left-6 w-12 h-12 flex items-center justify-center text-white/90 hover:text-white transition-colors"
+            style={{
+              background: "rgba(0,0,0,0.6)",
+              border: `1px solid ${PALETTE.steelLine}`,
+            }}
+          >
+            <span aria-hidden className="font-display text-2xl leading-none">‹</span>
+          </button>
+
+          {/* next */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              showNext();
+            }}
+            aria-label="Next photo"
+            className="absolute right-2 sm:right-6 w-12 h-12 flex items-center justify-center text-white/90 hover:text-white transition-colors"
+            style={{
+              background: "rgba(0,0,0,0.6)",
+              border: `1px solid ${PALETTE.steelLine}`,
+            }}
+          >
+            <span aria-hidden className="font-display text-2xl leading-none">›</span>
+          </button>
+
+          {/* photo + caption — click bubble stops on inner content */}
+          <figure
+            className="relative max-w-[1100px] max-h-[88vh] w-full flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={PORTFOLIO[lightboxIndex].src}
+              alt={PORTFOLIO[lightboxIndex].alt}
+              className="w-full h-full object-contain max-h-[78vh]"
+            />
+            <figcaption
+              className="mt-3 px-2 text-center"
+              style={{ color: PALETTE.boneDim }}
+            >
+              <div
+                className="text-[11px] uppercase tracking-[0.25em] mb-1"
+                style={{ color: PALETTE.crimsonHot, fontWeight: 600 }}
+              >
+                {PORTFOLIO[lightboxIndex].tag}
+              </div>
+              <div
+                className="font-display uppercase text-lg md:text-xl"
+                style={{ color: PALETTE.bone, fontWeight: 700 }}
+              >
+                {PORTFOLIO[lightboxIndex].title}
+              </div>
+              <div
+                className="text-[11px] mt-1"
+                style={{ color: PALETTE.chrome }}
+              >
+                {lightboxIndex + 1} of {PORTFOLIO.length} ·{" "}
+                <span className="opacity-70">esc · ←/→</span>
+              </div>
+            </figcaption>
+          </figure>
+        </div>
+      )}
     </div>
   );
 }
