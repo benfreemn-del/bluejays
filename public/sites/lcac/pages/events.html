@@ -205,7 +205,10 @@
     gtag("js", new Date());
     gtag("config", "[[GA4_MEASUREMENT_ID]]", { "anonymize_ip": true });
   </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=[[GA4_MEASUREMENT_ID]]"></script>
+  <!-- GA4 disabled until Michelle provides GA4_MEASUREMENT_ID.
+       To re-enable: (1) replace [[GA4_MEASUREMENT_ID]] with the real G-XXXXXXX id
+       in the gtag("config", ...) call above, AND (2) uncomment the gtag.js loader below. -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=[[GA4_MEASUREMENT_ID]]"></script> -->
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
@@ -379,7 +382,7 @@
       </div>
       <div class="footer__credit">
         <svg width="16" height="16" viewBox="0 0 100 100" fill="currentColor"><path d="M52 18 C56 12, 62 8, 60 4 C58 2, 54 6, 52 10 C50 6, 46 2, 44 4 C42 8, 48 12, 52 18Z"/><ellipse cx="50" cy="24" rx="12" ry="11"/><ellipse cx="54" cy="22" rx="2.5" ry="2.5" fill="#0a0a0a"/><ellipse cx="54.5" cy="21.5" rx="1" ry="1" fill="white"/><path d="M62 25 L74 23 L62 27Z"/><ellipse cx="46" cy="50" rx="18" ry="20"/><path d="M36 66 C28 72, 20 80, 12 90 L18 90 C24 82, 30 74, 38 68Z"/></svg>
-        Created by&nbsp;<a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">bluejayportfolio.com</a>
+        Built by&nbsp;<a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">BlueJays</a>&nbsp;— get your free site audit
       </div>
     </div>
   </footer>
@@ -395,8 +398,8 @@
   // LCAC Events Renderer
   // ============================================================
   (function() {
-    var W3F_KEY = '[[WEB3FORMS_ACCESS_KEY]]'; // Replace with real key from web3forms.com
-    var NOTIFY_EMAIL = 'info@lcautism.org';
+    var W3F_KEY = 'c7341c41-b260-4ef0-a8c3-69180da5de8f'; // Replace with real key from web3forms.com
+    var NOTIFY_EMAIL = 'outreach@lcautism.org';
 
     // ---- Helpers ----
     function formatDate(iso, endIso) {
