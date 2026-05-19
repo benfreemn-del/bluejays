@@ -1050,17 +1050,20 @@ function ConnectSection() {
               group, or curious about baptism — fill this out and our team will
               follow up personally. No mailing lists, no auto-replies.
             </p>
-            <ul className="mt-10 space-y-3 text-sm text-[#1a1a1a]/75">
-              <li className="flex items-center gap-3">
-                <Sparkle size={12} weight="fill" className="text-[#d97706]" />
+            <ul className="mt-10 space-y-3 text-sm text-[#1a1a1a]/75 lg:space-y-4 lg:text-xl">
+              <li className="flex items-center gap-3 lg:gap-4">
+                <Sparkle size={12} weight="fill" className="shrink-0 text-[#d97706] lg:hidden" />
+                <Sparkle size={16} weight="fill" className="hidden shrink-0 text-[#d97706] lg:inline" />
                 Real reply from a real person
               </li>
-              <li className="flex items-center gap-3">
-                <Sparkle size={12} weight="fill" className="text-[#d97706]" />
+              <li className="flex items-center gap-3 lg:gap-4">
+                <Sparkle size={12} weight="fill" className="shrink-0 text-[#d97706] lg:hidden" />
+                <Sparkle size={16} weight="fill" className="hidden shrink-0 text-[#d97706] lg:inline" />
                 Usually within a couple of days
               </li>
-              <li className="flex items-center gap-3">
-                <Sparkle size={12} weight="fill" className="text-[#d97706]" />
+              <li className="flex items-center gap-3 lg:gap-4">
+                <Sparkle size={12} weight="fill" className="shrink-0 text-[#d97706] lg:hidden" />
+                <Sparkle size={16} weight="fill" className="hidden shrink-0 text-[#d97706] lg:inline" />
                 Your info stays with us
               </li>
             </ul>
