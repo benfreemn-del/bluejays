@@ -97,15 +97,24 @@ type Tab =
   | "sermons"
   | "giving";
 
-const TABS: { id: Tab; label: string; Icon: typeof House; count?: number }[] = [
-  { id: "overview", label: "Overview", Icon: House },
-  { id: "inbox", label: "Inbox", Icon: EnvelopeSimple, count: INBOX.filter((i) => i.status === "new").length },
-  { id: "members", label: "Members", Icon: Users },
-  { id: "groups", label: "Thrive Groups", Icon: HandHeart },
-  { id: "preschool", label: "Preschool", Icon: PaintBrushHousehold },
-  { id: "sermons", label: "Sermons", Icon: BookBookmark },
-  { id: "giving", label: "Giving", Icon: CurrencyDollar },
-];
+function buildTabs(
+  inbox: InboxItem[],
+): { id: Tab; label: string; Icon: typeof House; count?: number }[] {
+  return [
+    { id: "overview", label: "Overview", Icon: House },
+    {
+      id: "inbox",
+      label: "Inbox",
+      Icon: EnvelopeSimple,
+      count: inbox.filter((i) => i.status === "new").length,
+    },
+    { id: "members", label: "Members", Icon: Users },
+    { id: "groups", label: "Thrive Groups", Icon: HandHeart },
+    { id: "preschool", label: "Preschool", Icon: PaintBrushHousehold },
+    { id: "sermons", label: "Sermons", Icon: BookBookmark },
+    { id: "giving", label: "Giving", Icon: CurrencyDollar },
+  ];
+}
 
 /* ════════════════════════ ROOT ════════════════════════ */
 
@@ -114,6 +123,13 @@ export default function ThrivePortalDemo() {
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState("");
   const [tab, setTab] = useState<Tab>("overview");
+  // Inbox is the only LIVE-DATA surface in v1 — every other tab is still
+  // mock seed data. Defaults to the bundled mock so the sales-call demo
+  // looks rich on first paint; once the API resolves we swap to real
+  // submissions if any exist, otherwise keep the mock + flag usingDemoData
+  // so the UI can show a small "demo data" pill.
+  const [inboxItems, setInboxItems] = useState<InboxItem[]>(INBOX);
+  const [usingDemoData, setUsingDemoData] = useState<boolean>(true);
 
   // Sticky unlock for the demo session
   useEffect(() => {
@@ -124,6 +140,40 @@ export default function ThrivePortalDemo() {
       }
     } catch {}
   }, []);
+
+  // Fetch real client_leads after unlock. Falls back to mock if API
+  // returns empty (no real submissions yet) or errors out.
+  useEffect(() => {
+    if (!unlocked) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `/api/clients/thrive-church-sequim/inbox?gate=${encodeURIComponent(PASSWORD)}`,
+          { cache: "no-store" },
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          ok?: boolean;
+          items?: InboxItem[];
+          usingDemoData?: boolean;
+        };
+        if (cancelled) return;
+        if (data.ok && Array.isArray(data.items) && data.items.length > 0) {
+          setInboxItems(data.items);
+          setUsingDemoData(false);
+        } else {
+          // No real submissions yet — keep the mock data visible.
+          setUsingDemoData(true);
+        }
+      } catch (err) {
+        console.error("[thrive portal] inbox fetch failed:", err);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [unlocked]);
 
   function submitPw(e: React.FormEvent) {
     e.preventDefault();
@@ -155,14 +205,22 @@ export default function ThrivePortalDemo() {
       style={{
         background: TEAL_DEEP,
         color: INK_INVERTED,
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-thrive-body), sans-serif",
       }}
     >
       <TopBar />
-      <TabNav tab={tab} setTab={setTab} />
+      <TabNav tab={tab} setTab={setTab} inbox={inboxItems} />
       <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 sm:py-10">
-        {tab === "overview" && <OverviewTab setTab={setTab} />}
-        {tab === "inbox" && <InboxTab />}
+        {tab === "overview" && (
+          <OverviewTab
+            setTab={setTab}
+            inbox={inboxItems}
+            usingDemoData={usingDemoData}
+          />
+        )}
+        {tab === "inbox" && (
+          <InboxTab inbox={inboxItems} usingDemoData={usingDemoData} />
+        )}
         {tab === "members" && <MembersTab />}
         {tab === "groups" && <GroupsTab />}
         {tab === "preschool" && <PreschoolTab />}
@@ -190,7 +248,7 @@ function GateScreen({
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6"
-      style={{ background: TEAL_DEEP, color: INK_INVERTED, fontFamily: "'Inter', sans-serif" }}
+      style={{ background: TEAL_DEEP, color: INK_INVERTED, fontFamily: "var(--font-thrive-body), sans-serif" }}
     >
       <div
         className="w-full max-w-md rounded-2xl border p-8 sm:p-10"
@@ -202,7 +260,7 @@ function GateScreen({
           </span>
           <div>
             <p
-              className="font-[Fraunces] text-xl"
+              className="font-[family-name:var(--font-thrive-display)] text-xl"
               style={{ color: CREAM, fontWeight: 600 }}
             >
               Thrive Church
@@ -285,7 +343,7 @@ function TopBar() {
             <ThriveMark flat />
           </span>
           <div className="leading-tight">
-            <p className="font-[Fraunces] text-[18px]" style={{ color: CREAM, fontWeight: 600 }}>
+            <p className="font-[family-name:var(--font-thrive-display)] text-[18px]" style={{ color: CREAM, fontWeight: 600 }}>
               Thrive
             </p>
             <p
@@ -331,11 +389,20 @@ function TopBar() {
 
 /* ════════════════════════ TAB NAV ════════════════════════ */
 
-function TabNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+function TabNav({
+  tab,
+  setTab,
+  inbox,
+}: {
+  tab: Tab;
+  setTab: (t: Tab) => void;
+  inbox: InboxItem[];
+}) {
+  const tabs = buildTabs(inbox);
   return (
     <div className="border-b" style={{ background: TEAL_DEEP, borderColor: TEAL_BORDER }}>
       <div className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-3 sm:px-6">
-        {TABS.map((t) => {
+        {tabs.map((t) => {
           const active = tab === t.id;
           return (
             <button
@@ -368,7 +435,16 @@ function TabNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 
 /* ════════════════════════ OVERVIEW TAB ════════════════════════ */
 
-function OverviewTab({ setTab }: { setTab: (t: Tab) => void }) {
+function OverviewTab({
+  setTab,
+  inbox,
+  usingDemoData,
+}: {
+  setTab: (t: Tab) => void;
+  inbox: InboxItem[];
+  usingDemoData: boolean;
+}) {
+  void usingDemoData; // Reserved for future "demo data" badge here.
   const givingTrendUp = WEEK_STATS.givingThisWeek > WEEK_STATS.givingLastWeek;
   const givingPct = Math.round(
     ((WEEK_STATS.givingThisWeek - WEEK_STATS.givingLastWeek) / WEEK_STATS.givingLastWeek) * 100,
@@ -382,7 +458,7 @@ function OverviewTab({ setTab }: { setTab: (t: Tab) => void }) {
           Monday Morning, May 18
         </p>
         <h1
-          className="mt-2 font-[Fraunces] text-[clamp(2rem,3.5vw,2.6rem)] leading-tight"
+          className="mt-2 font-[family-name:var(--font-thrive-display)] text-[clamp(2rem,3.5vw,2.6rem)] leading-tight"
           style={{ color: CREAM, fontWeight: 500 }}
         >
           Good morning, Pastor Dave.
@@ -457,7 +533,7 @@ function OverviewTab({ setTab }: { setTab: (t: Tab) => void }) {
           }
         >
           <ul className="divide-y" style={{ borderColor: TEAL_BORDER }}>
-            {INBOX.slice(0, 6).map((item) => (
+            {inbox.slice(0, 6).map((item) => (
               <InboxRow key={item.id} item={item} compact />
             ))}
           </ul>
@@ -541,30 +617,51 @@ function OverviewTab({ setTab }: { setTab: (t: Tab) => void }) {
 
 /* ════════════════════════ INBOX TAB ════════════════════════ */
 
-function InboxTab() {
+function InboxTab({
+  inbox,
+  usingDemoData,
+}: {
+  inbox: InboxItem[];
+  usingDemoData: boolean;
+}) {
   const [filter, setFilter] = useState<"all" | InboxType>("all");
   const [statusFilter, setStatusFilter] = useState<"all" | InboxStatus>("all");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<InboxItem | null>(null);
 
   const filtered = useMemo(() => {
-    return INBOX.filter((i) => {
+    return inbox.filter((i) => {
       if (filter !== "all" && i.type !== filter) return false;
       if (statusFilter !== "all" && i.status !== statusFilter) return false;
       if (search && !`${i.name} ${i.preview}`.toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
-  }, [filter, statusFilter, search]);
+  }, [inbox, filter, statusFilter, search]);
 
   return (
     <>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+          <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
             Inbox
           </h2>
-          <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
             Every form submission across the public site lands here.
+            {usingDemoData ? (
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+                style={{ background: "rgba(217, 119, 6, 0.16)", color: AMBER_LIGHT }}
+              >
+                <Sparkle size={10} weight="fill" /> Demo data
+              </span>
+            ) : (
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+                style={{ background: "rgba(60, 138, 90, 0.18)", color: VINE }}
+              >
+                <CheckCircle size={10} weight="fill" /> Live
+              </span>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -580,7 +677,7 @@ function InboxTab() {
       {/* Type filter chips */}
       <div className="mb-4 flex flex-wrap gap-2">
         {(["all", "connect", "prayer", "volunteer", "verse", "preschool"] as const).map((t) => {
-          const count = t === "all" ? INBOX.length : INBOX.filter((i) => i.type === t).length;
+          const count = t === "all" ? inbox.length : inbox.filter((i) => i.type === t).length;
           const active = filter === t;
           return (
             <button
@@ -855,7 +952,7 @@ function MembersTab() {
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+          <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
             Members
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
@@ -958,7 +1055,7 @@ function GroupsTab() {
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+          <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
             Thrive Groups
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
@@ -982,7 +1079,7 @@ function GroupsTab() {
             >
               <div className="flex items-start justify-between">
                 <div className="min-w-0">
-                  <h3 className="font-[Fraunces] text-[18px] leading-tight" style={{ color: CREAM, fontWeight: 600 }}>
+                  <h3 className="font-[family-name:var(--font-thrive-display)] text-[18px] leading-tight" style={{ color: CREAM, fontWeight: 600 }}>
                     {g.name}
                   </h3>
                   <p className="mt-1 text-[12px]" style={{ color: AMBER_LIGHT }}>
@@ -1055,7 +1152,7 @@ function PreschoolTab() {
   return (
     <>
       <div className="mb-6">
-        <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+        <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
           Thrive Preschool
         </h2>
         <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
@@ -1139,7 +1236,7 @@ function SermonsTab() {
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+          <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
             Sermon Archive
           </h2>
           <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
@@ -1163,7 +1260,7 @@ function SermonsTab() {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start gap-2">
-                  <h3 className="font-[Fraunces] text-[16px]" style={{ color: CREAM, fontWeight: 600 }}>
+                  <h3 className="font-[family-name:var(--font-thrive-display)] text-[16px]" style={{ color: CREAM, fontWeight: 600 }}>
                     {s.title}
                   </h3>
                   {s.status === "draft" && (
@@ -1209,7 +1306,7 @@ function GivingTab() {
   return (
     <>
       <div className="mb-6">
-        <h2 className="font-[Fraunces] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
+        <h2 className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3vw,2.4rem)]" style={{ color: CREAM, fontWeight: 500 }}>
           Giving
         </h2>
         <p className="mt-1 text-[14px]" style={{ color: "rgba(251, 247, 238, 0.65)" }}>
@@ -1246,7 +1343,7 @@ function GivingTab() {
         <Panel title="Year-To-Goal Progress">
           <div>
             <div className="mb-2 flex items-end justify-between">
-              <span className="font-[Fraunces] text-[28px]" style={{ color: AMBER_LIGHT, fontWeight: 600 }}>
+              <span className="font-[family-name:var(--font-thrive-display)] text-[28px]" style={{ color: AMBER_LIGHT, fontWeight: 600 }}>
                 {yearPct}%
               </span>
               <span className="text-[12px]" style={{ color: "rgba(251, 247, 238, 0.6)" }}>
@@ -1398,7 +1495,7 @@ function StatCard({
         )}
       </div>
       <p
-        className="mt-3 font-[Fraunces] text-[clamp(1.4rem,2.2vw,1.9rem)] leading-none"
+        className="mt-3 font-[family-name:var(--font-thrive-display)] text-[clamp(1.4rem,2.2vw,1.9rem)] leading-none"
         style={{ color: CREAM, fontWeight: 600 }}
       >
         {value}

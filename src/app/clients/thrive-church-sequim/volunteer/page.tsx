@@ -38,7 +38,7 @@ export default function VolunteerPage() {
   return (
     <main
       className="relative min-h-screen overflow-x-clip bg-[#fbf7ee] text-[#1b2922] antialiased selection:bg-[#0d4f4a] selection:text-[#fbf7ee]"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      style={{ fontFamily: "var(--font-thrive-body), sans-serif" }}
     >
       <StickyNav />
 
@@ -51,7 +51,7 @@ export default function VolunteerPage() {
             Volunteer
           </div>
           <h1
-            className="mt-7 font-[Fraunces] text-[clamp(2.8rem,7vw,6.5rem)] font-light leading-[0.95] tracking-[-0.03em] text-[#0d4f4a]"
+            className="mt-7 font-[family-name:var(--font-thrive-display)] text-[clamp(2.8rem,7vw,6.5rem)] font-light leading-[0.95] tracking-[-0.03em] text-[#0d4f4a]"
             style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
           >
             Find your place to{" "}
@@ -85,12 +85,12 @@ export default function VolunteerPage() {
                   <Sparkle size={26} weight="duotone" />
                 </span>
                 <h2
-                  className="mt-7 font-[Fraunces] text-3xl text-[#0d4f4a] sm:text-4xl"
+                  className="mt-7 font-[family-name:var(--font-thrive-display)] text-3xl text-[#0d4f4a] sm:text-4xl"
                   style={{ fontWeight: 500 }}
                 >
                   Not sure yet?
                 </h2>
-                <p className="mt-2 font-[Fraunces] text-lg italic text-[#0d4f4a]/70">
+                <p className="mt-2 font-[family-name:var(--font-thrive-display)] text-lg italic text-[#0d4f4a]/70">
                   Take a 2-minute fit quiz.
                 </p>
                 <p className="mt-5 text-[15px] leading-relaxed text-[#1b2922]/72">
@@ -123,12 +123,12 @@ export default function VolunteerPage() {
                   <HandHeart size={26} weight="duotone" />
                 </span>
                 <h2
-                  className="mt-7 font-[Fraunces] text-3xl text-[#0d4f4a] sm:text-4xl"
+                  className="mt-7 font-[family-name:var(--font-thrive-display)] text-3xl text-[#0d4f4a] sm:text-4xl"
                   style={{ fontWeight: 500 }}
                 >
                   I already know.
                 </h2>
-                <p className="mt-2 font-[Fraunces] text-lg italic text-[#0d4f4a]/70">
+                <p className="mt-2 font-[family-name:var(--font-thrive-display)] text-lg italic text-[#0d4f4a]/70">
                   Skip ahead — sign me up.
                 </p>
                 <p className="mt-5 text-[15px] leading-relaxed text-[#1b2922]/72">
@@ -198,7 +198,7 @@ export default function VolunteerPage() {
                 Why serve?
               </div>
               <h2
-                className="mt-7 font-[Fraunces] text-[clamp(2rem,4.5vw,3.5rem)] font-light leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
+                className="mt-7 font-[family-name:var(--font-thrive-display)] text-[clamp(2rem,4.5vw,3.5rem)] font-light leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
                 style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
               >
                 Three honest reasons.
@@ -238,7 +238,7 @@ export default function VolunteerPage() {
         />
         <div className="relative mx-auto max-w-[1280px] px-6 text-center sm:px-10">
           <p
-            className="font-[Fraunces] text-[clamp(1.6rem,3vw,2.6rem)] italic leading-snug text-[#fbf7ee]"
+            className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.6rem,3vw,2.6rem)] italic leading-snug text-[#fbf7ee]"
             style={{ fontWeight: 400 }}
           >
             &ldquo;Each of you should use whatever gift you have received to
@@ -279,7 +279,7 @@ function Reason({
         {icon}
       </span>
       <h3
-        className="mt-5 font-[Fraunces] text-xl text-[#0d4f4a] sm:text-2xl"
+        className="mt-5 font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a] sm:text-2xl"
         style={{ fontWeight: 600 }}
       >
         {heading}

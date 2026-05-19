@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CheckCircle, Warning, HandHeart } from "@phosphor-icons/react";
 
 /**
@@ -28,6 +28,12 @@ export default function ConnectCardForm() {
     "idle",
   );
   const [errMsg, setErrMsg] = useState<string>("");
+  // Set on mount so server can reject sub-2.5s submissions (bots).
+  // useRef avoids re-renders and survives the form lifecycle.
+  const loadedAtRef = useRef<number>(0);
+  useEffect(() => {
+    loadedAtRef.current = Date.now();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,6 +53,10 @@ export default function ConnectCardForm() {
       next_step: String(fd.get("next_step") || "").trim(),
       prayer_request: String(fd.get("prayer_request") || "").trim(),
       message: String(fd.get("message") || "").trim(),
+      // Spam guards: honeypot + timestamp. Server silent-drops if either
+      // trips, so bots get ok:true and never tune their attack.
+      website: String(fd.get("website") || ""),
+      _loadedAt: loadedAtRef.current,
     };
 
     if (!payload.name) {
@@ -93,7 +103,7 @@ export default function ConnectCardForm() {
           background: "#ffffff",
           borderColor: "rgba(13, 79, 74, 0.25)",
           boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.45)",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-thrive-body), sans-serif",
         }}
       >
         <div
@@ -106,7 +116,7 @@ export default function ConnectCardForm() {
           className="text-[28px] sm:text-[34px] tracking-tight mb-3"
           style={{
             color: INK,
-            fontFamily: "'Fraunces', serif",
+            fontFamily: "var(--font-thrive-display), serif",
             fontWeight: 600,
           }}
         >
@@ -132,10 +142,35 @@ export default function ConnectCardForm() {
         background: "#ffffff",
         borderColor: "rgba(13, 79, 74, 0.18)",
         boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.4)",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-thrive-body), sans-serif",
       }}
       noValidate
     >
+      {/* Honeypot — off-screen, aria-hidden, untabbable. Bots see the
+          `website` field in the HTML and fill it; humans never do. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          top: "-9999px",
+          height: 0,
+          width: 0,
+          overflow: "hidden",
+        }}
+      >
+        <label>
+          Website (leave blank)
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </label>
+      </div>
+
       <div className="flex items-center gap-2.5 mb-6">
         <span
           className="inline-flex items-center justify-center w-9 h-9 rounded-full"
@@ -145,7 +180,7 @@ export default function ConnectCardForm() {
         </span>
         <span
           className="text-[13px] tracking-[0.22em] uppercase font-bold"
-          style={{ color: TEAL, fontFamily: "'Inter', sans-serif" }}
+          style={{ color: TEAL, fontFamily: "var(--font-thrive-body), sans-serif" }}
         >
           Connect Card
         </span>
@@ -258,7 +293,7 @@ export default function ConnectCardForm() {
           style={{
             background: TEAL,
             color: CREAM,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-thrive-body), sans-serif",
             boxShadow: "0 8px 24px -10px rgba(13, 79, 74, 0.6)",
           }}
         >
@@ -289,7 +324,7 @@ function Field({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (
@@ -333,7 +368,7 @@ function Select({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
       </span>
@@ -371,7 +406,7 @@ function Textarea({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (

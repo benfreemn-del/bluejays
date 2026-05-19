@@ -24,7 +24,7 @@ import {
  * "volunteer_quiz_result").
  *
  * Visually matches the rest of the Thrive site: cream / deep teal /
- * amber palette + Fraunces display.
+ * amber palette + Newsreader display.
  */
 
 const TEAL = "#0d4f4a";
@@ -337,11 +337,11 @@ export default function VolunteerQuiz({ onDone }: { onDone?: () => void }) {
     return (
       <div
         className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-8 sm:p-10"
-        style={{ fontFamily: "'Inter', sans-serif" }}
+        style={{ fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         <CheckCircle size={36} weight="duotone" style={{ color: TEAL }} />
         <h3
-          className="mt-5 font-[Fraunces] text-3xl tracking-tight text-[#0d4f4a]"
+          className="mt-5 font-[family-name:var(--font-thrive-display)] text-3xl tracking-tight text-[#0d4f4a]"
           style={{ fontWeight: 600 }}
         >
           On its way to the team.
@@ -357,7 +357,7 @@ export default function VolunteerQuiz({ onDone }: { onDone?: () => void }) {
   return (
     <div
       className="rounded-sm border border-[#0d4f4a]/15 bg-[#fbf7ee] p-7 sm:p-9 lg:p-11"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      style={{ fontFamily: "var(--font-thrive-body), sans-serif" }}
     >
       {/* progress */}
       <div className="mb-7 flex items-center justify-between text-[11px] uppercase tracking-[0.28em] text-[#0d4f4a]/70">
@@ -379,7 +379,7 @@ export default function VolunteerQuiz({ onDone }: { onDone?: () => void }) {
       {!done && (
         <div>
           <h3
-            className="font-[Fraunces] text-[clamp(1.8rem,3.5vw,2.8rem)] leading-tight tracking-tight text-[#0d4f4a]"
+            className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3.5vw,2.8rem)] leading-tight tracking-tight text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             {QUESTIONS[step].label}
@@ -425,7 +425,7 @@ export default function VolunteerQuiz({ onDone }: { onDone?: () => void }) {
       {done && (
         <div>
           <h3
-            className="font-[Fraunces] text-[clamp(1.8rem,3.5vw,2.8rem)] leading-tight tracking-tight text-[#0d4f4a]"
+            className="font-[family-name:var(--font-thrive-display)] text-[clamp(1.8rem,3.5vw,2.8rem)] leading-tight tracking-tight text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             Sounds like you&rsquo;d be a great fit for…
@@ -464,7 +464,7 @@ export default function VolunteerQuiz({ onDone }: { onDone?: () => void }) {
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-[Fraunces] text-xl text-[#0d4f4a]">
+                      <h4 className="font-[family-name:var(--font-thrive-display)] text-xl text-[#0d4f4a]">
                         {r.team.name}
                       </h4>
                       {idx === 0 && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CheckCircle, Warning, HandsPraying } from "@phosphor-icons/react";
 
 /**
@@ -26,6 +26,10 @@ export default function PrayerRequestForm() {
     "idle",
   );
   const [errMsg, setErrMsg] = useState<string>("");
+  const loadedAtRef = useRef<number>(0);
+  useEffect(() => {
+    loadedAtRef.current = Date.now();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,6 +46,8 @@ export default function PrayerRequestForm() {
       keep_private: fd.get("keep_private") === "on" ? "yes" : "no",
       follow_up_ok: fd.get("follow_up_ok") === "on" ? "yes" : "no",
       message: String(fd.get("message") || "").trim(),
+      website: String(fd.get("website") || ""),
+      _loadedAt: loadedAtRef.current,
     };
 
     if (!payload.message) {
@@ -83,7 +89,7 @@ export default function PrayerRequestForm() {
           background: "#ffffff",
           borderColor: "rgba(13, 79, 74, 0.25)",
           boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.4)",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-thrive-body), sans-serif",
         }}
       >
         <div
@@ -96,7 +102,7 @@ export default function PrayerRequestForm() {
           className="text-[24px] sm:text-[28px] tracking-tight mb-3"
           style={{
             color: INK,
-            fontFamily: "'Fraunces', serif",
+            fontFamily: "var(--font-thrive-display), serif",
             fontWeight: 600,
           }}
         >
@@ -122,10 +128,34 @@ export default function PrayerRequestForm() {
         background: "#ffffff",
         borderColor: "rgba(13, 79, 74, 0.18)",
         boxShadow: "0 18px 50px -30px rgba(13, 79, 74, 0.35)",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "var(--font-thrive-body), sans-serif",
       }}
       noValidate
     >
+      {/* Honeypot — off-screen, aria-hidden, untabbable. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          top: "-9999px",
+          height: 0,
+          width: 0,
+          overflow: "hidden",
+        }}
+      >
+        <label>
+          Website (leave blank)
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </label>
+      </div>
+
       <div className="flex items-center gap-2.5 mb-6">
         <span
           className="inline-flex items-center justify-center w-9 h-9 rounded-full"
@@ -135,7 +165,7 @@ export default function PrayerRequestForm() {
         </span>
         <span
           className="text-[13px] tracking-[0.22em] uppercase font-bold"
-          style={{ color: AMBER, fontFamily: "'Inter', sans-serif" }}
+          style={{ color: AMBER, fontFamily: "var(--font-thrive-body), sans-serif" }}
         >
           Prayer Request
         </span>
@@ -144,7 +174,7 @@ export default function PrayerRequestForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Name (optional)" name="name" autoComplete="name" />
         <Field
-          label="Email or phone (optional)"
+          label="Email (optional)"
           name="email"
           type="email"
           autoComplete="email"
@@ -208,7 +238,7 @@ export default function PrayerRequestForm() {
           style={{
             background: AMBER,
             color: "#ffffff",
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-thrive-body), sans-serif",
             boxShadow: "0 8px 24px -10px rgba(217, 119, 6, 0.6)",
           }}
         >
@@ -239,7 +269,7 @@ function Field({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (
@@ -279,7 +309,7 @@ function Textarea({
     <label className="block">
       <span
         className="block text-[12px] tracking-[0.18em] uppercase mb-2 font-bold"
-        style={{ color: TEAL_DEEP, fontFamily: "'Inter', sans-serif" }}
+        style={{ color: TEAL_DEEP, fontFamily: "var(--font-thrive-body), sans-serif" }}
       >
         {label}
         {required && (

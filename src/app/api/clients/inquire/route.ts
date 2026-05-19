@@ -259,6 +259,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Silent-drop spam checks. Both return ok:true so bots get a "success"
+  // response and never learn what tripped them. Layered defense:
+  //   1. Honeypot — an off-screen "website" input bots fill but humans
+  //      never see. Forms that opt in include the field; older forms
+  //      omit it and pass through unchanged.
+  //   2. Timing trap — forms send _loadedAt (ms epoch) at mount;
+  //      submissions <2.5s later are almost always automated.
+  if (String(body.website || "").trim() !== "") {
+    console.log(
+      "[clients/inquire] honeypot tripped from IP:", ip,
+      "slug:", body.slug,
+    );
+    return NextResponse.json({ ok: true });
+  }
+  const loadedAtRaw = body._loadedAt;
+  if (typeof loadedAtRaw === "number" && loadedAtRaw > 0) {
+    const gap = Date.now() - loadedAtRaw;
+    if (gap < 2500) {
+      console.log(
+        "[clients/inquire] timing-trap tripped from IP:", ip,
+        "slug:", body.slug, "gap_ms:", gap,
+      );
+      return NextResponse.json({ ok: true });
+    }
+  }
+
   const slug = String(body.slug || "").trim();
   const name = String(body.name || "").trim();
   const email = String(body.email || "").trim().toLowerCase();
@@ -283,7 +309,7 @@ export async function POST(request: NextRequest) {
   // Build a readable owner-alert body. Iterate every body key (except
   // slug/name/email which are summarized in the header) so site-specific
   // fields surface without needing per-slug code here.
-  const skipKeys = new Set(["slug", "name", "email"]);
+  const skipKeys = new Set(["slug", "name", "email", "website", "_loadedAt"]);
   const fieldLines: string[] = [];
   for (const [k, v] of Object.entries(body)) {
     if (skipKeys.has(k)) continue;
