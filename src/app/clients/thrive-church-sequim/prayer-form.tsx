@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CheckCircle, Warning, HandsPraying } from "@phosphor-icons/react";
 
 /**
@@ -26,6 +26,10 @@ export default function PrayerRequestForm() {
     "idle",
   );
   const [errMsg, setErrMsg] = useState<string>("");
+  const loadedAtRef = useRef<number>(0);
+  useEffect(() => {
+    loadedAtRef.current = Date.now();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,6 +46,8 @@ export default function PrayerRequestForm() {
       keep_private: fd.get("keep_private") === "on" ? "yes" : "no",
       follow_up_ok: fd.get("follow_up_ok") === "on" ? "yes" : "no",
       message: String(fd.get("message") || "").trim(),
+      website: String(fd.get("website") || ""),
+      _loadedAt: loadedAtRef.current,
     };
 
     if (!payload.message) {
@@ -126,6 +132,30 @@ export default function PrayerRequestForm() {
       }}
       noValidate
     >
+      {/* Honeypot — off-screen, aria-hidden, untabbable. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          top: "-9999px",
+          height: 0,
+          width: 0,
+          overflow: "hidden",
+        }}
+      >
+        <label>
+          Website (leave blank)
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </label>
+      </div>
+
       <div className="flex items-center gap-2.5 mb-6">
         <span
           className="inline-flex items-center justify-center w-9 h-9 rounded-full"
