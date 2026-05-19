@@ -4,8 +4,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           personalizations: [{ to: [{ email: prospect.email }] }],
           from: { email: FROM_EMAIL, name: "BlueJays Reviews" },
+          reply_to: { email: REPLY_TO, name: "BlueJays" },
           subject: `New ${rating}-star feedback for ${prospect.businessName}`,
           content: [{ type: "text/plain", value: emailBody }],
         }),

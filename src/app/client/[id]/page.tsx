@@ -45,8 +45,11 @@ export const metadata: Metadata = {
 };
 
 const BASE_URL = "https://bluejayportfolio.com";
-const CONTACT_EMAIL =
-  process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// CONTACT_EMAIL is the customer-facing "reach Ben" address displayed on the
+// portal page (mailto: link). Hardcoded to the real-inbox Gmail per Rule 67
+// audit pattern (no process.env.FROM_EMAIL lookups). The DMARC-aligned
+// alerts@ address has no inbox; replies go to this Gmail.
+const CONTACT_EMAIL = "bluejaycontactme@gmail.com";
 
 async function getRenewalInfo(
   mgmtSubscriptionId: string | undefined,

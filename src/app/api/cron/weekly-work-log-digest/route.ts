@@ -30,7 +30,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const FROM_EMAIL = "bluejaycontactme@gmail.com" as const;
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com" as const;
+const REPLY_TO = "bluejaycontactme@gmail.com" as const;
 
 // SLUGS that get the digest — restricted to AI System ($10k tier) clients.
 // When a new AI System client onboards, add their slug here. This is a
@@ -153,6 +156,7 @@ async function sendDigest(
       body: JSON.stringify({
         personalizations: [{ to: [{ email: to }] }],
         from: { email: FROM_EMAIL, name: "BlueJays" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject,
         content: [{ type: "text/plain", value: body }],
       }),

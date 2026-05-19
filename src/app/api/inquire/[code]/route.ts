@@ -16,7 +16,11 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = "bluejaycontactme@gmail.com"; // per CLAUDE.md, hardcoded sender
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+// reply_to is intentionally set to the inquirer's email below (partner can
+// reply directly to the person inquiring), so no separate reply_to override here.
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
 
 // in-memory rate-limit bucket (resets on deploy — fine for an MVP)
 const recentByProspect = new Map<string, number[]>();

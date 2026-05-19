@@ -39,7 +39,10 @@ import type { EmailTemplate } from "@/lib/email-templates";
  */
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
 
 /** Amount (in cents) that identifies a $997 one-time setup payment */
@@ -818,6 +821,7 @@ async function notifyOwnerPayment(
       body: JSON.stringify({
         personalizations: [{ to: [{ email: OWNER_EMAIL }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Payments" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: `PAYMENT RECEIVED: ${businessName} just paid ${amount}!`,
         content: [
           {
@@ -873,6 +877,7 @@ async function sendAbandonedCheckoutEmail(
     body: JSON.stringify({
       personalizations: [{ to: [{ email: clientEmail }] }],
       from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+      reply_to: { email: REPLY_TO, name: "Ben @ BlueJays" },
       subject: `Did something go wrong with your ${businessName} site?`,
       content: [{
         type: "text/plain",

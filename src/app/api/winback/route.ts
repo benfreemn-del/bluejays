@@ -6,7 +6,10 @@ import type { Prospect } from "@/lib/types";
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 
 const SIXTY_DAYS = 60 * 24 * 60 * 60 * 1000;
 
@@ -94,6 +97,7 @@ async function sendWinBackEmail(prospect: Prospect, previewUrl: string) {
     body: JSON.stringify({
       personalizations: [{ to: [{ email: prospect.email }] }],
       from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+      reply_to: { email: REPLY_TO, name: "Ben @ BlueJays" },
       subject: `${name}, we rebuilt your ${prospect.businessName} site`,
       content: [{
         type: "text/plain",

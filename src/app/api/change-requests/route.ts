@@ -5,7 +5,10 @@ import { getProspect } from "@/lib/store";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 const OWNER_EMAIL = process.env.ADMIN_EMAIL || "ben@bluejayportfolio.com";
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
@@ -186,6 +189,7 @@ async function notifyOwnerChangeRequest({
       body: JSON.stringify({
         personalizations: [{ to: [{ email: OWNER_EMAIL }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Change Requests" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: `Customer change request: ${businessName}`,
         content: [
           {

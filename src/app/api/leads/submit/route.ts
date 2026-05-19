@@ -12,7 +12,10 @@ import { canonicalizeCity, normalizeAddress } from "@/lib/address-normalizer";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
-const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER || "+12538863753";
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -69,6 +72,7 @@ async function notifyOwnerEmail(lead: {
       body: JSON.stringify({
         personalizations: [{ to: [{ email: OWNER_EMAIL }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Leads" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: `🔥 INBOUND LEAD: ${lead.businessName} (${lead.category || "Unknown"})`,
         content: [{ type: "text/html", value: htmlBody }],
       }),

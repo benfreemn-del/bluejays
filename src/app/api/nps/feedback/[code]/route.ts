@@ -37,7 +37,11 @@ import { sendEmail } from "@/lib/email-sender";
 export const dynamic = "force-dynamic";
 
 const BASE_URL = "https://bluejayportfolio.com";
-const INBOX_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// INBOX_EMAIL is the RECIPIENT for NPS feedback notifications (where Ben reads them),
+// not a FROM address. The actual send goes through sendEmail() in email-sender.ts
+// which uses ben@bluejayportfolio.com (DKIM-aligned, Rule 67 already satisfied there).
+// Hardcoded per Rule 67 audit pattern (no process.env.FROM_EMAIL lookups).
+const INBOX_EMAIL = "bluejaycontactme@gmail.com";
 
 interface ProspectLite {
   id: string;

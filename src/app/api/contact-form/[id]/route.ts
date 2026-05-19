@@ -62,17 +62,13 @@ import {
 } from "@/lib/alerts";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// FROM_EMAIL hardcoded per CLAUDE.md Rule 16 — SendGrid was rejecting
-// sends with status 400 "Invalid from email address" because
-// ben@bluejayportfolio.com isn't authenticated as a verified single
-// sender on this SendGrid account (and the bluejayportfolio.com domain
-// authentication was reset during the 2026-05-12 billing suspension).
-// bluejaycontactme@gmail.com is the verified single sender used across
-// the rest of the email pipeline (email-sender.ts, etc.) — keep this
-// in lockstep with that file. Don't read from process.env.FROM_EMAIL —
-// the env var on Vercel has historically been set to invalid values
-// (stale NEXT_PUBLIC_* legacy), so hardcoding is the safety net.
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to
+// alerts@bluejayportfolio.com — DMARC-aligned via the SendGrid-authenticated
+// bluejayportfolio.com domain. The previous @gmail.com value was silently
+// spam-filtered by Gmail's strict DMARC policy on @gmail.com From-addresses
+// sent through 3rd-party SMTP. Reply-To preserved as bluejaycontactme@gmail.com.
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 // Same Rule 16 pattern — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
 
@@ -99,6 +95,7 @@ async function sendOwnerEmail(ownerEmail: string, subject: string, body: string)
       body: JSON.stringify({
         personalizations: [{ to: [{ email: ownerEmail }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Leads" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject,
         content: [{ type: "text/plain", value: body }],
       }),

@@ -18,8 +18,10 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 
 // Default appointment duration in minutes
 const APPT_DURATION_MIN = 60;
@@ -138,6 +140,7 @@ async function sendConfirmationEmail(args: {
       body: JSON.stringify({
         personalizations: [{ to: [{ email: args.to }] }],
         from: { email: FROM_EMAIL, name: "BlueJays Scheduling" },
+        reply_to: { email: REPLY_TO, name: "BlueJays" },
         subject: args.subject,
         content: [
           { type: "text/plain", value: args.plainText },

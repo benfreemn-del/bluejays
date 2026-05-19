@@ -62,9 +62,10 @@ async function sendToClient(args: {
   replyToName?: string;
 }): Promise<boolean> {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-  // Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL. Env fallback
-  // silently 403s on sender-auth failures.
-  const FROM_EMAIL = "bluejaycontactme@gmail.com";
+  // Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+  // (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+  const FROM_EMAIL = "alerts@bluejayportfolio.com";
+  const REPLY_TO_FALLBACK = "bluejaycontactme@gmail.com";
 
   if (!SENDGRID_API_KEY) {
     console.log(
@@ -98,6 +99,10 @@ async function sendToClient(args: {
       email: args.replyToEmail,
       ...(args.replyToName ? { name: args.replyToName } : {}),
     };
+  } else {
+    // Default reply_to keeps customer replies landing in Ben's Gmail
+    // (the FROM address alerts@bluejayportfolio.com has no inbox).
+    body.reply_to = { email: REPLY_TO_FALLBACK, name: "BlueJays" };
   }
 
   try {

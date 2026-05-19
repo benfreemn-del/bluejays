@@ -31,8 +31,11 @@ export const runtime = "nodejs";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// Rule 67 (locked 2026-05-12): hardcode FROM_EMAIL.
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
+// (DMARC-aligned via SendGrid-authenticated bluejayportfolio.com domain).
+// Reply-To + List-Unsubscribe point at bluejaycontactme@gmail.com (real inbox).
+const FROM_EMAIL = "alerts@bluejayportfolio.com";
+const REPLY_TO = "bluejaycontactme@gmail.com";
 const FROM_NAME = "Ben @ BlueJays";
 
 type App = {
@@ -68,7 +71,7 @@ async function sendNurtureEmail(args: {
       body: JSON.stringify({
         personalizations: [{ to: [{ email: args.to }] }],
         from: { email: FROM_EMAIL, name: FROM_NAME },
-        reply_to: { email: FROM_EMAIL, name: FROM_NAME },
+        reply_to: { email: REPLY_TO, name: FROM_NAME },
         subject: args.subject,
         content: [
           { type: "text/plain", value: args.text },
@@ -80,7 +83,7 @@ async function sendNurtureEmail(args: {
         // RFC 8058 list-unsubscribe — keeps Gmail from spam-binning
         // the nurture sequence and gives recipients a 1-click out.
         headers: {
-          "List-Unsubscribe": `<mailto:${FROM_EMAIL}?subject=Unsubscribe>`,
+          "List-Unsubscribe": `<mailto:${REPLY_TO}?subject=Unsubscribe>`,
           "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
       }),
