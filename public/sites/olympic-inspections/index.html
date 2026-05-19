@@ -307,19 +307,17 @@
     <nav id="navbar">
         <div class="container nav-inner">
             <a href="#home" class="nav-logo" aria-label="Olympic Inspections & Testing home">
-                <!-- New logo plugged in 2026-05-10. The PNG is dark
-                     on transparent; we render it in brand-green via
-                     CSS mask-image (background-color = forest green,
-                     PNG silhouette = the mask). Crisper than a
-                     filter chain + recolors instantly if --forest
-                     ever changes.
-                     The PNG already contains the "OIT" wordmark, so
-                     the separate `.nav-name` text block is gone. -->
-                <span
+                <!-- Logo refresh 2026-05-19: full-color brand mark
+                     (mountain + cabin + magnifier + OIT wordmark).
+                     Rendered natively as an <img> — no mask or
+                     filter needed. -->
+                <img
+                    src="/sites/olympic-inspections/logo.png"
+                    alt="Olympic Inspections &amp; Testing"
                     class="nav-brand-img"
-                    role="img"
-                    aria-label="Olympic Inspections &amp; Testing"
-                ></span>
+                    width="240"
+                    height="240"
+                />
             </a>
             <div class="nav-links">
                 <a href="#services">Services</a>
@@ -976,19 +974,19 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-mark">
-                        <!-- Footer logo — same PNG as nav, larger so the
-                             OIT wordmark is legible against the dark
-                             footer background. The PNG is dark on
-                             transparent; footer is dark, so we wrap in
-                             .footer-brand-img which inverts to white
-                             via CSS filter. -->
-                        <img
-                            src="/sites/olympic-inspections/logo.png"
-                            alt="Olympic Inspections &amp; Testing"
-                            class="footer-brand-img"
-                            width="1500"
-                            height="940"
-                        />
+                        <!-- Footer logo — full-color brand mark in a
+                             cream "coin" so the bright art reads as an
+                             intentional brand badge against the dark
+                             forest footer background. -->
+                        <div class="footer-brand-coin">
+                            <img
+                                src="/sites/olympic-inspections/logo.png"
+                                alt="Olympic Inspections &amp; Testing"
+                                class="footer-brand-img"
+                                width="240"
+                                height="240"
+                            />
+                        </div>
                         <div>
                             <strong>Olympic Inspections &amp; Testing</strong>
                             <small>Mold &middot; Radon &middot; Water</small>
