@@ -581,6 +581,49 @@ function Hero() {
 
 
 /* ═══════════════════════════════════════════════════════════════════
+   BY THE NUMBERS — compact stat band between Hero and Practice
+   ═══════════════════════════════════════════════════════════════════ */
+
+const STAT_BAND = [
+  { value: "1976", label: "Founded" },
+  { value: "5,000+", label: "Satisfied customers" },
+  { value: "4", label: "Counties served" },
+  { value: "8", label: "Disciplines in-house" },
+  { value: "5.0", label: "Google rating" },
+];
+
+function ByTheNumbers() {
+  return (
+    <section className="relative bg-[#F5F1E8] border-y border-[#15803d]/15 overflow-hidden">
+      <div className="mx-auto max-w-[1700px] px-6 sm:px-10 py-8 sm:py-10">
+        <motion.dl
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="grid grid-cols-2 sm:grid-cols-5 gap-y-7 sm:gap-y-0 sm:divide-x sm:divide-[#A8A294]/35"
+        >
+          {STAT_BAND.map((s) => (
+            <motion.div
+              key={s.label}
+              variants={fadeUp}
+              className="text-center sm:px-4 first:sm:pl-0 last:sm:pr-0"
+            >
+              <p className="font-[family-name:var(--font-playfair)] font-medium text-[36px] sm:text-[44px] lg:text-[52px] leading-none tracking-[-0.022em] text-[#1C1F1A]">
+                {s.value}
+              </p>
+              <p className="mt-2 font-[family-name:var(--font-inter)] text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#15803d] font-semibold">
+                {s.label}
+              </p>
+            </motion.div>
+          ))}
+        </motion.dl>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    SECTION 2 — PRACTICE
    Photo (60%) + 8-discipline vertical list (40%). No icons. No cards.
    Just typography.
@@ -744,6 +787,25 @@ function ProjectMonograph({
           loading={index === 0 ? "eager" : "lazy"}
         />
       </motion.div>
+
+      {/* Italic photo caption — editorial signature under each primary
+          photo, similar to a magazine plate credit. Project number in
+          Playfair italic, framed by hairline rules on either side. */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.6 }}
+        transition={{ delay: 0.45, duration: 0.6 }}
+        className="px-6 sm:px-10 lg:px-12 mt-4 sm:mt-5 flex items-center gap-3 sm:gap-5"
+      >
+        <span className="font-[family-name:var(--font-playfair)] italic font-normal text-[14px] sm:text-[15px] text-[#A8A294] tracking-wide tabular-nums">
+          Plate {String(index + 1).padStart(2, "0")}
+        </span>
+        <span className="h-px flex-1 bg-[#A8A294]/35" />
+        <span className="font-[family-name:var(--font-playfair)] italic font-normal text-[14px] sm:text-[15px] text-[#1C1F1A]/75 tracking-tight">
+          {project.name}
+        </span>
+      </motion.p>
 
       {/* Metadata + caption — sits below the primary photo, paper-side margins */}
       <div className="px-6 sm:px-10 lg:px-12 mt-7 sm:mt-10">
@@ -1758,6 +1820,7 @@ export default function MtViewLandscapingPage() {
         phoneHref={BUSINESS.phoneHref}
       />
       <Hero />
+      <ByTheNumbers />
       <Practice />
       <SelectedWork />
       <Process />
