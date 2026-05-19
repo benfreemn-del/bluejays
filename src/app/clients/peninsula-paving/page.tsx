@@ -502,10 +502,11 @@ function ServiceCard({
 }) {
   return (
     <div
-      className="group relative overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:border-white/15"
+      className="group relative overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:border-[#1c1410]/20 hover:shadow-[0_12px_28px_rgba(28,20,16,0.10)]"
       style={{
         background: BG_PANEL,
         borderColor: "rgba(28, 20, 16, 0.10)",
+        boxShadow: "0 2px 12px rgba(28, 20, 16, 0.04)",
       }}
     >
       {/* Decorative number in corner — bumped visibility so the
@@ -1709,7 +1710,6 @@ export default function PeninsulaPavingPage() {
                 style={{
                   color: INK_SOFT,
                   fontFamily: FONT_BODY,
-                  textShadow: "0 1px 8px rgba(0,0,0,0.6)",
                 }}
               >
                 {BUSINESS.yearsInBusiness} years paving driveways, parking lots,
@@ -1757,7 +1757,7 @@ export default function PeninsulaPavingPage() {
                   href={BUSINESS.phoneHref}
                   className="inline-flex items-center justify-center gap-2 px-7 h-14 rounded-md font-bold uppercase tracking-wide text-[14px] text-[#1c1410] border-2 transition-all hover:bg-[#1c1410]/[0.04] active:scale-[0.97]"
                   style={{
-                    borderColor: "rgba(255, 255, 255, 0.2)",
+                    borderColor: "rgba(28, 20, 16, 0.22)",
                     fontFamily: FONT_HEAD,
                   }}
                 >
@@ -1774,7 +1774,7 @@ export default function PeninsulaPavingPage() {
           className="border-y"
           style={{
             background: BG_ALT,
-            borderColor: "rgba(255,255,255,0.06)",
+            borderColor: "rgba(28, 20, 16, 0.08)",
           }}
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8 py-3.5 sm:py-4">
@@ -1854,7 +1854,7 @@ export default function PeninsulaPavingPage() {
                 <div className="leading-tight text-center sm:text-left">
                   <div
                     className="text-[12px] uppercase tracking-[0.28em] font-bold"
-                    style={{ color: OLIVE, fontFamily: FONT_HEAD }}
+                    style={{ color: ACCENT_DEEP, fontFamily: FONT_HEAD }}
                   >
                     Est. 1985
                   </div>
@@ -2386,11 +2386,11 @@ export default function PeninsulaPavingPage() {
             <div className="flex flex-col items-center gap-2">
               <span
                 className="inline-block w-12 h-px"
-                style={{ background: OLIVE }}
+                style={{ background: ACCENT_DEEP }}
               />
               <span
                 className="text-[18px] italic mt-1"
-                style={{ color: "#f8fafc", fontFamily: FONT_SERIF }}
+                style={{ color: INK, fontFamily: FONT_SERIF }}
               >
                 Cyril &amp; Ella Frick
               </span>
@@ -2437,7 +2437,8 @@ export default function PeninsulaPavingPage() {
                   className="rounded-xl border p-6 sm:p-7"
                   style={{
                     background: BG_PANEL,
-                    borderColor: "rgba(255,255,255,0.08)",
+                    borderColor: "rgba(28, 20, 16, 0.10)",
+                    boxShadow: "0 2px 12px rgba(28, 20, 16, 0.04)",
                   }}
                 >
                   <div
@@ -2466,7 +2467,8 @@ export default function PeninsulaPavingPage() {
                   className="rounded-xl border p-6 sm:p-7"
                   style={{
                     background: BG_PANEL,
-                    borderColor: "rgba(255,255,255,0.08)",
+                    borderColor: "rgba(28, 20, 16, 0.10)",
+                    boxShadow: "0 2px 12px rgba(28, 20, 16, 0.04)",
                   }}
                 >
                   <div
@@ -2507,7 +2509,8 @@ export default function PeninsulaPavingPage() {
                   className="rounded-xl border p-6 sm:p-7"
                   style={{
                     background: BG_PANEL,
-                    borderColor: "rgba(255,255,255,0.08)",
+                    borderColor: "rgba(28, 20, 16, 0.10)",
+                    boxShadow: "0 2px 12px rgba(28, 20, 16, 0.04)",
                   }}
                 >
                   <div
