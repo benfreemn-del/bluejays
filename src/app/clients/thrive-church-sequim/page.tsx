@@ -438,6 +438,49 @@ function SunriseIllustration() {
           <ellipse cx="475" cy="220" rx="220" ry="6" fill="#fde68a" opacity="0.32" />
         </g>
 
+        {/* ── DAY 2 (cont.) — CLOUDS drifting in with the firmament.
+            Soft ellipse clusters in cream-white with a warm peach
+            underside catching the sun's dawn light. Positioned to
+            avoid the sun disc itself (475, 100). The cloud nearest
+            the sun (x≈370) picks up a stronger warm wash to sell the
+            "sunrise lighting the underside of the clouds" moment. ── */}
+        <g opacity={hazeOp}>
+          {/* Cloud 1 — far left, high */}
+          <g>
+            <ellipse cx="90" cy="78" rx="38" ry="13" fill="#fdf6ee" opacity="0.92" />
+            <ellipse cx="64" cy="83" rx="22" ry="11" fill="#fdf6ee" opacity="0.88" />
+            <ellipse cx="116" cy="83" rx="26" ry="11" fill="#fdf6ee" opacity="0.88" />
+            <ellipse cx="80" cy="70" rx="18" ry="9" fill="#fdf6ee" opacity="0.95" />
+            <ellipse cx="105" cy="70" rx="20" ry="10" fill="#fdf6ee" opacity="0.95" />
+            <ellipse cx="90" cy="90" rx="38" ry="3" fill="#fed7aa" opacity="0.40" />
+          </g>
+          {/* Cloud 2 — left mid-sky */}
+          <g>
+            <ellipse cx="225" cy="155" rx="44" ry="13" fill="#fdf6ee" opacity="0.88" />
+            <ellipse cx="195" cy="158" rx="20" ry="10" fill="#fdf6ee" opacity="0.85" />
+            <ellipse cx="255" cy="155" rx="22" ry="10" fill="#fdf6ee" opacity="0.85" />
+            <ellipse cx="215" cy="148" rx="18" ry="9" fill="#fdf6ee" opacity="0.9" />
+            <ellipse cx="242" cy="148" rx="20" ry="9" fill="#fdf6ee" opacity="0.9" />
+            <ellipse cx="225" cy="165" rx="44" ry="3" fill="#fed7aa" opacity="0.45" />
+          </g>
+          {/* Cloud 3 — small wisp near the sun · catches strongest warm light */}
+          <g>
+            <ellipse cx="365" cy="185" rx="34" ry="11" fill="#fef3c7" opacity="0.85" />
+            <ellipse cx="343" cy="188" rx="16" ry="8" fill="#fef3c7" opacity="0.82" />
+            <ellipse cx="388" cy="185" rx="18" ry="9" fill="#fef3c7" opacity="0.82" />
+            <ellipse cx="365" cy="179" rx="16" ry="8" fill="#fef3c7" opacity="0.88" />
+            <ellipse cx="365" cy="194" rx="34" ry="3" fill="#fdba74" opacity="0.55" />
+          </g>
+          {/* Cloud 4 — far right, just below sun · also lit warm */}
+          <g>
+            <ellipse cx="555" cy="180" rx="34" ry="11" fill="#fef3c7" opacity="0.82" />
+            <ellipse cx="535" cy="183" rx="18" ry="9" fill="#fef3c7" opacity="0.80" />
+            <ellipse cx="578" cy="180" rx="19" ry="9" fill="#fef3c7" opacity="0.80" />
+            <ellipse cx="552" cy="173" rx="14" ry="7" fill="#fef3c7" opacity="0.86" />
+            <ellipse cx="555" cy="190" rx="34" ry="3" fill="#fdba74" opacity="0.50" />
+          </g>
+        </g>
+
         {/* ── DAY 3a — DISTANT OLYMPIC PEAKS rise from the deep
             ("Let dry ground appear"). Softened, organic ridgeline with
             snow-capped highest peaks. ── */}
