@@ -105,28 +105,51 @@ export default function ChristianMotifs({
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 overflow-hidden"
+      className="thrive-motifs pointer-events-none absolute inset-0 overflow-hidden"
     >
-      {motifs.map((m, i) => (
-        <span
-          key={i}
-          className="absolute"
-          style={{
-            top: m.top,
-            left: m.left,
-            right: m.right,
-            bottom: m.bottom,
-            width: m.size,
-            height: m.size,
-            transform: m.rotate ? `rotate(${m.rotate}deg)` : undefined,
-            opacity: opacity * (m.weight ?? 1),
-            color: m.color ?? TEAL,
-            filter: "drop-shadow(0 6px 18px rgba(13, 79, 74, 0.15))",
-          }}
-        >
-          {iconFor(m.icon, m.size)}
-        </span>
-      ))}
+      {/* Mobile opacity dampener — motifs at smaller sizes are still
+          visible enough to slightly interrupt heading legibility on
+          narrow viewports. Drop their effective opacity by ~50% on
+          screens under 640px so the heading stays clean. CLAUDE.md
+          rule: use dangerouslySetInnerHTML, NOT <style jsx>, to avoid
+          Turbopack 16.2.2 build-hang. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `@media (max-width: 639px) { .thrive-motifs > span { opacity: 0.09 !important; } }`,
+        }}
+      />
+      {motifs.map((m, i) => {
+        // Responsive sizing — locked 2026-05-19 after Ben caught the
+        // dove cutoff in the visit section on mobile. The fixed-pixel
+        // sizes (140-220px) were designed for desktop, where headings
+        // sit in narrow grid columns. On mobile the grid stacks to a
+        // single column so the heading occupies the full width and
+        // collides with the motif behind it. Using clamp() with a
+        // 50%-of-desktop floor and a 13vw fluid mid keeps motifs
+        // proportional to the viewport. Mobile (≤375px) → ~50% size;
+        // tablet (~768px) → ~70% size; desktop (≥1024px) → 100%.
+        const sizeClamp = `clamp(${Math.round(m.size * 0.5)}px, ${(m.size * 0.13).toFixed(2)}vw, ${m.size}px)`;
+        return (
+          <span
+            key={i}
+            className="absolute"
+            style={{
+              top: m.top,
+              left: m.left,
+              right: m.right,
+              bottom: m.bottom,
+              width: sizeClamp,
+              height: sizeClamp,
+              transform: m.rotate ? `rotate(${m.rotate}deg)` : undefined,
+              opacity: opacity * (m.weight ?? 1),
+              color: m.color ?? TEAL,
+              filter: "drop-shadow(0 6px 18px rgba(13, 79, 74, 0.15))",
+            }}
+          >
+            {iconFor(m.icon, m.size)}
+          </span>
+        );
+      })}
     </div>
   );
 }

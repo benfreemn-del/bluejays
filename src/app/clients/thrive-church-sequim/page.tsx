@@ -1678,6 +1678,10 @@ function Outreach() {
   //   ↔ ACROSS — horizontal arm (loving our neighbors face-to-face)
   //   ↓ AMONG  — vertical-down arm (rooted, where the cross meets the
   //              ground and everyone has a seat at the table)
+  // Each card "Learn more" button deep-links to the matching resource
+  // page on the live thrivesequim.com site (the real ministry content
+  // already lives there). Added 2026-05-19 — before this each card just
+  // dropped visitors at the connect form, dead-ending the curious.
   const fronts = [
     {
       bearing: "BEYOND",
@@ -1686,6 +1690,7 @@ function Outreach() {
       tagline: "Global mission partners.",
       body: "Supporting missionaries and indigenous leaders across continents — sharing the gospel, planting churches, and meeting practical needs in some of the hardest places.",
       icon: Globe,
+      href: "https://thrivesequim.com/around-the-world",
     },
     {
       bearing: "ACROSS",
@@ -1694,6 +1699,7 @@ function Outreach() {
       tagline: "Loving our neighbors first.",
       body: "Sequim is our parish. We partner with local schools, recovery ministries, food banks, and the Sequim community — because the gospel travels best on first-name terms.",
       icon: House,
+      href: "https://thrivesequim.com/across-the-street",
     },
     {
       bearing: "AMONG",
@@ -1702,6 +1708,7 @@ function Outreach() {
       tagline: "Community meals, no questions.",
       body: "A free hot meal served regularly to anyone who shows up — no signups, no sermons, no strings. Just food, warmth, and people who'll remember your name next time.",
       icon: ForkKnife,
+      href: "https://thrivesequim.com/table-of-grace",
     },
   ];
   return (
@@ -1773,7 +1780,9 @@ function Outreach() {
             return (
               <motion.a
                 key={f.label}
-                href="#connect"
+                href={f.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
