@@ -43,22 +43,22 @@ const EVENT_LIBRARY: Record<CelebrationKind, Omit<CelebrationEvent, "kind">> = {
   "calls-100": {
     emoji: "📞",
     headline: "100 calls today!",
-    detail: "Daily dial quota — crushed. Every call past this is bonus.",
+    detail: "Daily dial goal — hit. Every call past this is bonus territory.",
   },
   "meetings-3": {
     emoji: "📅",
     headline: "3 meetings booked!",
-    detail: "Daily meeting target — done. The pipeline got fed today.",
+    detail: "Daily meeting goal — done. The pipeline got fed today.",
   },
   "commission-first": {
     emoji: "💰",
     headline: "First commission of the month!",
-    detail: "Streak started. The next one is faster — momentum is compounding.",
+    detail: "Streak started. The next one tends to come faster — momentum compounds.",
   },
   "lap-up": {
     emoji: "🚀",
     headline: "Lap unlocked!",
-    detail: "New skill open. New commission ceiling. Run it.",
+    detail: "New skill open · new commission ceiling. Take it at your own pace.",
   },
 };
 

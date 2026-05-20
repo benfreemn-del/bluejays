@@ -150,8 +150,8 @@ export default function MadieTodoList() {
           <p className="text-xs text-pink-200/60 mt-0.5">
             {open.length === 0
               ? done.length > 0
-                ? `🔥 ${done.length} crushed today — add another or take a breath`
-                : "Add what you're knocking out today. One line each."
+                ? `✨ ${done.length} done today — add another or take a breather`
+                : "Jot down what you'd like to tackle today. One line each."
               : `${open.length} open · ${done.length} done`}
           </p>
         </div>

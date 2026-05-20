@@ -141,7 +141,7 @@ export default function MadieRaceTrack() {
       n: 1,
       emoji: "🎙️",
       title: "Cold Caller",
-      subtitle: "100 dials a day · 3 meetings booked · become a phone weapon",
+      subtitle: "100 dials a day · 3 meetings booked · build phone confidence",
       unlockCriterion:
         "Land 1 full week of 100/3 cadence — 500 calls + 15 meetings minimum.",
       skill: "Voice on the phone · objection handling · pace under pressure",
@@ -214,7 +214,7 @@ export default function MadieRaceTrack() {
       unlockCriterion:
         "Customize 3 mock backends with prospect-specific data DURING a close meeting.",
       skill: "Real-time confidence · the demo that closes itself",
-      commission: "🚀 CLOSER tier unlocks · rates DOUBLE · $400/website · $2,000/AI System per close",
+      commission: "🚀 Closer tier unlocks · rates double · $400/website · $2,000/AI System per close",
       status:
         currentLevel > 5
           ? "completed"
@@ -229,7 +229,7 @@ export default function MadieRaceTrack() {
       subtitle: "Cash in the bank · streaks · leaderboard top",
       unlockCriterion: "First paid close YOU ran end-to-end. Then the second. Then the streak.",
       skill: "$400 per $997 website · $2,000 per AI System ($10,000+) — top tier",
-      commission: "💎 10 closes/month at $10k tier = $20k/mo for you · the prize",
+      commission: "💎 10 closes/month at $10k tier = $20k/mo for you · the top of the track",
       status:
         currentLevel >= 6
           ? "current"
@@ -287,9 +287,9 @@ export default function MadieRaceTrack() {
         </h2>
         <p className="text-sm text-slate-300 leading-relaxed mb-5 max-w-3xl">
           Every conversation is a lap. Every lap unlocks a new skill + a higher
-          commission ceiling. The race rewards consistency: the operators who
-          dial 100 calls a day for 30 days hit Lap 6 within their first 90 days.
-          The ones who skip days don&apos;t. Pick a lap, run it, level up.
+          commission ceiling. The race rewards consistency — a steady cadence
+          over 90 days is what carries you to Lap 6. Pick a lap, run it,
+          level up at your own pace.
         </p>
 
         {/* Owner-only: manual lap-advance admin panel. Hidden from
@@ -784,31 +784,31 @@ function pickMission(level: number, stats: MadieStats | null): Mission {
   if (level === 1) {
     if (callsToday < 25) {
       return {
-        headline: "First 25 calls — start your block.",
+        headline: "First 25 calls — ease into your block.",
         detail:
-          "Pick your window — naptime, after drop-off, before pickup, evening. The script is right there. Nothing to think about. Just dial.",
+          "Pick a window that works for your day — naptime, after drop-off, before pickup, evening. The script is right there whenever you're ready.",
       };
     }
     if (callsToday < 100) {
       return {
-        headline: `${100 - callsToday} more dials to hit 100.`,
+        headline: `${100 - callsToday} more dials to reach 100.`,
         detail:
-          "You're in the zone. Keep dialing. Every call is a lap closer to Lap 2.",
+          "You're in a great rhythm. Every call is a lap closer to Lap 2.",
       };
     }
     if (meetingsToday < 3) {
       return {
-        headline: `${3 - meetingsToday} more meetings to hit today's quota.`,
+        headline: `${3 - meetingsToday} more meetings to reach today's goal.`,
         detail:
-          "100 calls done — now convert. Check the Win-Loss banner; weave this week's top objection-tweak into your next pitch.",
-        ctaLabel: "Run pitch review",
+          "100 calls done — nice work. Check the Win-Loss banner and weave this week's top objection-tweak into your next pitch if it helps.",
+        ctaLabel: "Open Win-Loss",
         ctaHref: "/dashboard/win-loss",
       };
     }
     return {
-      headline: "🔥 Daily quota crushed. Keep the streak.",
+      headline: "🎉 Today's goals hit. Keep the streak going.",
       detail:
-        "100/3 done. Every extra call right now is bonus. Aim for one more meeting before EOD — that's the streak Lap 2 is built on.",
+        "100/3 done — that's the day. Any extra time today is bonus territory. One more meeting before EOD is icing.",
     };
   }
 
