@@ -190,6 +190,52 @@ export async function sendEmail(
   htmlBody?: string,
   options?: { transactional?: boolean },
 ): Promise<SentEmail> {
+  // ────────────────────────────────────────────────────────────────────
+  // GLOBAL KILL SWITCH (added 2026-05-20 after the Meyer Electric +
+  // onboarding-reminders incident).
+  //
+  // When BLUEJAYS_EMAILS_PAUSED is set to a truthy value, every send
+  // routed through sendEmail() is suppressed. This blanket-blocks all
+  // automated marketing / lifecycle / funnel email:
+  //   • Cron-based: welcome series, onboarding reminders, audit
+  //     follow-up, NPS, referral asks, agency-nurture, renewals,
+  //     win-loss survey, weekly digest, etc.
+  //   • Webhook-triggered: Stripe checkout welcome, payment_failed
+  //     dunning, upsell welcomes, abandoned-checkout recovery.
+  //   • Funnel manager: cold outreach + reply-handling emails.
+  //
+  // What this DOES NOT block (intentional):
+  //   • Contact-form lead forwarding to client owners — uses
+  //     `sendEmailToWithAlert()` from `src/lib/alerts.ts`, which is a
+  //     separate code path that does NOT route through sendEmail().
+  //   • Ben's owner-alert copies — uses `sendOwnerEmail()` / `sendOwnerAlert()`
+  //     from `src/lib/alerts.ts`, also separate from sendEmail().
+  //   • Booking confirmations, inquire-form acknowledgments — these
+  //     are transactional sends through `sendEmailToWithAlert()`.
+  //
+  // Throws so the caller's existing try/catch updates the failure path
+  // (no `*_sent_at` flag marked → automatic resume when the pause lifts).
+  //
+  // To pause: set env var BLUEJAYS_EMAILS_PAUSED=true on Vercel + .env.local.
+  // To resume: remove the var (or set to "false" / unset).
+  // ────────────────────────────────────────────────────────────────────
+  const pausedFlag = process.env.BLUEJAYS_EMAILS_PAUSED;
+  const isPaused =
+    pausedFlag !== undefined &&
+    pausedFlag !== "" &&
+    pausedFlag.toLowerCase() !== "false" &&
+    pausedFlag !== "0";
+  if (isPaused) {
+    console.log(
+      `  [EMAILS_PAUSED] Suppressed send to ${to} (subject: "${subject.slice(0, 60)}"). ` +
+        `Unset BLUEJAYS_EMAILS_PAUSED to resume.`,
+    );
+    throw new Error(
+      `BlueJays automated emails are paused (BLUEJAYS_EMAILS_PAUSED env var is set). ` +
+        `Contact-form lead forwarding + Ben's owner-alert copies are unaffected.`,
+    );
+  }
+
   // Check if email has hard-bounced — skip sending
   if (isEmailBounced(to)) {
     console.log(`  [Deliverability] Skipping ${to} — hard bounced`);
