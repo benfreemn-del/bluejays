@@ -16,6 +16,8 @@
     initBookingForm();
     initYearStamp();
     initReviewsCarousel();
+    // Floating reviews widget is self-contained — see the separate IIFE
+    // at the bottom of this file (same pattern as the back-to-top button).
   });
 
   // ---- NAV: scrolled state + smooth scroll ----
@@ -892,4 +894,114 @@
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
   update();
+})();
+
+// ─── FLOATING GOOGLE REVIEWS WIDGET (added 2026-05-19) ───────────────────
+// Fixed-position card on the right edge that rotates through the live
+// Google reviews coming from the OIT (formerly Pine & Particle) profile.
+// Same data source as the in-page carousel — both hit
+// /api/clients/olympic-inspections/google-reviews. Hidden on mobile via CSS.
+// Hidden permanently for THIS session if the user clicks the × — uses
+// sessionStorage so it doesn't pester them on every page refresh.
+(function () {
+  if (sessionStorage.getItem("oit_floating_reviews_dismissed") === "1") return;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var widget = document.getElementById("floatingReviews");
+    if (!widget) return;
+    var closeBtn = document.getElementById("floatingReviewsClose");
+    var avgEl = document.getElementById("floatingReviewsAvg");
+    var avgStarsEl = document.getElementById("floatingReviewsAvgStars");
+    var countEl = document.getElementById("floatingReviewsCount");
+    var card = document.getElementById("floatingReviewsCard");
+    var authorEl = document.getElementById("floatingReviewAuthor");
+    var starsEl = document.getElementById("floatingReviewStars");
+    var textEl = document.getElementById("floatingReviewText");
+    var dotsEl = document.getElementById("floatingReviewDots");
+    var linkEl = document.getElementById("floatingReviewsLink");
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        widget.classList.remove("visible");
+        sessionStorage.setItem("oit_floating_reviews_dismissed", "1");
+      });
+    }
+
+    fetch("/api/clients/olympic-inspections/google-reviews")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var reviews = (data && data.reviews) || [];
+        if (!reviews.length) return; // graceful: stay hidden
+
+        // Header summary
+        if (avgEl && typeof data.rating === "number") {
+          avgEl.textContent = data.rating.toFixed(1);
+        }
+        if (avgStarsEl && typeof data.rating === "number") {
+          var filled = Math.round(data.rating);
+          avgStarsEl.textContent = "★★★★★".slice(0, Math.max(0, Math.min(5, filled))) +
+            "☆☆☆☆☆".slice(0, Math.max(0, 5 - filled));
+        }
+        if (countEl) {
+          countEl.textContent = data.reviewCount || reviews.length;
+        }
+        if (linkEl) {
+          // Best-effort link to the public Google search for "olympic
+          // inspections sequim" reviews. The Place Details API doesn't
+          // hand us back a direct review URL without an extra fetch, so
+          // a search URL covers it cleanly.
+          linkEl.href = "https://www.google.com/maps/search/?api=1&query=Olympic+Inspections+Sequim+WA";
+        }
+
+        // Build dots
+        if (dotsEl) {
+          dotsEl.innerHTML = reviews.map(function (_r, i) {
+            return '<span class="floating-reviews-dot' + (i === 0 ? ' active' : '') + '"></span>';
+          }).join("");
+        }
+
+        var idx = 0;
+        function render() {
+          var r = reviews[idx];
+          if (!r) return;
+          if (authorEl) authorEl.textContent = r.author || "Anonymous";
+          if (starsEl) {
+            var n = Math.round(r.rating || 5);
+            starsEl.textContent = "★★★★★".slice(0, Math.max(1, Math.min(5, n)));
+          }
+          if (textEl) textEl.textContent = (r.text || "").slice(0, 240);
+          if (dotsEl) {
+            var allDots = dotsEl.querySelectorAll(".floating-reviews-dot");
+            for (var i = 0; i < allDots.length; i++) {
+              allDots[i].classList.toggle("active", i === idx);
+            }
+          }
+        }
+        render();
+
+        // Show widget after the first review is populated (avoids a
+        // visible empty state flash on slow API responses).
+        requestAnimationFrame(function () { widget.classList.add("visible"); });
+
+        // Rotate every 7s with a soft cross-fade. Pause on hover.
+        var paused = false;
+        widget.addEventListener("mouseenter", function () { paused = true; });
+        widget.addEventListener("mouseleave", function () { paused = false; });
+
+        if (reviews.length > 1) {
+          setInterval(function () {
+            if (paused) return;
+            if (card) card.classList.add("fade");
+            setTimeout(function () {
+              idx = (idx + 1) % reviews.length;
+              render();
+              if (card) card.classList.remove("fade");
+            }, 300);
+          }, 7000);
+        }
+      })
+      .catch(function (err) {
+        console.warn("[oit] floating reviews fetch failed:", err);
+      });
+  });
 })();

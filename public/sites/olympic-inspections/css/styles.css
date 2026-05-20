@@ -1619,16 +1619,27 @@ html {
 }
 .footer-credit a { color: rgba(250, 246, 238, 0.78); }
 .footer-credit a:hover { color: var(--wheat); }
-.oit-owner-key {
+/* The .footer-credit a selector below us has higher specificity (class+element)
+   than a plain .oit-owner-key, so we double-up the class to win without
+   resorting to !important. */
+.footer-credit a.oit-owner-key,
+.oit-owner-key.oit-owner-key {
   display: inline-flex;
   align-items: center;
   margin-right: 4px;
-  color: inherit;
+  color: #3b82f6;                                  /* BlueJay blue — flags the backend-access entry */
   text-decoration: none;
-  opacity: 0.7;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0.95;
+  transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.35));
 }
-.oit-owner-key:hover { opacity: 1; transform: translateY(-1px) scale(1.08); }
+.footer-credit a.oit-owner-key:hover,
+.oit-owner-key.oit-owner-key:hover {
+  opacity: 1;
+  color: #60a5fa;                                  /* lighter blue on hover */
+  transform: translateY(-1px) scale(1.12);
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6));
+}
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 960px) {
@@ -2374,4 +2385,153 @@ html {
     width: 3.5rem;
     height: 3.5rem;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   FLOATING GOOGLE REVIEWS WIDGET (added 2026-05-19)
+   Pulls from /api/clients/olympic-inspections/google-reviews (which
+   resolves the Pine & Particle Place ID OIT inherits during transfer).
+   Right-side fixed card, rotates through the 5 most-relevant reviews.
+   Hidden on mobile (<900px) to avoid covering the booking CTA.
+   ───────────────────────────────────────────────────────────────── */
+#floatingReviews {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  max-width: calc(100vw - 36px);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 10px 32px rgba(20, 30, 20, 0.18),
+              0 2px 8px rgba(20, 30, 20, 0.08);
+  padding: 14px 16px 12px;
+  z-index: 90;
+  font-family: var(--sans);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+#floatingReviews.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#floatingReviews.collapsed {
+  width: auto;
+  padding: 10px 14px;
+}
+.floating-reviews-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.floating-reviews-google-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.floating-reviews-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+.floating-reviews-rating-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.floating-reviews-stars {
+  color: #f5b942;
+  letter-spacing: 0.5px;
+  font-size: 0.95rem;
+}
+.floating-reviews-count {
+  font-size: 0.74rem;
+  color: var(--ink-mute);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.floating-reviews-close {
+  background: transparent;
+  border: none;
+  color: var(--ink-mute);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+  margin: -4px -4px -4px 0;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.floating-reviews-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink);
+}
+.floating-reviews-card {
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  min-height: 92px;
+  transition: opacity 0.35s ease;
+}
+.floating-reviews-card.fade { opacity: 0; }
+.floating-reviews-author {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.floating-reviews-card-stars {
+  color: #f5b942;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.floating-reviews-text {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.floating-reviews-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.72rem;
+}
+.floating-reviews-footer a {
+  color: var(--forest);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.floating-reviews-footer a:hover { color: var(--forest-dark); text-decoration: underline; }
+.floating-reviews-dots {
+  display: flex;
+  gap: 4px;
+}
+.floating-reviews-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  transition: background 0.2s ease;
+}
+.floating-reviews-dot.active { background: var(--forest); }
+
+@media (max-width: 900px) {
+  #floatingReviews { display: none; }
 }
