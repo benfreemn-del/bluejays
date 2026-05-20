@@ -73,7 +73,7 @@ export default function StickyNav() {
             <ThriveMark size={40} className="shrink-0" />
             <span
               className="flex flex-col leading-tight"
-              style={{ fontFamily: "var(--font-thrive-display), serif", color: INK }}
+              style={{ fontFamily: "var(--font-thrive-display), sans-serif", color: INK }}
             >
               <span className="text-[18px] sm:text-[22px] font-semibold tracking-tight">
                 THRIVE
@@ -155,7 +155,7 @@ export default function StickyNav() {
           >
             <span
               className="flex items-center gap-3"
-              style={{ fontFamily: "var(--font-thrive-display), serif", color: INK }}
+              style={{ fontFamily: "var(--font-thrive-display), sans-serif", color: INK }}
             >
               <ThriveMark size={34} flat />
               <span className="text-[18px] font-semibold tracking-tight">
@@ -183,7 +183,7 @@ export default function StickyNav() {
                 style={{
                   color: INK,
                   borderColor: "rgba(13, 79, 74, 0.12)",
-                  fontFamily: "var(--font-thrive-display), serif",
+                  fontFamily: "var(--font-thrive-display), sans-serif",
                 }}
               >
                 {link.label}

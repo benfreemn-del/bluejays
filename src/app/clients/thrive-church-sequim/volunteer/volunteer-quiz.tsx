@@ -24,7 +24,8 @@ import {
  * "volunteer_quiz_result").
  *
  * Visually matches the rest of the Thrive site: cream / deep teal /
- * amber palette + Newsreader display.
+ * amber palette + Manrope display (all-sans typography, swapped from
+ * Newsreader 2026-05-20 per owner preference for clean, crisp fonts).
  */
 
 const TEAL = "#0d4f4a";

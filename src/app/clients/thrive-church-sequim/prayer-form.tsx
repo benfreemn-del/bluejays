@@ -102,7 +102,7 @@ export default function PrayerRequestForm() {
           className="text-[24px] sm:text-[28px] tracking-tight mb-3"
           style={{
             color: INK,
-            fontFamily: "var(--font-thrive-display), serif",
+            fontFamily: "var(--font-thrive-display), sans-serif",
             fontWeight: 600,
           }}
         >

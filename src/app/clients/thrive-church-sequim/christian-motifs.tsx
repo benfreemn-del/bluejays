@@ -269,7 +269,7 @@ function OmegaText({ size }: { size: number }) {
   return (
     <span
       style={{
-        fontFamily: "var(--font-thrive-display), serif",
+        fontFamily: "var(--font-thrive-display), sans-serif",
         fontSize: size * 0.92,
         fontWeight: 600,
         lineHeight: 1,

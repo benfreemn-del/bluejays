@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Inter } from "next/font/google";
+import { Manrope, Inter } from "next/font/google";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 import VerseOfDayPopup from "./verse-popup";
 import BackToTopButton from "./back-to-top";
@@ -7,16 +7,21 @@ import BackToTopButton from "./back-to-top";
 /**
  * Fonts loaded via next/font/google (Next 16 + Turbopack strips raw
  * `<link rel="stylesheet">` to fonts.googleapis.com down to preload-only
- * hints — they never become active stylesheets. That's why the page used
- * to render in the browser's fallback serif, which is where the "weird
- * F's and J's" came from. With next/font/google the TTF is bundled and
- * served from /_next/static/media with @font-face baked into the global
- * CSS, so the fonts actually render.
+ * hints — they never become active stylesheets. With next/font/google
+ * the TTF is bundled and served from /_next/static/media with @font-face
+ * baked into the global CSS, so the fonts actually render.
+ *
+ * Typography swap 2026-05-20: dropped Newsreader (serif) and moved to
+ * Manrope as the display font per owner Thrive Church preference for
+ * "clean, crisp fonts." Manrope + Inter is an all-sans pairing — both
+ * modern, geometric, highly readable. Display gets Manrope's slightly
+ * heavier letterforms for hierarchy; body keeps Inter's exceptional
+ * small-size readability. (Manrope ships only normal style on Google
+ * Fonts — italics are browser-synthesized if used.)
  */
-const displayFont = Newsreader({
+const displayFont = Manrope({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-thrive-display",
 });
@@ -45,11 +50,12 @@ const bodyFont = Inter({
  * Family Care = green/citrus cleaning) so the local cluster doesn't
  * collide visually.
  *
- * Fonts: Newsreader (display serif — warm, editorial, ecclesiastical
- * without being stuffy) + Inter (body) — pairing chosen for the
- * "modern church that still feels reverent" voice. Swapped from
- * Fraunces 2026-05-19 because Fraunces' F/J letterforms read as
- * "weird" at the large display sizes used across the page.
+ * Fonts: Manrope (display sans — modern, clean, slightly geometric)
+ * + Inter (body) — all-sans pairing per owner preference for
+ * "clean, crisp fonts" (2026-05-20). Previously: Newsreader (display
+ * serif) + Inter. Swapped from Fraunces → Newsreader 2026-05-19 (F/J
+ * letterforms read as "weird" at display sizes), then from Newsreader
+ * → Manrope 2026-05-20 (owner went all-sans).
  *
  * Meets the Meyer Electric reference standard (CLAUDE.md ship-gate):
  * 1. Hero shows OUTCOME (warm worshipful gathering moment) — not a

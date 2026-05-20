@@ -5,10 +5,11 @@
  * Concept: "Where Light Breaks" — a dawn-over-the-Olympics editorial.
  * Cream paper · Evergreen ink · Sunrise amber.
  *
- * Typography: Newsreader (display serif) + Inter (body). Swapped from
- *   Fraunces 2026-05-19 — Fraunces' canonical F/J letterforms read as
- *   "weird" at display sizes. Newsreader keeps the warm editorial feel
- *   with conventional letterforms.
+ * Typography: Manrope (display sans) + Inter (body). All-sans pairing
+ *   per owner preference for "clean, crisp fonts" (2026-05-20). Previous
+ *   chain: Fraunces (2026-05-18) → Newsreader (2026-05-19, fixing
+ *   Fraunces' weird F/J letterforms at display sizes) → Manrope
+ *   (2026-05-20, owner went all-sans).
  */
 
 import { useEffect, useState } from "react";
@@ -662,7 +663,7 @@ function SunriseIllustration() {
           <text
             x="32"
             y="442"
-            fontFamily="var(--font-thrive-display), serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontStyle="italic"
             fontSize="13"
             fill="#fbf7ee"
@@ -1331,7 +1332,7 @@ function PreschoolSpotlight() {
             x="60"
             y="50"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="42"
             fontWeight="700"
             fill="#fbf7ee"
@@ -1358,7 +1359,7 @@ function PreschoolSpotlight() {
             x="46"
             y="48"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="38"
             fontWeight="700"
             fill="#1a1612"
@@ -1385,7 +1386,7 @@ function PreschoolSpotlight() {
             x="37"
             y="44"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="34"
             fontWeight="700"
             fill="#d97706"
@@ -1412,7 +1413,7 @@ function PreschoolSpotlight() {
             x="27"
             y="40"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="34"
             fontWeight="700"
             fill="#fbf7ee"
@@ -1439,7 +1440,7 @@ function PreschoolSpotlight() {
             x="23"
             y="33"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="28"
             fontWeight="700"
             fill="#fbbf24"
@@ -1466,7 +1467,7 @@ function PreschoolSpotlight() {
             x="19"
             y="27"
             textAnchor="middle"
-            fontFamily="var(--font-thrive-display), Georgia, serif"
+            fontFamily="var(--font-thrive-display), sans-serif"
             fontSize="22"
             fontWeight="700"
             fill="#0d4f4a"
@@ -1737,7 +1738,7 @@ function Outreach() {
         </g>
         <g
           fill="#fbf7ee"
-          fontFamily="var(--font-thrive-display), serif"
+          fontFamily="var(--font-thrive-display), sans-serif"
           fontWeight="600"
           textAnchor="middle"
           transform="translate(300,350)"

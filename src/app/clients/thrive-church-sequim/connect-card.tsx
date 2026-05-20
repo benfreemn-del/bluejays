@@ -161,7 +161,7 @@ export default function ConnectCardForm() {
           className="text-[28px] sm:text-[34px] tracking-tight mb-3"
           style={{
             color: INK,
-            fontFamily: "var(--font-thrive-display), serif",
+            fontFamily: "var(--font-thrive-display), sans-serif",
             fontWeight: 600,
           }}
         >
