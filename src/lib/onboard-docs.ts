@@ -74,111 +74,129 @@ export type OnboardDoc = {
 };
 
 const REGISTRY: OnboardDoc[] = [
+  // ────────────────────────────────────────────────────────────────────
+  // TEKKY · Zenith Sports — updated 2026-05-20.
+  //
+  // Originally scoped as the first $10K AI Marketing System client (4-qtr
+  // installment plan). Paul + Philip reviewed the Service Agreement on
+  // 2026-05-20 and pulled back to a phased approach. Phase 1 is now a
+  // standard-tier $997 + tax website + SEO foundation, set up on TEKKY's
+  // Shopify store. Phase 2 (full AI System at $10K) remains available
+  // whenever inbound flow + club deal-flow justifies the investment.
+  //
+  // What changed in this registry:
+  //   - The 4-entry pack (handoff / brand-voice / sla / agreement) was
+  //     rewritten to a 3-entry pack: the $10K Service Agreement entry
+  //     was REMOVED (no $10K contract anymore — the $997 tier ships via
+  //     the standard online purchase flow with the SLA as the working
+  //     contract).
+  //   - handoff: completely rewritten for the $997 + tax Phase 1 scope
+  //     (site + SEO + Shopify integration). New valueProof bullets,
+  //     new payment CTA ($997 + tax), simpler extraQuestions.
+  //   - brand-voice: kept as-is — the brand voice doc is still useful
+  //     for any copy that lands on the TEKKY site.
+  //   - sla: description softened — no $10K-specific scope language.
+  // ────────────────────────────────────────────────────────────────────
   {
     slug: "zenith-sports",
     doc: "handoff",
     displayOrder: 20,
-    title: "Owner Onboarding Packet",
+    title: "Phase 1 — Website + SEO Welcome Packet",
     brand: "TEKKY · Zenith Sports",
     pdfPath: "/clients/zenith-sports/pdfs/tekky-onboarding-handoff.pdf",
-    alertSubject: "Tekky onboarding signed",
+    alertSubject: "Tekky $997 site + SEO onboarding signed",
     description:
-      "Welcome packet for Paul — portal access, tab tour, ownership " +
-      "matrix, pricing breakdown, account-creation permissions, and " +
-      "card-on-file policy. Read through and confirm below. " +
-      "Note: Phase A build work begins the business day Q1 payment clears.",
+      "Welcome packet for Paul + Philip — Phase 1 scope ($997 + tax: " +
+      "site + SEO foundation, set up on TEKKY's Shopify store), what " +
+      "happens this week, what we need from you, and the path to Phase 2 " +
+      "(the $10K AI Marketing System) whenever inbound flow justifies it. " +
+      "Read through and confirm below — build work starts the business " +
+      "day payment clears.",
     valueProof: {
-      headline: "What's already built for TEKKY",
+      headline: "Phase 1 — TEKKY website + SEO foundation",
       subhead:
-        "Preview-ready as of Monday 2026-05-18. The funnel engine, ad library, " +
-        "SEO layer, and portal cockpit are built and waiting. Final " +
-        "tekky.org domain flip + Shopify shop integration come this week — " +
-        "those are on Ben, no work needed from you.",
+        "$997 + Washington state sales tax. One-time. Goes live on TEKKY's " +
+        "Shopify store as the polished, SEO-foundation-baked storefront " +
+        "you were initially seeking. The full AI Marketing System (Phase 2) " +
+        "stays open at $10K when you're ready — same scope we discussed.",
       bullets: [
         {
-          title: "Bespoke TEKKY website (preview live)",
+          title: "Bespoke TEKKY website",
           detail:
-            "Built ground-up to the TEKKY brand — not a template. Preview live at bluejayportfolio.com/clients/zenith-sports. Final tekky.org domain flip + Shopify shop integration come this week — Ben handling.",
+            "The custom design we've already aligned on — not a template. Honored at the standard-tier price as a one-time exception given the work already completed.",
         },
         {
-          title: "986 leads pre-loaded + color-coded",
+          title: "Shopify store integration",
           detail:
-            "Parent / coach / player / club audiences with Cmd-K search and bulk-action toolbar in your portal.",
+            "Set up directly on TEKKY's Shopify so you have the polished website + native commerce stack you were initially seeking. Product pages, cart, and checkout flow stay native to Shopify; the BlueJays site is the marketing front + SEO layer that funnels traffic into it.",
         },
         {
-          title: "43 ad creatives + 6-touch funnels",
+          title: "SEO foundation that compounds",
           detail:
-            "Meta Feed/Reels/Stories, Google Search/PMax/YouTube, Lob direct mail — paired with audience-specific email sequences that fire on day offsets.",
+            "JSON-LD structured data, llms.txt for AI crawlers (ChatGPT, Claude, Perplexity, Gemini, Bing AI), proper meta + Open Graph tags, sitemap, and robots.txt — all shipped with the site so search ranking compounds over time. The long-tail SEO engine most agencies bill as a separate $1.5K/mo line item, included as the foundation.",
         },
         {
-          title: "SEO that compounds (the long-tail engine)",
+          title: "Contact capture + lead routing",
           detail:
-            "llms.txt + JSON-LD structured data ship with every page so ChatGPT, Claude, Perplexity, Gemini, and Bing AI parse TEKKY cleanly. Every lead captured feeds back into the site as fresh on-page signal — search rank quietly compounds month over month. Most agencies bill this as a separate $1.5k/mo line item; here it's the byproduct of the funnel running.",
+            "Contact form on the site routes inquiries directly to your inbox. (Optional Twilio SMS alert on every new lead can be wired up — let us know.)",
         },
         {
-          title: "Tracking layer already firing",
+          title: "Hosting, maintenance, updates — year 1 included",
           detail:
-            "Microsoft Clarity heatmaps, Meta Pixel, GA4 — every click, scroll depth, and conversion event captured from day one. You'll have audience-specific conversion rates by week 2.",
+            "Hosting on Vercel, maintenance, and standard content updates included for the first year. After year 1, $100/yr standard renewal keeps the site live + maintained.",
         },
         {
-          title: "AI Reply Drafter + Drill of Week (Phase A)",
+          title: "Phase 2 path stays open",
           detail:
-            "Personalized email drafts in your voice (you hit send) and an auto-broadcast drill to your coach list every Tuesday 9am PT — already LIVE.",
+            "The full $10K AI Marketing System (per-audience funnels, ad creative library, AI inbound responder, affiliate pipeline, weekly reports, lead magnets) remains available at full price whenever your inbound flow + club deal-flow tells you it's time. Same scope we discussed — no re-pricing or re-scoping needed when you activate.",
         },
       ],
     },
     extraQuestions: [
       {
-        id: "account_creation_permission",
+        id: "shopify_admin_access",
         label:
-          "Do I have your permission to create accounts on TEKKY's behalf? (yes / no)",
-        placeholder: "yes — proceed with Phase A account stand-up",
-        presets: ["Yes — proceed", "Wait — let's discuss first"],
+          "Shopify admin access — best way for us to get in to wire up the site + integrations.",
+        placeholder: "invite ben@bluejayportfolio.com as Staff · screenshare during setup · I'll handle myself with your guidance",
+        presets: [
+          "Invite ben@bluejayportfolio.com as Staff",
+          "Screenshare when you're ready",
+          "I'll handle myself, send me the steps",
+        ],
       },
       {
-        id: "preferred_email_for_accounts",
+        id: "brand_assets",
         label:
-          "Preferred email for new accounts (or a login you already have)",
-        placeholder: "info@tekky.org · admin@zenithsports.org",
+          "Final brand assets — logo (highest-res you have), brand colors, any photography you want featured.",
+        placeholder: "logo: attached · primary blue: #1e40af · photos: see Drive folder",
+      },
+      {
+        id: "contact_form_destination",
+        label:
+          "Where should leads from the contact form land? (email + optional SMS)",
+        placeholder: "email: info@zenithsports.org · SMS to (360) 555-1234",
       },
       {
         id: "owner_cell",
         label:
-          "Your direct cell — used for owner SMS alerts (new leads, AI flags, urgent funnel issues).",
+          "Your direct cell — used for any urgent owner alerts (site issues, lead spikes, payment events).",
         placeholder: "(360) 555-1234",
       },
       {
-        id: "existing_accounts",
+        id: "launch_date_preference",
         label:
-          "Existing accounts I should take over instead of creating fresh (Shopify · GBP · Meta BM · Google Ads · email tool)",
-        placeholder:
-          "Shopify yes (zenithsports.org) · GBP no · Meta BM no · Google Ads no · email tool: none",
-      },
-      {
-        id: "customer_list",
-        label:
-          "Customer or email list to import? Rough size + segments (parents / coaches / past buyers)",
-        placeholder: "Shopify: ~120 past buyers · newsletter: ~400 parents",
-      },
-      {
-        id: "vendor_card_setup",
-        label:
-          "Third-party vendor accounts (Twilio · Meta ad spend · Google Ads · SendGrid paid tiers) each need their own card entered directly into the vendor — Stripe's PCI rules don't let me re-use the Q1 card for those. Q2-Q4 Stripe installments auto-charge the Q1 card; this question is just about the vendor side. How do you want to handle it?",
-        placeholder: "screenshare during setup · send me the URLs · will get later",
-        presets: [
-          "Screenshare with me when you set them up",
-          "Send the URLs, I'll enter myself",
-          "Will get later",
-        ],
+          "Preferred launch window for Phase 1 — when do you want the site live on tekky.org?",
+        placeholder: "ASAP · within 2 weeks · target date: ____",
+        presets: ["ASAP — go as fast as possible", "Within 2 weeks", "I'll specify a target date below"],
       },
     ],
     paymentLinks: [
       {
-        label: "Pay Q1 — $2,500",
-        url: process.env.STRIPE_PAYMENT_LINK_TEKKY_Q1 || "",
+        label: "Pay $997 + tax — Phase 1 launch",
+        url: process.env.STRIPE_PAYMENT_LINK_TEKKY_997 || "",
         description:
-          "Quarterly installment 1 of 4 — the launch payment. Unlocks Phase A build work the business day funds clear.",
-        badge: "Due at launch (Monday 2026-05-18)",
+          "One-time payment for Phase 1: bespoke TEKKY site + SEO foundation + Shopify integration + year-1 hosting and maintenance. Washington state sales tax applied at checkout. Build work starts the business day payment clears.",
+        badge: "Phase 1 launch",
         primary: true,
       },
     ],
@@ -192,13 +210,12 @@ const REGISTRY: OnboardDoc[] = [
     pdfPath: "/clients/zenith-sports/pdfs/tekky-brand-voice.pdf",
     alertSubject: "Tekky brand-voice acknowledged",
     description:
-      "The locked voice rules every Tekky email, SMS, ad, and AI-drafted " +
-      "reply follows. Read once, then acknowledge below.",
+      "The locked voice rules every piece of copy on the TEKKY site (and " +
+      "any future email or marketing content) follows. Read once, then " +
+      "acknowledge below.",
   },
-  // BlueJays SLA — same PDF, registered per slug so each AI System
-  // client gets /sign/[slug]/sla and Ben gets a separate ack row in
-  // onboarding_acks per signature. Add a new row when onboarding a
-  // new AI System ($10k tier) client.
+  // BlueJays SLA — shared across paying clients. Each slug gets its own
+  // /sign/[slug]/sla route so signatures land in onboarding_acks per client.
   {
     slug: "zenith-sports",
     doc: "sla",
@@ -208,27 +225,11 @@ const REGISTRY: OnboardDoc[] = [
     pdfPath: "/onboarding/bluejays-sla.pdf",
     alertSubject: "Tekky acknowledged BlueJays SLA",
     description:
-      "Working contract between you and BlueJays — response times, " +
-      "what's included every month, what's out of scope, and the " +
-      "escalation order when something feels off. Read once, acknowledge " +
-      "below.",
-  },
-  // Formal Service Agreement — the actual contract behind the $10k AI System.
-  // Pair with the SLA: SLA = day-to-day response commitments; Agreement = the
-  // legal contract (deliverables, IP, refund, data ownership, termination).
-  {
-    slug: "zenith-sports",
-    doc: "agreement",
-    displayOrder: 10,
-    title: "Service Agreement (AI Marketing System)",
-    brand: "TEKKY · Zenith Sports",
-    pdfPath: "/onboarding/bluejays-service-agreement.pdf",
-    alertSubject: "Tekky acknowledged BlueJays Service Agreement",
-    description:
-      "The formal contract for your $10,000 AI Marketing System — deliverables, " +
-      "payment terms (4 quarterly installments of $2,500 or $9,700 pay-in-full), " +
-      "refund policy, data ownership, IP, what continues after the 4-installment " +
-      "program ends, and the optional $500/mo retainer. Read once, acknowledge below.",
+      "Working contract between you and BlueJays — response times for " +
+      "site issues, what's included in the year-1 maintenance, what's " +
+      "out of scope (counts against the future Phase 2 retainer), and " +
+      "the escalation order when something feels off. Read once, " +
+      "acknowledge below.",
   },
   {
     slug: "itc-quick-attach",

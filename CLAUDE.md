@@ -116,7 +116,7 @@ every slug.
 
 | Slug | Owner-Portal Backend | AI Marketing System | Sales Portal (commission program) | Notes |
 |---|---|---|---|---|
-| `zenith-sports` | ✓ | ✓ | ✓ | TEKKY · 4-qtr $10K AI plan · soccer, Philip + Paul |
+| `zenith-sports` | ✗ | ✗ | ✗ | TEKKY · Standard $997 + tax site + SEO (locked 2026-05-20 after Paul pulled back from the $10K AI System) · Phase 2 ($10K AI System) available later when inbound flow + club deal-flow justifies it · soccer, Philip + Paul · Bespoke site honored at standard-tier price (one-time exception, not a precedent) |
 | `itc-quick-attach` | ✓ | ✓ (queued) | ✓ | Jake · $9.7K AI System · tractor accessories · signing later |
 | `laser-lakes` | ✓ | ✗ | ✗ | Nate · custom site + Customers/Email tab ONLY · explicitly NO AI features |
 | `hector-landscaping` | ✗ (TBD) | ✗ | ✗ | Currently leads-only via SLUG_CONFIG · package undecided |
@@ -129,7 +129,7 @@ every slug.
 | Others in `SLUG_CONFIG` | ✗ | ✗ | ✗ | Email routing only — no portal, no AI |
 
 **Rules when adding a tenant-facing feature:**
-1. **AI-related features** (AI inbound responder · Hyperloop · AI postcards · AI Skills tab · funnel automation · self-learning ads): gate to `slug === "zenith-sports" || slug === "itc-quick-attach"` ONLY.
+1. **AI-related features** (AI inbound responder · Hyperloop · AI postcards · AI Skills tab · funnel automation · self-learning ads): gate to `slug === "itc-quick-attach"` ONLY. (zenith-sports removed 2026-05-20 when Tekky moved to the $997 standard tier — re-add if/when they activate the Phase 2 $10K AI System.)
 2. **Portal backend features in general**: only ship for slugs with ✓ in column 2 of the table above.
 3. **Sales-portal / partner features**: only ship for slugs with ✓ in column 3.
 4. **Custom-build / e-commerce / customer-tracking features** (e.g. Laser Lakes Customers tab, Shopify webhook): can be specific to non-AI clients with portals — those clients still get a portal, just without the AI surface.
