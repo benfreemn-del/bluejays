@@ -67,6 +67,7 @@ export type NavTabId =
   | "backend-audit"
   | "team"
   | "agency"
+  | "notifications"
   | "settings";
 
 type NavItem = {
@@ -309,6 +310,13 @@ const CATEGORIES: NavCategory[] = [
         emoji: "🏢",
         href: "/dashboard/agency",
         hint: "Sub-agency white-label config",
+      },
+      {
+        id: "notifications",
+        label: "Notifications",
+        emoji: "🔔",
+        href: "/dashboard/notifications",
+        hint: "Per-client email / SMS / dashboard cadence",
       },
       { id: "settings", label: "Settings", emoji: "⚙️", hint: "App-wide preferences" },
     ],
