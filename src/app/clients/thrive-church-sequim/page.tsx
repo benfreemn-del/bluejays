@@ -148,7 +148,7 @@ function Hero() {
             initial="hidden"
             animate="show"
             custom={1}
-            className="mt-4 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
+            className="mt-6 font-[family-name:var(--font-thrive-display)] text-[clamp(2.4rem,5.2vw,6rem)] leading-[1] tracking-[-0.02em] text-[#0d4f4a]"
             style={{ fontWeight: 500 }}
           >
             We are{" "}
@@ -157,27 +157,20 @@ function Hero() {
             </em>
           </motion.h1>
 
-          <motion.p
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={2}
-            className="mt-4 max-w-xl text-base leading-relaxed text-[#1a1a1a]/80 xl:text-lg 2xl:text-xl"
-          >
-            A community church for imperfect people on the mission with Jesus,
-            bringing hope and healing to the Olympic Peninsula — and beyond.
-            <span className="mt-1.5 block font-[family-name:var(--font-thrive-display)] italic text-[#0d4f4a]" style={{ fontWeight: 500 }}>
-              You&rsquo;re invited home. Sundays at 10:30.
-            </span>
-          </motion.p>
+          {/* Paragraph removed 2026-05-19 per Ben — the same mission
+              quote appears immediately below the ServiceStripe marquee
+              inside TaglineSpread, so this duplicated it. Hero now
+              reads cleaner: eyebrow → giant H1 → CTA → service stamp.
+              CTA margin bumped (mt-6 → mt-10) to compensate for the
+              vertical breathing room the paragraph used to provide. */}
 
           {/* CTA cluster */}
           <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="show"
-            custom={3}
-            className="mt-6 flex flex-wrap items-center gap-4"
+            custom={2}
+            className="mt-10 flex flex-wrap items-center gap-4"
           >
             <Link
               href="#connect"
@@ -206,7 +199,7 @@ function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="show"
-            custom={4}
+            custom={3}
             className="mt-5 inline-flex max-w-md flex-col gap-1 border-l-2 border-[#d97706] pl-4"
           >
             <span className="text-[12px] font-bold uppercase tracking-[0.28em] text-[#d97706]">
@@ -1149,7 +1142,10 @@ function MinistriesGrid() {
       icon: Users,
       cta: "Find a group",
       accent: "from-[#fdebbf] to-[#fbf7ee]",
-      href: "#connect",
+      // ?group=<id> pre-checks the matching opt-in checkbox on the
+      // Connect Card so the visitor doesn't have to re-state which
+      // ministry they came from. Added 2026-05-19.
+      href: "?group=thrive-groups#connect",
     },
     {
       tag: "02",
@@ -1159,7 +1155,7 @@ function MinistriesGrid() {
       icon: Baby,
       cta: "Kids ministry",
       accent: "from-[#fef3c7] to-[#fbf7ee]",
-      href: "#connect",
+      href: "?group=next-wave-kids#connect",
     },
     {
       tag: "03",
@@ -1169,7 +1165,7 @@ function MinistriesGrid() {
       icon: HandHeart,
       cta: "Youth ministry",
       accent: "from-[#fdebbf] to-[#f5ede0]",
-      href: "#connect",
+      href: "?group=next-wave-youth#connect",
     },
     {
       tag: "04",

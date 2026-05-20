@@ -23,6 +23,18 @@ const AMBER_LIGHT = "#fbbf24";
 const CREAM = "#fbf7ee";
 const INK = "#1b2922";
 
+// Ministry opt-in checkboxes added 2026-05-19 — Ben noticed visitors
+// clicking the 4 ministry cards landed at the Connect Card with no way
+// to say which ministry they came from. The Ministries Grid now passes
+// `?group=<id>` and the matching checkbox auto-checks on mount.
+const GROUPS: { id: string; label: string; short: string }[] = [
+  { id: "thrive-groups", label: "Thrive Groups (small groups for adults)", short: "Thrive Groups" },
+  { id: "next-wave-kids", label: "Next Wave Kids (infants–5th grade)", short: "Next Wave Kids" },
+  { id: "next-wave-youth", label: "Next Wave Youth (middle & high school)", short: "Next Wave Youth" },
+  { id: "thrive-preschool", label: "Thrive Preschool (licensed, ages 2.5–5)", short: "Thrive Preschool" },
+];
+const GROUP_IDS = new Set(GROUPS.map((g) => g.id));
+
 export default function ConnectCardForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">(
     "idle",
@@ -31,9 +43,36 @@ export default function ConnectCardForm() {
   // Set on mount so server can reject sub-2.5s submissions (bots).
   // useRef avoids re-renders and survives the form lifecycle.
   const loadedAtRef = useRef<number>(0);
+  // Selected ministry checkboxes — Set<id> for cheap toggle + dedup.
+  // Pre-populated on mount from `?group=<id>` if the URL has one.
+  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(
+    () => new Set(),
+  );
   useEffect(() => {
     loadedAtRef.current = Date.now();
+    // window-level access only on mount — avoids the useSearchParams()
+    // Suspense-boundary requirement Next.js 16 added.
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const group = params.get("group");
+      if (group && GROUP_IDS.has(group)) {
+        setSelectedGroups(new Set([group]));
+      }
+    } catch {}
   }, []);
+
+  function toggleGroup(id: string) {
+    setSelectedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,6 +80,11 @@ export default function ConnectCardForm() {
     setErrMsg("");
 
     const fd = new FormData(e.currentTarget);
+    // Resolve selected group IDs to human-readable labels for the lead
+    // email — Ben sees "Next Wave Kids, Thrive Preschool" not raw IDs.
+    const groupInterestsList = GROUPS
+      .filter((g) => selectedGroups.has(g.id))
+      .map((g) => g.short);
     const payload = {
       slug: "thrive-church-sequim",
       form_type: "connect_card",
@@ -52,6 +96,7 @@ export default function ConnectCardForm() {
       heard_about: String(fd.get("heard_about") || "").trim(),
       next_step: String(fd.get("next_step") || "").trim(),
       prayer_request: String(fd.get("prayer_request") || "").trim(),
+      group_interests: groupInterestsList.join(", "),
       message: String(fd.get("message") || "").trim(),
       // Spam guards: honeypot + timestamp. Server silent-drops if either
       // trips, so bots get ok:true and never tune their attack.
@@ -253,6 +298,54 @@ export default function ConnectCardForm() {
               "Request prayer",
             ]}
           />
+        </div>
+
+        {/* Ministry / group opt-in checkboxes. Tap-friendly pill chips
+            (mobile target ≥44px), each toggles a Set entry. Auto-checked
+            when the visitor arrives via /clients/thrive-church-sequim?group=…
+            from a Ministry Card click. */}
+        <div className="sm:col-span-2">
+          <span
+            className="block text-[12px] tracking-[0.18em] uppercase mb-3 font-bold"
+            style={{ color: TEAL_DEEP }}
+          >
+            Interested in any of these? (check all that apply)
+          </span>
+          <div className="flex flex-wrap gap-2.5">
+            {GROUPS.map((g) => {
+              const checked = selectedGroups.has(g.id);
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={checked}
+                  onClick={() => toggleGroup(g.id)}
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border px-4 py-2.5 text-[14px] transition-all hover:brightness-105 active:scale-[0.98]"
+                  style={{
+                    background: checked ? TEAL : "rgba(251, 247, 238, 0.6)",
+                    color: checked ? CREAM : INK,
+                    borderColor: checked ? TEAL_DEEP : "rgba(13, 79, 74, 0.25)",
+                    fontFamily: "var(--font-thrive-body), sans-serif",
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    className="inline-flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors"
+                    style={{
+                      background: checked ? AMBER : "transparent",
+                      borderColor: checked ? AMBER : "rgba(13, 79, 74, 0.45)",
+                    }}
+                  >
+                    {checked && (
+                      <CheckCircle size={12} weight="fill" color={CREAM} />
+                    )}
+                  </span>
+                  <span className="text-[14px] font-medium">{g.short}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="sm:col-span-2">
