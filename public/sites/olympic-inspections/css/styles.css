@@ -197,22 +197,23 @@ h1, h2, h3, h4, .section-title {
 /* OIT brand mark — full-color logo refresh 2026-05-19 (mountain +
    cabin + magnifier + OIT wordmark). Rendered natively as an <img>;
    no mask or filter applied. Aspect ratio ~square so width = height. */
-/* Nav box widened 2026-05-19 to fit the actual logo aspect ratio
-   (1151x820 ≈ 1.4:1) so the OLYMPIC INSPECTIONS & TESTING wordmark
-   stays legible. object-fit: contain prevents distortion. */
+/* Nav box sized to the actual logo aspect ratio (1151x820 ≈ 1.4:1)
+   so the OLYMPIC INSPECTIONS & TESTING wordmark stays legible.
+   Bumped up 2026-05-19 per Ben's request — the smaller box made the
+   wordmark hard to read; this size makes the full brand visible. */
 .nav-brand-img {
   display: block;
-  height: 56px;
-  width: 80px;
+  height: 76px;
+  width: 108px;
   object-fit: contain;
 }
 #navbar.scrolled .nav-brand-img {
-  height: 48px;
-  width: 68px;
+  height: 64px;
+  width: 92px;
 }
 @media (max-width: 600px) {
-  .nav-brand-img { height: 44px; width: 62px; }
-  #navbar.scrolled .nav-brand-img { height: 40px; width: 56px; }
+  .nav-brand-img { height: 56px; width: 80px; }
+  #navbar.scrolled .nav-brand-img { height: 48px; width: 68px; }
 }
 .nav-logo .nav-name { line-height: 1.1; }
 .nav-logo .nav-name small {
