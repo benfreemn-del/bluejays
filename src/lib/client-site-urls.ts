@@ -156,3 +156,9 @@ const CLIENT_SITES: Record<string, ClientSite> = {
 export function clientSiteFor(slug: string): ClientSite {
   return CLIENT_SITES[slug] ?? { kind: "none" };
 }
+
+/** Every known client slug, sorted alphabetically. Use for surfaces that
+ *  need to enumerate all clients (e.g. /dashboard/notifications). */
+export function allClientSlugs(): string[] {
+  return Object.keys(CLIENT_SITES).sort();
+}

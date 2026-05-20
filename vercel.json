@@ -175,6 +175,14 @@
     {
       "path": "/api/ai-skills/run?skill=triage",
       "schedule": "0 15 * * 1-5"
+    },
+    {
+      "path": "/api/cron/owner-notification-digest?mode=daily",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/owner-notification-digest?mode=weekly",
+      "schedule": "0 13 * * 1"
     }
   ],
   "functions": {

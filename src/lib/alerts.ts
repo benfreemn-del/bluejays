@@ -1,5 +1,9 @@
 import type { Prospect } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
+import {
+  getOwnerNotificationPref,
+  queueOwnerNotification,
+} from "./owner-notification-prefs";
 
 const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
@@ -26,6 +30,27 @@ async function sendOwnerSms(
   message: string,
   ctx?: { clientSlug?: string; prospectId?: string },
 ): Promise<boolean> {
+  // Per-client SMS gating — when Ben has set a non-instant cadence for
+  // this client in /dashboard/notifications, queue or drop the message
+  // instead of firing Twilio immediately. System-wide alerts (no
+  // clientSlug) always fire so cron/system errors aren't suppressed.
+  if (ctx?.clientSlug) {
+    const pref = await getOwnerNotificationPref(ctx.clientSlug);
+    if (pref.smsFrequency === "off") {
+      console.log(`  🔕 [SMS suppressed for ${ctx.clientSlug}]: ${message}`);
+      return true;
+    }
+    if (pref.smsFrequency === "daily") {
+      await queueOwnerNotification({
+        clientSlug: ctx.clientSlug,
+        channel: "sms",
+        body: message,
+        prospectId: ctx.prospectId,
+      });
+      return true;
+    }
+  }
+
   if (!OWNER_PHONE || !TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
     console.log(`  🔔 [ALERT - would text owner]: ${message}`);
     return false;
@@ -130,6 +155,30 @@ export async function sendOwnerEmail(args: {
   const FROM_EMAIL = "alerts@bluejayportfolio.com";
   const REPLY_TO = "bluejaycontactme@gmail.com";
   const OWNER_EMAIL = process.env.OWNER_EMAIL || "ben@bluejayportfolio.com";
+
+  // Per-client email gating — when Ben has set a non-instant cadence for
+  // this client in /dashboard/notifications, queue or drop the email
+  // instead of firing SendGrid immediately. System-wide alerts (no
+  // clientSlug) always fire so cron/system errors aren't suppressed.
+  if (args.clientSlug) {
+    const pref = await getOwnerNotificationPref(args.clientSlug);
+    if (pref.emailFrequency === "off") {
+      console.log(
+        `  🔕 [email suppressed for ${args.clientSlug}]: ${args.subject}`,
+      );
+      return true;
+    }
+    if (pref.emailFrequency === "daily" || pref.emailFrequency === "weekly") {
+      await queueOwnerNotification({
+        clientSlug: args.clientSlug,
+        channel: "email",
+        subject: args.subject,
+        body: args.body,
+        prospectId: args.prospectId,
+      });
+      return true;
+    }
+  }
 
   if (!SENDGRID_API_KEY) {
     console.log(
