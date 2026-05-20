@@ -4,38 +4,42 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 /**
  * GET /api/madie/today
  *
- * Returns Madie's (and any cross-client BlueJays-side caller's) daily
- * productivity numbers — the exact stats the dashboard surfaces need
- * to answer "are we on pace for 100 calls / 3 meetings today" without
- * tab-hopping. Per the dashboard review (2026-05-08): the #1 missing
- * surface in the system, ranked above the per-client refactor.
+ * Returns Madie's daily productivity numbers — the exact stats the
+ * dashboard surfaces need to answer "are we on pace for 100 calls /
+ * 3 meetings today" without tab-hopping. Per the dashboard review
+ * (2026-05-08): the #1 missing surface in the system.
  *
- * Source: `partner_calls` table — populated by /api/partners/work/log-call
- * every time a Hormozi-script call ends with an outcome button click.
+ * Source: `prospect_touches` table where `by_user = 'madie'` and
+ * `kind IN ('call', 'voicemail')`. Populated by
+ * /api/prospects/[id]/log-call (called from CallWorkspace's admin
+ * branch when Madie marks an outcome on /dashboard/script). Replaces
+ * the legacy `partner_calls` source which was only written by the
+ * external-partner flow at /partners/work — Madie's admin-mode dials
+ * never landed there, so the tile read 0/100 forever.
  *
  * Goals as guard rails:
  *   - 100 calls/day target (Madie's locked daily target)
  *   - 3 meetings/day target (the close-rate predictor)
  *
- * Outcomes that count as "meetings booked":
- *   - answered_call_scheduled  → primary "meeting set" outcome
+ * Outcome mapping (set in /api/prospects/[id]/log-call mapOutcome):
+ *   - meeting_booked  → primary "meeting set" outcome (counts as both
+ *                       meeting AND engaged)
+ *   - connected       → answered_preview_sent / answered_audit_sent /
+ *                       answered_callback (counts as engaged)
+ *   - declined        → answered_not_interested / do_not_call
+ *   - no_answer       → no_answer / wrong_number
+ *   - left_voicemail  → voicemail (kind='voicemail')
  *
- * Outcomes that count as "calls completed":
- *   - all of them (every dial logged is a call, regardless of outcome)
- *
- * When Madie role-auth ships (Q4=A), this endpoint filters by
- * `partner_id = madie.id`. Until then it includes EVERY partner_calls
- * row (which is fine — Ben + Madie are the only two operators
- * dialing today).
+ * Every kind='call' OR kind='voicemail' row counts as a "call
+ * completed" regardless of outcome.
  */
 
-const MEETING_OUTCOMES = new Set(["answered_call_scheduled"]);
+const MEETING_OUTCOMES = new Set(["meeting_booked"]);
 const ENGAGED_OUTCOMES = new Set([
-  "answered_call_scheduled",
-  "answered_preview_sent",
-  "answered_audit_sent",
-  "answered_callback",
+  "meeting_booked",
+  "connected",
 ]);
+const COUNTED_KINDS = new Set(["call", "voicemail"]);
 
 export async function GET(_request: NextRequest) {
   if (!isSupabaseConfigured()) {
@@ -63,15 +67,16 @@ export async function GET(_request: NextRequest) {
   );
 
   try {
-    // Pull partner_calls from the last 90 days. Light-weight enough
-    // — typical row count is a few thousand max — and gives us streak
-    // calculation in the same query as today/week stats. Aggregated
-    // in memory.
+    // Pull prospect_touches from the last 90 days for Madie. Light-
+    // weight — typical row count is a few thousand max — and gives us
+    // streak calculation in the same query as today/week stats.
+    // Aggregated in memory.
     const { data, error } = await supabase
-      .from("partner_calls")
-      .select("id, outcome, created_at, partner_id")
-      .gte("created_at", startOf90dWindow.toISOString())
-      .order("created_at", { ascending: false })
+      .from("prospect_touches")
+      .select("id, kind, outcome, occurred_at, by_user")
+      .eq("by_user", "madie")
+      .gte("occurred_at", startOf90dWindow.toISOString())
+      .order("occurred_at", { ascending: false })
       .limit(5000);
 
     if (error) {
@@ -91,7 +96,9 @@ export async function GET(_request: NextRequest) {
     const daysWithCalls = new Set<string>();
 
     for (const r of rows) {
-      const ts = r.created_at ? Date.parse(r.created_at) : 0;
+      const kind = (r.kind || "").toString();
+      if (!COUNTED_KINDS.has(kind)) continue;
+      const ts = r.occurred_at ? Date.parse(r.occurred_at) : 0;
       if (!ts) continue;
       const isToday = ts >= startOfTodayUtc.getTime();
       const isThisWeek = ts >= startOf7dWindow.getTime();

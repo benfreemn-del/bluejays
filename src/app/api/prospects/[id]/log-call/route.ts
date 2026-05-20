@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { logTouch } from "@/lib/prospect-touches";
+import { logTouch, type TouchKind, type TouchOutcome } from "@/lib/prospect-touches";
 
 /**
  * POST /api/prospects/[id]/log-call
@@ -22,11 +22,50 @@ import { logTouch } from "@/lib/prospect-touches";
  *
  * Operator-only — protected by middleware (not in PUBLIC_API_PATHS).
  *
- * Body (optional): `{ note?: string }` — appended to prospect notes
- * for context (e.g., "left voicemail, no answer"). Soft optional.
+ * Body (all optional):
+ *   - `note?: string` — appended to admin_notes (legacy timeline).
+ *   - `outcome?: string` — raw CallWorkspace outcome (e.g.
+ *     "answered_call_scheduled", "voicemail"). Mapped to the
+ *     prospect_touches schema below so MadieProductivity + the
+ *     touch timeline can count it.
+ *   - `byUser?: string` — explicit override; otherwise derived from
+ *     the `bj_role` cookie ("sales" → "madie", anything else → "ben").
+ *
+ * Without an outcome the endpoint behaves as before: stamps
+ * last_contacted_at and writes a generic prospect_touches row.
  */
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Map CallWorkspace outcomes to the prospect_touches enum shape.
+ * Keeps the strict outcome column meaningful (so /api/madie/today can
+ * count meetings) while preserving the raw label inside the notes
+ * field for the timeline.
+ */
+function mapOutcome(raw: string): {
+  kind: TouchKind;
+  outcome: TouchOutcome | null;
+} {
+  switch (raw) {
+    case "voicemail":
+      return { kind: "voicemail", outcome: "left_voicemail" };
+    case "no_answer":
+    case "wrong_number":
+      return { kind: "call", outcome: "no_answer" };
+    case "answered_call_scheduled":
+      return { kind: "call", outcome: "meeting_booked" };
+    case "answered_preview_sent":
+    case "answered_audit_sent":
+    case "answered_callback":
+      return { kind: "call", outcome: "connected" };
+    case "answered_not_interested":
+    case "do_not_call":
+      return { kind: "call", outcome: "declined" };
+    default:
+      return { kind: "call", outcome: null };
+  }
+}
 
 export async function POST(
   request: NextRequest,
@@ -49,16 +88,32 @@ export async function POST(
     );
   }
 
-  // Optional note appended to existing notes
+  // Optional note appended to existing notes + optional outcome / byUser
   let note: string | null = null;
+  let rawOutcome: string | null = null;
+  let byUserOverride: string | null = null;
   try {
     const body = await request.json();
     if (body && typeof body.note === "string" && body.note.trim()) {
       note = body.note.trim().slice(0, 500);
     }
+    if (body && typeof body.outcome === "string" && body.outcome.trim()) {
+      rawOutcome = body.outcome.trim().slice(0, 64);
+    }
+    if (body && typeof body.byUser === "string" && body.byUser.trim()) {
+      byUserOverride = body.byUser.trim().slice(0, 32);
+    }
   } catch {
-    // No body / invalid JSON is fine — note stays null
+    // No body / invalid JSON is fine — fields stay null
   }
+
+  // Derive by_user from bj_role cookie when caller didn't override.
+  // sales → madie, anything else (including missing) → ben. Matches
+  // the same convention used by /dashboard/script/page.tsx when it
+  // sets partner.code on CallWorkspace.
+  const role = request.cookies.get("bj_role")?.value;
+  const byUser =
+    byUserOverride || (role === "sales" ? "madie" : "ben");
 
   // Pre-fetch the prospect to confirm it exists + read current notes
   // for append. Use a tight column list so we don't pull PII the
@@ -106,14 +161,24 @@ export async function POST(
 
   // Phase 1 Lead Interaction System bridge — also record this call as a
   // structured prospect_touches row so the new TouchTimeline + 60-sec SLA
-  // chip see it. Fire-and-forget; if it fails we still succeed because
-  // the legacy column updates are what existing surfaces depend on.
+  // chip + MadieProductivity tile see it. Fire-and-forget; if it fails we
+  // still succeed because the legacy column updates are what existing
+  // surfaces depend on.
+  const mapped = rawOutcome ? mapOutcome(rawOutcome) : { kind: "call" as TouchKind, outcome: null };
+  const touchNotes = [
+    rawOutcome ? `outcome:${rawOutcome}` : "",
+    note || "",
+  ]
+    .filter(Boolean)
+    .join(" — ")
+    .slice(0, 2000) || null;
   void logTouch({
     prospectId: id,
-    kind: "call",
+    kind: mapped.kind,
     direction: "outbound",
-    by_user: "ben",
-    notes: note || undefined,
+    outcome: mapped.outcome || undefined,
+    by_user: byUser,
+    notes: touchNotes || undefined,
     occurred_at: now,
   }).catch((err) =>
     console.error("[log-call] bridge to prospect_touches failed:", err),
@@ -126,5 +191,7 @@ export async function POST(
     lastContactedAt: now,
     isFirstContact: !(prospect as { last_contacted_at?: string }).last_contacted_at,
     noteAppended: !!note,
+    byUser,
+    outcome: rawOutcome,
   });
 }

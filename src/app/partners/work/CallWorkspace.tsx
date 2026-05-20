@@ -252,7 +252,7 @@ export default function CallWorkspace(props: Props) {
       // to read the voicemail / objection script after marking the
       // outcome. They click "Next prospect →" when ready.
       if (isAdmin) {
-        // 1. Always save the outcome as a note for timeline visibility
+        // 1a. Always save the outcome as a note for timeline visibility
         try {
           await fetch(`/api/notes/${prospect.id}`, {
             method: "POST",
@@ -264,6 +264,31 @@ export default function CallWorkspace(props: Props) {
         } catch {
           // Note save failed — non-blocking. Outcome still tracked
           // locally so the rep sees their selection persist.
+        }
+
+        // 1b. Bridge to the Lead Interaction System: write a
+        // structured prospect_touches row so MadieProductivity tile,
+        // TouchTimeline, and the 60-sec SLA chip can count this dial.
+        // by_user is derived server-side from the bj_role cookie
+        // (sales → madie / owner → ben); partner.code is sent as an
+        // explicit override so the attribution matches the workspace's
+        // displayed identity. Rule 43 (Persist Before You Touch) — the
+        // structured row is the source of truth; the legacy note above
+        // is for the human-readable timeline.
+        try {
+          await fetch(`/api/prospects/${prospect.id}/log-call`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              outcome,
+              note: notes.trim() || undefined,
+              byUser: partner.code || undefined,
+            }),
+          });
+        } catch {
+          // Touch bridge failed — non-blocking. Note + status flip
+          // below still go through; partner_touches gap will surface
+          // in the dashboard's silent-failure watchdog.
         }
 
         // 2. Bump prospect status when outcome implies contact-was-
