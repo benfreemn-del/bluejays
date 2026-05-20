@@ -131,10 +131,20 @@ export async function GET(request: NextRequest) {
     // We bound by paid_at >= now - 60 days so we don't keep escalating
     // stale records forever.
     const sixtyDaysAgo = new Date(now - 60 * ONE_DAY_MS).toISOString();
+    // pricing_tier filter (added 2026-05-20 after Meyer Electric incident):
+    // The auto-onboarding form at /onboarding/[id] is ONLY for standard + free
+    // tier prospects whose sites are auto-generated from the V2 template
+    // pipeline. Custom-tier clients have hand-built bespoke sites — they don't
+    // need to fill out the auto-form. Fullsystem-tier clients (AI System $10k)
+    // have their own separate onboarding flow (ai_package_welcome series).
+    // Without this filter, paying custom/fullsystem clients receive escalating
+    // reminders ("Quick — need 5 min from you to start your site") for a form
+    // that doesn't apply to their tier.
     const { data: candidates, error: candidatesErr } = await supabase
       .from("prospects")
-      .select("id, business_name, email, owner_name, category, address, city, state, paid_at, onboarding_reminder_sent_at, created_at, updated_at")
+      .select("id, business_name, email, owner_name, category, address, city, state, paid_at, onboarding_reminder_sent_at, created_at, updated_at, pricing_tier")
       .eq("status", "paid")
+      .in("pricing_tier", ["standard", "free"])
       .lte("paid_at", thirtyMinutesAgo)
       .gte("paid_at", sixtyDaysAgo)
       .not("email", "is", null)

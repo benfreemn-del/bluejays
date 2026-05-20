@@ -57,6 +57,27 @@ const STEP_GATE_HOURS: Record<number, number> = {
   2: 22, // same gate for Day 2
 };
 
+// Defense-in-depth allowlist: hardcoded business-name fragments for known
+// AI System ($10k tier) clients. Any prospect with pricing_tier='fullsystem'
+// whose business_name does NOT contain one of these fragments is treated as
+// a data bug (tier accidentally flipped) and SKIPPED. Add a new fragment
+// ONLY after manually confirming a client purchased the AI Marketing System.
+// 2026-05-20: added after Meyer Electric (custom-tier $1,500 client) received
+// AI Package welcome emails due to a misconfigured pricing_tier field.
+const AI_PACKAGE_WELCOME_ALLOWED_NAME_FRAGMENTS = [
+  "zenith sports",
+  "tekky",
+  "itc quick attach",
+];
+
+function isAllowedAIPackageClient(businessName: string | null): boolean {
+  if (!businessName) return false;
+  const lower = businessName.toLowerCase();
+  return AI_PACKAGE_WELCOME_ALLOWED_NAME_FRAGMENTS.some((fragment) =>
+    lower.includes(fragment),
+  );
+}
+
 export async function POST(request?: NextRequest) {
   if (request) {
     const auth = request.headers.get("authorization");
@@ -110,6 +131,17 @@ export async function POST(request?: NextRequest) {
       p.status === "dismissed"
     ) {
       log.push({ id: p.id, step: 0, result: `skipped_status_${p.status}` });
+      continue;
+    }
+    // Hardcoded business-name allowlist (see comment at top of file).
+    // If a prospect somehow ends up with pricing_tier='fullsystem' but isn't
+    // a real AI System client, skip them — the pricing_tier flip was a data bug.
+    if (!isAllowedAIPackageClient(p.business_name)) {
+      log.push({
+        id: p.id,
+        step: 0,
+        result: `skipped_not_in_allowlist:${p.business_name ?? "null"}`,
+      });
       continue;
     }
 
