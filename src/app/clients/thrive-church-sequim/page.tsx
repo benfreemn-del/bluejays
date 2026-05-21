@@ -1344,6 +1344,34 @@ function MinistriesGrid() {
             );
           })}
         </div>
+
+        {/* "Sunday is the start, but the church really happens in the
+            in-between" — visualized. Small group photo as the cinematic
+            closer to the Ministries section. Ties directly to the
+            Thrive Groups card tagline above ("Faith, lived around a
+            table"). Added 2026-05-20. */}
+        <motion.figure
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.0, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16"
+        >
+          <div className="relative aspect-[3/2] max-h-[560px] overflow-hidden bg-[#0d4f4a]/5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/clients/thrive-church-sequim/photos/connect-small-group.jpg"
+              alt="Thrive Church Sequim — a Thrive Group meeting in person, faith and conversation lived around a table"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <figcaption className="mt-4 flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
+            <span className="inline-block h-px w-8 bg-[#d97706]" />
+            Thrive Groups · Faith, lived around a table
+          </figcaption>
+        </motion.figure>
       </div>
     </section>
   );
