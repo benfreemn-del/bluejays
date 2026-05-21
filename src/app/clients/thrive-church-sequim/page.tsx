@@ -890,6 +890,30 @@ function WhatToExpect() {
               No registration, no awkward introductions, no "stand up and wave."
               Just slip in, grab a coffee, and see for yourself.
             </p>
+
+            {/* Real-Sunday anchor photo (added 2026-05-20). Casual mid-
+                sermon shot — pastor in a sweater + ball cap, worship
+                team in the background. Directly visualizes the
+                "casual dress, no awkward introductions" promise above.
+                Sticky column means this stays in frame while the
+                reader scrolls through the numbered list on the right. */}
+            <figure className="mt-10 max-w-[360px]">
+              <div className="relative aspect-[4/5] overflow-hidden bg-[#0d4f4a]/5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/clients/thrive-church-sequim/photos/first-visit-pastor-speaking.jpg"
+                  alt="Thrive Church Sunday gathering — pastor speaking from the stage in a casual sweater, worship team in the background"
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption className="mt-3 flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.24em] text-[#d97706]">
+                <span className="inline-block h-px w-8 bg-[#d97706]" />
+                A real Sunday at Thrive
+              </figcaption>
+            </figure>
+
             <Link
               href="#connect"
               className="mt-10 inline-flex min-h-[44px] items-center gap-2 py-2 text-sm font-medium uppercase tracking-[0.18em] text-[#0d4f4a] underline decoration-[#d97706] decoration-2 underline-offset-[6px] transition-colors hover:text-[#d97706]"
