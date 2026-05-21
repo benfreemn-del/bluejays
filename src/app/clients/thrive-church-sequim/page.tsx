@@ -220,18 +220,45 @@ function Hero() {
           </motion.div>
         </div>
 
-        {/* ILLUSTRATION BLOCK */}
+        {/* HERO PHOTO BLOCK — congregation in worship.
+            Replaces the original SunriseIllustration 2026-05-20: owner
+            wanted real people on the page to make Thrive feel more
+            welcoming. The animated SVG sunrise function remains
+            defined below in case we want to use it on a sub-page
+            (e.g. /about) later — just not on the homepage hero. */}
         <motion.div
           variants={reveal}
           initial="hidden"
           animate="show"
           className="relative lg:col-span-5 lg:pt-4"
         >
-          <SunriseIllustration />
+          {/* Aspect / sizing tuned 2026-05-20 after first-look review:
+              originally 3:4 portrait felt too tall against the short text
+              column on the left (created an L-shape of empty space below
+              the CTA stamp). Tightened to 4:5 + max-h cap so the photo
+              never towers over the headline. object-center keeps the
+              hands-raised worshipper in frame as the focal point. */}
+          <div className="relative aspect-[4/5] max-h-[640px] overflow-hidden bg-[#0d4f4a]/5 sm:aspect-[1/1] lg:aspect-[4/5]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/clients/thrive-church-sequim/photos/hero-worship-hands-raised.jpg"
+              alt="Thrive Church Sequim — Sunday gathering, congregation worshipping together with hands raised in praise"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              loading="eager"
+              decoding="async"
+            />
+            {/* Subtle deep-teal gradient at the bottom so the pull-quote
+                figure has enough contrast against the photo behind it
+                without obscuring the worshippers. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0d4f4a]/55 via-[#0d4f4a]/15 to-transparent"
+            />
+          </div>
 
-          {/* Pull quote — sits inside the illustration frame so it
-              doesn't add to the section's overall height (keeps the
-              marquee above the fold on initial landing). */}
+          {/* Pull quote — same John 1:5 callout, now overlaid on the
+              photo. The cream backdrop + amber quote marks keep the
+              brand visual signature intact. */}
           <motion.figure
             variants={fadeUp}
             initial="hidden"
@@ -989,41 +1016,45 @@ function LatestSermon() {
               rel="noopener noreferrer"
               className="group relative block aspect-[4/3] overflow-hidden rounded-sm bg-[#0a3d39]"
             >
-              {/* Layered visual: sunrise + serif title overlaid */}
+              {/* Real worship moment — replaced the stylized SVG sunrise
+                  treatment 2026-05-20. Owner wanted real people on the
+                  page, and this card is the YouTube-sermon CTA — a
+                  candid worship shot (guitar + vocalist, congregation
+                  backs in foreground, purple stage light) tells the
+                  "what does it mean to gather" story far better than
+                  another illustration would. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/clients/thrive-church-sequim/photos/gather-intimate-worship.jpg"
+                alt="Thrive Church Sunday gathering — worship leaders on stage during a Sunday service, congregation in the foreground"
+                className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                loading="lazy"
+                decoding="async"
+              />
+              {/* Teal darkening overlay so the white play button + the
+                  bottom rail stay readable on top of the photo. The
+                  radial gradient mimics the original SVG's amber glow
+                  on the right side for brand continuity. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-tr from-[#031e1c]/65 via-[#0a3d39]/35 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(circle at 80% 40%, rgba(217,119,6,0.22) 0%, rgba(217,119,6,0) 55%)",
+                }}
+              />
               <svg
                 viewBox="0 0 900 675"
-                className="absolute inset-0 h-full w-full"
+                className="hidden"
                 aria-hidden
               >
-                <defs>
-                  <radialGradient id="sermonGlow" cx="80%" cy="40%" r="60%">
-                    <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.5" />
-                    <stop offset="60%" stopColor="#d97706" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-                <rect width="900" height="675" fill="#0a3d39" />
-                <rect width="900" height="675" fill="url(#sermonGlow)" />
-
-                {/* Ridge silhouettes */}
-                <path
-                  d="M0,460 Q150,420 300,440 T600,415 T900,425 L900,675 L0,675 Z"
-                  fill="#0d4f4a"
-                  opacity="0.5"
-                />
-                <path
-                  d="M0,520 L100,490 L220,510 L340,475 L460,495 L580,470 L700,490 L820,475 L900,485 L900,675 L0,675 Z"
-                  fill="#063432"
-                  opacity="0.7"
-                />
-                <path
-                  d="M0,580 L120,560 L260,575 L390,545 L520,565 L660,545 L800,560 L900,555 L900,675 L0,675 Z"
-                  fill="#031e1c"
-                />
-
-                {/* Sun crest */}
-                <circle cx="720" cy="280" r="68" fill="#d97706" />
-                <ellipse cx="720" cy="280" rx="150" ry="2" fill="#fbbf24" opacity="0.6" />
+                {/* legacy SVG kept hidden as a fallback reference — DO NOT
+                    render, but kept for revert simplicity if the photo
+                    is ever pulled. */}
 
                 {/* Edition stamp */}
                 <g transform="translate(50,80)">
