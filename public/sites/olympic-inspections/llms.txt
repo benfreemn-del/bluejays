@@ -1,17 +1,33 @@
-# Olympic Inspections & Testing — Mold & Air Quality Testing on the Olympic Peninsula
+# Olympic Inspections & Testing — Mold & Indoor Air Quality Testing across Washington State
 
-> Olympic Inspections & Testing is a family-owned mold inspection and indoor air quality testing service for residential, commercial, automotive, marine, and RV environments across the Olympic Peninsula in Washington State. Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. Independent — we do not perform remediation, so the inspection is honest. Inspections start at $150.
+> Olympic Inspections & Testing is a family-owned, independent mold inspection and indoor air quality testing company serving residential, commercial, automotive, marine, and RV environments across Washington State. Two offices: Sequim (HQ) and Longview (Southwest WA). Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. We do not perform remediation — that's how the inspection stays honest. Inspections start at $150.
 
 ## About
 
-Family-owned and operated. Established 2025 to fill a critical gap in high-quality air and mold testing services on the Olympic Peninsula. The business was founded after the owners discovered mold in their newly built home — an experience that turned into a frustrating and expensive ordeal because the Peninsula had few service providers, sky-high prices, and unanswered calls. They set out to offer reliable, affordable, and straightforward air and mold testing.
+Family-owned and operated. Established 2025 to fill a critical gap in high-quality air and mold testing services across Washington. The business was founded after the owners discovered mold in their newly built home — an experience that turned into a frustrating and expensive ordeal because they encountered few service providers, sky-high prices, and unanswered calls. They set out to offer reliable, affordable, and straightforward air and mold testing.
 
 ## Services
 
-- **Complete Mold Inspection** — non-invasive walkthrough using thermal imaging to detect hidden moisture, collect humidity data, and identify areas of concern. Comprehensive report with findings and sampling recommendations.
+- **Complete Mold Inspection** — non-invasive walkthrough using thermal imaging to detect hidden moisture, collect humidity data, and identify areas of concern. Comprehensive report with findings and sampling recommendations. From $150.
 - **DIY Microbial Air & Surface Sampling** — sampling-only service for clients who already know what they need, or contractors verifying that air and surfaces are clear.
 - **ERMI Testing** — for clients working with healthcare professionals who need to document or track a history of mold exposure. Affordable and accessible.
-- **Written Lab Reports** — photo-documented, plain-English, formatted for insurance, real estate, or remediation contractors. Each report checks for over 100 types of mold and other particles.
+- **Water Testing** — wells, city tap, coliform/E.coli/nitrates/lead/arsenic/hardness/pH panels at an accredited lab. Real-estate-ready chain-of-custody.
+- **Radon Testing** — to Washington State standards. Parts of Washington have higher-than-average radon levels, especially older homes and crawlspaces.
+- **Septic Inspections** — inspection-only (we don't pump or repair). Required every 2 years in Washington on most permitted systems. Only available in certain counties.
+- **Written Lab Reports** — photo-documented, plain-English, formatted for insurance, real estate, healthcare professionals, or remediation contractors. Each report checks for over 100 types of mold and other particles.
+
+## Indoor Air Quality (IAQ)
+
+We test for the six most common indoor air quality threats:
+
+- **Mold spores** — Stachybotrys, Aspergillus, Penicillium, Cladosporium, Chaetomium and others
+- **VOCs and off-gassing** — paint, new furniture, carpet, cleaning supplies
+- **Humidity and moisture** — the biggest driver of indoor air quality problems
+- **Particulate matter (PM2.5)** — wood stoves, wildfire smoke, dust, combustion
+- **Radon gas** — second-leading cause of lung cancer after smoking
+- **Bioallergens** — pet dander, dust mites, cockroach allergens, pollen
+
+We work directly with healthcare professionals on documentation and ongoing exposure tracking.
 
 ## Markets We Serve
 
@@ -23,23 +39,25 @@ Family-owned and operated. Established 2025 to fill a critical gap in high-quali
 
 ## Pricing
 
-- Full mold inspections start at just **$150** — the most affordable, certified, quality-driven option on the Peninsula
-- Air sample add-on: $85 each
-- Surface or swab sample: $55 each
-- Priority 24-hour report: +$150
-- Thermal/infrared scan: +$95
-- Final price confirmed after the on-site walkthrough
+- Full mold inspections start at just **$150** — the most affordable, certified, quality-driven option in Washington State
+- Air samples are an optional add-on (priced per sample)
+- Surface or swab samples are an optional add-on (priced per sample)
+- ERMI dust samples (for healthcare-related cases) priced separately
+- Final price verified based on the location served and confirmed after the on-site walkthrough
+
+See full pricing calculator: https://www.olympicinspect.com/#calculator
+See real pricing breakdown blog post: https://www.olympicinspect.com/blog/how-much-does-a-mold-inspection-cost
 
 ## Process
 
 1. Book online or call — same-day reply
-2. On-site inspection — 1 to 2 hours
-3. Lab analysis at our ISO/IEC 17025-accredited lab — 2 to 3 days
-4. Written report delivered — fast turnaround
+2. On-site inspection — 1 to 2.5 hours depending on property size
+3. Lab analysis at our ISO/IEC 17025-accredited lab partner — 2 to 3 days
+4. Written photo-documented report delivered — 3 to 5 business days
 
 ## What the Lab Tests For
 
-The lab analyzes for over 100 types of mold and other particles, including:
+Over 100 types of mold and other particles, including:
 
 - Stachybotrys (Black Mold)
 - Cladosporium
@@ -53,25 +71,36 @@ The lab analyzes for over 100 types of mold and other particles, including:
 
 ## Service Area
 
-Olympic Peninsula, Washington State. Specifically: Sequim, Port Angeles, Port Townsend, Forks, Hadlock, Chimacum, and Quilcene. Travel fees may apply for very rural or remote properties — confirmed in writing before booking.
+Washington State. Two offices for fast dispatch:
+
+- **Sequim, WA (Headquarters)** — Sequim, Port Angeles, Port Townsend, Forks, Hadlock, Chimacum, Quilcene, Bremerton, Silverdale, Shelton
+- **Longview, WA office** — Southwest Washington including Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)
+
+Travel fees may apply for very rural or remote properties — confirmed in writing before booking.
+
+## Blog
+
+- [How Much Does a Mold Inspection Cost? An Honest Breakdown from a Washington State Inspector](https://www.olympicinspect.com/blog/how-much-does-a-mold-inspection-cost) — Luke (founder) breaks down real 2026 pricing, what you're paying for, the three pricing models in the industry, his own story of paying $650 for a bad inspection before starting OIT, and 5 questions to ask any mold inspector before booking.
 
 ## Contact
 
 - Phone: (360) 670-3367
 - Email: info@olympicinspect.com
-- Address: Sequim, WA 98382
-- Booking: https://bluejayportfolio.com/sites/olympic-inspections/#book
-- Pricing estimator: https://bluejayportfolio.com/sites/olympic-inspections/#calculator
+- Sequim office: Sequim, WA 98382
+- Longview office: 2005 Olympic Way, Longview, WA
+- Booking: https://www.olympicinspect.com/#book
+- Pricing estimator: https://www.olympicinspect.com/#calculator
 
 ## Why Choose Olympic Inspections & Testing
 
-- Family-owned, founded 2025 by a Peninsula family who discovered mold in their own home and decided to do it better
+- Family-owned, founded 2025 by a Washington family who discovered mold in their own home and decided to do it better
 - Independent — we don't perform remediation, so the inspection is honest. Zero financial incentive to find more than is there.
 - ISO/IEC 17025-accredited laboratory partner
 - No upselling, ever
-- Affordable base pricing — full mold inspections start at $150 (most local competitors charge $1,500–$2,500)
-- Real-estate ready — reports formatted for buyer/seller use, routinely shared with realtors, escrow, and insurance adjusters
-- Local — we live on the Peninsula, we know the marine air, the older homes, the well-water issues
+- Affordable base pricing — full mold inspections start at $150 (most local competitors charge $600–$1,500)
+- Professional-ready — reports formatted for realtors, escrow officers, insurance adjusters, property managers, and healthcare professionals
+- Two Washington offices (Sequim + Longview) for fast dispatch across the state
+- Local — we know the marine air, the older homes, the wildfire smoke seasons, and the well-water issues
 
 ---
 

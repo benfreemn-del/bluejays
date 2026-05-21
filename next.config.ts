@@ -111,6 +111,40 @@ const nextConfig: NextConfig = {
           source: '/:file(sitemap.xml|robots.txt|llms.txt|llms-full.txt)',
           destination: '/sites/olympic-inspections/:file',
         },
+        // Blog — added 2026-05-20. /blog/ resolves to the index; each
+        // article slug resolves to its own .html file. To add another
+        // post: add the slug to BOTH alternations below AND drop the
+        // matching .html file in /public/sites/olympic-inspections/blog/.
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/blog',
+          destination: '/sites/olympic-inspections/blog/index.html',
+        },
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/blog/',
+          destination: '/sites/olympic-inspections/blog/index.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/blog',
+          destination: '/sites/olympic-inspections/blog/index.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/blog/',
+          destination: '/sites/olympic-inspections/blog/index.html',
+        },
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/blog/:slug(how-much-does-a-mold-inspection-cost)',
+          destination: '/sites/olympic-inspections/blog/:slug.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/blog/:slug(how-much-does-a-mold-inspection-cost)',
+          destination: '/sites/olympic-inspections/blog/:slug.html',
+        },
         // Pine & Particle Co. rebranded to Olympic Inspections & Testing
         // 2026-05-05. The pineparticle.com domain is in transfer; while
         // it still resolves it serves the OIT site directly. Once the
