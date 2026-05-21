@@ -835,6 +835,36 @@ function TaglineSpread() {
             time, or finding your way back — there's a place at the table.
           </p>
         </motion.div>
+
+        {/* Cinematic photo closer (added 2026-05-20) — worship team on
+            stage during a Sunday gathering. Grounds the editorial
+            manifesto above with a real moment from the church. Wide
+            16:9 crop centers on the worship leaders; the photo's
+            natural portrait composition keeps the top wood-paneling
+            mountains and bottom pews out of frame. */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.0, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mt-16 aspect-[16/9] max-h-[480px] overflow-hidden bg-[#0d4f4a]/5"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/clients/thrive-church-sequim/photos/mission-worship-team.jpg"
+            alt="Thrive Church Sequim — worship team leading the congregation in song during a Sunday gathering"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            loading="lazy"
+            decoding="async"
+          />
+          {/* Soft cream wash at the top so the section's preceding
+              text doesn't visually collide with the photo's brighter
+              stage lighting. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[#fbf7ee]/40 to-transparent"
+          />
+        </motion.div>
       </div>
     </section>
   );
