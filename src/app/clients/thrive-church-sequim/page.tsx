@@ -841,13 +841,18 @@ function TaglineSpread() {
             manifesto above with a real moment from the church. Wide
             16:9 crop centers on the worship leaders; the photo's
             natural portrait composition keeps the top wood-paneling
-            mountains and bottom pews out of frame. */}
+            mountains and bottom pews out of frame.
+            Constrained to max-w-6xl + mx-auto on desktop (2026-05-20
+            follow-up) so the photo reads as a centered, framed
+            photograph instead of an edge-to-edge banner on wide
+            monitors. Still full-width on mobile/tablet via the
+            implicit 100% below the lg breakpoint. */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.0, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mt-16 aspect-[16/9] max-h-[480px] overflow-hidden bg-[#0d4f4a]/5"
+          className="relative mx-auto mt-16 aspect-[16/9] max-h-[480px] w-full max-w-6xl overflow-hidden bg-[#0d4f4a]/5"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -1349,13 +1354,18 @@ function MinistriesGrid() {
             in-between" — visualized. Small group photo as the cinematic
             closer to the Ministries section. Ties directly to the
             Thrive Groups card tagline above ("Faith, lived around a
-            table"). Added 2026-05-20. */}
+            table"). Added 2026-05-20.
+            Constrained to max-w-6xl + mx-auto on desktop (2026-05-20
+            follow-up) so the photo reads as a centered, framed
+            photograph instead of an edge-to-edge banner on wide
+            monitors. The caption underneath inherits the same
+            width so it left-aligns under the photo. */}
         <motion.figure
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.0, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16"
+          className="mx-auto mt-16 w-full max-w-6xl"
         >
           <div className="relative aspect-[3/2] max-h-[560px] overflow-hidden bg-[#0d4f4a]/5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
