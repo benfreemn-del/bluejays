@@ -111,6 +111,22 @@ const nextConfig: NextConfig = {
           source: '/:file(sitemap.xml|robots.txt|llms.txt|llms-full.txt)',
           destination: '/sites/olympic-inspections/:file',
         },
+        // Favicon — Chrome (and most browsers) auto-request /favicon.ico
+        // BEFORE parsing the HTML <link rel="icon"> tag. Without this
+        // rewrite, the request falls through to src/app/favicon.ico
+        // and the visitor sees the BlueJays favicon on Luke's domain.
+        // Serving the OIT logo.png as the favicon — browsers sniff by
+        // content type, not URL extension.
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/favicon.ico',
+          destination: '/sites/olympic-inspections/logo.png',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/favicon.ico',
+          destination: '/sites/olympic-inspections/logo.png',
+        },
         // Blog — added 2026-05-20. /blog/ resolves to the index; each
         // article slug resolves to its own .html file. To add another
         // post: add the slug to BOTH alternations below AND drop the
