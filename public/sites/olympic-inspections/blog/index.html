@@ -66,7 +66,7 @@
     </script>
 
     <style>
-      .blog-hero { padding: 8rem 0 4rem; background: linear-gradient(180deg, #fdfbf6 0%, #faf6ee 100%); }
+      .blog-hero { padding: 140px 0 4rem; background: linear-gradient(180deg, #fdfbf6 0%, #faf6ee 100%); }
       .blog-hero h1 { font-family: 'Merriweather', serif; font-weight: 900; font-size: clamp(2.25rem, 5vw, 3.5rem); color: var(--forest, #1f4d2c); margin: 0 0 1rem; line-height: 1.15; }
       .blog-hero p.lead { font-size: 1.15rem; color: #4a4a4a; max-width: 680px; line-height: 1.6; }
       .blog-hero .eyebrow { display: inline-block; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.12em; color: var(--amber, #c4751f); font-size: 0.95rem; margin-bottom: 1rem; }
@@ -85,9 +85,9 @@
 <body>
 
     <!-- NAV -->
-    <nav id="topnav" class="topnav" aria-label="Main navigation">
-        <div class="nav-container">
-            <a href="/" class="nav-brand" aria-label="Olympic Inspections &amp; Testing home">
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <a href="/" class="nav-logo" aria-label="Olympic Inspections &amp; Testing home">
                 <img
                     src="/sites/olympic-inspections/logo.png"
                     alt="Olympic Inspections &amp; Testing"
@@ -106,8 +106,24 @@
                 <a href="/#faq">FAQ</a>
                 <a href="/#book" class="nav-cta">Book Inspection</a>
             </div>
+            <button class="hamburger" aria-label="Open menu" id="hamburgerBtn">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <button class="mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+        <a href="/#services">Services</a>
+        <a href="/#iaq">Air Quality</a>
+        <a href="/#locations">Locations</a>
+        <a href="/#about">About</a>
+        <a href="/#calculator">Pricing</a>
+        <a href="/blog/">Blog</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/#book">Book Inspection</a>
+    </div>
 
     <header class="blog-hero">
         <div class="container">
@@ -180,6 +196,22 @@
         </div>
     </footer>
 
-    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+      (function(){
+        const nav = document.getElementById('navbar');
+        const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+        const hb = document.getElementById('hamburgerBtn');
+        const drawer = document.getElementById('mobileDrawer');
+        const close = document.getElementById('mobileClose');
+        if (hb && drawer) {
+          hb.addEventListener('click', () => drawer.classList.add('open'));
+          if (close) close.addEventListener('click', () => drawer.classList.remove('open'));
+          drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => drawer.classList.remove('open')));
+        }
+      })();
+    </script>
 </body>
 </html>
