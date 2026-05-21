@@ -91,11 +91,15 @@ const LOGO =
    Older Squarespace URLs don't accept ?format= so they're rendered as
    originals. */
 const PHOTOS = {
-  // ─── ERIK PORTRAIT ─── Founder-first hero (locked 2026-05-18 per Ben).
-  // Sourced from /04 Marketing Assets/, optimized via sharp → JPEG
-  // 2000px-max wide, quality 82 mozjpeg. Self-hosted at
-  // /clients/hector-landscaping/photos/meet-erik.jpg so we control the
-  // asset (vs Squarespace CDN dependency for hero brand image).
+  // ─── ERIK PORTRAIT ─── Founder-first hero (locked 2026-05-18 per Ben,
+  // re-confirmed 2026-05-20 after the new low-res phone-captures landed —
+  // the new Bluejay (2).zip photos are 320×240 thumbnails, too low-res to
+  // serve as the hero image. They live in the tiny-gallery strip only.)
+  //
+  // The file at /photos/meet-erik.jpg is currently a stock backyard-patio
+  // image (671×377) — higher resolution than the new phone-captures but
+  // not an actual portrait of Erik. Swap to a real Erik portrait the day
+  // we get one (Ben: ping Erik for a headshot).
   //
   // Note on CLAUDE.md "Bespoke Client Showcase reference standard"
   // (Meyer Electric pattern, locked 2026-05-16): the standard says
@@ -115,6 +119,13 @@ const PHOTOS = {
   hero: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
 
   // ─── REAL PORTFOLIO — Hector's Phone Captures (1.5–2.1MB each) ───
+  // These Squarespace web crops drive the big slots (hero-adjacent
+  // surfaces, service cards, project cards, About Erik spotlight). A
+  // separate set of 9 lower-res (320×240) phone-captures landed
+  // 2026-05-20 in /public/clients/hector-landscaping/photos/ — those are
+  // used ONLY in the tiny-square gallery strip below Featured Projects
+  // (lines ~1071-1095). When Ben sources higher-res re-exports, swap them
+  // up into these PHOTOS slots and the page picks them up everywhere.
   yardJun1: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/e21eb5d8-1dbb-4c52-ab70-456921b0a94e/Photo+Jun+08+2021%2C+3+30+52+PM.jpg",
   yardJun2: "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/1c1a47d7-39fc-4917-b830-182ff2a1b2ef/Photo+Jun+08+2021%2C+3+30+58+PM.jpg",
   yardJul:  "https://images.squarespace-cdn.com/content/v1/5d0c474ee10299000145e36b/3ad7db31-09c6-4525-82e3-288033b2ffa7/Photo+Jul+27+2021%2C+2+34+23+PM.jpg",
@@ -591,12 +602,10 @@ const faqs = [
   { q: "How long has Hector Landscaping been around?", a: "Hector has been landscaping in the Renton area since 2018. Family-run from day one — same standard, same crew style, the whole way through." },
 ];
 
-// Hero floating cards — three feature views from Hector Landscaping's archive.
-const heroCards = [
-  { src: PHOTOS.hardscapeWide, alt: "Kirse residence — full-yard installation with mature plantings" },
-  { src: PHOTOS.retainingMain, alt: "Custom Stoneworks — tiered retaining wall in natural stone" },
-  { src: PHOTOS.lawnFinished, alt: "Olano Property — finished lawn carried through coordinated bed work" },
-];
+// heroCards array removed 2026-05-20 — was dead code (declared but never
+// rendered). The actual above-the-fold hero is a single founder portrait
+// (PHOTOS.erikPortrait, line 770-790) per Ben's 2026-05-18 founder-first
+// override. The 3-card hero strip pattern lives on V2 templates only.
 
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
@@ -1057,18 +1066,26 @@ export default function HectorLandscapingLandscapingPage() {
             })}
           </motion.div>
 
-          {/* Detail strip — 6 in-grid photos under the lead masonry. Reuses
-              cluster shots from each project so the archive depth shows. */}
-          <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+          {/* Detail strip — 9 tiny in-grid squares under the lead masonry.
+              2026-05-20: switched from "Squarespace cluster reuses" to the
+              9 new phone-captures Ben dropped. These are 320×240 thumbnails
+              (too low-res for big slots — see PHOTOS map comments), so they
+              live ONLY in this tiny-square gallery where the small render
+              size hides the resolution limit. Replace these with full-res
+              re-exports anytime; filenames are stable. */}
+          <motion.div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2 mt-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
-              { src: PHOTOS.brick1, alt: "Kirse residence — entry walkway in natural stone" },
-              { src: PHOTOS.retainingMain, alt: "Stoneworks — engineered single-tier retaining wall" },
-              { src: PHOTOS.paver1, alt: "Stoneworks — paver patio carried through bed work" },
-              { src: PHOTOS.lawnFinished, alt: "Olano Property — finished lawn integrated into the landscape" },
-              { src: PHOTOS.yardJun2, alt: "Olano residence — yard view" },
-              { src: PHOTOS.yardJun1, alt: "Hector Landscaping — summer plantings" },
+              { src: "/clients/hector-landscaping/photos/patio-dark-side-yard.jpg", alt: "Dark slate paver patio — full side-yard scene with mature plantings" },
+              { src: "/clients/hector-landscaping/photos/backyard-stepping-stones.jpg", alt: "Backyard transformation — stepping stones to circular paver patio + outdoor lounge" },
+              { src: "/clients/hector-landscaping/photos/patio-firepit.jpg", alt: "Backyard patio with built-in firepit + cedar privacy fence" },
+              { src: "/clients/hector-landscaping/photos/patio-wide-curved.jpg", alt: "Wide multi-tone paver patio with curving black-bordered planter beds" },
+              { src: "/clients/hector-landscaping/photos/patio-paver-walkway.jpg", alt: "Tan paver walkway with charcoal-paver border curving through yard" },
+              { src: "/clients/hector-landscaping/photos/patio-flagstone.jpg", alt: "Flagstone patio — natural irregular stone hand-laid with tight joints" },
+              { src: "/clients/hector-landscaping/photos/walkway-side-yard-1.jpg", alt: "Side-yard walkway — concrete pavers between house and fence" },
+              { src: "/clients/hector-landscaping/photos/walkway-side-yard-2.jpg", alt: "Side-yard walkway — second angle, concrete pavers with gravel borders" },
+              { src: "/clients/hector-landscaping/photos/patio-paver-install.jpg", alt: "Hardscape install in progress — paver base preparation + edge work" },
             ].map((d, i) => (
-              <motion.div key={i} variants={fadeUp} className="aspect-square rounded-xl overflow-hidden border border-white/15">
+              <motion.div key={i} variants={fadeUp} className="aspect-square rounded-lg overflow-hidden border border-white/15">
                 <img src={d.src} alt={d.alt} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
               </motion.div>
             ))}
