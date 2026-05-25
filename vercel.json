@@ -29,10 +29,6 @@
       "schedule": "*/15 * * * *"
     },
     {
-      "path": "/api/digest",
-      "schedule": "0 15 * * *"
-    },
-    {
       "path": "/api/referral/send",
       "schedule": "0 18 * * *"
     },
