@@ -64,6 +64,7 @@ export default function LeadPicker() {
     | "cold"
     | "fullsystem"
     | "mfg"
+    | "has-preview"
   >("all");
   // Industry / category drop-down — auto-populated from the distinct
   // category values present in the loaded prospects.
@@ -387,6 +388,16 @@ export default function LeadPicker() {
       if (filter === "cold" && p.source !== "scouted") return false;
       if (filter === "fullsystem" && p.pricingTier !== "fullsystem") return false;
       if (filter === "mfg" && !p.lookalikeCategory) return false;
+      // "has-preview" — only show prospects whose preview site is built
+      // and ready to send. That's the prospect Madie can pitch on a
+      // live call ("we already built it, let me text you the link"). A
+      // preview exists when generatedSiteUrl is set OR the status has
+      // moved past the pre-generation pipeline (scouted/scraped).
+      if (filter === "has-preview") {
+        const hasUrl = !!p.generatedSiteUrl;
+        const postGen = !["scouted", "scraped", "qc_failed"].includes(s);
+        if (!hasUrl && !postGen) return false;
+      }
 
       // Category dropdown filter (industry)
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
@@ -631,6 +642,7 @@ export default function LeadPicker() {
             {(
               ([
                 { id: "all", label: "All", color: "violet" },
+                { id: "has-preview", label: "🌐 Has preview", color: "cyan" },
                 // Inbound chip hidden for sales role — Madie's queue is
                 // cold-only by policy (Ben closes warm inbounds himself).
                 ...(role === "sales"
@@ -664,6 +676,9 @@ export default function LeadPicker() {
                 emerald: active
                   ? "border-emerald-400 bg-emerald-500/15 text-emerald-200"
                   : "border-border bg-background text-muted hover:text-foreground",
+                cyan: active
+                  ? "border-cyan-400 bg-cyan-500/15 text-cyan-200"
+                  : "border-cyan-500/25 bg-cyan-500/[0.04] text-cyan-300/80 hover:text-cyan-200",
               };
               return (
                 <button
