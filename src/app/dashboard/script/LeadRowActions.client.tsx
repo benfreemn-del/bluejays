@@ -402,7 +402,7 @@ function SendModal({
   // Default SMS copy. Madie can edit before tapping Send.
   const defaultSms =
     kind === "book"
-      ? `Hey ${firstName}, Madie with BlueJays — as promised, here's Ben's calendar to grab a 15-min walkthrough of the site we built for ${biz}: https://calendly.com/ben-bluejays/15min-walkthrough`
+      ? `Hey ${firstName}, Madie with BlueJays — as promised, here's Ben's calendar to grab a 15-min walkthrough of the site we built for ${biz}: https://bluejayportfolio.com/book-ben`
       : `Hey ${firstName}, Madie with BlueJays — here's that 60-second audit of ${biz}'s site I mentioned. Shows the issues + the $ you're losing/mo: https://bluejayportfolio.com/audit`;
 
   const [smsBody, setSmsBody] = useState(defaultSms);
