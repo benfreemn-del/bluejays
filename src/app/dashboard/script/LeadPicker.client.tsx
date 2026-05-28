@@ -433,6 +433,14 @@ export default function LeadPicker() {
         p.email?.toLowerCase().includes(q) ||
         p.city?.toLowerCase().includes(q) ||
         p.state?.toLowerCase().includes(q) ||
+        // Category included so Madie can type an industry word
+        // ("dental", "roofing", "landscaping") and get that vertical —
+        // category is stored kebab-case ("auto-repair"), so also match
+        // with dashes swapped to spaces. Found 2026-05-27: searching
+        // "landscaping" returned 0 because businesses are named
+        // "X Landscape" (not "Landscaping") and category wasn't searched.
+        String(p.category ?? "").toLowerCase().includes(q) ||
+        String(p.category ?? "").toLowerCase().replace(/-/g, " ").includes(q) ||
         false
       );
     });
@@ -625,7 +633,7 @@ export default function LeadPicker() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search business / owner / phone / city…"
+              placeholder="Search name, city, phone, or industry…"
               className="flex-1 min-w-[240px] h-9 px-3 rounded-lg bg-background border border-border text-sm placeholder:text-muted focus:outline-none focus:border-pink-500/50"
             />
             <select
