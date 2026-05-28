@@ -92,7 +92,17 @@ madie@bluejayportfolio.com`;
       text,
       999,
       html,
-      { transactional: true },
+      {
+        transactional: true,
+        // Send FROM Madie so the prospect sees her name and replies land
+        // in her inbox (madie@bluejayportfolio.com is a real Workspace
+        // mailbox on the DKIM-authenticated domain).
+        senderOverride: {
+          email: "madie@bluejayportfolio.com",
+          name: "Madie @ BlueJays",
+          replyTo: "madie@bluejayportfolio.com",
+        },
+      },
     );
 
     void logTouch({

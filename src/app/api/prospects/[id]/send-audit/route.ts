@@ -129,7 +129,15 @@ madie@bluejayportfolio.com`;
       text,
       999,
       html,
-      { transactional: true },
+      {
+        transactional: true,
+        // Send FROM Madie so replies land in her inbox, not Ben's.
+        senderOverride: {
+          email: "madie@bluejayportfolio.com",
+          name: "Madie @ BlueJays",
+          replyTo: "madie@bluejayportfolio.com",
+        },
+      },
     );
 
     void logTouch({

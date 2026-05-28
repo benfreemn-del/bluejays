@@ -188,7 +188,17 @@ export async function sendEmail(
   body: string,
   sequence: number,
   htmlBody?: string,
-  options?: { transactional?: boolean },
+  options?: {
+    transactional?: boolean;
+    /**
+     * Override the From identity + reply-to. Used for per-rep sends
+     * (e.g. Madie's booking/audit emails go FROM madie@bluejayportfolio.com
+     * so the prospect sees her name and replies land in HER inbox, not
+     * Ben's). The override email MUST be on a SendGrid domain-authenticated
+     * domain (bluejayportfolio.com / bluejaywebs.com) to keep DKIM aligned.
+     */
+    senderOverride?: { email: string; name: string; replyTo?: string };
+  },
 ): Promise<SentEmail> {
   // ────────────────────────────────────────────────────────────────────
   // GLOBAL KILL SWITCH (added 2026-05-20 after the Meyer Electric +
@@ -251,7 +261,11 @@ export async function sendEmail(
     console.log(`  [Deliverability] All sender domains capped for today (primary+backup both at limit).`);
     throw new Error(`Daily warm-up limit reached across all sender domains. Try again tomorrow.`);
   }
-  const fromSender = SENDERS[sendingDomain] || FALLBACK_SENDER;
+  // Per-rep sender override (Madie) takes precedence over the
+  // domain-rotation sender. Falls back to the rotation sender / default.
+  // DKIM stays aligned as long as the override email is on an
+  // authenticated domain (enforced by convention at the call site).
+  const fromSender = options?.senderOverride || SENDERS[sendingDomain] || FALLBACK_SENDER;
 
   const email: SentEmail = {
     id: uuidv4(),

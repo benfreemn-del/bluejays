@@ -70,7 +70,15 @@ export async function generateMetadata({
     ? category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : "";
   const locationSuffix = city ? ` in ${city}` : "";
-  const title = `${businessName} — Custom Website Preview | BlueJays`;
+  // Title reads like the prospect's OWN site (business + what they do +
+  // where), not "Custom Website Preview | BlueJays | BlueJays". The
+  // prospect opens this link from Madie expecting to see THEIR new site —
+  // the browser tab should reinforce that, not advertise the tool. The
+  // doubled "| BlueJays" was the root layout's `%s | BlueJays` template
+  // stacking on top of the page's own suffix; { absolute } bypasses it.
+  const title = categoryLabel
+    ? `${businessName} — ${categoryLabel}${locationSuffix}`
+    : `${businessName}${locationSuffix}`;
   const description = categoryLabel
     ? `See the custom ${categoryLabel} website we built for ${businessName}${locationSuffix}. Claim it today — no contracts, 100% satisfaction guaranteed.`
     : `See the custom website we built for ${businessName}${locationSuffix}. Claim it today — no contracts, 100% satisfaction guaranteed.`;
@@ -84,7 +92,9 @@ export async function generateMetadata({
   const previewScreenshot = getPreviewScreenshotUrl(id);
 
   return {
-    title,
+    // absolute bypasses the root layout's "%s | BlueJays" template so the
+    // prospect's tab shows just their business, not a doubled brand suffix.
+    title: { absolute: title },
     description,
     alternates: { canonical: pageUrl },
     openGraph: {
