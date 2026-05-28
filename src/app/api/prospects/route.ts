@@ -27,9 +27,24 @@ export async function GET(request: NextRequest) {
   const role = request.cookies.get("bj_role")?.value;
   const user = await currentUserFromCookies(request.cookies);
 
-  // Sales role: scope to mine + unassigned. (If the cookie is missing
-  // — i.e. the user is on the legacy env-password Madie flow — leave
-  // unscoped; we don't yet know who they are.)
+  // Sales role requires an identified user. The legacy env-password
+  // flow (ADMIN_PASSWORD_MADIE) sets bj_role=sales but no bj_user_id,
+  // which previously fell through to returning the FULL prospect pool
+  // — leaking every rep's + Ben's unscoped data. Fail closed so this
+  // can't silently regress if the env var ever comes back.
+  if (role === "sales" && !user) {
+    return NextResponse.json(
+      {
+        prospects: [],
+        total: 0,
+        error:
+          "log in with email + password — legacy password flow no longer supports prospect access",
+      },
+      { status: 403 },
+    );
+  }
+
+  // Sales role: scope to mine + unassigned.
   if (role === "sales" && user) {
     prospects = prospects.filter(
       (p) => !p.assignedToUserId || p.assignedToUserId === user.id,
