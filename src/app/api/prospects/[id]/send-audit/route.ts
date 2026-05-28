@@ -61,7 +61,11 @@ export async function POST(
   // 60-second audit form for them to fill out.
   type ProspectWithAudit = typeof prospect & { auditViewUrl?: string | null };
   const auditViewUrl = (prospect as ProspectWithAudit).auditViewUrl;
-  const auditUrl = auditViewUrl || `${SITE_ORIGIN}/audit?ref=${prospect.id}`;
+  // Clean audit URL — no UUID query param (CLAUDE.md Short URL Rule:
+  // customer-facing links must stay short). The bare /audit form is
+  // ~37 chars vs ~85 with a UUID ref. Madie's prospect already exists
+  // in our DB, so we don't need ?ref attribution on her manual sends.
+  const auditUrl = auditViewUrl || `${SITE_ORIGIN}/audit`;
   const hasCompletedAudit = !!auditViewUrl;
 
   const subject = hasCompletedAudit

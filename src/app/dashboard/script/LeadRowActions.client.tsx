@@ -39,7 +39,43 @@ export default function LeadRowActions({
   onNurtured?: (id: string) => void;
 }) {
   const [open, setOpen] = useState<ModalKind>(null);
+  const [copied, setCopied] = useState(false);
   const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  // Short preview URL — /p/[code] (~40 chars), the link Madie pastes
+  // into SMS / email / DM. Uses the persisted short_code; the /p/ route
+  // resolves it to the full preview. NEVER copy /preview/[uuid] (85+
+  // chars) — CLAUDE.md Short URL Rule.
+  const shortCode = prospect.short_code;
+  const previewLink = shortCode
+    ? `https://bluejayportfolio.com/p/${shortCode}`
+    : null;
+
+  const copyLink = async () => {
+    if (!previewLink) return;
+    try {
+      await navigator.clipboard.writeText(previewLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // Clipboard API can fail on insecure origins / old browsers —
+      // fall back to a hidden textarea + execCommand.
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = previewLink;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1600);
+      } catch {
+        // give up silently — the View site button is the fallback
+      }
+    }
+  };
 
   return (
     <>
@@ -50,6 +86,15 @@ export default function LeadRowActions({
         className="flex items-center gap-0.5 ml-1 rounded-lg border border-white/10 bg-slate-950/40 p-0.5"
         onClick={stop}
       >
+        {previewLink && (
+          <ActionBtn
+            icon={copied ? "✓" : "🔗"}
+            label={copied ? "Copied" : "Link"}
+            tone="cyan"
+            title="Copy the short preview link to paste into a text or email"
+            onClick={copyLink}
+          />
+        )}
         <ActionBtn
           icon="📝"
           label="Note"
@@ -149,9 +194,11 @@ export default function LeadRowActions({
 
 // ─── Shared button ─────────────────────────────────────────────────
 
-type ActionTone = "slate" | "violet" | "sky" | "amber" | "emerald";
+type ActionTone = "slate" | "violet" | "sky" | "amber" | "emerald" | "cyan";
 
 const TONE_STYLES: Record<ActionTone, string> = {
+  cyan:
+    "text-cyan-300 hover:bg-cyan-500/15 hover:text-cyan-100 border-transparent hover:border-cyan-500/30",
   slate:
     "text-slate-300 hover:bg-slate-500/15 hover:text-slate-100 border-transparent hover:border-slate-500/30",
   violet:
@@ -356,7 +403,7 @@ function SendModal({
   const defaultSms =
     kind === "book"
       ? `Hey ${firstName}, Madie with BlueJays — as promised, here's Ben's calendar to grab a 15-min walkthrough of the site we built for ${biz}: https://calendly.com/ben-bluejays/15min-walkthrough`
-      : `Hey ${firstName}, Madie with BlueJays — here's that 60-second audit of ${biz}'s site I mentioned. Shows the issues + the $ you're losing/mo: https://bluejayportfolio.com/audit?ref=${prospect.id}`;
+      : `Hey ${firstName}, Madie with BlueJays — here's that 60-second audit of ${biz}'s site I mentioned. Shows the issues + the $ you're losing/mo: https://bluejayportfolio.com/audit`;
 
   const [smsBody, setSmsBody] = useState(defaultSms);
   const [emailBusy, setEmailBusy] = useState(false);
