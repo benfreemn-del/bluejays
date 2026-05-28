@@ -610,6 +610,25 @@ export default function CampFinderPage() {
           )}
         </div>
       </div>
+
+      {/* Network-effect footer credit (CLAUDE.md Quality Rule #8). */}
+      <footer
+        className="border-t border-white/10 py-6 text-center"
+        style={{ background: NAVY_DEEP, color: "rgba(255,255,255,0.4)" }}
+      >
+        <p className="text-[11px] tracking-normal">
+          Built by{" "}
+          <a
+            href="https://bluejayportfolio.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-[#a3e635] transition"
+          >
+            BlueJays
+          </a>{" "}
+          — get your free site audit.
+        </p>
+      </footer>
     </main>
   );
 }

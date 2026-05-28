@@ -136,17 +136,21 @@ const ZENITH: PortalConfig = {
     message: "Looking for a TEKKY ball + summer camp options for my U10 player.",
     role: "parent",
   },
+  // PHASE 1 SCOPE (locked 2026-05-27): Tekky downgraded to the $997
+  // standard tier on 2026-05-20. The AI Skills / Ads / Funnels / Map
+  // tabs are all $10K AI-System (Phase 2) features and the signed Phase 1
+  // handoff explicitly excludes them. With the AI capability gate removed
+  // for zenith-sports, those tabs render empty/upgrade-required states —
+  // so they're turned OFF here to keep the owner portal clean (Overview +
+  // Leads + Account only). Re-enable when Tekky activates the $10K Phase 2.
   tabs: {
-    aiSkills: true,
-    ads: true,
-    funnels: true,
-    map: true,
+    aiSkills: false,
+    ads: false,
+    funnels: false,
+    map: false,
     customers: false,
     adminLinkInOverview: false,
   },
-  // Funnels live in src/app/clients/[slug]/portal/page.tsx FUNNELS_BY_SLUG
-  // — leaving as [] here means the page renders from its inline registry.
-  // Phase 2: migrate the inline FUNNELS_BY_SLUG into this field.
   funnels: [],
   quickLinks: [
     { href: `/clients/zenith-sports`, icon: "🌐", label: "Your site" },

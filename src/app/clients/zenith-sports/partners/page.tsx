@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import PartnerApplyForm from "./PartnerApplyForm";
 
 export const metadata = {
@@ -12,8 +13,18 @@ export const metadata = {
  * sales-affiliate program. Mirrors the ITC partners page shape, retooled
  * for soccer audiences: coach affiliates, club wholesale, parent
  * referrers, camp directors. Uses Zenith's lime/charcoal/sky palette.
+ *
+ * PHASE 1 GATE (locked 2026-05-27): The affiliate / club partner program
+ * (commission tracking, payout ladder) is a $10K AI-System Phase 2 feature
+ * and is explicitly out of scope for Tekky's $997 Phase 1. The public
+ * recruitment landing redirects to the showcase so no one can sign up for
+ * a commission program we're not running yet. The full page JSX below is
+ * preserved (unreachable) — delete the redirect line to restore it when
+ * Tekky activates Phase 2.
  */
 export default function ZenithPartnersPage() {
+  redirect("/clients/zenith-sports");
+
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-lime-500/10">

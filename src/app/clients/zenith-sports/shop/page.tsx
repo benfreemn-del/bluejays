@@ -35,6 +35,7 @@ import {
 import StickyNav from "../sticky-nav";
 import { PhotoZoom, ZoomTrigger } from "../photo-zoom";
 import EmailCapture from "../email-capture";
+import BluejayLogo from "@/components/BluejayLogo";
 import { getZenithCheckoutUrl } from "@/lib/shopify-express-checkout";
 
 export const metadata: Metadata = {
@@ -760,17 +761,25 @@ export default function ZenithSportsShopPage() {
               © 2025 Zenith Sports, LLC · TEKKY<sup className="text-[0.55em] -ml-px top-[-0.4em]">®</sup>{" "}
               is a registered trademark · Patent Pending
             </div>
-            <div>
-              Site by{" "}
+            <p className="flex items-center gap-2 normal-case tracking-normal text-white/40">
               <a
-                href="https://bluejaywebdesign.com"
+                href="/clients/zenith-sports/login"
+                title="Owner login"
+                aria-label="Owner login"
+                className="text-sky-500/80 hover:text-[#a3e635] transition"
+              >
+                <BluejayLogo size={16} />
+              </a>
+              Built by{" "}
+              <a
+                href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/70 hover:text-[#a3e635] transition"
+                className="hover:text-[#a3e635] transition underline underline-offset-2"
               >
                 BlueJays
               </a>
-            </div>
+            </p>
           </div>
         </div>
       </footer>

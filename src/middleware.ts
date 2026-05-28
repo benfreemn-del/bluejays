@@ -229,12 +229,24 @@ const PUBLIC_API_PATHS = [
  * Strip www in the lookup (we accept both apex and www and treat them
  * the same — Vercel handles www→apex redirect at the edge).
  *
- * Path can point at either:
+ * Each entry is either:
+ *   - A string — single-page bespoke showcase. `/` rewrites to the
+ *     showcase, anything else 301s to `/` (legacy URL coverage for
+ *     pages Google may have indexed from the old Wix/Squarespace site).
+ *   - An object with `base` + `subpaths` — multi-page showcase. `/`
+ *     rewrites to `base`, listed subpaths rewrite to `base/subpath`,
+ *     anything else still 301s to `/`. Subpaths MUST include the
+ *     leading slash and SHOULD include /llms.txt + /sitemap.xml +
+ *     /robots.txt for SEO-foundation parity at the root domain.
+ *
+ * Base path can point at either:
  *   - A static showcase folder under /clients/{slug}  (Zenith pattern)
  *   - A generated /preview/{prospect-id}              (Hector pattern,
  *     where the site is rendered from prospects DB row + theme)
  */
-const CLIENT_DOMAIN_MAP: Record<string, string> = {
+type DomainRewrite = { base: string; subpaths: string[] };
+
+const CLIENT_DOMAIN_MAP: Record<string, string | DomainRewrite> = {
   // Hector Landscaping & Design — bespoke custom showcase at
   // /clients/hector-landscaping (cloned from Mt View landscaping
   // template + customized with Hector's photos, copy, and contact
@@ -248,12 +260,25 @@ const CLIENT_DOMAIN_MAP: Record<string, string> = {
   // migrated from YOLA 2026-05-12).
   "sequimelectric.com": "/clients/meyer-electric",
   "sequimelectrician.com": "/clients/meyer-electric",
-  // Zenith Sports / TEKKY — bespoke showcase at /clients/zenith-sports.
-  // Domain activated for 2026-05-17 cutover. Safe to leave uncommented
-  // even before Paul flips DNS — middleware only rewrites when the
-  // request hostname matches, so this is dormant until tekky.org's
-  // nameservers point at Vercel.
-  "tekky.org": "/clients/zenith-sports",
+  // Zenith Sports / TEKKY — multi-page showcase. Phase 1 deliverable
+  // ($997 + WA tax, locked 2026-05-20) requires the SEO surfaces
+  // (llms.txt + sitemap.xml + robots.txt) live at the root domain
+  // so AI crawlers + Google find them where they expect. Subpaths
+  // mirror the page-level subroutes built under /clients/zenith-sports/*.
+  "tekky.org": {
+    base: "/clients/zenith-sports",
+    subpaths: [
+      "/shop",
+      "/camps",
+      "/training-guide",
+      "/build-your-player",
+      "/partners",
+      "/login",
+      "/llms.txt",
+      "/sitemap.xml",
+      "/robots.txt",
+    ],
+  },
 };
 
 export async function middleware(request: NextRequest) {
@@ -261,28 +286,40 @@ export async function middleware(request: NextRequest) {
 
   // ── Custom-domain rewrite ──
   // hectorlandscaping.com/anything → /clients/hector-landscaping/anything
+  // tekky.org/shop → /clients/zenith-sports/shop (multi-page entry)
   // Strip Vercel's _next + api paths to avoid breaking framework + APIs.
   const host = (request.headers.get("host") || "").toLowerCase().split(":")[0];
   const apexHost = host.replace(/^www\./, "");
-  const showcasePath = CLIENT_DOMAIN_MAP[apexHost];
+  const entry = CLIENT_DOMAIN_MAP[apexHost];
+  const showcasePath = typeof entry === "string" ? entry : entry?.base;
+  const allowedSubpaths = typeof entry === "string" ? [] : entry?.subpaths ?? [];
   if (
     showcasePath &&
     !pathname.startsWith("/_next") &&
     !pathname.startsWith("/api") &&
     !pathname.startsWith(showcasePath)
   ) {
+    // Root → rewrite to showcase base.
+    if (pathname === "/") {
+      const rewriteUrl = new URL(showcasePath, request.url);
+      rewriteUrl.search = request.nextUrl.search;
+      return NextResponse.rewrite(rewriteUrl);
+    }
+    // Multi-page entry: known subpath → rewrite to base + subpath. This
+    // is how tekky.org/shop, /llms.txt, /sitemap.xml etc resolve to
+    // their Zenith-specific routes instead of 301'ing to home.
+    if (allowedSubpaths.includes(pathname)) {
+      const rewriteUrl = new URL(showcasePath + pathname, request.url);
+      rewriteUrl.search = request.nextUrl.search;
+      return NextResponse.rewrite(rewriteUrl);
+    }
     // Single-page bespoke showcases (Meyer, Hector, etc.) don't have
     // sub-pages. Legacy paths Google still has indexed from the prior
     // hosting (e.g. /contact, /catalog, /about from old YOLA/Wix sites)
     // should 301 to the showcase root rather than rewrite to a path
     // that 404s on the new Next.js page. The 301 tells Google to
     // update its index — stale sitelinks drop within a few weeks.
-    if (pathname !== "/") {
-      return NextResponse.redirect(new URL("/", request.url), 301);
-    }
-    const rewriteUrl = new URL(showcasePath, request.url);
-    rewriteUrl.search = request.nextUrl.search;
-    return NextResponse.rewrite(rewriteUrl);
+    return NextResponse.redirect(new URL("/", request.url), 301);
   }
 
   // Always allow public API paths (webhooks, inbound handlers)

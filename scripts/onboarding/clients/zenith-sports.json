@@ -3,48 +3,79 @@
   "businessName": "Zenith Sports",
   "internalName": "Tekky",
   "contact": {
-    "primaryName": "Paul",
-    "primaryEmail": "paul@zenithsports.com",
-    "primaryRole": "Owner / GM",
-    "secondaryName": "Caleb",
-    "secondaryEmail": "caleb@zenithsports.com",
-    "secondaryRole": "Operations / Soccer Programs"
+    "primaryName": "Paul Hanson",
+    "primaryEmail": "Paul@ZenithSports.org",
+    "primaryRole": "Co-Founder, CEO, Manager",
+    "secondaryName": "Philip Lund",
+    "secondaryEmail": "info@zenithsports.org",
+    "secondaryRole": "Co-Founder · 40+ years coaching"
   },
+  "tier": "standard",
+  "phase": 1,
   "pricing": {
-    "totalUsd": 10000,
-    "planLabel": "4-quarter",
-    "installmentUsd": 2500,
-    "installmentDueDates": ["2026-05-18", "2026-08-18", "2026-11-18", "2027-02-18"]
+    "phase1": {
+      "label": "$997 + WA sales tax (one-time)",
+      "amountUsd": 997,
+      "salesTaxRange": "10.1-10.5% destination-based (WA)",
+      "billing": "one-time payment, no installments on standard tier",
+      "year1HostingIncluded": true,
+      "year2PlusRenewalUsd": 100,
+      "stripePaymentLink": "https://buy.stripe.com/00weVfeAX88G28T3Lq04803",
+      "stripePaymentLinkId": "plink_1TZGSqRuVfGvONwtM9q0yDGo",
+      "stripeEnvVar": "STRIPE_PAYMENT_LINK_TEKKY_997"
+    },
+    "phase2": {
+      "label": "$10,000 AI Marketing System (deferred until inbound flow justifies)",
+      "amountUsd": 10000,
+      "available": true,
+      "note": "Same scope as originally discussed. No re-pricing or re-scoping when activated."
+    }
   },
   "brand": {
-    "primaryHex": "#0a0f1e",
-    "accentHex": "#84cc16",
-    "secondaryHex": "#475569",
-    "positioning": "The intelligence layer for elite youth soccer programs."
+    "primaryHex": "#0a1832",
+    "accentHex": "#a3e635",
+    "secondaryHex": "#1d4ed8",
+    "amberHex": "#f59e0b",
+    "ivoryHex": "#f5f3ee",
+    "positioning": "Building Better Players, One Touch at a Time. Patent-pending TEKKY soccer training ball."
   },
-  "liveSiteUrl": "https://bluejayportfolio.com/clients/zenith-sports",
-  "paymentLinks": {
-    "primary": { "label": "Pay Q1 — $2,500", "envVar": "STRIPE_PAYMENT_LINK_ZENITH_SPORTS_Q1" },
-    "secondary": [
-      { "label": "Pay In Full — $9,700", "envVar": "STRIPE_PAYMENT_LINK_ZENITH_SPORTS_FULL" }
+  "liveSiteUrl": "https://tekky.org",
+  "showcaseUrl": "https://bluejayportfolio.com/clients/zenith-sports",
+  "shopifyDomain": "zenithsports.org",
+  "shopifyIntegration": {
+    "model": "marketing-front-shopify-checkout",
+    "note": "Our /clients/zenith-sports is the polished marketing front; Shopify keeps product/cart/checkout. Express-checkout URLs (Apple Pay / Shop Pay) wire up via NEXT_PUBLIC_ZENITH_SHOPIFY_*_CHECKOUT_URL env vars once variant IDs are pulled.",
+    "expressCheckoutEnvVars": [
+      "NEXT_PUBLIC_ZENITH_SHOPIFY_BALL_CHECKOUT_URL",
+      "NEXT_PUBLIC_ZENITH_SHOPIFY_SOCKS_CHECKOUT_URL",
+      "NEXT_PUBLIC_ZENITH_SHOPIFY_SHIRT_CHECKOUT_URL"
     ]
   },
-  "featureFlags": {
-    "aiOperator": true,
-    "hyperloopWeekly": true,
-    "affiliatePipeline": true,
-    "weeklyReports": true,
-    "verticalExtras": ["drill-of-week", "tournament-leaderboard", "parent/coach/player audiences"]
-  },
   "schedule": {
-    "signedAt": "2026-05-15",
-    "onboardingStartsAt": "2026-05-16",
-    "goLiveAt": "2026-05-18"
+    "originallyScoped": "2026-05-15",
+    "downgradedToPhase1": "2026-05-20",
+    "phase1Paid": "2026-05-27",
+    "handoffSignedAt": "2026-05-27T16:00:15Z",
+    "cutoverPending": "tekky.org DNS flip (Vercel domain + nameserver swap)"
   },
   "signDocs": {
-    "handoff": true,
-    "brandVoice": true,
-    "sla": true,
-    "valueProof": true
+    "handoff": { "signed": true, "signedAt": "2026-05-27T16:00:15Z", "signer": "Paul Hanson" },
+    "brandVoice": { "signed": false, "followUpNeeded": true },
+    "sla": { "signed": false, "followUpNeeded": true }
+  },
+  "openFollowUps": {
+    "fromPaul": [
+      "Owner cell phone",
+      "Final brand assets (logo high-res + colors + photos)",
+      "Contact form destination email + optional SMS alert",
+      "Preferred launch window",
+      "Sign brand-voice + SLA pages"
+    ],
+    "fromBen": [
+      "Add tekky.org + www.tekky.org to Vercel project Domains",
+      "Paul flips registrar nameservers to ns1/ns2.vercel-dns.com",
+      "Verify Stripe customer ID + set up $100/yr deferred mgmt sub manually (generic Payment Link did not auto-create)",
+      "Optional: pull Shopify variant IDs to wire express-checkout env vars"
+    ]
   }
 }

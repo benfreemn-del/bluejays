@@ -45,7 +45,7 @@ const ACTIVE_CLIENT_SHOWCASES = [
   // "itc-quick-attach" — removed from public sitemap 2026-05-19 per Ben.
   // The /clients/itc-quick-attach page still exists for Jake's direct use,
   // just no longer indexed/featured publicly.
-  "zenith-sports",           // Soccer training balls · TEKKY brand ($10K AI System)
+  "zenith-sports",           // Soccer training balls · TEKKY brand · $997 Phase 1 (locked 2026-05-20)
   "laser-lakes",             // Custom lake-map wood art
   "lcac",                    // Lewis County Autism Coalition
   "bloodlines",              // Preston James Hunsaker · indie-author · Bloodlines fantasy series
