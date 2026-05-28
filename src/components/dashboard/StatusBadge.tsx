@@ -128,6 +128,11 @@ const statusConfig: Record<
     bg: "bg-purple-900/60",
     text: "text-purple-300",
   },
+  nurturing: {
+    label: "Nurturing 🌱",
+    bg: "bg-emerald-900/40",
+    text: "text-emerald-300",
+  },
   "pro-bono": { label: "Pro Bono", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
 

@@ -18,6 +18,12 @@ export async function GET(request: NextRequest) {
   const status = searchParams.get("status") || undefined;
   const city = searchParams.get("city") || undefined;
   const assignedToParam = searchParams.get("assignedTo");
+  // Madie's LeadPicker hides status='nurturing' by default to keep the
+  // dialing queue tight. Pass ?includeNurturing=1 (or set status filter
+  // explicitly to 'nurturing') to reveal them via the "Show nurturing"
+  // filter chip.
+  const includeNurturing =
+    searchParams.get("includeNurturing") === "1" || status === "nurturing";
 
   let prospects =
     category || status || city
@@ -43,6 +49,13 @@ export async function GET(request: NextRequest) {
     } else if (assignedToParam !== "all") {
       prospects = prospects.filter((p) => p.assignedToUserId === assignedToParam);
     }
+  }
+
+  // Default-hide nurturing prospects so Madie's LeadPicker stays focused.
+  // Skipped when the caller explicitly opted in via ?includeNurturing=1
+  // OR when they filtered status='nurturing' directly.
+  if (!includeNurturing) {
+    prospects = prospects.filter((p) => p.status !== "nurturing");
   }
 
   return NextResponse.json({ prospects, total: prospects.length });

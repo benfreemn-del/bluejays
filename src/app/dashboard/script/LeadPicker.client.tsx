@@ -9,6 +9,7 @@ import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
 import { useRole } from "@/lib/use-role";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
+import LeadRowActions from "./LeadRowActions.client";
 
 /**
  * LeadPicker — fallback view rendered on /dashboard/script when no
@@ -102,15 +103,34 @@ export default function LeadPicker() {
     new Set(),
   );
 
-  // Load prospects.
+  // "Show nurturing" toggle — reveal prospects flipped to
+  // status='nurturing' via the row 🌱 button. Default OFF so the
+  // dialing queue stays tight.
+  const [showNurturing, setShowNurturing] = useState(false);
+
+  // Locally-hidden IDs that just got nurtured this session. Lets the
+  // row disappear instantly without waiting for the next /api/prospects
+  // refetch. Cleared when showNurturing is toggled on.
+  const [justNurtured, setJustNurtured] = useState<Set<string>>(new Set());
+
+  // Bump to force a refetch after a mutation (note added, reminder set,
+  // email sent). Keeps the parent's prospect data fresh.
+  const [reloadKey, setReloadKey] = useState(0);
+
+  // Load prospects. Refetches when showNurturing toggles or reloadKey
+  // bumps (note/reminder/email/nurture mutations).
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/prospects")
+    const url = showNurturing
+      ? "/api/prospects?includeNurturing=1"
+      : "/api/prospects";
+    fetch(url)
       .then((r) => r.json())
       .then((j: { prospects?: Prospect[] }) => {
         if (cancelled) return;
         setProspects(j.prospects ?? []);
         setLoading(false);
+        if (showNurturing) setJustNurtured(new Set());
       })
       .catch(() => {
         if (!cancelled) setLoading(false);
@@ -118,7 +138,7 @@ export default function LeadPicker() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [showNurturing, reloadKey]);
 
   // Hydrate active-client filter list (slugs + display names from
   // client_owners). Lowercased for fuzzy substring match against
@@ -309,6 +329,10 @@ export default function LeadPicker() {
       // unaffected; this is per-browser scope only.
       if (dismissedSet.has(p.id)) return false;
 
+      // Drop leads just nurtured this session (instant disappear; the
+      // next refetch will exclude them server-side too).
+      if (justNurtured.has(p.id)) return false;
+
       const s = String(p.status ?? "").toLowerCase();
 
       // Drop active clients from the call queue. If we've already
@@ -417,6 +441,7 @@ export default function LeadPicker() {
     categoryFilter,
     sortBy,
     dismissed,
+    justNurtured,
     role,
     activeClientNames,
   ]);
@@ -617,7 +642,7 @@ export default function LeadPicker() {
                 { id: "no-calls", label: "Not contacted", color: "slate" },
                 { id: "called-recently", label: "Recently called", color: "slate" },
                 { id: "interested", label: "Interested", color: "emerald" },
-              ]) as { id: typeof filter; label: string; color: string }[]
+              ]) as { id: Exclude<typeof filter, never>; label: string; color: string }[]
             ).map((f) => {
               const active = filter === f.id;
               const colorMap: Record<string, string> = {
@@ -651,6 +676,25 @@ export default function LeadPicker() {
                 </button>
               );
             })}
+            {/* "Show nurturing" toggle — reveals prospects flipped to
+                status='nurturing' via the row 🌱 button. Triggers a
+                refetch with ?includeNurturing=1 server-side. */}
+            <button
+              type="button"
+              onClick={() => setShowNurturing((v) => !v)}
+              className={`text-[11px] font-bold uppercase tracking-wider rounded-md px-2.5 py-1.5 border transition-colors ${
+                showNurturing
+                  ? "border-emerald-400 bg-emerald-500/15 text-emerald-200"
+                  : "border-emerald-500/25 bg-emerald-500/[0.04] text-emerald-300/80 hover:text-emerald-200"
+              }`}
+              title={
+                showNurturing
+                  ? "Currently showing nurturing prospects — click to hide"
+                  : "Show prospects you've moved to nurture (hidden by default)"
+              }
+            >
+              🌱 {showNurturing ? "Hide nurturing" : "Show nurturing"}
+            </button>
           </div>
         </div>
 
@@ -984,6 +1028,31 @@ export default function LeadPicker() {
                         📞 Just called
                       </button>
                     )}
+
+                    {/* Quick-action bar — 📝 Notes / 📅 Book / 🔍 Audit /
+                        ⏰ Remind / 🌱 Nurture. Built 2026-05-27 in
+                        response to Madie's feedback: she shouldn't have
+                        to Start a one-person queue just to leave a note
+                        or text a booking link. See LeadRowActions for
+                        modal logic. */}
+                    <LeadRowActions
+                      prospect={p}
+                      onMutate={() => setReloadKey((k) => k + 1)}
+                      onNurtured={(id) => {
+                        setJustNurtured((prev) => {
+                          const next = new Set(prev);
+                          next.add(id);
+                          return next;
+                        });
+                        // Also drop from selected queue if it was there
+                        if (selected.includes(id)) {
+                          persist(selected.filter((x) => x !== id));
+                        }
+                        setToast(
+                          `🌱 Moved "${p.businessName ?? "lead"}" to nurture.`,
+                        );
+                      }}
+                    />
 
                     {/* Per-row Remove button — hides the lead from this
                         picker (per-browser scope). Pushes to undo stack

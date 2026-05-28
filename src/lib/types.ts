@@ -101,6 +101,7 @@ export type ProspectStatus =
   | "audit_marketing"         // audit submitter who isn't website-pitch fit but is digital-presence curious — STAYS in email sequence, OFF the call queue + auto-preview cron
   | "audit_preview_requested" // clicked "Build me a preview" on the audit page; Ben handles manually
   | "fullsystem_inquiry"      // clicked "The Full System" — discovery call booked; Ben handles manually
+  | "nurturing"               // sales manually flipped via /api/prospects/[id]/nurture — hidden from default LeadPicker until "Show nurturing" chip toggled
   | "pro-bono";
 
 export interface Prospect {
