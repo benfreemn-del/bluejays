@@ -66,12 +66,12 @@ ${callerFirstName} with BlueJays — as promised on the phone, here's Ben's cale
 
 ${bookingUrl}
 
-He'll show you everything live, answer any questions, and we can talk launch from there.
+He'll show you everything live, answer your questions, and we'll plan your launch.
 
 Talk soon,
 ${callerFirstName}
 BlueJays
-bluejaycontactme@gmail.com`;
+madie@bluejayportfolio.com`;
 
   const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;line-height:1.55;color:#111;">
   <p>Hey ${escapeHtml(ownerFirst)},</p>
@@ -80,8 +80,8 @@ bluejaycontactme@gmail.com`;
     <a href="${bookingUrl}" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;">Pick a 15-min slot →</a>
   </p>
   <p style="color:#555;font-size:14px;">Or paste this link into your browser:<br><a href="${bookingUrl}">${bookingUrl}</a></p>
-  <p>He'll show you everything live, answer any questions, and we can talk launch from there.</p>
-  <p>Talk soon,<br>${escapeHtml(callerFirstName)}<br>BlueJays<br><a href="mailto:bluejaycontactme@gmail.com">bluejaycontactme@gmail.com</a></p>
+  <p>He'll show you everything live, answer your questions, and we'll plan your launch.</p>
+  <p>Talk soon,<br>${escapeHtml(callerFirstName)}<br>BlueJays<br><a href="mailto:madie@bluejayportfolio.com">madie@bluejayportfolio.com</a></p>
 </div>`;
 
   try {

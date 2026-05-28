@@ -476,7 +476,7 @@ function SendModal({
         </div>
       ) : (
         <p className="mb-4 text-[12px] text-muted bg-slate-950 border border-white/10 rounded-lg p-3">
-          No phone on file — SMS unavailable.
+          No phone saved for this lead — you can&apos;t text them.
         </p>
       )}
 
@@ -493,8 +493,8 @@ function SendModal({
           </div>
           <p className="text-[12px] text-muted mb-2">
             Sends the {kind === "book" ? "booking" : "audit"} link in a
-            short branded HTML email, from BlueJays. They'll have it in
-            their inbox within 30 seconds.
+            clean email from BlueJays. They&apos;ll get it in about 30
+            seconds.
           </p>
           {emailErr && (
             <p className="text-rose-400 text-xs mb-2">{emailErr}</p>
@@ -518,7 +518,7 @@ function SendModal({
         </div>
       ) : (
         <p className="border-t border-white/10 pt-4 text-[12px] text-muted">
-          No email on file — only SMS available.
+          No email saved for this lead — text them instead.
         </p>
       )}
     </ModalScaffold>

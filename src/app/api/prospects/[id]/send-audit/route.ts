@@ -84,7 +84,7 @@ Takes 90 seconds to read. The dollar estimate at the top is what you're leaving 
 Talk soon,
 ${callerFirstName}
 BlueJays
-bluejaycontactme@gmail.com`
+madie@bluejayportfolio.com`
     : `Hey ${ownerFirst},
 
 ${callerFirstName} with BlueJays — here's the free 60-second audit tool I mentioned. It scans your site, flags the issues that are costing you leads, and gives you a dollar estimate of what those issues are worth per month:
@@ -96,7 +96,7 @@ No signup, no card — just runs. Send me the result and I'll walk you through i
 Talk soon,
 ${callerFirstName}
 BlueJays
-bluejaycontactme@gmail.com`;
+madie@bluejayportfolio.com`;
 
   const buttonLabel = hasCompletedAudit
     ? "View your full audit →"
@@ -118,7 +118,7 @@ bluejaycontactme@gmail.com`;
       ? `Takes 90 seconds to read. The dollar estimate at the top is what you're leaving on the table per month — usually the part owners want to talk about.`
       : `No signup, no card — just runs. Send me the result and I'll walk you through it.`
   }</p>
-  <p>Talk soon,<br>${escapeHtml(callerFirstName)}<br>BlueJays<br><a href="mailto:bluejaycontactme@gmail.com">bluejaycontactme@gmail.com</a></p>
+  <p>Talk soon,<br>${escapeHtml(callerFirstName)}<br>BlueJays<br><a href="mailto:madie@bluejayportfolio.com">madie@bluejayportfolio.com</a></p>
 </div>`;
 
   try {
