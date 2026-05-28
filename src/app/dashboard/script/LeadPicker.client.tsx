@@ -21,6 +21,27 @@ import LeadRowActions from "./LeadRowActions.client";
  * queue survives reloads.
  */
 
+// Statuses where the preview is QC-cleared and safe for Madie to send
+// on a call. Powers the "✅ Ready to send" filter chip. Excludes raw
+// auto-generated previews (status='generated') that haven't passed QC,
+// plus dead/terminal statuses (qc_failed, bounced, dismissed, etc).
+// Values are lowercase to match the `s` comparison in the filter.
+const READY_TO_SEND_STATUSES = new Set([
+  "approved",
+  "ready_to_review",
+  "ready_to_send",
+  "pending-review",
+  "changes_pending",
+  "ready_to_finalize",
+  "contacted",
+  "email_opened",
+  "engaged",
+  "link_clicked",
+  "responded",
+  "interested",
+  "claimed",
+]);
+
 const QUEUE_KEY = "bluejays.sales-portal.queue.v1";
 // Per-browser hide list. The Remove button on each lead row pushes the
 // prospect ID here; the picker filter excludes any IDs in this set.
@@ -388,15 +409,17 @@ export default function LeadPicker() {
       if (filter === "cold" && p.source !== "scouted") return false;
       if (filter === "fullsystem" && p.pricingTier !== "fullsystem") return false;
       if (filter === "mfg" && !p.lookalikeCategory) return false;
-      // "has-preview" — only show prospects whose preview site is built
-      // and ready to send. That's the prospect Madie can pitch on a
-      // live call ("we already built it, let me text you the link"). A
-      // preview exists when generatedSiteUrl is set OR the status has
-      // moved past the pre-generation pipeline (scouted/scraped).
+      // "has-preview" → "Ready to send" — narrow to prospects whose
+      // preview is QC-cleared, i.e. Ben has OK'd it to go out (or it's
+      // already been sent). This HIDES the raw auto-generated previews
+      // (status='generated') that haven't passed QC yet — those aren't
+      // safe to pitch. Re-aimed 2026-05-27 after Madie reported the old
+      // strict-URL rule didn't narrow her pool (every cold prospect she
+      // sees already has a URL; the real signal she needs is "is this
+      // one approved to send?"). ~1085 of her pool qualify; the ~496
+      // un-QC'd `generated` previews drop off.
       if (filter === "has-preview") {
-        const hasUrl = !!p.generatedSiteUrl;
-        const postGen = !["scouted", "scraped", "qc_failed"].includes(s);
-        if (!hasUrl && !postGen) return false;
+        if (!p.generatedSiteUrl || !READY_TO_SEND_STATUSES.has(s)) return false;
       }
 
       // Category dropdown filter (industry)
@@ -642,7 +665,7 @@ export default function LeadPicker() {
             {(
               ([
                 { id: "all", label: "All", color: "violet" },
-                { id: "has-preview", label: "🌐 Has preview", color: "cyan" },
+                { id: "has-preview", label: "✅ Ready to send", color: "cyan" },
                 // Inbound chip hidden for sales role — Madie's queue is
                 // cold-only by policy (Ben closes warm inbounds himself).
                 ...(role === "sales"
