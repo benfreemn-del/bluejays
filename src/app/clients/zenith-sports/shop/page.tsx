@@ -30,6 +30,7 @@ import {
   Envelope,
   InstagramLogo,
   FacebookLogo,
+  Lightning,
 } from "@phosphor-icons/react/dist/ssr";
 
 import StickyNav from "../sticky-nav";
@@ -163,6 +164,12 @@ type Product = {
 
 function ProductCard({ product, index }: { product: Product; index: number }) {
   const reversed = index % 2 === 1;
+  // Express checkout permalinks resolve to `…/cart/VARIANT:1/checkout`
+  // (one tap → Shopify checkout with Apple Pay / Shop Pay). The fallback
+  // resolves to the product page (`…/products/…`). When the per-product
+  // NEXT_PUBLIC_ZENITH_SHOPIFY_*_CHECKOUT_URL env var is set, the button
+  // upgrades to "Buy Now" + a one-tap badge — no code change needed.
+  const isExpress = product.shopUrl.includes("/cart/");
   return (
     <article
       id={product.id}
@@ -312,13 +319,22 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               className="ml-auto inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[12px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group/cta"
             >
               <ShoppingCart size={14} weight="bold" />
-              Buy on Zenith Sports
+              {isExpress ? "Buy Now" : "Buy on Zenith Sports"}
               <ArrowUpRight
                 size={14}
                 weight="bold"
                 className="group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 transition-transform"
               />
             </a>
+            {isExpress && (
+              <div
+                className="basis-full flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+                style={{ color: ELECTRIC }}
+              >
+                <Lightning size={12} weight="fill" />
+                1-tap checkout · Apple Pay / Shop Pay / Google Pay
+              </div>
+            )}
           </div>
         </div>
       </div>
