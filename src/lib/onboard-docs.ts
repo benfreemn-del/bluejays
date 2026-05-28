@@ -108,10 +108,11 @@ const REGISTRY: OnboardDoc[] = [
     description:
       "Welcome packet for Paul + Philip — Phase 1 scope ($997 + tax: " +
       "site + SEO foundation, set up on TEKKY's Shopify store), what " +
-      "happens this week, what we need from you, and the path to Phase 2 " +
-      "(the $10K AI Marketing System) whenever inbound flow justifies it. " +
-      "Read through and confirm below — build work starts the business " +
-      "day payment clears.",
+      "happens this week, what we need from you, the Terms (revisions, " +
+      "pre-go-live refund, stock photography, WA sales tax), and the path " +
+      "to Phase 2 (the $10K AI Marketing System) whenever inbound flow " +
+      "justifies it. Read through and confirm below — build work starts " +
+      "the business day payment clears.",
     valueProof: {
       headline: "Phase 1 — TEKKY website + SEO foundation",
       subhead:
@@ -128,7 +129,7 @@ const REGISTRY: OnboardDoc[] = [
         {
           title: "Shopify store integration",
           detail:
-            "Set up directly on TEKKY's Shopify so you have the polished website + native commerce stack you were initially seeking. Product pages, cart, and checkout flow stay native to Shopify; the BlueJays site is the marketing front + SEO layer that funnels traffic into it.",
+            "Set up directly on TEKKY's Shopify so you have the polished website + native commerce stack you were initially seeking. Product pages, cart, and checkout flow stay native to Shopify.",
         },
         {
           title: "SEO foundation that compounds",

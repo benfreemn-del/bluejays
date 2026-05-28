@@ -269,9 +269,7 @@ def build_story(s):
                 "Site set up directly on TEKKY's Shopify store so you "
                 "have the polished website + native commerce stack you "
                 "were initially seeking. Product pages, cart, and "
-                "checkout stay native to Shopify; the BlueJays site is "
-                "the marketing front + SEO layer that funnels traffic "
-                "into it.",
+                "checkout stay native to Shopify.",
                 s["body_cell"],
             ),
         ],
@@ -354,8 +352,8 @@ def build_story(s):
         ],
         [Paragraph("Phase 1 base — site + SEO + Shopify integration", s["body_cell"]),
          Paragraph("<b>$997.00</b>", s["body_cell"])],
-        [Paragraph("Washington state sales tax (applied at checkout)", s["body_cell"]),
-         Paragraph("calculated by Stripe", s["body_cell"])],
+        [Paragraph("Washington state sales tax (destination-based, ~10.1&ndash;10.5%)", s["body_cell"]),
+         Paragraph("calculated by Stripe at checkout based on your ZIP", s["body_cell"])],
         [Paragraph("Year-1 hosting + maintenance + updates", s["body_cell"]),
          Paragraph("<b>included</b>", s["body_cell"])],
         [Paragraph("Year-2+ standard renewal (per year)", s["body_cell"]),
@@ -395,9 +393,9 @@ def build_story(s):
         [Paragraph("Day 3-7", s["body_cell"]),
          Paragraph("Site built + SEO foundation deployed. Internal QA pass on desktop + mobile.", s["body_cell"])],
         [Paragraph("Day 7-10", s["body_cell"]),
-         Paragraph("Staging link sent to you for review. One revision round included in Phase 1 scope.", s["body_cell"])],
+         Paragraph("Staging link sent to you for review. One revision round (during build) included — iterate on copy, layout, photos, colors before we agree on the final version.", s["body_cell"])],
         [Paragraph("Day 10-14", s["body_cell"]),
-         Paragraph("Final revisions applied. Site goes live on tekky.org. Search Console + analytics confirmed.", s["body_cell"])],
+         Paragraph("Final revisions applied. Site goes live on tekky.org. Search Console + analytics confirmed. One post-launch revision round also included (see Terms below).", s["body_cell"])],
     ]
     timeline_table = Table(timeline_data, colWidths=[1.6 * inch, 4.6 * inch])
     timeline_table.setStyle(TableStyle([
@@ -481,14 +479,64 @@ def build_story(s):
         s["body"],
     ))
 
+    # Terms — revisions, refund, stock, sales tax
+    story.append(Paragraph("Terms", s["h1"]))
+    story.append(Paragraph(
+        "Four housekeeping items, spelled out so there's no ambiguity later:",
+        s["body"],
+    ))
+
+    story.append(Paragraph("Revisions", s["h2"]))
+    story.append(Paragraph(
+        "Phase 1 includes <b>one revision round during the build</b> "
+        "(iterate on copy, layout, photos, colors on the staging link "
+        "before we agree on the final version) <b>plus one post-launch "
+        "revision round</b> after delivery (catch anything that surfaces "
+        "once the site is live). Beyond that, additional revisions are "
+        "billable — typically small edits are flat-rate, larger changes "
+        "get a written quote before any work starts. Nothing gets "
+        "invoiced without your sign-off first.",
+        s["body"],
+    ))
+
+    story.append(Paragraph("Pre-go-live refund", s["h2"]))
+    story.append(Paragraph(
+        "If you decide to walk away <b>before the site goes live on "
+        "tekky.org</b>, you get a full refund of the $997 (sales tax "
+        "is non-refundable per WA state). Once the site is live and "
+        "the final-revision round has been delivered, the work is "
+        "considered accepted and the payment is non-refundable.",
+        s["body"],
+    ))
+
+    story.append(Paragraph("Stock photography", s["h2"]))
+    story.append(Paragraph(
+        "We work from your photo library first. Stock photography is "
+        "used only when there's a specific gap your library can't fill, "
+        "and only with your sign-off on each image. Any stock licenses "
+        "needed for Phase 1 are <b>included in the $997</b> — no "
+        "separate charge.",
+        s["body"],
+    ))
+
+    story.append(Paragraph("Washington state sales tax", s["h2"]))
+    story.append(Paragraph(
+        "WA state sales tax is destination-based — Stripe calculates "
+        "the exact rate at checkout from your ZIP code. Tekky's "
+        "Washington address puts the rate in the <b>10.1&ndash;10.5%</b> "
+        "range, so budget roughly $100&ndash;$105 on top of the $997.",
+        s["body"],
+    ))
+
     # Signature block
     story.append(Paragraph("Acknowledgment", s["h1"]))
     story.append(Paragraph(
         "By signing below (or completing the acknowledgment form at the "
         "sign URL on the cover), Paul + Philip confirm: (a) Phase 1 scope "
         "and pricing as described above; (b) that Phase 1 does not "
-        "include the AI Marketing System features listed on page 1; and "
-        "(c) that Phase 2 remains available at the originally-discussed "
+        "include the AI Marketing System features listed on page 1; "
+        "(c) the Terms above (revisions, refund, stock, sales tax); and "
+        "(d) that Phase 2 remains available at the originally-discussed "
         "scope whenever activated.",
         s["body"],
     ))

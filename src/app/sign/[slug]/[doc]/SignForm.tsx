@@ -193,7 +193,7 @@ export default function SignForm({
           </p>
           <p className="text-slate-300 text-sm">
             {primaryPayment
-              ? "Last step — clear the launch payment below to unlock Phase A build work."
+              ? "Last step — clear the launch payment below to unlock the build work."
               : "You can close this tab. Ben will reach out within a business day if anything needs follow-up."}
           </p>
         </div>

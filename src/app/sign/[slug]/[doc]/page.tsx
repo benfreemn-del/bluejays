@@ -176,7 +176,7 @@ export default async function SignPage({
               One last step — secure your launch.
             </h2>
             <p className="mt-2 text-slate-300 max-w-3xl">
-              Clearing payment unlocks Phase A build work (begins the business
+              Clearing payment unlocks the build work (begins the business
               day funds clear). All amounts mirror the pricing table in the
               packet above.
             </p>
