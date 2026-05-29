@@ -1161,7 +1161,13 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value, 10))}
-        className="w-full accent-[#a3e635]"
+        // touch-none = touch-action: none. Without it the browser claims a
+        // touch/trackpad drag on the thumb as a page-scroll/pan gesture, so
+        // the slider only responds to taps (click-to-position) and won't
+        // drag. touch-action:none tells the browser the input owns the
+        // gesture → smooth thumb dragging on touch + trackpad.
+        className="w-full accent-[#a3e635] touch-none"
+        style={{ touchAction: "none" }}
       />
       <div className="flex justify-between text-[9px] text-white/30 mt-1 tabular-nums">
         <span>{min}</span>
