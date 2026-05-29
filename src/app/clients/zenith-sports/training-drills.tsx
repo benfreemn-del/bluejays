@@ -25,7 +25,18 @@ const ELECTRIC = "#1d4ed8";
 const LIME = "#a3e635";
 const INK_SOFT_LIGHT = "#475569";
 
-type Drill = { id: string; name: string };
+type Drill = {
+  id: string;
+  name: string;
+  /**
+   * Optional YouTube thumbnail frame override. Defaults to "hqdefault"
+   * (the auto-selected frame). Set to "hq1" | "hq2" | "hq3" (storyboard
+   * frames at ~25/50/75%) when a video's default thumbnail is the blue
+   * TEKKY intro/title card instead of on-field drill footage — so its
+   * card matches the green-turf look of the rest of the grid.
+   */
+  frame?: string;
+};
 type Tier = { label: string; tag: string; accent: string; drills: Drill[] };
 
 const TIERS: Tier[] = [
@@ -39,7 +50,7 @@ const TIERS: Tier[] = [
       { id: "g28gQ2aZ-0k", name: "1 Touch Instep Pass" },
       { id: "mukre9VRGx4", name: "1 Touch Outside Foot Pass" },
       { id: "qXGWT_-_yF4", name: "Laces Gather and Pass" },
-      { id: "nyGSAw-4Xw0", name: "1 Touch Laces" },
+      { id: "nyGSAw-4Xw0", name: "1 Touch Laces", frame: "hq3" },
       { id: "68vbXVsSKes", name: "Instep Trap, Outside Touch, Instep Pass" },
       { id: "G8aa_34JpFg", name: "Sole Trap, Instep Pass" },
       { id: "rab0LPa33VI", name: "Sole Trap, Outside Foot Pass" },
@@ -81,7 +92,9 @@ const TIERS: Tier[] = [
 function DrillCard({ drill }: { drill: Drill }) {
   // hqdefault is the most reliable thumbnail size — maxresdefault doesn't
   // exist for every video, while hqdefault is guaranteed by YouTube.
-  const thumb = `https://img.youtube.com/vi/${drill.id}/hqdefault.jpg`;
+  // A drill can override `frame` (e.g. "hq3") when its default thumbnail
+  // is the blue TEKKY intro card instead of on-field footage.
+  const thumb = `https://img.youtube.com/vi/${drill.id}/${drill.frame || "hqdefault"}.jpg`;
   const watch = `https://www.youtube.com/watch?v=${drill.id}`;
   return (
     <a
