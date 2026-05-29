@@ -405,12 +405,10 @@ export default function LeadPicker() {
       // until we wire actual partner_calls history into the prospect list.
       if (filter === "called-recently" && !s.includes("contact")) return false;
       if (filter === "no-calls" && (s.includes("contact") || s.includes("interest"))) return false;
-      // Inbound leads are warm — they came IN to Ben via the audit /
-      // get-started form. Those are Ben's to close personally; Madie's
-      // queue is cold-dial-only. Hide every inbound prospect from her
-      // picker entirely (she can't filter them in or accidentally see
-      // them in 'all').
-      if (role === "sales" && p.source === "inbound") return false;
+      // (Removed 2026-05-29 per Ben: previously hid every inbound
+      // prospect from sales role. Reversal — Madie now has full access
+      // to inbound + MFG + warm leads. Active-client filter above still
+      // protects against dialing existing customers.)
 
       // Source-based + tier-based filters (the caller 2026-05-06):
       if (filter === "inbound" && p.source !== "inbound") return false;
@@ -710,11 +708,10 @@ export default function LeadPicker() {
                 { id: "all", label: "All", color: "violet" },
                 { id: "has-preview", label: "✅ Ready to send", color: "cyan" },
                 { id: "following-up", label: "📌 Following up", color: "indigo" },
-                // Inbound chip hidden for sales role — Madie's queue is
-                // cold-only by policy (Ben closes warm inbounds himself).
-                ...(role === "sales"
-                  ? []
-                  : [{ id: "inbound", label: "Inbound", color: "amber" }]),
+                // Inbound chip now visible for everyone (Ben 2026-05-29).
+                // Previously hidden for sales role; reversed so Madie can
+                // see warm inbounds + MFG audit submissions.
+                { id: "inbound", label: "Inbound", color: "amber" },
                 { id: "cold", label: "Cold scout", color: "slate" },
                 { id: "mfg", label: "MFG", color: "pink" },
                 { id: "fullsystem", label: "Agency $10K", color: "purple" },
