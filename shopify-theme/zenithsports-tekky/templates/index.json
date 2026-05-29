@@ -1,0 +1,68 @@
+{
+  "_comment": "Zenith homepage composition. Replaces Dawn's default index.json. Each section below corresponds to a .liquid file in /sections. Future sections (drill library, training-guide promo, shop strip, BYP CTA, etc.) will be added between hero-zenith and footer-zenith as they ship.",
+  "sections": {
+    "hero-zenith": {
+      "type": "hero-zenith",
+      "settings": {
+        "eyebrow": "Patent-pending · Built by Zenith",
+        "headline_top": "Smaller ball —",
+        "headline_accent": "Bigger gains.",
+        "subhead": "<p>The TEKKY® is a patent-pending technical training ball — smaller than regulation so every touch sharpens, weighted to FIFA Size 5 spec so every rep builds real strength. Use it alongside your standard ball to build precision, confidence, and strength that transfers directly to match day.</p>",
+        "cta_primary_label": "Buy the TEKKY® · $59.95",
+        "cta_primary_url": "/cart/45347164389551:1",
+        "cta_secondary_label": "Shop socks + tees →",
+        "cta_secondary_url": "/collections/all",
+        "show_trust_row": true,
+        "trust_1": "Patent-pending TEKKY ball",
+        "trust_2": "Founded by Philip + Paul · 40+ yrs coaching",
+        "trust_3": "5.0★ verified buyers"
+      }
+    },
+    "founders-zenith": {
+      "type": "founders-zenith",
+      "blocks": {
+        "philip": {
+          "type": "founder",
+          "settings": {
+            "name": "Philip Lund",
+            "role": "Co-Founder",
+            "quote": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training — it is about building a culture.</p>"
+          }
+        },
+        "paul": {
+          "type": "founder",
+          "settings": {
+            "name": "Paul Hanson",
+            "role": "Co-Founder · 40+ years in the game",
+            "quote": "<p>I've spent extensive years coaching, always with a clear focus on true player development — not just winning games. My approach remains rooted in long-term growth over short-term accolades.</p>"
+          }
+        }
+      },
+      "block_order": ["philip", "paul"],
+      "settings": {
+        "eyebrow": "The team behind TEKKY",
+        "heading": "Built by coaches who've seen the gap.",
+        "intro": "<p>Philip Lund and Paul Hanson have spent 40+ combined years in U.S. youth soccer development — coaching club, ECNL, MLS Next, and college programs. They built TEKKY because they kept seeing the same thing: U.S. players hit a technical ceiling at 17–18 that European players don't.</p>"
+      }
+    },
+    "footer-zenith": {
+      "type": "footer-zenith",
+      "blocks": {
+        "home": { "type": "link", "settings": { "label": "Home", "url": "/" } },
+        "shop": { "type": "link", "settings": { "label": "Shop the TEKKY", "url": "/products/the-tekky-advanced-youth-training-ball" } },
+        "training": { "type": "link", "settings": { "label": "Training Guide", "url": "/pages/training-guide" } },
+        "build": { "type": "link", "settings": { "label": "Build Your Player", "url": "/pages/build-your-player" } },
+        "contact": { "type": "link", "settings": { "label": "Contact", "url": "mailto:info@zenithsports.org" } }
+      },
+      "block_order": ["home", "shop", "training", "build", "contact"],
+      "settings": {
+        "tagline": "Home of the TEKKY®",
+        "brand_blurb": "<p>Building Better Players, One Touch at a Time. The TEKKY® is an innovative training tool designed to reshape the future of US Soccer by building a stronger technical foundation for the next generation of players.</p>",
+        "contact_email": "info@zenithsports.org",
+        "instagram_url": "https://www.instagram.com/zenithsports.tekky",
+        "facebook_url": "https://www.facebook.com/zenithsports.tekky"
+      }
+    }
+  },
+  "order": ["hero-zenith", "founders-zenith", "footer-zenith"]
+}

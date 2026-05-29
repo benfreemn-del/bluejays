@@ -1,0 +1,348 @@
+{% comment %}
+  Zenith Sports / TEKKY brand styles — inject into theme.liquid by adding
+  `{% render 'zenith-styles' %}` just before </head>.
+
+  Single source of truth for brand colors, typography, and reusable utility
+  classes. Matches the Next.js site at /clients/zenith-sports.
+{% endcomment %}
+
+<style>
+  :root {
+    /* TEKKY brand palette — match bluejays/src/app/clients/zenith-sports */
+    --zenith-navy:        #0a1832;
+    --zenith-navy-deep:   #050d1f;
+    --zenith-navy-ink:    #0f172a;
+    --zenith-ivory:       #f5f3ee;
+    --zenith-ivory-soft:  #ebe7dd;
+    --zenith-electric:    #1d4ed8;
+    --zenith-lime:        #a3e635;
+    --zenith-amber:       #f59e0b;
+    --zenith-ink:         #0f172a;
+    --zenith-ink-soft:    #475569;
+
+    --zenith-font-display: 'Inter', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+    --zenith-font-body:    'Inter', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Reset Dawn's default heading/body fonts on Zenith sections only so we
+     don't fight the system-wide Dawn typography on /products etc. */
+  .zenith-section {
+    font-family: var(--zenith-font-body);
+    color: var(--zenith-ink);
+  }
+
+  .zenith-section--dark {
+    background: var(--zenith-navy);
+    color: #fff;
+  }
+
+  .zenith-section--ivory {
+    background: var(--zenith-ivory);
+    color: var(--zenith-ink);
+  }
+
+  /* ── Typography utilities ── */
+  .zenith-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    color: var(--zenith-lime);
+  }
+  .zenith-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+  }
+  .zenith-eyebrow--electric { color: var(--zenith-electric); }
+
+  .zenith-h1 {
+    font-family: var(--zenith-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    margin: 0;
+  }
+  .zenith-h2 {
+    font-family: var(--zenith-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    margin: 0;
+  }
+  .zenith-h3 {
+    font-family: var(--zenith-font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: 1.25rem;
+    margin: 0;
+  }
+  .zenith-body {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--zenith-ink-soft);
+  }
+  .zenith-section--dark .zenith-body { color: rgba(255,255,255,0.8); }
+
+  /* ── Buttons ── */
+  .zenith-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.75rem;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all 0.18s ease;
+    cursor: pointer;
+  }
+  .zenith-btn--primary {
+    background: var(--zenith-lime);
+    color: var(--zenith-navy-deep);
+  }
+  .zenith-btn--primary:hover {
+    background: #fff;
+  }
+  .zenith-btn--dark {
+    background: var(--zenith-navy);
+    color: #fff;
+  }
+  .zenith-btn--dark:hover {
+    background: var(--zenith-electric);
+  }
+  .zenith-btn--ghost {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .zenith-btn--ghost:hover {
+    background: rgba(255,255,255,0.08);
+  }
+  .zenith-btn--secondary-link {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    padding: 0.5rem 0;
+  }
+  .zenith-btn--secondary-link:hover {
+    color: var(--zenith-lime);
+  }
+
+  /* ── Layout helpers ── */
+  .zenith-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .zenith-container { padding-left: 2rem; padding-right: 2rem; }
+  }
+
+  .zenith-stack > * + * { margin-top: 1.5rem; }
+
+  /* ── Hero ── */
+  .zenith-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--zenith-navy);
+    color: #fff;
+    padding: 5rem 0 6rem;
+  }
+  @media (min-width: 768px) {
+    .zenith-hero { padding: 6rem 0 8rem; }
+  }
+  .zenith-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .zenith-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.05) contrast(1.04);
+  }
+  .zenith-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(10,24,50,0.92) 0%, rgba(10,24,50,0.7) 50%, rgba(10,24,50,0.55) 100%);
+  }
+  .zenith-hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 56rem;
+  }
+  .zenith-hero__highlight { color: var(--zenith-lime); }
+
+  /* ── Trust strip (under hero CTAs) ── */
+  .zenith-trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 2.5rem;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.7);
+  }
+  .zenith-trust-row__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ── Founders ── */
+  .zenith-founders {
+    background: var(--zenith-ivory);
+    padding: 5rem 0;
+  }
+  @media (min-width: 768px) {
+    .zenith-founders { padding: 8rem 0; }
+  }
+  .zenith-founders__grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 768px) {
+    .zenith-founders__grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
+  }
+  .zenith-founder-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .zenith-founder-card:hover {
+    border-color: rgba(29,78,216,0.4);
+  }
+  .zenith-founder-card__photo {
+    aspect-ratio: 4 / 3;
+    background: var(--zenith-ivory-soft);
+    overflow: hidden;
+  }
+  .zenith-founder-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .zenith-founder-card__body {
+    padding: 2rem;
+  }
+  .zenith-founder-card__name {
+    font-family: var(--zenith-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: 1.75rem;
+    color: var(--zenith-navy-ink);
+    margin: 0 0 0.25rem;
+  }
+  .zenith-founder-card__role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--zenith-electric);
+  }
+  .zenith-founder-card__quote {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--zenith-ink-soft);
+    font-style: italic;
+  }
+
+  /* ── Footer ── */
+  .zenith-footer {
+    background: var(--zenith-navy-deep);
+    color: rgba(255,255,255,0.75);
+    padding: 5rem 0 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .zenith-footer__grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 1024px) {
+    .zenith-footer__grid { grid-template-columns: 5fr 3fr 4fr; }
+  }
+  .zenith-footer__brand-name {
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .zenith-footer__brand-tagline {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: var(--zenith-lime);
+  }
+  .zenith-footer__heading {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: var(--zenith-lime);
+    margin-bottom: 1.25rem;
+  }
+  .zenith-footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .zenith-footer__list li + li { margin-top: 0.75rem; }
+  .zenith-footer__list a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.18s;
+  }
+  .zenith-footer__list a:hover { color: #fff; }
+  .zenith-footer__bottom {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.4);
+  }
+  .zenith-footer__bottom a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .zenith-footer__bottom a:hover { color: var(--zenith-lime); }
+</style>

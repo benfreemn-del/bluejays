@@ -1,0 +1,181 @@
+{% comment %}
+  Zenith Sports / TEKKY hero section.
+  Port of the hero from bluejays/src/app/clients/zenith-sports/page.tsx.
+
+  Defaults match the live Next.js site copy. Everything is editable in
+  the Shopify theme customizer via the schema below.
+{% endcomment %}
+
+<section class="zenith-hero zenith-section zenith-section--dark">
+  {% if section.settings.bg_image %}
+    <div class="zenith-hero__bg" aria-hidden="true">
+      <img
+        src="{{ section.settings.bg_image | image_url: width: 2400 }}"
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        width="2400"
+        height="1350"
+      >
+    </div>
+    <div class="zenith-hero__overlay" aria-hidden="true"></div>
+  {% endif %}
+
+  <div class="zenith-container">
+    <div class="zenith-hero__inner">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      <h1 class="zenith-h1" style="margin-top: 1.5rem;">
+        {{ section.settings.headline_top | escape }}
+        <br>
+        <span class="zenith-hero__highlight">{{ section.settings.headline_accent | escape }}</span>
+      </h1>
+
+      {% if section.settings.subhead != blank %}
+        <p class="zenith-body" style="margin-top: 2rem; max-width: 42rem; color: rgba(255,255,255,0.8); font-size: clamp(1rem, 1.4vw, 1.25rem);">
+          {{ section.settings.subhead }}
+        </p>
+      {% endif %}
+
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 2.5rem;">
+        {% if section.settings.cta_primary_label != blank %}
+          <a
+            href="{{ section.settings.cta_primary_url | default: '/cart/45347164389551:1' }}"
+            class="zenith-btn zenith-btn--primary"
+          >
+            {{ section.settings.cta_primary_label | escape }}
+          </a>
+        {% endif %}
+        {% if section.settings.cta_secondary_label != blank %}
+          <a
+            href="{{ section.settings.cta_secondary_url | default: '/collections/all' }}"
+            class="zenith-btn--secondary-link"
+          >
+            {{ section.settings.cta_secondary_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_trust_row %}
+        <div class="zenith-trust-row">
+          <span class="zenith-trust-row__item">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-lime);"></span>
+            {{ section.settings.trust_1 | escape }}
+          </span>
+          <span class="zenith-trust-row__item">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-lime);"></span>
+            {{ section.settings.trust_2 | escape }}
+          </span>
+          <span class="zenith-trust-row__item">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-amber);"></span>
+            {{ section.settings.trust_3 | escape }}
+          </span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Zenith Hero",
+  "tag": "section",
+  "class": "zenith-hero-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image (full-bleed under navy overlay)"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (small lime text above headline)",
+      "default": "Patent-pending · Built by Zenith"
+    },
+    {
+      "type": "text",
+      "id": "headline_top",
+      "label": "Headline — top line",
+      "default": "Smaller ball —"
+    },
+    {
+      "type": "text",
+      "id": "headline_accent",
+      "label": "Headline — accent line (renders in lime)",
+      "default": "Bigger gains."
+    },
+    {
+      "type": "richtext",
+      "id": "subhead",
+      "label": "Subhead paragraph",
+      "default": "<p>The TEKKY® is a patent-pending technical training ball — smaller than regulation so every touch sharpens, weighted to FIFA Size 5 spec so every rep builds real strength. Use it alongside your standard ball to build precision, confidence, and strength that transfers directly to match day.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Primary CTA — Buy the TEKKY"
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_label",
+      "label": "Primary CTA label",
+      "default": "Buy the TEKKY® · $59.95"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_url",
+      "label": "Primary CTA URL (default: direct add-to-cart for the ball)"
+    },
+    {
+      "type": "header",
+      "content": "Secondary CTA — Shop apparel"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_label",
+      "label": "Secondary CTA label",
+      "default": "Shop socks + tees →"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_url",
+      "label": "Secondary CTA URL"
+    },
+    {
+      "type": "header",
+      "content": "Trust row (below CTAs)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_row",
+      "label": "Show trust row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_1",
+      "label": "Trust badge 1",
+      "default": "Patent-pending TEKKY ball"
+    },
+    {
+      "type": "text",
+      "id": "trust_2",
+      "label": "Trust badge 2",
+      "default": "Founded by Philip + Paul · 40+ yrs coaching"
+    },
+    {
+      "type": "text",
+      "id": "trust_3",
+      "label": "Trust badge 3",
+      "default": "5.0★ verified buyers"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Hero"
+    }
+  ]
+}
+{% endschema %}

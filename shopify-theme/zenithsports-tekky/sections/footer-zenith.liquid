@@ -1,0 +1,181 @@
+{% comment %}
+  Zenith Sports / TEKKY footer.
+  Replaces Dawn's default footer with the Zenith-branded version.
+
+  Network-effect credit: "Built by BlueJays" -> bluejayportfolio.com
+  (per CLAUDE.md Quality Rule #8 — every site footer pulls portfolio traffic).
+{% endcomment %}
+
+<footer class="zenith-footer zenith-section">
+  <div class="zenith-container">
+    <div class="zenith-footer__grid">
+
+      {% comment %} Brand block {% endcomment %}
+      <div>
+        <a href="/" style="display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+          {% if section.settings.logo %}
+            <img
+              src="{{ section.settings.logo | image_url: width: 240 }}"
+              alt="{{ shop.name | escape }}"
+              style="height: 56px; width: auto;"
+              loading="lazy"
+            >
+          {% endif %}
+          <div>
+            <div class="zenith-footer__brand-name">{{ shop.name | escape }}</div>
+            <div class="zenith-footer__brand-tagline">{{ section.settings.tagline | escape }}</div>
+          </div>
+        </a>
+        {% if section.settings.brand_blurb != blank %}
+          <p style="margin-top: 1.75rem; max-width: 28rem; font-size: 0.875rem; line-height: 1.65;">
+            {{ section.settings.brand_blurb }}
+          </p>
+        {% endif %}
+      </div>
+
+      {% comment %} Quick links {% endcomment %}
+      <div>
+        <div class="zenith-footer__heading">Quick links</div>
+        <ul class="zenith-footer__list">
+          {% for block in section.blocks %}
+            {% if block.type == 'link' %}
+              <li {{ block.shopify_attributes }}>
+                <a href="{{ block.settings.url }}">{{ block.settings.label | escape }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% comment %} Get in touch {% endcomment %}
+      <div>
+        <div class="zenith-footer__heading">Get in touch</div>
+        <ul class="zenith-footer__list">
+          {% if section.settings.contact_email != blank %}
+            <li>
+              <a href="mailto:{{ section.settings.contact_email }}">
+                ✉ {{ section.settings.contact_email }}
+              </a>
+            </li>
+          {% endif %}
+          {% if section.settings.instagram_url != blank %}
+            <li>
+              <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener noreferrer">
+                ⓘ Instagram
+              </a>
+            </li>
+          {% endif %}
+          {% if section.settings.facebook_url != blank %}
+            <li>
+              <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener noreferrer">
+                ⓕ Facebook
+              </a>
+            </li>
+          {% endif %}
+          {% if section.settings.youtube_url != blank %}
+            <li>
+              <a href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener noreferrer">
+                ▶ YouTube
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="zenith-footer__bottom">
+      <div>
+        © {{ 'now' | date: '%Y' }} {{ shop.name | escape }}, LLC ·
+        TEKKY<sup style="font-size: 0.55em; vertical-align: super;">®</sup> is a registered trademark · Patent Pending
+      </div>
+      <div>
+        Built by
+        <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer">BlueJays</a>
+        — get your free site audit.
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Zenith Footer",
+  "tag": "section",
+  "class": "zenith-footer-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo (used in brand block — falls back to text if empty)"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand tagline (small lime text under logo)",
+      "default": "Home of the TEKKY®"
+    },
+    {
+      "type": "richtext",
+      "id": "brand_blurb",
+      "label": "Brand blurb paragraph",
+      "default": "<p>Building Better Players, One Touch at a Time. The TEKKY® is an innovative training tool designed to reshape the future of US Soccer by building a stronger technical foundation for the next generation of players.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email",
+      "default": "info@zenithsports.org"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "YouTube channel URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Quick link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Footer",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Home" } },
+        { "type": "link", "settings": { "label": "Shop the TEKKY" } },
+        { "type": "link", "settings": { "label": "Training Guide" } },
+        { "type": "link", "settings": { "label": "Build Your Player" } },
+        { "type": "link", "settings": { "label": "Contact" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
