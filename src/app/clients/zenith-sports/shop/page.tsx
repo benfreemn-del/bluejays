@@ -319,7 +319,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               className="ml-auto inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[12px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group/cta"
             >
               <ShoppingCart size={14} weight="bold" />
-              {isExpress ? "Buy Now" : "Buy on Zenith Sports"}
+              {isExpress ? "Buy Now" : "Shop on Zenith Sports"}
               <ArrowUpRight
                 size={14}
                 weight="bold"
@@ -547,8 +547,8 @@ export default function ZenithSportsShopPage() {
               className="mt-7 text-base md:text-lg leading-relaxed max-w-xl"
               style={{ color: INK_SOFT_LIGHT }}
             >
-              Tap any &ldquo;Buy on Zenith Sports&rdquo; button to head straight to
-              checkout on Zenith&apos;s own store. No accounts to create here.
+              Tap any &ldquo;Shop on Zenith Sports&rdquo; button to pick your size and
+              color and check out on Zenith&apos;s own store. No accounts to create here.
             </p>
           </div>
 
