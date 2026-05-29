@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BookingTimeModal from "@/components/clients/BookingTimeModal";
+import TouchTimeline from "@/components/dashboard/TouchTimeline";
+import TodaysChecklist from "@/components/dashboard/TodaysChecklist";
 
 type FilledSection = {
   id: string;
@@ -929,6 +931,33 @@ ben@bluejayportfolio.com`;
           <p className="text-[10px] text-slate-500 leading-relaxed text-center">
             Includes both partner calls and admin (Ben) outcomes.
           </p>
+
+          {/* Full touch history for THIS prospect — every call / text /
+              email / DM / note ever logged against this lead. Distinct
+              from CallHistoryPanel (which only shows partner_calls +
+              admin notes) — TouchTimeline pulls from prospect_touches
+              which captures the structured touches Madie logs via the
+              row buttons + TouchButtons elsewhere. Per Ben spec
+              2026-05-28. */}
+          <div className="rounded-2xl border border-sky-500/20 bg-sky-500/[0.03] p-3">
+            <p className="text-[10px] uppercase tracking-wider font-bold text-sky-300/80 mb-2 px-1">
+              📜 Every touch with {prospect.businessName}
+            </p>
+            <TouchTimeline
+              prospectId={prospect.id}
+              limit={50}
+              pollMs={0}
+            />
+          </div>
+
+          {/* Today's checklist (compact) — Madie's other reminders so
+              she sees what's queued up after the current call. Hides
+              the inline add-form here to save space (she can add from
+              any Later button on the picker). */}
+          <TodaysChecklist
+            hideAddForm
+            surfaceLabel="Across all leads"
+          />
         </aside>
       </div>
 
@@ -1087,6 +1116,19 @@ function ProspectCard({
               📋 View audit
             </a>
           )}
+          {/* 📅 Book Ben — short link to the Google Calendar Appointment
+              page. One-click open for Madie to verify the booking page
+              is live before sending the URL to a prospect. Same short
+              URL prospects receive via SMS / email (no UTM polluting). */}
+          <a
+            href="https://bluejayportfolio.com/book-ben"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200 px-3 py-1.5 text-xs font-semibold transition-colors"
+            title="Open Ben's booking calendar (verify it's working before texting the link)"
+          >
+            📅 Book Ben
+          </a>
           {prospect.websiteUrl ? (
             <a
               href={

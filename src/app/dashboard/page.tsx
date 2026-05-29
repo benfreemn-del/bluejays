@@ -11,6 +11,7 @@ import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import MadieTodoList from "@/components/dashboard/MadieTodoList";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
+import TodaysChecklist from "@/components/dashboard/TodaysChecklist";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import AutomationDailyDigest from "@/components/dashboard/AutomationDailyDigest";
 import RoleBadge from "@/components/dashboard/RoleBadge";
@@ -330,6 +331,10 @@ export default function DashboardPage() {
               // the win-loss banner so she sees this week's top objection.
               <>
                 <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
+                {/* Today's reminders — pinned at the top so Madie sees
+                    every lead she committed to chase today before she
+                    starts new prospects. Per Ben spec 2026-05-28. */}
+                <TodaysChecklist surfaceLabel="On your overview" />
                 <MadieTodoList />
                 <WinLossSalesBanner />
                 <MadieRaceTrack />
@@ -350,6 +355,11 @@ export default function DashboardPage() {
                     on a sales call without scrolling past the operator-
                     flavor cron heartbeat. */}
                 <InFlightBuildsCard />
+                {/* Today's reminders (Ben's overview) — same checklist
+                    Madie sees, sits right under in-flight builds so any
+                    follow-up Ben committed to is unmissable. Per Ben
+                    spec 2026-05-28. */}
+                <TodaysChecklist surfaceLabel="Today's follow-ups" />
                 {/* H6 (Hormozi "No Data Daddy") Tier 1 — Pipeline 1
                     closer split. Mounted directly under InFlightBuilds
                     because both are Day-19 FB-launch visibility cards:

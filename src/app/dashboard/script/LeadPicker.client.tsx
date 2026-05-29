@@ -7,6 +7,8 @@ import type { Prospect } from "@/lib/types";
 import MadieProductivity from "@/components/dashboard/MadieProductivity";
 import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
+import TodaysChecklist from "@/components/dashboard/TodaysChecklist";
+import LeadDetailDrawer from "@/components/dashboard/LeadDetailDrawer";
 import { useRole } from "@/lib/use-role";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
 import LeadRowActions from "./LeadRowActions.client";
@@ -139,6 +141,11 @@ export default function LeadPicker() {
   // Bump to force a refetch after a mutation (note added, reminder set,
   // email sent). Keeps the parent's prospect data fresh.
   const [reloadKey, setReloadKey] = useState(0);
+
+  // Lead detail drawer — opened when Madie clicks a lead's name (NOT the
+  // row checkbox). Shows notes + full touch history + quick actions
+  // without leaving the picker.
+  const [drawerProspectId, setDrawerProspectId] = useState<string | null>(null);
 
   // Load prospects. Refetches when showNurturing toggles or reloadKey
   // bumps (note/reminder/email/nurture mutations).
@@ -527,6 +534,19 @@ export default function LeadPicker() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* 📅 Book Ben verification — opens the short link in a new
+                tab so Madie can confirm it lands on the Google Calendar
+                Appointment page before sending it to prospects. Same
+                URL prospects receive via SMS/email. */}
+            <a
+              href="https://bluejayportfolio.com/book-ben"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 px-3 rounded-lg border border-violet-500/40 bg-violet-500/[0.06] hover:bg-violet-500/[0.12] text-violet-300 text-xs font-bold uppercase tracking-wider transition-colors inline-flex items-center"
+              title="Open Ben's booking page — same short link you send prospects. Click to verify it's live."
+            >
+              📅 Book Ben
+            </a>
             {/* Undo last removal — appears whenever the undo stack has
                 anything in it. Counter shows how many removals can be
                 undone. Stack is LIFO (most recent first), persisted to
@@ -625,6 +645,18 @@ export default function LeadPicker() {
           this week. Dismissible per-session. */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
         <WinLossSalesBanner />
+      </div>
+
+      {/* Today's Checklist — every lead with a reminder due today (or
+          overdue). Pinned at the top so Madie sees what to chase
+          BEFORE she starts working through new prospects. Per Ben's
+          spec 2026-05-28. Clicking a row opens the lead detail
+          drawer (same surface) so she doesn't lose her place. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
+        <TodaysChecklist
+          onOpenLead={(id) => setDrawerProspectId(id)}
+          surfaceLabel="On your sales portal"
+        />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
@@ -944,9 +976,22 @@ export default function LeadPicker() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-bold text-foreground truncate">
+                        {/* Lead name — clickable to open the detail
+                            drawer (notes + full touch history + quick
+                            actions) without losing the picker scroll
+                            position. stopPropagation so the click
+                            doesn't ALSO toggle the row checkbox. */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDrawerProspectId(p.id);
+                          }}
+                          className="text-sm font-bold text-foreground truncate text-left hover:text-amber-300 transition-colors"
+                          title="Open notes + full touch history"
+                        >
                           {p.businessName ?? "(no name)"}
-                        </p>
+                        </button>
                         {/* Pink MFG chip — manufacturer cold lookalike. Vertical-aware
                             script auto-fires when Madie clicks into this lead. */}
                         {isMfgLookalike && (
@@ -1196,6 +1241,17 @@ export default function LeadPicker() {
           </>
         )}
       </div>
+
+      {/* Lead detail drawer — opens when Madie clicks a lead's name in
+          the picker, when she clicks a Today's Checklist row, or from
+          any other surface that calls setDrawerProspectId. Shows notes
+          + full touch history + Call/Email/Preview/Book Ben actions
+          without leaving the picker. */}
+      <LeadDetailDrawer
+        prospectId={drawerProspectId}
+        onClose={() => setDrawerProspectId(null)}
+        refreshKey={reloadKey}
+      />
 
       {/* Floating toast — auto-clears after 2.5s. Confirms remove/undo
           actions so the sales rep gets feedback without a layout jump. */}
