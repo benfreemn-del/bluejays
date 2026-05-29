@@ -102,7 +102,11 @@ const SHOP_URLS = {
  * Shopify Analytics attribution params appended. See
  * src/lib/shopify-express-checkout.ts for the resolver + setup notes. */
 const CHECKOUT_URLS = {
-  tekkyBall: getZenithCheckoutUrl("ball", SHOP_URLS.tekkyBall),
+  // Ball is a single-variant product (Shopify variant 45347164389551), so
+  // the fallback is a DIRECT cart permalink — the card auto-shows "Buy Now"
+  // + a 1-tap-checkout badge, consistent with the home-page buy CTAs. Socks
+  // + tee keep the product-page fallback because they have size/color to pick.
+  tekkyBall: getZenithCheckoutUrl("ball", "https://zenithsports.org/cart/45347164389551:1"),
   socks: getZenithCheckoutUrl("socks", SHOP_URLS.socks),
   shirt: getZenithCheckoutUrl("shirt", SHOP_URLS.shirt),
 } as const;
