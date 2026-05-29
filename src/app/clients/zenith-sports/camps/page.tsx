@@ -586,7 +586,7 @@ export default function CampFinderPage() {
         {step !== "results" && (
           <div className="mt-10 flex items-center justify-between">
             <div className="text-[11px] text-white/40">
-              {step === "notify" ? "We'll only email when there's a real camp match — no spam." : ""}
+              {step === "notify" ? "We'll only email when a TEKKY camp opens near you — no spam." : ""}
             </div>
             <button
               onClick={next}
@@ -597,7 +597,7 @@ export default function CampFinderPage() {
                 color: canAdvance ? NAVY_DEEP : "#94a3b8",
               }}
             >
-              {step === "notify" ? "Find my camps →" : "Next →"}
+              {step === "notify" ? "Notify me when camps open →" : "Next →"}
             </button>
           </div>
         )}
@@ -654,8 +654,8 @@ function AgeStep({
       </h1>
       <p className="text-base text-white/60 mb-2 leading-relaxed">
         Pick the closest band — or two if your player is in between. Camp
-        programming is built around the age group, so picking both unlocks
-        more matches.
+        programming is built around the age group, so picking both widens
+        the camps we&apos;ll watch for on your behalf.
       </p>
       <p className="text-[11px] uppercase tracking-[0.18em] font-bold text-white/40 mb-6">
         {values.length} / 2 selected
@@ -724,8 +724,8 @@ function LocationStep({
         Where do you live?
       </h1>
       <p className="text-base text-white/60 mb-6 leading-relaxed">
-        Tap your state on the map. We&apos;ll match camps within driving
-        distance.
+        Tap your state on the map so we can watch for TEKKY camps within
+        driving distance and notify you the moment one opens.
       </p>
 
       {/* Real US map · Albers projection. SVG path data per state means
@@ -1393,11 +1393,12 @@ function NotifyStep({
         Last question
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
-        Where should we send your matches?
+        Where should we send camp openings?
       </h1>
       <p className="text-base text-white/60 mb-8 leading-relaxed">
-        We&apos;ll send camps that fit — and notify you the moment new ones open
-        near {state.county || "you"}, {state.state || "your area"}.
+        TEKKY camps are rolling out by region. Drop your info and we&apos;ll
+        notify you the moment one opens near {state.county || "you"},{" "}
+        {state.state || "your area"}.
       </p>
 
       <div className="space-y-3">

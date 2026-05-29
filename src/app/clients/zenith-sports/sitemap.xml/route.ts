@@ -21,8 +21,9 @@ const PAGES = [
   { path: "/shop", priority: 0.95, changeFrequency: "weekly" },
   { path: "/training-guide", priority: 0.85, changeFrequency: "monthly" },
   { path: "/build-your-player", priority: 0.85, changeFrequency: "monthly" },
-  { path: "/camps", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/partners", priority: 0.7, changeFrequency: "monthly" },
+  // /camps is intentionally noindex (waitlist until the camp catalog
+  // populates) — kept out of the sitemap. /partners redirects to the
+  // showcase (Phase-2 affiliate program gated off), so it's omitted too.
 ] as const;
 
 export function GET() {

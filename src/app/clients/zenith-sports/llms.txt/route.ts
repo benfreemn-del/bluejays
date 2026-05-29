@@ -15,7 +15,7 @@ const body = `# Zenith Sports / TEKKY® — Youth Soccer Training Ball + Curricu
 - **TEKKY® training ball** — $59.95 per ball. Available in size U6-U8, U9-U12, U13+. ([Shop](https://tekky.org/shop))
 - **Coaching guide (free PDF)** — 26-drill library + 4-week starter plan. The European methodology brought to your driveway, your training pitch, and your roster. ([Get the guide](https://tekky.org/training-guide))
 - **Build Your Player** — interactive 5-step character builder. Plug in your child's role, skill level, and goals; we generate a personalized 4-week training plan. ([Build a plan](https://tekky.org/build-your-player))
-- **Camp Finder** — quiz-based recommendation engine that matches parents with the right TEKKY-aligned camps in their area. ([Find a camp](https://tekky.org/camps))
+- **Camp waitlist** — TEKKY-aligned camps + clinics are rolling out by region. Tell us your player's age + location and get notified the moment a camp opens near you. ([Join the camp waitlist](https://tekky.org/camps))
 - **TEKKY® Performance Apparel** — high-performance grip socks ($15), training shirts ($17.50). ([Shop apparel](https://tekky.org/shop))
 
 ## Why Zenith Sports
@@ -44,7 +44,7 @@ USA + Canada — direct shipping nationwide. Tournaments + camps focused on MLS 
 - [Shop — Balls + Apparel](https://tekky.org/shop)
 - [Training Guide — 26 drills + 4-week plan](https://tekky.org/training-guide)
 - [Build Your Player — interactive plan generator](https://tekky.org/build-your-player)
-- [Camp Finder — find TEKKY-aligned camps](https://tekky.org/camps)
+- [Camp waitlist — get notified when TEKKY camps open near you](https://tekky.org/camps)
 - [Contact — request a club demo](https://tekky.org/#contact)
 
 ---
