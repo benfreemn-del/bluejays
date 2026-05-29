@@ -1,0 +1,222 @@
+{% comment %}
+  Zenith Sports / TEKKY sticky top nav. Replaces Dawn's default header
+  for Zenith branding. Glass-morphism on scroll, mobile hamburger,
+  primary "Buy the TEKKY" CTA on the right.
+{% endcomment %}
+
+<header class="zenith-nav" id="zenith-nav">
+  <div class="zenith-nav__inner zenith-container">
+    <a href="/" class="zenith-nav__brand">
+      {% if section.settings.logo %}
+        <img
+          src="{{ section.settings.logo | image_url: width: 200 }}"
+          alt="{{ shop.name | escape }}"
+          height="44"
+          width="auto"
+        >
+      {% endif %}
+      <span class="zenith-nav__brand-text">{{ shop.name | escape }}</span>
+    </a>
+
+    <nav class="zenith-nav__links" aria-label="Primary">
+      {% for block in section.blocks %}
+        {% if block.type == 'link' %}
+          <a href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+            {{ block.settings.label | escape }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    <div class="zenith-nav__cta-wrap">
+      <a
+        href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
+        class="zenith-btn zenith-btn--primary zenith-nav__cta"
+      >
+        {{ section.settings.cta_label | default: 'Buy the TEKKY®' | escape }}
+      </a>
+
+      <button
+        type="button"
+        class="zenith-nav__hamburger"
+        aria-controls="zenith-mobile-menu"
+        aria-expanded="false"
+        aria-label="Open menu"
+        onclick="(function(b){var m=document.getElementById('zenith-mobile-menu');var open=m.getAttribute('data-open')==='true';m.setAttribute('data-open',open?'false':'true');b.setAttribute('aria-expanded',open?'false':'true');b.setAttribute('aria-label',open?'Open menu':'Close menu');})(this)"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="zenith-mobile-menu" id="zenith-mobile-menu" data-open="false">
+    <nav aria-label="Mobile">
+      {% for block in section.blocks %}
+        {% if block.type == 'link' %}
+          <a href="{{ block.settings.url }}">{{ block.settings.label | escape }}</a>
+        {% endif %}
+      {% endfor %}
+      <a
+        href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
+        class="zenith-btn zenith-btn--primary"
+        style="margin-top: 1rem;"
+      >
+        {{ section.settings.cta_label | default: 'Buy the TEKKY®' | escape }}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .zenith-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10,24,50,0.92);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .zenith-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .zenith-nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+  .zenith-nav__brand img { display: block; max-height: 44px; width: auto; }
+  .zenith-nav__brand-text {
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+  }
+  .zenith-nav__links {
+    display: none;
+    gap: 1.75rem;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+  }
+  @media (min-width: 900px) {
+    .zenith-nav__links { display: flex; }
+  }
+  .zenith-nav__links a {
+    color: rgba(255,255,255,0.85);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+  .zenith-nav__links a:hover { color: var(--zenith-lime); }
+
+  .zenith-nav__cta-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .zenith-nav__cta { padding: 0.65rem 1.25rem; font-size: 11px; }
+  @media (max-width: 640px) { .zenith-nav__cta { display: none; } }
+
+  .zenith-nav__hamburger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+  }
+  @media (min-width: 900px) { .zenith-nav__hamburger { display: none; } }
+  .zenith-nav__hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+  }
+
+  .zenith-mobile-menu {
+    display: none;
+    background: var(--zenith-navy-deep);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .zenith-mobile-menu[data-open="true"] { display: block; }
+  .zenith-mobile-menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1.25rem 2rem;
+  }
+  .zenith-mobile-menu nav a {
+    display: block;
+    padding: 0.85rem 1rem;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .zenith-mobile-menu nav a:hover { color: var(--zenith-lime); }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Header",
+  "tag": "section",
+  "class": "zenith-header-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Nav buy-CTA label",
+      "default": "Buy the TEKKY®"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Nav buy-CTA URL (default: direct add-to-cart for the ball)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Nav link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "url", "id": "url", "label": "URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Header",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Shop" } },
+        { "type": "link", "settings": { "label": "Build Your Player" } },
+        { "type": "link", "settings": { "label": "Training Guide" } },
+        { "type": "link", "settings": { "label": "Contact" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,134 @@
+{% comment %}
+  TEKKY ball spotlight ("Meet the TEKKY"). Hero product feature.
+  Large ball photo on one side, story + bullets + Buy CTA on the other.
+{% endcomment %}
+
+<section class="zenith-section zenith-spotlight">
+  <div class="zenith-container">
+    <div class="zenith-spotlight__grid">
+      <div class="zenith-spotlight__photo">
+        {% if section.settings.photo %}
+          <img
+            src="{{ section.settings.photo | image_url: width: 1400 }}"
+            alt="{{ section.settings.heading | escape }}"
+            loading="lazy"
+            width="1400"
+            height="1400"
+          >
+        {% endif %}
+      </div>
+
+      <div class="zenith-spotlight__copy">
+        {% if section.settings.eyebrow != blank %}
+          <p class="zenith-eyebrow zenith-eyebrow--electric">{{ section.settings.eyebrow | escape }}</p>
+        {% endif %}
+        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: var(--zenith-navy-ink);">
+          {{ section.settings.heading | escape }}
+        </h2>
+        {% if section.settings.intro != blank %}
+          <div class="zenith-body" style="margin-top: 1.5rem;">
+            {{ section.settings.intro }}
+          </div>
+        {% endif %}
+
+        <ul class="zenith-spotlight__bullets">
+          {% for block in section.blocks %}
+            {% if block.type == 'bullet' %}
+              <li {{ block.shopify_attributes }}>
+                <span class="zenith-spotlight__check" aria-hidden="true">✓</span>
+                {{ block.settings.text | escape }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+        <div style="margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+          <a
+            href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
+            class="zenith-btn zenith-btn--dark"
+          >
+            {{ section.settings.cta_label | escape }}
+          </a>
+          {% if section.settings.price_note != blank %}
+            <span style="font-size: 12px; color: var(--zenith-ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">
+              {{ section.settings.price_note | escape }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-spotlight {
+    background: var(--zenith-ivory);
+    padding: 5rem 0;
+  }
+  @media (min-width: 768px) { .zenith-spotlight { padding: 8rem 0; } }
+  .zenith-spotlight__grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .zenith-spotlight__grid { grid-template-columns: 5fr 6fr; gap: 4rem; }
+  }
+  .zenith-spotlight__photo {
+    aspect-ratio: 1 / 1;
+    background: #fff;
+    overflow: hidden;
+  }
+  .zenith-spotlight__photo img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .zenith-spotlight__bullets {
+    list-style: none; padding: 0; margin: 2rem 0 0;
+    display: flex; flex-direction: column; gap: 0.65rem;
+  }
+  .zenith-spotlight__bullets li {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    font-size: 0.95rem; color: var(--zenith-navy-ink);
+  }
+  .zenith-spotlight__check {
+    flex-shrink: 0; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--zenith-electric); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Ball Spotlight",
+  "tag": "section",
+  "class": "zenith-spotlight-section",
+  "settings": [
+    { "type": "image_picker", "id": "photo", "label": "Ball photo (square crop)" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Meet the TEKKY®" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Smaller surface. Regulation weight." },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>FIFA Size 3 control. FIFA Size 5 match-day weight. The TEKKY® forces sharper focus on every touch, builds real foot strength through resistance, and trains the kind of precision US Soccer's player pipeline has been missing for years.</p>" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY® · $59.95" },
+    { "type": "url", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" },
+    { "type": "text", "id": "price_note", "label": "Note next to CTA", "default": "Ships from US · 5.0★ verified" }
+  ],
+  "blocks": [
+    {
+      "type": "bullet",
+      "name": "Bullet",
+      "settings": [{ "type": "text", "id": "text", "label": "Bullet text" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Ball Spotlight",
+      "blocks": [
+        { "type": "bullet", "settings": { "text": "Smaller surface area trains pinpoint touch" } },
+        { "type": "bullet", "settings": { "text": "Full FIFA-spec weight builds genuine strength" } },
+        { "type": "bullet", "settings": { "text": "Engineered for ages 5 through high school" } },
+        { "type": "bullet", "settings": { "text": "Regulation ball feels effortless after" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

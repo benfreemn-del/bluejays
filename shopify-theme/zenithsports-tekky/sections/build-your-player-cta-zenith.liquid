@@ -1,0 +1,102 @@
+{% comment %}
+  Build Your Player promo card. Until the full BYP interactive section
+  is ported (planned for follow-up session), this serves as a CTA that
+  drives visitors to /pages/build-your-player (a Shopify Page that
+  hosts the rebuilt quiz once shipped).
+{% endcomment %}
+
+<section class="zenith-section zenith-bypcta">
+  <div class="zenith-container">
+    <div class="zenith-bypcta__card">
+      <div class="zenith-bypcta__copy">
+        {% if section.settings.eyebrow != blank %}
+          <p class="zenith-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {% endif %}
+        <h2 class="zenith-h2" style="margin-top: 1rem; color: #fff; font-size: clamp(1.75rem, 4vw, 3.25rem);">
+          {{ section.settings.heading | escape }}
+        </h2>
+        {% if section.settings.body != blank %}
+          <div class="zenith-body" style="margin-top: 1.5rem; color: rgba(255,255,255,0.85); max-width: 36rem;">
+            {{ section.settings.body }}
+          </div>
+        {% endif %}
+
+        <ul class="zenith-bypcta__bullets">
+          {% for block in section.blocks %}
+            {% if block.type == 'bullet' %}
+              <li {{ block.shopify_attributes }}>
+                <span aria-hidden="true">→</span> {{ block.settings.text | escape }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+        <a href="{{ section.settings.cta_url | default: '/pages/build-your-player' }}" class="zenith-btn zenith-btn--primary" style="margin-top: 2rem;">
+          {{ section.settings.cta_label | escape }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-bypcta {
+    background: var(--zenith-navy-deep);
+    padding: 4rem 0;
+  }
+  @media (min-width: 768px) { .zenith-bypcta { padding: 6rem 0; } }
+  .zenith-bypcta__card {
+    background: linear-gradient(135deg, rgba(163,230,53,0.12) 0%, rgba(29,78,216,0.08) 100%);
+    border: 2px solid var(--zenith-lime);
+    padding: 2.5rem;
+    color: #fff;
+  }
+  @media (min-width: 768px) { .zenith-bypcta__card { padding: 4rem; } }
+  .zenith-bypcta__bullets {
+    list-style: none; padding: 0; margin: 1.75rem 0 0;
+    display: grid; gap: 0.65rem;
+  }
+  .zenith-bypcta__bullets li {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.85);
+  }
+  .zenith-bypcta__bullets li span {
+    color: var(--zenith-lime);
+    font-weight: 800;
+    margin-right: 0.5rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Build Your Player CTA",
+  "tag": "section",
+  "class": "zenith-bypcta-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Build Your Player" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get a personalized training plan in 60 seconds." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Tell us about your player — role, age, skill level, goals — and we generate a custom 4-week plan plus the 3 starter drills matched to where they are now. Free.</p>" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Build my plan →" },
+    { "type": "url", "id": "cta_url", "label": "CTA URL", "default": "/pages/build-your-player" }
+  ],
+  "blocks": [
+    {
+      "type": "bullet",
+      "name": "Outcome bullet",
+      "limit": 5,
+      "settings": [{ "type": "text", "id": "text", "label": "Text" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Build Your Player CTA",
+      "blocks": [
+        { "type": "bullet", "settings": { "text": "Personalized 4-week cadence (sessions × duration)" } },
+        { "type": "bullet", "settings": { "text": "3 starter drills matched to current skill" } },
+        { "type": "bullet", "settings": { "text": "Recommended TEKKY kit fit for your player" } },
+        { "type": "bullet", "settings": { "text": "Free — takes 60 seconds" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

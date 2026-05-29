@@ -1,0 +1,145 @@
+{% comment %}
+  3-product shop strip (TEKKY ball + grip socks + tee). Mixed buy flow:
+    - Ball (single-variant): direct cart permalink → "Buy Now"
+    - Socks + tee (variant products): product page link → "Shop"
+  Defaults match the Next.js shop page.
+{% endcomment %}
+
+<section class="zenith-section zenith-shopstrip">
+  <div class="zenith-container">
+    <div class="zenith-shopstrip__header">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow zenith-eyebrow--electric">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: var(--zenith-navy-ink);">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {% endif %}
+    </div>
+
+    <div class="zenith-shopstrip__grid">
+      {% for block in section.blocks %}
+        <article class="zenith-shopstrip__card">
+          <div class="zenith-shopstrip__photo">
+            {% if block.settings.photo %}
+              <img src="{{ block.settings.photo | image_url: width: 800 }}" alt="{{ block.settings.name | escape }}" loading="lazy">
+            {% endif %}
+            {% if block.settings.badge != blank %}
+              <span class="zenith-shopstrip__badge">{{ block.settings.badge | escape }}</span>
+            {% endif %}
+          </div>
+          <div class="zenith-shopstrip__body">
+            <h3 class="zenith-shopstrip__name">{{ block.settings.name | escape }}</h3>
+            <p class="zenith-shopstrip__tag">{{ block.settings.tagline | escape }}</p>
+            <div class="zenith-shopstrip__row">
+              <span class="zenith-shopstrip__price">{{ block.settings.price | escape }}</span>
+              <a
+                href="{{ block.settings.url }}"
+                {% if block.settings.url contains '/cart/' %}target="_blank" rel="noopener noreferrer"{% endif %}
+                class="zenith-btn {% if block.settings.url contains '/cart/' %}zenith-btn--primary{% else %}zenith-btn--dark{% endif %}"
+                style="padding: 0.65rem 1.25rem; font-size: 11px;"
+              >
+                {{ block.settings.cta_label | escape }}
+              </a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-shopstrip {
+    background: var(--zenith-ivory);
+    padding: 5rem 0;
+  }
+  @media (min-width: 768px) { .zenith-shopstrip { padding: 7rem 0; } }
+  .zenith-shopstrip__header { margin-bottom: 3rem; max-width: 42rem; }
+  .zenith-shopstrip__grid {
+    display: grid; gap: 1.5rem; grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .zenith-shopstrip__grid { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-shopstrip__card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .zenith-shopstrip__photo {
+    aspect-ratio: 4 / 3;
+    position: relative;
+    background: var(--zenith-ivory-soft);
+    overflow: hidden;
+  }
+  .zenith-shopstrip__photo img { width: 100%; height: 100%; object-fit: cover; }
+  .zenith-shopstrip__badge {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--zenith-lime); color: var(--zenith-navy-deep);
+    padding: 0.35rem 0.75rem;
+    font-size: 10px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.22em;
+  }
+  .zenith-shopstrip__body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .zenith-shopstrip__name {
+    font-family: var(--zenith-font-display);
+    font-weight: 900; text-transform: uppercase;
+    font-size: 1.25rem; letter-spacing: -0.01em;
+    color: var(--zenith-navy-ink); margin: 0;
+  }
+  .zenith-shopstrip__tag {
+    margin: 0.35rem 0 0;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    color: var(--zenith-electric);
+  }
+  .zenith-shopstrip__row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; margin-top: auto; padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+  }
+  .zenith-shopstrip__price {
+    font-family: var(--zenith-font-display);
+    font-weight: 900; font-size: 1.5rem;
+    color: var(--zenith-navy-ink);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Shop Strip",
+  "tag": "section",
+  "class": "zenith-shopstrip-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The lineup" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Three products. One philosophy." }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product card",
+      "limit": 4,
+      "settings": [
+        { "type": "image_picker", "id": "photo", "label": "Product photo" },
+        { "type": "text", "id": "name", "label": "Name" },
+        { "type": "text", "id": "tagline", "label": "Tagline (small accent text)" },
+        { "type": "text", "id": "price", "label": "Price display", "default": "$59.95" },
+        { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop" },
+        { "type": "url", "id": "url", "label": "CTA URL (a /cart/<variant>:1 link triggers 'Buy Now' style; a /products/ link is the variant flow)" },
+        { "type": "text", "id": "badge", "label": "Optional badge (e.g., Bestseller, 30% Off)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Shop Strip",
+      "blocks": [
+        { "type": "product", "settings": { "name": "The TEKKY®", "tagline": "Patent-pending training ball", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
+        { "type": "product", "settings": { "name": "TEKKY® Grip Socks", "tagline": "Footwork foundation", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
+        { "type": "product", "settings": { "name": "Performance Tee", "tagline": "On-pitch identity", "price": "$17.50", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

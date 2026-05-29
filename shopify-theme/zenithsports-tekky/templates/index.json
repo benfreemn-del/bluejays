@@ -1,6 +1,12 @@
 {
-  "_comment": "Zenith homepage composition. Replaces Dawn's default index.json. Each section below corresponds to a .liquid file in /sections. Future sections (drill library, training-guide promo, shop strip, BYP CTA, etc.) will be added between hero-zenith and footer-zenith as they ship.",
+  "_comment": "Zenith homepage composition. Replaces Dawn's default index.json. Header + footer live in layout/theme.liquid (edit Dawn's theme.liquid to use header-zenith and footer-zenith — see README). This file composes the page BODY sections only.",
   "sections": {
+    "marquee-zenith": {
+      "type": "marquee-zenith",
+      "settings": {
+        "text": "TEKKY® GRIP SOCKS — 30% OFF · BUY 2 SHIRTS FOR $30 · FREE COACHING DRILLS · DISCOUNTS APPLIED AT CHECKOUT"
+      }
+    },
     "hero-zenith": {
       "type": "hero-zenith",
       "settings": {
@@ -17,6 +23,63 @@
         "trust_2": "Founded by Philip + Paul · 40+ yrs coaching",
         "trust_3": "5.0★ verified buyers"
       }
+    },
+    "stats-zenith": {
+      "type": "stats-zenith",
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "number": "FIFA Size 3", "label": "Control surface", "note": "Smaller than regulation — every touch counts" } },
+        "s2": { "type": "stat", "settings": { "number": "FIFA Size 5", "label": "Match-day weight", "note": "Real strength transfer, not a foam toy" } },
+        "s3": { "type": "stat", "settings": { "number": "5.0★", "label": "Verified buyers", "note": "Trusted by Rec, Travel, ECNL, MLS Next" } }
+      },
+      "block_order": ["s1", "s2", "s3"]
+    },
+    "ball-spotlight-zenith": {
+      "type": "ball-spotlight-zenith",
+      "blocks": {
+        "b1": { "type": "bullet", "settings": { "text": "Smaller surface area trains pinpoint touch" } },
+        "b2": { "type": "bullet", "settings": { "text": "Full FIFA-spec weight builds genuine strength" } },
+        "b3": { "type": "bullet", "settings": { "text": "Engineered for ages 5 through high school" } },
+        "b4": { "type": "bullet", "settings": { "text": "Regulation ball feels effortless after" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"]
+    },
+    "before-after-zenith": {
+      "type": "before-after-zenith",
+      "blocks": {
+        "step1": { "type": "step", "settings": { "number": "1", "title": "Pick 3 drills from the library", "desc": "One per skill area: gather, dribble, finish. Start with Warm Up tier." } },
+        "step2": { "type": "step", "settings": { "number": "2", "title": "10–15 min, 3× per week", "desc": "Quality over quantity. Pristine reps build technique faster than tired ones." } },
+        "step3": { "type": "step", "settings": { "number": "3", "title": "Level up after week 2", "desc": "Add 2 Beginner drills. Drop the easiest Warm Up. Always keep something challenging." } },
+        "step4": { "type": "step", "settings": { "number": "4", "title": "Week 4: hit regulation ball", "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic." } }
+      },
+      "block_order": ["step1", "step2", "step3", "step4"]
+    },
+    "drill-library-zenith": {
+      "type": "drill-library-zenith"
+    },
+    "shop-strip-zenith": {
+      "type": "shop-strip-zenith",
+      "blocks": {
+        "ball":  { "type": "product", "settings": { "name": "The TEKKY®", "tagline": "Patent-pending training ball", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
+        "socks": { "type": "product", "settings": { "name": "TEKKY® Grip Socks", "tagline": "Footwork foundation", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
+        "tee":   { "type": "product", "settings": { "name": "Performance Tee", "tagline": "On-pitch identity", "price": "$17.50", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
+      },
+      "block_order": ["ball", "socks", "tee"]
+    },
+    "training-guide-cta-zenith": {
+      "type": "training-guide-cta-zenith",
+      "settings": {
+        "success_link": "/pages/training-guide"
+      }
+    },
+    "build-your-player-cta-zenith": {
+      "type": "build-your-player-cta-zenith",
+      "blocks": {
+        "b1": { "type": "bullet", "settings": { "text": "Personalized 4-week cadence" } },
+        "b2": { "type": "bullet", "settings": { "text": "3 starter drills matched to current skill" } },
+        "b3": { "type": "bullet", "settings": { "text": "Recommended TEKKY kit fit" } },
+        "b4": { "type": "bullet", "settings": { "text": "Free — takes 60 seconds" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"]
     },
     "founders-zenith": {
       "type": "founders-zenith",
@@ -38,31 +101,23 @@
           }
         }
       },
-      "block_order": ["philip", "paul"],
-      "settings": {
-        "eyebrow": "The team behind TEKKY",
-        "heading": "Built by coaches who've seen the gap.",
-        "intro": "<p>Philip Lund and Paul Hanson have spent 40+ combined years in U.S. youth soccer development — coaching club, ECNL, MLS Next, and college programs. They built TEKKY because they kept seeing the same thing: U.S. players hit a technical ceiling at 17–18 that European players don't.</p>"
-      }
+      "block_order": ["philip", "paul"]
     },
-    "footer-zenith": {
-      "type": "footer-zenith",
-      "blocks": {
-        "home": { "type": "link", "settings": { "label": "Home", "url": "/" } },
-        "shop": { "type": "link", "settings": { "label": "Shop the TEKKY", "url": "/products/the-tekky-advanced-youth-training-ball" } },
-        "training": { "type": "link", "settings": { "label": "Training Guide", "url": "/pages/training-guide" } },
-        "build": { "type": "link", "settings": { "label": "Build Your Player", "url": "/pages/build-your-player" } },
-        "contact": { "type": "link", "settings": { "label": "Contact", "url": "mailto:info@zenithsports.org" } }
-      },
-      "block_order": ["home", "shop", "training", "build", "contact"],
-      "settings": {
-        "tagline": "Home of the TEKKY®",
-        "brand_blurb": "<p>Building Better Players, One Touch at a Time. The TEKKY® is an innovative training tool designed to reshape the future of US Soccer by building a stronger technical foundation for the next generation of players.</p>",
-        "contact_email": "info@zenithsports.org",
-        "instagram_url": "https://www.instagram.com/zenithsports.tekky",
-        "facebook_url": "https://www.facebook.com/zenithsports.tekky"
-      }
+    "inquiry-form-zenith": {
+      "type": "inquiry-form-zenith"
     }
   },
-  "order": ["hero-zenith", "founders-zenith", "footer-zenith"]
+  "order": [
+    "marquee-zenith",
+    "hero-zenith",
+    "stats-zenith",
+    "ball-spotlight-zenith",
+    "before-after-zenith",
+    "drill-library-zenith",
+    "shop-strip-zenith",
+    "training-guide-cta-zenith",
+    "build-your-player-cta-zenith",
+    "founders-zenith",
+    "inquiry-form-zenith"
+  ]
 }

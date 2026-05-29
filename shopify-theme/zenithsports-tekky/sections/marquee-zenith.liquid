@@ -1,0 +1,64 @@
+{% comment %}
+  Promo marquee — scrolling text bar at the top of the page.
+  Port of PromoMarquee from /shop and the homepage.
+{% endcomment %}
+
+<div class="zenith-marquee" role="region" aria-label="Promotions">
+  <div class="zenith-marquee__track">
+    {% for i in (1..6) %}
+      <span class="zenith-marquee__item">{{ section.settings.text | escape }}</span>
+      <span class="zenith-marquee__sep">·</span>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .zenith-marquee {
+    overflow: hidden;
+    background: var(--zenith-navy-deep);
+    color: var(--zenith-lime);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0.5rem 0;
+  }
+  .zenith-marquee__track {
+    display: flex;
+    gap: 1.5rem;
+    white-space: nowrap;
+    animation: zenith-marquee 42s linear infinite;
+    will-change: transform;
+  }
+  .zenith-marquee:hover .zenith-marquee__track { animation-play-state: paused; }
+  .zenith-marquee__item {
+    flex-shrink: 0;
+    padding: 0 1.5rem;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+  }
+  .zenith-marquee__sep { color: rgba(255,255,255,0.4); }
+  @keyframes zenith-marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zenith-marquee__track { animation: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Marquee",
+  "tag": "section",
+  "class": "zenith-marquee-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Marquee text (repeats across the bar)",
+      "default": "TEKKY® GRIP SOCKS — 30% OFF · BUY 2 SHIRTS FOR $30 · FREE COACHING DRILLS · DISCOUNTS APPLIED AT CHECKOUT"
+    }
+  ],
+  "presets": [{ "name": "Zenith Marquee" }]
+}
+{% endschema %}

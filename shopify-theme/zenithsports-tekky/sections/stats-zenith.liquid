@@ -1,0 +1,93 @@
+{% comment %}
+  3 outcome / credibility stat cards. Quick scannable proof points.
+{% endcomment %}
+
+<section class="zenith-section zenith-stats">
+  <div class="zenith-container">
+    <div class="zenith-stats__grid">
+      {% for block in section.blocks %}
+        <article class="zenith-stat-card">
+          <div class="zenith-stat-card__number">{{ block.settings.number | escape }}</div>
+          <div class="zenith-stat-card__label">{{ block.settings.label | escape }}</div>
+          {% if block.settings.note != blank %}
+            <p class="zenith-stat-card__note">{{ block.settings.note | escape }}</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-stats {
+    background: var(--zenith-navy);
+    color: #fff;
+    padding: 4rem 0;
+  }
+  .zenith-stats__grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) {
+    .zenith-stats__grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  }
+  .zenith-stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 2rem 1.75rem;
+  }
+  .zenith-stat-card__number {
+    font-family: var(--zenith-font-display);
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--zenith-lime);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .zenith-stat-card__label {
+    margin-top: 0.75rem;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #fff;
+  }
+  .zenith-stat-card__note {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Stats",
+  "tag": "section",
+  "class": "zenith-stats-section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat card",
+      "limit": 4,
+      "settings": [
+        { "type": "text", "id": "number", "label": "Big number / phrase" },
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "text", "id": "note", "label": "Note (small text under label)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Stats",
+      "blocks": [
+        { "type": "stat", "settings": { "number": "FIFA Size 3", "label": "Control surface", "note": "Smaller than regulation — every touch counts" } },
+        { "type": "stat", "settings": { "number": "FIFA Size 5", "label": "Match-day weight", "note": "Real strength transfer, not a foam toy" } },
+        { "type": "stat", "settings": { "number": "5.0★", "label": "Verified buyers", "note": "Trusted by Rec, Travel, ECNL, MLS Next" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

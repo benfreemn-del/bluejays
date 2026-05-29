@@ -1,0 +1,159 @@
+{% comment %}
+  Before & After Effect (BAE) section. The conversion narrative:
+  10-15 min/day × 4 weeks → visible improvement on regulation ball.
+{% endcomment %}
+
+<section class="zenith-section zenith-bae">
+  <div class="zenith-container">
+    <div class="zenith-bae__grid">
+      <div class="zenith-bae__copy">
+        {% if section.settings.eyebrow != blank %}
+          <p class="zenith-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {% endif %}
+        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: #fff;">
+          {{ section.settings.heading | escape }}
+        </h2>
+        {% if section.settings.body != blank %}
+          <div class="zenith-body" style="margin-top: 1.5rem; color: rgba(255,255,255,0.85);">
+            {{ section.settings.body }}
+          </div>
+        {% endif %}
+
+        <div class="zenith-bae__steps">
+          {% for block in section.blocks %}
+            {% if block.type == 'step' %}
+              <div class="zenith-bae__step">
+                <div class="zenith-bae__step-num">{{ block.settings.number | escape }}</div>
+                <div>
+                  <div class="zenith-bae__step-title">{{ block.settings.title | escape }}</div>
+                  <p class="zenith-bae__step-desc">{{ block.settings.desc | escape }}</p>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if section.settings.cta_label != blank %}
+          <a
+            href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
+            class="zenith-btn zenith-btn--primary"
+            style="margin-top: 2.5rem;"
+          >
+            {{ section.settings.cta_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="zenith-bae__visual">
+        <div class="zenith-bae__compare">
+          {% if section.settings.before_image %}
+            <figure class="zenith-bae__col">
+              <img src="{{ section.settings.before_image | image_url: width: 800 }}" alt="Before TEKKY training" loading="lazy">
+              <figcaption>Before</figcaption>
+            </figure>
+          {% endif %}
+          {% if section.settings.after_image %}
+            <figure class="zenith-bae__col">
+              <img src="{{ section.settings.after_image | image_url: width: 800 }}" alt="After 4 weeks on TEKKY" loading="lazy">
+              <figcaption>After 4 weeks</figcaption>
+            </figure>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-bae {
+    background: var(--zenith-navy-deep);
+    color: #fff;
+    padding: 5rem 0;
+  }
+  @media (min-width: 768px) { .zenith-bae { padding: 8rem 0; } }
+  .zenith-bae__grid {
+    display: grid; gap: 3rem;
+  }
+  @media (min-width: 1024px) {
+    .zenith-bae__grid { grid-template-columns: 6fr 5fr; gap: 4rem; align-items: center; }
+  }
+  .zenith-bae__steps {
+    display: flex; flex-direction: column; gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .zenith-bae__step {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .zenith-bae__step-num {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    background: var(--zenith-lime); color: var(--zenith-navy-deep);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.95rem;
+  }
+  .zenith-bae__step-title {
+    font-weight: 900; text-transform: uppercase; font-size: 0.95rem; letter-spacing: -0.01em;
+  }
+  .zenith-bae__step-desc {
+    margin: 0.25rem 0 0;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.875rem; line-height: 1.55;
+  }
+  .zenith-bae__compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+  }
+  .zenith-bae__col { margin: 0; position: relative; }
+  .zenith-bae__col img {
+    width: 100%; aspect-ratio: 3 / 4; object-fit: cover;
+  }
+  .zenith-bae__col figcaption {
+    position: absolute; bottom: 0.5rem; left: 0.5rem;
+    padding: 0.25rem 0.65rem;
+    background: rgba(0,0,0,0.7); color: #fff;
+    font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.18em;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Before & After",
+  "tag": "section",
+  "class": "zenith-bae-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Before & After Effect" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "10 minutes a day. 4 weeks. Watch the gap close." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Players who train with TEKKY for 10–15 min/day, 3× per week, visibly improve first touch, ball mastery, and confidence. After 4 weeks, regulation balls feel huge — and that's where the transfer to match day happens.</p>" },
+    { "type": "image_picker", "id": "before_image", "label": "Before image (action shot, baseline)" },
+    { "type": "image_picker", "id": "after_image", "label": "After image (4 weeks later)" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Start the BAE → buy the TEKKY" },
+    { "type": "url", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Routine step",
+      "limit": 4,
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "1" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "desc", "label": "Description" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Before & After",
+      "blocks": [
+        { "type": "step", "settings": { "number": "1", "title": "Pick 3 drills from the library", "desc": "One per skill area: gather, dribble, finish. Start with Warm Up tier." } },
+        { "type": "step", "settings": { "number": "2", "title": "10–15 min, 3× per week", "desc": "Quality over quantity. Pristine reps build technique faster than tired ones." } },
+        { "type": "step", "settings": { "number": "3", "title": "Level up after week 2", "desc": "Add 2 Beginner drills. Drop the easiest Warm Up. Always keep something challenging." } },
+        { "type": "step", "settings": { "number": "4", "title": "Week 4: hit regulation ball", "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
