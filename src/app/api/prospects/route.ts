@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllProspects, filterProspects } from "@/lib/store";
 import { currentUserFromCookies } from "@/lib/bluejays-auth";
 import { touchCountsByProspect } from "@/lib/prospect-touches";
+import { DEAD_STATUSES } from "@/lib/lead-origin";
 
 /**
  * GET /api/prospects
@@ -40,6 +41,18 @@ export async function GET(request: NextRequest) {
   if (role === "sales" && user) {
     prospects = prospects.filter(
       (p) => !p.assignedToUserId || p.assignedToUserId === user.id,
+    );
+  }
+
+  // Sales role: drop dead-for-sales statuses (dismissed / unsubscribed
+  // / do_not_call / audit_marketing). Defense-in-depth — the LeadPicker
+  // also filters these client-side, but enforcing at the API layer means
+  // no surface (drawer, checklist, scout suggestions, future mobile)
+  // can ever accidentally pitch a killed lead. Owner role still sees
+  // them so Ben can manage the graveyard.
+  if (role === "sales") {
+    prospects = prospects.filter(
+      (p) => !p.status || !DEAD_STATUSES.has(String(p.status).toLowerCase()),
     );
   }
 

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import TouchTimeline from "@/components/dashboard/TouchTimeline";
+import { getLeadOrigin } from "@/lib/lead-origin";
+import type { Prospect } from "@/lib/types";
 
 /**
  * <LeadDetailDrawer /> — right-side slide-in panel showing everything an
@@ -38,6 +40,12 @@ type ProspectSummary = {
   category: string | null;
   currentWebsite: string | null;
   generatedSiteUrl: string | null;
+  // Origin signals — feed getLeadOrigin() for the "where did this lead
+  // come from" subtitle. Optional; the helper falls back gracefully.
+  source?: string | null;
+  lookalikeCategory?: string | null;
+  scrapedData?: Record<string, unknown> | null;
+  createdAt?: string | null;
 };
 
 type Props = {
@@ -118,6 +126,11 @@ export default function LeadDetailDrawer({
             category: (p.category as string) ?? null,
             currentWebsite: (p.currentWebsite as string) ?? null,
             generatedSiteUrl: (p.generatedSiteUrl as string) ?? null,
+            source: (p.source as string) ?? null,
+            lookalikeCategory: (p.lookalikeCategory as string) ?? null,
+            scrapedData:
+              (p.scrapedData as Record<string, unknown>) ?? null,
+            createdAt: (p.createdAt as string) ?? null,
           });
         })
         .catch(() => {});
@@ -222,6 +235,17 @@ export default function LeadDetailDrawer({
                 .filter(Boolean)
                 .join(" · ")}
             </p>
+            {/* Lead-origin sentence — "Submitted /audit form 4d ago" etc.
+                Sourced from the same getLeadOrigin() helper as the
+                LeadPicker row so the context is consistent everywhere. */}
+            {p && (
+              <p
+                className="text-[11px] text-amber-300/80 mt-1 leading-snug"
+                title={getLeadOrigin(p as unknown as Prospect).long}
+              >
+                {getLeadOrigin(p as unknown as Prospect).long}
+              </p>
+            )}
           </div>
           <button
             type="button"

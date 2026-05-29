@@ -11,6 +11,7 @@ import TodaysChecklist from "@/components/dashboard/TodaysChecklist";
 import LeadDetailDrawer from "@/components/dashboard/LeadDetailDrawer";
 import { useRole } from "@/lib/use-role";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
+import { getLeadOrigin, DEAD_STATUSES } from "@/lib/lead-origin";
 import LeadRowActions from "./LeadRowActions.client";
 
 /**
@@ -385,6 +386,13 @@ export default function LeadPicker() {
         !!p.siteLiveAt ||
         !!p.customSiteUrl;
       if (isAlreadyClient) return false;
+
+      // Drop dead-for-sales statuses unconditionally — Ben killed
+      // these for a reason and no toggle should expose them in the
+      // sales picker. Centralized in lead-origin.ts so every surface
+      // excludes the same set. Includes: dismissed, unsubscribed,
+      // do_not_call, audit_marketing.
+      if (DEAD_STATUSES.has(s)) return false;
 
       // Sales-role only: also drop prospects whose business name
       // matches an active client_owners slug or display name. Catches
@@ -1097,6 +1105,36 @@ export default function LeadPicker() {
                           .filter(Boolean)
                           .join(" · ") || "no contact info"}
                       </p>
+                      {/* Lead-origin line — explains WHERE this lead came
+                          from so Madie knows what to say. Auto-renders the
+                          right tone per source: inbound audit-form leads
+                          get "Submitted /audit", cold scouts get the
+                          Hormozi opener cue, MFG lookalikes get the
+                          manufacturer-vertical cue, etc. See
+                          src/lib/lead-origin.ts for the source mapping.
+                          Tooltip shows the full sentence. */}
+                      {(() => {
+                        const origin = getLeadOrigin(p);
+                        const emoji =
+                          origin.kind === "inbound_audit" ||
+                          origin.kind === "inbound_form"
+                            ? "📥"
+                            : origin.kind === "mfg_lookalike"
+                              ? "🏭"
+                              : origin.kind === "partner_referral"
+                                ? "🤝"
+                                : origin.kind === "manual"
+                                  ? "✍️"
+                                  : "🔍";
+                        return (
+                          <p
+                            className="text-[10px] text-muted/70 leading-tight mt-0.5 truncate"
+                            title={origin.long}
+                          >
+                            {emoji} {origin.long}
+                          </p>
+                        );
+                      })()}
                     </div>
                     {/* "Just called" button — stamps prospects.last_contacted_at
                         for the 2-min callback SLA telemetry chip on
