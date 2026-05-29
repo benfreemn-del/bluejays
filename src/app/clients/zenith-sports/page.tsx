@@ -167,8 +167,15 @@ const TEAL_DK = "#1FAE96";       // deeper teal for hover states
 const VIOLET = "#8A6FDF";        // violet swoosh — premium-tier accent
 const VIOLET_DK = "#6448C2";     // deeper violet for hover states
 
-/* Real Shopify product URLs live in /shop/page.tsx — this page funnels
- * to /clients/zenith-sports/shop where the BUY NOW buttons exist. */
+/* Real Shopify product URLs live in /shop/page.tsx. The primary buy CTAs
+ * on THIS page skip the intermediate /shop page and add the TEKKY ball
+ * straight to the Shopify cart (where Shop Pay / Apple Pay / Google Pay +
+ * any cart upsells live, then one tap to checkout). The ball is a single-
+ * variant product (Shopify variant id 45347164389551, "Default Title"),
+ * so a direct cart permalink can't lock a wrong size/color. Apparel
+ * (socks/tees, which DO have variants) still routes to /shop to pick
+ * options. */
+const BALL_BUY_URL = "https://zenithsports.org/cart/45347164389551:1";
 
 /* ───────────────────────── PROMO MARQUEE ───────────────────────── */
 const PROMO_TEXT =
@@ -394,16 +401,26 @@ export default function ZenithSportsPage() {
 
             <div className="mt-10 flex flex-wrap gap-4 items-center">
               <a
-                href="/clients/zenith-sports/shop"
+                href={BALL_BUY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
               >
                 <ShoppingCart size={16} weight="bold" />
-                Shop the TEKKY
+                Buy the TEKKY® · $59.95
                 <ArrowRight
                   size={16}
                   weight="bold"
                   className="group-hover:translate-x-1 transition-transform"
                 />
+              </a>
+              {/* Secondary: browse the full store (apparel has size/color
+                  options, so it routes to the shop page to pick). */}
+              <a
+                href="/clients/zenith-sports/shop"
+                className="text-[12px] font-bold tracking-[0.18em] uppercase text-white/70 hover:text-[#a3e635] transition underline underline-offset-4"
+              >
+                Shop socks + tees →
               </a>
               {/* Was an anchor to #meet (just scrolled to product copy).
                   Now opens an actual TEKKY drill video in a modal. */}
@@ -682,11 +699,13 @@ export default function ZenithSportsPage() {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <a
-                  href="/clients/zenith-sports/shop"
+                  href={BALL_BUY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#0a1832] text-white px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-[#1d4ed8] transition group"
                 >
                   <ShoppingCart size={16} weight="bold" />
-                  Shop the TEKKY® · $59.95
+                  Buy the TEKKY® · $59.95
                   <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
@@ -1089,8 +1108,8 @@ export default function ZenithSportsPage() {
                 <EmailCapture
                   variant="lime"
                   intent="Training Guide"
-                  badge="Free coaching plan"
-                  headline="Get the TEKKY® coaching plan."
+                  badge="Free training plan"
+                  headline="Get the TEKKY® training plan."
                   body="Drill progressions, session plans, and the European-style technical curriculum we use with ECNL and MLS Next clubs — open it now or save it for later."
                   cta="Send me the plan"
                   successHeadline="Plan is ready."
@@ -1659,11 +1678,13 @@ export default function ZenithSportsPage() {
 
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
             <a
-              href="/clients/zenith-sports/shop"
+              href={BALL_BUY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 bg-[#a3e635] text-[#0a1832] px-10 py-5 text-[14px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition group"
             >
               <ShoppingCart size={18} weight="bold" />
-              Get Your TEKKY
+              Get Your TEKKY® · $59.95
               <ArrowRight
                 size={18}
                 weight="bold"
