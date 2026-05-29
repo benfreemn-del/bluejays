@@ -65,6 +65,12 @@ export default function LeadDetailDrawer({
   const [fetchedSummary, setFetchedSummary] = useState<ProspectSummary | null>(
     null,
   );
+  // Tab inside the History section — "notes" = Madie's freeform notes,
+  // "touches" = the structured prospect_touches timeline (calls, texts,
+  // emails, DMs). Sits in the same section so she sees one history
+  // surface but can pick which slice to view. Defaults to Notes since
+  // that's what she edits most often.
+  const [historyTab, setHistoryTab] = useState<"notes" | "touches">("notes");
 
   // Reload notes + (optionally) prospect summary when the drawer opens or
   // the parent bumps refreshKey.
@@ -275,14 +281,17 @@ export default function LeadDetailDrawer({
           </Link>
         </div>
 
-        {/* Body — Notes + Touch History */}
-        <div className="px-5 py-4 space-y-6">
-          {/* Notes */}
-          <section>
-            <h3 className="text-[11px] uppercase tracking-wider font-bold text-amber-300/80 mb-2">
-              📝 Notes
-            </h3>
-            <div className="flex gap-2 mb-3">
+        {/* Body — single History section with Notes | Touch tabs */}
+        <div className="px-5 py-4">
+          {/* Always-visible "Add a note" composer above the tabs. Lets
+              Madie capture a thought without first switching tabs. The
+              note also logs a touch so it appears in BOTH the Notes
+              tab AND the Touch tab. */}
+          <div className="mb-4">
+            <label className="block text-[10px] uppercase tracking-wider font-bold text-amber-300/80 mb-1.5">
+              📝 New note
+            </label>
+            <div className="flex gap-2">
               <input
                 type="text"
                 value={newNote}
@@ -293,7 +302,7 @@ export default function LeadDetailDrawer({
                     void addNote();
                   }
                 }}
-                placeholder="Add a quick note…"
+                placeholder="Add a quick note about this lead…"
                 className="flex-1 h-9 px-3 rounded-md bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60"
               />
               <button
@@ -305,43 +314,74 @@ export default function LeadDetailDrawer({
                 {savingNote ? "…" : "Add"}
               </button>
             </div>
-            {loadingNotes ? (
-              <p className="text-xs text-slate-500 italic">Loading notes…</p>
-            ) : notes.length === 0 ? (
-              <p className="text-xs text-slate-500 italic px-2 py-2">
-                No notes yet. Add the first one above ↑
-              </p>
-            ) : (
-              <ul className="space-y-1.5">
-                {notes.map((n) => (
-                  <li
-                    key={n.id}
-                    className="rounded-md border border-amber-500/15 bg-amber-500/[0.04] px-3 py-2"
-                  >
-                    <p className="text-xs text-slate-100 whitespace-pre-wrap break-words">
-                      {n.text}
-                    </p>
-                    <p className="text-[10px] text-slate-500 mt-1 tabular-nums">
-                      {new Date(n.createdAt).toLocaleString()}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          </div>
 
-          {/* Full touch history */}
-          <section>
-            <h3 className="text-[11px] uppercase tracking-wider font-bold text-sky-300/80 mb-2">
+          {/* Tab toggle — Notes vs Touch history. Both render the same
+              section's history pane below. */}
+          <div className="flex items-center gap-1 mb-3 border-b border-slate-800">
+            <button
+              type="button"
+              onClick={() => setHistoryTab("notes")}
+              className={`text-[11px] uppercase tracking-wider font-bold px-3 py-2 -mb-px border-b-2 transition-colors ${
+                historyTab === "notes"
+                  ? "border-amber-400 text-amber-200"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              📝 Notes{notes.length > 0 ? ` (${notes.length})` : ""}
+            </button>
+            <button
+              type="button"
+              onClick={() => setHistoryTab("touches")}
+              className={`text-[11px] uppercase tracking-wider font-bold px-3 py-2 -mb-px border-b-2 transition-colors ${
+                historyTab === "touches"
+                  ? "border-sky-400 text-sky-200"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
+              }`}
+            >
               📜 Touch history
-            </h3>
-            <TouchTimeline
-              prospectId={prospectId}
-              limit={100}
-              refreshKey={touchBump + refreshKey}
-              pollMs={0}
-            />
-          </section>
+            </button>
+          </div>
+
+          {/* History pane — picks one of the two views. */}
+          {historyTab === "notes" ? (
+            <div>
+              {loadingNotes ? (
+                <p className="text-xs text-slate-500 italic px-2 py-3">
+                  Loading notes…
+                </p>
+              ) : notes.length === 0 ? (
+                <p className="text-xs text-slate-500 italic px-2 py-3">
+                  No notes yet. Add the first one above ↑
+                </p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {notes.map((n) => (
+                    <li
+                      key={n.id}
+                      className="rounded-md border border-amber-500/15 bg-amber-500/[0.04] px-3 py-2"
+                    >
+                      <p className="text-xs text-slate-100 whitespace-pre-wrap break-words">
+                        {n.text}
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-1 tabular-nums">
+                        {new Date(n.createdAt).toLocaleString()}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : (
+            <div>
+              <TouchTimeline
+                prospectId={prospectId}
+                limit={100}
+                refreshKey={touchBump + refreshKey}
+                pollMs={0}
+              />
+            </div>
+          )}
         </div>
       </aside>
     </>

@@ -22,7 +22,20 @@ const OUTREACH_ELIGIBLE_STATUSES = [
   "paid",
 ];
 
-export async function sendPitchEmail(prospect: Prospect) {
+/**
+ * sendPitchEmail options. When `sender === "madie"`, the email is sent
+ * FROM madie@bluejayportfolio.com with reply-to set to the same. This
+ * lets Madie's sends from the lead-detail page mirror the row-pill
+ * pattern (send-booking + send-audit) where the prospect sees her name.
+ */
+type SendPitchOptions = {
+  sender?: "madie";
+};
+
+export async function sendPitchEmail(
+  prospect: Prospect,
+  options?: SendPitchOptions,
+) {
   if (!prospect.email) {
     throw new Error(`No email address for ${prospect.businessName}`);
   }
@@ -66,7 +79,18 @@ export async function sendPitchEmail(prospect: Prospect) {
     prospect.email,
     template.subject,
     template.body,
-    template.sequence
+    template.sequence,
+    undefined,
+    options?.sender === "madie"
+      ? {
+          transactional: true,
+          senderOverride: {
+            email: "madie@bluejayportfolio.com",
+            name: "Madie @ BlueJays",
+            replyTo: "madie@bluejayportfolio.com",
+          },
+        }
+      : undefined,
   );
 
   // Update prospect status

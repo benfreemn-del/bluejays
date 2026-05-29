@@ -379,6 +379,19 @@ function NotesModal({
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(j.error || "Couldn't save note");
       }
+      // Also log a touch so it surfaces on the unified prospect_touches
+      // timeline (drawer + workspace right-rail). Notes-only without a
+      // touch were invisible to Madie's "every touch with X" view. Fire-
+      // and-forget — note already saved successfully.
+      void fetch(`/api/prospects/${prospect.id}/touches`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "note",
+          direction: "outbound",
+          notes: text.trim(),
+        }),
+      }).catch((err) => console.error("[note-action] touch log failed:", err));
       onSaved();
     } catch (e) {
       setErr((e as Error).message);
