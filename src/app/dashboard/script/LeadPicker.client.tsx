@@ -86,6 +86,7 @@ export default function LeadPicker() {
     | "fullsystem"
     | "mfg"
     | "has-preview"
+    | "following-up"
   >("all");
   // Industry / category drop-down — auto-populated from the distinct
   // category values present in the loaded prospects.
@@ -421,6 +422,8 @@ export default function LeadPicker() {
       if (filter === "has-preview") {
         if (!p.generatedSiteUrl || !READY_TO_SEND_STATUSES.has(s)) return false;
       }
+      // "following-up" — Madie's actively-pursued leads (parked via 📌 Working).
+      if (filter === "following-up" && s !== "following_up") return false;
 
       // Category dropdown filter (industry)
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
@@ -674,6 +677,7 @@ export default function LeadPicker() {
               ([
                 { id: "all", label: "All", color: "violet" },
                 { id: "has-preview", label: "✅ Ready to send", color: "cyan" },
+                { id: "following-up", label: "📌 Following up", color: "indigo" },
                 // Inbound chip hidden for sales role — Madie's queue is
                 // cold-only by policy (Ben closes warm inbounds himself).
                 ...(role === "sales"
@@ -710,6 +714,9 @@ export default function LeadPicker() {
                 cyan: active
                   ? "border-cyan-400 bg-cyan-500/15 text-cyan-200"
                   : "border-cyan-500/25 bg-cyan-500/[0.04] text-cyan-300/80 hover:text-cyan-200",
+                indigo: active
+                  ? "border-indigo-400 bg-indigo-500/15 text-indigo-200"
+                  : "border-indigo-500/25 bg-indigo-500/[0.04] text-indigo-300/80 hover:text-indigo-200",
               };
               return (
                 <button
@@ -1009,11 +1016,31 @@ export default function LeadPicker() {
                             {String(p.category).replace(/-/g, " ")}
                           </span>
                         )}
+                        {/* Touch-cadence badge — "N/3" shows where this lead
+                            sits in Madie's 3-touch cadence. Only renders once
+                            she's logged at least one outreach touch. Green at
+                            3+ (cadence complete → time to nurture). */}
+                        {typeof p.touchCount === "number" && p.touchCount > 0 && (
+                          <span
+                            className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold tracking-wider border tabular-nums ${
+                              p.touchCount >= 3
+                                ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/40"
+                                : "bg-amber-500/15 text-amber-300 border-amber-400/40"
+                            }`}
+                            title={
+                              p.touchCount >= 3
+                                ? `${p.touchCount} touches — cadence complete. Consider 🌱 Nurture if no reply.`
+                                : `${p.touchCount} of 3 touches in your cadence`
+                            }
+                          >
+                            {Math.min(p.touchCount, 3)}/3
+                          </span>
+                        )}
                         {p.ownerName && (
                           <span className="text-[11px] text-muted">· {p.ownerName}</span>
                         )}
                         <span className="text-[10px] uppercase tracking-wider text-muted ml-auto">
-                          {p.status}
+                          {p.status === "following_up" ? "following up 📌" : p.status}
                         </span>
                       </div>
                       <p className="text-[11px] text-muted leading-tight mt-0.5 truncate">

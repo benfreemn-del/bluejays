@@ -133,6 +133,11 @@ const statusConfig: Record<
     bg: "bg-emerald-900/40",
     text: "text-emerald-300",
   },
+  following_up: {
+    label: "Following Up 📌",
+    bg: "bg-sky-900/50",
+    text: "text-sky-300",
+  },
   "pro-bono": { label: "Pro Bono", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllProspects, filterProspects } from "@/lib/store";
 import { currentUserFromCookies } from "@/lib/bluejays-auth";
+import { touchCountsByProspect } from "@/lib/prospect-touches";
 
 /**
  * GET /api/prospects
@@ -54,8 +55,19 @@ export async function GET(request: NextRequest) {
   // Default-hide nurturing prospects so Madie's LeadPicker stays focused.
   // Skipped when the caller explicitly opted in via ?includeNurturing=1
   // OR when they filtered status='nurturing' directly.
+  // NOTE: status='following_up' is NOT hidden — those are actively-pursued
+  // leads that must stay visible (they surface under the Following Up chip).
   if (!includeNurturing) {
     prospects = prospects.filter((p) => p.status !== "nurturing");
+  }
+
+  // Enrich each prospect with its outreach-touch count for the "N/3"
+  // cadence badge. One grouped read; best-effort (never blocks the list).
+  try {
+    const counts = await touchCountsByProspect();
+    prospects = prospects.map((p) => ({ ...p, touchCount: counts[p.id] || 0 }));
+  } catch (err) {
+    console.error("[/api/prospects] touch-count enrich failed:", err);
   }
 
   return NextResponse.json({ prospects, total: prospects.length });

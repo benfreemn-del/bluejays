@@ -40,7 +40,31 @@ export default function LeadRowActions({
 }) {
   const [open, setOpen] = useState<ModalKind>(null);
   const [copied, setCopied] = useState(false);
+  const [parking, setParking] = useState(false);
   const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  const alreadyFollowingUp = prospect.status === "following_up";
+
+  // 📌 Working — park an actively-pursued lead in the Following Up
+  // section. Stays visible (unlike nurture). A daily sweep auto-moves it
+  // to nurture after 3 touches + 14 days silence.
+  const moveToFollowingUp = async () => {
+    if (parking || alreadyFollowingUp) return;
+    setParking(true);
+    try {
+      const res = await fetch(`/api/prospects/${prospect.id}/follow-up`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      const j = (await res.json().catch(() => ({}))) as { ok?: boolean };
+      if (j.ok) onMutate?.();
+    } catch {
+      // best-effort
+    } finally {
+      setParking(false);
+    }
+  };
 
   // Short preview URL — /p/[code] (~40 chars), the link Madie pastes
   // into SMS / email / DM. Uses the persisted short_code; the /p/ route
@@ -83,7 +107,7 @@ export default function LeadRowActions({
           so they read as one unit. Each button is icon + short word so
           Madie doesn't have to memorize emoji meanings. */}
       <div
-        className="flex items-center gap-0.5 ml-1 rounded-lg border border-white/10 bg-slate-950/40 p-0.5"
+        className="flex flex-wrap items-center gap-0.5 ml-1 rounded-lg border border-white/10 bg-slate-950/40 p-0.5"
         onClick={stop}
       >
         {previewLink && (
@@ -126,6 +150,18 @@ export default function LeadRowActions({
           tone="amber"
           title="Set a callback reminder"
           onClick={() => setOpen("remind")}
+        />
+        <ActionBtn
+          icon={alreadyFollowingUp ? "✓" : parking ? "…" : "📌"}
+          label={alreadyFollowingUp ? "Working" : "Working"}
+          tone="indigo"
+          title={
+            alreadyFollowingUp
+              ? "Already in your Following Up list"
+              : "Move to Following Up — keeps this lead in your active-pursuit list (doesn't hide it)"
+          }
+          onClick={moveToFollowingUp}
+          disabled={parking || alreadyFollowingUp}
         />
         <ActionBtn
           icon="🌱"
@@ -194,11 +230,20 @@ export default function LeadRowActions({
 
 // ─── Shared button ─────────────────────────────────────────────────
 
-type ActionTone = "slate" | "violet" | "sky" | "amber" | "emerald" | "cyan";
+type ActionTone =
+  | "slate"
+  | "violet"
+  | "sky"
+  | "amber"
+  | "emerald"
+  | "cyan"
+  | "indigo";
 
 const TONE_STYLES: Record<ActionTone, string> = {
   cyan:
     "text-cyan-300 hover:bg-cyan-500/15 hover:text-cyan-100 border-transparent hover:border-cyan-500/30",
+  indigo:
+    "text-indigo-300 hover:bg-indigo-500/15 hover:text-indigo-100 border-transparent hover:border-indigo-500/30",
   slate:
     "text-slate-300 hover:bg-slate-500/15 hover:text-slate-100 border-transparent hover:border-slate-500/30",
   violet:

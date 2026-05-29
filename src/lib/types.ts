@@ -102,6 +102,7 @@ export type ProspectStatus =
   | "audit_preview_requested" // clicked "Build me a preview" on the audit page; Ben handles manually
   | "fullsystem_inquiry"      // clicked "The Full System" — discovery call booked; Ben handles manually
   | "nurturing"               // sales manually flipped via /api/prospects/[id]/nurture — hidden from default LeadPicker until "Show nurturing" chip toggled
+  | "following_up"            // sales manually parked via 📌 Working — actively pursuing within the 3-touch cadence; stays visible, surfaces under the "Following Up" chip. Auto-moves to nurturing after 3 touches + 14d silence.
   | "pro-bono";
 
 export interface Prospect {
@@ -291,6 +292,11 @@ export interface Prospect {
    *  (see /p/[code] route + src/lib/short-urls.ts). Derived from md5(id).
    *  Populated by migration 20260419_prospect_short_codes.sql. */
   short_code?: string;
+  /** Count of outreach touches (call/voicemail/text/email/dm/in_person —
+   *  NOT notes/reminders) logged in prospect_touches. Surfaced on the
+   *  LeadPicker row as the "N/3" cadence badge. Enriched onto the
+   *  /api/prospects response, not a stored column. */
+  touchCount?: number;
   /** ISO timestamp of when we sent the "welcome / now fill out onboarding" email
    *  right after a successful Stripe payment. Used for idempotency so the
    *  webhook can retry without double-sending. */

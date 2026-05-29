@@ -188,6 +188,46 @@ export async function listTouches(
   return (data || []) as ProspectTouch[];
 }
 
+// Kinds that count as a real outreach "touch" toward Madie's 3-touch
+// cadence. Notes/reminders don't count — they're internal bookkeeping,
+// not contact attempts.
+const OUTREACH_TOUCH_KINDS: TouchKind[] = [
+  "call",
+  "voicemail",
+  "text",
+  "email",
+  "dm",
+  "in_person",
+];
+
+/**
+ * Outreach-touch count per prospect, across the whole table. Powers the
+ * "N/3" cadence badge on the LeadPicker. Returns a plain map
+ * { prospectId: count }. One grouped read; cheap + indexed on
+ * prospect_id. Mock-safe: returns {} when Supabase isn't configured.
+ *
+ * Counts only OUTREACH_TOUCH_KINDS (excludes notes/reminders).
+ */
+export async function touchCountsByProspect(): Promise<Record<string, number>> {
+  if (!isSupabaseConfigured()) return {};
+  // Supabase JS has no GROUP BY helper; pull the (prospect_id, kind)
+  // columns for outreach kinds and tally in JS. The table is bounded by
+  // touch volume (a few per prospect), so this stays small.
+  const { data, error } = await supabase
+    .from("prospect_touches")
+    .select("prospect_id, kind")
+    .in("kind", OUTREACH_TOUCH_KINDS);
+  if (error) {
+    console.error("[touchCountsByProspect] query failed:", error.message);
+    return {};
+  }
+  const counts: Record<string, number> = {};
+  for (const row of (data || []) as { prospect_id: string }[]) {
+    counts[row.prospect_id] = (counts[row.prospect_id] || 0) + 1;
+  }
+  return counts;
+}
+
 /**
  * "What did each operator do today?" — for the dashboard touches-today
  * view.
