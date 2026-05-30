@@ -90,6 +90,7 @@ export default function LeadPicker() {
     | "mfg"
     | "has-preview"
     | "following-up"
+    | "saved"
   >("all");
   // Industry / category drop-down — auto-populated from the distinct
   // category values present in the loaded prospects.
@@ -437,6 +438,10 @@ export default function LeadPicker() {
       }
       // "following-up" — Madie's actively-pursued leads (parked via 📌 Working).
       if (filter === "following-up" && s !== "following_up") return false;
+      // "saved" — Madie's 📍 holds. Exempt from the 14-day auto-sweep.
+      // See /api/leads/sweep-following-up and migration
+      // 20260529_prospects_saved_at.sql.
+      if (filter === "saved" && !p.savedAt) return false;
 
       // Category dropdown filter (industry)
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
@@ -716,6 +721,14 @@ export default function LeadPicker() {
                 { id: "all", label: "All", color: "violet" },
                 { id: "has-preview", label: "✅ Ready to send", color: "cyan" },
                 { id: "following-up", label: "📌 Following up", color: "indigo" },
+                // 📍 Saved — leads Madie marked to skip the 14-day auto-
+                // sweep. Count derived from the loaded prospects pool so
+                // she sees "📍 Saved (8)" at a glance.
+                {
+                  id: "saved",
+                  label: `📍 Saved${prospects.filter((p) => p.savedAt).length > 0 ? ` (${prospects.filter((p) => p.savedAt).length})` : ""}`,
+                  color: "rose",
+                },
                 // Inbound chip now visible for everyone (Ben 2026-05-29).
                 // Previously hidden for sales role; reversed so Madie can
                 // see warm inbounds + MFG audit submissions.
@@ -754,6 +767,9 @@ export default function LeadPicker() {
                 indigo: active
                   ? "border-indigo-400 bg-indigo-500/15 text-indigo-200"
                   : "border-indigo-500/25 bg-indigo-500/[0.04] text-indigo-300/80 hover:text-indigo-200",
+                rose: active
+                  ? "border-rose-400 bg-rose-500/15 text-rose-200"
+                  : "border-rose-500/25 bg-rose-500/[0.04] text-rose-300/80 hover:text-rose-200",
               };
               return (
                 <button

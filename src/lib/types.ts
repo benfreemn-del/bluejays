@@ -141,6 +141,14 @@ export interface Prospect {
   mgmtSubscriptionId?: string;
   instagramHandle?: string;
   funnelPaused?: boolean;
+  /** ISO timestamp set when Madie marks the lead as "saved" via the 📍Save
+   *  row pill / drawer toggle. Saved leads are EXEMPT from the 14-day
+   *  auto-sweep in `/api/leads/sweep-following-up` — they stay put no
+   *  matter how long since last contact. NULL = not saved. Stored as
+   *  timestamp (not boolean) so the UI can show "saved 3d ago" and we
+   *  can reason about save cohorts later. See migration
+   *  `20260529_prospects_saved_at.sql`. */
+  savedAt?: string | null;
   /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
   source?: "inbound" | "scouted";
   /** Express written SMS consent. NON-NEGOTIABLE for any outbound SMS to fire

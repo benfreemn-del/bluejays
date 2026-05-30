@@ -40,6 +40,9 @@ type ProspectSummary = {
   category: string | null;
   currentWebsite: string | null;
   generatedSiteUrl: string | null;
+  /** ISO timestamp set when Madie 📍Saved the lead — null = not saved.
+   *  Drives the Save/Unsave toggle in the drawer's quick-action bar. */
+  savedAt?: string | null;
   // Origin signals — feed getLeadOrigin() for the "where did this lead
   // come from" subtitle. Optional; the helper falls back gracefully.
   source?: string | null;
@@ -73,6 +76,11 @@ export default function LeadDetailDrawer({
   const [fetchedSummary, setFetchedSummary] = useState<ProspectSummary | null>(
     null,
   );
+  // Local mirror of saved_at so the 📍Save toggle flips instantly. Resets
+  // whenever the underlying summary changes (parent passed a fresher row,
+  // or the drawer just re-fetched).
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [savingFlag, setSavingFlag] = useState(false);
   // Tab inside the History section — "notes" = Madie's freeform notes,
   // "touches" = the structured prospect_touches timeline (calls, texts,
   // emails, DMs). Sits in the same section so she sees one history
@@ -126,6 +134,7 @@ export default function LeadDetailDrawer({
             category: (p.category as string) ?? null,
             currentWebsite: (p.currentWebsite as string) ?? null,
             generatedSiteUrl: (p.generatedSiteUrl as string) ?? null,
+            savedAt: (p.savedAt as string | null) ?? null,
             source: (p.source as string) ?? null,
             lookalikeCategory: (p.lookalikeCategory as string) ?? null,
             scrapedData:
@@ -151,8 +160,41 @@ export default function LeadDetailDrawer({
     return () => window.removeEventListener("keydown", handler);
   }, [prospectId, onClose]);
 
+  // Reseed local savedAt mirror whenever the resolved summary changes.
+  useEffect(() => {
+    const resolved = summary || fetchedSummary;
+    setSavedAt(resolved?.savedAt ?? null);
+  }, [summary, fetchedSummary]);
+
   if (!prospectId) return null;
   const p = summary || fetchedSummary;
+
+  const toggleSave = async () => {
+    if (!prospectId || savingFlag) return;
+    setSavingFlag(true);
+    const prev = savedAt;
+    const optimistic = prev ? null : new Date().toISOString();
+    setSavedAt(optimistic);
+    try {
+      const r = await fetch(`/api/prospects/${prospectId}/save`, {
+        method: "POST",
+      });
+      const j = (await r.json().catch(() => ({}))) as {
+        ok?: boolean;
+        savedAt?: string | null;
+      };
+      if (j.ok) {
+        setSavedAt(j.savedAt ?? null);
+        setTouchBump((k) => k + 1); // refresh touch timeline (we logged one)
+      } else {
+        setSavedAt(prev);
+      }
+    } catch {
+      setSavedAt(prev);
+    } finally {
+      setSavingFlag(false);
+    }
+  };
 
   const addNote = async () => {
     const text = newNote.trim();
@@ -296,6 +338,26 @@ export default function LeadDetailDrawer({
           >
             📅 Book Ben
           </a>
+          {/* 📍 Save toggle — flips prospects.saved_at so the lead is
+              exempt from the 14-day auto-sweep. Active = filled rose
+              pill; inactive = outlined. */}
+          <button
+            type="button"
+            onClick={toggleSave}
+            disabled={savingFlag}
+            className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded border transition-colors ${
+              savedAt
+                ? "border-rose-400/60 bg-rose-500/15 text-rose-200 hover:bg-rose-500/25"
+                : "border-rose-500/40 text-rose-300 hover:bg-rose-500/10"
+            } ${savingFlag ? "opacity-60 cursor-wait" : ""}`}
+            title={
+              savedAt
+                ? "Saved — exempt from the 14-day auto-sweep. Click to unsave."
+                : "Mark as Saved — keeps this lead out of the auto-sweep no matter how long it sits"
+            }
+          >
+            {savingFlag ? "…" : savedAt ? "✓📍 Saved" : "📍 Save"}
+          </button>
           <Link
             href={`/lead/${prospectId}`}
             className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded border border-slate-500/40 text-slate-300 hover:bg-slate-500/10 ml-auto"

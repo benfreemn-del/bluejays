@@ -15,11 +15,17 @@ import { logHeartbeat } from "@/lib/cron-heartbeat";
  *
  * Criteria (ALL must hold):
  *   - status = 'following_up'
+ *   - saved_at IS NULL  (📍 Saved leads are exempt — they stay forever)
  *   - outreach touch count >= 3 (call/voicemail/text/email/dm/in_person)
  *   - last_contacted_at <= now() - 14 days  (silence window)
  *
  * Leads in following_up with < 3 touches OR contacted within 14 days
  * STAY put — she's still actively working them.
+ *
+ * Saved leads (`saved_at IS NOT NULL`) are EXEMPT regardless of touch
+ * count or silence — Madie marked them as "keep no matter what" via
+ * the 📍Save row pill / drawer toggle. See migration
+ * `20260529_prospects_saved_at.sql`.
  *
  * Idempotent: re-running does nothing once a lead has been flipped
  * (it's no longer status='following_up'). Mock-safe: no-ops without
@@ -50,10 +56,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: true, swept: 0, note: "Supabase not configured (mock mode)" });
   }
 
-  // Pull the following_up set + their last-contact timestamps.
+  // Pull the following_up set + their last-contact timestamps + saved flag.
   const { data, error } = await supabase
     .from("prospects")
-    .select("id, business_name, last_contacted_at")
+    .select("id, business_name, last_contacted_at, saved_at")
     .eq("status", "following_up");
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
@@ -62,7 +68,13 @@ export async function GET(request: NextRequest) {
   const counts = await touchCountsByProspect();
   const cutoff = Date.now() - FOURTEEN_DAYS_MS;
 
-  const eligible = (data || []).filter((row: { id: string; last_contacted_at: string | null }) => {
+  let exemptedSaved = 0;
+  const eligible = (data || []).filter((row: { id: string; last_contacted_at: string | null; saved_at: string | null }) => {
+    if (row.saved_at) {
+      // Madie marked this one as 📍Saved — never auto-flip.
+      exemptedSaved++;
+      return false;
+    }
     const touches = counts[row.id] || 0;
     if (touches < TOUCH_THRESHOLD) return false;
     if (!row.last_contacted_at) return false; // never contacted → leave alone
@@ -74,6 +86,7 @@ export async function GET(request: NextRequest) {
       ok: true,
       dryRun: true,
       followingUpTotal: (data || []).length,
+      exemptedSaved,
       eligibleToNurture: eligible.length,
       sample: eligible.slice(0, 10).map((r) => r.business_name),
     });
@@ -93,13 +106,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  await logHeartbeat("sweep-following-up", { swept, eligible: eligible.length }).catch(
+  await logHeartbeat("sweep-following-up", { swept, eligible: eligible.length, exemptedSaved }).catch(
     () => {},
   );
 
   return NextResponse.json({
     ok: true,
     followingUpTotal: (data || []).length,
+    exemptedSaved,
     swept,
   });
 }

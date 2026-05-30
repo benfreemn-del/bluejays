@@ -41,9 +41,49 @@ export default function LeadRowActions({
   const [open, setOpen] = useState<ModalKind>(null);
   const [copied, setCopied] = useState(false);
   const [parking, setParking] = useState(false);
+  // Local mirror of saved_at so the 📍Save pill flips instantly without
+  // waiting for the parent's refetch. Reseeds whenever the row mounts
+  // with a fresh prospect (e.g. parent did a hard refresh).
+  const [savedAt, setSavedAt] = useState<string | null>(
+    prospect.savedAt ?? null,
+  );
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    setSavedAt(prospect.savedAt ?? null);
+  }, [prospect.savedAt]);
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   const alreadyFollowingUp = prospect.status === "following_up";
+
+  // 📍 Save — toggle the prospect's saved_at flag. Saved leads are
+  // exempt from the 14-day auto-sweep in /api/leads/sweep-following-up.
+  // Optimistic — flips local state first, rolls back on failure.
+  const toggleSave = async () => {
+    if (saving) return;
+    setSaving(true);
+    const prevSavedAt = savedAt;
+    const optimisticSavedAt = prevSavedAt ? null : new Date().toISOString();
+    setSavedAt(optimisticSavedAt);
+    try {
+      const res = await fetch(`/api/prospects/${prospect.id}/save`, {
+        method: "POST",
+      });
+      const j = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        savedAt?: string | null;
+      };
+      if (j.ok) {
+        setSavedAt(j.savedAt ?? null);
+        onMutate?.();
+      } else {
+        setSavedAt(prevSavedAt);
+      }
+    } catch {
+      setSavedAt(prevSavedAt);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // 📌 Working — park an actively-pursued lead in the Following Up
   // section. Stays visible (unlike nurture). A daily sweep auto-moves it
@@ -164,6 +204,18 @@ export default function LeadRowActions({
           disabled={parking || alreadyFollowingUp}
         />
         <ActionBtn
+          icon={saving ? "…" : savedAt ? "✓📍" : "📍"}
+          label={savedAt ? "Saved" : "Save"}
+          tone="rose"
+          title={
+            savedAt
+              ? "Saved — exempt from the 14-day auto-sweep. Click to unsave."
+              : "Mark as Saved — keeps this lead out of the 14-day auto-sweep no matter how long it sits"
+          }
+          onClick={toggleSave}
+          disabled={saving}
+        />
+        <ActionBtn
           icon="🌱"
           label="Nurture"
           tone="emerald"
@@ -237,7 +289,8 @@ type ActionTone =
   | "amber"
   | "emerald"
   | "cyan"
-  | "indigo";
+  | "indigo"
+  | "rose";
 
 const TONE_STYLES: Record<ActionTone, string> = {
   cyan:
@@ -254,6 +307,8 @@ const TONE_STYLES: Record<ActionTone, string> = {
     "text-amber-300 hover:bg-amber-500/15 hover:text-amber-100 border-transparent hover:border-amber-500/30",
   emerald:
     "text-emerald-300 hover:bg-emerald-500/15 hover:text-emerald-100 border-transparent hover:border-emerald-500/30",
+  rose:
+    "text-rose-300 hover:bg-rose-500/15 hover:text-rose-100 border-transparent hover:border-rose-500/30",
 };
 
 function ActionBtn({
