@@ -56,10 +56,8 @@ export async function GET() {
   ).toISOString();
 
   // Pull every touch with a future-or-past next_touch_at within the
-  // window. We take the LATEST touch per prospect (newest occurred_at)
-  // and reject rows whose latest touch doesn't have a next_touch_at —
-  // matches the semantics of overdueNextTouches() but extends the
-  // window to include today's scheduled-not-yet-overdue.
+  // window. These are candidate reminders — each one points to "X
+  // should happen by this time."
   const { data: touchData, error: touchErr } = await supabase
     .from("prospect_touches")
     .select(
@@ -86,23 +84,69 @@ export async function GET() {
     occurred_at: string;
   };
 
-  // Keep only the LATEST touch per prospect — if a newer touch exists
-  // without a next_touch_at, the reminder was satisfied and shouldn't
-  // surface anymore. Implemented by walking the rows newest-first and
-  // taking the first hit per prospect; if that first hit doesn't have a
-  // next_touch_at it gets skipped (which means the latest touch cleared
-  // the reminder).
-  const latestPerProspect = new Map<string, TouchRow>();
-  for (const row of (touchData || []) as TouchRow[]) {
-    if (!latestPerProspect.has(row.prospect_id)) {
-      latestPerProspect.set(row.prospect_id, row);
+  const candidates = (touchData || []) as TouchRow[];
+
+  // Bug fix (2026-05-29): mark-done writes a new touch with
+  // next_touch_at=NULL to clear the reminder. The query above filters
+  // those out at the DB layer (.not next_touch_at is null) so the
+  // candidate set never sees the clearing touch — meaning a "Done"
+  // click did nothing visible: the original reminder kept showing up.
+  //
+  // Fix: for every prospect that has a candidate reminder, fetch the
+  // ACTUAL latest touch (next_touch_at NULL or not) and drop the
+  // prospect from the checklist when the latest touch's
+  // occurred_at > the candidate's occurred_at AND that latest touch
+  // has no next_touch_at — i.e. a newer touch cleared the reminder.
+  if (candidates.length === 0) {
+    return NextResponse.json({ ok: true, rows: [] });
+  }
+  const candidateProspectIds = [...new Set(candidates.map((t) => t.prospect_id))];
+  const { data: latestData } = await supabase
+    .from("prospect_touches")
+    .select("prospect_id, occurred_at, next_touch_at")
+    .in("prospect_id", candidateProspectIds)
+    .order("occurred_at", { ascending: false });
+  const latestByProspect = new Map<
+    string,
+    { occurred_at: string; next_touch_at: string | null }
+  >();
+  for (const row of (latestData || []) as Array<{
+    prospect_id: string;
+    occurred_at: string;
+    next_touch_at: string | null;
+  }>) {
+    if (!latestByProspect.has(row.prospect_id)) {
+      latestByProspect.set(row.prospect_id, {
+        occurred_at: row.occurred_at,
+        next_touch_at: row.next_touch_at,
+      });
     }
   }
-  // Filter: only rows whose latest touch DOES have a next_touch_at in
-  // the window. (Already implied by the .lte() filter, but the LATEST
-  // dedup could pull a no-next-touch row through — guard explicitly.)
-  const eligibleTouches = Array.from(latestPerProspect.values()).filter(
-    (t) => !!t.next_touch_at,
+
+  // Dedup candidates to latest-per-prospect (within the candidate set
+  // those with next_touch_at), then exclude any whose actual latest
+  // touch is newer AND has no next_touch_at (= reminder was cleared).
+  const latestCandidatePerProspect = new Map<string, TouchRow>();
+  for (const row of candidates) {
+    if (!latestCandidatePerProspect.has(row.prospect_id)) {
+      latestCandidatePerProspect.set(row.prospect_id, row);
+    }
+  }
+  const eligibleTouches = Array.from(latestCandidatePerProspect.values()).filter(
+    (t) => {
+      const latest = latestByProspect.get(t.prospect_id);
+      if (!latest) return true; // shouldn't happen, but fail-open
+      // If the actual latest touch is newer than this candidate AND
+      // has no next_touch_at, the reminder was cleared (Done clicked
+      // OR a newer touch wrote no follow-up).
+      if (
+        latest.occurred_at > t.occurred_at &&
+        latest.next_touch_at == null
+      ) {
+        return false;
+      }
+      return true;
+    },
   );
 
   if (eligibleTouches.length === 0) {
