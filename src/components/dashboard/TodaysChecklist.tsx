@@ -420,18 +420,52 @@ function AddReminderForm({ onAdded }: { onAdded: () => void }) {
       .slice(0, 6);
   }, [search, allProspects]);
 
+  // The form is now dual-mode (locked 2026-05-29 per Ben):
+  //   · Plain to-do: just fill the note (no lead, no date) → POST to
+  //     /api/madie/tasks. Lands in the standalone to-do list below.
+  //   · Scheduled reminder: pick lead + date + time → POST to
+  //     /api/touches/quick-reminder. Lands on this checklist for the
+  //     day it's due. Original behavior, preserved unchanged.
+  // The submit-button label flips based on which mode the form's in.
+  const isReminderMode = !!picked && !!dateInput && !!timeInput;
   const submit = async () => {
     setMsg(null);
-    if (!picked) {
-      setMsg("Pick a lead first.");
+    const trimmedNote = note.trim();
+
+    // Plain to-do path — only the note matters. Empty note is rejected.
+    if (!isReminderMode) {
+      if (!trimmedNote) {
+        setMsg("Type a task or pick a lead + time for a reminder.");
+        return;
+      }
+      setBusy(true);
+      try {
+        const r = await fetch("/api/madie/tasks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ content: trimmedNote }),
+        });
+        const j = (await r.json()) as { ok?: boolean; error?: string };
+        if (j.ok) {
+          setMsg("✓ Added to your to-do list");
+          setNote("");
+          onAdded();
+          setTimeout(() => setMsg(null), 2500);
+        } else {
+          setMsg(j.error || "Failed to add task");
+        }
+      } catch (e) {
+        setMsg(e instanceof Error ? e.message : "Network error");
+      } finally {
+        setBusy(false);
+      }
       return;
     }
-    if (!dateInput || !timeInput) {
-      setMsg("Pick a date + time.");
-      return;
-    }
-    // Compose local-time ISO. The HTML time input is local-clock, so
-    // build the ISO by concatenating and parsing as local.
+
+    // Reminder path — original behavior. `picked`, `dateInput`,
+    // `timeInput` are all guaranteed truthy at this point per
+    // isReminderMode.
     const local = new Date(`${dateInput}T${timeInput}:00`);
     if (isNaN(local.getTime())) {
       setMsg("Invalid date/time.");
@@ -443,15 +477,15 @@ function AddReminderForm({ onAdded }: { onAdded: () => void }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prospectId: picked.id,
+          prospectId: picked!.id,
           nextTouchAt: local.toISOString(),
           nextTouchKind: kind,
-          nextTouchNote: note.trim() || undefined,
+          nextTouchNote: trimmedNote || undefined,
         }),
       });
       const j = (await r.json()) as { ok?: boolean; error?: string };
       if (j.ok) {
-        setMsg(`✓ Reminder set for ${picked.businessName}`);
+        setMsg(`✓ Reminder set for ${picked!.businessName}`);
         setPicked(null);
         setSearch("");
         setNote("");
@@ -469,8 +503,12 @@ function AddReminderForm({ onAdded }: { onAdded: () => void }) {
 
   return (
     <div className="mt-4 rounded-lg border border-amber-500/20 bg-slate-950/60 p-3">
-      <p className="text-[10px] uppercase tracking-wider font-bold text-amber-300/80 mb-2">
-        + Add a daily reminder
+      <p className="text-[10px] uppercase tracking-wider font-bold text-amber-300/80 mb-1">
+        + Add a task or reminder
+      </p>
+      <p className="text-[10px] text-slate-500 mb-2 leading-snug">
+        Type a quick to-do and hit Enter — or pick a lead + date + time
+        to schedule a reminder.
       </p>
       <div className="space-y-2">
         {/* Lead picker */}
@@ -547,12 +585,23 @@ function AddReminderForm({ onAdded }: { onAdded: () => void }) {
           </select>
         </div>
 
-        {/* Note */}
+        {/* Note — doubles as task content in to-do mode and reason
+            in reminder mode. Enter key submits in either mode. */}
         <input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Why? (e.g. 'call back about pricing')"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              void submit();
+            }
+          }}
+          placeholder={
+            isReminderMode
+              ? "Why? (e.g. 'call back about pricing')"
+              : "Type a quick task and hit Enter…"
+          }
           maxLength={200}
           className="w-full h-9 px-3 rounded-md bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500"
         />
@@ -564,10 +613,10 @@ function AddReminderForm({ onAdded }: { onAdded: () => void }) {
           <button
             type="button"
             onClick={() => void submit()}
-            disabled={busy || !picked}
+            disabled={busy || (!isReminderMode && !note.trim())}
             className="h-9 px-4 rounded-md bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {busy ? "Saving…" : "Set reminder"}
+            {busy ? "Saving…" : isReminderMode ? "Set reminder" : "Add task"}
           </button>
         </div>
 

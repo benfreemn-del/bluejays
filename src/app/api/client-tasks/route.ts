@@ -7,6 +7,7 @@ import {
   listClientsWithTasks,
   type NewClientTask,
 } from "@/lib/client-tasks";
+import { currentUserFromCookies } from "@/lib/bluejays-auth";
 
 /**
  * /api/client-tasks
@@ -43,7 +44,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: true, tasks });
     }
     if (!client) {
-      const summary = await listClientsWithTasks();
+      // Scope by current user for sales role — sales reps see only
+      // clients they're connected to (claimed via assigned_to_user_id
+      // OR 📍Saved via saved_by_user_id). Owners see every client.
+      // Legacy env-password sales sessions have no bj_user_id cookie —
+      // they get an empty list and a one-line nudge to log in via
+      // email so per-user scoping can work.
+      const role = req.cookies.get("bj_role")?.value;
+      let connectedToUserId: string | undefined = undefined;
+      if (role === "sales") {
+        const user = await currentUserFromCookies(req.cookies);
+        if (!user) {
+          return NextResponse.json({
+            ok: true,
+            clients: [],
+            note:
+              "Log in with email + password to see clients you're connected to. Password-only sessions can't be scoped to a specific rep.",
+          });
+        }
+        connectedToUserId = user.id;
+      }
+      const summary = await listClientsWithTasks({ connectedToUserId });
       return NextResponse.json({ ok: true, clients: summary });
     }
     const tasks = await listClientTasks(client, { includeCompleted });

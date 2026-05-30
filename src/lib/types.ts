@@ -141,14 +141,17 @@ export interface Prospect {
   mgmtSubscriptionId?: string;
   instagramHandle?: string;
   funnelPaused?: boolean;
-  /** ISO timestamp set when Madie marks the lead as "saved" via the 📍Save
-   *  row pill / drawer toggle. Saved leads are EXEMPT from the 14-day
-   *  auto-sweep in `/api/leads/sweep-following-up` — they stay put no
-   *  matter how long since last contact. NULL = not saved. Stored as
-   *  timestamp (not boolean) so the UI can show "saved 3d ago" and we
-   *  can reason about save cohorts later. See migration
-   *  `20260529_prospects_saved_at.sql`. */
+  /** ISO timestamp set when a sales rep marks the lead as "saved" via
+   *  the 📍Save row pill / drawer toggle. Saved leads are EXEMPT from
+   *  the 14-day auto-sweep in `/api/leads/sweep-following-up` — they
+   *  stay put no matter how long since last contact. NULL = not saved.
+   *  Paired with `savedByUserId` so each rep's saved set is their own.
+   *  See migrations `20260529_prospects_saved_at.sql` +
+   *  `20260529_prospects_saved_by_user_id.sql`. */
   savedAt?: string | null;
+  /** UUID of the bluejays_users row that saved this lead. NULL when
+   *  saved_at is NULL. Set from the bj_user_id cookie at save time. */
+  savedByUserId?: string | null;
   /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
   source?: "inbound" | "scouted";
   /** Express written SMS consent. NON-NEGOTIABLE for any outbound SMS to fire

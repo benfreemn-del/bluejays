@@ -9,7 +9,7 @@ import WinLossSalesBanner from "@/components/dashboard/WinLossSalesBanner";
 import MadieRaceTrack from "@/components/dashboard/MadieRaceTrack";
 import TodaysChecklist from "@/components/dashboard/TodaysChecklist";
 import LeadDetailDrawer from "@/components/dashboard/LeadDetailDrawer";
-import { useRole } from "@/lib/use-role";
+import { useRole, useBluejaysUser } from "@/lib/use-role";
 import { getProspectClock, getOpenStatus } from "@/lib/business-hours";
 import { getLeadOrigin, DEAD_STATUSES } from "@/lib/lead-origin";
 import LeadRowActions from "./LeadRowActions.client";
@@ -58,6 +58,11 @@ const UNDO_STACK_KEY = "bluejays.sales-portal.undo.v1";
 export default function LeadPicker() {
   const router = useRouter();
   const role = useRole();
+  // Current user identity — used to scope per-user surfaces (e.g. the
+  // 📍 Saved chip narrows to leads THIS rep saved, not every rep's
+  // saves combined). Reads bj_user_id cookie; null for legacy
+  // env-password sessions.
+  const me = useBluejaysUser();
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
@@ -438,10 +443,15 @@ export default function LeadPicker() {
       }
       // "following-up" — Madie's actively-pursued leads (parked via 📌 Working).
       if (filter === "following-up" && s !== "following_up") return false;
-      // "saved" — Madie's 📍 holds. Exempt from the 14-day auto-sweep.
-      // See /api/leads/sweep-following-up and migration
-      // 20260529_prospects_saved_at.sql.
-      if (filter === "saved" && !p.savedAt) return false;
+      // "saved" — sales rep's 📍 holds. Exempt from the 14-day auto-
+      // sweep. See /api/leads/sweep-following-up and migrations
+      // 20260529_prospects_saved_at.sql + 20260529_prospects_saved_by_user_id.sql.
+      // Per-user scoping: sales role sees only THEIR saves; owner sees
+      // every save across all reps.
+      if (filter === "saved") {
+        if (!p.savedAt) return false;
+        if (role === "sales" && me.id && p.savedByUserId !== me.id) return false;
+      }
 
       // Category dropdown filter (industry)
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
@@ -721,12 +731,19 @@ export default function LeadPicker() {
                 { id: "all", label: "All", color: "violet" },
                 { id: "has-preview", label: "✅ Ready to send", color: "cyan" },
                 { id: "following-up", label: "📌 Following up", color: "indigo" },
-                // 📍 Saved — leads Madie marked to skip the 14-day auto-
-                // sweep. Count derived from the loaded prospects pool so
-                // she sees "📍 Saved (8)" at a glance.
+                // 📍 Saved — leads marked to skip the 14-day auto-sweep.
+                // Count is per-user for sales role (only THIS rep's saves)
+                // and global for owner role (every save across all reps).
                 {
                   id: "saved",
-                  label: `📍 Saved${prospects.filter((p) => p.savedAt).length > 0 ? ` (${prospects.filter((p) => p.savedAt).length})` : ""}`,
+                  label: (() => {
+                    const matches = prospects.filter((p) => {
+                      if (!p.savedAt) return false;
+                      if (role === "sales" && me.id) return p.savedByUserId === me.id;
+                      return true;
+                    });
+                    return `📍 Saved${matches.length > 0 ? ` (${matches.length})` : ""}`;
+                  })(),
                   color: "rose",
                 },
                 // Inbound chip now visible for everyone (Ben 2026-05-29).

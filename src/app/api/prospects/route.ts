@@ -35,12 +35,20 @@ export async function GET(request: NextRequest) {
   const role = request.cookies.get("bj_role")?.value;
   const user = await currentUserFromCookies(request.cookies);
 
-  // Sales role: scope to mine + unassigned. (If the cookie is missing
-  // — i.e. the user is on the legacy env-password Madie flow — leave
-  // unscoped; we don't yet know who they are.)
+  // Sales role: scope to mine + unassigned + leads I've 📍Saved.
+  // The saved bucket lets a rep keep a lead in their view even after
+  // someone else has claimed it (e.g. Madie 📍Saves a lead Raidas is
+  // now working — she still wants to follow up later). Without this
+  // branch the saved flag would silently hide the lead from the saver
+  // the moment it was reassigned. If the cookie is missing — i.e. the
+  // user is on the legacy env-password Madie flow — leave unscoped;
+  // we don't yet know who they are.
   if (role === "sales" && user) {
     prospects = prospects.filter(
-      (p) => !p.assignedToUserId || p.assignedToUserId === user.id,
+      (p) =>
+        !p.assignedToUserId ||
+        p.assignedToUserId === user.id ||
+        p.savedByUserId === user.id,
     );
   }
 

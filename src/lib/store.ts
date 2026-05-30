@@ -164,6 +164,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
     savedAt: (row.saved_at as string | null | undefined) ?? null,
+    savedByUserId: (row.saved_by_user_id as string | null | undefined) ?? null,
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
     pricingTier:
       (row.pricing_tier as
@@ -273,6 +274,7 @@ function prospectToDb(p: Prospect) {
     instagram_handle: sanitized.instagramHandle || null,
     funnel_paused: sanitized.funnelPaused || false,
     saved_at: sanitized.savedAt || null,
+    saved_by_user_id: sanitized.savedByUserId || null,
     source: sanitized.source || "scouted",
     pricing_tier: sanitized.pricingTier || "standard",
     custom_site_url: sanitized.customSiteUrl || null,
@@ -469,6 +471,7 @@ export async function updateProspect(
     if (sanitizedUpdates.instagramHandle !== undefined) dbUpdates.instagram_handle = sanitizedUpdates.instagramHandle;
     if (sanitizedUpdates.funnelPaused !== undefined) dbUpdates.funnel_paused = sanitizedUpdates.funnelPaused;
     if (sanitizedUpdates.savedAt !== undefined) dbUpdates.saved_at = sanitizedUpdates.savedAt || null;
+    if (sanitizedUpdates.savedByUserId !== undefined) dbUpdates.saved_by_user_id = sanitizedUpdates.savedByUserId || null;
     if (sanitizedUpdates.selectedTheme !== undefined) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme || null;
     if (sanitizedUpdates.selectedVersion !== undefined) dbUpdates.selected_version = sanitizedUpdates.selectedVersion || null;
     if (sanitizedUpdates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = sanitizedUpdates.aiThemeRecommendation;

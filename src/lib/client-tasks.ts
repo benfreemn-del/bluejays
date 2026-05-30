@@ -312,9 +312,21 @@ export type ClientJobSummary = {
   pipeline_stage: string | null;
 };
 
-export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
+/**
+ * List every client with open or done tasks.
+ *
+ * When `opts.connectedToUserId` is set, narrows the result to only
+ * clients that share a slug with a prospect this user is "connected to"
+ * — i.e. `assigned_to_user_id = userId` OR `saved_by_user_id = userId`.
+ * Used by /api/client-tasks to scope the /dashboard/clients index for
+ * sales reps so each rep sees only their own client jobs, not every
+ * BlueJays client. Owner role passes no userId and gets the full list.
+ */
+export async function listClientsWithTasks(
+  opts: { connectedToUserId?: string } = {},
+): Promise<ClientJobSummary[]> {
   const sb = getSupabase();
-  const [tasksRes, metaRes, prospectsRes] = await Promise.all([
+  const [tasksRes, metaRes, prospectsRes, connectedRes] = await Promise.all([
     sb.from("client_tasks").select("client_slug, status"),
     // Best-effort meta read — table may not exist yet on a fresh deploy
     sb
@@ -360,6 +372,30 @@ export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
           error: null,
         }),
       ),
+    // "Connected to me" set — only queried when scoping to a sales rep.
+    // OR-combines two ownership signals: claimed (assigned_to_user_id)
+    // and saved (saved_by_user_id). Either qualifies the lead as
+    // "connected" so the matching client_slug shows on Madie's
+    // /dashboard/clients view. Returns empty when no userId is passed
+    // (owner role) — the caller treats that as "no filter".
+    opts.connectedToUserId
+      ? sb
+          .from("prospects")
+          .select("business_name")
+          .or(
+            `assigned_to_user_id.eq.${opts.connectedToUserId},saved_by_user_id.eq.${opts.connectedToUserId}`,
+          )
+          .then(
+            (r) => r,
+            () => ({
+              data: [] as Array<{ business_name: string | null }>,
+              error: null,
+            }),
+          )
+      : Promise.resolve({
+          data: [] as Array<{ business_name: string | null }>,
+          error: null,
+        }),
   ]);
 
   if (tasksRes.error) throw new Error(`listClientsWithTasks: ${tasksRes.error.message}`);
@@ -420,8 +456,25 @@ export async function listClientsWithTasks(): Promise<ClientJobSummary[]> {
     }
   }
 
+  // Build the "connected-to-me" slug set when a userId was passed.
+  // Slugify every business_name we got back and keep only matches in
+  // the final return below. When no userId was passed (owner role),
+  // connectedSlugs is null and the filter no-ops.
+  let connectedSlugs: Set<string> | null = null;
+  if (opts.connectedToUserId) {
+    connectedSlugs = new Set<string>();
+    if (connectedRes && !connectedRes.error && Array.isArray(connectedRes.data)) {
+      for (const p of connectedRes.data) {
+        if (!p.business_name) continue;
+        const key = slugifyBusinessName(p.business_name);
+        if (key) connectedSlugs.add(key);
+      }
+    }
+  }
+
   const slugs = new Set([...open.keys(), ...done.keys(), ...metaBySlug.keys()]);
   return Array.from(slugs)
+    .filter((slug) => !connectedSlugs || connectedSlugs.has(slug))
     .map((client_slug) => {
       const meta = metaBySlug.get(client_slug);
       return {

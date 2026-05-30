@@ -133,11 +133,20 @@ export default function ClientsIndexPage() {
   const [snoozingSlug, setSnoozingSlug] = useState<string | null>(null);
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
+  // Scope note from the API — e.g. when a sales rep is on legacy
+  // env-password and we can't tell which rep they are, the server
+  // returns a one-liner explaining the empty state.
+  const [scopeNote, setScopeNote] = useState<string | null>(null);
 
   const reload = async () => {
     const r = await fetch("/api/client-tasks");
-    const j = (await r.json()) as { ok: boolean; clients?: ClientSummary[] };
+    const j = (await r.json()) as {
+      ok: boolean;
+      clients?: ClientSummary[];
+      note?: string;
+    };
     if (j.ok && j.clients) setClients(j.clients);
+    setScopeNote(j.note ?? null);
   };
 
   useEffect(() => {
@@ -296,11 +305,24 @@ export default function ClientsIndexPage() {
         {!loading && clients.length === 0 && (
           <div className="text-center text-slate-500 py-10">
             <div className="text-4xl mb-2">📋</div>
-            No active client jobs yet.
-            <div className="mt-3 text-xs max-w-sm mx-auto">
-              Once a client signs on, their open tasks will land here.
-              Each row links into that client&apos;s job board.
-            </div>
+            {scopeNote ? (
+              <>
+                <div className="font-medium text-slate-300">
+                  No clients connected to you yet.
+                </div>
+                <div className="mt-3 text-xs max-w-sm mx-auto">
+                  {scopeNote}
+                </div>
+              </>
+            ) : (
+              <>
+                No active client jobs yet.
+                <div className="mt-3 text-xs max-w-sm mx-auto">
+                  Once a client signs on, their open tasks will land here.
+                  Each row links into that client&apos;s job board.
+                </div>
+              </>
+            )}
           </div>
         )}
 

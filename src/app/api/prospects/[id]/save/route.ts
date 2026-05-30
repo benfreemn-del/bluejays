@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getProspect, updateProspect } from "@/lib/store";
 import { logTouch } from "@/lib/prospect-touches";
+import { currentUserFromCookies } from "@/lib/bluejays-auth";
 
 /**
  * POST /api/prospects/[id]/save
@@ -12,15 +13,17 @@ import { logTouch } from "@/lib/prospect-touches";
  *
  * Saved leads are EXEMPT from the 14-day auto-sweep at
  * `/api/leads/sweep-following-up` — they stay in `following_up`
- * regardless of how long since last contact. See migration
- * `20260529_prospects_saved_at.sql`.
+ * regardless of how long since last contact. See migrations
+ * `20260529_prospects_saved_at.sql` + `20260529_prospects_saved_by_user_id.sql`.
  *
- * Caller identity is read from the `bj_role` cookie so the resulting
- * `prospect_touches` row attributes correctly to Madie (sales) or Ben
- * (owner). Same pattern as `/api/email/send/[id]/route.ts`.
+ * Per-user attribution: `saved_by_user_id` is populated from the
+ * `bj_user_id` cookie so each sales rep's saved set is their own.
+ * Reps on the legacy env-password flow (no `bj_user_id`) get the save
+ * recorded but with `saved_by_user_id = NULL` — visible to owner via
+ * the chip in owner role, but not surfaced on any rep's per-user view.
  *
  * Response:
- *   { ok: true, prospectId, savedAt: <ISO or null>, wasSaved: <prior> }
+ *   { ok: true, prospectId, savedAt: <ISO or null>, savedByUserId, wasSaved }
  */
 
 const UUID_RE =
@@ -49,15 +52,22 @@ export async function POST(
 
   const cookieStore = await cookies();
   const role = cookieStore.get("bj_role")?.value;
-  const byUser = role === "sales" ? "madie" : "ben";
+  const user = await currentUserFromCookies(cookieStore);
+  // Touch attribution: prefer the real user name when available, fall
+  // back to role label for legacy env-password sessions.
+  const byUser =
+    user?.name?.toLowerCase().split(/\s+/)[0] || (role === "sales" ? "sales" : "ben");
 
   const wasSaved = !!prospect.savedAt;
   const nextSavedAt = wasSaved ? null : new Date().toISOString();
+  // On save: stamp current user (or NULL for env-password sessions).
+  // On unsave: clear both fields.
+  const nextSavedByUserId = wasSaved ? null : user?.id ?? null;
 
   try {
     await updateProspect(
       id,
-      { savedAt: nextSavedAt },
+      { savedAt: nextSavedAt, savedByUserId: nextSavedByUserId },
       { source: wasSaved ? "unsaved_by_operator" : "saved_by_operator" },
     );
   } catch (err) {
@@ -83,6 +93,7 @@ export async function POST(
     ok: true,
     prospectId: id,
     savedAt: nextSavedAt,
+    savedByUserId: nextSavedByUserId,
     wasSaved,
   });
 }
