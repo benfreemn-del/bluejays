@@ -476,14 +476,24 @@ export default function LeadPicker() {
       );
     });
 
-    // Sort
+    // Sort. Two-pass: PRIMARY key always pins inbound leads to the top
+    // (locked 2026-05-29 per Ben — warm self-submitted leads are higher
+    // intent than any cold scout, regardless of fit/newest/etc). Within
+    // each source bucket the requested sort mode controls the order.
     const sorted = [...filtered];
+    const inboundFirst = (a: Prospect, b: Prospect): number => {
+      const ai = a.source === "inbound" ? 0 : 1;
+      const bi = b.source === "inbound" ? 0 : 1;
+      return ai - bi;
+    };
     switch (sortBy) {
       case "fit":
         // Hormozi-fit score desc, then newest within same score. Nulls
         // (unscored prospects) fall to the bottom — they shouldn't
         // beat any scored prospect.
         sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
           const sa = a.hormoziFitScore ?? -1;
           const sb = b.hormoziFitScore ?? -1;
           if (sb !== sa) return sb - sa;
@@ -491,19 +501,42 @@ export default function LeadPicker() {
         });
         break;
       case "newest":
-        sorted.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+        sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
+          return (b.createdAt || "").localeCompare(a.createdAt || "");
+        });
         break;
       case "oldest":
-        sorted.sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
+        sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
+          return (a.createdAt || "").localeCompare(b.createdAt || "");
+        });
         break;
       case "category":
-        sorted.sort((a, b) => String(a.category || "").localeCompare(String(b.category || "")));
+        sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
+          return String(a.category || "").localeCompare(String(b.category || ""));
+        });
         break;
       case "source":
-        sorted.sort((a, b) => String(a.source || "scouted").localeCompare(String(b.source || "scouted")));
+        // Source sort already groups inbound vs scouted; "source asc"
+        // puts inbound first naturally ("inbound" < "scouted"). Apply
+        // the inbound-pin secondary only as a tie-breaker for clarity.
+        sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
+          return String(a.source || "scouted").localeCompare(String(b.source || "scouted"));
+        });
         break;
       case "status":
-        sorted.sort((a, b) => String(a.status || "").localeCompare(String(b.status || "")));
+        sorted.sort((a, b) => {
+          const i = inboundFirst(a, b);
+          if (i !== 0) return i;
+          return String(a.status || "").localeCompare(String(b.status || ""));
+        });
         break;
     }
     return sorted;
