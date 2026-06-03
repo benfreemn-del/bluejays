@@ -426,8 +426,8 @@ def build_mold(city_slug):
 
     faqs = [
         (f"How much does a mold inspection cost in {name}, WA?",
-         f"A complete mold inspection in {name} starts at <strong>$150</strong> &mdash; the most affordable certified option on the Olympic Peninsula. Thermal imaging is included. Lab samples are $85 (air) or $55 (surface) and only added if you want them. Most local competitors charge $1,500&ndash;$2,500 for the same scope.",
-         f"A complete mold inspection in {name} starts at $150 — the most affordable certified option on the Olympic Peninsula. Thermal imaging is included. Lab samples are $85 (air) or $55 (surface) and only added if you want them. Most local competitors charge $1,500 to $2,500 for the same scope."),
+         f"A complete mold inspection in {name} starts at <strong>$150</strong> &mdash; the most affordable certified option on the Olympic Peninsula. The base covers up to 1,500 sqft (+$50 per additional 500 sqft) with thermal imaging included. Optional lab samples: an air sample is $250 for the first (it includes an outdoor control sample) then $100 each additional, and surface samples are $100 each &mdash; you only pay for what you need. Most local competitors charge $1,500&ndash;$2,500 for the same scope.",
+         f"A complete mold inspection in {name} starts at $150 — the most affordable certified option on the Olympic Peninsula. The base covers up to 1,500 sqft (+$50 per additional 500 sqft) with thermal imaging included. Optional lab samples: an air sample is $250 for the first (it includes an outdoor control sample) then $100 each additional, and surface samples are $100 each — you only pay for what you need. Most local competitors charge $1,500 to $2,500 for the same scope."),
         ("What does a mold inspection include?",
          "A non-invasive walkthrough of every accessible area, thermal imaging to find hidden moisture, humidity and moisture readings, and a written photo-documented report with sampling recommendations. If you opt in to lab samples, the lab tests for 100+ mold species and other particles.",
          "A non-invasive walkthrough of every accessible area, thermal imaging to find hidden moisture, humidity and moisture readings, and a written photo-documented report with sampling recommendations. If you opt in to lab samples, the lab tests for 100+ mold species and other particles."),
@@ -518,7 +518,7 @@ def build_mold(city_slug):
         <div class="container">
             <div class="pricing-pitch-card reveal">
                 <h2>Don&rsquo;t get <em>spored</em> into spending $2,500 on a mold inspector.</h2>
-                <p>Full mold inspections in {name} start at just <strong>$150</strong> &mdash; the most affordable, certified, quality-driven option on the Olympic Peninsula. Air samples $85 each, surface samples $55 each, thermal scan included.</p>
+                <p>Full mold inspections in {name} start at just <strong>$150</strong> &mdash; the most affordable, certified, quality-driven option on the Olympic Peninsula. Thermal scan included; the base covers up to 1,500 sqft (+$50 per additional 500 sqft). Optional add-ons: air samples $250 for the first (with an outdoor control sample) then $100 each, surface samples $100 each.</p>
                 <p class="pricing-pitch-sub">Use the calculator to estimate your total before you book.</p>
                 <div class="pricing-pitch-ctas">
                     <a href="/#book" class="btn-primary">Book a Mold Inspection</a>
