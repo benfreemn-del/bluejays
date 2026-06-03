@@ -79,23 +79,25 @@ const nextConfig: NextConfig = {
           source: '/',
           destination: '/sites/olympic-inspections/index.html',
         },
-        // Per-service landing pages on the canonical OIT domain.
-        // Added 2026-05-14 (Phase 2 SEO). Each slug maps to a dedicated
-        // .html file under /public/sites/olympic-inspections/. The regex
-        // is explicit so other paths (booking API, /admin, future
-        // additions) still flow through normal routing — only these
-        // five marketing slugs get rewritten to static HTML.
-        // To add a sixth service landing page: add the slug to BOTH
-        // alternations below AND drop the matching .html file in the
-        // public sites folder.
+        // Per-service / per-city local-SEO landing pages on the canonical
+        // OIT domain. Phase 2 (2026-05-14, 5 pages) → Phase 3 (2026-06-03,
+        // expanded to 33 across the Olympic Peninsula + Kitsap). Each slug
+        // maps to a dedicated .html file under /public/sites/olympic-inspections/.
+        // The regex is explicit so other paths (booking API, /admin) still
+        // flow through normal routing — only these marketing slugs rewrite
+        // to static HTML.
+        // DO NOT hand-edit this alternation. The pages + this exact regex
+        // string are emitted by scripts/generate-oit-seo-pages.py — re-run
+        // it to add/change pages, then paste its printed alternation into
+        // BOTH host blocks below.
         {
           has: [{ type: 'host', value: 'olympicinspect.com' }],
-          source: '/:slug(mold-inspection-sequim-wa|ermi-testing-olympic-peninsula|well-water-testing-sequim|radon-testing-port-angeles|septic-inspection-clallam-county)',
+          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|radon-testing-bremerton|radon-testing-port-angeles|radon-testing-port-townsend|radon-testing-poulsbo|radon-testing-sequim|radon-testing-silverdale|septic-inspection-clallam-county|septic-inspection-port-angeles|septic-inspection-port-townsend|septic-inspection-sequim|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
           destination: '/sites/olympic-inspections/:slug.html',
         },
         {
           has: [{ type: 'host', value: 'www.olympicinspect.com' }],
-          source: '/:slug(mold-inspection-sequim-wa|ermi-testing-olympic-peninsula|well-water-testing-sequim|radon-testing-port-angeles|septic-inspection-clallam-county)',
+          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|radon-testing-bremerton|radon-testing-port-angeles|radon-testing-port-townsend|radon-testing-poulsbo|radon-testing-sequim|radon-testing-silverdale|septic-inspection-clallam-county|septic-inspection-port-angeles|septic-inspection-port-townsend|septic-inspection-sequim|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
           destination: '/sites/olympic-inspections/:slug.html',
         },
         // SEO discovery files — sitemap, robots, llms.txt, llms-full.txt.
