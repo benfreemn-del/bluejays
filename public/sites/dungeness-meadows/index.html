@@ -1427,6 +1427,108 @@
                 height: 3.5rem;
             }
         }
+
+        /* ===== WHAT'S HAPPENING / BULLETIN ===== */
+        .bulletin { background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%); }
+        .bulletin-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        @media (max-width: 960px) { .bulletin-grid { grid-template-columns: 1fr; gap: 32px; } }
+        .events-list { display: flex; flex-direction: column; gap: 14px; }
+        .event-row {
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            background: var(--cream);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px 26px;
+            transition: all 0.25s ease;
+        }
+        .event-row:hover {
+            border-color: var(--gold);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .event-date {
+            flex-shrink: 0;
+            width: 62px;
+            text-align: center;
+            border-right: 1px solid var(--line);
+            padding-right: 20px;
+        }
+        .event-date .mo {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .event-date .day {
+            display: block;
+            font-family: 'Fraunces', serif;
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: var(--forest-deep);
+            line-height: 1;
+        }
+        .event-info h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.1rem;
+            color: var(--forest-deep);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .event-info p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.5; }
+        .event-info .when { color: var(--river); font-weight: 500; }
+        .notice-card {
+            background: var(--forest-deep);
+            color: var(--cream);
+            border-radius: var(--radius-xl);
+            padding: 36px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .notice-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 10%, rgba(226, 187, 116, 0.22), transparent 55%);
+            pointer-events: none;
+        }
+        .notice-card > * { position: relative; }
+        .notice-card h3 { color: var(--cream); font-size: 1.4rem; margin: 14px 0 20px; }
+        .notice-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+        .notice-list li {
+            padding-left: 22px;
+            position: relative;
+            font-size: 0.93rem;
+            color: rgba(250, 246, 238, 0.82);
+            line-height: 1.55;
+        }
+        .notice-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 12px;
+            height: 1px;
+            background: var(--gold);
+        }
+        .notice-list li strong { color: var(--cream); font-family: 'Fraunces', serif; font-weight: 600; }
+        .bulletin-foot {
+            margin-top: 28px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(236, 217, 176, 0.18);
+            font-size: 0.85rem;
+            color: rgba(250, 246, 238, 0.65);
+            line-height: 1.55;
+        }
+        .bulletin-foot a { color: var(--gold-light); font-weight: 500; }
     </style>
 </head>
 <body>
@@ -1447,11 +1549,11 @@
                 </span>
             </a>
             <div class="nav-links">
-                <a href="#about">About</a>
-                <a href="#setting">Setting</a>
+                <a href="#whats-happening">What's Happening</a>
                 <a href="#amenities">Amenities</a>
                 <a href="#governance">Governance</a>
                 <a href="#documents">Documents</a>
+                <a href="#about">About</a>
                 <a href="#contact">Contact</a>
                 <a href="tel:3606839716" class="nav-cta">(360) 683-9716</a>
             </div>
@@ -1462,12 +1564,13 @@
     </nav>
 
     <div class="mobile-menu" id="mobileMenu">
-        <a href="#about">About</a>
-        <a href="#setting">Setting</a>
+        <a href="#whats-happening">What's Happening</a>
         <a href="#amenities">Amenities</a>
         <a href="#recreation">Recreation</a>
         <a href="#governance">Governance</a>
         <a href="#documents">Documents</a>
+        <a href="#about">About</a>
+        <a href="#setting">Setting</a>
         <a href="#nearby">Nearby</a>
         <a href="#contact">Contact</a>
         <a href="tel:3606839716" class="mobile-cta">Call (360) 683-9716</a>
@@ -1495,14 +1598,14 @@
         <div class="container">
             <div class="hero-content reveal">
                 <span class="eyebrow">Sequim · Olympic Peninsula · Clallam County</span>
-                <h1>Home in the <span class="accent">rain shadow</span><br>of the Olympics.</h1>
-                <p class="hero-sub">The official site for the homeowners of Dungeness Meadows — documents, forms, office hours, and what's happening around the neighborhood. A community of roughly 200 homes along the Dungeness River.</p>
+                <h1>Your neighborhood,<br><span class="accent">in one place.</span></h1>
+                <p class="hero-sub">The homeowners' hub for Dungeness Meadows — upcoming events, forms and documents, office hours, and the notices that keep our community of roughly 200 homes running. Everything a resident needs, all in one spot.</p>
                 <div class="hero-ctas">
-                    <a href="#documents" class="btn-primary">
-                        Forms &amp; Documents
+                    <a href="#whats-happening" class="btn-primary">
+                        See What's Happening
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>
-                    <a href="#contact" class="btn-outline">Contact the Office</a>
+                    <a href="#documents" class="btn-outline">Forms &amp; Documents</a>
                 </div>
                 <div class="hero-stats">
                     <div>
@@ -1521,6 +1624,66 @@
                         <span class="stat-num">15<small style="font-size:0.55em">min</small></span>
                         <span class="stat-label">To the Strait</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT'S HAPPENING -->
+    <!-- NOTE: events + notices below are placeholders. Swap dates/items for the real ones, or wire to a calendar. -->
+    <section id="whats-happening" class="bulletin">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="header-left">
+                    <span class="eyebrow">Community Bulletin</span>
+                    <h2>What's happening around the Meadows.</h2>
+                    <p class="lead">Upcoming gatherings, meetings, and the notices every homeowner should have on their radar. Check back here — it's kept current by the office.</p>
+                </div>
+                <div class="header-right">Updated by the office</div>
+            </div>
+
+            <div class="bulletin-grid">
+                <div class="events-list reveal">
+                    <div class="event-row">
+                        <div class="event-date"><span class="mo">Jun</span><span class="day">10</span></div>
+                        <div class="event-info">
+                            <h4>Monthly Board Meeting</h4>
+                            <p><span class="when">Clubhouse · 6:00 p.m.</span> — open to all members. Agenda posted on the documents page.</p>
+                        </div>
+                    </div>
+                    <div class="event-row">
+                        <div class="event-date"><span class="mo">Jun</span><span class="day">21</span></div>
+                        <div class="event-info">
+                            <h4>Pool Opens for the Season</h4>
+                            <p><span class="when">All summer</span> — heated and ready. Members and guests; please review pool rules before first swim.</p>
+                        </div>
+                    </div>
+                    <div class="event-row">
+                        <div class="event-date"><span class="mo">Jul</span><span class="day">04</span></div>
+                        <div class="event-info">
+                            <h4>Independence Day Potluck</h4>
+                            <p><span class="when">Clubhouse lawn · 1:00 p.m.</span> — bring a dish to share. A long-running Meadows tradition.</p>
+                        </div>
+                    </div>
+                    <div class="event-row">
+                        <div class="event-date"><span class="mo">Aug</span><span class="day">12</span></div>
+                        <div class="event-info">
+                            <h4>Annual Meeting &amp; Budget Review</h4>
+                            <p><span class="when">Clubhouse · 5:30 p.m.</span> — one vote per home. Hear the budget and meet the board.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notice-card reveal reveal-delay-1">
+                    <span class="eyebrow light">Notices</span>
+                    <h3>Good to know this month.</h3>
+                    <ul class="notice-list">
+                        <li><strong>Water system flushing</strong> — last week of June. A brief discoloration at the tap is normal and clears in a few minutes.</li>
+                        <li><strong>ACC requests</strong> — submit at least two weeks before any exterior project so the committee has time to review.</li>
+                        <li><strong>Yard-waste drop</strong> — open Saturday mornings through the summer. Members only, no bag fees.</li>
+                        <li><strong>New neighbor?</strong> — stop by the office during open hours to get on the directory and pick up a welcome packet.</li>
+                    </ul>
+                    <p class="bulletin-foot">Have something to post? Email the office at <a href="mailto:info@dungenessmeadows.net">info@dungenessmeadows.net</a> and we'll add it to the bulletin.</p>
                 </div>
             </div>
         </div>
@@ -1560,9 +1723,9 @@
     <section id="setting" class="setting">
         <div class="container">
             <div class="setting-intro reveal">
-                <span class="eyebrow center">The Setting</span>
-                <h2>Where the rain stops and the sun stays.</h2>
-                <p>The Olympic Mountains form a wall to our south and west — clouds rolling in from the Pacific drop their rain on the far side, leaving us with one of the driest, sunniest pockets on the entire West Coast. Locals call it the <strong>Sequim rain shadow</strong>. You'll call it home.</p>
+                <span class="eyebrow center">Our Setting</span>
+                <h2>Why we live where the rain stops.</h2>
+                <p>The Olympic Mountains form a wall to our south and west — clouds rolling in from the Pacific drop their rain on the far side, leaving us with one of the driest, sunniest pockets on the entire West Coast. Locals call it the <strong>Sequim rain shadow</strong>, and it's a big part of why so many of us settled here for good.</p>
             </div>
             <div class="climate-grid">
                 <div class="climate-card reveal">
