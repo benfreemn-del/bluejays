@@ -82,7 +82,7 @@ const SITES: Record<
   },
   "zenith-sports": {
     label: "Tekky / Zenith Sports",
-    iframeUrl: "/clients/zenith-sports?embed=1",
+    iframeUrl: "https://zenithsports.org",
     envToken: "ZENITH_SPORTS_CLARITY_API_TOKEN",
     envProject: "ZENITH_SPORTS_CLARITY_ID",
   },
