@@ -211,7 +211,7 @@ export default function ZenithSportsLayout({
       `}</style>
       <ClientTrackingScripts slug="zenith-sports" />
       <div className="zenith-root">{children}</div>
-      <BackToTopButton bg="#a3e635" fg="#0a1832" />
+      <BackToTopButton bg="#2DE0C2" fg="#0a1832" />
     </>
   );
 }

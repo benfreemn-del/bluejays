@@ -57,7 +57,7 @@ const NAVY_INK = "#0f172a";
 const IVORY = "#f5f3ee";
 const IVORY_SOFT = "#ebe7dd";
 const ELECTRIC = "#1d4ed8";
-const LIME = "#a3e635";
+const NEON = "#2DE0C2";
 const AMBER = "#f59e0b";
 const INK_SOFT_LIGHT = "#475569";
 
@@ -119,7 +119,7 @@ function PromoMarquee() {
   return (
     <div
       className="relative overflow-hidden border-b border-white/10"
-      style={{ background: NAVY_DEEP, color: LIME }}
+      style={{ background: NAVY_DEEP, color: NEON }}
     >
       <div className="flex whitespace-nowrap py-2 animate-zenith-marquee group hover:[animation-play-state:paused]">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -208,7 +208,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               <div
                 className="absolute top-5 left-5 px-3 py-1.5 text-[10px] tracking-[0.22em] uppercase font-extrabold pointer-events-none z-10"
                 style={{
-                  background: product.badge.color || LIME,
+                  background: product.badge.color || NEON,
                   color: NAVY_INK,
                 }}
               >
@@ -459,15 +459,15 @@ export default function ZenithSportsShopPage() {
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-20 sm:pt-24 lg:pt-28 pb-24 sm:pb-32">
           <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-[0.32em]" style={{ color: LIME }}>
-              <span className="inline-block w-6 h-px" style={{ background: LIME }} />
+            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-[0.32em]" style={{ color: NEON }}>
+              <span className="inline-block w-6 h-px" style={{ background: NEON }} />
               Zenith Shop
             </div>
 
             <h1 className="mt-7 text-[12vw] sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase leading-[0.9] tracking-tighter text-white">
               Train better.
               <br />
-              <span style={{ color: LIME }}>Look better.</span>
+              <span style={{ color: NEON }}>Look better.</span>
             </h1>
 
             <p
@@ -481,11 +481,11 @@ export default function ZenithSportsShopPage() {
 
             <div className="mt-10 flex flex-wrap gap-6 items-center text-[11px] tracking-[0.22em] uppercase font-bold text-white/70">
               <span className="inline-flex items-center gap-2">
-                <ShieldCheck size={16} weight="bold" style={{ color: LIME }} />
+                <ShieldCheck size={16} weight="bold" style={{ color: NEON }} />
                 Direct from Zenith
               </span>
               <span className="inline-flex items-center gap-2">
-                <Truck size={16} weight="bold" style={{ color: LIME }} />
+                <Truck size={16} weight="bold" style={{ color: NEON }} />
                 Ships from US
               </span>
               <span className="inline-flex items-center gap-2">
@@ -580,8 +580,8 @@ export default function ZenithSportsShopPage() {
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(5,13,31,0.92), rgba(29,78,216,0.55))" }} />
 
         <div className="relative mx-auto max-w-5xl px-5 sm:px-8 text-center">
-          <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-[0.32em]" style={{ color: LIME }}>
-            <span className="inline-block w-6 h-px" style={{ background: LIME }} />
+          <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-[0.32em]" style={{ color: NEON }}>
+            <span className="inline-block w-6 h-px" style={{ background: NEON }} />
             Stack the deal
           </div>
           <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92] text-white">
@@ -602,7 +602,7 @@ export default function ZenithSportsShopPage() {
               href={CHECKOUT_URLS.shirt}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[12px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition"
+              className="inline-flex items-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-7 py-4 text-[12px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition"
             >
               <ShoppingCart size={14} weight="bold" />
               Shop the tees
@@ -692,7 +692,7 @@ export default function ZenithSportsShopPage() {
                   <div className="text-[18px] font-extrabold uppercase tracking-tight text-white">
                     Zenith Sports
                   </div>
-                  <div className="text-[10px] tracking-[0.28em] uppercase font-semibold" style={{ color: LIME }}>
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-semibold" style={{ color: NEON }}>
                     Home of the TEKKY
                   </div>
                 </div>
@@ -706,7 +706,7 @@ export default function ZenithSportsShopPage() {
 
               <div className="mt-8 max-w-md">
                 <EmailCapture
-                  variant="lime"
+                  variant="NEON"
                   intent="Newsletter — Shop Footer"
                   headline="TEKKY® drops + drills, in your inbox."
                   body="One email a week — new gear releases, drill of the week, and the occasional discount."
@@ -718,7 +718,7 @@ export default function ZenithSportsShopPage() {
             </div>
 
             <div className="lg:col-span-3">
-              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#2DE0C2]">
                 Quick Links
               </div>
               <ul className="mt-5 space-y-3 text-sm">
@@ -740,7 +740,7 @@ export default function ZenithSportsShopPage() {
             </div>
 
             <div className="lg:col-span-4">
-              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#2DE0C2]">
                 Get in touch
               </div>
               <ul className="mt-5 space-y-4 text-sm">
@@ -786,7 +786,7 @@ export default function ZenithSportsShopPage() {
                 href="/clients/zenith-sports/login"
                 title="Owner login"
                 aria-label="Owner login"
-                className="text-sky-500/80 hover:text-[#a3e635] transition"
+                className="text-sky-500/80 hover:text-[#2DE0C2] transition"
               >
                 <BluejayLogo size={16} />
               </a>
@@ -795,7 +795,7 @@ export default function ZenithSportsShopPage() {
                 href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#a3e635] transition underline underline-offset-2"
+                className="hover:text-[#2DE0C2] transition underline underline-offset-2"
               >
                 BlueJays
               </a>

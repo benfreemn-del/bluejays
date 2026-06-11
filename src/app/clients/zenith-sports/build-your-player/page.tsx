@@ -47,7 +47,7 @@ import {
 
 const NAVY = "#0a1832";
 const NAVY_DEEP = "#050d1f";
-const LIME = "#a3e635";
+const NEON = "#2DE0C2";
 const ELECTRIC = "#1d4ed8";
 
 // Per Philip+Paul's notes: email capture moves AFTER goals (so the
@@ -215,9 +215,9 @@ export default function BuildYourPlayerPage() {
           )}
           {(step === "plan" || step === "role") && <span className="w-12" />}
         </div>
-        {/* Top-of-page 10K-hour meter — visible across the builder + goals
-            steps so the parent watches it react as they adjust hours.
-            Hidden on role / identity / plan (no slider in those screens). */}
+        {/* Top-of-page Touches Advantage strip — A/B/C annual touch
+            volumes at a glance across the builder + goals steps.
+            Hidden on role / identity / plan to keep those screens focused. */}
         {(step === "builder" || step === "goals") && (
           <div className="mx-auto max-w-6xl px-5 sm:px-8 pb-2.5">
             <TenKHourMeter
@@ -276,7 +276,7 @@ export default function BuildYourPlayerPage() {
             <button
               type="button"
               onClick={() => setStep("role")}
-              className="inline-flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-3 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
+              className="inline-flex items-center justify-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-6 py-3 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
             >
               Start over
             </button>
@@ -307,9 +307,9 @@ function ProgressDots({ step }: { step: Step }) {
           key={s}
           className={`block h-1 rounded-full transition-all ${
             i === idx
-              ? "w-8 bg-[#a3e635]"
+              ? "w-8 bg-[#2DE0C2]"
               : i < idx
-                ? "w-3 bg-[#a3e635]/60"
+                ? "w-3 bg-[#2DE0C2]/60"
                 : "w-3 bg-white/15"
           }`}
         />
@@ -331,7 +331,7 @@ function RoleStep({
 }) {
   return (
     <div className="text-center">
-      <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
+      <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#2DE0C2] mb-3">
         Free · 60 seconds
       </div>
       <h1 className="text-5xl sm:text-7xl font-black uppercase tracking-tighter leading-[0.92]">
@@ -358,7 +358,7 @@ function RoleStep({
               onClick={() => update("role", opt.v)}
               className={`text-left p-5 rounded-2xl border-2 transition group ${
                 selected
-                  ? "border-[#a3e635] bg-[#a3e635]/5"
+                  ? "border-[#2DE0C2] bg-[#2DE0C2]/5"
                   : "border-white/10 bg-white/[0.03] hover:border-white/30"
               }`}
             >
@@ -371,7 +371,7 @@ function RoleStep({
                 <CheckCircle
                   size={16}
                   weight="fill"
-                  className="text-[#a3e635] mt-3"
+                  className="text-[#2DE0C2] mt-3"
                 />
               )}
             </button>
@@ -404,7 +404,7 @@ function IdentityStep({
   // to "your custom training plan" lifts capture rate vs asking up-front.
   return (
     <div className="max-w-md mx-auto">
-      <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
+      <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#2DE0C2] mb-3">
         Last step before your plan
       </div>
       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
@@ -417,8 +417,8 @@ function IdentityStep({
       </p>
 
       {/* What they'll get card — invests them harder before the field */}
-      <div className="mt-5 rounded-xl border border-[#a3e635]/30 bg-[#a3e635]/5 p-4">
-        <p className="text-[10px] tracking-[0.22em] uppercase font-bold text-[#a3e635] mb-2">
+      <div className="mt-5 rounded-xl border border-[#2DE0C2]/30 bg-[#2DE0C2]/5 p-4">
+        <p className="text-[10px] tracking-[0.22em] uppercase font-bold text-[#2DE0C2] mb-2">
           You&apos;ll get
         </p>
         <ul className="space-y-1.5 text-sm text-white/85">
@@ -427,7 +427,7 @@ function IdentityStep({
           <li>· Recommended TEKKY kit fit</li>
           <li>
             · A quick reply from Philip with{" "}
-            <strong className="text-[#a3e635]">
+            <strong className="text-[#2DE0C2]">
               one specific next-step recommendation
             </strong>{" "}
             for {state.firstName || "your player"}
@@ -449,7 +449,7 @@ function IdentityStep({
             onChange={(e) => update("firstName", e.target.value)}
             autoComplete="given-name"
             required
-            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 outline-none transition"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#2DE0C2] focus:ring-2 focus:ring-[#2DE0C2]/30 outline-none transition"
             placeholder="Your name"
             autoFocus
           />
@@ -461,7 +461,7 @@ function IdentityStep({
             onChange={(e) => update("email", e.target.value)}
             autoComplete="email"
             required
-            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 outline-none transition"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#2DE0C2] focus:ring-2 focus:ring-[#2DE0C2]/30 outline-none transition"
             placeholder="you@example.com"
           />
         </Field>
@@ -471,7 +471,7 @@ function IdentityStep({
             value={state.phone}
             onChange={(e) => update("phone", e.target.value)}
             autoComplete="tel"
-            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 outline-none transition"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-md px-4 py-3 text-white focus:border-[#2DE0C2] focus:ring-2 focus:ring-[#2DE0C2]/30 outline-none transition"
             placeholder="(555) 555-5555"
           />
         </Field>
@@ -480,7 +480,7 @@ function IdentityStep({
         <label
           className={`flex items-start gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
             state.smsConsent
-              ? "border-[#a3e635] bg-[#a3e635]/10"
+              ? "border-[#2DE0C2] bg-[#2DE0C2]/10"
               : "border-white/10 bg-white/[0.03] hover:border-white/20"
           }`}
         >
@@ -488,7 +488,7 @@ function IdentityStep({
             type="checkbox"
             checked={state.smsConsent}
             onChange={(e) => update("smsConsent", e.target.checked)}
-            className="mt-0.5 flex-shrink-0 accent-[#a3e635]"
+            className="mt-0.5 flex-shrink-0 accent-[#2DE0C2]"
           />
           <div className="text-[11px] leading-relaxed text-white/70">
             <span className="font-semibold text-white">
@@ -569,7 +569,7 @@ function BuilderStep({
     <div className="grid lg:grid-cols-2 gap-10 items-stretch">
       {/* Left — one question at a time */}
       <div className="flex flex-col">
-        <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
+        <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#2DE0C2] mb-3">
           Step 2 of 5 · {subIdx + 1} / {BUILDER_SUBSTEPS.length}
         </div>
         <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
@@ -587,9 +587,9 @@ function BuilderStep({
               key={s}
               className={`block h-1 rounded-full transition-all ${
                 i === subIdx
-                  ? "w-6 bg-[#a3e635]"
+                  ? "w-6 bg-[#2DE0C2]"
                   : i < subIdx
-                    ? "w-3 bg-[#a3e635]/60"
+                    ? "w-3 bg-[#2DE0C2]/60"
                     : "w-3 bg-white/15"
               }`}
             />
@@ -623,7 +623,7 @@ function BuilderStep({
                           onClick={() => update("gender", opt.v)}
                           className={`p-5 rounded-2xl border-2 transition text-left ${
                             selected
-                              ? "border-[#a3e635] bg-[#a3e635]/8"
+                              ? "border-[#2DE0C2] bg-[#2DE0C2]/8"
                               : "border-white/10 bg-white/[0.03] hover:border-white/30"
                           }`}
                         >
@@ -635,7 +635,7 @@ function BuilderStep({
                             <CheckCircle
                               size={16}
                               weight="fill"
-                              className="text-[#a3e635] mt-3"
+                              className="text-[#2DE0C2] mt-3"
                             />
                           )}
                         </button>
@@ -704,11 +704,11 @@ function BuilderStep({
                     step={1}
                     display={`${state.currentWeeklyHours} hrs / wk`}
                   />
-                  {/* Big 10K-hour meter — wired to currentWeeklyHours
-                      so the parent watches "X years to mastery" tick
-                      down live as they drag the slider. This IS the
-                      conversion hook: at 5 hrs/wk the bar barely
-                      moves; at 25 hrs/wk it fills. */}
+                  {/* Big Touches Advantage calculator — the A/B/C
+                      scenario model from Philip + Paul's deck (6.4× max
+                      touch multiplier). Start-age slider turns "years to
+                      mastery" into "reaches mastery at age N." This IS the
+                      conversion hook: traditional ~74 yrs vs full TEKKY ~19. */}
                   <div className="mt-6">
                     <TenKHourMeter
                       currentWeeklyHours={state.currentWeeklyHours}
@@ -823,7 +823,7 @@ function GoalsStep({
   return (
     <div className="max-w-3xl mx-auto">
       <div className="text-center">
-        <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3">
+        <div className="text-[10px] tracking-[0.32em] uppercase font-bold text-[#2DE0C2] mb-3">
           Step 3 of 5
         </div>
         <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
@@ -845,7 +845,7 @@ function GoalsStep({
               disabled={atCap}
               className={`text-left p-4 rounded-xl border-2 transition flex items-center gap-3 ${
                 selected
-                  ? "border-[#a3e635] bg-[#a3e635]/8"
+                  ? "border-[#2DE0C2] bg-[#2DE0C2]/8"
                   : atCap
                     ? "border-white/5 bg-white/[0.02] opacity-40 cursor-not-allowed"
                     : "border-white/10 bg-white/[0.03] hover:border-white/30"
@@ -857,7 +857,7 @@ function GoalsStep({
                 <CheckCircle
                   size={16}
                   weight="fill"
-                  className="ml-auto text-[#a3e635]"
+                  className="ml-auto text-[#2DE0C2]"
                 />
               )}
             </button>
@@ -895,7 +895,7 @@ function PlanStep({
   return (
     <div className="max-w-4xl mx-auto">
       {submitting && (
-        <div className="text-center text-[11px] tracking-[0.32em] uppercase font-bold text-[#a3e635] mb-3 animate-pulse">
+        <div className="text-center text-[11px] tracking-[0.32em] uppercase font-bold text-[#2DE0C2] mb-3 animate-pulse">
           Saving your plan…
         </div>
       )}
@@ -909,7 +909,7 @@ function PlanStep({
         <h2 className="text-4xl sm:text-6xl font-black uppercase tracking-tighter leading-[0.95]">
           {state.firstName}&apos;s
           <br />
-          <span style={{ color: LIME }}>{plan.level} plan.</span>
+          <span style={{ color: NEON }}>{plan.level} plan.</span>
         </h2>
       </div>
 
@@ -917,9 +917,9 @@ function PlanStep({
       <div
         className="mt-10 rounded-2xl border-2 p-6 sm:p-8"
         style={{
-          borderColor: `${LIME}55`,
+          borderColor: `${NEON}55`,
           background:
-            "linear-gradient(135deg, rgba(163,230,53,0.06) 0%, rgba(255,255,255,0.02) 100%)",
+            "linear-gradient(135deg, rgba(45,224,194,0.06) 0%, rgba(255,255,255,0.02) 100%)",
         }}
       >
         <div className="grid sm:grid-cols-3 gap-5 text-center">
@@ -937,7 +937,7 @@ function PlanStep({
 
       {/* Drills */}
       <div className="mt-8">
-        <h3 className="text-[11px] tracking-[0.28em] uppercase font-bold text-[#a3e635] mb-4">
+        <h3 className="text-[11px] tracking-[0.28em] uppercase font-bold text-[#2DE0C2] mb-4">
           Your 3 starter drills
         </h3>
         <div className="grid md:grid-cols-3 gap-3">
@@ -947,9 +947,9 @@ function PlanStep({
               href={`https://www.youtube.com/watch?v=${d.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group block rounded-xl border border-white/10 bg-white/[0.03] hover:border-[#a3e635]/40 transition p-4"
+              className="group block rounded-xl border border-white/10 bg-white/[0.03] hover:border-[#2DE0C2]/40 transition p-4"
             >
-              <div className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase font-bold text-[#a3e635]">
+              <div className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase font-bold text-[#2DE0C2]">
                 <span>0{i + 1}</span>
                 <PlayCircle size={14} weight="fill" />
                 <span className="ml-auto text-white/40">YouTube</span>
@@ -1004,7 +1004,7 @@ function PlanStep({
         </div>
         <a
           href="/clients/zenith-sports/shop?from=plan-kit"
-          className="mt-6 flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
+          className="mt-6 flex items-center justify-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-6 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md"
         >
           <ShoppingCart size={16} weight="bold" />
           Shop the kit
@@ -1017,7 +1017,7 @@ function PlanStep({
         <Lightning
           size={28}
           weight="fill"
-          className="mx-auto text-[#a3e635] mb-3"
+          className="mx-auto text-[#2DE0C2] mb-3"
         />
         <p className="text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed">
           {plan.nextStep}
@@ -1075,7 +1075,7 @@ function Slider({
         <label className="text-[11px] tracking-[0.22em] uppercase font-bold text-white/55">
           {label}
         </label>
-        <span className="text-base font-black text-[#a3e635] tabular-nums">
+        <span className="text-base font-black text-[#2DE0C2] tabular-nums">
           {display}
         </span>
       </div>
@@ -1091,7 +1091,7 @@ function Slider({
         // the slider only responds to taps (click-to-position) and won't
         // drag. touch-action:none tells the browser the input owns the
         // gesture → smooth thumb dragging on touch + trackpad.
-        className="w-full accent-[#a3e635] touch-none"
+        className="w-full accent-[#2DE0C2] touch-none"
         style={{ touchAction: "none" }}
       />
       <div className="flex justify-between text-[9px] text-white/30 mt-1 tabular-nums">
@@ -1115,7 +1115,7 @@ function NextButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+      className="inline-flex items-center justify-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
     >
       {label}
       <ArrowRight size={14} weight="bold" />
@@ -1126,7 +1126,7 @@ function NextButton({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-3xl font-black tracking-tighter text-[#a3e635]">
+      <div className="text-3xl font-black tracking-tighter text-[#2DE0C2]">
         {value}
       </div>
       <div className="text-[10px] tracking-[0.22em] uppercase font-bold text-white/45 mt-1">

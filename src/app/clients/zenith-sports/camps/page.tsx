@@ -45,7 +45,7 @@ const TIMING_FRAC: Record<string, number> = {
 
 const NAVY = "#0a1832";
 const NAVY_DEEP = "#050d1f";
-const LIME = "#a3e635";
+const NEON = "#2DE0C2";
 const ELECTRIC = "#1d4ed8";
 const IVORY = "#f5f3ee";
 
@@ -470,7 +470,7 @@ export default function CampFinderPage() {
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${((stepIndex + 1) / TOTAL_QUESTION_STEPS) * 100}%`,
-                background: LIME,
+                background: NEON,
               }}
             />
           </div>
@@ -481,17 +481,17 @@ export default function CampFinderPage() {
               isn't published in any survey I could verify. Swap the
               copy below if Philip has a sourced figure he prefers. */}
           <div
-            className="mt-3 rounded-xl border border-lime-300/20 px-4 py-2.5 flex items-center gap-3"
+            className="mt-3 rounded-xl border border-teal-300/20 px-4 py-2.5 flex items-center gap-3"
             style={{
               background:
-                "linear-gradient(90deg, rgba(163,230,53,0.08) 0%, rgba(29,78,216,0.04) 100%)",
+                "linear-gradient(90deg, rgba(45,224,194,0.08) 0%, rgba(29,78,216,0.04) 100%)",
             }}
           >
             <span className="text-lg" aria-hidden>
               📊
             </span>
             <p className="text-[12px] sm:text-[13px] leading-snug text-white/80">
-              <strong className="font-black" style={{ color: LIME }}>
+              <strong className="font-black" style={{ color: NEON }}>
                 3M+ U.S. kids
               </strong>{" "}
               play registered youth soccer — the #1 youth team sport.
@@ -593,7 +593,7 @@ export default function CampFinderPage() {
               disabled={!canAdvance}
               className="text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               style={{
-                background: canAdvance ? LIME : "#334155",
+                background: canAdvance ? NEON : "#334155",
                 color: canAdvance ? NAVY_DEEP : "#94a3b8",
               }}
             >
@@ -622,7 +622,7 @@ export default function CampFinderPage() {
             href="https://bluejayportfolio.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-[#a3e635] transition"
+            className="underline underline-offset-2 hover:text-[#2DE0C2] transition"
           >
             BlueJays
           </a>{" "}
@@ -646,7 +646,7 @@ function AgeStep({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Question 1 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -672,14 +672,14 @@ function AgeStep({
               disabled={atCap}
               className={`relative text-left rounded-xl p-4 border-2 transition-all ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950 hover:scale-[1.02]"
+                  ? "bg-teal-300 border-teal-300 text-slate-950 hover:scale-[1.02]"
                   : atCap
                     ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed"
-                    : "bg-white/5 border-white/10 hover:border-lime-300/40 hover:scale-[1.02]"
+                    : "bg-white/5 border-white/10 hover:border-teal-300/40 hover:scale-[1.02]"
               }`}
             >
               {active && (
-                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-teal-300 text-xs font-black flex items-center justify-center">
                   ✓
                 </span>
               )}
@@ -717,7 +717,7 @@ function LocationStep({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Question 2 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -730,7 +730,7 @@ function LocationStep({
 
       {/* Real US map · Albers projection. SVG path data per state means
           the shape is recognizable, not a square grid. Active state is
-          highlighted in lime. */}
+          highlighted in NEON. */}
       <div className="rounded-2xl border border-white/10 bg-black/30 p-3 sm:p-4 mb-5">
         <USStatesMap
           selected={stateCode || undefined}
@@ -742,7 +742,7 @@ function LocationStep({
         />
         {stateCode && (
           <p className="text-center text-xs text-white/60 mt-3">
-            <span className="font-bold" style={{ color: LIME }}>
+            <span className="font-bold" style={{ color: NEON }}>
               {STATE_NAMES[stateCode] ?? stateCode}
             </span>{" "}
             selected. Pick your county below.
@@ -844,10 +844,10 @@ function CountyAutocomplete({
         placeholder="Start typing — pick from the list"
         className={`w-full rounded-xl bg-white/5 border-2 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none transition ${
           isExactMatch
-            ? "border-lime-300/60"
+            ? "border-teal-300/60"
             : value
               ? "border-amber-400/40"
-              : "border-white/10 focus:border-lime-300/60"
+              : "border-white/10 focus:border-teal-300/60"
         }`}
         autoFocus
         autoComplete="off"
@@ -871,7 +871,7 @@ function CountyAutocomplete({
               onMouseEnter={() => setHighlight(i)}
               className={`px-4 py-2.5 text-sm cursor-pointer transition ${
                 i === highlight
-                  ? "bg-lime-300/15 text-lime-200"
+                  ? "bg-teal-300/15 text-teal-200"
                   : "text-white/85 hover:bg-white/5"
               }`}
             >
@@ -930,7 +930,7 @@ function TravelStep({
     <div>
       <p
         className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3"
-        style={{ color: LIME }}
+        style={{ color: NEON }}
       >
         Question 3 of 7
       </p>
@@ -946,9 +946,9 @@ function TravelStep({
       <div
         className="rounded-2xl border-2 p-5 mb-6"
         style={{
-          borderColor: `${LIME}40`,
+          borderColor: `${NEON}40`,
           background:
-            "linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(29,78,216,0.05) 100%)",
+            "linear-gradient(135deg, rgba(45,224,194,0.08) 0%, rgba(29,78,216,0.05) 100%)",
         }}
       >
         <div className="flex items-end justify-between gap-4 flex-wrap">
@@ -987,13 +987,13 @@ function TravelStep({
               "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%)",
           }}
         >
-          {/* Filled progress (lime gradient) */}
+          {/* Filled progress (NEON gradient) */}
           <div
             className="absolute inset-y-0 left-0 transition-all duration-200"
             style={{
               width: `${pct}%`,
               background:
-                "linear-gradient(90deg, rgba(163,230,53,0.55) 0%, rgba(163,230,53,0.85) 100%)",
+                "linear-gradient(90deg, rgba(45,224,194,0.55) 0%, rgba(45,224,194,0.85) 100%)",
             }}
           />
           {/* Dashed lane stripes */}
@@ -1062,7 +1062,7 @@ function AvailabilityRail({
   const pct = Math.min(100, (count / TOTAL_US_CAMPS_ESTIMATE) * 100);
   // Bar color: green (lots of camps) → amber (narrowing) → blue (focused).
   const barColor =
-    pct > 25 ? LIME : pct > 5 ? "#fbbf24" : ELECTRIC;
+    pct > 25 ? NEON : pct > 5 ? "#fbbf24" : ELECTRIC;
 
   // Step-specific commentary so the rail teaches as it updates.
   const note =
@@ -1188,7 +1188,7 @@ function RailRow({
       </span>
       <span
         className={`tabular-nums truncate ml-2 ${
-          on ? "text-lime-300" : "text-white/30"
+          on ? "text-teal-300" : "text-white/30"
         }`}
         style={{ maxWidth: 130 }}
       >
@@ -1211,7 +1211,7 @@ function SkillStep({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Question 4 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -1237,14 +1237,14 @@ function SkillStep({
               disabled={atCap}
               className={`relative text-left rounded-xl p-5 border-2 transition-all ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950 hover:scale-[1.02]"
+                  ? "bg-teal-300 border-teal-300 text-slate-950 hover:scale-[1.02]"
                   : atCap
                     ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed"
-                    : "bg-white/5 border-white/10 hover:border-lime-300/40 hover:scale-[1.02]"
+                    : "bg-white/5 border-white/10 hover:border-teal-300/40 hover:scale-[1.02]"
               }`}
             >
               {active && (
-                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-teal-300 text-xs font-black flex items-center justify-center">
                   ✓
                 </span>
               )}
@@ -1273,7 +1273,7 @@ function FormatStep({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Question 5 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -1292,12 +1292,12 @@ function FormatStep({
               onClick={() => onToggle(opt.id)}
               className={`relative text-left rounded-xl p-4 border-2 transition-all hover:scale-[1.02] ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950"
-                  : "bg-white/5 border-white/10 hover:border-lime-300/40"
+                  ? "bg-teal-300 border-teal-300 text-slate-950"
+                  : "bg-white/5 border-white/10 hover:border-teal-300/40"
               }`}
             >
               {active && (
-                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-teal-300 text-xs font-black flex items-center justify-center">
                   ✓
                 </span>
               )}
@@ -1332,7 +1332,7 @@ function TimingStep({
   const allFour = values.length === 4;
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Question 6 of 7
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -1355,12 +1355,12 @@ function TimingStep({
               onClick={() => onToggle(opt.id)}
               className={`relative w-full text-left rounded-xl p-4 border-2 transition-all flex items-center gap-3 ${
                 active
-                  ? "bg-lime-300 border-lime-300 text-slate-950"
-                  : "bg-white/5 border-white/10 hover:border-lime-300/40"
+                  ? "bg-teal-300 border-teal-300 text-slate-950"
+                  : "bg-white/5 border-white/10 hover:border-teal-300/40"
               }`}
             >
               {active && (
-                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-lime-300 text-xs font-black flex items-center justify-center">
+                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-slate-950 text-teal-300 text-xs font-black flex items-center justify-center">
                   ✓
                 </span>
               )}
@@ -1389,7 +1389,7 @@ function NotifyStep({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: LIME }}>
+      <p className="text-[11px] tracking-[0.32em] uppercase font-bold mb-3" style={{ color: NEON }}>
         Last question
       </p>
       <h1 className="text-3xl sm:text-5xl font-black leading-tight mb-3">
@@ -1411,7 +1411,7 @@ function NotifyStep({
             value={state.parentName}
             onChange={(e) => update("parentName", e.target.value)}
             placeholder="Sarah Williams"
-            className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-lime-300/60"
+            className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-teal-300/60"
           />
         </div>
 
@@ -1424,7 +1424,7 @@ function NotifyStep({
             value={state.email}
             onChange={(e) => update("email", e.target.value)}
             placeholder="sarah@example.com"
-            className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-lime-300/60"
+            className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-teal-300/60"
           />
         </div>
 
@@ -1438,7 +1438,7 @@ function NotifyStep({
               value={state.playerName}
               onChange={(e) => update("playerName", e.target.value)}
               placeholder="Maya"
-              className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-lime-300/60"
+              className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-teal-300/60"
             />
           </div>
 
@@ -1451,17 +1451,17 @@ function NotifyStep({
               value={state.phone}
               onChange={(e) => update("phone", e.target.value)}
               placeholder="(555) 123-4567"
-              className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-lime-300/60"
+              className="w-full rounded-xl bg-white/5 border-2 border-white/10 px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-teal-300/60"
             />
           </div>
         </div>
 
-        <label className="flex items-start gap-3 mt-5 cursor-pointer p-4 rounded-xl bg-lime-300/10 border-2 border-lime-300/30">
+        <label className="flex items-start gap-3 mt-5 cursor-pointer p-4 rounded-xl bg-teal-300/10 border-2 border-teal-300/30">
           <input
             type="checkbox"
             checked={state.notifyOptIn}
             onChange={(e) => update("notifyOptIn", e.target.checked)}
-            className="mt-0.5 w-5 h-5 accent-lime-400 cursor-pointer"
+            className="mt-0.5 w-5 h-5 accent-teal-400 cursor-pointer"
           />
           <span className="text-sm leading-relaxed">
             <strong className="text-white">Yes — notify me</strong> when new
@@ -1477,7 +1477,7 @@ function NotifyStep({
         <label
           className={`flex items-start gap-3 mt-3 cursor-pointer p-4 rounded-xl border-2 transition-colors ${
             state.smsConsent
-              ? "bg-lime-300/10 border-lime-300/40"
+              ? "bg-teal-300/10 border-teal-300/40"
               : "bg-white/[0.03] border-white/10 hover:border-white/20"
           }`}
         >
@@ -1485,7 +1485,7 @@ function NotifyStep({
             type="checkbox"
             checked={state.smsConsent}
             onChange={(e) => update("smsConsent", e.target.checked)}
-            className="mt-0.5 w-5 h-5 accent-lime-400 cursor-pointer"
+            className="mt-0.5 w-5 h-5 accent-teal-400 cursor-pointer"
           />
           <span className="text-sm leading-relaxed">
             <strong className="text-white">Optional — text me</strong> camp
@@ -1572,8 +1572,8 @@ function ResultsStep({
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border-2 border-lime-300/30 bg-lime-300/5 p-6 max-w-md mx-auto text-center">
-          <p className="text-base font-bold mb-2" style={{ color: LIME }}>
+        <div className="rounded-2xl border-2 border-teal-300/30 bg-teal-300/5 p-6 max-w-md mx-auto text-center">
+          <p className="text-base font-bold mb-2" style={{ color: NEON }}>
             What happens next
           </p>
           <ul className="space-y-2 text-sm text-white/70 text-left">
@@ -1585,7 +1585,7 @@ function ResultsStep({
           <Link
             href="/clients/zenith-sports/build-your-player"
             className="inline-block mt-5 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full"
-            style={{ background: LIME, color: NAVY_DEEP }}
+            style={{ background: NEON, color: NAVY_DEEP }}
           >
             While you wait → Build a training plan
           </Link>
@@ -1613,7 +1613,7 @@ function ResultsStep({
           <Link
             href="/clients/zenith-sports/shop"
             className="text-sm font-bold px-5 py-2.5 rounded-full border border-white/20 hover:bg-white/10"
-            style={{ borderColor: LIME, color: LIME }}
+            style={{ borderColor: NEON, color: NEON }}
           >
             ⚽ Shop TEKKY ball
           </Link>
@@ -1683,7 +1683,7 @@ function CampCard({
       <div className="flex items-start justify-between gap-2 mb-2">
         <h3 className="font-bold text-base leading-tight">{camp.name}</h3>
         {camp.ballIncluded && (
-          <span className="text-[9px] uppercase tracking-wider font-black px-1.5 py-0.5 rounded shrink-0" style={{ background: LIME, color: NAVY_DEEP }}>
+          <span className="text-[9px] uppercase tracking-wider font-black px-1.5 py-0.5 rounded shrink-0" style={{ background: NEON, color: NAVY_DEEP }}>
             ⚽ ball
           </span>
         )}

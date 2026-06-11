@@ -24,11 +24,11 @@ export default async function ZenithPartnerLoginPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <header className="border-b border-lime-500/10">
+      <header className="border-b border-teal-500/10">
         <div className="mx-auto max-w-2xl px-6 py-5">
           <Link
             href="/clients/zenith-sports/partners"
-            className="text-sm text-lime-300/80 hover:text-lime-200 transition-colors"
+            className="text-sm text-teal-300/80 hover:text-teal-200 transition-colors"
           >
             ← Zenith Partner Program
           </Link>
@@ -38,7 +38,7 @@ export default async function ZenithPartnerLoginPage() {
       <section className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <p className="text-xs uppercase tracking-widest text-lime-300 font-semibold mb-3">
+            <p className="text-xs uppercase tracking-widest text-teal-300 font-semibold mb-3">
               Zenith Partner Workspace
             </p>
             <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
@@ -55,7 +55,7 @@ export default async function ZenithPartnerLoginPage() {
             Don&apos;t have a code yet?{" "}
             <Link
               href="/clients/zenith-sports/partners"
-              className="text-lime-300 hover:underline"
+              className="text-teal-300 hover:underline"
             >
               Apply →
             </Link>

@@ -150,7 +150,7 @@ export default function TrainingGuidePage() {
         <div className="mx-auto max-w-4xl px-5 py-3 flex items-center justify-between">
           <Link
             href="/clients/zenith-sports"
-            className="text-xs font-bold tracking-wider uppercase hover:text-[#a3e635]"
+            className="text-xs font-bold tracking-wider uppercase hover:text-[#2DE0C2]"
           >
             ← Zenith Sports
           </Link>
@@ -181,7 +181,7 @@ export default function TrainingGuidePage() {
             ].map((s) => (
               <div
                 key={s.v}
-                className="border-l-4 border-[#a3e635] pl-3 py-1"
+                className="border-l-4 border-[#2DE0C2] pl-3 py-1"
               >
                 <div className="text-2xl font-black tracking-tighter text-[#0a1832]">
                   {s.k}
@@ -316,7 +316,7 @@ export default function TrainingGuidePage() {
                     key={d.id}
                     className="avoid-break border border-slate-200 rounded p-4 grid grid-cols-[28px_1fr] gap-3"
                   >
-                    <div className="text-2xl font-black text-[#a3e635] tabular-nums leading-none">
+                    <div className="text-2xl font-black text-[#2DE0C2] tabular-nums leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </div>
                     <div>
@@ -464,7 +464,7 @@ export default function TrainingGuidePage() {
 
           <div className="mt-10 grid sm:grid-cols-3 gap-3 text-sm">
             <div className="bg-[#0a1832] text-white p-4 rounded">
-              <div className="text-[9px] tracking-wider uppercase font-extrabold text-[#a3e635]">
+              <div className="text-[9px] tracking-wider uppercase font-extrabold text-[#2DE0C2]">
                 Request a Club Demo
               </div>
               <div className="mt-1 text-[13px]">

@@ -78,7 +78,7 @@ export default function StickyNav({
           />
           <span className="hidden md:block tracking-tight text-[15px] font-bold uppercase text-white leading-tight">
             Zenith Sports
-            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#a3e635] font-semibold">
+            <span className="block text-[10px] tracking-[0.22em] uppercase text-[#2DE0C2] font-semibold">
               The TEKKY<sup className="text-[0.55em] -ml-px top-[-0.45em]">®</sup> Ball
             </span>
           </span>
@@ -91,13 +91,13 @@ export default function StickyNav({
               href={l.href}
               className={`transition relative ${
                 isActive(l.label)
-                  ? "text-[#a3e635]"
+                  ? "text-[#2DE0C2]"
                   : "hover:text-white"
               }`}
             >
               {l.label}
               {isActive(l.label) && (
-                <span className="absolute -bottom-2 left-0 right-0 h-[2px] bg-[#a3e635]" />
+                <span className="absolute -bottom-2 left-0 right-0 h-[2px] bg-[#2DE0C2]" />
               )}
             </a>
           ))}
@@ -106,7 +106,7 @@ export default function StickyNav({
         <div className="flex items-center gap-3">
           <a
             href="/clients/zenith-sports/shop"
-            className="hidden sm:inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-5 py-2.5 text-[12px] font-extrabold tracking-[0.18em] uppercase hover:bg-white transition"
+            className="hidden sm:inline-flex items-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-5 py-2.5 text-[12px] font-extrabold tracking-[0.18em] uppercase hover:bg-white transition"
           >
             <ShoppingCart size={14} weight="bold" />
             Shop Now
@@ -114,7 +114,7 @@ export default function StickyNav({
           </a>
           <a
             href="/clients/zenith-sports/shop"
-            className="sm:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-[#a3e635] hover:bg-white/5 transition"
+            className="sm:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-[#2DE0C2] hover:bg-white/5 transition"
             aria-label="Shop now"
           >
             <ShoppingCart size={20} weight="fill" />
@@ -166,8 +166,8 @@ export default function StickyNav({
                 onClick={() => setOpen(false)}
                 className={`text-[22px] sm:text-[28px] py-3 border-b border-white/10 transition font-bold uppercase tracking-tight ${
                   isActive(l.label)
-                    ? "text-[#a3e635]"
-                    : "text-white hover:text-[#a3e635]"
+                    ? "text-[#2DE0C2]"
+                    : "text-white hover:text-[#2DE0C2]"
                 }`}
               >
                 {l.label}
@@ -178,7 +178,7 @@ export default function StickyNav({
             <a
               href="/clients/zenith-sports/shop"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 bg-[#a3e635] text-[#0a1832] px-6 py-4 text-[14px] font-extrabold tracking-[0.18em] uppercase hover:bg-white transition"
+              className="flex items-center justify-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-6 py-4 text-[14px] font-extrabold tracking-[0.18em] uppercase hover:bg-white transition"
             >
               <ShoppingCart size={16} weight="bold" />
               Shop the TEKKY

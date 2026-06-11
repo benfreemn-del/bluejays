@@ -54,7 +54,7 @@ export default function PartnerLoginForm() {
           required
           autoFocus
           placeholder="you@example.com"
-          className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-lime-400 focus:ring-1 focus:ring-lime-400"
+          className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400"
         />
       </label>
       <label className="block">
@@ -68,7 +68,7 @@ export default function PartnerLoginForm() {
           autoComplete="off"
           spellCheck={false}
           placeholder="zen-coach-...."
-          className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-lime-400 focus:ring-1 focus:ring-lime-400 font-mono lowercase"
+          className="w-full rounded-md bg-slate-950 border border-slate-700 px-4 py-3 text-base text-white placeholder-slate-600 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono lowercase"
         />
       </label>
 
@@ -81,7 +81,7 @@ export default function PartnerLoginForm() {
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="w-full rounded-md bg-lime-400 hover:bg-lime-300 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3.5 text-base font-bold text-slate-950 shadow-lg transition-colors"
+        className="w-full rounded-md bg-teal-400 hover:bg-teal-300 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3.5 text-base font-bold text-slate-950 shadow-lg transition-colors"
       >
         {state === "submitting" ? "Logging in…" : "Log in →"}
       </button>

@@ -67,7 +67,7 @@ export default function ZenithWorkspace({
     <div className="mx-auto max-w-5xl px-6 py-10 space-y-10">
       {/* Hero — link + week stats */}
       <section>
-        <p className="text-xs uppercase tracking-widest text-lime-300 font-semibold mb-3">
+        <p className="text-xs uppercase tracking-widest text-teal-300 font-semibold mb-3">
           Welcome back, {firstName}
         </p>
         <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2">
@@ -82,7 +82,7 @@ export default function ZenithWorkspace({
         <CopyBlock
           label="Your link"
           value={partnerLink}
-          accent="lime"
+          accent="NEON"
         />
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
@@ -95,7 +95,7 @@ export default function ZenithWorkspace({
         <div className="mt-6 flex flex-wrap gap-2 text-xs">
           <Link
             href={dashboardLink}
-            className="rounded-full border border-lime-500/30 bg-lime-500/5 hover:bg-lime-500/10 text-lime-200 px-3 py-1.5 transition-colors"
+            className="rounded-full border border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 text-teal-200 px-3 py-1.5 transition-colors"
           >
             Full dashboard →
           </Link>
@@ -154,7 +154,7 @@ export default function ZenithWorkspace({
             emoji="🥅"
             title="Coach pitch"
             sub="$25/ball + $100/coaching package"
-            accent="lime"
+            accent="NEON"
           />
           <ScriptLink
             href="/clients/zenith-sports/partners/script?audience=club"
@@ -188,7 +188,7 @@ export default function ZenithWorkspace({
         </p>
 
         {recentReferrals.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-lime-500/30 bg-gradient-to-br from-lime-950/20 to-slate-900/30 p-6 sm:p-8">
+          <div className="rounded-xl border border-dashed border-teal-500/30 bg-gradient-to-br from-teal-950/20 to-slate-900/30 p-6 sm:p-8">
             <div className="text-2xl mb-2">🎯</div>
             <p className="text-slate-100 font-bold mb-2">
               Ready when you are. Pick a play and ship it.
@@ -202,7 +202,7 @@ export default function ZenithWorkspace({
             <div className="grid sm:grid-cols-3 gap-2 text-sm">
               <a
                 href={`sms:&body=${encodeURIComponent(`The ball I use at trainings — TEKKY. ${partnerLink}`)}`}
-                className="rounded-lg border border-lime-500/30 bg-lime-500/5 hover:bg-lime-500/10 px-3 py-2.5 text-lime-200 transition-colors"
+                className="rounded-lg border border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 px-3 py-2.5 text-teal-200 transition-colors"
               >
                 <div className="text-[11px] uppercase tracking-wider font-bold mb-0.5">
                   📲 1-min play
@@ -236,7 +236,7 @@ export default function ZenithWorkspace({
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-lime-500/15 bg-slate-900/30 overflow-hidden">
+          <div className="rounded-xl border border-teal-500/15 bg-slate-900/30 overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-slate-900/60 text-xs uppercase tracking-wider text-slate-400">
                 <tr>
@@ -247,7 +247,7 @@ export default function ZenithWorkspace({
                   <th className="text-left px-4 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-lime-500/10">
+              <tbody className="divide-y divide-teal-500/10">
                 {recentReferrals.map((r) => (
                   <tr key={r.id}>
                     <td className="px-4 py-3 text-white">
@@ -274,8 +274,8 @@ export default function ZenithWorkspace({
       </section>
 
       {/* Help footer */}
-      <section className="rounded-2xl border border-lime-500/15 bg-lime-950/15 p-6">
-        <p className="text-xs uppercase tracking-wider text-lime-300 font-semibold mb-2">
+      <section className="rounded-2xl border border-teal-500/15 bg-teal-950/15 p-6">
+        <p className="text-xs uppercase tracking-wider text-teal-300 font-semibold mb-2">
           Need help?
         </p>
         <p className="text-sm text-slate-300 leading-relaxed mb-4">
@@ -284,7 +284,7 @@ export default function ZenithWorkspace({
         </p>
         <a
           href="mailto:partners@zenithsports.org"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-lime-300 hover:text-lime-200"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-teal-300 hover:text-teal-200"
         >
           partners@zenithsports.org →
         </a>
@@ -319,16 +319,16 @@ function CopyBlock({
 }: {
   label: string;
   value: string;
-  accent: "lime" | "sky";
+  accent: "NEON" | "sky";
 }) {
   const [copied, setCopied] = useState(false);
   const colorMap = {
-    lime: {
-      border: "border-lime-500/30",
-      bg: "bg-lime-500/5",
-      label: "text-lime-300",
-      value: "text-lime-100",
-      btn: "bg-lime-400 hover:bg-lime-300 text-slate-950",
+    NEON: {
+      border: "border-teal-500/30",
+      bg: "bg-teal-500/5",
+      label: "text-teal-300",
+      value: "text-teal-100",
+      btn: "bg-teal-400 hover:bg-teal-300 text-slate-950",
       btnCopied: "bg-emerald-500 text-white",
     },
     sky: {
@@ -387,16 +387,16 @@ function ShareCard({ channel, body }: { channel: string; body: string }) {
     }
   }
   return (
-    <div className="rounded-xl border border-lime-500/15 bg-slate-900/30 p-4 hover:border-lime-500/30 transition-colors">
+    <div className="rounded-xl border border-teal-500/15 bg-slate-900/30 p-4 hover:border-teal-500/30 transition-colors">
       <div className="flex items-start justify-between gap-3 mb-2">
-        <p className="text-sm font-semibold text-lime-200">{channel}</p>
+        <p className="text-sm font-semibold text-teal-200">{channel}</p>
         <button
           type="button"
           onClick={copy}
           className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
             copied
               ? "bg-emerald-500 text-white"
-              : "bg-lime-400 hover:bg-lime-300 text-slate-950"
+              : "bg-teal-400 hover:bg-teal-300 text-slate-950"
           }`}
         >
           {copied ? "Copied ✓" : "Copy"}
@@ -418,10 +418,10 @@ function ScriptLink({
   emoji: string;
   title: string;
   sub: string;
-  accent: "lime" | "sky" | "amber" | "violet";
+  accent: "NEON" | "sky" | "amber" | "violet";
 }) {
   const colorMap = {
-    lime: "border-lime-500/20 hover:border-lime-500/50 text-lime-300",
+    NEON: "border-teal-500/20 hover:border-teal-500/50 text-teal-300",
     sky: "border-sky-500/20 hover:border-sky-500/50 text-sky-300",
     amber: "border-amber-500/20 hover:border-amber-500/50 text-amber-300",
     violet: "border-violet-500/20 hover:border-violet-500/50 text-violet-300",
@@ -456,7 +456,7 @@ function Stat({
       className={`rounded-xl border p-4 ${
         highlight
           ? "border-emerald-500/30 bg-emerald-500/5"
-          : "border-lime-500/10 bg-slate-900/40"
+          : "border-teal-500/10 bg-slate-900/40"
       }`}
     >
       <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1 font-semibold">
@@ -492,9 +492,9 @@ function GoalProgress({ monthCents }: { monthCents: number }) {
   const pct = Math.max(0, Math.min(100, (monthCents / next.cents) * 100));
   const remaining = (next.cents - monthCents) / 100;
   return (
-    <div className="mt-6 rounded-xl border border-lime-500/20 bg-slate-900/40 p-4">
+    <div className="mt-6 rounded-xl border border-teal-500/20 bg-slate-900/40 p-4">
       <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-        <div className="text-[11px] uppercase tracking-wider font-bold text-lime-300">
+        <div className="text-[11px] uppercase tracking-wider font-bold text-teal-300">
           This month · next goal: {next.label}
         </div>
         <div className="text-[10px] text-slate-500 tabular-nums">
@@ -503,12 +503,12 @@ function GoalProgress({ monthCents }: { monthCents: number }) {
       </div>
       <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-lime-500 to-lime-300 transition-all duration-500"
+          className="h-full bg-gradient-to-r from-teal-500 to-teal-300 transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
       <p className="text-[12px] text-slate-300 mt-2 leading-relaxed">
-        <strong className="text-lime-300">${remaining.toFixed(0)} more</strong>{" "}
+        <strong className="text-teal-300">${remaining.toFixed(0)} more</strong>{" "}
         unlocks: <span className="text-slate-100">{next.perk}</span>.
       </p>
     </div>

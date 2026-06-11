@@ -9,7 +9,7 @@
  * and Paul Hanson (40+ years coaching).
  *
  * Visual language: athletic premium — deep electric navy + ivory + a
- * lime-green energy pop + warm-amber CTA highlights. Sharp corners,
+ * teal-green energy pop + warm-amber CTA highlights. Sharp corners,
  * hairline rules, sans-serif headlines tracked tight. Every photo is
  * Zenith's own work, pulled from zenithsports.org's Shopify CDN.
  *
@@ -153,7 +153,7 @@ const NAVY_INK = "#0f172a";      // type on light bg
 const IVORY = "#f5f3ee";         // clean ivory — primary light base
 const IVORY_SOFT = "#ebe7dd";    // band variant
 const ELECTRIC = "#1d4ed8";      // electric blue — brand (close to ball cobalt)
-const LIME = "#a3e635";          // energy pop
+const NEON = "#2DE0C2";          // energy pop
 const INK_SOFT_LIGHT = "#475569";
 const INK_SOFT_DARK = "rgba(255,255,255,0.65)";
 
@@ -161,7 +161,7 @@ const INK_SOFT_DARK = "rgba(255,255,255,0.65)";
 // (zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg).
 // Mint-teal → cobalt-blue → violet swooshes across white panels.
 // Used as supporting accents to make the site feel native to the
-// product without overhauling the existing lime/electric system.
+// product without overhauling the existing NEON/electric system.
 const TEAL = "#3BDAC0";          // mint-teal swoosh — fresh accent
 const TEAL_DK = "#1FAE96";       // deeper teal for hover states
 const VIOLET = "#8A6FDF";        // violet swoosh — premium-tier accent
@@ -189,7 +189,7 @@ function PromoMarquee() {
   return (
     <div
       className="relative overflow-hidden border-b border-white/10"
-      style={{ background: NAVY_DEEP, color: LIME }}
+      style={{ background: NAVY_DEEP, color: NEON }}
     >
       <div className="flex whitespace-nowrap py-2 animate-zenith-marquee group hover:[animation-play-state:paused]">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -223,7 +223,7 @@ function PromoMarquee() {
 
 function Eyebrow({
   children,
-  color = LIME,
+  color = NEON,
 }: {
   children: React.ReactNode;
   color?: string;
@@ -364,7 +364,7 @@ export default function ZenithSportsPage() {
         </div>
 
         {/* Diagonal slash decor — pure CSS, no JS */}
-        <div className="absolute -left-32 top-1/3 w-[480px] h-[2px] bg-[#a3e635]/30 rotate-[-22deg] hidden md:block" />
+        <div className="absolute -left-32 top-1/3 w-[480px] h-[2px] bg-[#2DE0C2]/30 rotate-[-22deg] hidden md:block" />
         <div className="absolute -left-20 top-1/3 mt-4 w-[260px] h-[1px] bg-white/15 rotate-[-22deg] hidden md:block" />
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8 pt-20 sm:pt-28 lg:pt-36 pb-24 sm:pb-32 lg:pb-44 min-h-[88vh] flex flex-col justify-end">
@@ -373,7 +373,7 @@ export default function ZenithSportsPage() {
                 TEKKY Unified Brand Voice Guide (2025-05). The doc
                 specifies the EXACT copy for these three lines — they
                 are the anchor of the brand voice framework. */}
-            <Eyebrow color={LIME}>
+            <Eyebrow color={NEON}>
               Patent-pending technical training accelerator
             </Eyebrow>
 
@@ -385,7 +385,7 @@ export default function ZenithSportsPage() {
             >
               Building better players.
               <br />
-              <span style={{ color: LIME }}>One touch at a time.</span>
+              <span style={{ color: NEON }}>One touch at a time.</span>
             </h1>
 
             <p
@@ -404,7 +404,7 @@ export default function ZenithSportsPage() {
                 href={BALL_BUY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
+                className="inline-flex items-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
               >
                 <ShoppingCart size={16} weight="bold" />
                 Buy the TEKKY® · $59.95
@@ -418,7 +418,7 @@ export default function ZenithSportsPage() {
                   options, so it routes to the shop page to pick). */}
               <a
                 href="/clients/zenith-sports/shop"
-                className="text-[12px] font-bold tracking-[0.18em] uppercase text-white/70 hover:text-[#a3e635] transition underline underline-offset-4"
+                className="text-[12px] font-bold tracking-[0.18em] uppercase text-white/70 hover:text-[#2DE0C2] transition underline underline-offset-4"
               >
                 Shop socks + tees →
               </a>
@@ -448,7 +448,7 @@ export default function ZenithSportsPage() {
                     href: "/clients/zenith-sports/build-your-player",
                   },
                 ]}
-                className="inline-block hover:text-white underline decoration-[#a3e635]/40 underline-offset-4 hover:decoration-[#a3e635] transition"
+                className="inline-block hover:text-white underline decoration-[#2DE0C2]/40 underline-offset-4 hover:decoration-[#2DE0C2] transition"
               />
             </div>
           </div>
@@ -482,7 +482,7 @@ export default function ZenithSportsPage() {
             <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter text-white leading-[0.92]">
               Built for the
               <br />
-              <span style={{ color: LIME }}>technical player.</span>
+              <span style={{ color: NEON }}>technical player.</span>
             </h2>
             <p
               className="mt-8 text-base md:text-lg leading-relaxed max-w-xl"
@@ -527,7 +527,7 @@ export default function ZenithSportsPage() {
               return (
                 <article
                   key={p.no}
-                  className="group relative bg-white/[0.04] border border-white/10 hover:border-[#a3e635]/40 transition flex flex-col"
+                  className="group relative bg-white/[0.04] border border-white/10 hover:border-[#2DE0C2]/40 transition flex flex-col"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
@@ -539,14 +539,14 @@ export default function ZenithSportsPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/85 via-transparent to-transparent" />
                     <div
                       className="absolute top-5 left-5 text-[11px] tracking-[0.28em] uppercase font-extrabold"
-                      style={{ color: LIME }}
+                      style={{ color: NEON }}
                     >
                       {p.no}
                     </div>
                     <div
                       className="absolute bottom-5 left-5 right-5 flex items-center gap-3 text-white"
                     >
-                      <span className="inline-flex items-center justify-center w-10 h-10 bg-[#a3e635] text-[#0a1832]">
+                      <span className="inline-flex items-center justify-center w-10 h-10 bg-[#2DE0C2] text-[#0a1832]">
                         <Icon size={18} weight="bold" />
                       </span>
                     </div>
@@ -720,7 +720,7 @@ export default function ZenithSportsPage() {
         style={{ background: NAVY }}
       >
         {/* Diagonal accent */}
-        <div className="absolute top-1/2 right-0 w-[60%] h-px bg-[#a3e635]/20" />
+        <div className="absolute top-1/2 right-0 w-[60%] h-px bg-[#2DE0C2]/20" />
 
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <div className="text-center max-w-3xl mx-auto">
@@ -728,7 +728,7 @@ export default function ZenithSportsPage() {
             <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92] text-white">
               From <span style={{ color: "#94a3b8" }}>average</span>
               <br />
-              to <span style={{ color: LIME }}>advanced.</span>
+              to <span style={{ color: NEON }}>advanced.</span>
             </h2>
             <p
               className="mt-8 text-base md:text-lg leading-relaxed"
@@ -777,7 +777,7 @@ export default function ZenithSportsPage() {
             </article>
 
             {/* AFTER */}
-            <article className="relative border-2 overflow-hidden" style={{ borderColor: LIME, background: NAVY_DEEP }}>
+            <article className="relative border-2 overflow-hidden" style={{ borderColor: NEON, background: NAVY_DEEP }}>
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
                   src={PHOTOS.after}
@@ -786,7 +786,7 @@ export default function ZenithSportsPage() {
                   style={{ filter: "saturate(1.15) contrast(1.08)" }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a1832]/70 via-transparent to-transparent" />
-                <div className="absolute top-6 left-6 inline-flex items-center gap-2 px-4 py-2" style={{ background: LIME, color: NAVY_INK }}>
+                <div className="absolute top-6 left-6 inline-flex items-center gap-2 px-4 py-2" style={{ background: NEON, color: NAVY_INK }}>
                   <Lightning size={14} weight="fill" />
                   <span className="text-[10px] tracking-[0.28em] uppercase font-extrabold">
                     After TEKKY
@@ -799,15 +799,15 @@ export default function ZenithSportsPage() {
                 </h3>
                 <ul className="mt-6 space-y-3 text-base text-white/80">
                   <li className="flex items-start gap-3">
-                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: LIME }} />
+                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: NEON }} />
                     Crisp, weighted passes — every time
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: LIME }} />
+                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: NEON }} />
                     First touch settles the ball under the foot
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: LIME }} />
+                    <CheckCircle size={18} weight="fill" className="mt-1 flex-shrink-0" style={{ color: NEON }} />
                     Composed decision-making under pressure
                   </li>
                 </ul>
@@ -915,7 +915,7 @@ export default function ZenithSportsPage() {
                   }}
                 />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#2DE0C2]">
                     The European way
                   </div>
                   <p className="mt-2 text-base font-medium leading-snug">
@@ -960,11 +960,11 @@ export default function ZenithSportsPage() {
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
-              <Eyebrow color={LIME}>Built for better training</Eyebrow>
+              <Eyebrow color={NEON}>Built for better training</Eyebrow>
               <h2 className="mt-6 text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] text-white">
                 Real-game
                 <br />
-                <span style={{ color: LIME }}>feel.</span>
+                <span style={{ color: NEON }}>feel.</span>
               </h2>
               {/* Subhead rewritten with the brand voice guide's dual-spec
                   one-liner: Size 3 control. Size 5 match-day weight. That's
@@ -1004,11 +1004,11 @@ export default function ZenithSportsPage() {
                     key={b.title}
                     className="bg-white/10 backdrop-blur-sm border border-white/20 p-5 lg:p-6 flex items-start gap-4 hover:bg-white/15 transition"
                   >
-                    <span className="inline-flex flex-shrink-0 items-center justify-center w-11 h-11 bg-[#a3e635] text-[#0a1832]">
+                    <span className="inline-flex flex-shrink-0 items-center justify-center w-11 h-11 bg-[#2DE0C2] text-[#0a1832]">
                       <Icon size={20} weight="bold" />
                     </span>
                     <div>
-                      <div className="text-[11px] tracking-[0.22em] uppercase font-extrabold text-[#a3e635]">
+                      <div className="text-[11px] tracking-[0.22em] uppercase font-extrabold text-[#2DE0C2]">
                         Why it works
                       </div>
                       <h3 className="mt-1 text-xl font-black tracking-tight text-white">
@@ -1050,11 +1050,11 @@ export default function ZenithSportsPage() {
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             <div className="lg:col-span-7">
-              <Eyebrow color={LIME}>For coaches, clubs &amp; DOCs</Eyebrow>
+              <Eyebrow color={NEON}>For coaches, clubs &amp; DOCs</Eyebrow>
               <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92] text-white">
                 Coach-credible.
                 <br />
-                <span style={{ color: LIME }}>Not influencer-first.</span>
+                <span style={{ color: NEON }}>Not influencer-first.</span>
               </h2>
               <p
                 className="mt-8 max-w-2xl text-base md:text-lg leading-relaxed"
@@ -1081,7 +1081,7 @@ export default function ZenithSportsPage() {
               <div className="mt-10 flex flex-wrap gap-3">
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 bg-[#a3e635] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
+                  className="inline-flex items-center gap-2 bg-[#2DE0C2] text-[#0a1832] px-7 py-4 text-[13px] font-extrabold tracking-[0.2em] uppercase hover:bg-white transition group"
                 >
                   Request a Club Demo
                   <ArrowRight
@@ -1106,7 +1106,7 @@ export default function ZenithSportsPage() {
                   add a real PDF download later when warranted. */}
               <div className="mt-10 max-w-xl">
                 <EmailCapture
-                  variant="lime"
+                  variant="NEON"
                   intent="Training Guide"
                   badge="Free training plan"
                   headline="Get the TEKKY® training plan."
@@ -1145,7 +1145,7 @@ export default function ZenithSportsPage() {
               </div>
 
               {/* "Zenith Sports promise" testimonial — switched to TEAL
-                  to mirror the mint-teal swoosh on the actual ball. Lime
+                  to mirror the mint-teal swoosh on the actual ball. NEON
                   stays the dominant CTA accent; teal handles the
                   brand-credibility / quote treatments. */}
               <div
@@ -1245,7 +1245,7 @@ export default function ZenithSportsPage() {
           of truth is the DB. */}
       <TestimonialCarousel
         clientSlug="zenith-sports"
-        accentColor={LIME}
+        accentColor={NEON}
         bgClass="bg-[#0a1832]"
         heading="Coaches + parents · in their words"
         subheading="Real names. Real clubs."
@@ -1340,7 +1340,7 @@ export default function ZenithSportsPage() {
               <div className="p-8 lg:p-10 flex-1 flex flex-col">
                 <div className="flex items-center justify-between gap-4">
                   <Eyebrow color={ELECTRIC}>Co-Founder</Eyebrow>
-                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#0a1832] bg-[#a3e635] px-2.5 py-1">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#0a1832] bg-[#2DE0C2] px-2.5 py-1">
                     <Medal size={11} weight="bold" />
                     40+ Years
                   </span>
@@ -1400,7 +1400,7 @@ export default function ZenithSportsPage() {
           <h2 className="mt-6 text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.92] text-white">
             Transforming
             <br />
-            <span style={{ color: LIME }}>US Soccer.</span>
+            <span style={{ color: NEON }}>US Soccer.</span>
           </h2>
 
           <p
@@ -1419,7 +1419,7 @@ export default function ZenithSportsPage() {
           <p
             className="mt-6 text-xl md:text-3xl leading-relaxed font-light max-w-3xl mx-auto"
             style={{
-              color: LIME,
+              color: NEON,
               fontFamily:
                 "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
             }}
@@ -1529,7 +1529,7 @@ export default function ZenithSportsPage() {
         <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
           <a
             href="/clients/zenith-sports/build-your-player"
-            className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#a3e635]/40 transition-all overflow-hidden"
+            className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a1832] via-[#050d1f] to-[#0a1832] hover:border-[#2DE0C2]/40 transition-all overflow-hidden"
           >
             <div className="grid lg:grid-cols-[auto_1fr_auto] gap-6 sm:gap-10 items-center p-6 sm:p-10">
               {/* Three Pixar previews — youngest → oldest, left to
@@ -1582,7 +1582,7 @@ export default function ZenithSportsPage() {
                   className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter leading-[0.95] text-white"
                 >
                   Get a plan built for{" "}
-                  <span style={{ color: "#a3e635" }}>your</span> player.
+                  <span style={{ color: "#2DE0C2" }}>your</span> player.
                 </h3>
                 <p className="mt-3 sm:mt-4 text-[13px] sm:text-[15px] leading-relaxed text-white/70 max-w-xl">
                   Slide age, height, skill, and weekly training. We email a
@@ -1594,8 +1594,8 @@ export default function ZenithSportsPage() {
               {/* CTA */}
               <div className="flex lg:flex-col gap-3 lg:items-end">
                 <span
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.18em] uppercase whitespace-nowrap shadow-lg group-hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
-                  style={{ background: LIME, color: NAVY_INK }}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-[12px] font-extrabold tracking-[0.18em] uppercase whitespace-nowrap shadow-lg group-hover:shadow-[0_0_30px_rgba(45,224,194,0.4)] transition-shadow"
+                  style={{ background: NEON, color: NAVY_INK }}
                 >
                   Build Your Player
                   <ArrowRight size={14} weight="bold" />
@@ -1664,7 +1664,7 @@ export default function ZenithSportsPage() {
           <h2 className="mt-6 text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.88] text-white">
             Get your
             <br />
-            <span style={{ color: LIME }}>TEKKY.</span>
+            <span style={{ color: NEON }}>TEKKY.</span>
           </h2>
           <p
             className="mt-10 max-w-2xl mx-auto text-base md:text-xl leading-relaxed"
@@ -1681,7 +1681,7 @@ export default function ZenithSportsPage() {
               href={BALL_BUY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-[#a3e635] text-[#0a1832] px-10 py-5 text-[14px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition group"
+              className="inline-flex items-center gap-3 bg-[#2DE0C2] text-[#0a1832] px-10 py-5 text-[14px] font-extrabold tracking-[0.22em] uppercase hover:bg-white transition group"
             >
               <ShoppingCart size={18} weight="bold" />
               Get Your TEKKY® · $59.95
@@ -1766,7 +1766,7 @@ export default function ZenithSportsPage() {
                   href="/clients/zenith-sports/shop"
                   className="flex items-start gap-4 group"
                 >
-                  <span className="inline-flex flex-shrink-0 items-center justify-center w-11 h-11 bg-[#a3e635] text-[#0a1832] group-hover:bg-white transition">
+                  <span className="inline-flex flex-shrink-0 items-center justify-center w-11 h-11 bg-[#2DE0C2] text-[#0a1832] group-hover:bg-white transition">
                     <ShoppingCart size={18} weight="bold" />
                   </span>
                   <div>
@@ -1891,7 +1891,7 @@ export default function ZenithSportsPage() {
                   <div className="text-[18px] font-extrabold uppercase tracking-tight text-white">
                     Zenith Sports
                   </div>
-                  <div className="text-[10px] tracking-[0.28em] uppercase font-semibold" style={{ color: LIME }}>
+                  <div className="text-[10px] tracking-[0.28em] uppercase font-semibold" style={{ color: NEON }}>
                     Home of the TEKKY
                   </div>
                 </div>
@@ -1917,7 +1917,7 @@ export default function ZenithSportsPage() {
                 />
                 <button
                   type="submit"
-                  className="px-5 bg-[#a3e635] text-[#0a1832] text-[11px] font-extrabold uppercase tracking-[0.2em] hover:bg-white transition"
+                  className="px-5 bg-[#2DE0C2] text-[#0a1832] text-[11px] font-extrabold uppercase tracking-[0.2em] hover:bg-white transition"
                 >
                   Join
                 </button>
@@ -1926,7 +1926,7 @@ export default function ZenithSportsPage() {
 
             {/* Quick Links */}
             <div className="lg:col-span-3">
-              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#2DE0C2]">
                 Quick Links
               </div>
               <ul className="mt-5 space-y-3 text-sm">
@@ -1950,7 +1950,7 @@ export default function ZenithSportsPage() {
 
             {/* Get in touch */}
             <div className="lg:col-span-4">
-              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#a3e635]">
+              <div className="text-[10px] tracking-[0.28em] uppercase font-extrabold text-[#2DE0C2]">
                 Get in touch
               </div>
               <ul className="mt-5 space-y-4 text-sm">
@@ -2004,7 +2004,7 @@ export default function ZenithSportsPage() {
                 href="/clients/zenith-sports/login"
                 title="Owner login"
                 aria-label="Owner login"
-                className="text-sky-500/80 hover:text-[#a3e635] transition"
+                className="text-sky-500/80 hover:text-[#2DE0C2] transition"
               >
                 <BluejayLogo size={16} />
               </a>
@@ -2013,7 +2013,7 @@ export default function ZenithSportsPage() {
                 href="https://bluejayportfolio.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#a3e635] transition underline underline-offset-2"
+                className="hover:text-[#2DE0C2] transition underline underline-offset-2"
               >
                 BlueJays
               </a>

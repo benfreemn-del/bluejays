@@ -68,12 +68,12 @@ export default async function ZenithPartnerWorkPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-lime-500/10 sticky top-0 z-30 bg-slate-950/95 backdrop-blur">
+      <header className="border-b border-teal-500/10 sticky top-0 z-30 bg-slate-950/95 backdrop-blur">
         <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/clients/zenith-sports/partners"
-              className="text-xs text-lime-300/70 hover:text-lime-200"
+              className="text-xs text-teal-300/70 hover:text-teal-200"
             >
               ← Program
             </Link>

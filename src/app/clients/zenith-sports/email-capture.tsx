@@ -22,7 +22,7 @@ import { ArrowRight, CheckCircle, Envelope } from "@phosphor-icons/react/dist/ss
  * email so he can tell at a glance which funnel the lead came from.
  */
 
-type Variant = "lime" | "navy" | "white";
+type Variant = "NEON" | "navy" | "white";
 
 type Props = {
   intent: string;
@@ -66,7 +66,7 @@ const VARIANT_STYLES: Record<
     successAccent: string;
   }
 > = {
-  lime: {
+  NEON: {
     bg: "bg-[#0a1832]",
     border: "border-white/10",
     headline: "text-white",
@@ -75,14 +75,14 @@ const VARIANT_STYLES: Record<
     inputText: "text-white",
     inputBorder: "border-white/15",
     inputPlaceholder: "placeholder:text-white/35",
-    btnBg: "bg-[#a3e635]",
+    btnBg: "bg-[#2DE0C2]",
     btnText: "text-[#0a1832]",
     btnHover: "hover:bg-white",
-    badgeBg: "bg-[#a3e635]/15 border border-[#a3e635]/40",
-    badgeText: "text-[#a3e635]",
+    badgeBg: "bg-[#2DE0C2]/15 border border-[#2DE0C2]/40",
+    badgeText: "text-[#2DE0C2]",
     successText: "text-white",
     successBody: "text-white/70",
-    successAccent: "text-[#a3e635]",
+    successAccent: "text-[#2DE0C2]",
   },
   navy: {
     bg: "bg-white",
@@ -111,10 +111,10 @@ const VARIANT_STYLES: Record<
     inputText: "text-[#0a1832]",
     inputBorder: "border-slate-300",
     inputPlaceholder: "placeholder:text-slate-400",
-    btnBg: "bg-[#a3e635]",
+    btnBg: "bg-[#2DE0C2]",
     btnText: "text-[#0a1832]",
     btnHover: "hover:bg-[#0a1832] hover:text-white",
-    badgeBg: "bg-[#a3e635]/20 border border-[#a3e635]/40",
+    badgeBg: "bg-[#2DE0C2]/20 border border-[#2DE0C2]/40",
     badgeText: "text-[#0a1832]",
     successText: "text-[#0a1832]",
     successBody: "text-slate-600",
@@ -129,7 +129,7 @@ export default function EmailCapture({
   successHeadline = "You're in.",
   successBody = "We'll be in touch shortly with the details.",
   cta = "Send it to me",
-  variant = "lime",
+  variant = "NEON",
   badge,
   successCta,
 }: Props) {
@@ -251,7 +251,7 @@ export default function EmailCapture({
             placeholder="First name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
+            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#2DE0C2] focus:ring-2 focus:ring-[#2DE0C2]/30 transition`}
           />
           <input
             type="email"
@@ -261,7 +261,7 @@ export default function EmailCapture({
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#a3e635] focus:ring-2 focus:ring-[#a3e635]/30 transition`}
+            className={`min-w-0 px-4 py-3 rounded-md text-[14px] outline-none border ${s.inputBg} ${s.inputText} ${s.inputBorder} ${s.inputPlaceholder} focus:border-[#2DE0C2] focus:ring-2 focus:ring-[#2DE0C2]/30 transition`}
           />
         </div>
         {/* Button row — left-aligned, intrinsic width so it doesn't
@@ -284,7 +284,7 @@ export default function EmailCapture({
       )}
       <p
         className={`mt-3 text-[10px] tracking-tight ${
-          variant === "lime" ? "text-white/40" : "text-slate-500"
+          variant === "NEON" ? "text-white/40" : "text-slate-500"
         }`}
       >
         We&apos;ll never share your email. Unsubscribe anytime.

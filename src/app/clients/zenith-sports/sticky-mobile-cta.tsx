@@ -85,7 +85,7 @@ export default function StickyMobileCta({
     >
       <a
         href={href}
-        className="pointer-events-auto flex items-center justify-between gap-3 bg-[#a3e635] text-[#0a1832] px-5 py-4 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:bg-white transition active:scale-[0.98]"
+        className="pointer-events-auto flex items-center justify-between gap-3 bg-[#2DE0C2] text-[#0a1832] px-5 py-4 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:bg-white transition active:scale-[0.98]"
       >
         <span className="inline-flex items-center gap-2">
           <ShoppingCart size={18} weight="fill" />

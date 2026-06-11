@@ -12,7 +12,7 @@ export const metadata = {
  * /clients/zenith-sports/partners — recruitment landing for Zenith / TEKKY's
  * sales-affiliate program. Mirrors the ITC partners page shape, retooled
  * for soccer audiences: coach affiliates, club wholesale, parent
- * referrers, camp directors. Uses Zenith's lime/charcoal/sky palette.
+ * referrers, camp directors. Uses Zenith's NEON/charcoal/sky palette.
  *
  * PHASE 1 GATE (locked 2026-05-27): The affiliate / club partner program
  * (commission tracking, payout ladder) is a $10K AI-System Phase 2 feature
@@ -27,47 +27,47 @@ export default function ZenithPartnersPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-lime-500/10">
+      <header className="border-b border-teal-500/10">
         <div className="mx-auto max-w-4xl px-6 py-5 flex items-center justify-between">
           <Link
             href="/clients/zenith-sports/portal"
-            className="text-sm text-lime-300/70 hover:text-lime-200 transition-colors"
+            className="text-sm text-teal-300/70 hover:text-teal-200 transition-colors"
           >
             ← Zenith Portal
           </Link>
           <div className="flex items-center gap-3">
             <Link
               href="/clients/zenith-sports/partners/script"
-              className="text-sm text-lime-300/80 hover:text-lime-200 transition-colors"
+              className="text-sm text-teal-300/80 hover:text-teal-200 transition-colors"
             >
               View script library
             </Link>
             <PartnerApplyForm
               trigger="Apply →"
-              className="text-sm font-semibold rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-3 py-1.5 transition-colors"
+              className="text-sm font-semibold rounded-md bg-teal-400 hover:bg-teal-300 text-slate-950 px-3 py-1.5 transition-colors"
             />
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="border-b border-lime-500/10 bg-gradient-to-b from-lime-950/40 via-lime-950/10 to-transparent">
+      <section className="border-b border-teal-500/10 bg-gradient-to-b from-teal-950/40 via-teal-950/10 to-transparent">
         <div className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <p className="text-xs uppercase tracking-widest text-lime-300 font-semibold mb-3">
+          <p className="text-xs uppercase tracking-widest text-teal-300 font-semibold mb-3">
             Zenith Sports · Partner Program
           </p>
           <h1 className="text-4xl md:text-6xl font-black leading-tight mb-5">
             Coaches, clubs, and camps:{" "}
-            <span className="text-lime-300">parents trust you. Get paid for it.</span>
+            <span className="text-teal-300">parents trust you. Get paid for it.</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-7">
             Four ways in. <span className="text-white font-semibold">Coaches earn $25/ball + $100 per Zenith coaching-package signup</span>. Clubs get wholesale margin built in. Camps add a co-branded ball to the camp registration fee. Parents get $20/referral. Paid Venmo or Zelle within 7 days.
           </p>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-lime-500/40 bg-lime-500/10 px-4 py-2 mb-7 text-sm text-lime-200">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/40 bg-teal-500/10 px-4 py-2 mb-7 text-sm text-teal-200">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-lime-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500" />
             </span>
             Designed by Philip + Paul · Both former pros · Vetted by college DOCs
           </div>
@@ -75,11 +75,11 @@ export default function ZenithPartnersPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <PartnerApplyForm
               trigger="Apply to be a partner →"
-              className="inline-flex items-center justify-center rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
+              className="inline-flex items-center justify-center rounded-md bg-teal-400 hover:bg-teal-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
             />
             <Link
               href="/clients/zenith-sports/partners/script"
-              className="inline-flex items-center justify-center rounded-md border border-lime-500/30 hover:border-lime-500/60 bg-slate-900/50 hover:bg-slate-800 px-6 py-4 text-sm text-lime-200 hover:text-white transition-colors"
+              className="inline-flex items-center justify-center rounded-md border border-teal-500/30 hover:border-teal-500/60 bg-slate-900/50 hover:bg-slate-800 px-6 py-4 text-sm text-teal-200 hover:text-white transition-colors"
             >
               See the 4-audience script →
             </Link>
@@ -91,7 +91,7 @@ export default function ZenithPartnersPage() {
       </section>
 
       {/* What you get */}
-      <section className="border-b border-lime-500/10 bg-slate-900/50">
+      <section className="border-b border-teal-500/10 bg-slate-900/50">
         <div className="mx-auto max-w-4xl px-6 py-14">
           <p className="text-xs uppercase tracking-widest text-sky-400 font-semibold mb-3 text-center">
             For approved partners
@@ -140,7 +140,7 @@ export default function ZenithPartnersPage() {
       </section>
 
       {/* Four audiences */}
-      <section className="border-b border-lime-500/10">
+      <section className="border-b border-teal-500/10">
         <div className="mx-auto max-w-4xl px-6 py-14">
           <p className="text-xs uppercase tracking-widest text-emerald-300 font-semibold mb-3 text-center">
             Four customer types · Four different conversations
@@ -153,7 +153,7 @@ export default function ZenithPartnersPage() {
               emoji="🥅"
               title="Coach affiliate"
               body="Youth or club coach (U10–U19) with buying influence. Parents listen to them more than any ad we run. $25/ball + $100/coaching-package signup."
-              accent="text-lime-300"
+              accent="text-teal-300"
             />
             <AudienceCard
               emoji="🏟️"
@@ -177,7 +177,7 @@ export default function ZenithPartnersPage() {
           <div className="text-center mt-10">
             <Link
               href="/clients/zenith-sports/partners/script"
-              className="inline-flex items-center justify-center rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-6 py-3 text-sm font-bold transition-colors"
+              className="inline-flex items-center justify-center rounded-md bg-teal-400 hover:bg-teal-300 text-slate-950 px-6 py-3 text-sm font-bold transition-colors"
             >
               View the full script library →
             </Link>
@@ -188,7 +188,7 @@ export default function ZenithPartnersPage() {
       {/* Income math */}
       <section
         id="how-it-pays"
-        className="border-b border-lime-500/10 scroll-mt-20 bg-slate-900/40"
+        className="border-b border-teal-500/10 scroll-mt-20 bg-slate-900/40"
       >
         <div className="mx-auto max-w-3xl px-6 py-14">
           <p className="text-xs uppercase tracking-widest text-emerald-300 font-semibold mb-3 text-center">
@@ -213,8 +213,8 @@ export default function ZenithPartnersPage() {
                 <li>• 5 minutes of work all season</li>
               </ul>
             </div>
-            <div className="rounded-2xl border border-lime-500/30 bg-lime-500/5 p-6">
-              <p className="text-xs uppercase tracking-wider text-lime-300 font-semibold mb-2">
+            <div className="rounded-2xl border border-teal-500/30 bg-teal-500/5 p-6">
+              <p className="text-xs uppercase tracking-wider text-teal-300 font-semibold mb-2">
                 Club / academy · 200+ players
               </p>
               <p className="text-4xl font-extrabold text-white tabular-nums mb-3">
@@ -237,7 +237,7 @@ export default function ZenithPartnersPage() {
       </section>
 
       {/* What they're selling */}
-      <section className="border-b border-lime-500/10">
+      <section className="border-b border-teal-500/10">
         <div className="mx-auto max-w-3xl px-6 py-14">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">
             What you&apos;re actually recommending
@@ -269,7 +269,7 @@ export default function ZenithPartnersPage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-b border-lime-500/10 bg-slate-900/40">
+      <section className="border-b border-teal-500/10 bg-slate-900/40">
         <div className="mx-auto max-w-3xl px-6 py-14">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Quick questions</h2>
           <div className="space-y-6">
@@ -298,7 +298,7 @@ export default function ZenithPartnersPage() {
         </div>
       </section>
 
-      <section className="border-b border-lime-500/10">
+      <section className="border-b border-teal-500/10">
         <div className="mx-auto max-w-2xl px-6 py-14 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready?</h2>
           <p className="text-slate-400 mb-8">
@@ -307,7 +307,7 @@ export default function ZenithPartnersPage() {
           </p>
           <PartnerApplyForm
             trigger="Apply now →"
-            className="inline-flex items-center justify-center rounded-md bg-lime-400 hover:bg-lime-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
+            className="inline-flex items-center justify-center rounded-md bg-teal-400 hover:bg-teal-300 text-slate-950 px-8 py-4 text-base font-bold shadow-lg transition-colors"
           />
         </div>
       </section>
@@ -317,7 +317,7 @@ export default function ZenithPartnersPage() {
           Questions? Email{" "}
           <a
             href="mailto:partners@zenithsports.org"
-            className="text-lime-400 hover:underline"
+            className="text-teal-400 hover:underline"
           >
             partners@zenithsports.org
           </a>
@@ -346,7 +346,7 @@ function PerkCard({
   body: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5 hover:border-lime-500/30 transition-colors">
+    <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5 hover:border-teal-500/30 transition-colors">
       <div className="flex items-start gap-3">
         <span className="text-2xl shrink-0 leading-none mt-0.5">{emoji}</span>
         <div className="min-w-0">
@@ -372,7 +372,7 @@ function AudienceCard({
   accent: string;
 }) {
   return (
-    <div className="rounded-xl border border-lime-500/15 bg-gradient-to-b from-lime-950/15 to-transparent p-5 hover:border-lime-500/40 transition-colors">
+    <div className="rounded-xl border border-teal-500/15 bg-gradient-to-b from-teal-950/15 to-transparent p-5 hover:border-teal-500/40 transition-colors">
       <div className="flex items-start gap-3">
         <span className="text-2xl shrink-0 leading-none mt-0.5">{emoji}</span>
         <div className="min-w-0">
