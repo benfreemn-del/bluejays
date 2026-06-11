@@ -22,7 +22,7 @@ import { PlayCircle, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 
 const NAVY_INK = "#0f172a";
 const ELECTRIC = "#1d4ed8";
-const NEON = "#2DE0C2";
+const TURQ = "#22D3EE";
 const INK_SOFT_LIGHT = "#475569";
 
 type Drill = {
@@ -172,7 +172,7 @@ function TierBlock({ tier, idx }: { tier: Tier; idx: number }) {
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase font-extrabold text-[#0a1832] hover:text-[#1d4ed8] transition cursor-pointer"
           >
             {expanded ? `Show fewer ${tier.label.toLowerCase()} drills` : `Show all ${tier.drills.length} ${tier.label.toLowerCase()} drills`}
-            <span aria-hidden style={{ background: NEON }} className="inline-block w-2 h-2" />
+            <span aria-hidden style={{ background: TURQ }} className="inline-block w-2 h-2" />
           </button>
         </div>
       )}

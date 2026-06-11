@@ -42,20 +42,20 @@ export default function ZenithScriptViewerPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-teal-500/10 bg-slate-950/95 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-cyan-500/10 bg-slate-950/95 backdrop-blur sticky top-0 z-20">
         <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
           <Link
             href="/clients/zenith-sports/partners"
-            className="text-sm text-teal-300/70 hover:text-teal-200 transition-colors"
+            className="text-sm text-cyan-300/70 hover:text-cyan-200 transition-colors"
           >
             ← Partner program
           </Link>
-          <h1 className="text-sm font-semibold text-teal-100">
+          <h1 className="text-sm font-semibold text-cyan-100">
             Zenith / TEKKY Sales Script · 4 audiences
           </h1>
           <Link
             href="/clients/zenith-sports/portal"
-            className="text-sm text-teal-300/70 hover:text-teal-200 transition-colors"
+            className="text-sm text-cyan-300/70 hover:text-cyan-200 transition-colors"
           >
             Portal →
           </Link>
@@ -63,9 +63,9 @@ export default function ZenithScriptViewerPage() {
       </header>
 
       {/* Audience picker */}
-      <section className="border-b border-teal-500/10 bg-slate-900/50">
+      <section className="border-b border-cyan-500/10 bg-slate-900/50">
         <div className="mx-auto max-w-5xl px-6 py-5">
-          <p className="text-xs uppercase tracking-widest text-teal-300/80 font-semibold mb-3">
+          <p className="text-xs uppercase tracking-widest text-cyan-300/80 font-semibold mb-3">
             Pick the customer you&apos;re calling
           </p>
           <div className="flex flex-wrap gap-2">
@@ -79,8 +79,8 @@ export default function ZenithScriptViewerPage() {
                   onClick={() => setAudience(id)}
                   className={`rounded-md px-3 py-2 text-sm font-semibold border transition-colors ${
                     active
-                      ? "border-teal-400 bg-teal-400 text-slate-950"
-                      : "border-teal-500/20 bg-slate-900/60 text-teal-100/80 hover:border-teal-500/50 hover:text-teal-100"
+                      ? "border-cyan-400 bg-cyan-400 text-slate-950"
+                      : "border-cyan-500/20 bg-slate-900/60 text-cyan-100/80 hover:border-cyan-500/50 hover:text-cyan-100"
                   }`}
                 >
                   {s.label}
@@ -89,7 +89,7 @@ export default function ZenithScriptViewerPage() {
             })}
           </div>
           <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-            <span className="text-teal-200 font-semibold">{script.label}</span>
+            <span className="text-cyan-200 font-semibold">{script.label}</span>
             {" — "}
             {script.whoTheyAre}
           </p>
@@ -97,9 +97,9 @@ export default function ZenithScriptViewerPage() {
       </section>
 
       {/* Variable inputs */}
-      <section className="border-b border-teal-500/10">
+      <section className="border-b border-cyan-500/10">
         <div className="mx-auto max-w-5xl px-6 py-5">
-          <p className="text-xs uppercase tracking-widest text-teal-300/60 font-semibold mb-3">
+          <p className="text-xs uppercase tracking-widest text-cyan-300/60 font-semibold mb-3">
             Fill in what you know · the script auto-updates
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -216,14 +216,14 @@ export default function ZenithScriptViewerPage() {
 
         {/* Tips sidebar */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-2xl border border-teal-500/20 bg-teal-950/10 p-5">
-            <p className="text-xs uppercase tracking-widest text-teal-300 font-semibold mb-3">
+          <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/10 p-5">
+            <p className="text-xs uppercase tracking-widest text-cyan-300 font-semibold mb-3">
               Soccer dial tips
             </p>
             <ul className="space-y-2.5 text-sm text-slate-200 leading-relaxed">
               {ZENITH_HORMOZI_TIPS.map((tip, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="text-teal-400 shrink-0">•</span>
+                  <span className="text-cyan-400 shrink-0">•</span>
                   <span>{tip}</span>
                 </li>
               ))}
@@ -292,10 +292,10 @@ function ScriptBlock({
       chipBg: "bg-violet-500/10",
     },
     pitch: {
-      border: "border-teal-500/25",
-      bg: "bg-teal-950/15",
-      chip: "text-teal-300",
-      chipBg: "bg-teal-500/10",
+      border: "border-cyan-500/25",
+      bg: "bg-cyan-950/15",
+      chip: "text-cyan-300",
+      chipBg: "bg-cyan-500/10",
     },
     cta: {
       border: "border-emerald-500/25",
@@ -375,7 +375,7 @@ function VarInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-md border border-teal-500/15 bg-slate-950/60 px-2.5 py-1.5 text-sm text-white placeholder:text-slate-600 focus:border-teal-400/60 focus:outline-none"
+        className="w-full rounded-md border border-cyan-500/15 bg-slate-950/60 px-2.5 py-1.5 text-sm text-white placeholder:text-slate-600 focus:border-cyan-400/60 focus:outline-none"
       />
     </label>
   );

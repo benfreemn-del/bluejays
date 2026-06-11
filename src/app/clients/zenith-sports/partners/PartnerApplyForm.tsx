@@ -107,7 +107,7 @@ export default function PartnerApplyForm({
           onClick={close}
         >
           <div
-            className="relative w-full max-w-lg rounded-2xl border border-teal-500/30 bg-slate-900 p-6 sm:p-8 shadow-2xl shadow-teal-500/10"
+            className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-slate-900 p-6 sm:p-8 shadow-2xl shadow-cyan-500/10"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -121,7 +121,7 @@ export default function PartnerApplyForm({
 
             {!success ? (
               <>
-                <p className="text-[11px] tracking-[0.32em] uppercase font-bold text-teal-300 mb-2">
+                <p className="text-[11px] tracking-[0.32em] uppercase font-bold text-cyan-300 mb-2">
                   Zenith partner application
                 </p>
                 <h2 className="text-2xl sm:text-3xl font-black leading-tight mb-2">
@@ -175,8 +175,8 @@ export default function PartnerApplyForm({
                           onClick={() => setRole(r.id)}
                           className={`text-left rounded-lg border-2 px-3 py-2 transition ${
                             role === r.id
-                              ? "border-teal-300 bg-teal-300/10 text-white"
-                              : "border-white/10 bg-white/[0.03] text-white/75 hover:border-teal-300/30"
+                              ? "border-cyan-300 bg-cyan-300/10 text-white"
+                              : "border-white/10 bg-white/[0.03] text-white/75 hover:border-cyan-300/30"
                           }`}
                         >
                           <div className="text-sm font-bold">{r.label}</div>
@@ -222,7 +222,7 @@ export default function PartnerApplyForm({
                   <button
                     type="submit"
                     disabled={!canSubmit || submitting}
-                    className="w-full rounded-md bg-teal-400 hover:bg-teal-300 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wider transition"
+                    className="w-full rounded-md bg-cyan-400 hover:bg-cyan-300 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wider transition"
                   >
                     {submitting ? "Sending…" : "Send my application →"}
                   </button>
@@ -239,13 +239,13 @@ export default function PartnerApplyForm({
                 </h2>
                 <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
                   Thanks {name.split(" ")[0]} — Philip will reach out at{" "}
-                  <span className="text-teal-300">{email}</span> within 24
+                  <span className="text-cyan-300">{email}</span> within 24
                   hours with your partner kit + first script library access.
                 </p>
                 <button
                   type="button"
                   onClick={close}
-                  className="mt-6 rounded-md bg-teal-400 hover:bg-teal-300 text-slate-950 px-6 py-3 text-sm font-bold transition"
+                  className="mt-6 rounded-md bg-cyan-400 hover:bg-cyan-300 text-slate-950 px-6 py-3 text-sm font-bold transition"
                 >
                   Close
                 </button>
@@ -259,7 +259,7 @@ export default function PartnerApplyForm({
 }
 
 const inputCls =
-  "w-full rounded-md bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-teal-300/60 focus:ring-2 focus:ring-teal-300/20 outline-none transition";
+  "w-full rounded-md bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20 outline-none transition";
 
 function Field({
   label,

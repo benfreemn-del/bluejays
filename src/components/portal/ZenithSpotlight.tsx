@@ -71,16 +71,16 @@ export default function ZenithSpotlight() {
     <>
     <section className="grid lg:grid-cols-[0.55fr_0.45fr] gap-3">
       {/* DRILL OF THE WEEK */}
-      <div className="rounded-2xl border border-teal-500/25 bg-gradient-to-br from-teal-950/30 via-slate-900/60 to-slate-900/40 p-4">
+      <div className="rounded-2xl border border-cyan-500/25 bg-gradient-to-br from-cyan-950/30 via-slate-900/60 to-slate-900/40 p-4">
         <div className="flex items-baseline justify-between mb-3">
-          <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-teal-300">
+          <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-cyan-300">
             🎯 Drill of the Week
           </p>
           <Link
             href="/clients/zenith-sports/training-guide"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] uppercase tracking-wider font-bold text-teal-300 hover:text-teal-200"
+            className="text-[11px] uppercase tracking-wider font-bold text-cyan-300 hover:text-cyan-200"
           >
             Full library →
           </Link>
@@ -103,7 +103,7 @@ export default function ZenithSpotlight() {
               <p className="text-sm font-bold text-white truncate">
                 {featuredDrill.name}
               </p>
-              <span className="text-[10px] uppercase tracking-wider text-teal-300/80 font-bold">
+              <span className="text-[10px] uppercase tracking-wider text-cyan-300/80 font-bold">
                 {featuredDrill.tier}
               </span>
             </div>
@@ -154,7 +154,7 @@ export default function ZenithSpotlight() {
                 <p className="text-[11px] text-slate-400 leading-tight truncate">
                   {c.city}, {c.state} · {c.format} · {c.ageRange}
                   {c.ballIncluded && (
-                    <span className="ml-1.5 text-[10px] text-teal-300 font-bold">
+                    <span className="ml-1.5 text-[10px] text-cyan-300 font-bold">
                       · ⚽ ball included
                     </span>
                   )}
@@ -194,7 +194,7 @@ export default function ZenithSpotlight() {
           <button
             type="button"
             onClick={() => setInviteOpen(true)}
-            className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md border border-teal-500/30 bg-teal-500/10 hover:bg-teal-500/20 text-teal-200 transition-colors"
+            className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-200 transition-colors"
           >
             🤝 Invite a coach
           </button>
@@ -256,10 +256,10 @@ function InviteCoachModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative my-6 mx-4 w-full max-w-md rounded-2xl border border-teal-500/25 bg-slate-900 shadow-2xl p-5"
+        className="relative my-6 mx-4 w-full max-w-md rounded-2xl border border-cyan-500/25 bg-slate-900 shadow-2xl p-5"
       >
         <div className="flex items-baseline justify-between mb-1">
-          <h3 className="text-lg font-bold text-teal-200">🤝 Invite a coach</h3>
+          <h3 className="text-lg font-bold text-cyan-200">🤝 Invite a coach</h3>
           <button
             type="button"
             onClick={onClose}
@@ -288,7 +288,7 @@ function InviteCoachModal({ onClose }: { onClose: () => void }) {
           }}
           className={`block w-full text-center text-sm font-bold uppercase tracking-wider px-4 py-3 rounded-md mt-4 transition-colors ${
             ready
-              ? "bg-teal-500 hover:bg-teal-400 text-teal-950"
+              ? "bg-cyan-500 hover:bg-cyan-400 text-cyan-950"
               : "bg-slate-800 text-slate-500 cursor-not-allowed"
           }`}
         >

@@ -10,7 +10,7 @@ export default function PrintButton() {
     <button
       onClick={() => window.print()}
       type="button"
-      className="bg-[#2DE0C2] text-[#0a1832] text-xs font-extrabold tracking-wider uppercase px-4 py-2 rounded hover:bg-white"
+      className="bg-[#22D3EE] text-[#0a1832] text-xs font-extrabold tracking-wider uppercase px-4 py-2 rounded hover:bg-white"
     >
       Save as PDF / Print
     </button>

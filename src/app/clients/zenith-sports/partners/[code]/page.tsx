@@ -69,11 +69,11 @@ export default async function ZenithPartnerDashboardPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-teal-500/10">
+      <header className="border-b border-cyan-500/10">
         <div className="mx-auto max-w-4xl px-6 py-5 flex items-center justify-between">
           <Link
             href="/clients/zenith-sports/partners"
-            className="text-sm text-teal-300/80 hover:text-teal-200 transition-colors"
+            className="text-sm text-cyan-300/80 hover:text-cyan-200 transition-colors"
           >
             ← Zenith Partner Program
           </Link>
@@ -118,7 +118,7 @@ export default async function ZenithPartnerDashboardPage({
       )}
 
       {/* Stats */}
-      <section className="border-b border-teal-500/10">
+      <section className="border-b border-cyan-500/10">
         <div className="mx-auto max-w-4xl px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <Stat label="Referrals" value={closedCount.toString()} />
@@ -140,9 +140,9 @@ export default async function ZenithPartnerDashboardPage({
               {Object.entries(byKind).map(([k, v]) => (
                 <div
                   key={k}
-                  className="rounded-xl border border-teal-500/15 bg-teal-950/20 p-4"
+                  className="rounded-xl border border-cyan-500/15 bg-cyan-950/20 p-4"
                 >
-                  <p className="text-xs uppercase tracking-wider text-teal-300/80 font-semibold mb-1">
+                  <p className="text-xs uppercase tracking-wider text-cyan-300/80 font-semibold mb-1">
                     {kindLabel(k)}
                   </p>
                   <p className="text-xl font-bold text-white tabular-nums">
@@ -154,11 +154,11 @@ export default async function ZenithPartnerDashboardPage({
           )}
 
           {/* Link block */}
-          <div className="rounded-2xl border border-teal-500/30 bg-teal-500/5 p-6">
-            <p className="text-xs uppercase tracking-wider text-teal-300 font-semibold mb-2">
+          <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/5 p-6">
+            <p className="text-xs uppercase tracking-wider text-cyan-300 font-semibold mb-2">
               Your partner link
             </p>
-            <p className="font-mono text-teal-200 text-sm break-all mb-3">
+            <p className="font-mono text-cyan-200 text-sm break-all mb-3">
               {link}
             </p>
             <p className="text-xs text-slate-400">
@@ -173,15 +173,15 @@ export default async function ZenithPartnerDashboardPage({
       </section>
 
       {/* Referrals list */}
-      <section className="border-b border-teal-500/10">
+      <section className="border-b border-cyan-500/10">
         <div className="mx-auto max-w-4xl px-6 py-10">
           <h2 className="text-xl font-bold mb-4">Your referrals</h2>
           {referrals.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-teal-500/15 bg-slate-900/30 p-8 text-center text-slate-400">
+            <div className="rounded-xl border border-dashed border-cyan-500/15 bg-slate-900/30 p-8 text-center text-slate-400">
               No referrals yet. Share your link and check back.
             </div>
           ) : (
-            <div className="rounded-xl border border-teal-500/15 bg-slate-900/30 overflow-hidden">
+            <div className="rounded-xl border border-cyan-500/15 bg-slate-900/30 overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-slate-900/60 text-xs uppercase tracking-wider text-slate-400">
                   <tr>
@@ -192,7 +192,7 @@ export default async function ZenithPartnerDashboardPage({
                     <th className="text-left px-4 py-3">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-teal-500/10">
+                <tbody className="divide-y divide-cyan-500/10">
                   {referrals.map((r) => (
                     <tr key={r.id}>
                       <td className="px-4 py-3 text-white">
@@ -224,7 +224,7 @@ export default async function ZenithPartnerDashboardPage({
           Questions? Email{" "}
           <a
             href="mailto:partners@zenithsports.org"
-            className="text-teal-400 hover:underline"
+            className="text-cyan-400 hover:underline"
           >
             partners@zenithsports.org
           </a>
@@ -265,7 +265,7 @@ function Stat({
       className={`rounded-xl border p-4 ${
         highlight
           ? "border-emerald-500/30 bg-emerald-500/5"
-          : "border-teal-500/15 bg-slate-900/40"
+          : "border-cyan-500/15 bg-slate-900/40"
       }`}
     >
       <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">
