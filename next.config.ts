@@ -100,6 +100,22 @@ const nextConfig: NextConfig = {
           source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|radon-testing-bremerton|radon-testing-port-angeles|radon-testing-port-townsend|radon-testing-poulsbo|radon-testing-sequim|radon-testing-silverdale|septic-inspection-clallam-county|septic-inspection-port-angeles|septic-inspection-port-townsend|septic-inspection-sequim|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
           destination: '/sites/olympic-inspections/:slug.html',
         },
+        // Legal pages — Privacy Policy + Terms of Service / EULA. Required
+        // public, no-login pages for the OIT QuickBooks Online (Intuit)
+        // integration. Clean URLs (/privacy, /terms) map to dedicated
+        // .html files under /public/sites/olympic-inspections/. Kept as a
+        // SEPARATE block from the script-generated SEO alternation above so
+        // re-running generate-oit-seo-pages.py never clobbers them.
+        {
+          has: [{ type: 'host', value: 'olympicinspect.com' }],
+          source: '/:slug(privacy|terms)',
+          destination: '/sites/olympic-inspections/:slug.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+          source: '/:slug(privacy|terms)',
+          destination: '/sites/olympic-inspections/:slug.html',
+        },
         // SEO discovery files — sitemap, robots, llms.txt, llms-full.txt.
         // These MUST live at the domain root for crawlers to find them.
         // Same regex pattern keeps the rewrite scope tight.
