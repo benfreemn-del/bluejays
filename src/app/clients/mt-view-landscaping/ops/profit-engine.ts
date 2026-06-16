@@ -90,6 +90,17 @@ export type ProfitAndLoss = {
   profitPerCrewHour: number;
 };
 
+export type CrewRouteLine = {
+  routeId: string;
+  day: string;
+  stops: number;
+  hours: number;
+  revenue: number;
+  cost: number;
+  netProfit: number;
+  netMarginPct: number;
+};
+
 export type CrewProfitability = {
   crew: Crew;
   members: Employee[];
@@ -102,6 +113,9 @@ export type CrewProfitability = {
   weeklyHours: number;
   netMarginPct: number;
   profitPerHour: number;
+  /** What this crew actually ran — one line per route day. Empty for
+   *  construction crews (project-based, no recurring routes yet). */
+  routeBreakdown: CrewRouteLine[];
 };
 
 export type EmployeeCost = {
@@ -315,12 +329,23 @@ export function createEngine(data: OpsDataset) {
 
       let weeklyRevenue = 0, weeklyLaborCost = 0, weeklyDriveCost = 0,
         weeklyNetProfit = 0, weeklyHours = 0;
+      const routeBreakdown: CrewRouteLine[] = [];
       for (const re of crewRoutes) {
         weeklyRevenue += re.revenue;
         weeklyLaborCost += re.laborCost;
         weeklyDriveCost += re.driveCost;
         weeklyNetProfit += re.netProfit;
         weeklyHours += re.totalHours;
+        routeBreakdown.push({
+          routeId: re.route.id,
+          day: re.route.day,
+          stops: re.stops.length,
+          hours: re.totalHours,
+          revenue: re.revenue,
+          cost: re.revenue - re.netProfit,
+          netProfit: re.netProfit,
+          netMarginPct: re.netMarginPct,
+        });
       }
 
       return {
@@ -330,6 +355,7 @@ export function createEngine(data: OpsDataset) {
         weeklyRevenue, weeklyLaborCost, weeklyDriveCost, weeklyNetProfit, weeklyHours,
         netMarginPct: weeklyRevenue > 0 ? (weeklyNetProfit / weeklyRevenue) * 100 : 0,
         profitPerHour: weeklyHours > 0 ? weeklyNetProfit / weeklyHours : 0,
+        routeBreakdown,
       };
     });
   }

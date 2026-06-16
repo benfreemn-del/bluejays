@@ -121,9 +121,20 @@ export function vehicleCostPerMile(v: Vehicle): number {
 
 /* ═════════════════════════ CREWS ═════════════════════════ */
 
+/** Which side of the business a crew works:
+ *  - maintenance: runs recurring routes (route-based profit)
+ *  - construction: runs projects/jobs (job-based profit, modeled later) */
+export type CrewSide = "maintenance" | "construction";
+
+export const SIDE_LABEL: Record<CrewSide, string> = {
+  maintenance: "Maintenance",
+  construction: "Construction",
+};
+
 export type Crew = {
   id: string;
   name: string;
+  side: CrewSide;
   leadId: string;
   memberIds: string[];
   vehicleId: string;
@@ -134,6 +145,7 @@ export const CREWS: Crew[] = [
   {
     id: "c_maint",
     name: "Bonnie's Maintenance Crew",
+    side: "maintenance",
     leadId: "e_marcus",
     memberIds: ["e_marcus", "e_diego"],
     vehicleId: "v_truck1",
@@ -142,6 +154,7 @@ export const CREWS: Crew[] = [
   {
     id: "c_install",
     name: "Tim's Install + Hardscape Crew",
+    side: "construction",
     leadId: "e_jose",
     memberIds: ["e_jose", "e_sam", "e_tyler", "e_tim"],
     vehicleId: "v_truck2",

@@ -77,6 +77,7 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
   },
   crews: {
     name: { col: "name", type: "string" },
+    side: { col: "side", type: "string" },
     leadId: { col: "lead_id", type: "string" },
     vehicleId: { col: "vehicle_id", type: "string" },
     color: { col: "color", type: "string" },

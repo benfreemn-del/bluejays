@@ -16,8 +16,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
+  SIDE_LABEL,
   TIER_LABEL,
   type Crew,
+  type CrewSide,
   type Employee,
   type OpsAssumptions,
   type OpsDataset,
@@ -29,6 +31,7 @@ import {
   usd,
   pct,
   hrs,
+  type CrewProfitability,
   type OpsEngine,
   type ProfitAndLoss,
   type RouteEconomics,
@@ -452,10 +455,11 @@ function TierPill({ tier }: { tier: keyof typeof TIER_LABEL }) {
 function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
   const assumptions = dataset.assumptions;
   const router = useRouter();
-  const crews = useMemo(() => E.crewProfitability().filter((c) => c.weeklyHours > 0), [E]);
+  const crews = useMemo(() => E.crewProfitability(), [E]);
   const emps = useMemo(() => E.employeeCosts(), [E]);
   const [editing, setEditing] = useState<Employee | null | "new">(null);
   const closeAndRefresh = () => { setEditing(null); router.refresh(); };
+  const sides: CrewSide[] = ["maintenance", "construction"];
 
   return (
     <div style={{ display: "grid", gap: 28 }}>
@@ -478,27 +482,21 @@ function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
         <AddBtn onClick={() => setEditing("new")}>+ Add employee</AddBtn>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px,1fr))", gap: 16 }}>
-        {crews.map((c) => (
-          <div key={c.crew.id} style={{ background: C.bone, border: "1px solid rgba(168,162,148,0.35)", padding: "20px 22px", borderTop: `3px solid ${c.crew.color}` }}>
-            <p style={{ fontFamily: FONT_DISP, fontSize: 20, fontWeight: 500, color: C.ink, margin: 0, letterSpacing: "-0.01em" }}>{c.crew.name}</p>
-            <p style={{ fontSize: 12, color: C.stone, margin: "3px 0 16px" }}>{c.members.length} crew · {usd(c.burdenedWage, { cents: true })}/hr burdened</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <CrewStat label="Weekly revenue" value={usd(c.weeklyRevenue)} />
-              <CrewStat label="Weekly net" value={usd(c.weeklyNetProfit)} color={moneyColor(c.weeklyNetProfit)} />
-              <CrewStat label="Net margin" value={pct(c.netMarginPct)} color={marginTone(c.netMarginPct).color} />
-              <CrewStat label="Profit / hr" value={usd(c.profitPerHour, { cents: true })} />
+      {sides.map((side) => {
+        const sideCrews = crews.filter((c) => c.crew.side === side);
+        if (sideCrews.length === 0) return null;
+        return (
+          <div key={side}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 12 }}>
+              <h3 style={{ fontFamily: FONT_DISP, fontSize: 22, fontWeight: 500, color: C.ink, margin: 0 }}>{SIDE_LABEL[side]}</h3>
+              <span style={{ fontSize: 12, color: C.stone }}>{side === "maintenance" ? "runs the weekly routes" : "runs build projects"}</span>
             </div>
-            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {c.members.map((m) => (
-                <span key={m.id} style={{ fontSize: 11, background: C.sage, color: C.ink, padding: "4px 9px", borderRadius: 3 }}>
-                  {m.name.split(" ")[0]} · {usd(m.hourlyRate)}/hr
-                </span>
-              ))}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px,1fr))", gap: 16 }}>
+              {sideCrews.map((c) => <CrewCard key={c.crew.id} c={c} />)}
             </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
 
       <Card title="Employee roster · pay + loaded cost">
         <div style={{ overflowX: "auto" }}>
@@ -518,7 +516,7 @@ function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
                   <td style={{ color: C.stone }}>+{(e.burdenPct * 100).toFixed(0)}%</td>
                   <td style={{ fontWeight: 500 }}>{usd(e.burdenedHourly, { cents: true })}</td>
                   <td style={{ color: e.weeklyHours > 0 ? C.ink : C.stone }}>{e.weeklyHours > 0 ? hrs(e.weeklyHours) : "—"}</td>
-                  <td style={{ fontWeight: 600, color: e.weeklyLaborCost > 0 ? C.warn : C.stone }}>{e.weeklyLaborCost > 0 ? usd(e.weeklyLaborCost) : (e.employee.billable ? "install side" : "overhead")}</td>
+                  <td style={{ fontWeight: 600, color: e.weeklyLaborCost > 0 ? C.warn : C.stone }}>{e.weeklyLaborCost > 0 ? usd(e.weeklyLaborCost) : (e.employee.billable ? "build crew" : "office")}</td>
                   <td><EditLink onClick={() => setEditing(e.employee)} /></td>
                 </tr>
               ))}
@@ -538,6 +536,69 @@ function CrewStat({ label, value, color }: { label: string; value: string; color
     <div>
       <p style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.stone, margin: 0 }}>{label}</p>
       <p style={{ fontFamily: FONT_DISP, fontSize: 22, fontWeight: 500, color: color ?? C.ink, margin: "2px 0 0", letterSpacing: "-0.01em" }}>{value}</p>
+    </div>
+  );
+}
+
+function CrewCard({ c }: { c: CrewProfitability }) {
+  const [open, setOpen] = useState(false);
+  const hasRoutes = c.routeBreakdown.length > 0;
+  return (
+    <div style={{ background: C.bone, border: "1px solid rgba(168,162,148,0.35)", padding: "20px 22px", borderTop: `3px solid ${c.crew.color}` }}>
+      <p style={{ fontFamily: FONT_DISP, fontSize: 20, fontWeight: 500, color: C.ink, margin: 0, letterSpacing: "-0.01em" }}>{c.crew.name}</p>
+      <p style={{ fontSize: 12, color: C.stone, margin: "3px 0 16px" }}>{c.members.length} people · {usd(c.burdenedWage, { cents: true })}/hr loaded</p>
+
+      {hasRoutes ? (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <CrewStat label="Money in / week" value={usd(c.weeklyRevenue)} />
+            <CrewStat label="Profit / week" value={usd(c.weeklyNetProfit)} color={moneyColor(c.weeklyNetProfit)} />
+            <CrewStat label="Margin" value={pct(c.netMarginPct)} color={marginTone(c.netMarginPct).color} />
+            <CrewStat label="Profit / hr" value={usd(c.profitPerHour, { cents: true })} />
+          </div>
+          <button type="button" onClick={() => setOpen(!open)}
+            style={{ marginTop: 14, background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 13, fontWeight: 600, padding: 0, textDecoration: "underline", textUnderlineOffset: 2 }}>
+            {open ? "Hide what they did ▲" : "See what they did this week ▾"}
+          </button>
+          {open && (
+            <div style={{ marginTop: 12, overflowX: "auto" }}>
+              <table className="ops-tbl">
+                <thead>
+                  <tr><th>Day</th><th>Stops</th><th>Hours</th><th>Money in</th><th>Cost</th><th>Profit</th><th>Margin</th></tr>
+                </thead>
+                <tbody>
+                  {c.routeBreakdown.map((r) => (
+                    <tr key={r.routeId}>
+                      <td style={{ fontWeight: 500 }}>{r.day}</td>
+                      <td style={{ color: C.stone }}>{r.stops}</td>
+                      <td style={{ color: C.stone }}>{hrs(r.hours)}</td>
+                      <td>{usd(r.revenue)}</td>
+                      <td style={{ color: C.warn }}>−{usd(r.cost)}</td>
+                      <td style={{ fontWeight: 700, color: moneyColor(r.netProfit) }}>{r.netProfit < 0 ? "−" : ""}{usd(Math.abs(r.netProfit))}</td>
+                      <td><span style={{ background: marginTone(r.netMarginPct).bg, color: marginTone(r.netMarginPct).color, fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 3 }}>{pct(r.netMarginPct)}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p style={{ fontSize: 11, color: C.stone, margin: "10px 0 0", lineHeight: 1.5 }}>
+                This is how you spot a crew to tweak — a low-margin day usually means too much drive time for the work, or prices set too low.
+              </p>
+            </div>
+          )}
+        </>
+      ) : (
+        <div style={{ background: C.sage, padding: "14px 16px", fontSize: 13, color: C.ink, lineHeight: 1.55 }}>
+          Build crew — paid by the <strong>project</strong>, not a weekly route. Job profit will show here once jobs are added. Their pay still counts in payroll below.
+        </div>
+      )}
+
+      <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {c.members.map((m) => (
+          <span key={m.id} style={{ fontSize: 11, background: C.sage, color: C.ink, padding: "4px 9px", borderRadius: 3 }}>
+            {m.name.split(" ")[0]} · {usd(m.hourlyRate)}/hr
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -765,10 +826,10 @@ function EmployeeForm({ employee, crews, onClose, onDone }: { employee: Employee
           </Fld>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <Fld label="Crew">
+          <Fld label="Crew" hint="Switch sides by moving them to a different crew">
             <select style={inputStyle} value={f.crewId} onChange={(e) => set("crewId", e.target.value)}>
-              <option value="">— None (overhead) —</option>
-              {crews.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              <option value="">— None (office / overhead) —</option>
+              {crews.map((c) => <option key={c.id} value={c.id}>{c.name} ({SIDE_LABEL[c.side]})</option>)}
             </select>
           </Fld>
           <Fld label="Tenure (yrs)"><input style={inputStyle} type="number" step="1" value={f.tenureYears} onChange={(e) => set("tenureYears", e.target.value)} /></Fld>

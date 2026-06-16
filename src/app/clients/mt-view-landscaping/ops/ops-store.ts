@@ -85,6 +85,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
     const crews: Crew[] = cRows.map((r) => ({
       id: String(r.id),
       name: String(r.name ?? ""),
+      side: r.side === "construction" ? "construction" : "maintenance",
       leadId: String(r.lead_id ?? ""),
       memberIds: employees.filter((e) => e.crewId === String(r.id)).map((e) => e.id),
       vehicleId: String(r.vehicle_id ?? ""),
