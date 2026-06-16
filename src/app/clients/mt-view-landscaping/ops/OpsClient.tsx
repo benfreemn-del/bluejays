@@ -13,11 +13,15 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   TIER_LABEL,
+  type Crew,
+  type Employee,
   type OpsAssumptions,
   type OpsDataset,
+  type Property,
   type ShopInfo,
 } from "./mock-ops-data";
 import {
@@ -114,8 +118,8 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
         <div style={{ marginTop: "2rem" }}>
           {tab === "pnl" && <PnlTab E={E} assumptions={dataset.assumptions} />}
           {tab === "routes" && <RoutesTab E={E} shop={dataset.shop} />}
-          {tab === "crew" && <CrewTab E={E} assumptions={dataset.assumptions} />}
-          {tab === "customers" && <CustomersTab E={E} />}
+          {tab === "crew" && <CrewTab E={E} dataset={dataset} />}
+          {tab === "customers" && <CustomersTab E={E} dataset={dataset} />}
           {tab === "map" && <MapTab E={E} shop={dataset.shop} />}
         </div>
       </div>
@@ -445,18 +449,33 @@ function TierPill({ tier }: { tier: keyof typeof TIER_LABEL }) {
 }
 
 /* ════════════════════ CREW TAB ════════════════════ */
-function CrewTab({ E, assumptions }: { E: OpsEngine; assumptions: OpsAssumptions }) {
+function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
+  const assumptions = dataset.assumptions;
+  const router = useRouter();
   const crews = useMemo(() => E.crewProfitability().filter((c) => c.weeklyHours > 0), [E]);
   const emps = useMemo(() => E.employeeCosts(), [E]);
+  const [editing, setEditing] = useState<Employee | null | "new">(null);
+  const closeAndRefresh = () => { setEditing(null); router.refresh(); };
 
   return (
     <div style={{ display: "grid", gap: 28 }}>
-      <div>
-        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Crews &amp; Pay</p>
-        <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>What each crew costs — and earns.</h2>
-        <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
-          Burdened wages, weekly hours, and the profit each crew throws off after their loaded labor cost.
-        </p>
+      {editing !== null && (
+        <EmployeeForm
+          employee={editing === "new" ? null : editing}
+          crews={dataset.crews}
+          onClose={() => setEditing(null)}
+          onDone={closeAndRefresh}
+        />
+      )}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
+        <div>
+          <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Crews &amp; Pay</p>
+          <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>What each crew costs — and earns.</h2>
+          <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
+            Burdened wages, weekly hours, and the profit each crew throws off after their loaded labor cost.
+          </p>
+        </div>
+        <AddBtn onClick={() => setEditing("new")}>+ Add employee</AddBtn>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px,1fr))", gap: 16 }}>
@@ -486,7 +505,7 @@ function CrewTab({ E, assumptions }: { E: OpsEngine; assumptions: OpsAssumptions
           <table className="ops-tbl">
             <thead>
               <tr>
-                <th>Employee</th><th>Role</th><th>Pay</th><th>Base $/hr</th><th>Burden</th><th>Loaded $/hr</th><th>Wk hrs</th><th>Wk labor cost</th>
+                <th>Employee</th><th>Role</th><th>Pay</th><th>Base $/hr</th><th>Burden</th><th>Loaded $/hr</th><th>Wk hrs</th><th>Wk labor cost</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -500,6 +519,7 @@ function CrewTab({ E, assumptions }: { E: OpsEngine; assumptions: OpsAssumptions
                   <td style={{ fontWeight: 500 }}>{usd(e.burdenedHourly, { cents: true })}</td>
                   <td style={{ color: e.weeklyHours > 0 ? C.ink : C.stone }}>{e.weeklyHours > 0 ? hrs(e.weeklyHours) : "—"}</td>
                   <td style={{ fontWeight: 600, color: e.weeklyLaborCost > 0 ? C.warn : C.stone }}>{e.weeklyLaborCost > 0 ? usd(e.weeklyLaborCost) : (e.employee.billable ? "install side" : "overhead")}</td>
+                  <td><EditLink onClick={() => setEditing(e.employee)} /></td>
                 </tr>
               ))}
             </tbody>
@@ -523,9 +543,13 @@ function CrewStat({ label, value, color }: { label: string; value: string; color
 }
 
 /* ════════════════════ CUSTOMERS TAB ════════════════════ */
-function CustomersTab({ E }: { E: OpsEngine }) {
+function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
+  const router = useRouter();
   const all = useMemo(() => E.customerProfitability(), [E]);
   const [sort, setSort] = useState<"margin" | "revenue">("margin");
+  const [editing, setEditing] = useState<Property | null | "new">(null);
+  const closeAndRefresh = () => { setEditing(null); router.refresh(); };
+  const propsById = useMemo(() => Object.fromEntries(dataset.properties.map((p) => [p.id, p])), [dataset.properties]);
   const rows = useMemo(() => {
     const r = [...all];
     r.sort((a, b) => sort === "margin" ? a.netMarginPct - b.netMarginPct : b.monthlyRevenue - a.monthlyRevenue);
@@ -538,6 +562,13 @@ function CustomersTab({ E }: { E: OpsEngine }) {
 
   return (
     <div style={{ display: "grid", gap: 24 }}>
+      {editing !== null && (
+        <PropertyForm
+          property={editing === "new" ? null : editing}
+          onClose={() => setEditing(null)}
+          onDone={closeAndRefresh}
+        />
+      )}
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
         <div>
           <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Maintenance Customers</p>
@@ -546,7 +577,10 @@ function CustomersTab({ E }: { E: OpsEngine }) {
             {all.length} recurring properties · {usd(totalMrr)}/mo revenue · {usd(totalProfit)}/mo net · <span style={{ color: losers > 0 ? C.warn : C.moss, fontWeight: 600 }}>{losers} below 15% margin</span>
           </p>
         </div>
-        <Toggle value={sort} onChange={setSort} options={[{ id: "margin", label: "By margin" }, { id: "revenue", label: "By revenue" }]} />
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <Toggle value={sort} onChange={setSort} options={[{ id: "margin", label: "By margin" }, { id: "revenue", label: "By revenue" }]} />
+          <AddBtn onClick={() => setEditing("new")}>+ Add customer</AddBtn>
+        </div>
       </div>
 
       <Card>
@@ -554,7 +588,7 @@ function CustomersTab({ E }: { E: OpsEngine }) {
           <table className="ops-tbl">
             <thead>
               <tr>
-                <th>Customer</th><th>City</th><th>Tier</th><th>Crew</th><th>$/visit</th><th>MRR</th><th>Net/visit</th><th>Net/mo</th><th>Margin</th>
+                <th>Customer</th><th>City</th><th>Tier</th><th>Crew</th><th>$/visit</th><th>MRR</th><th>Net/visit</th><th>Net/mo</th><th>Margin</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -571,6 +605,7 @@ function CustomersTab({ E }: { E: OpsEngine }) {
                     <td style={{ color: moneyColor(c.perVisit?.netProfit ?? 0) }}>{c.perVisit ? (c.perVisit.netProfit < 0 ? "−" : "") + usd(Math.abs(c.perVisit.netProfit)) : "—"}</td>
                     <td style={{ fontWeight: 700, color: moneyColor(c.monthlyNetProfit) }}>{c.monthlyNetProfit < 0 ? "−" : ""}{usd(Math.abs(c.monthlyNetProfit))}</td>
                     <td><span style={{ background: tone.bg, color: tone.color, fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 3 }}>{pct(c.netMarginPct)}</span></td>
+                    <td><EditLink onClick={() => setEditing(propsById[c.property.id] ?? c.property)} /></td>
                   </tr>
                 );
               })}
@@ -616,6 +651,230 @@ function Legend({ color, label, square }: { color: string; label: string; square
       <span style={{ width: 12, height: 12, borderRadius: square ? 2 : "50%", background: color, display: "inline-block" }} />
       {label}
     </span>
+  );
+}
+
+/* ════════════════════ EDIT FORMS ════════════════════ */
+async function opsMutate(entity: string, op: "upsert" | "delete", row: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch("/api/clients/mt-view-landscaping/ops/mutate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entity, op, row }),
+    });
+    const j = await res.json();
+    return { ok: !!j.ok, error: j.error };
+  } catch {
+    return { ok: false, error: "Network error." };
+  }
+}
+
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(28,31,26,0.45)", zIndex: 100, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "5vh 1rem", overflowY: "auto" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: C.paper, width: "100%", maxWidth: 560, border: `1px solid rgba(168,162,148,0.5)`, boxShadow: "0 20px 60px rgba(28,31,26,0.3)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", borderBottom: `1px solid rgba(168,162,148,0.3)` }}>
+          <h3 style={{ fontFamily: FONT_DISP, fontSize: 22, fontWeight: 500, color: C.ink, margin: 0 }}>{title}</h3>
+          <button type="button" onClick={onClose} style={{ background: "transparent", border: 0, fontSize: 22, color: C.stone, cursor: "pointer", lineHeight: 1 }}>✕</button>
+        </div>
+        <div style={{ padding: "22px" }}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+const labelStyle: React.CSSProperties = { display: "block", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.stone, fontWeight: 600, marginBottom: 6 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 12px", border: "1px solid rgba(168,162,148,0.5)", background: C.bone, fontSize: 14, fontFamily: FONT_BODY, color: C.ink, outline: "none" };
+
+function Fld({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
+  return (
+    <div>
+      <label style={labelStyle}>{label}</label>
+      {children}
+      {hint && <p style={{ fontSize: 11, color: C.stone, margin: "4px 0 0" }}>{hint}</p>}
+    </div>
+  );
+}
+
+function FormActions({ onCancel, onDelete, saving, deleting, isEdit }: { onCancel: () => void; onDelete?: () => void; saving: boolean; deleting?: boolean; isEdit: boolean }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 22 }}>
+      <button type="submit" disabled={saving} style={{ background: C.moss, color: C.paper, border: 0, padding: "12px 24px", fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1, fontFamily: FONT_BODY }}>
+        {saving ? "Saving…" : "Save"}
+      </button>
+      <button type="button" onClick={onCancel} style={{ background: "transparent", color: C.ink, border: `1px solid rgba(168,162,148,0.5)`, padding: "12px 20px", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: FONT_BODY }}>
+        Cancel
+      </button>
+      {isEdit && onDelete && (
+        <button type="button" onClick={onDelete} disabled={deleting} style={{ marginLeft: "auto", background: "transparent", color: C.loss, border: `1px solid ${C.loss}40`, padding: "12px 18px", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: FONT_BODY }}>
+          {deleting ? "Removing…" : "Remove"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function EmployeeForm({ employee, crews, onClose, onDone }: { employee: Employee | null; crews: Crew[]; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({
+    name: employee?.name ?? "",
+    role: employee?.role ?? "",
+    payType: employee?.payType ?? "hourly",
+    hourlyRate: String(employee?.hourlyRate ?? ""),
+    crewId: employee?.crewId ?? "",
+    tenureYears: String(employee?.tenureYears ?? ""),
+    phone: employee?.phone ?? "",
+    billable: employee?.billable ?? true,
+  });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [err, setErr] = useState("");
+  const set = (k: string, v: unknown) => setF((p) => ({ ...p, [k]: v }));
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!f.name.trim()) { setErr("Name is required."); return; }
+    setSaving(true); setErr("");
+    const row: Record<string, unknown> = { ...f, hourlyRate: f.hourlyRate || 0, tenureYears: f.tenureYears || 0 };
+    if (employee) row.id = employee.id;
+    const res = await opsMutate("employees", "upsert", row);
+    setSaving(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Save failed.");
+  }
+  async function remove() {
+    if (!employee) return;
+    setDeleting(true);
+    const res = await opsMutate("employees", "delete", { id: employee.id });
+    setDeleting(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Remove failed.");
+  }
+
+  return (
+    <Modal title={employee ? "Edit employee" : "Add employee"} onClose={onClose}>
+      <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
+        <Fld label="Name"><input style={inputStyle} value={f.name} onChange={(e) => set("name", e.target.value)} autoFocus /></Fld>
+        <Fld label="Role"><input style={inputStyle} value={f.role} onChange={(e) => set("role", e.target.value)} placeholder="Crew · Maintenance" /></Fld>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Pay type">
+            <select style={inputStyle} value={f.payType} onChange={(e) => set("payType", e.target.value)}>
+              <option value="hourly">Hourly</option>
+              <option value="salary">Salary</option>
+            </select>
+          </Fld>
+          <Fld label="Rate ($/hr)" hint="Salaried: hourly equivalent">
+            <input style={inputStyle} type="number" step="0.01" value={f.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} />
+          </Fld>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Crew">
+            <select style={inputStyle} value={f.crewId} onChange={(e) => set("crewId", e.target.value)}>
+              <option value="">— None (overhead) —</option>
+              {crews.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </Fld>
+          <Fld label="Tenure (yrs)"><input style={inputStyle} type="number" step="1" value={f.tenureYears} onChange={(e) => set("tenureYears", e.target.value)} /></Fld>
+        </div>
+        <Fld label="Phone"><input style={inputStyle} value={f.phone} onChange={(e) => set("phone", e.target.value)} /></Fld>
+        <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: C.ink, cursor: "pointer" }}>
+          <input type="checkbox" checked={f.billable} onChange={(e) => set("billable", e.target.checked)} style={{ accentColor: C.moss, width: 16, height: 16 }} />
+          Billable to routes (uncheck for owners/admin whose time is overhead)
+        </label>
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+        <FormActions onCancel={onClose} onDelete={remove} saving={saving} deleting={deleting} isEdit={!!employee} />
+      </form>
+    </Modal>
+  );
+}
+
+function PropertyForm({ property, onClose, onDone }: { property: Property | null; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({
+    customer: property?.customer ?? "",
+    address: property?.address ?? "",
+    city: property?.city ?? "",
+    tier: property?.tier ?? "full_care",
+    pricePerVisitUsd: String(property?.pricePerVisitUsd ?? ""),
+    materialsPerVisitUsd: String(property?.materialsPerVisitUsd ?? ""),
+    visitsPerMonth: String(property?.visitsPerMonth ?? 4),
+    lat: property?.lat != null ? String(property.lat) : "",
+    lng: property?.lng != null ? String(property.lng) : "",
+    startedAt: property?.startedAt ?? "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [err, setErr] = useState("");
+  const set = (k: string, v: unknown) => setF((p) => ({ ...p, [k]: v }));
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!f.customer.trim()) { setErr("Customer name is required."); return; }
+    setSaving(true); setErr("");
+    const row: Record<string, unknown> = {
+      ...f,
+      pricePerVisitUsd: f.pricePerVisitUsd || 0,
+      materialsPerVisitUsd: f.materialsPerVisitUsd || 0,
+      visitsPerMonth: f.visitsPerMonth || 4,
+      lat: f.lat === "" ? null : f.lat,
+      lng: f.lng === "" ? null : f.lng,
+    };
+    if (property) row.id = property.id;
+    const res = await opsMutate("properties", "upsert", row);
+    setSaving(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Save failed.");
+  }
+  async function remove() {
+    if (!property) return;
+    setDeleting(true);
+    const res = await opsMutate("properties", "delete", { id: property.id });
+    setDeleting(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Remove failed.");
+  }
+
+  return (
+    <Modal title={property ? "Edit customer" : "Add customer"} onClose={onClose}>
+      <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
+        <Fld label="Customer / property name"><input style={inputStyle} value={f.customer} onChange={(e) => set("customer", e.target.value)} autoFocus /></Fld>
+        <Fld label="Address"><input style={inputStyle} value={f.address} onChange={(e) => set("address", e.target.value)} placeholder="8240 168th Ave SE" /></Fld>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
+          <Fld label="City"><input style={inputStyle} value={f.city} onChange={(e) => set("city", e.target.value)} /></Fld>
+          <Fld label="Tier">
+            <select style={inputStyle} value={f.tier} onChange={(e) => set("tier", e.target.value)}>
+              <option value="essentials">Essentials</option>
+              <option value="full_care">Full Care</option>
+              <option value="estate">Estate</option>
+            </select>
+          </Fld>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          <Fld label="$ / visit"><input style={inputStyle} type="number" step="0.01" value={f.pricePerVisitUsd} onChange={(e) => set("pricePerVisitUsd", e.target.value)} /></Fld>
+          <Fld label="Materials / visit"><input style={inputStyle} type="number" step="0.01" value={f.materialsPerVisitUsd} onChange={(e) => set("materialsPerVisitUsd", e.target.value)} /></Fld>
+          <Fld label="Visits / mo"><input style={inputStyle} type="number" step="1" value={f.visitsPerMonth} onChange={(e) => set("visitsPerMonth", e.target.value)} /></Fld>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Lat" hint="for the map"><input style={inputStyle} type="number" step="0.0001" value={f.lat} onChange={(e) => set("lat", e.target.value)} /></Fld>
+          <Fld label="Lng" hint="for the map"><input style={inputStyle} type="number" step="0.0001" value={f.lng} onChange={(e) => set("lng", e.target.value)} /></Fld>
+        </div>
+        <p style={{ fontSize: 12, color: C.stone, margin: 0, lineHeight: 1.5 }}>
+          New customers show revenue immediately; profit/margin appears once they&apos;re added to a route day (route editing — next).
+        </p>
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+        <FormActions onCancel={onClose} onDelete={remove} saving={saving} deleting={deleting} isEdit={!!property} />
+      </form>
+    </Modal>
+  );
+}
+
+function AddBtn({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button type="button" onClick={onClick} style={{ background: C.bark, color: C.paper, border: 0, padding: "10px 18px", fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, cursor: "pointer", fontFamily: FONT_BODY }}>
+      {children}
+    </button>
+  );
+}
+
+function EditLink({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} style={{ background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 12, fontWeight: 600, padding: "2px 6px", textDecoration: "underline", textUnderlineOffset: 2 }}>
+      Edit
+    </button>
   );
 }
 
