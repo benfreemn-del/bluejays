@@ -30,6 +30,7 @@ import {
   Star,
   MapPin,
   EnvelopeSimple,
+  LockKey,
 } from "@phosphor-icons/react";
 import MtViewContactForm from "./contact-form";
 
@@ -58,25 +59,25 @@ const body = "font-[family-name:var(--font-inter)]";
 
 /* ───────── content ───────── */
 const SERVICES = [
-  { icon: PencilSimpleLine, name: "Landscape Design", desc: "We plan your whole yard. You see the drawing before we start." },
-  { icon: Mountains, name: "Hardscapes", desc: "Patios, walkways, and stone work you can enjoy for years." },
-  { icon: Wall, name: "Retaining Walls", desc: "Strong walls that hold back hills — and look good doing it." },
-  { icon: Drop, name: "Water Features", desc: "Ponds and waterfalls that sound nice and fit right in." },
-  { icon: Sun, name: "Irrigation", desc: "Sprinklers that water the right spots at the right time." },
-  { icon: Plant, name: "Sod & Lawns", desc: "Fresh green grass, rolled out and ready to enjoy." },
-  { icon: Leaf, name: "Native Planting", desc: "Plants that grow well here and don't need much fuss." },
-  { icon: Lightbulb, name: "Night Lights", desc: "Soft lights that make your yard pretty after dark." },
-  { icon: Hammer, name: "Yard Care", desc: "We come back and keep your yard looking great all year." },
-  { icon: Star, name: "Custom Projects", desc: "Got something special in mind? We can build it." },
+  { icon: PencilSimpleLine, color: "#2F7D4F", name: "Landscape Design", desc: "We plan your whole yard. You see the drawing before we start." },
+  { icon: Mountains, color: "#B5683C", name: "Hardscapes", desc: "Patios, walkways, and stone work you can enjoy for years." },
+  { icon: Wall, color: "#4F6D7A", name: "Retaining Walls", desc: "Strong walls that hold back hills — and look good doing it." },
+  { icon: Drop, color: "#2D6E9E", name: "Water Features", desc: "Ponds and waterfalls that sound nice and fit right in." },
+  { icon: Sun, color: "#2D6E9E", name: "Irrigation", desc: "Sprinklers that water the right spots at the right time." },
+  { icon: Plant, color: "#2F7D4F", name: "Sod & Lawns", desc: "Fresh green grass, rolled out and ready to enjoy." },
+  { icon: Leaf, color: "#2E8B82", name: "Native Planting", desc: "Plants that grow well here and don't need much fuss." },
+  { icon: Lightbulb, color: "#C7821A", name: "Night Lights", desc: "Soft lights that make your yard pretty after dark." },
+  { icon: Hammer, color: "#2F7D4F", name: "Yard Care", desc: "We come back and keep your yard looking great all year." },
+  { icon: Star, color: "#C7821A", name: "Custom Projects", desc: "Got something special in mind? We can build it." },
 ];
 
 const WORK = [
-  { src: `${P}/proj-kirse.webp`, cap: "Brick patio with a clean stone border" },
   { src: `${P}/proj-stone.webp`, cap: "Block retaining walls and a fresh lawn" },
   { src: `${P}/proj-aqua.webp`, cap: "Front-yard beds with maples and boulders" },
   { src: `${P}/proj-climate.webp`, cap: "A paver path down to the water" },
   { src: `${P}/proj-night.webp`, cap: "Driveway and lights at dusk" },
   { src: `${P}/work-2.webp`, cap: "Stacked stone wall and gravel path" },
+  { src: `${P}/hero.webp`, cap: "Healthy, well-watered lawns" },
 ];
 
 const STEPS = [
@@ -224,7 +225,9 @@ function Services() {
             const Icon = s.icon;
             return (
               <div key={s.name} className={`bg-[#F5F1E8] border border-[#A8A294]/25 rounded-xl p-6 hover:border-[#2F7D4F]/40 transition-colors`}>
-                <Icon size={26} weight="duotone" className={`text-[#2F7D4F]`} />
+                <span className="inline-flex items-center justify-center w-11 h-11 rounded-lg" style={{ backgroundColor: `${s.color}1a`, color: s.color }}>
+                  <Icon size={26} weight="duotone" />
+                </span>
                 <h3 className={`${head} text-[20px] text-[#23271F] mt-3`}>{s.name}</h3>
                 <p className={`${body} text-[15px] leading-[1.55] text-[#5C6152] mt-1.5`}>{s.desc}</p>
               </div>
@@ -253,8 +256,14 @@ function DrawFirst() {
           </p>
         </div>
         <div className="order-1 lg:order-2 grid grid-cols-2 gap-4">
-          <img src={`${P}/work-3.webp`} alt="Tim hand-coloring a landscape design plan" className="w-full aspect-[3/4] object-cover rounded-xl" loading="lazy" />
-          <img src={`${P}/work-1.webp`} alt="A hand-drawn landscape design plan for a home" className="w-full aspect-[3/4] object-cover rounded-xl mt-8" loading="lazy" />
+          <figure>
+            <img src={`${P}/work-1.webp`} alt="One of Tim's hand-drawn landscape plans" className="w-full aspect-[3/4] object-cover rounded-xl border border-[#A8A294]/25" loading="lazy" />
+            <figcaption className={`${body} text-[12px] text-[#5C6152] mt-2`}>The plan, drawn by hand</figcaption>
+          </figure>
+          <figure className="mt-8">
+            <img src={`${P}/proj-kirse.webp`} alt="The finished yard built from the plan" className="w-full aspect-[3/4] object-cover rounded-xl" loading="lazy" />
+            <figcaption className={`${body} text-[12px] text-[#5C6152] mt-2`}>The finished yard</figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -451,6 +460,14 @@ function Footer() {
             <Mountains size={15} weight="fill" className={`text-[#2F7D4F]`} />
             Built by <a href="https://bluejayportfolio.com" className={`underline hover:text-[#F5F1E8]`}>BlueJays</a> — get your free site audit
           </span>
+        </div>
+      </div>
+      {/* Owner/team backend entry — all the way at the very bottom */}
+      <div className="border-t border-[#F5F1E8]/12 bg-[#1b1f17]">
+        <div className="max-w-6xl mx-auto px-5 py-4 flex justify-center">
+          <a href="/clients/mt-view-landscaping/ops" className={`inline-flex items-center gap-2 border border-[#F5F1E8]/25 hover:border-[#2F7D4F] rounded-full px-5 py-2 ${body} text-[13px] font-semibold text-[#F5F1E8]/70 hover:text-[#F5F1E8] transition-colors`}>
+            <LockKey size={15} weight="fill" className="text-[#2F7D4F]" /> Mt View Team Login
+          </a>
         </div>
       </div>
     </footer>
