@@ -60,10 +60,11 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
     const sRows = (sRes.data ?? []) as Record<string, unknown>[];
     const tRows = (tRes.data ?? []) as Record<string, unknown>[];
 
-    // No seed for this slug → fall back to mock so the page still renders.
-    if (!aRow || eRows.length === 0 || pRows.length === 0 || rRows.length === 0) {
-      return MOCK_DATASET;
-    }
+    // Empty slug (e.g. a fresh "real data" space) renders empty so the owner
+    // can fill it in — only fall back to the mock when Supabase itself is down,
+    // which is handled by the isSupabaseConfigured() check above. `a` is the
+    // settings row, defaulting to {} so the field fallbacks below kick in.
+    const a = aRow ?? {};
 
     const employees: Employee[] = eRows.map((r) => ({
       id: String(r.id),
@@ -146,29 +147,29 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       },
     }));
 
-    const overheadLines = Array.isArray(aRow.overhead_lines)
-      ? (aRow.overhead_lines as { label: string; monthlyUsd: number }[])
+    const overheadLines = Array.isArray(a.overhead_lines)
+      ? (a.overhead_lines as { label: string; monthlyUsd: number }[])
       : [];
 
     const assumptions: OpsAssumptions = {
-      laborBurdenPct: num(aRow.labor_burden_pct, 0.31),
+      laborBurdenPct: num(a.labor_burden_pct, 0.31),
       monthlyOverhead: overheadLines,
-      maintenanceOverheadSharePct: num(aRow.maintenance_overhead_share_pct, 0.32),
-      taxSetAsidePct: num(aRow.tax_set_aside_pct, 0.2),
-      overtimeMultiplier: num(aRow.overtime_multiplier, 1.5),
+      maintenanceOverheadSharePct: num(a.maintenance_overhead_share_pct, 0.32),
+      taxSetAsidePct: num(a.tax_set_aside_pct, 0.2),
+      overtimeMultiplier: num(a.overtime_multiplier, 1.5),
     };
 
     const shop: ShopInfo = {
-      name: String(aRow.shop_name ?? MOCK_DATASET.shop.name),
-      address: String(aRow.shop_address ?? MOCK_DATASET.shop.address),
-      city: String(aRow.shop_city ?? MOCK_DATASET.shop.city),
-      lat: num(aRow.shop_lat, MOCK_DATASET.shop.lat),
-      lng: num(aRow.shop_lng, MOCK_DATASET.shop.lng),
+      name: String(a.shop_name ?? MOCK_DATASET.shop.name),
+      address: String(a.shop_address ?? MOCK_DATASET.shop.address),
+      city: String(a.shop_city ?? MOCK_DATASET.shop.city),
+      lat: num(a.shop_lat, MOCK_DATASET.shop.lat),
+      lng: num(a.shop_lng, MOCK_DATASET.shop.lng),
     };
 
     return {
       assumptions,
-      weeksPerMonth: num(aRow.weeks_per_month, 4.33),
+      weeksPerMonth: num(a.weeks_per_month, 4.33),
       shop,
       vehicles,
       crews,

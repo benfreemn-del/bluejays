@@ -20,7 +20,6 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const SLUG = "mt-view-landscaping";
 const ID_RE = /^[a-z0-9_-]{1,48}$/i;
 
 type Entity =
@@ -30,7 +29,8 @@ type Entity =
   | "properties"
   | "routes"
   | "route_stops"
-  | "assumptions";
+  | "assumptions"
+  | "timesheets";
 
 const TABLE: Record<Entity, string> = {
   employees: "ops_employees",
@@ -40,6 +40,7 @@ const TABLE: Record<Entity, string> = {
   routes: "ops_routes",
   route_stops: "ops_route_stops",
   assumptions: "ops_assumptions",
+  timesheets: "ops_timesheets",
 };
 
 const ID_PREFIX: Record<Entity, string> = {
@@ -50,6 +51,7 @@ const ID_PREFIX: Record<Entity, string> = {
   routes: "r",
   route_stops: "s",
   assumptions: "a",
+  timesheets: "t",
 };
 
 type FieldDef = { col: string; type: "string" | "number" | "bool" | "numberOrNull" | "json" | "refOrNull" };
@@ -95,6 +97,8 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
     materialsPerVisitUsd: { col: "materials_per_visit_usd", type: "number" },
     startedAt: { col: "started_at", type: "string" },
     active: { col: "active", type: "bool" },
+    billingStatus: { col: "billing_status", type: "string" },
+    billingNote: { col: "billing_note", type: "string" },
   },
   routes: {
     day: { col: "day", type: "string" },
@@ -119,6 +123,12 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
     weeksPerMonth: { col: "weeks_per_month", type: "number" },
     overtimeMultiplier: { col: "overtime_multiplier", type: "number" },
   },
+  timesheets: {
+    employeeId: { col: "employee_id", type: "string" },
+    weekday: { col: "weekday", type: "string" },
+    hours: { col: "hours", type: "number" },
+    note: { col: "note", type: "string" },
+  },
 };
 
 const REQUIRED: Record<Entity, string[]> = {
@@ -129,6 +139,7 @@ const REQUIRED: Record<Entity, string[]> = {
   routes: ["day"],
   route_stops: ["routeId", "propertyId"],
   assumptions: [],
+  timesheets: ["employeeId", "weekday"],
 };
 
 function coerce(def: FieldDef, v: unknown): unknown {
@@ -164,6 +175,12 @@ export async function POST(req: NextRequest) {
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: false, error: "Database not configured." }, { status: 503 });
   }
+
+  // Write to whichever data space the operator is viewing (example vs real),
+  // read from the same cookie the page uses.
+  const SLUG = req.cookies.get("bj_mtv_ops_mode")?.value === "real"
+    ? "mt-view-landscaping-real"
+    : "mt-view-landscaping";
 
   let body: { entity?: string; op?: string; row?: Record<string, unknown> };
   try {
@@ -224,6 +241,16 @@ export async function POST(req: NextRequest) {
     // one row per client, keyed by client_slug
     record.updated_at = new Date().toISOString();
     result = await sb.from(table).upsert(record, { onConflict: "client_slug" }).select().maybeSingle();
+  } else if (entity === "timesheets") {
+    // one row per (employee, weekday) — upsert on that natural key
+    const eid = String(row.employeeId ?? "");
+    const wd = String(row.weekday ?? "");
+    if (!ID_RE.test(eid) || !wd) {
+      return NextResponse.json({ ok: false, error: "Invalid timesheet cell." }, { status: 400 });
+    }
+    record.id = `t_${eid}_${wd.toLowerCase()}`;
+    record.updated_at = new Date().toISOString();
+    result = await sb.from(table).upsert(record, { onConflict: "client_slug,employee_id,weekday" }).select().maybeSingle();
   } else if (incomingId) {
     if (!ID_RE.test(incomingId)) {
       return NextResponse.json({ ok: false, error: "Invalid id." }, { status: 400 });

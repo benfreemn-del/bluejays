@@ -95,7 +95,12 @@ function marginTone(marginPct: number): { color: string; bg: string; label: stri
   return { color: C.moss, bg: C.mossSoft, label: "Healthy" };
 }
 
-export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
+function switchMode(to: "example" | "real") {
+  document.cookie = `bj_mtv_ops_mode=${to}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+  window.location.reload();
+}
+
+export default function OpsClient({ dataset, mode = "example" }: { dataset: OpsDataset; mode?: "example" | "real" }) {
   const [unlocked, setUnlocked] = useState(false);
   const [tab, setTab] = useState<TabId>("home");
 
@@ -124,7 +129,8 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
 
   return (
     <main style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: FONT_BODY }}>
-      <Header />
+      <Header mode={mode} />
+      <ModeBanner mode={mode} />
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "1.25rem 1.25rem 4rem" }}>
         <Tabs current={tab} onChange={setTab} />
         <div style={{ marginTop: "2rem" }}>
@@ -188,10 +194,11 @@ function PasswordGate({ onUnlock }: { onUnlock: (input: string) => boolean }) {
 }
 
 /* ════════════════════ CHROME ════════════════════ */
-function Header() {
+function Header({ mode }: { mode: "example" | "real" }) {
+  const real = mode === "real";
   return (
     <header style={{ background: C.paper, borderBottom: `1px solid rgba(28,31,26,0.08)`, position: "sticky", top: 0, zIndex: 30, backdropFilter: "blur(8px)" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 38, height: 38, borderRadius: "50%", background: C.moss, color: C.paper, fontFamily: FONT_DISP, fontSize: 18, fontWeight: 500 }}>MV</span>
           <div>
@@ -199,12 +206,35 @@ function Header() {
             <p style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: C.stone, marginTop: 2, fontWeight: 500 }}>Operations Backend</p>
           </div>
         </div>
-        <span style={{ fontSize: 11, color: C.stone, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-          <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: C.moss, marginRight: 6, verticalAlign: "middle" }} />
-          Live data
-        </span>
+        {/* Example ⇄ Real data switch */}
+        <div style={{ display: "inline-flex", alignItems: "center", border: `1px solid rgba(168,162,148,0.5)`, borderRadius: 999, overflow: "hidden", fontFamily: FONT_BODY }}>
+          <button type="button" onClick={() => !real || switchMode("example")} disabled={!real}
+            style={{ background: !real ? C.bark : "transparent", color: !real ? C.paper : C.ink, border: 0, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: real ? "pointer" : "default" }}>
+            Example data
+          </button>
+          <button type="button" onClick={() => real || switchMode("real")} disabled={real}
+            style={{ background: real ? C.moss : "transparent", color: real ? C.paper : C.ink, border: 0, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: real ? "default" : "pointer" }}>
+            Real data
+          </button>
+        </div>
       </div>
     </header>
+  );
+}
+
+function ModeBanner({ mode }: { mode: "example" | "real" }) {
+  const real = mode === "real";
+  return (
+    <div style={{ background: real ? C.moss : C.warnSoft, color: real ? C.paper : C.bark, borderBottom: `1px solid ${real ? "rgba(0,0,0,0.1)" : "rgba(194,65,12,0.25)"}` }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "9px 1.25rem", fontSize: 13, fontFamily: FONT_BODY, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <span style={{ fontWeight: 700 }}>{real ? "● You're on your REAL data." : "● You're viewing EXAMPLE data."}</span>
+        <span style={{ opacity: 0.92 }}>
+          {real
+            ? "Everything you type in here is saved and kept. Build it up over time."
+            : "This is a sample so you can see how it works. Flip to “Real data” (top right) to start entering your own — nothing here is lost when you switch."}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -359,6 +389,8 @@ function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
   const [activeId, setActiveId] = useState(routes[0]?.route.id ?? "");
   const active = routes.find((r) => r.route.id === activeId) ?? routes[0];
   const [managing, setManaging] = useState(false);
+  const [addingDay, setAddingDay] = useState(false);
+  const canBuild = dataset.crews.length > 0;
 
   const gmapsUrl = useMemo(() => {
     if (!active) return "#";
@@ -366,10 +398,9 @@ function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
     return `https://www.google.com/maps/dir/${encodeURIComponent(`${shop.address}, ${shop.city}`)}/${pts.map((p) => encodeURIComponent(p)).join("/")}`;
   }, [active, shop]);
 
-  if (!active) return <p style={{ color: C.stone }}>No routes yet.</p>;
-
   return (
     <div style={{ display: "grid", gap: 24 }}>
+      {addingDay && <AddRouteDayForm crews={dataset.crews} sortOrder={routes.length} onClose={() => setAddingDay(false)} onDone={() => { setAddingDay(false); router.refresh(); }} />}
       <div>
         <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Route Economics</p>
         <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Profit on every route.</h2>
@@ -378,21 +409,33 @@ function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {routes.map((r) => {
-          const on = r.route.id === active.route.id;
-          const tone = marginTone(r.netMarginPct);
-          return (
-            <button key={r.route.id} type="button" onClick={() => setActiveId(r.route.id)}
-              style={{ background: on ? C.ink : C.bone, color: on ? C.paper : C.ink, border: `1px solid ${on ? C.ink : "rgba(168,162,148,0.4)"}`, padding: "12px 16px", cursor: "pointer", textAlign: "left", fontFamily: FONT_BODY, flex: 1, minWidth: 150 }}>
-              <p style={{ fontFamily: FONT_DISP, fontSize: 18, fontWeight: 500, margin: 0, lineHeight: 1 }}>{r.route.day}</p>
-              <p style={{ fontSize: 11, letterSpacing: "0.06em", margin: "5px 0 0", opacity: on ? 0.85 : 0.7 }}>
-                {r.stops.length} stops · {usd(r.netProfit)} net · <span style={{ color: on ? C.paper : tone.color, fontWeight: 600 }}>{pct(r.netMarginPct)}</span>
-              </p>
-            </button>
-          );
-        })}
-      </div>
+      {!active ? (
+        <Card>
+          <p style={{ fontSize: 14, color: C.ink, lineHeight: 1.6, margin: "0 0 14px" }}>
+            No routes yet. {canBuild ? "Add a route day — pick a weekday and the crew that runs it, then add your customers to it." : "First add a crew on the Setup tab, then come back here to build your routes."}
+          </p>
+          {canBuild && <AddBtn onClick={() => setAddingDay(true)}>+ Add a route day</AddBtn>}
+        </Card>
+      ) : (
+        <>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {routes.map((r) => {
+              const on = r.route.id === active.route.id;
+              const tone = marginTone(r.netMarginPct);
+              return (
+                <button key={r.route.id} type="button" onClick={() => setActiveId(r.route.id)}
+                  style={{ background: on ? C.ink : C.bone, color: on ? C.paper : C.ink, border: `1px solid ${on ? C.ink : "rgba(168,162,148,0.4)"}`, padding: "12px 16px", cursor: "pointer", textAlign: "left", fontFamily: FONT_BODY, flex: 1, minWidth: 150 }}>
+                  <p style={{ fontFamily: FONT_DISP, fontSize: 18, fontWeight: 500, margin: 0, lineHeight: 1 }}>{r.route.day}</p>
+                  <p style={{ fontSize: 11, letterSpacing: "0.06em", margin: "5px 0 0", opacity: on ? 0.85 : 0.7 }}>
+                    {r.stops.length} stops · {usd(r.netProfit)} net · <span style={{ color: on ? C.paper : tone.color, fontWeight: 600 }}>{pct(r.netMarginPct)}</span>
+                  </p>
+                </button>
+              );
+            })}
+            {canBuild && (
+              <button type="button" onClick={() => setAddingDay(true)} style={{ background: "transparent", color: C.moss, border: `1px dashed rgba(168,162,148,0.6)`, padding: "12px 16px", cursor: "pointer", fontFamily: FONT_BODY, fontSize: 13, fontWeight: 600, minWidth: 110 }}>+ New day</button>
+            )}
+          </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px,1fr))", gap: 12 }}>
         <Mini label="Revenue" value={usd(active.revenue)} />
@@ -471,7 +514,58 @@ function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           </p>
         )}
       </Card>
+        </>
+      )}
     </div>
+  );
+}
+
+function AddRouteDayForm({ crews, sortOrder, onClose, onDone }: { crews: Crew[]; sortOrder: number; onClose: () => void; onDone: () => void }) {
+  const maint = crews.filter((c) => c.side === "maintenance");
+  const [day, setDay] = useState("Monday");
+  const [crewId, setCrewId] = useState(maint[0]?.id ?? crews[0]?.id ?? "");
+  const [ret, setRet] = useState("20");
+  const [retMi, setRetMi] = useState("12");
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!crewId) { setErr("Pick a crew."); return; }
+    setSaving(true); setErr("");
+    const res = await opsMutate("routes", "upsert", {
+      day, crewId, returnDriveMinutes: ret || 0, returnDriveMiles: retMi || 0, sortOrder,
+    });
+    setSaving(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Could not add the day.");
+  }
+
+  return (
+    <Modal title="Add a route day" onClose={onClose}>
+      <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Which day">
+            <select style={inputStyle} value={day} onChange={(e) => setDay(e.target.value)}>
+              {WEEKDAYS.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </Fld>
+          <Fld label="Which crew runs it">
+            <select style={inputStyle} value={crewId} onChange={(e) => setCrewId(e.target.value)}>
+              {crews.map((c) => <option key={c.id} value={c.id}>{c.name} ({SIDE_LABEL[c.side]})</option>)}
+            </select>
+          </Fld>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Drive home after (min)" hint="from the last stop back to the shop"><input style={inputStyle} type="number" step="1" value={ret} onChange={(e) => setRet(e.target.value)} /></Fld>
+          <Fld label="Drive home after (mi)"><input style={inputStyle} type="number" step="0.5" value={retMi} onChange={(e) => setRetMi(e.target.value)} /></Fld>
+        </div>
+        <p style={{ fontSize: 12, color: C.stone, margin: 0, lineHeight: 1.5 }}>
+          This makes an empty day for that crew. Next, add your customers to it with &quot;Add or remove stops.&quot;
+        </p>
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+        <FormActions onCancel={onClose} saving={saving} isEdit={false} />
+      </form>
+    </Modal>
   );
 }
 
@@ -1047,6 +1141,30 @@ function HomeTab({ E, dataset, onGo }: { E: OpsEngine; dataset: OpsDataset; onGo
         <Kpi label="Money owed to you" value={usd(owed)} sub="billed + unbilled" warn={owed > 0} />
         <Kpi label="Build crew payroll" value={usd(buildPay)} sub="from the time clock / wk" />
       </div>
+
+      {dataset.crews.length === 0 && dataset.properties.length === 0 && (
+        <Card title="Start here — fill it in, in this order">
+          <ol style={{ margin: 0, paddingLeft: 0, listStyle: "none", display: "grid", gap: 8 }}>
+            {[
+              ["Setup", "setup", "Add your trucks, then your crews (maintenance and build)."],
+              ["Crew", "crew", "Add your people and put them on a crew. Set their pay."],
+              ["Customers", "customers", "Add your maintenance customers — what they pay and how often."],
+              ["Routes", "routes", "Make a route day for each crew, then add customers to each day."],
+              ["Time Clock", "timeclock", "Each week, type in everyone's hours."],
+            ].map(([label, id, desc], i) => (
+              <li key={id as string}>
+                <button type="button" onClick={() => onGo(id as TabId)}
+                  style={{ width: "100%", textAlign: "left", background: C.bone, border: "1px solid rgba(168,162,148,0.3)", padding: "11px 14px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: FONT_BODY, borderRadius: 4 }}>
+                  <span style={{ width: 24, height: 24, borderRadius: "50%", background: C.moss, color: C.paper, display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{i + 1}</span>
+                  <span style={{ fontWeight: 700, color: C.ink, fontSize: 14, minWidth: 92 }}>{label}</span>
+                  <span style={{ flex: 1, fontSize: 13.5, color: "rgba(28,31,26,0.72)" }}>{desc}</span>
+                  <span style={{ color: C.moss, fontWeight: 600 }}>→</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </Card>
+      )}
 
       <Card title="Needs your attention">
         {alerts.length === 0 ? (

@@ -6,12 +6,15 @@
  * profit-engine.ts; the UI in OpsClient.tsx.
  */
 
+import { cookies } from "next/headers";
 import OpsClient from "./OpsClient";
 import { readOpsDataset } from "./ops-store";
 
 export const dynamic = "force-dynamic";
 
 export default async function MtViewOpsPage() {
-  const dataset = await readOpsDataset("mt-view-landscaping");
-  return <OpsClient dataset={dataset} />;
+  const mode = (await cookies()).get("bj_mtv_ops_mode")?.value === "real" ? "real" : "example";
+  const slug = mode === "real" ? "mt-view-landscaping-real" : "mt-view-landscaping";
+  const dataset = await readOpsDataset(slug);
+  return <OpsClient dataset={dataset} mode={mode} />;
 }
