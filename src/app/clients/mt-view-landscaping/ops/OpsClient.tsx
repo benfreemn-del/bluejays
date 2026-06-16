@@ -23,6 +23,7 @@ import {
   type BillingStatus,
   type Crew,
   type CrewSide,
+  type DailyRoute,
   type Employee,
   type OpsAssumptions,
   type OpsDataset,
@@ -129,7 +130,7 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
         <div style={{ marginTop: "2rem" }}>
           {tab === "home" && <HomeTab E={E} dataset={dataset} onGo={setTab} />}
           {tab === "pnl" && <PnlTab E={E} assumptions={dataset.assumptions} />}
-          {tab === "routes" && <RoutesTab E={E} shop={dataset.shop} />}
+          {tab === "routes" && <RoutesTab E={E} dataset={dataset} />}
           {tab === "crew" && <CrewTab E={E} dataset={dataset} />}
           {tab === "timeclock" && <TimeClockTab E={E} dataset={dataset} />}
           {tab === "customers" && <CustomersTab E={E} dataset={dataset} />}
@@ -351,10 +352,13 @@ function PnlWaterfall({ pl, assumptions }: { pl: ProfitAndLoss; assumptions: Ops
 }
 
 /* ════════════════════ ROUTES TAB ════════════════════ */
-function RoutesTab({ E, shop }: { E: OpsEngine; shop: ShopInfo }) {
+function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
+  const shop = dataset.shop;
+  const router = useRouter();
   const routes = useMemo(() => E.allRouteEconomics(), [E]);
   const [activeId, setActiveId] = useState(routes[0]?.route.id ?? "");
   const active = routes.find((r) => r.route.id === activeId) ?? routes[0];
+  const [managing, setManaging] = useState(false);
 
   const gmapsUrl = useMemo(() => {
     if (!active) return "#";
@@ -449,6 +453,98 @@ function RoutesTab({ E, shop }: { E: OpsEngine; shop: ShopInfo }) {
           Drive $ includes the return-to-shop leg ({active.route.returnToShop.driveMiles.toFixed(0)} mi) at the route level — unbilled windshield time that quietly eats margin. Watch any stop where the margin pill turns amber or red.
         </p>
       </Card>
+
+      <Card title="Stops on this day" right={
+        <button type="button" onClick={() => setManaging((m) => !m)} style={{ background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 13, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 2 }}>
+          {managing ? "Done" : "Add or remove stops"}
+        </button>
+      }>
+        {managing ? (
+          <RouteStopEditor
+            route={dataset.routes.find((r) => r.id === active.route.id)!}
+            properties={dataset.properties}
+            onDone={() => router.refresh()}
+          />
+        ) : (
+          <p style={{ fontSize: 13, color: C.ink, lineHeight: 1.55, margin: 0 }}>
+            {active.stops.length} stops on {active.route.day}. Click <strong>Add or remove stops</strong> to put a new customer on this day or take one off — the route re-prices itself.
+          </p>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+function RouteStopEditor({ route, properties, onDone }: { route: DailyRoute; properties: Property[]; onDone: () => void }) {
+  const propById = useMemo(() => Object.fromEntries(properties.map((p) => [p.id, p])), [properties]);
+  const onRoute = new Set(route.stops.map((s) => s.propertyId));
+  const available = properties.filter((p) => !onRoute.has(p.id)).sort((a, b) => a.customer.localeCompare(b.customer));
+  const [pid, setPid] = useState(available[0]?.id ?? "");
+  const [svc, setSvc] = useState("45");
+  const [dmin, setDmin] = useState("15");
+  const [dmi, setDmi] = useState("8");
+  const [busy, setBusy] = useState("");
+  const [err, setErr] = useState("");
+
+  async function removeStop(stopId: string) {
+    setBusy(stopId);
+    const res = await opsMutate("route_stops", "delete", { id: stopId });
+    setBusy("");
+    if (res.ok) onDone(); else setErr(res.error ?? "Could not remove.");
+  }
+  async function addStop(e: React.FormEvent) {
+    e.preventDefault();
+    if (!pid) { setErr("Pick a customer to add."); return; }
+    setBusy("add"); setErr("");
+    const res = await opsMutate("route_stops", "upsert", {
+      routeId: route.id, propertyId: pid, seq: route.stops.length + 1,
+      serviceMinutes: svc || 0, driveMinutes: dmin || 0, driveMiles: dmi || 0,
+    });
+    setBusy("");
+    if (res.ok) onDone(); else setErr(res.error ?? "Could not add.");
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 16 }}>
+      <div>
+        <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.stone, fontWeight: 600, margin: "0 0 8px" }}>On {route.day} now</p>
+        <div style={{ display: "grid", gap: 6 }}>
+          {route.stops.map((s, i) => {
+            const p = propById[s.propertyId];
+            return (
+              <div key={s.id ?? i} style={{ display: "flex", alignItems: "center", gap: 10, background: C.paper, border: "1px solid rgba(168,162,148,0.3)", padding: "8px 12px" }}>
+                <span style={{ color: C.stone, fontSize: 12, minWidth: 18 }}>{i + 1}</span>
+                <span style={{ flex: 1, fontSize: 14, color: C.ink }}>{p?.customer ?? s.propertyId} <span style={{ color: C.stone, fontSize: 12 }}>· {(s.serviceMinutes / 60).toFixed(1)}h · {s.driveMiles.toFixed(0)}mi drive</span></span>
+                <button type="button" disabled={!s.id || busy === s.id} onClick={() => s.id && removeStop(s.id)} style={{ background: "transparent", border: 0, color: C.loss, cursor: "pointer", fontSize: 16, padding: "0 4px" }} title="Remove from this day">{busy === s.id ? "…" : "✕"}</button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <form onSubmit={addStop} style={{ background: C.sage, padding: "14px 16px", display: "grid", gap: 12 }}>
+        <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.bark, fontWeight: 700, margin: 0 }}>Add a customer to {route.day}</p>
+        {available.length === 0 ? (
+          <p style={{ fontSize: 13, color: C.ink, margin: 0 }}>Every customer is already on a route. Add a new customer on the Customers tab first.</p>
+        ) : (
+          <>
+            <Fld label="Customer">
+              <select style={inputStyle} value={pid} onChange={(e) => setPid(e.target.value)}>
+                {available.map((p) => <option key={p.id} value={p.id}>{p.customer} — {p.city}</option>)}
+              </select>
+            </Fld>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              <Fld label="Time on site (min)"><input style={inputStyle} type="number" step="5" value={svc} onChange={(e) => setSvc(e.target.value)} /></Fld>
+              <Fld label="Drive to it (min)"><input style={inputStyle} type="number" step="1" value={dmin} onChange={(e) => setDmin(e.target.value)} /></Fld>
+              <Fld label="Drive to it (mi)"><input style={inputStyle} type="number" step="0.5" value={dmi} onChange={(e) => setDmi(e.target.value)} /></Fld>
+            </div>
+            <button type="submit" disabled={busy === "add"} style={{ justifySelf: "start", background: C.bark, color: C.paper, border: 0, padding: "10px 20px", fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, cursor: "pointer", fontFamily: FONT_BODY }}>
+              {busy === "add" ? "Adding…" : "+ Add to this day"}
+            </button>
+          </>
+        )}
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+      </form>
     </div>
   );
 }
@@ -629,12 +725,15 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
   const closeAndRefresh = () => { setEditing(null); router.refresh(); };
   const propsById = useMemo(() => Object.fromEntries(dataset.properties.map((p) => [p.id, p])), [dataset.properties]);
   const [bill, setBill] = useState<"all" | BillingStatus>("all");
+  const [q, setQ] = useState("");
   const rows = useMemo(() => {
     let r = [...all];
     if (bill !== "all") r = r.filter((c) => (propsById[c.property.id]?.billingStatus ?? "unbilled") === bill);
+    const qq = q.trim().toLowerCase();
+    if (qq) r = r.filter((c) => c.property.customer.toLowerCase().includes(qq) || c.property.city.toLowerCase().includes(qq));
     r.sort((a, b) => sort === "margin" ? a.netMarginPct - b.netMarginPct : b.monthlyRevenue - a.monthlyRevenue);
     return r;
-  }, [all, sort, bill, propsById]);
+  }, [all, sort, bill, q, propsById]);
 
   async function cycleBill(p: Property) {
     const cur = p.billingStatus ?? "unbilled";
@@ -672,6 +771,14 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           <AddBtn onClick={() => setEditing("new")}>+ Add customer</AddBtn>
         </div>
       </div>
+
+      <input
+        type="search"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search a customer or city…"
+        style={{ width: "100%", maxWidth: 340, padding: "10px 14px", border: "1px solid rgba(168,162,148,0.5)", background: C.bone, fontSize: 14, fontFamily: FONT_BODY, color: C.ink, outline: "none", borderRadius: 4 }}
+      />
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         {([["all", `All ${all.length}`], ["unbilled", `Not billed ${billCounts.unbilled}`], ["billed", `Billed ${billCounts.billed}`], ["paid", `Paid ${billCounts.paid}`]] as [typeof bill, string][]).map(([id, lbl]) => {
@@ -1021,6 +1128,7 @@ function Fld({ label, children, hint }: { label: string; children: React.ReactNo
 }
 
 function FormActions({ onCancel, onDelete, saving, deleting, isEdit }: { onCancel: () => void; onDelete?: () => void; saving: boolean; deleting?: boolean; isEdit: boolean }) {
+  const [confirm, setConfirm] = useState(false);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 22 }}>
       <button type="submit" disabled={saving} style={{ background: C.moss, color: C.paper, border: 0, padding: "12px 24px", fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1, fontFamily: FONT_BODY }}>
@@ -1030,8 +1138,11 @@ function FormActions({ onCancel, onDelete, saving, deleting, isEdit }: { onCance
         Cancel
       </button>
       {isEdit && onDelete && (
-        <button type="button" onClick={onDelete} disabled={deleting} style={{ marginLeft: "auto", background: "transparent", color: C.loss, border: `1px solid ${C.loss}40`, padding: "12px 18px", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: FONT_BODY }}>
-          {deleting ? "Removing…" : "Remove"}
+        <button type="button"
+          onClick={() => { if (confirm) { onDelete(); } else { setConfirm(true); setTimeout(() => setConfirm(false), 4000); } }}
+          disabled={deleting}
+          style={{ marginLeft: "auto", background: confirm ? C.loss : "transparent", color: confirm ? C.paper : C.loss, border: `1px solid ${confirm ? C.loss : C.loss + "40"}`, padding: "12px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: FONT_BODY }}>
+          {deleting ? "Removing…" : confirm ? "Tap again to remove" : "Remove"}
         </button>
       )}
     </div>

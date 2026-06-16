@@ -127,6 +127,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
     for (const r of sRows) {
       const routeId = String(r.route_id);
       (stopsByRoute[routeId] ??= []).push({
+        id: String(r.id),
         propertyId: String(r.property_id),
         serviceMinutes: num(r.service_minutes),
         driveMinutes: num(r.drive_minutes),

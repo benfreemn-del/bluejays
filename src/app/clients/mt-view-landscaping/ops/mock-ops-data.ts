@@ -248,6 +248,8 @@ export function propertyById(id: string): Property | undefined {
 /* ═════════════════════════ ROUTES + STOPS ═════════════════════════ */
 
 export type RouteStop = {
+  /** route_stop row id (present on DB-loaded data; used for edit/remove). */
+  id?: string;
   propertyId: string;
   /** On-site service minutes for this visit. */
   serviceMinutes: number;
@@ -258,7 +260,7 @@ export type RouteStop = {
 
 export type DailyRoute = {
   id: string;
-  day: "Tuesday" | "Wednesday" | "Thursday" | "Friday";
+  day: string;
   crewId: string;
   stops: RouteStop[];
   /** Drive leg from the last stop back to the shop (closes the loop). */
