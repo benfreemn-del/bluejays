@@ -125,7 +125,7 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
           {tab === "routes" && <RoutesTab E={E} shop={dataset.shop} />}
           {tab === "crew" && <CrewTab E={E} dataset={dataset} />}
           {tab === "customers" && <CustomersTab E={E} dataset={dataset} />}
-          {tab === "map" && <MapTab E={E} shop={dataset.shop} />}
+          {tab === "map" && <MapTab E={E} dataset={dataset} />}
           {tab === "setup" && <SetupTab dataset={dataset} />}
         </div>
       </div>
@@ -691,19 +691,19 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
 }
 
 /* ════════════════════ MAP TAB ════════════════════ */
-function MapTab({ E, shop }: { E: OpsEngine; shop: ShopInfo }) {
+function MapTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
   const routes = useMemo<RouteEconomics[]>(() => E.allRouteEconomics(), [E]);
   return (
     <div style={{ display: "grid", gap: 20 }}>
       <div>
-        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Service Map</p>
-        <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Every property, color-coded by profit.</h2>
+        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Dispatch Map</p>
+        <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Pick a crew and a day.</h2>
         <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
-          Green = healthy margin, amber = thin, red = losing money. Lines trace each crew&apos;s route from the shop. Click a pin for the stop&apos;s economics.
+          Flip through your crews and the days of the week on the right. The map shows that crew&apos;s route — stops colored by margin (green healthy, amber thin, red losing). Click a pin for the stop&apos;s numbers.
         </p>
       </div>
       <div style={{ border: "1px solid rgba(168,162,148,0.4)" }}>
-        <OpsMap routes={routes} shop={shop} />
+        <OpsMap routes={routes} crews={dataset.crews} employees={dataset.employees} shop={dataset.shop} />
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 12, color: C.ink }}>
         <Legend color={C.moss} label="Healthy (15%+ margin)" />
@@ -1008,7 +1008,7 @@ function SetupTab({ dataset }: { dataset: OpsDataset }) {
         </p>
         <div style={{ display: "grid", gap: 10 }}>
           {dataset.crews.map((c) => (
-            <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", background: C.paper, border: "1px solid rgba(168,162,148,0.3)", borderLeft: `3px solid ${c.color}`, padding: "12px 14px" }}>
+            <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", background: C.paper, border: "1px solid rgba(168,162,148,0.3)", boxShadow: `inset 3px 0 0 ${c.color}`, padding: "12px 14px 12px 16px" }}>
               <div>
                 <p style={{ fontWeight: 600, color: C.ink, margin: 0, fontSize: 14 }}>{c.name}</p>
                 <p style={{ fontSize: 12, color: C.stone, margin: "2px 0 0" }}>{SIDE_LABEL[c.side]} · drives {vehName(c.vehicleId)} · {c.memberIds.length} people</p>
