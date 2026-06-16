@@ -288,11 +288,50 @@ export function vehicleById(id: string): Vehicle | undefined {
   return VEHICLES.find((v) => v.id === id);
 }
 
+export type ShopInfo = {
+  name: string;
+  address: string;
+  city: string;
+  lat: number;
+  lng: number;
+};
+
 /** The shop / yard origin — start + end of every route loop. */
-export const SHOP = {
+export const SHOP: ShopInfo = {
   name: "Mt View Shop + Yard",
   address: "2800 Auburn Way N",
   city: "Auburn",
   lat: 47.3225,
   lng: -122.2285,
+};
+
+/* ═════════════════════════ DATASET ═════════════════════════ */
+
+/**
+ * The complete input the profit engine needs. The engine reads ONLY from a
+ * dataset — never module globals — so the same code runs against this mock
+ * fallback OR live Supabase rows (assembled in ops-store.ts).
+ */
+export type OpsDataset = {
+  assumptions: OpsAssumptions;
+  weeksPerMonth: number;
+  shop: ShopInfo;
+  vehicles: Vehicle[];
+  crews: Crew[];
+  employees: Employee[];
+  properties: Property[];
+  routes: DailyRoute[];
+};
+
+/** Mock fallback dataset — used when Supabase isn't configured or returns
+ *  no rows. Mirrors the seeded production data. */
+export const MOCK_DATASET: OpsDataset = {
+  assumptions: ASSUMPTIONS,
+  weeksPerMonth: WEEKS_PER_MONTH,
+  shop: SHOP,
+  vehicles: VEHICLES,
+  crews: CREWS,
+  employees: EMPLOYEES,
+  properties: PROPERTIES,
+  routes: ROUTES,
 };

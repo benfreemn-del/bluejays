@@ -23,8 +23,8 @@ import {
   Tooltip,
 } from "react-leaflet";
 
-import { SHOP } from "./mock-ops-data";
-import { allRouteEconomics, usd, pct, hrs } from "./profit-engine";
+import type { ShopInfo } from "./mock-ops-data";
+import { usd, pct, hrs, type RouteEconomics } from "./profit-engine";
 
 const COLORS = {
   moss: "#15803d",
@@ -42,9 +42,7 @@ function marginColor(marginPct: number): string {
   return COLORS.moss;
 }
 
-export default function OpsMap() {
-  const routes = useMemo(() => allRouteEconomics(), []);
-
+export default function OpsMap({ routes, shop }: { routes: RouteEconomics[]; shop: ShopInfo }) {
   // Flatten stops with their economics + crew color for pins.
   const pins = useMemo(
     () =>
@@ -70,12 +68,12 @@ export default function OpsMap() {
         day: re.route.day,
         crew: re.crew.name,
         path: [
-          [SHOP.lat, SHOP.lng] as [number, number],
+          [shop.lat, shop.lng] as [number, number],
           ...re.stops.map((s) => [s.property.lat, s.property.lng] as [number, number]),
-          [SHOP.lat, SHOP.lng] as [number, number],
+          [shop.lat, shop.lng] as [number, number],
         ],
       })),
-    [routes],
+    [routes, shop],
   );
 
   const [activeDay, setActiveDay] = useState<string | "all">("all");
@@ -109,9 +107,9 @@ export default function OpsMap() {
           ))}
 
         {/* Shop marker */}
-        <CircleMarker center={[SHOP.lat, SHOP.lng]} radius={9} pathOptions={{ color: COLORS.paper, weight: 2, fillColor: COLORS.bark, fillOpacity: 1 }}>
+        <CircleMarker center={[shop.lat, shop.lng]} radius={9} pathOptions={{ color: COLORS.paper, weight: 2, fillColor: COLORS.bark, fillOpacity: 1 }}>
           <Tooltip direction="top" offset={[0, -8]}>
-            <strong>{SHOP.name}</strong><br />{SHOP.address}, {SHOP.city}
+            <strong>{shop.name}</strong><br />{shop.address}, {shop.city}
           </Tooltip>
         </CircleMarker>
 
