@@ -177,6 +177,27 @@ export const TIER_LABEL: Record<ServiceTier, string> = {
   estate: "Estate",
 };
 
+/** Where a customer stands on this month's bill. */
+export type BillingStatus = "unbilled" | "billed" | "paid";
+
+export const BILLING_LABEL: Record<BillingStatus, string> = {
+  unbilled: "Not billed",
+  billed: "Billed · waiting",
+  paid: "Paid",
+};
+
+export const WEEKDAYS = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+] as const;
+
+/** One time-clock cell: hours an employee worked on a given weekday this week. */
+export type TimesheetEntry = {
+  employeeId: string;
+  weekday: string;
+  hours: number;
+  note?: string;
+};
+
 export type Property = {
   id: string;
   customer: string;
@@ -192,6 +213,9 @@ export type Property = {
   /** Typical materials/disposal cost per visit (mulch top-ups, dump fees). */
   materialsPerVisitUsd: number;
   startedAt: string; // ISO — onboarding date
+  /** This month's bill status. Defaults to unbilled when absent. */
+  billingStatus?: BillingStatus;
+  billingNote?: string;
 };
 
 // Coordinates are approximate city centers + small per-stop jitter — good
@@ -339,6 +363,7 @@ export type OpsDataset = {
   employees: Employee[];
   properties: Property[];
   routes: DailyRoute[];
+  timesheets: TimesheetEntry[];
 };
 
 /** Mock fallback dataset — used when Supabase isn't configured or returns
@@ -352,4 +377,5 @@ export const MOCK_DATASET: OpsDataset = {
   employees: EMPLOYEES,
   properties: PROPERTIES,
   routes: ROUTES,
+  timesheets: [],
 };

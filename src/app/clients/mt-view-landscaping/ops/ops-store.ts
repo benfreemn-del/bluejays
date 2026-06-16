@@ -11,6 +11,7 @@
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import {
   MOCK_DATASET,
+  type BillingStatus,
   type Crew,
   type DailyRoute,
   type Employee,
@@ -21,6 +22,7 @@ import {
   type RouteStop,
   type ServiceTier,
   type ShopInfo,
+  type TimesheetEntry,
   type Vehicle,
 } from "./mock-ops-data";
 
@@ -38,7 +40,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
 
   try {
     const sb = getSupabase();
-    const [aRes, vRes, cRes, eRes, pRes, rRes, sRes] = await Promise.all([
+    const [aRes, vRes, cRes, eRes, pRes, rRes, sRes, tRes] = await Promise.all([
       sb.from("ops_assumptions").select("*").eq("client_slug", slug).maybeSingle(),
       sb.from("ops_vehicles").select("*").eq("client_slug", slug),
       sb.from("ops_crews").select("*").eq("client_slug", slug),
@@ -46,6 +48,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       sb.from("ops_properties").select("*").eq("client_slug", slug).eq("active", true),
       sb.from("ops_routes").select("*").eq("client_slug", slug).order("sort_order", { ascending: true }),
       sb.from("ops_route_stops").select("*").eq("client_slug", slug).order("seq", { ascending: true }),
+      sb.from("ops_timesheets").select("*").eq("client_slug", slug),
     ]);
 
     const aRow = aRes.data as Record<string, unknown> | null;
@@ -55,6 +58,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
     const pRows = (pRes.data ?? []) as Record<string, unknown>[];
     const rRows = (rRes.data ?? []) as Record<string, unknown>[];
     const sRows = (sRes.data ?? []) as Record<string, unknown>[];
+    const tRows = (tRes.data ?? []) as Record<string, unknown>[];
 
     // No seed for this slug → fall back to mock so the page still renders.
     if (!aRow || eRows.length === 0 || pRows.length === 0 || rRows.length === 0) {
@@ -105,6 +109,17 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       visitsPerMonth: num(r.visits_per_month, 4),
       materialsPerVisitUsd: num(r.materials_per_visit_usd),
       startedAt: r.started_at ? String(r.started_at) : "",
+      billingStatus: (["unbilled", "billed", "paid"].includes(String(r.billing_status))
+        ? (String(r.billing_status) as BillingStatus)
+        : "unbilled"),
+      billingNote: r.billing_note ? String(r.billing_note) : undefined,
+    }));
+
+    const timesheets: TimesheetEntry[] = tRows.map((r) => ({
+      employeeId: String(r.employee_id),
+      weekday: String(r.weekday),
+      hours: num(r.hours),
+      note: r.note ? String(r.note) : undefined,
     }));
 
     // Group stops by route, preserving the seq order from the query.
@@ -159,6 +174,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       employees,
       properties,
       routes,
+      timesheets,
     };
   } catch (err) {
     console.error("[ops-store] readOpsDataset failed, using mock:", err);

@@ -16,8 +16,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
+  BILLING_LABEL,
   SIDE_LABEL,
   TIER_LABEL,
+  WEEKDAYS,
+  type BillingStatus,
   type Crew,
   type CrewSide,
   type Employee,
@@ -32,6 +35,7 @@ import {
   usd,
   pct,
   hrs,
+  type CrewPayroll,
   type CrewProfitability,
   type OpsEngine,
   type ProfitAndLoss,
@@ -69,13 +73,15 @@ const C = {
 const FONT_BODY = "'Inter', system-ui, sans-serif";
 const FONT_DISP = "'Playfair Display', Georgia, serif";
 
-type TabId = "pnl" | "routes" | "crew" | "customers" | "map" | "setup";
+type TabId = "home" | "pnl" | "routes" | "map" | "crew" | "timeclock" | "customers" | "setup";
 const TABS: { id: TabId; label: string; emoji: string }[] = [
+  { id: "home", label: "Home", emoji: "⌂" },
   { id: "pnl", label: "P&L", emoji: "▤" },
   { id: "routes", label: "Routes", emoji: "➔" },
-  { id: "crew", label: "Crew", emoji: "✦" },
-  { id: "customers", label: "Customers", emoji: "◈" },
   { id: "map", label: "Map", emoji: "⌖" },
+  { id: "crew", label: "Crew", emoji: "✦" },
+  { id: "timeclock", label: "Time Clock", emoji: "◷" },
+  { id: "customers", label: "Customers", emoji: "◈" },
   { id: "setup", label: "Setup", emoji: "⚙" },
 ];
 
@@ -90,7 +96,7 @@ function marginTone(marginPct: number): { color: string; bg: string; label: stri
 
 export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
   const [unlocked, setUnlocked] = useState(false);
-  const [tab, setTab] = useState<TabId>("pnl");
+  const [tab, setTab] = useState<TabId>("home");
 
   const E = useMemo(() => createEngine(dataset), [dataset]);
 
@@ -121,9 +127,11 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "1.25rem 1.25rem 4rem" }}>
         <Tabs current={tab} onChange={setTab} />
         <div style={{ marginTop: "2rem" }}>
+          {tab === "home" && <HomeTab E={E} dataset={dataset} onGo={setTab} />}
           {tab === "pnl" && <PnlTab E={E} assumptions={dataset.assumptions} />}
           {tab === "routes" && <RoutesTab E={E} shop={dataset.shop} />}
           {tab === "crew" && <CrewTab E={E} dataset={dataset} />}
+          {tab === "timeclock" && <TimeClockTab E={E} dataset={dataset} />}
           {tab === "customers" && <CustomersTab E={E} dataset={dataset} />}
           {tab === "map" && <MapTab E={E} dataset={dataset} />}
           {tab === "setup" && <SetupTab dataset={dataset} />}
@@ -620,15 +628,27 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
   const [editing, setEditing] = useState<Property | null | "new">(null);
   const closeAndRefresh = () => { setEditing(null); router.refresh(); };
   const propsById = useMemo(() => Object.fromEntries(dataset.properties.map((p) => [p.id, p])), [dataset.properties]);
+  const [bill, setBill] = useState<"all" | BillingStatus>("all");
   const rows = useMemo(() => {
-    const r = [...all];
+    let r = [...all];
+    if (bill !== "all") r = r.filter((c) => (propsById[c.property.id]?.billingStatus ?? "unbilled") === bill);
     r.sort((a, b) => sort === "margin" ? a.netMarginPct - b.netMarginPct : b.monthlyRevenue - a.monthlyRevenue);
     return r;
-  }, [all, sort]);
+  }, [all, sort, bill, propsById]);
+
+  async function cycleBill(p: Property) {
+    const cur = p.billingStatus ?? "unbilled";
+    const next: BillingStatus = cur === "unbilled" ? "billed" : cur === "billed" ? "paid" : "unbilled";
+    await opsMutate("properties", "upsert", { id: p.id, billingStatus: next });
+    router.refresh();
+  }
 
   const losers = all.filter((c) => c.losingMoney || c.netMarginPct < 15).length;
   const totalMrr = all.reduce((s, c) => s + c.monthlyRevenue, 0);
   const totalProfit = all.reduce((s, c) => s + c.monthlyNetProfit, 0);
+  const owed = dataset.properties.filter((p) => (p.billingStatus ?? "unbilled") !== "paid").reduce((s, p) => s + p.pricePerVisitUsd * dataset.weeksPerMonth, 0);
+  const billCounts = { unbilled: 0, billed: 0, paid: 0 } as Record<BillingStatus, number>;
+  for (const p of dataset.properties) billCounts[p.billingStatus ?? "unbilled"]++;
 
   return (
     <div style={{ display: "grid", gap: 24 }}>
@@ -644,7 +664,7 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Maintenance Customers</p>
           <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Who&apos;s actually profitable.</h2>
           <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
-            {all.length} recurring properties · {usd(totalMrr)}/mo revenue · {usd(totalProfit)}/mo net · <span style={{ color: losers > 0 ? C.warn : C.moss, fontWeight: 600 }}>{losers} below 15% margin</span>
+            {all.length} customers · {usd(totalMrr)}/mo revenue · {usd(totalProfit)}/mo net · <span style={{ color: losers > 0 ? C.warn : C.moss, fontWeight: 600 }}>{losers} below 15% margin</span> · <span style={{ color: owed > 0 ? C.warn : C.moss, fontWeight: 600 }}>{usd(owed)}/mo owed</span>
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -653,17 +673,32 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
         </div>
       </div>
 
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        {([["all", `All ${all.length}`], ["unbilled", `Not billed ${billCounts.unbilled}`], ["billed", `Billed ${billCounts.billed}`], ["paid", `Paid ${billCounts.paid}`]] as [typeof bill, string][]).map(([id, lbl]) => {
+          const on = bill === id;
+          return (
+            <button key={id} type="button" onClick={() => setBill(id)}
+              style={{ background: on ? C.ink : "transparent", color: on ? C.paper : C.ink, border: `1px solid ${on ? C.ink : "rgba(168,162,148,0.45)"}`, padding: "7px 13px", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: FONT_BODY, borderRadius: 3 }}>
+              {lbl}
+            </button>
+          );
+        })}
+      </div>
+
       <Card>
         <div style={{ overflowX: "auto" }}>
           <table className="ops-tbl">
             <thead>
               <tr>
-                <th>Customer</th><th>City</th><th>Tier</th><th>Crew</th><th>$/visit</th><th>MRR</th><th>Net/visit</th><th>Net/mo</th><th>Margin</th><th></th>
+                <th>Customer</th><th>City</th><th>Tier</th><th>Crew</th><th>$/visit</th><th>MRR</th><th>Net/mo</th><th>Margin</th><th>Bill</th><th></th>
               </tr>
             </thead>
             <tbody>
               {rows.map((c) => {
                 const tone = marginTone(c.netMarginPct);
+                const p = propsById[c.property.id] ?? c.property;
+                const bs = p.billingStatus ?? "unbilled";
+                const bt = { unbilled: { c: C.warn, bg: C.warnSoft }, billed: { c: "#0369a1", bg: "#e0f2fe" }, paid: { c: C.moss, bg: C.mossSoft } }[bs];
                 return (
                   <tr key={c.property.id}>
                     <td style={{ fontWeight: 500 }}>{c.property.customer}</td>
@@ -672,10 +707,12 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
                     <td style={{ textAlign: "left", color: C.stone, fontSize: 12 }}>{c.crew ? c.crew.name.split("'")[0] + "'s" : "—"}</td>
                     <td>{usd(c.property.pricePerVisitUsd)}</td>
                     <td style={{ fontWeight: 500 }}>{usd(c.monthlyRevenue)}</td>
-                    <td style={{ color: moneyColor(c.perVisit?.netProfit ?? 0) }}>{c.perVisit ? (c.perVisit.netProfit < 0 ? "−" : "") + usd(Math.abs(c.perVisit.netProfit)) : "—"}</td>
                     <td style={{ fontWeight: 700, color: moneyColor(c.monthlyNetProfit) }}>{c.monthlyNetProfit < 0 ? "−" : ""}{usd(Math.abs(c.monthlyNetProfit))}</td>
                     <td><span style={{ background: tone.bg, color: tone.color, fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 3 }}>{pct(c.netMarginPct)}</span></td>
-                    <td><EditLink onClick={() => setEditing(propsById[c.property.id] ?? c.property)} /></td>
+                    <td>
+                      <button type="button" onClick={() => cycleBill(p)} title="Click to change" style={{ background: bt.bg, color: bt.c, border: 0, fontSize: 11, fontWeight: 600, padding: "4px 9px", borderRadius: 3, cursor: "pointer", fontFamily: FONT_BODY, whiteSpace: "nowrap" }}>{BILLING_LABEL[bs]}</button>
+                    </td>
+                    <td><EditLink onClick={() => setEditing(p)} /></td>
                   </tr>
                 );
               })}
@@ -721,6 +758,223 @@ function Legend({ color, label, square }: { color: string; label: string; square
       <span style={{ width: 12, height: 12, borderRadius: square ? 2 : "50%", background: color, display: "inline-block" }} />
       {label}
     </span>
+  );
+}
+
+/* ════════════════════ TIME CLOCK TAB ════════════════════ */
+function TimeClockTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
+  const burden = dataset.assumptions.laborBurdenPct;
+  const loaded = (e: Employee) => e.hourlyRate * (1 + (e.burdenPctOverride ?? burden));
+  const days = [...WEEKDAYS];
+
+  const initial: Record<string, Record<string, string>> = {};
+  for (const t of dataset.timesheets) {
+    (initial[t.employeeId] ??= {})[t.weekday] = String(t.hours);
+  }
+  const [grid, setGrid] = useState(initial);
+  const [savingCell, setSavingCell] = useState<string>("");
+
+  const cell = (eid: string, d: string) => grid[eid]?.[d] ?? "";
+  const empHours = (eid: string) => days.reduce((s, d) => s + (parseFloat(grid[eid]?.[d] || "0") || 0), 0);
+  function setCell(eid: string, d: string, v: string) {
+    setGrid((p) => ({ ...p, [eid]: { ...(p[eid] || {}), [d]: v } }));
+  }
+  async function saveCell(eid: string, d: string) {
+    const raw = grid[eid]?.[d] ?? "";
+    setSavingCell(eid + d);
+    await opsMutate("timesheets", "upsert", { employeeId: eid, weekday: d, hours: raw === "" ? 0 : Number(raw) || 0 });
+    setSavingCell("");
+  }
+
+  const plannedByCrew: Record<string, number> = {};
+  for (const p of E.payroll()) plannedByCrew[p.crew.id] = p.plannedHours;
+
+  // live totals from the local grid
+  const empById = Object.fromEntries(dataset.employees.map((e) => [e.id, e]));
+  function crewTotals(crew: Crew) {
+    let hours = 0, cost = 0;
+    for (const id of crew.memberIds) {
+      const e = empById[id]; if (!e) continue;
+      const h = empHours(id); hours += h; cost += h * loaded(e);
+    }
+    return { hours, cost };
+  }
+  const sideTotals = (side: CrewSide) =>
+    dataset.crews.filter((c) => c.side === side).reduce((acc, c) => {
+      const t = crewTotals(c); return { hours: acc.hours + t.hours, cost: acc.cost + t.cost };
+    }, { hours: 0, cost: 0 });
+  const maint = sideTotals("maintenance");
+  const build = sideTotals("construction");
+
+  const sides: CrewSide[] = ["maintenance", "construction"];
+
+  return (
+    <div style={{ display: "grid", gap: 24 }}>
+      <div>
+        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Time Clock</p>
+        <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Hours this week.</h2>
+        <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0", maxWidth: 640 }}>
+          Type each person&apos;s hours for the day. The build crews are tracked here only — no job paperwork. Maintenance hours get checked against the route plan so you can see if a crew ran over.
+        </p>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px,1fr))", gap: 12 }}>
+        <Mini label="Total hours" value={hrs(maint.hours + build.hours)} accent />
+        <Mini label="Total labor cost" value={usd(maint.cost + build.cost)} />
+        <Mini label="Maintenance" value={`${hrs(maint.hours)} · ${usd(maint.cost)}`} />
+        <Mini label="Construction" value={`${hrs(build.hours)} · ${usd(build.cost)}`} />
+      </div>
+
+      {sides.map((side) => (
+        <Card key={side} title={`${SIDE_LABEL[side]} crews`}>
+          {dataset.crews.filter((c) => c.side === side).map((crew) => {
+            const members = crew.memberIds.map((id) => empById[id]).filter(Boolean) as Employee[];
+            const t = crewTotals(crew);
+            const planned = plannedByCrew[crew.id] ?? 0;
+            return (
+              <div key={crew.id} style={{ marginBottom: 18 }}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <p style={{ fontWeight: 600, color: C.ink, margin: 0, fontSize: 14 }}>{crew.name}</p>
+                  {side === "maintenance" && planned > 0 && (
+                    <span style={{ fontSize: 12, color: t.hours > planned + 0.5 ? C.warn : C.stone }}>
+                      planned {hrs(planned)} · clocked {hrs(t.hours)}{t.hours > planned + 0.5 ? " · over" : ""}
+                    </span>
+                  )}
+                </div>
+                <div style={{ overflowX: "auto" }}>
+                  <table className="ops-tbl" style={{ minWidth: 640 }}>
+                    <thead>
+                      <tr>
+                        <th>Person</th>
+                        {days.map((d) => <th key={d} style={{ textAlign: "center" }}>{d.slice(0, 3)}</th>)}
+                        <th>Hrs</th><th>Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {members.map((e) => (
+                        <tr key={e.id}>
+                          <td style={{ fontWeight: 500 }}>{e.name}</td>
+                          {days.map((d) => (
+                            <td key={d} style={{ textAlign: "center", padding: "6px 4px" }}>
+                              <input
+                                type="number" step="0.5" min="0"
+                                value={cell(e.id, d)}
+                                onChange={(ev) => setCell(e.id, d, ev.target.value)}
+                                onBlur={() => saveCell(e.id, d)}
+                                style={{ width: 46, textAlign: "center", padding: "5px 4px", border: `1px solid ${savingCell === e.id + d ? C.moss : "rgba(168,162,148,0.5)"}`, background: C.paper, fontSize: 13, fontFamily: FONT_BODY, borderRadius: 3 }}
+                              />
+                            </td>
+                          ))}
+                          <td style={{ fontWeight: 600 }}>{hrs(empHours(e.id))}</td>
+                          <td style={{ color: C.warn, fontWeight: 600 }}>{usd(empHours(e.id) * loaded(e))}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          })}
+        </Card>
+      ))}
+      <p style={{ fontSize: 12, color: C.stone, lineHeight: 1.6 }}>
+        Hours save on their own as you type. Cost = hours × loaded pay rate (base + {(burden * 100).toFixed(0)}% burden).
+      </p>
+    </div>
+  );
+}
+
+/* ════════════════════ HOME TAB ════════════════════ */
+function HomeTab({ E, dataset, onGo }: { E: OpsEngine; dataset: OpsDataset; onGo: (t: TabId) => void }) {
+  const pl = useMemo(() => E.monthlyProfitAndLoss(), [E]);
+  const customers = useMemo(() => E.customerProfitability(), [E]);
+  const routes = useMemo(() => E.allRouteEconomics(), [E]);
+  const payroll = useMemo(() => E.payroll(), [E]);
+
+  // build the "needs attention" list
+  type Alert = { tone: "warn" | "loss" | "info"; text: string; cta: string; go: TabId };
+  const alerts: Alert[] = [];
+
+  const losing = customers.filter((c) => c.perVisit && c.perVisit.netProfit < 0);
+  const thin = customers.filter((c) => c.perVisit && c.netMarginPct >= 0 && c.netMarginPct < 15);
+  if (losing.length) alerts.push({ tone: "loss", text: `${losing.length} customer${losing.length > 1 ? "s are" : " is"} losing money every visit (worst: ${losing.sort((a, b) => a.netMarginPct - b.netMarginPct)[0].property.customer}).`, cta: "See customers", go: "customers" });
+  if (thin.length) alerts.push({ tone: "warn", text: `${thin.length} more customers are under 15% margin — too thin.`, cta: "See customers", go: "customers" });
+
+  const badRoutes = routes.filter((r) => r.netMarginPct < 10).sort((a, b) => a.netMarginPct - b.netMarginPct);
+  if (badRoutes.length) alerts.push({ tone: "warn", text: `${badRoutes[0].route.day}'s route is only ${pct(badRoutes[0].netMarginPct)} margin — usually too much drive time.`, cta: "See routes", go: "routes" });
+
+  const unbilled = dataset.properties.filter((p) => (p.billingStatus ?? "unbilled") === "unbilled");
+  const billedUnpaid = dataset.properties.filter((p) => p.billingStatus === "billed");
+  if (unbilled.length) alerts.push({ tone: "warn", text: `${unbilled.length} customers haven't been billed this month.`, cta: "See billing", go: "customers" });
+  if (billedUnpaid.length) alerts.push({ tone: "info", text: `${billedUnpaid.length} customers are billed but haven't paid yet.`, cta: "See billing", go: "customers" });
+
+  const over = payroll.filter((p) => p.crew.side === "maintenance" && p.hasClock && p.clockedHours > p.plannedHours + 1);
+  if (over.length) alerts.push({ tone: "warn", text: `${over[0].crew.name} clocked ${hrs(over[0].clockedHours)} vs ${hrs(over[0].plannedHours)} planned — running over.`, cta: "See time clock", go: "timeclock" });
+
+  const ot = E.employeeCosts().filter((e) => e.overtimeHours > 0);
+  const otTotal = ot.reduce((s, e) => s + e.overtimeCost, 0);
+  if (otTotal > 0) alerts.push({ tone: "info", text: `${usd(otTotal * E.weeksPerMonth)}/mo is going to overtime (${ot.length} people).`, cta: "See crew", go: "crew" });
+
+  const buildPay = payroll.filter((p) => p.crew.side === "construction").reduce((s, p) => s + p.laborCost, 0);
+  const totalMrr = customers.reduce((s, c) => s + c.monthlyRevenue, 0);
+  const owed = dataset.properties.filter((p) => p.billingStatus !== "paid").reduce((s, p) => s + p.pricePerVisitUsd * dataset.weeksPerMonth, 0);
+
+  const toneColor = { warn: C.warn, loss: C.loss, info: "#0369a1" };
+  const toneBg = { warn: C.warnSoft, loss: C.lossSoft, info: "#e0f2fe" };
+
+  return (
+    <div style={{ display: "grid", gap: 28 }}>
+      <div>
+        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 10 }}>This Week</p>
+        <h2 style={{ fontFamily: FONT_DISP, fontSize: 36, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0, lineHeight: 1.1 }}>
+          Good morning, Bonnie.
+        </h2>
+        <p style={{ fontSize: 16, color: "rgba(28,31,26,0.7)", marginTop: 8, maxWidth: 600 }}>
+          Here&apos;s where the maintenance side stands and what needs you today.
+        </p>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px,1fr))", gap: 16 }}>
+        <Kpi label="Take-home / month" value={usd(pl.takeHome)} sub={pct(pl.netMarginPct) + " margin"} accent />
+        <Kpi label="Recurring revenue" value={usd(totalMrr)} sub={`${customers.length} customers`} />
+        <Kpi label="Money owed to you" value={usd(owed)} sub="billed + unbilled" warn={owed > 0} />
+        <Kpi label="Build crew payroll" value={usd(buildPay)} sub="from the time clock / wk" />
+      </div>
+
+      <Card title="Needs your attention">
+        {alerts.length === 0 ? (
+          <p style={{ fontSize: 14, color: C.moss }}>All clear — nothing flagged this week.</p>
+        ) : (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 }}>
+            {alerts.map((a, i) => (
+              <li key={i}>
+                <button type="button" onClick={() => onGo(a.go)}
+                  style={{ width: "100%", textAlign: "left", background: toneBg[a.tone], border: `1px solid ${toneColor[a.tone]}40`, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: FONT_BODY, borderRadius: 4 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: toneColor[a.tone], flexShrink: 0 }} />
+                  <span style={{ flex: 1, fontSize: 14, color: C.ink, lineHeight: 1.45 }}>{a.text}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: toneColor[a.tone], whiteSpace: "nowrap" }}>{a.cta} →</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 12 }}>
+        <QuickLink label="See the full P&L" onClick={() => onGo("pnl")} />
+        <QuickLink label="Open the dispatch map" onClick={() => onGo("map")} />
+        <QuickLink label="Enter this week's hours" onClick={() => onGo("timeclock")} />
+        <QuickLink label="Check the route economics" onClick={() => onGo("routes")} />
+      </div>
+    </div>
+  );
+}
+
+function QuickLink({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} style={{ background: C.bone, border: "1px solid rgba(168,162,148,0.35)", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontFamily: FONT_BODY, fontSize: 14, color: C.ink, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+      {label} <span style={{ color: C.moss }}>→</span>
+    </button>
   );
 }
 

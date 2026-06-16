@@ -141,6 +141,15 @@ export type CustomerProfitability = {
   losingMoney: boolean;
 };
 
+export type CrewPayroll = {
+  crew: Crew;
+  members: Employee[];
+  clockedHours: number; // actual hours from the time clock
+  plannedHours: number; // route hours (maintenance); 0 for construction
+  laborCost: number; // burdened, from clocked hours
+  hasClock: boolean;
+};
+
 /* ═════════════════════════ ENGINE FACTORY ═════════════════════════ */
 
 export type OpsEngine = ReturnType<typeof createEngine>;
@@ -160,6 +169,16 @@ export function createEngine(data: OpsDataset) {
   const crewById = (id: string) => data.crews.find((c) => c.id === id);
   const vehicleById = (id: string) => data.vehicles.find((v) => v.id === id);
   const propertyById = (id: string) => data.properties.find((p) => p.id === id);
+
+  /* time clock: actual hours per employee from the weekly timesheet */
+  const clockedByEmp: Record<string, number> = {};
+  for (const t of data.timesheets) {
+    clockedByEmp[t.employeeId] = (clockedByEmp[t.employeeId] ?? 0) + (t.hours || 0);
+  }
+  function employeeLoadedRate(e: Employee): number {
+    const burden = e.burdenPctOverride ?? assumptions.laborBurdenPct;
+    return e.hourlyRate * (1 + burden);
+  }
 
   /* overtime: hours beyond the route, paid at the OT multiplier (burdened) */
   function employeeOvertimeCost(e: Employee): number {
@@ -420,6 +439,29 @@ export function createEngine(data: OpsDataset) {
     });
   }
 
+  /* payroll from the time clock — per crew clocked hours + burdened cost.
+   *  Maintenance crews also carry their planned route hours for variance. */
+  function payroll(): CrewPayroll[] {
+    const routeHoursByCrew: Record<string, number> = {};
+    for (const re of allRouteEconomics()) {
+      routeHoursByCrew[re.crew.id] = (routeHoursByCrew[re.crew.id] ?? 0) + re.totalHours;
+    }
+    return data.crews.map((crew) => {
+      const members = crew.memberIds.map((id) => employeeById(id)).filter((e): e is Employee => !!e);
+      let clockedHours = 0, laborCost = 0, hasClock = false;
+      for (const m of members) {
+        const h = clockedByEmp[m.id] ?? 0;
+        if (m.id in clockedByEmp) hasClock = true;
+        clockedHours += h;
+        laborCost += h * employeeLoadedRate(m);
+      }
+      // planned PERSON-hours = route duration × crew size, to match clocked
+      // hours (which are summed across people).
+      const plannedHours = (routeHoursByCrew[crew.id] ?? 0) * members.length;
+      return { crew, members, clockedHours, plannedHours, laborCost, hasClock };
+    });
+  }
+
   return {
     monthlyOverheadTotal,
     maintenanceOverheadMonthly,
@@ -436,6 +478,7 @@ export function createEngine(data: OpsDataset) {
     crewProfitability,
     employeeCosts,
     customerProfitability,
+    payroll,
   };
 }
 
