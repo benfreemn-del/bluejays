@@ -41,7 +41,7 @@ const inter = Inter({
 const SITE_URL = "https://bluejayportfolio.com";
 const PAGE_PATH = "/clients/mt-view-landscaping";
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
-const HERO_OG_IMAGE = `${SITE_URL}/clients/mt-view-landscaping/tiered-stairs-hero.jpg`;
+const HERO_OG_IMAGE = `${SITE_URL}/clients/mt-view-landscaping/real/proj-olano.webp`;
 
 const TITLE =
   "Mountain View Landscape & Design — Custom Landscapes & Maintenance · Auburn, WA · Serving King, Pierce, Snohomish & Kittitas Counties";
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
         url: HERO_OG_IMAGE,
         width: 2000,
         height: 1334,
-        alt: "Tiered red-block retaining wall with stone steps, mature plantings, and path-light bollards — Mountain View Landscape & Design, Auburn WA",
+        alt: "Natural stone steps winding up a planted garden hillside — Mountain View Landscape & Design, Auburn WA",
       },
     ],
   },
