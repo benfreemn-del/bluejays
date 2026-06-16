@@ -316,7 +316,7 @@ function PnlTab({ E, assumptions }: { E: OpsEngine; assumptions: OpsAssumptions 
 function PnlWaterfall({ pl, assumptions }: { pl: ProfitAndLoss; assumptions: OpsAssumptions }) {
   const rows: { label: string; amount: number; kind: "in" | "out" | "net" }[] = [
     { label: "Revenue", amount: pl.revenue, kind: "in" },
-    { label: "Crew labor (burdened)", amount: -pl.laborCost, kind: "out" },
+    { label: "Crew pay (with taxes)", amount: -pl.laborCost, kind: "out" },
     { label: "Drive cost (wages + truck)", amount: -pl.driveCost, kind: "out" },
     { label: "Materials + disposal", amount: -pl.materials, kind: "out" },
     { label: "Overtime", amount: -pl.overtime, kind: "out" },
@@ -374,7 +374,7 @@ function RoutesTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
         <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Route Economics</p>
         <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Profit on every route.</h2>
         <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
-          Each maintenance day, stop by stop — revenue against burdened labor, drive cost, materials, and overhead.
+          Each maintenance day, stop by stop — money in against crew pay, drive cost, materials, and office costs.
         </p>
       </div>
 
@@ -584,7 +584,7 @@ function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Crews &amp; Pay</p>
           <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>What each crew costs — and earns.</h2>
           <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
-            Burdened wages, weekly hours, and the profit each crew throws off after their loaded labor cost.
+            What each crew costs (their pay plus taxes), the hours they work, and the profit they bring in after that.
           </p>
         </div>
         <AddBtn onClick={() => setEditing("new")}>+ Add employee</AddBtn>
@@ -611,7 +611,7 @@ function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           <table className="ops-tbl">
             <thead>
               <tr>
-                <th>Employee</th><th>Role</th><th>Pay</th><th>Base $/hr</th><th>Burden</th><th>Loaded $/hr</th><th>Wk hrs</th><th>Wk labor cost</th><th></th>
+                <th>Employee</th><th>Role</th><th>Pay</th><th>Pay $/hr</th><th>+ Taxes</th><th>True cost / hr</th><th>Wk hrs</th><th>Wk pay cost</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -632,7 +632,7 @@ function CrewTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           </table>
         </div>
         <p style={{ fontSize: 12, color: C.stone, margin: "14px 0 0", lineHeight: 1.5 }}>
-          Bonnie&apos;s field hours sit in overhead (she runs the route but isn&apos;t billed against a stop). &quot;Loaded $/hr&quot; is base wage + {(assumptions.laborBurdenPct * 100).toFixed(0)}% burden — the number that actually hits a job cost.
+          &quot;True cost / hr&quot; is their pay plus {(assumptions.laborBurdenPct * 100).toFixed(0)}% for payroll taxes, workers-comp, and insurance — the real number a job costs you. Owners who run a route but aren&apos;t billed to a stop show as office cost.
         </p>
       </Card>
     </div>
@@ -654,7 +654,7 @@ function CrewCard({ c }: { c: CrewProfitability }) {
   return (
     <div style={{ background: C.bone, border: "1px solid rgba(168,162,148,0.35)", padding: "20px 22px", borderTop: `3px solid ${c.crew.color}` }}>
       <p style={{ fontFamily: FONT_DISP, fontSize: 20, fontWeight: 500, color: C.ink, margin: 0, letterSpacing: "-0.01em" }}>{c.crew.name}</p>
-      <p style={{ fontSize: 12, color: C.stone, margin: "3px 0 16px" }}>{c.members.length} people · {usd(c.burdenedWage, { cents: true })}/hr loaded</p>
+      <p style={{ fontSize: 12, color: C.stone, margin: "3px 0 16px" }}>{c.members.length} people · {usd(c.burdenedWage, { cents: true })}/hr all-in</p>
 
       {hasRoutes ? (
         <>
@@ -797,7 +797,7 @@ function CustomersTab({ E, dataset }: { E: OpsEngine; dataset: OpsDataset }) {
           <table className="ops-tbl">
             <thead>
               <tr>
-                <th>Customer</th><th>City</th><th>Tier</th><th>Crew</th><th>$/visit</th><th>MRR</th><th>Net/mo</th><th>Margin</th><th>Bill</th><th></th>
+                <th>Customer</th><th>City</th><th>Plan</th><th>Crew</th><th>Per visit</th><th>Per month</th><th>Profit / mo</th><th>Margin</th><th>Bill</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -1067,21 +1067,27 @@ function HomeTab({ E, dataset, onGo }: { E: OpsEngine; dataset: OpsDataset; onGo
         )}
       </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 12 }}>
-        <QuickLink label="See the full P&L" onClick={() => onGo("pnl")} />
-        <QuickLink label="Open the dispatch map" onClick={() => onGo("map")} />
-        <QuickLink label="Enter this week's hours" onClick={() => onGo("timeclock")} />
-        <QuickLink label="Check the route economics" onClick={() => onGo("routes")} />
-      </div>
+      <Card title="Where to go — what each page is for">
+        <div style={{ display: "grid", gap: 8 }}>
+          {([
+            ["pnl", "P&L", "Your bottom line — what you keep after everything is paid."],
+            ["customers", "Customers", "Every customer, what they pay, and who's been billed or still owes."],
+            ["routes", "Routes", "Each day's route and what it earns. Add or drop a customer from a day."],
+            ["map", "Map", "See a crew's route on a map. Click between crews and days."],
+            ["crew", "Crew", "Your crews, who's on them, and what they cost versus earn."],
+            ["timeclock", "Time Clock", "Type in everyone's hours for the week."],
+            ["setup", "Setup", "Change your business numbers, trucks, and crews."],
+          ] as [TabId, string, string][]).map(([id, label, desc]) => (
+            <button key={id} type="button" onClick={() => onGo(id)}
+              style={{ display: "flex", alignItems: "center", gap: 12, textAlign: "left", background: C.bone, border: "1px solid rgba(168,162,148,0.3)", padding: "12px 14px", cursor: "pointer", fontFamily: FONT_BODY, borderRadius: 4 }}>
+              <span style={{ fontWeight: 700, color: C.ink, fontSize: 14, minWidth: 92 }}>{label}</span>
+              <span style={{ flex: 1, fontSize: 13.5, color: "rgba(28,31,26,0.72)" }}>{desc}</span>
+              <span style={{ color: C.moss, fontWeight: 600 }}>→</span>
+            </button>
+          ))}
+        </div>
+      </Card>
     </div>
-  );
-}
-
-function QuickLink({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} style={{ background: C.bone, border: "1px solid rgba(168,162,148,0.35)", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontFamily: FONT_BODY, fontSize: 14, color: C.ink, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-      {label} <span style={{ color: C.moss }}>→</span>
-    </button>
   );
 }
 
@@ -1421,17 +1427,20 @@ function AssumptionsForm({ assumptions, onDone }: { assumptions: OpsAssumptions;
 
   return (
     <Card title="Business numbers">
+      <p style={{ fontSize: 13, color: C.ink, lineHeight: 1.55, margin: "0 0 16px", maxWidth: 640 }}>
+        These four numbers drive every dollar figure in the whole tool. Set them once. If you&apos;re not sure, the numbers already in here are sensible starting points — change them when you know your real figures.
+      </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px,1fr))", gap: 14 }}>
-        <Fld label="Extra payroll cost %" hint="taxes, insurance, etc.">
+        <Fld label="Extra payroll cost %" hint="On top of wages: payroll taxes, workers-comp, insurance.">
           <input style={inputStyle} type="number" step="1" value={burden} onChange={(e) => setBurden(e.target.value)} />
         </Fld>
-        <Fld label="Office cost share %" hint="maintenance's slice">
+        <Fld label="Office cost share %" hint="How much of the shop/insurance/admin the maintenance side carries (construction covers the rest).">
           <input style={inputStyle} type="number" step="1" value={ohShare} onChange={(e) => setOhShare(e.target.value)} />
         </Fld>
-        <Fld label="Save for taxes %">
+        <Fld label="Save for taxes %" hint="What you set aside from profit for income tax.">
           <input style={inputStyle} type="number" step="1" value={tax} onChange={(e) => setTax(e.target.value)} />
         </Fld>
-        <Fld label="Overtime pay rate" hint="1.5 = time-and-a-half">
+        <Fld label="Overtime pay rate" hint="1.5 means time-and-a-half.">
           <input style={inputStyle} type="number" step="0.1" value={otMult} onChange={(e) => setOtMult(e.target.value)} />
         </Fld>
       </div>
