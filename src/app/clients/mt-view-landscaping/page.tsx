@@ -32,6 +32,9 @@ import {
   MapPin,
   EnvelopeSimple,
   LockKey,
+  Tree,
+  Users,
+  Handshake,
 } from "@phosphor-icons/react";
 import MtViewContactForm from "./contact-form";
 
@@ -198,12 +201,20 @@ function Hero() {
 
 /* ───────── trust strip ───────── */
 function Trust() {
-  const items = ["Working since 1976", "Family-run", "Free quotes, no pressure", "4 counties served"];
+  const items = [
+    { icon: Tree, label: "Working since 1976" },
+    { icon: Users, label: "Family-run" },
+    { icon: Handshake, label: "Free quotes, no pressure" },
+    { icon: MapPin, label: "4 counties served" },
+  ];
   return (
     <section className={`bg-[#234E36] text-[#F5F1E8]`}>
-      <div className="max-w-6xl mx-auto px-5 py-5 grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-6 text-center">
-        {items.map((t) => (
-          <p key={t} className={`${body} text-[15px] sm:text-[16px] font-semibold`}>{t}</p>
+      <div className="max-w-6xl mx-auto px-5 py-5 grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
+        {items.map(({ icon: Icon, label }) => (
+          <div key={label} className="flex items-center justify-center gap-2.5">
+            <Icon size={24} weight="duotone" className="text-[#8FCB9B] shrink-0" />
+            <span className={`${body} text-[15px] sm:text-[16px] font-semibold`}>{label}</span>
+          </div>
         ))}
       </div>
     </section>
