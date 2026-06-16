@@ -52,7 +52,7 @@ const ID_PREFIX: Record<Entity, string> = {
   assumptions: "a",
 };
 
-type FieldDef = { col: string; type: "string" | "number" | "bool" | "numberOrNull" | "json" };
+type FieldDef = { col: string; type: "string" | "number" | "bool" | "numberOrNull" | "json" | "refOrNull" };
 
 // app field (camelCase) → DB column + coercion. Only listed fields are
 // written — anything else in the payload is ignored.
@@ -63,11 +63,12 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
     payType: { col: "pay_type", type: "string" },
     hourlyRate: { col: "hourly_rate", type: "number" },
     burdenPctOverride: { col: "burden_pct_override", type: "numberOrNull" },
-    crewId: { col: "crew_id", type: "string" },
+    crewId: { col: "crew_id", type: "refOrNull" },
     tenureYears: { col: "tenure_years", type: "number" },
     phone: { col: "phone", type: "string" },
     billable: { col: "billable", type: "bool" },
     active: { col: "active", type: "bool" },
+    overtimeHoursWeekly: { col: "overtime_hours_weekly", type: "number" },
   },
   vehicles: {
     name: { col: "name", type: "string" },
@@ -78,8 +79,8 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
   crews: {
     name: { col: "name", type: "string" },
     side: { col: "side", type: "string" },
-    leadId: { col: "lead_id", type: "string" },
-    vehicleId: { col: "vehicle_id", type: "string" },
+    leadId: { col: "lead_id", type: "refOrNull" },
+    vehicleId: { col: "vehicle_id", type: "refOrNull" },
     color: { col: "color", type: "string" },
   },
   properties: {
@@ -116,6 +117,7 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
     taxSetAsidePct: { col: "tax_set_aside_pct", type: "number" },
     overheadLines: { col: "overhead_lines", type: "json" },
     weeksPerMonth: { col: "weeks_per_month", type: "number" },
+    overtimeMultiplier: { col: "overtime_multiplier", type: "number" },
   },
 };
 
@@ -142,6 +144,9 @@ function coerce(def: FieldDef, v: unknown): unknown {
     }
     case "bool":
       return v === true || v === "true";
+    case "refOrNull":
+      // FK reference: empty string → NULL (avoids FK-violation on "")
+      return v == null || v === "" ? null : String(v);
     case "json":
       return v ?? [];
     default:

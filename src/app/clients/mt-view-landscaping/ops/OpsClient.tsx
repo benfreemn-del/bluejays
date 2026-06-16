@@ -25,6 +25,7 @@ import {
   type OpsDataset,
   type Property,
   type ShopInfo,
+  type Vehicle,
 } from "./mock-ops-data";
 import {
   createEngine,
@@ -68,13 +69,14 @@ const C = {
 const FONT_BODY = "'Inter', system-ui, sans-serif";
 const FONT_DISP = "'Playfair Display', Georgia, serif";
 
-type TabId = "pnl" | "routes" | "crew" | "customers" | "map";
+type TabId = "pnl" | "routes" | "crew" | "customers" | "map" | "setup";
 const TABS: { id: TabId; label: string; emoji: string }[] = [
   { id: "pnl", label: "P&L", emoji: "▤" },
   { id: "routes", label: "Routes", emoji: "➔" },
   { id: "crew", label: "Crew", emoji: "✦" },
   { id: "customers", label: "Customers", emoji: "◈" },
   { id: "map", label: "Map", emoji: "⌖" },
+  { id: "setup", label: "Setup", emoji: "⚙" },
 ];
 
 function moneyColor(n: number): string {
@@ -124,6 +126,7 @@ export default function OpsClient({ dataset }: { dataset: OpsDataset }) {
           {tab === "crew" && <CrewTab E={E} dataset={dataset} />}
           {tab === "customers" && <CustomersTab E={E} dataset={dataset} />}
           {tab === "map" && <MapTab E={E} shop={dataset.shop} />}
+          {tab === "setup" && <SetupTab dataset={dataset} />}
         </div>
       </div>
       <Footer />
@@ -307,6 +310,7 @@ function PnlWaterfall({ pl, assumptions }: { pl: ProfitAndLoss; assumptions: Ops
     { label: "Crew labor (burdened)", amount: -pl.laborCost, kind: "out" },
     { label: "Drive cost (wages + truck)", amount: -pl.driveCost, kind: "out" },
     { label: "Materials + disposal", amount: -pl.materials, kind: "out" },
+    { label: "Overtime", amount: -pl.overtime, kind: "out" },
     { label: "Gross profit", amount: pl.grossProfit, kind: "net" },
     { label: "Fixed overhead", amount: -pl.overhead, kind: "out" },
     { label: "Net profit (pre-tax)", amount: pl.netProfit, kind: "net" },
@@ -556,6 +560,11 @@ function CrewCard({ c }: { c: CrewProfitability }) {
             <CrewStat label="Margin" value={pct(c.netMarginPct)} color={marginTone(c.netMarginPct).color} />
             <CrewStat label="Profit / hr" value={usd(c.profitPerHour, { cents: true })} />
           </div>
+          {c.weeklyOvertimeCost > 0 && (
+            <p style={{ fontSize: 12, color: C.warn, margin: "10px 0 0", fontWeight: 500 }}>
+              Profit already takes out −{usd(c.weeklyOvertimeCost)} of overtime this week.
+            </p>
+          )}
           <button type="button" onClick={() => setOpen(!open)}
             style={{ marginTop: 14, background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 13, fontWeight: 600, padding: 0, textDecoration: "underline", textUnderlineOffset: 2 }}>
             {open ? "Hide what they did ▲" : "See what they did this week ▾"}
@@ -785,6 +794,7 @@ function EmployeeForm({ employee, crews, onClose, onDone }: { employee: Employee
     tenureYears: String(employee?.tenureYears ?? ""),
     phone: employee?.phone ?? "",
     billable: employee?.billable ?? true,
+    overtimeHoursWeekly: String(employee?.overtimeHoursWeekly ?? ""),
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -795,7 +805,7 @@ function EmployeeForm({ employee, crews, onClose, onDone }: { employee: Employee
     e.preventDefault();
     if (!f.name.trim()) { setErr("Name is required."); return; }
     setSaving(true); setErr("");
-    const row: Record<string, unknown> = { ...f, hourlyRate: f.hourlyRate || 0, tenureYears: f.tenureYears || 0 };
+    const row: Record<string, unknown> = { ...f, hourlyRate: f.hourlyRate || 0, tenureYears: f.tenureYears || 0, overtimeHoursWeekly: f.overtimeHoursWeekly || 0 };
     if (employee) row.id = employee.id;
     const res = await opsMutate("employees", "upsert", row);
     setSaving(false);
@@ -834,7 +844,12 @@ function EmployeeForm({ employee, crews, onClose, onDone }: { employee: Employee
           </Fld>
           <Fld label="Tenure (yrs)"><input style={inputStyle} type="number" step="1" value={f.tenureYears} onChange={(e) => set("tenureYears", e.target.value)} /></Fld>
         </div>
-        <Fld label="Phone"><input style={inputStyle} value={f.phone} onChange={(e) => set("phone", e.target.value)} /></Fld>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Phone"><input style={inputStyle} value={f.phone} onChange={(e) => set("phone", e.target.value)} /></Fld>
+          <Fld label="Overtime hrs / week" hint="Paid at the OT rate">
+            <input style={inputStyle} type="number" step="0.5" value={f.overtimeHoursWeekly} onChange={(e) => set("overtimeHoursWeekly", e.target.value)} />
+          </Fld>
+        </div>
         <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: C.ink, cursor: "pointer" }}>
           <input type="checkbox" checked={f.billable} onChange={(e) => set("billable", e.target.checked)} style={{ accentColor: C.moss, width: 16, height: 16 }} />
           Billable to routes (uncheck for owners/admin whose time is overhead)
@@ -936,6 +951,253 @@ function EditLink({ onClick }: { onClick: () => void }) {
     <button type="button" onClick={onClick} style={{ background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 12, fontWeight: 600, padding: "2px 6px", textDecoration: "underline", textUnderlineOffset: 2 }}>
       Edit
     </button>
+  );
+}
+
+/* ════════════════════ SETUP TAB ════════════════════ */
+function SetupTab({ dataset }: { dataset: OpsDataset }) {
+  const router = useRouter();
+  const refresh = () => router.refresh();
+  const [editVehicle, setEditVehicle] = useState<Vehicle | null | "new">(null);
+  const [editCrew, setEditCrew] = useState<Crew | null | "new">(null);
+  const vehName = (id: string) => dataset.vehicles.find((v) => v.id === id)?.name ?? "—";
+
+  return (
+    <div style={{ display: "grid", gap: 28 }}>
+      {editVehicle !== null && (
+        <VehicleForm vehicle={editVehicle === "new" ? null : editVehicle} onClose={() => setEditVehicle(null)} onDone={() => { setEditVehicle(null); refresh(); }} />
+      )}
+      {editCrew !== null && (
+        <CrewForm crew={editCrew === "new" ? null : editCrew} vehicles={dataset.vehicles} onClose={() => setEditCrew(null)} onDone={() => { setEditCrew(null); refresh(); }} />
+      )}
+
+      <div>
+        <p style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: C.moss, fontWeight: 600, marginBottom: 8 }}>Setup</p>
+        <h2 style={{ fontFamily: FONT_DISP, fontSize: 32, fontWeight: 400, letterSpacing: "-0.018em", color: C.ink, margin: 0 }}>Change the numbers behind it all.</h2>
+        <p style={{ fontSize: 14, color: "rgba(28,31,26,0.7)", margin: "6px 0 0" }}>
+          Edit your business numbers, trucks, and crews here. Everything else on the other tabs updates the moment you save.
+        </p>
+      </div>
+
+      {/* Business numbers */}
+      <AssumptionsForm assumptions={dataset.assumptions} onDone={refresh} />
+
+      {/* Trucks */}
+      <Card title="Trucks">
+        <p style={{ fontSize: 13, color: C.ink, lineHeight: 1.55, margin: "0 0 14px" }}>
+          A truck&apos;s gas mileage and upkeep set its cost per mile. Change a truck and every route that uses it re-prices itself.
+        </p>
+        <div style={{ display: "grid", gap: 10 }}>
+          {dataset.vehicles.map((v) => (
+            <div key={v.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", background: C.paper, border: "1px solid rgba(168,162,148,0.3)", padding: "12px 14px" }}>
+              <div>
+                <p style={{ fontWeight: 600, color: C.ink, margin: 0, fontSize: 14 }}>{v.name}</p>
+                <p style={{ fontSize: 12, color: C.stone, margin: "2px 0 0" }}>{v.mpg} mpg · {usd(v.fuelCostPerGal, { cents: true })}/gal gas · {usd(v.maintenancePerMile, { cents: true })}/mi upkeep</p>
+              </div>
+              <EditLink onClick={() => setEditVehicle(v)} />
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 14 }}><AddBtn onClick={() => setEditVehicle("new")}>+ Add truck</AddBtn></div>
+      </Card>
+
+      {/* Crews */}
+      <Card title="Crews">
+        <p style={{ fontSize: 13, color: C.ink, lineHeight: 1.55, margin: "0 0 14px" }}>
+          Set which side a crew works and which truck they drive. Move people between crews on the Crew tab.
+        </p>
+        <div style={{ display: "grid", gap: 10 }}>
+          {dataset.crews.map((c) => (
+            <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", background: C.paper, border: "1px solid rgba(168,162,148,0.3)", borderLeft: `3px solid ${c.color}`, padding: "12px 14px" }}>
+              <div>
+                <p style={{ fontWeight: 600, color: C.ink, margin: 0, fontSize: 14 }}>{c.name}</p>
+                <p style={{ fontSize: 12, color: C.stone, margin: "2px 0 0" }}>{SIDE_LABEL[c.side]} · drives {vehName(c.vehicleId)} · {c.memberIds.length} people</p>
+              </div>
+              <EditLink onClick={() => setEditCrew(c)} />
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 14 }}><AddBtn onClick={() => setEditCrew("new")}>+ Add crew</AddBtn></div>
+      </Card>
+    </div>
+  );
+}
+
+function AssumptionsForm({ assumptions, onDone }: { assumptions: OpsAssumptions; onDone: () => void }) {
+  const [burden, setBurden] = useState(String(Math.round(assumptions.laborBurdenPct * 100)));
+  const [ohShare, setOhShare] = useState(String(Math.round(assumptions.maintenanceOverheadSharePct * 100)));
+  const [tax, setTax] = useState(String(Math.round(assumptions.taxSetAsidePct * 100)));
+  const [otMult, setOtMult] = useState(String(assumptions.overtimeMultiplier));
+  const [lines, setLines] = useState(assumptions.monthlyOverhead.map((l) => ({ label: l.label, monthlyUsd: String(l.monthlyUsd) })));
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [err, setErr] = useState("");
+
+  const setLine = (i: number, k: "label" | "monthlyUsd", v: string) =>
+    setLines((p) => p.map((l, idx) => (idx === i ? { ...l, [k]: v } : l)));
+  const addLine = () => setLines((p) => [...p, { label: "", monthlyUsd: "" }]);
+  const removeLine = (i: number) => setLines((p) => p.filter((_, idx) => idx !== i));
+
+  async function save() {
+    setSaving(true); setErr(""); setDone(false);
+    const row = {
+      laborBurdenPct: (parseFloat(burden) || 0) / 100,
+      maintenanceOverheadSharePct: (parseFloat(ohShare) || 0) / 100,
+      taxSetAsidePct: (parseFloat(tax) || 0) / 100,
+      overtimeMultiplier: parseFloat(otMult) || 1.5,
+      overheadLines: lines
+        .map((l) => ({ label: l.label.trim(), monthlyUsd: parseFloat(l.monthlyUsd) || 0 }))
+        .filter((l) => l.label),
+    };
+    const res = await opsMutate("assumptions", "upsert", row);
+    setSaving(false);
+    if (res.ok) { setDone(true); onDone(); } else setErr(res.error ?? "Save failed.");
+  }
+
+  return (
+    <Card title="Business numbers">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px,1fr))", gap: 14 }}>
+        <Fld label="Extra payroll cost %" hint="taxes, insurance, etc.">
+          <input style={inputStyle} type="number" step="1" value={burden} onChange={(e) => setBurden(e.target.value)} />
+        </Fld>
+        <Fld label="Office cost share %" hint="maintenance's slice">
+          <input style={inputStyle} type="number" step="1" value={ohShare} onChange={(e) => setOhShare(e.target.value)} />
+        </Fld>
+        <Fld label="Save for taxes %">
+          <input style={inputStyle} type="number" step="1" value={tax} onChange={(e) => setTax(e.target.value)} />
+        </Fld>
+        <Fld label="Overtime pay rate" hint="1.5 = time-and-a-half">
+          <input style={inputStyle} type="number" step="0.1" value={otMult} onChange={(e) => setOtMult(e.target.value)} />
+        </Fld>
+      </div>
+
+      <p style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.stone, fontWeight: 600, margin: "22px 0 10px" }}>Monthly office costs</p>
+      <div style={{ display: "grid", gap: 8 }}>
+        {lines.map((l, i) => (
+          <div key={i} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input style={{ ...inputStyle, flex: 2 }} value={l.label} placeholder="What it's for" onChange={(e) => setLine(i, "label", e.target.value)} />
+            <input style={{ ...inputStyle, flex: 1 }} type="number" value={l.monthlyUsd} placeholder="$ / mo" onChange={(e) => setLine(i, "monthlyUsd", e.target.value)} />
+            <button type="button" onClick={() => removeLine(i)} style={{ background: "transparent", border: 0, color: C.loss, cursor: "pointer", fontSize: 18, padding: "0 6px" }}>✕</button>
+          </div>
+        ))}
+        <button type="button" onClick={addLine} style={{ background: "transparent", border: `1px dashed rgba(168,162,148,0.6)`, color: C.moss, cursor: "pointer", fontSize: 13, fontWeight: 600, padding: "9px", fontFamily: FONT_BODY }}>+ Add a cost</button>
+      </div>
+
+      {err && <p style={{ color: C.loss, fontSize: 13, margin: "12px 0 0" }}>{err}</p>}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 18 }}>
+        <button type="button" onClick={save} disabled={saving} style={{ background: C.moss, color: C.paper, border: 0, padding: "12px 24px", fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1, fontFamily: FONT_BODY }}>
+          {saving ? "Saving…" : "Save numbers"}
+        </button>
+        {done && <span style={{ fontSize: 13, color: C.moss, fontWeight: 600 }}>Saved ✓</span>}
+      </div>
+    </Card>
+  );
+}
+
+function VehicleForm({ vehicle, onClose, onDone }: { vehicle: Vehicle | null; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({
+    name: vehicle?.name ?? "",
+    mpg: String(vehicle?.mpg ?? ""),
+    fuelCostPerGal: String(vehicle?.fuelCostPerGal ?? "4.85"),
+    maintenancePerMile: String(vehicle?.maintenancePerMile ?? "0.18"),
+  });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [err, setErr] = useState("");
+  const set = (k: string, v: string) => setF((p) => ({ ...p, [k]: v }));
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!f.name.trim()) { setErr("Give the truck a name."); return; }
+    setSaving(true); setErr("");
+    const row: Record<string, unknown> = { ...f, mpg: f.mpg || 0, fuelCostPerGal: f.fuelCostPerGal || 0, maintenancePerMile: f.maintenancePerMile || 0 };
+    if (vehicle) row.id = vehicle.id;
+    const res = await opsMutate("vehicles", "upsert", row);
+    setSaving(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Save failed.");
+  }
+  async function remove() {
+    if (!vehicle) return;
+    setDeleting(true);
+    const res = await opsMutate("vehicles", "delete", { id: vehicle.id });
+    setDeleting(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Remove failed.");
+  }
+
+  return (
+    <Modal title={vehicle ? "Edit truck" : "Add truck"} onClose={onClose}>
+      <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
+        <Fld label="Truck name"><input style={inputStyle} value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="Truck 1 — F-250" autoFocus /></Fld>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          <Fld label="Gas mileage (mpg)"><input style={inputStyle} type="number" step="0.1" value={f.mpg} onChange={(e) => set("mpg", e.target.value)} /></Fld>
+          <Fld label="Gas $/gallon"><input style={inputStyle} type="number" step="0.01" value={f.fuelCostPerGal} onChange={(e) => set("fuelCostPerGal", e.target.value)} /></Fld>
+          <Fld label="Upkeep $/mile" hint="tires, repairs"><input style={inputStyle} type="number" step="0.01" value={f.maintenancePerMile} onChange={(e) => set("maintenancePerMile", e.target.value)} /></Fld>
+        </div>
+        <p style={{ fontSize: 12, color: C.stone, margin: 0, lineHeight: 1.5 }}>
+          Lower gas mileage or higher upkeep makes every mile cost more — so routes that drive a lot will show less profit.
+        </p>
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+        <FormActions onCancel={onClose} onDelete={remove} saving={saving} deleting={deleting} isEdit={!!vehicle} />
+      </form>
+    </Modal>
+  );
+}
+
+function CrewForm({ crew, vehicles, onClose, onDone }: { crew: Crew | null; vehicles: Vehicle[]; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({
+    name: crew?.name ?? "",
+    side: crew?.side ?? "maintenance",
+    vehicleId: crew?.vehicleId ?? (vehicles[0]?.id ?? ""),
+    color: crew?.color ?? "#2f7d4f",
+  });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [err, setErr] = useState("");
+  const set = (k: string, v: string) => setF((p) => ({ ...p, [k]: v }));
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!f.name.trim()) { setErr("Give the crew a name."); return; }
+    setSaving(true); setErr("");
+    const row: Record<string, unknown> = { ...f };
+    if (crew) row.id = crew.id;
+    const res = await opsMutate("crews", "upsert", row);
+    setSaving(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Save failed.");
+  }
+  async function remove() {
+    if (!crew) return;
+    setDeleting(true);
+    const res = await opsMutate("crews", "delete", { id: crew.id });
+    setDeleting(false);
+    if (res.ok) onDone(); else setErr(res.error ?? "Remove failed.");
+  }
+
+  return (
+    <Modal title={crew ? "Edit crew" : "Add crew"} onClose={onClose}>
+      <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
+        <Fld label="Crew name"><input style={inputStyle} value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="Bonnie's Maintenance Crew" autoFocus /></Fld>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <Fld label="Side">
+            <select style={inputStyle} value={f.side} onChange={(e) => set("side", e.target.value)}>
+              <option value="maintenance">Maintenance (runs routes)</option>
+              <option value="construction">Construction (runs projects)</option>
+            </select>
+          </Fld>
+          <Fld label="Truck">
+            <select style={inputStyle} value={f.vehicleId} onChange={(e) => set("vehicleId", e.target.value)}>
+              <option value="">— None —</option>
+              {vehicles.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
+            </select>
+          </Fld>
+        </div>
+        <Fld label="Color" hint="shows on the map + cards">
+          <input type="color" value={f.color} onChange={(e) => set("color", e.target.value)} style={{ width: 60, height: 40, border: "1px solid rgba(168,162,148,0.5)", background: C.bone, cursor: "pointer" }} />
+        </Fld>
+        {err && <p style={{ color: C.loss, fontSize: 13, margin: 0 }}>{err}</p>}
+        <FormActions onCancel={onClose} onDelete={remove} saving={saving} deleting={deleting} isEdit={!!crew} />
+      </form>
+    </Modal>
   );
 }
 

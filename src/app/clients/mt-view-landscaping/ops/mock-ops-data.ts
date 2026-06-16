@@ -34,6 +34,8 @@ export type OpsAssumptions = {
   maintenanceOverheadSharePct: number;
   /** Owner tax set-aside on pre-tax net profit (federal + WA B&O). */
   taxSetAsidePct: number;
+  /** Pay multiplier for overtime hours (e.g. 1.5 = time-and-a-half). */
+  overtimeMultiplier: number;
 };
 
 export type OverheadLine = { label: string; monthlyUsd: number };
@@ -49,6 +51,7 @@ export const ASSUMPTIONS: OpsAssumptions = {
   ],
   maintenanceOverheadSharePct: 0.32,
   taxSetAsidePct: 0.2,
+  overtimeMultiplier: 1.5,
 };
 
 /** Sum of fixed monthly overhead (whole company). */
@@ -84,16 +87,18 @@ export type Employee = {
   /** Whether this person's labor is billed against routes (field crew) or
    *  sits in overhead (owners' admin time). */
   billable: boolean;
+  /** Overtime hours logged this week, paid at assumptions.overtimeMultiplier. */
+  overtimeHoursWeekly: number;
 };
 
 export const EMPLOYEES: Employee[] = [
-  { id: "e_tim", name: "Tim Hunsaker", role: "Owner · Design + Install Lead", payType: "salary", hourlyRate: 46, crewId: "c_install", tenureYears: 50, phone: "(253) 555-0111", billable: true },
-  { id: "e_bonnie", name: "Bonnie Hunsaker", role: "Owner · Maintenance Director", payType: "salary", hourlyRate: 42, crewId: null, tenureYears: 38, phone: "(253) 555-0112", billable: false },
-  { id: "e_marcus", name: "Marcus Vega", role: "Crew Lead · Maintenance", payType: "hourly", hourlyRate: 28, crewId: "c_maint", tenureYears: 5, phone: "(253) 555-0131", billable: true },
-  { id: "e_diego", name: "Diego Morales", role: "Crew · Maintenance", payType: "hourly", hourlyRate: 22, crewId: "c_maint", tenureYears: 3, phone: "(253) 555-0132", billable: true },
-  { id: "e_tyler", name: "Tyler Brooks", role: "Crew · Install", payType: "hourly", hourlyRate: 20, crewId: "c_install", tenureYears: 1, phone: "(253) 555-0133", billable: true },
-  { id: "e_jose", name: "José Restrepo", role: "Crew Lead · Install + Hardscape", payType: "hourly", hourlyRate: 26, crewId: "c_install", tenureYears: 11, phone: "(253) 555-0134", billable: true },
-  { id: "e_sam", name: "Sam Kowalski", role: "Crew · Install", payType: "hourly", hourlyRate: 24, crewId: "c_install", tenureYears: 2, phone: "(253) 555-0135", billable: true },
+  { id: "e_tim", name: "Tim Hunsaker", role: "Owner · Design + Install Lead", payType: "salary", hourlyRate: 46, crewId: "c_install", tenureYears: 50, phone: "(253) 555-0111", billable: true, overtimeHoursWeekly: 0 },
+  { id: "e_bonnie", name: "Bonnie Hunsaker", role: "Owner · Maintenance Director", payType: "salary", hourlyRate: 42, crewId: null, tenureYears: 38, phone: "(253) 555-0112", billable: false, overtimeHoursWeekly: 0 },
+  { id: "e_marcus", name: "Marcus Vega", role: "Crew Lead · Maintenance", payType: "hourly", hourlyRate: 28, crewId: "c_maint", tenureYears: 5, phone: "(253) 555-0131", billable: true, overtimeHoursWeekly: 0 },
+  { id: "e_diego", name: "Diego Morales", role: "Crew · Maintenance", payType: "hourly", hourlyRate: 22, crewId: "c_maint", tenureYears: 3, phone: "(253) 555-0132", billable: true, overtimeHoursWeekly: 0 },
+  { id: "e_tyler", name: "Tyler Brooks", role: "Crew · Install", payType: "hourly", hourlyRate: 20, crewId: "c_install", tenureYears: 1, phone: "(253) 555-0133", billable: true, overtimeHoursWeekly: 0 },
+  { id: "e_jose", name: "José Restrepo", role: "Crew Lead · Install + Hardscape", payType: "hourly", hourlyRate: 26, crewId: "c_install", tenureYears: 11, phone: "(253) 555-0134", billable: true, overtimeHoursWeekly: 0 },
+  { id: "e_sam", name: "Sam Kowalski", role: "Crew · Install", payType: "hourly", hourlyRate: 24, crewId: "c_install", tenureYears: 2, phone: "(253) 555-0135", billable: true, overtimeHoursWeekly: 0 },
 ];
 
 /* ═════════════════════════ VEHICLES ═════════════════════════ */

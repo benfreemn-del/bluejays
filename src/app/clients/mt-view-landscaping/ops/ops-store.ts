@@ -72,6 +72,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       tenureYears: num(r.tenure_years),
       phone: String(r.phone ?? ""),
       billable: r.billable !== false,
+      overtimeHoursWeekly: num(r.overtime_hours_weekly),
     }));
 
     const vehicles: Vehicle[] = vRows.map((r) => ({
@@ -138,6 +139,7 @@ export async function readOpsDataset(slug: string): Promise<OpsDataset> {
       monthlyOverhead: overheadLines,
       maintenanceOverheadSharePct: num(aRow.maintenance_overhead_share_pct, 0.32),
       taxSetAsidePct: num(aRow.tax_set_aside_pct, 0.2),
+      overtimeMultiplier: num(aRow.overtime_multiplier, 1.5),
     };
 
     const shop: ShopInfo = {

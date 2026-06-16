@@ -76,6 +76,7 @@ export type ProfitAndLoss = {
   laborCost: number;
   driveCost: number;
   materials: number;
+  overtime: number;
   grossProfit: number;
   overhead: number;
   netProfit: number;
@@ -109,6 +110,7 @@ export type CrewProfitability = {
   weeklyRevenue: number;
   weeklyLaborCost: number;
   weeklyDriveCost: number;
+  weeklyOvertimeCost: number;
   weeklyNetProfit: number;
   weeklyHours: number;
   netMarginPct: number;
@@ -125,6 +127,8 @@ export type EmployeeCost = {
   burdenedHourly: number;
   weeklyHours: number;
   weeklyLaborCost: number;
+  overtimeHours: number;
+  overtimeCost: number;
 };
 
 export type CustomerProfitability = {
@@ -156,6 +160,15 @@ export function createEngine(data: OpsDataset) {
   const crewById = (id: string) => data.crews.find((c) => c.id === id);
   const vehicleById = (id: string) => data.vehicles.find((v) => v.id === id);
   const propertyById = (id: string) => data.properties.find((p) => p.id === id);
+
+  /* overtime: hours beyond the route, paid at the OT multiplier (burdened) */
+  function employeeOvertimeCost(e: Employee): number {
+    const burden = e.burdenPctOverride ?? assumptions.laborBurdenPct;
+    return (e.overtimeHoursWeekly || 0) * e.hourlyRate * assumptions.overtimeMultiplier * (1 + burden);
+  }
+  function totalOvertimeCostWeekly(): number {
+    return data.employees.reduce((s, e) => s + employeeOvertimeCost(e), 0);
+  }
 
   /* crew rates */
   function crewBlendedWage(crew: Crew): number {
@@ -273,14 +286,14 @@ export function createEngine(data: OpsDataset) {
   /* P&L */
   function emptyPL(): ProfitAndLoss {
     return {
-      revenue: 0, laborCost: 0, driveCost: 0, materials: 0, grossProfit: 0,
+      revenue: 0, laborCost: 0, driveCost: 0, materials: 0, overtime: 0, grossProfit: 0,
       overhead: 0, netProfit: 0, taxSetAside: 0, takeHome: 0,
       serviceHours: 0, driveHours: 0, totalHours: 0, driveMiles: 0,
       grossMarginPct: 0, netMarginPct: 0, profitPerCrewHour: 0,
     };
   }
   function finalizePL(pl: ProfitAndLoss): ProfitAndLoss {
-    pl.grossProfit = pl.revenue - pl.laborCost - pl.driveCost - pl.materials;
+    pl.grossProfit = pl.revenue - pl.laborCost - pl.driveCost - pl.materials - pl.overtime;
     pl.netProfit = pl.grossProfit - pl.overhead;
     pl.taxSetAside = Math.max(0, pl.netProfit) * assumptions.taxSetAsidePct;
     pl.takeHome = pl.netProfit - pl.taxSetAside;
@@ -302,6 +315,7 @@ export function createEngine(data: OpsDataset) {
       pl.driveHours += re.driveHours;
       pl.driveMiles += re.driveMiles;
     }
+    pl.overtime = totalOvertimeCostWeekly();
     return finalizePL(pl);
   }
   function monthlyProfitAndLoss(): ProfitAndLoss {
@@ -311,6 +325,7 @@ export function createEngine(data: OpsDataset) {
     pl.laborCost = w.laborCost * weeksPerMonth;
     pl.driveCost = w.driveCost * weeksPerMonth;
     pl.materials = w.materials * weeksPerMonth;
+    pl.overtime = w.overtime * weeksPerMonth;
     pl.overhead = maintenanceOverheadMonthly; // exact allocated figure
     pl.serviceHours = w.serviceHours * weeksPerMonth;
     pl.driveHours = w.driveHours * weeksPerMonth;
@@ -348,11 +363,15 @@ export function createEngine(data: OpsDataset) {
         });
       }
 
+      // Overtime is a crew-level cost on top of the route work.
+      const weeklyOvertimeCost = members.reduce((s, m) => s + employeeOvertimeCost(m), 0);
+      weeklyNetProfit -= weeklyOvertimeCost;
+
       return {
         crew, members,
         blendedWage: crewBlendedWage(crew),
         burdenedWage: crewBurdenedWage(crew),
-        weeklyRevenue, weeklyLaborCost, weeklyDriveCost, weeklyNetProfit, weeklyHours,
+        weeklyRevenue, weeklyLaborCost, weeklyDriveCost, weeklyOvertimeCost, weeklyNetProfit, weeklyHours,
         netMarginPct: weeklyRevenue > 0 ? (weeklyNetProfit / weeklyRevenue) * 100 : 0,
         profitPerHour: weeklyHours > 0 ? weeklyNetProfit / weeklyHours : 0,
         routeBreakdown,
@@ -371,7 +390,12 @@ export function createEngine(data: OpsDataset) {
       const burdenPct = employee.burdenPctOverride ?? assumptions.laborBurdenPct;
       const burdenedHourly = employee.hourlyRate * (1 + burdenPct);
       const weeklyHours = crew && employee.billable ? crewHours[crew.id] ?? 0 : 0;
-      return { employee, crew, burdenPct, burdenedHourly, weeklyHours, weeklyLaborCost: weeklyHours * burdenedHourly };
+      return {
+        employee, crew, burdenPct, burdenedHourly, weeklyHours,
+        weeklyLaborCost: weeklyHours * burdenedHourly,
+        overtimeHours: employee.overtimeHoursWeekly || 0,
+        overtimeCost: employeeOvertimeCost(employee),
+      };
     });
   }
 
