@@ -54,7 +54,7 @@ const ID_PREFIX: Record<Entity, string> = {
   timesheets: "t",
 };
 
-type FieldDef = { col: string; type: "string" | "number" | "bool" | "numberOrNull" | "json" | "refOrNull" };
+type FieldDef = { col: string; type: "string" | "number" | "bool" | "numberOrNull" | "json" | "refOrNull" | "dateOrNull" };
 
 // app field (camelCase) → DB column + coercion. Only listed fields are
 // written — anything else in the payload is ignored.
@@ -95,14 +95,14 @@ const FIELDS: Record<Entity, Record<string, FieldDef>> = {
     pricePerVisitUsd: { col: "price_per_visit_usd", type: "number" },
     visitsPerMonth: { col: "visits_per_month", type: "number" },
     materialsPerVisitUsd: { col: "materials_per_visit_usd", type: "number" },
-    startedAt: { col: "started_at", type: "string" },
+    startedAt: { col: "started_at", type: "dateOrNull" },
     active: { col: "active", type: "bool" },
     billingStatus: { col: "billing_status", type: "string" },
     billingNote: { col: "billing_note", type: "string" },
   },
   routes: {
     day: { col: "day", type: "string" },
-    crewId: { col: "crew_id", type: "string" },
+    crewId: { col: "crew_id", type: "refOrNull" },
     returnDriveMinutes: { col: "return_drive_minutes", type: "number" },
     returnDriveMiles: { col: "return_drive_miles", type: "number" },
     sortOrder: { col: "sort_order", type: "number" },
@@ -158,6 +158,9 @@ function coerce(def: FieldDef, v: unknown): unknown {
     case "refOrNull":
       // FK reference: empty string → NULL (avoids FK-violation on "")
       return v == null || v === "" ? null : String(v);
+    case "dateOrNull":
+      // date column: empty string → NULL (Postgres rejects "" as a date)
+      return v == null || String(v).trim() === "" ? null : String(v).trim();
     case "json":
       return v ?? [];
     default:
@@ -212,7 +215,7 @@ export async function POST(req: NextRequest) {
     const { error } = await sb.from(table).delete().eq("id", id).eq("client_slug", SLUG);
     if (error) {
       console.error(`[ops mutate] delete ${entity} failed:`, error.message);
-      return NextResponse.json({ ok: false, error: "Delete failed." }, { status: 500 });
+      return NextResponse.json({ ok: false, error: `Couldn't remove: ${error.message}` }, { status: 500 });
     }
     return NextResponse.json({ ok: true, id });
   }
@@ -263,7 +266,13 @@ export async function POST(req: NextRequest) {
 
   if (result.error) {
     console.error(`[ops mutate] upsert ${entity} failed:`, result.error.message);
-    return NextResponse.json({ ok: false, error: "Save failed." }, { status: 500 });
+    // Surface the real reason — this is an internal owner tool, and a silent
+    // "Save failed" once cost Bonnie a whole session of lost customer entry.
+    return NextResponse.json({ ok: false, error: `Couldn't save: ${result.error.message}` }, { status: 500 });
+  }
+  if (!result.data) {
+    console.error(`[ops mutate] upsert ${entity} returned no row`);
+    return NextResponse.json({ ok: false, error: "Save didn't confirm — please try again." }, { status: 500 });
   }
   return NextResponse.json({ ok: true, row: result.data });
 }

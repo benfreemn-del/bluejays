@@ -1379,6 +1379,7 @@ function PropertyForm({ property, onClose, onDone }: { property: Property | null
       visitsPerMonth: f.visitsPerMonth || 4,
       lat: f.lat === "" ? null : f.lat,
       lng: f.lng === "" ? null : f.lng,
+      startedAt: f.startedAt === "" ? null : f.startedAt,
     };
     if (property) row.id = property.id;
     const res = await opsMutate("properties", "upsert", row);
