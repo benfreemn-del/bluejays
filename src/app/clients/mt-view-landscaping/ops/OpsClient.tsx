@@ -14,7 +14,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BILLING_LABEL,
   SIDE_LABEL,
@@ -1366,19 +1366,62 @@ function PropertyForm({ property, onClose, onDone }: { property: Property | null
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [err, setErr] = useState("");
+  // Map-pin lookup: coordinates fill in automatically from the address so the
+  // operator never types latitude/longitude by hand.
+  const [geo, setGeo] = useState<{ status: "idle" | "looking" | "found" | "notfound"; label?: string }>(
+    property?.lat != null && property?.lng != null ? { status: "found" } : { status: "idle" }
+  );
+  const [showManual, setShowManual] = useState(false);
+  const lastLookup = useRef<string>("");
   const set = (k: string, v: unknown) => setF((p) => ({ ...p, [k]: v }));
+
+  // Geocode the current address → lat/lng. Returns the coords if found.
+  async function lookupCoords(opts?: { force?: boolean }): Promise<{ lat: string; lng: string } | null> {
+    const address = f.address.trim();
+    const city = f.city.trim();
+    if (!address && !city) return null;
+    const key = `${address}|${city}`.toLowerCase();
+    if (!opts?.force && key === lastLookup.current) return null; // unchanged since last lookup
+    lastLookup.current = key;
+    setGeo({ status: "looking" });
+    try {
+      const res = await fetch(
+        `/api/clients/mt-view-landscaping/ops/geocode?address=${encodeURIComponent(address)}&city=${encodeURIComponent(city)}`
+      );
+      const j = await res.json();
+      if (j.ok) {
+        const lat = String(j.lat);
+        const lng = String(j.lng);
+        setF((p) => ({ ...p, lat, lng }));
+        setGeo({ status: "found", label: j.label });
+        return { lat, lng };
+      }
+    } catch {
+      /* fall through to not-found */
+    }
+    setGeo({ status: "notfound" });
+    return null;
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!f.customer.trim()) { setErr("Customer name is required."); return; }
     setSaving(true); setErr("");
+    // Make sure coordinates are filled before saving — if she typed an address
+    // but the blur lookup didn't run, do a final geocode now so the map pin lands.
+    let lat = f.lat;
+    let lng = f.lng;
+    if ((lat === "" || lng === "") && (f.address.trim() || f.city.trim())) {
+      const found = await lookupCoords({ force: true });
+      if (found) { lat = found.lat; lng = found.lng; }
+    }
     const row: Record<string, unknown> = {
       ...f,
       pricePerVisitUsd: f.pricePerVisitUsd || 0,
       materialsPerVisitUsd: f.materialsPerVisitUsd || 0,
       visitsPerMonth: f.visitsPerMonth || 4,
-      lat: f.lat === "" ? null : f.lat,
-      lng: f.lng === "" ? null : f.lng,
+      lat: lat === "" ? null : lat,
+      lng: lng === "" ? null : lng,
       startedAt: f.startedAt === "" ? null : f.startedAt,
     };
     if (property) row.id = property.id;
@@ -1398,9 +1441,9 @@ function PropertyForm({ property, onClose, onDone }: { property: Property | null
     <Modal title={property ? "Edit customer" : "Add customer"} onClose={onClose}>
       <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
         <Fld label="Customer / property name"><input style={inputStyle} value={f.customer} onChange={(e) => set("customer", e.target.value)} autoFocus /></Fld>
-        <Fld label="Address"><input style={inputStyle} value={f.address} onChange={(e) => set("address", e.target.value)} placeholder="8240 168th Ave SE" /></Fld>
+        <Fld label="Address"><input style={inputStyle} value={f.address} onChange={(e) => set("address", e.target.value)} onBlur={() => lookupCoords()} placeholder="8240 168th Ave SE" /></Fld>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
-          <Fld label="City"><input style={inputStyle} value={f.city} onChange={(e) => set("city", e.target.value)} /></Fld>
+          <Fld label="City"><input style={inputStyle} value={f.city} onChange={(e) => set("city", e.target.value)} onBlur={() => lookupCoords()} /></Fld>
           <Fld label="Tier">
             <select style={inputStyle} value={f.tier} onChange={(e) => set("tier", e.target.value)}>
               <option value="essentials">Essentials</option>
@@ -1414,9 +1457,33 @@ function PropertyForm({ property, onClose, onDone }: { property: Property | null
           <Fld label="Materials / visit"><input style={inputStyle} type="number" step="0.01" value={f.materialsPerVisitUsd} onChange={(e) => set("materialsPerVisitUsd", e.target.value)} /></Fld>
           <Fld label="Visits / mo"><input style={inputStyle} type="number" step="1" value={f.visitsPerMonth} onChange={(e) => set("visitsPerMonth", e.target.value)} /></Fld>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <Fld label="Lat" hint="for the map"><input style={inputStyle} type="number" step="0.0001" value={f.lat} onChange={(e) => set("lat", e.target.value)} /></Fld>
-          <Fld label="Lng" hint="for the map"><input style={inputStyle} type="number" step="0.0001" value={f.lng} onChange={(e) => set("lng", e.target.value)} /></Fld>
+        {/* Map pin — fills in automatically from the address. No typing coordinates. */}
+        <div style={{ border: "1px solid rgba(168,162,148,0.4)", background: C.bone, padding: "12px 14px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+            <div style={{ fontSize: 13, lineHeight: 1.45 }}>
+              {geo.status === "idle" && <span style={{ color: C.stone }}>📍 The map pin fills in by itself once you type the address above.</span>}
+              {geo.status === "looking" && <span style={{ color: C.ink }}>📍 Finding this address on the map…</span>}
+              {geo.status === "found" && <span style={{ color: C.moss, fontWeight: 600 }}>📍 Pinned on the map ✓</span>}
+              {geo.status === "notfound" && <span style={{ color: C.ink }}>Couldn&apos;t find that address automatically. Double-check the address, or enter the location by hand below.</span>}
+            </div>
+            {(f.address.trim() || f.city.trim()) && (
+              <button type="button" onClick={() => lookupCoords({ force: true })} style={{ background: "transparent", border: 0, color: C.moss, cursor: "pointer", fontSize: 12, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 2, padding: 0, whiteSpace: "nowrap" }}>
+                Find again
+              </button>
+            )}
+          </div>
+          {geo.status === "found" && geo.label && (
+            <p style={{ fontSize: 11, color: C.stone, margin: "6px 0 0" }}>{geo.label}</p>
+          )}
+          <button type="button" onClick={() => setShowManual((s) => !s)} style={{ background: "transparent", border: 0, color: C.stone, cursor: "pointer", fontSize: 11, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 2, padding: 0, marginTop: 8 }}>
+            {showManual ? "Hide coordinates" : "Enter location by hand"}
+          </button>
+          {showManual && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+              <Fld label="Lat"><input style={inputStyle} type="number" step="0.0001" value={f.lat} onChange={(e) => set("lat", e.target.value)} /></Fld>
+              <Fld label="Lng"><input style={inputStyle} type="number" step="0.0001" value={f.lng} onChange={(e) => set("lng", e.target.value)} /></Fld>
+            </div>
+          )}
         </div>
         <p style={{ fontSize: 12, color: C.stone, margin: 0, lineHeight: 1.5 }}>
           New customers show revenue immediately; profit/margin appears once they&apos;re added to a route day (route editing — next).
