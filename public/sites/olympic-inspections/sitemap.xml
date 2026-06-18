@@ -22,14 +22,6 @@
   <url><loc>https://www.olympicinspect.com/mold-inspection-port-orchard</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.olympicinspect.com/mold-inspection-bainbridge-island</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 
-  <!-- Radon testing -->
-  <url><loc>https://www.olympicinspect.com/radon-testing-port-angeles</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.olympicinspect.com/radon-testing-sequim</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.olympicinspect.com/radon-testing-port-townsend</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.olympicinspect.com/radon-testing-bremerton</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.olympicinspect.com/radon-testing-silverdale</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.olympicinspect.com/radon-testing-poulsbo</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-
   <!-- Well water testing -->
   <url><loc>https://www.olympicinspect.com/well-water-testing-sequim</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.olympicinspect.com/well-water-testing-port-angeles</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -37,12 +29,6 @@
   <url><loc>https://www.olympicinspect.com/well-water-testing-bremerton</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.olympicinspect.com/well-water-testing-silverdale</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.olympicinspect.com/well-water-testing-poulsbo</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-
-  <!-- Septic inspection (Clallam + Jefferson only) -->
-  <url><loc>https://www.olympicinspect.com/septic-inspection-clallam-county</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.olympicinspect.com/septic-inspection-sequim</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.olympicinspect.com/septic-inspection-port-angeles</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.olympicinspect.com/septic-inspection-port-townsend</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- ERMI -->
   <url><loc>https://www.olympicinspect.com/ermi-testing-olympic-peninsula</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>

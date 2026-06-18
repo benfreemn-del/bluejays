@@ -12,12 +12,8 @@
     initRevealObserver();
     initFaqToggle();
     initCalculator();
-    initSlotPicker();
     initBookingForm();
     initYearStamp();
-    initReviewsCarousel();
-    // Floating reviews widget is self-contained — see the separate IIFE
-    // at the bottom of this file (same pattern as the back-to-top button).
   });
 
   // ---- NAV: scrolled state + smooth scroll ----
@@ -329,149 +325,14 @@
     render();
   }
 
-  // ---- SLOT PICKER (fetches real available slots from API) ----
-  function initSlotPicker() {
-    var picker = document.getElementById("slotPicker");
-    var hiddenInput = document.getElementById("bookSlotId");
-    if (!picker) return;
-
-    function setStatus(msg, kind) {
-      picker.innerHTML = '<div class="slot-picker-status">' + msg + "</div>";
-      picker.setAttribute("data-state", kind || "loading");
-    }
-
-    function setEmpty() {
-      picker.innerHTML =
-        '<div class="slot-picker-empty">' +
-          '<strong>No open slots showing right now.</strong>' +
-          'Submit your details below and we will reach out with the next available time.' +
-        "</div>";
-      picker.setAttribute("data-state", "empty");
-    }
-
-    function groupByDay(slots) {
-      var groups = {};
-      var order = [];
-      slots.forEach(function (s) {
-        var d = new Date(s.start_at);
-        var key = d.toISOString().slice(0, 10);
-        if (!groups[key]) {
-          groups[key] = { date: d, slots: [] };
-          order.push(key);
-        }
-        groups[key].slots.push(s);
-      });
-      return order.map(function (k) { return groups[k]; });
-    }
-
-    function fmtTime(d) {
-      return d.toLocaleTimeString(undefined, {
-        hour: "numeric",
-        minute: "2-digit",
-      });
-    }
-
-    function fmtDay(d) {
-      return d.toLocaleDateString(undefined, {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-      });
-    }
-
-    function render(slots) {
-      if (!slots || slots.length === 0) {
-        setEmpty();
-        return;
-      }
-      picker.setAttribute("data-state", "ready");
-      var days = groupByDay(slots);
-      var html = "";
-      days.forEach(function (g) {
-        html += '<div class="slot-picker-day">';
-        html += '<span class="slot-picker-day-label">' + fmtDay(g.date) + "</span>";
-        html += '<div class="slot-picker-times">';
-        g.slots.forEach(function (s) {
-          var start = new Date(s.start_at);
-          var end = new Date(s.end_at);
-          html +=
-            '<button type="button" class="slot-pill" data-slot-id="' + s.id + '">' +
-              fmtTime(start) + " – " + fmtTime(end) +
-            "</button>";
-        });
-        html += "</div></div>";
-      });
-      picker.innerHTML = html;
-
-      // Wire selection
-      var pills = picker.querySelectorAll(".slot-pill");
-      for (var i = 0; i < pills.length; i++) {
-        pills[i].addEventListener("click", function () {
-          for (var k = 0; k < pills.length; k++) pills[k].classList.remove("is-selected");
-          this.classList.add("is-selected");
-          if (hiddenInput) hiddenInput.value = this.getAttribute("data-slot-id") || "";
-        });
-      }
-    }
-
-    setStatus("Loading available slots…", "loading");
-
-    fetch("/api/clients/olympic-inspections/slots/public", { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("api_" + r.status);
-        return r.json();
-      })
-      .then(function (j) {
-        if (j && j.ok) render(j.slots || []);
-        else setEmpty();
-      })
-      .catch(function () {
-        setEmpty();
-      });
-
-    // Wire the "Suggest a different time" toggle (custom slot input)
-    var toggle = document.getElementById("slotCustomToggle");
-    var custom = document.getElementById("slotCustom");
-    if (toggle && custom) {
-      toggle.addEventListener("click", function () {
-        var willOpen = custom.hasAttribute("hidden");
-        if (willOpen) {
-          custom.removeAttribute("hidden");
-          toggle.classList.add("is-open");
-          // Clear any selected preset slot since user is suggesting custom
-          if (hiddenInput) hiddenInput.value = "";
-          var sel = picker.querySelectorAll(".slot-pill.is-selected");
-          for (var i = 0; i < sel.length; i++) sel[i].classList.remove("is-selected");
-        } else {
-          custom.setAttribute("hidden", "");
-          toggle.classList.remove("is-open");
-        }
-      });
-      // If user clicks a preset slot pill while custom is open, auto-collapse
-      picker.addEventListener("click", function (e) {
-        var t = e.target;
-        if (t && t.classList && t.classList.contains("slot-pill")) {
-          if (!custom.hasAttribute("hidden")) {
-            custom.setAttribute("hidden", "");
-            toggle.classList.remove("is-open");
-            // Clear custom inputs
-            var cd = document.getElementById("customDate");
-            var ct = document.getElementById("customTime");
-            if (cd) cd.value = "";
-            if (ct) ct.value = "";
-          }
-        }
-      });
-    }
-  }
-
   // ---- BOOKING FORM ----
   function initBookingForm() {
     var form = document.getElementById("bookForm");
     var success = document.getElementById("bookSuccess");
     if (!form) return;
 
-    // Native OIT booking endpoint — atomically claims the slot + creates booking
+    // Native OIT booking endpoint — creates the booking request (no time slot;
+    // we follow up to schedule). slotId is sent null for API compatibility.
     var endpoint = "/api/clients/olympic-inspections/bookings";
 
     // ── Validation helpers ─────────────────────────────────────────────
@@ -590,7 +451,6 @@
       }
 
       var fd = new FormData(form);
-      var slotId = fd.get("slotId") || null;
       var estimateVal = (fd.get("estimate") || "").toString();
       // estimateVal is "low-high" string from calculator; split for API
       var estimateLow = null, estimateHigh = null;
@@ -604,21 +464,10 @@
         }
       }
 
-      // If customer used the "Suggest a different time" path, prepend that
-      // request to their notes field so it lands in the admin booking detail.
-      var userNotes = (fd.get("notes") || "").toString();
-      var customDate = (fd.get("customDate") || "").toString();
-      var customTime = (fd.get("customTime") || "").toString();
-      var combinedNotes = userNotes;
-      if (!slotId && (customDate || customTime)) {
-        var requested = "Requested time: " +
-          (customDate || "(no date)") +
-          (customTime ? " at " + customTime : "");
-        combinedNotes = requested + (userNotes ? "\n\n" + userNotes : "");
-      }
+      var combinedNotes = (fd.get("notes") || "").toString();
 
       var payload = {
-        slotId: slotId || null,
+        slotId: null,
         name: name,
         phone: phone,
         email: email,
@@ -655,16 +504,6 @@
             if (success) success.classList.add("show");
             return;
           }
-          if (res.status === 409) {
-            // Slot got claimed by someone else — refresh picker
-            resetButton();
-            showBanner(
-              (res.body && res.body.message) ||
-                "That slot was just booked by someone else. Please pick another time."
-            );
-            initSlotPicker();
-            return;
-          }
           // Surface the actual error message + status so failures are diagnosable.
           var serverError = (res.body && (res.body.message || res.body.error)) || "";
           var msg = "We couldn't submit your request";
@@ -689,183 +528,6 @@
   function initYearStamp() {
     var year = document.getElementById("year");
     if (year) year.textContent = String(new Date().getFullYear());
-  }
-
-  // ─── LIVE GOOGLE REVIEWS CAROUSEL (added 2026-05-10) ────────────────────
-  // Fetches reviews from /api/clients/olympic-inspections/google-reviews
-  // (cached server-side 1hr). Renders cards into the carousel, wires
-  // prev/next + dots + autoplay (6s) + keyboard nav. Pauses on hover.
-  // Graceful empty state when API unconfigured or zero reviews.
-  function initReviewsCarousel() {
-    var loading = document.getElementById("reviewsLoading");
-    var track = document.getElementById("reviewsTrack");
-    var prev = document.getElementById("reviewsPrev");
-    var next = document.getElementById("reviewsNext");
-    var dots = document.getElementById("reviewsDots");
-    var summary = document.getElementById("reviewsRatingSummary");
-    var empty = document.getElementById("reviewsEmpty");
-    var subtitle = document.getElementById("testimonialsSubtitle");
-    if (!track) return;
-
-    fetch("/api/clients/olympic-inspections/google-reviews")
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (loading) loading.hidden = true;
-        var reviews = (data && data.reviews) || [];
-        if (!reviews.length) {
-          if (empty) empty.hidden = false;
-          if (subtitle && data && !data.configured) {
-            // Hide the "Live Google Reviews" subtitle when API isn't
-            // configured yet — don't promise live data we can't deliver.
-            subtitle.hidden = true;
-          }
-          return;
-        }
-        renderCards(track, reviews);
-        renderDots(dots, reviews.length);
-        renderSummary(summary, data);
-        if (prev) prev.hidden = false;
-        if (next) next.hidden = false;
-        if (dots) dots.hidden = false;
-        if (summary) summary.hidden = false;
-        track.hidden = false;
-        wireCarousel(track, prev, next, dots, reviews.length);
-      })
-      .catch(function (err) {
-        if (loading) loading.hidden = true;
-        if (empty) empty.hidden = false;
-        console.warn("[oit] reviews fetch failed:", err);
-      });
-  }
-
-  function escapeHtml(s) {
-    return String(s || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  function renderCards(track, reviews) {
-    track.innerHTML = reviews
-      .map(function (r) {
-        var initial = (r.author || "?").trim().charAt(0).toUpperCase() || "?";
-        var avatar = r.profilePhoto
-          ? '<img src="' + escapeHtml(r.profilePhoto) + '" alt="" loading="lazy" referrerpolicy="no-referrer" />'
-          : escapeHtml(initial);
-        var stars = "★★★★★".slice(0, Math.max(1, Math.min(5, Math.round(r.rating || 5))));
-        return (
-          '<article class="testimonial-card" role="group" aria-roledescription="slide">' +
-            '<div class="testimonial-card-header">' +
-              '<div class="testimonial-avatar">' + avatar + '</div>' +
-              '<div class="testimonial-meta">' +
-                '<span class="testimonial-meta-author">' + escapeHtml(r.author) + '</span>' +
-                '<span class="testimonial-meta-time">' + escapeHtml(r.relativeTime || "") + '</span>' +
-              '</div>' +
-              '<span class="testimonial-google-badge" title="Verified Google review">G&nbsp;Review</span>' +
-            '</div>' +
-            '<p class="testimonial-stars" aria-label="' + r.rating + ' out of 5 stars">' + stars + '</p>' +
-            '<blockquote>' + escapeHtml(r.text) + '</blockquote>' +
-          '</article>'
-        );
-      })
-      .join("");
-  }
-
-  function renderDots(dots, count) {
-    if (!dots) return;
-    dots.innerHTML = "";
-    for (var i = 0; i < count; i++) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "testimonial-dot";
-      b.setAttribute("role", "tab");
-      b.setAttribute("aria-label", "Review " + (i + 1) + " of " + count);
-      b.setAttribute("aria-selected", i === 0 ? "true" : "false");
-      b.dataset.index = String(i);
-      dots.appendChild(b);
-    }
-  }
-
-  function renderSummary(summary, data) {
-    if (!summary || !data || data.rating == null) {
-      if (summary) summary.hidden = true;
-      return;
-    }
-    var starsEl = summary.querySelector(".rating-stars");
-    var numEl = summary.querySelector(".rating-number");
-    var countEl = summary.querySelector(".rating-count");
-    var linkEl = summary.querySelector(".rating-google-link");
-    if (starsEl) starsEl.textContent = "★★★★★".slice(0, Math.round(data.rating));
-    if (numEl) numEl.textContent = Number(data.rating).toFixed(1);
-    if (countEl) countEl.textContent = "(" + (data.reviewCount || 0) + " reviews)";
-    if (linkEl && data.placeId) {
-      linkEl.href = "https://search.google.com/local/reviews?placeid=" +
-        encodeURIComponent(data.placeId);
-    } else if (linkEl) {
-      linkEl.hidden = true;
-    }
-  }
-
-  function wireCarousel(track, prev, next, dots, count) {
-    var current = 0;
-    var autoplayMs = 6000;
-    var autoplayTimer = null;
-
-    function go(index) {
-      current = (index + count) % count;
-      var card = track.children[current];
-      if (card) {
-        card.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "start",
-        });
-      }
-      if (dots) {
-        var allDots = dots.querySelectorAll(".testimonial-dot");
-        for (var i = 0; i < allDots.length; i++) {
-          allDots[i].setAttribute("aria-selected", i === current ? "true" : "false");
-        }
-      }
-    }
-    function startAutoplay() {
-      stopAutoplay();
-      autoplayTimer = setInterval(function () { go(current + 1); }, autoplayMs);
-    }
-    function stopAutoplay() {
-      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-    }
-
-    if (prev) prev.addEventListener("click", function () { go(current - 1); stopAutoplay(); });
-    if (next) next.addEventListener("click", function () { go(current + 1); stopAutoplay(); });
-    if (dots) {
-      dots.addEventListener("click", function (e) {
-        var btn = e.target.closest(".testimonial-dot");
-        if (!btn) return;
-        go(parseInt(btn.dataset.index, 10));
-        stopAutoplay();
-      });
-    }
-
-    var carousel = track.parentElement;
-    if (carousel) {
-      carousel.addEventListener("mouseenter", stopAutoplay);
-      carousel.addEventListener("mouseleave", startAutoplay);
-      carousel.addEventListener("focusin", stopAutoplay);
-      carousel.addEventListener("focusout", startAutoplay);
-    }
-
-    track.tabIndex = 0;
-    track.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowLeft") { go(current - 1); stopAutoplay(); }
-      else if (e.key === "ArrowRight") { go(current + 1); stopAutoplay(); }
-    });
-
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-    startAutoplay();
   }
 
 })();
@@ -894,114 +556,4 @@
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
   update();
-})();
-
-// ─── FLOATING GOOGLE REVIEWS WIDGET (added 2026-05-19) ───────────────────
-// Fixed-position card on the right edge that rotates through the live
-// Google reviews coming from the OIT (formerly Pine & Particle) profile.
-// Same data source as the in-page carousel — both hit
-// /api/clients/olympic-inspections/google-reviews. Hidden on mobile via CSS.
-// Hidden permanently for THIS session if the user clicks the × — uses
-// sessionStorage so it doesn't pester them on every page refresh.
-(function () {
-  if (sessionStorage.getItem("oit_floating_reviews_dismissed") === "1") return;
-
-  document.addEventListener("DOMContentLoaded", function () {
-    var widget = document.getElementById("floatingReviews");
-    if (!widget) return;
-    var closeBtn = document.getElementById("floatingReviewsClose");
-    var avgEl = document.getElementById("floatingReviewsAvg");
-    var avgStarsEl = document.getElementById("floatingReviewsAvgStars");
-    var countEl = document.getElementById("floatingReviewsCount");
-    var card = document.getElementById("floatingReviewsCard");
-    var authorEl = document.getElementById("floatingReviewAuthor");
-    var starsEl = document.getElementById("floatingReviewStars");
-    var textEl = document.getElementById("floatingReviewText");
-    var dotsEl = document.getElementById("floatingReviewDots");
-    var linkEl = document.getElementById("floatingReviewsLink");
-
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function () {
-        widget.classList.remove("visible");
-        sessionStorage.setItem("oit_floating_reviews_dismissed", "1");
-      });
-    }
-
-    fetch("/api/clients/olympic-inspections/google-reviews")
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        var reviews = (data && data.reviews) || [];
-        if (!reviews.length) return; // graceful: stay hidden
-
-        // Header summary
-        if (avgEl && typeof data.rating === "number") {
-          avgEl.textContent = data.rating.toFixed(1);
-        }
-        if (avgStarsEl && typeof data.rating === "number") {
-          var filled = Math.round(data.rating);
-          avgStarsEl.textContent = "★★★★★".slice(0, Math.max(0, Math.min(5, filled))) +
-            "☆☆☆☆☆".slice(0, Math.max(0, 5 - filled));
-        }
-        if (countEl) {
-          countEl.textContent = data.reviewCount || reviews.length;
-        }
-        if (linkEl) {
-          // Best-effort link to the public Google search for "olympic
-          // inspections sequim" reviews. The Place Details API doesn't
-          // hand us back a direct review URL without an extra fetch, so
-          // a search URL covers it cleanly.
-          linkEl.href = "https://www.google.com/maps/search/?api=1&query=Olympic+Inspections+Sequim+WA";
-        }
-
-        // Build dots
-        if (dotsEl) {
-          dotsEl.innerHTML = reviews.map(function (_r, i) {
-            return '<span class="floating-reviews-dot' + (i === 0 ? ' active' : '') + '"></span>';
-          }).join("");
-        }
-
-        var idx = 0;
-        function render() {
-          var r = reviews[idx];
-          if (!r) return;
-          if (authorEl) authorEl.textContent = r.author || "Anonymous";
-          if (starsEl) {
-            var n = Math.round(r.rating || 5);
-            starsEl.textContent = "★★★★★".slice(0, Math.max(1, Math.min(5, n)));
-          }
-          if (textEl) textEl.textContent = (r.text || "").slice(0, 240);
-          if (dotsEl) {
-            var allDots = dotsEl.querySelectorAll(".floating-reviews-dot");
-            for (var i = 0; i < allDots.length; i++) {
-              allDots[i].classList.toggle("active", i === idx);
-            }
-          }
-        }
-        render();
-
-        // Show widget after the first review is populated (avoids a
-        // visible empty state flash on slow API responses).
-        requestAnimationFrame(function () { widget.classList.add("visible"); });
-
-        // Rotate every 7s with a soft cross-fade. Pause on hover.
-        var paused = false;
-        widget.addEventListener("mouseenter", function () { paused = true; });
-        widget.addEventListener("mouseleave", function () { paused = false; });
-
-        if (reviews.length > 1) {
-          setInterval(function () {
-            if (paused) return;
-            if (card) card.classList.add("fade");
-            setTimeout(function () {
-              idx = (idx + 1) % reviews.length;
-              render();
-              if (card) card.classList.remove("fade");
-            }, 300);
-          }, 7000);
-        }
-      })
-      .catch(function (err) {
-        console.warn("[oit] floating reviews fetch failed:", err);
-      });
-  });
 })();

@@ -41,6 +41,36 @@ const nextConfig: NextConfig = {
         destination: '/sites/olympic-inspections/:path*',
         permanent: true,
       },
+      // Radon + Septic services discontinued 2026-06-17 (Luke's request).
+      // The 10 standalone radon-testing-* / septic-inspection-* pages were
+      // deleted + removed from the rewrite alternation below. 301 the old
+      // URLs → OIT homepage so Google drops them from the index and any
+      // existing inbound links / bookmarks don't 404. Host-gated to the OIT
+      // domain so bluejayportfolio.com routing is untouched.
+      {
+        has: [{ type: 'host', value: 'olympicinspect.com' }],
+        source: '/radon-testing-:city',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+        source: '/radon-testing-:city',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        has: [{ type: 'host', value: 'olympicinspect.com' }],
+        source: '/septic-inspection-:city',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        has: [{ type: 'host', value: 'www.olympicinspect.com' }],
+        source: '/septic-inspection-:city',
+        destination: '/',
+        permanent: true,
+      },
       // Legacy /audit-classic funnel — retired 2026-05-16. Both the entry
       // form and any prospect-specific result page (with sub-paths like
       // /processing and /funnel-preview) redirect to the canonical
@@ -90,14 +120,19 @@ const nextConfig: NextConfig = {
         // string are emitted by scripts/generate-oit-seo-pages.py — re-run
         // it to add/change pages, then paste its printed alternation into
         // BOTH host blocks below.
+        // 2026-06-17: the 6 radon-testing-* + 4 septic-inspection-* slugs
+        // were removed here by hand when those services were discontinued
+        // (pages deleted; old URLs now 301 → homepage via the redirects
+        // block above). Re-running the generator against the current pages
+        // dir reproduces this same (radon/septic-free) alternation.
         {
           has: [{ type: 'host', value: 'olympicinspect.com' }],
-          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|radon-testing-bremerton|radon-testing-port-angeles|radon-testing-port-townsend|radon-testing-poulsbo|radon-testing-sequim|radon-testing-silverdale|septic-inspection-clallam-county|septic-inspection-port-angeles|septic-inspection-port-townsend|septic-inspection-sequim|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
+          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
           destination: '/sites/olympic-inspections/:slug.html',
         },
         {
           has: [{ type: 'host', value: 'www.olympicinspect.com' }],
-          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|radon-testing-bremerton|radon-testing-port-angeles|radon-testing-port-townsend|radon-testing-poulsbo|radon-testing-sequim|radon-testing-silverdale|septic-inspection-clallam-county|septic-inspection-port-angeles|septic-inspection-port-townsend|septic-inspection-sequim|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
+          source: '/:slug(ermi-testing-olympic-peninsula|inspections-clallam-county|inspections-jefferson-county|inspections-kitsap-county|mold-inspection-bainbridge-island|mold-inspection-bremerton|mold-inspection-chimacum|mold-inspection-forks|mold-inspection-port-angeles|mold-inspection-port-hadlock|mold-inspection-port-ludlow|mold-inspection-port-orchard|mold-inspection-port-townsend|mold-inspection-poulsbo|mold-inspection-quilcene|mold-inspection-sequim-wa|mold-inspection-silverdale|well-water-testing-bremerton|well-water-testing-port-angeles|well-water-testing-port-townsend|well-water-testing-poulsbo|well-water-testing-sequim|well-water-testing-silverdale)',
           destination: '/sites/olympic-inspections/:slug.html',
         },
         // Legal pages — Privacy Policy + Terms of Service / EULA. Required

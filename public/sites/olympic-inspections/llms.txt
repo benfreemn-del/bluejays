@@ -12,14 +12,12 @@ Family-owned and operated. Established 2025 to fill a critical gap in high-quali
 - **DIY Microbial Air & Surface Sampling** — sampling-only service for clients who already know what they need, or contractors verifying that air and surfaces are clear.
 - **ERMI Testing** — for clients working with healthcare professionals who need to document or track a history of mold exposure. Affordable and accessible.
 - **Water Testing** — wells, city tap, coliform/E.coli/nitrates/lead/arsenic/hardness/pH panels at an accredited lab. Real-estate-ready chain-of-custody.
-- **Radon Testing** — to Washington State standards. Parts of Washington have higher-than-average radon levels, especially older homes and crawlspaces.
-- **Septic Inspections** — inspection-only (we don't pump or repair). Required every 2 years in Washington on most permitted systems. Only available in certain counties.
 - **Written Lab Reports** — photo-documented, plain-English, formatted for insurance, real estate, healthcare professionals, or remediation contractors. Each report checks for over 100 types of mold and other particles.
 
 ## Markets We Serve
 
 - **Residential** — homeowners, renters, landlords, property managers
-- **Commercial** — offices, retail, restaurants, commercial buildings
+- **Commercial** — offices, retail, commercial buildings
 - **Automotive** — personal vehicles, work trucks, vans, fleet cars
 - **Marine** — sailboats, yachts, fishing boats, houseboats
 - **RV & Trailer** — motorhomes, travel trailers, campers, fifth wheels
@@ -66,7 +64,7 @@ Travel fees may apply for very rural or remote properties — confirmed in writi
 
 ## Local Service Pages
 
-Dedicated pages for each service in the Olympic Peninsula + Kitsap communities we serve. Mold inspection is available in every town; radon and water testing in the larger towns; septic inspection in Clallam and Jefferson counties only.
+Dedicated pages for each service in the Olympic Peninsula + Kitsap communities we serve. Mold inspection is available in every town; water testing in the larger towns.
 
 ### By county
 - Clallam County: https://www.olympicinspect.com/inspections-clallam-county
@@ -88,14 +86,6 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Port Orchard: https://www.olympicinspect.com/mold-inspection-port-orchard
 - Bainbridge Island: https://www.olympicinspect.com/mold-inspection-bainbridge-island
 
-### Radon testing
-- Port Angeles: https://www.olympicinspect.com/radon-testing-port-angeles
-- Sequim: https://www.olympicinspect.com/radon-testing-sequim
-- Port Townsend: https://www.olympicinspect.com/radon-testing-port-townsend
-- Bremerton: https://www.olympicinspect.com/radon-testing-bremerton
-- Silverdale: https://www.olympicinspect.com/radon-testing-silverdale
-- Poulsbo: https://www.olympicinspect.com/radon-testing-poulsbo
-
 ### Well water testing
 - Sequim: https://www.olympicinspect.com/well-water-testing-sequim
 - Port Angeles: https://www.olympicinspect.com/well-water-testing-port-angeles
@@ -103,12 +93,6 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Bremerton: https://www.olympicinspect.com/well-water-testing-bremerton
 - Silverdale: https://www.olympicinspect.com/well-water-testing-silverdale
 - Poulsbo: https://www.olympicinspect.com/well-water-testing-poulsbo
-
-### Septic inspection (Clallam & Jefferson counties only)
-- Clallam County: https://www.olympicinspect.com/septic-inspection-clallam-county
-- Sequim: https://www.olympicinspect.com/septic-inspection-sequim
-- Port Angeles: https://www.olympicinspect.com/septic-inspection-port-angeles
-- Port Townsend: https://www.olympicinspect.com/septic-inspection-port-townsend
 
 ### ERMI testing
 - Olympic Peninsula: https://www.olympicinspect.com/ermi-testing-olympic-peninsula
