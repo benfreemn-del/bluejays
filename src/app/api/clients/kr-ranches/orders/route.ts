@@ -82,10 +82,17 @@ export async function GET(req: NextRequest) {
     if (from) query = query.gte("ordered_at", from);
     if (to) query = query.lte("ordered_at", to);
     if (q) {
-      const safe = q.replace(/[%,]/g, " ");
-      query = query.or(
-        `customer_name.ilike.%${safe}%,customer_phone.ilike.%${safe}%,customer_email.ilike.%${safe}%,order_number::text.ilike.%${safe}%`,
-      );
+      const safe = q.replace(/[%,()]/g, " ").trim();
+      const ors = [
+        `customer_name.ilike.%${safe}%`,
+        `customer_phone.ilike.%${safe}%`,
+        `customer_email.ilike.%${safe}%`,
+      ];
+      // order_number is a bigint — PostgREST can't ::text-cast inside .or(),
+      // so match it by equality only when the query is all digits.
+      const digits = safe.replace(/\D/g, "");
+      if (digits) ors.push(`order_number.eq.${digits}`);
+      query = query.or(ors.join(","));
     }
     return query;
   };

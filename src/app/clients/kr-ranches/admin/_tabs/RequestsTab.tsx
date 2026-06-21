@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   C, Card, Btn, Loading, Empty, SectionTitle, fmtDateTime, fmtDate, SERIF,
 } from "./ui";
+import { OrderModal, prefillFromRequest, saveOrder, type FormState } from "./OrderModal";
 
 type ContactForm = {
   id: string;
@@ -30,6 +31,12 @@ export default function RequestsTab() {
   const [emails, setEmails] = useState<EmailRow[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // convert-to-order state
+  const [editing, setEditing] = useState<FormState | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [convertingId, setConvertingId] = useState<string | null>(null);
+  const [converted, setConverted] = useState<Record<string, number>>({}); // requestId -> order #
+
   useEffect(() => {
     (async () => {
       try {
@@ -55,6 +62,24 @@ export default function RequestsTab() {
     return "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
   }, [emails]);
 
+  function startConvert(f: ContactForm) {
+    setConvertingId(f.id);
+    setEditing(prefillFromRequest(f));
+  }
+
+  async function save() {
+    if (!editing) return;
+    setSaving(true);
+    const res = await saveOrder(editing);
+    setSaving(false);
+    if (!res.ok) { alert(res.error || "Could not create the order."); return; }
+    if (convertingId && res.order) {
+      setConverted((prev) => ({ ...prev, [convertingId]: res.order!.order_number }));
+    }
+    setEditing(null);
+    setConvertingId(null);
+  }
+
   if (loading) return <Loading />;
 
   return (
@@ -63,7 +88,6 @@ export default function RequestsTab() {
         Requests &amp; inbox
       </SectionTitle>
 
-      {/* email export banner */}
       <Card style={{ marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
         <div>
           <strong style={{ fontFamily: SERIF, fontSize: 16 }}>Email list</strong>
@@ -76,25 +100,33 @@ export default function RequestsTab() {
         ) : <span style={{ fontSize: 12, color: C.muted }}>No emails yet.</span>}
       </Card>
 
-      {/* order requests */}
       <Section title={`Website order requests (${requests.length})`} empty="No order requests yet. They arrive here when someone fills out the “Send Order Request” form on your site.">
-        {requests.map((f) => (
-          <Card key={f.id} pad={14}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
-              <strong style={{ fontFamily: SERIF, fontSize: 16, color: C.ink2 }}>{f.customer_name || "Anonymous"}</strong>
-              <span style={{ fontSize: 11, color: C.muted }}>{fmtDateTime(f.submitted_at)}</span>
-            </div>
-            <div style={{ fontSize: 13, color: C.ink2, marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
-              {f.customer_phone && <a href={`tel:${f.customer_phone}`} style={{ color: C.red }}>📞 {f.customer_phone}</a>}
-              {f.customer_email && <a href={`mailto:${f.customer_email}`} style={{ color: C.red }}>✉️ {f.customer_email}</a>}
-            </div>
-            {f.service_requested && <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>Interested in: {f.service_requested}</div>}
-            {f.message && <div style={{ fontSize: 13, color: C.ink2, marginTop: 6, lineHeight: 1.5 }}>{f.message}</div>}
-          </Card>
-        ))}
+        {requests.map((f) => {
+          const orderNum = converted[f.id];
+          return (
+            <Card key={f.id} pad={14}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap", alignItems: "flex-start" }}>
+                <strong style={{ fontFamily: SERIF, fontSize: 16, color: C.ink2 }}>{f.customer_name || "Anonymous"}</strong>
+                <span style={{ fontSize: 11, color: C.muted }}>{fmtDateTime(f.submitted_at)}</span>
+              </div>
+              <div style={{ fontSize: 13, color: C.ink2, marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                {f.customer_phone && <a href={`tel:${f.customer_phone}`} style={{ color: C.red }}>📞 {f.customer_phone}</a>}
+                {f.customer_email && <a href={`mailto:${f.customer_email}`} style={{ color: C.red }}>✉️ {f.customer_email}</a>}
+              </div>
+              {f.service_requested && <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>Interested in: {f.service_requested}</div>}
+              {f.message && <div style={{ fontSize: 13, color: C.ink2, marginTop: 6, lineHeight: 1.5 }}>{f.message}</div>}
+              <div style={{ marginTop: 12, display: "flex", justifyContent: "flex-end" }}>
+                {orderNum ? (
+                  <span style={{ fontSize: 12, fontWeight: 800, color: C.green }}>✓ Converted to order #{orderNum}</span>
+                ) : (
+                  <Btn size="sm" variant="green" onClick={() => startConvert(f)}>Convert to order →</Btn>
+                )}
+              </div>
+            </Card>
+          );
+        })}
       </Section>
 
-      {/* waitlist */}
       <Section title={`Freezer drop-alert waitlist (${waitlist.length})`} empty="No one on the drop-alert waitlist yet.">
         {waitlist.map((f) => (
           <div key={f.id} style={{ display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 13 }}>
@@ -104,7 +136,6 @@ export default function RequestsTab() {
         ))}
       </Section>
 
-      {/* missed calls */}
       <Section title={`Missed calls (${calls.length})`} empty="No missed calls logged. (Shows up if your business line is wired to the missed-call auto-texter.)">
         {calls.map((m) => (
           <Card key={m.id} pad={12}>
@@ -119,6 +150,17 @@ export default function RequestsTab() {
           </Card>
         ))}
       </Section>
+
+      {editing && (
+        <OrderModal
+          form={editing}
+          setForm={setEditing}
+          saving={saving}
+          onClose={() => { setEditing(null); setConvertingId(null); }}
+          onSave={save}
+          title="Convert request to order"
+        />
+      )}
     </div>
   );
 }

@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
       .eq("client_slug", SLUG);
 
     if (q) {
-      const safe = q.replace(/[%,]/g, " ");
+      const safe = q.replace(/[%,()]/g, " ").trim();
       query = query.or(
         `name.ilike.%${safe}%,phone.ilike.%${safe}%,email.ilike.%${safe}%`,
       );
