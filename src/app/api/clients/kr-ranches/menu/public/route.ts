@@ -42,7 +42,7 @@ export async function GET() {
   try {
     const { data, error } = await getSupabase()
       .from("client_menu_items")
-      .select("name, price, note, status, sort_order")
+      .select("id, name, price, note, status, sort_order, quantity, unit_label, buyable, price_cents, category")
       .eq("client_slug", SLUG)
       .order("sort_order", { ascending: true });
 

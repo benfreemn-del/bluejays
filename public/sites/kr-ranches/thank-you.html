@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>Thank you — KR Ranches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #faf6ee; color: #1f1a14; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: #fff; border: 1px solid rgba(31,26,20,.12); border-radius: 18px; max-width: 480px; width: 100%; padding: 40px 32px; text-align: center; box-shadow: 0 24px 50px -20px rgba(31,26,20,.25); }
+  .logo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid #9d3030; margin: 0 auto 18px; display: block; }
+  .check { font-size: 46px; line-height: 1; margin-bottom: 6px; }
+  h1 { font-family: "Playfair Display", serif; font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+  p { color: #7a6f60; font-size: 15px; line-height: 1.6; margin-bottom: 8px; }
+  .ord { font-family: "Oswald", sans-serif; font-size: 15px; letter-spacing: .04em; color: #2f5d3a; font-weight: 700; margin: 14px 0 4px; }
+  .steps { text-align: left; background: #faf6ee; border: 1px solid rgba(31,26,20,.08); border-radius: 12px; padding: 16px 18px; margin: 20px 0; font-size: 14px; color: #3d2a18; }
+  .steps b { font-family: "Oswald", sans-serif; letter-spacing: .04em; }
+  .steps li { margin: 6px 0 6px 18px; }
+  .btn { display: inline-block; margin-top: 8px; background: linear-gradient(180deg, #a02525, #6b1414); color: #f5e8c8; padding: 13px 26px; border-radius: 10px; text-decoration: none; font-family: "Oswald", sans-serif; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .call { display: block; margin-top: 14px; color: #9d3030; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <img class="logo" src="/sites/kr-ranches/assets/logo.jpg" alt="KR Ranches" />
+    <div class="check">✅</div>
+    <h1 class="serif" style="font-family:'Playfair Display',serif;">Thank you!</h1>
+    <p>Your order is in and your payment went through. We've got it from here.</p>
+    <div class="ord" id="ord"></div>
+    <div class="steps">
+      <b>What happens next</b>
+      <ul>
+        <li>We pull your pack and get it ready for pickup.</li>
+        <li>We'll text or call you the moment it's ready.</li>
+        <li>Stop by the ranch in Prosser to grab it.</li>
+      </ul>
+    </div>
+    <a class="btn" href="/sites/kr-ranches/index.html">Back to KR Ranches</a>
+    <a class="call" href="tel:3607086369">Questions? Call (360) 708-6369</a>
+  </div>
+<script>
+  (function () {
+    var p = new URLSearchParams(window.location.search);
+    var n = p.get("order");
+    if (n) document.getElementById("ord").textContent = "Order #" + n;
+  })();
+</script>
+</body>
+</html>

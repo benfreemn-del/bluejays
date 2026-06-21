@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ownerFromCookie } from "@/lib/client-auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { statusFromQuantity } from "@/lib/client-shop";
 
 /**
  * Authed menu CRUD for KR Ranches admin. Owner cookie required, scoped
@@ -60,6 +61,14 @@ export async function PATCH(req: NextRequest) {
     note?: string;
     status?: string;
     sort_order?: number;
+    quantity?: number | null;
+    unit_label?: string;
+    low_threshold?: number;
+    price_cents?: number | null;
+    category?: string;
+    track_inventory?: boolean;
+    buyable?: boolean;
+    square_catalog_id?: string;
   };
   try {
     body = await req.json();
@@ -80,6 +89,21 @@ export async function PATCH(req: NextRequest) {
   if (typeof body.note === "string") update.note = body.note.trim().slice(0, 80);
   if (typeof body.status === "string") update.status = body.status;
   if (typeof body.sort_order === "number") update.sort_order = body.sort_order;
+  if (body.quantity === null || typeof body.quantity === "number") update.quantity = body.quantity;
+  if (typeof body.unit_label === "string") update.unit_label = body.unit_label.trim().slice(0, 20);
+  if (typeof body.low_threshold === "number") update.low_threshold = body.low_threshold;
+  if (body.price_cents === null || typeof body.price_cents === "number") update.price_cents = body.price_cents;
+  if (typeof body.category === "string") update.category = body.category.trim().slice(0, 30);
+  if (typeof body.track_inventory === "boolean") update.track_inventory = body.track_inventory;
+  if (typeof body.buyable === "boolean") update.buyable = body.buyable;
+  if (typeof body.square_catalog_id === "string")
+    update.square_catalog_id = body.square_catalog_id.trim().slice(0, 80);
+
+  // Auto-flag: when quantity changes and the caller didn't explicitly set a
+  // status, derive available/low/gone from the new quantity + threshold.
+  if (typeof body.quantity === "number" && typeof body.status !== "string") {
+    update.status = statusFromQuantity(body.quantity, body.low_threshold);
+  }
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ ok: false, error: "nothing_to_update" }, { status: 400 });
@@ -112,6 +136,13 @@ export async function POST(req: NextRequest) {
     note?: string;
     status?: string;
     sort_order?: number;
+    quantity?: number | null;
+    unit_label?: string;
+    low_threshold?: number;
+    price_cents?: number | null;
+    category?: string;
+    track_inventory?: boolean;
+    buyable?: boolean;
   };
   try {
     body = await req.json();
@@ -140,6 +171,20 @@ export async function POST(req: NextRequest) {
       note: (body.note || "").trim().slice(0, 80) || null,
       status: body.status || "available",
       sort_order: typeof body.sort_order === "number" ? body.sort_order : 999,
+      quantity:
+        body.quantity === null || typeof body.quantity === "number"
+          ? body.quantity
+          : null,
+      unit_label:
+        typeof body.unit_label === "string" ? body.unit_label.trim().slice(0, 20) : null,
+      low_threshold: typeof body.low_threshold === "number" ? body.low_threshold : 3,
+      price_cents:
+        body.price_cents === null || typeof body.price_cents === "number"
+          ? body.price_cents
+          : null,
+      category: typeof body.category === "string" ? body.category.trim().slice(0, 30) : null,
+      track_inventory: typeof body.track_inventory === "boolean" ? body.track_inventory : false,
+      buyable: typeof body.buyable === "boolean" ? body.buyable : false,
     })
     .select("*")
     .single();

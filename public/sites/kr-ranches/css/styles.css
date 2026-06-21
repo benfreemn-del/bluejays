@@ -234,6 +234,15 @@ h1, h2, h3, h4 {
   background: var(--wagyu-dark);
   transform: translateY(-1px);
 }
+.nav-cta--shop {
+  background: #2f5d3a;
+}
+.nav-cta--shop:hover {
+  background: #244a2f;
+}
+.mobile-menu .mobile-cta--shop {
+  background: #2f5d3a;
+}
 
 .hamburger {
   display: none;

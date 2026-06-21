@@ -205,6 +205,8 @@ const PUBLIC_API_PATHS = [
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
   "/api/clients/kr-ranches/menu/public", // Public menu fetch for KR static site (no auth, 60s cache)
   "/api/clients/kr-ranches/waitlist",    // Public waitlist email capture from the freezer section
+  "/api/clients/kr-ranches/checkout",    // Public online-checkout — mints a Square payment link
+  "/api/clients/kr-ranches/square-webhook", // Public Square webhook (HMAC signature-verified)
   "/api/clients/olympic-inspections/slots/public", // Public booking-slot list (OIT)
   "/api/clients/olympic-inspections/bookings",     // POST is public — customer creates booking; GET/PATCH check owner cookie internally
   "/api/clients/zenith-sports/camp-signup",        // Public camp-signup form (parent reserves a TEKKY camp spot)
