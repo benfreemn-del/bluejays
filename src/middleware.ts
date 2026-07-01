@@ -135,6 +135,7 @@ const PROTECTED_PATHS = [
   "/api/warming",
   "/api/postcards",
   "/api/domains",
+  "/api/managed-domains",  // Command-center domain inventory — admin-only
   "/api/outbox",          // bj ai Day-4 outbox approval endpoints — admin-only
   "/funnel-tracker",
 ];

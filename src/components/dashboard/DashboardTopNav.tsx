@@ -52,6 +52,7 @@ export type NavTabId =
   | "hyperloop"
   | "diagnostic"
   | "client-jobs"
+  | "command"
   | "onboarding"
   | "todo"
   | "customers"
@@ -190,6 +191,13 @@ const CATEGORIES: NavCategory[] = [
     label: "Clients",
     emoji: "💼",
     items: [
+      {
+        id: "command",
+        label: "Command",
+        emoji: "🌐",
+        href: "/dashboard/command",
+        hint: "All domains, mailboxes & renewals — every business + client",
+      },
       {
         id: "client-jobs",
         label: "Client Jobs",

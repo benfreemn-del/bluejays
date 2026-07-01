@@ -1,7 +1,9 @@
 import type { Prospect } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
 
-const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER;
+// Fall back to BEN_PHONE — the env actually set on Vercel/.env.local — so
+// owner-alert SMS fires even when OWNER_PHONE_NUMBER was never provisioned.
+const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER || process.env.BEN_PHONE;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
