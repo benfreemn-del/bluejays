@@ -49,6 +49,7 @@ import CalculatorStatsCard from "@/components/dashboard/CalculatorStatsCard";
 import InFlightBuildsCard from "@/components/dashboard/InFlightBuildsCard";
 import AIActivityCard from "@/components/dashboard/AIActivityCard";
 import CloserBreakdownCard from "@/components/dashboard/CloserBreakdownCard";
+import DomainsExpiringCard from "@/components/dashboard/DomainsExpiringCard";
 import BluejaysFunnelsTab from "@/components/dashboard/BluejaysFunnelsTab";
 import DashboardTopNav, {
   type NavTabId,
@@ -354,34 +355,63 @@ export default function DashboardPage() {
                     sit at the very top so Ben can screen-share them live
                     on a sales call without scrolling past the operator-
                     flavor cron heartbeat. */}
+                {/* ── Command-center essentials, always visible ──
+                    Simplified home (Ben spec 2026-07-01): the cockpit-
+                    relevant cards stay up top; the funnel-heavy operator
+                    widgets collapse into the "Sales engine" section below
+                    so the daily view is "what needs me" not "everything at
+                    once". Collapse-don't-delete — nothing removed. */}
                 <InFlightBuildsCard />
                 {/* Today's reminders (Ben's overview) — same checklist
                     Madie sees, sits right under in-flight builds so any
                     follow-up Ben committed to is unmissable. Per Ben
                     spec 2026-05-28. */}
                 <TodaysChecklist surfaceLabel="Today's follow-ups" />
-                {/* H6 (Hormozi "No Data Daddy") Tier 1 — Pipeline 1
-                    closer split. Mounted directly under InFlightBuilds
-                    because both are Day-19 FB-launch visibility cards:
-                    one shows what we're building, the other shows who's
-                    closing. */}
-                <CloserBreakdownCard />
-                <AIActivityCard />
-                <AutomationDailyDigest />
-                <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
+                {/* Domains & renewals cockpit tile — anything expiring
+                    ≤60d surfaces here; links to /dashboard/command. */}
+                <DomainsExpiringCard />
                 <BusinessSetupChecklist />
-                <PaymentLinksPanel />
-                <PendingRepliesPanel />
-                <NeedsPreviewPanel />
-                <DashboardStats
-                  prospects={prospects}
-                  onFilterStatus={setStatusFilter}
-                  activeFilter={statusFilter}
-                />
-                <StatusTransitionsToday />
-                <CalculatorStatsCard />
-                <LossReasonsPanel />
-                <DeliverabilityWidget />
+
+                {/* ── Sales engine — collapsed by default ──
+                    Pipeline / AI / deliverability / stats. Everything the
+                    old always-expanded home showed, tucked behind one
+                    click so it's there when Ben wants it. */}
+                <details className="group rounded-2xl border border-border bg-surface/40">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-bold">
+                    <span className="flex items-center gap-2">
+                      🛠️ Sales engine
+                      <span className="font-normal text-muted">
+                        pipeline · AI · deliverability · stats
+                      </span>
+                    </span>
+                    <span className="text-xs font-semibold text-blue-400 group-open:hidden">
+                      Show ▾
+                    </span>
+                    <span className="hidden text-xs font-semibold text-blue-400 group-open:inline">
+                      Hide ▴
+                    </span>
+                  </summary>
+                  <div className="space-y-6 border-t border-border p-4 sm:p-5">
+                    {/* H6 (Hormozi "No Data Daddy") Tier 1 — Pipeline 1
+                        closer split. */}
+                    <CloserBreakdownCard />
+                    <AIActivityCard />
+                    <AutomationDailyDigest />
+                    <MadieProductivity mode="tile" partnerLabel="Today's velocity" />
+                    <PaymentLinksPanel />
+                    <PendingRepliesPanel />
+                    <NeedsPreviewPanel />
+                    <DashboardStats
+                      prospects={prospects}
+                      onFilterStatus={setStatusFilter}
+                      activeFilter={statusFilter}
+                    />
+                    <StatusTransitionsToday />
+                    <CalculatorStatsCard />
+                    <LossReasonsPanel />
+                    <DeliverabilityWidget />
+                  </div>
+                </details>
               </>
             )}
 

@@ -91,6 +91,7 @@ export default function CommandClient() {
   const [syncing, setSyncing] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [view, setView] = useState<"domains" | "mailboxes">("domains");
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
@@ -138,6 +139,23 @@ export default function CommandClient() {
     });
     entries.sort((a, b) => a.soonest - b.soonest);
     return entries;
+  }, [domains]);
+
+  // Flat mailbox list across every domain, sorted by owner then domain.
+  const mailboxes = useMemo(() => {
+    const rows = domains.flatMap((d) =>
+      d.mailboxes.map((email) => ({
+        email,
+        domain: d.domain,
+        ownerLabel: d.ownerLabel,
+        kind: d.kind,
+        clientSlug: d.clientSlug,
+      }))
+    );
+    rows.sort(
+      (a, b) => a.ownerLabel.localeCompare(b.ownerLabel) || a.domain.localeCompare(b.domain)
+    );
+    return rows;
   }, [domains]);
 
   async function syncNamecheap() {
@@ -305,6 +323,26 @@ export default function CommandClient() {
         </span>
       </div>
 
+      {/* View toggle: domains ↔ mailboxes */}
+      <div className="mb-4 inline-flex rounded-lg border border-slate-700 bg-slate-900/60 p-0.5 text-sm">
+        <button
+          onClick={() => setView("domains")}
+          className={`rounded-md px-3 py-1.5 font-semibold ${
+            view === "domains" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+          }`}
+        >
+          🌐 Domains
+        </button>
+        <button
+          onClick={() => setView("mailboxes")}
+          className={`rounded-md px-3 py-1.5 font-semibold ${
+            view === "mailboxes" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+          }`}
+        >
+          ✉ Mailboxes{mailboxes.length ? ` (${mailboxes.length})` : ""}
+        </button>
+      </div>
+
       {banner && (
         <div className="mb-4 rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200">
           {banner}
@@ -333,6 +371,54 @@ export default function CommandClient() {
         <p className="py-10 text-center text-slate-500">
           No domains tracked yet. Hit “Sync from Namecheap” or “Add domain”.
         </p>
+      ) : view === "mailboxes" ? (
+        mailboxes.length === 0 ? (
+          <p className="py-10 text-center text-slate-500">
+            No mailboxes recorded yet. Add them via a domain’s “Edit”.
+          </p>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="grid grid-cols-12 gap-2 border-b border-slate-800 bg-slate-900/70 px-4 py-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <div className="col-span-5">Mailbox</div>
+              <div className="col-span-4">Domain</div>
+              <div className="col-span-3">Owner</div>
+            </div>
+            <div className="divide-y divide-slate-800/70">
+              {mailboxes.map((m) => (
+                <div
+                  key={`${m.domain}:${m.email}`}
+                  className="grid grid-cols-12 items-center gap-2 px-4 py-2.5 text-sm"
+                >
+                  <a href={`mailto:${m.email}`} className="col-span-5 break-all text-blue-300 hover:underline">
+                    ✉ {m.email}
+                  </a>
+                  <a
+                    href={`https://${m.domain}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="col-span-4 break-all text-slate-300 hover:underline"
+                  >
+                    {m.domain}
+                  </a>
+                  <div className="col-span-3 flex items-center gap-1.5 text-xs text-slate-400">
+                    <span
+                      className={`h-2 w-2 shrink-0 rounded-full ${
+                        m.kind === "business" ? "bg-violet-400" : "bg-cyan-400"
+                      }`}
+                    />
+                    {m.clientSlug ? (
+                      <a href={`/dashboard/clients/${m.clientSlug}`} className="hover:underline">
+                        {m.ownerLabel}
+                      </a>
+                    ) : (
+                      m.ownerLabel
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
       ) : (
         <div className="space-y-6">
           {groups.map(({ owner, list, kind }) => (
