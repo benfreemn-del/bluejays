@@ -80,6 +80,14 @@ export interface RenewResult {
   raw?: unknown;
 }
 
+/** One entry from the registrar's account-wide domain list (getList). */
+export interface RegistrarDomainSummary {
+  domain: string;
+  expiresAt: Date | null;
+  registeredAt: Date | null;
+  autoRenew: boolean | null;
+}
+
 export interface RegistrarClient {
   name: RegistrarName;
   checkAvailability(domain: string): Promise<AvailabilityResult>;
@@ -87,6 +95,12 @@ export interface RegistrarClient {
   setNameservers(domain: string, nameservers: string[]): Promise<void>;
   getExpiry(domain: string): Promise<Date | null>;
   renew(domain: string, years: number): Promise<RenewResult>;
+  /**
+   * List EVERY domain in the account with its expiry date. Optional because
+   * not every registrar exposes it; the Command-center sync feature-detects
+   * it. Namecheap wraps `namecheap.domains.getList`.
+   */
+  listDomains?(): Promise<RegistrarDomainSummary[]>;
 }
 
 /** Typed error class — every registrar call throws this on failure. */
@@ -199,6 +213,16 @@ export const mockClient: RegistrarClient = {
       metadata: { years, registrar: "mock" },
     });
     return result;
+  },
+
+  async listDomains() {
+    // Deterministic mock account list so the Command-center sync runs
+    // end-to-end in dev/CI without a live Namecheap account.
+    const oneYear = 365 * 24 * 60 * 60 * 1000;
+    return [
+      { domain: "bluejayportfolio.com", expiresAt: new Date(Date.now() + oneYear), registeredAt: new Date(Date.now() - oneYear), autoRenew: true },
+      { domain: "bluejaywebs.com", expiresAt: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000), registeredAt: new Date(Date.now() - oneYear), autoRenew: false },
+    ];
   },
 };
 
@@ -472,7 +496,62 @@ export const namecheapClient: RegistrarClient = {
       throw new RegistrarError("namecheap_unknown", (err as Error).message, err);
     }
   },
+
+  async listDomains() {
+    const env = readNamecheapEnv();
+    if (!env) throw new RegistrarError("not_configured", "Namecheap env vars missing");
+    const out: RegistrarDomainSummary[] = [];
+    const pageSize = 100; // Namecheap max
+    // Paginate up to 5 pages (500 domains) — a hard safety cap.
+    for (let page = 1; page <= 5; page += 1) {
+      const xml = await namecheapFetch(env, "namecheap.domains.getList", {
+        Page: String(page),
+        PageSize: String(pageSize),
+        ListType: "ALL",
+      });
+      const rows = extractDomainListRows(xml);
+      out.push(...rows);
+      const total = Number((xml.match(/<TotalItems>(\d+)<\/TotalItems>/i) || [])[1] || "0");
+      if (rows.length < pageSize || (total > 0 && out.length >= total)) break;
+    }
+    await logCost({
+      service: "domain_registrar",
+      action: `namecheap.listDomains:${out.length}`,
+      costUsd: 0,
+      metadata: { count: out.length, registrar: "namecheap" },
+    });
+    return out;
+  },
 };
+
+/**
+ * Parse the `<Domain .../>` rows out of a namecheap.domains.getList XML
+ * response. Each row looks like:
+ *   <Domain ID="127" Name="ex.com" Created="02/15/2016" Expires="02/15/2027"
+ *           IsExpired="false" AutoRenew="false" .../>
+ * The `<Domain\b` boundary won't match `<DomainGetListResult>` ("n"→"G" is not
+ * a word boundary), so this only picks up the real per-domain rows.
+ */
+function extractDomainListRows(xml: string): RegistrarDomainSummary[] {
+  const out: RegistrarDomainSummary[] = [];
+  const tags = xml.match(/<Domain\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    const name = (tag.match(/\bName\s*=\s*"([^"]*)"/i) || [])[1];
+    if (!name) continue;
+    const expires = (tag.match(/\bExpires\s*=\s*"([^"]*)"/i) || [])[1];
+    const created = (tag.match(/\bCreated\s*=\s*"([^"]*)"/i) || [])[1];
+    const autoRenew = (tag.match(/\bAutoRenew\s*=\s*"([^"]*)"/i) || [])[1];
+    const expDate = expires ? new Date(expires) : null;
+    const regDate = created ? new Date(created) : null;
+    out.push({
+      domain: name.trim().toLowerCase(),
+      expiresAt: expDate && Number.isFinite(expDate.getTime()) ? expDate : null,
+      registeredAt: regDate && Number.isFinite(regDate.getTime()) ? regDate : null,
+      autoRenew: autoRenew ? autoRenew.toLowerCase() === "true" : null,
+    });
+  }
+  return out;
+}
 
 // ──────────────────────────────────────────────────────────────────────────
 // Factory + helpers
