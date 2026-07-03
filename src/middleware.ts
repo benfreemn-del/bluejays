@@ -211,6 +211,8 @@ const PUBLIC_API_PATHS = [
   "/api/clients/olympic-inspections/slots/public", // Public booking-slot list (OIT)
   "/api/clients/olympic-inspections/bookings",     // POST is public — customer creates booking; GET/PATCH check owner cookie internally
   "/api/clients/zenith-sports/camp-signup",        // Public camp-signup form (parent reserves a TEKKY camp spot)
+  "/api/clients/zenith-sports/track",              // Public page-view beacon fired from every zenithsports.org page
+  "/api/clients/zenith-sports/stats",              // Owner stats feed — password verified inside the handler (bluejay26)
   "/api/oauth/google_ads/callback",                // OAuth callback (Google Ads) — third-party redirects here, no cookie
   "/api/oauth/meta_ads/callback",                  // OAuth callback (Meta Ads) — third-party redirects here, no cookie
   "/api/oauth/lob/callback",                       // OAuth callback (Lob) — reserved (Lob uses API key, not OAuth)
