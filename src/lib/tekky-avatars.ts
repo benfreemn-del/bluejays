@@ -71,7 +71,7 @@ export function avatarPath(
   const ageIdx = AGE_ORDER.indexOf(age);
   // Cards are sequenced 1-15 within a gender folder, in (tier, age) order.
   const seq = String(tierIdx * 3 + ageIdx + 1).padStart(2, "0");
-  return `/avatars/tekky/${gender}/${seq}_${tier}_age_${age}.png`;
+  return `/avatars/tekky/${gender}/${seq}_${tier}_age_${age}.webp`;
 }
 
 /** One-shot resolver. Returns DEFAULT_AVATAR if any input is missing. */
@@ -97,7 +97,7 @@ export function resolveAvatar(input: {
 }
 
 /** Neutral starter avatar — shown before the user has picked everything. */
-export const DEFAULT_AVATAR = "/avatars/tekky/male/02_rec_age_13-25.png";
+export const DEFAULT_AVATAR = "/avatars/tekky/male/02_rec_age_13-25.webp";
 
 /** Tier display labels for any UI that needs them. */
 export const TIER_LABEL: Record<TierSlug, string> = {

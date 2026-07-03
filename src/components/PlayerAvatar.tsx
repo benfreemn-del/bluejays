@@ -26,8 +26,8 @@ import {
  *  fix is "regenerate without the border" — this is a CSS-side
  *  workaround until we have replacements. */
 const HAS_BAKED_BORDER = new Set([
-  "/avatars/tekky/female/06_travel_age_25-35.png",
-  "/avatars/tekky/female/14_elite_age_13-25.png",
+  "/avatars/tekky/female/06_travel_age_25-35.webp",
+  "/avatars/tekky/female/14_elite_age_13-25.webp",
 ]);
 
 interface PlayerAvatarProps {

@@ -1541,9 +1541,9 @@ export default function ZenithSportsPage() {
                   dead-center on phone where the strip stacks. */}
               <div className="flex items-end justify-center gap-2 sm:gap-3 lg:gap-3 shrink-0">
                 {[
-                  { src: "01_rec_age_5-15.png", alt: "Rec — kid", glow: "rgba(59,189,248,0.45)" },
-                  { src: "08_club_age_13-25.png", alt: "Club — teen", glow: "rgba(124,58,237,0.55)" },
-                  { src: "15_elite_age_25-35.png", alt: "Elite — adult", glow: "rgba(251,191,36,0.55)" },
+                  { src: "01_rec_age_5-15.webp", alt: "Rec — kid", glow: "rgba(59,189,248,0.45)" },
+                  { src: "08_club_age_13-25.webp", alt: "Club — teen", glow: "rgba(124,58,237,0.55)" },
+                  { src: "15_elite_age_25-35.webp", alt: "Elite — adult", glow: "rgba(251,191,36,0.55)" },
                 ].map((a) => (
                   <div
                     key={a.src}

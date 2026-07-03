@@ -60,7 +60,7 @@ function avatarFilename(tier: TierSlug, age: AgeSlug): string {
   const tierIdx = TIERS.findIndex((t) => t.slug === tier);
   const ageIdx = AGE_SLUGS.indexOf(age);
   const seq = String(tierIdx * 3 + ageIdx + 1).padStart(2, "0");
-  return `${seq}_${tier}_age_${age}.png`;
+  return `${seq}_${tier}_age_${age}.webp`;
 }
 
 export default function CharacterBuilder({
