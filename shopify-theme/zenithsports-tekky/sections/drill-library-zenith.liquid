@@ -1,10 +1,10 @@
 {% comment %}
-  TEKKY drill library -- 18 drills across 3 tiers (Warm Up / Beginner /
+  TEKKY™ drill library -- 18 drills across 3 tiers (Warm Up / Beginner /
   Intermediate). 6 per tier, hand-picked to give variety without overwhelming
   the buyer. Each card = YouTube thumbnail + click-to-watch.
   Port of training-drills.tsx. The "1 Touch Laces" drill uses YouTube's
   hq3 frame instead of hqdefault because its default thumbnail is the
-  blue TEKKY title card (looks different from the rest).
+  blue TEKKY™ title card (looks different from the rest).
 {% endcomment %}
 
 <section class="zenith-section zenith-drills" id="drills">
@@ -64,7 +64,7 @@
         <div class="zenith-drills__grid">
           {% for vid in ids %}
             {%- assign drill_name = names[forloop.index0] -%}
-            {%- comment -%} "1 Touch Laces" (nyGSAw-4Xw0) uses hq3 frame -- its default thumb is the blue TEKKY title card.
+            {%- comment -%} "1 Touch Laces" (nyGSAw-4Xw0) uses hq3 frame -- its default thumb is the blue TEKKY™ title card.
                 Everything else uses maxresdefault (1280x720 16:9) for premium sharpness;
                 a CSS background-image fallback to hqdefault catches videos without maxres. {%- endcomment -%}
             {%- if vid == "nyGSAw-4Xw0" -%}
@@ -290,7 +290,7 @@
   "class": "zenith-drills-section",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The drill library" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "22 drills. 3 tiers. All on TEKKY." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "22 drills. 3 tiers. All on TEKKY™." },
     { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>The same European technique-first methodology used by ECNL + MLS Next clubs -- broken into 3 tiers. The full 22-drill library is free on our YouTube; here is a featured selection. 10-15 minutes a day, three times a week beats one 90-minute team session.</p>" }
   ],
   "presets": [{ "name": "Zenith Drill Library" }]

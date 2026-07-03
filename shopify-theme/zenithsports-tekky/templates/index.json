@@ -38,7 +38,7 @@
           "settings": {
             "number": "6.4x",
             "label": "More touches",
-            "note": "Full TEKKY protocol vs. traditional club training (em) same 50-week season"
+            "note": "Full TEKKY™ protocol vs. traditional club training (em) same 50-week season"
           }
         },
         "s2": {
@@ -185,7 +185,7 @@
       ],
       "settings": {
         "eyebrow": "On the pitch",
-        "heading": "TEKKY in action",
+        "heading": "TEKKY™ in action",
         "intro": "<p>Real reps, real players. Every touch on the TEKKY&trade; transfers straight to match day.</p>",
         "columns": "3"
       }
@@ -222,7 +222,7 @@
           "settings": {
             "number": "4",
             "title": "Week 4: hit regulation ball",
-            "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic."
+            "desc": "Your player picks up a match ball after 4 weeks of TEKKY™ and it feels bigger, slower, easier to control. The transfer is automatic."
           }
         }
       },
@@ -338,35 +338,35 @@
         "q1": {
           "type": "faq",
           "settings": {
-            "question": "What is the TEKKY ball?",
-            "answer": "<p>The TEKKY&trade; is a patent-pending technical training soccer ball from Zenith Sports. It is smaller than a regulation ball, so every touch has to be precise &mdash; but it is built to full FIFA Size 5 weight, so every rep builds real strength. After a few weeks on the TEKKY, a regulation match ball feels slow and easy to control.</p>"
+            "question": "What is the TEKKY™ ball?",
+            "answer": "<p>The TEKKY&trade; is a patent-pending technical training soccer ball from Zenith Sports. It is smaller than a regulation ball, so every touch has to be precise &mdash; but it is built to full FIFA Size 5 weight, so every rep builds real strength. After a few weeks on the TEKKY™, a regulation match ball feels slow and easy to control.</p>"
           }
         },
         "q2": {
           "type": "faq",
           "settings": {
             "question": "Does training with a smaller soccer ball actually improve skills?",
-            "answer": "<p>Yes. A smaller surface forces cleaner, more deliberate touches &mdash; the same way the world&rsquo;s top academies build technique. Because the TEKKY keeps full match-day weight, the strength and timing you build transfer straight to a regulation ball.</p>"
+            "answer": "<p>Yes. A smaller surface forces cleaner, more deliberate touches &mdash; the same way the world&rsquo;s top academies build technique. Because the TEKKY™ keeps full match-day weight, the strength and timing you build transfer straight to a regulation ball.</p>"
           }
         },
         "q3": {
           "type": "faq",
           "settings": {
-            "question": "How is the TEKKY different from a futsal ball or a size 3 ball?",
-            "answer": "<p>A futsal ball is low-bounce and made for hard courts; a size 3 ball is lighter all around for young kids. The TEKKY is different: a smaller control surface with full FIFA-5 match weight &mdash; so it sharpens first touch like a small ball while building real strength like a match ball.</p>"
+            "question": "How is the TEKKY™ different from a futsal ball or a size 3 ball?",
+            "answer": "<p>A futsal ball is low-bounce and made for hard courts; a size 3 ball is lighter all around for young kids. The TEKKY™ is different: a smaller control surface with full FIFA-5 match weight &mdash; so it sharpens first touch like a small ball while building real strength like a match ball.</p>"
           }
         },
         "q4": {
           "type": "faq",
           "settings": {
-            "question": "What age is the TEKKY training ball for?",
+            "question": "What age is the TEKKY™ training ball for?",
             "answer": "<p>Ages 5 through high school and beyond. Rec, Travel, Club, ECNL, and MLS Next players all train with it. The free <a href=\"/pages/build-your-player\">Build Your Player</a> quiz tailors a plan to any age and skill level.</p>"
           }
         },
         "q5": {
           "type": "faq",
           "settings": {
-            "question": "How do I use the TEKKY to improve first touch at home?",
+            "question": "How do I use the TEKKY™ to improve first touch at home?",
             "answer": "<p>Pick 3 drills from the free 22-drill library &mdash; one each for gather, dribble, and finish. Train 10&ndash;15 minutes, 3 times a week, and level up every two weeks. Most players see a visible difference in first touch and control within about 4 weeks.</p>"
           }
         },
@@ -374,14 +374,14 @@
           "type": "faq",
           "settings": {
             "question": "What ball do soccer academies use for technical training?",
-            "answer": "<p>Top academies prioritize thousands of clean, deliberate touches over reps with a full-size ball. The TEKKY brings that European technical methodology home &mdash; a smaller control surface with full FIFA-5 weight, so focused touches build skill that holds up on match day.</p>"
+            "answer": "<p>Top academies prioritize thousands of clean, deliberate touches over reps with a full-size ball. The TEKKY™ brings that European technical methodology home &mdash; a smaller control surface with full FIFA-5 weight, so focused touches build skill that holds up on match day.</p>"
           }
         },
         "q7": {
           "type": "faq",
           "settings": {
-            "question": "How much is the TEKKY and where can I buy it?",
-            "answer": "<p>The TEKKY&trade; is $59.95 at zenithsports.org and ships across the U.S. TEKKY grip socks ($15, or 2 for $25) and performance training tees ($17.50) are available too.</p>"
+            "question": "How much is the TEKKY™ and where can I buy it?",
+            "answer": "<p>The TEKKY&trade; is $59.95 at zenithsports.org and ships across the U.S. TEKKY™ grip socks ($15, or 2 for $25) and performance training tees ($17.50) are available too.</p>"
           }
         }
       },

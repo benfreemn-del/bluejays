@@ -1,17 +1,17 @@
 {% comment %}
   The Touches Advantage — interactive calculator + cumulative-touches line graph.
-  Rebuilt 2026-06-11 on the TEKKY "Touches Advantage" model (TEKKY_Touches_Advantage deck).
+  Rebuilt 2026-06-11 on the TEKKY™ "Touches Advantage" model (TEKKY™_Touches_Advantage deck).
 
   Model (verified against the deck's three scenarios):
     BASELINE_PER_YEAR = 26,250 touches/yr   (Scenario A — traditional club only:
                          ~175 events/yr × 150 touches)
-    TEKKY_PER_SESSION = 375 touches          (one 15-min TEKKY session)
+    TEKKY™_PER_SESSION = 375 touches          (one 15-min TEKKY™ session)
     WEEKS             = 50                    (club season)
-    tekkyPerYear      = sessions/week × WEEKS × TEKKY_PER_SESSION
+    tekkyPerYear      = sessions/week × WEEKS × TEKKY™_PER_SESSION
     totalPerYear      = BASELINE_PER_YEAR + tekkyPerYear
     cumulative(year)  = totalPerYear × year
 
-    Slider = TEKKY sessions per week (0–8, step 0.5). It reproduces the deck exactly:
+    Slider = TEKKY™ sessions per week (0–8, step 0.5). It reproduces the deck exactly:
       0   sessions → 26,250/yr   → 131,250 / 5yr   (Scenario A)
       2.5 sessions → 73,125/yr   → 365,625 / 5yr   (Scenario B — warm-up before practice)
       7.5 sessions → 166,875/yr  → 834,375 / 5yr   (Scenario C — full protocol, 6.4×)
@@ -41,10 +41,10 @@
 
         <div class="zenith-touch__slider">
           <div class="zenith-touch__slider-head">
-            <span class="zenith-touch__slider-label">TEKKY sessions per week</span>
+            <span class="zenith-touch__slider-label">TEKKY™ sessions per week</span>
             <span class="zenith-touch__slider-val"><span data-sessions-out>2.5</span></span>
           </div>
-          <input type="range" min="0" max="8" step="0.5" value="2.5" data-input="sessions" aria-label="TEKKY sessions per week" class="zenith-touch__range" />
+          <input type="range" min="0" max="8" step="0.5" value="2.5" data-input="sessions" aria-label="TEKKY™ sessions per week" class="zenith-touch__range" />
           <div class="zenith-touch__slider-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span></div>
         </div>
 
@@ -60,7 +60,7 @@
             <div class="zenith-touch__stat-num" data-touches-year>73,125</div>
           </div>
           <div class="zenith-touch__stat zenith-touch__stat--mult">
-            <div class="zenith-touch__stat-label">vs. no TEKKY</div>
+            <div class="zenith-touch__stat-label">vs. no TEKKY™</div>
             <div class="zenith-touch__stat-num" data-multiplier>2.8&times;</div>
           </div>
           <div class="zenith-touch__stat zenith-touch__stat--wide">
@@ -89,7 +89,7 @@
           <span class="zenith-touch__chart-sub">5-year development window</span>
         </div>
 
-        <svg viewBox="0 0 420 300" class="zenith-touch__svg" role="img" aria-label="Line graph of cumulative touches over five years: a flat traditional baseline versus your TEKKY plan, which rises higher as you add sessions.">
+        <svg viewBox="0 0 420 300" class="zenith-touch__svg" role="img" aria-label="Line graph of cumulative touches over five years: a flat traditional baseline versus your TEKKY™ plan, which rises higher as you add sessions.">
           <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
             <line x1="46" y1="31.1"  x2="404" y2="31.1"/>
             <line x1="46" y1="91.3"  x2="404" y2="91.3"/>
@@ -134,7 +134,7 @@
     </div>
 
     <p class="zenith-touch__footnote">
-      Every touch compounds. More reps now means years closer to the 10,000-hour mastery threshold &mdash; the gap a traditional-only player can never fully close. One 15-min TEKKY session &asymp; <strong>375 deliberate touches</strong>.
+      Every touch compounds. More reps now means years closer to the 10,000-hour mastery threshold &mdash; the gap a traditional-only player can never fully close. One 15-min TEKKY™ session &asymp; <strong>375 deliberate touches</strong>.
     </p>
 
   </div>
@@ -308,7 +308,7 @@
     if (!root) return;
 
     var BASELINE = 26250;      // Scenario A touches/yr
-    var PER_SESSION = 375;     // touches per 15-min TEKKY session
+    var PER_SESSION = 375;     // touches per 15-min TEKKY™ session
     var WEEKS = 50;            // club season
     var YEARS = 5;
     var YMAX = 850000;         // chart ceiling (just above Scenario C 5yr = 834,375)
@@ -393,7 +393,7 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Touches Advantage" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "How many touches will your player bank?" },
-    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Drag the TEKKY sessions per week and watch the touch gap compound over a 5-year season. More deliberate reps now is technique a traditional-only player can't catch.</p>" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Drag the TEKKY™ sessions per week and watch the touch gap compound over a 5-year season. More deliberate reps now build technique a traditional-only player can't catch up to.</p>" },
     { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY™ · $59.95" },
     { "type": "text", "id": "cta_url", "label": "CTA URL" }
   ],

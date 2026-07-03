@@ -1,5 +1,5 @@
 {% comment %}
-  Zenith Sports / TEKKY footer.
+  Zenith Sports / TEKKY™ footer.
   Replaces Dawn's default footer with the Zenith-branded version.
 
   Network-effect credit: "Built by BlueJays" -> bluejayportfolio.com
@@ -25,7 +25,7 @@
 
       <nav class="zenith-footer__nav" aria-label="Footer">
         <a href="{{ routes.root_url }}">Home</a>
-        <a href="/pages/shop">Shop the TEKKY</a>
+        <a href="/pages/shop">Shop the TEKKY™</a>
         <a href="/pages/build-your-player">Build Your Player</a>
         <a href="/#contact">Contact</a>
       </nav>
@@ -81,7 +81,7 @@
     <div class="zenith-footer__bottom" style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
       <div>
         &copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}, LLC &nbsp;|&nbsp;
-        TEKKY<sup style="font-size: 0.55em; vertical-align: super;">&trade;</sup> is a trademark of Zenith Sports &nbsp;|&nbsp; Patent Pending
+        TEKKY™<sup style="font-size: 0.55em; vertical-align: super;">&trade;</sup> is a trademark of Zenith Sports &nbsp;|&nbsp; Patent Pending
       </div>
       {%- comment -%} Owner backdoor — lock icon, bottom right. Opens the
         password-gated analytics backend (emails collected + per-page
@@ -335,7 +335,7 @@
       "name": "Zenith Footer",
       "blocks": [
         { "type": "link", "settings": { "label": "Home" } },
-        { "type": "link", "settings": { "label": "Shop the TEKKY" } },
+        { "type": "link", "settings": { "label": "Shop the TEKKY™" } },
         { "type": "link", "settings": { "label": "Training Guide" } },
         { "type": "link", "settings": { "label": "Build Your Player" } },
         { "type": "link", "settings": { "label": "Contact" } }

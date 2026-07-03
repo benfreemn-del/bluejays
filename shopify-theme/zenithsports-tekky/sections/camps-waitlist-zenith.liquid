@@ -91,7 +91,7 @@
         <div class="zenith-camps__step" data-step="location" hidden>
           <p class="zenith-camps__qnum">Question 2 of 7</p>
           <h2 class="zenith-camps__qtitle">Where do you live?</h2>
-          <p class="zenith-camps__qbody">Pick your state so we can watch for TEKKY camps within driving distance and notify you the moment one opens.</p>
+          <p class="zenith-camps__qbody">Pick your state so we can watch for TEKKY™ camps within driving distance and notify you the moment one opens.</p>
           <label class="zenith-camps__field">
             <span>State *</span>
             <select data-input="state">
@@ -205,7 +205,7 @@
         <div class="zenith-camps__step" data-step="notify" hidden>
           <p class="zenith-camps__qnum">Last question</p>
           <h2 class="zenith-camps__qtitle">Where should we send camp openings?</h2>
-          <p class="zenith-camps__qbody">TEKKY camps are rolling out by region. Drop your info and we'll notify you the moment one opens near <span data-summary-loc>you</span>.</p>
+          <p class="zenith-camps__qbody">TEKKY™ camps are rolling out by region. Drop your info and we'll notify you the moment one opens near <span data-summary-loc>you</span>.</p>
 
           {% form 'customer', class: 'zenith-camps__form' %}
             <input type="hidden" name="contact[tags]" value="camp-waitlist, zenith-tekky" />
@@ -255,7 +255,7 @@
 
             {% if form.posted_successfully? %}
               <p class="zenith-camps__success">
-                ✓ You're on the list. Watch <span data-summary-email>your inbox</span> for first-look access when a TEKKY camp opens near you.
+                ✓ You're on the list. Watch <span data-summary-email>your inbox</span> for first-look access when a TEKKY™ camp opens near you.
               </p>
             {% endif %}
 
@@ -981,7 +981,7 @@
       form.addEventListener('submit', function () {
         if (pNote) {
           pNote.value = [
-            'TEKKY Camp Finder submission',
+            'TEKKY™ Camp Finder submission',
             'Age: ' + state.ageGroups.join(' + '),
             'Location: ' + state.county + ', ' + (STATE_NAMES[state.stateCode] || state.stateCode),
             'Travel: up to ' + state.travelMiles + ' miles',
@@ -1029,10 +1029,10 @@
   "tag": "section",
   "class": "zenith-camps-section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "TEKKY Camps · Coming soon" },
-    { "type": "text", "id": "headline_top", "label": "Headline (top line)", "default": "Find a TEKKY camp" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "TEKKY™ Camps · Coming soon" },
+    { "type": "text", "id": "headline_top", "label": "Headline (top line)", "default": "Find a TEKKY™ camp" },
     { "type": "text", "id": "headline_accent", "label": "Headline (accent line)", "default": "near your player." },
-    { "type": "richtext", "id": "subhead", "label": "Subhead", "default": "<p>60 seconds. Tell us about your player and we'll match them to the right TEKKY camp — or notify you the moment one opens nearby. First-look access before the public list.</p>" }
+    { "type": "richtext", "id": "subhead", "label": "Subhead", "default": "<p>60 seconds. Tell us about your player and we'll match them to the right TEKKY™ camp — or notify you the moment one opens nearby. First-look access before the public list.</p>" }
   ],
   "presets": [
     { "name": "Zenith Camps Waitlist" }
