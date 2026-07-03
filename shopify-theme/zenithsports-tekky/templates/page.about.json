@@ -1,0 +1,292 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "image_with_text_mFeiGW": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_89Vfit": {
+          "type": "subheading",
+          "settings": {
+            "text": "Building Better Players, One Touch at a Time"
+          }
+        },
+        "heading_QbGYiq": {
+          "type": "heading",
+          "settings": {
+            "text": "Our Passion, Your Play",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_G7Dxa8": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>At Zenith Sports, we believe every great player starts with strong fundamentals. That’s why we have created the TEKKY™ training ball. Building Better Players, One Touch at a Time.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_89Vfit",
+        "heading_QbGYiq",
+        "richtext_G7Dxa8"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "image": "shopify://shop_images/scr.jpg",
+        "mobile_image": "shopify://shop_images/scr.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true
+      }
+    },
+    "rich_text_3hcmgW": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_6rjT7Y": {
+          "type": "heading",
+          "settings": {
+            "text": "Our Commitment to Excellence",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_Dt6aPA": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>At Zenith Sports, excellence is more than a goal—it’s a standard we live by every day. We understand that youth soccer is not just about competition; it’s about growth, discipline, and joy. Our TEKKY™ ball is carefully engineered to challenge young players, encouraging precision, control, and confidence with every practice. By combining innovation with passion, we aim to set a new benchmark in youth soccer development and help build the next generation of champions.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_6rjT7Y",
+        "richtext_Dt6aPA"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": true,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false
+      }
+    },
+    "multi_column_ybGe4V": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_3VHKXK": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/c1.jpg",
+            "title": "Skill-First Approach",
+            "heading_tag": "h3",
+            "content": "<p>At Zenith Sports, we believe technical skill is the foundation of greatness. Our training tools and philosophy focus on developing touch, control, and decision-making—helping players rise above a “kick and run” mentality.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_7DeRCt": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/c2.jpg",
+            "title": "Designed for Development",
+            "heading_tag": "h3",
+            "content": "<p>The TEKKY™ ball is engineered to challenge and inspire. With its smaller size and increased weight, it builds strength and precision in every session—transforming simple drills into impactful development.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_iEViVi": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/box_3_img.jpg",
+            "title": "Made for All Ages",
+            "heading_tag": "h3",
+            "content": "<p>Whether you're coaching five-year-olds or training high school athletes, our products adapt to every stage. TEKKY™ bridges the gap between fun and performance, making it ideal for any level of youth soccer.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_3VHKXK",
+        "image_with_text_7DeRCt",
+        "image_with_text_iEViVi"
+      ],
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "columns_per_row": 3,
+        "stack_on_mobile": false,
+        "overlap_image": false,
+        "content_alignment": "center",
+        "text_alignment": "center",
+        "spacing": "md",
+        "subheading": "",
+        "title": "Why Zenith?",
+        "content": ""
+      }
+    },
+    "rich_text_LtryX4": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_zP6NAU": {
+          "type": "heading",
+          "settings": {
+            "text": "From the Founders",
+            "heading_tag": "h1"
+          }
+        }
+      },
+      "block_order": [
+        "heading_zP6NAU"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false
+      }
+    },
+    "image_with_text_bTNKdR": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_LxQpwP": {
+          "type": "heading",
+          "disabled": true,
+          "settings": {
+            "text": "From the Founders",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_mBHdV7": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>I was born and raised in Denmark in a soccer family, where the game was a part of everyday life. That passion led to a 16-year professional career, taking me from Denmark to clubs across Europe, Asia, and North America. Soccer gave me incredible experiences, life lessons, and a deep respect for the different ways the game is played and taught around the world. As my playing career wound down, I became increasingly passionate about youth coaching. Over the past six years, that passion has turned into a mission: to help the next generation of players grow. I have seen the potential in young athletes - especially in the U.S. but also the need for a more creative, player-driven development model. That is why we created TEKKY™. It is more than just a product - it is a movement to inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training. It is about building a culture.  </p>"
+          }
+        },
+        "subheading_bYGxai": {
+          "type": "subheading",
+          "settings": {
+            "text": "<strong>– Philip Lund</strong>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_LxQpwP",
+        "richtext_mBHdV7",
+        "subheading_bYGxai"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "image": "shopify://shop_images/PhilipHeadShot.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "md",
+        "remove_vertical_spacing": true
+      }
+    },
+    "image_with_text_Um7pVL": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_BE9Kz7": {
+          "type": "heading",
+          "disabled": true,
+          "settings": {
+            "text": "From the Founders",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_BXKQT9": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>With over 40 years in the game, from collegiate play through to post-collegiate competition, my experience spans every level of the sport. I’ve spent extensive years coaching, always with a clear focus on true player development—not just winning games. I’m passionate about youth development and deeply committed to fostering intelligent, technical players, but I find a growing misalignment between the current U.S. player development roadmap and the outcomes we claim to want at the highest levels. My approach remains rooted in long-term growth over short-term accolades, aiming to bridge that gap for the next generation.</p>"
+          }
+        },
+        "subheading_dCeV3j": {
+          "type": "subheading",
+          "settings": {
+            "text": "<strong>– Paul Hanson</strong>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_BE9Kz7",
+        "richtext_BXKQT9",
+        "subheading_dCeV3j"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "image": "shopify://shop_images/PaulHeadShot.jpg",
+        "reveal_on_scroll": true,
+        "image_position": "end",
+        "content_width": "md",
+        "remove_vertical_spacing": true
+      }
+    },
+    "rich_text_3pCpgE": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_cVfkMD": {
+          "type": "heading",
+          "settings": {
+            "text": "<strong>Why TEKKY™?</strong>",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_g8m6hK": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p><strong>Transforming US Soccer with TEKKY™: The Next-Level Training Ball</strong></p><p>For years, US Soccer has been celebrated for its physicality and speed—yet often critiqued for lacking elite-level technical skill. Enter the <strong>TEKKY™</strong> ball by Zenith Sports: an innovative training tool designed to reshape the future of US Soccer by building a stronger technical foundation for the next generation of players.</p><p><strong>The Inspiration Behind TEKKY™</strong></p><p>At Zenith Sports, we believe truly exceptional players are built on a solid technical foundation. TEKKY™ was born from our commitment to helping young athletes master essential skills that are often overlooked—touch, control, and precision.</p><p><strong>What Makes TEKKY™ Unique?</strong></p><p>TEKKY™ is smaller in size yet maintains the weight of a regulation-size 5 FIFA-approved ball. This unique combination delivers powerful benefits during training:</p><ul><li>Promotes pinpoint accuracy and precision</li><li>Sharpens focus and consistency</li><li>Builds strength and control through touch-based drills<br/></li></ul><p><strong>The Results Speak for Themselves</strong></p><p>Using TEKKY™ in technical training sessions delivers game-changing<br/>outcomes:  </p><ul><li>Enhanced touch, ball control, and speed.  </li><li>Strengthened muscles and refined ability to hit<br/>the \"sweet spot.\"  </li><li>Seamless transitions between age groups,<br/>eliminating fear of heavier, larger balls.</li><li>Improved composure under pressure, making tight<br/>spaces a welcomed challenge.  </li></ul><p>Whether you're a budding player starting at age 5 or a high school athlete striving to elevate your technical abilities, TEKKY™ is designed to unlock your full potential. Say goodbye to the old \"kick-it-long and sprint\" mentality. With TEKKY™, you’ll develop the finesse and skill required to excel at every level of the game.</p><p><strong>Welcome to TEKKY™!</strong></p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_cVfkMD",
+        "richtext_g8m6hK"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": true,
+        "content_width": "lg",
+        "text_position": "start",
+        "remove_vertical_spacing": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_mFeiGW",
+    "rich_text_3hcmgW",
+    "multi_column_ybGe4V",
+    "rich_text_LtryX4",
+    "image_with_text_bTNKdR",
+    "image_with_text_Um7pVL",
+    "rich_text_3pCpgE"
+  ]
+}

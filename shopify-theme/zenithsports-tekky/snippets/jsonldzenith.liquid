@@ -1,0 +1,103 @@
+{% comment %}
+  JSON-LD structured data for AI / SEO discoverability.
+
+  Render in layout/theme.liquid right before </head>:
+
+    {% render 'jsonld-zenith' %}
+
+  Emits three schemas:
+    1. Organization — Zenith Sports, LLC + founders + sameAs links
+    2. WebSite — with SearchAction so Google + ChatGPT can surface
+       the site search box in their answers
+    3. Product (conditional) — only when on a product page, emits
+       full Shopify product JSON-LD with variants, price, brand,
+       SKU, image gallery, in-stock status
+
+  Why this matters: AI crawlers (ChatGPT browse, Claude browse,
+  Perplexity, Gemini, Bing Copilot) prefer clean structured data
+  over JS-rendered Shopify pages. Without this, AI answers about
+  "TEKKY ball" / "Zenith Sports" fall back to whatever they scraped
+  from random review sites — usually wrong, often outdated.
+
+  Pairs with the llms.txt file at /llms.txt (separate page template).
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Zenith Sports, LLC",
+  "alternateName": ["TEKKY", "Zenith Sports"],
+  "url": "{{ shop.url }}",
+  "logo": "https://zenithsports.org/cdn/shop/files/Zenith_Sports-02-removebg-preview.png",
+  "description": "Patent-pending TEKKY™ technical training ball — smaller surface, full FIFA-5 weight. Built by Philip Lund + Paul Hanson, 40+ combined years coaching U.S. youth soccer. Used by Rec, Travel, ECNL, MLS Next clubs.",
+  "founder": [
+    { "@type": "Person", "name": "Philip Lund", "jobTitle": "Co-Founder" },
+    { "@type": "Person", "name": "Paul Hanson",  "jobTitle": "Co-Founder · 40+ years coaching" }
+  ],
+  "email": "info@zenithsports.org",
+  "sameAs": [
+    "https://www.instagram.com/zenithsports.tekky/",
+    "https://www.youtube.com/@zenithsportstekky"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Product",
+        "name": "The TEKKY™ · Patent-pending training ball",
+        "description": "Smaller than regulation for control, full FIFA-5 spec weight for real strength transfer."
+      },
+      "priceCurrency": "USD",
+      "price": "59.95",
+      "url": "https://zenithsports.org/cart/45347164389551:1"
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Zenith Sports · TEKKY",
+  "url": "{{ shop.url }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ shop.url }}/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+{%- if template contains 'product' and product != blank -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "description": {{ product.description | strip_html | truncate: 1000 | json }},
+    "sku": {{ product.selected_or_first_available_variant.sku | json }},
+    "brand": {
+      "@type": "Brand",
+      "name": "TEKKY"
+    },
+    "image": [
+      {%- for img in product.images limit: 8 -%}
+        "https:{{ img | image_url: width: 1200 }}"{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "{{ shop.url }}{{ product.url }}",
+      "priceCurrency": "{{ cart.currency.iso_code }}",
+      "price": "{{ product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' }}",
+      "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+      "seller": {
+        "@type": "Organization",
+        "name": "Zenith Sports, LLC"
+      }
+    }
+  }
+  </script>
+{%- endif -%}

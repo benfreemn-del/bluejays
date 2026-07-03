@@ -1,0 +1,231 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h3"
+          }
+        },
+        "judge_me_reviews_preview_badge_YPnbLN": {
+          "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
+        "payment_terms": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "separator": {
+          "type": "separator",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapse_content": false,
+            "show_below_gallery": false
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_sold_out_variants": false,
+            "selector_style": "block",
+            "swatch_selector_style": "swatch",
+            "variant_image_options": "",
+            "size_chart_page": ""
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": true,
+            "show_gift_card_recipient": true,
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": ""
+          }
+        },
+        "complementary_products": {
+          "type": "complementary_products",
+          "settings": {
+            "title": "Pairs well with",
+            "products_count": 2,
+            "show_below_gallery": true,
+            "stack_products": false,
+            "show_quick_buy": true
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "judge_me_reviews_preview_badge_YPnbLN",
+        "price",
+        "payment_terms",
+        "separator",
+        "description",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "complementary_products"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "container_size": "full",
+        "product_info_size": 35,
+        "show_sticky_add_to_cart": false,
+        "center_basic_info": false,
+        "desktop_media_layout": "grid_2x",
+        "desktop_media_grid_gap": 30,
+        "mobile_controls": "dots",
+        "enable_media_autoplay": false,
+        "enable_video_looping": true,
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3
+      }
+    },
+    "rich_text_TzhzMm": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_KBwRYt": {
+          "type": "heading",
+          "settings": {
+            "text": "<strong>Why TEKKY™?</strong>",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_tyjfa9": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p><strong>Transforming US Soccer with TEKKY™: The Next-Level Training Ball</strong></p><p>For years, US Soccer has been celebrated for its physicality and speed—yet often critiqued for lacking elite-level technical skill. Enter the <strong>TEKKY™</strong> ball by Zenith Sports: an innovative training tool designed to reshape the future of US Soccer by building a stronger technical foundation for the next generation of players.</p><p><strong>The Inspiration Behind TEKKY™</strong></p><p>At Zenith Sports, we believe truly exceptional players are built on a solid technical foundation. TEKKY™ was born from our commitment to helping young athletes master essential skills that are often overlooked—touch, control, and precision.</p><p><strong>What Makes TEKKY™ Unique?</strong></p><p>TEKKY™ is smaller in size yet maintains the weight of a regulation-size 5 FIFA-approved ball. This unique combination delivers powerful benefits during training:</p><ul><li>Promotes pinpoint accuracy and precision</li><li>Sharpens focus and consistency</li><li>Builds strength and control through touch-based drills<br/></li></ul><p><strong>The Results Speak for Themselves</strong></p><p>Using TEKKY™ in technical training sessions delivers game-changing<br/>outcomes:  </p><ul><li>Enhanced touch, ball control, and speed.  </li><li>Strengthened muscles and refined ability to hit<br/>the \"sweet spot.\"  </li><li>Seamless transitions between age groups,<br/>eliminating fear of heavier, larger balls.</li><li>Improved composure under pressure, making tight<br/>spaces a welcomed challenge.  </li></ul><p>Whether you're a budding player starting at age 5 or a high school athlete striving to elevate your technical abilities, TEKKY™ is designed to unlock your full potential. Say goodbye to the old \"kick-it-long and sprint\" mentality. With TEKKY™, you’ll develop the finesse and skill required to excel at every level of the game</p><p><strong>Welcome to Your TEKKY™ Journey</strong></p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_KBwRYt",
+        "richtext_tyjfa9"
+      ],
+      "disabled": true,
+      "custom_css": [],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "content_width": "lg",
+        "text_position": "start",
+        "remove_vertical_spacing": false
+      }
+    },
+    "multi_column_3CeRmD": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_8xNQmy": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/c1.jpg",
+            "title": "Skill-First Approach",
+            "heading_tag": "h3",
+            "content": "<p>At Zenith Sports, we believe technical skill is the foundation of greatness. Our training tools and philosophy focus on developing touch, control, and decision-making—helping players rise above a “kick and run” mentality.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_jXXHb4": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/c2.jpg",
+            "title": "Designed for Development",
+            "heading_tag": "h3",
+            "content": "<p>The TEKKY™ ball is engineered to challenge and inspire. With its smaller size and increased weight, it builds strength and precision in every session—transforming simple drills into impactful development.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_jqV4HW": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/box_3_img.jpg",
+            "title": "Made for All Ages",
+            "heading_tag": "h3",
+            "content": "<p>Whether you're coaching five-year-olds or training high school athletes, our products adapt to every stage. TEKKY™ bridges the gap between fun and performance, making it ideal for any level of youth soccer.</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_8xNQmy",
+        "image_with_text_jXXHb4",
+        "image_with_text_jqV4HW"
+      ],
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "columns_per_row": 3,
+        "stack_on_mobile": false,
+        "overlap_image": false,
+        "content_alignment": "start",
+        "text_alignment": "start",
+        "spacing": "md",
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "174954490591c07978": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_wpwLXh": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_wpwLXh"
+      ],
+      "custom_css": [
+        ".jdgm-rev-widg {padding: 50px 0px !important;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_TzhzMm",
+    "multi_column_3CeRmD",
+    "174954490591c07978"
+  ]
+}
