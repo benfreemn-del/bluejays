@@ -535,4 +535,66 @@
     text-underline-offset: 2px;
   }
   .zenith-footer__bottom a:hover { color: var(--zenith-lime); }
+
+  /* Trademark symbol — render ™ as a small superscript (~40% smaller than the
+     surrounding text) so it stops overpowering display headings. Applied
+     site-wide by the wrap script below. */
+  .zenith-tm {
+    font-size: 0.6em;
+    vertical-align: super;
+    line-height: 0;
+    font-weight: inherit;
+    letter-spacing: 0;
+  }
 </style>
+
+{%- comment -%}
+  Wrap every trademark glyph (™ / U+2122) in <sup class="zenith-tm"> so it
+  renders as a small superscript everywhere — headings, eyebrows, subheads,
+  body copy, CTAs, marquee. Doing it once here beats editing 60+ render sites
+  and guarantees the ™ is a consistent size across the whole site. Skips form
+  controls + script/style nodes, and won't double-wrap.
+{%- endcomment -%}
+<script>
+  (function () {
+    var TM = '™';
+    function wrap(root) {
+      if (!root || !root.ownerDocument && root.nodeType !== 9 && root.nodeType !== 1) return;
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          if (!node.nodeValue || node.nodeValue.indexOf(TM) === -1) return NodeFilter.FILTER_REJECT;
+          var p = node.parentNode;
+          if (!p) return NodeFilter.FILTER_REJECT;
+          var tag = p.nodeName;
+          if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'OPTION') return NodeFilter.FILTER_REJECT;
+          if (p.classList && p.classList.contains('zenith-tm')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      var nodes = [], n;
+      while ((n = walker.nextNode())) nodes.push(n);
+      nodes.forEach(function (node) {
+        var parts = node.nodeValue.split(TM);
+        var frag = document.createDocumentFragment();
+        parts.forEach(function (part, i) {
+          if (part) frag.appendChild(document.createTextNode(part));
+          if (i < parts.length - 1) {
+            var sup = document.createElement('sup');
+            sup.className = 'zenith-tm';
+            sup.textContent = TM;
+            frag.appendChild(sup);
+          }
+        });
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+    function run() { wrap(document.body); }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+    // Shopify theme editor re-renders sections in place — re-wrap those.
+    document.addEventListener('shopify:section:load', function (e) { wrap(e.target); });
+  })();
+</script>
