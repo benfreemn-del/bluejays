@@ -1,85 +1,308 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-  "_comment": "Zenith homepage composition. Replaces Dawn's default index.json. Header + footer live in layout/theme.liquid (edit Dawn's theme.liquid to use header-zenith and footer-zenith — see README). This file composes the page BODY sections only.",
   "sections": {
-    "marquee-zenith": {
-      "type": "marquee-zenith",
-      "settings": {
-        "text": "TEKKY® GRIP SOCKS — 30% OFF · BUY 2 SHIRTS FOR $30 · FREE COACHING DRILLS · DISCOUNTS APPLIED AT CHECKOUT"
-      }
-    },
     "hero-zenith": {
       "type": "hero-zenith",
       "settings": {
-        "eyebrow": "Patent-pending · Built by Zenith",
-        "headline_top": "Smaller ball —",
+        "bg_video_url": "https://cdn.shopify.com/videos/c/o/v/629e309833874095a335d49b586c9ea8.mp4",
+        "bg_video_url_2": "https://cdn.shopify.com/videos/c/o/v/85ec2eef26ef4e69a759b9ce97d4c95a.mp4",
+        "bg_video_url_3": "https://cdn.shopify.com/videos/c/o/v/63b47e657b0c4f65a8198e7d348c8d9a.mp4",
+        "bg_video_url_4": "https://cdn.shopify.com/videos/c/o/v/19a487fd886a4c17a87859c642f02d95.mp4",
+        "eyebrow": "Patent-pending [dot] Built by Zenith",
+        "headline_top": "Smaller ball (em)",
         "headline_accent": "Bigger gains.",
-        "subhead": "<p>The TEKKY® is a patent-pending technical training ball — smaller than regulation so every touch sharpens, weighted to FIFA Size 5 spec so every rep builds real strength. Use it alongside your standard ball to build precision, confidence, and strength that transfers directly to match day.</p>",
-        "cta_primary_label": "Buy the TEKKY® · $59.95",
+        "subhead": "<p>Smaller than a regulation ball, so every touch has to be precise. Full FIFA Size 5 weight, so every rep builds real strength. Train on the TEKKY&reg; &mdash; then watch the match ball feel slow.</p>",
+        "cta_primary_label": "Buy the TEKKY(R) (em) $59.95",
         "cta_primary_url": "/cart/45347164389551:1",
-        "cta_secondary_label": "Shop socks + tees →",
-        "cta_secondary_url": "/collections/all",
+        "cta_secondary_label": "Shop socks + tees [arrow]",
+        "cta_secondary_url": "/pages/shop",
         "show_trust_row": true,
-        "trust_1": "Patent-pending TEKKY ball",
-        "trust_2": "Founded by Philip + Paul · 40+ yrs coaching",
-        "trust_3": "5.0★ verified buyers"
+        "trust_1": "Made to last a lifetime of training",
+        "trust_2": "Free 22-drill coaching library",
+        "trust_3": "Founded by Philip Lund + Paul Hanson [dot] 40+ yrs coaching"
       }
     },
     "stats-zenith": {
       "type": "stats-zenith",
       "blocks": {
-        "s1": { "type": "stat", "settings": { "number": "FIFA Size 3", "label": "Control surface", "note": "Smaller than regulation — every touch counts" } },
-        "s2": { "type": "stat", "settings": { "number": "FIFA Size 5", "label": "Match-day weight", "note": "Real strength transfer, not a foam toy" } },
-        "s3": { "type": "stat", "settings": { "number": "5.0★", "label": "Verified buyers", "note": "Trusted by Rec, Travel, ECNL, MLS Next" } }
+        "s1": {
+          "type": "stat",
+          "settings": {
+            "number": "6.4x",
+            "label": "More touches",
+            "note": "Full TEKKY protocol vs. traditional club training (em) same 50-week season"
+          }
+        },
+        "s2": {
+          "type": "stat",
+          "settings": {
+            "number": "15 min/day",
+            "label": "Nearly 3x the reps",
+            "note": "One pre-practice habit takes a player from 26,250 [arrow] 73,000+ touches a year"
+          }
+        },
+        "s3": {
+          "type": "stat",
+          "settings": {
+            "number": "703,125",
+            "label": "The 5-year gap",
+            "note": "Extra touches a traditional-only player can never get back"
+          }
+        }
       },
-      "block_order": ["s1", "s2", "s3"]
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {}
+    },
+    "who-its-for-zenith": {
+      "type": "who-its-for-zenith",
+      "blocks": {
+        "a1": {
+          "type": "audience",
+          "settings": {
+            "icon": "parent",
+            "title": "Parents",
+            "blurb": "Get a custom 4-week plan for your player in 60 seconds — drills, reps, and the right kit for where they are now.",
+            "cta_label": "For parents",
+            "cta_url": "/pages/for-parents?view=for-parents"
+          }
+        },
+        "a2": {
+          "type": "audience",
+          "settings": {
+            "icon": "player",
+            "title": "Players",
+            "blurb": "Train like a European academy. Build your own plan and sharpen your first touch on your own time.",
+            "cta_label": "For players",
+            "cta_url": "/pages/for-players?view=for-players"
+          }
+        },
+        "a3": {
+          "type": "audience",
+          "settings": {
+            "icon": "coach",
+            "title": "Coaches & Trainers",
+            "blurb": "The full coaching guide, a 4-week session plan, and a ready-made drill library — drop it into team practice or private sessions this week.",
+            "cta_label": "For coaches & trainers",
+            "cta_url": "/pages/for-coaches?view=for-coaches"
+          }
+        },
+        "a4": {
+          "type": "audience",
+          "settings": {
+            "icon": "doc",
+            "title": "Directors & Clubs",
+            "blurb": "One technique-first curriculum for every age group, plus roster orders and bulk pricing. Book a club demo and we'll tailor it.",
+            "cta_label": "For directors & clubs",
+            "cta_url": "/pages/for-docs?view=for-docs"
+          }
+        }
+      },
+      "block_order": [
+        "a1",
+        "a2",
+        "a3",
+        "a4"
+      ],
+      "settings": {}
     },
     "ball-spotlight-zenith": {
       "type": "ball-spotlight-zenith",
       "blocks": {
-        "b1": { "type": "bullet", "settings": { "text": "Smaller surface area trains pinpoint touch" } },
-        "b2": { "type": "bullet", "settings": { "text": "Full FIFA-spec weight builds genuine strength" } },
-        "b3": { "type": "bullet", "settings": { "text": "Engineered for ages 5 through high school" } },
-        "b4": { "type": "bullet", "settings": { "text": "Regulation ball feels effortless after" } }
+        "b1": {
+          "type": "bullet",
+          "settings": {
+            "text": "Smaller surface area trains pinpoint touch"
+          }
+        },
+        "b2": {
+          "type": "bullet",
+          "settings": {
+            "text": "Full FIFA-spec weight builds genuine strength"
+          }
+        },
+        "b3": {
+          "type": "bullet",
+          "settings": {
+            "text": "Engineered for ages 5 through high school"
+          }
+        },
+        "b4": {
+          "type": "bullet",
+          "settings": {
+            "text": "Regulation ball feels effortless after"
+          }
+        }
       },
-      "block_order": ["b1", "b2", "b3", "b4"]
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {}
+    },
+    "video-gallery-zenith": {
+      "type": "video-gallery-zenith",
+      "blocks": {
+        "c4": {
+          "type": "clip",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/9047f952286440f19ba3743734f3cbff.mp4",
+            "poster_url": "https://zenithsports.org/cdn/shop/files/tekky-hero-19.jpg"
+          }
+        },
+        "c5": {
+          "type": "clip",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/8cdf4ea505194e38a7dcab3369b02e31.mp4",
+            "poster_url": "https://zenithsports.org/cdn/shop/files/tekky-hero-17.jpg"
+          }
+        },
+        "c3": {
+          "type": "clip",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/d89ce524b6d848dda02b9514bcd71f73.mp4",
+            "poster_url": "https://zenithsports.org/cdn/shop/files/tekky-hero-15.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "c4",
+        "c5",
+        "c3"
+      ],
+      "settings": {
+        "eyebrow": "On the pitch",
+        "heading": "TEKKY in action",
+        "intro": "<p>Real reps, real players. Every touch on the TEKKY&reg; transfers straight to match day.</p>",
+        "columns": "3"
+      }
     },
     "before-after-zenith": {
       "type": "before-after-zenith",
       "blocks": {
-        "step1": { "type": "step", "settings": { "number": "1", "title": "Pick 3 drills from the library", "desc": "One per skill area: gather, dribble, finish. Start with Warm Up tier." } },
-        "step2": { "type": "step", "settings": { "number": "2", "title": "10–15 min, 3× per week", "desc": "Quality over quantity. Pristine reps build technique faster than tired ones." } },
-        "step3": { "type": "step", "settings": { "number": "3", "title": "Level up after week 2", "desc": "Add 2 Beginner drills. Drop the easiest Warm Up. Always keep something challenging." } },
-        "step4": { "type": "step", "settings": { "number": "4", "title": "Week 4: hit regulation ball", "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic." } }
+        "step1": {
+          "type": "step",
+          "settings": {
+            "number": "1",
+            "title": "Pick 3 drills from the library",
+            "desc": "One per skill area: gather, dribble, finish. Start with Warm Up tier."
+          }
+        },
+        "step2": {
+          "type": "step",
+          "settings": {
+            "number": "2",
+            "title": "10-15 min, 3x per week",
+            "desc": "Quality over quantity. Pristine reps build technique faster than tired ones."
+          }
+        },
+        "step3": {
+          "type": "step",
+          "settings": {
+            "number": "3",
+            "title": "Level up after week 2",
+            "desc": "Add 2 Beginner drills. Drop the easiest Warm Up. Always keep something challenging."
+          }
+        },
+        "step4": {
+          "type": "step",
+          "settings": {
+            "number": "4",
+            "title": "Week 4: hit regulation ball",
+            "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic."
+          }
+        }
       },
-      "block_order": ["step1", "step2", "step3", "step4"]
+      "block_order": [
+        "step1",
+        "step2",
+        "step3",
+        "step4"
+      ],
+      "settings": {
+        "cta_label": "Buy the TEKKY(R) (em) $59.95"
+      }
     },
     "drill-library-zenith": {
-      "type": "drill-library-zenith"
+      "type": "drill-library-zenith",
+      "settings": {}
+    },
+    "ten-k-hour-meter-zenith": {
+      "type": "ten-k-hour-meter-zenith",
+      "settings": {}
     },
     "shop-strip-zenith": {
       "type": "shop-strip-zenith",
       "blocks": {
-        "ball":  { "type": "product", "settings": { "name": "The TEKKY®", "tagline": "Patent-pending training ball", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
-        "socks": { "type": "product", "settings": { "name": "TEKKY® Grip Socks", "tagline": "Footwork foundation", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
-        "tee":   { "type": "product", "settings": { "name": "Performance Tee", "tagline": "On-pitch identity", "price": "$17.50", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
+        "ball": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg",
+            "name": "The TEKKY(R)",
+            "tagline": "Patent-pending training ball",
+            "price": "$59.95",
+            "cta_label": "Buy Now",
+            "url": "/cart/45347164389551:1",
+            "badge": "Bestseller"
+          }
+        },
+        "socks": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/Tekky_Socks_White_Web_eaa7877d-0611-4947-bf90-832db80b57b4.jpg",
+            "name": "TEKKY(R) Grip Socks",
+            "tagline": "Footwork foundation",
+            "price": "$15.00",
+            "cta_label": "Shop",
+            "url": "/products/tekky-grip-socks",
+            "badge": "2 for $25"
+          }
+        },
+        "tee": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/Performance_T-Shirt_Gray_Front_Web.jpg",
+            "name": "Performance Tee",
+            "tagline": "On-pitch identity",
+            "price": "$17.50",
+            "cta_label": "Shop",
+            "url": "/products/high-performance-tekky-t-white-copy",
+            "badge": "30% Off"
+          }
+        }
       },
-      "block_order": ["ball", "socks", "tee"]
+      "block_order": [
+        "ball",
+        "socks",
+        "tee"
+      ],
+      "settings": {}
     },
     "training-guide-cta-zenith": {
       "type": "training-guide-cta-zenith",
       "settings": {
-        "success_link": "/pages/training-guide"
+        "success_text": "Thank you! Your plan is ready —",
+        "success_link": "/pages/training-guide",
+        "feature_video_url": "https://cdn.shopify.com/videos/c/o/v/5c0dbf85c81f4a37b5346496a927b727.mp4",
+        "photo_url": "https://zenithsports.org/cdn/shop/files/tekky-hero-53.jpg"
       }
     },
     "build-your-player-cta-zenith": {
       "type": "build-your-player-cta-zenith",
-      "blocks": {
-        "b1": { "type": "bullet", "settings": { "text": "Personalized 4-week cadence" } },
-        "b2": { "type": "bullet", "settings": { "text": "3 starter drills matched to current skill" } },
-        "b3": { "type": "bullet", "settings": { "text": "Recommended TEKKY kit fit" } },
-        "b4": { "type": "bullet", "settings": { "text": "Free — takes 60 seconds" } }
-      },
-      "block_order": ["b1", "b2", "b3", "b4"]
+      "settings": {}
     },
     "founders-zenith": {
       "type": "founders-zenith",
@@ -87,37 +310,115 @@
         "philip": {
           "type": "founder",
           "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/PhilipHeadShot.jpg",
             "name": "Philip Lund",
             "role": "Co-Founder",
-            "quote": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training — it is about building a culture.</p>"
+            "quote": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training &mdash; it is about building a culture.</p>"
           }
         },
         "paul": {
           "type": "founder",
           "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/PaulHeadShot.jpg",
             "name": "Paul Hanson",
-            "role": "Co-Founder · 40+ years in the game",
-            "quote": "<p>I've spent extensive years coaching, always with a clear focus on true player development — not just winning games. My approach remains rooted in long-term growth over short-term accolades.</p>"
+            "role": "Co-Founder [dot] 40+ years in the game",
+            "quote": "<p>I have spent extensive years coaching, always with a clear focus on true player development &mdash; not just winning games. My approach remains rooted in long-term growth over short-term accolades.</p>"
           }
         }
       },
-      "block_order": ["philip", "paul"]
+      "block_order": [
+        "philip",
+        "paul"
+      ],
+      "settings": {}
+    },
+    "faq-zenith": {
+      "type": "faq-zenith",
+      "blocks": {
+        "q1": {
+          "type": "faq",
+          "settings": {
+            "question": "What is the TEKKY ball?",
+            "answer": "<p>The TEKKY&reg; is a patent-pending technical training soccer ball from Zenith Sports. It is smaller than a regulation ball, so every touch has to be precise &mdash; but it is built to full FIFA Size 5 weight, so every rep builds real strength. After a few weeks on the TEKKY, a regulation match ball feels slow and easy to control.</p>"
+          }
+        },
+        "q2": {
+          "type": "faq",
+          "settings": {
+            "question": "Does training with a smaller soccer ball actually improve skills?",
+            "answer": "<p>Yes. A smaller surface forces cleaner, more deliberate touches &mdash; the same way the world&rsquo;s top academies build technique. Because the TEKKY keeps full match-day weight, the strength and timing you build transfer straight to a regulation ball.</p>"
+          }
+        },
+        "q3": {
+          "type": "faq",
+          "settings": {
+            "question": "How is the TEKKY different from a futsal ball or a size 3 ball?",
+            "answer": "<p>A futsal ball is low-bounce and made for hard courts; a size 3 ball is lighter all around for young kids. The TEKKY is different: a smaller control surface with full FIFA-5 match weight &mdash; so it sharpens first touch like a small ball while building real strength like a match ball.</p>"
+          }
+        },
+        "q4": {
+          "type": "faq",
+          "settings": {
+            "question": "What age is the TEKKY training ball for?",
+            "answer": "<p>Ages 5 through high school and beyond. Rec, Travel, Club, ECNL, and MLS Next players all train with it. The free <a href=\"/pages/build-your-player\">Build Your Player</a> quiz tailors a plan to any age and skill level.</p>"
+          }
+        },
+        "q5": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I use the TEKKY to improve first touch at home?",
+            "answer": "<p>Pick 3 drills from the free 22-drill library &mdash; one each for gather, dribble, and finish. Train 10&ndash;15 minutes, 3 times a week, and level up every two weeks. Most players see a visible difference in first touch and control within about 4 weeks.</p>"
+          }
+        },
+        "q6": {
+          "type": "faq",
+          "settings": {
+            "question": "What ball do soccer academies use for technical training?",
+            "answer": "<p>Top academies prioritize thousands of clean, deliberate touches over reps with a full-size ball. The TEKKY brings that European technical methodology home &mdash; a smaller control surface with full FIFA-5 weight, so focused touches build skill that holds up on match day.</p>"
+          }
+        },
+        "q7": {
+          "type": "faq",
+          "settings": {
+            "question": "How much is the TEKKY and where can I buy it?",
+            "answer": "<p>The TEKKY&reg; is $59.95 at zenithsports.org and ships across the U.S. TEKKY grip socks ($15, or 2 for $25) and performance training tees ($17.50) are available too.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7"
+      ],
+      "settings": {
+        "eyebrow": "Questions, answered",
+        "heading": "TEKKY® training ball — FAQ",
+        "intro": "<p>Everything parents and coaches ask before training with a smaller ball.</p>"
+      }
     },
     "inquiry-form-zenith": {
-      "type": "inquiry-form-zenith"
+      "type": "inquiry-form-zenith",
+      "settings": {}
     }
   },
   "order": [
-    "marquee-zenith",
     "hero-zenith",
     "stats-zenith",
+    "who-its-for-zenith",
     "ball-spotlight-zenith",
+    "video-gallery-zenith",
     "before-after-zenith",
     "drill-library-zenith",
+    "build-your-player-cta-zenith",
+    "ten-k-hour-meter-zenith",
     "shop-strip-zenith",
     "training-guide-cta-zenith",
-    "build-your-player-cta-zenith",
     "founders-zenith",
+    "faq-zenith",
     "inquiry-form-zenith"
   ]
 }

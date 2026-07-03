@@ -79,7 +79,9 @@ export async function POST(req: NextRequest) {
         if (/scout/i.test(String(l.audience_segment || ""))) return false;
         // BlueJays-internal test submissions — never client-facing
         if (/@[^@]*\.example$/i.test(email)) return false;
+        if (/@example\.(com|org|net)$/i.test(email)) return false;
         if (/@bluejayportfolio\.com$/i.test(email)) return false;
+        if (/^tester?$/i.test(name.trim())) return false;
         if (/\btest\b.*\bignore\b|\bignore\b.*\btest\b/i.test(name)) return false;
         return true;
       });

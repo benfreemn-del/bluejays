@@ -1,0 +1,48 @@
+{
+  "sections": {
+    "aud": {
+      "type": "audience-landing-zenith",
+      "settings": {
+        "accent": "#1d4ed8",
+        "hero_video": "https://cdn.shopify.com/videos/c/o/v/d89ce524b6d848dda02b9514bcd71f73.mp4",
+        "hero_poster": "https://zenithsports.org/cdn/shop/files/tekky-hero-15.jpg",
+        "eyebrow": "For Coaches & Trainers",
+        "heading": "Your 90 minutes can't deliver the touches.",
+        "subhead": "<p>In a full team practice, most players get <strong>100&ndash;150 touches</strong> &mdash; and if the session topic is possession or finishing, closer to 100. Technique is built on volume multiplied by intention, and there isn't enough of either in one weekly session.</p><p>Send them home with the TEKKY and a plan, and every player walks into your practice sharper.</p>",
+        "cta_label": "Get the coaching guide",
+        "cta_url": "/pages/training-guide",
+        "cta2_label": "Talk to us",
+        "cta2_url": "#contact",
+        "stat1_num": "100-150",
+        "stat1_label": "touches per player in a 90-min team session",
+        "stat2_num": "+46,875",
+        "stat2_label": "touches a year from a 15-min pre-practice habit",
+        "stat3_num": "22 drills",
+        "stat3_label": "free, sequenced across 3 tiers",
+        "value_heading": "What the TEKKY does for your group",
+        "method_quote": "<p>Train technique on the smallest surface, transfer it on full match weight. One TEKKY session &asymp; <strong>375 deliberate touches</strong>.</p>",
+        "method_cite": "The TEKKY methodology",
+        "close_heading": "Get the coaching guide (em) free",
+        "close_body": "<p>The full Coach + DOC edition: curriculum, a 4-week session plan, and the drill library. Want a guest demo with Philip or Paul? We'll set it up.</p>"
+      },
+      "blocks": {
+        "v1": { "type": "value", "settings": { "kicker": "Drop-in ready", "title": "A session plan you can run this week", "body": "The full coaching guide plus a 4-week plan and a 22-drill library sequenced Warm Up to Beginner to Intermediate. No prep needed - press play." } },
+        "v2": { "type": "value", "settings": { "kicker": "Multiply touches", "title": "Homework that moves the needle", "body": "15 minutes of TEKKY before practice nearly triples a player's annual touches. The work you can't fit into one session happens at home, for free." } },
+        "v3": { "type": "value", "settings": { "kicker": "Faster feedback", "title": "A ball that punishes the lazy touch", "body": "The smaller surface gives instant feedback, so players self-correct first touch, body shape, and weak foot without you standing over every rep." } },
+        "v4": { "type": "value", "settings": { "kicker": "Whole-roster lift", "title": "Raise the floor of your team", "body": "When every player banks clean touches between sessions, your team training jumps from teaching control to teaching the game." } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"]
+    },
+    "meter": { "type": "ten-k-hour-meter-zenith" },
+    "drills": { "type": "drill-library-zenith" },
+    "inquiry": {
+      "type": "inquiry-form-zenith",
+      "settings": {
+        "eyebrow": "Coaches + trainers",
+        "heading": "Want the full guide or a demo?",
+        "body": "<p>Tell us your team's age group and we'll send the coaching guide and set up a guest session. Philip and Paul personally read every message.</p>"
+      }
+    }
+  },
+  "order": ["aud", "meter", "drills", "inquiry"]
+}

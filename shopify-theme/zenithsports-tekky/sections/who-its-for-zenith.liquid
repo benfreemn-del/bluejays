@@ -1,0 +1,210 @@
+{% comment %}
+  "Who it's for" — audience routing section.
+  Six cards (Parent / Player / Coach / DOC / Club / Trainer), each with a
+  crafted SVG icon, a one-line pitch, and a CTA to the right destination
+  (Build Your Player quiz, the Coaching Guide, or the inquiry form).
+
+  Fully block-driven — add/remove/reorder audiences in the theme customizer.
+  Icons are inline SVG selected per block (no emoji), so they're sharp on
+  every device and match the Build-Your-Player quiz icon set.
+{% endcomment %}
+
+<section class="zenith-section zenith-whofor" id="who-its-for" style="scroll-margin-top: 90px;">
+  <div class="zenith-container">
+    <div class="zenith-whofor__head">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow zenith-whofor__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: #fff;">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.intro != blank %}
+        <div class="zenith-whofor__intro">{{ section.settings.intro }}</div>
+      {% endif %}
+    </div>
+
+    <div class="zenith-whofor__grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'audience' %}
+          {%- assign href = block.settings.cta_url | default: '/#contact' -%}
+          <a href="{{ href }}" class="zenith-whofor__card zenith-whofor__card--{{ block.settings.icon }}" {{ block.shopify_attributes }}>
+            <span class="zenith-whofor__icon" aria-hidden="true">
+              {%- case block.settings.icon -%}
+                {%- when 'parent' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="3"/><path d="M2.5 21v-1a5.5 5.5 0 0 1 11 0v1"/><circle cx="17.5" cy="9.5" r="2.2"/><path d="M14.8 21v-.5a3.4 3.4 0 0 1 6.7 0v.5"/></svg>
+                {%- when 'player' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.3l3.4 2.5-1.3 4H9.9l-1.3-4 3.4-2.5z"/><path d="M12 7.3V3.6"/><path d="M15.4 9.8l3.4-1.2"/><path d="M14.1 13.8l2.2 3"/><path d="M9.9 13.8l-2.2 3"/><path d="M8.6 9.8 5.2 8.6"/></svg>
+                {%- when 'coach' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h4"/></svg>
+                {%- when 'doc' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><line x1="12" y1="5" x2="12" y2="19"/><circle cx="12" cy="12" r="2.4"/><path d="M3 9h2v6H3"/><path d="M21 9h-2v6h2"/></svg>
+                {%- when 'club' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.5v5.5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5V5.5L12 3z"/><path d="M12 8.6l1.1 2.2 2.4.35-1.75 1.7.4 2.4L12 16l-2.15 1.15.4-2.4-1.75-1.7 2.4-.35z"/></svg>
+                {%- when 'trainer' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V9.5"/><path d="M10 2.5h4"/><path d="M12 2.5v2"/><path d="M18.8 7.2l1.1-1.1"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+              {%- endcase -%}
+            </span>
+            <span class="zenith-whofor__title">{{ block.settings.title | escape }}</span>
+            {% if block.settings.blurb != blank %}
+              <span class="zenith-whofor__blurb">{{ block.settings.blurb | escape }}</span>
+            {% endif %}
+            {% if block.settings.cta_label != blank %}
+              <span class="zenith-whofor__cta">{{ block.settings.cta_label | escape }}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </span>
+            {% endif %}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-whofor {
+    background: radial-gradient(circle at 50% -10%, rgba(0,196,154,0.06), transparent 55%), var(--zenith-navy);
+    padding: 3.5rem 0;
+  }
+  @media (min-width: 768px) { .zenith-whofor { padding: 5.5rem 0; } }
+  .zenith-whofor__head { text-align: center; max-width: 46rem; margin: 0 auto 2.75rem; }
+  .zenith-whofor__intro {
+    margin-top: 1.25rem;
+    color: rgba(255,255,255,0.82);
+    font-size: 1.0625rem; line-height: 1.65;
+  }
+  .zenith-whofor__intro p { margin: 0; }
+
+  .zenith-whofor__grid {
+    display: grid; gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 600px) { .zenith-whofor__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .zenith-whofor__grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
+
+  .zenith-whofor__card {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 0.55rem;
+    padding: 1.6rem 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.85rem;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .zenith-whofor__card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,196,154,0.45);
+    background: rgba(255,255,255,0.07);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  }
+  .zenith-whofor__icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px;
+    border-radius: 0.75rem;
+    background: rgba(0,196,154,0.12);
+    color: var(--zenith-lime);
+    margin-bottom: 0.35rem;
+  }
+  .zenith-whofor__icon svg { width: 28px; height: 28px; }
+  .zenith-whofor__title {
+    font-family: var(--zenith-font-display);
+    font-size: 1.3rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    color: #fff;
+  }
+  .zenith-whofor__blurb {
+    color: rgba(255,255,255,0.86);
+    font-size: 1rem; line-height: 1.6;
+  }
+  .zenith-whofor__cta {
+    margin-top: auto; padding-top: 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: var(--zenith-lime);
+    font-family: var(--zenith-font-display);
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+  }
+  .zenith-whofor__cta svg { width: 14px; height: 14px; transition: transform 0.18s ease; }
+  .zenith-whofor__card:hover .zenith-whofor__cta svg { transform: translateX(3px); }
+
+  /* Eyebrow — bright lime so it's readable on navy (was invisible electric-blue) */
+  .zenith-whofor__eyebrow { color: var(--zenith-lime); }
+
+  /* Per-audience accent colors — each card pops in its own color */
+  .zenith-whofor__card--parent  .zenith-whofor__icon { color:#fbbf24; background:rgba(251,191,36,0.14); }
+  .zenith-whofor__card--parent  .zenith-whofor__cta  { color:#fbbf24; }
+  .zenith-whofor__card--parent:hover  { border-color:rgba(251,191,36,0.55); }
+
+  .zenith-whofor__card--player  .zenith-whofor__icon { color:#00c49a; background:rgba(0,196,154,0.16); }
+  .zenith-whofor__card--player  .zenith-whofor__cta  { color:#00c49a; }
+  .zenith-whofor__card--player:hover  { border-color:rgba(0,196,154,0.55); }
+
+  .zenith-whofor__card--coach   .zenith-whofor__icon { color:#38bdf8; background:rgba(56,189,248,0.15); }
+  .zenith-whofor__card--coach   .zenith-whofor__cta  { color:#38bdf8; }
+  .zenith-whofor__card--coach:hover   { border-color:rgba(56,189,248,0.55); }
+
+  .zenith-whofor__card--doc     .zenith-whofor__icon { color:#a78bfa; background:rgba(167,139,250,0.16); }
+  .zenith-whofor__card--doc     .zenith-whofor__cta  { color:#a78bfa; }
+  .zenith-whofor__card--doc:hover     { border-color:rgba(167,139,250,0.55); }
+
+  .zenith-whofor__card--club    .zenith-whofor__icon { color:#34d399; background:rgba(52,211,153,0.15); }
+  .zenith-whofor__card--club    .zenith-whofor__cta  { color:#34d399; }
+  .zenith-whofor__card--club:hover    { border-color:rgba(52,211,153,0.55); }
+
+  .zenith-whofor__card--trainer .zenith-whofor__icon { color:#fb7185; background:rgba(251,113,133,0.15); }
+  .zenith-whofor__card--trainer .zenith-whofor__cta  { color:#fb7185; }
+  .zenith-whofor__card--trainer:hover { border-color:rgba(251,113,133,0.55); }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Who It's For",
+  "tag": "section",
+  "class": "zenith-whofor-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Built for your whole program" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Who it's for." },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>From a parent in the driveway to a Director of Coaching running a club — TEKKY® meets every level with the right plan.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "audience",
+      "name": "Audience card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "parent", "label": "Parent (adult + child)" },
+            { "value": "player", "label": "Player (soccer ball)" },
+            { "value": "coach", "label": "Coach (clipboard)" },
+            { "value": "doc", "label": "DOC (pitch / strategy)" },
+            { "value": "club", "label": "Club (crest)" },
+            { "value": "trainer", "label": "Trainer (stopwatch)" }
+          ],
+          "default": "parent"
+        },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "blurb", "label": "One-line pitch" },
+        { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Learn more" },
+        { "type": "text", "id": "cta_url", "label": "CTA URL" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Zenith Who It's For",
+      "blocks": [
+        { "type": "audience", "settings": { "icon": "parent", "title": "Parents", "blurb": "Get a custom 4-week plan for your player in 60 seconds — drills, reps, and the right kit for where they are now.", "cta_label": "Build their plan", "cta_url": "/pages/build-your-player" } },
+        { "type": "audience", "settings": { "icon": "player", "title": "Players", "blurb": "Train like a European academy. Build your own plan and sharpen your first touch on your own time.", "cta_label": "Build my plan", "cta_url": "/pages/build-your-player" } },
+        { "type": "audience", "settings": { "icon": "coach", "title": "Coaches & Trainers", "blurb": "The full coaching guide, a 4-week session plan, and a ready-made drill library — drop it into team practice or private sessions this week.", "cta_label": "For coaches & trainers", "cta_url": "/pages/for-coaches" } },
+        { "type": "audience", "settings": { "icon": "doc", "title": "Directors & Clubs", "blurb": "One technique-first curriculum for every age group, plus roster orders and bulk pricing. Book a club demo and we'll tailor it.", "cta_label": "For directors & clubs", "cta_url": "/pages/for-docs" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

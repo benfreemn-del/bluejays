@@ -1,0 +1,48 @@
+{
+  "sections": {
+    "aud": {
+      "type": "audience-landing-zenith",
+      "settings": {
+        "accent": "#8b5cf6",
+        "hero_video": "https://cdn.shopify.com/videos/c/o/v/63b47e657b0c4f65a8198e7d348c8d9a.mp4",
+        "hero_poster": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg",
+        "eyebrow": "For Directors & Clubs",
+        "heading": "One technique-first method. Every age group.",
+        "subhead": "<p>A club develops players when there's a single line connecting U8 to U18 that every coach understands and runs the same way. The TEKKY is that line for technical development &mdash; a smaller-ball, touch-first method that drops into <strong>any age group, any coaching level</strong>, with output you can measure.</p><p>Bring European technical methodology to your whole program.</p>",
+        "cta_label": "Book a club demo",
+        "cta_url": "#contact",
+        "cta2_label": "Roster + bulk pricing",
+        "cta2_url": "#contact",
+        "stat1_num": "U8 [arrow] U18",
+        "stat1_label": "one curriculum, every age group",
+        "stat2_num": "6.4x",
+        "stat2_label": "touch volume on the full protocol",
+        "stat3_num": "3 tiers",
+        "stat3_label": "sequenced progression, drop-in ready",
+        "value_heading": "Why a DOC standardizes on the TEKKY",
+        "method_quote": "<p>The best academies don't start with tactics. They start with touch. The TEKKY brings that <strong>club-wide</strong>.</p>",
+        "method_cite": "Built by Philip Lund + Paul Hanson [dot] ECNL [dot] MLS Next [dot] college",
+        "close_heading": "Book a club demo",
+        "close_body": "<p>30 minutes with Philip and Paul &mdash; in person in WA or video anywhere. We'll tailor the curriculum to your age groups and walk through roster and bulk pricing.</p>"
+      },
+      "blocks": {
+        "v1": { "type": "value", "settings": { "kicker": "Club-wide consistency", "title": "The line that connects your age groups", "body": "A methodology every coach runs the same way, so a player's technical base is built deliberately from your youngest teams up - not left to chance per coach." } },
+        "v2": { "type": "value", "settings": { "kicker": "Measurable", "title": "Development you can actually track", "body": "Touches are countable. Set the protocol and progress shows up in first touch, both feet, and how players hold up a level - visible at evaluations." } },
+        "v3": { "type": "value", "settings": { "kicker": "Coach-proof", "title": "Works at every coaching level", "body": "Volunteer parent-coach or licensed staff - the ball does the teaching. The smaller surface forces the right reps without a technical director in every session." } },
+        "v4": { "type": "value", "settings": { "kicker": "A differentiator", "title": "What families are evaluating", "body": "Parents are deciding whether your club builds technique or just runs scrimmages. A named technical methodology plus a home program is a reason to commit." } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"]
+    },
+    "meter": { "type": "ten-k-hour-meter-zenith" },
+    "drills": { "type": "drill-library-zenith" },
+    "inquiry": {
+      "type": "inquiry-form-zenith",
+      "settings": {
+        "eyebrow": "Directors + clubs",
+        "heading": "Book a demo or get roster pricing",
+        "body": "<p>Tell us your club, age groups, and roster size. We'll tailor the curriculum and send bulk pricing. Philip and Paul personally read every message.</p>"
+      }
+    }
+  },
+  "order": ["aud", "meter", "drills", "inquiry"]
+}
