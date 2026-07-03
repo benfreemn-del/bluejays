@@ -12,7 +12,7 @@
 
       <a href="{{ routes.root_url }}" class="zenith-footer__brand-link">
         {%- comment -%} Hardcoded to the high-quality white-lettering logo asset (same as the header), ignoring the customizer's old CDN default. {%- endcomment -%}
-        <img src="{{ 'zenith-logo-white.png' | asset_url }}" alt="{{ shop.name | escape }}" width="80" height="80" loading="lazy">
+        <img src="{{ 'zenith-logo-mono-white.png' | asset_url }}" alt="{{ shop.name | escape }}" width="80" height="80" loading="lazy">
         <div>
           <div class="zenith-footer__brand-name">{{ shop.name | escape }}</div>
           <div class="zenith-footer__brand-tagline">{% render 'zenith-text', text: section.settings.tagline %}</div>
@@ -226,6 +226,12 @@
   .zenith-backtotop.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
   .zenith-backtotop svg { width: 22px; height: 22px; }
   .zenith-backtotop:hover { background: #2fe3b6; }
+  /* Hide on mobile so it never collides with the sticky "Shop the TEKKY" buy bar
+     that appears at the bottom of the screen on phones. Kept on desktop where
+     there is no bottom bar. */
+  @media (max-width: 767px) {
+    .zenith-backtotop { display: none; }
+  }
   .zenith-footer__payments {
     display: flex;
     flex-wrap: wrap;
