@@ -1,0 +1,522 @@
+{% comment %}
+  Training Guide content section. Ports the curriculum content from the
+  Next.js /training-guide page to a Shopify Liquid section. Renders inline
+  on /pages/training-guide via templates/page.training-guide.json. The
+  drill grid + inquiry form come from separate sections (drill-library-
+  zenith, inquiry-form-zenith) composed in the same template.
+
+  Includes:
+   - Cover/intro hero (eyebrow + headline + tagline + 3 stats)
+   - Section 1: European methodology (3 principle cards)
+   - Section 2: 4-week starter plan (4 weeks × 3 sessions = 12 cards)
+   - Section 3: Coaching guardrails (Always ✓ / Never ✕)
+   - Closing pull-quote + 3 CTA cards (demo / shop / contact)
+
+  Print-friendliness preserved via @media print rules so a coach can
+  hit Cmd/Ctrl+P → Save as PDF and get a clean printable doc.
+{% endcomment %}
+
+<section class="zenith-tg">
+  <div class="zenith-container">
+
+    {%- comment -%} ── COVER / INTRO ── {%- endcomment -%}
+    <header class="zenith-tg__cover">
+      <div class="zenith-tg__eyebrow">{{ section.settings.eyebrow | escape }}</div>
+      <h1 class="zenith-tg__title">
+        {{ section.settings.headline_top | escape }}
+        <br />
+        <span class="zenith-tg__title-accent">{{ section.settings.headline_accent | escape }}</span>
+      </h1>
+      {% if section.settings.tagline != blank %}
+        <div class="zenith-tg__tagline">{{ section.settings.tagline }}</div>
+      {% endif %}
+      <div class="zenith-tg__stats">
+        <div class="zenith-tg__stat">
+          <div class="zenith-tg__stat-num">22</div>
+          <div class="zenith-tg__stat-label">Drills across 3 tiers</div>
+        </div>
+        <div class="zenith-tg__stat">
+          <div class="zenith-tg__stat-num">4 weeks</div>
+          <div class="zenith-tg__stat-label">Starter session plan</div>
+        </div>
+        <div class="zenith-tg__stat">
+          <div class="zenith-tg__stat-num">10–15 min</div>
+          <div class="zenith-tg__stat-label">Per session, 3× / week</div>
+        </div>
+      </div>
+      {% if section.settings.credit != blank %}
+        <div class="zenith-tg__credit">{{ section.settings.credit }}</div>
+      {% endif %}
+    </header>
+
+    {%- comment -%} ── SECTION 1: METHODOLOGY ── {%- endcomment -%}
+    <section class="zenith-tg__sec">
+      <div class="zenith-tg__sec-eyebrow">Section 1</div>
+      <h2 class="zenith-tg__h2">The European Way: Technique Before Tactics</h2>
+      <div class="zenith-tg__prose">
+        <p>The best youth academies in Europe don't start with tactics. They start with touch.</p>
+        <p>By the time a Spanish or Dutch academy player is 14, they have tens of thousands of clean, deliberate touches with the ball. By contrast, U.S. youth players spend their early development years inside team-tactics frameworks built for adult performance — and the gap shows up at 17, 18, when the technical ceiling matters.</p>
+        <p>TEKKY™ brings the European methodology to your roster. The ball is FIFA Size 3 control surface. FIFA Size 5 match-day weight. The combination forces what every academy coach in Europe already knows: when the surface is smaller, sloppy touches get punished, and a player who can master the smaller ball feels the regulation ball as obvious by comparison.</p>
+        <p class="zenith-tg__prose-bold">That's the Before & After Effect.</p>
+      </div>
+      <div class="zenith-tg__principle-grid">
+        <div class="zenith-tg__principle">
+          <div class="zenith-tg__principle-num">01</div>
+          <h3 class="zenith-tg__principle-title">Street football roots</h3>
+          <p class="zenith-tg__principle-body">Iniesta, Modrić, the Brazilian generation — every great technical player came up on smaller surfaces, more touches, no coach yelling tactics.</p>
+        </div>
+        <div class="zenith-tg__principle">
+          <div class="zenith-tg__principle-num">02</div>
+          <h3 class="zenith-tg__principle-title">Touch before tactics</h3>
+          <p class="zenith-tg__principle-body">Tactics need a base of technique. Without a clean first touch, the prettiest formation falls apart at U14.</p>
+        </div>
+        <div class="zenith-tg__principle">
+          <div class="zenith-tg__principle-num">03</div>
+          <h3 class="zenith-tg__principle-title">Driveway, daily</h3>
+          <p class="zenith-tg__principle-body">10–15 minutes a day with the right tool beats one 90-min team session a week. TEKKY makes daily reps possible at home.</p>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ── SECTION 2: 4-WEEK PLAN ── {%- endcomment -%}
+    <section class="zenith-tg__sec zenith-tg__sec--break">
+      <div class="zenith-tg__sec-eyebrow">Section 2</div>
+      <h2 class="zenith-tg__h2">4-Week Starter Session Plan</h2>
+      <p class="zenith-tg__sec-intro">
+        Three sessions a week, 10–15 min each (drop into your existing warm-up). By the end of week 4, run the BAE Test on Friday — the players themselves will tell you what changed.
+      </p>
+
+      {%- comment -%} Week 1 ─ Foundation {%- endcomment -%}
+      <div class="zenith-tg__week">
+        <div class="zenith-tg__week-head">
+          <h3 class="zenith-tg__week-title">Week 1 — Foundation</h3>
+          <span class="zenith-tg__week-focus">Focus: Touch + control</span>
+        </div>
+        <div class="zenith-tg__sessions">
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Mon</span><span class="zenith-tg__session-title">Warm Up only</span></div>
+            <p class="zenith-tg__session-body">All 10 warm-up drills. 30 sec each, 2 sets. Focus on cleanness, not speed. End with a 5-min small-sided 3v3 to reset the brain.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Wed</span><span class="zenith-tg__session-title">Warm Up + first 3 Beginner moves</span></div>
+            <p class="zenith-tg__session-body">Full warm-up. Then La Croqueta · Push Pull · Inside-Outside. 1 min each, 3 sets. Slow.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Fri</span><span class="zenith-tg__session-title">Warm Up + drill of the week</span></div>
+            <p class="zenith-tg__session-body">Full warm-up. Pick the move every player is struggling with most and run it 5×30 sec with corrections.</p>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Week 2 ─ Patterning {%- endcomment -%}
+      <div class="zenith-tg__week">
+        <div class="zenith-tg__week-head">
+          <h3 class="zenith-tg__week-title">Week 2 — Patterning</h3>
+          <span class="zenith-tg__week-focus">Focus: Sole-of-foot control</span>
+        </div>
+        <div class="zenith-tg__sessions">
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Mon</span><span class="zenith-tg__session-title">Sole-foot focus</span></div>
+            <p class="zenith-tg__session-body">Warm up via Sole Trap drills only. Then add Sole Drag + L-Drag from Beginner.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Wed</span><span class="zenith-tg__session-title">V-Cut / L-Drag combos</span></div>
+            <p class="zenith-tg__session-body">Warm up. Then drill Beginner V-Cut and L-Drag back-to-back — emphasize the change-of-direction beat.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Fri</span><span class="zenith-tg__session-title">Repeat best move from Mon</span></div>
+            <p class="zenith-tg__session-body">Coach picks the move with most growth potential per player; 8 min focused 1-on-1 reps.</p>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Week 3 ─ Deception {%- endcomment -%}
+      <div class="zenith-tg__week">
+        <div class="zenith-tg__week-head">
+          <h3 class="zenith-tg__week-title">Week 3 — Deception</h3>
+          <span class="zenith-tg__week-focus">Focus: Sell the move</span>
+        </div>
+        <div class="zenith-tg__sessions">
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Mon</span><span class="zenith-tg__session-title">Scissors series</span></div>
+            <p class="zenith-tg__session-body">Warm up. Then Scissors · Outside Push and Double Scissors. Coach faces each player and reacts to the feint — give them honest read.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Wed</span><span class="zenith-tg__session-title">Bridge to Intermediate</span></div>
+            <p class="zenith-tg__session-body">Run Tap Tap Drag · La Croqueta · Drag. Half the players will struggle — pair them with players who got it.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Fri</span><span class="zenith-tg__session-title">1v1 small-area games</span></div>
+            <p class="zenith-tg__session-body">10x10 yard squares. 1v1 to a line. Whoever can use a learned move successfully = scoring play. Forces transfer to game speed.</p>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Week 4 ─ Integration {%- endcomment -%}
+      <div class="zenith-tg__week">
+        <div class="zenith-tg__week-head">
+          <h3 class="zenith-tg__week-title">Week 4 — Integration</h3>
+          <span class="zenith-tg__week-focus">Focus: Game-speed transfer</span>
+        </div>
+        <div class="zenith-tg__sessions">
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Mon</span><span class="zenith-tg__session-title">All Intermediate combos</span></div>
+            <p class="zenith-tg__session-body">Roll · Stepover [The Jay Jay], Push Pull U-Drag, L-Drag Roll. 2 min each, 2 sets. Players will be tired — that's the point.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Wed</span><span class="zenith-tg__session-title">BAE (Before & After) test</span></div>
+            <p class="zenith-tg__session-body">Run a 5-min possession game on the TEKKY. Then switch to a regulation ball and play 5 more. Ask the players: what felt different? Their answers ARE the marketing.</p>
+          </div>
+          <div class="zenith-tg__session">
+            <div class="zenith-tg__session-head"><span class="zenith-tg__session-day">Fri</span><span class="zenith-tg__session-title">Match-play with curated rules</span></div>
+            <p class="zenith-tg__session-body">Scrimmage. Goal counts double if the scoring sequence includes a learned move. Reward what you want to see.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ── SECTION 3: GUARDRAILS ── {%- endcomment -%}
+    <section class="zenith-tg__sec zenith-tg__sec--break">
+      <div class="zenith-tg__sec-eyebrow">Section 3</div>
+      <h2 class="zenith-tg__h2">Coaching Guardrails</h2>
+      <div class="zenith-tg__guard-grid">
+        <div class="zenith-tg__guard zenith-tg__guard--always">
+          <h3 class="zenith-tg__guard-head">Always</h3>
+          <ul>
+            <li><span class="zenith-tg__check">✓</span> Lead the warm-up. Players model your tempo.</li>
+            <li><span class="zenith-tg__check">✓</span> Praise clean touches more than fast touches.</li>
+            <li><span class="zenith-tg__check">✓</span> Coach in 30-second cues, not lectures.</li>
+            <li><span class="zenith-tg__check">✓</span> Run the BAE test at month-end. Let players name the change.</li>
+            <li><span class="zenith-tg__check">✓</span> Pair high-performers with strugglers — peer reps stick longer.</li>
+          </ul>
+        </div>
+        <div class="zenith-tg__guard zenith-tg__guard--never">
+          <h3 class="zenith-tg__guard-head">Never</h3>
+          <ul>
+            <li><span class="zenith-tg__x">✕</span> Skip the warm-up. The ball will punish unprepared ankles.</li>
+            <li><span class="zenith-tg__x">✕</span> Drill new moves at full speed. Clean first, fast second.</li>
+            <li><span class="zenith-tg__x">✕</span> Use TEKKY in matches. It's a training tool, not a game ball.</li>
+            <li><span class="zenith-tg__x">✕</span> Run more than 25 minutes of TEKKY in one session. Fatigue degrades technique.</li>
+            <li><span class="zenith-tg__x">✕</span> Replace your tactical work with TEKKY. It complements, doesn't replace.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ── CLOSING + CTA CARDS ── {%- endcomment -%}
+    <section class="zenith-tg__close">
+      <div class="zenith-tg__pullquote">
+        “The ball does the coaching for me. My U13s aren't getting away with sloppy first touches anymore — the ball won't let them.”
+      </div>
+      <div class="zenith-tg__pullquote-cite">— DOC, ECNL Club (verified buyer)</div>
+
+      <div class="zenith-tg__cta-grid">
+        <a href="#contact" class="zenith-tg__cta zenith-tg__cta--dark">
+          <div class="zenith-tg__cta-eye">Request a Club Demo</div>
+          <div class="zenith-tg__cta-body">30 min, in person if you're in WA, video anywhere else.</div>
+          <div class="zenith-tg__cta-link">Scroll to inquiry form ↓</div>
+        </a>
+        <a href="{{ section.settings.shop_url | default: '/collections/all' }}" class="zenith-tg__cta zenith-tg__cta--light">
+          <div class="zenith-tg__cta-eye zenith-tg__cta-eye--blue">Bulk-order direct</div>
+          <div class="zenith-tg__cta-body">Club discount available on roster orders.</div>
+          <div class="zenith-tg__cta-link zenith-tg__cta-link--blue">Shop the TEKKY™ →</div>
+        </a>
+        <a href="mailto:info@zenithsports.org" class="zenith-tg__cta zenith-tg__cta--light">
+          <div class="zenith-tg__cta-eye zenith-tg__cta-eye--blue">Contact direct</div>
+          <div class="zenith-tg__cta-body">Philip + Paul personally read every email.</div>
+          <div class="zenith-tg__cta-link zenith-tg__cta-link--blue">info@zenithsports.org</div>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<style>
+  .zenith-tg {
+    background: #fff;
+    color: var(--zenith-ink);
+    padding: 4rem 0;
+  }
+  @media (min-width: 768px) { .zenith-tg { padding: 6rem 0; } }
+
+  .zenith-tg__cover {
+    padding-bottom: 3rem;
+    border-bottom: 4px solid var(--zenith-navy);
+    margin-bottom: 4rem;
+  }
+  .zenith-tg__eyebrow {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.32em;
+    color: var(--zenith-electric);
+    margin-bottom: 0.75rem;
+  }
+  .zenith-tg__title {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--zenith-navy);
+    margin: 0;
+  }
+  .zenith-tg__title-accent { color: var(--zenith-electric); }
+  .zenith-tg__tagline {
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-style: italic;
+    color: var(--zenith-navy);
+    max-width: 42rem;
+    margin: 1.5rem 0 0;
+    line-height: 1.55;
+  }
+  .zenith-tg__stats {
+    display: grid; grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  @media (min-width: 640px) { .zenith-tg__stats { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-tg__stat {
+    border-left: 4px solid var(--zenith-lime);
+    padding: 0.25rem 0 0.25rem 0.75rem;
+  }
+  .zenith-tg__stat-num {
+    font-size: 1.5rem; font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--zenith-navy);
+  }
+  .zenith-tg__stat-label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: #64748b;
+    margin-top: 0.15rem;
+  }
+  .zenith-tg__credit {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: #475569;
+    max-width: 42rem;
+  }
+
+  .zenith-tg__sec { margin-bottom: 3rem; }
+  .zenith-tg__sec--break { margin-top: 4rem; }
+  .zenith-tg__sec-eyebrow {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.32em;
+    color: var(--zenith-electric);
+    margin-bottom: 0.5rem;
+  }
+  .zenith-tg__h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--zenith-navy);
+    margin: 0 0 1.25rem;
+  }
+  .zenith-tg__sec-intro {
+    font-size: 1rem;
+    color: #475569;
+    max-width: 48rem;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+  .zenith-tg__prose {
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-size: 1.0625rem;
+    color: var(--zenith-navy);
+    line-height: 1.7;
+    max-width: 48rem;
+  }
+  .zenith-tg__prose p { margin: 0 0 1rem; }
+  .zenith-tg__prose-bold { font-weight: 700; font-style: normal; }
+
+  .zenith-tg__principle-grid {
+    display: grid; gap: 1rem;
+    margin-top: 2rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .zenith-tg__principle-grid { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-tg__principle {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 4px;
+  }
+  .zenith-tg__principle-num {
+    font-size: 9px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.28em;
+    color: var(--zenith-electric);
+  }
+  .zenith-tg__principle-title {
+    margin: 0.35rem 0 0.65rem;
+    font-size: 15px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    color: var(--zenith-navy);
+  }
+  .zenith-tg__principle-body {
+    font-size: 0.875rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .zenith-tg__week {
+    border-top: 1px solid #cbd5e1;
+    padding-top: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .zenith-tg__week-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .zenith-tg__week-title {
+    font-size: 1.15rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    color: var(--zenith-navy);
+    margin: 0;
+  }
+  .zenith-tg__week-focus {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--zenith-electric);
+  }
+  .zenith-tg__sessions {
+    display: grid; gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .zenith-tg__sessions { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-tg__session {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 4px;
+  }
+  .zenith-tg__session-head {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .zenith-tg__session-day {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--zenith-navy);
+    color: #fff;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  .zenith-tg__session-title {
+    font-size: 14px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    color: var(--zenith-navy);
+  }
+  .zenith-tg__session-body {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .zenith-tg__guard-grid {
+    display: grid; gap: 1.25rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .zenith-tg__guard-grid { grid-template-columns: repeat(2, 1fr); } }
+  .zenith-tg__guard {
+    padding: 0.25rem 0 0.25rem 1rem;
+  }
+  .zenith-tg__guard--always { border-left: 4px solid #10b981; }
+  .zenith-tg__guard--never { border-left: 4px solid #f43f5e; }
+  .zenith-tg__guard-head {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.28em;
+    margin: 0 0 0.75rem;
+  }
+  .zenith-tg__guard--always .zenith-tg__guard-head { color: #047857; }
+  .zenith-tg__guard--never .zenith-tg__guard-head { color: #be123c; }
+  .zenith-tg__guard ul {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: 0.6rem;
+  }
+  .zenith-tg__guard li {
+    display: flex; gap: 0.5rem;
+    font-size: 14px;
+    color: #1e293b;
+    line-height: 1.55;
+  }
+  .zenith-tg__check { color: #10b981; font-weight: 700; }
+  .zenith-tg__x { color: #f43f5e; font-weight: 700; }
+
+  .zenith-tg__close {
+    border-top: 4px solid var(--zenith-navy);
+    padding-top: 2rem;
+    margin-top: 3rem;
+  }
+  .zenith-tg__pullquote {
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    font-style: italic;
+    color: var(--zenith-navy);
+    line-height: 1.5;
+    max-width: 48rem;
+  }
+  .zenith-tg__pullquote-cite {
+    margin-top: 0.75rem;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--zenith-electric);
+  }
+  .zenith-tg__cta-grid {
+    display: grid; gap: 0.75rem;
+    grid-template-columns: 1fr;
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 768px) { .zenith-tg__cta-grid { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-tg__cta {
+    display: block;
+    padding: 1.25rem;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  .zenith-tg__cta--dark { background: var(--zenith-navy); color: #fff; }
+  .zenith-tg__cta--light { background: #f1f5f9; color: var(--zenith-ink); }
+  .zenith-tg__cta-eye {
+    font-size: 9px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--zenith-lime);
+  }
+  .zenith-tg__cta-eye--blue { color: var(--zenith-electric); }
+  .zenith-tg__cta-body { margin-top: 0.35rem; font-size: 13px; }
+  .zenith-tg__cta-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 11px; font-weight: 700;
+    text-decoration: underline;
+  }
+  .zenith-tg__cta-link--blue { color: var(--zenith-electric); }
+
+  @media print {
+    .zenith-tg { padding: 0; }
+    .zenith-tg__sec--break { page-break-before: always; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith TG Content",
+  "tag": "section",
+  "class": "zenith-tg-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Coach + DOC Edition · Patent-Pending" },
+    { "type": "text", "id": "headline_top", "label": "Headline (top line)", "default": "The TEKKY™" },
+    { "type": "text", "id": "headline_accent", "label": "Headline (accent line)", "default": "Coaching Guide." },
+    { "type": "richtext", "id": "tagline", "label": "Tagline (italic serif under headline)", "default": "<p>Technique before tactics. The European methodology, brought to your driveway, your training pitch, and your roster.</p>" },
+    { "type": "richtext", "id": "credit", "label": "Author credit paragraph", "default": "<p>Built by Philip Lund + Paul Hanson — two coaches with 40+ combined years in U.S. youth soccer development. Trusted by Rec, Travel, ECNL, MLS Next clubs and college programs.</p>" },
+    { "type": "text", "id": "shop_url", "label": "Bulk-order CTA URL", "default": "/collections/all" }
+  ],
+  "presets": [
+    { "name": "Zenith TG Content" }
+  ]
+}
+{% endschema %}

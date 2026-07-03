@@ -7,15 +7,35 @@
 {% endcomment %}
 
 <section class="zenith-hero zenith-section zenith-section--dark">
-  {% if section.settings.bg_image %}
+  {%- capture hero_vlist -%}
+    {%- if section.settings.bg_video_url != blank -%}{{ section.settings.bg_video_url }}|{%- endif -%}
+    {%- if section.settings.bg_video_url_2 != blank -%}{{ section.settings.bg_video_url_2 }}|{%- endif -%}
+    {%- if section.settings.bg_video_url_3 != blank -%}{{ section.settings.bg_video_url_3 }}|{%- endif -%}
+    {%- if section.settings.bg_video_url_4 != blank -%}{{ section.settings.bg_video_url_4 }}|{%- endif -%}
+  {%- endcapture -%}
+  {%- assign hero_videos = hero_vlist | strip | split: '|' -%}
+
+  {% if hero_videos.size > 0 %}
+    <div class="zenith-hero__bg zenith-hero__bg--video" data-hero-reel aria-hidden="true">
+      {% for vurl in hero_videos %}
+        <video
+          class="zenith-hero__video{% if forloop.first %} is-active{% endif %}"
+          muted
+          playsinline
+          preload="none"
+          {% if forloop.first and section.settings.bg_image_url != blank %}poster="{{ section.settings.bg_image_url }}"{% endif %}
+          data-src="{{ vurl | strip }}"
+        ></video>
+      {% endfor %}
+    </div>
+    <div class="zenith-hero__overlay" aria-hidden="true"></div>
+  {% elsif section.settings.bg_image_url != blank %}
     <div class="zenith-hero__bg" aria-hidden="true">
       <img
-        src="{{ section.settings.bg_image | image_url: width: 2400 }}"
+        src="{{ section.settings.bg_image_url }}"
         alt=""
         loading="eager"
         fetchpriority="high"
-        width="2400"
-        height="1350"
       >
     </div>
     <div class="zenith-hero__overlay" aria-hidden="true"></div>
@@ -24,28 +44,28 @@
   <div class="zenith-container">
     <div class="zenith-hero__inner">
       {% if section.settings.eyebrow != blank %}
-        <p class="zenith-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        <p class="zenith-eyebrow">{% render 'zenith-text', text: section.settings.eyebrow %}</p>
       {% endif %}
 
       <h1 class="zenith-h1" style="margin-top: 1.5rem;">
-        {{ section.settings.headline_top | escape }}
+        {% render 'zenith-text', text: section.settings.headline_top %}
         <br>
-        <span class="zenith-hero__highlight">{{ section.settings.headline_accent | escape }}</span>
+        <span class="zenith-hero__highlight">{% render 'zenith-text', text: section.settings.headline_accent %}</span>
       </h1>
 
       {% if section.settings.subhead != blank %}
-        <p class="zenith-body" style="margin-top: 2rem; max-width: 42rem; color: rgba(255,255,255,0.8); font-size: clamp(1rem, 1.4vw, 1.25rem);">
+        <div class="zenith-body" style="margin-top: 2rem; max-width: 42rem; color: rgba(255,255,255,0.85); font-size: clamp(1.05rem, 1.4vw, 1.25rem);">
           {{ section.settings.subhead }}
-        </p>
+        </div>
       {% endif %}
 
-      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 2.5rem;">
+      <div class="zenith-hero__cta-row" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 2.5rem;">
         {% if section.settings.cta_primary_label != blank %}
           <a
             href="{{ section.settings.cta_primary_url | default: '/cart/45347164389551:1' }}"
             class="zenith-btn zenith-btn--primary"
           >
-            {{ section.settings.cta_primary_label | escape }}
+            {% render 'zenith-text', text: section.settings.cta_primary_label %}
           </a>
         {% endif %}
         {% if section.settings.cta_secondary_label != blank %}
@@ -53,7 +73,7 @@
             href="{{ section.settings.cta_secondary_url | default: '/collections/all' }}"
             class="zenith-btn--secondary-link"
           >
-            {{ section.settings.cta_secondary_label | escape }}
+            {% render 'zenith-text', text: section.settings.cta_secondary_label %}
           </a>
         {% endif %}
       </div>
@@ -61,22 +81,60 @@
       {% if section.settings.show_trust_row %}
         <div class="zenith-trust-row">
           <span class="zenith-trust-row__item">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-lime);"></span>
-            {{ section.settings.trust_1 | escape }}
+            <span class="zenith-trust-row__dot zenith-trust-row__dot--lime"></span>
+            {% render 'zenith-text', text: section.settings.trust_1 %}
           </span>
           <span class="zenith-trust-row__item">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-lime);"></span>
-            {{ section.settings.trust_2 | escape }}
+            <span class="zenith-trust-row__dot zenith-trust-row__dot--amber"></span>
+            {% render 'zenith-text', text: section.settings.trust_2 %}
           </span>
           <span class="zenith-trust-row__item">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--zenith-amber);"></span>
-            {{ section.settings.trust_3 | escape }}
+            <span class="zenith-trust-row__dot zenith-trust-row__dot--electric"></span>
+            {% render 'zenith-text', text: section.settings.trust_3 %}
           </span>
         </div>
       {% endif %}
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    var reel = document.querySelector('[data-hero-reel]');
+    if (!reel) return;
+    var vids = [].slice.call(reel.querySelectorAll('video'));
+    if (!vids.length) return;
+    function ensure(v) { if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src); }
+    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+    // Respect data-saver + reduced-motion: leave the poster image, download no video.
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (saveData || reduce) { vids[0].classList.add('is-active'); return; }
+
+    // Mobile (or a single clip): loop ONLY the first clip so phones don't
+    // download the other reel clips. Desktop cross-fades the full reel.
+    var isSmall = window.matchMedia('(max-width: 767px)').matches;
+    if (vids.length === 1 || isSmall) {
+      var only = vids[0];
+      only.classList.add('is-active');
+      only.loop = true;
+      ensure(only);
+      play(only);
+      return;
+    }
+
+    function playIdx(n) {
+      vids.forEach(function (v, k) { v.classList.toggle('is-active', k === n); });
+      var cur = vids[n]; ensure(cur); play(cur);
+      var nx = (n + 1) % vids.length; ensure(vids[nx]); // preload next only
+    }
+    vids.forEach(function (v, k) {
+      v.addEventListener('ended', function () { playIdx((k + 1) % vids.length); });
+    });
+    playIdx(0);
+  })();
+</script>
 
 {% schema %}
 {
@@ -85,61 +143,90 @@
   "class": "zenith-hero-section",
   "settings": [
     {
-      "type": "image_picker",
-      "id": "bg_image",
-      "label": "Background image (full-bleed under navy overlay)"
+      "type": "header",
+      "content": "Background video reel (optional)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add 1-4 mp4 URLs. One = looping background. Two or more = a cinematic reel that cross-fades clip to clip and loops. Upload clips in Content > Files first."
+    },
+    {
+      "type": "text",
+      "id": "bg_video_url",
+      "label": "Background video 1 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "bg_video_url_2",
+      "label": "Background video 2 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "bg_video_url_3",
+      "label": "Background video 3 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "bg_video_url_4",
+      "label": "Background video 4 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "bg_image_url",
+      "label": "Background image URL (also used as the video poster)",
+      "default": "https://zenithsports.org/cdn/shop/files/meet.jpg"
     },
     {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow (small lime text above headline)",
-      "default": "Patent-pending · Built by Zenith"
+      "default": "Patent-pending [dot] Built by Zenith"
     },
     {
       "type": "text",
       "id": "headline_top",
-      "label": "Headline — top line",
-      "default": "Smaller ball —"
+      "label": "Headline -- top line",
+      "default": "Smaller ball (em)"
     },
     {
       "type": "text",
       "id": "headline_accent",
-      "label": "Headline — accent line (renders in lime)",
+      "label": "Headline -- accent line (renders in lime)",
       "default": "Bigger gains."
     },
     {
       "type": "richtext",
       "id": "subhead",
       "label": "Subhead paragraph",
-      "default": "<p>The TEKKY® is a patent-pending technical training ball — smaller than regulation so every touch sharpens, weighted to FIFA Size 5 spec so every rep builds real strength. Use it alongside your standard ball to build precision, confidence, and strength that transfers directly to match day.</p>"
+      "default": "<p>The TEKKY&trade; is a patent-pending technical training ball &mdash; smaller than regulation so every touch sharpens, weighted to FIFA Size 5 spec so every rep builds real strength. Use it alongside your standard ball to build precision, confidence, and strength that transfers directly to match day.</p>"
     },
     {
       "type": "header",
-      "content": "Primary CTA — Buy the TEKKY"
+      "content": "Primary CTA -- Buy the TEKKY"
     },
     {
       "type": "text",
       "id": "cta_primary_label",
       "label": "Primary CTA label",
-      "default": "Buy the TEKKY® · $59.95"
+      "default": "Buy the TEKKY(TM) (em) $59.95"
     },
     {
-      "type": "url",
+      "type": "text",
       "id": "cta_primary_url",
       "label": "Primary CTA URL (default: direct add-to-cart for the ball)"
     },
     {
       "type": "header",
-      "content": "Secondary CTA — Shop apparel"
+      "content": "Secondary CTA -- Shop apparel"
     },
     {
       "type": "text",
       "id": "cta_secondary_label",
       "label": "Secondary CTA label",
-      "default": "Shop socks + tees →"
+      "default": "Shop socks + tees [arrow]"
     },
     {
-      "type": "url",
+      "type": "text",
       "id": "cta_secondary_url",
       "label": "Secondary CTA URL"
     },
@@ -163,13 +250,13 @@
       "type": "text",
       "id": "trust_2",
       "label": "Trust badge 2",
-      "default": "Founded by Philip + Paul · 40+ yrs coaching"
+      "default": "Founded by Philip + Paul [dot] 40+ yrs coaching"
     },
     {
       "type": "text",
       "id": "trust_3",
       "label": "Trust badge 3",
-      "default": "5.0★ verified buyers"
+      "default": "Free 22-drill coaching library"
     }
   ],
   "presets": [

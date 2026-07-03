@@ -1,0 +1,330 @@
+{% comment %}
+  Audience landing — tailored destination per role (Players / Parents / Coaches / DOCs).
+  Built 2026-06-12 to give each "Who it's for" card its own real page instead of
+  dumping into the contact form (Paul Hanson feedback, 2026-06-12).
+
+  Fully content-driven from the page template JSON so one section powers every
+  audience. Per-audience accent set via the `accent` color setting. Compose with
+  ten-k-hour-meter-zenith + drill-library-zenith + inquiry-form-zenith in the
+  page template for a full destination.
+
+  Copy is grounded in the TEKKY "Touches Advantage" deck + youth-development research
+  (golden-age ball mastery, touches-per-practice ceilings, recruiting reality,
+  club-wide curriculum consistency).
+{% endcomment %}
+
+{%- assign accent = section.settings.accent | default: '#00c49a' -%}
+{%- assign hero_video = section.settings.hero_video -%}
+{%- assign hero_poster = section.settings.hero_poster -%}
+
+<section class="zenith-section zenith-aud{% if hero_video != blank %} zenith-aud--video{% endif %}" style="--aud: {{ accent }};">
+
+  <div class="zenith-aud__herowrap">
+    {%- if hero_video != blank -%}
+      <div class="zenith-aud__video" aria-hidden="true">
+        <video autoplay muted loop playsinline preload="metadata"{% if hero_poster != blank %} poster="{{ hero_poster }}"{% endif %}>
+          <source src="{{ hero_video }}" type="video/mp4">
+        </video>
+      </div>
+      <div class="zenith-aud__video-overlay" aria-hidden="true"></div>
+    {%- else -%}
+      <div class="zenith-aud__glow" aria-hidden="true"></div>
+    {%- endif -%}
+    <div class="zenith-container">
+
+    {%- comment -%} ── HERO ── {%- endcomment -%}
+    <div class="zenith-aud__hero">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-aud__eyebrow">{% render 'zenith-text', text: section.settings.eyebrow %}</p>
+      {% endif %}
+      <h1 class="zenith-aud__title">{% render 'zenith-text', text: section.settings.heading %}</h1>
+      {% if section.settings.subhead != blank %}
+        <div class="zenith-aud__subhead">{{ section.settings.subhead }}</div>
+      {% endif %}
+
+      <div class="zenith-aud__cta-row">
+        {% if section.settings.cta_label != blank %}
+          <a href="{{ section.settings.cta_url | default: '/#contact' }}" class="zenith-aud__btn zenith-aud__btn--primary">
+            {% render 'zenith-text', text: section.settings.cta_label %}
+          </a>
+        {% endif %}
+        {% if section.settings.cta2_label != blank %}
+          <a href="{{ section.settings.cta2_url | default: '/collections/all' }}" class="zenith-aud__btn zenith-aud__btn--ghost">
+            {% render 'zenith-text', text: section.settings.cta2_label %}
+          </a>
+        {% endif %}
+      </div>
+
+      {%- comment -%} ── STAT BAND ── {%- endcomment -%}
+      {% if section.settings.stat1_num != blank %}
+        <div class="zenith-aud__stats">
+          {% if section.settings.stat1_num != blank %}
+            <div class="zenith-aud__stat">
+              <div class="zenith-aud__stat-num">{% render 'zenith-text', text: section.settings.stat1_num %}</div>
+              <div class="zenith-aud__stat-label">{% render 'zenith-text', text: section.settings.stat1_label %}</div>
+            </div>
+          {% endif %}
+          {% if section.settings.stat2_num != blank %}
+            <div class="zenith-aud__stat">
+              <div class="zenith-aud__stat-num">{% render 'zenith-text', text: section.settings.stat2_num %}</div>
+              <div class="zenith-aud__stat-label">{% render 'zenith-text', text: section.settings.stat2_label %}</div>
+            </div>
+          {% endif %}
+          {% if section.settings.stat3_num != blank %}
+            <div class="zenith-aud__stat">
+              <div class="zenith-aud__stat-num">{% render 'zenith-text', text: section.settings.stat3_num %}</div>
+              <div class="zenith-aud__stat-label">{% render 'zenith-text', text: section.settings.stat3_label %}</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    </div>
+  </div>
+
+  <div class="zenith-container">
+    {%- comment -%} ── VALUE GRID (blocks) ── {%- endcomment -%}
+    {% if section.blocks.size > 0 %}
+      {% if section.settings.value_heading != blank %}
+        <h2 class="zenith-aud__section-h">{% render 'zenith-text', text: section.settings.value_heading %}</h2>
+      {% endif %}
+      <div class="zenith-aud__grid">
+        {% for block in section.blocks %}
+          {% if block.type == 'value' %}
+            <article class="zenith-aud__card" {{ block.shopify_attributes }}>
+              {% if block.settings.kicker != blank %}
+                <span class="zenith-aud__card-kicker">{% render 'zenith-text', text: block.settings.kicker %}</span>
+              {% endif %}
+              <h3 class="zenith-aud__card-title">{% render 'zenith-text', text: block.settings.title %}</h3>
+              {% if block.settings.body != blank %}
+                <p class="zenith-aud__card-body">{% render 'zenith-text', text: block.settings.body %}</p>
+              {% endif %}
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {%- comment -%} ── METHODOLOGY PULL-QUOTE ── {%- endcomment -%}
+    {% if section.settings.method_quote != blank %}
+      <figure class="zenith-aud__method">
+        <blockquote class="zenith-aud__method-quote">{{ section.settings.method_quote }}</blockquote>
+        {% if section.settings.method_cite != blank %}
+          <figcaption class="zenith-aud__method-cite">{% render 'zenith-text', text: section.settings.method_cite %}</figcaption>
+        {% endif %}
+      </figure>
+    {% endif %}
+
+    {%- comment -%} ── CLOSING CTA ── {%- endcomment -%}
+    {% if section.settings.close_heading != blank %}
+      <div class="zenith-aud__close">
+        <h2 class="zenith-aud__close-h">{% render 'zenith-text', text: section.settings.close_heading %}</h2>
+        {% if section.settings.close_body != blank %}
+          <div class="zenith-aud__close-body">{{ section.settings.close_body }}</div>
+        {% endif %}
+        {% if section.settings.cta_label != blank %}
+          <a href="{{ section.settings.cta_url | default: '/#contact' }}" class="zenith-aud__btn zenith-aud__btn--primary">
+            {% render 'zenith-text', text: section.settings.cta_label %}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+  .zenith-aud {
+    position: relative;
+    background: var(--zenith-navy-deep);
+    color: #fff;
+    padding: 4rem 0 4.5rem;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) { .zenith-aud { padding: 5.5rem 0 6rem; } }
+  .zenith-aud__glow {
+    position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+    width: 70rem; max-width: 120%; height: 40rem;
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--aud) 22%, transparent) 0%, transparent 62%);
+    pointer-events: none;
+  }
+  .zenith-aud .zenith-container { position: relative; z-index: 1; }
+
+  /* Hero background video — bounded to the hero block, fades to solid navy below */
+  .zenith-aud__herowrap { position: relative; overflow: hidden; }
+  .zenith-aud--video { padding-top: 0; }
+  .zenith-aud--video .zenith-aud__herowrap { padding: 4rem 0 2rem; }
+  @media (min-width: 768px) { .zenith-aud--video .zenith-aud__herowrap { padding: 5.5rem 0 2.5rem; } }
+  .zenith-aud__video { position: absolute; inset: 0; z-index: 0; }
+  .zenith-aud__video video { width: 100%; height: 100%; object-fit: cover; }
+  .zenith-aud__video-overlay { position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(5,13,31,0.58) 0%, rgba(5,13,31,0.72) 58%, var(--zenith-navy-deep) 100%); }
+  .zenith-aud__herowrap .zenith-container { position: relative; z-index: 2; }
+
+  .zenith-aud__hero { max-width: 46rem; }
+  .zenith-aud__eyebrow {
+    font-size: 12px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.28em; color: var(--aud); margin: 0 0 1rem;
+  }
+  .zenith-aud__title {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    font-weight: 900; letter-spacing: -0.03em; line-height: 1.02;
+    text-transform: uppercase; color: #fff; margin: 0;
+  }
+  .zenith-aud__title em, .zenith-aud__title .hl { color: var(--aud); font-style: normal; }
+  .zenith-aud__subhead {
+    margin: 1.5rem 0 0; font-size: 1.125rem; line-height: 1.65;
+    color: rgba(255,255,255,0.84); max-width: 40rem;
+  }
+  .zenith-aud__subhead p { margin: 0 0 0.75rem; }
+  .zenith-aud__subhead p:last-child { margin-bottom: 0; }
+  .zenith-aud__subhead strong { color: #fff; font-weight: 800; }
+
+  .zenith-aud__cta-row { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
+  .zenith-aud__btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.95rem 1.6rem; border-radius: 999px;
+    font-size: 0.95rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.04em; text-decoration: none; transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+  .zenith-aud__btn--primary {
+    background: var(--aud); color: var(--zenith-navy-deep);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--aud) 40%, transparent);
+  }
+  .zenith-aud__btn--primary:hover { transform: translateY(-2px); filter: brightness(1.06); }
+  .zenith-aud__btn--ghost {
+    background: rgba(255,255,255,0.06); color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.22);
+  }
+  .zenith-aud__btn--ghost:hover { border-color: var(--aud); color: var(--aud); }
+
+  .zenith-aud__stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    max-width: 38rem;
+  }
+  .zenith-aud__stat-num {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1;
+    color: var(--aud); font-variant-numeric: tabular-nums;
+  }
+  .zenith-aud__stat-label {
+    margin-top: 0.5rem; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.7); line-height: 1.4;
+  }
+
+  .zenith-aud__section-h {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+    color: #fff; margin: 4rem 0 1.75rem;
+  }
+  .zenith-aud__grid {
+    display: grid; gap: 1rem; grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .zenith-aud__grid { grid-template-columns: repeat(2, 1fr); } }
+  .zenith-aud__card {
+    background: linear-gradient(150deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-left: 3px solid var(--aud);
+    border-radius: 14px; padding: 1.6rem 1.75rem;
+  }
+  .zenith-aud__card-kicker {
+    display: inline-block; font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em; color: var(--aud);
+    margin-bottom: 0.6rem;
+  }
+  .zenith-aud__card-title {
+    font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em;
+    color: #fff; margin: 0 0 0.55rem; line-height: 1.25;
+  }
+  .zenith-aud__card-body {
+    font-size: 0.975rem; line-height: 1.6; color: rgba(255,255,255,0.78); margin: 0;
+  }
+
+  .zenith-aud__method {
+    margin: 4rem auto 0; max-width: 44rem; text-align: center;
+    padding: 2.5rem 1.5rem 0; border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .zenith-aud__method-quote {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.35rem, 3vw, 1.9rem); font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1.3; color: #fff; margin: 0;
+  }
+  .zenith-aud__method-quote em, .zenith-aud__method-quote .hl { color: var(--aud); font-style: normal; }
+  .zenith-aud__method-cite {
+    margin-top: 1rem; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.6);
+  }
+
+  .zenith-aud__close {
+    margin: 4rem auto 0; max-width: 42rem; text-align: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--aud) 14%, transparent) 0%, rgba(255,255,255,0.03) 100%);
+    border: 1px solid color-mix(in srgb, var(--aud) 35%, transparent);
+    border-radius: 18px; padding: 2.5rem 1.75rem;
+  }
+  .zenith-aud__close-h {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.02em; color: #fff; margin: 0 0 1rem;
+  }
+  .zenith-aud__close-body {
+    font-size: 1.0625rem; line-height: 1.6; color: rgba(255,255,255,0.85);
+    margin: 0 auto 1.75rem; max-width: 34rem;
+  }
+  .zenith-aud__close-body p { margin: 0; }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Audience Landing",
+  "tag": "section",
+  "class": "zenith-audience-section",
+  "settings": [
+    { "type": "color", "id": "accent", "label": "Audience accent color", "default": "#00c49a" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "For Players" },
+    { "type": "text", "id": "heading", "label": "Hero headline", "default": "Become the player they can't take off the pitch." },
+    { "type": "richtext", "id": "subhead", "label": "Hero subhead" },
+    { "type": "text", "id": "cta_label", "label": "Primary CTA label", "default": "Build my plan" },
+    { "type": "text", "id": "cta_url", "label": "Primary CTA URL", "default": "/pages/build-your-player" },
+    { "type": "text", "id": "cta2_label", "label": "Secondary CTA label", "default": "Get the TEKKY(TM)" },
+    { "type": "text", "id": "cta2_url", "label": "Secondary CTA URL", "default": "/collections/all" },
+    { "type": "header", "content": "Hero background video" },
+    { "type": "text", "id": "hero_video", "label": "Hero video URL (mp4 from Shopify Files)" },
+    { "type": "text", "id": "hero_poster", "label": "Hero poster image URL (shown before play)" },
+    { "type": "header", "content": "Stat band (3)" },
+    { "type": "text", "id": "stat1_num", "label": "Stat 1 number" },
+    { "type": "text", "id": "stat1_label", "label": "Stat 1 label" },
+    { "type": "text", "id": "stat2_num", "label": "Stat 2 number" },
+    { "type": "text", "id": "stat2_label", "label": "Stat 2 label" },
+    { "type": "text", "id": "stat3_num", "label": "Stat 3 number" },
+    { "type": "text", "id": "stat3_label", "label": "Stat 3 label" },
+    { "type": "header", "content": "Value grid" },
+    { "type": "text", "id": "value_heading", "label": "Value section heading", "default": "What the TEKKY does for you" },
+    { "type": "header", "content": "Methodology pull-quote" },
+    { "type": "richtext", "id": "method_quote", "label": "Methodology quote" },
+    { "type": "text", "id": "method_cite", "label": "Methodology cite" },
+    { "type": "header", "content": "Closing CTA" },
+    { "type": "text", "id": "close_heading", "label": "Closing heading" },
+    { "type": "richtext", "id": "close_body", "label": "Closing body" }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value card",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Kicker (optional)" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "body", "label": "Body" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Zenith Audience Landing" }]
+}
+{% endschema %}

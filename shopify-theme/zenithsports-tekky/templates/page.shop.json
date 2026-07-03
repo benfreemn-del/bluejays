@@ -1,0 +1,67 @@
+{
+  "sections": {
+    "shop-page-zenith": {
+      "type": "shop-page-zenith",
+      "settings": {
+        "eyebrow": "The Lineup",
+        "heading": "Shop the TEKKY(TM) system.",
+        "subhead": "<p>One ball, built to make every other ball feel easy &mdash; plus the kit that backs it up. Free coaching drills ship with every order.</p>"
+      },
+      "blocks": {
+        "ball": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg",
+            "name": "The TEKKY(TM)",
+            "tagline": "Patent-pending training ball",
+            "description": "Smaller than regulation, full FIFA-5 weight. The training ball that makes the match ball feel slow.",
+            "price": "$59.95",
+            "cta_label": "Buy Now",
+            "url": "/cart/45347164389551:1",
+            "badge": "Bestseller"
+          }
+        },
+        "socks": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/Tekky_Socks_White_Web_eaa7877d-0611-4947-bf90-832db80b57b4.jpg",
+            "name": "TEKKY(TM) Grip Socks",
+            "tagline": "Footwork foundation",
+            "description": "Grip-locked socks that keep your foot planted through every cut, touch, and turn. $15 each, or 2 for $25.",
+            "price": "$15.00",
+            "cta_label": "Shop",
+            "url": "/products/tekky-grip-socks",
+            "badge": "2 for $25"
+          }
+        },
+        "tee": {
+          "type": "product",
+          "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/Performance_T-Shirt_Gray_Front_Web.jpg",
+            "name": "Performance Tee",
+            "tagline": "On-pitch identity",
+            "description": "Breathable performance tee built to rep with you, on the pitch and off.",
+            "price": "$17.50",
+            "compare_at": "$25.00",
+            "cta_label": "Shop",
+            "url": "/products/high-performance-tekky-t-white-copy",
+            "badge": "30% Off"
+          }
+        }
+      },
+      "block_order": ["ball", "socks", "tee"]
+    },
+    "inquiry-form-zenith": {
+      "type": "inquiry-form-zenith",
+      "settings": {
+        "eyebrow": "Questions before you buy?",
+        "heading": "Not sure where to start?",
+        "body": "<p>Tell us your player's age and level and we'll point you to the right setup. Philip and Paul personally read every message.</p>"
+      }
+    }
+  },
+  "order": [
+    "shop-page-zenith",
+    "inquiry-form-zenith"
+  ]
+}

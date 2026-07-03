@@ -1,6 +1,6 @@
 {% comment %}
   Before & After Effect (BAE) section. The conversion narrative:
-  10-15 min/day × 4 weeks → visible improvement on regulation ball.
+  10-15 min/day x 4 weeks = visible improvement on regulation ball.
 {% endcomment %}
 
 <section class="zenith-section zenith-bae">
@@ -10,11 +10,11 @@
         {% if section.settings.eyebrow != blank %}
           <p class="zenith-eyebrow">{{ section.settings.eyebrow | escape }}</p>
         {% endif %}
-        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: #fff;">
+        <h2 class="zenith-h2" style="margin-top: 1.25rem; color: #fff; line-height: 1.18;">
           {{ section.settings.heading | escape }}
         </h2>
         {% if section.settings.body != blank %}
-          <div class="zenith-body" style="margin-top: 1.5rem; color: rgba(255,255,255,0.85);">
+          <div class="zenith-body zenith-bae__intro" style="margin-top: 1.5rem; color: rgba(255,255,255,0.9);">
             {{ section.settings.body }}
           </div>
         {% endif %}
@@ -36,28 +36,29 @@
         {% if section.settings.cta_label != blank %}
           <a
             href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
-            class="zenith-btn zenith-btn--primary"
-            style="margin-top: 2.5rem;"
+            class="zenith-btn zenith-btn--primary zenith-bae__cta"
           >
-            {{ section.settings.cta_label | escape }}
+            {% render 'zenith-text', text: section.settings.cta_label %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
         {% endif %}
       </div>
 
       <div class="zenith-bae__visual">
         <div class="zenith-bae__compare">
-          {% if section.settings.before_image %}
-            <figure class="zenith-bae__col">
-              <img src="{{ section.settings.before_image | image_url: width: 800 }}" alt="Before TEKKY training" loading="lazy">
+          {% if section.settings.before_image_url != blank %}
+            <figure class="zenith-bae__col zenith-bae__col--before">
+              <img src="{{ section.settings.before_image_url }}" alt="Before TEKKY training" width="600" height="800" loading="lazy">
               <figcaption>Before</figcaption>
             </figure>
           {% endif %}
-          {% if section.settings.after_image %}
-            <figure class="zenith-bae__col">
-              <img src="{{ section.settings.after_image | image_url: width: 800 }}" alt="After 4 weeks on TEKKY" loading="lazy">
-              <figcaption>After 4 weeks</figcaption>
-            </figure>
-          {% endif %}
+          {%- comment -%} After image: the bundled cones-drill photo (Ben's requested replacement). An http URL in the setting overrides it. {%- endcomment -%}
+          {%- assign after_src = 'tekky-after-cones.webp' | asset_url -%}
+          {%- if section.settings.after_image_url contains 'http' -%}{%- assign after_src = section.settings.after_image_url -%}{%- endif -%}
+          <figure class="zenith-bae__col zenith-bae__col--after">
+            <img src="{{ after_src }}" alt="After 4 weeks on TEKKY: sharp cuts through cones" width="600" height="800" loading="lazy">
+            <figcaption>After 4 weeks</figcaption>
+          </figure>
         </div>
       </div>
     </div>
@@ -66,71 +67,126 @@
 
 <style>
   .zenith-bae {
+    position: relative;
     background: var(--zenith-navy-deep);
     color: #fff;
-    padding: 5rem 0;
+    padding: 3.5rem 0;
+    overflow: hidden;
   }
-  @media (min-width: 768px) { .zenith-bae { padding: 8rem 0; } }
+  .zenith-bae > .zenith-container { position: relative; z-index: 1; }
+  @media (min-width: 768px) { .zenith-bae { padding: 5.5rem 0; } }
+  @media (min-width: 1024px) { .zenith-bae { padding: 6rem 0; } }
   .zenith-bae__grid {
     display: grid; gap: 3rem;
   }
   @media (min-width: 1024px) {
-    .zenith-bae__grid { grid-template-columns: 6fr 5fr; gap: 4rem; align-items: center; }
+    .zenith-bae__grid { grid-template-columns: 5fr 6fr; gap: 4rem; align-items: stretch; }
   }
+  .zenith-bae__visual { position: relative; }
+  .zenith-bae__intro {
+    font-size: 1.125rem; line-height: 1.65; max-width: 38rem;
+  }
+  @media (min-width: 1024px) { .zenith-bae__intro { font-size: 1.2rem; } }
   .zenith-bae__steps {
     display: flex; flex-direction: column; gap: 1.25rem;
-    margin-top: 2rem;
+    margin-top: 2.25rem;
   }
   .zenith-bae__step {
-    display: flex; gap: 1rem; align-items: flex-start;
-    padding: 1.25rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; gap: 1.1rem; align-items: flex-start;
+    padding: 1.4rem 1.5rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 0.85rem;
   }
   .zenith-bae__step-num {
     flex-shrink: 0;
-    width: 36px; height: 36px;
+    width: 42px; height: 42px;
     background: var(--zenith-lime); color: var(--zenith-navy-deep);
     display: inline-flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 0.95rem;
+    font-weight: 900; font-size: 1.1rem;
   }
   .zenith-bae__step-title {
-    font-weight: 900; text-transform: uppercase; font-size: 0.95rem; letter-spacing: -0.01em;
+    font-weight: 900; text-transform: uppercase; font-size: 1.05rem; letter-spacing: -0.01em;
+    color: #fff;
   }
   .zenith-bae__step-desc {
-    margin: 0.25rem 0 0;
-    color: rgba(255,255,255,0.7);
-    font-size: 0.875rem; line-height: 1.55;
+    margin: 0.35rem 0 0;
+    color: rgba(255,255,255,0.85);
+    font-size: 1.0625rem; line-height: 1.6;
+  }
+  .zenith-bae__cta {
+    margin-top: 2.5rem;
+    padding: 1.15rem 2rem;
+    font-size: 14px;
+  }
+  @media (min-width: 1024px) {
+    .zenith-bae__cta {
+      padding: 1.35rem 2.5rem;
+      font-size: 15px;
+      letter-spacing: 0.22em;
+    }
   }
   .zenith-bae__compare {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+    display: grid; grid-template-columns: 1fr; gap: 0.9rem;
   }
-  .zenith-bae__col { margin: 0; position: relative; }
+  @media (min-width: 1024px) {
+    .zenith-bae__visual { height: 100%; }
+    .zenith-bae__compare { height: 100%; grid-template-rows: 1fr 1fr; }
+    .zenith-bae__col { min-height: 0; height: 100%; }
+    .zenith-bae__col img { aspect-ratio: auto; height: 100%; }
+  }
+  .zenith-bae__col {
+    margin: 0; position: relative;
+    border-radius: 0.75rem; overflow: hidden;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.55);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .zenith-bae__col:hover { transform: translateY(-4px); }
+  .zenith-bae__col--before {
+    border: 2px solid rgba(255,255,255,0.12);
+  }
+  .zenith-bae__col--after {
+    border: 2px solid var(--zenith-lime);
+    box-shadow: 0 18px 48px rgba(0,0,0,0.55), 0 0 0 6px rgba(0,196,154,0.12), 0 0 40px rgba(0,196,154,0.25);
+  }
+  .zenith-bae__col--after:hover {
+    box-shadow: 0 22px 56px rgba(0,0,0,0.55), 0 0 0 6px rgba(0,196,154,0.18), 0 0 60px rgba(0,196,154,0.4);
+  }
   .zenith-bae__col img {
-    width: 100%; aspect-ratio: 3 / 4; object-fit: cover;
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center;
+    display: block;
   }
+  .zenith-bae__col--before img { object-position: center 60%; }
+  .zenith-bae__col--after img { object-position: center 55%; }
   .zenith-bae__col figcaption {
-    position: absolute; bottom: 0.5rem; left: 0.5rem;
-    padding: 0.25rem 0.65rem;
-    background: rgba(0,0,0,0.7); color: #fff;
-    font-size: 10px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.18em;
+    position: absolute; bottom: 0.75rem; left: 0.75rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 12px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.2em;
+    border-radius: 0.2rem;
+  }
+  .zenith-bae__col--after figcaption {
+    color: var(--zenith-navy-deep);
+    background: var(--zenith-lime);
   }
 </style>
 
 {% schema %}
 {
-  "name": "Zenith Before & After",
+  "name": "Zenith Before and After",
   "tag": "section",
   "class": "zenith-bae-section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Before & After Effect" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Before and After Effect" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "10 minutes a day. 4 weeks. Watch the gap close." },
-    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Players who train with TEKKY for 10–15 min/day, 3× per week, visibly improve first touch, ball mastery, and confidence. After 4 weeks, regulation balls feel huge — and that's where the transfer to match day happens.</p>" },
-    { "type": "image_picker", "id": "before_image", "label": "Before image (action shot, baseline)" },
-    { "type": "image_picker", "id": "after_image", "label": "After image (4 weeks later)" },
-    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Start the BAE → buy the TEKKY" },
-    { "type": "url", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" }
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Players who train with TEKKY for 10-15 min/day, 3x per week, visibly improve first touch, ball mastery, and confidence. After 4 weeks, regulation balls feel huge &mdash; and that is where the transfer to match day happens.</p>" },
+    { "type": "text", "id": "before_image_url", "label": "Before image URL (defaults to bespoke baseline shot)", "default": "https://zenithsports.org/cdn/shop/files/scr.jpg" },
+    { "type": "text", "id": "after_image_url", "label": "After image URL (override; default = cones-drill photo)", "default": "tekky-after-cones.webp" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY(TM) (em) $59.95" },
+    { "type": "text", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" }
   ],
   "blocks": [
     {
@@ -146,10 +202,10 @@
   ],
   "presets": [
     {
-      "name": "Zenith Before & After",
+      "name": "Zenith Before and After",
       "blocks": [
         { "type": "step", "settings": { "number": "1", "title": "Pick 3 drills from the library", "desc": "One per skill area: gather, dribble, finish. Start with Warm Up tier." } },
-        { "type": "step", "settings": { "number": "2", "title": "10–15 min, 3× per week", "desc": "Quality over quantity. Pristine reps build technique faster than tired ones." } },
+        { "type": "step", "settings": { "number": "2", "title": "10-15 min, 3x per week", "desc": "Quality over quantity. Pristine reps build technique faster than tired ones." } },
         { "type": "step", "settings": { "number": "3", "title": "Level up after week 2", "desc": "Add 2 Beginner drills. Drop the easiest Warm Up. Always keep something challenging." } },
         { "type": "step", "settings": { "number": "4", "title": "Week 4: hit regulation ball", "desc": "Your player picks up a match ball after 4 weeks of TEKKY and it feels bigger, slower, easier to control. The transfer is automatic." } }
       ]

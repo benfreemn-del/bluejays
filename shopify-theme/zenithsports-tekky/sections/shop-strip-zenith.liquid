@@ -22,25 +22,25 @@
       {% for block in section.blocks %}
         <article class="zenith-shopstrip__card">
           <div class="zenith-shopstrip__photo">
-            {% if block.settings.photo %}
-              <img src="{{ block.settings.photo | image_url: width: 800 }}" alt="{{ block.settings.name | escape }}" loading="lazy">
+            {% if block.settings.photo_url != blank %}
+              <img src="{{ block.settings.photo_url }}" alt="{{ block.settings.name | escape }}" loading="lazy">
             {% endif %}
             {% if block.settings.badge != blank %}
               <span class="zenith-shopstrip__badge">{{ block.settings.badge | escape }}</span>
             {% endif %}
           </div>
           <div class="zenith-shopstrip__body">
-            <h3 class="zenith-shopstrip__name">{{ block.settings.name | escape }}</h3>
-            <p class="zenith-shopstrip__tag">{{ block.settings.tagline | escape }}</p>
+            <h3 class="zenith-shopstrip__name">{% render 'zenith-text', text: block.settings.name %}</h3>
+            <p class="zenith-shopstrip__tag">{% render 'zenith-text', text: block.settings.tagline %}</p>
             <div class="zenith-shopstrip__row">
               <span class="zenith-shopstrip__price">{{ block.settings.price | escape }}</span>
               <a
                 href="{{ block.settings.url }}"
                 {% if block.settings.url contains '/cart/' %}target="_blank" rel="noopener noreferrer"{% endif %}
                 class="zenith-btn {% if block.settings.url contains '/cart/' %}zenith-btn--primary{% else %}zenith-btn--dark{% endif %}"
-                style="padding: 0.65rem 1.25rem; font-size: 11px;"
+                style="padding: 0.75rem 1.4rem; font-size: 13px;"
               >
-                {{ block.settings.cta_label | escape }}
+                {% render 'zenith-text', text: block.settings.cta_label %}
               </a>
             </div>
           </div>
@@ -52,20 +52,28 @@
 
 <style>
   .zenith-shopstrip {
-    background: var(--zenith-ivory);
-    padding: 5rem 0;
+    background: linear-gradient(180deg, var(--zenith-ivory-soft) 0%, var(--zenith-ivory) 100%);
+    padding: 3.5rem 0;
   }
-  @media (min-width: 768px) { .zenith-shopstrip { padding: 7rem 0; } }
+  @media (min-width: 768px) { .zenith-shopstrip { padding: 5rem 0; } }
+  @media (min-width: 1024px) { .zenith-shopstrip { padding: 5.5rem 0; } }
   .zenith-shopstrip__header { margin-bottom: 3rem; max-width: 42rem; }
   .zenith-shopstrip__grid {
     display: grid; gap: 1.5rem; grid-template-columns: 1fr;
   }
   @media (min-width: 768px) { .zenith-shopstrip__grid { grid-template-columns: repeat(3, 1fr); } }
   .zenith-shopstrip__card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
+    background: #fdfbf8;
+    border: 1px solid #e7e2d8;
     overflow: hidden;
+    border-radius: 0.85rem;
     display: flex; flex-direction: column;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+  .zenith-shopstrip__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(10,24,50,0.12);
+    border-color: var(--zenith-electric);
   }
   .zenith-shopstrip__photo {
     aspect-ratio: 4 / 3;
@@ -73,12 +81,18 @@
     background: var(--zenith-ivory-soft);
     overflow: hidden;
   }
-  .zenith-shopstrip__photo img { width: 100%; height: 100%; object-fit: cover; }
+  .zenith-shopstrip__photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .zenith-shopstrip__card:hover .zenith-shopstrip__photo img {
+    transform: scale(1.05);
+  }
   .zenith-shopstrip__badge {
     position: absolute; top: 1rem; left: 1rem;
     background: var(--zenith-lime); color: var(--zenith-navy-deep);
     padding: 0.35rem 0.75rem;
-    font-size: 10px; font-weight: 900;
+    font-size: 12px; font-weight: 900;
     text-transform: uppercase; letter-spacing: 0.22em;
   }
   .zenith-shopstrip__body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
@@ -90,9 +104,9 @@
   }
   .zenith-shopstrip__tag {
     margin: 0.35rem 0 0;
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.22em;
-    color: var(--zenith-electric);
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--zenith-navy);
   }
   .zenith-shopstrip__row {
     display: flex; align-items: center; justify-content: space-between;
@@ -121,12 +135,12 @@
       "name": "Product card",
       "limit": 4,
       "settings": [
-        { "type": "image_picker", "id": "photo", "label": "Product photo" },
+        { "type": "text", "id": "photo_url", "label": "Product photo URL (defaults to bespoke product shot per product)", "default": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "tagline", "label": "Tagline (small accent text)" },
         { "type": "text", "id": "price", "label": "Price display", "default": "$59.95" },
         { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop" },
-        { "type": "url", "id": "url", "label": "CTA URL (a /cart/<variant>:1 link triggers 'Buy Now' style; a /products/ link is the variant flow)" },
+        { "type": "text", "id": "url", "label": "CTA URL (cart permalink = Buy Now; product page = variant flow)" },
         { "type": "text", "id": "badge", "label": "Optional badge (e.g., Bestseller, 30% Off)" }
       ]
     }
@@ -135,9 +149,9 @@
     {
       "name": "Zenith Shop Strip",
       "blocks": [
-        { "type": "product", "settings": { "name": "The TEKKY®", "tagline": "Patent-pending training ball", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
-        { "type": "product", "settings": { "name": "TEKKY® Grip Socks", "tagline": "Footwork foundation", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
-        { "type": "product", "settings": { "name": "Performance Tee", "tagline": "On-pitch identity", "price": "$17.50", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg", "name": "The TEKKY™", "tagline": "Patent-pending training ball", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/Tekky_Socks_White_Web_eaa7877d-0611-4947-bf90-832db80b57b4.jpg", "name": "TEKKY™ Grip Socks", "tagline": "Footwork foundation", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/Performance_T-Shirt_Gray_Front_Web.jpg", "name": "Performance Tee", "tagline": "On-pitch identity", "price": "$17.50", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
       ]
     }
   ]

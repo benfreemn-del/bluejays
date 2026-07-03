@@ -1,0 +1,1095 @@
+{% comment %}
+  Build Your Player — full interactive 5-step lead-gen quiz.
+
+  Ports the Next.js /clients/zenith-sports/build-your-player page to
+  vanilla JS inside a Shopify section. Same flow, same plan generator
+  logic (deterministic — direct port from training-plan.ts).
+
+  Steps:
+    1. Role (parent / player / coach)
+    2. Builder (age slider + height slider + skill level +
+       current weekly hours) with a LIVE development snapshot that
+       updates as the sliders move — projected touches/year + the
+       multiplier vs a traditional-only player (Touches Advantage model).
+    3. Goals (multi-select up to 3)
+    4. Identity (first name, email, phone, optional sms consent)
+    5. Plan reveal — auto-submits to Shopify customer form with tag
+       'build-your-player-lead' and the full builder snapshot baked
+       into the customer note. Then shows the personalized plan:
+       level, sessions/week × min/session, projected touches/year,
+       3 recommended drills with YouTube links, recommended kit with
+       TEKKY ball CTA, next step.
+
+  No avatars: the builder centerpiece is the live touches snapshot, so
+  the whole tool speaks the same metric language as the homepage stats
+  strip and the Touches Advantage calculator (TEKKY Teal #00C49A).
+{% endcomment %}
+
+{%- assign ball_buy_url = "https://zenithsports.org/cart/45347164389551:1" -%}
+
+<section class="zenith-section zenith-byp">
+  <div class="zenith-container">
+
+    {%- comment -%} ── HEADER ── {%- endcomment -%}
+    <header class="zenith-byp__head">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow" style="color: var(--zenith-lime);">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      <h1 class="zenith-byp__title">
+        {{ section.settings.headline_top | escape }}
+        <br />
+        <span class="zenith-byp__title-accent">{{ section.settings.headline_accent | escape }}</span>
+      </h1>
+      {% if section.settings.subhead != blank %}
+        <div class="zenith-byp__subhead">{{ section.settings.subhead }}</div>
+      {% endif %}
+    </header>
+
+    {%- comment -%} ── PROGRESS BAR ── {%- endcomment -%}
+    <div class="zenith-byp__progress">
+      <div class="zenith-byp__progress-meta">
+        <span>Step <span data-step-num>1</span> of 5</span>
+        <span><span data-step-pct>20</span>%</span>
+      </div>
+      <div class="zenith-byp__progress-track">
+        <div class="zenith-byp__progress-fill" data-progress-fill></div>
+      </div>
+    </div>
+
+    {%- comment -%} ── STEPS ── {%- endcomment -%}
+    <div class="zenith-byp__pane">
+
+      {%- comment -%} STEP 1 · ROLE {%- endcomment -%}
+      <div class="zenith-byp__step" data-step="role">
+        <p class="zenith-byp__qnum">Question 1 of 5</p>
+        <h2 class="zenith-byp__qtitle">Who is this for?</h2>
+        <p class="zenith-byp__qbody">We'll tune your plan for who's actually doing the training.</p>
+        <div class="zenith-byp__roles">
+          <button type="button" class="zenith-byp__role" data-role="parent">
+            <span class="zenith-byp__role-emoji">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="3"/><path d="M2.5 21v-1a5.5 5.5 0 0 1 11 0v1"/><circle cx="17.5" cy="9.5" r="2.2"/><path d="M14.8 21v-.5a3.4 3.4 0 0 1 6.7 0v.5"/></svg>
+            </span>
+            <span class="zenith-byp__role-label">Parent of a player</span>
+            <span class="zenith-byp__role-note">You'll guide the routine and get the plan</span>
+          </button>
+          <button type="button" class="zenith-byp__role" data-role="player">
+            <span class="zenith-byp__role-emoji">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.3l3.4 2.5-1.3 4H9.9l-1.3-4 3.4-2.5z"/><path d="M12 7.3V3.6"/><path d="M15.4 9.8l3.4-1.2"/><path d="M14.1 13.8l2.2 3"/><path d="M9.9 13.8l-2.2 3"/><path d="M8.6 9.8 5.2 8.6"/></svg>
+            </span>
+            <span class="zenith-byp__role-label">I'm the player</span>
+            <span class="zenith-byp__role-note">You'll run the routine yourself</span>
+          </button>
+          <button type="button" class="zenith-byp__role" data-role="coach">
+            <span class="zenith-byp__role-emoji">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h4"/></svg>
+            </span>
+            <span class="zenith-byp__role-label">Coach / trainer</span>
+            <span class="zenith-byp__role-note">For your roster — we'll match a team plan</span>
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} STEP 2 · BUILDER {%- endcomment -%}
+      <div class="zenith-byp__step" data-step="builder" hidden>
+        <p class="zenith-byp__qnum">Question 2 of 5</p>
+        <h2 class="zenith-byp__qtitle">Tell us about <span data-builder-subject>the player</span>.</h2>
+        <p class="zenith-byp__qbody">Drag the sliders — watch the plan build in real time.</p>
+
+        <div class="zenith-byp__builder-grid">
+          <div class="zenith-byp__builder-controls">
+            <div class="zenith-byp__slider">
+              <div class="zenith-byp__slider-head">
+                <span class="zenith-byp__field-label">Age</span>
+                <span class="zenith-byp__slider-val"><span data-age-val>12</span> <small>years</small></span>
+              </div>
+              <input type="range" min="5" max="35" step="1" value="12" data-input="age" aria-label="Age" />
+              <div class="zenith-byp__slider-marks"><span>5</span><span>15</span><span>25</span><span>35</span></div>
+            </div>
+
+            <div class="zenith-byp__slider">
+              <div class="zenith-byp__slider-head">
+                <span class="zenith-byp__field-label">Height</span>
+                <span class="zenith-byp__slider-val"><span data-height-ft>4</span>' <span data-height-in>8</span>"</span>
+              </div>
+              <input type="range" min="36" max="78" step="1" value="56" data-input="height" aria-label="Height in inches" />
+              <div class="zenith-byp__slider-marks"><span>3'</span><span>4'6"</span><span>5'6"</span><span>6'6"</span></div>
+            </div>
+
+            <div class="zenith-byp__slider">
+              <div class="zenith-byp__slider-head">
+                <span class="zenith-byp__field-label">Skill level</span>
+                <span class="zenith-byp__slider-val" data-skill-label>Recreational</span>
+              </div>
+              <input type="range" min="1" max="5" step="1" value="2" data-input="skill" aria-label="Skill level" />
+              <div class="zenith-byp__slider-marks"><span>Beginner</span><span>Rec</span><span>Travel</span><span>ECNL</span><span>Elite</span></div>
+            </div>
+
+            <div class="zenith-byp__slider">
+              <div class="zenith-byp__slider-head">
+                <span class="zenith-byp__field-label">Current training hours / week</span>
+                <span class="zenith-byp__slider-val"><span data-hours-val>2</span> <small>hrs</small></span>
+              </div>
+              <input type="range" min="0" max="10" step="1" value="2" data-input="hours" aria-label="Current weekly training hours" />
+              <div class="zenith-byp__slider-marks"><span>0</span><span>3</span><span>6</span><span>10+</span></div>
+            </div>
+          </div><!-- /builder-controls -->
+
+          <div class="zenith-byp__snapshot" aria-live="polite">
+            <span class="zenith-byp__snap-eye">Live snapshot · updates as you slide</span>
+            <div class="zenith-byp__snap-big" data-snap-touches>82,500</div>
+            <div class="zenith-byp__snap-sub">touches a year on this plan</div>
+            <div class="zenith-byp__snap-mult"><span data-snap-mult>3.1&times;</span> the touches of a traditional-only player</div>
+            <div class="zenith-byp__snap-bar"><div class="zenith-byp__snap-bar-fill" data-snap-bar style="width:59%"></div></div>
+            <p class="zenith-byp__snap-plan">
+              <strong data-preview-level>Foundation</strong> plan · <span data-preview-sessions>3</span>&times;/week &times; <span data-preview-minutes>10</span> min · <span data-preview-tier>Warm Up</span> tier
+            </p>
+          </div>
+        </div><!-- /builder-grid -->
+      </div>
+
+      {%- comment -%} STEP 3 · GOALS {%- endcomment -%}
+      <div class="zenith-byp__step" data-step="goals" hidden>
+        <p class="zenith-byp__qnum">Question 3 of 5</p>
+        <h2 class="zenith-byp__qtitle">What are you after?</h2>
+        <p class="zenith-byp__qbody">Pick up to 3. We use these to handpick the drills that move the needle for your player.</p>
+        <p class="zenith-byp__qcount"><span data-count-goals>0</span> / 3 selected</p>
+        <div class="zenith-byp__goals">
+          <button type="button" class="zenith-byp__goal" data-goal="first-touch">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="2.5" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="21.5" y2="12"/><circle cx="12" cy="12" r="2.4"/></svg></span>
+            <span class="zenith-byp__goal-label">Sharper first touch</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="tryouts">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9.5h16"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M9.3 14.8l1.8 1.8 3.6-3.6"/></svg></span>
+            <span class="zenith-byp__goal-label">Prepare for tryouts</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="confidence">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></span>
+            <span class="zenith-byp__goal-label">More confidence in 1v1s</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="tactics">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+            <span class="zenith-byp__goal-label">Move from rec to club</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="ecnl">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
+            <span class="zenith-byp__goal-label">Get noticed by ECNL/MLS Next</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="fitness">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8" width="3.5" height="8" rx="1"/><rect x="18" y="8" width="3.5" height="8" rx="1"/><line x1="6" y1="12" x2="18" y2="12"/></svg></span>
+            <span class="zenith-byp__goal-label">Build strength + technique</span>
+          </button>
+          <button type="button" class="zenith-byp__goal" data-goal="fun">
+            <span class="zenith-byp__goal-check">✓</span>
+            <span class="zenith-byp__goal-emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg></span>
+            <span class="zenith-byp__goal-label">Fall back in love with the ball</span>
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} STEP 4 · IDENTITY {%- endcomment -%}
+      <div class="zenith-byp__step" data-step="identity" hidden>
+        <p class="zenith-byp__qnum">Last step · then your plan</p>
+        <h2 class="zenith-byp__qtitle">Where should we send your plan?</h2>
+        <p class="zenith-byp__qbody">Your plan + drill links land in your inbox immediately. We don't share your info, and you can unsubscribe with one click.</p>
+
+        <div class="zenith-byp__form">
+          <label class="zenith-byp__field">
+            <span>First name *</span>
+            <input type="text" data-input="firstName" placeholder="Sarah" autocomplete="given-name" />
+          </label>
+          <label class="zenith-byp__field">
+            <span>Email *</span>
+            <input type="email" data-input="email" placeholder="sarah@example.com" autocomplete="email" />
+          </label>
+          <label class="zenith-byp__field">
+            <span>Phone (optional)</span>
+            <input type="tel" data-input="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+          </label>
+
+          <label class="zenith-byp__consent">
+            <input type="checkbox" data-input="drill-email" />
+            <span>
+              <strong>Email me the Drill of the Month</strong> — one new technical drill + coaching tip in your inbox each month.
+              <small>Optional. Unsubscribe anytime.</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {%- comment -%} STEP 5 · PLAN REVEAL (renders dynamically + auto-submits) {%- endcomment -%}
+      <div class="zenith-byp__step" data-step="plan" hidden>
+        <div class="zenith-byp__plan" data-plan-out>
+          {%- comment -%} Dynamically populated by JS on entry to this step {%- endcomment -%}
+        </div>
+
+        {%- comment -%}
+          Hidden Shopify customer form. JS fills the inputs on plan-reveal
+          entry and submits programmatically. Submission lands in Shopify
+          Admin -> Customers tagged 'build-your-player-lead' with the full
+          builder snapshot in the Note field.
+        {%- endcomment -%}
+        {% form 'customer', class: 'zenith-byp__hidden-form' %}
+          <input type="hidden" name="contact[tags]" value="build-your-player-lead, zenith-tekky" />
+          <input type="hidden" name="contact[accepts_marketing]" value="1" />
+          <input type="hidden" name="contact[first_name]" data-hidden="firstName" value="" />
+          <input type="hidden" name="contact[email]" data-hidden="email" value="" />
+          <input type="hidden" name="contact[phone]" data-hidden="phone" value="" />
+          <input type="hidden" name="contact[note]" data-hidden="note" value="" />
+          <button type="submit" data-form-submit hidden>Submit</button>
+          {% if form.posted_successfully? %}
+            <p class="zenith-byp__sent">✓ Plan saved — check your inbox for the full breakdown.</p>
+          {% endif %}
+          {%- if form.errors -%}
+            <p class="zenith-byp__sent zenith-byp__sent--err">{{ form.errors | default_errors }}</p>
+          {%- endif -%}
+        {% endform %}
+      </div>
+
+      {%- comment -%} ── NAV ── {%- endcomment -%}
+      <div class="zenith-byp__nav" data-nav>
+        <button type="button" class="zenith-byp__back" data-back hidden>← Back</button>
+        <button type="button" class="zenith-btn zenith-btn--primary zenith-byp__next" data-next disabled>
+          Next →
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .zenith-byp {
+    background: linear-gradient(180deg, var(--zenith-navy-deep) 0%, var(--zenith-navy) 100%);
+    color: #fff;
+    padding: 3rem 0 5rem;
+  }
+  @media (min-width: 768px) { .zenith-byp { padding: 5rem 0 7rem; } }
+
+  .zenith-byp__head { text-align: center; max-width: 48rem; margin: 0 auto 2rem; }
+  .zenith-byp__title {
+    font-size: clamp(2rem, 5.5vw, 4rem);
+    font-weight: 900; line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0.75rem 0 1.25rem;
+  }
+  .zenith-byp__title-accent { color: var(--zenith-lime); }
+  .zenith-byp__subhead { color: rgba(255,255,255,0.82); font-size: 1.0625rem; line-height: 1.65; }
+  .zenith-byp__subhead p { margin: 0; }
+
+  .zenith-byp__progress { max-width: 56rem; margin: 0 auto 2.5rem; }
+  .zenith-byp__progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.72);
+    margin-bottom: 0.45rem;
+  }
+  .zenith-byp__progress-track {
+    height: 6px; border-radius: 999px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+  }
+  .zenith-byp__progress-fill {
+    height: 100%; width: 20%;
+    background: var(--zenith-lime);
+    border-radius: 999px;
+    transition: width 0.4s;
+  }
+
+  .zenith-byp__pane { max-width: 48rem; margin: 0 auto; }
+  .zenith-byp__step[hidden] { display: none; }
+  .zenith-byp__qnum {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.32em;
+    color: var(--zenith-lime);
+    margin: 0 0 0.65rem;
+  }
+  .zenith-byp__qtitle {
+    font-size: clamp(1.5rem, 4vw, 2.75rem);
+    font-weight: 900; line-height: 1.05;
+    color: #fff;
+    margin: 0 0 0.75rem;
+  }
+  .zenith-byp__qbody {
+    font-size: 1.0625rem;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+  }
+  .zenith-byp__qcount {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.62);
+    margin: 0 0 1.5rem;
+  }
+
+  /* Role cards */
+  .zenith-byp__roles { display: grid; gap: 0.65rem; grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .zenith-byp__roles { grid-template-columns: repeat(3, 1fr); } }
+  .zenith-byp__role {
+    display: flex; flex-direction: column; gap: 0.4rem;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .zenith-byp__role:hover { border-color: rgba(0,196,154,0.4); transform: scale(1.02); }
+  .zenith-byp__role--active {
+    background: var(--zenith-lime);
+    border-color: var(--zenith-lime);
+    color: var(--zenith-navy-deep);
+  }
+  .zenith-byp__role-emoji {
+    display: inline-flex; justify-content: center; align-items: center;
+    color: var(--zenith-lime);
+    margin-bottom: 0.35rem;
+  }
+  .zenith-byp__role-emoji svg { width: 46px; height: 46px; }
+  .zenith-byp__role--active .zenith-byp__role-emoji { color: var(--zenith-navy-deep); }
+  .zenith-byp__role-label { font-size: 1.15rem; font-weight: 800; }
+  .zenith-byp__role-note { font-size: 13px; opacity: 0.75; }
+  .zenith-byp__role--active .zenith-byp__role-note { color: rgba(15,23,42,0.7); opacity: 1; }
+
+  /* Builder fields */
+  .zenith-byp__field-label {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.8);
+  }
+  .zenith-byp__builder-grid { display: grid; gap: 1.5rem; }
+  .zenith-byp__builder-controls { display: grid; gap: 1.5rem; }
+  /* Desktop: sliders on the left, live snapshot pinned to the right */
+  @media (min-width: 860px) {
+    .zenith-byp__builder-grid {
+      grid-template-columns: 1fr 0.82fr;
+      gap: 2.25rem; align-items: start;
+    }
+    .zenith-byp__builder-controls { order: 1; min-width: 0; }
+    .zenith-byp__snapshot { order: 2; position: sticky; top: 90px; }
+  }
+
+  /* Live development snapshot — replaces the player avatar.
+     order:-1 floats it above the sliders on mobile so the big number
+     stays visible while sliding; the desktop media query moves it right. */
+  .zenith-byp__snapshot {
+    order: -1;
+    background: linear-gradient(160deg, rgba(0,196,154,0.12) 0%, rgba(10,24,50,0.65) 58%, rgba(5,13,31,0.9) 100%);
+    border: 1px solid rgba(0,196,154,0.32);
+    border-radius: 20px;
+    padding: 1.6rem 1.6rem 1.75rem;
+    box-shadow: 0 22px 44px rgba(0,0,0,0.4);
+  }
+  .zenith-byp__snap-eye {
+    display: block;
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--zenith-lime);
+  }
+  .zenith-byp__snap-big {
+    font-family: var(--zenith-font-display, 'Oswald', sans-serif);
+    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    font-weight: 900; line-height: 1; letter-spacing: -0.03em;
+    color: #fff; margin-top: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .zenith-byp__snap-sub {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.68); margin-top: 0.4rem;
+  }
+  .zenith-byp__snap-mult {
+    margin-top: 1rem; font-size: 0.95rem; line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+  }
+  .zenith-byp__snap-mult span {
+    color: var(--zenith-lime); font-weight: 900; font-size: 1.15rem;
+  }
+  .zenith-byp__snap-bar {
+    margin-top: 0.85rem; height: 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .zenith-byp__snap-bar-fill {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--zenith-lime) 0%, #2fe3b6 100%);
+    transition: width 0.4s ease;
+  }
+  .zenith-byp__snap-plan {
+    margin: 1.1rem 0 0; padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.95rem; line-height: 1.55; color: rgba(255,255,255,0.82);
+  }
+  .zenith-byp__snap-plan strong { color: #fff; }
+
+  /* Touches callout on the generated plan */
+  .zenith-byp__plan-touches {
+    margin-top: 1.25rem; padding: 0.95rem 1.15rem;
+    background: rgba(0,196,154,0.1);
+    border: 1px solid rgba(0,196,154,0.3);
+    border-radius: 12px;
+    font-size: 1rem; line-height: 1.55; color: rgba(255,255,255,0.9);
+  }
+  .zenith-byp__plan-touches strong { color: var(--zenith-lime); font-weight: 900; }
+
+  .zenith-byp__slider { margin-bottom: 1.5rem; }
+  .zenith-byp__slider-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+  .zenith-byp__slider-val {
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--zenith-lime);
+    font-variant-numeric: tabular-nums;
+  }
+  .zenith-byp__slider-val small {
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.65);
+    margin-left: 0.3rem;
+  }
+  .zenith-byp__slider input[type="range"] {
+    width: 100%;
+    height: 30px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    touch-action: pan-y;
+  }
+  .zenith-byp__slider input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+  }
+  .zenith-byp__slider input[type="range"]::-moz-range-track {
+    height: 8px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+  }
+  .zenith-byp__slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px; height: 24px;
+    margin-top: -8px;
+    border-radius: 50%;
+    background: var(--zenith-lime);
+    border: 3px solid var(--zenith-navy-deep);
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,196,154,0.4);
+  }
+  .zenith-byp__slider input[type="range"]::-moz-range-thumb {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--zenith-lime);
+    border: 3px solid var(--zenith-navy-deep);
+    cursor: pointer;
+  }
+  .zenith-byp__slider-marks {
+    display: flex; justify-content: space-between;
+    font-size: 12px; font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    margin-top: 0.6rem;
+    padding: 0 0.25rem;
+  }
+
+
+  /* Goals */
+  .zenith-byp__goals {
+    display: grid; gap: 0.55rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .zenith-byp__goals { grid-template-columns: 1fr 1fr; } }
+  .zenith-byp__goal {
+    position: relative;
+    display: flex; align-items: center; gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .zenith-byp__goal:hover { border-color: rgba(0,196,154,0.4); }
+  .zenith-byp__goal--active {
+    background: var(--zenith-lime);
+    border-color: var(--zenith-lime);
+    color: var(--zenith-navy-deep);
+  }
+  .zenith-byp__goal--disabled {
+    opacity: 0.4; cursor: not-allowed;
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.05);
+  }
+  .zenith-byp__goal-check {
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--zenith-navy-deep);
+    color: var(--zenith-lime);
+    font-size: 11px; font-weight: 900;
+    display: none; align-items: center; justify-content: center;
+  }
+  .zenith-byp__goal--active .zenith-byp__goal-check { display: flex; }
+  .zenith-byp__goal-emoji {
+    display: inline-flex; align-items: center; flex-shrink: 0;
+    color: var(--zenith-lime);
+  }
+  .zenith-byp__goal-emoji svg { width: 24px; height: 24px; }
+  .zenith-byp__goal--active .zenith-byp__goal-emoji { color: var(--zenith-navy-deep); }
+  .zenith-byp__goal-label { font-size: 1.0625rem; font-weight: 700; }
+
+  /* Identity form */
+  .zenith-byp__form { display: grid; gap: 1rem; }
+  .zenith-byp__field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .zenith-byp__field > span {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.8);
+  }
+  .zenith-byp__field input {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  .zenith-byp__field input::placeholder { color: rgba(255,255,255,0.3); }
+  .zenith-byp__field input:focus {
+    outline: none;
+    border-color: var(--zenith-lime);
+    background: rgba(255,255,255,0.08);
+  }
+  .zenith-byp__consent {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+  }
+  .zenith-byp__consent input { margin-top: 0.25rem; width: 18px; height: 18px; cursor: pointer; accent-color: var(--zenith-lime); }
+  .zenith-byp__consent strong { color: #fff; }
+  .zenith-byp__consent small {
+    display: block;
+    font-size: 12px;
+    color: rgba(255,255,255,0.68);
+    margin-top: 0.35rem;
+    line-height: 1.45;
+  }
+
+  /* Plan reveal */
+  .zenith-byp__plan { display: grid; gap: 1.5rem; }
+  .zenith-byp__plan-hero {
+    border: 2px solid var(--zenith-lime);
+    border-radius: 20px;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0,196,154,0.12) 0%, rgba(29,78,216,0.06) 100%);
+  }
+  .zenith-byp__plan-eye {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.32em;
+    color: var(--zenith-lime);
+  }
+  .zenith-byp__plan-level {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900; line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0.5rem 0 1rem;
+  }
+  .zenith-byp__plan-meta {
+    display: flex; flex-wrap: wrap; gap: 1rem 2rem;
+    margin-bottom: 1rem;
+  }
+  .zenith-byp__plan-meta-item {
+    display: flex; flex-direction: column;
+  }
+  .zenith-byp__plan-meta-key {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.68);
+  }
+  .zenith-byp__plan-meta-val {
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--zenith-lime);
+  }
+  .zenith-byp__plan-pitch {
+    color: rgba(255,255,255,0.88);
+    line-height: 1.65;
+    font-size: 1.0625rem;
+    margin: 0;
+  }
+
+  .zenith-byp__plan-block {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    background: rgba(0,0,0,0.2);
+  }
+  .zenith-byp__plan-block-head {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.28em;
+    color: var(--zenith-lime);
+    margin: 0 0 0.5rem;
+  }
+  .zenith-byp__plan-block-title {
+    font-size: 1.5rem; font-weight: 900;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+
+  .zenith-byp__drills { display: grid; gap: 0.75rem; }
+  .zenith-byp__drill {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+  }
+  .zenith-byp__drill-num {
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--zenith-lime);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .zenith-byp__drill-body { min-width: 0; }
+  .zenith-byp__drill-name {
+    font-size: 1rem; font-weight: 800;
+    color: #fff;
+    margin: 0 0 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .zenith-byp__drill-reason {
+    font-size: 14px;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .zenith-byp__drill-link {
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--zenith-lime);
+    white-space: nowrap;
+  }
+  .zenith-byp__drill-link:hover { color: #fff; }
+
+  .zenith-byp__kit {
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+    align-items: center; justify-content: space-between;
+  }
+  .zenith-byp__kit-items { margin: 0; color: rgba(255,255,255,0.85); }
+  .zenith-byp__kit-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin: 0.35rem 0 0;
+  }
+  .zenith-byp__kit-price {
+    font-size: 2rem; font-weight: 900;
+    color: var(--zenith-lime);
+  }
+
+  .zenith-byp__plan-cta {
+    margin-top: 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+  }
+
+  .zenith-byp__sent {
+    margin-top: 1rem; padding: 0.85rem 1rem;
+    color: var(--zenith-lime); font-weight: 700;
+    border: 1px solid rgba(0,196,154,0.3);
+    background: rgba(0,196,154,0.08);
+    border-radius: 12px;
+    font-size: 0.875rem;
+  }
+  .zenith-byp__sent--err { color: #fca5a5; border-color: rgba(252,165,165,0.3); background: rgba(252,165,165,0.08); }
+
+  .zenith-byp__nav {
+    margin-top: 2.5rem;
+    display: flex; justify-content: center; align-items: center;
+    gap: 1.5rem;
+  }
+  .zenith-byp__back {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+  .zenith-byp__back:hover { color: #fff; }
+  .zenith-byp__next:disabled { opacity: 0.4; cursor: not-allowed; }
+  .zenith-byp__hidden-form { margin-top: 1rem; }
+</style>
+
+<script>
+  (function () {
+    var root = document.querySelector('.zenith-byp');
+    if (!root) return;
+
+    var BALL_BUY_URL = "{{ ball_buy_url }}";
+    var STEPS = ['role', 'builder', 'goals', 'identity', 'plan'];
+
+    var state = {
+      step: 'role',
+      role: null,
+      firstName: '',
+      email: '',
+      phone: '',
+      age: 12,
+      heightInches: 56,
+      skillLevel: 2,
+      currentWeeklyHours: 2,
+      goals: [],
+      drillEmail: false
+    };
+
+    function $(s, c) { return (c || root).querySelector(s); }
+    function $$(s, c) { return Array.prototype.slice.call((c || root).querySelectorAll(s)); }
+
+    // ── PLAN GENERATOR (port of training-plan.ts) ─────────────────────────
+    function generatePlan(s) {
+      var level, focusTier, weeklySessions, minutesPerSession;
+      if (s.skillLevel <= 2 || s.age <= 8) {
+        level = 'Foundation'; focusTier = 'Warm Up'; weeklySessions = 3; minutesPerSession = 10;
+      } else if (s.skillLevel === 3) {
+        level = 'Builder'; focusTier = 'Beginner'; weeklySessions = 4; minutesPerSession = 15;
+      } else if (s.skillLevel === 4) {
+        level = 'Accelerator'; focusTier = 'Intermediate'; weeklySessions = 5; minutesPerSession = 20;
+      } else {
+        level = 'Elite'; focusTier = 'Intermediate'; weeklySessions = 6; minutesPerSession = 25;
+      }
+      if (s.currentWeeklyHours >= 5 && weeklySessions < 6) weeklySessions += 1;
+
+      var drills = pickDrillsForTier(focusTier, s.goals, s.age);
+
+      var kit;
+      if (level === 'Foundation') {
+        kit = { items: ['The TEKKY™ Ball'], label: 'Starter — just the ball', priceUsd: 59.95 };
+      } else if (level === 'Builder') {
+        kit = { items: ['The TEKKY™ Ball', 'TEKKY™ Grip Socks'], label: 'Builder kit — ball + grip socks for stable footwork', priceUsd: 74.95 };
+      } else {
+        kit = { items: ['The TEKKY™ Ball', 'TEKKY™ Grip Socks', 'High Performance TEKKY™ Training Tee'], label: 'Elite kit — ball + grip socks + training tee', priceUsd: 92.45 };
+      }
+
+      var nextStep = s.role === 'coach'
+        ? "Book a free 30-minute club demo — we'll walk you through the curriculum and ship a few balls to your roster on us."
+        : s.role === 'parent'
+          ? "Get the TEKKY™ and start the 14-day Foundation routine. By week 2, the difference will be visible."
+          : "Grab the TEKKY™ and start the cadence above today. Tag #TEKKYTouch in your training reels — we feature one player a week.";
+
+      var totalWeekly = weeklySessions * minutesPerSession;
+      var audience = s.role === 'coach'
+        ? 'For your roster, this means ' + weeklySessions + ' short technical blocks a week — drop them into your existing practice as warm-up replacements.'
+        : s.role === 'parent'
+          ? 'For ' + (s.firstName || 'your player') + ', that\'s ' + minutesPerSession + ' minutes a day — a 10-min driveway routine before homework, ' + weeklySessions + ' times a week.'
+          : 'That\'s ' + minutesPerSession + ' minutes ' + weeklySessions + ' times a week. Doable before practice, after school, or during your warm-up.';
+      var pitch = 'Your ' + level + ' plan: ' + weeklySessions + ' sessions a week × ' + minutesPerSession + ' minutes — ' + totalWeekly + ' total minutes of focused TEKKY™ work. ' + audience + ' You\'ll feel the change in your touch within 14 days, and your coach will see it before week 4.';
+
+      return { level: level, focusTier: focusTier, weeklySessions: weeklySessions, minutesPerSession: minutesPerSession, recommendedDrills: drills, recommendedKit: kit, nextStep: nextStep, pitch: pitch };
+    }
+
+    function pickDrillsForTier(tier, goals, age) {
+      if (tier === 'Warm Up') {
+        return [
+          { id: 'bX-HMzizdxU', name: 'Instep Touch', reason: age <= 8 ? 'First touch — wakes up the ankle and trains rhythm.' : 'Foundation rep — re-tunes the laces-to-ball relationship.' },
+          { id: 'qXGWT_-_yF4', name: 'Laces Gather and Pass', reason: 'Soft cushion + redirect. The bedrock first-touch move.' },
+          { id: 'G8aa_34JpFg', name: 'Sole Trap, Instep Pass', reason: 'Sole control + clean redirect — under-trained at U10 in U.S. soccer.' }
+        ];
+      }
+      if (tier === 'Beginner') {
+        var wantsFirstTouch = goals.indexOf('first-touch') >= 0;
+        var wants1v1 = goals.indexOf('confidence') >= 0;
+        return [
+          { id: wantsFirstTouch ? 'n4625BwqiU0' : 'l40Cq1RJ_QI', name: wantsFirstTouch ? 'Push Pull' : 'La Croqueta', reason: wantsFirstTouch ? 'Sole-of-foot rhythm. The fundamental beat of every pro\'s close control.' : 'Iniesta\'s signature lateral shift. Builds the move that breaks tight pressure.' },
+          { id: 'ojviCQ0mrsY', name: 'V-Cut', reason: wants1v1 ? 'Change-of-direction in one touch — exact shape every winger uses to beat a defender 1v1.' : 'Single-touch direction change. Foundation for everything tactical that comes next.' },
+          { id: 'Kaj6ymLWsB8', name: 'Scissors · Outside Push', reason: 'Body-feint into outside-foot exit. Trains deception + acceleration in one rep.' }
+        ];
+      }
+      var wantsECNL = goals.indexOf('ecnl') >= 0;
+      var wantsTactics = goals.indexOf('tactics') >= 0;
+      return [
+        { id: 'aLWVJfbAn9I', name: 'Tap Tap Drag · La Croqueta · Drag', reason: wantsECNL ? 'Six-touch combo. The kind of close-quarter solving that turns U13 academy players into U15 first-team prospects.' : 'Stacked combo move — when you own this, you own the regulation ball easily.' },
+        { id: '9frnJdNJW9o', name: 'Roll · Stepover [The Jay Jay]', reason: 'Pure deception under tight space. A signature trick that translates to game day.' },
+        { id: 'fydguVA6Fzw', name: 'Touch In · Scissors · Touch Out', reason: wantsTactics ? 'Closest move in the library to a real-game 1v1. Builds the read needed in academy-level pressure.' : 'Three-touch deception sequence. Real-game-pace drilling.' }
+      ];
+    }
+
+    function skillLabel(n) {
+      return ['', 'Beginner', 'Recreational', 'Travel / club', 'ECNL / MLS Next', 'Elite'][n] || 'Recreational';
+    }
+
+
+    function canAdvance() {
+      if (state.step === 'role') return state.role !== null;
+      if (state.step === 'builder') return true;
+      if (state.step === 'goals') return state.goals.length >= 1;
+      if (state.step === 'identity') return state.firstName.trim().length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email);
+      return false;
+    }
+
+    function renderStep() {
+      $$('.zenith-byp__step').forEach(function (el) {
+        el.hidden = el.getAttribute('data-step') !== state.step;
+      });
+      var idx = STEPS.indexOf(state.step);
+      $('[data-step-num]').textContent = idx + 1;
+      var pct = Math.round(((idx + 1) / 5) * 100);
+      $('[data-step-pct]').textContent = pct;
+      $('[data-progress-fill]').style.width = pct + '%';
+
+      var backBtn = $('[data-back]'); if (backBtn) backBtn.hidden = idx === 0;
+      var nav = $('[data-nav]'); if (nav) nav.hidden = state.step === 'plan';
+      var nextBtn = $('[data-next]');
+      if (nextBtn) {
+        nextBtn.disabled = !canAdvance();
+        nextBtn.textContent = state.step === 'identity' ? 'Show my plan →' : 'Next →';
+      }
+
+      if (state.step === 'plan') renderPlan();
+    }
+
+    function renderBuilderLive() {
+      $('[data-age-val]').textContent = state.age;
+      var ft = Math.floor(state.heightInches / 12);
+      var inch = state.heightInches % 12;
+      $('[data-height-ft]').textContent = ft;
+      $('[data-height-in]').textContent = inch;
+      $('[data-skill-label]').textContent = skillLabel(state.skillLevel);
+      $('[data-hours-val]').textContent = state.currentWeeklyHours;
+
+      // Live development snapshot — updates as the sliders move.
+      // Touches model mirrors the Touches Advantage deck: a traditional-only
+      // player banks ~26,250 touches/yr; each TEKKY session ≈ 375 deliberate
+      // touches across a 50-week year.
+      var sp = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, goals: state.goals });
+      var tekkyTouches = sp.weeklySessions * 50 * 375;
+      var totalTouches = 26250 + tekkyTouches;
+      var mult = totalTouches / 26250;
+
+      var snapTouches = $('[data-snap-touches]');
+      if (snapTouches) snapTouches.textContent = totalTouches.toLocaleString();
+      var snapMult = $('[data-snap-mult]');
+      if (snapMult) snapMult.textContent = (mult >= 10 ? mult.toFixed(0) : mult.toFixed(1)) + '×';
+      var snapBar = $('[data-snap-bar]');
+      if (snapBar) snapBar.style.width = Math.min(100, Math.round((totalTouches / 138750) * 100)) + '%';
+
+      var pLevel = $('[data-preview-level]'); if (pLevel) pLevel.textContent = sp.level;
+      var pSessions = $('[data-preview-sessions]'); if (pSessions) pSessions.textContent = sp.weeklySessions;
+      var pMinutes = $('[data-preview-minutes]'); if (pMinutes) pMinutes.textContent = sp.minutesPerSession;
+      var pTier = $('[data-preview-tier]'); if (pTier) pTier.textContent = sp.focusTier;
+
+      // Pronoun in question title
+      var subject = $('[data-builder-subject]');
+      if (subject) {
+        subject.textContent = state.role === 'player' ? 'yourself' : state.role === 'coach' ? 'a typical player' : 'your player';
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function renderPlan() {
+      var p = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, goals: state.goals });
+      var out = $('[data-plan-out]');
+      if (!out) return;
+
+      var drillHtml = p.recommendedDrills.map(function (d, i) {
+        return '<div class="zenith-byp__drill">'
+          + '<div class="zenith-byp__drill-num">' + String(i + 1).padStart(2, '0') + '</div>'
+          + '<div class="zenith-byp__drill-body">'
+          +   '<h4 class="zenith-byp__drill-name">' + escapeHtml(d.name) + '</h4>'
+          +   '<p class="zenith-byp__drill-reason">' + escapeHtml(d.reason) + '</p>'
+          + '</div>'
+          + '<a href="https://www.youtube.com/watch?v=' + encodeURIComponent(d.id) + '" target="_blank" rel="noopener noreferrer" class="zenith-byp__drill-link">Watch ↗</a>'
+          + '</div>';
+      }).join('');
+
+      var kitItemsHtml = p.recommendedKit.items.map(function (item) {
+        return '<li>' + escapeHtml(item) + '</li>';
+      }).join('');
+
+      // Touches math (same model as the Touches Advantage deck + live snapshot)
+      var planTekky = p.weeklySessions * 50 * 375;
+      var planTotal = 26250 + planTekky;
+      var planMult = planTotal / 26250;
+      var planMultStr = (planMult >= 10 ? planMult.toFixed(0) : planMult.toFixed(1));
+
+      out.innerHTML = ''
+        + '<div class="zenith-byp__plan-hero">'
+        +   '<div class="zenith-byp__plan-eye">Your personalized plan</div>'
+        +   '<h2 class="zenith-byp__plan-level">' + escapeHtml(p.level) + '</h2>'
+        +   '<div class="zenith-byp__plan-meta">'
+        +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Sessions / week</span><span class="zenith-byp__plan-meta-val">' + p.weeklySessions + '</span></div>'
+        +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Minutes / session</span><span class="zenith-byp__plan-meta-val">' + p.minutesPerSession + '</span></div>'
+        +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Drill tier</span><span class="zenith-byp__plan-meta-val">' + escapeHtml(p.focusTier) + '</span></div>'
+        +   '</div>'
+        +   '<div class="zenith-byp__plan-touches">At this cadence your player banks <strong>' + planTotal.toLocaleString() + '</strong> touches a year — <strong>' + planMultStr + '×</strong> the touches of a traditional-only player.</div>'
+        +   '<p class="zenith-byp__plan-pitch">' + escapeHtml(p.pitch) + '</p>'
+        + '</div>'
+        + '<div class="zenith-byp__plan-block">'
+        +   '<p class="zenith-byp__plan-block-head">Your 3 starter drills</p>'
+        +   '<h3 class="zenith-byp__plan-block-title">Hand-picked for your goals.</h3>'
+        +   '<div class="zenith-byp__drills">' + drillHtml + '</div>'
+        + '</div>'
+        + '<div class="zenith-byp__plan-block">'
+        +   '<p class="zenith-byp__plan-block-head">Recommended kit</p>'
+        +   '<h3 class="zenith-byp__plan-block-title">' + escapeHtml(p.recommendedKit.label) + '</h3>'
+        +   '<div class="zenith-byp__kit">'
+        +     '<div>'
+        +       '<ul class="zenith-byp__kit-items">' + kitItemsHtml + '</ul>'
+        +     '</div>'
+        +     '<div class="zenith-byp__kit-price">$' + p.recommendedKit.priceUsd.toFixed(2) + '</div>'
+        +   '</div>'
+        +   '<div class="zenith-byp__plan-cta">'
+        +     '<a href="' + BALL_BUY_URL + '" class="zenith-btn zenith-btn--primary">Buy the TEKKY™ · $59.95</a>'
+        +     '<a href="/collections/all" class="zenith-btn zenith-btn--ghost">Shop the full kit →</a>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="zenith-byp__plan-block">'
+        +   '<p class="zenith-byp__plan-block-head">Your next step</p>'
+        +   '<p class="zenith-byp__plan-pitch">' + escapeHtml(p.nextStep) + '</p>'
+        + '</div>';
+
+      // Fill the hidden Shopify customer form + submit it (once).
+      if (!state._submitted) {
+        var fn = root.querySelector('[data-hidden="firstName"]'); if (fn) fn.value = state.firstName;
+        var em = root.querySelector('[data-hidden="email"]'); if (em) em.value = state.email;
+        var ph = root.querySelector('[data-hidden="phone"]'); if (ph) ph.value = state.phone;
+        var nt = root.querySelector('[data-hidden="note"]');
+        if (nt) {
+          nt.value = [
+            'Build Your Player quiz submission',
+            'Role: ' + (state.role || '—'),
+            'Age: ' + state.age,
+            'Height: ' + Math.floor(state.heightInches / 12) + '\' ' + (state.heightInches % 12) + '"',
+            'Skill level: ' + skillLabel(state.skillLevel),
+            'Current weekly hours: ' + state.currentWeeklyHours,
+            'Goals: ' + state.goals.join(', '),
+            'Generated plan: ' + p.level + ' · ' + p.weeklySessions + 'x/wk · ' + p.minutesPerSession + ' min · ' + p.focusTier,
+            'Kit fit: ' + p.recommendedKit.label + ' ($' + p.recommendedKit.priceUsd.toFixed(2) + ')',
+            'Drill-of-Month email: ' + (state.drillEmail ? 'yes' : 'no')
+          ].join('\n');
+        }
+        state._submitted = true;
+        var submitBtn = root.querySelector('[data-form-submit]');
+        if (submitBtn) submitBtn.click();
+      }
+    }
+
+    // ── INTERACTIONS ───────────────────────────────────────────────────────
+    $$('[data-role]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.role = btn.getAttribute('data-role');
+        $$('[data-role]').forEach(function (b) {
+          b.classList.toggle('zenith-byp__role--active', b === btn);
+        });
+        renderStep();
+      });
+    });
+
+    var ageIn = $('[data-input="age"]');
+    if (ageIn) ageIn.addEventListener('input', function (e) { state.age = parseInt(e.target.value, 10); renderBuilderLive(); });
+    var heightIn = $('[data-input="height"]');
+    if (heightIn) heightIn.addEventListener('input', function (e) { state.heightInches = parseInt(e.target.value, 10); renderBuilderLive(); });
+    var skillIn = $('[data-input="skill"]');
+    if (skillIn) skillIn.addEventListener('input', function (e) { state.skillLevel = parseInt(e.target.value, 10); renderBuilderLive(); });
+    var hoursIn = $('[data-input="hours"]');
+    if (hoursIn) hoursIn.addEventListener('input', function (e) { state.currentWeeklyHours = parseInt(e.target.value, 10); renderBuilderLive(); });
+
+    $$('[data-goal]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-goal');
+        var i = state.goals.indexOf(id);
+        if (i >= 0) state.goals.splice(i, 1);
+        else if (state.goals.length < 3) state.goals.push(id);
+        else return;
+        paintGoals();
+        $('[data-count-goals]').textContent = state.goals.length;
+        renderStep();
+      });
+    });
+    function paintGoals() {
+      $$('[data-goal]').forEach(function (b) {
+        var id = b.getAttribute('data-goal');
+        var active = state.goals.indexOf(id) >= 0;
+        b.classList.toggle('zenith-byp__goal--active', active);
+        var atCap = !active && state.goals.length >= 3;
+        b.classList.toggle('zenith-byp__goal--disabled', atCap);
+        b.disabled = atCap;
+      });
+    }
+
+    var fn = $('[data-input="firstName"]');
+    if (fn) fn.addEventListener('input', function (e) { state.firstName = e.target.value; renderStep(); });
+    var em = $('[data-input="email"]');
+    if (em) em.addEventListener('input', function (e) { state.email = e.target.value; renderStep(); });
+    var ph = $('[data-input="phone"]');
+    if (ph) ph.addEventListener('input', function (e) { state.phone = e.target.value; });
+    var drillEmail = $('[data-input="drill-email"]');
+    if (drillEmail) drillEmail.addEventListener('change', function (e) { state.drillEmail = e.target.checked; });
+
+    var nextBtn = $('[data-next]');
+    if (nextBtn) nextBtn.addEventListener('click', function () {
+      if (!canAdvance()) return;
+      var idx = STEPS.indexOf(state.step);
+      if (idx < STEPS.length - 1) {
+        state.step = STEPS[idx + 1];
+        renderStep();
+        if (state.step === 'builder') renderBuilderLive();
+        window.scrollTo({ top: root.offsetTop - 20, behavior: 'smooth' });
+      }
+    });
+    var backBtn = $('[data-back]');
+    if (backBtn) backBtn.addEventListener('click', function () {
+      var idx = STEPS.indexOf(state.step);
+      if (idx > 0) {
+        // Allow re-entry to plan submit if user goes back then forward again
+        if (state.step === 'plan') state._submitted = false;
+        state.step = STEPS[idx - 1];
+        renderStep();
+      }
+    });
+
+    // INIT
+    renderStep();
+    renderBuilderLive();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Zenith BYP Quiz",
+  "tag": "section",
+  "class": "zenith-byp-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Build Your Player · Free" },
+    { "type": "text", "id": "headline_top", "label": "Headline (top line)", "default": "60 seconds to a" },
+    { "type": "text", "id": "headline_accent", "label": "Headline (accent line)", "default": "personalized plan." },
+    { "type": "richtext", "id": "subhead", "label": "Subhead", "default": "<p>Tell us about your player — role, age, skill level, goals — and we generate a custom 4-week TEKKY™ plan plus the 3 starter drills matched to where they are now. Free.</p>" }
+  ],
+  "presets": [
+    { "name": "Zenith BYP Quiz" }
+  ]
+}
+{% endschema %}

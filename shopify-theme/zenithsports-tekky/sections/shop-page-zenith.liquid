@@ -1,0 +1,240 @@
+{% comment %}
+  Zenith Shop page — bespoke product showcase. Replaces the bare Dawn
+  /collections/all as the "Shop" destination. Product detail pages + cart +
+  checkout stay native Shopify underneath; this is the branded storefront.
+
+  Composed onto /pages/shop via templates/page.shop.json. Product data lives
+  in that template's blocks so Paul can edit copy/price in the customizer.
+{% endcomment %}
+
+<section class="zenith-section zenith-shop">
+  <div class="zenith-container">
+
+    <header class="zenith-shop__head">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow zenith-eyebrow--electric">{% render 'zenith-text', text: section.settings.eyebrow %}</p>
+      {% endif %}
+      <h1 class="zenith-shop__title">{% render 'zenith-text', text: section.settings.heading %}</h1>
+      {% if section.settings.subhead != blank %}
+        <div class="zenith-shop__sub">{{ section.settings.subhead }}</div>
+      {% endif %}
+    </header>
+
+    <div class="zenith-shop__grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'product' %}
+          <article class="zenith-shop__card" {{ block.shopify_attributes }}>
+            <div class="zenith-shop__media">
+              {% if block.settings.photo_url != blank %}
+                <img src="{{ block.settings.photo_url }}" alt="{{ block.settings.name | escape }}" loading="lazy">
+              {% endif %}
+              {% if block.settings.badge != blank %}
+                <span class="zenith-shop__badge">{{ block.settings.badge | escape }}</span>
+              {% endif %}
+            </div>
+            <div class="zenith-shop__body">
+              <h3 class="zenith-shop__name">{% render 'zenith-text', text: block.settings.name %}</h3>
+              {% if block.settings.tagline != blank %}
+                <p class="zenith-shop__tag">{% render 'zenith-text', text: block.settings.tagline %}</p>
+              {% endif %}
+              {% if block.settings.description != blank %}
+                <p class="zenith-shop__desc">{{ block.settings.description | escape }}</p>
+              {% endif %}
+              <div class="zenith-shop__foot">
+                <div class="zenith-shop__price-wrap">
+                  <span class="zenith-shop__price">{{ block.settings.price | escape }}</span>
+                  {% if block.settings.compare_at != blank %}
+                    <span class="zenith-shop__compare">{{ block.settings.compare_at | escape }}</span>
+                  {% endif %}
+                </div>
+                <a
+                  href="{{ block.settings.url }}"
+                  {% if block.settings.url contains '/cart/' %}target="_blank" rel="noopener noreferrer"{% endif %}
+                  class="zenith-btn {% if block.settings.url contains '/cart/' %}zenith-btn--primary{% else %}zenith-btn--dark{% endif %} zenith-shop__cta"
+                >
+                  {% render 'zenith-text', text: block.settings.cta_label %}
+                </a>
+              </div>
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="zenith-shop__benefits">
+      <div class="zenith-shop__benefit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span><strong>Free coaching drills</strong> with every order</span>
+      </div>
+      <div class="zenith-shop__benefit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <span><strong>Ships from the USA</strong></span>
+      </div>
+      <div class="zenith-shop__benefit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span><strong>Secure checkout</strong></span>
+      </div>
+      <div class="zenith-shop__benefit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span><strong>Patent-pending</strong> &middot; built to last</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .zenith-shop {
+    background: linear-gradient(180deg, var(--zenith-ivory) 0%, var(--zenith-ivory-soft) 100%);
+    padding: 3rem 0 4rem;
+  }
+  @media (min-width: 768px) { .zenith-shop { padding: 4.5rem 0 5.5rem; } }
+  .zenith-shop__head { max-width: 44rem; margin-bottom: 2.5rem; }
+  .zenith-shop__title {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    font-weight: 700; line-height: 1;
+    text-transform: uppercase;
+    color: var(--zenith-navy);
+    margin: 1rem 0 0;
+  }
+  .zenith-shop__sub {
+    margin-top: 1rem;
+    font-size: 1.0625rem; line-height: 1.6;
+    color: var(--zenith-ink-soft);
+  }
+  .zenith-shop__sub p { margin: 0; }
+
+  .zenith-shop__grid {
+    display: grid; gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 700px) { .zenith-shop__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .zenith-shop__grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .zenith-shop__card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+  .zenith-shop__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 50px -20px rgba(10,24,50,0.4);
+    border-color: rgba(10,24,50,0.25);
+  }
+  .zenith-shop__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: #fff;
+    overflow: hidden;
+  }
+  .zenith-shop__media img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .zenith-shop__card:hover .zenith-shop__media img { transform: scale(1.05); }
+  .zenith-shop__badge {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--zenith-lime); color: var(--zenith-navy-deep);
+    padding: 0.4rem 0.8rem;
+    font-size: 11px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    border-radius: 0.3rem;
+  }
+  .zenith-shop__body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .zenith-shop__name {
+    font-weight: 700; text-transform: uppercase;
+    font-size: 1.45rem; line-height: 1.05;
+    color: var(--zenith-navy-ink); margin: 0;
+  }
+  .zenith-shop__tag {
+    margin: 0.4rem 0 0;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--zenith-navy);
+  }
+  .zenith-shop__desc {
+    margin: 0.85rem 0 0;
+    font-size: 0.95rem; line-height: 1.55;
+    color: var(--zenith-ink-soft);
+  }
+  .zenith-shop__foot {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; margin-top: auto; padding-top: 1.4rem;
+  }
+  .zenith-shop__price-wrap { display: flex; align-items: baseline; gap: 0.5rem; }
+  .zenith-shop__price {
+    font-family: var(--zenith-font-display);
+    font-weight: 700; font-size: 1.6rem;
+    color: var(--zenith-navy-ink);
+  }
+  .zenith-shop__compare {
+    font-size: 1rem; color: var(--zenith-ink-soft);
+    text-decoration: line-through;
+  }
+  .zenith-shop__cta { padding: 0.8rem 1.5rem; font-size: 13px; }
+
+  .zenith-shop__benefits {
+    margin-top: 2.5rem;
+    display: grid; gap: 1rem;
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    background: rgba(10,24,50,0.04);
+    border: 1px solid rgba(10,24,50,0.08);
+    border-radius: 0.75rem;
+  }
+  @media (min-width: 700px) { .zenith-shop__benefits { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .zenith-shop__benefits { grid-template-columns: repeat(4, 1fr); } }
+  .zenith-shop__benefit {
+    display: flex; align-items: center; gap: 0.65rem;
+    font-size: 0.9rem; color: var(--zenith-navy-ink);
+  }
+  .zenith-shop__benefit strong { color: var(--zenith-navy); }
+  .zenith-shop__benefit svg {
+    width: 22px; height: 22px; flex-shrink: 0;
+    color: var(--zenith-navy);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith Shop Page",
+  "tag": "section",
+  "class": "zenith-shop-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Lineup" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the TEKKY(TM) system." },
+    { "type": "richtext", "id": "subhead", "label": "Subhead", "default": "<p>One ball, built to make every other ball feel easy &mdash; plus the kit that backs it up. Free coaching drills ship with every order.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product card",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "photo_url", "label": "Product photo URL" },
+        { "type": "text", "id": "name", "label": "Name" },
+        { "type": "text", "id": "tagline", "label": "Tagline (small accent line)" },
+        { "type": "textarea", "id": "description", "label": "Short description" },
+        { "type": "text", "id": "price", "label": "Price display" },
+        { "type": "text", "id": "compare_at", "label": "Compare-at price (optional, shows struck-through)" },
+        { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop" },
+        { "type": "text", "id": "url", "label": "CTA URL (cart permalink = Buy Now; product page = variant flow)" },
+        { "type": "text", "id": "badge", "label": "Optional badge (e.g., Bestseller, 30% Off)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zenith Shop Page",
+      "blocks": [
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg", "name": "The TEKKY(TM)", "tagline": "Patent-pending training ball", "description": "Smaller than regulation, full FIFA-5 weight. The training ball that makes the match ball feel slow.", "price": "$59.95", "cta_label": "Buy Now", "url": "/cart/45347164389551:1", "badge": "Bestseller" } },
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/Tekky_Socks_White_Web_eaa7877d-0611-4947-bf90-832db80b57b4.jpg", "name": "TEKKY(TM) Grip Socks", "tagline": "Footwork foundation", "description": "Grip-locked socks that keep your foot planted through every cut, touch, and turn.", "price": "$15.00", "cta_label": "Shop", "url": "/products/tekky-grip-socks" } },
+        { "type": "product", "settings": { "photo_url": "https://zenithsports.org/cdn/shop/files/Performance_T-Shirt_Gray_Front_Web.jpg", "name": "Performance Tee", "tagline": "On-pitch identity", "description": "Breathable performance tee built to rep with you, on the pitch and off.", "price": "$17.50", "compare_at": "$25.00", "cta_label": "Shop", "url": "/products/high-performance-tekky-t-white-copy", "badge": "30% Off" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

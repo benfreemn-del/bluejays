@@ -7,10 +7,10 @@
     <div class="zenith-stats__grid">
       {% for block in section.blocks %}
         <article class="zenith-stat-card">
-          <div class="zenith-stat-card__number">{{ block.settings.number | escape }}</div>
-          <div class="zenith-stat-card__label">{{ block.settings.label | escape }}</div>
+          <div class="zenith-stat-card__number">{% render 'zenith-text', text: block.settings.number %}</div>
+          <div class="zenith-stat-card__label">{% render 'zenith-text', text: block.settings.label %}</div>
           {% if block.settings.note != blank %}
-            <p class="zenith-stat-card__note">{{ block.settings.note | escape }}</p>
+            <p class="zenith-stat-card__note">{% render 'zenith-text', text: block.settings.note %}</p>
           {% endif %}
         </article>
       {% endfor %}
@@ -24,6 +24,7 @@
     color: #fff;
     padding: 4rem 0;
   }
+  @media (min-width: 768px) { .zenith-stats { padding: 5rem 0; } }
   .zenith-stats__grid {
     display: grid;
     gap: 1.25rem;
@@ -33,8 +34,9 @@
     .zenith-stats__grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
   }
   .zenith-stat-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 0.85rem;
     padding: 2rem 1.75rem;
   }
   .zenith-stat-card__number {
@@ -46,18 +48,18 @@
     letter-spacing: -0.02em;
   }
   .zenith-stat-card__label {
-    margin-top: 0.75rem;
-    font-size: 11px;
+    margin-top: 0.85rem;
+    font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: #fff;
   }
   .zenith-stat-card__note {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: rgba(255,255,255,0.6);
-    line-height: 1.5;
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.55;
   }
 </style>
 
@@ -83,9 +85,9 @@
     {
       "name": "Zenith Stats",
       "blocks": [
-        { "type": "stat", "settings": { "number": "FIFA Size 3", "label": "Control surface", "note": "Smaller than regulation — every touch counts" } },
-        { "type": "stat", "settings": { "number": "FIFA Size 5", "label": "Match-day weight", "note": "Real strength transfer, not a foam toy" } },
-        { "type": "stat", "settings": { "number": "5.0★", "label": "Verified buyers", "note": "Trusted by Rec, Travel, ECNL, MLS Next" } }
+        { "type": "stat", "settings": { "number": "10 min/day", "label": "All it takes", "note": "3 reps a week beats one long session" } },
+        { "type": "stat", "settings": { "number": "4 weeks", "label": "Visible improvement", "note": "First touch, mastery, confidence" } },
+        { "type": "stat", "settings": { "number": "1 ball", "label": "Lifetime training", "note": "Patent-pending -- built to last" } }
       ]
     }
   ]

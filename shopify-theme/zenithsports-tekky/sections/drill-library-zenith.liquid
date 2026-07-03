@@ -1,12 +1,13 @@
 {% comment %}
-  TEKKY drill library — 26 drills across 3 tiers (Warm Up / Beginner /
-  Intermediate). Each card = YouTube thumbnail + click-to-watch.
+  TEKKY drill library -- 18 drills across 3 tiers (Warm Up / Beginner /
+  Intermediate). 6 per tier, hand-picked to give variety without overwhelming
+  the buyer. Each card = YouTube thumbnail + click-to-watch.
   Port of training-drills.tsx. The "1 Touch Laces" drill uses YouTube's
   hq3 frame instead of hqdefault because its default thumbnail is the
   blue TEKKY title card (looks different from the rest).
 {% endcomment %}
 
-<section class="zenith-section zenith-drills">
+<section class="zenith-section zenith-drills" id="drills">
   <div class="zenith-container">
     <div class="zenith-drills__header">
       {% if section.settings.eyebrow != blank %}
@@ -18,18 +19,19 @@
         </h2>
       {% endif %}
       {% if section.settings.intro != blank %}
-        <p class="zenith-body" style="margin-top: 1.5rem; max-width: 42rem;">{{ section.settings.intro }}</p>
+        <div class="zenith-body" style="margin-top: 1.5rem; max-width: 42rem;">{{ section.settings.intro }}</div>
       {% endif %}
     </div>
 
-    {%- assign warmup_ids   = "bX-HMzizdxU,Wzlr9RpBNs4,g28gQ2aZ-0k,mukre9VRGx4,qXGWT_-_yF4,nyGSAw-4Xw0,68vbXVsSKes,G8aa_34JpFg,rab0LPa33VI,hWQGlKbx0HM" | split: "," -%}
-    {%- assign warmup_names = "Instep Touch,Outside-Foot Gather + Instep Pass,1 Touch Instep Pass,1 Touch Outside Foot Pass,Laces Gather and Pass,1 Touch Laces,Instep Trap + Outside Touch + Instep Pass,Sole Trap + Instep Pass,Sole Trap + Outside Foot Pass,Sole Trap + Cross Body Drag + Instep Pass" | split: "," -%}
+    {%- comment -%} 6 per tier (trimmed from 10 + 10 + 6). Picks favor foundational + variety. {%- endcomment -%}
+    {%- assign warmup_ids   = "bX-HMzizdxU,Wzlr9RpBNs4,g28gQ2aZ-0k,qXGWT_-_yF4,nyGSAw-4Xw0,G8aa_34JpFg" | split: "," -%}
+    {%- assign warmup_names = "Instep Touch,Outside-Foot Gather + Instep Pass,1 Touch Instep Pass,Laces Gather and Pass,1 Touch Laces,Sole Trap + Instep Pass" | split: "," -%}
 
-    {%- assign beginner_ids   = "l40Cq1RJ_QI,074-lKwl9kI,n4625BwqiU0,v4bHgBiPW6I,Lnny2pLZmiI,ojviCQ0mrsY,nPzYPHHwgGU,2h1hwvVDTXI,Kaj6ymLWsB8,6mCwL9xHfLk" | split: "," -%}
-    {%- assign beginner_names = "La Croqueta,La Croqueta · 2 Touch Shift,Push Pull,Inside · Outside,Sole Drag,V-Cut,L-Drag,Inside · Outside Combo,Scissors · Outside Push,Double Scissors · Outside Push" | split: "," -%}
+    {%- assign beginner_ids   = "l40Cq1RJ_QI,n4625BwqiU0,v4bHgBiPW6I,Lnny2pLZmiI,ojviCQ0mrsY,Kaj6ymLWsB8" | split: "," -%}
+    {%- assign beginner_names = "La Croqueta,Push Pull,Inside + Outside,Sole Drag,V-Cut,Scissors + Outside Push" | split: "," -%}
 
     {%- assign inter_ids   = "aLWVJfbAn9I,2mqCyIdrlBs,p7k4AF7piT4,9frnJdNJW9o,ldiRz5W-Mjo,fydguVA6Fzw" | split: "," -%}
-    {%- assign inter_names = "Tap Tap Drag · La Croqueta · Drag,Push Pull U-Drag with Cone,L-Drag Roll,Roll · Stepover [The Jay Jay],Single Leg V-Cut to L-Drag,Touch In · Scissors · Touch Out" | split: "," -%}
+    {%- assign inter_names = "Tap Tap Drag -La Croqueta -Drag,Push Pull U-Drag with Cone,L-Drag Roll,Roll -Stepover [The Jay Jay],Single Leg V-Cut to L-Drag,Touch In -Scissors -Touch Out" | split: "," -%}
 
     {% comment %} Render each tier {% endcomment %}
     {% for tier_index in (0..2) %}
@@ -51,30 +53,39 @@
           {%- assign names = inter_names -%}
       {%- endcase -%}
 
-      <div class="zenith-drills__tier" {% if tier_index > 0 %}style="margin-top: 4rem;"{% endif %}>
+      <div class="zenith-drills__tier zenith-drills__tier--{{ tier_index }}">
         <div class="zenith-drills__tier-header">
-          <span class="zenith-drills__tier-label">{{ tier_tag }} · {{ tier_label }}</span>
+          <div class="zenith-drills__tier-heading">
+            <span class="zenith-drills__tier-tag">{{ tier_tag }}</span>
+            <h3 class="zenith-drills__tier-label">{{ tier_label }}</h3>
+          </div>
           <span class="zenith-drills__tier-count">{{ ids.size }} drills</span>
         </div>
         <div class="zenith-drills__grid">
           {% for vid in ids %}
             {%- assign drill_name = names[forloop.index0] -%}
-            {%- comment -%} "1 Touch Laces" (nyGSAw-4Xw0) uses hq3 frame — its hqdefault is the blue TEKKY title card {%- endcomment -%}
+            {%- comment -%} "1 Touch Laces" (nyGSAw-4Xw0) uses hq3 frame -- its default thumb is the blue TEKKY title card.
+                Everything else uses maxresdefault (1280x720 16:9) for premium sharpness;
+                a CSS background-image fallback to hqdefault catches videos without maxres. {%- endcomment -%}
             {%- if vid == "nyGSAw-4Xw0" -%}
               {%- assign thumb = "https://img.youtube.com/vi/" | append: vid | append: "/hq3.jpg" -%}
+              {%- assign thumb_fallback = "https://img.youtube.com/vi/" | append: vid | append: "/hqdefault.jpg" -%}
             {%- else -%}
-              {%- assign thumb = "https://img.youtube.com/vi/" | append: vid | append: "/hqdefault.jpg" -%}
+              {%- assign thumb = "https://img.youtube.com/vi/" | append: vid | append: "/maxresdefault.jpg" -%}
+              {%- assign thumb_fallback = "https://img.youtube.com/vi/" | append: vid | append: "/hqdefault.jpg" -%}
             {%- endif -%}
             <a
               href="https://www.youtube.com/watch?v={{ vid }}"
               target="_blank"
               rel="noopener noreferrer"
               class="zenith-drill-card"
-              aria-label="Watch {{ drill_name | escape }} on YouTube"
+              data-drill-video="{{ vid }}"
+              data-drill-title="{{ drill_name | escape }}"
+              aria-label="Play {{ drill_name | escape }}"
             >
-              <div class="zenith-drill-card__thumb">
-                <img src="{{ thumb }}" alt="" loading="lazy" width="480" height="270">
-                <span class="zenith-drill-card__play" aria-hidden="true">▶</span>
+              <div class="zenith-drill-card__thumb" style="background-image: url('{{ thumb_fallback }}');">
+                <img src="{{ thumb }}" alt="" loading="lazy" width="1280" height="720" onerror="this.style.display='none'">
+                <span class="zenith-drill-card__play" aria-hidden="true">&#9654;</span>
               </div>
               <h3 class="zenith-drill-card__title">{{ drill_name | escape }}</h3>
             </a>
@@ -83,34 +94,83 @@
       </div>
     {% endfor %}
   </div>
+
+  {%- comment -%} On-site player: keeps users on the site. Falls back to the YouTube link with JS off. {%- endcomment -%}
+  <div class="zenith-drill-modal" data-drill-modal hidden>
+    <div class="zenith-drill-modal__backdrop" data-drill-close></div>
+    <div class="zenith-drill-modal__dialog" role="dialog" aria-modal="true" aria-label="Drill video">
+      <button type="button" class="zenith-drill-modal__close" data-drill-close aria-label="Close video">&times;</button>
+      <div class="zenith-drill-modal__frame">
+        <iframe data-drill-iframe title="Drill video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p class="zenith-drill-modal__title" data-drill-modal-title></p>
+    </div>
+  </div>
 </section>
 
 <style>
   .zenith-drills {
-    background: var(--zenith-ivory-soft);
-    padding: 5rem 0;
+    background: var(--zenith-ivory);
+    padding: 3.5rem 0;
+    scroll-margin-top: 120px; /* clears the sticky banner + header on anchor jump */
   }
-  @media (min-width: 768px) { .zenith-drills { padding: 7rem 0; } }
+  @media (min-width: 768px) { .zenith-drills { padding: 5rem 0; } }
+  @media (min-width: 1024px) { .zenith-drills { padding: 5.5rem 0; } }
+  .zenith-drills__tier {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(15,23,42,0.08);
+    border-radius: 0.75rem;
+    padding: 2rem 1.5rem;
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .zenith-drills__tier { padding: 2.5rem 2rem; }
+  }
+  .zenith-drills__tier:first-of-type { margin-top: 3rem; }
+  .zenith-drills__tier--0 { border-top: 4px solid var(--zenith-amber); }
+  .zenith-drills__tier--1 { border-top: 4px solid var(--zenith-electric); }
+  .zenith-drills__tier--2 { border-top: 4px solid var(--zenith-lime); }
   .zenith-drills__tier-header {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(15,23,42,0.08);
   }
-  .zenith-drills__tier-label {
-    font-size: 11px;
+  .zenith-drills__tier-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .zenith-drills__tier-tag {
+    font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.32em;
     color: var(--zenith-electric);
   }
-  .zenith-drills__tier-count {
-    font-size: 10px;
-    font-weight: 700;
+  .zenith-drills__tier--0 .zenith-drills__tier-tag { color: var(--zenith-amber); }
+  .zenith-drills__tier--1 .zenith-drills__tier-tag { color: var(--zenith-electric); }
+  .zenith-drills__tier--2 .zenith-drills__tier-tag { color: #65a90b; }
+  .zenith-drills__tier-label {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.22em;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--zenith-navy-ink);
+    margin: 0;
+  }
+  .zenith-drills__tier-count {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: var(--zenith-ink-soft);
+    white-space: nowrap;
   }
   .zenith-drills__grid {
     display: grid;
@@ -135,12 +195,16 @@
   .zenith-drill-card__thumb {
     position: relative;
     aspect-ratio: 16 / 9;
-    background: #1a1a1a;
+    background-color: #1a1a1a;
+    background-size: cover;
+    background-position: center;
     overflow: hidden;
+    border-radius: 0.75rem 0.75rem 0 0;
   }
   .zenith-drill-card__thumb img {
     width: 100%; height: 100%; object-fit: cover;
     transition: transform 0.4s;
+    display: block;
   }
   .zenith-drill-card:hover .zenith-drill-card__thumb img { transform: scale(1.04); }
   .zenith-drill-card__play {
@@ -167,7 +231,57 @@
     color: var(--zenith-navy-ink);
     margin: 0;
   }
+
+  /* On-site video player */
+  .zenith-drill-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
+  .zenith-drill-modal[hidden] { display: none; }
+  .zenith-drill-modal__backdrop { position: absolute; inset: 0; background: rgba(5,13,31,0.88); backdrop-filter: blur(4px); }
+  .zenith-drill-modal__dialog { position: relative; width: 100%; max-width: 900px; }
+  .zenith-drill-modal__frame { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.6); }
+  .zenith-drill-modal__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .zenith-drill-modal__close { position: absolute; top: -3rem; right: 0; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: none; background: rgba(255,255,255,0.16); color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; transition: background 0.18s, color 0.18s; }
+  .zenith-drill-modal__close:hover { background: var(--zenith-lime); color: var(--zenith-navy-deep); }
+  .zenith-drill-modal__title { margin: 0.9rem 0 0; text-align: center; color: #fff; font-weight: 700; font-size: 0.95rem; }
+  @media (max-width: 600px) { .zenith-drill-modal__close { top: -2.75rem; } }
 </style>
+
+<script>
+  (function () {
+    var section = document.getElementById('drills');
+    if (!section) return;
+    var modal = section.querySelector('[data-drill-modal]');
+    var iframe = section.querySelector('[data-drill-iframe]');
+    var titleEl = section.querySelector('[data-drill-modal-title]');
+    if (!modal || !iframe) return;
+
+    function open(vid, title) {
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + vid + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      if (titleEl) { titleEl.textContent = title || ''; }
+      modal.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+    }
+    function close() {
+      modal.hidden = true;
+      iframe.src = '';
+      document.documentElement.style.overflow = '';
+    }
+
+    section.querySelectorAll('[data-drill-video]').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        var vid = card.getAttribute('data-drill-video');
+        if (!vid) { return; }
+        e.preventDefault();
+        open(vid, card.getAttribute('data-drill-title'));
+      });
+    });
+    modal.querySelectorAll('[data-drill-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) { close(); }
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -176,8 +290,8 @@
   "class": "zenith-drills-section",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The drill library" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "26 drills. 3 tiers. All on TEKKY." },
-    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>The same European technique-first methodology used by ECNL + MLS Next clubs — broken into 3 tiers, sequenced by complexity. 10–15 minutes a day, three times a week beats one 90-minute team session.</p>" }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "22 drills. 3 tiers. All on TEKKY." },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>The same European technique-first methodology used by ECNL + MLS Next clubs -- broken into 3 tiers. The full 22-drill library is free on our YouTube; here is a featured selection. 10-15 minutes a day, three times a week beats one 90-minute team session.</p>" }
   ],
   "presets": [{ "name": "Zenith Drill Library" }]
 }

@@ -1,0 +1,404 @@
+{% comment %}
+  The Touches Advantage — interactive calculator + cumulative-touches line graph.
+  Rebuilt 2026-06-11 on the TEKKY "Touches Advantage" model (TEKKY_Touches_Advantage deck).
+
+  Model (verified against the deck's three scenarios):
+    BASELINE_PER_YEAR = 26,250 touches/yr   (Scenario A — traditional club only:
+                         ~175 events/yr × 150 touches)
+    TEKKY_PER_SESSION = 375 touches          (one 15-min TEKKY session)
+    WEEKS             = 50                    (club season)
+    tekkyPerYear      = sessions/week × WEEKS × TEKKY_PER_SESSION
+    totalPerYear      = BASELINE_PER_YEAR + tekkyPerYear
+    cumulative(year)  = totalPerYear × year
+
+    Slider = TEKKY sessions per week (0–8, step 0.5). It reproduces the deck exactly:
+      0   sessions → 26,250/yr   → 131,250 / 5yr   (Scenario A)
+      2.5 sessions → 73,125/yr   → 365,625 / 5yr   (Scenario B — warm-up before practice)
+      7.5 sessions → 166,875/yr  → 834,375 / 5yr   (Scenario C — full protocol, 6.4×)
+
+  The graph plots cumulative touches over a 5-year window (deck slide 5): a fixed
+  gray baseline line + a turquoise "your plan" line that rises and pulls away as the
+  slider increases. To retune, edit the constants in the <script> below.
+{% endcomment %}
+
+<section class="zenith-section zenith-touch">
+  <div class="zenith-container">
+
+    {% if section.settings.eyebrow != blank %}
+      <p class="zenith-eyebrow zenith-touch__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {% endif %}
+
+    <h2 class="zenith-touch__title">{{ section.settings.heading | escape }}</h2>
+
+    {% if section.settings.intro != blank %}
+      <div class="zenith-touch__intro">{{ section.settings.intro }}</div>
+    {% endif %}
+
+    <div class="zenith-touch__grid">
+
+      {%- comment -%} ── LEFT: control + live readouts ── {%- endcomment -%}
+      <div class="zenith-touch__panel zenith-touch__controls">
+
+        <div class="zenith-touch__slider">
+          <div class="zenith-touch__slider-head">
+            <span class="zenith-touch__slider-label">TEKKY sessions per week</span>
+            <span class="zenith-touch__slider-val"><span data-sessions-out>2.5</span></span>
+          </div>
+          <input type="range" min="0" max="8" step="0.5" value="2.5" data-input="sessions" aria-label="TEKKY sessions per week" class="zenith-touch__range" />
+          <div class="zenith-touch__slider-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span></div>
+        </div>
+
+        <div class="zenith-touch__scenarios">
+          <button type="button" class="zenith-touch__chip" data-scenario="0">A · Traditional</button>
+          <button type="button" class="zenith-touch__chip is-active" data-scenario="2.5">B · + Warm-Up</button>
+          <button type="button" class="zenith-touch__chip" data-scenario="7.5">C · Full Protocol</button>
+        </div>
+
+        <div class="zenith-touch__readouts">
+          <div class="zenith-touch__stat">
+            <div class="zenith-touch__stat-label">Touches per year</div>
+            <div class="zenith-touch__stat-num" data-touches-year>73,125</div>
+          </div>
+          <div class="zenith-touch__stat zenith-touch__stat--mult">
+            <div class="zenith-touch__stat-label">vs. no TEKKY</div>
+            <div class="zenith-touch__stat-num" data-multiplier>2.8&times;</div>
+          </div>
+          <div class="zenith-touch__stat zenith-touch__stat--wide">
+            <div class="zenith-touch__stat-label">5-year cumulative touches</div>
+            <div class="zenith-touch__stat-num" data-cumulative>365,625</div>
+          </div>
+        </div>
+
+        <p class="zenith-touch__gapline" data-gap-block>
+          <span data-gap-num>234,375</span> more touches than a traditional-only player over 5 years.
+        </p>
+
+        {% if section.settings.cta_label != blank %}
+          <div class="zenith-touch__cta">
+            <a href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}" class="zenith-btn zenith-btn--primary">
+              {{ section.settings.cta_label | escape }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      {%- comment -%} ── RIGHT: cumulative-touches line graph ── {%- endcomment -%}
+      <div class="zenith-touch__panel zenith-touch__chart">
+        <div class="zenith-touch__chart-head">
+          <span class="zenith-touch__chart-title">Cumulative touches</span>
+          <span class="zenith-touch__chart-sub">5-year development window</span>
+        </div>
+
+        <svg viewBox="0 0 420 300" class="zenith-touch__svg" role="img" aria-label="Line graph of cumulative touches over five years: a flat traditional baseline versus your TEKKY plan, which rises higher as you add sessions.">
+          <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
+            <line x1="46" y1="31.1"  x2="404" y2="31.1"/>
+            <line x1="46" y1="91.3"  x2="404" y2="91.3"/>
+            <line x1="46" y1="151.5" x2="404" y2="151.5"/>
+            <line x1="46" y1="211.8" x2="404" y2="211.8"/>
+            <line x1="46" y1="272"   x2="404" y2="272"/>
+          </g>
+          <g fill="rgba(255,255,255,0.5)" font-size="9" font-family="inherit" text-anchor="end">
+            <text x="40" y="34">800k</text>
+            <text x="40" y="94">600k</text>
+            <text x="40" y="154">400k</text>
+            <text x="40" y="214">200k</text>
+            <text x="40" y="275">0</text>
+          </g>
+          <g fill="rgba(255,255,255,0.55)" font-size="9" font-family="inherit" text-anchor="middle">
+            <text x="117.6" y="288">Yr 1</text>
+            <text x="189.2" y="288">Yr 2</text>
+            <text x="260.8" y="288">Yr 3</text>
+            <text x="332.4" y="288">Yr 4</text>
+            <text x="404"   y="288">Yr 5</text>
+          </g>
+
+          <path data-plan-area fill="rgba(0,196,154,0.14)" stroke="none"
+                d="M46,272 L117.6,250 L189.2,228 L260.8,205.9 L332.4,183.9 L404,161.9 L404,272 Z"/>
+
+          <polyline data-baseline-line fill="none" stroke="#8aa0b8" stroke-width="2" stroke-dasharray="4 4"
+                    points="46,272 117.6,264.1 189.2,256.2 260.8,248.3 332.4,240.4 404,232.5"/>
+
+          <polyline data-plan-line fill="none" stroke="#00c49a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                    points="46,272 117.6,250 189.2,228 260.8,205.9 332.4,183.9 404,161.9"/>
+
+          <circle data-plan-dot cx="404" cy="161.9" r="4.5" fill="#00c49a" stroke="#0a1832" stroke-width="2"/>
+          <circle cx="404" cy="232.5" r="3.5" fill="#8aa0b8" stroke="#0a1832" stroke-width="1.5"/>
+        </svg>
+
+        <div class="zenith-touch__legend">
+          <span class="zenith-touch__legend-item"><span class="zenith-touch__legend-swatch zenith-touch__legend-swatch--plan"></span>Your plan &middot; <strong data-legend-plan>365,625</strong></span>
+          <span class="zenith-touch__legend-item"><span class="zenith-touch__legend-swatch zenith-touch__legend-swatch--base"></span>Traditional &middot; 131,250</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="zenith-touch__footnote">
+      Every touch compounds. More reps now means years closer to the 10,000-hour mastery threshold &mdash; the gap a traditional-only player can never fully close. One 15-min TEKKY session &asymp; <strong>375 deliberate touches</strong>.
+    </p>
+
+  </div>
+</section>
+
+<style>
+  .zenith-touch {
+    --tq: #00c49a;
+    --tq-soft: rgba(0,196,154,0.10);
+    --tq-line: rgba(0,196,154,0.35);
+    background: var(--zenith-navy-deep);
+    color: #fff;
+    padding: 4rem 0;
+  }
+  @media (min-width: 768px) { .zenith-touch { padding: 6rem 0; } }
+
+  .zenith-touch__eyebrow { color: var(--tq); text-align: center; }
+  .zenith-touch__title {
+    text-align: center;
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 900; letter-spacing: -0.03em;
+    text-transform: uppercase; line-height: 1.05;
+    color: #fff; margin: 0.75rem auto 1rem; max-width: 40rem;
+  }
+  .zenith-touch__intro {
+    text-align: center; max-width: 42rem; margin: 0 auto 2.5rem;
+    color: rgba(255,255,255,0.82); font-size: 1.0625rem; line-height: 1.65;
+  }
+  .zenith-touch__intro p { margin: 0; }
+
+  .zenith-touch__grid {
+    max-width: 60rem; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr; gap: 1rem;
+  }
+  @media (min-width: 880px) {
+    .zenith-touch__grid { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 1.25rem; }
+  }
+
+  .zenith-touch__panel {
+    border: 2px solid var(--tq-line);
+    background: linear-gradient(135deg, rgba(10,24,50,0.85) 0%, rgba(5,13,31,0.95) 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+  }
+  @media (min-width: 640px) { .zenith-touch__panel { padding: 1.75rem; } }
+
+  .zenith-touch__slider {
+    padding: 1.1rem 1.2rem 1.25rem;
+    border: 2px solid var(--tq-line);
+    background: var(--tq-soft);
+    border-radius: 14px;
+  }
+  .zenith-touch__slider-head {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; flex-wrap: wrap; margin-bottom: 0.6rem;
+  }
+  .zenith-touch__slider-label {
+    font-size: 12px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.14em; color: rgba(255,255,255,0.88);
+  }
+  .zenith-touch__slider-val {
+    font-size: 2rem; font-weight: 900; color: var(--tq);
+    font-variant-numeric: tabular-nums; line-height: 1;
+  }
+  .zenith-touch__range {
+    width: 100%; height: 30px; -webkit-appearance: none; appearance: none;
+    background: transparent; cursor: pointer; touch-action: pan-y;
+  }
+  .zenith-touch__range::-webkit-slider-runnable-track {
+    height: 8px; background: rgba(255,255,255,0.14); border-radius: 999px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .zenith-touch__range::-moz-range-track {
+    height: 8px; background: rgba(255,255,255,0.14); border-radius: 999px;
+  }
+  .zenith-touch__range::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 26px; height: 26px; margin-top: -9px;
+    border-radius: 50%; background: var(--tq); border: 3px solid var(--zenith-navy-deep);
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,196,154,0.45);
+  }
+  .zenith-touch__range::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--tq);
+    border: 3px solid var(--zenith-navy-deep); cursor: pointer;
+  }
+  .zenith-touch__slider-marks {
+    display: flex; justify-content: space-between; font-size: 11px;
+    font-weight: 600; color: rgba(255,255,255,0.55); margin-top: 0.5rem; padding: 0 0.25rem;
+  }
+
+  .zenith-touch__scenarios { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .zenith-touch__chip {
+    flex: 1; min-width: 0; cursor: pointer;
+    font-size: 11.5px; font-weight: 800; letter-spacing: 0.02em;
+    padding: 0.55rem 0.4rem; border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.78);
+    transition: all 0.18s ease; white-space: nowrap;
+  }
+  .zenith-touch__chip:hover { border-color: var(--tq-line); color: #fff; }
+  .zenith-touch__chip.is-active {
+    background: var(--tq); color: var(--zenith-navy-deep);
+    border-color: var(--tq); box-shadow: 0 2px 12px rgba(0,196,154,0.35);
+  }
+
+  .zenith-touch__readouts {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.5rem;
+  }
+  .zenith-touch__stat {
+    padding: 0.9rem 1rem; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  }
+  .zenith-touch__stat--wide { grid-column: 1 / -1; }
+  .zenith-touch__stat--mult { background: var(--tq-soft); border-color: var(--tq-line); }
+  .zenith-touch__stat-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.12em; color: rgba(255,255,255,0.6); margin-bottom: 0.35rem;
+  }
+  .zenith-touch__stat-num {
+    font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 900;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; color: #fff;
+  }
+  .zenith-touch__stat--mult .zenith-touch__stat-num { color: var(--tq); }
+
+  .zenith-touch__gapline {
+    margin: 1.25rem 0 0; padding-top: 1rem;
+    border-top: 1px solid rgba(0,196,154,0.2);
+    font-size: 0.95rem; line-height: 1.5; color: rgba(255,255,255,0.9);
+  }
+  .zenith-touch__gapline span { color: var(--tq); font-weight: 900; }
+
+  .zenith-touch__cta { margin-top: 1.5rem; display: flex; }
+  .zenith-touch__cta .zenith-btn { width: 100%; justify-content: center; text-align: center; }
+
+  .zenith-touch__chart-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;
+  }
+  .zenith-touch__chart-title {
+    font-size: 13px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.16em; color: var(--tq);
+  }
+  .zenith-touch__chart-sub {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.55);
+  }
+  .zenith-touch__svg { width: 100%; height: auto; display: block; }
+  .zenith-touch__svg text { font-variant-numeric: tabular-nums; }
+
+  .zenith-touch__legend {
+    display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.75rem;
+    font-size: 12px; color: rgba(255,255,255,0.75);
+  }
+  .zenith-touch__legend-item { display: flex; align-items: center; gap: 6px; }
+  .zenith-touch__legend-item strong { color: #fff; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .zenith-touch__legend-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .zenith-touch__legend-swatch--plan { background: var(--tq); }
+  .zenith-touch__legend-swatch--base { background: #8aa0b8; }
+
+  .zenith-touch__footnote {
+    max-width: 60rem; margin: 1.75rem auto 0; padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px; font-style: italic; color: rgba(255,255,255,0.78);
+    line-height: 1.55; text-align: center;
+  }
+  .zenith-touch__footnote strong { color: #fff; font-style: normal; font-weight: 800; }
+</style>
+
+<script>
+  (function () {
+    var root = document.querySelector('.zenith-touch');
+    if (!root) return;
+
+    var BASELINE = 26250;      // Scenario A touches/yr
+    var PER_SESSION = 375;     // touches per 15-min TEKKY session
+    var WEEKS = 50;            // club season
+    var YEARS = 5;
+    var YMAX = 850000;         // chart ceiling (just above Scenario C 5yr = 834,375)
+
+    // SVG plot geometry (matches the viewBox 0 0 420 300)
+    var X0 = 46, X1 = 404, Y0 = 16, Y1 = 272;
+    var PLOTW = X1 - X0, PLOTH = Y1 - Y0;
+
+    function $(s) { return root.querySelector(s); }
+    function fmt(n) { return Math.round(n).toLocaleString(); }
+    function xAt(year) { return X0 + (year / YEARS) * PLOTW; }
+    function yAt(touches) { return Y1 - (Math.min(touches, YMAX) / YMAX) * PLOTH; }
+
+    function linePoints(perYear) {
+      var pts = [];
+      for (var yr = 0; yr <= YEARS; yr++) {
+        pts.push(xAt(yr).toFixed(1) + ',' + yAt(perYear * yr).toFixed(1));
+      }
+      return pts.join(' ');
+    }
+    function areaPath(perYear) {
+      var pts = [];
+      for (var yr = 0; yr <= YEARS; yr++) {
+        pts.push((yr === 0 ? 'M' : 'L') + xAt(yr).toFixed(1) + ',' + yAt(perYear * yr).toFixed(1));
+      }
+      pts.push('L' + X1.toFixed(1) + ',' + Y1.toFixed(1) + ' Z');
+      return pts.join(' ');
+    }
+
+    var baseLine = $('[data-baseline-line]');
+    if (baseLine) baseLine.setAttribute('points', linePoints(BASELINE));
+
+    function update(sessions) {
+      var tekkyPerYear = sessions * WEEKS * PER_SESSION;
+      var totalPerYear = BASELINE + tekkyPerYear;
+      var cumulative = totalPerYear * YEARS;
+      var baseCumulative = BASELINE * YEARS;
+      var mult = totalPerYear / BASELINE;
+      var gap = cumulative - baseCumulative;
+
+      $('[data-sessions-out]').textContent = (sessions % 1 === 0) ? sessions : sessions.toFixed(1);
+      $('[data-touches-year]').textContent = fmt(totalPerYear);
+      $('[data-multiplier]').innerHTML = (mult >= 10 ? mult.toFixed(0) : mult.toFixed(1)) + '&times;';
+      $('[data-cumulative]').textContent = fmt(cumulative);
+      $('[data-gap-num]').textContent = fmt(gap);
+      $('[data-legend-plan]').textContent = fmt(cumulative);
+
+      var planLine = $('[data-plan-line]');
+      var planArea = $('[data-plan-area]');
+      var planDot = $('[data-plan-dot]');
+      if (planLine) planLine.setAttribute('points', linePoints(totalPerYear));
+      if (planArea) planArea.setAttribute('d', areaPath(totalPerYear));
+      if (planDot) planDot.setAttribute('cy', yAt(cumulative).toFixed(1));
+
+      // sync scenario chips
+      root.querySelectorAll('[data-scenario]').forEach(function (chip) {
+        chip.classList.toggle('is-active', parseFloat(chip.getAttribute('data-scenario')) === sessions);
+      });
+    }
+
+    var slider = $('[data-input="sessions"]');
+    if (slider) {
+      slider.addEventListener('input', function (e) { update(parseFloat(e.target.value)); });
+    }
+    root.querySelectorAll('[data-scenario]').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var v = parseFloat(chip.getAttribute('data-scenario'));
+        if (slider) slider.value = v;
+        update(v);
+      });
+    });
+
+    update(2.5);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Zenith Touches Advantage",
+  "tag": "section",
+  "class": "zenith-touch-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Touches Advantage" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "How many touches will your player bank?" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Drag the TEKKY sessions per week and watch the touch gap compound over a 5-year season. More deliberate reps now is technique a traditional-only player can't catch.</p>" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY™ · $59.95" },
+    { "type": "text", "id": "cta_url", "label": "CTA URL" }
+  ],
+  "presets": [
+    { "name": "Zenith Touches Advantage" }
+  ]
+}
+{% endschema %}

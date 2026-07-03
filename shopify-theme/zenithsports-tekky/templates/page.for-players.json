@@ -7,11 +7,11 @@
         "hero_video": "https://cdn.shopify.com/videos/c/o/v/9047f952286440f19ba3743734f3cbff.mp4",
         "hero_poster": "https://zenithsports.org/cdn/shop/files/tekky-hero-19.jpg",
         "eyebrow": "For Players",
-        "heading": "Become undroppable.",
-        "subhead": "<p>Here's the truth nobody tells you: <strong>playing time beats the league badge</strong>. A player who dominates with clean film out-recruits a benchwarmer in ECNL or MLS Next almost every time. The separator isn't talent &mdash; it's touches.</p><p>Train on your own time, on a ball that punishes a lazy touch, and walk into every session sharper than the player next to you.</p>",
+        "heading": "Become unstoppable.",
+        "subhead": "<p>Success isn't built on gameday &mdash; it's built in the thousands of touches no one sees.</p><p>The TEKKY&trade; way is simple: own your development. Every session is an opportunity to sharpen your technique, challenge your first touch, and build habits that separate you from the competition. Train with purpose today, so tomorrow's game feels easier.</p>",
         "cta_label": "Build my plan",
         "cta_url": "/pages/build-your-player",
-        "cta2_label": "Get the TEKKY(R)",
+        "cta2_label": "Get the TEKKY(TM)",
         "cta2_url": "/collections/all",
         "stat1_num": "6.4x",
         "stat1_label": "more touches on the full TEKKY protocol",
@@ -40,7 +40,9 @@
       "settings": {
         "eyebrow": "Questions before you start?",
         "heading": "Not sure where to begin?",
-        "body": "<p>Tell us your position, age, and level and we'll point you to the right drills and setup. Philip and Paul personally read every message.</p>"
+        "body": "<p>Tell us your position, age, and level and we'll point you to the right drills and setup. Philip and Paul personally read every message.</p>",
+        "show_club_option": false,
+        "show_bulk_line": false
       }
     }
   },

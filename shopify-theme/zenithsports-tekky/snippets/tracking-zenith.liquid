@@ -1,0 +1,86 @@
+{% comment %}
+  Zenith Sports — storefront analytics / pixels.
+  Rendered once per page from header-zenith.liquid (which is in the
+  header group, so this loads on every storefront page).
+
+  IDs are entered in the THEME CUSTOMIZER → Header section settings:
+    - clarity_id    : Microsoft Clarity project id   (e.g. abcd1234ef)
+    - ga4_id        : GA4 Measurement id              (e.g. G-XXXXXXXXXX)
+    - meta_pixel_id : Meta (Facebook) Pixel id        (~15-digit number)
+
+  Each block only renders when its id is non-blank, so this snippet is
+  safe to ship before any ids exist (renders nothing).
+
+  NOTE: these are CLIENT-SIDE storefront tags. Shopify checkout lives on
+  a separate (checkout.shopify.com) domain — these tags do NOT see the
+  checkout/purchase step. Purchase-conversion tracking still requires the
+  native Google & YouTube + Meta sales-channel apps (owner/Settings task).
+  This snippet covers storefront PageView + behavior, which is what
+  Clarity heatmaps/recordings + GA4 traffic + Pixel top-of-funnel need.
+{% endcomment %}
+
+{%- comment -%} ---------- Microsoft Clarity ---------- {%- endcomment -%}
+{%- if clarity_id != blank -%}
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", {{ clarity_id | json }});
+</script>
+{%- endif -%}
+
+{%- comment -%} ---------- Google Analytics 4 ---------- {%- endcomment -%}
+{%- if ga4_id != blank -%}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', {{ ga4_id | json }});
+</script>
+{%- endif -%}
+
+{%- comment -%} ---------- BlueJays first-party page-view beacon ----------
+  Always renders (no id needed). Fires one POST per page view to the
+  BlueJays backend so the owner stats page at
+  bluejayportfolio.com/clients/zenith-sports/stats can show per-URL
+  view counts. Sent as text/plain — application/json triggers a CORS
+  preflight that sendBeacon can't perform (Rule 57 beacon transport).
+{%- endcomment -%}
+<script>
+  (function () {
+    try {
+      if (/bot|crawl|spider|slurp|headless|lighthouse|preview/i.test(navigator.userAgent)) return;
+      if (window.Shopify && window.Shopify.designMode) return; /* theme editor */
+      var payload = JSON.stringify({
+        path: location.pathname,
+        referrer: document.referrer || ""
+      });
+      var url = "https://bluejayportfolio.com/api/clients/zenith-sports/track";
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, payload);
+      } else {
+        fetch(url, { method: "POST", body: payload, keepalive: true });
+      }
+    } catch (e) { /* never break the storefront */ }
+  })();
+</script>
+
+{%- comment -%} ---------- Meta (Facebook) Pixel ---------- {%- endcomment -%}
+{%- if meta_pixel_id != blank -%}
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', {{ meta_pixel_id | json }});
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id={{ meta_pixel_id }}&ev=PageView&noscript=1"/></noscript>
+{%- endif -%}

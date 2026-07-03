@@ -1,12 +1,15 @@
 {% comment %}
-  Inquiry / contact form. Uses Shopify's native `contact` form action,
-  which POSTs to Shopify and emails the store's configured "Sender email"
-  (Settings → Notifications → Sender email — defaults to the store owner's
-  email, info@zenithsports.org for Tekky).
+  Inquiry / lead-capture form. Uses Shopify's native `customer` form so
+  every submit creates a DURABLE, tagged Customer (Customers list) with
+  marketing consent — leads can't silently vanish, and each one triggers
+  the Shopify Email welcome flow. Tag base = `contact-inquiry` (+ segment).
 
-  Fields: name, email, phone, audience-segment dropdown, message.
-  No CORS or external backend needed — leads land in Paul's Shopify
-  admin inbox + the connected store-admin email.
+  Detailed / bulk inquiries route to the mailto (info@zenithsports.org) —
+  reliable, opens the visitor's own email client.
+
+  UPGRADE PATH: to store the full free-text message in the admin too,
+  install the Shopify Forms app and swap this section for its block.
+  Native customer forms can store email + name + tags, not a free message.
 {% endcomment %}
 
 <section class="zenith-section zenith-inquiry" id="contact">
@@ -30,54 +33,65 @@
       </div>
 
       <div class="zenith-inquiry__form-wrap">
-        {% form 'contact', class: 'zenith-inquiry__form' %}
-          <label class="zenith-inquiry__field">
-            <span>Your name *</span>
-            <input type="text" name="contact[name]" required autocomplete="name" placeholder="Sarah Williams">
-          </label>
-
-          <label class="zenith-inquiry__field">
-            <span>Email *</span>
-            <input type="email" name="contact[email]" required autocomplete="email" placeholder="sarah@example.com">
-          </label>
-
-          <label class="zenith-inquiry__field">
-            <span>Phone (optional)</span>
-            <input type="tel" name="contact[phone]" autocomplete="tel" placeholder="(555) 123-4567">
-          </label>
-
-          <label class="zenith-inquiry__field">
-            <span>I'm a... (optional)</span>
-            <select name="contact[audience]">
-              <option value="">— pick one —</option>
-              <option value="parent">Parent of a player</option>
-              <option value="coach">Coach / trainer</option>
-              <option value="player">Player</option>
-              <option value="club">Club / academy / camp</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-
-          <label class="zenith-inquiry__field zenith-inquiry__field--full">
-            <span>Message *</span>
-            <textarea name="contact[body]" required rows="5" placeholder="Tell us about your player or what you're looking for…"></textarea>
-          </label>
-
-          <button type="submit" class="zenith-btn zenith-btn--primary zenith-inquiry__submit">
-            {{ section.settings.cta_label | escape }}
-          </button>
+        {% comment %}
+          Customer form = DURABLE lead capture: every submit creates a tagged
+          Customer (Customers list) with marketing consent, so it can't silently
+          vanish AND it triggers the Shopify Email welcome flow. The audience
+          dropdown writes a segment tag. Detailed / bulk questions route to the
+          mailto link below (reliable — opens the visitor's own email client).
+        {% endcomment %}
+        {% form 'customer', class: 'zenith-inquiry__form' %}
+          <input type="hidden" name="contact[accepts_marketing]" value="yes">
 
           {% if form.posted_successfully? %}
-            <p class="zenith-inquiry__success">
-              ✓ {{ section.settings.success_text | escape }}
-            </p>
+            <div class="zenith-inquiry__done" data-form-done>
+              <span class="zenith-inquiry__done-check" aria-hidden="true">&#10003;</span>
+              <div class="zenith-inquiry__done-text">
+                <strong>{{ section.settings.success_text | escape }}</strong>
+                <span>Your message is in — keep an eye on your inbox. Philip and Paul usually reply within one business day.</span>
+              </div>
+            </div>
+          {% else %}
+            <label class="zenith-inquiry__field">
+              <span>Your name</span>
+              <input type="text" name="contact[first_name]" autocomplete="given-name" placeholder="Sarah Williams">
+            </label>
+
+            <label class="zenith-inquiry__field">
+              <span>Email *</span>
+              <input type="email" name="contact[email]" required autocomplete="email" placeholder="sarah@example.com">
+            </label>
+
+            <label class="zenith-inquiry__field zenith-inquiry__field--full">
+              <span>I'm a... (optional)</span>
+              <select name="contact[tags]">
+                <option value="contact-inquiry">General inquiry</option>
+                <option value="contact-inquiry,parent">Parent of a player</option>
+                <option value="contact-inquiry,coach">Coach / trainer</option>
+                <option value="contact-inquiry,player">Player</option>
+                {% if section.settings.show_club_option != false %}
+                  <option value="contact-inquiry,club">Club / academy / camp</option>
+                {% endif %}
+              </select>
+            </label>
+
+            <button type="submit" class="zenith-btn zenith-btn--primary zenith-inquiry__submit">
+              {{ section.settings.cta_label | escape }}
+            </button>
+
+            {%- if form.errors -%}
+              <p class="zenith-inquiry__error">
+                {{ form.errors | default_errors }}
+              </p>
+            {%- endif -%}
           {% endif %}
 
-          {%- if form.errors -%}
-            <p class="zenith-inquiry__error">
-              {{ form.errors | default_errors }}
+          {% if section.settings.show_bulk_line != false %}
+            <p class="zenith-inquiry__reassure" style="margin-top: 1.25rem;">
+              Bulk, club, or a detailed question? Email
+              <a href="mailto:info@zenithsports.org" style="color: var(--zenith-lime); text-decoration: underline;">info@zenithsports.org</a>
             </p>
-          {%- endif -%}
+          {% endif %}
         {% endform %}
       </div>
     </div>
@@ -86,7 +100,7 @@
 
 <style>
   .zenith-inquiry {
-    background: var(--zenith-navy);
+    background: var(--zenith-navy-deep);
     color: #fff;
     padding: 5rem 0;
   }
@@ -100,7 +114,7 @@
   .zenith-inquiry__reassure {
     margin-top: 1.5rem;
     color: var(--zenith-lime);
-    font-size: 11px; font-weight: 700;
+    font-size: 12.5px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.22em;
   }
   .zenith-inquiry__form {
@@ -113,7 +127,7 @@
   }
   .zenith-inquiry__field--full { grid-column: 1 / -1; }
   .zenith-inquiry__field span {
-    font-size: 10px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.22em;
     color: rgba(255,255,255,0.7);
   }
@@ -127,6 +141,16 @@
     font-size: 0.95rem;
     font-family: inherit;
   }
+  .zenith-inquiry__field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ffffff' stroke-opacity='0.6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px 8px;
+    padding-right: 2.5rem;
+  }
+  .zenith-inquiry__field select option { color: #0f172a; background: #fff; }
   .zenith-inquiry__field input::placeholder,
   .zenith-inquiry__field textarea::placeholder { color: rgba(255,255,255,0.35); }
   .zenith-inquiry__field input:focus,
@@ -136,10 +160,42 @@
     border-color: var(--zenith-lime);
     background: rgba(255,255,255,0.1);
   }
-  .zenith-inquiry__submit { grid-column: 1 / -1; justify-self: start; }
-  .zenith-inquiry__success { grid-column: 1 / -1; color: var(--zenith-lime); font-weight: 700; }
+  .zenith-inquiry__submit { grid-column: 1 / -1; justify-self: center; }
   .zenith-inquiry__error { grid-column: 1 / -1; color: #fca5a5; font-size: 0.875rem; }
+  .zenith-inquiry__done {
+    grid-column: 1 / -1;
+    display: flex; align-items: flex-start; gap: 1.1rem;
+    padding: 1.75rem;
+    background: rgba(0,196,154,0.12);
+    border: 2px solid var(--zenith-lime);
+    border-radius: 0.85rem;
+  }
+  .zenith-inquiry__done-check {
+    flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+    background: var(--zenith-lime); color: var(--zenith-navy-deep);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; line-height: 1;
+  }
+  .zenith-inquiry__done-text strong {
+    display: block; font-size: 1.4rem; line-height: 1.25;
+    font-family: var(--zenith-font-display); font-weight: 800; color: #fff;
+  }
+  .zenith-inquiry__done-text span {
+    display: block; margin-top: 0.5rem;
+    color: rgba(255,255,255,0.82); font-size: 1rem; line-height: 1.55;
+  }
 </style>
+
+<script>
+  (function () {
+    var done = document.querySelector('.zenith-inquiry__done');
+    if (done) {
+      requestAnimationFrame(function () {
+        done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+  })();
+</script>
 
 {% schema %}
 {
@@ -152,7 +208,9 @@
     { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Philip and Paul personally read every inquiry — usually a reply within one business day. Tell us about your player, your club, or what you're trying to build with them. We'll come back with one specific recommendation.</p>" },
     { "type": "text", "id": "reassure", "label": "Reassurance line", "default": "Real humans · usually < 1 business day" },
     { "type": "text", "id": "cta_label", "label": "Submit button label", "default": "Send →" },
-    { "type": "text", "id": "success_text", "label": "Success message", "default": "Got it — Philip and Paul will be in touch." }
+    { "type": "text", "id": "success_text", "label": "Success message", "default": "Got it — Philip and Paul will be in touch." },
+    { "type": "checkbox", "id": "show_club_option", "label": "Show 'Club / academy / camp' dropdown option", "default": true },
+    { "type": "checkbox", "id": "show_bulk_line", "label": "Show 'Bulk, club, or detailed question' email line", "default": true }
   ],
   "presets": [{ "name": "Zenith Inquiry Form" }]
 }

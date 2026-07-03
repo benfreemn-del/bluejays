@@ -1,0 +1,19 @@
+{% comment %}
+  zenith-text snippet -- ASCII-safe text renderer for brand strings.
+  Lets settings stay 100% ASCII (paste-safe through any clipboard
+  pipeline) while rendering proper Unicode at template time.
+
+  Usage:
+    {% render 'zenith-text', text: section.settings.cta_label %}
+
+  Tokens recognized in source text (all ASCII-safe to paste):
+    (R)      -> registered trademark symbol
+    (TM)     -> trademark symbol
+    (c)      -> copyright symbol
+    (em)     -> em-dash
+    [stars]  -> five-star unicode block
+    [star]   -> single star
+    [arrow]  -> right arrow
+    [dot]    -> middle dot separator
+{% endcomment %}
+{{- text | escape | replace: '(R)', '&reg;' | replace: '(TM)', '&trade;' | replace: '(c)', '&copy;' | replace: '(em)', '&mdash;' | replace: '[stars]', '&#11088;&#11088;&#11088;&#11088;&#11088;' | replace: '[star]', '&#11088;' | replace: '[ustars]', '&#9733;&#9733;&#9733;&#9733;&#9733;' | replace: '[arrow]', '&rarr;' | replace: '[dot]', '&middot;' -}}

@@ -1,0 +1,172 @@
+{% comment %}
+  FAQ — SEO + AI-bot answer engine.
+
+  Two jobs in one section:
+    1. Visible accordion of keyword-targeted Q&A (no JS — native
+       <details>/<summary>, accessible + crawlable).
+    2. FAQPage JSON-LD emitted from the SAME blocks, so Google rich
+       results + ChatGPT/Perplexity/Gemini answers stay perfectly in
+       sync with what a human reads. (Google requires the FAQ content
+       to be visible on the page for FAQPage rich results — that's why
+       the schema lives in the section, not the global jsonld snippet.)
+
+  Questions are reverse-engineered from real search demand around
+  "tekky ball", "soccer training ball", "smaller ball for skills",
+  "tekky vs futsal", "how to improve first touch", "tekky price".
+  Mount on the homepage only (one canonical FAQ per site).
+{% endcomment %}
+
+<section class="zenith-section zenith-faq" id="faq">
+  <div class="zenith-container zenith-faq__wrap">
+    <div class="zenith-faq__head">
+      {% if section.settings.eyebrow != blank %}
+        <span class="zenith-faq__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      {% endif %}
+      <h2 class="zenith-faq__title">{{ section.settings.heading | escape }}</h2>
+      {% if section.settings.intro != blank %}
+        <div class="zenith-faq__intro">{{ section.settings.intro }}</div>
+      {% endif %}
+    </div>
+
+    <div class="zenith-faq__list">
+      {% for block in section.blocks %}
+        {% if block.type == 'faq' %}
+          <details class="zenith-faq__item" {{ block.shopify_attributes }}{% if forloop.first %} open{% endif %}>
+            <summary class="zenith-faq__q">
+              <span>{{ block.settings.question | escape }}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </summary>
+            <div class="zenith-faq__a">{{ block.settings.answer }}</div>
+          </details>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} ---- FAQPage structured data (mirrors the visible Q&A above) ---- {%- endcomment -%}
+{%- assign faq_count = 0 -%}
+{%- for block in section.blocks -%}{%- if block.type == 'faq' -%}{%- assign faq_count = faq_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+{%- if faq_count > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign i = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'faq' -%}
+        {%- assign i = i | plus: 1 -%}
+        {
+          "@type": "Question",
+          "name": {{ block.settings.question | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ block.settings.answer | strip_html | strip_newlines | json }}
+          }
+        }{% unless i == faq_count %},{% endunless %}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+<style>
+  .zenith-faq { background: radial-gradient(circle at 50% -10%, rgba(0,196,154,0.07), transparent 55%), var(--zenith-navy-deep); padding: 4rem 0; }
+  @media (min-width: 768px) { .zenith-faq { padding: 6rem 0; } }
+  .zenith-faq__wrap { max-width: 52rem; margin: 0 auto; }
+  .zenith-faq__head { text-align: center; margin-bottom: 2.5rem; }
+  .zenith-faq__eyebrow {
+    display: inline-block;
+    font-family: var(--zenith-font-display);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--zenith-lime);
+    margin-bottom: 0.75rem;
+  }
+  .zenith-faq__title {
+    font-family: var(--zenith-font-display);
+    font-size: clamp(1.875rem, 4vw, 3rem);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: 0.005em;
+    color: #fff; margin: 0;
+  }
+  .zenith-faq__intro {
+    color: rgba(255,255,255,0.75);
+    font-size: 1.0625rem; line-height: 1.6;
+    margin-top: 1rem;
+  }
+  .zenith-faq__intro p { margin: 0; }
+  .zenith-faq__list { display: flex; flex-direction: column; gap: 0.85rem; }
+  .zenith-faq__item {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .zenith-faq__item[open] {
+    border-color: rgba(0,196,154,0.4);
+    background: rgba(255,255,255,0.06);
+  }
+  .zenith-faq__q {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; cursor: pointer; list-style: none;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--zenith-font-display);
+    font-size: 1.15rem; font-weight: 600;
+    color: #fff;
+  }
+  .zenith-faq__q::-webkit-details-marker { display: none; }
+  .zenith-faq__q svg {
+    flex-shrink: 0; width: 22px; height: 22px;
+    color: var(--zenith-lime);
+    transition: transform 0.25s ease;
+  }
+  .zenith-faq__item[open] .zenith-faq__q svg { transform: rotate(45deg); }
+  .zenith-faq__item[open] .zenith-faq__q { padding-bottom: 0.9rem; }
+  .zenith-faq__a {
+    margin: 0 1.5rem;
+    padding: 1rem 0 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.88);
+    font-size: 1.0625rem; line-height: 1.8;
+    letter-spacing: 0.005em;
+  }
+  .zenith-faq__a p { margin: 0 0 0.9rem; }
+  .zenith-faq__a p:last-child { margin: 0; }
+  .zenith-faq__a a { color: var(--zenith-lime); text-decoration: underline; }
+  @media (max-width: 600px) {
+    .zenith-faq__q { font-size: 1.05rem; padding: 1.1rem 1.15rem; }
+    .zenith-faq__item[open] .zenith-faq__q { padding-bottom: 0.8rem; }
+    .zenith-faq__a { margin: 0 1.15rem; padding: 0.85rem 0 1.3rem; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Zenith FAQ",
+  "tag": "section",
+  "class": "zenith-faq-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Questions, answered" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "TEKKY™ training ball — FAQ" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Everything parents and coaches ask before training with a smaller ball.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Q&A",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Zenith FAQ", "blocks": [] }]
+}
+{% endschema %}

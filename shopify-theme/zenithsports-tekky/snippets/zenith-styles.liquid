@@ -1,27 +1,47 @@
 {% comment %}
-  Zenith Sports / TEKKY brand styles — inject into theme.liquid by adding
+  Zenith Sports / TEKKY brand styles -- inject into theme.liquid by adding
   `{% render 'zenith-styles' %}` just before </head>.
 
   Single source of truth for brand colors, typography, and reusable utility
   classes. Matches the Next.js site at /clients/zenith-sports.
 {% endcomment %}
 
+{%- comment -%}
+  SEO fallbacks (2026-06-12). The store's homepage meta description + social
+  share image were never set in Online Store > Preferences, so the base theme
+  emits no meta description / og:image / og:description on the homepage.
+  These fill the gap ONLY when Shopify's own value is blank and only on the
+  homepage — if Paul later sets Preferences, page_description stops being
+  blank and this block steps aside automatically.
+{%- endcomment -%}
+{%- if page_description == blank and template.name == 'index' -%}
+  {%- assign zenith_seo_desc = 'The TEKKY™ — patent-pending training ball, smaller than regulation with full FIFA-5 weight. Train 15 min a day and watch the match ball feel slow. Free 22-drill library.' -%}
+  <meta name="description" content="{{ zenith_seo_desc | escape }}">
+  <meta property="og:description" content="{{ zenith_seo_desc | escape }}">
+  <meta property="og:image" content="https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg">
+{%- endif -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap">
+
 <style>
   :root {
-    /* TEKKY brand palette — match bluejays/src/app/clients/zenith-sports */
+    /* TEKKY brand palette -- match bluejays/src/app/clients/zenith-sports */
     --zenith-navy:        #0a1832;
     --zenith-navy-deep:   #050d1f;
     --zenith-navy-ink:    #0f172a;
     --zenith-ivory:       #f5f3ee;
     --zenith-ivory-soft:  #ebe7dd;
     --zenith-electric:    #1d4ed8;
-    --zenith-lime:        #a3e635;
+    --zenith-lime:        #00c49a;
     --zenith-amber:       #f59e0b;
     --zenith-ink:         #0f172a;
     --zenith-ink-soft:    #475569;
 
-    --zenith-font-display: 'Inter', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+    --zenith-font-display: 'Oswald', 'Inter', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
     --zenith-font-body:    'Inter', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+    --zenith-lime-deep:    #00936f;
   }
 
   /* Reset Dawn's default heading/body fonts on Zenith sections only so we
@@ -30,6 +50,39 @@
     font-family: var(--zenith-font-body);
     color: var(--zenith-ink);
   }
+
+  /* All section headings use the athletic display font (Oswald). Some
+     section-specific titles previously inherited the body font by accident;
+     this guarantees consistent display type across every heading. */
+  .zenith-section h1, .zenith-section h2, .zenith-section h3, .zenith-section h4,
+  .zenith-tg h1, .zenith-tg h2, .zenith-tg h3 {
+    font-family: var(--zenith-font-display);
+    letter-spacing: 0.005em;
+  }
+
+  /* Hide leftover Dawn announcement strips -- premium DTC skips them.
+     NOTE: do NOT hide .zenith-marquee-section here -- the sub-page templates
+     (training-guide / camps / build-your-player) intentionally compose a
+     marquee-zenith promo bar. Hiding the class blanked all three. */
+  .shopify-section--announcement-bar,
+  section[class*="announcement-bar"],
+  .announcement-bar,
+  .utility-bar {
+    display: none !important;
+  }
+
+  /* Hide Dawn's empty collection banner (the big gray block) -- Zenith
+     collections have no banner image set, so it renders as dead grey space. */
+  .shopify-section--collection-banner,
+  .collection-banner {
+    display: none !important;
+  }
+  /* Give the bare collection/product/cart pages a touch of brand breathing room */
+  .shopify-section--main-collection-product-grid,
+  .collection { padding-top: 1.5rem; }
+
+  html { scroll-behavior: smooth; }
+  #contact { scroll-margin-top: 90px; }
 
   .zenith-section--dark {
     background: var(--zenith-navy);
@@ -41,12 +94,12 @@
     color: var(--zenith-ink);
   }
 
-  /* ── Typography utilities ── */
+  /* == Typography utilities == */
   .zenith-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.32em;
@@ -59,7 +112,7 @@
     height: 1px;
     background: currentColor;
   }
-  .zenith-eyebrow--electric { color: var(--zenith-electric); }
+  .zenith-eyebrow--electric { color: var(--zenith-navy); }
 
   .zenith-h1 {
     font-family: var(--zenith-font-display);
@@ -88,13 +141,13 @@
     margin: 0;
   }
   .zenith-body {
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.65;
     color: var(--zenith-ink-soft);
   }
-  .zenith-section--dark .zenith-body { color: rgba(255,255,255,0.8); }
+  .zenith-section--dark .zenith-body { color: rgba(255,255,255,0.85); }
 
-  /* ── Buttons ── */
+  /* == Buttons == */
   .zenith-btn {
     display: inline-flex;
     align-items: center;
@@ -106,15 +159,21 @@
     letter-spacing: 0.2em;
     text-decoration: none;
     border: 2px solid transparent;
-    transition: all 0.18s ease;
+    border-radius: 0.85rem;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
     cursor: pointer;
+    will-change: transform;
   }
+  .zenith-btn:active { transform: translateY(0); }
   .zenith-btn--primary {
     background: var(--zenith-lime);
     color: var(--zenith-navy-deep);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.05);
   }
   .zenith-btn--primary:hover {
-    background: #fff;
+    background: #2fe3b6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,196,154,0.45), 0 2px 0 rgba(0,0,0,0.05);
   }
   .zenith-btn--dark {
     background: var(--zenith-navy);
@@ -122,6 +181,8 @@
   }
   .zenith-btn--dark:hover {
     background: var(--zenith-electric);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(29,78,216,0.4);
   }
   .zenith-btn--ghost {
     background: transparent;
@@ -130,6 +191,8 @@
   }
   .zenith-btn--ghost:hover {
     background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.7);
+    transform: translateY(-2px);
   }
   .zenith-btn--secondary-link {
     display: inline-block;
@@ -146,7 +209,7 @@
     color: var(--zenith-lime);
   }
 
-  /* ── Layout helpers ── */
+  /* == Layout helpers == */
   .zenith-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -159,16 +222,19 @@
 
   .zenith-stack > * + * { margin-top: 1.5rem; }
 
-  /* ── Hero ── */
+  /* == Hero == */
   .zenith-hero {
     position: relative;
     overflow: hidden;
     background: var(--zenith-navy);
     color: #fff;
-    padding: 5rem 0 6rem;
+    padding: 4rem 0 4.5rem;
   }
   @media (min-width: 768px) {
-    .zenith-hero { padding: 6rem 0 8rem; }
+    .zenith-hero { padding: 5rem 0 6rem; }
+  }
+  @media (min-width: 1024px) {
+    .zenith-hero { padding: 5.5rem 0 7rem; }
   }
   .zenith-hero__bg {
     position: absolute;
@@ -186,6 +252,82 @@
     inset: 0;
     background: linear-gradient(105deg, rgba(10,24,50,0.92) 0%, rgba(10,24,50,0.7) 50%, rgba(10,24,50,0.55) 100%);
   }
+  .zenith-hero__bg--video { z-index: 0; }
+  .zenith-hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.05) contrast(1.04);
+    opacity: 0;
+    transition: opacity 0.9s ease;
+  }
+  .zenith-hero__video.is-active { opacity: 1; }
+
+  /* == Video gallery ("TEKKY in action") == */
+  .zenith-videos { padding: 5rem 0 5.5rem; }
+  @media (min-width: 1024px) { .zenith-videos { padding: 7rem 0; } }
+  .zenith-videos__head { max-width: 46rem; }
+  .zenith-videos__grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2.75rem;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  @media (min-width: 640px) {
+    .zenith-videos__grid--2,
+    .zenith-videos__grid--3,
+    .zenith-videos__grid--4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .zenith-videos__grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .zenith-videos__grid--4 { grid-template-columns: repeat(4, 1fr); }
+  }
+  .zenith-videos__tile { margin: 0; }
+  .zenith-videos__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: #0a1832;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  .zenith-videos__video,
+  .zenith-videos__frame > video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+  }
+  .zenith-videos__play {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: rgba(15,23,42,0.7);
+    color: var(--zenith-lime);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .zenith-videos__frame:hover .zenith-videos__play { opacity: 0; transform: scale(0.9); }
+  .zenith-videos__label {
+    margin-top: 0.75rem;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.8);
+  }
   .zenith-hero__inner {
     position: relative;
     z-index: 2;
@@ -193,37 +335,75 @@
   }
   .zenith-hero__highlight { color: var(--zenith-lime); }
 
-  /* ── Trust strip (under hero CTAs) ── */
+  /* Bigger, rounder hero CTA */
+  .zenith-hero .zenith-btn--primary {
+    padding: 1.25rem 2.5rem;
+    font-size: 15px;
+    border-radius: 1rem;
+  }
+  @media (min-width: 768px) {
+    .zenith-hero .zenith-btn--primary { padding: 1.45rem 3rem; font-size: 16.5px; }
+  }
+  .zenith-hero .zenith-btn--secondary-link { font-size: 14px; }
+  @media (max-width: 640px) {
+    .zenith-hero__cta-row .zenith-btn--secondary-link {
+      display: block; width: 100%; text-align: center; margin-top: 0.25rem;
+    }
+    .zenith-hero .zenith-h1 { line-height: 1.05; }
+  }
+
+  /* == Trust strip (under hero CTAs) == */
   .zenith-trust-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 1.5rem 2.25rem;
     align-items: center;
-    margin-top: 2.5rem;
-    font-size: 11px;
+    margin-top: 2.75rem;
+    font-size: 15px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.9);
+  }
+  @media (min-width: 768px) {
+    .zenith-trust-row { font-size: 16px; }
   }
   .zenith-trust-row__item {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
   }
+  .zenith-trust-row__item--stars {
+    color: #fff;
+    letter-spacing: 0.16em;
+  }
+  .zenith-trust-row__dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .zenith-trust-row__dot--lime { background: var(--zenith-lime); }
+  .zenith-trust-row__dot--electric { background: var(--zenith-electric); }
+  .zenith-trust-row__dot--amber { background: var(--zenith-amber); }
 
-  /* ── Founders ── */
+  /* == Founders == */
   .zenith-founders {
-    background: var(--zenith-ivory);
-    padding: 5rem 0;
+    background: linear-gradient(180deg, var(--zenith-ivory) 0%, var(--zenith-ivory-soft) 100%);
+    padding: 3.5rem 0;
   }
   @media (min-width: 768px) {
-    .zenith-founders { padding: 8rem 0; }
+    .zenith-founders { padding: 5.5rem 0; }
+  }
+  @media (min-width: 1024px) {
+    .zenith-founders { padding: 6rem 0; }
   }
   .zenith-founders__grid {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
     margin-top: 3rem;
+    align-items: stretch;
   }
   @media (min-width: 768px) {
     .zenith-founders__grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
@@ -233,49 +413,61 @@
     border: 1px solid #e2e8f0;
     overflow: hidden;
     transition: border-color 0.2s;
+    display: flex;
+    flex-direction: column;
   }
   .zenith-founder-card:hover {
     border-color: rgba(29,78,216,0.4);
   }
   .zenith-founder-card__photo {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
     background: var(--zenith-ivory-soft);
     overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .zenith-founder-card__photo { aspect-ratio: 1 / 1; }
   }
   .zenith-founder-card__photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
+    object-position: center top;
+    display: block;
   }
   .zenith-founder-card__body {
-    padding: 2rem;
+    padding: 2rem 2rem 2.25rem;
   }
   .zenith-founder-card__name {
     font-family: var(--zenith-font-display);
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.01em;
-    font-size: 1.75rem;
+    font-size: 2rem;
     color: var(--zenith-navy-ink);
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.35rem;
+  }
+  @media (min-width: 1024px) {
+    .zenith-founder-card__name { font-size: 2.25rem; }
   }
   .zenith-founder-card__role {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: var(--zenith-electric);
+    color: var(--zenith-navy);
   }
   .zenith-founder-card__quote {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--zenith-ink-soft);
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--zenith-ink);
     font-style: italic;
   }
+  @media (min-width: 1024px) {
+    .zenith-founder-card__quote { font-size: 1.125rem; }
+  }
 
-  /* ── Footer ── */
+  /* == Footer == */
   .zenith-footer {
     background: var(--zenith-navy-deep);
     color: rgba(255,255,255,0.75);
@@ -304,10 +496,10 @@
     color: var(--zenith-lime);
   }
   .zenith-footer__heading {
-    font-size: 10px;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     color: var(--zenith-lime);
     margin-bottom: 1.25rem;
   }
@@ -318,26 +510,24 @@
   }
   .zenith-footer__list li + li { margin-top: 0.75rem; }
   .zenith-footer__list a {
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.78);
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
     transition: color 0.18s;
   }
   .zenith-footer__list a:hover { color: #fff; }
   .zenith-footer__bottom {
-    margin-top: 4rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 1.5rem;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.55);
   }
   .zenith-footer__bottom a {
     color: rgba(255,255,255,0.7);

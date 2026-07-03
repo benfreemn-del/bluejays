@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "build-your-player-zenith": {
+      "type": "build-your-player-zenith"
+    }
+  },
+  "order": [
+    "build-your-player-zenith"
+  ]
+}

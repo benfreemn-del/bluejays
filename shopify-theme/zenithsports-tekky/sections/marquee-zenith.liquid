@@ -5,44 +5,56 @@
 
 <div class="zenith-marquee" role="region" aria-label="Promotions">
   <div class="zenith-marquee__track">
+    {%- assign zm_parts = section.settings.text | split: '·' -%}
     {% for i in (1..6) %}
-      <span class="zenith-marquee__item">{{ section.settings.text | escape }}</span>
-      <span class="zenith-marquee__sep">·</span>
+      {%- for p in zm_parts -%}
+        {%- assign zm_pt = p | strip -%}
+        {%- if zm_pt != blank -%}
+          <span class="zenith-marquee__item">{{ zm_pt | escape }}</span>
+          <span class="zenith-marquee__sep" aria-hidden="true">·</span>
+        {%- endif -%}
+      {%- endfor -%}
     {% endfor %}
   </div>
 </div>
 
 <style>
+  /* Pin the promo bar to the very top; the header sticks right below it. */
+  .zenith-marquee-section {
+    position: sticky;
+    top: 0;
+    z-index: 51;
+  }
   .zenith-marquee {
     overflow: hidden;
     background: var(--zenith-navy-deep);
     color: var(--zenith-lime);
     border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding: 0.5rem 0;
+    height: 48px;            /* fixed — header offset is hardcoded to match (no gap) */
+    box-sizing: border-box;
   }
   .zenith-marquee__track {
     display: flex;
     gap: 1.5rem;
+    align-items: center;
+    height: 100%;
     white-space: nowrap;
-    animation: zenith-marquee 42s linear infinite;
+    animation: zenith-marquee 21s linear infinite;
     will-change: transform;
   }
   .zenith-marquee:hover .zenith-marquee__track { animation-play-state: paused; }
   .zenith-marquee__item {
     flex-shrink: 0;
-    padding: 0 1.5rem;
-    font-size: 11px;
+    padding: 0;
+    font-size: 14px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
   }
   .zenith-marquee__sep { color: rgba(255,255,255,0.4); }
   @keyframes zenith-marquee {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .zenith-marquee__track { animation: none; }
   }
 </style>
 
@@ -56,7 +68,7 @@
       "type": "text",
       "id": "text",
       "label": "Marquee text (repeats across the bar)",
-      "default": "TEKKY® GRIP SOCKS — 30% OFF · BUY 2 SHIRTS FOR $30 · FREE COACHING DRILLS · DISCOUNTS APPLIED AT CHECKOUT"
+      "default": "TEKKY™ GRIP SOCKS — $15, OR 2 FOR $25 · BUY 2 SHIRTS FOR $30 · FREE COACHING DRILLS · DISCOUNTS APPLIED AT CHECKOUT"
     }
   ],
   "presets": [{ "name": "Zenith Marquee" }]

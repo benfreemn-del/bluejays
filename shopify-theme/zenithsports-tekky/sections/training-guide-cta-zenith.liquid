@@ -10,7 +10,7 @@
   inquire route. Current default is Shopify-native (simpler).
 {% endcomment %}
 
-<section class="zenith-section zenith-tgcta">
+<section class="zenith-section zenith-tgcta" id="get-the-guide">
   <div class="zenith-container">
     <div class="zenith-tgcta__card">
       <div class="zenith-tgcta__copy">
@@ -21,50 +21,61 @@
           {{ section.settings.heading | escape }}
         </h2>
         {% if section.settings.body != blank %}
-          <p class="zenith-body" style="margin-top: 1.25rem; max-width: 36rem;">{{ section.settings.body }}</p>
+          <div class="zenith-body" style="margin-top: 1.25rem; max-width: 36rem;">{{ section.settings.body }}</div>
         {% endif %}
 
         {% form 'customer', class: 'zenith-tgcta__form' %}
           <input type="hidden" name="contact[tags]" value="training-guide-lead">
           <input type="hidden" name="contact[accepts_marketing]" value="yes">
 
-          <label class="zenith-tgcta__field">
-            <span class="zenith-tgcta__field-label">Your email</span>
-            <input
-              type="email"
-              name="contact[email]"
-              required
-              placeholder="coach@example.com"
-              autocomplete="email"
-            >
-          </label>
-
-          <button type="submit" class="zenith-btn zenith-btn--primary">
-            {{ section.settings.cta_label | escape }}
-          </button>
-
           {% if form.posted_successfully? %}
-            <p class="zenith-tgcta__success">
-              ✓ {{ section.settings.success_text | escape }}
-              {% if section.settings.success_link != blank %}
-                <a href="{{ section.settings.success_link }}">Open it now →</a>
-              {% endif %}
-            </p>
+            <div class="zenith-tgcta__done" data-form-done>
+              <span class="zenith-tgcta__done-check" aria-hidden="true">&#10003;</span>
+              <div class="zenith-tgcta__done-text">
+                <strong>{{ section.settings.success_text | escape }}</strong>
+                {% if section.settings.success_link != blank %}
+                  <a class="zenith-btn zenith-btn--primary zenith-tgcta__done-btn" href="{{ section.settings.success_link }}">Open your plan →</a>
+                {% endif %}
+              </div>
+            </div>
+          {% else %}
+            <label class="zenith-tgcta__field">
+              <span class="zenith-tgcta__field-label">Your email</span>
+              <input
+                type="email"
+                name="contact[email]"
+                required
+                placeholder="coach@example.com"
+                autocomplete="email"
+              >
+            </label>
+
+            <button type="submit" class="zenith-btn zenith-btn--primary">
+              {{ section.settings.cta_label | escape }}
+            </button>
+
+            {%- if form.errors -%}
+              <p class="zenith-tgcta__error">
+                {{ form.errors | default_errors }}
+              </p>
+            {%- endif -%}
+
+            <p class="zenith-tgcta__fine">No spam. We email when there's actually something worth your time.</p>
           {% endif %}
-
-          {%- if form.errors -%}
-            <p class="zenith-tgcta__error">
-              {{ form.errors | default_errors }}
-            </p>
-          {%- endif -%}
         {% endform %}
-
-        <p class="zenith-tgcta__fine">No spam. We email when there's actually something worth your time.</p>
       </div>
 
-      {% if section.settings.photo %}
+      {% if section.settings.feature_video_url != blank %}
+        <div class="zenith-tgcta__photo zenith-tgcta__photo--video" data-tgcta-video>
+          <video
+            autoplay muted loop playsinline preload="none"
+            {% if section.settings.photo_url != blank %}poster="{{ section.settings.photo_url }}"{% endif %}
+            data-src="{{ section.settings.feature_video_url }}"
+          ></video>
+        </div>
+      {% elsif section.settings.photo_url != blank %}
         <div class="zenith-tgcta__photo">
-          <img src="{{ section.settings.photo | image_url: width: 1200 }}" alt="" loading="lazy">
+          <img src="{{ section.settings.photo_url }}" alt="" loading="lazy">
         </div>
       {% endif %}
     </div>
@@ -72,7 +83,7 @@
 </section>
 
 <style>
-  .zenith-tgcta { background: var(--zenith-ivory); padding: 4rem 0; }
+  .zenith-tgcta { background: var(--zenith-ivory); padding: 4rem 0; scroll-margin-top: 120px; }
   @media (min-width: 768px) { .zenith-tgcta { padding: 6rem 0; } }
   .zenith-tgcta__card {
     background: #fff;
@@ -91,7 +102,7 @@
     padding: 0.35rem 0.75rem;
     background: var(--zenith-lime);
     color: var(--zenith-navy-deep);
-    font-size: 10px; font-weight: 900;
+    font-size: 12px; font-weight: 900;
     text-transform: uppercase; letter-spacing: 0.22em;
   }
   .zenith-tgcta__form {
@@ -99,9 +110,13 @@
     display: flex; gap: 0.75rem; flex-wrap: wrap;
     align-items: stretch;
   }
+  @media (max-width: 520px) {
+    .zenith-tgcta__form { flex-direction: column; }
+    .zenith-tgcta__field { min-width: auto; }
+  }
   .zenith-tgcta__field { flex: 1; min-width: 220px; display: flex; flex-direction: column; }
   .zenith-tgcta__field-label {
-    font-size: 10px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.22em;
     color: var(--zenith-ink-soft);
     margin-bottom: 0.4rem;
@@ -116,12 +131,25 @@
   .zenith-tgcta__form input[type="email"]:focus {
     outline: none; border-color: var(--zenith-lime);
   }
-  .zenith-tgcta__success {
+  .zenith-tgcta__done {
     flex-basis: 100%;
-    margin-top: 0.75rem;
-    color: #16a34a;
-    font-weight: 700;
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.4rem 1.6rem;
+    background: rgba(22,163,74,0.10);
+    border: 2px solid #16a34a;
+    border-radius: 0.85rem;
   }
+  .zenith-tgcta__done-check {
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+    background: #16a34a; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900; line-height: 1;
+  }
+  .zenith-tgcta__done-text strong {
+    display: block; font-size: 1.3rem; line-height: 1.25;
+    font-family: var(--zenith-font-display); font-weight: 800; color: #14532d;
+  }
+  .zenith-tgcta__done-btn { margin-top: 1rem; }
   .zenith-tgcta__error {
     flex-basis: 100%;
     margin-top: 0.75rem;
@@ -134,23 +162,57 @@
     color: var(--zenith-ink-soft);
   }
   .zenith-tgcta__photo { background: var(--zenith-ivory-soft); }
-  .zenith-tgcta__photo img { width: 100%; height: 100%; object-fit: cover; }
+  .zenith-tgcta__photo img,
+  .zenith-tgcta__photo--video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 899px) { .zenith-tgcta__photo--video video { aspect-ratio: 16 / 10; } }
 </style>
+
+<script>
+  (function () {
+    var done = document.querySelector('.zenith-tgcta__done');
+    if (done) {
+      requestAnimationFrame(function () {
+        done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    // Lazy-load the side video: nothing downloads until the section is near
+    // the viewport. Pauses when scrolled away. Skips entirely on data-saver
+    // / reduced-motion (the poster image stays).
+    var wrap = document.querySelector('[data-tgcta-video]');
+    if (!wrap) return;
+    var v = wrap.querySelector('video');
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (saveData || reduce) return;
+    function load() { if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src); }
+    function play() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { load(); play(); } else { v.pause(); }
+        });
+      }, { rootMargin: '200px 0px' });
+      io.observe(wrap);
+    } else { load(); play(); }
+  })();
+</script>
 
 {% schema %}
 {
-  "name": "Zenith Training Guide CTA",
+  "name": "Zenith TG CTA",
   "tag": "section",
   "class": "zenith-tgcta-section",
   "settings": [
     { "type": "text", "id": "badge", "label": "Badge", "default": "Free training plan" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Get the TEKKY® training plan." },
-    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>26 drills + the 4-week starter plan. The European-style technical curriculum used at ECNL and MLS Next clubs — opens in your browser, prints to PDF, or save it for later.</p>" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get the TEKKY™ training plan." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>The full 22-drill library + the 4-week starter plan, in one coaching PDF — the European-style technical curriculum used at ECNL and MLS Next clubs. Opens in your browser, prints, or save it for later.</p>" },
     { "type": "text", "id": "cta_label", "label": "Submit button label", "default": "Send me the plan" },
     { "type": "text", "id": "success_text", "label": "Success message", "default": "Plan is ready." },
-    { "type": "url", "id": "success_link", "label": "Optional link to open after submit (e.g., /pages/training-guide)" },
-    { "type": "image_picker", "id": "photo", "label": "Side photo (optional)" }
+    { "type": "text", "id": "success_link", "label": "Optional link to open after submit (e.g., /pages/training-guide)" },
+    { "type": "text", "id": "feature_video_url", "label": "Side VIDEO URL (mp4) -- muted loop, replaces the photo", "info": "Paste a Shopify-hosted video URL (cdn.shopify.com/videos/...). The photo below is used as the poster." },
+    { "type": "text", "id": "photo_url", "label": "Side photo URL (also used as the video poster)", "default": "https://zenithsports.org/cdn/shop/files/c2.jpg" }
   ],
-  "presets": [{ "name": "Zenith Training Guide CTA" }]
+  "presets": [{ "name": "Zenith TG CTA" }]
 }
 {% endschema %}

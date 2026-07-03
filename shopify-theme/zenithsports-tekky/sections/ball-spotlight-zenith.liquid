@@ -6,24 +6,48 @@
 <section class="zenith-section zenith-spotlight">
   <div class="zenith-container">
     <div class="zenith-spotlight__grid">
-      <div class="zenith-spotlight__photo">
-        {% if section.settings.photo %}
-          <img
-            src="{{ section.settings.photo | image_url: width: 1400 }}"
-            alt="{{ section.settings.heading | escape }}"
-            loading="lazy"
-            width="1400"
-            height="1400"
-          >
+      <div class="zenith-spotlight__media">
+        {% if section.settings.photo_url != blank %}
+          <div class="zenith-spotlight__photo zenith-spotlight__photo--main" data-spotlight-zoom>
+            <img
+              src="{{ section.settings.photo_url }}"
+              alt="{{ section.settings.heading | escape }}"
+              data-spotlight-main
+              loading="lazy"
+            >
+            <span class="zenith-spotlight__zoom-hint" aria-hidden="true"></span>
+          </div>
         {% endif %}
+        <div class="zenith-spotlight__thumbs">
+          {% if section.settings.photo_url != blank %}
+            <button type="button" class="zenith-spotlight__thumb is-active" data-spotlight-thumb data-src="{{ section.settings.photo_url }}" aria-label="View main photo">
+              <img src="{{ section.settings.photo_url }}" alt="TEKKY view 1" loading="lazy">
+            </button>
+          {% endif %}
+          {% if section.settings.photo_url_2 != blank %}
+            <button type="button" class="zenith-spotlight__thumb" data-spotlight-thumb data-src="{{ section.settings.photo_url_2 }}" aria-label="View photo 2">
+              <img src="{{ section.settings.photo_url_2 }}" alt="TEKKY view 2" loading="lazy">
+            </button>
+          {% endif %}
+          {% if section.settings.photo_url_3 != blank %}
+            <button type="button" class="zenith-spotlight__thumb" data-spotlight-thumb data-src="{{ section.settings.photo_url_3 }}" aria-label="View photo 3">
+              <img src="{{ section.settings.photo_url_3 }}" alt="TEKKY view 3" loading="lazy">
+            </button>
+          {% endif %}
+          {% if section.settings.photo_url_4 != blank %}
+            <button type="button" class="zenith-spotlight__thumb" data-spotlight-thumb data-src="{{ section.settings.photo_url_4 }}" aria-label="View photo 4">
+              <img src="{{ section.settings.photo_url_4 }}" alt="TEKKY view 4" loading="lazy">
+            </button>
+          {% endif %}
+        </div>
       </div>
 
       <div class="zenith-spotlight__copy">
         {% if section.settings.eyebrow != blank %}
-          <p class="zenith-eyebrow zenith-eyebrow--electric">{{ section.settings.eyebrow | escape }}</p>
+          <p class="zenith-eyebrow zenith-eyebrow--electric">{% render 'zenith-text', text: section.settings.eyebrow %}</p>
         {% endif %}
         <h2 class="zenith-h2" style="margin-top: 1.25rem; color: var(--zenith-navy-ink);">
-          {{ section.settings.heading | escape }}
+          {% render 'zenith-text', text: section.settings.heading %}
         </h2>
         {% if section.settings.intro != blank %}
           <div class="zenith-body" style="margin-top: 1.5rem;">
@@ -35,8 +59,8 @@
           {% for block in section.blocks %}
             {% if block.type == 'bullet' %}
               <li {{ block.shopify_attributes }}>
-                <span class="zenith-spotlight__check" aria-hidden="true">✓</span>
-                {{ block.settings.text | escape }}
+                <span class="zenith-spotlight__check" aria-hidden="true">&#10003;</span>
+                {% render 'zenith-text', text: block.settings.text %}
               </li>
             {% endif %}
           {% endfor %}
@@ -47,11 +71,11 @@
             href="{{ section.settings.cta_url | default: '/cart/45347164389551:1' }}"
             class="zenith-btn zenith-btn--dark"
           >
-            {{ section.settings.cta_label | escape }}
+            {% render 'zenith-text', text: section.settings.cta_label %}
           </a>
           {% if section.settings.price_note != blank %}
             <span style="font-size: 12px; color: var(--zenith-ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">
-              {{ section.settings.price_note | escape }}
+              {% render 'zenith-text', text: section.settings.price_note %}
             </span>
           {% endif %}
         </div>
@@ -62,41 +86,144 @@
 
 <style>
   .zenith-spotlight {
-    background: var(--zenith-ivory);
-    padding: 5rem 0;
+    background: linear-gradient(180deg, var(--zenith-ivory) 0%, var(--zenith-ivory-soft) 100%);
+    padding: 1.75rem 0 3rem;
   }
-  @media (min-width: 768px) { .zenith-spotlight { padding: 8rem 0; } }
+  @media (min-width: 768px) { .zenith-spotlight { padding: 4.5rem 0; } }
+  @media (min-width: 1024px) { .zenith-spotlight { padding: 5rem 0; } }
   .zenith-spotlight__grid {
     display: grid;
-    gap: 3rem;
+    gap: 2.5rem;
     align-items: center;
   }
   @media (min-width: 1024px) {
-    .zenith-spotlight__grid { grid-template-columns: 5fr 6fr; gap: 4rem; }
+    .zenith-spotlight__grid { grid-template-columns: 5fr 6fr; gap: 3.5rem; }
   }
+  .zenith-spotlight__media { display: flex; flex-direction: column; gap: 0.65rem; }
   .zenith-spotlight__photo {
     aspect-ratio: 1 / 1;
     background: #fff;
     overflow: hidden;
+    border-radius: 0.75rem;
+  }
+  .zenith-spotlight__photo--main {
+    position: relative;
+    border: 1px solid rgba(15,23,42,0.10);
+    box-shadow: 0 24px 50px -24px rgba(10,24,50,0.45);
+    cursor: zoom-in;
   }
   .zenith-spotlight__photo img {
     width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.15s ease-out;
+    transform-origin: center center;
+  }
+  .zenith-spotlight__zoom-hint {
+    position: absolute; bottom: 0.85rem; right: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    background: rgba(10,24,50,0.85);
+    color: #fff;
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    border-radius: 999px;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .zenith-spotlight__zoom-hint::after { content: "Hover to zoom"; }
+  @media (hover: none), (max-width: 768px) {
+    .zenith-spotlight__zoom-hint { display: none; }
+  }
+  /* Stop iOS's long-press Save/Copy/Share callout + image drag on the gallery */
+  .zenith-spotlight img {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  .zenith-spotlight__photo--main:hover .zenith-spotlight__zoom-hint,
+  .zenith-spotlight__photo--main.is-zooming .zenith-spotlight__zoom-hint { opacity: 0; }
+  .zenith-spotlight__thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+  }
+  @media (max-width: 600px) {
+    .zenith-spotlight__thumbs { grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+  }
+  .zenith-spotlight__thumb {
+    aspect-ratio: 1 / 1;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 2px solid rgba(15,23,42,0.10);
+    padding: 0;
+    cursor: pointer;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .zenith-spotlight__thumb:hover { transform: translateY(-2px); border-color: rgba(10,24,50,0.4); }
+  .zenith-spotlight__thumb.is-active { border-color: var(--zenith-lime); }
+  .zenith-spotlight__thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
   .zenith-spotlight__bullets {
     list-style: none; padding: 0; margin: 2rem 0 0;
-    display: flex; flex-direction: column; gap: 0.65rem;
+    display: flex; flex-direction: column; gap: 0.7rem;
   }
   .zenith-spotlight__bullets li {
     display: flex; align-items: flex-start; gap: 0.75rem;
-    font-size: 0.95rem; color: var(--zenith-navy-ink);
+    font-size: 1rem; color: var(--zenith-navy-ink);
   }
   .zenith-spotlight__check {
-    flex-shrink: 0; width: 20px; height: 20px;
-    border-radius: 50%; background: var(--zenith-electric); color: #fff;
+    flex-shrink: 0; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--zenith-navy); color: var(--zenith-lime);
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 900;
+    font-size: 12px; font-weight: 900;
+    margin-top: 1px;
   }
 </style>
+
+<script>
+  (function () {
+    var root = document.querySelector('.zenith-spotlight');
+    if (!root) return;
+    var main = root.querySelector('[data-spotlight-main]');
+    var zoomBox = root.querySelector('[data-spotlight-zoom]');
+
+    // Click a thumbnail -> swap it into the main image
+    root.querySelectorAll('[data-spotlight-thumb]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var src = btn.getAttribute('data-src');
+        if (main && src) { main.src = src; }
+        root.querySelectorAll('[data-spotlight-thumb]').forEach(function (b) {
+          b.classList.toggle('is-active', b === btn);
+        });
+      });
+    });
+
+    // Magnify the main image, following cursor (desktop) or finger (mobile)
+    if (zoomBox && main) {
+      var box = root.querySelector('.zenith-spotlight__photo--main');
+      function zoomTo(clientX, clientY) {
+        var r = zoomBox.getBoundingClientRect();
+        var x = Math.max(0, Math.min(100, ((clientX - r.left) / r.width) * 100));
+        var y = Math.max(0, Math.min(100, ((clientY - r.top) / r.height) * 100));
+        main.style.transformOrigin = x + '% ' + y + '%';
+        main.style.transform = 'scale(2.4)';
+        if (box) box.classList.add('is-zooming');
+      }
+      function resetZoom() {
+        main.style.transform = 'scale(1)';
+        main.style.transformOrigin = 'center center';
+        if (box) box.classList.remove('is-zooming');
+      }
+
+      // Desktop only: hover to zoom (follows the cursor). No zoom on touch devices —
+      // mobile is plain images; users switch views with the thumbnails.
+      zoomBox.addEventListener('mousemove', function (e) { zoomTo(e.clientX, e.clientY); });
+      zoomBox.addEventListener('mouseleave', resetZoom);
+    }
+  })();
+</script>
 
 {% schema %}
 {
@@ -104,13 +231,16 @@
   "tag": "section",
   "class": "zenith-spotlight-section",
   "settings": [
-    { "type": "image_picker", "id": "photo", "label": "Ball photo (square crop)" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Meet the TEKKY®" },
+    { "type": "text", "id": "photo_url", "label": "Main ball photo URL", "default": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00001.jpg" },
+    { "type": "text", "id": "photo_url_2", "label": "Thumbnail photo 2 URL", "default": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00002.jpg" },
+    { "type": "text", "id": "photo_url_3", "label": "Thumbnail photo 3 URL", "default": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00003.jpg" },
+    { "type": "text", "id": "photo_url_4", "label": "Thumbnail photo 4 URL", "default": "https://zenithsports.org/cdn/shop/files/ZENITHSPORTS-eComm00004.jpg" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Meet the TEKKY™" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Smaller surface. Regulation weight." },
-    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>FIFA Size 3 control. FIFA Size 5 match-day weight. The TEKKY® forces sharper focus on every touch, builds real foot strength through resistance, and trains the kind of precision US Soccer's player pipeline has been missing for years.</p>" },
-    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY® · $59.95" },
-    { "type": "url", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" },
-    { "type": "text", "id": "price_note", "label": "Note next to CTA", "default": "Ships from US · 5.0★ verified" }
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>FIFA Size 3 control. FIFA Size 5 match-day weight. The TEKKY™ forces sharper focus on every touch, builds real foot strength through resistance, and trains the kind of precision US Soccer's player pipeline has been missing for years.</p>" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Buy the TEKKY(TM) (em) $59.95" },
+    { "type": "text", "id": "cta_url", "label": "CTA URL (default: direct ball cart)" },
+    { "type": "text", "id": "price_note", "label": "Note next to CTA", "default": "Ships from the U.S. · patent-pending design" }
   ],
   "blocks": [
     {

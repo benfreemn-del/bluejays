@@ -1,0 +1,50 @@
+{
+  "sections": {
+    "aud": {
+      "type": "audience-landing-zenith",
+      "settings": {
+        "accent": "#f59e0b",
+        "hero_video": "https://cdn.shopify.com/videos/c/o/v/8cdf4ea505194e38a7dcab3369b02e31.mp4",
+        "hero_poster": "https://zenithsports.org/cdn/shop/files/tekky-hero-17.jpg",
+        "eyebrow": "For Parents",
+        "heading": "Every great player starts with great technique.",
+        "subhead": "<p>Ages 8&ndash;10 are the golden age of skill acquisition. Players who bank <strong>15 minutes of daily ball mastery</strong> now build a technical foundation the others never catch up to.</p><p>The best academies in the world &mdash; Barcelona, Ajax, Manchester City &mdash; spend 80%+ of training at this age on individual technique, not formations. The TEKKY&trade; brings that method to your driveway.</p><p>The TEKKY&trade; helps every player build confidence, improve technique, and fall in love with the ball. <strong>Small habits. Big results.</strong></p>",
+        "cta_label": "Build their plan",
+        "cta_url": "/pages/build-your-player",
+        "cta2_label": "Get the TEKKY(TM)",
+        "cta2_url": "/collections/all",
+        "stat1_num": "15 min/day",
+        "stat1_label": "is all the golden-age window asks",
+        "stat2_num": "80%+",
+        "stat2_label": "of elite academy training is individual technique",
+        "stat3_num": "703,125",
+        "stat3_label": "touch gap by year 5 vs. traditional only",
+        "value_heading": "Why parents choose the TEKKY",
+        "method_quote": "<p>By 14, a Spanish or Dutch academy player has tens of thousands of clean, deliberate touches. The TEKKY brings that European methodology <strong>home</strong>.</p>",
+        "method_cite": "Founded by Philip Lund + Paul Hanson [dot] 40+ years coaching",
+        "close_heading": "Get their personalized plan",
+        "close_body": "<p>A 60-second quiz builds a 4-week plan matched to your player's age and level &mdash; plus the right kit to start.</p>"
+      },
+      "blocks": {
+        "v1": { "type": "value", "settings": { "kicker": "A habit, not a fee", "title": "10-15 minutes in the driveway", "body": "Three times a week. No extra practices to drive to, no $300-a-month trainer. Just the right ball and a clear plan your player can run on their own." } },
+        "v2": { "type": "value", "settings": { "kicker": "Visible progress", "title": "You'll see it in 4 weeks", "body": "A good program shows week-to-week improvement with a purpose behind every session. Your player picks up a match ball after 4 weeks and it feels bigger, slower, easier." } },
+        "v3": { "type": "value", "settings": { "kicker": "The right reps", "title": "Quality, not just quantity", "body": "It isn't only how many touches. It's first-touch direction, body shape, weight of pass, and playing cleanly with both feet. The smaller surface forces all of it." } },
+        "v4": { "type": "value", "settings": { "kicker": "Built to last", "title": "One ball, a lifetime of training", "body": "Patent-pending, full FIFA-5 match weight. Buy it once and it grows with them from rec through high school and beyond." } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"]
+    },
+    "meter": { "type": "ten-k-hour-meter-zenith" },
+    "drills": { "type": "drill-library-zenith" },
+    "inquiry": {
+      "type": "inquiry-form-zenith",
+      "settings": {
+        "eyebrow": "Questions before you buy?",
+        "heading": "Not sure where to start?",
+        "body": "<p>Tell us your child's age and level and we'll point you to the right setup. Philip and Paul personally read every message.</p>",
+        "show_club_option": false,
+        "show_bulk_line": false
+      }
+    }
+  },
+  "order": ["aud", "meter", "drills", "inquiry"]
+}

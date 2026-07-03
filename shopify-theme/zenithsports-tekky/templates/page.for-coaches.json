@@ -10,7 +10,7 @@
         "heading": "Your 90 minutes can't deliver the touches.",
         "subhead": "<p>In a full team practice, most players get <strong>100&ndash;150 touches</strong> &mdash; and if the session topic is possession or finishing, closer to 100. Technique is built on volume multiplied by intention, and there isn't enough of either in one weekly session.</p><p>Send them home with the TEKKY and a plan, and every player walks into your practice sharper.</p>",
         "cta_label": "Get the coaching guide",
-        "cta_url": "/pages/training-guide",
+        "cta_url": "/#get-the-guide",
         "cta2_label": "Talk to us",
         "cta2_url": "#contact",
         "stat1_num": "100-150",
@@ -39,8 +39,10 @@
       "type": "inquiry-form-zenith",
       "settings": {
         "eyebrow": "Coaches + trainers",
-        "heading": "Want the full guide or a demo?",
-        "body": "<p>Tell us your team's age group and we'll send the coaching guide and set up a guest session. Philip and Paul personally read every message.</p>"
+        "heading": "Tell us about your team.",
+        "body": "<p>Tell us about yourself &mdash; the age group you coach or train and what you're working on. We'll send the coaching guide and can set up a guest session with Philip or Paul. They read every message personally.</p>",
+        "show_club_option": false,
+        "show_bulk_line": false
       }
     }
   },

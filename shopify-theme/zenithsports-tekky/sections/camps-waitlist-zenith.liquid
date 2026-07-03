@@ -1,0 +1,1041 @@
+{% comment %}
+  Camp Finder Quiz — full interactive multi-step state machine.
+
+  Ports the Next.js /clients/zenith-sports/camps page to vanilla JS
+  inside a Shopify section. Same 7-step flow, same multi-select rules,
+  same animated travel slider, same live availability rail.
+
+  Steps:
+    1. Age (multi-select up to 2)
+    2. Location (state select + county text input)
+    3. Travel (slider 5-300 miles, animated car emoji)
+    4. Skill (multi-select up to 2)
+    5. Format (multi-select)
+    6. Timing (multi-select; all 4 = "any time")
+    7. Notify (parent name, email, phone, player name, opt-ins) → submits
+       to Shopify customer form with tag 'camp-waitlist'
+
+  Lead lands in Shopify Admin -> Customers tagged 'camp-waitlist' with
+  the full quiz snapshot baked into a Note field so Philip can match
+  parents to camps as the catalog grows.
+
+  Note: the SVG state map and county autocomplete from the Next.js
+  version aren't ported here — Liquid sections that ship a 50-state SVG
+  + counties JSON would balloon to >100KB. Native <select> for state and
+  free-text county input cover the same data capture.
+{% endcomment %}
+
+<section class="zenith-section zenith-camps">
+  <div class="zenith-container">
+
+    {%- comment -%} ── HEADER ── {%- endcomment -%}
+    <header class="zenith-camps__head">
+      {% if section.settings.eyebrow != blank %}
+        <p class="zenith-eyebrow zenith-camps__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      <h1 class="zenith-camps__title">
+        {{ section.settings.headline_top | escape }}
+        <br />
+        <span class="zenith-camps__title-accent">{{ section.settings.headline_accent | escape }}</span>
+      </h1>
+      {% if section.settings.subhead != blank %}
+        <div class="zenith-camps__subhead">{{ section.settings.subhead }}</div>
+      {% endif %}
+    </header>
+
+    {%- comment -%} ── PROGRESS BAR ── {%- endcomment -%}
+    <div class="zenith-camps__progress" data-progress>
+      <div class="zenith-camps__progress-meta">
+        <span class="zenith-camps__progress-step">Step <span data-step-num>1</span> of 7</span>
+        <span class="zenith-camps__progress-pct"><span data-step-pct>14</span>%</span>
+      </div>
+      <div class="zenith-camps__progress-track">
+        <div class="zenith-camps__progress-fill" data-progress-fill></div>
+      </div>
+      <div class="zenith-camps__stat-banner">
+        <span aria-hidden="true">📊</span>
+        <p><strong>3M+ U.S. kids</strong> play registered youth soccer — the #1 youth team sport. Camps are how the top players sharpen the gap.</p>
+      </div>
+    </div>
+
+    {%- comment -%} ── QUIZ GRID: question + availability rail ── {%- endcomment -%}
+    <div class="zenith-camps__grid">
+
+      {%- comment -%} ── LEFT: QUESTION PANE ── {%- endcomment -%}
+      <div class="zenith-camps__pane">
+
+        {%- comment -%} STEP 1 · AGE {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="age">
+          <p class="zenith-camps__qnum">Question 1 of 7</p>
+          <h2 class="zenith-camps__qtitle">How old is your player?</h2>
+          <p class="zenith-camps__qbody">Pick the closest band — or two if your player is in between. Camp programming is built around the age group, so picking both widens the camps we'll watch for on your behalf.</p>
+          <p class="zenith-camps__qcount"><span data-count-age>0</span> / 2 selected</p>
+          <div class="zenith-camps__opts zenith-camps__opts--grid3">
+            {%- assign age_ids = "U6-U8,U9-U10,U11-U12,U13-U14,U15-U16,U17-U19" | split: "," -%}
+            {%- assign age_labels = "U6 – U8,U9 – U10,U11 – U12,U13 – U14,U15 – U16,U17 – U19" | split: "," -%}
+            {%- assign age_emojis = "🌱,⚡,🎯,🔥,🏆,⭐" | split: "," -%}
+            {%- assign age_notes = "Just starting out,Growing fast,Skill-building age,Position decisions,Tryout & HS prep,College recruitment" | split: "," -%}
+            {%- for id in age_ids -%}
+              {%- assign idx = forloop.index0 -%}
+              <button type="button" class="zenith-camps__opt" data-pick="age" data-id="{{ id }}" data-cap="2">
+                <span class="zenith-camps__opt-check">✓</span>
+                <div class="zenith-camps__opt-emoji">{{ age_emojis[idx] }}</div>
+                <div class="zenith-camps__opt-label">{{ age_labels[idx] }}</div>
+                <div class="zenith-camps__opt-note">{{ age_notes[idx] }}</div>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} STEP 2 · LOCATION {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="location" hidden>
+          <p class="zenith-camps__qnum">Question 2 of 7</p>
+          <h2 class="zenith-camps__qtitle">Where do you live?</h2>
+          <p class="zenith-camps__qbody">Pick your state so we can watch for TEKKY camps within driving distance and notify you the moment one opens.</p>
+          <label class="zenith-camps__field">
+            <span>State *</span>
+            <select data-input="state">
+              <option value="">— pick your state —</option>
+              {%- assign state_codes = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY" | split: "," -%}
+              {%- assign state_names = "Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming" | split: "," -%}
+              {%- for code in state_codes -%}
+                <option value="{{ code }}">{{ state_names[forloop.index0] }}</option>
+              {%- endfor -%}
+            </select>
+          </label>
+          <label class="zenith-camps__field">
+            <span>County *</span>
+            <input type="text" data-input="county" placeholder="e.g. King · Clallam · Maricopa" autocomplete="off" />
+            <small class="zenith-camps__hint">Type your county so we can match the nearest camps.</small>
+          </label>
+        </div>
+
+        {%- comment -%} STEP 3 · TRAVEL {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="travel" hidden>
+          <p class="zenith-camps__qnum">Question 3 of 7</p>
+          <h2 class="zenith-camps__qtitle">How far can you travel?</h2>
+          <p class="zenith-camps__qbody">Drag the slider — the car shows your reach. Wider radius = more camps on the table.</p>
+
+          <div class="zenith-camps__travel-readout">
+            <div class="zenith-camps__travel-tier" data-travel-tier>🏠 Right around the corner</div>
+            <div class="zenith-camps__travel-num"><span data-travel-num>50</span><span class="zenith-camps__travel-unit">miles</span></div>
+            <div class="zenith-camps__travel-hours">≈ <span data-travel-hours>0.9</span> hours each way</div>
+          </div>
+
+          <div class="zenith-camps__highway">
+            <div class="zenith-camps__highway-marks">
+              <span>5 mi</span><span>50</span><span>100</span><span>200</span><span>300+</span>
+            </div>
+            <div class="zenith-camps__highway-road">
+              <div class="zenith-camps__highway-fill" data-highway-fill></div>
+              <div class="zenith-camps__highway-stripes"></div>
+              <div class="zenith-camps__highway-car" data-highway-car aria-hidden="true">🚗</div>
+            </div>
+            <input type="range" min="5" max="300" step="5" value="50" data-input="travel" aria-label="Travel distance in miles" class="zenith-camps__highway-range" />
+          </div>
+
+          <p class="zenith-camps__qhint">Most parents drive 30-60 miles for a great camp. Big-name residential camps pull from 200+ mile radii.</p>
+        </div>
+
+        {%- comment -%} STEP 4 · SKILL {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="skill" hidden>
+          <p class="zenith-camps__qnum">Question 4 of 7</p>
+          <h2 class="zenith-camps__qtitle">Where are they at?</h2>
+          <p class="zenith-camps__qbody">Pick the closest level — or two if they straddle. Beginner camps feel different from elite tryout-prep camps; picking two adjacent tiers opens more matches.</p>
+          <p class="zenith-camps__qcount"><span data-count-skill>0</span> / 2 selected</p>
+          <div class="zenith-camps__opts zenith-camps__opts--grid2">
+            {%- assign skill_ids = "beginner,rec,select,elite" | split: "," -%}
+            {%- assign skill_labels = "Just starting,Rec / casual,Select / club,Elite / ECNL" | split: "," -%}
+            {%- assign skill_emojis = "🌱,⚽,⚡,🏆" | split: "," -%}
+            {%- for id in skill_ids -%}
+              {%- assign idx = forloop.index0 -%}
+              <button type="button" class="zenith-camps__opt" data-pick="skill" data-id="{{ id }}" data-cap="2">
+                <span class="zenith-camps__opt-check">✓</span>
+                <div class="zenith-camps__opt-emoji zenith-camps__opt-emoji--lg">{{ skill_emojis[idx] }}</div>
+                <div class="zenith-camps__opt-label">{{ skill_labels[idx] }}</div>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} STEP 5 · FORMAT {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="format" hidden>
+          <p class="zenith-camps__qnum">Question 5 of 7</p>
+          <h2 class="zenith-camps__qtitle">What format works for your family?</h2>
+          <p class="zenith-camps__qbody">Pick any that work — we'll surface camps that match.</p>
+          <div class="zenith-camps__opts zenith-camps__opts--grid2">
+            {%- assign fmt_ids = "day-camp,residential,clinic,demo" | split: "," -%}
+            {%- assign fmt_labels = "Day camp,Residential,Clinic,Demo / open house" | split: "," -%}
+            {%- assign fmt_emojis = "☀️,🏕️,🎯,👋" | split: "," -%}
+            {%- assign fmt_notes = "Drop-off mornings,Sleep-away weeks,1-2 day skill clinics,Try-it-out events" | split: "," -%}
+            {%- for id in fmt_ids -%}
+              {%- assign idx = forloop.index0 -%}
+              <button type="button" class="zenith-camps__opt" data-pick="format" data-id="{{ id }}">
+                <span class="zenith-camps__opt-check">✓</span>
+                <div class="zenith-camps__opt-emoji">{{ fmt_emojis[idx] }}</div>
+                <div class="zenith-camps__opt-label">{{ fmt_labels[idx] }}</div>
+                <div class="zenith-camps__opt-note">{{ fmt_notes[idx] }}</div>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} STEP 6 · TIMING {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="timing" hidden>
+          <p class="zenith-camps__qnum">Question 6 of 7</p>
+          <h2 class="zenith-camps__qtitle">When are you looking?</h2>
+          <p class="zenith-camps__qbody">Pick any or all — flexible families that tick multiple windows unlock more matches.</p>
+          <p class="zenith-camps__qcount"><span data-count-timing>0</span> / 4 selected<span data-any-time></span></p>
+          <div class="zenith-camps__opts zenith-camps__opts--stack">
+            {%- assign t_ids = "summer-2026,fall-2026,winter-2026,spring-2027" | split: "," -%}
+            {%- assign t_labels = "Summer 2026,Fall break 2026,Winter 2026/27,Spring 2027" | split: "," -%}
+            {%- assign t_emojis = "☀️,🍂,❄️,🌸" | split: "," -%}
+            {%- for id in t_ids -%}
+              {%- assign idx = forloop.index0 -%}
+              <button type="button" class="zenith-camps__opt zenith-camps__opt--row" data-pick="timing" data-id="{{ id }}">
+                <span class="zenith-camps__opt-check">✓</span>
+                <span class="zenith-camps__opt-emoji">{{ t_emojis[idx] }}</span>
+                <span class="zenith-camps__opt-label">{{ t_labels[idx] }}</span>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} STEP 7 · NOTIFY (lead capture via Shopify customer form) {%- endcomment -%}
+        <div class="zenith-camps__step" data-step="notify" hidden>
+          <p class="zenith-camps__qnum">Last question</p>
+          <h2 class="zenith-camps__qtitle">Where should we send camp openings?</h2>
+          <p class="zenith-camps__qbody">TEKKY camps are rolling out by region. Drop your info and we'll notify you the moment one opens near <span data-summary-loc>you</span>.</p>
+
+          {% form 'customer', class: 'zenith-camps__form' %}
+            <input type="hidden" name="contact[tags]" value="camp-waitlist, zenith-tekky" />
+            <input type="hidden" name="contact[note]" data-input="note" value="" />
+            <input type="hidden" name="contact[accepts_marketing]" value="1" />
+
+            <label class="zenith-camps__field">
+              <span>Your name *</span>
+              <input type="text" name="contact[first_name]" data-input="parent-name" required placeholder="Sarah Williams" autocomplete="name" />
+            </label>
+
+            <label class="zenith-camps__field">
+              <span>Email *</span>
+              <input type="email" name="contact[email]" data-input="email" required placeholder="sarah@example.com" autocomplete="email" />
+            </label>
+
+            <div class="zenith-camps__field-row">
+              <label class="zenith-camps__field">
+                <span>Player's name (optional)</span>
+                <input type="text" name="contact[last_name]" data-input="player-name" placeholder="Maya" />
+              </label>
+              <label class="zenith-camps__field">
+                <span>Phone (optional)</span>
+                <input type="tel" name="contact[phone]" data-input="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+              </label>
+            </div>
+
+            <label class="zenith-camps__consent zenith-camps__consent--primary">
+              <input type="checkbox" data-input="notify-opt" checked />
+              <span>
+                <strong>Yes — notify me</strong> when new camps open near <span data-summary-state>me</span>.
+                <small>First-look access. We email when there's a real fit, not on a schedule.</small>
+              </span>
+            </label>
+
+            <label class="zenith-camps__consent">
+              <input type="checkbox" data-input="sms-consent" />
+              <span>
+                <strong>Optional — text me</strong> camp drops + drill of the week.
+                <small>Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to submit this form.</small>
+              </span>
+            </label>
+
+            <button type="submit" class="zenith-btn zenith-btn--primary zenith-camps__submit" data-submit disabled>
+              Notify me when camps open →
+            </button>
+
+            {% if form.posted_successfully? %}
+              <p class="zenith-camps__success">
+                ✓ You're on the list. Watch <span data-summary-email>your inbox</span> for first-look access when a TEKKY camp opens near you.
+              </p>
+            {% endif %}
+
+            {%- if form.errors -%}
+              <p class="zenith-camps__error">{{ form.errors | default_errors }}</p>
+            {%- endif -%}
+          {% endform %}
+        </div>
+
+        {%- comment -%} ── PREV / NEXT NAV (hidden on notify step — form's own submit advances) ── {%- endcomment -%}
+        <div class="zenith-camps__nav" data-nav>
+          <button type="button" class="zenith-camps__back" data-back hidden>← Back</button>
+          <button type="button" class="zenith-btn zenith-btn--primary zenith-camps__next" data-next disabled>
+            Next →
+          </button>
+        </div>
+
+      </div>
+
+      {%- comment -%} ── RIGHT: AVAILABILITY RAIL ── {%- endcomment -%}
+      <aside class="zenith-camps__rail" data-rail>
+        <div class="zenith-camps__rail-eye">Camps in your funnel</div>
+        <div class="zenith-camps__rail-num">
+          <span data-rail-count>22,000</span>
+          <span class="zenith-camps__rail-total">of 22,000</span>
+        </div>
+        <div class="zenith-camps__rail-bar">
+          <div class="zenith-camps__rail-bar-fill" data-rail-fill></div>
+        </div>
+        <p class="zenith-camps__rail-pct"><span data-rail-pct>100.0</span>% of US camps still match.</p>
+        <p class="zenith-camps__rail-note" data-rail-note>Pick an age band → narrows by participation share</p>
+
+        <ul class="zenith-camps__rail-list">
+          <li><span>Age</span><span data-rail-age>—</span></li>
+          <li><span>State</span><span data-rail-state>—</span></li>
+          <li><span>County</span><span data-rail-county>—</span></li>
+          <li><span>Travel</span><span data-rail-travel>—</span></li>
+          <li><span>Skill</span><span data-rail-skill>—</span></li>
+          <li><span>Format</span><span data-rail-format>—</span></li>
+          <li><span>When</span><span data-rail-timing>—</span></li>
+        </ul>
+      </aside>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .zenith-camps {
+    background: linear-gradient(180deg, var(--zenith-navy-deep) 0%, var(--zenith-navy) 100%);
+    color: #fff;
+    padding: 3rem 0 5rem;
+  }
+  @media (min-width: 768px) { .zenith-camps { padding: 5rem 0 7rem; } }
+
+  .zenith-camps__head { text-align: center; max-width: 48rem; margin: 0 auto 2.5rem; }
+  .zenith-camps__eyebrow { color: var(--zenith-lime); }
+  .zenith-camps__title {
+    font-size: clamp(2rem, 5.5vw, 4rem);
+    font-weight: 900; line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0.75rem 0 1.25rem;
+  }
+  .zenith-camps__title-accent { color: var(--zenith-lime); }
+  .zenith-camps__subhead { color: rgba(255,255,255,0.7); line-height: 1.6; }
+  .zenith-camps__subhead p { margin: 0; }
+
+  .zenith-camps__progress { max-width: 56rem; margin: 0 auto 2rem; }
+  .zenith-camps__progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.45rem;
+  }
+  .zenith-camps__progress-pct { color: rgba(255,255,255,0.4); }
+  .zenith-camps__progress-track {
+    height: 6px; border-radius: 999px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+  }
+  .zenith-camps__progress-fill {
+    height: 100%; width: 14.28%;
+    background: var(--zenith-lime);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .zenith-camps__stat-banner {
+    margin-top: 0.85rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0,196,154,0.2);
+    background: linear-gradient(90deg, rgba(0,196,154,0.08) 0%, rgba(29,78,216,0.04) 100%);
+  }
+  .zenith-camps__stat-banner p {
+    margin: 0; font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.45;
+  }
+  .zenith-camps__stat-banner strong {
+    color: var(--zenith-lime);
+    font-weight: 900;
+  }
+
+  .zenith-camps__grid {
+    display: grid; gap: 2rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 1024px) { .zenith-camps__grid { grid-template-columns: 1fr 280px; } }
+  .zenith-camps__pane { min-width: 0; }
+  .zenith-camps__step[hidden] { display: none; }
+
+  .zenith-camps__qnum {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.32em;
+    color: var(--zenith-lime);
+    margin: 0 0 0.65rem;
+  }
+  .zenith-camps__qtitle {
+    font-size: clamp(1.5rem, 4vw, 2.75rem);
+    font-weight: 900; line-height: 1.05;
+    color: #fff;
+    margin: 0 0 0.75rem;
+  }
+  .zenith-camps__qbody {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+    margin: 0 0 1rem;
+    max-width: 42rem;
+  }
+  .zenith-camps__qcount {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.4);
+    margin: 0 0 1.5rem;
+  }
+  .zenith-camps__qhint {
+    margin-top: 1rem;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+
+  .zenith-camps__opts { display: grid; gap: 0.55rem; }
+  .zenith-camps__opts--grid2 { grid-template-columns: 1fr 1fr; }
+  .zenith-camps__opts--grid3 { grid-template-columns: 1fr 1fr; }
+  @media (min-width: 640px) {
+    .zenith-camps__opts--grid3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .zenith-camps__opts--stack { grid-template-columns: 1fr; }
+
+  .zenith-camps__opt {
+    position: relative;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: left;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .zenith-camps__opt:hover { border-color: rgba(0,196,154,0.4); transform: scale(1.02); }
+  .zenith-camps__opt--active {
+    background: var(--zenith-lime);
+    border-color: var(--zenith-lime);
+    color: var(--zenith-navy-deep);
+  }
+  .zenith-camps__opt--disabled {
+    opacity: 0.4; cursor: not-allowed;
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.05);
+    transform: none !important;
+  }
+  .zenith-camps__opt--row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 1rem;
+  }
+  .zenith-camps__opt-check {
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--zenith-navy-deep);
+    color: var(--zenith-lime);
+    font-size: 11px; font-weight: 900;
+    display: none; align-items: center; justify-content: center;
+  }
+  .zenith-camps__opt--active .zenith-camps__opt-check { display: flex; }
+  .zenith-camps__opt-emoji { font-size: 1.5rem; margin-bottom: 0.35rem; }
+  .zenith-camps__opt-emoji--lg { font-size: 1.85rem; margin-bottom: 0.5rem; }
+  .zenith-camps__opt-label { font-size: 1rem; font-weight: 700; }
+  .zenith-camps__opt-note { font-size: 12px; opacity: 0.6; margin-top: 0.2rem; }
+  .zenith-camps__opt--active .zenith-camps__opt-note { color: rgba(15,23,42,0.7); }
+
+  .zenith-camps__field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+  .zenith-camps__field > span {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.65);
+  }
+  .zenith-camps__field input,
+  .zenith-camps__field select {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  .zenith-camps__field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ffffff' stroke-opacity='0.6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px 8px;
+    padding-right: 2.5rem;
+  }
+  .zenith-camps__field select option { color: #0f172a; background: #fff; }
+  .zenith-camps__field input::placeholder { color: rgba(255,255,255,0.3); }
+  .zenith-camps__field input:focus,
+  .zenith-camps__field select:focus {
+    outline: none;
+    border-color: var(--zenith-lime);
+    background: rgba(255,255,255,0.08);
+  }
+  .zenith-camps__hint { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 0.25rem; }
+  .zenith-camps__field-row {
+    display: grid; gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .zenith-camps__field-row { grid-template-columns: 1fr 1fr; } }
+
+  .zenith-camps__travel-readout {
+    border: 2px solid rgba(0,196,154,0.25);
+    background: linear-gradient(135deg, rgba(0,196,154,0.08) 0%, rgba(29,78,216,0.05) 100%);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .zenith-camps__travel-tier {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.25rem;
+  }
+  .zenith-camps__travel-num {
+    font-size: clamp(2.25rem, 7vw, 3.25rem);
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .zenith-camps__travel-unit {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    margin-left: 0.5rem;
+  }
+  .zenith-camps__travel-hours {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 0.4rem;
+  }
+
+  .zenith-camps__highway { position: relative; padding-top: 1.5rem; padding-bottom: 0.5rem; }
+  .zenith-camps__highway-marks {
+    display: flex; justify-content: space-between;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.5rem;
+    padding: 0 0.25rem;
+  }
+  .zenith-camps__highway-road {
+    position: relative;
+    height: 48px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.04) 100%);
+    overflow: hidden;
+  }
+  .zenith-camps__highway-fill {
+    position: absolute; inset: 0 auto 0 0; width: 16.6%;
+    background: linear-gradient(90deg, rgba(0,196,154,0.55) 0%, rgba(0,196,154,0.85) 100%);
+    transition: width 0.2s;
+  }
+  .zenith-camps__highway-stripes {
+    position: absolute; left: 0; right: 0; top: 50%;
+    height: 3px; transform: translateY(-50%);
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.55) 14px, transparent 14px, transparent 28px);
+  }
+  .zenith-camps__highway-car {
+    position: absolute; top: 50%;
+    left: calc(16.6% - 16px);
+    transform: translateY(-50%) scaleX(-1);
+    font-size: 28px; line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    pointer-events: none;
+    transition: left 0.2s, transform 0.2s;
+  }
+  .zenith-camps__highway-range {
+    position: absolute; inset: 1.5rem 0 auto 0;
+    height: 48px; width: 100%;
+    opacity: 0; cursor: pointer;
+    touch-action: none;
+  }
+
+  .zenith-camps__form { display: grid; gap: 0; }
+  .zenith-camps__consent {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .zenith-camps__consent:hover { border-color: rgba(255,255,255,0.25); }
+  .zenith-camps__consent input { margin-top: 0.25rem; width: 18px; height: 18px; cursor: pointer; accent-color: var(--zenith-lime); }
+  .zenith-camps__consent strong { color: #fff; }
+  .zenith-camps__consent small { display: block; font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 0.25rem; }
+  .zenith-camps__consent--primary {
+    border-color: rgba(0,196,154,0.3);
+    background: rgba(0,196,154,0.1);
+  }
+  .zenith-camps__submit { margin-top: 0.75rem; justify-self: center; }
+  .zenith-camps__submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .zenith-camps__success {
+    margin-top: 1rem; padding: 0.85rem 1rem;
+    color: var(--zenith-lime); font-weight: 700;
+    border: 1px solid rgba(0,196,154,0.3);
+    background: rgba(0,196,154,0.08);
+    border-radius: 12px;
+  }
+  .zenith-camps__error {
+    margin-top: 0.75rem; color: #fca5a5; font-size: 0.875rem;
+  }
+
+  .zenith-camps__nav {
+    margin-top: 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+  }
+  .zenith-camps__back {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+  .zenith-camps__back:hover { color: #fff; }
+  .zenith-camps__next:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .zenith-camps__rail {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    padding: 1.25rem;
+    align-self: start;
+  }
+  @media (min-width: 1024px) { .zenith-camps__rail { position: sticky; top: 1.5rem; } }
+  .zenith-camps__rail-eye {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.28em;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 0.25rem;
+  }
+  .zenith-camps__rail-num {
+    display: flex; align-items: baseline; gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .zenith-camps__rail-num > span:first-child {
+    font-size: 2.25rem; font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.025em;
+    color: var(--zenith-lime);
+    transition: color 0.3s;
+  }
+  .zenith-camps__rail-total {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+  }
+  .zenith-camps__rail-bar {
+    height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .zenith-camps__rail-bar-fill {
+    height: 100%; width: 100%;
+    background: linear-gradient(90deg, var(--zenith-lime) 0%, rgba(0,196,154,0.6) 100%);
+    transition: width 0.5s, background 0.3s;
+  }
+  .zenith-camps__rail-pct {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+  }
+  .zenith-camps__rail-note {
+    margin: 0 0 1rem;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+  }
+  .zenith-camps__rail-list {
+    list-style: none; padding: 1rem 0 0; margin: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: grid; gap: 0.45rem;
+    font-size: 11px;
+  }
+  .zenith-camps__rail-list li {
+    display: flex; justify-content: space-between; gap: 0.5rem;
+  }
+  .zenith-camps__rail-list li span:first-child {
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.4);
+  }
+  .zenith-camps__rail-list li span:last-child {
+    color: rgba(255,255,255,0.3);
+    font-variant-numeric: tabular-nums;
+    max-width: 130px; text-align: right;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .zenith-camps__rail-list li[data-on] span:first-child { color: rgba(255,255,255,0.65); }
+  .zenith-camps__rail-list li[data-on] span:last-child { color: var(--zenith-lime); }
+</style>
+
+<script>
+  (function () {
+    // ── ELEMENT REFS ────────────────────────────────────────────────────────
+    var root = document.querySelector('.zenith-camps');
+    if (!root) return;
+
+    var STEPS = ['age', 'location', 'travel', 'skill', 'format', 'timing', 'notify'];
+
+    var STATE_NAMES = {
+      AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'
+    };
+
+    // Availability estimation constants — same shape as data/camp-estimates.ts
+    var TOTAL_US_CAMPS = 22000;
+    var AGE_MULT = { 'U6-U8':0.18,'U9-U10':0.22,'U11-U12':0.25,'U13-U14':0.22,'U15-U16':0.18,'U17-U19':0.12 };
+    var SKILL_MULT = { beginner:0.4, rec:0.55, select:0.35, elite:0.18 };
+    var FORMAT_MULT = { 'day-camp':0.55,'residential':0.25,'clinic':0.35,'demo':0.1 };
+    var TIMING_MULT = { 'summer-2026':0.55,'fall-2026':0.12,'winter-2026':0.08,'spring-2027':0.1 };
+    // State-level slice as a fraction of total US (rough — same purpose as
+    // CAMPS_BY_STATE in the Next.js data file). Defaults to 0.02 for missing.
+    var STATE_FRAC = {
+      CA:0.13, TX:0.09, FL:0.07, NY:0.06, PA:0.045, IL:0.04, OH:0.04, GA:0.035, NC:0.035, MI:0.03,
+      NJ:0.03, VA:0.03, WA:0.028, MA:0.025, AZ:0.025, IN:0.022, MN:0.022, MO:0.02, WI:0.02, CO:0.02,
+      MD:0.02, TN:0.022, SC:0.02, AL:0.018, OR:0.018, KY:0.015, LA:0.015, OK:0.014, CT:0.014, UT:0.014,
+      IA:0.012, NV:0.012, KS:0.011, AR:0.011, MS:0.01, NM:0.009, NE:0.009, WV:0.008, ID:0.008, HI:0.007,
+      NH:0.006, ME:0.006, MT:0.005, RI:0.005, DE:0.004, SD:0.004, ND:0.004, AK:0.003, VT:0.003, WY:0.002
+    };
+
+    // ── STATE ──────────────────────────────────────────────────────────────
+    var state = {
+      step: 'age',
+      ageGroups: [],
+      stateCode: '',
+      county: '',
+      travelMiles: 50,
+      skillLevels: [],
+      formats: [],
+      timings: [],
+      parentName: '',
+      email: '',
+      phone: '',
+      playerName: '',
+      notifyOptIn: true,
+      smsConsent: false
+    };
+
+    // ── HELPERS ────────────────────────────────────────────────────────────
+    function $(sel, ctx) { return (ctx || root).querySelector(sel); }
+    function $$(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
+
+    function estimateAvailability() {
+      var count = TOTAL_US_CAMPS;
+      if (state.stateCode) {
+        var stateFrac = STATE_FRAC[state.stateCode] || 0.02;
+        var stateCount = TOTAL_US_CAMPS * stateFrac;
+        var m = state.travelMiles;
+        var radiusFrac;
+        if (m <= 30) radiusFrac = 0.25;
+        else if (m <= 60) radiusFrac = 0.45;
+        else if (m <= 100) radiusFrac = 0.7;
+        else if (m <= 150) radiusFrac = 0.9;
+        else if (m <= 200) radiusFrac = 1.0;
+        else radiusFrac = Math.min(1.4, 1.0 + (m - 200) / 250);
+        count = stateCount * radiusFrac;
+      }
+      if (state.ageGroups.length > 0) {
+        var s1 = state.ageGroups.reduce(function (a, id) { return a + (AGE_MULT[id] || 0.18); }, 0);
+        count *= Math.min(1, s1);
+      }
+      if (state.skillLevels.length > 0) {
+        var s2 = state.skillLevels.reduce(function (a, id) { return a + (SKILL_MULT[id] || 0.3); }, 0);
+        count *= Math.min(1, s2);
+      }
+      if (state.formats.length > 0) {
+        var s3 = state.formats.reduce(function (a, id) { return a + (FORMAT_MULT[id] || 0); }, 0);
+        count *= Math.min(1, s3);
+      }
+      if (state.timings.length > 0 && state.timings.length < 4) {
+        var s4 = state.timings.reduce(function (a, id) { return a + (TIMING_MULT[id] || 0.3); }, 0);
+        count *= Math.min(1, s4);
+      }
+      return Math.max(1, Math.round(count));
+    }
+
+    function canAdvance() {
+      if (state.step === 'age') return state.ageGroups.length >= 1;
+      if (state.step === 'location') return state.stateCode !== '' && state.county.trim().length >= 2;
+      if (state.step === 'travel') return state.travelMiles > 0;
+      if (state.step === 'skill') return state.skillLevels.length >= 1;
+      if (state.step === 'format') return state.formats.length >= 1;
+      if (state.step === 'timing') return state.timings.length >= 1;
+      if (state.step === 'notify') return state.parentName.trim().length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email);
+      return false;
+    }
+
+    // ── RENDER ─────────────────────────────────────────────────────────────
+    function renderStep() {
+      $$('.zenith-camps__step').forEach(function (el) {
+        el.hidden = el.getAttribute('data-step') !== state.step;
+      });
+      var idx = STEPS.indexOf(state.step);
+      $('[data-step-num]').textContent = idx + 1;
+      var pct = Math.round(((idx + 1) / 7) * 100);
+      $('[data-step-pct]').textContent = pct;
+      $('[data-progress-fill]').style.width = pct + '%';
+
+      // Back button visible from step 2+
+      var backBtn = $('[data-back]');
+      if (backBtn) backBtn.hidden = idx === 0;
+
+      // Hide Next + Back on notify step (form has its own submit button)
+      var nav = $('[data-nav]');
+      if (nav) nav.hidden = state.step === 'notify';
+
+      // Hide availability rail on notify step (no more filtering to show)
+      var rail = $('[data-rail]');
+      if (rail) rail.style.display = (state.step === 'notify') ? 'none' : '';
+
+      var nextBtn = $('[data-next]');
+      if (nextBtn) nextBtn.disabled = !canAdvance();
+
+      var submitBtn = $('[data-submit]');
+      if (submitBtn) submitBtn.disabled = !canAdvance();
+
+      renderRail();
+      renderCounts();
+      renderSummaries();
+    }
+
+    function renderCounts() {
+      var ageC = $('[data-count-age]'); if (ageC) ageC.textContent = state.ageGroups.length;
+      var skC = $('[data-count-skill]'); if (skC) skC.textContent = state.skillLevels.length;
+      var tC = $('[data-count-timing]'); if (tC) tC.textContent = state.timings.length;
+      var any = $('[data-any-time]'); if (any) any.textContent = state.timings.length === 4 ? ' · any time' : '';
+    }
+
+    function renderSummaries() {
+      var locTxt = state.county || state.stateCode ? (state.county + (state.stateCode ? (', ' + state.stateCode) : '')) : 'you';
+      var loc = $('[data-summary-loc]'); if (loc) loc.textContent = locTxt;
+      var st = $('[data-summary-state]'); if (st) st.textContent = state.stateCode ? STATE_NAMES[state.stateCode] : 'me';
+      var em = $('[data-summary-email]'); if (em) em.textContent = state.email || 'your inbox';
+    }
+
+    function renderRail() {
+      var count = estimateAvailability();
+      var pct = Math.min(100, (count / TOTAL_US_CAMPS) * 100);
+      var color = pct > 25 ? '#00c49a' : pct > 5 ? '#fbbf24' : '#1d4ed8';
+
+      var num = $('[data-rail-count]');
+      if (num) { num.textContent = count.toLocaleString(); num.style.color = color; }
+      var fill = $('[data-rail-fill]');
+      if (fill) {
+        fill.style.width = pct + '%';
+        fill.style.background = 'linear-gradient(90deg, ' + color + ' 0%, ' + color + '99 100%)';
+      }
+      var p = $('[data-rail-pct]'); if (p) p.textContent = pct.toFixed(pct < 1 ? 2 : 1);
+
+      var notes = {
+        age: 'Pick an age band → narrows by participation share',
+        location: 'Pick your state → collapses to local catalog',
+        travel: 'Wider radius = more camps on the table',
+        skill: 'Skill picks tier of programming',
+        format: 'Format trims to day / residential / clinic',
+        timing: 'Season slices the calendar',
+        notify: ''
+      };
+      var n = $('[data-rail-note]'); if (n) n.textContent = notes[state.step] || '';
+
+      function setRailRow(key, on, value) {
+        var el = $('[data-rail-' + key + ']');
+        if (!el) return;
+        el.textContent = on ? (value || '—') : '—';
+        var li = el.closest('li');
+        if (li) { if (on) li.setAttribute('data-on', ''); else li.removeAttribute('data-on'); }
+      }
+      setRailRow('age', state.ageGroups.length > 0, state.ageGroups.join(' + '));
+      setRailRow('state', !!state.stateCode, STATE_NAMES[state.stateCode] || state.stateCode);
+      setRailRow('county', !!state.county, state.county);
+      setRailRow('travel', state.travelMiles !== 50, state.travelMiles + ' mi');
+      setRailRow('skill', state.skillLevels.length > 0, state.skillLevels.join(' + '));
+      setRailRow('format', state.formats.length > 0, state.formats.join(', '));
+      setRailRow('timing', state.timings.length > 0, state.timings.length === 4 ? 'any time' : state.timings.join(' + '));
+    }
+
+    function renderTravel() {
+      var m = state.travelMiles;
+      var pct = Math.min(100, Math.max(0, ((m - 5) / (300 - 5)) * 100));
+      var hours = Math.max(0.1, m / 55);
+      var carScale = 0.9 + (pct / 100) * 0.6;
+      var tier = m <= 30 ? '🏠 Right around the corner'
+        : m <= 75 ? '🚗 Easy weekday drive'
+        : m <= 150 ? '🛣️ Weekend road trip'
+        : m <= 250 ? '🗺️ Big day out'
+        : '🌎 Anywhere in driving range';
+
+      var n = $('[data-travel-num]'); if (n) n.textContent = m;
+      var h = $('[data-travel-hours]'); if (h) h.textContent = hours.toFixed(1);
+      var t = $('[data-travel-tier]'); if (t) t.textContent = tier;
+      var f = $('[data-highway-fill]'); if (f) f.style.width = pct + '%';
+      var c = $('[data-highway-car]');
+      if (c) {
+        c.style.left = 'calc(' + pct + '% - 16px)';
+        c.style.transform = 'translateY(-50%) scale(' + carScale + ') scaleX(-1)';
+      }
+    }
+
+    // ── INTERACTIONS ───────────────────────────────────────────────────────
+    function togglePick(key, id, cap) {
+      var arr = state[key];
+      var i = arr.indexOf(id);
+      if (i >= 0) { arr.splice(i, 1); }
+      else {
+        if (cap && arr.length >= cap) return;
+        arr.push(id);
+      }
+      paintPicks(key);
+      renderStep();
+    }
+
+    function paintPicks(key) {
+      var dataKey = key === 'ageGroups' ? 'age'
+        : key === 'skillLevels' ? 'skill'
+        : key === 'formats' ? 'format'
+        : key === 'timings' ? 'timing' : key;
+      $$('[data-pick="' + dataKey + '"]').forEach(function (btn) {
+        var id = btn.getAttribute('data-id');
+        var active = state[key].indexOf(id) >= 0;
+        btn.classList.toggle('zenith-camps__opt--active', active);
+        var cap = parseInt(btn.getAttribute('data-cap') || '0', 10);
+        var atCap = cap > 0 && !active && state[key].length >= cap;
+        btn.classList.toggle('zenith-camps__opt--disabled', atCap);
+        btn.disabled = atCap;
+      });
+    }
+
+    // Wire option-pick buttons
+    $$('[data-pick]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var dataKey = btn.getAttribute('data-pick');
+        var stateKey = dataKey === 'age' ? 'ageGroups'
+          : dataKey === 'skill' ? 'skillLevels'
+          : dataKey === 'format' ? 'formats'
+          : dataKey === 'timing' ? 'timings' : dataKey;
+        var id = btn.getAttribute('data-id');
+        var cap = parseInt(btn.getAttribute('data-cap') || '0', 10);
+        togglePick(stateKey, id, cap);
+      });
+    });
+
+    // Wire location inputs
+    var stateSel = $('[data-input="state"]');
+    if (stateSel) stateSel.addEventListener('change', function (e) {
+      state.stateCode = e.target.value;
+      renderStep();
+    });
+    var countyIn = $('[data-input="county"]');
+    if (countyIn) countyIn.addEventListener('input', function (e) {
+      state.county = e.target.value;
+      renderStep();
+    });
+
+    // Wire travel slider
+    var travelIn = $('[data-input="travel"]');
+    if (travelIn) {
+      travelIn.addEventListener('input', function (e) {
+        state.travelMiles = parseInt(e.target.value, 10);
+        renderTravel();
+        renderRail();
+      });
+    }
+
+    // Wire notify inputs
+    var pName = $('[data-input="parent-name"]');
+    var pEmail = $('[data-input="email"]');
+    var pPhone = $('[data-input="phone"]');
+    var pPlayer = $('[data-input="player-name"]');
+    var pNotify = $('[data-input="notify-opt"]');
+    var pSms = $('[data-input="sms-consent"]');
+    var pNote = $('[data-input="note"]');
+
+    if (pName) pName.addEventListener('input', function (e) { state.parentName = e.target.value; renderStep(); });
+    if (pEmail) pEmail.addEventListener('input', function (e) { state.email = e.target.value; renderStep(); });
+    if (pPhone) pPhone.addEventListener('input', function (e) { state.phone = e.target.value; });
+    if (pPlayer) pPlayer.addEventListener('input', function (e) { state.playerName = e.target.value; });
+    if (pNotify) pNotify.addEventListener('change', function (e) { state.notifyOptIn = e.target.checked; });
+    if (pSms) pSms.addEventListener('change', function (e) { state.smsConsent = e.target.checked; });
+
+    // Build the hidden contact[note] payload on submit so Philip sees the
+    // full quiz snapshot in the Shopify customer record.
+    var form = root.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function () {
+        if (pNote) {
+          pNote.value = [
+            'TEKKY Camp Finder submission',
+            'Age: ' + state.ageGroups.join(' + '),
+            'Location: ' + state.county + ', ' + (STATE_NAMES[state.stateCode] || state.stateCode),
+            'Travel: up to ' + state.travelMiles + ' miles',
+            'Skill: ' + state.skillLevels.join(' + '),
+            'Format: ' + state.formats.join(', '),
+            'When: ' + (state.timings.length === 4 ? 'any time' : state.timings.join(' + ')),
+            'Player: ' + (state.playerName || '—'),
+            'Phone: ' + (state.phone || '—'),
+            'SMS consent: ' + (state.smsConsent ? 'yes' : 'no'),
+            'Notify opt-in: ' + (state.notifyOptIn ? 'yes' : 'no')
+          ].join('\n');
+        }
+      });
+    }
+
+    // Wire navigation
+    var nextBtn = $('[data-next]');
+    if (nextBtn) nextBtn.addEventListener('click', function () {
+      if (!canAdvance()) return;
+      var idx = STEPS.indexOf(state.step);
+      if (idx < STEPS.length - 1) {
+        state.step = STEPS[idx + 1];
+        renderStep();
+        window.scrollTo({ top: root.offsetTop - 20, behavior: 'smooth' });
+      }
+    });
+    var backBtn = $('[data-back]');
+    if (backBtn) backBtn.addEventListener('click', function () {
+      var idx = STEPS.indexOf(state.step);
+      if (idx > 0) {
+        state.step = STEPS[idx - 1];
+        renderStep();
+      }
+    });
+
+    // INIT
+    renderStep();
+    renderTravel();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Zenith Camps Waitlist",
+  "tag": "section",
+  "class": "zenith-camps-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "TEKKY Camps · Coming soon" },
+    { "type": "text", "id": "headline_top", "label": "Headline (top line)", "default": "Find a TEKKY camp" },
+    { "type": "text", "id": "headline_accent", "label": "Headline (accent line)", "default": "near your player." },
+    { "type": "richtext", "id": "subhead", "label": "Subhead", "default": "<p>60 seconds. Tell us about your player and we'll match them to the right TEKKY camp — or notify you the moment one opens nearby. First-look access before the public list.</p>" }
+  ],
+  "presets": [
+    { "name": "Zenith Camps Waitlist" }
+  ]
+}
+{% endschema %}

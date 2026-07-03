@@ -17,31 +17,29 @@
     {% endif %}
 
     {% if section.settings.intro != blank %}
-      <p class="zenith-body" style="margin-top: 1.5rem; max-width: 42rem; font-size: clamp(1rem, 1.2vw, 1.125rem);">
+      <div class="zenith-body" style="margin-top: 1.5rem; max-width: 42rem; font-size: clamp(1rem, 1.2vw, 1.125rem);">
         {{ section.settings.intro }}
-      </p>
+      </div>
     {% endif %}
 
     <div class="zenith-founders__grid">
       {% for block in section.blocks %}
         <article class="zenith-founder-card">
           <div class="zenith-founder-card__photo">
-            {% if block.settings.photo %}
+            {% if block.settings.photo_url != blank %}
               <img
-                src="{{ block.settings.photo | image_url: width: 800 }}"
-                alt="{{ block.settings.name | escape }} — {{ block.settings.role | escape }}"
+                src="{{ block.settings.photo_url }}"
+                alt="{{ block.settings.name | escape }} -- {{ block.settings.role | escape }}"
                 loading="lazy"
-                width="800"
-                height="600"
               >
             {% endif %}
           </div>
           <div class="zenith-founder-card__body">
-            <p class="zenith-founder-card__role">{{ block.settings.role | escape }}</p>
+            <p class="zenith-founder-card__role">{% render 'zenith-text', text: block.settings.role %}</p>
             <h3 class="zenith-founder-card__name">{{ block.settings.name | escape }}</h3>
             {% if block.settings.quote != blank %}
               <p class="zenith-founder-card__quote">
-                &ldquo;{{ block.settings.quote }}&rdquo;
+                &ldquo;{{ block.settings.quote | strip_html }}&rdquo;
               </p>
             {% endif %}
           </div>
@@ -73,7 +71,7 @@
       "type": "richtext",
       "id": "intro",
       "label": "Intro paragraph",
-      "default": "<p>Philip Lund and Paul Hanson have spent 40+ combined years in U.S. youth soccer development — coaching club, ECNL, MLS Next, and college programs. They built TEKKY because they kept seeing the same thing: U.S. players hit a technical ceiling at 17–18 that European players don't.</p>"
+      "default": "<p>Philip Lund and Paul Hanson have spent 40+ combined years in U.S. youth soccer development -- coaching club, ECNL, MLS Next, and college programs. They built TEKKY because they kept seeing the same thing: U.S. players hit a technical ceiling at 17-18 that European players do not.</p>"
     }
   ],
   "blocks": [
@@ -83,9 +81,10 @@
       "limit": 4,
       "settings": [
         {
-          "type": "image_picker",
-          "id": "photo",
-          "label": "Photo (4:3, person facing camera)"
+          "type": "text",
+          "id": "photo_url",
+          "label": "Photo URL (full external URL -- defaults to bespoke headshot)",
+          "default": "https://zenithsports.org/cdn/shop/files/PhilipHeadShot.jpg"
         },
         {
           "type": "text",
@@ -103,7 +102,7 @@
           "type": "richtext",
           "id": "quote",
           "label": "Quote / bio (1-3 sentences)",
-          "default": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training — it is about building a culture.</p>"
+          "default": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training -- it is about building a culture.</p>"
         }
       ]
     }
@@ -115,17 +114,19 @@
         {
           "type": "founder",
           "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/PhilipHeadShot.jpg",
             "name": "Philip Lund",
             "role": "Co-Founder",
-            "quote": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training — it is about building a culture.</p>"
+            "quote": "<p>To inspire kids to enjoy the process of improvement, build confidence, and fall in love with the game. This is not just about training -- it is about building a culture.</p>"
           }
         },
         {
           "type": "founder",
           "settings": {
+            "photo_url": "https://zenithsports.org/cdn/shop/files/PaulHeadShot.jpg",
             "name": "Paul Hanson",
-            "role": "Co-Founder · 40+ years in the game",
-            "quote": "<p>I've spent extensive years coaching, always with a clear focus on true player development — not just winning games. My approach remains rooted in long-term growth over short-term accolades.</p>"
+            "role": "Co-Founder | 40+ years in the game",
+            "quote": "<p>I have spent extensive years coaching, always with a clear focus on true player development -- not just winning games. My approach remains rooted in long-term growth over short-term accolades.</p>"
           }
         }
       ]

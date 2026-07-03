@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "training-guide-content-zenith": {
+      "type": "training-guide-content-zenith"
+    },
+    "drill-library-zenith": {
+      "type": "drill-library-zenith",
+      "settings": {
+        "eyebrow": "Tap to watch",
+        "heading": "The full library, on demand.",
+        "intro": "<p>The complete 22-drill library — free on our YouTube. Share with your team, save the playlist, sequence them however your players need.</p>"
+      }
+    },
+    "inquiry-form-zenith": {
+      "type": "inquiry-form-zenith",
+      "settings": {
+        "eyebrow": "Need a deeper conversation?",
+        "heading": "Tell us about your club or your player.",
+        "body": "<p>Philip and Paul personally read every email from a coach or club. Usually a reply within one business day — they read every one to figure out what would actually move the needle for you.</p>"
+      }
+    }
+  },
+  "order": [
+    "training-guide-content-zenith",
+    "drill-library-zenith",
+    "inquiry-form-zenith"
+  ]
+}
