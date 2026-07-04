@@ -893,6 +893,9 @@
         level = 'Elite'; focusTier = 'Intermediate'; weeklySessions = 6; minutesPerSession = 25;
       }
       if (s.currentWeeklyHours >= 5 && weeklySessions < 6) weeklySessions += 1;
+      // The player's own commitment overrides the recommended cadence, so every
+      // piece of plan copy (pitch, totals, preview) speaks the number THEY chose.
+      if (typeof s.commitSessions === 'number') weeklySessions = Math.max(1, s.commitSessions);
 
       var drills = pickDrillsForTier(focusTier, s.goals, s.age);
 
@@ -1015,7 +1018,7 @@
       // player banks ~26,250 touches/yr (Scenario A — no extra work). Each extra
       // TEKKY™ session the player COMMITS to ≈ 375 deliberate touches, across a
       // 50-week year. The commitment slider is what opens the gap vs Scenario A.
-      var sp = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, goals: state.goals });
+      var sp = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, commitSessions: state.commitSessions, goals: state.goals });
       var tekkyTouches = state.commitSessions * 50 * 375;
       var totalTouches = 26250 + tekkyTouches;
       var mult = totalTouches / 26250;
@@ -1071,7 +1074,7 @@
     }
 
     function renderPlan() {
-      var p = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, goals: state.goals });
+      var p = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, commitSessions: state.commitSessions, goals: state.goals });
       var out = $('[data-plan-out]');
       if (!out) return;
 
@@ -1158,6 +1161,9 @@
           ].join('\n');
         }
         state._submitted = true;
+        // The native form POST reloads the page — save the quiz state first so
+        // the reload can restore the player straight back to their plan.
+        try { sessionStorage.setItem('zenithBypState', JSON.stringify(state)); } catch (e) {}
         var submitBtn = root.querySelector('[data-form-submit]');
         if (submitBtn) submitBtn.click();
       }
@@ -1246,9 +1252,26 @@
       }
     });
 
-    // INIT
+    // INIT — if we just returned from the hidden lead-form POST (page reload),
+    // restore the saved quiz state and drop the player straight back on their
+    // plan instead of resetting to step 1 and losing the payoff.
+    var restored = false;
+    try {
+      var postedOk = !!root.querySelector('.zenith-byp__hidden-form .zenith-byp__sent') ||
+                     /customer_posted=true/.test(window.location.search);
+      var saved = sessionStorage.getItem('zenithBypState');
+      if (postedOk && saved) {
+        var s = JSON.parse(saved);
+        for (var k in s) { if (Object.prototype.hasOwnProperty.call(s, k)) state[k] = s[k]; }
+        state._submitted = true;   // never re-submit on the restore pass
+        state.step = 'plan';
+        sessionStorage.removeItem('zenithBypState');
+        restored = true;
+      }
+    } catch (e) {}
     renderStep();
     renderBuilderLive();
+    if (restored) window.scrollTo({ top: root.offsetTop - 20, behavior: 'auto' });
   })();
 </script>
 
