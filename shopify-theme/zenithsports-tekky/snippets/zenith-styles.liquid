@@ -149,9 +149,9 @@
 
   /* == Buttons == */
   .zenith-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-block;
+    text-align: center;
+    line-height: 1.25;
     padding: 1rem 1.75rem;
     font-size: 13px;
     font-weight: 800;
@@ -164,6 +164,9 @@
     cursor: pointer;
     will-change: transform;
   }
+  .zenith-btn svg { vertical-align: -0.15em; margin-left: 0.4em; }
+  /* Keep the ™ superscript from breaking button/heading lines onto their own row */
+  .zenith-btn .ztm, h1 .ztm, h2 .ztm, h3 .ztm { white-space: nowrap; }
   .zenith-btn:active { transform: translateY(0); }
   .zenith-btn--primary {
     background: var(--zenith-lime);
@@ -577,10 +580,24 @@
   function run() { wrapTM(document.body); }
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', run); } else { run(); }
   if (window.MutationObserver) {
-    var t;
     document.addEventListener('DOMContentLoaded', function () {
-      new MutationObserver(function () { clearTimeout(t); t = setTimeout(run, 120); })
-        .observe(document.body, { childList: true, subtree: true });
+      // Only wrap ™ inside NEWLY ADDED nodes (e.g. the Build Your Player plan).
+      // A full-body rescan on every mutation caused visible reflow/jitter while
+      // dragging sliders (their number updates fire mutations constantly).
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          var added = muts[i].addedNodes;
+          for (var j = 0; j < added.length; j++) {
+            var n = added[j];
+            if (n.nodeType === 1) {
+              if (n.textContent && n.textContent.indexOf(TM) > -1) wrapTM(n);
+            } else if (n.nodeType === 3 && n.nodeValue && n.nodeValue.indexOf(TM) > -1) {
+              var p = n.parentNode;
+              if (p && !(p.closest && p.closest('.ztm'))) wrapTM(p);
+            }
+          }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
     });
   }
 })();
