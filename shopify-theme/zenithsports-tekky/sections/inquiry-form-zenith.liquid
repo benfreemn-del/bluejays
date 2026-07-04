@@ -49,6 +49,9 @@
               <div class="zenith-inquiry__done-text">
                 <strong>{{ section.settings.success_text | escape }}</strong>
                 <span>Your message is in — keep an eye on your inbox. Philip and Paul usually reply within one business day.</span>
+                {% if section.settings.success_link != blank %}
+                  <a href="{{ section.settings.success_link }}" class="zenith-btn zenith-btn--primary" style="margin-top: 1.1rem; display: inline-flex; align-self: flex-start;">{{ section.settings.success_link_label | escape }}</a>
+                {% endif %}
               </div>
             </div>
           {% else %}
@@ -210,7 +213,9 @@
     { "type": "text", "id": "cta_label", "label": "Submit button label", "default": "Send →" },
     { "type": "text", "id": "success_text", "label": "Success message", "default": "Got it — Philip and Paul will be in touch." },
     { "type": "checkbox", "id": "show_club_option", "label": "Show 'Club / academy / camp' dropdown option", "default": true },
-    { "type": "checkbox", "id": "show_bulk_line", "label": "Show 'Bulk, club, or detailed question' email line", "default": true }
+    { "type": "checkbox", "id": "show_bulk_line", "label": "Show 'Bulk, club, or detailed question' email line", "default": true },
+    { "type": "text", "id": "success_link", "label": "Success button link (e.g. /pages/training-guide)", "default": "/pages/training-guide" },
+    { "type": "text", "id": "success_link_label", "label": "Success button label", "default": "Open the free training guide →" }
   ],
   "presets": [{ "name": "Zenith Inquiry Form" }]
 }
