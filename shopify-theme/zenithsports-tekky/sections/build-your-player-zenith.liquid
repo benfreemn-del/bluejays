@@ -97,6 +97,14 @@
 
         <div class="zenith-byp__builder-grid">
           <div class="zenith-byp__builder-controls">
+            <div class="zenith-byp__genderrow">
+              <span class="zenith-byp__field-label">Your player</span>
+              <div class="zenith-byp__gender" role="group" aria-label="Player">
+                <button type="button" class="zenith-byp__gender-btn is-active" data-gender="male">Boy</button>
+                <button type="button" class="zenith-byp__gender-btn" data-gender="female">Girl</button>
+              </div>
+            </div>
+
             <div class="zenith-byp__slider">
               <div class="zenith-byp__slider-head">
                 <span class="zenith-byp__field-label">Age</span>
@@ -145,12 +153,29 @@
           </div><!-- /builder-controls -->
 
           <div class="zenith-byp__snapshot" aria-live="polite">
-            <span class="zenith-byp__snap-eye">Live snapshot · updates as you slide</span>
+            <span class="zenith-byp__snap-eye">Your player · updates as you slide</span>
+            <div class="zenith-byp__avatarwrap">
+              <img class="zenith-byp__avatar" data-avatar src="https://bluejayportfolio.com/avatars/tekky/male/04_travel_age_5-15.webp" alt="Your TEKKY player card" width="240" height="240" loading="lazy" />
+            </div>
             <div class="zenith-byp__snap-big" data-snap-touches>82,500</div>
             <div class="zenith-byp__snap-sub">touches a year on this plan</div>
+
+            <div class="zenith-byp__gapviz">
+              <div class="zenith-byp__gapviz-head">The gap you're building</div>
+              <div class="zenith-byp__gapviz-row">
+                <div class="zenith-byp__gapviz-label">You <small>(<span data-commit-echo>3</span>&times;/wk)</small></div>
+                <div class="zenith-byp__gapviz-track"><div class="zenith-byp__gapviz-fill zenith-byp__gapviz-fill--you" data-gapviz-you style="width:39%"></div></div>
+                <div class="zenith-byp__gapviz-num zenith-byp__gapviz-num--you" data-gapviz-younum>82,500</div>
+              </div>
+              <div class="zenith-byp__gapviz-row">
+                <div class="zenith-byp__gapviz-label">Same&nbsp;ol'&nbsp;player</div>
+                <div class="zenith-byp__gapviz-track"><div class="zenith-byp__gapviz-fill zenith-byp__gapviz-fill--them" data-gapviz-them style="width:12%"></div></div>
+                <div class="zenith-byp__gapviz-num">26,250</div>
+              </div>
+              <div class="zenith-byp__gapviz-gap"><strong data-snap-gap>+56,250</strong> touches a year they never get back</div>
+            </div>
+
             <div class="zenith-byp__snap-mult"><span data-snap-mult>3.1&times;</span> the touches of a traditional-only player</div>
-            <div class="zenith-byp__snap-gap"><strong data-snap-gap>+56,250</strong> touches a year vs a player who skips the extra sessions</div>
-            <div class="zenith-byp__snap-bar"><div class="zenith-byp__snap-bar-fill" data-snap-bar style="width:59%"></div></div>
             <p class="zenith-byp__snap-plan">
               <strong data-preview-level>Foundation</strong> plan · <span data-preview-sessions>3</span>&times;/week &times; <span data-preview-minutes>10</span> min · <span data-preview-tier>Warm Up</span> tier
             </p>
@@ -439,6 +464,44 @@
   .zenith-byp__slider-hint {
     margin: 0.55rem 0 0; font-size: 12.5px; line-height: 1.4;
     color: rgba(255,255,255,0.6);
+  }
+  /* Gender toggle */
+  .zenith-byp__genderrow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .zenith-byp__gender { display: inline-flex; gap: 0.35rem; background: rgba(255,255,255,0.06); border-radius: 999px; padding: 0.25rem; }
+  .zenith-byp__gender-btn {
+    appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 800; font-size: 13px;
+    padding: 0.45rem 1.15rem; border-radius: 999px; color: rgba(255,255,255,0.7);
+    background: transparent; transition: background 0.18s ease, color 0.18s ease;
+  }
+  .zenith-byp__gender-btn.is-active { background: var(--zenith-lime); color: var(--zenith-navy-deep); }
+  /* Live avatar */
+  .zenith-byp__avatarwrap { display: flex; justify-content: center; margin: 0.1rem 0 1rem; }
+  .zenith-byp__avatar {
+    width: 188px; height: 188px; object-fit: contain;
+    filter: drop-shadow(0 12px 26px rgba(0,0,0,0.45));
+    transition: opacity 0.18s ease;
+  }
+  @media (min-width: 960px) { .zenith-byp__avatar { width: 228px; height: 228px; } }
+  /* Bold "you vs same-ol-player" gap comparison */
+  .zenith-byp__gapviz { margin-top: 1.1rem; }
+  .zenith-byp__gapviz-head {
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.55); margin-bottom: 0.65rem;
+  }
+  .zenith-byp__gapviz-row { display: grid; grid-template-columns: 82px 1fr auto; align-items: center; gap: 0.55rem; margin-bottom: 0.5rem; }
+  .zenith-byp__gapviz-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.82); line-height: 1.15; }
+  .zenith-byp__gapviz-label small { display: block; font-weight: 600; color: rgba(255,255,255,0.5); }
+  .zenith-byp__gapviz-track { height: 16px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .zenith-byp__gapviz-fill { height: 100%; border-radius: 999px; transition: width 0.45s cubic-bezier(.2,.7,.3,1); }
+  .zenith-byp__gapviz-fill--you { background: linear-gradient(90deg, var(--zenith-lime) 0%, #2fe3b6 100%); }
+  .zenith-byp__gapviz-fill--them { background: rgba(255,255,255,0.26); }
+  .zenith-byp__gapviz-num { font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.85); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .zenith-byp__gapviz-num--you { color: var(--zenith-lime); }
+  .zenith-byp__gapviz-gap { margin-top: 0.4rem; font-size: 0.92rem; line-height: 1.4; color: rgba(255,255,255,0.72); }
+  .zenith-byp__gapviz-gap strong { color: var(--zenith-amber); font-weight: 900; font-size: 1.15rem; }
+  .zenith-byp__plan-avatar {
+    width: 150px; height: 150px; object-fit: contain; margin: 0 auto 0.5rem;
+    display: block; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.4));
   }
   .zenith-byp__snap-bar {
     margin-top: 0.85rem; height: 10px; border-radius: 999px;
@@ -782,6 +845,7 @@
       skillLevel: 2,
       currentWeeklyHours: 2,
       commitSessions: 3,
+      gender: 'male',
       goals: [],
       drillEmail: false
     };
@@ -891,6 +955,18 @@
       if (state.step === 'plan') renderPlan();
     }
 
+    // Avatar resolver — mirrors bluejays/src/lib/tekky-avatars.ts.
+    // 2 genders x 5 tiers x 3 age bands = 30 cards, hosted on the portfolio CDN.
+    var AV_TIERS = ['rec', 'travel', 'club', 'ecnl_mls_next', 'elite'];
+    var AV_AGES = ['5-15', '13-25', '25-35'];
+    function avatarUrl(gender, skill, age) {
+      var tier = AV_TIERS[Math.min(Math.max(Math.round(skill) - 1, 0), 4)];
+      var ageS = age < 13 ? '5-15' : (age < 25 ? '13-25' : '25-35');
+      var seq = AV_TIERS.indexOf(tier) * 3 + AV_AGES.indexOf(ageS) + 1;
+      seq = (seq < 10 ? '0' : '') + seq;
+      return 'https://bluejayportfolio.com/avatars/tekky/' + gender + '/' + seq + '_' + tier + '_age_' + ageS + '.webp';
+    }
+
     function renderBuilderLive() {
       $('[data-age-val]').textContent = state.age;
       var ft = Math.floor(state.heightInches / 12);
@@ -919,6 +995,20 @@
       if (snapBar) snapBar.style.width = Math.min(100, Math.round((totalTouches / 213750) * 100)) + '%';
       var snapGap = $('[data-snap-gap]');
       if (snapGap) snapGap.textContent = '+' + tekkyTouches.toLocaleString();
+
+      // Live avatar swap (gender + skill tier + age band)
+      var avEl = $('[data-avatar]');
+      if (avEl) {
+        var url = avatarUrl(state.gender, state.skillLevel, state.age);
+        if (avEl.getAttribute('src') !== url) avEl.setAttribute('src', url);
+      }
+
+      // Bold gap comparison bars — YOU pulls away from the same-ol' player
+      var MAXT = 213750; // touches at the 10-session/wk ceiling
+      var youEl = $('[data-gapviz-you]'); if (youEl) youEl.style.width = Math.max(6, Math.round(totalTouches / MAXT * 100)) + '%';
+      var themEl = $('[data-gapviz-them]'); if (themEl) themEl.style.width = Math.round(26250 / MAXT * 100) + '%';
+      var youNum = $('[data-gapviz-younum]'); if (youNum) youNum.textContent = totalTouches.toLocaleString();
+      var commitEcho = $('[data-commit-echo]'); if (commitEcho) commitEcho.textContent = state.commitSessions;
 
       var pLevel = $('[data-preview-level]'); if (pLevel) pLevel.textContent = sp.level;
       var pSessions = $('[data-preview-sessions]'); if (pSessions) pSessions.textContent = state.commitSessions;
@@ -968,6 +1058,7 @@
 
       out.innerHTML = ''
         + '<div class="zenith-byp__plan-hero">'
+        +   '<img class="zenith-byp__plan-avatar" src="' + avatarUrl(state.gender, state.skillLevel, state.age) + '" alt="Your TEKKY player card" width="200" height="200" loading="lazy" />'
         +   '<div class="zenith-byp__plan-eye">Your personalized plan</div>'
         +   '<h2 class="zenith-byp__plan-level">' + escapeHtml(p.level) + '</h2>'
         +   '<div class="zenith-byp__plan-meta">'
@@ -1051,6 +1142,13 @@
     if (hoursIn) hoursIn.addEventListener('input', function (e) { state.currentWeeklyHours = parseInt(e.target.value, 10); renderBuilderLive(); });
     var commitIn = $('[data-input="commit"]');
     if (commitIn) commitIn.addEventListener('input', function (e) { state.commitSessions = parseInt(e.target.value, 10); renderBuilderLive(); });
+    $$('.zenith-byp__gender-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.gender = btn.getAttribute('data-gender');
+        $$('.zenith-byp__gender-btn').forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+        renderBuilderLive();
+      });
+    });
 
     $$('[data-goal]').forEach(function (btn) {
       btn.addEventListener('click', function () {
