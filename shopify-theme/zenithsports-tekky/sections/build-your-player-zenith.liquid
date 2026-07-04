@@ -132,6 +132,16 @@
               <input type="range" min="0" max="10" step="1" value="2" data-input="hours" aria-label="Current weekly training hours" />
               <div class="zenith-byp__slider-marks"><span>0</span><span>3</span><span>6</span><span>10+</span></div>
             </div>
+
+            <div class="zenith-byp__slider zenith-byp__slider--commit">
+              <div class="zenith-byp__slider-head">
+                <span class="zenith-byp__field-label">Extra TEKKY™ sessions / week you'll commit to</span>
+                <span class="zenith-byp__slider-val"><span data-commit-val>3</span> <small>× / wk</small></span>
+              </div>
+              <input type="range" min="0" max="10" step="1" value="3" data-input="commit" aria-label="Extra TEKKY sessions per week you will commit to" />
+              <div class="zenith-byp__slider-marks"><span>0</span><span>3</span><span>6</span><span>10</span></div>
+              <p class="zenith-byp__slider-hint">Just 10–15 min each. This is the work a typical player skips — watch the gap below move.</p>
+            </div>
           </div><!-- /builder-controls -->
 
           <div class="zenith-byp__snapshot" aria-live="polite">
@@ -139,6 +149,7 @@
             <div class="zenith-byp__snap-big" data-snap-touches>82,500</div>
             <div class="zenith-byp__snap-sub">touches a year on this plan</div>
             <div class="zenith-byp__snap-mult"><span data-snap-mult>3.1&times;</span> the touches of a traditional-only player</div>
+            <div class="zenith-byp__snap-gap"><strong data-snap-gap>+56,250</strong> touches a year vs a player who skips the extra sessions</div>
             <div class="zenith-byp__snap-bar"><div class="zenith-byp__snap-bar-fill" data-snap-bar style="width:59%"></div></div>
             <p class="zenith-byp__snap-plan">
               <strong data-preview-level>Foundation</strong> plan · <span data-preview-sessions>3</span>&times;/week &times; <span data-preview-minutes>10</span> min · <span data-preview-tier>Warm Up</span> tier
@@ -196,7 +207,7 @@
       <div class="zenith-byp__step" data-step="identity" hidden>
         <p class="zenith-byp__qnum">Last step · then your plan</p>
         <h2 class="zenith-byp__qtitle">Where should we send your plan?</h2>
-        <p class="zenith-byp__qbody">Your plan + drill links land in your inbox immediately. We don't share your info, and you can unsubscribe with one click.</p>
+        <p class="zenith-byp__qbody">Your full plan builds on the very next screen — instantly. Add your email so Philip and Paul can save it and follow up with the right next step. We don't share your info, and you can unsubscribe with one click.</p>
 
         <div class="zenith-byp__form">
           <label class="zenith-byp__field">
@@ -243,7 +254,7 @@
           <input type="hidden" name="contact[note]" data-hidden="note" value="" />
           <button type="submit" data-form-submit hidden>Submit</button>
           {% if form.posted_successfully? %}
-            <p class="zenith-byp__sent">✓ Plan saved — check your inbox for the full breakdown.</p>
+            <p class="zenith-byp__sent">✓ Saved! Your full plan is right below — drills, cadence, and kit. Philip and Paul will follow up personally with your next step.</p>
           {% endif %}
           {%- if form.errors -%}
             <p class="zenith-byp__sent zenith-byp__sent--err">{{ form.errors | default_errors }}</p>
@@ -415,6 +426,19 @@
   }
   .zenith-byp__snap-mult span {
     color: var(--zenith-lime); font-weight: 900; font-size: 1.15rem;
+  }
+  .zenith-byp__snap-gap {
+    margin-top: 0.7rem; font-size: 0.9rem; line-height: 1.45;
+    color: rgba(255,255,255,0.72);
+  }
+  .zenith-byp__snap-gap strong { color: var(--zenith-amber); font-weight: 900; font-size: 1.05rem; }
+  .zenith-byp__slider--commit {
+    padding: 1rem 1.1rem; border-radius: 0.85rem;
+    background: rgba(0,196,154,0.07); border: 1px solid rgba(0,196,154,0.28);
+  }
+  .zenith-byp__slider-hint {
+    margin: 0.55rem 0 0; font-size: 12.5px; line-height: 1.4;
+    color: rgba(255,255,255,0.6);
   }
   .zenith-byp__snap-bar {
     margin-top: 0.85rem; height: 10px; border-radius: 999px;
@@ -757,6 +781,7 @@
       heightInches: 56,
       skillLevel: 2,
       currentWeeklyHours: 2,
+      commitSessions: 3,
       goals: [],
       drillEmail: false
     };
@@ -874,13 +899,15 @@
       $('[data-height-in]').textContent = inch;
       $('[data-skill-label]').textContent = skillLabel(state.skillLevel);
       $('[data-hours-val]').textContent = state.currentWeeklyHours;
+      var commitVal = $('[data-commit-val]'); if (commitVal) commitVal.textContent = state.commitSessions;
 
       // Live development snapshot — updates as the sliders move.
       // Touches model mirrors the Touches Advantage deck: a traditional-only
-      // player banks ~26,250 touches/yr; each TEKKY™ session ≈ 375 deliberate
-      // touches across a 50-week year.
+      // player banks ~26,250 touches/yr (Scenario A — no extra work). Each extra
+      // TEKKY™ session the player COMMITS to ≈ 375 deliberate touches, across a
+      // 50-week year. The commitment slider is what opens the gap vs Scenario A.
       var sp = generatePlan({ role: state.role || 'parent', firstName: state.firstName, age: state.age, heightInches: state.heightInches, skillLevel: state.skillLevel, currentWeeklyHours: state.currentWeeklyHours, goals: state.goals });
-      var tekkyTouches = sp.weeklySessions * 50 * 375;
+      var tekkyTouches = state.commitSessions * 50 * 375;
       var totalTouches = 26250 + tekkyTouches;
       var mult = totalTouches / 26250;
 
@@ -889,10 +916,12 @@
       var snapMult = $('[data-snap-mult]');
       if (snapMult) snapMult.textContent = (mult >= 10 ? mult.toFixed(0) : mult.toFixed(1)) + '×';
       var snapBar = $('[data-snap-bar]');
-      if (snapBar) snapBar.style.width = Math.min(100, Math.round((totalTouches / 138750) * 100)) + '%';
+      if (snapBar) snapBar.style.width = Math.min(100, Math.round((totalTouches / 213750) * 100)) + '%';
+      var snapGap = $('[data-snap-gap]');
+      if (snapGap) snapGap.textContent = '+' + tekkyTouches.toLocaleString();
 
       var pLevel = $('[data-preview-level]'); if (pLevel) pLevel.textContent = sp.level;
-      var pSessions = $('[data-preview-sessions]'); if (pSessions) pSessions.textContent = sp.weeklySessions;
+      var pSessions = $('[data-preview-sessions]'); if (pSessions) pSessions.textContent = state.commitSessions;
       var pMinutes = $('[data-preview-minutes]'); if (pMinutes) pMinutes.textContent = sp.minutesPerSession;
       var pTier = $('[data-preview-tier]'); if (pTier) pTier.textContent = sp.focusTier;
 
@@ -929,8 +958,10 @@
         return '<li>' + escapeHtml(item) + '</li>';
       }).join('');
 
-      // Touches math (same model as the Touches Advantage deck + live snapshot)
-      var planTekky = p.weeklySessions * 50 * 375;
+      // Touches math (same model as the Touches Advantage deck + live snapshot).
+      // Driven by the sessions the player COMMITTED to on the builder slider —
+      // that commitment is what separates them from Scenario A (26,250 touches/yr).
+      var planTekky = state.commitSessions * 50 * 375;
       var planTotal = 26250 + planTekky;
       var planMult = planTotal / 26250;
       var planMultStr = (planMult >= 10 ? planMult.toFixed(0) : planMult.toFixed(1));
@@ -940,11 +971,11 @@
         +   '<div class="zenith-byp__plan-eye">Your personalized plan</div>'
         +   '<h2 class="zenith-byp__plan-level">' + escapeHtml(p.level) + '</h2>'
         +   '<div class="zenith-byp__plan-meta">'
-        +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Sessions / week</span><span class="zenith-byp__plan-meta-val">' + p.weeklySessions + '</span></div>'
+        +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Sessions / week</span><span class="zenith-byp__plan-meta-val">' + state.commitSessions + '</span></div>'
         +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Minutes / session</span><span class="zenith-byp__plan-meta-val">' + p.minutesPerSession + '</span></div>'
         +     '<div class="zenith-byp__plan-meta-item"><span class="zenith-byp__plan-meta-key">Drill tier</span><span class="zenith-byp__plan-meta-val">' + escapeHtml(p.focusTier) + '</span></div>'
         +   '</div>'
-        +   '<div class="zenith-byp__plan-touches">At this cadence your player banks <strong>' + planTotal.toLocaleString() + '</strong> touches a year — <strong>' + planMultStr + '×</strong> the touches of a traditional-only player.</div>'
+        +   '<div class="zenith-byp__plan-touches">At <strong>' + state.commitSessions + '&times;/week</strong> your player banks <strong>' + planTotal.toLocaleString() + '</strong> touches a year — <strong>' + planMultStr + '&times;</strong> a traditional-only player, and <strong>+' + planTekky.toLocaleString() + '</strong> more than a player who skips the extra sessions.</div>'
         +   '<p class="zenith-byp__plan-pitch">' + escapeHtml(p.pitch) + '</p>'
         + '</div>'
         + '<div class="zenith-byp__plan-block">'
@@ -985,8 +1016,10 @@
             'Height: ' + Math.floor(state.heightInches / 12) + '\' ' + (state.heightInches % 12) + '"',
             'Skill level: ' + skillLabel(state.skillLevel),
             'Current weekly hours: ' + state.currentWeeklyHours,
+            'Committed extra sessions/wk: ' + state.commitSessions,
             'Goals: ' + state.goals.join(', '),
-            'Generated plan: ' + p.level + ' · ' + p.weeklySessions + 'x/wk · ' + p.minutesPerSession + ' min · ' + p.focusTier,
+            'Generated plan: ' + p.level + ' · rec ' + p.weeklySessions + 'x/wk · ' + p.minutesPerSession + ' min · ' + p.focusTier,
+            'Projected touches/yr: ' + (26250 + state.commitSessions * 50 * 375).toLocaleString() + ' (+' + (state.commitSessions * 50 * 375).toLocaleString() + ' vs a typical player)',
             'Kit fit: ' + p.recommendedKit.label + ' ($' + p.recommendedKit.priceUsd.toFixed(2) + ')',
             'Drill-of-Month email: ' + (state.drillEmail ? 'yes' : 'no')
           ].join('\n');
@@ -1016,6 +1049,8 @@
     if (skillIn) skillIn.addEventListener('input', function (e) { state.skillLevel = parseInt(e.target.value, 10); renderBuilderLive(); });
     var hoursIn = $('[data-input="hours"]');
     if (hoursIn) hoursIn.addEventListener('input', function (e) { state.currentWeeklyHours = parseInt(e.target.value, 10); renderBuilderLive(); });
+    var commitIn = $('[data-input="commit"]');
+    if (commitIn) commitIn.addEventListener('input', function (e) { state.commitSessions = parseInt(e.target.value, 10); renderBuilderLive(); });
 
     $$('[data-goal]').forEach(function (btn) {
       btn.addEventListener('click', function () {

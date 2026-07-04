@@ -33,6 +33,7 @@
               <span class="zenith-tgcta__done-check" aria-hidden="true">&#10003;</span>
               <div class="zenith-tgcta__done-text">
                 <strong>{{ section.settings.success_text | escape }}</strong>
+                <span>Thanks for grabbing it — tap below to open your full plan + 22-drill library. Save it or print it for the driveway.</span>
                 {% if section.settings.success_link != blank %}
                   <a class="zenith-btn zenith-btn--primary zenith-tgcta__done-btn" href="{{ section.settings.success_link }}">Open your plan →</a>
                 {% endif %}
@@ -208,8 +209,8 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Get the TEKKY™ training plan." },
     { "type": "richtext", "id": "body", "label": "Body", "default": "<p>The full 22-drill library + the 4-week starter plan, in one coaching PDF — the European-style technical curriculum used at ECNL and MLS Next clubs. Opens in your browser, prints, or save it for later.</p>" },
     { "type": "text", "id": "cta_label", "label": "Submit button label", "default": "Send me the plan" },
-    { "type": "text", "id": "success_text", "label": "Success message", "default": "Plan is ready." },
-    { "type": "text", "id": "success_link", "label": "Optional link to open after submit (e.g., /pages/training-guide)" },
+    { "type": "text", "id": "success_text", "label": "Success message", "default": "You're in — your plan's ready." },
+    { "type": "text", "id": "success_link", "label": "Link to open after submit (e.g., /pages/training-guide)", "default": "/pages/training-guide" },
     { "type": "text", "id": "feature_video_url", "label": "Side VIDEO URL (mp4) -- muted loop, replaces the photo", "info": "Paste a Shopify-hosted video URL (cdn.shopify.com/videos/...). The photo below is used as the poster." },
     { "type": "text", "id": "photo_url", "label": "Side photo URL (also used as the video poster)", "default": "https://zenithsports.org/cdn/shop/files/c2.jpg" }
   ],

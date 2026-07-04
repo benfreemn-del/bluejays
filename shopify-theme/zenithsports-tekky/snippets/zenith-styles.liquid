@@ -535,4 +535,53 @@
     text-underline-offset: 2px;
   }
   .zenith-footer__bottom a:hover { color: var(--zenith-lime); }
+
+  /* Trademark symbol — render ~40% smaller as a raised superscript everywhere
+     "TEKKY™" appears (headings, CTAs, body). Applied by the wrapTM script below. */
+  .ztm { font-size: 0.6em; vertical-align: super; line-height: 0; font-weight: inherit; letter-spacing: 0; }
 </style>
+
+<script>
+/* Zenith — shrink every ™ to a small superscript site-wide. Wraps each ™ text
+   node in <sup class="ztm">, skips scripts/styles/inputs + already-wrapped ones,
+   and re-runs on dynamically injected content (e.g. the Build Your Player plan). */
+(function () {
+  var TM = '™';
+  function wrapTM(rootEl) {
+    if (!rootEl) return;
+    var walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue || n.nodeValue.indexOf(TM) === -1) return NodeFilter.FILTER_REJECT;
+        var p = n.parentNode;
+        if (!p || (p.closest && p.closest('script,style,textarea,.ztm'))) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      var parts = node.nodeValue.split(TM);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (part, i) {
+        if (part) frag.appendChild(document.createTextNode(part));
+        if (i < parts.length - 1) {
+          var s = document.createElement('sup');
+          s.className = 'ztm';
+          s.textContent = TM;
+          frag.appendChild(s);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  function run() { wrapTM(document.body); }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', run); } else { run(); }
+  if (window.MutationObserver) {
+    var t;
+    document.addEventListener('DOMContentLoaded', function () {
+      new MutationObserver(function () { clearTimeout(t); t = setTimeout(run, 120); })
+        .observe(document.body, { childList: true, subtree: true });
+    });
+  }
+})();
+</script>
