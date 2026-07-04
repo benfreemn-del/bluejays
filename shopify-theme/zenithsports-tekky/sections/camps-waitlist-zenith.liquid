@@ -1017,7 +1017,15 @@
       }
     });
 
-    // INIT
+    // INIT — after the waitlist form POSTs, the page reloads and would reset to
+    // step 1, hiding the "✓ you're on the waitlist" confirmation inside step 7.
+    // Jump straight back to the notify step so the submitter SEES their confirmation.
+    try {
+      if (root.querySelector('.zenith-camps__success') || /customer_posted=true/.test(window.location.search)) {
+        state.step = 'notify';
+        setTimeout(function () { window.scrollTo({ top: root.offsetTop - 20, behavior: 'auto' }); }, 0);
+      }
+    } catch (e) {}
     renderStep();
     renderTravel();
   })();
