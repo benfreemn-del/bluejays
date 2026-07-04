@@ -126,10 +126,10 @@
             <div class="zenith-byp__slider">
               <div class="zenith-byp__slider-head">
                 <span class="zenith-byp__field-label">Skill level</span>
-                <span class="zenith-byp__slider-val" data-skill-label>Recreational</span>
+                <span class="zenith-byp__slider-val" data-skill-label>Travel</span>
               </div>
               <input type="range" min="1" max="5" step="1" value="2" data-input="skill" aria-label="Skill level" />
-              <div class="zenith-byp__slider-marks"><span>Beginner</span><span>Rec</span><span>Travel</span><span>ECNL</span><span>Elite</span></div>
+              <div class="zenith-byp__slider-marks"><span>Rec</span><span>Travel</span><span>Club</span><span>ECNL</span><span>Elite</span></div>
             </div>
 
             <div class="zenith-byp__slider">
@@ -154,8 +154,17 @@
 
           <div class="zenith-byp__snapshot" aria-live="polite">
             <span class="zenith-byp__snap-eye">Your player · updates as you slide</span>
-            <div class="zenith-byp__avatarwrap">
-              <img class="zenith-byp__avatar" data-avatar src="https://bluejayportfolio.com/avatars/tekky/male/04_travel_age_5-15.webp" alt="Your TEKKY player card" width="240" height="240" loading="lazy" />
+            <div class="zenith-byp__transform">
+              <div class="zenith-byp__tcard">
+                <img class="zenith-byp__tavatar" data-avatar-now src="https://bluejayportfolio.com/avatars/tekky/male/04_travel_age_5-15.webp" alt="Your player today" width="150" height="150" loading="lazy" />
+                <span class="zenith-byp__tlabel">You today</span>
+              </div>
+              <div class="zenith-byp__tarrow" aria-hidden="true">&rarr;</div>
+              <div class="zenith-byp__tcard zenith-byp__tcard--future" data-future-card>
+                <span class="zenith-byp__levelup" data-levelup hidden>+1 level</span>
+                <img class="zenith-byp__tavatar" data-avatar-future src="https://bluejayportfolio.com/avatars/tekky/male/07_club_age_5-15.webp" alt="Your player in a year" width="150" height="150" loading="lazy" />
+                <span class="zenith-byp__tlabel">In 1 year <small data-future-sub>at 3&times;/wk</small></span>
+              </div>
             </div>
             <div class="zenith-byp__snap-big" data-snap-touches>82,500</div>
             <div class="zenith-byp__snap-sub">touches a year on this plan</div>
@@ -475,13 +484,30 @@
   }
   .zenith-byp__gender-btn.is-active { background: var(--zenith-lime); color: var(--zenith-navy-deep); }
   /* Live avatar */
-  .zenith-byp__avatarwrap { display: flex; justify-content: center; margin: 0.1rem 0 1rem; }
-  .zenith-byp__avatar {
-    width: 188px; height: 188px; object-fit: contain;
-    filter: drop-shadow(0 12px 26px rgba(0,0,0,0.45));
-    transition: opacity 0.18s ease;
+  /* "You today -> You in a year" transformation — the player levels up as they commit sessions */
+  .zenith-byp__transform {
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    margin: 0.1rem 0 1.1rem;
   }
-  @media (min-width: 960px) { .zenith-byp__avatar { width: 228px; height: 228px; } }
+  .zenith-byp__tcard { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1 1 0; min-width: 0; position: relative; }
+  .zenith-byp__tavatar {
+    width: 100%; max-width: 140px; height: auto; object-fit: contain;
+    filter: drop-shadow(0 10px 22px rgba(0,0,0,0.45));
+    transition: opacity 0.18s ease, transform 0.35s ease, filter 0.35s ease;
+  }
+  .zenith-byp__tcard--future .zenith-byp__tavatar {
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 18px rgba(0,196,154,0.55)) drop-shadow(0 10px 22px rgba(0,0,0,0.5));
+  }
+  .zenith-byp__tlabel { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.25; }
+  .zenith-byp__tlabel small { display: block; font-weight: 700; color: var(--zenith-lime); text-transform: none; letter-spacing: 0; }
+  .zenith-byp__tarrow { font-size: 1.5rem; font-weight: 900; color: var(--zenith-lime); flex: 0 0 auto; padding-bottom: 1.3rem; }
+  .zenith-byp__levelup {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    background: var(--zenith-amber); color: #1a1200; font-size: 10px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.55rem; border-radius: 999px;
+    white-space: nowrap; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
   /* Bold "you vs same-ol-player" gap comparison */
   .zenith-byp__gapviz { margin-top: 1.1rem; }
   .zenith-byp__gapviz-head {
@@ -923,7 +949,7 @@
     }
 
     function skillLabel(n) {
-      return ['', 'Beginner', 'Recreational', 'Travel / club', 'ECNL / MLS Next', 'Elite'][n] || 'Recreational';
+      return ['', 'Rec', 'Travel', 'Club', 'ECNL / MLS Next', 'Elite'][n] || 'Rec';
     }
 
 
@@ -960,13 +986,19 @@
     // 2 genders x 5 tiers x 3 age bands = 30 cards, hosted on the portfolio CDN.
     var AV_TIERS = ['rec', 'travel', 'club', 'ecnl_mls_next', 'elite'];
     var AV_AGES = ['5-15', '13-25', '25-35'];
-    function avatarUrl(gender, skill, age) {
-      var tier = AV_TIERS[Math.min(Math.max(Math.round(skill) - 1, 0), 4)];
+    function tierIdxFromSkill(skill) { return Math.min(Math.max(Math.round(skill) - 1, 0), 4); }
+    function avatarUrlByTier(gender, tierIdx, age) {
+      tierIdx = Math.min(Math.max(tierIdx, 0), 4);
+      var tier = AV_TIERS[tierIdx];
       var ageS = age < 13 ? '5-15' : (age < 25 ? '13-25' : '25-35');
-      var seq = AV_TIERS.indexOf(tier) * 3 + AV_AGES.indexOf(ageS) + 1;
+      var seq = tierIdx * 3 + AV_AGES.indexOf(ageS) + 1;
       seq = (seq < 10 ? '0' : '') + seq;
       return 'https://bluejayportfolio.com/avatars/tekky/' + gender + '/' + seq + '_' + tier + '_age_' + ageS + '.webp';
     }
+    function avatarUrl(gender, skill, age) { return avatarUrlByTier(gender, tierIdxFromSkill(skill), age); }
+    // Committed sessions -> how many tiers the player is projected to climb in a year.
+    function commitBoost(sessions) { return Math.min(4, Math.round(sessions / 2.5)); }
+    var AV_TIER_NAMES = ['Rec', 'Travel', 'Club', 'ECNL/MLS', 'Elite'];
 
     function renderBuilderLive() {
       $('[data-age-val]').textContent = state.age;
@@ -997,11 +1029,20 @@
       var snapGap = $('[data-snap-gap]');
       if (snapGap) snapGap.textContent = '+' + tekkyTouches.toLocaleString();
 
-      // Live avatar swap (gender + skill tier + age band)
-      var avEl = $('[data-avatar]');
-      if (avEl) {
-        var url = avatarUrl(state.gender, state.skillLevel, state.age);
-        if (avEl.getAttribute('src') !== url) avEl.setAttribute('src', url);
+      // "You today -> You in a year" transformation. The committed sessions are
+      // what climb the player up the tiers — the impact is visible ON the player.
+      var curTier = tierIdxFromSkill(state.skillLevel);
+      var projTier = Math.min(4, curTier + commitBoost(state.commitSessions));
+      var nowEl = $('[data-avatar-now]');
+      if (nowEl) { var nu = avatarUrlByTier(state.gender, curTier, state.age); if (nowEl.getAttribute('src') !== nu) nowEl.setAttribute('src', nu); }
+      var futEl = $('[data-avatar-future]');
+      if (futEl) { var fu = avatarUrlByTier(state.gender, projTier, state.age); if (futEl.getAttribute('src') !== fu) futEl.setAttribute('src', fu); }
+      var futSub = $('[data-future-sub]'); if (futSub) futSub.textContent = 'at ' + state.commitSessions + '×/wk';
+      var levelup = $('[data-levelup]');
+      if (levelup) {
+        var jumps = projTier - curTier;
+        if (jumps > 0) { levelup.textContent = '▲ ' + AV_TIER_NAMES[projTier]; levelup.hidden = false; }
+        else { levelup.hidden = true; }
       }
 
       // Bold gap comparison bars — YOU pulls away from the same-ol' player
@@ -1059,7 +1100,7 @@
 
       out.innerHTML = ''
         + '<div class="zenith-byp__plan-hero">'
-        +   '<img class="zenith-byp__plan-avatar" src="' + avatarUrl(state.gender, state.skillLevel, state.age) + '" alt="Your TEKKY player card" width="200" height="200" loading="lazy" />'
+        +   '<img class="zenith-byp__plan-avatar" src="' + avatarUrlByTier(state.gender, Math.min(4, tierIdxFromSkill(state.skillLevel) + commitBoost(state.commitSessions)), state.age) + '" alt="Your TEKKY player card" width="200" height="200" loading="lazy" />'
         +   '<div class="zenith-byp__plan-eye">Your personalized plan</div>'
         +   '<h2 class="zenith-byp__plan-level">' + escapeHtml(p.level) + '</h2>'
         +   '<div class="zenith-byp__plan-meta">'
