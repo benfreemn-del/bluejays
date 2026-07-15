@@ -87,6 +87,9 @@ export default function StatsClient() {
   const [error, setError] = useState("");
   const [data, setData] = useState<StatsPayload | null>(null);
   const [leadPage, setLeadPage] = useState(0);
+  // Quote-request window — defaults to the last 30 days so Kyle opens
+  // to what's current; "All time" one tap away.
+  const [leadWindow, setLeadWindow] = useState<"30d" | "all">("30d");
 
   async function load(password: string) {
     setLoading(true);
@@ -122,8 +125,16 @@ export default function StatsClient() {
   const totals = data?.totals;
   const pages = data?.pages ?? [];
   const referrers = data?.referrers ?? [];
-  const leads = data?.leads ?? [];
+  const allLeads = data?.leads ?? [];
   const domains = data?.domains ?? [];
+  const cutoff30 = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const leads =
+    leadWindow === "30d"
+      ? allLeads.filter((l) => {
+          const t = l.submitted_at ? new Date(l.submitted_at).getTime() : 0;
+          return t >= cutoff30;
+        })
+      : allLeads;
   const leadPages = Math.max(1, Math.ceil(leads.length / PAGE_SIZE));
   const leadSlice = leads.slice(leadPage * PAGE_SIZE, (leadPage + 1) * PAGE_SIZE);
   const maxReferrer = referrers.length ? referrers[0].count : 0;
@@ -382,16 +393,54 @@ export default function StatsClient() {
                   gap: 8,
                 }}
               >
-                <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: FONT_HEAD }}>Quote requests</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: FONT_HEAD }}>Quote requests</h2>
+                  <div style={{ display: "inline-flex", gap: 6 }}>
+                    {(
+                      [
+                        { id: "30d", label: "Last 30 days" },
+                        { id: "all", label: "All time" },
+                      ] as const
+                    ).map((w) => (
+                      <button
+                        key={w.id}
+                        onClick={() => {
+                          setLeadWindow(w.id);
+                          setLeadPage(0);
+                        }}
+                        style={{
+                          padding: "5px 12px",
+                          borderRadius: 999,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          border:
+                            leadWindow === w.id
+                              ? `1px solid ${ACCENT}`
+                              : "1px solid rgba(255,255,255,0.15)",
+                          background: leadWindow === w.id ? "rgba(250,204,21,0.12)" : "transparent",
+                          color: leadWindow === w.id ? ACCENT : "rgba(255,255,255,0.6)",
+                        }}
+                      >
+                        {w.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
                   Showing {leads.length === 0 ? 0 : leadPage * PAGE_SIZE + 1}–
                   {Math.min((leadPage + 1) * PAGE_SIZE, leads.length)} of {leads.length}
+                  {leadWindow === "30d" && allLeads.length > leads.length
+                    ? ` · ${allLeads.length} all-time`
+                    : ""}
                 </span>
               </div>
               <div style={{ background: CARD, borderRadius: 14, border: BORDER, overflowX: "auto" }}>
                 {leads.length === 0 ? (
                   <div style={{ padding: 24, color: INK_DIM, fontSize: 14 }}>
-                    No quote requests yet — website form submissions land here (and in your email).
+                    {leadWindow === "30d" && allLeads.length > 0
+                      ? "No quote requests in the last 30 days — tap All time to see older ones."
+                      : "No quote requests yet — website form submissions land here (and in your email)."}
                   </div>
                 ) : (
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
