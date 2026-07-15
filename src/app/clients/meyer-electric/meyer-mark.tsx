@@ -12,14 +12,12 @@
  * Ben sourced. So the lockup pattern is: [MeyerMark icon] + text.
  *
  * Each instance gets a unique gradient ID so multiple instances on the
- * same page don't collide.
+ * same page don't collide. IDs come from React's useId — SSR-stable, so
+ * server and client agree (a module-level counter here caused hydration
+ * mismatches; fixed 2026-07-15).
  */
 
-let _idCounter = 0;
-function uniqueId(prefix: string): string {
-  _idCounter += 1;
-  return `${prefix}-${_idCounter}`;
-}
+import { useId } from "react";
 
 type Props = {
   size?: number;
@@ -29,8 +27,9 @@ type Props = {
 };
 
 export default function MeyerMark({ size = 32, className = "", flat = false }: Props) {
-  const gid = uniqueId("meyer-mark-grad");
-  const innerGid = uniqueId("meyer-mark-inner");
+  const uid = useId();
+  const gid = `meyer-mark-grad-${uid}`;
+  const innerGid = `meyer-mark-inner-${uid}`;
   return (
     <svg
       width={size}

@@ -203,25 +203,44 @@ export default function StatsClient() {
   return (
     <div style={{ minHeight: "100vh", background: BG, color: "#fff", fontFamily: FONT_BODY }}>
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "40px 20px 80px" }}>
-        <header style={{ marginBottom: 32 }}>
-          <div
+        <header style={{ marginBottom: 32, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: ACCENT,
+                fontFamily: FONT_HEAD,
+              }}
+            >
+              Meyer Electric LLC
+            </div>
+            <h1 style={{ fontSize: 30, fontWeight: 800, margin: "6px 0 4px", fontFamily: FONT_HEAD }}>
+              Your Website Backend
+            </h1>
+            <p style={{ color: INK_DIM, fontSize: 14, margin: 0 }}>
+              Live traffic, quote requests, and your domains — updated in real time
+            </p>
+          </div>
+          <a
+            href="/clients/meyer-electric"
             style={{
               fontSize: 12,
               fontWeight: 700,
-              letterSpacing: "0.2em",
               textTransform: "uppercase",
-              color: ACCENT,
-              fontFamily: FONT_HEAD,
+              letterSpacing: "0.08em",
+              color: INK_DIM,
+              textDecoration: "none",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 8,
+              padding: "8px 12px",
+              whiteSpace: "nowrap",
             }}
           >
-            Meyer Electric LLC
-          </div>
-          <h1 style={{ fontSize: 30, fontWeight: 800, margin: "6px 0 4px", fontFamily: FONT_HEAD }}>
-            Your Website Backend
-          </h1>
-          <p style={{ color: INK_DIM, fontSize: 14, margin: 0 }}>
-            Live traffic, quote requests, and your domains — updated in real time
-          </p>
+            ← Your site
+          </a>
         </header>
 
         {!authed ? (
@@ -338,10 +357,8 @@ export default function StatsClient() {
                 marginBottom: 32,
               }}
             >
-              <strong style={{ color: ACCENT }}>Full history included:</strong> counts before
-              July 15, 2026 were imported from hosting analytics (tracked since the site
-              launched May 12, 2026), so the totals above tell the whole story. Live
-              first-party tracking runs from July 15 onward.
+              <strong style={{ color: ACCENT }}>Tracking since launch:</strong> every visit to
+              your site since it went live on May 12, 2026 is counted here.
             </div>
 
             {/* Views by domain */}
