@@ -274,9 +274,10 @@ export default function StatsClient() {
                 marginBottom: 32,
               }}
             >
-              <strong style={{ color: ACCENT }}>Before live tracking:</strong> hosting analytics
-              measured <strong>398 visits · 466 page views</strong> from June 15 – July 15, 2026.
-              The counters above run from the day live tracking switched on.
+              <strong style={{ color: ACCENT }}>Full history included:</strong> counts before
+              July 15, 2026 were imported from hosting analytics (tracked since the site
+              launched May 12, 2026), so the totals above tell the whole story. Live
+              first-party tracking runs from July 15 onward.
             </div>
 
             {/* Views by domain */}

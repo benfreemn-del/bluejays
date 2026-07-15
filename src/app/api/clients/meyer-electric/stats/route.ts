@@ -32,6 +32,17 @@ const PROSPECT_ID = "063c4d4a-81e1-4cae-bbf1-3ce615e1c6f7";
 const STATS_PASSWORD = process.env.MEYER_STATS_PASSWORD || "";
 const MEYER_DOMAIN_RE = /sequimelectric/i;
 
+// Vendor solicitations posing as quote requests — never show these to
+// Kyle. Domain list covers known spam operations; the message heuristics
+// catch the pitch language (guest-post pitchers, virtual-assistant
+// sellers, estimation vendors, business brokers) including senders on
+// personal mailboxes, which must never be hardcoded here (public repo).
+// Display-level filter only; rows stay in contact_form_submissions.
+const SPAM_SENDER_RE =
+  /housingsecrets\.net|safetykid\.info|parallelaid\.com|homesafetyhub\.org|tidylifetoday\.com|vas4hire\.com|lightlaunch\.ai|sendproud\.com/i;
+const SPAM_MESSAGE_RE =
+  /guest post|article (proposal|submission)|your readers|virtual assistant|calendly\.com\/|reply stop to unsubscribe|backlink|complimentary valuation|estimation services|lead generation|book(ed)? meetings|user sign ?ups|volume discounts|vendor,? not a customer/i;
+
 type PageStat = {
   path: string;
   total_views: number;
@@ -143,6 +154,9 @@ export async function POST(req: NextRequest) {
         if (/^service address:[^]*?\btest\.?$/i.test(message) && message.length < 60) return false;
         // Bot gibberish — long single-token mixed-case name, no spaces
         if (/^[a-zA-Z]{16,}$/.test(name) && /[a-z]/.test(name) && /[A-Z]/.test(name.slice(1))) return false;
+        // Vendor solicitations — not quote requests
+        if (SPAM_SENDER_RE.test(email)) return false;
+        if (SPAM_MESSAGE_RE.test(message)) return false;
         return true;
       });
     }
