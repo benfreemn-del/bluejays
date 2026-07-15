@@ -97,6 +97,40 @@ export async function POST(req: NextRequest) {
     console.error("[meyer stats] page stats failed:", err);
   }
 
+  // Daily view counts (PT days) for the day/week/month breakdown. No
+  // GROUP BY in supabase-js — page through created_at values and bucket
+  // here. Volume is low (~500/mo); the 30-page cap covers years.
+  let daily: Array<{ day: string; views: number }> = [];
+  try {
+    const fmt = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Los_Angeles",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const counts = new Map<string, number>();
+    const PAGE = 1000;
+    for (let page = 0; page < 30; page++) {
+      const { data, error } = await supabase
+        .from("client_page_views")
+        .select("created_at")
+        .eq("client_slug", SLUG)
+        .order("created_at", { ascending: true })
+        .range(page * PAGE, page * PAGE + PAGE - 1);
+      if (error || !Array.isArray(data) || data.length === 0) break;
+      for (const row of data as Array<{ created_at: string }>) {
+        const key = fmt.format(new Date(row.created_at));
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+      if (data.length < PAGE) break;
+    }
+    daily = Array.from(counts.entries())
+      .map(([day, views]) => ({ day, views }))
+      .sort((a, b) => a.day.localeCompare(b.day));
+  } catch (err) {
+    console.error("[meyer stats] daily fetch failed:", err);
+  }
+
   // Top referrers, last 30 days. supabase-js has no GROUP BY — volume
   // is low (hundreds/month), so pull the window and aggregate here.
   let referrers: Array<{ source: string; count: number }> = [];
@@ -195,6 +229,7 @@ export async function POST(req: NextRequest) {
     ok: true,
     totals: { totalViews, views30d, views7d, leadCount: leads.length },
     pages,
+    daily,
     referrers,
     leads,
     domains,

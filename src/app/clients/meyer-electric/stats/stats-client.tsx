@@ -57,10 +57,56 @@ type StatsPayload = {
     leadCount: number;
   };
   pages?: PageStat[];
+  daily?: Array<{ day: string; views: number }>;
   referrers?: Array<{ source: string; count: number }>;
   leads?: Lead[];
   domains?: DomainInfo[];
 };
+
+type ViewBucket = "day" | "week" | "month";
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function parseDayKey(key: string): Date {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+function shortDate(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/** Aggregate daily counts into day / week (Mon-start) / month buckets. */
+function bucketViews(
+  daily: Array<{ day: string; views: number }>,
+  bucket: ViewBucket,
+): Array<{ label: string; views: number; key: string }> {
+  const map = new Map<string, { label: string; views: number }>();
+  for (const { day, views } of daily) {
+    const d = parseDayKey(day);
+    let key = day;
+    let label = shortDate(d);
+    if (bucket === "week") {
+      const monday = new Date(d);
+      monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      key = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, "0")}-${String(monday.getDate()).padStart(2, "0")}`;
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      label = `${shortDate(monday)} – ${shortDate(sunday)}`;
+    } else if (bucket === "month") {
+      key = day.slice(0, 7);
+      label = `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+    }
+    const prev = map.get(key);
+    map.set(key, { label, views: (prev?.views ?? 0) + views });
+  }
+  return Array.from(map.entries())
+    .map(([key, v]) => ({ key, ...v }))
+    .sort((a, b) => b.key.localeCompare(a.key)); // newest first
+}
 
 const PW_KEY = "meyer-stats-pw";
 const PAGE_SIZE = 50;
@@ -90,6 +136,8 @@ export default function StatsClient() {
   // Quote-request window — defaults to the last 30 days so Kyle opens
   // to what's current; "All time" one tap away.
   const [leadWindow, setLeadWindow] = useState<"30d" | "all">("30d");
+  // Views-over-time granularity toggle.
+  const [viewBucket, setViewBucket] = useState<ViewBucket>("week");
 
   async function load(password: string) {
     setLoading(true);
@@ -124,6 +172,11 @@ export default function StatsClient() {
 
   const totals = data?.totals;
   const pages = data?.pages ?? [];
+  const daily = data?.daily ?? [];
+  // Newest-first buckets, capped so the Day view doesn't become a wall.
+  const bucketCap = viewBucket === "day" ? 31 : viewBucket === "week" ? 26 : 24;
+  const viewRows = bucketViews(daily, viewBucket).slice(0, bucketCap);
+  const maxViewRow = viewRows.reduce((m, r) => Math.max(m, r.views), 0);
   const referrers = data?.referrers ?? [];
   const allLeads = data?.leads ?? [];
   const domains = data?.domains ?? [];
@@ -333,6 +386,87 @@ export default function StatsClient() {
                       ))}
                     </tbody>
                   </table>
+                )}
+              </div>
+            </section>
+
+            {/* Views over time — day / week / month */}
+            <section style={{ marginBottom: 40 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  flexWrap: "wrap",
+                  marginBottom: 12,
+                }}
+              >
+                <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: FONT_HEAD }}>
+                  Views over time
+                </h2>
+                <div style={{ display: "inline-flex", gap: 6 }}>
+                  {(
+                    [
+                      { id: "day", label: "By day" },
+                      { id: "week", label: "By week" },
+                      { id: "month", label: "By month" },
+                    ] as const
+                  ).map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => setViewBucket(b.id)}
+                      style={{
+                        padding: "5px 12px",
+                        borderRadius: 999,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        border:
+                          viewBucket === b.id
+                            ? `1px solid ${ACCENT}`
+                            : "1px solid rgba(255,255,255,0.15)",
+                        background: viewBucket === b.id ? "rgba(250,204,21,0.12)" : "transparent",
+                        color: viewBucket === b.id ? ACCENT : "rgba(255,255,255,0.6)",
+                      }}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div style={{ background: CARD, borderRadius: 14, border: BORDER, padding: "8px 0", maxHeight: 420, overflowY: "auto" }}>
+                {viewRows.length === 0 ? (
+                  <div style={{ padding: 24, color: INK_DIM, fontSize: 14 }}>
+                    View history appears here once visits start logging.
+                  </div>
+                ) : (
+                  viewRows.map((r) => (
+                    <div
+                      key={r.key}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "150px 1fr 60px",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "7px 16px",
+                      }}
+                    >
+                      <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap" }}>{r.label}</div>
+                      <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 6, height: 10 }}>
+                        <div
+                          style={{
+                            width: `${maxViewRow ? Math.max(3, (r.views / maxViewRow) * 100) : 0}%`,
+                            background: ACCENT,
+                            borderRadius: 6,
+                            height: 10,
+                          }}
+                        />
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 700, textAlign: "right", color: ACCENT }}>
+                        {r.views.toLocaleString()}
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </section>
