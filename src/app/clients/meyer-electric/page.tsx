@@ -48,12 +48,12 @@ import {
   CaretDown,
   XCircle,
   Trophy,
+  LockKey,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
 import MeyerElectricContactForm from "./contact-form";
 import MeyerMark from "./meyer-mark";
-import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── BUSINESS DATA ───────────────────────── */
 const BUSINESS = {
@@ -2184,36 +2184,20 @@ export default function MeyerElectricPage() {
             >
               © {new Date().getFullYear()} Meyer Electric LLC. All rights reserved.
             </div>
-            <div className="inline-flex items-center gap-3">
-              <a
-                href="https://bluejayportfolio.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[12px] hover:text-white transition-colors"
-                style={{ color: INK_DIM, fontFamily: FONT_BODY }}
-              >
-                <BluejayLogo size={14} className="text-sky-500" />
-                <span>
-                  Built by{" "}
-                  <span className="underline decoration-dotted underline-offset-2">
-                    BlueJays
-                  </span>{" "}
-                  — get your free site audit
-                </span>
-              </a>
-              {/* Small secondary feather — entry point to the password-
-                  gated demo backend (MOCK BACKEND playbook). No visible
-                  label per Q3=A. Only people who know to click it can
-                  find it. Subtle hover hint surfaces on focus/hover. */}
-              <Link
-                href="/clients/meyer-electric/portal-demo"
-                aria-label="Backend demo"
-                className="inline-flex items-center justify-center w-6 h-6 rounded-full opacity-30 hover:opacity-100 transition-opacity"
-                title="Backend demo"
-              >
-                <BluejayLogo size={12} className="text-sky-500" />
-              </Link>
-            </div>
+            {/* Lock — owner entry to the password-gated live backend
+                (traffic + quote requests + domains). Replaced the
+                "Built by BlueJays" credit + demo feather per Ben
+                2026-07-15 (Meyer exception to the footer-credit rule,
+                noted in CLAUDE.md tenant table). */}
+            <Link
+              href="/clients/meyer-electric/stats"
+              aria-label="Owner backend access"
+              title="Owner backend"
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full opacity-30 hover:opacity-100 transition-opacity"
+              style={{ color: INK_DIM }}
+            >
+              <LockKey size={14} weight="bold" />
+            </Link>
           </div>
         </div>
       </footer>

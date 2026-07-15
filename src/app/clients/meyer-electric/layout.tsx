@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ClientTrackingScripts } from "@/components/client-tracking-scripts";
 import BackToTopButton from "@/components/BackToTopButton";
+import MeyerTrackBeacon from "./track-beacon";
 
 /**
  * Layout for /clients/meyer-electric — Meyer Electric LLC, Sequim WA.
@@ -280,6 +281,10 @@ export default function MeyerElectricLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(meyerSchema) }}
       />
       <ClientTrackingScripts slug="meyer-electric" />
+      {/* First-party page-view beacon → client_page_views. Powers the
+          owner stats page at /clients/meyer-electric/stats. Skips the
+          /stats + /portal-demo owner surfaces internally. */}
+      <MeyerTrackBeacon />
       {children}
       <BackToTopButton bg="#facc15" fg="#0a0a0a" />
     </>

@@ -123,6 +123,7 @@ every slug.
 | `olympic-inspections` | ✗ | ✗ | ✗ | Native booking calendar + admin (formerly `pine-and-particle`) · Owner-Editable Site enabled 2026-05-12 (needs GITHUB_TOKEN + ANTHROPIC_API_KEY env vars on Vercel) |
 | `mt-view-landscaping` | ✓ | ✗ | ✗ | Tim + Bonnie Hunsaker · Auburn WA · Custom $100/yr tier · Family-owned since 1976 · King/Pierce/Snohomish/Kittitas counties · Owner portal live 2026-05-19 (seed migration `20260519_mt_view_owners.sql`) · Contact form CCs both `mtviewlandscapeonline@gmail.com` + `info@mountainviewlandscape.com` · Full SEO bundle: JSON-LD HomeAndConstructionBusiness schema + llms.txt + llms-full.txt + sitemap entry |
 | `lewis-county-autism` | ✓ (bespoke, no AI) | ✗ | ✗ | Nonprofit owner portal at `/clients/lewis-county-autism/portal` (URL-as-secret) — site status + form-inbox links + Claude Code editing protocol + mission-dashboard preview link. Mock backend at `/clients/lewis-county-autism/portal-demo` (1212) is the first nonprofit-config install — see `docs/mock-backends/nonprofit.md`. LCAC site itself is a separate static-HTML repo at `Lewis County Austim Coalition/`; DNS still on Wix as of 2026-05-18. |
+| `meyer-electric` | ✓ (stats-only) | ✗ | ✗ | Kyle Meyer · Sequim WA · custom-tier bespoke · Live owner stats backend at `/clients/meyer-electric/stats` (password `meyer26`, server-verified) shipped 2026-07-15 — first-party page-view beacon (per-hostname: sequimelectrician.com / sequimelectric.com / bluejayportfolio.com path) + quote requests from `contact_form_submissions` + domains from `managed_domains`. **Footer-credit EXCEPTION (Ben, 2026-07-15):** the "Built by BlueJays" credit is REMOVED from this showcase — footer carries only a subtle lock icon linking to the stats page. Mock portal-demo (1212) stays live for sales demos, untouched. |
 | `bloodlines` | ✗ | ✗ | ✗ | Preston James Hunsaker · indie-author bespoke showcase · 5 interactive features (world map / roster / elletas / parchment / faction quiz) · Amazon-driven CTAs · launched 2026-05-07 |
 | `thrive-church-sequim` | ✗ | ✗ | ✗ | Thrive Church · Sequim WA · custom-tier bespoke build · warm-cream + deep teal + amber palette · Connect Card + Prayer Request forms route to office@thrivesequim.com · launched 2026-05-18 |
 | `elite-hardscapes-and-landscapes` | ✗ | ✗ | ✗ | Tyler Fritz · Port Angeles WA · $1k bespoke (PAID 2026-05-19, year 1 free on $100/yr mgmt) · No-Backend Client Pattern (mailto + tel/sms) · prospect UUID `4e9c89b4-d321-4d9c-91bd-1dc071cf847a` short_code `04cfd510` · pending: Tyler's email + GBP Place ID + custom domain + Twilio number. Two helper scripts: `scripts/setup-elite-mgmt-sub.mjs` (deferred Stripe sub) + `scripts/lookup-elite-place-id.mjs` (live Google reviews). |
@@ -182,7 +183,7 @@ Every AI API call must follow these rules to minimize cost:
 - **Each template must SCREAM its industry** — Real Estate screams luxury. Dental screams trust. Law screams authority. Landscaping screams nature. Salon screams beauty. If it could be any industry, it's not good enough.
 - **$997 is the base price** — firm, no negotiation for agents. It includes custom website design, domain registration, and hosting setup. The ongoing maintenance plan is $100/year and covers domain renewal, hosting, ongoing maintenance, and support.
 - **All generated sites and templates must use the network-effect footer credit** (Hormozi review #10) — `Built by BlueJays — get your free site audit`, with `BlueJays` rendered as a clickable link to `https://bluejayportfolio.com` (the portfolio root, NOT `/audit` — Ben prefers visitors land on the full portfolio and discover the audit CTA from there; locked 2026-05-19). The BluejayLogo bird icon stays before "Built by". Never use BlueJay Business Solutions wording or any other footer variation. Goal: every customer's site footer pulls portfolio-funnel traffic — at customer #100 we have 100 backlinks driving to bluejayportfolio.com.
-- **Owner-Portal shortcut via the bird icon** (locked 2026-05-19) — On any site that has a real owner-facing backend (Zenith, Laser Lakes, OIT, KR Ranches, ITC, Lewis County, future AI-Package clients), the BlueJay BIRD icon in the footer credit is itself a link to that client's owner-portal entry (`/clients/<slug>/portal`, `/clients/<slug>/login`, or `/clients/<slug>/admin` depending on which auth route exists). The word "BlueJays" still links to the portfolio (network-effect preserved). Pattern: TWO separate `<a>` tags — `<a href="/clients/<slug>/portal"><BluejayFeather/></a>` then `<a href="https://bluejayportfolio.com">BlueJays</a>`. On static-HTML sites without a bird icon (KR Ranches, OIT), the existing small "key" SVG glyph serves the same purpose — leave it; don't replace with a bird. Sites WITHOUT a backend (Elite Hardscapes, Hector, Meyer, Thrive, Bloodlines, every V2 generated preview) keep the single-`<a>` footer credit pointing only at the portfolio.
+- **Owner-Portal shortcut via the bird icon** (locked 2026-05-19) — On any site that has a real owner-facing backend (Zenith, Laser Lakes, OIT, KR Ranches, ITC, Lewis County, future AI-Package clients), the BlueJay BIRD icon in the footer credit is itself a link to that client's owner-portal entry (`/clients/<slug>/portal`, `/clients/<slug>/login`, or `/clients/<slug>/admin` depending on which auth route exists). The word "BlueJays" still links to the portfolio (network-effect preserved). Pattern: TWO separate `<a>` tags — `<a href="/clients/<slug>/portal"><BluejayFeather/></a>` then `<a href="https://bluejayportfolio.com">BlueJays</a>`. On static-HTML sites without a bird icon (KR Ranches, OIT), the existing small "key" SVG glyph serves the same purpose — leave it; don't replace with a bird. Sites WITHOUT a backend (Elite Hardscapes, Hector, Thrive, Bloodlines, every V2 generated preview) keep the single-`<a>` footer credit pointing only at the portfolio. **Meyer Electric exception (Ben, 2026-07-15):** Meyer now HAS a real stats backend, and Ben removed the footer credit entirely on that showcase — its footer carries only a lock icon → `/clients/meyer-electric/stats`. Don't re-add the credit there without Ben's say-so.
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
@@ -422,6 +423,67 @@ When launching a new cold-paid Meta ad wave via `bj meta launch <wave>` OR addin
 - **UTM attribution** — `utm_audience` is now in the tracked-params allowlist (`src/lib/attribution.ts`) so cold-paid waves can split-test by audience segment. When adding a new UTM key for future waves, update BOTH `attribution.ts TRACKED_PARAMS` AND `parseUtmFromQuery` in `AuditForm.tsx`.
 
 The CLI commands + 8-item pre-flight checklist + post-launch verification are all in the playbook. Treat the orchestrator + spec as the validated launch shape — `src/lib/ads-spec/<wave>.ts` is the only file you should diff between waves; everything else stays stable.
+
+## Vercel Cost Discipline (NON-NEGOTIABLE — added 2026-06-07)
+
+Applies to **every Vercel project we own** — `bluejays`, `lcautism-coalition`,
+LinePlay (if/when it lands on Vercel), and every future client deploy.
+Whenever a cost fix is found on one project, apply it as a standard here and
+replicate it to the others so the saving compounds and the mistake isn't
+re-made.
+
+**June 2026 root cause (verified in the Vercel invoice — diagnose from the
+per-meter breakdown, never guess):** the ~$226/mo spikes were **99% "Build
+CPU Minutes" ($203.91)** because every deploy built on the **Turbo
+(30-vCPU) machine** (the team default) at $0.126/build-min × a high deploy
+count. **Bandwidth was $0.00** and crons/functions were pennies. Lesson on
+Vercel: **build compute is the thing to watch, not bandwidth.**
+
+### 1. Build machine + build frequency (THE cost driver)
+- **Never leave a standard Next.js project on the Turbo build machine.** Turbo
+  (30 vCPU, $0.126/build-min) is ~9× Standard and ~36× Elastic per minute.
+  Default to **Elastic** (auto-scales, ~$0.0035/CPU-min, won't OOM on big
+  builds) or **Standard** (4 vCPU, $0.014/build-min). Set it per project at
+  Settings → Build and Deployment → Build Machine. (bluejays was switched
+  Turbo→Elastic on 2026-06-07 — that was the $200/mo fix.)
+- **Fewer builds = less cost.** Every push triggers a build. Batch commits,
+  don't push-spam, and don't let parallel agents/worktrees each fire builds.
+- **Keep builds fast** — a slim repo builds in fewer minutes (see assets
+  below; fix any Turbopack build-hang per Deployment Rules — a hung build
+  burns minutes).
+- **Watch "Build CPU Minutes" on the monthly invoice** — that's the line that
+  spikes.
+
+### 2. Images / static assets (bandwidth — secondary; was $0 in June 2026 but matters at scale)
+- **Never commit oversized media to `/public`.** Photos ship pre-compressed
+  and resized (WebP/AVIF, ~1600px max long edge, target <150 KB each).
+  When `images: { unoptimized: true }` is set (BlueJays is), this is
+  mandatory — the browser downloads exactly what's in `/public`, full size.
+- **No internal/marketing assets in the deployed repo.** Ad creative, agent
+  screenshots, raw content drops, etc. live OUTSIDE `/public` (separate
+  storage). `/public` is visitor-facing assets only. (June 2026: BlueJays
+  `/public` was 319 MB — avatars 85 / ad-assets 48 / content 28 / etc.)
+- **Heavy or hot media → external CDN** (Cloudflare R2 free-egress / Shopify
+  CDN / Supabase Storage), never Vercel bandwidth, once traffic scales.
+- **Long-cache hashed static assets** — `Cache-Control: public,
+  max-age=31536000, immutable`.
+
+### 3. Cron hygiene (function GB-hours + invocations)
+- **Lowest frequency that works.** No every-1-min / every-5-min crons unless
+  the feature is actively running at volume and justifies it.
+- **Pause crons for inactive features.** If the cold-outreach funnel
+  (auto-scout, funnel/run, replies/process, client-funnels, onboarding-
+  reminders) isn't running at volume, those crons stay OFF — they bill
+  function-hours doing nothing every day.
+- **Dead-feature crons get deleted, not left running.** Every cron should
+  have a clear, current purpose.
+
+### 4. Monthly review + diagnosis
+- Check Vercel → Usage monthly; log the figure to the costs dashboard
+  (`recurring_costs`). Investigate any month the overage climbs.
+- The bill is **monthly**. Pro base is $20/mo/seat; anything above is overage.
+- When fixing a cost spike, read the **Usage tab first** (bandwidth vs
+  function duration vs invocations) — never optimize blind.
 
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
