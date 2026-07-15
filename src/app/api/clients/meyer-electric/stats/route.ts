@@ -26,7 +26,10 @@ export const dynamic = "force-dynamic";
 
 const SLUG = "meyer-electric";
 const PROSPECT_ID = "063c4d4a-81e1-4cae-bbf1-3ce615e1c6f7";
-const STATS_PASSWORD = "meyer26";
+// Repo is PUBLIC — the gate password must NEVER be hardcoded here.
+// Set MEYER_STATS_PASSWORD on Vercel (all environments) + .env.local.
+// Fails closed (401 for every request) when unset.
+const STATS_PASSWORD = process.env.MEYER_STATS_PASSWORD || "";
 const MEYER_DOMAIN_RE = /sequimelectric/i;
 
 type PageStat = {
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest) {
     /* fall through to auth failure */
   }
 
-  if (password !== STATS_PASSWORD) {
+  if (!STATS_PASSWORD || password !== STATS_PASSWORD) {
     return NextResponse.json({ ok: false, error: "Wrong password" }, { status: 401 });
   }
 
