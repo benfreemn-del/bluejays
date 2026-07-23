@@ -909,8 +909,22 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="bookAddress">Property address</label>
-                        <input type="text" id="bookAddress" name="address" placeholder="123 Main St, Sequim, WA">
+                        <label for="bookStreet">Property street address <span class="required-mark" aria-hidden="true">*</span></label>
+                        <input type="text" id="bookStreet" name="street" placeholder="123 Main St" required aria-required="true" autocomplete="street-address">
+                        <p class="field-error" id="bookStreetError" hidden></p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bookCity">City <span class="required-mark" aria-hidden="true">*</span></label>
+                            <input type="text" id="bookCity" name="city" placeholder="Sequim" required aria-required="true" autocomplete="address-level2">
+                            <p class="field-error" id="bookCityError" hidden></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookZip">ZIP code <span class="required-mark" aria-hidden="true">*</span></label>
+                            <input type="text" id="bookZip" name="zip" placeholder="98382" inputmode="numeric" maxlength="10" required aria-required="true" autocomplete="postal-code">
+                            <p class="field-error" id="bookZipError" hidden></p>
+                        </div>
                     </div>
 
                     <div class="form-group">

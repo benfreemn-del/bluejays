@@ -339,6 +339,8 @@
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // Phone: at least 10 digits when stripped of formatting.
     var PHONE_RE = /^\+?[\d\s().\-]{10,}$/;
+    // ZIP: 5 digits, optional +4.
+    var ZIP_RE = /^\d{5}(-\d{4})?$/;
 
     function setFieldError(inputId, errorId, message) {
       var input = document.getElementById(inputId);
@@ -381,7 +383,17 @@
       var n = (form.elements.name.value || "").trim();
       var p = (form.elements.phone.value || "").trim();
       var em = (form.elements.email.value || "").trim();
-      return n.length >= 2 && PHONE_RE.test(p) && EMAIL_RE.test(em);
+      var st = (form.elements.street.value || "").trim();
+      var ci = (form.elements.city.value || "").trim();
+      var zi = (form.elements.zip.value || "").trim();
+      return (
+        n.length >= 2 &&
+        PHONE_RE.test(p) &&
+        (!em || EMAIL_RE.test(em)) &&
+        st.length >= 4 &&
+        ci.length >= 2 &&
+        ZIP_RE.test(zi)
+      );
     }
     function refreshSubmitState() {
       if (!submitBtn) return;
@@ -394,6 +406,9 @@
       ["bookName", "bookNameError"],
       ["bookPhone", "bookPhoneError"],
       ["bookEmail", "bookEmailError"],
+      ["bookStreet", "bookStreetError"],
+      ["bookCity", "bookCityError"],
+      ["bookZip", "bookZipError"],
     ].forEach(function (pair) {
       var input = document.getElementById(pair[0]);
       if (input) {
@@ -413,11 +428,17 @@
       var name = (form.elements.name.value || "").trim();
       var phone = (form.elements.phone.value || "").trim();
       var email = (form.elements.email.value || "").trim();
+      var street = (form.elements.street.value || "").trim();
+      var city = (form.elements.city.value || "").trim();
+      var zip = (form.elements.zip.value || "").trim();
       var hasError = false;
 
       clearFieldError("bookName", "bookNameError");
       clearFieldError("bookPhone", "bookPhoneError");
       clearFieldError("bookEmail", "bookEmailError");
+      clearFieldError("bookStreet", "bookStreetError");
+      clearFieldError("bookCity", "bookCityError");
+      clearFieldError("bookZip", "bookZipError");
 
       if (name.length < 2) {
         setFieldError("bookName", "bookNameError", "Please enter your name.");
@@ -434,6 +455,20 @@
       // Phone is the required contact channel; the API requires (email OR phone).
       if (email && !EMAIL_RE.test(email)) {
         setFieldError("bookEmail", "bookEmailError", "Please enter a valid email address.");
+        hasError = true;
+      }
+      // Property address is REQUIRED — Luke can't quote or route an
+      // inspection without the full street + city + ZIP.
+      if (street.length < 4) {
+        setFieldError("bookStreet", "bookStreetError", "Please enter the property's street address.");
+        hasError = true;
+      }
+      if (city.length < 2) {
+        setFieldError("bookCity", "bookCityError", "Please enter the city.");
+        hasError = true;
+      }
+      if (!ZIP_RE.test(zip)) {
+        setFieldError("bookZip", "bookZipError", "Please enter a valid 5-digit ZIP code.");
         hasError = true;
       }
 
@@ -471,7 +506,9 @@
         name: name,
         phone: phone,
         email: email,
-        address: (fd.get("address") || "").toString(),
+        // Compose the structured fields into one clean line so the
+        // owner email always shows a complete, mappable address.
+        address: street + ", " + city + ", WA " + zip,
         propertySize: (fd.get("propertySize") || "").toString(),
         addons: (fd.get("addons") || "").toString(),
         estimateLow: estimateLow,
