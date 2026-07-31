@@ -17,6 +17,7 @@
  */
 
 import { getSupabase } from "../supabase";
+import { isEmailAllowed } from "../email-guard";
 import {
   type ClientLead,
   type ClientLeadAudience,
@@ -402,6 +403,23 @@ export async function runClientFunnel(clientSlug: string): Promise<RunSummary> {
     steps_skipped: 0,
     errors: [],
   };
+
+  // Short-circuit the WHOLE run while marketing email is paused.
+  //
+  // Guarding only at the send call isn't enough: `deliverTouch` returning
+  // without sending looks identical to a successful delivery to the step
+  // walker, which then advances `funnel_step`. Leads would silently burn
+  // through the sequence during the pause and land at "completed" having
+  // received nothing. Stopping here leaves every lead exactly where it is,
+  // so the funnel resumes cleanly.
+  if (!isEmailAllowed("marketing")) {
+    console.log(
+      `  [EMAILS_PAUSED] Skipping client funnel run for ${clientSlug} — ` +
+        `no steps enrolled or advanced. Set BLUEJAYS_EMAILS_PAUSED=off to resume.`,
+    );
+    return summary;
+  }
+
   summary.enrolled = await enrollEligibleLeads(clientSlug);
   await sendDueSteps(clientSlug, summary);
   return summary;

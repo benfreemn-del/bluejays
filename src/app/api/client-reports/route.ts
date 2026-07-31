@@ -158,6 +158,7 @@ export async function POST(req: NextRequest) {
               body,
               fromName: `${client} weekly digest`,
               clientSlug: client,
+              category: "marketing",
             });
           } catch (err) {
             console.error(

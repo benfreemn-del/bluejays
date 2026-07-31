@@ -410,6 +410,115 @@ grep -rn "sendEmailTo\b" src/
 
 When BlueJays Pro client backends ship, this rule SHIPS WITH THE PER-CLIENT INSTALL — every Pro client's AIOS inherits Rule 68 + the `sendEmailToWithAlert` wrapper. Their own customer-facing sends get the same silent-failure guard automatically. Major differentiator: no generic AI tool gives a small-business owner a silent-failure detector for their own contact form.
 
+## Rule 69 — One Chokepoint For Every Outbound Email (NON-NEGOTIABLE — locked 2026-07-31)
+
+**The bug this prevents:** a kill switch that only covers some of the
+code. `BLUEJAYS_EMAILS_PAUSED` lived inside `sendEmail()`, so it stopped
+the funnel/lifecycle path and nothing else. Five paths called SendGrid
+directly and sailed past it — agency-nurture (a multi-step marketing
+sequence to DNQ'd applicants), the weekly work-log digest, client-funnel
+touches, winback, campaign blasts. Setting the flag *looked* like "all
+email stopped" while marketing kept going out. Nobody could tell from
+the dashboard either: the Kill Switches panel read `envCheck.envs`, a
+field the API has never returned, so all four switches rendered green
+"Live" unconditionally regardless of the real env values.
+
+### The rule
+
+**Every outbound send asks `src/lib/email-guard.ts` for permission
+first, tagged with a category. No exceptions, no direct-to-SendGrid
+shortcuts.**
+
+Three categories:
+
+| Category | Means | Blocked when |
+|---|---|---|
+| `marketing` | Anything sent to sell, nurture, survey, report, or re-engage. Cold outreach, audit follow-ups, agency nurture, NPS, referral asks, win/loss surveys, campaign blasts, client-funnel touches, weekly digests, monthly reports, winback, abandoned-checkout recovery. | mode = `marketing` (default) or `all` |
+| `transactional` | A real person did a thing and someone is waiting on the result. Contact-form lead forwards, booking confirmations, inquiry acknowledgments, purchase receipts. | mode = `all` only |
+| `internal` | Alerts to Ben. Owner email/SMS copies, watchdog pings, operator QA + deliverability test sends. | mode = `all` only |
+
+Three modes via `BLUEJAYS_EMAILS_PAUSED`:
+
+- **unset / `marketing` / `true` / `1` / `yes` / `on`** → blocks marketing. **This is the default.**
+- **`all` / `everything`** → blocks everything, including client lead forwards. The domain goes silent.
+- **`off` / `false` / `0` / `none` / `resume`** → nothing paused.
+
+**The default is PAUSED and it fails closed.** An unset env var means
+marketing email does NOT go out. An unrecognised value (typo in the
+Vercel dashboard) also resolves to paused, never to `off` — a typo must
+never silently restart the funnel. To resume you must explicitly set
+`BLUEJAYS_EMAILS_PAUSED=off`.
+
+### API
+
+```ts
+import { assertEmailAllowed, blockEmailIfPaused, isEmailAllowed } from "@/lib/email-guard";
+
+assertEmailAllowed("marketing", { to, subject });   // throws — for callers whose try/catch already means "send failed"
+if (blockEmailIfPaused("transactional", { to })) return false;  // non-throwing — for callers that return a boolean
+if (!isEmailAllowed("marketing")) return;            // for short-circuiting a whole cron run
+```
+
+### Guard the RUN, not just the SEND, when state advances
+
+Several crons advance state regardless of send success (agency-nurture
+bumps `nurture_step` "regardless of send success"; the client-funnel
+runner treats a silent `deliverTouch` return as delivered and advances
+`funnel_step`). Guarding only the send call means a paused system
+marches every recipient through the sequence having received nothing,
+then marks them complete.
+
+**If a loop mutates state per-recipient, check `isEmailAllowed()` at the
+top of the run and return early.** Currently enforced in
+`runClientFunnel()` (`src/lib/client-funnels/runner.ts`) and the
+`/api/cron/agency-nurture` handler.
+
+### Opt-out suppression is separate from the pause
+
+`sendEmail()` checks the hard-bounce list *by address* but has no
+visibility into prospect status. **Any cron that assembles its own
+recipient set must filter on `SUPPRESSED_PROSPECT_STATUSES`**
+(`unsubscribed`, `bounced`) itself.
+
+The win-loss survey cron shipped with `.in("status", ["dismissed",
+"unsubscribed"])` and emailed opted-out people for months. Nothing
+downstream caught it, and the send was flagged `transactional: true`
+which also skipped the domain-warming cap. `/api/audit/followup-cron`
+is the reference implementation — it has a `stopStatuses` list.
+
+**"They opted out" and "we want to know why they left" are not the same
+question. An opt-out is an answer.**
+
+### Kill-switch state is resolved server-side
+
+`/api/admin/env-check` returns a `switches` block with each switch's
+resolved `{ live, state, detail }`. The dashboard renders that verbatim.
+**Never re-derive switch semantics in the UI** — three of the six flags
+are inverted and two default to OFF, and the previous client-side
+re-derivation is exactly what produced permanently-green switches.
+
+### Audit pattern when adding any new email-sending code
+
+```bash
+# Every file that talks to SendGrid must import the guard.
+for f in $(grep -rln "api.sendgrid.com/v3/mail/send" src/); do
+  grep -q "email-guard" "$f" || echo "UNGUARDED: $f"
+done
+```
+
+Zero output = clean. Any hit is a regression — that file can send while
+the system reports itself paused.
+
+Contract tests live at `src/lib/__tests__/email-guard.test.ts`
+(`npx tsx --test src/lib/__tests__/email-guard.test.ts`). Run them after
+touching the guard.
+
+### Bucket A (universal — per principle 25 in aios/CLAUDE.md)
+
+Ships with every BlueJays Pro client backend, same as Rule 68. A client
+whose own outbound sending can't be stopped from one place has the same
+liability we did.
+
 ## Meta Marketing API Launch Rules (NON-NEGOTIABLE — added 2026-05-18)
 
 When launching a new cold-paid Meta ad wave via `bj meta launch <wave>` OR adding any new Meta-API surface (Pixel, CAPI, ad orchestrator): **read `docs/playbooks/meta-ads-launch-playbook.md` first.** The playbook captures the 8 specific gotchas from the wave-1 launch — together they took ~4 hours to debug the first time. Don't relearn them. Highlights:

@@ -1,5 +1,10 @@
 import type { Prospect } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
+import {
+  blockEmailIfPaused,
+  isEmailAllowed,
+  type EmailCategory,
+} from "./email-guard";
 
 // Fall back to BEN_PHONE — the env actually set on Vercel/.env.local — so
 // owner-alert SMS fires even when OWNER_PHONE_NUMBER was never provisioned.
@@ -122,6 +127,10 @@ export async function sendOwnerEmail(args: {
   clientSlug?: string;
   prospectId?: string;
 }): Promise<boolean> {
+  // Category "internal" — this only ever goes to Ben. Blocked only when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("internal", { subject: args.subject })) return false;
+
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
   // Rule 67 (updated 2026-05-19): FROM_EMAIL hardcoded to alerts@bluejayportfolio.com.
   // Why: previous value bluejaycontactme@gmail.com was silently Gmail-spam-filtered.
@@ -209,7 +218,26 @@ export async function sendEmailTo(args: {
   body: string;
   fromName?: string;
   clientSlug?: string;
+  /**
+   * Guard category — defaults to "transactional" because the overwhelming
+   * majority of callers are lead forwards, booking confirmations, and
+   * inquiry acknowledgments that a real person is waiting on.
+   *
+   * Batch/bulk senders (campaign blasts, weekly digests, drill-of-week
+   * broadcasts, client-funnel touches) MUST pass "marketing" so the
+   * global pause actually stops them.
+   */
+  category?: EmailCategory;
 }): Promise<boolean> {
+  if (
+    blockEmailIfPaused(args.category ?? "transactional", {
+      to: args.to,
+      subject: args.subject,
+    })
+  ) {
+    return false;
+  }
+
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
   // Rule 67 (updated 2026-05-19): FROM_EMAIL hardcoded to alerts@bluejayportfolio.com.
   // Why: previous value bluejaycontactme@gmail.com was silently Gmail-spam-filtered.
@@ -310,13 +338,27 @@ export async function sendEmailToWithAlert(args: {
    *   "⚽ Zenith Sports camp signup confirmation"
    */
   alertContext: string;
+  /** See `sendEmailTo`. Defaults to "transactional". */
+  category?: EmailCategory;
 }): Promise<boolean> {
+  const category = args.category ?? "transactional";
+
+  // When the global pause blocks this category, return quietly. Firing the
+  // Rule 68 "send FAILED — manual forward needed" SMS would be wrong and
+  // would spam Ben on every suppressed send: nothing is broken, we chose
+  // not to send.
+  if (!isEmailAllowed(category)) {
+    blockEmailIfPaused(category, { to: args.to, subject: args.subject });
+    return false;
+  }
+
   const ok = await sendEmailTo({
     to: args.to,
     subject: args.subject,
     body: args.body,
     fromName: args.fromName,
     clientSlug: args.clientSlug,
+    category,
   });
   if (!ok) {
     // Fire-and-forget owner SMS so caller doesn't have to await.

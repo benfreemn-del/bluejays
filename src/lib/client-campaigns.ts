@@ -349,6 +349,7 @@ export async function sendCampaign(args: {
       body: row.rendered_body,
       fromName: args.fromName,
       clientSlug: args.clientSlug,
+      category: "marketing",
     }).catch((e) => {
       console.error("[sendCampaign] send failed:", e);
       return false;

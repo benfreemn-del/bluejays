@@ -18,6 +18,7 @@
 import type { ClientLead } from "../client-leads";
 import { getSupabase } from "../supabase";
 import { logCost, COST_RATES } from "../cost-logger";
+import { blockEmailIfPaused } from "../email-guard";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
@@ -39,6 +40,19 @@ export async function sendClientLeadEmail(args: {
   sender: EmailSender;
 }): Promise<void> {
   if (!args.lead.email) throw new Error("sendClientLeadEmail: no recipient");
+
+  // Automated funnel touch to a client's lead — marketing. Checked BEFORE
+  // the queued-row insert so a paused funnel doesn't litter the timeline
+  // with rows that were never going to send.
+  if (
+    blockEmailIfPaused("marketing", {
+      to: args.lead.email,
+      subject: args.subject,
+    })
+  ) {
+    return;
+  }
+
   const sb = getSupabase();
 
   // 1. Insert queued row

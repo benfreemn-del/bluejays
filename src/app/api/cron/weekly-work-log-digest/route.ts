@@ -9,6 +9,7 @@ import {
   type WorkLogEntry,
 } from "@/lib/work-log";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * GET /api/cron/weekly-work-log-digest
@@ -138,6 +139,12 @@ async function sendDigest(
   subject: string,
   body: string,
 ): Promise<{ ok: boolean; error?: string }> {
+  // Weekly digest to client owners — informational, not lead-critical, and
+  // previously bypassed the global pause by calling SendGrid directly.
+  if (blockEmailIfPaused("marketing", { to, subject })) {
+    return { ok: false, error: "emails_paused" };
+  }
+
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
   if (!SENDGRID_API_KEY) {
     console.warn(

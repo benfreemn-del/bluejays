@@ -3,6 +3,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { getPitchEmail } from "@/lib/email-templates";
 import { getShortPreviewUrl } from "@/lib/short-urls";
 import type { Prospect } from "@/lib/types";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * POST /api/funnel/preview-pitch
@@ -121,6 +122,16 @@ export async function POST(request: NextRequest) {
   const baseUrl = "https://bluejayportfolio.com";
   const unsubUrl = `${baseUrl}/api/unsubscribe/${prospect.id}`;
   const unsubMailto = `unsubscribe+${prospect.id}@bluejayportfolio.com`;
+
+  // Operator QA send — renders a pitch verbatim and mails it to Ben so he
+  // can eyeball inbox placement. Category "internal": it never reaches a
+  // prospect, so a marketing pause shouldn't block Ben's own QA loop.
+  if (blockEmailIfPaused("internal", { subject: template.subject })) {
+    return NextResponse.json(
+      { ok: false, error: "Outbound email is paused (BLUEJAYS_EMAILS_PAUSED)." },
+      { status: 503 },
+    );
+  }
 
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",

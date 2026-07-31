@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { blockEmailIfPaused, isEmailAllowed } from "@/lib/email-guard";
 import {
   NURTURE_STEPS,
   firstNameOf,
@@ -57,6 +58,11 @@ async function sendNurtureEmail(args: {
   text: string;
   html: string;
 }): Promise<boolean> {
+  // Multi-step marketing sequence to DNQ'd agency applicants. This used to
+  // call SendGrid directly and sail straight past BLUEJAYS_EMAILS_PAUSED.
+  if (blockEmailIfPaused("marketing", { to: args.to, subject: args.subject })) {
+    return false;
+  }
   if (!SENDGRID_API_KEY) {
     console.log(`  📧 [DRY] Would send to ${args.to}: ${args.subject}`);
     return false;
@@ -109,6 +115,23 @@ export async function GET(request: NextRequest) {
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: false, error: "Supabase not configured" }, { status: 503 });
+  }
+
+  // Short-circuit before touching any rows. This loop advances
+  // nurture_step "regardless of send success" (see below), so running it
+  // while email is paused would march every applicant to
+  // nurture_completed_at without a single email going out.
+  if (!isEmailAllowed("marketing")) {
+    console.log(
+      "  [EMAILS_PAUSED] Skipping agency-nurture run — no steps advanced. " +
+        "Set BLUEJAYS_EMAILS_PAUSED=off to resume.",
+    );
+    return NextResponse.json({
+      ok: true,
+      paused: true,
+      processed: 0,
+      results: [],
+    });
   }
 
   // Pull due applicants. Index agency_applications_nurture_idx makes

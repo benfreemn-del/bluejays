@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * POST /api/email-deliverability/test-send
@@ -75,6 +76,14 @@ export async function POST(request: NextRequest) {
       content: [{ type: "text/plain", value: content }],
     };
     if (from.replyTo) payload.reply_to = { email: from.replyTo };
+
+    // Deliverability diagnostic to a seed address Ben controls.
+    if (blockEmailIfPaused("internal", { to, subject })) {
+      return NextResponse.json(
+        { ok: false, error: "Outbound email is paused (BLUEJAYS_EMAILS_PAUSED)." },
+        { status: 503 },
+      );
+    }
 
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",

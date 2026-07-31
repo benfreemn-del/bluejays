@@ -24,6 +24,7 @@ import {
   type UpsellSku,
 } from "@/lib/upsells";
 import type { EmailTemplate } from "@/lib/email-templates";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * POST /api/webhooks/stripe
@@ -808,6 +809,10 @@ async function notifyOwnerPayment(
     console.log(`[Stripe Webhook] SendGrid not configured — skipping payment email`);
     return;
   }
+  // Internal — payment alert to Ben. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("internal")) return;
+
 
   const amount = amountTotal ? `$${(amountTotal / 100).toFixed(2)}` : "$997+";
 
@@ -867,6 +872,10 @@ async function sendAbandonedCheckoutEmail(
   // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
   const BASE_URL = "https://bluejayportfolio.com";
   const claimUrl = `${BASE_URL}/claim/${prospectId}`;
+
+  // Recovery email to someone who abandoned checkout — marketing, not a
+  // receipt. Blocked by the default pause.
+  if (blockEmailIfPaused("marketing", { to: clientEmail })) return;
 
   await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",

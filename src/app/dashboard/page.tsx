@@ -959,6 +959,18 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
 
   const killSwitches = [
     {
+      key: "BLUEJAYS_EMAILS_PAUSED",
+      label: "Outbound Email",
+      desc: "Global pause for every outbound send. DEFAULT IS PAUSED — unset means marketing email does not go out. Set to 'off' to resume, 'all' to also stop client lead forwards.",
+      docsRule: "Rule 69",
+    },
+    {
+      key: "COLD_FUNNEL_ENABLED",
+      label: "Cold Outreach Funnel",
+      desc: "Auto-enroll + pitch scraped prospects. Must be literally 'true' to run — unset means off. Blocks the cron, manual enrollment, and step advancement.",
+      docsRule: "Rule 69",
+    },
+    {
       key: "STRIPE_LIVE_ENABLED",
       label: "Stripe LIVE Checkout",
       desc: "When OFF, every public checkout returns 503. Existing in-flight transactions still finish.",
@@ -1049,14 +1061,24 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {killSwitches.map((sw) => {
-            const value = envCheck?.envs?.[sw.key];
-            const isLive = sw.key === "SMS_FUNNEL_DISABLED"
-              ? value !== "true"
-              : value !== "false";
+            // Resolved server-side by /api/admin/env-check. Each switch has
+            // its own default and polarity (three are inverted, two default
+            // to OFF), so the UI must not re-derive them — it previously
+            // read `envCheck.envs`, a field the API never returned, which
+            // made every switch render "Live" regardless of reality.
+            const resolved = envCheck?.switches?.[sw.key];
+            const isLive = resolved?.live === true;
+            const unknown = !resolved;
             return (
               <div
                 key={sw.key}
-                className={`rounded-xl border p-4 ${isLive ? "border-emerald-500/30 bg-emerald-500/[0.03]" : "border-rose-500/30 bg-rose-500/[0.03]"}`}
+                className={`rounded-xl border p-4 ${
+                  unknown
+                    ? "border-border bg-surface/30"
+                    : isLive
+                      ? "border-emerald-500/30 bg-emerald-500/[0.03]"
+                      : "border-rose-500/30 bg-rose-500/[0.03]"
+                }`}
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div className="min-w-0">
@@ -1064,11 +1086,24 @@ function SettingsTab({ autoScoutData, onLoadAutoScout, onToggleAutoScout }: Sett
                     <code className="text-[11px] text-muted font-mono">{sw.key}</code>
                   </div>
                   <span
-                    className={`shrink-0 text-[11px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${isLive ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"}`}
+                    className={`shrink-0 text-[11px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${
+                      unknown
+                        ? "bg-slate-500/15 text-slate-300"
+                        : isLive
+                          ? "bg-emerald-500/15 text-emerald-300"
+                          : "bg-rose-500/15 text-rose-300"
+                    }`}
                   >
-                    {isLive ? "Live" : "Killed"}
+                    {unknown ? "—" : isLive ? "Live" : "Stopped"}
                   </span>
                 </div>
+                {resolved?.detail && (
+                  <p
+                    className={`text-xs font-medium leading-relaxed mb-1 ${isLive ? "text-emerald-300/90" : "text-rose-300/90"}`}
+                  >
+                    {resolved.detail}
+                  </p>
+                )}
                 <p className="text-xs text-muted leading-relaxed">{sw.desc}</p>
                 <p className="text-[11px] text-muted/60 mt-2">CLAUDE.md {sw.docsRule}</p>
               </div>
