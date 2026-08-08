@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
@@ -58,6 +59,10 @@ export async function POST(request: NextRequest) {
       "",
       `— BlueJays Review System`,
     ].join("\n");
+
+  // Transactional — a real person is waiting on this. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("transactional")) return;
 
     try {
       await fetch("https://api.sendgrid.com/v3/mail/send", {

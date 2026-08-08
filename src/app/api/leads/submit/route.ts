@@ -9,6 +9,7 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import { canonicalizeCity, normalizeAddress } from "@/lib/address-normalizer";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
@@ -63,6 +64,10 @@ async function notifyOwnerEmail(lead: {
       </table>
       <p style="margin-top:16px;">Check the dashboard for details — look for the <b style="color:#f59e0b;">Inbound</b> badge.</p>
     `;
+    // Internal — new-lead notification to Ben, not the lead. Only
+    // blocked when BLUEJAYS_EMAILS_PAUSED=all.
+    if (blockEmailIfPaused("internal")) return;
+
     await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
       headers: {

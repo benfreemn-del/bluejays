@@ -60,6 +60,7 @@ import {
   sendOwnerEmail as sendBenEmail,
   sendOwnerAlert as sendBenSmsAlert,
 } from "@/lib/alerts";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // Rule 67 (FROM-address swapped 2026-05-19): hardcoded to
@@ -84,6 +85,10 @@ async function sendOwnerEmail(ownerEmail: string, subject: string, body: string)
     console.error("[contact-form] SENDGRID_API_KEY missing — email NOT sent to", ownerEmail);
     return;
   }
+  // Transactional — a real person is waiting on this. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("transactional")) return;
+
   console.log("[contact-form] Sending lead email to", ownerEmail, "via SendGrid");
   try {
     const sgRes = await fetch("https://api.sendgrid.com/v3/mail/send", {

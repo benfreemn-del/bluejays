@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * Public inquiry endpoint — /api/inquire/[code]
@@ -117,6 +118,14 @@ export async function POST(
     subject,
     content: [{ type: "text/plain", value: text }],
   };
+
+  // Transactional — a real person is waiting on this. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all. Mirrors the missing-API-key branch above:
+  // report success to the visitor so the form UX doesn't break, and make
+  // the suppression loud in the server log instead.
+  if (blockEmailIfPaused("transactional", { to: toEmail, subject })) {
+    return NextResponse.json({ ok: true, suppressed: "emails_paused" });
+  }
 
   const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",

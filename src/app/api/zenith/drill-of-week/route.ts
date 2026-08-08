@@ -144,6 +144,7 @@ export async function POST(request: NextRequest) {
         body: fillTemplate(email.body, vars),
         fromName: "Philip @ TEKKY",
         clientSlug: "zenith-sports",
+        category: "marketing",
       });
       sent += 1;
     } catch (err) {

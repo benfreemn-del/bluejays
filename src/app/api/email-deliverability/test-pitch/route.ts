@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPitchEmail } from "@/lib/email-templates";
 import { getProspect } from "@/lib/store";
 import type { Prospect } from "@/lib/types";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * POST /api/email-deliverability/test-pitch
@@ -117,6 +118,14 @@ export async function POST(request: NextRequest) {
       categories: ["test-pitch"],
     };
     if (from.replyTo) payload.reply_to = { email: from.replyTo };
+
+    // Deliverability diagnostic to a seed address Ben controls.
+    if (blockEmailIfPaused("internal", { to, subject: pitch.subject })) {
+      return NextResponse.json(
+        { ok: false, error: "Outbound email is paused (BLUEJAYS_EMAILS_PAUSED)." },
+        { status: 503 },
+      );
+    }
 
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",

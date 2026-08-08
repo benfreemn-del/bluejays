@@ -3,6 +3,7 @@ import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // Rule 67 (FROM-address swapped 2026-05-19): hardcoded to alerts@bluejayportfolio.com
@@ -178,6 +179,10 @@ async function notifyOwnerChangeRequest({
   const escapedCustomerEmail = escapeHtml(customerEmail || "Not provided");
   const escapedCustomerPhone = escapeHtml(customerPhone || "Not provided");
   const escapedRequestText = escapeHtml(requestText).replace(/\n/g, "<br />");
+
+  // Internal — change-request notification to Ben. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("internal")) return;
 
   try {
     await fetch("https://api.sendgrid.com/v3/mail/send", {

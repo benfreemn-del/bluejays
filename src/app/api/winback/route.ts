@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAllProspects } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import type { Prospect } from "@/lib/types";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
 const BASE_URL = "https://bluejayportfolio.com";
@@ -86,6 +87,11 @@ export async function POST() {
 }
 
 async function sendWinBackEmail(prospect: Prospect, previewUrl: string) {
+  // Re-engagement blast to prospects who already said no. Pure marketing.
+  if (blockEmailIfPaused("marketing", { to: prospect.email ?? undefined })) {
+    return;
+  }
+
   const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
 
   await fetch("https://api.sendgrid.com/v3/mail/send", {

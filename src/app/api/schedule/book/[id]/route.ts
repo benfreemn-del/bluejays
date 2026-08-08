@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -129,6 +130,10 @@ async function sendConfirmationEmail(args: {
   icsContent: string;
   icsFilename: string;
 }): Promise<boolean> {
+  // Transactional — a real person is waiting on this. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("transactional")) return false;
+
   if (!SENDGRID_API_KEY) return false;
   try {
     const res = await fetch("https://api.sendgrid.com/v3/mail/send", {

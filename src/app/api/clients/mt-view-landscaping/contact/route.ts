@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOwnerAlert, sendOwnerEmail } from "@/lib/alerts";
+import { blockEmailIfPaused } from "@/lib/email-guard";
 
 /**
  * POST /api/clients/mt-view-landscaping/contact
@@ -104,6 +105,10 @@ async function sendToClient(args: {
     // (the FROM address alerts@bluejayportfolio.com has no inbox).
     body.reply_to = { email: REPLY_TO_FALLBACK, name: "BlueJays" };
   }
+
+  // Transactional — a real person is waiting on this. Only blocked when
+  // BLUEJAYS_EMAILS_PAUSED=all.
+  if (blockEmailIfPaused("transactional")) return false;
 
   try {
     const res = await fetch("https://api.sendgrid.com/v3/mail/send", {

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { emailPauseStatus } from "@/lib/email-guard";
 
 /**
  * GET /api/admin/env-check
@@ -53,6 +54,11 @@ const ENV_KEYS = [
   "BROWSERLESS_API_KEY",
   // AI safety + funnel
   "AI_AUTO_REPLY_ENABLED",
+  // Outbound-email kill switches (see `switches` block below for
+  // resolved state — presence alone is misleading for these two,
+  // since both have non-obvious defaults).
+  "BLUEJAYS_EMAILS_PAUSED",
+  "COLD_FUNNEL_ENABLED",
   "ENABLE_HTML_PITCH_EMAIL",
   // Stripe LIVE kill-switch + tier gate (Rules 52, 53)
   "STRIPE_LIVE_ENABLED",
@@ -126,10 +132,96 @@ export async function GET() {
     }
   }
 
+  // ────────────────────────────────────────────────────────────────
+  // Kill-switch RESOLVED STATE.
+  //
+  // The dashboard used to read `envCheck.envs[key]` — a field this
+  // route has never returned — so every switch rendered "Live" green
+  // no matter what the env vars actually said. Resolving each switch
+  // here (rather than shipping raw values and re-deriving the
+  // semantics in the UI) keeps one source of truth: each flag has its
+  // own default and polarity, and three of them are inverted.
+  //
+  // Safe to expose: these are booleans/modes, not secrets, and this
+  // route is behind the admin auth middleware.
+  // ────────────────────────────────────────────────────────────────
+  const emailPause = emailPauseStatus();
+
+  const switches: Record<
+    string,
+    { live: boolean; state: string; detail: string }
+  > = {
+    STRIPE_LIVE_ENABLED: {
+      live: process.env.STRIPE_LIVE_ENABLED !== "false",
+      state: process.env.STRIPE_LIVE_ENABLED === "false" ? "killed" : "live",
+      detail:
+        process.env.STRIPE_LIVE_ENABLED === "false"
+          ? "Checkout returns 503."
+          : "Checkout accepting payments.",
+    },
+    NAMECHEAP_LIVE_ENABLED: {
+      live: process.env.NAMECHEAP_LIVE_ENABLED !== "false",
+      state: process.env.NAMECHEAP_LIVE_ENABLED === "false" ? "killed" : "live",
+      detail:
+        process.env.NAMECHEAP_LIVE_ENABLED === "false"
+          ? "Registration + renewal return 503."
+          : "Registrar calls live.",
+    },
+    // Inverted: the var DISABLES when true.
+    SMS_FUNNEL_DISABLED: {
+      live: (process.env.SMS_FUNNEL_DISABLED || "").toLowerCase() !== "true",
+      state:
+        (process.env.SMS_FUNNEL_DISABLED || "").toLowerCase() === "true"
+          ? "killed"
+          : "live",
+      detail:
+        (process.env.SMS_FUNNEL_DISABLED || "").toLowerCase() === "true"
+          ? "All outbound SMS blocked."
+          : "SMS sending permitted (still gated per-prospect by Rule 35).",
+    },
+    AI_AUTO_REPLY_ENABLED: {
+      live: (process.env.AI_AUTO_REPLY_ENABLED || "").toLowerCase() !== "false",
+      state:
+        (process.env.AI_AUTO_REPLY_ENABLED || "").toLowerCase() === "false"
+          ? "killed"
+          : "live",
+      detail:
+        (process.env.AI_AUTO_REPLY_ENABLED || "").toLowerCase() === "false"
+          ? "Drafts park for manual approval."
+          : "AI replies send automatically.",
+    },
+    // Inverted AND defaults to paused. Unset = marketing email is OFF.
+    BLUEJAYS_EMAILS_PAUSED: {
+      live: emailPause.mode === "off",
+      state: emailPause.mode === "off" ? "live" : `paused:${emailPause.mode}`,
+      detail:
+        emailPause.mode === "off"
+          ? "All outbound email sending."
+          : emailPause.mode === "all"
+            ? "EVERYTHING blocked — including client lead forwards and booking confirmations."
+            : "Marketing/outreach/lifecycle blocked. Client lead forwards, booking confirmations, and owner alerts still send." +
+              (emailPause.usingDefault ? " (env var unset — using paused default)" : ""),
+    },
+    // Defaults to OFF: must be the literal string "true" to run.
+    COLD_FUNNEL_ENABLED: {
+      live: (process.env.COLD_FUNNEL_ENABLED || "").toLowerCase() === "true",
+      state:
+        (process.env.COLD_FUNNEL_ENABLED || "").toLowerCase() === "true"
+          ? "live"
+          : "killed",
+      detail:
+        (process.env.COLD_FUNNEL_ENABLED || "").toLowerCase() === "true"
+          ? "Cold prospects are being auto-enrolled and pitched."
+          : "No cold enrollment, no step advancement. Unset = off.",
+    },
+  };
+
   return NextResponse.json({
     deploy,
     lobReady,
     present,
     stripePricePrefixes,
+    switches,
+    emailPause,
   });
 }
