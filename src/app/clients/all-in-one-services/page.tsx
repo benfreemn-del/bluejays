@@ -983,7 +983,13 @@ export default function AllInOneServicesPage() {
                   }}
                 >
                   <Certificate size={16} weight="fill" />
-                  Sequim, WA · Since 2016 · WA L&I {BUSINESS.license}
+                  <span className="whitespace-nowrap">
+                    Sequim, WA · Since 2016
+                    <span className="hidden sm:inline">
+                      {" · WA L&I "}
+                      {BUSINESS.license}
+                    </span>
+                  </span>
                 </div>
 
                 <h1
