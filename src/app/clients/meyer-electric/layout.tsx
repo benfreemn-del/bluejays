@@ -32,9 +32,9 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const HERO_OG_IMAGE = `${SITE_URL}/images/meyer-electric/hero-powerwall-storm.jpg`;
 
 const TITLE =
-  "Meyer Electric LLC — Tesla Powerwall, Generators & Licensed Electrician · Sequim, WA";
+  "Meyer Electric LLC — Solar, Tesla Powerwall, Generators & Licensed Electrician · Sequim, WA";
 const DESCRIPTION =
-  "Olympic Peninsula's Tesla Powerwall Certified Installer + Generac Certified Installer. Licensed, bonded & insured. 15+ years powering Sequim, Port Angeles, Port Townsend, and the entire Olympic Peninsula. Call (360) 477-2202.";
+  "Solar panel installation, Tesla Powerwall battery storage, and Generac standby generators from one licensed crew. Olympic Peninsula's Tesla Powerwall Certified + Generac Certified Installer. Bonded & insured, 15+ years serving Sequim, Port Angeles & Port Townsend. Call (360) 477-2202.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -43,6 +43,9 @@ export const metadata: Metadata = {
   // electrician-/Sequim-specific terms.
   keywords: [
     "electrician Sequim WA",
+    "solar panel installation Sequim WA",
+    "solar installer Olympic Peninsula",
+    "solar and battery storage Clallam County",
     "Tesla Powerwall installer Sequim",
     "Tesla Powerwall Certified Installer",
     "Generac Certified Installer Sequim",
@@ -167,6 +170,15 @@ const meyerSchema = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
+          name: "Solar Panel Installation",
+          description:
+            "Solar panel installation by a licensed electrical contractor — the array and all of the electrical work behind it handled by the same crew, with optional Tesla Powerwall battery storage so generated power is still available after dark.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
           name: "Tesla Powerwall Installation",
           description:
             "Tesla Powerwall battery storage system installation by a Tesla-Certified Installer. Includes permits, install, Tesla app setup, and tie-in to existing or new solar.",
@@ -202,6 +214,7 @@ const meyerSchema = {
     ],
   },
   knowsAbout: [
+    "Solar panel installation",
     "Tesla Powerwall",
     "Generac generators",
     "Solar energy storage",
@@ -211,7 +224,10 @@ const meyerSchema = {
     "Whole-home backup power",
     "Code-compliant electrical work",
   ],
-  sameAs: ["https://www.sequimelectrician.com/"],
+  sameAs: [
+    "https://www.sequimelectrician.com/",
+    "https://www.instagram.com/meyerelectric360/",
+  ],
 };
 
 export default function MeyerElectricLayout({

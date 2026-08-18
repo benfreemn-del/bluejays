@@ -49,6 +49,7 @@ import {
   XCircle,
   Trophy,
   LockKey,
+  InstagramLogo,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
@@ -73,6 +74,11 @@ const BUSINESS = {
   },
   mapsUrl: "https://maps.google.com/?q=35+Robbins+Rd+Sequim+WA+98382",
   license: "MEYERE*862P1",
+  // Instagram added 2026-08-17 per Kyle. Their social-media contractor
+  // posts job photos here; when she starts sending content, drop real
+  // posts into the "See the work" band above the contact section.
+  instagramHandle: "@meyerelectric360",
+  instagramUrl: "https://www.instagram.com/meyerelectric360/",
   serviceArea: [
     "Sequim",
     "Port Angeles",
@@ -240,30 +246,50 @@ function ServiceCard({
   image,
   imageAlt,
   href,
+  className = "",
+  badge,
+  visual,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
-  image: string;
-  imageAlt: string;
+  /** Real photo. Omit when passing `visual` instead. */
+  image?: string;
+  imageAlt?: string;
   href: string;
+  /** Grid-span classes so the 5-card grid lays out cleanly. */
+  className?: string;
+  /** Small pill in the top-right of the media area (e.g. "New"). */
+  badge?: string;
+  /**
+   * Branded SVG treatment rendered INSTEAD of a photo. Meyer only has
+   * 5 unique real photos and CLAUDE.md bans duplicate images across a
+   * site, so the Solar card gets the same gradient + grid + animated
+   * icon language the Powerwall / Generac deep-dives use rather than a
+   * recycled image. Doubles as visual emphasis on the new service.
+   */
+  visual?: React.ReactNode;
 }) {
   return (
     <a
       href={href}
-      className="group block overflow-hidden rounded-xl border transition-all hover:-translate-y-1"
+      className={`group block overflow-hidden rounded-xl border transition-all hover:-translate-y-1 ${className}`}
       style={{
         background: BG_PANEL,
         borderColor: "rgba(255, 255, 255, 0.08)",
       }}
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={image}
-          alt={imageAlt}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        />
+        {visual ? (
+          visual
+        ) : (
+          <img
+            src={image}
+            alt={imageAlt}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+        )}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -271,6 +297,14 @@ function ServiceCard({
               "linear-gradient(180deg, rgba(10,10,10,0) 40%, rgba(10,10,10,0.85) 100%)",
           }}
         />
+        {badge && (
+          <span
+            className="absolute top-4 right-4 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.16em] text-black"
+            style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
+          >
+            {badge}
+          </span>
+        )}
         <span
           className="absolute bottom-4 left-4 flex items-center justify-center w-12 h-12 rounded-full shadow-lg"
           style={{
@@ -328,6 +362,7 @@ type QuizOption = {
 const COMPARISON_ROWS: Array<{ label: string; meyer: string; avg: string }> = [
   { label: "Tesla Powerwall Certified Installer", meyer: "yes", avg: "Sometimes" },
   { label: "Generac Certified Installer", meyer: "yes", avg: "Rarely" },
+  { label: "Solar, battery storage & generators under one license", meyer: "yes", avg: "Pick one" },
   { label: "Licensed, bonded & insured", meyer: "yes", avg: "Usually" },
   { label: "15+ years on the Olympic Peninsula", meyer: "yes", avg: "Varies" },
   { label: "Upfront pricing throughout any project", meyer: "yes", avg: "Time + materials" },
@@ -352,12 +387,12 @@ export default function MeyerElectricPage() {
       color: ACCENT,
     },
     {
-      label: "Adding solar — need a panel upgrade",
+      label: "I want solar panels",
       icon: <Sun size={24} weight="fill" />,
       rec:
-        "Tesla Powerwall + the panel work your solar installer needs. We don't install solar panels — we do the breaker panel upgrade so your installer can connect cleanly. Plus Powerwall storage so you can use what you generate after dark.",
-      ctaHref: "#powerwall",
-      ctaText: "See Powerwall Details",
+        "We install solar panels — and because we're a licensed electrical contractor first, the panel and breaker work behind them is ours too. Add a Tesla Powerwall and you're still running on what you generated once the sun goes down. One crew, one call, roof to breaker.",
+      ctaHref: "#solar",
+      ctaText: "See Solar Details",
       color: ACCENT_AMBER,
     },
     {
@@ -713,11 +748,16 @@ export default function MeyerElectricPage() {
             eyebrow="What We Do"
             title="Complete Electrical &"
             highlight="Backup Power Solutions"
-            subtitle={`From whole-home Tesla Powerwall systems to standby Generac generators, underground power, and code-compliant electrical work — all by one licensed crew serving the Olympic Peninsula since ${BUSINESS.established}.`}
+            subtitle={`Solar panels, whole-home Tesla Powerwall systems, standby Generac generators, underground power, and code-compliant electrical work — all by one licensed crew serving the Olympic Peninsula since ${BUSINESS.established}.`}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          {/* 5-card grid on a 6-column track: three cards across on the
+              first row (span-2 each), two wider cards on the second
+              (span-3 each). Keeps the row edges flush instead of
+              orphaning a 5th card in a 4-column grid. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5 sm:gap-6">
             <ServiceCard
+              className="lg:col-span-2"
               icon={<Lightning size={22} weight="fill" />}
               title="Tesla Powerwall Installation"
               description="Store energy from any source — solar, grid, or generator. Power your home through outages. We're Tesla-certified Powerwall installers: permits, install, and Tesla app setup handled."
@@ -726,6 +766,16 @@ export default function MeyerElectricPage() {
               href="#powerwall"
             />
             <ServiceCard
+              className="lg:col-span-2"
+              icon={<Sun size={22} weight="fill" />}
+              badge="New"
+              title="Solar Panel Installation"
+              description="Yes — we install solar panels. Licensed electrical contractor first, so the array and every bit of wiring behind it come from the same crew. Pair it with a Powerwall and you keep using what you generate after dark."
+              visual={<SolarCardVisual />}
+              href="#solar"
+            />
+            <ServiceCard
+              className="lg:col-span-2"
               icon={<Plug size={22} weight="fill" />}
               title="Generators & Backup Power"
               description="Generac standby generators that kick on automatically when the grid drops. Sized to your home. Fueled by propane or natural gas. Certified installer."
@@ -734,6 +784,7 @@ export default function MeyerElectricPage() {
               href="#generators"
             />
             <ServiceCard
+              className="lg:col-span-3"
               icon={<Wrench size={22} weight="fill" />}
               title="Underground Power & In-House Excavation"
               description="We trench it ourselves with our Kubota U27 excavator — no waiting on a separate excavation contractor. Underground power runs conduit-correct, depth-compliant, built to last decades."
@@ -742,13 +793,380 @@ export default function MeyerElectricPage() {
               href="#contact"
             />
             <ServiceCard
+              className="md:col-span-2 lg:col-span-3"
               icon={<Buildings size={22} weight="fill" />}
               title="Full-Service Electrical"
-              description="Panel upgrades (incl. solar+storage prep), service upgrades, lighting, EV chargers, saunas, hot tubs, heated floors, cook tops, wall ovens, greenhouse / shed / garage wiring, septic, troubleshooting. If it carries current, we can do it."
+              description="Panel upgrades, service upgrades, lighting, EV chargers, saunas, hot tubs, heated floors, cook tops, wall ovens, greenhouse / shed / garage wiring, septic, troubleshooting. If it carries current, we can do it."
               image={PHOTOS.electrical}
               imageAlt="Modern home with exterior electrical lighting at twilight"
               href="#contact"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────── SOLAR DEEP-DIVE ──────────────────────
+          Added 2026-08-17 per Kyle. Meyer became a solar installer some
+          time after the May 2026 build, when the page still said "we
+          don't install solar panels" in five places. Every one of those
+          disclaimers was reversed in the same pass — page copy, the
+          quiz, the Powerwall feature list, the JSON-LD offer catalog,
+          and both llms.txt routes.
+
+          SCOPE IS DELIBERATELY GENERAL (locked with Ben 2026-08-17):
+          states the capability, drives to a quote, and makes NO claim
+          about system design, permitting, utility interconnection, or
+          panel brands. Do not add those without Kyle confirming. Also
+          intentionally makes NO incentive or tax-credit claim — the
+          30% federal residential credit (26 USC 25D) terminated for
+          systems placed in service after 2025-12-31, so any dollar
+          figure here would be wrong on arrival.
+
+          Placed between Services and Powerwall so the page reads
+          generate → store → back up. Uses BG_PANEL rather than the
+          usual BG/BG_ALT alternation so it doesn't collide with the
+          Powerwall section directly below it. */}
+      <section
+        id="solar"
+        className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
+        style={{ background: BG_PANEL }}
+      >
+        {/* Warm sun glow — marks this as the new flagship service. */}
+        <div
+          className="absolute -top-52 -left-40 w-[560px] h-[560px] rounded-full opacity-25 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(251, 146, 60, 0.42) 0%, transparent 70%)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="order-2 lg:order-1">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-4 text-black"
+                style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
+              >
+                <Sun size={13} weight="fill" />
+                New Service
+              </div>
+              <h2
+                className="text-[34px] sm:text-[44px] lg:text-[52px] font-bold leading-[1.05] tracking-tight text-white"
+                style={{ fontFamily: FONT_HEAD }}
+              >
+                Yes — we install{" "}
+                <span style={{ color: ACCENT }}>solar panels</span>
+              </h2>
+              <p
+                className="mt-4 text-[16px] sm:text-[17px] leading-relaxed"
+                style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+              >
+                Solar is now part of what we do. And because Meyer
+                Electric is a licensed electrical contractor first, the
+                array and every bit of wiring behind it come from the
+                same crew — no coordinating between a solar company and
+                an electrician, no finger-pointing when something needs
+                a second look.
+              </p>
+
+              <ul className="mt-6 space-y-3">
+                <PowerwallFeature
+                  title="Solar, Storage &amp; Backup — One Crew"
+                  body="Most homeowners end up juggling a solar company, an electrician, and a generator installer. We're all three. One point of contact from the roof to the breaker panel."
+                />
+                <PowerwallFeature
+                  title="Better Paired With a Powerwall"
+                  body="Panels only make power while the sun's up. Add Tesla Powerwall and the house keeps running on what you generated — through the evening, and through an outage."
+                />
+                <PowerwallFeature
+                  title="Licensed, Bonded &amp; Insured"
+                  body={`License ${BUSINESS.license}. The same code-first crew that's been wiring the Olympic Peninsula since ${BUSINESS.established} — voted Clallam County's #1 electrician four times.`}
+                />
+                <PowerwallFeature
+                  title="A Real Conversation, Not a Sales Pitch"
+                  body="Call us, we'll come look at your property, and you'll get a straight answer about whether solar makes sense for your roof and your power bill. Upfront pricing, no pressure."
+                />
+              </ul>
+
+              <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                <a
+                  href="#contact"
+                  className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97]"
+                  style={{ background: FIRE_GRAD, fontFamily: FONT_HEAD }}
+                >
+                  Get a Solar Quote
+                  <ArrowRight size={14} weight="bold" />
+                </a>
+                <a
+                  href={BUSINESS.phoneHref}
+                  className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold uppercase tracking-wide text-[13px] text-white border-2 transition-all hover:bg-white/[0.06]"
+                  style={{
+                    borderColor: "rgba(255,255,255,0.18)",
+                    fontFamily: FONT_HEAD,
+                  }}
+                >
+                  <Phone size={14} weight="fill" />
+                  {BUSINESS.phoneDisplay}
+                </a>
+              </div>
+            </div>
+
+            {/* Visual side: animated sun → array → home diagram. Icon-led
+                for the same reason the Powerwall and Generac diagrams
+                are — the 5 unique real photos are spoken for by the
+                hero + services grid, and CLAUDE.md bans duplicates. */}
+            <div className="order-1 lg:order-2 relative">
+              <div
+                className="relative aspect-[4/5] sm:aspect-[5/6] rounded-2xl overflow-hidden flex items-center justify-center"
+                style={{
+                  background: `radial-gradient(circle at 50% 22%, rgba(251, 146, 60, 0.22) 0%, rgba(10, 10, 10, 0) 62%), linear-gradient(180deg, ${BG_ALT} 0%, ${BG} 100%)`,
+                  border: `1px solid rgba(250, 204, 21, 0.18)`,
+                  boxShadow: "0 24px 70px rgba(0, 0, 0, 0.6)",
+                }}
+              >
+                {/* Subtle grid pattern — matches the Powerwall panel. */}
+                <svg
+                  className="absolute inset-0 w-full h-full opacity-[0.06]"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <pattern
+                      id="meyer-sol-grid"
+                      width="40"
+                      height="40"
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M 40 0 L 0 0 0 40"
+                        fill="none"
+                        stroke={ACCENT}
+                        strokeWidth="0.5"
+                      />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#meyer-sol-grid)" />
+                </svg>
+
+                <div className="relative flex flex-col items-center gap-5 px-8 w-full">
+                  {/* Sun — slow-rotating ray halo behind a breathing
+                      core, with two expanding warmth rings. */}
+                  <div className="relative flex items-center justify-center h-[104px] w-[104px]">
+                    <span
+                      className="me-sol-ring me-sol-ring-1 absolute inset-0 rounded-full"
+                      style={{ border: `1.5px solid ${ACCENT_AMBER}` }}
+                    />
+                    <span
+                      className="me-sol-ring me-sol-ring-2 absolute inset-0 rounded-full"
+                      style={{ border: `1.5px solid ${ACCENT}` }}
+                    />
+                    <svg
+                      className="me-sol-rays absolute"
+                      width="104"
+                      height="104"
+                      viewBox="0 0 104 104"
+                      aria-hidden="true"
+                    >
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <rect
+                          key={i}
+                          x="51"
+                          y="4"
+                          width="2"
+                          height="13"
+                          rx="1"
+                          fill={i % 2 === 0 ? ACCENT : ACCENT_AMBER}
+                          transform={`rotate(${i * 30} 52 52)`}
+                        />
+                      ))}
+                    </svg>
+                    <span
+                      className="me-sol-core flex items-center justify-center w-[58px] h-[58px] rounded-full"
+                      style={{
+                        background: FIRE_GRAD_RADIAL,
+                        boxShadow: `0 0 34px ${ACCENT_ORANGE_DIM}, 0 0 16px rgba(250,204,21,0.55)`,
+                      }}
+                    >
+                      <Sun size={30} weight="fill" color="#0a0a0a" />
+                    </span>
+                  </div>
+
+                  {/* Sunlight falling onto the array. */}
+                  <div className="flex items-end gap-2 h-6">
+                    {[0, 1, 2].map((i) => (
+                      <span
+                        key={i}
+                        className={`me-sol-beam me-sol-beam-${i + 1} block w-px h-6`}
+                        style={{
+                          background: `linear-gradient(180deg, ${ACCENT} 0%, rgba(250,204,21,0) 100%)`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* The array — 8 cells with a shimmer sweeping across,
+                      tilted so it reads as a roof-mounted plane. */}
+                  <div
+                    className="relative w-full max-w-[236px]"
+                    style={{ perspective: "620px" }}
+                  >
+                    <div
+                      className="me-sol-array relative grid grid-cols-4 gap-[3px] p-[5px] rounded-[3px]"
+                      style={{
+                        transform: "rotateX(34deg)",
+                        background: "rgba(148, 163, 184, 0.30)",
+                        boxShadow: "0 16px 30px rgba(0,0,0,0.55)",
+                      }}
+                    >
+                      {Array.from({ length: 8 }).map((_, i) => (
+                        <span
+                          key={i}
+                          className="block aspect-[4/3] rounded-[1px]"
+                          style={{
+                            background:
+                              "linear-gradient(150deg, #1e293b 0%, #0f172a 55%, #1e293b 100%)",
+                            boxShadow: "inset 0 0 0 0.5px rgba(148,163,184,0.35)",
+                          }}
+                        />
+                      ))}
+                      <span className="me-sol-shimmer absolute inset-0 pointer-events-none rounded-[3px]" />
+                    </div>
+                  </div>
+
+                  {/* Generated power flowing down to the house. */}
+                  <div className="relative h-11 w-px" style={{ background: ACCENT_DIM }}>
+                    {[0, 1, 2].map((i) => (
+                      <span
+                        key={i}
+                        className={`me-sol-dot me-sol-dot-${i + 1} absolute left-1/2 w-[5px] h-[5px] rounded-full -ml-[2px]`}
+                        style={{
+                          background: ACCENT,
+                          boxShadow: `0 0 8px ${ACCENT}`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Destination: the house, still lit. */}
+                  <div
+                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg"
+                    style={{
+                      background: "rgba(250, 204, 21, 0.09)",
+                      border: `1px solid ${ACCENT_DIM}`,
+                    }}
+                  >
+                    {/* The animated class must sit on a host element,
+                        not on the Phosphor component — styled-jsx only
+                        adds its scoping class to real DOM tags, so a
+                        className passed to <House> never matches the
+                        scoped rule and the animation silently dies. */}
+                    <span className="me-sol-house inline-flex">
+                      <House size={20} weight="fill" style={{ color: ACCENT }} />
+                    </span>
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                      style={{ fontFamily: FONT_HEAD }}
+                    >
+                      Your Power, Your Roof
+                    </span>
+                  </div>
+                </div>
+
+                <style jsx>{`
+                  /* Warmth rings expanding off the sun */
+                  .me-sol-ring {
+                    animation: meSolRing 3.6s ease-out infinite;
+                    opacity: 0;
+                  }
+                  .me-sol-ring-1 { animation-delay: 0s; }
+                  .me-sol-ring-2 { animation-delay: 1.8s; }
+                  @keyframes meSolRing {
+                    0%   { transform: scale(0.62); opacity: 0; }
+                    22%  { opacity: 0.7; }
+                    100% { transform: scale(1.55); opacity: 0; }
+                  }
+
+                  /* Ray halo turns slowly behind the core */
+                  .me-sol-rays {
+                    animation: meSolSpin 26s linear infinite;
+                    transform-origin: 50% 50%;
+                  }
+                  @keyframes meSolSpin {
+                    to { transform: rotate(360deg); }
+                  }
+
+                  /* Core breathes */
+                  .me-sol-core {
+                    animation: meSolCore 3.2s ease-in-out infinite;
+                  }
+                  @keyframes meSolCore {
+                    0%, 100% { transform: scale(1); }
+                    50%      { transform: scale(1.07); }
+                  }
+
+                  /* Sunlight striking the panels, staggered */
+                  .me-sol-beam {
+                    animation: meSolBeam 2.6s ease-in-out infinite;
+                    transform-origin: top center;
+                  }
+                  .me-sol-beam-1 { animation-delay: 0s; }
+                  .me-sol-beam-2 { animation-delay: 0.32s; }
+                  .me-sol-beam-3 { animation-delay: 0.64s; }
+                  @keyframes meSolBeam {
+                    0%, 100% { opacity: 0.2; transform: scaleY(0.55); }
+                    50%      { opacity: 1;   transform: scaleY(1); }
+                  }
+
+                  /* Array settles into its tilt, then holds */
+                  .me-sol-array {
+                    animation: meSolArray 7s ease-in-out infinite;
+                  }
+                  @keyframes meSolArray {
+                    0%, 100% { transform: rotateX(34deg) translateY(0); }
+                    50%      { transform: rotateX(31deg) translateY(-3px); }
+                  }
+
+                  /* Light sweeping across the cell faces */
+                  .me-sol-shimmer {
+                    background: linear-gradient(
+                      115deg,
+                      rgba(250, 204, 21, 0) 38%,
+                      rgba(250, 204, 21, 0.42) 50%,
+                      rgba(250, 204, 21, 0) 62%
+                    );
+                    background-size: 260% 100%;
+                    animation: meSolShimmer 4.4s ease-in-out infinite;
+                  }
+                  @keyframes meSolShimmer {
+                    0%       { background-position: 130% 0; }
+                    55%, 100% { background-position: -130% 0; }
+                  }
+
+                  /* Generated power travelling down to the house */
+                  .me-sol-dot {
+                    animation: meSolDot 2.4s linear infinite;
+                    opacity: 0;
+                  }
+                  .me-sol-dot-1 { animation-delay: 0s; }
+                  .me-sol-dot-2 { animation-delay: 0.8s; }
+                  .me-sol-dot-3 { animation-delay: 1.6s; }
+                  @keyframes meSolDot {
+                    0%   { top: 0;    opacity: 0; }
+                    15%  { opacity: 1; }
+                    85%  { opacity: 1; }
+                    100% { top: 100%; opacity: 0; }
+                  }
+
+                  /* House glows as the power lands */
+                  .me-sol-house {
+                    animation: meSolHouse 2.4s ease-in-out infinite;
+                  }
+                  @keyframes meSolHouse {
+                    0%, 100% { filter: drop-shadow(0 0 0 rgba(250,204,21,0)); }
+                    50%      { filter: drop-shadow(0 0 7px rgba(250,204,21,0.85)); }
+                  }
+                `}</style>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -796,7 +1214,7 @@ export default function MeyerElectricPage() {
                 />
                 <PowerwallFeature
                   title="Pairs with Solar"
-                  body="Got solar already (or planning to add it)? Powerwall stores what your panels generate. We do the panel upgrade — your solar installer connects the panels."
+                  body="Powerwall stores what your panels generate so you can use it after dark. Already have solar? We'll tie it in. Don't yet? We install the panels too — same crew, same call."
                 />
                 <PowerwallFeature
                   title="Silent &amp; Stackable"
@@ -1631,6 +2049,11 @@ export default function MeyerElectricPage() {
           coverage. Sits after Why-Us (extending the trust narrative)
           and before the quiz (which qualifies the visitor's intent). */}
       <section
+        // id added 2026-08-17: llms.txt + llms-full.txt have always
+        // advertised /clients/meyer-electric#comparison as a key page,
+        // but the anchor never existed — AI crawlers following it landed
+        // at the top of the page instead.
+        id="comparison"
         className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG }}
       >
@@ -1897,6 +2320,9 @@ export default function MeyerElectricPage() {
 
       {/* ────────────────────── SERVICE AREA ────────────────────── */}
       <section
+        // id added 2026-08-17 — same reason as #comparison above: both
+        // llms.txt routes linked to #service-area with no anchor here.
+        id="service-area"
         className="py-14 sm:py-16 lg:py-20"
         style={{ background: BG }}
       >
@@ -1971,6 +2397,69 @@ export default function MeyerElectricPage() {
         </div>
       </section>
 
+      {/* ────────────────────── INSTAGRAM ──────────────────────
+          Added 2026-08-17 per Kyle. Deliberately NOT an embedded feed:
+          third-party IG embeds are a render-blocking script, they break
+          whenever Meta rotates their embed API, and Kyle's social-media
+          contractor hadn't sent any content yet as of this build. This
+          is a follow CTA that costs nothing to maintain. When she does
+          send photos, the natural upgrade is a 3-4 tile grid of real
+          job shots inside this band linking out to the profile —
+          self-hosted images, not an embed. */}
+      <section
+        className="py-10 sm:py-12 border-y"
+        style={{
+          // BG_PANEL so the strip reads as its own band between the
+          // BG service-area section above and the BG_ALT contact
+          // section below.
+          background: BG_PANEL,
+          borderColor: "rgba(255, 255, 255, 0.06)",
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <span
+                className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl text-black"
+                style={{ background: FIRE_GRAD }}
+              >
+                <InstagramLogo size={24} weight="fill" />
+              </span>
+              <div>
+                <h2
+                  className="text-[22px] sm:text-[26px] font-bold tracking-tight text-white leading-snug"
+                  style={{ fontFamily: FONT_HEAD }}
+                >
+                  See the work in progress
+                </h2>
+                <p
+                  className="mt-1.5 text-[14px] sm:text-[15px] leading-relaxed max-w-lg"
+                  style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+                >
+                  Panel swaps, Powerwall installs, solar going up, and
+                  the Kubota in the dirt — we post the real jobs on
+                  Instagram.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={BUSINESS.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              // Deliberately NOT `uppercase` like the page's other CTAs:
+              // an IG handle is a literal identifier, and @MEYERELECTRIC360
+              // reads as a different handle to anyone typing it by hand.
+              className="shrink-0 inline-flex items-center gap-2 px-6 h-12 rounded-md font-bold tracking-wide text-[14px] text-black transition-all hover:brightness-110 active:scale-[0.97]"
+              style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+            >
+              <InstagramLogo size={17} weight="fill" />
+              {BUSINESS.instagramHandle}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ────────────────────── CONTACT / CTA ────────────────────── */}
       <section
         id="contact"
@@ -2041,6 +2530,7 @@ export default function MeyerElectricPage() {
               <MeyerElectricContactForm
                 prospectId={BUSINESS.prospectId}
                 services={[
+                  "Solar Panel Installation",
                   "Tesla Powerwall Installation",
                   "Generac Standby Generator",
                   "Service Upgrade / Panel Replacement",
@@ -2102,6 +2592,7 @@ export default function MeyerElectricPage() {
                 Quick Links
               </div>
               <ul className="space-y-2.5">
+                <FooterLink href="#solar" label="Solar Panels" />
                 <FooterLink href="#powerwall" label="Tesla Powerwall" />
                 <FooterLink href="#generators" label="Generators" />
                 <FooterLink href="#services" label="Underground Power" />
@@ -2163,6 +2654,23 @@ export default function MeyerElectricPage() {
                     <span>{BUSINESS.address.full}</span>
                   </a>
                 </li>
+                <li>
+                  <a
+                    href={BUSINESS.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[14px] text-white/80 hover:text-white inline-flex items-center gap-2"
+                    style={{ fontFamily: FONT_BODY }}
+                  >
+                    <InstagramLogo
+                      size={14}
+                      weight="fill"
+                      style={{ color: ACCENT }}
+                      className="shrink-0"
+                    />
+                    <span>{BUSINESS.instagramHandle}</span>
+                  </a>
+                </li>
                 <li
                   className="text-[12px] uppercase tracking-wider"
                   style={{ color: INK_DIM, fontFamily: FONT_HEAD }}
@@ -2207,6 +2715,118 @@ export default function MeyerElectricPage() {
 }
 
 /* ───────────────────────── SUB COMPONENTS ───────────────────────── */
+
+/**
+ * SolarCardVisual — media treatment for the Solar service card.
+ *
+ * Meyer has exactly 5 unique real photos and every one is already
+ * spoken for (hero + the four other service cards). CLAUDE.md bans
+ * duplicate images on a site, and no real photo of a Meyer solar job
+ * exists yet — the capability is new as of Aug 2026. So rather than
+ * recycle a photo or drop in stock, the Solar card gets the same
+ * gradient + grid + animated-icon language the Powerwall and Generac
+ * deep-dive diagrams use. Side benefit: it's the only non-photo card
+ * in the grid, so the new service is the thing your eye lands on.
+ *
+ * Swap this for a real photo the moment Kyle's social-media contractor
+ * sends one of an actual Meyer install.
+ */
+function SolarCardVisual() {
+  return (
+    <div
+      className="absolute inset-0 flex items-center justify-center overflow-hidden"
+      style={{
+        background: `radial-gradient(circle at 50% 26%, rgba(251, 146, 60, 0.26) 0%, rgba(10, 10, 10, 0) 64%), linear-gradient(180deg, ${BG_ALT} 0%, ${BG} 100%)`,
+      }}
+    >
+      <svg
+        className="absolute inset-0 w-full h-full opacity-[0.07]"
+        aria-hidden="true"
+      >
+        <defs>
+          <pattern
+            id="meyer-solcard-grid"
+            width="28"
+            height="28"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 28 0 L 0 0 0 28"
+              fill="none"
+              stroke={ACCENT}
+              strokeWidth="0.5"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#meyer-solcard-grid)" />
+      </svg>
+
+      <div className="relative flex flex-col items-center gap-3.5 transition-transform duration-700 group-hover:scale-105">
+        {/* Sun */}
+        <span
+          className="me-solcard-sun flex items-center justify-center w-12 h-12 rounded-full"
+          style={{
+            background: FIRE_GRAD_RADIAL,
+            boxShadow: `0 0 26px ${ACCENT_ORANGE_DIM}, 0 0 12px rgba(250,204,21,0.5)`,
+          }}
+        >
+          <Sun size={26} weight="fill" color="#0a0a0a" />
+        </span>
+
+        {/* Array */}
+        <div style={{ perspective: "460px" }}>
+          <div
+            className="relative grid grid-cols-4 gap-[2px] p-[3px] rounded-[2px]"
+            style={{
+              transform: "rotateX(36deg)",
+              background: "rgba(148, 163, 184, 0.30)",
+              boxShadow: "0 12px 24px rgba(0,0,0,0.55)",
+              width: "150px",
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span
+                key={i}
+                className="block aspect-[4/3] rounded-[1px]"
+                style={{
+                  background:
+                    "linear-gradient(150deg, #1e293b 0%, #0f172a 55%, #1e293b 100%)",
+                  boxShadow: "inset 0 0 0 0.5px rgba(148,163,184,0.35)",
+                }}
+              />
+            ))}
+            <span className="me-solcard-shimmer absolute inset-0 pointer-events-none rounded-[2px]" />
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .me-solcard-sun {
+          animation: meSolCardSun 3.4s ease-in-out infinite;
+        }
+        @keyframes meSolCardSun {
+          0%, 100% { transform: scale(1); }
+          50%      { transform: scale(1.08); }
+        }
+
+        .me-solcard-shimmer {
+          background: linear-gradient(
+            115deg,
+            rgba(250, 204, 21, 0) 38%,
+            rgba(250, 204, 21, 0.4) 50%,
+            rgba(250, 204, 21, 0) 62%
+          );
+          background-size: 260% 100%;
+          animation: meSolCardShimmer 4.4s ease-in-out infinite;
+        }
+        @keyframes meSolCardShimmer {
+          0%        { background-position: 130% 0; }
+          55%, 100% { background-position: -130% 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 function HeroPill({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (

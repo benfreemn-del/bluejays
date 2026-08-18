@@ -15,9 +15,16 @@ import MeyerMark from "./meyer-mark";
  * palette.
  */
 
+// 6 links as of 2026-08-17 (Solar added). At exactly the lg breakpoint
+// the row is logo + 6 links + phone + CTA, so the Powerwall link is
+// labelled "Powerwall" rather than "Tesla Powerwall" and the nav gap
+// tightens to gap-4 until xl. The Tesla certification still leads the
+// trust strip, the Powerwall section heading, and the schema — only the
+// wayfinding label is shortened.
 const NAV_LINKS = [
   { href: "#services", label: "Services" },
-  { href: "#powerwall", label: "Tesla Powerwall" },
+  { href: "#solar", label: "Solar" },
+  { href: "#powerwall", label: "Powerwall" },
   { href: "#generators", label: "Generators" },
   { href: "#why-us", label: "Why Us" },
   { href: "#contact", label: "Contact" },
@@ -78,12 +85,16 @@ export default function StickyNav() {
         </a>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-7">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+              // shrink-0 + whitespace-nowrap: with 6 links the flex row
+              // gets tight at exactly the lg breakpoint and the only
+              // label containing a space ("Why Us") was breaking onto a
+              // second line. Never let a nav label wrap.
+              className="shrink-0 whitespace-nowrap text-sm font-medium text-white/80 hover:text-white transition-colors"
             >
               {link.label}
             </a>
