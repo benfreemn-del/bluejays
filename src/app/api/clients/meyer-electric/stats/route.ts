@@ -39,9 +39,15 @@ const MEYER_DOMAIN_RE = /sequimelectric/i;
 // personal mailboxes, which must never be hardcoded here (public repo).
 // Display-level filter only; rows stay in contact_form_submissions.
 const SPAM_SENDER_RE =
-  /housingsecrets\.net|safetykid\.info|parallelaid\.com|homesafetyhub\.org|tidylifetoday\.com|vas4hire\.com|lightlaunch\.ai|sendproud\.com/i;
+  /housingsecrets\.net|safetykid\.info|parallelaid\.com|homesafetyhub\.org|tidylifetoday\.com|vas4hire\.com|lightlaunch\.ai|sendproud\.com|melottogroup\.com|tradesbright\.org|virtualhandsupport\.com|vasdirect\.com/i;
+// Message heuristics matter more than the domain list: they catch the
+// next vendor running the same template from a new domain, and they're
+// the ONLY lever for pitchers on personal mailboxes (a Gmail estimator
+// was slipping through, and the address can't be hardcoded here).
+// Phrases below are lifted from the actual submissions they blocked —
+// keep them specific enough that a real customer can't trip them.
 const SPAM_MESSAGE_RE =
-  /guest post|article (proposal|submission)|your readers|virtual assistant|calendly\.com\/|reply stop to unsubscribe|backlink|complimentary valuation|estimation services|lead generation|book(ed)? meetings|user sign ?ups|volume discounts|vendor,? not a customer/i;
+  /guest post|article (proposal|submission)|write an article for your|your readers|virtual assistant|calendly\.com\/|reply stop to unsubscribe|stop to opt out|reply yes for a quick|tried emailing but it did|backlink|complimentary valuation|estimation services|estimating (services|specialist)|quantity takeoff|share your drawings|redesign their websites?|improve their content|lead generation|book(ed)? meetings|user sign ?ups|volume discounts|vendor,? not a customer/i;
 
 type PageStat = {
   path: string;
@@ -67,6 +73,43 @@ const INTERNAL_HOSTS = new Set(["bluejayportfolio.com"]);
 /** Stored paths are "<host><path>", e.g. "sequimelectrician.com/". */
 function hostOf(path: string): string {
   return (path.split("/")[0] || path).replace(/^www\./, "").toLowerCase();
+}
+
+/**
+ * Collapse repeat submissions of the SAME message by the SAME person.
+ *
+ * Double-tapping the submit button, or a vendor blasting the form on a
+ * schedule, produced several identical rows — Kyle was seeing the same
+ * pitch four times and had to read each one to realise it was the same
+ * one. Two rows collapse only when the sender AND the message body are
+ * identical, so a customer who writes back later with a different
+ * request still shows up as its own lead.
+ *
+ * Rows arrive newest-first, so the first one seen is the one kept and
+ * the older repeats drop away — the surviving row carries the most
+ * recent submitted_at, which is what Kyle should be calling back on.
+ */
+function dedupeLeads(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  const seen = new Set<string>();
+  const out: Record<string, unknown>[] = [];
+  for (const row of rows) {
+    // Fall back to phone when the form was submitted without an email.
+    const who =
+      String(row.customer_email || "").trim().toLowerCase() ||
+      String(row.customer_phone || "").replace(/\D/g, "") ||
+      String(row.customer_name || "").trim().toLowerCase();
+    const body = String(row.message || "").replace(/\s+/g, " ").trim().toLowerCase();
+    // No identity to key on — keep it rather than risk dropping a real lead.
+    if (!who) {
+      out.push(row);
+      continue;
+    }
+    const key = `${who}::${body}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(row);
+  }
+  return out;
 }
 
 /**
@@ -256,6 +299,9 @@ export async function POST(req: NextRequest) {
         if (SPAM_MESSAGE_RE.test(message)) return false;
         return true;
       });
+      // Dedupe AFTER the spam pass so identical vendor blasts are
+      // already gone and this only has real repeat submissions to fold.
+      leads = dedupeLeads(leads);
     }
   } catch (err) {
     console.error("[meyer stats] leads fetch failed:", err);
