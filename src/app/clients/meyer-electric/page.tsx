@@ -1745,11 +1745,20 @@ export default function MeyerElectricPage() {
                         "linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.35) 50%, transparent 100%)",
                     }}
                   />
-                  <House
-                    size={18}
-                    weight="fill"
-                    className="me-gen-house-icon relative text-emerald-400"
-                  />
+                  {/* The animated class must sit on a host element, not
+                      on the Phosphor component. styled-jsx only stamps
+                      its `jsx-<hash>` scoping class onto real DOM tags,
+                      so a className handed to <House> renders as
+                      `me-gen-house-icon` WITHOUT the hash and the scoped
+                      rule `.me-gen-house-icon.jsx-<hash>` never matches —
+                      the pulse silently never ran. Note the sibling
+                      `.me-pw-house` works precisely because it's on a
+                      raw <svg>. inline-flex so `transform: scale()` in
+                      the keyframes applies; the icon inherits the
+                      emerald via currentColor. */}
+                  <span className="me-gen-house-icon relative inline-flex text-emerald-400">
+                    <House size={18} weight="fill" />
+                  </span>
                   <span
                     className="relative text-[12px] uppercase tracking-[0.2em] font-bold text-emerald-400"
                     style={{ fontFamily: FONT_HEAD }}
