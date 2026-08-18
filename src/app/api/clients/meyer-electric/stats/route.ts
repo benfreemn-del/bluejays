@@ -51,6 +51,61 @@ type PageStat = {
   last_view: string | null;
 };
 
+// Hostnames that are OURS, not Kyle's. The showcase is reachable at
+// bluejayportfolio.com/clients/meyer-electric, so our own portfolio
+// traffic (Ben demoing the build, sales prospects clicking through
+// from the portfolio, crawlers) lands in the same client_page_views
+// rows as real sequimelectrician.com visitors.
+//
+// Kyle's backend must report HIS traffic only. Removed 2026-08-17 at
+// Ben's request. Filtered SERVER-SIDE on purpose — hiding these rows
+// in the client would still ship our internal numbers to his browser,
+// and totals are derived from `pages`, so dropping them here corrects
+// the headline counts as well.
+const INTERNAL_HOSTS = new Set(["bluejayportfolio.com"]);
+
+/** Stored paths are "<host><path>", e.g. "sequimelectrician.com/". */
+function hostOf(path: string): string {
+  return (path.split("/")[0] || path).replace(/^www\./, "").toLowerCase();
+}
+
+/**
+ * Drop our own hostnames, then roll the surviving rows up BY DOMAIN.
+ *
+ * The table is titled "Views by domain" but the RPC returns one row per
+ * PATH, and the client only ever renders the host portion. Any site
+ * with more than one tracked path therefore rendered as several
+ * identical-looking rows — Kyle was seeing "sequimelectrician.com"
+ * twice (1,422 and 6) with no way to tell them apart. Aggregating here
+ * makes the table match its own heading.
+ */
+function domainStats(rows: PageStat[]): PageStat[] {
+  const byHost = new Map<string, PageStat>();
+  for (const row of rows) {
+    const host = hostOf(row.path);
+    if (!host || INTERNAL_HOSTS.has(host)) continue;
+    const acc = byHost.get(host);
+    if (!acc) {
+      byHost.set(host, {
+        path: host,
+        total_views: Number(row.total_views || 0),
+        views_30d: Number(row.views_30d || 0),
+        views_7d: Number(row.views_7d || 0),
+        last_view: row.last_view,
+      });
+      continue;
+    }
+    acc.total_views += Number(row.total_views || 0);
+    acc.views_30d += Number(row.views_30d || 0);
+    acc.views_7d += Number(row.views_7d || 0);
+    // Keep the most recent visit across the merged paths.
+    if (row.last_view && (!acc.last_view || row.last_view > acc.last_view)) {
+      acc.last_view = row.last_view;
+    }
+  }
+  return [...byHost.values()].sort((a, b) => b.total_views - a.total_views);
+}
+
 function referrerSource(raw: string): string {
   try {
     const host = new URL(raw).hostname.replace(/^www\.|^m\.|^l\./, "");
@@ -92,7 +147,10 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase.rpc("client_page_view_stats", {
       p_slug: SLUG,
     });
-    if (!error && Array.isArray(data)) pages = data as PageStat[];
+    // domainStats() strips our own hostnames and rolls the rest up per
+    // domain. Everything downstream (the table AND the headline totals)
+    // reads from `pages`, so this is the single chokepoint.
+    if (!error && Array.isArray(data)) pages = domainStats(data as PageStat[]);
   } catch (err) {
     console.error("[meyer stats] page stats failed:", err);
   }
@@ -111,14 +169,19 @@ export async function POST(req: NextRequest) {
     const counts = new Map<string, number>();
     const PAGE = 1000;
     for (let page = 0; page < 30; page++) {
+      // `path` is selected purely so our own hostnames can be excluded
+      // here too — otherwise the "Views over time" chart would keep
+      // counting bluejayportfolio.com hits and visibly disagree with
+      // the corrected headline totals above.
       const { data, error } = await supabase
         .from("client_page_views")
-        .select("created_at")
+        .select("created_at, path")
         .eq("client_slug", SLUG)
         .order("created_at", { ascending: true })
         .range(page * PAGE, page * PAGE + PAGE - 1);
       if (error || !Array.isArray(data) || data.length === 0) break;
-      for (const row of data as Array<{ created_at: string }>) {
+      for (const row of data as Array<{ created_at: string; path: string | null }>) {
+        if (row.path && INTERNAL_HOSTS.has(hostOf(row.path))) continue;
         const key = fmt.format(new Date(row.created_at));
         counts.set(key, (counts.get(key) ?? 0) + 1);
       }
