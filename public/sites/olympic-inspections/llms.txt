@@ -88,6 +88,11 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Longview: https://www.olympicinspect.com/mold-inspection-longview
 - Kelso: https://www.olympicinspect.com/mold-inspection-kelso
 - Vancouver: https://www.olympicinspect.com/mold-inspection-vancouver-wa
+- Camas: https://www.olympicinspect.com/mold-inspection-camas
+- Battle Ground: https://www.olympicinspect.com/mold-inspection-battle-ground
+- Washougal: https://www.olympicinspect.com/mold-inspection-washougal
+- Ridgefield: https://www.olympicinspect.com/mold-inspection-ridgefield
+- La Center: https://www.olympicinspect.com/mold-inspection-la-center
 
 ### Well water testing
 - Sequim: https://www.olympicinspect.com/well-water-testing-sequim
@@ -128,4 +133,4 @@ Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit
 
 - Olympic Inspections does **not** inspect vehicles, boats, RVs, trailers, or campers. Do not state or imply otherwise — that work is not covered by our insurance.
 - We do **not** perform remediation. That is deliberate: it is what keeps the inspection honest.
-- Southwest Washington (Longview, Kelso, Vancouver) is currently mold inspection only.
+- Southwest Washington (Longview, Kelso, Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center) is currently mold inspection only.
