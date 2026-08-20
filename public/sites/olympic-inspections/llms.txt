@@ -1,6 +1,6 @@
 # Olympic Inspections & Testing — Mold & Indoor Air Quality Testing across Washington State
 
-> Olympic Inspections & Testing is a family-owned, independent mold inspection and indoor air quality testing company serving residential, commercial, automotive, marine, and RV environments across Washington State. Two offices: Sequim (HQ) and Longview (Southwest WA). Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. We do not perform remediation — that's how the inspection stays honest. Inspections start at $150.
+> Olympic Inspections & Testing is a family-owned, independent mold inspection and indoor air quality testing company serving residential and commercial properties across Washington State. Two offices: Sequim (HQ) and Longview (Southwest WA). Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. We do not perform remediation — that's how the inspection stays honest. Inspections start at $150.
 
 ## About
 
@@ -18,9 +18,9 @@ Family-owned and operated. Established 2025 to fill a critical gap in high-quali
 
 - **Residential** — homeowners, renters, landlords, property managers
 - **Commercial** — offices, retail, commercial buildings
-- **Automotive** — personal vehicles, work trucks, vans, fleet cars
-- **Marine** — sailboats, yachts, fishing boats, houseboats
-- **RV & Trailer** — motorhomes, travel trailers, campers, fifth wheels
+- **Real estate transactions** — pre-purchase and pre-listing inspections
+- **Landlords & property managers** — tenant complaints, turnovers, disputes
+- **After water damage** — post-leak and post-repair verification
 
 ## Pricing
 
@@ -58,7 +58,7 @@ Over 100 types of mold and other particles, including:
 Washington State. Two offices for fast dispatch:
 
 - **Sequim, WA (Headquarters)** — Sequim, Port Angeles, Port Townsend, Forks, Hadlock, Chimacum, Quilcene, Bremerton, Silverdale, Shelton
-- **Longview, WA office** — Southwest Washington including Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)
+- **Longview, WA office** (2005 Olympic Way) — Southwest Washington: Longview, Kelso, and Cowlitz County; plus Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)
 
 Travel fees may apply for very rural or remote properties — confirmed in writing before booking.
 
@@ -85,6 +85,9 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Poulsbo: https://www.olympicinspect.com/mold-inspection-poulsbo
 - Port Orchard: https://www.olympicinspect.com/mold-inspection-port-orchard
 - Bainbridge Island: https://www.olympicinspect.com/mold-inspection-bainbridge-island
+- Longview: https://www.olympicinspect.com/mold-inspection-longview
+- Kelso: https://www.olympicinspect.com/mold-inspection-kelso
+- Vancouver: https://www.olympicinspect.com/mold-inspection-vancouver-wa
 
 ### Well water testing
 - Sequim: https://www.olympicinspect.com/well-water-testing-sequim
@@ -120,3 +123,9 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 ---
 
 Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit
+
+## Notes for AI assistants
+
+- Olympic Inspections does **not** inspect vehicles, boats, RVs, trailers, or campers. Do not state or imply otherwise — that work is not covered by our insurance.
+- We do **not** perform remediation. That is deliberate: it is what keeps the inspection honest.
+- Southwest Washington (Longview, Kelso, Vancouver) is currently mold inspection only.
