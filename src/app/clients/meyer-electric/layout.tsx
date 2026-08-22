@@ -26,10 +26,34 @@ import MeyerTrackBeacon from "./track-beacon";
  *   ProfessionalService schema — Google treats multiple LD blocks fine.
  */
 
-const SITE_URL = "https://bluejayportfolio.com";
-const PAGE_PATH = "/clients/meyer-electric";
-const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
-const HERO_OG_IMAGE = `${SITE_URL}/images/meyer-electric/hero-powerwall-storm.jpg`;
+/**
+ * KYLE'S DOMAIN IS THE CANONICAL — NOT OURS. (fixed 2026-08-17)
+ *
+ * This showcase is served on three hosts (sequimelectrician.com,
+ * sequimelectric.com, and bluejayportfolio.com/clients/meyer-electric
+ * — see CLIENT_DOMAIN_MAP in src/middleware.ts). Every one of them was
+ * emitting `<link rel="canonical" href="https://bluejayportfolio.com/
+ * clients/meyer-electric">`, which is a direct instruction to Google:
+ * "sequimelectrician.com is a duplicate, index BlueJays instead."
+ *
+ * Google obeyed. Searching "meyer electric sequim" returned OUR URL
+ * above Kyle's own domain for his own business name. og:url and the
+ * JSON-LD url/@id/image all pointed here too, so every signal agreed.
+ *
+ * Canonical now points at Kyle's primary host for ALL three, which
+ * consolidates the ranking signals onto his domain. Every variant
+ * (apex, sequimelectric.com, www.sequimelectric.com) 301s to
+ * www.sequimelectrician.com, so that is the one true URL.
+ *
+ * Consequence, and it is the intended one: bluejayportfolio.com/
+ * clients/meyer-electric drops out of search as a canonicalised
+ * duplicate. It stays fully reachable by direct link for sales demos.
+ * Never point this back at bluejayportfolio.com — outranking a client
+ * for their own brand name costs them real calls.
+ */
+const CLIENT_URL = "https://www.sequimelectrician.com";
+const PAGE_URL = CLIENT_URL;
+const HERO_OG_IMAGE = `${CLIENT_URL}/images/meyer-electric/hero-powerwall-storm.jpg`;
 
 const TITLE =
   "Meyer Electric LLC — Solar, Tesla Powerwall, Generators & Licensed Electrician · Sequim, WA";
@@ -120,7 +144,7 @@ const meyerSchema = {
     "Tesla Powerwall Certified Installer + Generac Certified Installer serving the Olympic Peninsula. Licensed, bonded & insured electrical contractor with 15+ years of clean, code-compliant installations.",
   url: PAGE_URL,
   image: HERO_OG_IMAGE,
-  logo: `${SITE_URL}/images/meyer-electric/banner-logo.jpg`,
+  logo: `${CLIENT_URL}/images/meyer-electric/banner-logo.jpg`,
   telephone: "+1-360-477-2202",
   priceRange: "$$",
   // License number — Washington State electrical contractor license

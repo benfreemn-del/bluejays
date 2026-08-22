@@ -263,8 +263,20 @@ const CLIENT_DOMAIN_MAP: Record<string, string | DomainRewrite> = {
   // and long variants of the domain; we serve the same showcase on
   // both. Email lives on sequimelectrician.com (Zoho Mail Lite,
   // migrated from YOLA 2026-05-12).
-  "sequimelectric.com": "/clients/meyer-electric",
-  "sequimelectrician.com": "/clients/meyer-electric",
+  // Upgraded from a bare string to the DomainRewrite shape 2026-08-17
+  // so the SEO surfaces resolve at the ROOT of Kyle's domain, where
+  // Google and the AI crawlers actually look for them. As a bare
+  // string, every path on this host collapsed onto the showcase and
+  // /robots.txt + /sitemap.xml 301'd to "/" — the client's own domain
+  // published no crawl guidance at all. Same treatment tekky.org gets.
+  "sequimelectric.com": {
+    base: "/clients/meyer-electric",
+    subpaths: ["/llms.txt", "/llms-full.txt", "/sitemap.xml", "/robots.txt"],
+  },
+  "sequimelectrician.com": {
+    base: "/clients/meyer-electric",
+    subpaths: ["/llms.txt", "/llms-full.txt", "/sitemap.xml", "/robots.txt"],
+  },
   // Zenith Sports / TEKKY — multi-page showcase. Phase 1 deliverable
   // ($997 + WA tax, locked 2026-05-20) requires the SEO surfaces
   // (llms.txt + sitemap.xml + robots.txt) live at the root domain

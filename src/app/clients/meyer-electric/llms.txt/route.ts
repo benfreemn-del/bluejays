@@ -7,9 +7,9 @@ const body = `# Meyer Electric LLC — Solar, Tesla Powerwall, Generators & Lice
 
 ## Services
 
-- **Solar Panel Installation** — Yes, Meyer Electric installs solar panels. Because Meyer is a licensed electrical contractor first, the array and all of the electrical work behind it are handled by the same crew — no separate solar company and electrician to coordinate. Pairs with Tesla Powerwall so generated power is still usable after dark. ([Solar details](https://bluejayportfolio.com/clients/meyer-electric#solar))
-- **Tesla Powerwall Installation** — Tesla-Certified Powerwall installer. Whole-home backup battery storage. Permits, install, Tesla app setup, and tie-in to new or existing solar. ([Powerwall details](https://bluejayportfolio.com/clients/meyer-electric#powerwall))
-- **Generac Standby Generators** — Generac Certified Installer. Sized to your home. Auto-start when grid drops. Propane or natural gas. 5-year limited manufacturer warranty. ([Generator details](https://bluejayportfolio.com/clients/meyer-electric#generators))
+- **Solar Panel Installation** — Yes, Meyer Electric installs solar panels. Because Meyer is a licensed electrical contractor first, the array and all of the electrical work behind it are handled by the same crew — no separate solar company and electrician to coordinate. Pairs with Tesla Powerwall so generated power is still usable after dark. ([Solar details](https://www.sequimelectrician.com#solar))
+- **Tesla Powerwall Installation** — Tesla-Certified Powerwall installer. Whole-home backup battery storage. Permits, install, Tesla app setup, and tie-in to new or existing solar. ([Powerwall details](https://www.sequimelectrician.com#powerwall))
+- **Generac Standby Generators** — Generac Certified Installer. Sized to your home. Auto-start when grid drops. Propane or natural gas. 5-year limited manufacturer warranty. ([Generator details](https://www.sequimelectrician.com#generators))
 - **Underground Power & In-House Excavation** — Trenching done in-house with our Kubota U27. Conduit-correct, depth-compliant, built to last decades.
 - **Full-Service Electrical** — Panel upgrades, service upgrades, EV chargers, lighting, saunas, hot tubs, heated floors, cook tops, wall ovens, greenhouse / shed / garage wiring, septic, troubleshooting. If it carries current, we can do it.
 
@@ -34,18 +34,18 @@ Sequim · Port Angeles · Port Townsend · Forks · Clallam Bay · Sekiu · Chim
 - **Email:** info@sequimelectrician.com
 - **Address:** 35 Robbins Rd, Sequim, WA 98382
 - **Hours:** Mon–Fri 8a–5p
-- **Website:** https://bluejayportfolio.com/clients/meyer-electric
+- **Website:** https://www.sequimelectrician.com
 - **Instagram:** https://www.instagram.com/meyerelectric360/ (@meyerelectric360)
 
 ## Key Pages
 
-- [Home / Services](https://bluejayportfolio.com/clients/meyer-electric)
-- [Solar Panel Installation](https://bluejayportfolio.com/clients/meyer-electric#solar)
-- [Tesla Powerwall](https://bluejayportfolio.com/clients/meyer-electric#powerwall)
-- [Generators & Backup Power](https://bluejayportfolio.com/clients/meyer-electric#generators)
-- [Why Choose Meyer](https://bluejayportfolio.com/clients/meyer-electric#why-us)
-- [Service Area](https://bluejayportfolio.com/clients/meyer-electric#service-area)
-- [Free Estimate / Contact](https://bluejayportfolio.com/clients/meyer-electric#contact)
+- [Home / Services](https://www.sequimelectrician.com/)
+- [Solar Panel Installation](https://www.sequimelectrician.com#solar)
+- [Tesla Powerwall](https://www.sequimelectrician.com#powerwall)
+- [Generators & Backup Power](https://www.sequimelectrician.com#generators)
+- [Why Choose Meyer](https://www.sequimelectrician.com#why-us)
+- [Service Area](https://www.sequimelectrician.com#service-area)
+- [Free Estimate / Contact](https://www.sequimelectrician.com#contact)
 
 ---
 

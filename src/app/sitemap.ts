@@ -36,7 +36,13 @@ const V2_CATEGORIES = [
  * client churns + we tear their page down.
  */
 const ACTIVE_CLIENT_SHOWCASES = [
-  "meyer-electric",          // Tesla Powerwall + Generac · Sequim WA
+  // "meyer-electric" — removed 2026-08-17. Its canonical now points at
+  // https://www.sequimelectrician.com (Kyle's own domain), so listing
+  // /clients/meyer-electric here would submit a URL that canonicalises
+  // somewhere else — Search Console flags that as "Duplicate, submitted
+  // URL not selected as canonical". Kyle's domain has its own sitemap at
+  // sequimelectrician.com/sitemap.xml. The showcase page still exists
+  // and is reachable by direct link for sales demos.
   "hector-landscaping",      // Hardscapes + lawn care · Renton WA
   "elite-hardscapes-and-landscapes", // Hardscape + landscape · Port Angeles WA (Tyler Fritz)
   "masters-window-tinting",  // Auto + ceramic + PPF · West Babylon NY

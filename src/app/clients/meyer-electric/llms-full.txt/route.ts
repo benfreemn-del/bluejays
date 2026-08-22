@@ -95,7 +95,7 @@ Most service calls are same-day or next-day. Larger Powerwall and generator inst
 - **Email:** info@sequimelectrician.com
 - **Address:** 35 Robbins Rd, Sequim, WA 98382
 - **Hours:** Monday–Friday 8:00 AM – 5:00 PM (Pacific)
-- **Website:** https://bluejayportfolio.com/clients/meyer-electric
+- **Website:** https://www.sequimelectrician.com
 - **Instagram:** https://www.instagram.com/meyerelectric360/ (@meyerelectric360) — job photos from active installs
 
 ## Licensing & Insurance
@@ -136,15 +136,15 @@ Solar, battery storage, and standby generators all under one electrical license,
 
 ## Key Pages
 
-- [Home / Hero](https://bluejayportfolio.com/clients/meyer-electric)
-- [Services](https://bluejayportfolio.com/clients/meyer-electric#services)
-- [Solar Panel Installation](https://bluejayportfolio.com/clients/meyer-electric#solar)
-- [Tesla Powerwall Deep Dive](https://bluejayportfolio.com/clients/meyer-electric#powerwall)
-- [Generac Generators](https://bluejayportfolio.com/clients/meyer-electric#generators)
-- [Why Choose Meyer](https://bluejayportfolio.com/clients/meyer-electric#why-us)
-- [Comparison vs Average Electrician](https://bluejayportfolio.com/clients/meyer-electric#comparison)
-- [Service Area](https://bluejayportfolio.com/clients/meyer-electric#service-area)
-- [Free Estimate / Contact](https://bluejayportfolio.com/clients/meyer-electric#contact)
+- [Home / Hero](https://www.sequimelectrician.com/)
+- [Services](https://www.sequimelectrician.com#services)
+- [Solar Panel Installation](https://www.sequimelectrician.com#solar)
+- [Tesla Powerwall Deep Dive](https://www.sequimelectrician.com#powerwall)
+- [Generac Generators](https://www.sequimelectrician.com#generators)
+- [Why Choose Meyer](https://www.sequimelectrician.com#why-us)
+- [Comparison vs Average Electrician](https://www.sequimelectrician.com#comparison)
+- [Service Area](https://www.sequimelectrician.com#service-area)
+- [Free Estimate / Contact](https://www.sequimelectrician.com#contact)
 
 ---
 
