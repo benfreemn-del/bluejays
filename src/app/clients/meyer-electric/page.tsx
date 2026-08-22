@@ -22,7 +22,7 @@
  */
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import {
   Phone,
@@ -93,6 +93,62 @@ const BUSINESS = {
   ],
   prospectId: "063c4d4a-81e1-4cae-bbf1-3ce615e1c6f7",
 } as const;
+
+/* ───────────────────── HIGHLIGHT FILM ─────────────────────
+ * Vertical (9:16) highlight reel of real Meyer jobs. Slot prepped
+ * 2026-08-17; Kyle is sending the file.
+ *
+ * ── TO TURN IT ON ──
+ * Set `src` (and ideally `poster`). That's the only edit needed —
+ * the section, the nav link, and the anchor all wake up together.
+ * While `src` is empty the ENTIRE section renders nothing, so the
+ * live site never shows a "video coming soon" placeholder.
+ *
+ * ── WHERE TO PUT THE FILE (read this first) ──
+ * CLAUDE.md "Vercel Cost Discipline" bans heavy media in /public —
+ * that folder is served unoptimised (`images: { unoptimized: true }`)
+ * and a phone-shot reel is tens of MB. Prefer an external host and
+ * paste its full https URL here:
+ *   - Supabase Storage (already in the stack, public bucket)
+ *   - Cloudflare R2 (free egress)
+ * A local "/videos/meyer-electric/highlight.mp4" path also works if
+ * the file is compressed hard first (H.264 mp4, ~1080x1920, target
+ * well under 10 MB) — but external is the right default.
+ *
+ * ── FORMAT ──
+ * mp4/H.264 + AAC plays everywhere. `poster` is the first-frame
+ * image (jpg/webp, same 9:16 ratio) — without it the frame is black
+ * until the visitor presses play, which looks broken.
+ */
+const HIGHLIGHT_FILM: {
+  src: string;
+  poster: string;
+  /** Muted autoplay + loop, reel-style. false = click to play. */
+  autoPlay: boolean;
+  eyebrow: string;
+  heading: string;
+  headingAccent: string;
+  body: string;
+} = {
+  // Shot by Kyle's social-media contractor, already branded with the
+  // on-screen title card + @meyerelectric360 watermark. Source was a
+  // 9.2 MB HEVC .mov — HEVC does NOT decode in Chrome on Windows or in
+  // Firefox, so it was transcoded to H.264/yuv420p mp4 (3.3 MB) with
+  // +faststart. ANY future clip must get the same treatment; dropping
+  // a raw iPhone .mov in here plays fine on Ben's phone and renders a
+  // black box for most of Kyle's visitors.
+  src: "/videos/meyer-electric/highlight.mp4",
+  poster: "/videos/meyer-electric/highlight-poster.jpg",
+  autoPlay: true,
+  eyebrow: "On The Job",
+  heading: "Watch a real job,",
+  headingAccent: "start to finish",
+  // Describes THIS footage (an EV charger circuit + outlet install).
+  // If the clip is swapped for a different job, update this line —
+  // don't let the copy promise work the video doesn't show.
+  body:
+    "No stock footage, no actors. This is a Meyer crew running an EV charger circuit and outlet install on the Peninsula — the same crew that shows up at your place.",
+};
 
 const PHOTOS = {
   hero: "/images/meyer-electric/hero-powerwall-storm.jpg",
@@ -2406,6 +2462,12 @@ export default function MeyerElectricPage() {
         </div>
       </section>
 
+      {/* ────────────────────── HIGHLIGHT FILM ──────────────────────
+          Sits directly above the Instagram band so the page closes on
+          proof → follow → quote. Self-hides while HIGHLIGHT_FILM.src
+          is empty (see the config block at the top of this file). */}
+      <HighlightFilmSection />
+
       {/* ────────────────────── INSTAGRAM ──────────────────────
           Added 2026-08-17 per Kyle. Deliberately NOT an embedded feed:
           third-party IG embeds are a render-blocking script, they break
@@ -2724,6 +2786,180 @@ export default function MeyerElectricPage() {
 }
 
 /* ───────────────────────── SUB COMPONENTS ───────────────────────── */
+
+/**
+ * HighlightFilmSection — vertical (9:16) reel of a real Meyer job.
+ *
+ * Renders NOTHING when HIGHLIGHT_FILM.src is empty, so the slot can sit
+ * in the page waiting for footage without ever showing a live client a
+ * "video coming soon" box.
+ *
+ * Bandwidth: preload="none" plus an IntersectionObserver means the
+ * 3.3 MB file is only fetched once a visitor actually scrolls to it,
+ * and playback pauses when it scrolls away. Meyer runs ~440 views a
+ * month — eagerly loading this for every visitor (most of whom never
+ * reach it) is exactly the /public bandwidth waste CLAUDE.md's Vercel
+ * cost discipline warns about.
+ *
+ * Muted is REQUIRED for autoplay — every browser blocks autoplay with
+ * sound. Controls stay on so anyone who wants the audio can unmute.
+ */
+function HighlightFilmSection() {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (!HIGHLIGHT_FILM.autoPlay) return;
+        if (entry.isIntersecting) {
+          // play() rejects when the browser blocks autoplay — the
+          // visible controls are the fallback, so swallow it.
+          void el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  if (!HIGHLIGHT_FILM.src) return null;
+
+  return (
+    <section
+      id="our-work"
+      className="py-14 sm:py-16 lg:py-20 relative overflow-hidden"
+      style={{ background: BG_ALT }}
+    >
+      <div
+        className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full opacity-20 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(250, 204, 21, 0.38) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+          {/* Phone-shaped 9:16 frame. Capped by height on desktop so a
+              vertical video can't run away with the whole viewport. */}
+          <div className="flex justify-center lg:justify-start">
+            <div
+              className="relative w-full max-w-[300px] sm:max-w-[330px] rounded-[26px] overflow-hidden"
+              style={{
+                aspectRatio: "9 / 16",
+                border: `1px solid rgba(250, 204, 21, 0.22)`,
+                boxShadow:
+                  "0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04)",
+                background: BG,
+              }}
+            >
+              <video
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full object-cover"
+                src={HIGHLIGHT_FILM.src}
+                poster={HIGHLIGHT_FILM.poster || undefined}
+                preload="none"
+                muted
+                loop
+                playsInline
+                controls
+                aria-label="Meyer Electric crew installing an EV charger circuit and outlet"
+              />
+              {/* Live dot — only once the reel is actually rolling. */}
+              {inView && HIGHLIGHT_FILM.autoPlay && (
+                <div
+                  className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full pointer-events-none"
+                  style={{ background: "rgba(10,10,10,0.62)" }}
+                >
+                  <span
+                    className="me-film-dot block w-1.5 h-1.5 rounded-full"
+                    style={{ background: ACCENT }}
+                  />
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-[0.18em] text-white"
+                    style={{ fontFamily: FONT_HEAD }}
+                  >
+                    Real Job
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
+              style={{
+                background: ACCENT_DIM,
+                color: ACCENT,
+                fontFamily: FONT_HEAD,
+              }}
+            >
+              <Lightning size={13} weight="fill" />
+              {HIGHLIGHT_FILM.eyebrow}
+            </div>
+            <h2
+              className="text-[32px] sm:text-[42px] lg:text-[50px] font-bold leading-[1.06] tracking-tight text-white"
+              style={{ fontFamily: FONT_HEAD }}
+            >
+              {HIGHLIGHT_FILM.heading}{" "}
+              <span style={{ color: ACCENT }}>
+                {HIGHLIGHT_FILM.headingAccent}
+              </span>
+            </h2>
+            <p
+              className="mt-4 text-[16px] sm:text-[17px] leading-relaxed max-w-xl"
+              style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+            >
+              {HIGHLIGHT_FILM.body}
+            </p>
+
+            <div className="mt-7 flex flex-col sm:flex-row gap-3">
+              <a
+                href="#contact"
+                className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold uppercase tracking-wide text-[13px] text-black transition-all hover:brightness-110 active:scale-[0.97]"
+                style={{ background: ACCENT, fontFamily: FONT_HEAD }}
+              >
+                Get a Quote
+                <ArrowRight size={14} weight="bold" />
+              </a>
+              <a
+                href={BUSINESS.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-7 h-13 py-3.5 rounded-md font-bold tracking-wide text-[14px] text-white border-2 transition-all hover:bg-white/[0.06]"
+                style={{
+                  borderColor: "rgba(255,255,255,0.18)",
+                  fontFamily: FONT_HEAD,
+                }}
+              >
+                <InstagramLogo size={16} weight="fill" />
+                More on Instagram
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .me-film-dot {
+          animation: meFilmDot 1.8s ease-in-out infinite;
+        }
+        @keyframes meFilmDot {
+          0%, 100% { opacity: 1; }
+          50%      { opacity: 0.25; }
+        }
+      `}</style>
+    </section>
+  );
+}
 
 /**
  * SolarCardVisual — media treatment for the Solar service card.

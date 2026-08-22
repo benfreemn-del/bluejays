@@ -398,5 +398,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/).*)"],
+  // `videos/` added 2026-08-17 alongside the long-standing `images/`
+  // exclusion. Static media under /public must bypass the auth gate —
+  // without this, a <video src="/videos/..."> on a PUBLIC client
+  // showcase 307s to /login and the browser reports
+  // DEMUXER_ERROR_COULD_NOT_OPEN (it's demuxing the string "/login",
+  // not an mp4), which reads like a corrupt file rather than an auth
+  // redirect. Any future static asset directory served to visitors
+  // belongs in this list too.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/|videos/).*)"],
 };
