@@ -15,6 +15,14 @@ export const metadata: Metadata = {
     "Zenith Sports — TEKKY® · Building Better Players, One Touch at a Time · Patent Pending",
   description:
     "TEKKY® by Zenith Sports — a patent-pending technical training accelerator for youth soccer. FIFA Size 3 control, FIFA Size 5 match-day weight. Inspired by European-style development. Founded by Philip Lund and Paul Hanson.",
+  // Canonical MUST be tekky.org (added 2026-08-17). Without this the
+  // page inherits the root layout's `canonical: BASE_URL`, so tekky.org
+  // would tell Google it is a duplicate of the BlueJays HOMEPAGE and
+  // suppress itself from search. Matches the HOST constant already used
+  // by zenith-sports/robots.txt + sitemap.xml.
+  // Latent rather than live today — tekky.org was not resolving as of
+  // 2026-08-17 — but it must be correct before DNS lands.
+  alternates: { canonical: "https://tekky.org" },
 };
 
 export const viewport: Viewport = {

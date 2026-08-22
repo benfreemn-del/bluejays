@@ -16,6 +16,14 @@ export const metadata: Metadata = {
     "Hector Landscaping & Design — Hardscapes, Pavers, Retaining Walls & Lawn Care · Renton, WA",
   description:
     "Affordable landscaping with a 5-star reputation. Hardscapes, pavers, retaining walls, sod, lawn care and design serving Renton and the greater Seattle area. Owner-operated by Hector Landscaping & Design.",
+  // Canonical MUST be Hector's own domain (added 2026-08-17). Without
+  // this the page inherits the root layout's `canonical: BASE_URL`, so
+  // hectorlandscaping.com was telling Google it is a duplicate of the
+  // BlueJays HOMEPAGE — a page with nothing to do with landscaping.
+  // That suppresses his site from search entirely. Found while fixing
+  // the same class of bug on Meyer Electric.
+  // Apex 301s to www, so www is the one true URL.
+  alternates: { canonical: "https://www.hectorlandscaping.com" },
 };
 
 export const viewport: Viewport = {

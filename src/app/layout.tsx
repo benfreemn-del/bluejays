@@ -91,28 +91,47 @@ const GOOGLE_FONTS_URL =
   ].join("&") +
   "&display=swap";
 
-const SCHEMA = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "BlueJays",
-  "url": BASE_URL,
-  "logo": OG_IMAGE,
-  "description": "Custom website design for local businesses. $997 one-time includes domain registration and hosting setup.",
-  "areaServed": "United States",
-  "priceRange": "$997",
-  "offers": {
-    "@type": "Offer",
-    "name": "Custom Website Design",
-    "price": "997",
-    "priceCurrency": "USD",
-    "description": "Custom website design, domain registration, and hosting setup. See your site before you pay.",
-  },
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "email": "bluejaycontactme@gmail.com",
-    "contactType": "customer service",
-  },
-});
+/*
+ * The BlueJays ProfessionalService JSON-LD that used to live here was
+ * REMOVED 2026-08-17. Do not put a BlueJays business entity back in the
+ * root layout.
+ *
+ * The root layout wraps EVERY route, including the client showcases we
+ * serve on the clients' own domains via CLIENT_DOMAIN_MAP
+ * (sequimelectrician.com, tekky.org, hectorlandscaping.com, …). So a
+ * crawler on Kyle's electrician site was reading, on his domain:
+ *
+ *   "@type": "ProfessionalService", "name": "BlueJays",
+ *   "priceRange": "$997",
+ *   "offers": { "name": "Custom Website Design", "price": "997" }
+ *
+ * — a different company, with a price offer, on the client's own site.
+ * Alongside their real LocalBusiness block, that muddies who the site
+ * actually belongs to. Found while fixing the Meyer canonical bug where
+ * bluejayportfolio.com was outranking the client for his own name.
+ *
+ * It was also redundant here: the homepage already renders the
+ * canonical BlueJays entity via organizationLd() (src/lib/json-ld.ts),
+ * so bluejayportfolio.com was declaring the same business twice with
+ * two @types, two descriptions, and two different logos.
+ *
+ * Site-level Organization schema belongs on the homepage, declared
+ * once — which is exactly where it now lives. Every other BlueJays
+ * surface that needs structured data (/audit, /case-studies, /guides,
+ * /tools) already ships its own page-appropriate block, and each
+ * client layout ships its own LocalBusiness.
+ *
+ * NOTE: the old block also carried a $997 Offer that organizationLd()
+ * does not. If that offer is wanted back, add `makesOffer` to
+ * organizationLd() so it renders on the homepage ONLY — never here.
+ * (Worth pricing-checking first: the homepage now leads with the
+ * $10k AI System, so a bare $997 offer may be stale positioning.)
+ *
+ * Gating this by hostname instead was considered and rejected —
+ * reading headers() in the root layout opts the ENTIRE site out of
+ * static rendering, which is a real Vercel cost hit per the cost
+ * discipline rules, for a tag that simply does not belong here.
+ */
 
 export default function RootLayout({
   children,
@@ -128,10 +147,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: SCHEMA }}
-        />
+        {/* No JSON-LD here on purpose — see the note above the fonts
+            block. Site-level schema lives on the homepage; per-page and
+            per-client schema lives in those routes' own layouts. */}
       </head>
       <body>
         {/* Mounts gtag + Meta Pixel on every route so conversions fire from
