@@ -32,6 +32,8 @@ export const COST_RATES = {
   twilio_voice: 0.015,
   // SendGrid
   sendgrid_email: 0.0006,
+  // Resend (free tier 3k/mo — the SendGrid replacement, pilot 2026-09-04)
+  resend_email: 0,
   // Manus / AI site generation (template engine)
   site_generation: 0.003,
   manus_site_generation: 0.003,

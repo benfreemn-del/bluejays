@@ -5,6 +5,7 @@ import {
   isEmailAllowed,
   type EmailCategory,
 } from "./email-guard";
+import { resendPilotEnabled, sendViaResend } from "./resend-sender";
 
 // Fall back to BEN_PHONE — the env actually set on Vercel/.env.local — so
 // owner-alert SMS fires even when OWNER_PHONE_NUMBER was never provisioned.
@@ -157,6 +158,33 @@ export async function sendOwnerEmail(args: {
     .replace(/>/g, "&gt;")
     .replace(/\n/g, "<br/>");
 
+  // RESEND PILOT (2026-09-04, see resend-sender.ts): tenant-scoped via
+  // RESEND_PILOT_SLUGS. On any Resend failure we fall through to the
+  // unchanged SendGrid path below — no alert is ever dropped by the pilot.
+  if (resendPilotEnabled(args.clientSlug)) {
+    const ok = await sendViaResend({
+      to: OWNER_EMAIL,
+      subject: args.subject,
+      text: args.body,
+      html: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55;color:#1f2937">${htmlBody}</div>`,
+      fromEmail: FROM_EMAIL,
+      fromName: "BlueJays Alerts",
+      replyTo: REPLY_TO,
+    });
+    if (ok) {
+      await logCost({
+        service: "resend_email",
+        action: "owner_alert",
+        costUsd: 0,
+        clientSlug: args.clientSlug,
+        prospectId: args.prospectId,
+        metadata: { to: OWNER_EMAIL, type: "owner_alert" },
+      });
+      return true;
+    }
+    console.error("[sendOwnerEmail] Resend pilot failed — falling back to SendGrid");
+  }
+
   try {
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
@@ -259,6 +287,34 @@ export async function sendEmailTo(args: {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/\n/g, "<br/>");
+
+  // RESEND PILOT (2026-09-04, see resend-sender.ts): tenant-scoped via
+  // RESEND_PILOT_SLUGS (start: olympic-inspections). Any Resend failure
+  // falls through to the unchanged SendGrid path — Rule 68 alerting in
+  // sendEmailToWithAlert still sees the final result, so no silent drops.
+  if (resendPilotEnabled(args.clientSlug)) {
+    const ok = await sendViaResend({
+      to: args.to,
+      subject: args.subject,
+      text: args.body,
+      html: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55;color:#1f2937">${htmlBody}</div>`,
+      fromEmail: FROM_EMAIL,
+      fromName: args.fromName || "BlueJays Alerts",
+      replyTo: REPLY_TO,
+    });
+    if (ok) {
+      await logCost({
+        service: "resend_email",
+        action: "client_send",
+        costUsd: 0,
+        clientSlug: args.clientSlug,
+        metadata: { to: args.to, fromName: args.fromName ?? null },
+      });
+      return true;
+    }
+    console.error("[sendEmailTo] Resend pilot failed — falling back to SendGrid");
+  }
+
   try {
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
