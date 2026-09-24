@@ -44,7 +44,6 @@ const ACTIVE_CLIENT_SHOWCASES = [
   // sequimelectrician.com/sitemap.xml. The showcase page still exists
   // and is reachable by direct link for sales demos.
   "hector-landscaping",      // Hardscapes + lawn care · Renton WA
-  "elite-hardscapes-and-landscapes", // Hardscape + landscape · Port Angeles WA (Tyler Fritz)
   "masters-window-tinting",  // Auto + ceramic + PPF · West Babylon NY
   "kr-ranches",              // Farm-direct beef · Prosser WA
   "olympic-inspections",     // Home inspections (formerly P&P)

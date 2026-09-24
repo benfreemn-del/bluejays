@@ -84,14 +84,14 @@ Free estimates always. No deposit pressure, no high-pressure sales.
 - **Phone / Text:** (360) 797-4448
 - **Address:** 9321 Old Olympic Hwy, Port Angeles, WA
 - **Hours:** Mon–Sat 7a–6p · Sun closed
-- **Website:** https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes
+- **Website:** https://www.elitehardscapesnw.com
 
 ## Key Pages
 
-- [Home / Services overview](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes)
-- [Selected work portfolio](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#work)
-- [About Tyler Fritz](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#about)
-- [Free estimate request](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#contact)
+- [Home / Services overview](https://www.elitehardscapesnw.com)
+- [Selected work portfolio](https://www.elitehardscapesnw.com#work)
+- [About Tyler Fritz](https://www.elitehardscapesnw.com#about)
+- [Free estimate request](https://www.elitehardscapesnw.com#contact)
 
 ## Trust & Credentials
 
