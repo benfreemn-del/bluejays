@@ -1631,15 +1631,19 @@ export default function Site() {
 
                     <a
                       href="#contact"
-                      className="group/cta inline-flex items-center gap-2 text-sm uppercase tracking-[0.15em] border-b pb-1 transition-all hover:gap-3"
+                      // Solid button, not a text link: Ben 2026-09-23 wanted
+                      // it obvious. Same weight as the hero's primary CTA.
+                      // Bronze card gets ink text (bone on bronze is too
+                      // low-contrast).
+                      className="group/cta flex w-full items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3.5 hover:brightness-110 shadow-lg"
                       style={{
-                        color: toneHot,
-                        borderColor: toneBorder,
-                        fontWeight: 600,
+                        background: i === 1 ? PALETTE.bronze : PALETTE.crimson,
+                        color: i === 1 ? PALETTE.ink : PALETTE.bone,
+                        fontWeight: 700,
                       }}
                     >
                       Book this work
-                      <ArrowUpRight size={16} weight="bold" />
+                      <ArrowUpRight size={18} weight="bold" />
                     </a>
                   </div>
                 </Reveal>
