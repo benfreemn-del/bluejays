@@ -1568,7 +1568,7 @@ export default function Site() {
               return (
                 <Reveal key={i} delay={i * 120}>
                   <div
-                    className="group h-full p-8 md:p-10 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden"
+                    className="group h-full flex flex-col p-8 md:p-10 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden"
                     style={{
                       background: PALETTE.steel,
                       border: `1px solid ${PALETTE.steelLine}`,
@@ -1635,7 +1635,7 @@ export default function Site() {
                       // it obvious. Same weight as the hero's primary CTA.
                       // Bronze card gets ink text (bone on bronze is too
                       // low-contrast).
-                      className="group/cta flex w-full items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3.5 hover:brightness-110 shadow-lg"
+                      className="group/cta mt-auto flex w-full items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3.5 hover:brightness-110 shadow-lg"
                       style={{
                         background: i === 1 ? PALETTE.bronze : PALETTE.crimson,
                         color: i === 1 ? PALETTE.ink : PALETTE.bone,
