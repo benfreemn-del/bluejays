@@ -277,6 +277,13 @@ const CLIENT_DOMAIN_MAP: Record<string, string | DomainRewrite> = {
     base: "/clients/meyer-electric",
     subpaths: ["/llms.txt", "/llms-full.txt", "/sitemap.xml", "/robots.txt"],
   },
+  // Elite Hardscapes & Landscaping (Tyler Fritz, Sequim / Port Angeles
+  // WA). Bespoke single-page showcase. DomainRewrite shape from day one
+  // so robots/sitemap/llms resolve at the root of Tyler's domain.
+  "elitehardscapesnw.com": {
+    base: "/clients/elite-hardscapes-and-landscapes",
+    subpaths: ["/llms.txt", "/llms-full.txt", "/sitemap.xml", "/robots.txt"],
+  },
   // Zenith Sports / TEKKY — multi-page showcase. Phase 1 deliverable
   // ($997 + WA tax, locked 2026-05-20) requires the SEO surfaces
   // (llms.txt + sitemap.xml + robots.txt) live at the root domain

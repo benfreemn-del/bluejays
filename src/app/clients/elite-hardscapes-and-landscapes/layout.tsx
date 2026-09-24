@@ -12,8 +12,14 @@ import BackToTopButton from "@/components/BackToTopButton";
  * mailto: contact (no portal backend — No-Backend Client Pattern).
  */
 
-const SITE_URL =
-  "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes";
+/**
+ * TYLER'S DOMAIN IS THE CANONICAL, NOT OURS (set at domain launch).
+ * Same fix Meyer Electric needed: if every host emits a bluejayportfolio
+ * canonical, Google indexes our URL and Tyler's domain never ranks for
+ * his own business name. The /clients/... path stays reachable for
+ * sales demos but drops out of search as a canonicalised duplicate.
+ */
+const SITE_URL = "https://www.elitehardscapesnw.com";
 const HERO_PHOTO_URL =
   "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula.jpg";
 
@@ -23,7 +29,8 @@ const DESCRIPTION =
   "Tyler Fritz's owner-operated hardscape + landscape crew on the Olympic Peninsula. Retaining walls, paver patios, hydroseed, weekly maintenance.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  // absolute: skip the root "| BlueJays" template on the client's domain.
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: SITE_URL },
   robots: { index: true, follow: true },

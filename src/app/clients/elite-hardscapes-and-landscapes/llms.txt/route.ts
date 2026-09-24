@@ -7,7 +7,7 @@ const body = `# Elite Hardscapes & Landscaping — Hardscape, Landscape & Proper
 
 ## Services
 
-- **Hardscape** — Stack-block & natural-stone retaining walls, paver patios and walkways, cedar fencing, fire pits, custom steps. ([Services](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#services))
+- **Hardscape** — Stack-block & natural-stone retaining walls, paver patios and walkways, cedar fencing, fire pits, custom steps. ([Services](https://www.elitehardscapesnw.com#services))
 - **Landscape Design & Install** — Bed design, native + climate-resilient plant installs, hydroseed and sod lawns, mulch refresh, drainage cleanup.
 - **Property Maintenance** — Weekly and bi-weekly mowing, edging, blowing. Seasonal cleanups, brush clearing, storm prep.
 
@@ -21,14 +21,14 @@ Sequim · Port Angeles · Carlsborg · Port Townsend · Joyce · Diamond Point �
 - **Phone / Text:** (360) 797-4448
 - **Address:** 9321 Old Olympic Hwy, Port Angeles, WA
 - **Hours:** Mon–Sat 7a–6p · Sun closed
-- **Website:** https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes
+- **Website:** https://www.elitehardscapesnw.com
 
 ## Key Pages
 
-- [Home / Services](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes)
-- [Selected Work](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#work)
-- [About Tyler](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#about)
-- [Free Estimate Request](https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes#contact)
+- [Home / Services](https://www.elitehardscapesnw.com)
+- [Selected Work](https://www.elitehardscapesnw.com#work)
+- [About Tyler](https://www.elitehardscapesnw.com#about)
+- [Free Estimate Request](https://www.elitehardscapesnw.com#contact)
 
 ---
 
