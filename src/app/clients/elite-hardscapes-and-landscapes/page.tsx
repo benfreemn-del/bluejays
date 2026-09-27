@@ -104,6 +104,10 @@ const STATIC_REVIEWS: GoogleReview[] = [
   },
 ];
 
+// BlueJays prospects row for Elite (short_code 04cfd510). The contact-form
+// API emails whatever address is on that row: fritztyler9@gmail.com.
+const ELITE_PROSPECT_ID = "4e9c89b4-d321-4d9c-91bd-1dc071cf847a";
+
 const BRAND = {
   name: "Elite",
   suffix: "Hardscapes & Landscaping",
@@ -827,6 +831,40 @@ export default function Site() {
   // Esc closes; arrow keys page prev/next. Photo loops circularly so users
   // can scroll through the whole portfolio without dead-ends.
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  // Estimate form -> /api/contact-form/[prospectId]: saves the lead to
+  // Supabase, emails Tyler (prospect.email) via SendGrid, CCs Ben. Replaced
+  // a mailto: form (2026-09-27) that silently lost leads on phones with no
+  // mail app set up, and that Chrome flags as an insecure form target.
+  async function handleEstimateSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const get = (k: string) => String(fd.get(k) || "").trim();
+    const message = [
+      get("Address") && `Property: ${get("Address")}`,
+      get("Details"),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    setFormState("sending");
+    try {
+      const res = await fetch(`/api/contact-form/${ELITE_PROSPECT_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: get("Name"),
+          phone: get("Phone"),
+          email: get("Email"),
+          service: get("Project"),
+          message,
+        }),
+      });
+      setFormState(res.ok ? "sent" : "error");
+    } catch {
+      setFormState("error");
+    }
+  }
   const closeLightbox = () => setLightboxIndex(null);
   const showPrev = () =>
     setLightboxIndex((i) =>
@@ -2401,12 +2439,39 @@ export default function Site() {
               </div>
             </Reveal>
 
-            {/* right: mailto form */}
+            {/* right: estimate form (posts to /api/contact-form) */}
             <Reveal delay={150}>
+              {formState === "sent" ? (
+                <div
+                  className="p-7 md:p-10 text-center"
+                  role="status"
+                  style={{
+                    background: PALETTE.steel,
+                    border: `1px solid ${PALETTE.steelLine}`,
+                  }}
+                >
+                  <div
+                    className="font-display uppercase text-3xl md:text-4xl mb-4"
+                    style={{ color: PALETTE.bone, fontWeight: 700 }}
+                  >
+                    Request sent.
+                  </div>
+                  <p className="text-base leading-relaxed mb-6" style={{ color: PALETTE.boneDim }}>
+                    Thanks. {BRAND.owner.split(" ")[0]} will get back to you
+                    shortly. Want to speed it up? Text a few photos of the area.
+                  </p>
+                  <a
+                    href={`sms:${BRAND.phoneRaw}`}
+                    className="inline-flex items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em]"
+                    style={{ background: PALETTE.crimson, color: PALETTE.bone, fontWeight: 600 }}
+                  >
+                    <Camera size={18} weight="bold" />
+                    Text photos to {BRAND.phone}
+                  </a>
+                </div>
+              ) : (
               <form
-                action={`mailto:${BRAND.email}`}
-                method="post"
-                encType="text/plain"
+                onSubmit={handleEstimateSubmit}
                 className="p-7 md:p-10"
                 style={{
                   background: PALETTE.steel,
@@ -2537,16 +2602,23 @@ export default function Site() {
                   <div className="sm:col-span-2 mt-4">
                     <button
                       type="submit"
-                      className="group w-full inline-flex items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3.5"
+                      disabled={formState === "sending"}
+                      className="group w-full inline-flex items-center justify-center gap-2.5 px-7 py-4 text-sm uppercase tracking-[0.15em] transition-all hover:gap-3.5 disabled:opacity-70"
                       style={{
                         background: PALETTE.crimson,
                         color: PALETTE.bone,
                         fontWeight: 600,
                       }}
                     >
-                      Send Estimate Request
+                      {formState === "sending" ? "Sending…" : "Send Estimate Request"}
                       <ArrowUpRight size={18} weight="bold" />
                     </button>
+                    {formState === "error" && (
+                      <p role="alert" className="text-sm mt-3 text-center" style={{ color: PALETTE.bone }}>
+                        That didn&apos;t go through. Call or text {BRAND.phone}, or
+                        email <a className="underline" href={`mailto:${BRAND.email}`}>{BRAND.email}</a>.
+                      </p>
+                    )}
                   </div>
 
                   <div className="sm:col-span-2 mt-3">
@@ -2582,6 +2654,7 @@ export default function Site() {
                   </p>
                 </div>
               </form>
+              )}
             </Reveal>
           </div>
         </div>
