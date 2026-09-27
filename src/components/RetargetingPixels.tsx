@@ -33,6 +33,7 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { isBluejaysHost } from "@/lib/bluejays-host";
 
 // Read env vars at module load time. NEXT_PUBLIC_* are inlined at build
 // so these values are safe in client code.
@@ -85,19 +86,20 @@ if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
 }
 
 export default function RetargetingPixels() {
-  // Embed-mode check happens on the client since we read window.location.
-  // Start assumed-not-embedded; useEffect corrects if needed before any
-  // script mounts (Script uses `afterInteractive` so we have time).
-  const [isEmbedded, setIsEmbedded] = useState(false);
+  // Render nothing until the browser confirms we're on a BlueJays host
+  // and not in embed mode. Starting "off" (not "on") matters: the old
+  // start-on-then-correct pattern let afterInteractive scripts inject
+  // before the effect ran. See src/lib/bluejays-host.ts.
+  const [allowed, setAllowed] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const embedded =
       new URLSearchParams(window.location.search).get("embed") === "1";
-    setIsEmbedded(embedded);
+    setAllowed(!embedded && isBluejaysHost(window.location.hostname));
   }, []);
 
-  // No-op if no pixel configured OR if we're inside an embed/iframe/screenshot.
-  if (isEmbedded) return null;
+  // No-op if no pixel configured, on a client's domain, or in an embed.
+  if (!allowed) return null;
   if (!META_PIXEL_ID && !GOOGLE_ADS_ID) return null;
 
   return (

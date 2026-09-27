@@ -31,20 +31,25 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { isBluejaysHost } from "@/lib/bluejays-host";
 
 const CLARITY_PROJECT_ID =
   process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "wkot1apu92";
 
 export default function ClarityScript() {
-  const [isEmbedded, setIsEmbedded] = useState(false);
+  // Render nothing until the browser confirms we're on a BlueJays host
+  // and not in embed mode. Starting "off" (not "on") matters: the old
+  // start-on-then-correct pattern let afterInteractive scripts inject
+  // before the effect ran. See src/lib/bluejays-host.ts.
+  const [allowed, setAllowed] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const embedded =
       new URLSearchParams(window.location.search).get("embed") === "1";
-    setIsEmbedded(embedded);
+    setAllowed(!embedded && isBluejaysHost(window.location.hostname));
   }, []);
 
-  if (isEmbedded) return null;
+  if (!allowed) return null;
   if (!CLARITY_PROJECT_ID) return null;
 
   return (

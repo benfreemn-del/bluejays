@@ -238,7 +238,7 @@ const SERVICES = [
   {
     icon: Stack,
     kicker: "01 · Hardscape",
-    title: "Pavers, Walls & Walkways",
+    title: "Retaining Walls, Pavers & Walkways",
     copy:
       "Retaining walls, paver patios, stone walkways, fire pits, fences. Built level, built drained, built to outlast the rain.",
     bullets: [
@@ -250,7 +250,7 @@ const SERVICES = [
   {
     icon: Plant,
     kicker: "02 · Landscape",
-    title: "Design, Install & Hydroseed",
+    title: "Landscape Design, Planting & Hydroseed",
     copy:
       "From a single bed to a full property redesign. Plantings, mulch, beds, and hydroseed lawns that take root in PNW soil.",
     bullets: [
@@ -262,7 +262,7 @@ const SERVICES = [
   {
     icon: Tree,
     kicker: "03 · Maintenance",
-    title: "Lawn & Property Care",
+    title: "Lawn Care & Property Maintenance",
     copy:
       "Weekly and bi-weekly maintenance routes across the Peninsula. Same crew, same day, every visit. Keep the place sharp.",
     bullets: [
@@ -538,7 +538,7 @@ function GoogleReviewBadge({ hasOnPageReviews }: { hasOnPageReviews: boolean }) 
   return (
     <a
       {...linkProps}
-      aria-label={`${rating} stars on Google — ${GOOGLE_REVIEW_COUNT} reviews${hasOnPageReviews ? " (jump to reviews)" : ""}`}
+      title={`${rating} stars on Google, ${GOOGLE_REVIEW_COUNT} reviews`}
       className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-40 group inline-flex items-center gap-3 pl-3 pr-2 py-2 transition-all hover:gap-3.5 hover:-translate-y-0.5"
       style={{
         background: "rgba(0,0,0,0.85)",
@@ -708,6 +708,7 @@ function GoogleReviewMarquee({ reviews }: { reviews: GoogleReview[] }) {
               </svg>
               <span
                 className="inline-flex items-center gap-0.5"
+                role="img"
                 aria-label={`${r.rating} of 5 stars`}
               >
                 {[0, 1, 2, 3, 4].map((s) => (
@@ -1139,7 +1140,7 @@ export default function Site() {
                   backdropFilter: "blur(4px)",
                 }}
               >
-                {BRAND.region} · {BRAND.location}
+                Owner-operated since {BRAND.estYear} · {BRAND.region}
               </span>
             </div>
           </Reveal>
@@ -1153,6 +1154,15 @@ export default function Site() {
               <br />
               <span style={{ color: PALETTE.crimsonHot }}>Rooted</span>{" "}
               <span style={{ color: PALETTE.bone }}>in the Peninsula.</span>
+              {/* Keyword line lives INSIDE the h1 so the page's main
+                  heading says what + where (the display line alone gave
+                  Google no service or town). Visible, not hidden text. */}
+              <span
+                className="block mt-6 font-sans normal-case tracking-[0.04em] text-lg sm:text-xl md:text-2xl leading-snug"
+                style={{ color: PALETTE.chromeBright, fontWeight: 600 }}
+              >
+                Hardscaping &amp; Landscaping in Sequim &amp; Port Angeles, WA
+              </span>
             </h1>
           </Reveal>
 
@@ -2462,6 +2472,7 @@ export default function Site() {
                     </label>
                     <select
                       name="Project"
+                      aria-label="Project type"
                       defaultValue=""
                       className="w-full bg-transparent outline-none text-sm pb-3 appearance-none cursor-pointer"
                       style={{
@@ -2625,7 +2636,7 @@ export default function Site() {
             <div className="md:col-span-3">
               <div
                 className="text-[10px] uppercase tracking-[0.3em] mb-5"
-                style={{ color: PALETTE.crimsonHot, fontWeight: 600 }}
+                style={{ color: "#ef4444", fontWeight: 600 }}
               >
                 Service Area
               </div>
