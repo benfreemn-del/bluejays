@@ -112,9 +112,10 @@ const LOCAL_BUSINESS_SCHEMA = {
     `${ASSET_BASE}/photos/sequim-front-yard-refresh.jpg`,
   ],
   logo: LOGO_URL,
-  hasMap:
-    "https://maps.google.com/?q=" +
-    encodeURIComponent("9321 Old Olympic Hwy, Port Angeles, WA"),
+  // Tyler's real Google Business Profile (cid from the Maps listing,
+  // 2026-09-27). sameAs ties this site to the GBP entity for local pack.
+  hasMap: "https://www.google.com/maps?cid=993463956289889040",
+  sameAs: ["https://www.google.com/maps?cid=993463956289889040"],
   description: DESCRIPTION,
   telephone: "+1-360-797-4448",
   founder: { "@type": "Person", name: "Tyler Fritz" },
@@ -155,7 +156,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "4.7",
-    reviewCount: "13",
+    reviewCount: "15",
     bestRating: "5",
     worstRating: "1",
   },
