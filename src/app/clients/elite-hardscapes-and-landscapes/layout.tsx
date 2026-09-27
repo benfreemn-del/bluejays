@@ -310,6 +310,22 @@ export default function EliteLayout({
 }) {
   return (
     <>
+      {/* Preload the LCP candidates (Lighthouse: the nav logo, then the
+          hero) so they start downloading with the HTML instead of after
+          the CSS + JS parse. */}
+      <link
+        rel="preload"
+        as="image"
+        href="/clients/elite-hardscapes-and-landscapes/photos/logo-elite-hardscapes-300.webp"
+        fetchPriority="high"
+      />
+      <link
+        rel="preload"
+        as="image"
+        href="/clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula-800.jpg"
+        imageSrcSet="/clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula-800.jpg 800w, /clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula.jpg 1400w"
+        imageSizes="100vw"
+      />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link
         rel="preconnect"
