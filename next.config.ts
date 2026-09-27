@@ -180,6 +180,19 @@ const nextConfig: NextConfig = {
           source: '/favicon.ico',
           destination: '/sites/olympic-inspections/logo.png',
         },
+        // Elite Hardscapes (elitehardscapesnw.com): same favicon fix as OIT.
+        // The middleware matcher skips /favicon.ico, so CLIENT_DOMAIN_MAP
+        // can not catch it; without this Tyler gets the BlueJays icon.
+        {
+          has: [{ type: 'host', value: 'elitehardscapesnw.com' }],
+          source: '/favicon.ico',
+          destination: '/clients/elite-hardscapes-and-landscapes/favicon.ico',
+        },
+        {
+          has: [{ type: 'host', value: 'www.elitehardscapesnw.com' }],
+          source: '/favicon.ico',
+          destination: '/clients/elite-hardscapes-and-landscapes/favicon.ico',
+        },
         // Pine & Particle Co. rebranded to Olympic Inspections & Testing
         // 2026-05-05. The pineparticle.com domain is in transfer; while
         // it still resolves it serves the OIT site directly. Once the
