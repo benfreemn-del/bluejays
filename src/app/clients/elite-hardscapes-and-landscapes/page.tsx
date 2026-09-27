@@ -44,6 +44,10 @@ import {
 import BluejayFeather from "@/components/BluejayFeather";
 
 const PHOTO_BASE = "/clients/elite-hardscapes-and-landscapes/photos";
+// Photos are web-sized (1600px long edge, mozjpeg) with an -800 sibling
+// for phones and grid cards. Originals were 4-6 MB phone shots (41 MB
+// total), which tanked mobile load speed, a Google ranking factor.
+const small = (src: string) => src.replace(/.jpg$/, "-800.jpg");
 
 // Real Google Business Profile snapshot — scraped 2026-05-17 from
 // Tyler's actual GBP "Elite Hardscapes & Landscaping". Site brand
@@ -115,7 +119,8 @@ const BRAND = {
   // Tyler's own inbox (from Ben 2026-09-27). Estimate form + mailto links.
   email: "fritztyler9@gmail.com",
   estYear: "2022",
-  logo: `${PHOTO_BASE}/logo-elite-hardscapes.png`,
+  // 300px WebP (10 KB) for on-page use; the PNG stays for schema/social.
+  logo: `${PHOTO_BASE}/logo-elite-hardscapes-300.webp`,
 };
 
 const PALETTE = {
@@ -960,6 +965,9 @@ export default function Site() {
             <img
               src={BRAND.logo}
               alt="Elite Hardscapes & Landscaping — Olympic Peninsula hardscape and landscape contractor logo"
+              width={144}
+              height={96}
+              fetchPriority="high"
               className="h-20 md:h-24 w-auto transition-transform group-hover:scale-105"
             />
             <div className="hidden sm:block leading-none">
@@ -1079,6 +1087,12 @@ export default function Site() {
         <div className="absolute inset-0">
           <img
             src={`${PHOTO_BASE}/hero-property-maintenance-peninsula.jpg`}
+            srcSet={`${PHOTO_BASE}/hero-property-maintenance-peninsula-800.jpg 800w, ${PHOTO_BASE}/hero-property-maintenance-peninsula.jpg 1400w`}
+            sizes="100vw"
+            width={1400}
+            height={1867}
+            fetchPriority="high"
+            decoding="async"
             alt="Finished hardscape and landscape property maintained by Elite Hardscapes & Landscaping on the Olympic Peninsula — Sequim, Port Angeles, Washington"
             className="w-full h-full object-cover"
             style={{ filter: "saturate(0.95) brightness(0.7) contrast(1.05)" }}
@@ -1712,7 +1726,11 @@ export default function Site() {
                   }}
                 >
                   <img
-                    src={p.src}
+                    src={small(p.src)}
+                    srcSet={`${small(p.src)} 800w, ${p.src} 1600w`}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    loading="lazy"
+                    decoding="async"
                     alt={p.alt}
                     className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                     style={{ filter: "saturate(0.9) contrast(1.05)" }}
@@ -1850,7 +1868,11 @@ export default function Site() {
                 style={{ border: `1px solid ${PALETTE.steelLine}` }}
               >
                 <img
-                  src={`${PHOTO_BASE}/owner-tyler-fritz-port-angeles.jpg`}
+                  src={`${PHOTO_BASE}/owner-tyler-fritz-port-angeles-800.jpg`}
+                  srcSet={`${PHOTO_BASE}/owner-tyler-fritz-port-angeles-800.jpg 800w, ${PHOTO_BASE}/owner-tyler-fritz-port-angeles.jpg 1600w`}
+                  sizes="(min-width: 768px) 40vw, 100vw"
+                  loading="lazy"
+                  decoding="async"
                   alt={`Portrait of ${BRAND.owner}, owner-operator of Elite Hardscapes & Landscaping — Port Angeles, WA`}
                   className="w-full h-full object-cover object-top"
                   style={{ filter: "saturate(0.95) contrast(1.05)" }}
@@ -2570,6 +2592,9 @@ export default function Site() {
                 <img
                   src={BRAND.logo}
                   alt="Elite Hardscapes & Landscaping"
+                  width={84}
+                  height={56}
+                  loading="lazy"
                   className="h-14 w-auto"
                 />
                 <div className="leading-none">
