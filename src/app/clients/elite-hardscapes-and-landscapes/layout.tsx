@@ -20,20 +20,52 @@ import BackToTopButton from "@/components/BackToTopButton";
  * sales demos but drops out of search as a canonicalised duplicate.
  */
 const SITE_URL = "https://www.elitehardscapesnw.com";
-const HERO_PHOTO_URL =
-  "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/hero-property-maintenance-peninsula.jpg";
+// Assets resolve on Tyler's own domain: /clients/... passes straight
+// through the middleware rewrite, so these URLs work on both hosts.
+const ASSET_BASE = `${SITE_URL}/clients/elite-hardscapes-and-landscapes`;
+const HERO_PHOTO_URL = `${ASSET_BASE}/photos/hero-property-maintenance-peninsula.jpg`;
+// 1200x630 share card (logo over the hero, keyword strip). Built from
+// the logo + hero with sharp; the portrait hero crops badly in feeds.
+const OG_IMAGE_URL = `${ASSET_BASE}/og-image.jpg`;
+const LOGO_URL = `${ASSET_BASE}/photos/logo-elite-hardscapes.png`;
 
 // SEO-tight: title ≤60 chars (Google SERP truncate), description ≤155 chars.
-const TITLE = "Elite Hardscapes & Landscaping — Port Angeles WA";
+// Leads with both towns: Sequim is home base (most routes), Port Angeles
+// is the mailing address, and both are what locals type into Google.
+const TITLE = "Elite Hardscapes & Landscaping | Sequim & Port Angeles WA";
 const DESCRIPTION =
-  "Tyler Fritz's owner-operated hardscape + landscape crew on the Olympic Peninsula. Retaining walls, paver patios, hydroseed, weekly maintenance.";
+  "Retaining walls, paver patios, fencing, hydroseed lawns and weekly yard care in Sequim, Port Angeles and Clallam County. Owner-operated. Free estimates.";
 
 export const metadata: Metadata = {
   // absolute: skip the root "| BlueJays" template on the client's domain.
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: SITE_URL },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  // Elite's own icons. Without these Tyler's domain shows the BlueJays
+  // favicon from the root layout in every browser tab and bookmark.
+  icons: {
+    icon: [
+      { url: "/clients/elite-hardscapes-and-landscapes/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/clients/elite-hardscapes-and-landscapes/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/clients/elite-hardscapes-and-landscapes/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/clients/elite-hardscapes-and-landscapes/apple-touch-icon.png",
+  },
+  keywords: [
+    "landscaping Sequim WA",
+    "landscaping Port Angeles WA",
+    "hardscaping Sequim",
+    "retaining walls Port Angeles",
+    "paver patio Sequim",
+    "hydroseed Clallam County",
+    "lawn care Sequim",
+    "Olympic Peninsula landscaper",
+  ],
   openGraph: {
     type: "website",
     url: SITE_URL,
@@ -42,10 +74,10 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url: HERO_PHOTO_URL,
-        width: 1800,
-        height: 2400,
-        alt: "Elite Hardscapes & Landscaping — Olympic Peninsula property maintenance",
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: "Elite Hardscapes & Landscaping, hardscaping and landscaping in Sequim and Port Angeles, WA",
       },
     ],
   },
@@ -53,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: [HERO_PHOTO_URL],
+    images: [OG_IMAGE_URL],
   },
 };
 
@@ -67,12 +99,22 @@ export const viewport: Viewport = {
 // and beats out generic site-wide schema for local queries.
 const LOCAL_BUSINESS_SCHEMA = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": SITE_URL,
+  // HomeAndConstructionBusiness is the closest schema.org type for a
+  // landscaper; the array keeps generic LocalBusiness consumers happy.
+  "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+  "@id": `${SITE_URL}/#business`,
   name: "Elite Hardscapes & Landscaping",
   url: SITE_URL,
-  image: HERO_PHOTO_URL,
-  logo: "https://bluejayportfolio.com/clients/elite-hardscapes-and-landscapes/photos/logo-elite-hardscapes.png",
+  image: [
+    HERO_PHOTO_URL,
+    `${ASSET_BASE}/photos/carlsborg-retaining-wall.jpg`,
+    `${ASSET_BASE}/photos/paver-patio-grass-joints.jpg`,
+    `${ASSET_BASE}/photos/sequim-front-yard-refresh.jpg`,
+  ],
+  logo: LOGO_URL,
+  hasMap:
+    "https://maps.google.com/?q=" +
+    encodeURIComponent("9321 Old Olympic Hwy, Port Angeles, WA"),
   description: DESCRIPTION,
   telephone: "+1-360-797-4448",
   founder: { "@type": "Person", name: "Tyler Fritz" },
@@ -85,14 +127,14 @@ const LOCAL_BUSINESS_SCHEMA = {
     addressCountry: "US",
   },
   areaServed: [
-    "Sequim, WA",
-    "Port Angeles, WA",
-    "Carlsborg, WA",
-    "Port Townsend, WA",
-    "Joyce, WA",
-    "Diamond Point, WA",
-    "Forks, WA",
-    "Clallam County, WA",
+    ...["Sequim", "Port Angeles", "Carlsborg", "Port Townsend", "Joyce", "Diamond Point", "Forks"].map(
+      (name) => ({
+        "@type": "City",
+        name,
+        containedInPlace: { "@type": "State", name: "Washington" },
+      }),
+    ),
+    { "@type": "AdministrativeArea", name: "Clallam County, WA" },
   ],
   openingHoursSpecification: [
     {
@@ -188,6 +230,20 @@ const LOCAL_BUSINESS_SCHEMA = {
   ],
 };
 
+// WebSite JSON-LD: gives Google the site name to show in results
+// ("Elite Hardscapes & Landscaping" instead of the bare domain) and ties
+// the site to the business entity above.
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: "Elite Hardscapes & Landscaping",
+  alternateName: "Elite Hardscapes",
+  publisher: { "@id": `${SITE_URL}/#business` },
+  inLanguage: "en-US",
+};
+
 // FAQPage JSON-LD — gets Google's expandable "People also ask" rich result
 // when the page ranks for question-shaped queries. Mirrors FAQS in page.tsx.
 const FAQ_SCHEMA = {
@@ -271,6 +327,10 @@ export default function EliteLayout({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }}
       />
       <ClientTrackingScripts slug="elite-hardscapes-and-landscapes" />
       {children}
