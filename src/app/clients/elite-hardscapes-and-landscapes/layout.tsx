@@ -118,6 +118,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   sameAs: ["https://www.google.com/maps?cid=993463956289889040"],
   description: DESCRIPTION,
   telephone: "+1-360-797-4448",
+  email: "fritztyler9@gmail.com",
   founder: { "@type": "Person", name: "Tyler Fritz" },
   foundingDate: "2022",
   address: {

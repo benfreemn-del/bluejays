@@ -112,8 +112,8 @@ const BRAND = {
     encodeURIComponent("9321 Old Olympic Hwy, Port Angeles, WA"),
   phone: "(360) 797-4448",
   phoneRaw: "+13607974448",
-  // Routes to Ben's inbox for now (Tyler's email TBD — Ben forwards via text).
-  email: "bluejaycontactme@gmail.com",
+  // Tyler's own inbox (from Ben 2026-09-27). Estimate form + mailto links.
+  email: "fritztyler9@gmail.com",
   estYear: "2022",
   logo: `${PHOTO_BASE}/logo-elite-hardscapes.png`,
 };
