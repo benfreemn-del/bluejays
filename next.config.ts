@@ -20,6 +20,14 @@ const TEMPLATE_TO_V2_INDUSTRIES = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Inline the global CSS into the HTML instead of a render-blocking
+    // <link>. Lighthouse mobile (Elite launch, 2026-09-27) showed the
+    // shared 75 KB stylesheet as the whole first-paint bottleneck on every
+    // client site under slow 4G. Trade-off: CSS re-downloads per page
+    // instead of caching, fine for our mostly single-page showcases.
+    inlineCss: true,
+  },
   async redirects() {
     return [
       // 31 template→v2 industry redirects. Permanent (308) — passes link
