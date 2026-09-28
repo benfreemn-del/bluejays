@@ -156,8 +156,8 @@ const LOCAL_BUSINESS_SCHEMA = {
   priceRange: "$$",
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: "4.7",
-    reviewCount: "15",
+    ratingValue: "4.8",
+    reviewCount: "16",
     bestRating: "5",
     worstRating: "1",
   },

@@ -52,8 +52,8 @@ const small = (src: string) => src.replace(/.jpg$/, "-800.jpg");
 // Real Google Business Profile snapshot — scraped 2026-05-17 from
 // Tyler's actual GBP "Elite Hardscapes & Landscaping". Site brand
 // aligned to GBP on 2026-05-19. Update when Tyler gains/loses reviews.
-const GOOGLE_RATING = 4.7;
-const GOOGLE_REVIEW_COUNT = 15; // GBP 2026-09-27
+const GOOGLE_RATING = 4.8;
+const GOOGLE_REVIEW_COUNT = 16; // GBP 2026-09-28
 // Search URL is the chip's external fallback (only used if STATIC_REVIEWS
 // is somehow empty — currently impossible). Searches the Google listing
 // directly by name + Sequim so result hits Tyler's GBP first.
