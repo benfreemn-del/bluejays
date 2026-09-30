@@ -1,0 +1,606 @@
+/* ============================================================
+   OIT: Lewis + Thurston County pages (2026-09-30).
+
+   Luke opened a third office in Toledo, WA to serve Lewis and
+   Thurston County. This builds 2 county hubs + 7 city pages, then
+   updates sitemap.xml + llms.txt. index.html is edited by hand.
+
+   Unlike oit-clark-county-pages.mjs, this does NOT string-swap the
+   Poulsbo template (that left Kitsap areaServed, Silverdale geo
+   coords, and "On the Peninsula" copy on the SW WA pages). Every
+   location-specific field is explicit here.
+
+   City pages only for towns of ~5k+ plus Toledo (office town).
+   Smaller towns get a one-line card on their county hub rather
+   than a thin near-duplicate page.
+
+   Mold inspection only (same scope as SW WA). No well water / ERMI
+   claims until Luke confirms those run out of Toledo.
+
+   TODO-TOLEDO-ADDRESS: street address unknown. City + ZIP only
+   until Luke sends it. grep for TODO-TOLEDO-ADDRESS to find every
+   spot that needs it (this script, index.html).
+
+   Run from repo root:
+     node scripts/oit-lewis-thurston-pages.mjs
+
+   REMEMBER: new slugs must ALSO be added to the rewrite alternation
+   in next.config.ts (both host blocks) or they 404 on the domain.
+   ============================================================ */
+
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const DIR = 'public/sites/olympic-inspections';
+const BASE = 'https://www.olympicinspect.com';
+const HERO_IMG = 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=900&q=80&auto=format&fit=crop';
+const OFFICE = 'our Toledo office';
+
+const COUNTIES = {
+  lewis: {
+    slug: 'inspections-lewis-county', name: 'Lewis County', lat: 46.6621, lng: -122.9640,
+    eyebrow: 'Lewis County &middot; Centralia, Chehalis, Toledo &amp; the Cowlitz valley',
+    lead: `Independent mold inspection across Lewis County, from the Twin Cities of Centralia and Chehalis to Toledo, Winlock, Morton, and Pe Ell. Dispatched from ${OFFICE}. ISO/IEC 17025 lab, plain-English reports, and zero remediation upsell. We test, we don&rsquo;t sell the fix. Mold inspections start at $150.`,
+    why: `Lewis County is river country. The Chehalis, Skookumchuck, Newaukum, and Cowlitz rivers all run through it, and the Chehalis basin floods on a regular cycle: 1996, 2007, and 2009 all put water into homes around Centralia and Chehalis. Add a long wet season, older housing in the towns, and rural homes on vented crawlspaces, and hidden moisture is the most common thing we find.`,
+    other: [
+      ['Winlock', 'Rural homes and farm properties around Winlock, a short drive north of our Toledo office.'],
+      ['Napavine', 'Newer subdivisions and older rural homes along the I-5 corridor between Chehalis and Winlock.'],
+      ['Vader', 'Older homes and wooded lots just south of Toledo, near the Cowlitz County line.'],
+      ['Morton', 'East Lewis County on US 12, where heavy rain and tree cover keep crawlspaces damp.'],
+      ['Mossyrock', 'Homes and lake cabins near Mayfield and Riffe lakes. A closed-up cabin can build humidity for months.'],
+      ['Pe Ell', 'Older timber-town homes in the upper Chehalis River valley in far west Lewis County.'],
+    ],
+  },
+  thurston: {
+    slug: 'inspections-thurston-county', name: 'Thurston County', lat: 47.0379, lng: -122.9007,
+    eyebrow: 'Thurston County &middot; Olympia, Lacey, Tumwater &amp; Yelm',
+    lead: `Independent mold inspection across Thurston County, from Olympia, Lacey, and Tumwater out to Yelm, Tenino, and Rainier. Dispatched from ${OFFICE}. ISO/IEC 17025 lab, plain-English reports, and zero remediation upsell. We test, we don&rsquo;t sell the fix. Mold inspections start at $150.`,
+    why: `Thurston County sits at the southern end of Puget Sound, and Olympia averages around 50 inches of rain a year, most of it between October and April. The county mixes early-1900s homes around the Capitol, decades of suburban growth in Lacey and Tumwater, a large rental market near Joint Base Lewis-McChord, and fast-growing newer construction out toward Yelm. Every one of those housing types has its own way of hiding moisture.`,
+    other: [
+      ['Tenino', 'The old sandstone-quarry town in south Thurston County: historic downtown buildings and rural homes on the prairie.'],
+      ['Rainier', 'Rural acreage and manufactured homes on SR 507 between Yelm and Tenino.'],
+    ],
+  },
+};
+
+const CITIES = [
+  {
+    slug: 'centralia', name: 'Centralia', county: 'lewis', zip: '98531', lat: 46.7162, lng: -122.9543,
+    eyebrow: 'Centralia &middot; Lewis County &middot; the Twin Cities',
+    lead: 'Independent mold inspection in Centralia and the Twin Cities, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Centralia, including flood-affected and older downtown-area homes.',
+    why: `Centralia sits where the Skookumchuck River meets the Chehalis, and the Chehalis basin floods on a regular cycle. The December 2007 flood closed Interstate 5 for days and put water into homes across the Twin Cities, and 1996 and 2009 were not much kinder. The neighborhoods around downtown are full of early-1900s homes with original crawlspaces and basements. A house that took on water years ago can still be holding moisture in framing, subfloor, or insulation that was never fully dried out.`,
+    extraFaq: ['My Centralia home flooded or had water damage in the past. Should I get it tested?',
+      'If it was never professionally dried and checked, it is worth a look. Flood and leak water that soaks into subfloors, framing, or insulation can keep feeding mold long after the surfaces look fine. A mold inspection with thermal imaging and moisture readings shows whether that moisture is still there, and optional lab sampling shows what is growing. We also do post-repair verification after water damage is fixed.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Centralia and the surrounding Lewis County communities, including Chehalis, Napavine, Winlock, and Toledo, plus Olympia, Tumwater, and Lacey to the north.`,
+  },
+  {
+    slug: 'chehalis', name: 'Chehalis', county: 'lewis', zip: '98532', lat: 46.6621, lng: -122.9640,
+    eyebrow: 'Chehalis &middot; Lewis County seat',
+    lead: 'Independent mold inspection in Chehalis and central Lewis County, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Chehalis, from historic hillside homes to the river-bottom neighborhoods.',
+    why: `Chehalis is the Lewis County seat, set where the Newaukum River joins the Chehalis. The low ground along both rivers, around the airport and the Interstate 5 corridor, has flooded repeatedly, most famously in 1996, 2007, and 2009. Up the hill from downtown, historic neighborhoods of early-1900s homes bring a different problem: original foundations and crawlspaces, plus generations of additions and remodels that can trap moisture where nobody can see it.`,
+    extraFaq: ['Do you inspect older and historic homes in Chehalis?',
+      'Yes. Older homes are a big part of what we do. The inspection is non-invasive: a walkthrough of every accessible area including crawlspaces and attics, moisture and humidity readings, and thermal imaging to find hidden moisture behind walls and ceilings without opening them up. You get a written, photo-documented report either way.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Chehalis and the surrounding Lewis County communities, including Centralia, Napavine, Winlock, Toledo, and Pe Ell.`,
+  },
+  {
+    slug: 'toledo', name: 'Toledo', county: 'lewis', zip: '98591', lat: 46.4398, lng: -122.8468,
+    eyebrow: 'Toledo &middot; Lewis County &middot; home of our Lewis &amp; Thurston office',
+    lead: 'Independent mold inspection in Toledo and south Lewis County, dispatched from our office right here in Toledo and backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Home of our Lewis &amp; Thurston County office. Mold inspection across south Lewis County.',
+    why: `Toledo is a small river town on the Cowlitz River in south Lewis County, surrounded by farm ground, wooded acreage, and rural homes. River-bottom ground stays damp for most of the wet season, and a lot of the housing out here is older farmhouses, manufactured homes, and cabins sitting on vented crawlspaces. A crawlspace over wet ground can push moisture into a house for years before anything shows up in the living space.`,
+    extraFaq: ['Do you have an office near Toledo?',
+      'Yes. Our Lewis and Thurston County office is right here in Toledo, so Toledo, Winlock, Vader, and the rest of south Lewis County are close to home for us. Call (360) 670-3367 or book online and we will reply the same day.'],
+    nearby: `Our Lewis &amp; Thurston County office is here in Toledo. We serve Toledo and the surrounding communities, including Winlock, Vader, Napavine, Chehalis, Centralia, and Mossyrock.`,
+  },
+  {
+    slug: 'olympia', name: 'Olympia', county: 'thurston', zip: '98501', lat: 47.0379, lng: -122.9007,
+    eyebrow: 'Olympia &middot; Thurston County &middot; South Puget Sound',
+    lead: 'Independent mold inspection in Olympia and the South Sound, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Olympia, from early-1900s homes near the Capitol to newer builds.',
+    why: `Olympia sits at the southern tip of Puget Sound on Budd Inlet and averages around 50 inches of rain a year, most of it between October and April. The older neighborhoods around the Capitol, including South Capitol, the Eastside, and the Westside, are full of early-1900s homes with basements and crawlspaces, and much of downtown is built on low, filled ground near the water. A long wet season plus older housing is the classic setup for hidden moisture behind finished walls.`,
+    extraFaq: ['Do you inspect commercial buildings in Olympia?',
+      'Yes. We inspect residential and commercial properties alike: houses, rentals, offices, retail, and other buildings. Reports are formatted for property managers, insurance, and tenant communication, and our affordable base pricing applies across both.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Olympia and the surrounding Thurston County communities, including Lacey, Tumwater, Yelm, Tenino, and Rainier.`,
+  },
+  {
+    slug: 'lacey', name: 'Lacey', county: 'thurston', zip: '98503', lat: 47.0343, lng: -122.8232,
+    eyebrow: 'Lacey &middot; Thurston County &middot; South Puget Sound',
+    lead: 'Independent mold inspection in Lacey and north Thurston County, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Lacey for homeowners, buyers, landlords, and property managers.',
+    why: `Lacey grew mostly after the 1960s, so a lot of its housing is 1970s to 1990s construction: split-levels, tract homes, and manufactured-home communities, many now old enough for roofs, plumbing, and window seals to start failing. The city wraps around Long, Hicks, and Pattison lakes, and it has a large rental market tied to nearby Joint Base Lewis-McChord. With frequent move-ins and move-outs, a small leak can go unreported between tenants and turn into a bigger problem.`,
+    extraFaq: ['Can landlords and property managers book a mold inspection in Lacey?',
+      'Yes. Landlords and property managers are a big part of our work: tenant complaints, turnovers between tenants, and disputes where both sides need an independent answer. Because we do not perform remediation, the report is unbiased, and it is formatted to share with tenants, owners, and insurance.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Lacey and the surrounding Thurston County communities, including Olympia, Tumwater, Yelm, and Rainier.`,
+  },
+  {
+    slug: 'tumwater', name: 'Tumwater', county: 'thurston', zip: '98512', lat: 47.0073, lng: -122.9093,
+    eyebrow: 'Tumwater &middot; Thurston County &middot; the Deschutes valley',
+    lead: 'Independent mold inspection in Tumwater and south Olympia, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Tumwater, from the Deschutes valley to the newer subdivisions.',
+    why: `Tumwater is the oldest American settlement on Puget Sound, founded in 1845 at the falls of the Deschutes River. Housing runs from older homes near the historic district and the Deschutes valley to newer subdivisions toward Black Lake and the south end of town. Low ground along the Deschutes and around Black Lake holds moisture through the wet season, and homes of every age share the same long western Washington rainy season.`,
+    extraFaq: ['Can you confirm a space is clear after mold remediation?',
+      'Yes. If a remediation contractor has already done the work, air and surface sampling can verify the space is clear before you close up walls, move back in, or list the home. Because we never perform remediation ourselves, the clearance result is independent.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Tumwater and the surrounding Thurston County communities, including Olympia, Lacey, Tenino, and Rainier.`,
+  },
+  {
+    slug: 'yelm', name: 'Yelm', county: 'thurston', zip: '98597', lat: 46.9420, lng: -122.6060,
+    eyebrow: 'Yelm &middot; Thurston County &middot; the Nisqually valley',
+    lead: 'Independent mold inspection in Yelm and southeast Thurston County, backed by an ISO/IEC 17025-accredited lab.',
+    card: 'Mold inspection in Yelm, including newer construction and rural acreage homes.',
+    why: `Yelm sits on the prairie of the Nisqually valley at the edge of Joint Base Lewis-McChord, and the city has grown several times over since the 1990s. Fast growth means a lot of newer construction, including homes framed and closed in during the wet season, alongside rural acreage, manufactured homes, and older farmhouses on the outskirts. Tight modern homes can trap construction moisture that never fully dried, and bath fans or dryer vents that were not properly vented outside make it worse.`,
+    extraFaq: ['Can a newer home in Yelm really have mold?',
+      'Yes, and it is personal for us. This business was started after its owners found mold in their own newly built home. Framing that got rained on before the house was closed in, tight modern building envelopes, and vents that were never properly terminated outside can all cause mold in a house that is only a few years old.'],
+    nearby: `Dispatched from ${OFFICE}, we serve Yelm and the surrounding Thurston County communities, including Rainier, Tenino, Lacey, and Olympia.`,
+  },
+];
+
+/* ---------- shared pieces ---------- */
+
+/* JSON-LD text: decode the handful of entities used in copy */
+const plain = (s) => s
+  .replace(/&amp;/g, '&').replace(/&rsquo;/g, '’').replace(/&middot;/g, '·')
+  .replace(/&mdash;/g, '—').replace(/&ndash;/g, '–').replace(/&ldquo;|&rdquo;/g, '"')
+  .replace(/<[^>]+>/g, '');
+const ld = (o) => `    <script type="application/ld+json">\n${JSON.stringify(o, null, 2)}\n    </script>`;
+
+function head({ title, desc, slug, place, lat, lng, ldObjs }) {
+  const url = `${BASE}/${slug}`;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <meta name="description" content="${desc}">
+
+    <link rel="canonical" href="${url}">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="geo.region" content="US-WA">
+    <meta name="geo.placename" content="${place}">
+    <meta name="geo.position" content="${lat};${lng}">
+    <meta name="ICBM" content="${lat}, ${lng}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="${url}">
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${desc}">
+    <meta property="og:image" content="${BASE}/sites/olympic-inspections/logo.png">
+    <meta property="og:site_name" content="Olympic Inspections &amp; Testing">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${desc}">
+    <meta name="twitter:image" content="${BASE}/sites/olympic-inspections/logo.png">
+
+    <meta name="theme-color" content="#1f4d2c">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/sites/olympic-inspections/css/styles.css">
+    <link rel="icon" type="image/png" href="/sites/olympic-inspections/logo.png">
+    <link rel="apple-touch-icon" href="/sites/olympic-inspections/logo.png">
+${ldObjs.map(ld).join('\n')}
+</head>
+<body>
+`;
+}
+
+const NAV = `
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <a href="/" class="nav-logo" aria-label="Olympic Inspections & Testing home">
+                <img src="/sites/olympic-inspections/logo.png" alt="Olympic Inspections &amp; Testing" class="nav-brand-img" width="240" height="240" />
+            </a>
+            <div class="nav-links">
+                <a href="/#services">Services</a>
+                <a href="/#markets">Markets</a>
+                <a href="/#locations">Locations</a>
+                <a href="/#about">About</a>
+                <a href="/#calculator">Pricing</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/#book" class="nav-cta">Book Inspection</a>
+            </div>
+            <button class="hamburger" aria-label="Open menu" id="hamburgerBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+        <button class="mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+        <a href="/#services">Services</a>
+        <a href="/#markets">Markets</a>
+        <a href="/#locations">Locations</a>
+        <a href="/#about">About</a>
+        <a href="/#process">How It Works</a>
+        <a href="/#calculator">Pricing</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/#book">Book Inspection</a>
+    </div>
+`;
+
+const TRUST_BAR = `
+    <section class="trust-bar" aria-label="Why customers trust us">
+        <div class="container">
+            <div class="trust-bar-inner">
+                <div class="trust-bar-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><polyline points="9 12 11 14 15 10"/></svg><span>Certified inspectors</span></div>
+                <div class="trust-bar-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9c2 0 4 .5 6 2"/></svg><span>ISO/IEC 17025 lab</span></div>
+                <div class="trust-bar-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Fast turnaround</span></div>
+                <div class="trust-bar-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg><span>No upselling, ever</span></div>
+            </div>
+        </div>
+    </section>
+`;
+
+function hero({ eyebrow, h1, lead, alt, cta }) {
+  return `
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content reveal">
+                    <span class="hero-eyebrow hero-eyebrow--glow">${eyebrow}</span>
+                    <h1>${h1}</h1>
+                    <p class="lead">${lead}</p>
+                    <div class="hero-ctas">
+                        <a href="/#book" class="btn-primary">${cta}</a>
+                        <a href="/#calculator" class="btn-outline">Get an Estimate</a>
+                    </div>
+                    <div class="hero-trust">
+                        <span class="hero-trust-item check"><span class="hero-trust-emoji" aria-hidden="true">✅</span>ISO/IEC 17025 lab</span>
+                        <span class="hero-trust-item check"><span class="hero-trust-emoji" aria-hidden="true">✅</span>Thermal imaging included</span>
+                        <span class="hero-trust-item insured"><span class="hero-trust-shield" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg></span>No remediation upsell</span>
+                    </div>
+                </div>
+                <div class="hero-card reveal">
+                    <div class="hero-image">
+                        <img src="${HERO_IMG}" alt="${alt}" loading="eager" />
+                        <div class="hero-image-overlay"></div>
+                        <div class="hero-image-badge"><span class="num">$150</span><span class="label">Mold inspections start at</span></div>
+                    </div>
+                    <div class="hero-card-stats">
+                        <div class="hero-card-stat"><span class="num">100+</span><span class="label">Mold types tested</span></div>
+                        <div class="hero-card-stat"><span class="num">ISO 17025</span><span class="label">Accredited lab</span></div>
+                        <div class="hero-card-stat"><span class="num">2-3 day</span><span class="label">Lab turnaround</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+`;
+}
+
+const INCLUDED = `
+    <section id="included" class="services">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">What&rsquo;s Included in a Complete Mold Inspection</h2></div>
+            <p class="section-sub reveal">A thorough walkthrough, the right tools, lab-backed sampling on request, and a written report you can hand to insurance, your buyer, or your remediation contractor. No corners cut, no padding the bill.</p>
+            <div class="services-grid">
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">🔍</div><h3>Visual &amp; moisture walkthrough</h3><p>Every accessible area inspected &mdash; living spaces, bathrooms, kitchens, basements, crawlspaces, attics, utility rooms. We document moisture readings, humidity levels, and any visible signs of growth or water intrusion.</p></div>
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">🌡</div><h3>Thermal &amp; infrared imaging</h3><p>Thermal imaging reveals temperature anomalies behind walls and ceilings &mdash; the cold spots that indicate hidden moisture from leaks, condensation, or vapor intrusion. Included on every Complete Mold Inspection at no extra charge.</p></div>
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">💨</div><h3>Optional air sampling</h3><p>Air samples capture mold spores from the indoor environment and ship to the lab for species identification and concentration measurement. Most useful when there are health symptoms but no visible growth, or for real estate documentation.</p></div>
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">🧪</div><h3>Optional surface sampling</h3><p>Tape-lift or swab samples from suspected growth, sent to the lab for confirmation and species ID. Especially useful when you can see something but don&rsquo;t know if it&rsquo;s mold &mdash; or which kind.</p></div>
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">📄</div><h3>Written photo-documented report</h3><p>A PDF report with every area inspected documented, photo evidence, moisture readings, lab results (when sampled), and clear plain-English recommendations. Formatted to share with insurance, realtors, or remediation contractors.</p></div>
+                <div class="service-card reveal"><div class="service-icon" aria-hidden="true">📞</div><h3>Honest pre-call</h3><p>If your situation doesn&rsquo;t actually need an inspection, we&rsquo;ll tell you on the phone before booking. We make zero money turning away non-jobs &mdash; we just don&rsquo;t want to charge you $150 for a problem that didn&rsquo;t exist.</p></div>
+            </div>
+        </div>
+    </section>
+`;
+
+const PROCESS = `
+    <section id="process" class="process">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">How a Mold Inspection Works</h2></div>
+            <p class="section-sub reveal">Four steps from first call to a written, lab-backed report you can hand to insurance, your buyer, or your remediation contractor.</p>
+            <div class="process-grid">
+                <div class="process-step reveal"><div class="process-num">1</div><h3>Book online or call</h3><p>Same-day reply. We confirm the scope, the address, and your timeline before locking the slot. No surprise fees.</p></div>
+                <div class="process-step reveal"><div class="process-num">2</div><h3>On-site inspection</h3><p>1.5 to 2 hours for a typical home. Visual walkthrough, moisture readings, thermal imaging, and any optional sampling you opted in to.</p></div>
+                <div class="process-step reveal"><div class="process-num">3</div><h3>Lab analysis</h3><p>Samples ship to our ISO/IEC 17025-accredited lab. Results come back in 2 to 3 days &mdash; full species identification and concentration data.</p></div>
+                <div class="process-step reveal"><div class="process-num">4</div><h3>Written report delivered</h3><p>Photo-supported PDF with findings, lab results, and recommendations. Ready to share with insurance, realtors, or remediation contractors.</p></div>
+            </div>
+        </div>
+    </section>
+`;
+
+function pricingPitch(where) {
+  return `
+    <section id="pricing-pitch" class="pricing-pitch">
+        <div class="container">
+            <div class="pricing-pitch-card reveal">
+                <h2>Don&rsquo;t get <em>spored</em> into spending $2,500 on a mold inspector.</h2>
+                <p>Full mold inspections in ${where} start at just <strong>$150</strong> &mdash; the most affordable, certified, quality-driven option in Washington State. Thermal scan included; the base covers up to 1,500 sqft (+$50 per additional 500 sqft). Optional add-ons: air samples $250 for the first (with an outdoor control sample) then $100 each, surface samples $100 each.</p>
+                <p class="pricing-pitch-sub">Use the calculator to estimate your total before you book.</p>
+                <div class="pricing-pitch-ctas">
+                    <a href="/#book" class="btn-primary">Book a Mold Inspection</a>
+                    <a href="/#calculator" class="btn-outline">Estimate My Price</a>
+                </div>
+            </div>
+        </div>
+    </section>
+`;
+}
+
+function cta(where) {
+  return `
+    <section id="cta" class="pricing-pitch">
+        <div class="container">
+            <div class="pricing-pitch-card reveal">
+                <h2>Book a Mold Inspection in ${where}.</h2>
+                <p>Same-day reply. Written quote before we book. ISO 17025 lab. Inspections from $150.</p>
+                <div class="pricing-pitch-ctas">
+                    <a href="/#book" class="btn-primary">Book Now &rarr;</a>
+                    <a href="tel:3606703367" class="btn-outline">Or call (360) 670-3367</a>
+                </div>
+            </div>
+        </div>
+    </section>
+`;
+}
+
+const FOOTER = `
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-mark">
+                        <div class="footer-brand-coin"><img src="/sites/olympic-inspections/logo.png" alt="Olympic Inspections &amp; Testing" class="footer-brand-img" width="240" height="240" /></div>
+                        <div><strong>Olympic Inspections &amp; Testing</strong><small>Mold &middot; Water</small></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: rgba(250,246,238,0.65); line-height: 1.6; max-width: 320px;">Independent mold inspection &amp; air quality testing across Lewis and Thurston County. Lab-backed reports in 3-5 days.</p>
+                </div>
+                <div>
+                    <h4>Get in touch</h4>
+                    <ul>
+                        <li><a href="tel:3606703367">(360) 670-3367</a></li>
+                        <li><a href="mailto:info@olympicinspect.com">info@olympicinspect.com</a></li>
+                        <!-- TODO-TOLEDO-ADDRESS: swap in the street address once Luke sends it -->
+                        <li>Lewis &amp; Thurston office: Toledo, WA 98591</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Service areas</h4>
+                    <ul>
+                        <li><a href="/inspections-lewis-county">Lewis County</a></li>
+                        <li><a href="/inspections-thurston-county">Thurston County</a></li>
+                        <li><a href="/inspections-clallam-county">Clallam County</a></li>
+                        <li><a href="/inspections-jefferson-county">Jefferson County</a></li>
+                        <li><a href="/inspections-kitsap-county">Kitsap County</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p class="footer-coverage">Serving Lewis &amp; Thurston County &mdash; if mold is hiding in your cabin in the woods, we&rsquo;re not afraid to go find it.</p>
+            <div class="footer-bottom">
+                <span>&copy; <span id="year">2026</span> Olympic Inspections &amp; Testing. All rights reserved.</span>
+                <span class="footer-credit">
+                    <a href="/clients/olympic-inspections/portal" class="oit-owner-key" aria-label="Owner sign-in" title="Owner sign-in"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 6C22 4 17 5 14 8L8 14C6 16 6 19 8 21L10 23C8 25 6 27 4 28C7 28 10 27 12 25L14 27C16 29 19 29 21 27L27 21C30 18 31 13 29 9L26 6Z" fill="currentColor" opacity="0.85"/></svg></a>
+                    Built by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener">BlueJays</a> &mdash; get your free site audit
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+      <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z"/></svg>
+    </button>
+
+    <script src="/sites/olympic-inspections/js/main.js"></script>
+</body>
+</html>
+`;
+
+function faqSection(title, sub, faqs) {
+  const items = faqs.map(([q, a]) => `                <div class="faq-item">
+                    <button class="faq-question"><span>${q}</span><span class="faq-arrow">&#9660;</span></button>
+                    <div class="faq-answer"><p>${a}</p></div>
+                </div>`).join('\n');
+  return `
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">${title}</h2></div>
+            <p class="section-sub reveal">${sub}</p>
+            <div class="faq-list reveal">
+${items}
+            </div>
+        </div>
+    </section>
+`;
+}
+
+const faqLd = (faqs) => ({
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } })),
+});
+const crumbLd = (name, slug) => ({
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${BASE}/` },
+    { '@type': 'ListItem', position: 2, name, item: `${BASE}/${slug}` },
+  ],
+});
+const PROVIDER = { '@type': 'LocalBusiness', name: 'Olympic Inspections & Testing', '@id': `${BASE}/#business`, telephone: '+1-360-670-3367', url: `${BASE}/` };
+
+/* ---------- city pages ---------- */
+
+function buildCity(c) {
+  const co = COUNTIES[c.county];
+  const slug = `mold-inspection-${c.slug}`;
+  const title = `Mold Inspection ${c.name} WA &middot; From $150 | Olympic Inspections &amp; Testing`;
+  const desc = `Independent mold inspection in ${c.name}, WA &amp; ${co.name}. Thermal imaging, ISO 17025 lab testing for 100+ mold types. Honest, no-upsell reports from $150.`;
+  const faqs = [
+    [`How much does a mold inspection cost in ${c.name}, WA?`, `A complete mold inspection in ${c.name} starts at <strong>$150</strong> &mdash; the most affordable, certified, quality-driven option in Washington State. The base covers up to 1,500 sqft (+$50 per additional 500 sqft) with thermal imaging included. Optional lab samples: an air sample is $250 for the first (it includes an outdoor control sample) then $100 each additional, and surface samples are $100 each &mdash; you only pay for what you need. Most local competitors charge $1,500&ndash;$2,500 for the same scope.`],
+    ['What does a mold inspection include?', 'A non-invasive walkthrough of every accessible area, thermal imaging to find hidden moisture, humidity and moisture readings, and a written photo-documented report with sampling recommendations. If you opt in to lab samples, the lab tests for 100+ mold species and other particles.'],
+    [`How do I know if I have mold in my ${c.name} home?`, `Common signs: persistent musty smell, visible discoloration, peeling paint, warped baseboards, ongoing respiratory symptoms after moving in, recent water damage. In ${co.name}, the long wet season, past flooding, older homes, and crawlspaces all raise the baseline risk.`],
+    c.extraFaq,
+    ['Do you do mold inspections for real estate transactions?', 'Yes. Reports are formatted for buyer/seller use and routinely shared with realtors, escrow officers, and insurance adjusters. We&rsquo;re independent &mdash; we don&rsquo;t perform remediation &mdash; so the report is unbiased. We work around tight closing timelines.'],
+    [`Do you serve ${c.name} and the rest of ${co.name}?`, `Yes. ${c.name} and the surrounding ${co.name} communities are part of our regular service area, dispatched from our office in Toledo, WA. Very rural properties may include a small travel fee, always quoted in writing before booking.`],
+    ['Will you tell me to do remediation?', 'Only if the data says so. We don&rsquo;t perform remediation &mdash; that&rsquo;s a deliberate separation. Many of our reports conclude no remediation is needed, which is the answer customers most often want and rarely get from inspectors who also sell the cleanup.'],
+  ];
+  if (c.county === 'thurston') faqs[2][1] = faqs[2][1].replace('past flooding, ', '');
+
+  const cityNames = CITIES.filter((x) => x.county === c.county).map((x) => x.name);
+  const areaServed = [...cityNames, ...co.other.map(([n]) => n), `${co.name}, WA`]
+    .map((name) => ({ '@type': name.endsWith('County, WA') ? 'AdministrativeArea' : 'City', name }));
+
+  const service = {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': `${BASE}/${slug}#service`,
+    serviceType: 'Mold Inspection', name: `Complete Mold Inspection — ${c.name}, WA & ${co.name}`,
+    provider: PROVIDER, areaServed,
+    description: `Non-invasive mold inspection in ${c.name}, WA using thermal imaging to detect hidden moisture, humidity readings, and lab-backed sampling for 100+ mold species including Stachybotrys (black mold), Aspergillus, and Penicillium. Photo-documented report formatted for insurance, real estate, or remediation contractors.`,
+    category: 'Indoor Environmental Inspection',
+    offers: { '@type': 'Offer', price: '150', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${BASE}/#book`, priceValidUntil: '2027-12-31' },
+  };
+
+  const html = head({ title, desc, slug, place: c.name, lat: c.lat, lng: c.lng, ldObjs: [service, crumbLd(`Mold Inspection ${c.name} WA`, slug), faqLd(faqs)] })
+    + NAV
+    + hero({
+      eyebrow: c.eyebrow,
+      h1: `<span class="accent">Mold Inspection</span> in ${c.name}, WA.`,
+      lead: `${c.lead} Thermal imaging, plain-English reports, and zero remediation upsell &mdash; we don&rsquo;t fix mold, we just tell you what&rsquo;s there. Inspections start at $150.`,
+      alt: `Pacific Northwest home, ${c.name}, ${co.name}`, cta: 'Book a Mold Inspection',
+    })
+    + TRUST_BAR
+    + `
+    <section id="why-local" class="markets">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">Why ${c.name} Homes Are Prone to Mold</h2></div>
+            <p class="section-sub reveal">${c.why}</p>
+        </div>
+    </section>
+`
+    + INCLUDED + pricingPitch(c.name) + PROCESS
+    + faqSection(`Mold Inspection FAQ &mdash; ${c.name}, WA`, `The questions we get most often when homeowners in ${c.name} are deciding whether to book.`, faqs)
+    + `
+    <section class="markets">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">Serving ${c.name} &amp; Nearby Communities</h2></div>
+            <p class="section-sub reveal">${c.nearby} Very rural or remote properties may include a small travel fee, always quoted in writing before we book. <a href="/${co.slug}" style="color: var(--forest); font-weight: 600;">See all of ${co.name} &rarr;</a></p>
+        </div>
+    </section>
+`
+    + cta(c.name) + FOOTER;
+  return [slug, html];
+}
+
+/* ---------- county hubs ---------- */
+
+function buildHub(key) {
+  const co = COUNTIES[key];
+  const cities = CITIES.filter((c) => c.county === key);
+  const allNames = [...cities.map((c) => c.name), ...co.other.map(([n]) => n)];
+  const list = allNames.slice(0, -1).join(', ') + ', and ' + allNames.at(-1);
+  const title = `Mold Inspection in ${co.name}, WA | Olympic Inspections &amp; Testing`;
+  const desc = `Independent mold inspection across ${co.name}, WA &mdash; ${cities.map((c) => c.name).join(', ')} and nearby towns. From our Toledo office. ISO 17025 lab, no-upsell reports from $150.`;
+  const faqs = [
+    [`What areas of ${co.name} do you serve?`, `The entire county, including ${list}, dispatched from our office in Toledo, WA. Very rural properties may include a small travel fee, always quoted in writing first.`],
+    [`What inspections do you offer in ${co.name}?`, 'Complete mold inspection (from $150, thermal imaging included), with optional air and surface lab sampling. Every inspection is independent and lab-backed. We never sell the remediation, so the report stays honest.'],
+    ['How much does a mold inspection cost?', 'A complete mold inspection starts at $150, covering up to 1,500 sqft (+$50 per additional 500 sqft) with thermal imaging included. Lab samples are optional add-ons. Most competitors charge $1,500&ndash;$2,500 for the same scope.'],
+    [`Where is your ${co.name} office?`, 'Our Lewis &amp; Thurston County office is in Toledo, WA, in south Lewis County. Call (360) 670-3367 or book online and we will reply the same day.'],
+  ];
+  const areaServed = [...allNames, `${co.name}, WA`]
+    .map((name) => ({ '@type': name.endsWith('County, WA') ? 'AdministrativeArea' : 'City', name }));
+  const service = {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': `${BASE}/${co.slug}#service`,
+    serviceType: 'Mold Inspection', name: `Mold Inspection — ${co.name}, WA`,
+    provider: PROVIDER, areaServed,
+    description: `Independent mold inspection across ${co.name}, WA, dispatched from our Toledo office. Thermal imaging included, optional ISO/IEC 17025 lab sampling. No-upsell reports from $150.`,
+    category: 'Indoor Environmental Inspection',
+    offers: { '@type': 'Offer', price: '150', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${BASE}/#book`, priceValidUntil: '2027-12-31' },
+  };
+
+  const linked = cities.map((c) => `                <a href="/mold-inspection-${c.slug}" class="market-card reveal" style="text-decoration: none; color: inherit;">
+                    <div class="market-icon" aria-hidden="true">📍</div>
+                    <h3>${c.name} &rarr;</h3>
+                    <p>${c.card}</p>
+                </a>`);
+  const others = co.other.map(([n, d]) => `                <div class="market-card reveal">
+                    <div class="market-icon" aria-hidden="true">📍</div>
+                    <h3>${n}</h3>
+                    <p>${d}</p>
+                </div>`);
+
+  const html = head({ title, desc, slug: co.slug, place: co.name, lat: co.lat, lng: co.lng, ldObjs: [service, crumbLd(`Inspections in ${co.name}`, co.slug), faqLd(faqs)] })
+    + NAV
+    + hero({ eyebrow: co.eyebrow, h1: `<span class="accent">Mold Inspection</span> in ${co.name}.`, lead: co.lead, alt: `Pacific Northwest home, ${co.name}`, cta: 'Book an Inspection' })
+    + TRUST_BAR
+    + `
+    <section id="why-local" class="markets">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">Why Mold Shows Up in ${co.name}</h2></div>
+            <p class="section-sub reveal">${co.why}</p>
+        </div>
+    </section>
+
+    <section id="locations" class="markets">
+        <div class="container">
+            <div class="section-titlewrap"><h2 class="section-title reveal">Cities We Serve in ${co.name}</h2></div>
+            <p class="section-sub reveal">Local, independent, and dispatched from our Toledo office. Tap your town for local mold inspection details.</p>
+            <div class="markets-grid markets-grid--thirds">
+${[...linked, ...others].join('\n')}
+            </div>
+        </div>
+    </section>
+`
+    + INCLUDED + pricingPitch(co.name)
+    + faqSection(`${co.name} Inspections FAQ`, `The questions we hear most from ${co.name} homeowners, buyers, and agents.`, faqs)
+    + cta(co.name) + FOOTER;
+  return [co.slug, html];
+}
+
+/* ---------- write + verify ---------- */
+
+const pages = [...CITIES.map(buildCity), ...Object.keys(COUNTIES).map(buildHub)];
+for (const [slug, html] of pages) {
+  writeFileSync(join(DIR, `${slug}.html`), html);
+  let bad = 0;
+  for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try { JSON.parse(m[1]); } catch { bad++; }
+  }
+  const leftovers = (html.match(/Longview|Poulsbo|Kitsap(?! County<\/a>)|Peninsula|Sequim|RV|boat|vehicle/g) || []).length;
+  console.log(`${slug}.html`.padEnd(40) + `invalid-JSONLD:${bad} leftovers:${leftovers}`);
+}
+
+/* ---- sitemap ---- */
+let sm = readFileSync(join(DIR, 'sitemap.xml'), 'utf8');
+if (!sm.includes('inspections-lewis-county')) {
+  const hubs = Object.values(COUNTIES).map((co) =>
+    `  <url><loc>${BASE}/${co.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n');
+  const cities = CITIES.map((c) =>
+    `  <url><loc>${BASE}/mold-inspection-${c.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n');
+  sm = sm.replace('</urlset>', `\n  <!-- Lewis + Thurston County, Toledo office (added 2026-09-30) -->\n${hubs}\n${cities}\n\n</urlset>`);
+  writeFileSync(join(DIR, 'sitemap.xml'), sm);
+  console.log('sitemap: 9 URLs added, total ' + (sm.match(/<loc>/g) || []).length);
+}
+
+/* ---- llms.txt ---- */
+let l = readFileSync(join(DIR, 'llms.txt'), 'utf8');
+if (!l.includes('inspections-lewis-county')) {
+  const swap = (from, to) => {
+    if (!l.includes(from)) throw new Error(`llms.txt anchor missing: ${from.slice(0, 60)}`);
+    l = l.replace(from, to);
+  };
+  swap('Two offices: Sequim (HQ) and Longview (Southwest WA).',
+    'Three offices: Sequim (HQ), Longview (Southwest WA), and Toledo (Lewis & Thurston County).');
+  swap('Washington State. Two offices for fast dispatch:', 'Washington State. Three offices for fast dispatch:');
+  swap('plus Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)',
+    `plus Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)
+- **Toledo, WA office** — Lewis County (Centralia, Chehalis, Toledo, Winlock, Napavine, Vader, Morton, Mossyrock, Pe Ell) and Thurston County (Olympia, Lacey, Tumwater, Yelm, Tenino, Rainier)`);
+  swap('Dedicated pages for each service in the Olympic Peninsula + Kitsap communities we serve.',
+    'Dedicated pages for each service in the communities we serve.');
+  swap('- Kitsap County: https://www.olympicinspect.com/inspections-kitsap-county',
+    `- Kitsap County: https://www.olympicinspect.com/inspections-kitsap-county
+- Lewis County: https://www.olympicinspect.com/inspections-lewis-county
+- Thurston County: https://www.olympicinspect.com/inspections-thurston-county`);
+  swap('- La Center: https://www.olympicinspect.com/mold-inspection-la-center',
+    `- La Center: https://www.olympicinspect.com/mold-inspection-la-center
+${CITIES.map((c) => `- ${c.name}: ${BASE}/mold-inspection-${c.slug}`).join('\n')}`);
+  swap('- Longview office: 2005 Olympic Way, Longview, WA',
+    '- Longview office: 2005 Olympic Way, Longview, WA\n- Toledo office (Lewis & Thurston County): Toledo, WA 98591');
+  swap('- Two Washington offices (Sequim + Longview) for fast dispatch across the state',
+    '- Three Washington offices (Sequim, Longview, and Toledo) for fast dispatch across the state');
+  swap('La Center) is currently mold inspection only.',
+    'La Center) is currently mold inspection only.\n- Lewis County and Thurston County (served from the Toledo office) are currently mold inspection only.');
+  writeFileSync(join(DIR, 'llms.txt'), l);
+  console.log('llms.txt: Toledo office + 9 pages listed');
+}
+
+console.log('\nDONE. Now register the 9 slugs in next.config.ts (both host blocks).');

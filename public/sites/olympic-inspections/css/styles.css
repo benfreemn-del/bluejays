@@ -1862,6 +1862,11 @@ html {
   .markets-grid > .market-card:nth-child(5) {
     grid-column: span 3;
   }
+  /* --thirds: any count in rows of 3 (6 = 3+3, 9 = 3+3+3). The 3+2
+     rule above orphans cards 6+ at span 1. */
+  .markets-grid.markets-grid--thirds > .market-card {
+    grid-column: span 2;
+  }
 }
 .market-card {
   background: #fff;

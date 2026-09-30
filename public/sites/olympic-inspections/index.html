@@ -51,10 +51,13 @@
             area + price catalog. Drives local-pack eligibility.
          2. Service — Complete Mold Inspection (the flagship). Helps
             Google understand we're a mold-inspection-first business.
-         3. FAQPage — mirrors the 8 visible FAQs verbatim. Eligible
+         3. FAQPage — mirrors the 9 visible FAQs verbatim. Eligible
             for SERP FAQ-rich-result expansion.
          All three reference the canonical domain
-         https://www.olympicinspect.com/. -->
+         https://www.olympicinspect.com/.
+         TODO-TOLEDO-ADDRESS: the Toledo PostalAddress below has no
+         streetAddress yet. Add it (matching the Google Business
+         Profile exactly) once Luke sends it. -->
 
     <script type="application/ld+json">
     {
@@ -86,6 +89,13 @@
           "addressLocality": "Longview",
           "addressRegion": "WA",
           "addressCountry": "US"
+        },
+        {
+          "@type": "PostalAddress",
+          "addressLocality": "Toledo",
+          "addressRegion": "WA",
+          "postalCode": "98591",
+          "addressCountry": "US"
         }
       ],
       "geo": {
@@ -113,11 +123,20 @@
         { "@type": "City", "name": "Silverdale, WA" },
         { "@type": "City", "name": "Shelton, WA" },
         { "@type": "City", "name": "Longview, WA" },
+        { "@type": "City", "name": "Centralia, WA" },
+        { "@type": "City", "name": "Chehalis, WA" },
+        { "@type": "City", "name": "Toledo, WA" },
+        { "@type": "City", "name": "Olympia, WA" },
+        { "@type": "City", "name": "Lacey, WA" },
+        { "@type": "City", "name": "Tumwater, WA" },
+        { "@type": "City", "name": "Yelm, WA" },
         { "@type": "AdministrativeArea", "name": "Washington" },
         { "@type": "AdministrativeArea", "name": "Clallam County, WA" },
         { "@type": "AdministrativeArea", "name": "Jefferson County, WA" },
         { "@type": "AdministrativeArea", "name": "Kitsap County, WA" },
-        { "@type": "AdministrativeArea", "name": "Mason County, WA" }
+        { "@type": "AdministrativeArea", "name": "Mason County, WA" },
+        { "@type": "AdministrativeArea", "name": "Lewis County, WA" },
+        { "@type": "AdministrativeArea", "name": "Thurston County, WA" }
       ],
       "knowsAbout": [
         "Mold Inspection",
@@ -210,6 +229,10 @@
         { "@type": "City", "name": "Silverdale, WA" },
         { "@type": "City", "name": "Shelton, WA" },
         { "@type": "City", "name": "Longview, WA" },
+        { "@type": "City", "name": "Centralia, WA" },
+        { "@type": "City", "name": "Chehalis, WA" },
+        { "@type": "City", "name": "Olympia, WA" },
+        { "@type": "City", "name": "Lacey, WA" },
         { "@type": "AdministrativeArea", "name": "Washington" }
       ],
       "description": "Non-invasive walkthrough using thermal imaging to detect hidden moisture, collect humidity data, and identify areas of concern. Comprehensive lab-backed report tests for over 100 mold types including Stachybotrys (black mold), Aspergillus, Penicillium, Cladosporium, and Chaetomium. Photo-documented, plain-English, formatted for insurance, real estate, or remediation contractors.",
@@ -267,6 +290,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Yes — out of our Longview office we serve Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center, and the surrounding Clark County area. We work with homeowners, businesses, property managers, and healthcare professionals across Southwest Washington."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you serve Lewis County and Thurston County?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Our office in Toledo, WA serves all of Lewis County (Centralia, Chehalis, Toledo, Winlock, Napavine, Vader, Morton, Mossyrock, and Pe Ell) and Thurston County (Olympia, Lacey, Tumwater, Yelm, Tenino, and Rainier). Mold inspections start at $150, the same as everywhere we work."
           }
         },
         {
@@ -498,16 +529,16 @@
     </section>
 
     <!-- LOCATIONS — added 2026-05-10. Reuses the markets-grid +
-         market-card style for visual consistency. Two cards: Sequim
-         HQ (Olympic Peninsula) + Longview (Southwest WA). Phone +
-         Maps link on each card. To add a third location, just clone
-         a card and update the address. -->
+         market-card style for visual consistency. Three cards: Sequim
+         HQ (Olympic Peninsula) + Longview (Southwest WA) + Toledo
+         (Lewis & Thurston County, added 2026-09-30). Phone + Maps
+         link on each card. -->
     <section id="locations" class="markets" aria-label="Office locations">
         <div class="container">
             <div class="section-titlewrap">
                 <h2 class="section-title reveal">Locations</h2>
             </div>
-            <p class="section-sub reveal">Two Washington offices &mdash; Sequim and Longview. Service-area inspections dispatched from whichever location is closest.</p>
+            <p class="section-sub reveal">Three Washington offices &mdash; Sequim, Longview, and Toledo. Service-area inspections dispatched from whichever location is closest.</p>
             <div class="markets-grid">
                 <div class="market-card reveal">
                     <div class="market-icon" aria-hidden="true">📍</div>
@@ -529,6 +560,20 @@
                         <a href="https://maps.google.com/?q=2005%20Olympic%20Way%2C%20Longview%2C%20WA" target="_blank" rel="noopener noreferrer" style="color: var(--amber); font-weight: 600;">Open in Maps &rarr;</a>
                     </p>
                 </div>
+                <!-- TODO-TOLEDO-ADDRESS: street address unknown. Add it here
+                     plus an "Open in Maps" link (same pattern as the cards
+                     above) once Luke sends it. -->
+                <div class="market-card reveal">
+                    <div class="market-icon" aria-hidden="true">📍</div>
+                    <h3>Toledo, WA</h3>
+                    <p>
+                        <strong>Lewis &amp; Thurston County office</strong><br>
+                        Toledo, WA 98591<br>
+                        <a href="tel:3606703367" style="color: var(--forest); font-weight: 600;">(360) 670-3367</a><br>
+                        <a href="/inspections-lewis-county" style="color: var(--amber); font-weight: 600;">Lewis County</a> &middot;
+                        <a href="/inspections-thurston-county" style="color: var(--amber); font-weight: 600;">Thurston County</a>
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -539,8 +584,8 @@
             <div class="section-titlewrap">
                 <h2 class="section-title reveal">Areas We Serve</h2>
             </div>
-            <p class="section-sub reveal">Independent mold and water inspections across the Olympic Peninsula, Kitsap, and Southwest Washington. Tap your town for local details, or browse by county.</p>
-            <div class="markets-grid">
+            <p class="section-sub reveal">Independent mold and water inspections across the Olympic Peninsula, Kitsap, Lewis and Thurston County, and Southwest Washington. Tap your town for local details, or browse by county.</p>
+            <div class="markets-grid markets-grid--thirds">
                 <div class="market-card reveal">
                     <div class="market-icon" aria-hidden="true">🌲</div>
                     <h3><a href="/inspections-clallam-county" style="color: inherit;">Clallam County &rarr;</a></h3>
@@ -573,6 +618,27 @@
                         <a href="/mold-inspection-port-orchard" style="color: var(--forest); font-weight: 600;">Port Orchard</a> &middot;
                         <a href="/mold-inspection-bainbridge-island" style="color: var(--forest); font-weight: 600;">Bainbridge Island</a><br>
                         Mold &amp; water testing across the Kitsap Peninsula.
+                    </p>
+                </div>
+                <div class="market-card reveal">
+                    <div class="market-icon" aria-hidden="true">🏞</div>
+                    <h3><a href="/inspections-lewis-county" style="color: inherit;">Lewis County &rarr;</a></h3>
+                    <p>
+                        <a href="/mold-inspection-centralia" style="color: var(--forest); font-weight: 600;">Centralia</a> &middot;
+                        <a href="/mold-inspection-chehalis" style="color: var(--forest); font-weight: 600;">Chehalis</a> &middot;
+                        <a href="/mold-inspection-toledo" style="color: var(--forest); font-weight: 600;">Toledo</a><br>
+                        Mold inspection across Lewis County, dispatched from our Toledo office.
+                    </p>
+                </div>
+                <div class="market-card reveal">
+                    <div class="market-icon" aria-hidden="true">🏛</div>
+                    <h3><a href="/inspections-thurston-county" style="color: inherit;">Thurston County &rarr;</a></h3>
+                    <p>
+                        <a href="/mold-inspection-olympia" style="color: var(--forest); font-weight: 600;">Olympia</a> &middot;
+                        <a href="/mold-inspection-lacey" style="color: var(--forest); font-weight: 600;">Lacey</a> &middot;
+                        <a href="/mold-inspection-tumwater" style="color: var(--forest); font-weight: 600;">Tumwater</a> &middot;
+                        <a href="/mold-inspection-yelm" style="color: var(--forest); font-weight: 600;">Yelm</a><br>
+                        Mold inspection across Thurston County and the South Sound, dispatched from our Toledo office.
                     </p>
                 </div>
                 <div class="market-card reveal">
@@ -852,6 +918,15 @@
                     </button>
                     <div class="faq-answer">
                         <p>Yes &mdash; out of our Longview office we serve Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center, and the surrounding Clark County area. We work with homeowners, businesses, property managers, and healthcare professionals across Southwest Washington.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Do you serve Lewis County and Thurston County?</span>
+                        <span class="faq-arrow">&#9660;</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. Our office in Toledo, WA serves all of <a href="/inspections-lewis-county" style="color: var(--forest); font-weight: 600;">Lewis County</a> (Centralia, Chehalis, Toledo, Winlock, Napavine, Vader, Morton, Mossyrock, and Pe Ell) and <a href="/inspections-thurston-county" style="color: var(--forest); font-weight: 600;">Thurston County</a> (Olympia, Lacey, Tumwater, Yelm, Tenino, and Rainier). Mold inspections start at $150, the same as everywhere we work.</p>
                     </div>
                 </div>
                 <div class="faq-item">

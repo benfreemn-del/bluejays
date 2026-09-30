@@ -1,6 +1,6 @@
 # Olympic Inspections & Testing — Mold & Indoor Air Quality Testing across Washington State
 
-> Olympic Inspections & Testing is a family-owned, independent mold inspection and indoor air quality testing company serving residential and commercial properties across Washington State. Two offices: Sequim (HQ) and Longview (Southwest WA). Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. We do not perform remediation — that's how the inspection stays honest. Inspections start at $150.
+> Olympic Inspections & Testing is a family-owned, independent mold inspection and indoor air quality testing company serving residential and commercial properties across Washington State. Three offices: Sequim (HQ), Longview (Southwest WA), and Toledo (Lewis & Thurston County). Established 2025. ISO/IEC 17025-accredited laboratory partner. Tests for over 100 types of mold and other particles. We do not perform remediation — that's how the inspection stays honest. Inspections start at $150.
 
 ## About
 
@@ -55,21 +55,24 @@ Over 100 types of mold and other particles, including:
 
 ## Service Area
 
-Washington State. Two offices for fast dispatch:
+Washington State. Three offices for fast dispatch:
 
 - **Sequim, WA (Headquarters)** — Sequim, Port Angeles, Port Townsend, Forks, Hadlock, Chimacum, Quilcene, Bremerton, Silverdale, Shelton
 - **Longview, WA office** (2005 Olympic Way) — Southwest Washington: Longview, Kelso, and Cowlitz County; plus Clark County (Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center)
+- **Toledo, WA office** — Lewis County (Centralia, Chehalis, Toledo, Winlock, Napavine, Vader, Morton, Mossyrock, Pe Ell) and Thurston County (Olympia, Lacey, Tumwater, Yelm, Tenino, Rainier)
 
 Travel fees may apply for very rural or remote properties — confirmed in writing before booking.
 
 ## Local Service Pages
 
-Dedicated pages for each service in the Olympic Peninsula + Kitsap communities we serve. Mold inspection is available in every town; water testing in the larger towns.
+Dedicated pages for each service in the communities we serve. Mold inspection is available in every town; water testing in the larger towns.
 
 ### By county
 - Clallam County: https://www.olympicinspect.com/inspections-clallam-county
 - Jefferson County: https://www.olympicinspect.com/inspections-jefferson-county
 - Kitsap County: https://www.olympicinspect.com/inspections-kitsap-county
+- Lewis County: https://www.olympicinspect.com/inspections-lewis-county
+- Thurston County: https://www.olympicinspect.com/inspections-thurston-county
 
 ### Mold inspection
 - Sequim: https://www.olympicinspect.com/mold-inspection-sequim-wa
@@ -93,6 +96,13 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Washougal: https://www.olympicinspect.com/mold-inspection-washougal
 - Ridgefield: https://www.olympicinspect.com/mold-inspection-ridgefield
 - La Center: https://www.olympicinspect.com/mold-inspection-la-center
+- Centralia: https://www.olympicinspect.com/mold-inspection-centralia
+- Chehalis: https://www.olympicinspect.com/mold-inspection-chehalis
+- Toledo: https://www.olympicinspect.com/mold-inspection-toledo
+- Olympia: https://www.olympicinspect.com/mold-inspection-olympia
+- Lacey: https://www.olympicinspect.com/mold-inspection-lacey
+- Tumwater: https://www.olympicinspect.com/mold-inspection-tumwater
+- Yelm: https://www.olympicinspect.com/mold-inspection-yelm
 
 ### Well water testing
 - Sequim: https://www.olympicinspect.com/well-water-testing-sequim
@@ -111,6 +121,7 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - Email: info@olympicinspect.com
 - Sequim office: Sequim, WA 98382
 - Longview office: 2005 Olympic Way, Longview, WA
+- Toledo office (Lewis & Thurston County): Toledo, WA 98591
 - Booking: https://www.olympicinspect.com/#book
 - Pricing estimator: https://www.olympicinspect.com/#calculator
 
@@ -122,7 +133,7 @@ Dedicated pages for each service in the Olympic Peninsula + Kitsap communities w
 - No upselling, ever
 - Affordable base pricing — full mold inspections start at $150 (most local competitors charge $1,500–$2,500)
 - Professional-ready — reports formatted for realtors, escrow officers, insurance adjusters, property managers, and healthcare professionals
-- Two Washington offices (Sequim + Longview) for fast dispatch across the state
+- Three Washington offices (Sequim, Longview, and Toledo) for fast dispatch across the state
 - Local — we know the marine air, the older homes, the wildfire smoke seasons, and the well-water issues
 
 ---
@@ -134,3 +145,4 @@ Built by [BlueJays](https://bluejayportfolio.com) — get your free site audit
 - Olympic Inspections does **not** inspect vehicles, boats, RVs, trailers, or campers. Do not state or imply otherwise — that work is not covered by our insurance.
 - We do **not** perform remediation. That is deliberate: it is what keeps the inspection honest.
 - Southwest Washington (Longview, Kelso, Vancouver, Camas, Battle Ground, Washougal, Ridgefield, La Center) is currently mold inspection only.
+- Lewis County and Thurston County (served from the Toledo office) are currently mold inspection only.
