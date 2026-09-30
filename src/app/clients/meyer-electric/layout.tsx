@@ -134,6 +134,59 @@ export const viewport: Viewport = {
  * priceRange "$$" is reasonable for licensed-electrician pricing
  * (Generac install ~$5K-$10K, Powerwall ~$11K+, panel upgrades $1.5K+).
  */
+/**
+ * VideoObject schema for the job films on the page (#our-work), so
+ * Google can index them as video results for Meyer. Keep in step with
+ * FILMS in page.tsx (same files, same descriptions of what each clip
+ * actually shows). uploadDate = the day each film went on the site.
+ */
+const MEYER_FILMS = [
+  {
+    file: "powerwall-solar",
+    name: "Tesla Powerwall + solar installation | Meyer Electric",
+    description:
+      "A Meyer Electric crew sets a rooftop solar array and mounts the Tesla Powerwall that stores what it makes, on the Olympic Peninsula.",
+    duration: "PT47S",
+    uploadDate: "2026-09-30",
+  },
+  {
+    file: "generac-generator",
+    name: "Generac whole-home generator installation | Meyer Electric",
+    description:
+      "A Meyer Electric crew sets and wires a Generac whole-home standby generator, start to finish, on the Olympic Peninsula.",
+    duration: "PT56S",
+    uploadDate: "2026-09-30",
+  },
+  {
+    file: "highlight",
+    name: "EV charger circuit and outlet installation | Meyer Electric",
+    description:
+      "A Meyer Electric crew runs an EV charger circuit and outlet install on the Olympic Peninsula.",
+    duration: "PT31S",
+    uploadDate: "2026-08-21",
+  },
+  {
+    file: "meyer-crew",
+    name: "Meet the Meyer Electric crew",
+    description:
+      "Panels, solar, generators and everyday electrical work: one licensed crew serving Clallam and Jefferson counties, from the very first phone call.",
+    duration: "PT44S",
+    uploadDate: "2026-09-30",
+  },
+];
+const MEYER_FILMS_SCHEMA = MEYER_FILMS.map((v) => ({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: v.name,
+  description: v.description,
+  thumbnailUrl: `${CLIENT_URL}/videos/meyer-electric/${v.file}-poster.jpg`,
+  contentUrl: `${CLIENT_URL}/videos/meyer-electric/${v.file}.mp4`,
+  embedUrl: `${PAGE_URL}/#our-work`,
+  uploadDate: v.uploadDate,
+  duration: v.duration,
+  publisher: { "@id": `${PAGE_URL}#business` },
+}));
+
 const meyerSchema = {
   "@context": "https://schema.org",
   "@type": "Electrician",
@@ -319,6 +372,10 @@ export default function MeyerElectricLayout({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(meyerSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(MEYER_FILMS_SCHEMA) }}
       />
       <ClientTrackingScripts slug="meyer-electric" />
       {/* First-party page-view beacon → client_page_views. Powers the

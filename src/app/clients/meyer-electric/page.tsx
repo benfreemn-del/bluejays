@@ -50,6 +50,7 @@ import {
   Trophy,
   LockKey,
   InstagramLogo,
+  Play,
 } from "@phosphor-icons/react";
 
 import StickyNav from "./sticky-nav";
@@ -94,15 +95,23 @@ const BUSINESS = {
   prospectId: "063c4d4a-81e1-4cae-bbf1-3ce615e1c6f7",
 } as const;
 
-/* ───────────────────── HIGHLIGHT FILM ─────────────────────
- * Vertical (9:16) highlight reel of real Meyer jobs. Slot prepped
- * 2026-08-17; Kyle is sending the file.
+/* ───────────────────── JOB FILMS (the reel wall) ─────────────────────
+ * Vertical (9:16) films of real Meyer jobs, shot and branded by Kyle's
+ * social-media contractor. One featured player + a thumbnail rail; the
+ * featured film autoplays muted when scrolled into view and advances
+ * to the next film when it ends. 2026-08-21: one film (EV charger).
+ * 2026-09-30: three more added (Powerwall + solar, Generac, crew reel).
  *
- * ── TO TURN IT ON ──
- * Set `src` (and ideally `poster`). That's the only edit needed —
- * the section, the nav link, and the anchor all wake up together.
- * While `src` is empty the ENTIRE section renders nothing, so the
- * live site never shows a "video coming soon" placeholder.
+ * ── TO ADD / SWAP A FILM ──
+ * Add an entry to FILMS. Order = play order. If FILMS is empty the
+ * ENTIRE section renders nothing, so the live site never shows a
+ * "video coming soon" placeholder. Keep the VideoObject list in
+ * layout.tsx (MEYER_FILMS_SCHEMA) in step with this array.
+ *
+ * ── COPY RULE ──
+ * Every `body` describes what THAT footage actually shows. Watch the
+ * clip before writing it; never let the copy promise work the video
+ * doesn't show.
  *
  * ── WHERE TO PUT THE FILE (read this first) ──
  * CLAUDE.md "Vercel Cost Discipline" bans heavy media in /public —
@@ -120,35 +129,82 @@ const BUSINESS = {
  * image (jpg/webp, same 9:16 ratio) — without it the frame is black
  * until the visitor presses play, which looks broken.
  */
-const HIGHLIGHT_FILM: {
+// Every clip arrives from the contractor as an HEVC .mov straight off a
+// phone. HEVC does NOT decode in Chrome on Windows or in Firefox, so each
+// one is transcoded to H.264/yuv420p mp4 + AAC with +faststart (the four
+// below are 3.5 to 5.6 MB, down from 9 to 17 MB). ANY future clip must
+// get the same treatment; a raw iPhone .mov plays fine on Ben's phone
+// and renders a black box for most of Kyle's visitors.
+type JobFilm = {
+  id: string;
   src: string;
+  /** First-frame cover (9:16). Without it the frame sits black. */
   poster: string;
-  /** Muted autoplay + loop, reel-style. false = click to play. */
-  autoPlay: boolean;
-  eyebrow: string;
-  heading: string;
-  headingAccent: string;
+  /** Rail image when the poster carries burned-in on-screen text
+   *  (title cards, captions) that would collide with the rail label.
+   *  A caption-free frame, cropped 3:4. Falls back to poster. */
+  thumb?: string;
+  /** Short name on the thumbnail rail. */
+  label: string;
+  /** Headline shown beside the player while this film is up. */
+  title: string;
+  duration: string;
   body: string;
-} = {
-  // Shot by Kyle's social-media contractor, already branded with the
-  // on-screen title card + @meyerelectric360 watermark. Source was a
-  // 9.2 MB HEVC .mov — HEVC does NOT decode in Chrome on Windows or in
-  // Firefox, so it was transcoded to H.264/yuv420p mp4 (3.3 MB) with
-  // +faststart. ANY future clip must get the same treatment; dropping
-  // a raw iPhone .mov in here plays fine on Ben's phone and renders a
-  // black box for most of Kyle's visitors.
-  src: "/videos/meyer-electric/highlight.mp4",
-  poster: "/videos/meyer-electric/highlight-poster.jpg",
-  autoPlay: true,
-  eyebrow: "On The Job",
-  heading: "Watch a real job,",
-  headingAccent: "start to finish",
-  // Describes THIS footage (an EV charger circuit + outlet install).
-  // If the clip is swapped for a different job, update this line —
-  // don't let the copy promise work the video doesn't show.
-  body:
-    "No stock footage, no actors. This is a Meyer crew running an EV charger circuit and outlet install on the Peninsula — the same crew that shows up at your place.",
+  alt: string;
 };
+
+const FILMS_COPY = {
+  eyebrow: "On The Job",
+  heading: "Watch real jobs,",
+  headingAccent: "start to finish",
+  intro:
+    "No stock footage, no actors. Every film here is a Meyer crew on a real Peninsula job: the same crew that shows up at your place.",
+};
+
+const FILMS: JobFilm[] = [
+  {
+    id: "powerwall-solar",
+    src: "/videos/meyer-electric/powerwall-solar.mp4",
+    poster: "/videos/meyer-electric/powerwall-solar-poster.jpg",
+    label: "Powerwall + Solar",
+    title: "Tesla Powerwall + solar install",
+    duration: "0:46",
+    body: "The crew sets a rooftop solar array and mounts the Tesla Powerwall that stores what it makes, so the house keeps running when the grid doesn't.",
+    alt: "Meyer Electric crew installing rooftop solar panels and a Tesla Powerwall",
+  },
+  {
+    id: "generac-generator",
+    src: "/videos/meyer-electric/generac-generator.mp4",
+    poster: "/videos/meyer-electric/generac-generator-poster.jpg",
+    label: "Generac Generator",
+    title: "Generac whole-home generator install",
+    duration: "0:55",
+    body: "A Generac standby generator set on its pad and wired in, start to finish, with the Olympics behind the job. When the power drops, it kicks on by itself.",
+    alt: "Meyer Electric crew installing and wiring a Generac whole-home standby generator",
+  },
+  {
+    id: "ev-charger",
+    src: "/videos/meyer-electric/highlight.mp4",
+    poster: "/videos/meyer-electric/highlight-poster.jpg",
+    thumb: "/videos/meyer-electric/ev-charger-thumb.jpg",
+    label: "EV Charger",
+    title: "EV charger circuit + outlet install",
+    duration: "0:31",
+    body: "A Meyer crew running an EV charger circuit and outlet install on the Peninsula.",
+    alt: "Meyer Electric crew installing an EV charger circuit and outlet",
+  },
+  {
+    id: "meyer-crew",
+    src: "/videos/meyer-electric/meyer-crew.mp4",
+    poster: "/videos/meyer-electric/meyer-crew-poster.jpg",
+    thumb: "/videos/meyer-electric/meyer-crew-thumb.jpg",
+    label: "Meet the Crew",
+    title: "One crew for all of it",
+    duration: "0:44",
+    body: "New-construction panels, solar, generators and the everyday fixes. Experienced and equipped for all of your electrical needs, from the very first phone call.",
+    alt: "Meyer Electric crew at work on panels, solar, generators and new construction",
+  },
+];
 
 const PHOTOS = {
   hero: "/images/meyer-electric/hero-powerwall-storm.jpg",
@@ -157,6 +213,10 @@ const PHOTOS = {
   generator: "/images/meyer-electric/generator-install.jpg",
   underground: "/images/meyer-electric/gallery-tesla-charger.jpg",
   electrical: "/images/meyer-electric/about-twilight-home.jpg",
+  // Real Meyer solar job: a still pulled from the Powerwall + solar film
+  // (2026-09-30) at a different moment than that film's poster, so no
+  // image repeats on the page. Replaces the SolarCardVisual placeholder.
+  solar: "/images/meyer-electric/solar-install-crew.jpg",
   // NOTE: team-crew-panel.jpg + team-award-2022.jpg are still on disk
   // at /public/images/meyer-electric/ — preserved per Ben's revert
   // 2026-05-06 in case he wants them back. Re-add by re-importing
@@ -827,7 +887,8 @@ export default function MeyerElectricPage() {
               badge="New"
               title="Solar Panel Installation"
               description="Yes — we install solar panels. Licensed electrical contractor first, so the array and every bit of wiring behind it come from the same crew. Pair it with a Powerwall and you keep using what you generate after dark."
-              visual={<SolarCardVisual />}
+              image={PHOTOS.solar}
+              imageAlt="Meyer Electric crew setting solar panels on a Peninsula roof"
               href="#solar"
             />
             <ServiceCard
@@ -2464,7 +2525,7 @@ export default function MeyerElectricPage() {
 
       {/* ────────────────────── HIGHLIGHT FILM ──────────────────────
           Sits directly above the Instagram band so the page closes on
-          proof → follow → quote. Self-hides while HIGHLIGHT_FILM.src
+          proof → follow → quote. Self-hides while FILMS is empty
           is empty (see the config block at the top of this file). */}
       <HighlightFilmSection />
 
@@ -2788,34 +2849,54 @@ export default function MeyerElectricPage() {
 /* ───────────────────────── SUB COMPONENTS ───────────────────────── */
 
 /**
- * HighlightFilmSection — vertical (9:16) reel of a real Meyer job.
+ * HighlightFilmSection — the job-film reel wall (id="our-work").
  *
- * Renders NOTHING when HIGHLIGHT_FILM.src is empty, so the slot can sit
- * in the page waiting for footage without ever showing a live client a
- * "video coming soon" box.
+ * One featured 9:16 player + a thumbnail rail of every film in FILMS.
+ * The featured film autoplays muted once the section is on screen,
+ * pauses when it scrolls away, and advances to the next film when it
+ * ends, so a visitor who just watches sees every job in turn. Tapping
+ * a thumbnail swaps it in. The active thumbnail carries a live
+ * progress bar so the rail reads as "a playlist", not a gallery.
  *
- * Bandwidth: preload="none" plus an IntersectionObserver means the
- * 3.3 MB file is only fetched once a visitor actually scrolls to it,
- * and playback pauses when it scrolls away. Meyer runs ~440 views a
- * month — eagerly loading this for every visitor (most of whom never
- * reach it) is exactly the /public bandwidth waste CLAUDE.md's Vercel
- * cost discipline warns about.
+ * Renders NOTHING when FILMS is empty, so the slot can sit in the page
+ * waiting for footage without ever showing a "video coming soon" box.
  *
- * Muted is REQUIRED for autoplay — every browser blocks autoplay with
- * sound. Controls stay on so anyone who wants the audio can unmute.
+ * Bandwidth: there is exactly ONE <video> element. Thumbnails are the
+ * lightweight poster JPGs, never videos, and the player uses
+ * preload="none" + an IntersectionObserver, so nothing heavy is
+ * fetched until a visitor actually reaches the section, and only the
+ * film being watched is ever downloaded. Meyer runs ~440 views a month;
+ * eagerly loading four reels for every visitor is exactly the /public
+ * bandwidth waste CLAUDE.md's Vercel cost discipline warns about.
+ *
+ * Muted is REQUIRED for autoplay (every browser blocks autoplay with
+ * sound). Controls stay on so anyone who wants the audio can unmute,
+ * and the mute choice carries over as the reel advances. Visitors with
+ * prefers-reduced-motion get no autoplay at all.
  */
 function HighlightFilmSection() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const inViewRef = useRef(false);
+  const startedRef = useRef(false);
+  const [active, setActive] = useState(0);
+  const shownRef = useRef(0);
   const [inView, setInView] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const reducedMotion = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => {
+        inViewRef.current = entry.isIntersecting;
         setInView(entry.isIntersecting);
-        if (!HIGHLIGHT_FILM.autoPlay) return;
         if (entry.isIntersecting) {
+          if (reducedMotion() && !startedRef.current) return;
           // play() rejects when the browser blocks autoplay — the
           // visible controls are the fallback, so swallow it.
           void el.play().catch(() => {});
@@ -2829,7 +2910,35 @@ function HighlightFilmSection() {
     return () => io.disconnect();
   }, []);
 
-  if (!HIGHLIGHT_FILM.src) return null;
+  // A new film is up (a thumbnail tap or the previous film ending):
+  // roll it if the visitor has started watching or the section is on
+  // screen. React swapping the src is what makes the browser fetch the
+  // new file. Guarded on an actual change so the first render never
+  // triggers a fetch: preload="none" means nobody downloads a film
+  // until they reach the section.
+  useEffect(() => {
+    if (shownRef.current === active) return;
+    shownRef.current = active;
+    const el = videoRef.current;
+    if (!el) return;
+    if (startedRef.current || (inViewRef.current && !reducedMotion())) {
+      void el.play().catch(() => {});
+    }
+  }, [active]);
+
+  if (FILMS.length === 0) return null;
+  const film = FILMS[active];
+
+  const pick = (i: number) => {
+    startedRef.current = true;
+    if (i === active) {
+      const el = videoRef.current;
+      if (el?.paused) void el.play().catch(() => {});
+      return;
+    }
+    setProgress(0);
+    setActive(i);
+  };
 
   return (
     <section
@@ -2846,12 +2955,12 @@ function HighlightFilmSection() {
       />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-          {/* Phone-shaped 9:16 frame. Capped by height on desktop so a
-              vertical video can't run away with the whole viewport. */}
+        <div className="grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 lg:gap-14 items-center">
+          {/* Phone-shaped 9:16 frame. Capped by width so a vertical
+              video can't run away with the whole viewport. */}
           <div className="flex justify-center lg:justify-start">
             <div
-              className="relative w-full max-w-[300px] sm:max-w-[330px] rounded-[26px] overflow-hidden"
+              className="relative w-full max-w-[300px] sm:max-w-[340px] rounded-[26px] overflow-hidden"
               style={{
                 aspectRatio: "9 / 16",
                 border: `1px solid rgba(250, 204, 21, 0.22)`,
@@ -2863,17 +2972,27 @@ function HighlightFilmSection() {
               <video
                 ref={videoRef}
                 className="absolute inset-0 w-full h-full object-cover"
-                src={HIGHLIGHT_FILM.src}
-                poster={HIGHLIGHT_FILM.poster || undefined}
+                src={film.src}
+                poster={film.poster}
                 preload="none"
                 muted
-                loop
                 playsInline
                 controls
-                aria-label="Meyer Electric crew installing an EV charger circuit and outlet"
+                aria-label={film.alt}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onTimeUpdate={(e) => {
+                  const v = e.currentTarget;
+                  if (v.duration) setProgress(v.currentTime / v.duration);
+                }}
+                onEnded={() => {
+                  startedRef.current = true;
+                  setProgress(0);
+                  setActive((i) => (i + 1) % FILMS.length);
+                }}
               />
-              {/* Live dot — only once the reel is actually rolling. */}
-              {inView && HIGHLIGHT_FILM.autoPlay && (
+              {/* Live tag + position — only once the reel is rolling. */}
+              {inView && playing && (
                 <div
                   className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full pointer-events-none"
                   style={{ background: "rgba(10,10,10,0.62)" }}
@@ -2886,14 +3005,14 @@ function HighlightFilmSection() {
                     className="text-[9px] font-bold uppercase tracking-[0.18em] text-white"
                     style={{ fontFamily: FONT_HEAD }}
                   >
-                    Real Job
+                    Real Job · {active + 1}/{FILMS.length}
                   </span>
                 </div>
               )}
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
               style={{
@@ -2903,23 +3022,134 @@ function HighlightFilmSection() {
               }}
             >
               <Lightning size={13} weight="fill" />
-              {HIGHLIGHT_FILM.eyebrow}
+              {FILMS_COPY.eyebrow}
             </div>
             <h2
               className="text-[32px] sm:text-[42px] lg:text-[50px] font-bold leading-[1.06] tracking-tight text-white"
               style={{ fontFamily: FONT_HEAD }}
             >
-              {HIGHLIGHT_FILM.heading}{" "}
-              <span style={{ color: ACCENT }}>
-                {HIGHLIGHT_FILM.headingAccent}
-              </span>
+              {FILMS_COPY.heading}{" "}
+              <span style={{ color: ACCENT }}>{FILMS_COPY.headingAccent}</span>
             </h2>
             <p
               className="mt-4 text-[16px] sm:text-[17px] leading-relaxed max-w-xl"
               style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
             >
-              {HIGHLIGHT_FILM.body}
+              {FILMS_COPY.intro}
             </p>
+
+            {/* Now playing — re-keyed per film so it fades in fresh. */}
+            <div
+              key={film.id}
+              className="me-film-now mt-6 pl-4 border-l-2"
+              style={{ borderColor: ACCENT }}
+              aria-live="polite"
+            >
+              <div
+                className="text-[11px] font-bold uppercase tracking-[0.18em]"
+                style={{ color: ACCENT, fontFamily: FONT_HEAD }}
+              >
+                Now playing · {film.duration}
+              </div>
+              <h3
+                className="mt-1 text-[20px] sm:text-[22px] font-bold text-white leading-snug"
+                style={{ fontFamily: FONT_HEAD }}
+              >
+                {film.title}
+              </h3>
+              <p
+                className="mt-1.5 text-[15px] leading-relaxed max-w-xl"
+                style={{ color: INK_SOFT, fontFamily: FONT_BODY }}
+              >
+                {film.body}
+              </p>
+            </div>
+
+            {/* Thumbnail rail: posters only (no extra video weight).
+                Scrolls sideways on phones, four across from sm up. */}
+            <div
+              className="mt-6 -mx-5 px-5 sm:mx-0 sm:px-0 flex sm:grid sm:grid-cols-4 gap-3 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-5 sm:scroll-px-0 pb-1"
+              role="group"
+              aria-label="Meyer Electric job films"
+            >
+              {FILMS.map((f, i) => {
+                const on = i === active;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => pick(i)}
+                    aria-pressed={on}
+                    aria-label={`Play: ${f.title} (${f.duration})`}
+                    className="me-film-thumb group relative shrink-0 w-[31%] min-w-[118px] sm:w-auto sm:min-w-0 snap-start rounded-xl overflow-hidden text-left transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none"
+                    style={{
+                      aspectRatio: "3 / 4",
+                      border: on
+                        ? `2px solid ${ACCENT}`
+                        : "1px solid rgba(255,255,255,0.10)",
+                      boxShadow: on
+                        ? "0 14px 34px rgba(250, 204, 21, 0.18)"
+                        : "0 10px 26px rgba(0,0,0,0.45)",
+                      background: BG,
+                    }}
+                  >
+                    <img
+                      src={f.thumb ?? f.poster}
+                      alt=""
+                      loading="lazy"
+                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+                        on ? "opacity-100" : "opacity-70 group-hover:opacity-95"
+                      } group-hover:scale-[1.04]`}
+                    />
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(10,10,10,0) 35%, rgba(10,10,10,0.88) 100%)",
+                      }}
+                    />
+                    {!on && (
+                      <span
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                        style={{ background: "rgba(10,10,10,0.6)", color: ACCENT }}
+                      >
+                        <Play size={12} weight="fill" />
+                      </span>
+                    )}
+                    <div className="absolute left-2.5 right-2.5 bottom-2.5">
+                      <div
+                        className="text-[12px] sm:text-[13px] font-bold leading-tight text-white"
+                        style={{ fontFamily: FONT_HEAD }}
+                      >
+                        {f.label}
+                      </div>
+                      <div
+                        className="mt-0.5 text-[10px] font-semibold tracking-wide"
+                        style={{ color: on ? ACCENT : "rgba(255,255,255,0.6)", fontFamily: FONT_BODY }}
+                      >
+                        {on ? (playing ? "Playing" : "Up now") : f.duration}
+                      </div>
+                    </div>
+                    {/* Live progress for the film that's up. */}
+                    <div
+                      className="absolute left-0 right-0 bottom-0 h-[3px]"
+                      style={{ background: on ? "rgba(255,255,255,0.12)" : "transparent" }}
+                    >
+                      {on && (
+                        <div
+                          className="h-full"
+                          style={{
+                            width: `${Math.round(progress * 1000) / 10}%`,
+                            background: ACCENT,
+                            transition: "width 0.25s linear",
+                          }}
+                        />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <a
@@ -2956,120 +3186,21 @@ function HighlightFilmSection() {
           0%, 100% { opacity: 1; }
           50%      { opacity: 0.25; }
         }
+        .me-film-now {
+          animation: meFilmNow 0.45s ease-out both;
+        }
+        @keyframes meFilmNow {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .me-film-thumb:focus-visible {
+          box-shadow: 0 0 0 3px #facc15 !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .me-film-dot, .me-film-now { animation: none; }
+        }
       `}</style>
     </section>
-  );
-}
-
-/**
- * SolarCardVisual — media treatment for the Solar service card.
- *
- * Meyer has exactly 5 unique real photos and every one is already
- * spoken for (hero + the four other service cards). CLAUDE.md bans
- * duplicate images on a site, and no real photo of a Meyer solar job
- * exists yet — the capability is new as of Aug 2026. So rather than
- * recycle a photo or drop in stock, the Solar card gets the same
- * gradient + grid + animated-icon language the Powerwall and Generac
- * deep-dive diagrams use. Side benefit: it's the only non-photo card
- * in the grid, so the new service is the thing your eye lands on.
- *
- * Swap this for a real photo the moment Kyle's social-media contractor
- * sends one of an actual Meyer install.
- */
-function SolarCardVisual() {
-  return (
-    <div
-      className="absolute inset-0 flex items-center justify-center overflow-hidden"
-      style={{
-        background: `radial-gradient(circle at 50% 26%, rgba(251, 146, 60, 0.26) 0%, rgba(10, 10, 10, 0) 64%), linear-gradient(180deg, ${BG_ALT} 0%, ${BG} 100%)`,
-      }}
-    >
-      <svg
-        className="absolute inset-0 w-full h-full opacity-[0.07]"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern
-            id="meyer-solcard-grid"
-            width="28"
-            height="28"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 28 0 L 0 0 0 28"
-              fill="none"
-              stroke={ACCENT}
-              strokeWidth="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#meyer-solcard-grid)" />
-      </svg>
-
-      <div className="relative flex flex-col items-center gap-3.5 transition-transform duration-700 group-hover:scale-105">
-        {/* Sun */}
-        <span
-          className="me-solcard-sun flex items-center justify-center w-12 h-12 rounded-full"
-          style={{
-            background: FIRE_GRAD_RADIAL,
-            boxShadow: `0 0 26px ${ACCENT_ORANGE_DIM}, 0 0 12px rgba(250,204,21,0.5)`,
-          }}
-        >
-          <Sun size={26} weight="fill" color="#0a0a0a" />
-        </span>
-
-        {/* Array */}
-        <div style={{ perspective: "460px" }}>
-          <div
-            className="relative grid grid-cols-4 gap-[2px] p-[3px] rounded-[2px]"
-            style={{
-              transform: "rotateX(36deg)",
-              background: "rgba(148, 163, 184, 0.30)",
-              boxShadow: "0 12px 24px rgba(0,0,0,0.55)",
-              width: "150px",
-            }}
-          >
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span
-                key={i}
-                className="block aspect-[4/3] rounded-[1px]"
-                style={{
-                  background:
-                    "linear-gradient(150deg, #1e293b 0%, #0f172a 55%, #1e293b 100%)",
-                  boxShadow: "inset 0 0 0 0.5px rgba(148,163,184,0.35)",
-                }}
-              />
-            ))}
-            <span className="me-solcard-shimmer absolute inset-0 pointer-events-none rounded-[2px]" />
-          </div>
-        </div>
-      </div>
-
-      <style jsx>{`
-        .me-solcard-sun {
-          animation: meSolCardSun 3.4s ease-in-out infinite;
-        }
-        @keyframes meSolCardSun {
-          0%, 100% { transform: scale(1); }
-          50%      { transform: scale(1.08); }
-        }
-
-        .me-solcard-shimmer {
-          background: linear-gradient(
-            115deg,
-            rgba(250, 204, 21, 0) 38%,
-            rgba(250, 204, 21, 0.4) 50%,
-            rgba(250, 204, 21, 0) 62%
-          );
-          background-size: 260% 100%;
-          animation: meSolCardShimmer 4.4s ease-in-out infinite;
-        }
-        @keyframes meSolCardShimmer {
-          0%        { background-position: 130% 0; }
-          55%, 100% { background-position: -130% 0; }
-        }
-      `}</style>
-    </div>
   );
 }
 
