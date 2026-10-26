@@ -9,22 +9,22 @@ import GalleryGrid from "../_components/gallery-grid";
 import { Eyebrow, GreenBtn, JsonLd, head, body } from "../_components/ui";
 import { Contact, CtaBand, Breadcrumbs, Footer } from "../_components/sections";
 import { getBase } from "../_lib/base";
-import { BIZ, SITE_URL, PHOTO_PATH } from "../_lib/site";
+import { BIZ, SITE_URL, BASE_PATH, PHOTO_PATH, GALLERY_LEAD, GALLERY_LAST } from "../_lib/site";
 import { PHOTOS } from "../_lib/photos";
 
-const TITLE = "Landscaping Photo Gallery | Mountain View Landscape & Design, Auburn WA";
-const DESCRIPTION = `${PHOTOS.length} photos of ponds, waterfalls, flagstone patios, retaining walls, gardens, lawns, and lighting built by Mountain View Landscape & Design around Auburn and the Puget Sound.`;
+const TITLE = "Landscaping Photo Gallery | Mountain View Landscape";
+const DESCRIPTION = "Photos of ponds, waterfalls, flagstone patios, retaining walls, gardens, and lighting built by Mountain View Landscape & Design in Auburn, WA.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/gallery` },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: `${SITE_URL}/gallery`, siteName: BIZ.name, type: "website", images: [{ url: `${SITE_URL}${PHOTO_PATH}/p091-1600.webp` }] },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: `${SITE_URL}/gallery`, siteName: BIZ.name, type: "website", images: [{ url: `${SITE_URL}${BASE_PATH}/og/p091.jpg`, width: 1200, height: 630 }] },
 };
 
-// Best work first; the specimen-tree staging shots go last.
-const ORDER = [...PHOTOS].sort((a, b) => Number(a.cats.includes("trees")) - Number(b.cats.includes("trees")) || Number(b.big) - Number(a.big));
-const IDS = ORDER.filter((p) => !p.cats.includes("people")).map((p) => p.id);
+// Curated: showcase shots first, then everything else, then process / staging / low-res.
+const REST = PHOTOS.map((p) => p.id).filter((id) => !GALLERY_LEAD.includes(id) && !GALLERY_LAST.includes(id));
+const IDS = [...GALLERY_LEAD, ...REST, ...GALLERY_LAST].filter((id) => !PHOTOS.find((p) => p.id === id)?.cats.includes("people"));
 
 export default async function GalleryPage() {
   const base = await getBase();
@@ -51,8 +51,7 @@ export default async function GalleryPage() {
             <Eyebrow>Our work</Eyebrow>
             <h1 className={`${head} font-semibold text-[38px] sm:text-[52px] leading-[1.05] text-[#20241C] mt-3`}>Landscaping photo gallery</h1>
             <p className={`${body} text-[18px] leading-[1.6] text-[#3E4435] mt-4`}>
-              {IDS.length} photos from yards we&apos;ve designed and built around Auburn and the Puget Sound. Pick a
-              category, then tap any photo to see it full size.
+              {`${IDS.length} photos from yards we've designed and built around Auburn and the Puget Sound. Pick a category, then tap any photo to see it full size.`}
             </p>
           </div>
           <div className="mt-9">

@@ -71,13 +71,14 @@ export default function GalleryGrid({ ids, filters = false }: { ids: string[]; f
         </div>
       )}
 
-      <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-4">
+      {/* Row-major grid (not CSS columns) so the curated best-first order reads left to right, top to bottom. */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {shown.map((p, i) => (
           <button
             key={p.id}
             type="button"
             onClick={() => setIdx(i)}
-            className="group relative block w-full mb-3 sm:mb-4 break-inside-avoid overflow-hidden rounded-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-[#2F7D4F]/50"
+            className="group relative block w-full aspect-[4/3] overflow-hidden rounded-xl bg-[#D9DCCF] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#2F7D4F]/50"
             aria-label={`View larger: ${p.alt}`}
           >
             <img
@@ -89,7 +90,7 @@ export default function GalleryGrid({ ids, filters = false }: { ids: string[]; f
               alt={p.alt}
               loading="lazy"
               decoding="async"
-              className="w-full h-auto group-hover:scale-[1.03] transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
             />
           </button>
         ))}

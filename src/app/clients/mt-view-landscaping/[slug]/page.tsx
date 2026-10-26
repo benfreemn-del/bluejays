@@ -11,7 +11,7 @@ import GalleryGrid from "../_components/gallery-grid";
 import { Photo, Eyebrow, H2, GreenBtn, GhostBtn, JsonLd, head, body } from "../_components/ui";
 import { Reviews, Contact, CtaBand, FaqList, faqSchema, ServiceCards, AreasServed, Breadcrumbs, Footer } from "../_components/sections";
 import { getBase } from "../_lib/base";
-import { BIZ, SITE_URL, PHOTO_PATH, PAGE_SLUGS, SERVICES, serviceBySlug, cityBySlug, HOME_FAQS, yearsInBusiness } from "../_lib/site";
+import { BIZ, SITE_URL, BASE_PATH, PHOTO_PATH, PAGE_SLUGS, SERVICES, serviceBySlug, cityBySlug, HOME_FAQS, yearsInBusiness } from "../_lib/site";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -25,12 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = serviceBySlug(slug) ?? cityBySlug(slug);
   if (!page) return {};
   const url = `${SITE_URL}/${slug}`;
-  const image = `${SITE_URL}${PHOTO_PATH}/${page.hero}-1600.webp`;
+  const image = `${SITE_URL}${BASE_PATH}/og/${page.hero}.jpg`;
   return {
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: url },
-    openGraph: { title: page.title, description: page.description, url, siteName: BIZ.name, type: "website", locale: "en_US", images: [{ url: image }] },
+    openGraph: { title: page.title, description: page.description, url, siteName: BIZ.name, type: "website", locale: "en_US", images: [{ url: image, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image", title: page.title, description: page.description, images: [image] },
   };
 }

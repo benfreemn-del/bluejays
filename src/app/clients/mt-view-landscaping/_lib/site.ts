@@ -62,10 +62,10 @@ export const SERVICES: Service[] = [
   {
     slug: "landscape-design",
     name: "Landscape Design",
-    title: "Landscape Design in Auburn, WA | Mountain View Landscape & Design",
+    title: "Landscape Design in Auburn, WA | Mountain View Landscape",
     h1: "Landscape Design in Auburn, WA",
     description:
-      "Custom landscape design from a family firm working Puget Sound yards since 1976. Tim draws your plan by hand, then our own crew builds it. Free quotes: (253) 638-0500.",
+      "Custom landscape design in Auburn, WA. Tim draws every plan by hand and our own crew builds it. Family-run since 1976. Free quotes: (253) 638-0500.",
     hero: "p124",
     lede:
       "Every yard we build starts on paper. Tim walks your property, listens to how you want to use it, and draws the plan by hand before anyone picks up a shovel.",
@@ -90,7 +90,7 @@ export const SERVICES: Service[] = [
         p: "Some clients want a full front-to-back redo. Others want one problem area fixed, like a soggy side yard or a bare slope. Either way we start with the same plan so the new piece fits with the rest of your property.",
       },
     ],
-    photos: ["p124", "p003", "p094", "p095", "p001", "p013", "p040", "p009", "p118", "p048", "p128", "p125", "p122", "p014"],
+    photos: ["p124", "p009", "p095", "p003", "p002", "p013", "p040", "p001", "p118", "p128", "p125", "p048", "p122", "p014"],
     faqs: [
       { q: "Do you charge for the design?", a: "Quotes are always free. Call (253) 638-0500 and we will talk through your project and what the design step looks like for it." },
       { q: "Can I change the plan once I see it?", a: "Yes. That is the point of drawing it first. We adjust the plan until it feels right, then we build it." },
@@ -101,10 +101,10 @@ export const SERVICES: Service[] = [
   {
     slug: "hardscapes",
     name: "Patios & Hardscapes",
-    title: "Patios, Walkways & Hardscapes in Auburn, WA | Mountain View Landscape & Design",
+    title: "Patios & Hardscapes in Auburn, WA | Mountain View Landscape",
     h1: "Patios, Walkways & Hardscapes in Auburn, WA",
     description:
-      "Flagstone and bluestone patios, paver driveways, natural stone steps, fire pit areas, and walkways built by a family landscape firm in Auburn since 1976. Free quotes.",
+      "Flagstone and bluestone patios, paver driveways, stone steps, and fire pits in Auburn, WA. Family-run since 1976. Free quotes: (253) 638-0500.",
     hero: "p033",
     lede:
       "Stone patios, paths, steps, and driveways are the bones of a good yard. We set them to last through Northwest winters and to look like they always belonged there.",
@@ -140,10 +140,10 @@ export const SERVICES: Service[] = [
   {
     slug: "retaining-walls",
     name: "Retaining Walls",
-    title: "Retaining Walls in Auburn, WA | Mountain View Landscape & Design",
+    title: "Retaining Walls in Auburn, WA | Mountain View Landscape",
     h1: "Retaining Walls in Auburn, WA",
     description:
-      "Block retaining walls, terraced hillsides, rockeries, and garden steps from an Auburn landscape company with nearly five decades on Puget Sound slopes. Free quotes.",
+      "Block retaining walls, terraced hillsides, and rockeries built with proper drainage in Auburn, WA. Family-run since 1976. Call (253) 638-0500.",
     hero: "p131",
     lede:
       "Hillside lots are everywhere around here. A well-built wall turns a slope you cannot use into level lawn, garden terraces, and steps that are a pleasure to walk.",
@@ -179,10 +179,10 @@ export const SERVICES: Service[] = [
   {
     slug: "water-features",
     name: "Water Features",
-    title: "Ponds, Waterfalls & Water Features in Auburn, WA | Mountain View Landscape & Design",
+    title: "Ponds & Waterfalls in Auburn, WA | Mountain View Landscape",
     h1: "Ponds, Waterfalls & Water Features in Auburn, WA",
     description:
-      "Custom backyard ponds, streams, waterfalls, and basalt column fountains, built by Mountain View Landscape & Design. Serving King, Pierce, Snohomish & Kittitas counties since 1976.",
+      "Backyard ponds, streams, waterfalls, and basalt fountains in Auburn, WA, built by a family firm since 1976. See 50+ projects. (253) 638-0500.",
     hero: "p091",
     lede:
       "Water is our favorite thing to build. Ponds, streams that wander across a yard, hillside waterfalls, and bubbling basalt columns by the front door: we have built them all, and they look good in every season, even under snow.",
@@ -208,9 +208,9 @@ export const SERVICES: Service[] = [
       },
     ],
     photos: [
-      "p091", "p086", "p052", "p053", "p054", "p073", "p074", "p077", "p079", "p080", "p087", "p088", "p090", "p084", "p085", "p089",
-      "p001", "p002", "p057", "p058", "p059", "p055", "p056", "p063", "p064", "p066", "p067", "p068", "p124", "p050", "p051", "p039",
-      "p069", "p070", "p072", "p126", "p092", "p093", "p061", "p049", "p062", "p065", "p075", "p076", "p078", "p016", "p032",
+      "p091", "p052", "p086", "p053", "p054", "p063", "p002", "p087", "p088", "p090", "p084", "p085", "p089", "p057", "p059", "p058",
+      "p070", "p124", "p001", "p055", "p056", "p064", "p066", "p067", "p068", "p050", "p051", "p039", "p069", "p072", "p126", "p092",
+      "p093", "p061", "p049", "p062", "p065", "p016", "p032", "p079", "p080", "p073", "p074", "p077", "p078", "p075", "p076",
       "p081", "p082", "p083", "p071",
     ],
     faqs: [
@@ -223,10 +223,10 @@ export const SERVICES: Service[] = [
   {
     slug: "irrigation",
     name: "Irrigation",
-    title: "Sprinkler & Irrigation Systems in Auburn, WA | Mountain View Landscape & Design",
+    title: "Sprinkler Systems in Auburn, WA | Mountain View Landscape",
     h1: "Sprinkler & Irrigation Systems in Auburn, WA",
     description:
-      "Sprinkler system installation and repair from Mountain View Landscape & Design in Auburn. Efficient irrigation that keeps lawns and beds healthy through dry Northwest summers.",
+      "Sprinkler system installation, drip irrigation, and sprinkler repair in Auburn, WA. Family-run landscapers since 1976. Call (253) 638-0500.",
     hero: "p045",
     lede:
       "Northwest summers are drier than people expect. A good sprinkler system puts the right amount of water in the right places, so lawns stay green and new plants make it through July and August.",
@@ -262,10 +262,10 @@ export const SERVICES: Service[] = [
   {
     slug: "sod-installation",
     name: "Sod & Lawns",
-    title: "Sod Installation & New Lawns in Auburn, WA | Mountain View Landscape & Design",
+    title: "Sod Installation in Auburn, WA | Mountain View Landscape",
     h1: "Sod Installation & New Lawns in Auburn, WA",
     description:
-      "Professional sod installation in Auburn and South King County. Proper grading, soil prep, and drainage so your new lawn roots in and stays green. Free quotes: (253) 638-0500.",
+      "Sod installation in Auburn, WA with real grading, soil prep, and drainage so your new lawn roots in fast. Family-run since 1976. (253) 638-0500.",
     hero: "p127",
     lede:
       "Sod gives you a finished lawn the day we leave. Done right, with real soil prep and grading, it roots in fast and stays thick for years.",
@@ -301,10 +301,10 @@ export const SERVICES: Service[] = [
   {
     slug: "native-planting",
     name: "Planting & Trees",
-    title: "Native Plants, Trees & Garden Planting in Auburn, WA | Mountain View Landscape & Design",
+    title: "Trees & Planting in Auburn, WA | Mountain View Landscape",
     h1: "Native Plants, Trees & Garden Planting in Auburn, WA",
     description:
-      "Garden planting, specimen trees, Japanese maples, and Northwest native plants installed by Mountain View Landscape & Design, Auburn WA. Low-water, low-fuss planting that thrives here.",
+      "Northwest native planting, shade gardens, Japanese maples, and specimen trees installed in Auburn, WA. Family-run since 1976. (253) 638-0500.",
     hero: "p128",
     lede:
       "The right plant in the right spot grows into itself instead of fighting the site. We plant gardens built around Northwest natives and proven performers, plus specimen trees that become the centerpiece of a yard.",
@@ -343,10 +343,10 @@ export const SERVICES: Service[] = [
   {
     slug: "night-lights",
     name: "Landscape Lighting",
-    title: "Landscape Lighting in Auburn, WA | Mountain View Landscape & Design",
+    title: "Landscape Lighting in Auburn, WA | Mountain View Landscape",
     h1: "Landscape Lighting in Auburn, WA",
     description:
-      "Low-voltage landscape lighting for paths, steps, driveways, patios, and water features. Designed and installed by Mountain View Landscape & Design in Auburn, WA.",
+      "Low-voltage landscape lighting for paths, steps, driveways, patios, and ponds in Auburn, WA. Family-run since 1976. Call (253) 638-0500.",
     hero: "p007",
     lede:
       "Good lighting lets you enjoy the yard after dark, makes steps and paths safe, and shows off the stone and trees you invested in. Our long winter evenings are when it matters most.",
@@ -377,10 +377,10 @@ export const SERVICES: Service[] = [
   {
     slug: "yard-maintenance",
     name: "Yard Maintenance",
-    title: "Yard Maintenance & Landscape Care in Auburn, WA | Mountain View Landscape & Design",
+    title: "Yard Maintenance in Auburn, WA | Mountain View Landscape",
     h1: "Yard Maintenance & Landscape Care in Auburn, WA",
     description:
-      "Year-round yard maintenance from the family that builds it. Lawn care, pruning, bed care, cleanups, and sprinkler checks in Auburn and South King County. (253) 638-0500.",
+      "Year-round yard maintenance in Auburn, WA from the family that builds it: mowing, pruning, bark, cleanups, sprinklers. Call (253) 638-0500.",
     hero: "p046",
     lede:
       "A landscape is never done. Bonnie runs the crew that keeps our customers' yards looking the way they did on install day, season after season.",
@@ -411,11 +411,11 @@ export const SERVICES: Service[] = [
   {
     slug: "custom-projects",
     name: "Custom Projects",
-    title: "Custom Landscape Projects in Auburn, WA | Mountain View Landscape & Design",
+    title: "Custom Landscaping in Auburn, WA | Mountain View Landscape",
     h1: "Custom Landscape Projects",
     description:
-      "Estate landscapes, hillside waterfalls, lakeside patios, and one-of-a-kind outdoor spaces from Mountain View Landscape & Design. Family-run in Auburn, WA since 1976.",
-    hero: "p094",
+      "Estate landscapes, hillside waterfalls, and lakeside patios from Mountain View Landscape & Design, Auburn, WA, since 1976. (253) 638-0500.",
+    hero: "p002",
     lede:
       "Some yards do not fit a category. Estate front yards with waterfalls, lakeside patios, hillside cascades beside the stairs: if you can picture it, we have probably built something like it.",
     includes: [
@@ -435,7 +435,7 @@ export const SERVICES: Service[] = [
         p: "Start with a photo, a sketch, or just a problem you want solved. Tim will walk the site with you and draw a plan from there.",
       },
     ],
-    photos: ["p094", "p073", "p079", "p080", "p124", "p052", "p037", "p033", "p070", "p007", "p116", "p027", "p074", "p077", "p081", "p082"],
+    photos: ["p002", "p052", "p037", "p124", "p063", "p033", "p070", "p027", "p053", "p007", "p079", "p080", "p094", "p073", "p116"],
     faqs: [
       { q: "Do you take on large estate projects?", a: "Yes. Several projects in our gallery are full estate landscapes with water features, stone work, and planting." },
       { q: "How do custom projects start?", a: "With a free conversation and a site visit. Call (253) 638-0500 or send the form below." },
@@ -457,17 +457,17 @@ export type City = {
   photos: string[];
 };
 
-const cityTitle = (c: string) => `Landscaping in ${c}, WA | Mountain View Landscape & Design`;
+const cityTitle = (c: string) => `Landscaping in ${c}, WA | Mountain View Landscape`;
 
 export const CITIES: City[] = [
   {
     slug: "landscaping-auburn-wa",
     name: "Auburn",
     county: "King",
-    title: "Landscaping & Landscape Design in Auburn, WA | Mountain View Landscape & Design",
+    title: "Landscaping in Auburn, WA | Mountain View Landscape",
     description:
-      "Auburn's family landscape company since 1976. Landscape design, patios, retaining walls, water features, sod, and yard care from our home base in southeast Auburn. (253) 638-0500.",
-    hero: "p037",
+      "Auburn's family landscape company since 1976: design, patios, walls, ponds, sod, and yard care from our shop on SE 313th St. Call (253) 638-0500.",
+    hero: "p031",
     intro:
       "Auburn is home. Our shop is on SE 313th Street, and we have been building and caring for Auburn yards since Tim started in 1976.",
     local: [
@@ -481,7 +481,7 @@ export const CITIES: City[] = [
       },
     ],
     neighborhoods: ["Lea Hill", "Lakeland Hills", "Lake Tapps area", "West Hill", "Downtown Auburn", "Green River valley"],
-    photos: ["p037", "p033", "p091", "p131", "p124", "p031"],
+    photos: ["p031", "p037", "p091", "p131", "p124", "p063"],
   },
   {
     slug: "landscaping-kent-wa",
@@ -489,7 +489,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Kent"),
     description:
-      "Landscape design, patios, retaining walls, water features, and sod for Kent homeowners, from Mountain View Landscape & Design, a family company next door in Auburn since 1976.",
+      "Landscaping in Kent, WA: patios, retaining walls, water features, and sod from a family firm next door in Auburn since 1976. (253) 638-0500.",
     hero: "p036",
     intro:
       "Kent is right next door to our Auburn shop. We build patios, walls, water features, and full landscapes for homes on the East Hill, around Lake Meridian, and down in the valley.",
@@ -512,7 +512,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Covington"),
     description:
-      "Covington landscaping from a family firm minutes away in Auburn: shade gardens for wooded lots, patios, walls, water features, sod, and lighting. Free quotes: (253) 638-0500.",
+      "Landscaping in Covington, WA: shade gardens for wooded lots, patios, walls, ponds, and lawns. Family-run in Auburn since 1976. (253) 638-0500.",
     hero: "p128",
     intro:
       "Covington is minutes from our shop. Many homes here back onto tall firs and green belts, and we love building yards that fit that wooded setting.",
@@ -535,7 +535,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Maple Valley"),
     description:
-      "Maple Valley landscape design and construction: water features, flagstone patios, retaining walls, planting, and lawns from Mountain View Landscape & Design, Auburn WA, since 1976.",
+      "Landscaping in Maple Valley, WA: ponds, streams, flagstone patios, walls, and woodland planting. Family-run since 1976. (253) 638-0500.",
     hero: "p052",
     intro:
       "Maple Valley's big lots and tall evergreens are some of our favorite places to work. There is room here for streams, ponds, and patios that feel tucked into the woods.",
@@ -558,7 +558,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Black Diamond"),
     description:
-      "Black Diamond landscaping, ponds, patios, and acreage landscapes from Mountain View Landscape & Design, just down the road in Auburn. Family-run since 1976. (253) 638-0500.",
+      "Landscaping in Black Diamond, WA: acreage and lakefront landscapes, ponds, and patios. Family-run, just down the road. (253) 638-0500.",
     hero: "p084",
     intro:
       "Black Diamond is just down the road from our shop. Acreage, lakefront around Lake Sawyer, and rural lots call for landscapes on a bigger scale.",
@@ -581,8 +581,8 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Enumclaw"),
     description:
-      "Enumclaw landscaping from Mountain View Landscape & Design: waterfalls, stone patios, retaining walls, lawns, and tough planting for the plateau. Family-run near Auburn since 1976.",
-    hero: "p073",
+      "Landscaping in Enumclaw, WA: waterfalls, stone patios, retaining walls, and hardy planting for the plateau. Family-run since 1976. (253) 638-0500.",
+    hero: "p054",
     intro:
       "Out on the Enumclaw plateau, with Mount Rainier on the horizon, yards deal with open wind, colder winters, and big views. We build landscapes that frame those views and stand up to the weather.",
     local: [
@@ -596,7 +596,7 @@ export const CITIES: City[] = [
       },
     ],
     neighborhoods: ["Enumclaw plateau", "Downtown Enumclaw", "Mud Mountain Road area"],
-    photos: ["p073", "p094", "p076", "p054", "p045", "p131"],
+    photos: ["p054", "p053", "p045", "p131", "p009", "p076"],
   },
 ];
 
@@ -644,3 +644,13 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
 
 export const serviceBySlug = (slug: string) => SERVICES.find((s) => s.slug === slug);
 export const cityBySlug = (slug: string) => CITIES.find((c) => c.slug === slug);
+
+/** Full-gallery order: showcase shots first, process / staging / low-res last. */
+export const GALLERY_LEAD = [
+  "p037", "p052", "p091", "p033", "p124", "p053", "p031", "p063", "p002", "p131", "p045", "p086", "p036", "p054", "p009", "p095",
+  "p128", "p070", "p044", "p027", "p057", "p007", "p021", "p030", "p084", "p001", "p087", "p034", "p013", "p127", "p059", "p008",
+];
+export const GALLERY_LAST = [
+  "p079", "p080", "p073", "p074", "p075", "p076", "p077", "p078", "p094", "p081", "p082", "p083", "p071", "p120", "p006", "p022",
+  "p096", "p097", "p098", "p099", "p100", "p101", "p102", "p103", "p104", "p105", "p106", "p107", "p108", "p109", "p110", "p111",
+];

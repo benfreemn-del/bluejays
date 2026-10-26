@@ -20,10 +20,11 @@ const SIGNATURE = [
   { id: "p033", label: "Flagstone patios", slug: "hardscapes", cls: "" },
   { id: "p131", label: "Retaining walls", slug: "retaining-walls", cls: "" },
   { id: "p124", label: "Complete landscapes", slug: "landscape-design", cls: "" },
-  { id: "p007", label: "Landscape lighting", slug: "night-lights", cls: "" },
+  { id: "p045", label: "Lawns & irrigation", slug: "irrigation", cls: "" },
 ];
 
-const PREVIEW = ["p091", "p037", "p031", "p073", "p128", "p086", "p036", "p001", "p044", "p127", "p079", "p124", "p057", "p030", "p094", "p053"];
+// Best work, no repeats of the hero/mosaic above, no in-progress or fenced shots.
+const PREVIEW = ["p091", "p053", "p031", "p063", "p002", "p086", "p036", "p009", "p128", "p054", "p070", "p095", "p044", "p057", "p027", "p030"];
 
 const STEPS = [
   { n: "1", t: "You reach out", d: "Call or send the short form. Tell us a little about your yard." },
@@ -144,14 +145,14 @@ export default async function MtViewHome() {
               <figcaption className={`${body} text-[13px] font-medium text-[#5C6152] mt-2`}>The plan, drawn by hand</figcaption>
             </figure>
             <figure className="mt-8">
-              <Photo id="p001" className="w-full aspect-[3/4] object-cover rounded-xl" sizes="(min-width: 1024px) 25vw, 50vw" />
+              <Photo id="p002" className="w-full aspect-[3/4] object-cover rounded-xl" sizes="(min-width: 1024px) 25vw, 50vw" />
               <figcaption className={`${body} text-[13px] font-medium text-[#5C6152] mt-2`}>A finished yard</figcaption>
             </figure>
           </div>
         </div>
       </section>
 
-      <CtaBand base={base} photoId="p052" line={`${years} years of yards across the Puget Sound, beautiful in every season.`} />
+      <CtaBand base={base} photoId="p053" line={`${years} years of yards across the Puget Sound, beautiful in every season.`} />
 
       {/* ───── gallery preview ───── */}
       <section id="gallery" className="bg-[#E7EADF] py-14 sm:py-20">

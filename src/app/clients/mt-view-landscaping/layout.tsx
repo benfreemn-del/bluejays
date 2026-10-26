@@ -30,9 +30,9 @@ const inter = Inter({
 });
 
 const OG_IMAGE = `${SITE_URL}${BASE_PATH}/og-image.jpg`;
-const TITLE = "Mountain View Landscape & Design | Landscaper in Auburn, WA Since 1976";
+const TITLE = "Mountain View Landscape & Design | Auburn, WA Landscaper";
 const DESCRIPTION =
-  "Family-owned landscape design, patios, retaining walls, ponds and waterfalls, sod, irrigation, lighting, and yard care in Auburn and the Puget Sound since 1976. Free quotes: (253) 638-0500.";
+  "Family-run landscaper in Auburn, WA since 1976: landscape design, patios, retaining walls, ponds and waterfalls, sod, and yard care. Free quotes: (253) 638-0500.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
