@@ -26,12 +26,11 @@ export const runtime = "nodejs";
 
 const CLIENT_EMAIL = "mtviewlandscapeonline@gmail.com";
 const CLIENT_NAME = "Mountain View Landscape & Design";
-// CC the professional-facing inbox on every lead so nothing falls
-// through if either address goes quiet (gmail = working inbox the
-// Hunsakers check daily; info@ = canonical brand-facing address on
-// the domain). Locked 2026-05-19 — see CLAUDE.md "BOTH addresses"
-// answer when this site went live.
-const CLIENT_CC_EMAILS = ["info@mountainviewlandscape.com"];
+// 2026-10-26: info@mountainviewlandscape.com REMOVED. That domain lapsed
+// and is listed for sale at HugeDomains, so the CC bounced (or worse, would
+// land with whoever buys it). The gmail above is the working inbox. Add a
+// CC back only on a domain the Hunsakers control (e.g. @mtviewlandscaping.com).
+const CLIENT_CC_EMAILS: string[] = [];
 
 // in-memory rate limit — resets on deploy, fine for low-volume contact form
 const recentByIp = new Map<string, number[]>();

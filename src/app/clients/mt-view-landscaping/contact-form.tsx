@@ -12,7 +12,8 @@ import { ArrowRight, CheckCircle, Warning } from "@phosphor-icons/react";
  * site — Bark color, the visual exclamation point.
  *
  * Posts to /api/clients/mt-view-landscaping/contact which forwards to
- * the Hunsakers' gmail + CCs info@mountainviewlandscape.com.
+ * the Hunsakers' gmail (the old info@mountainviewlandscape.com CC was
+ * dropped 2026-10-26: that domain lapsed).
  */
 export default function MtViewContactForm({
   services,

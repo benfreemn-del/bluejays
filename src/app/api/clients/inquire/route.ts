@@ -127,8 +127,8 @@ const SLUG_CONFIG: Record<
   },
   "mt-view-landscaping": {
     // Primary inbox is the gmail the Hunsakers check daily — locked
-    // 2026-05-19 launch prep. The brand inbox info@mountainviewlandscape.com
-    // is CC'd by the dedicated contact route at
+    // 2026-05-19 launch prep. (The old info@mountainviewlandscape.com CC
+    // was dropped 2026-10-26: that domain lapsed.) Leads post to
     // /api/clients/mt-view-landscaping/contact (CLIENT_CC_EMAILS), which
     // is what the showcase form actually posts to. This SLUG_CONFIG
     // entry only fires as a fallback if something ever wires Mt View

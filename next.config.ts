@@ -193,6 +193,17 @@ const nextConfig: NextConfig = {
           source: '/favicon.ico',
           destination: '/clients/elite-hardscapes-and-landscapes/favicon.ico',
         },
+        // Mountain View Landscape & Design (mtviewlandscaping.com): same fix.
+        {
+          has: [{ type: 'host', value: 'mtviewlandscaping.com' }],
+          source: '/favicon.ico',
+          destination: '/clients/mt-view-landscaping/favicon.ico',
+        },
+        {
+          has: [{ type: 'host', value: 'www.mtviewlandscaping.com' }],
+          source: '/favicon.ico',
+          destination: '/clients/mt-view-landscaping/favicon.ico',
+        },
         // Pine & Particle Co. rebranded to Olympic Inspections & Testing
         // 2026-05-05. The pineparticle.com domain is in transfer; while
         // it still resolves it serves the OIT site directly. Once the
