@@ -66,7 +66,7 @@ export const SERVICES: Service[] = [
     h1: "Landscape Design in Auburn, WA",
     description:
       "Custom landscape design in Auburn, WA. Tim draws every plan by hand and our own crew builds it. Family-run since 1976. Free quotes: (253) 638-0500.",
-    hero: "p124",
+    hero: "p009",
     lede:
       "Every yard we build starts on paper. Tim walks your property, listens to how you want to use it, and draws the plan by hand before anyone picks up a shovel.",
     includes: [
@@ -90,7 +90,7 @@ export const SERVICES: Service[] = [
         p: "Some clients want a full front-to-back redo. Others want one problem area fixed, like a soggy side yard or a bare slope. Either way we start with the same plan so the new piece fits with the rest of your property.",
       },
     ],
-    photos: ["p124", "p009", "p095", "p003", "p002", "p013", "p040", "p001", "p118", "p128", "p125", "p048", "p122", "p014"],
+    photos: ["p009", "p124", "p095", "p003", "p002", "p013", "p040", "p001", "p118", "p128", "p125", "p048", "p122", "p014"],
     faqs: [
       { q: "Do you charge for the design?", a: "Quotes are always free. Call (253) 638-0500 and we will talk through your project and what the design step looks like for it." },
       { q: "Can I change the plan once I see it?", a: "Yes. That is the point of drawing it first. We adjust the plan until it feels right, then we build it." },
@@ -647,7 +647,7 @@ export const cityBySlug = (slug: string) => CITIES.find((c) => c.slug === slug);
 
 /** Full-gallery order: showcase shots first, process / staging / low-res last. */
 export const GALLERY_LEAD = [
-  "p037", "p052", "p091", "p033", "p124", "p053", "p031", "p063", "p002", "p131", "p045", "p086", "p036", "p054", "p009", "p095",
+  "p124", "p052", "p091", "p033", "p037", "p053", "p031", "p063", "p002", "p131", "p045", "p086", "p036", "p054", "p009", "p095",
   "p128", "p070", "p044", "p027", "p057", "p007", "p021", "p030", "p084", "p001", "p087", "p034", "p013", "p127", "p059", "p008",
 ];
 export const GALLERY_LAST = [

@@ -19,7 +19,7 @@ const SIGNATURE = [
   { id: "p052", label: "Ponds & waterfalls", slug: "water-features", cls: "col-span-2 row-span-2" },
   { id: "p033", label: "Flagstone patios", slug: "hardscapes", cls: "" },
   { id: "p131", label: "Retaining walls", slug: "retaining-walls", cls: "" },
-  { id: "p124", label: "Complete landscapes", slug: "landscape-design", cls: "" },
+  { id: "p009", label: "Complete landscapes", slug: "landscape-design", cls: "" },
   { id: "p045", label: "Lawns & irrigation", slug: "irrigation", cls: "" },
 ];
 
@@ -43,8 +43,10 @@ export default async function MtViewHome() {
 
       {/* ───── hero: their work, full bleed ───── */}
       <section className="relative isolate overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[78vh] flex items-end">
-        <Photo id="p037" priority sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/90 via-[#11140f]/45 to-[#11140f]/10" />
+        <Photo id="p124" priority sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/85 via-[#11140f]/35 to-[#11140f]/5" />
+        {/* Left shade keeps the headline readable over the bright fountain; the house and garden stay bright on the right. */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#11140f]/75 via-[#11140f]/35 to-transparent" />
         <div className="max-w-6xl mx-auto px-5 pb-12 sm:pb-16 pt-32 w-full">
           <Eyebrow light>Family-run since 1976 · Auburn, WA</Eyebrow>
           <h1 className="mt-4">
