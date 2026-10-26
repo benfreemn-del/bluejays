@@ -123,7 +123,7 @@ export default async function Page({ params }: Props) {
             <Eyebrow>Our {service.name.toLowerCase()} work</Eyebrow>
             <H2 className="mt-3">Real projects, real yards.</H2>
             <p className={`${body} text-[17px] leading-[1.6] text-[#3E4435] mt-3 max-w-2xl`}>
-              {service.photos.length} photos of {service.name.toLowerCase()} we&apos;ve built. Tap any photo to see it big.
+              {`${service.photos.length} photos of ${service.name.toLowerCase()} we've built. Tap any photo to see it big.`}
             </p>
             <div className="mt-8">
               <GalleryGrid ids={service.photos} />
