@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: BIZ.name,
     type: "website",
     locale: "en_US",
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Fountain motor court and perennial gardens built by Mountain View Landscape & Design" }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Front-yard pond with a boulder waterfall built by Mountain View Landscape & Design" }],
   },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [OG_IMAGE] },
   // Mountain View's own icons, otherwise the root layout's BlueJays favicon shows in tabs/bookmarks.

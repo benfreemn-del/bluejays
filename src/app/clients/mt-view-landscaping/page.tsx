@@ -19,7 +19,7 @@ const SIGNATURE = [
   { id: "p052", label: "Ponds & waterfalls", slug: "water-features", cls: "col-span-2 row-span-2" },
   { id: "p033", label: "Flagstone patios", slug: "hardscapes", cls: "" },
   { id: "p131", label: "Retaining walls", slug: "retaining-walls", cls: "" },
-  { id: "p009", label: "Complete landscapes", slug: "landscape-design", cls: "" },
+  { id: "p124", label: "Complete landscapes", slug: "landscape-design", cls: "" },
   { id: "p045", label: "Lawns & irrigation", slug: "irrigation", cls: "" },
 ];
 
@@ -33,14 +33,8 @@ const STEPS = [
   { n: "4", t: "We build it", d: "Our own crew builds it, and we can keep it looking great all year." },
 ];
 
-// Review toggle (2026-10-26): ?hero=current shows the photo on their old
-// Squarespace homepage (p001) so Ben can compare it with the new pick (p124).
-// Remove once a hero is chosen.
-const HERO_OPTIONS: Record<string, string> = { current: "p001" };
-
-export default async function MtViewHome({ searchParams }: { searchParams: Promise<{ hero?: string }> }) {
+export default async function MtViewHome() {
   const base = await getBase();
-  const heroId = HERO_OPTIONS[(await searchParams).hero ?? ""] ?? "p124";
   const years = yearsInBusiness();
   return (
     <main className={`${body} bg-[#F5F1E8]`}>
@@ -49,7 +43,8 @@ export default async function MtViewHome({ searchParams }: { searchParams: Promi
 
       {/* ───── hero: their work, full bleed ───── */}
       <section className="relative isolate overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[78vh] flex items-end">
-        <Photo id={heroId} priority hero sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
+        {/* Hero = the photo from their Squarespace homepage (Ben chose it 2026-10-26). */}
+        <Photo id="p001" priority hero sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/85 via-[#11140f]/35 to-[#11140f]/5" />
         {/* Left shade keeps the headline readable over the bright fountain; the house and garden stay bright on the right. */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#11140f]/75 via-[#11140f]/35 to-transparent" />
