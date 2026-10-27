@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ROOT_SUBPATHS as MT_VIEW_SUBPATHS,
+  LEGACY_REDIRECTS as MT_VIEW_REDIRECTS,
+} from "@/app/clients/mt-view-landscaping/_lib/site";
 
 /**
  * Two passwords supported per Q4=A locked 2026-05-08:
@@ -249,7 +253,12 @@ const PUBLIC_API_PATHS = [
  *   - A generated /preview/{prospect-id}              (Hector pattern,
  *     where the site is rendered from prospects DB row + theme)
  */
-type DomainRewrite = { base: string; subpaths: string[] };
+type DomainRewrite = {
+  base: string;
+  subpaths: string[];
+  /** Exact old-site paths that 301 somewhere specific instead of to "/". */
+  redirects?: Record<string, string>;
+};
 
 const CLIENT_DOMAIN_MAP: Record<string, string | DomainRewrite> = {
   // Hector Landscaping & Design — bespoke custom showcase at
@@ -283,6 +292,16 @@ const CLIENT_DOMAIN_MAP: Record<string, string | DomainRewrite> = {
   "elitehardscapesnw.com": {
     base: "/clients/elite-hardscapes-and-landscapes",
     subpaths: ["/llms.txt", "/llms-full.txt", "/sitemap.xml", "/robots.txt"],
+  },
+  // Mountain View Landscape & Design (Tim + Bonnie Hunsaker, Auburn WA).
+  // Multi-page local-SEO site replacing their Squarespace build. Service
+  // slugs match the old Squarespace URLs exactly so earned rankings carry
+  // over; renamed/retired old URLs 301 via `redirects`. The route list is
+  // shared with the pages themselves (clients/mt-view-landscaping/_lib/site.ts).
+  "mtviewlandscaping.com": {
+    base: "/clients/mt-view-landscaping",
+    subpaths: MT_VIEW_SUBPATHS,
+    redirects: MT_VIEW_REDIRECTS,
   },
   // Zenith Sports / TEKKY — multi-page showcase. Phase 1 deliverable
   // ($997 + WA tax, locked 2026-05-20) requires the SEO surfaces
@@ -328,6 +347,11 @@ export async function middleware(request: NextRequest) {
       const rewriteUrl = new URL(showcasePath, request.url);
       rewriteUrl.search = request.nextUrl.search;
       return NextResponse.rewrite(rewriteUrl);
+    }
+    // Old-site URL with a specific new home (e.g. a renamed service page).
+    const legacyTarget = typeof entry === "object" ? entry.redirects?.[pathname.replace(/\/+$/, "")] : undefined;
+    if (legacyTarget) {
+      return NextResponse.redirect(new URL(legacyTarget, request.url), 301);
     }
     // Multi-page entry: known subpath → rewrite to base + subpath. This
     // is how tekky.org/shop, /llms.txt, /sitemap.xml etc resolve to

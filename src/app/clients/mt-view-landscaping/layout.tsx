@@ -1,28 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import BackToTopButton from "@/components/BackToTopButton";
+import { BIZ, SITE_URL, BASE_PATH, PHOTO_PATH, SERVICES, CITIES, FOUNDED } from "./_lib/site";
 
 /**
- * Layout for /clients/mt-view-landscaping — Mountain View Landscape & Design Inc.
- * (Auburn, WA). Custom-tier bespoke build for the Hunsaker family's 49-year-old
- * landscape firm serving King, Pierce, Snohomish, and Kittitas counties.
+ * Layout for Mountain View Landscape & Design Inc. (Tim + Bonnie Hunsaker,
+ * Auburn WA, since 1976). Served at the root of mtviewlandscaping.com via
+ * CLIENT_DOMAIN_MAP (src/middleware.ts) and at /clients/mt-view-landscaping
+ * on bluejayportfolio.com as the demo / pre-launch preview.
  *
- * v4 redesign (2026-05-19): editorial monograph treatment — high-contrast
- * Playfair Display headlines + Inter body, warm-paper background, restrained
- * motion. Original spec called for Fraunces but the soft-axis variant read
- * mushy on real photos at scale; Playfair's higher contrast (thick/thin
- * stroke) holds its own against the hero image. Reference world: Olson
- * Kundig project pages, Aman resort microsites, Cereal Magazine.
- *
- * SEO HARDENING (audit 2026-05-19, launch-prep): full metadata override,
- * Landscaper + LocalBusiness JSON-LD schema. Coexists additively with the
- * root BlueJays ProfessionalService schema.
+ * Canonicals, og:url and JSON-LD ids ALWAYS point at mtviewlandscaping.com,
+ * so the bluejayportfolio.com copy never competes with the real domain.
+ * Pages override title/description/canonical; this sets the defaults.
  */
 
-// Playfair Display — classic high-contrast modern serif. Editorial weight,
-// holds its own at large display sizes (hero h1 ~88px) without the rounded
-// "soft" feel that Fraunces gave us. Weights: 400 (regular h2/body-serif),
-// 500 (h3/emphasis), 700 (h1 hero / strong moments).
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -38,181 +29,117 @@ const inter = Inter({
   display: "swap",
 });
 
-const SITE_URL = "https://bluejayportfolio.com";
-const PAGE_PATH = "/clients/mt-view-landscaping";
-const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
-const HERO_OG_IMAGE = `${SITE_URL}/clients/mt-view-landscaping/real/proj-olano.webp`;
-
-const TITLE =
-  "Mountain View Landscape & Design — Custom Landscapes & Maintenance · Auburn, WA · Serving King, Pierce, Snohomish & Kittitas Counties";
+const OG_IMAGE = `${SITE_URL}${BASE_PATH}/og-image.jpg`;
+const TITLE = "Mountain View Landscape & Design | Auburn, WA Landscaper";
 const DESCRIPTION =
-  "Family-owned since 1976. Tim and Bonnie Hunsaker design, build, and maintain custom landscapes across the Puget Sound region — hardscapes, water features, retaining walls, irrigation, sod, native planting, night lighting, and year-round maintenance plans from $180/mo. Call (253) 638-0500.";
+  "Family landscaper in Auburn, WA with 50 years' experience. Licensed & insured. Design, patios, walls, ponds, sod, and yard care. Call (253) 638-0500.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  metadataBase: new URL(SITE_URL),
+  title: { absolute: TITLE },
   description: DESCRIPTION,
-  keywords: [
-    "landscaper Auburn WA",
-    "landscape design Auburn",
-    "landscape installation King County",
-    "landscape maintenance Pierce County",
-    "retaining walls Auburn WA",
-    "hardscape contractor Puget Sound",
-    "water feature installation Auburn",
-    "irrigation installer King County WA",
-    "sod installation Auburn",
-    "landscape lighting Auburn WA",
-    "Tim Hunsaker landscaping",
-    "Mountain View Landscape Design",
-    "year round landscape maintenance Auburn",
-    "native plant landscaping Pacific Northwest",
-    "landscape contractor Snohomish County",
-    "landscape contractor Kittitas County",
-    "family owned landscaper Washington",
-  ],
   robots: { index: true, follow: true },
-  alternates: { canonical: PAGE_URL },
+  alternates: { canonical: `${SITE_URL}/` },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    url: PAGE_URL,
-    siteName: "Mountain View Landscape & Design",
+    url: `${SITE_URL}/`,
+    siteName: BIZ.name,
     type: "website",
     locale: "en_US",
-    images: [
-      {
-        url: HERO_OG_IMAGE,
-        width: 2000,
-        height: 1334,
-        alt: "Natural stone steps winding up a planted garden hillside — Mountain View Landscape & Design, Auburn WA",
-      },
-    ],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Front-yard pond with a boulder waterfall built by Mountain View Landscape & Design" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: DESCRIPTION,
-    images: [HERO_OG_IMAGE],
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [OG_IMAGE] },
+  // Mountain View's own icons, otherwise the root layout's BlueJays favicon shows in tabs/bookmarks.
+  icons: {
+    icon: [
+      { url: `${BASE_PATH}/icon-32.png`, sizes: "32x32", type: "image/png" },
+      { url: `${BASE_PATH}/icon-192.png`, sizes: "192x192", type: "image/png" },
+      { url: `${BASE_PATH}/icon-512.png`, sizes: "512x512", type: "image/png" },
+    ],
+    apple: `${BASE_PATH}/apple-touch-icon.png`,
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F5F1E8",
+  themeColor: "#234E36",
   width: "device-width",
   initialScale: 1,
 };
 
-const mtViewSchema = {
+const businessSchema = {
   "@context": "https://schema.org",
-  "@type": "HomeAndConstructionBusiness",
-  "@id": `${PAGE_URL}#business`,
-  additionalType: "https://www.wikidata.org/wiki/Q1064538",
-  name: "Mountain View Landscape & Design",
-  alternateName: [
-    "Mountain View Landscape",
-    "Mt View Landscape",
-    "Mountain View Landscape & Design Inc.",
-  ],
+  "@type": ["HomeAndConstructionBusiness", "LocalBusiness"],
+  "@id": `${SITE_URL}/#business`,
+  name: BIZ.name,
+  legalName: BIZ.legalName,
+  alternateName: ["Mountain View Landscape", "Mt View Landscaping", "Mountain View Landscaping & Design"],
   description:
-    "Family-owned landscape design, installation, and maintenance firm founded by Tim Hunsaker in 1976 (originally Shamrock Landscaping). Bonnie Hunsaker runs the maintenance side. Every discipline in-house: hardscapes, water features, retaining walls, irrigation, sod, native planting, night lighting, and year-round maintenance plans.",
-  url: PAGE_URL,
-  image: HERO_OG_IMAGE,
-  logo: "https://images.squarespace-cdn.com/content/v1/66761a64a49d3b0729a45e39/c7d25e65-6d11-45a8-a51f-87fc78e33417/Untitled+design+%2818%29.png?format=1500w",
-  telephone: "+1-253-638-0500",
-  email: "mtviewlandscapeonline@gmail.com",
-  foundingDate: "1976",
-  priceRange: "$$",
+    "Family-owned landscape design, installation, and maintenance company founded by Tim Hunsaker (landscaping since 1976, originally as Shamrock Landscaping with his brothers). Bonnie Hunsaker runs the maintenance crew. Design, hardscapes, retaining walls, water features, irrigation, sod, native planting, landscape lighting, and yard maintenance.",
+  url: `${SITE_URL}/`,
+  image: [OG_IMAGE, `${SITE_URL}${PHOTO_PATH}/p091-1600.webp`, `${SITE_URL}${PHOTO_PATH}/p033-1600.webp`],
+  logo: `${SITE_URL}${BASE_PATH}/icon-512.png`,
+  telephone: BIZ.phoneE164,
+  email: BIZ.email,
+  foundingDate: "2003", // incorporation (WA UBI 602 332 722); Tim's experience dates to 1976
+  identifier: { "@type": "PropertyValue", propertyID: "WA L&I contractor license", value: "MTVIEVL973QP" },
+  founder: [{ "@type": "Person", name: "Tim Hunsaker" }, { "@type": "Person", name: "Bonnie Hunsaker" }],
   address: {
     "@type": "PostalAddress",
     streetAddress: "18225 Southeast 313th Street",
-    addressLocality: "Auburn",
-    addressRegion: "WA",
-    postalCode: "98092",
+    addressLocality: BIZ.city,
+    addressRegion: BIZ.region,
+    postalCode: BIZ.zip,
     addressCountry: "US",
   },
-  geo: { "@type": "GeoCoordinates", latitude: 47.3207062, longitude: -122.0984311 },
-  areaServed: [
-    "Auburn, WA", "Seattle, WA", "Bellevue, WA", "Kent, WA", "Renton, WA",
-    "Federal Way, WA", "Tacoma, WA", "Puyallup, WA", "Bonney Lake, WA",
-    "Gig Harbor, WA", "Everett, WA", "Lynnwood, WA", "Bothell, WA",
-    "Ellensburg, WA", "Cle Elum, WA",
-  ].map((city) => ({ "@type": "City", name: city })),
+  geo: { "@type": "GeoCoordinates", latitude: BIZ.lat, longitude: BIZ.lng },
+  hasMap: BIZ.mapHref,
   openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "08:00",
-      closes: "17:00",
-    },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:00", closes: "17:00" },
   ],
-  founder: [
-    { "@type": "Person", name: "Tim Hunsaker", jobTitle: "Founder & Lead Designer" },
-    { "@type": "Person", name: "Bonnie Hunsaker", jobTitle: "Maintenance Director" },
+  areaServed: [
+    ...BIZ.counties.map((c) => ({ "@type": "AdministrativeArea", name: `${c} County, WA` })),
+    ...CITIES.map((c) => ({ "@type": "City", name: `${c.name}, WA` })),
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Landscape Services",
-    itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Landscape Design & Installation", description: "End-to-end residential and commercial design and installation. Every discipline in-house." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Hardscapes & Stoneworks", description: "Retaining walls, patios, walkways, fire features, decorative stoneworks." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Water Features", description: "Ponds, waterfalls, streams, and fountain installations." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Irrigation Systems", description: "Smart irrigation design and installation tuned to Puget Sound rainfall." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sod & Native Planting", description: "Premium sod installation and native-plant landscaping." } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Landscape Lighting", description: "Low-voltage LED path, accent, security, and architectural lighting." } },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Year-Round Maintenance Plans",
-          description: "Three-tier recurring maintenance: Essentials, Full Care (most popular), Estate. Starting at $180/mo.",
-          offers: {
-            "@type": "AggregateOffer",
-            priceCurrency: "USD",
-            lowPrice: "180",
-            highPrice: "420",
-            priceSpecification: {
-              "@type": "UnitPriceSpecification",
-              priceCurrency: "USD",
-              referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "MON" },
-            },
-          },
-        },
-      },
-    ],
+    name: "Landscape services",
+    itemListElement: SERVICES.map((s) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: s.name, url: `${SITE_URL}/${s.slug}`, description: s.description },
+    })),
   },
   knowsAbout: [
-    "Landscape design", "Hardscape construction", "Retaining wall engineering",
-    "Water feature installation", "Irrigation systems", "Sod installation",
-    "Native plant landscaping", "Pacific Northwest horticulture",
-    "Landscape lighting design", "Year-round landscape maintenance",
-    "Seasonal pruning", "Climate-smart planting",
+    "Landscape design", "Hardscape construction", "Flagstone patios", "Retaining walls",
+    "Ponds and waterfalls", "Irrigation systems", "Sod installation", "Native plant landscaping",
+    "Landscape lighting", "Landscape maintenance", "Pacific Northwest horticulture",
   ],
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: "5.0",
-    reviewCount: "10",
+    ratingValue: BIZ.googleRating.toFixed(1),
+    reviewCount: String(BIZ.googleReviewCount),
     bestRating: "5",
     worstRating: "1",
   },
-  sameAs: [
-    "https://mtviewlandscaping.com",
-    "https://www.google.com/maps/place/Mountain+View+Landscape+%26+Design/@47.3207062,-122.0984311,17z",
-  ],
+  sameAs: [BIZ.mapHref],
 };
 
-export default function MtViewLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: `${SITE_URL}/`,
+  name: BIZ.name,
+  publisher: { "@id": `${SITE_URL}/#business` },
+};
+
+export default function MtViewLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={`${playfair.variable} ${inter.variable}`}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(mtViewSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
       {children}
-      <BackToTopButton bg="#3E4A36" fg="#F5F1E8" />
+      <BackToTopButton bg="#234E36" fg="#F5F1E8" />
     </div>
   );
 }

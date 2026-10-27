@@ -18,10 +18,15 @@ const SCROLL_THRESHOLD = 120;
 
 export default function FloatingAuditCTA() {
   const pathname = usePathname() || "/";
+  // Server render can't see the hostname, and a client domain's homepage is a
+  // rewrite whose pathname is also "/". Defaulting to "portfolio" on the server
+  // put a BlueJays /audit link into the HTML of every client homepage
+  // (mtviewlandscaping.com, elitehardscapesnw.com, ...) for crawlers to read.
+  // So: decide only in the browser, and render nothing until scrolled.
   const isPortfolioDomain =
-    typeof window === "undefined" ||
-    PORTFOLIO_HOSTNAMES.some((h) => window.location.hostname === h) ||
-    window.location.hostname.endsWith(".vercel.app");
+    typeof window !== "undefined" &&
+    (PORTFOLIO_HOSTNAMES.some((h) => window.location.hostname === h) ||
+      window.location.hostname.endsWith(".vercel.app"));
   const allowed = isPortfolioDomain && ALLOW_PATTERNS.some((rx) => rx.test(pathname));
   const [visible, setVisible] = useState(false);
 
@@ -33,7 +38,9 @@ export default function FloatingAuditCTA() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [allowed]);
 
-  if (!allowed) return null;
+  // `visible` only flips true in the effect, so server HTML and first client
+  // render are both null: no hydration mismatch, no link in crawled HTML.
+  if (!allowed || !visible) return null;
 
   return (
     <Link
