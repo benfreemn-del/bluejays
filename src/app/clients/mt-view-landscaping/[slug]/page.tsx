@@ -88,7 +88,7 @@ export default async function Page({ params }: Props) {
         </section>
 
         <section className="relative overflow-hidden bg-[#FBF8F1] py-12 sm:py-16">
-          <Botanical kind="leaf" spot="bl" rotate={40} size={210} />
+          <Botanical kind="leaf" spot="bl" tone="gold" rotate={40} size={210} />
           <div className="relative max-w-6xl mx-auto px-5">
             <Breadcrumbs base={base} items={[{ name: service.name }]} />
             <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 mt-6">
@@ -120,7 +120,8 @@ export default async function Page({ params }: Props) {
           </div>
         </section>
 
-        <section className="bg-[#E7EADF] py-14 sm:py-20">
+        <section className="relative overflow-hidden bg-[#E7EADF] py-14 sm:py-20">
+          <Botanical kind="fern" spot="tr" tone="teal" rotate={-28} size={240} phone />
           <div className="relative max-w-6xl mx-auto px-5">
             <Eyebrow>Our {service.name.toLowerCase()} work</Eyebrow>
             <H2 className="mt-3">Real projects, real yards.</H2>
@@ -136,7 +137,8 @@ export default async function Page({ params }: Props) {
         <Reviews limit={3} />
         <FaqList faqs={service.faqs} title={`${service.name} questions`} />
 
-        <section className="bg-[#F5F1E8] py-14 sm:py-18">
+        <section className="relative overflow-hidden bg-[#F5F1E8] py-14 sm:py-18">
+          <Botanical kind="maple" spot="tr" tone="rust" rotate={-16} size={200} />
           <div className="relative max-w-6xl mx-auto px-5">
             <Eyebrow>Often paired with</Eyebrow>
             <H2 className="mt-3 !text-[28px] sm:!text-[36px]">More of what we do</H2>
@@ -188,7 +190,7 @@ export default async function Page({ params }: Props) {
       </section>
 
       <section className="relative overflow-hidden bg-[#FBF8F1] py-12 sm:py-16">
-        <Botanical kind="maple" spot="bl" rotate={24} size={210} />
+        <Botanical kind="maple" spot="bl" tone="rust" rotate={24} size={210} />
         <div className="relative max-w-6xl mx-auto px-5">
           <Breadcrumbs base={base} items={[{ name: `Landscaping in ${c.name}` }]} />
           <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 mt-6">
@@ -228,8 +230,9 @@ export default async function Page({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-[#F5F1E8] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#F5F1E8] py-14 sm:py-20">
+        <Botanical kind="leaf" spot="tr" tone="gold" rotate={-22} size={200} phone />
+        <div className="relative max-w-6xl mx-auto px-5">
           <Eyebrow>Services for {c.name} homes</Eyebrow>
           <H2 className="mt-3">Everything your yard needs.</H2>
           <div className="mt-9">
@@ -238,8 +241,9 @@ export default async function Page({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-[#E7EADF] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#E7EADF] py-14 sm:py-20">
+        <Botanical kind="fern" spot="tr" tone="teal" rotate={-26} size={220} />
+        <div className="relative max-w-6xl mx-auto px-5">
           <Eyebrow>A few of our projects</Eyebrow>
           <H2 className="mt-3">The kind of work we do.</H2>
           <div className="mt-8">

@@ -88,8 +88,9 @@ export default async function MtViewHome() {
       </section>
 
       {/* ───── signature work mosaic ───── */}
-      <section className="bg-[#FBF8F1] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-20">
+        <Botanical kind="leaf" spot="bl" tone="teal" rotate={30} size={200} phone />
+        <div className="relative max-w-6xl mx-auto px-5">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="max-w-xl">
               <Eyebrow>Our work</Eyebrow>
@@ -115,7 +116,7 @@ export default async function MtViewHome() {
 
       {/* ───── services ───── */}
       <section id="services" className="relative overflow-hidden bg-[#F5F1E8] py-14 sm:py-20 scroll-mt-20">
-        <Botanical kind="maple" spot="tr" rotate={-18} />
+        <Botanical kind="maple" spot="tr" tone="rust" rotate={-18} phone />
         <Botanical kind="fern" spot="br" rotate={20} size={300} wideOnly />
         <div className="relative max-w-6xl mx-auto px-5">
           <div className="max-w-xl">
@@ -133,7 +134,7 @@ export default async function MtViewHome() {
 
       {/* ───── we draw it first ───── */}
       <section className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-20">
-        <Botanical kind="leaf" spot="bl" rotate={35} size={220} />
+        <Botanical kind="leaf" spot="bl" tone="gold" rotate={35} size={220} />
         <div className="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-9 lg:gap-14 items-center">
           <div className="order-2 lg:order-1">
             <Eyebrow>How it starts</Eyebrow>
@@ -162,8 +163,10 @@ export default async function MtViewHome() {
       <CtaBand base={base} photoId="p053" line={`${years} years of yards across the Puget Sound, beautiful in every season.`} />
 
       {/* ───── gallery preview ───── */}
-      <section id="gallery" className="bg-[#E7EADF] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section id="gallery" className="relative overflow-hidden bg-[#E7EADF] py-14 sm:py-20">
+        <Botanical kind="fern" spot="tr" tone="teal" rotate={-25} size={240} phone />
+        <Botanical kind="maple" spot="bl" tone="rust" rotate={-12} size={180} />
+        <div className="relative max-w-6xl mx-auto px-5">
           <div className="max-w-xl">
             <Eyebrow>Recent and favorite projects</Eyebrow>
             <H2 className="mt-3">Yards we&apos;ve built.</H2>
@@ -181,8 +184,10 @@ export default async function MtViewHome() {
       </section>
 
       {/* ───── about ───── */}
-      <section id="about" className="bg-[#FBF8F1] py-14 sm:py-20 scroll-mt-20">
-        <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-9 lg:gap-14 items-center">
+      <section id="about" className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-20 scroll-mt-20">
+        <Botanical kind="leaf" spot="tr" tone="gold" rotate={-20} size={180} />
+        <Botanical kind="maple" spot="br" tone="rust" rotate={18} size={170} phone />
+        <div className="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-9 lg:gap-14 items-center">
           <div className="grid grid-cols-2 gap-4">
             <Photo id="p011" className="w-full aspect-[3/4] object-cover object-top rounded-xl" sizes="(min-width: 1024px) 25vw, 50vw" alt="Tim Hunsaker, founder of Mountain View Landscape & Design" />
             <Photo id="p012" className="w-full aspect-[3/4] object-cover object-top rounded-xl mt-8" sizes="(min-width: 1024px) 25vw, 50vw" alt="Bonnie Hunsaker, co-owner of Mountain View Landscape & Design" />
@@ -208,7 +213,7 @@ export default async function MtViewHome() {
 
       {/* ───── how it works ───── */}
       <section className="relative overflow-hidden bg-[#EDF3EC] py-14 sm:py-20">
-        <Botanical kind="fern" spot="tr" rotate={-35} size={260} />
+        <Botanical kind="fern" spot="tr" rotate={-35} size={260} phone />
         <div className="relative max-w-6xl mx-auto px-5">
           <div className="max-w-xl">
             <Eyebrow>How it works</Eyebrow>

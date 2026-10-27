@@ -46,7 +46,8 @@ export default async function GalleryPage() {
       />
       <Header base={base} />
       <section className="relative overflow-hidden bg-[#E7EADF] pt-10 sm:pt-14 pb-14 sm:pb-20">
-        <Botanical kind="fern" spot="tr" rotate={-30} size={260} />
+        <Botanical kind="maple" spot="bl" tone="rust" rotate={20} size={200} />
+        <Botanical kind="fern" spot="tr" tone="teal" rotate={-30} size={260} phone />
         <div className="relative max-w-6xl mx-auto px-5">
           <Breadcrumbs base={base} items={[{ name: "Gallery" }]} />
           <div className="max-w-2xl mt-6">

@@ -62,36 +62,51 @@ function Fern() {
 
 const SHAPES: Record<Kind, () => React.ReactElement> = { maple: Maple, leaf: Leaf, fern: Fern };
 
+/** Palette pulled from the site: brand green, autumn rust, ochre, teal; white for dark bands. */
+const TONES = {
+  green: { c: "#2F7D4F", fill: 0.04, stroke: 0.18 },
+  rust: { c: "#B5683C", fill: 0.045, stroke: 0.2 },
+  gold: { c: "#C7821A", fill: 0.045, stroke: 0.2 },
+  teal: { c: "#2E8B82", fill: 0.04, stroke: 0.18 },
+  white: { c: "#FFFFFF", fill: 0.035, stroke: 0.16 },
+} as const;
+type Tone = keyof typeof TONES;
+
 export default function Botanical({
   kind,
   spot,
   size = 240,
   rotate = 0,
+  tone = "green",
   wideOnly = false,
+  phone = false,
   className = "",
 }: {
   kind: Kind;
   spot: Spot;
   size?: number;
   rotate?: number;
+  tone?: Tone;
   /** Only show on large screens (for spots that are empty only in the 3-column layout). */
   wideOnly?: boolean;
+  /** Also show on phones, at ~55% size. Only for corners that stay clear of text on a narrow screen. */
+  phone?: boolean;
   className?: string;
 }) {
   const Shape = SHAPES[kind];
+  const t = TONES[tone];
+  const show = wideOnly ? "hidden lg:block" : phone ? "block" : "hidden sm:block";
   return (
     <svg
       aria-hidden="true"
       focusable="false"
       viewBox="0 0 100 100"
-      width={size}
-      height={size}
-      className={`pointer-events-none select-none absolute hidden ${wideOnly ? "lg:block" : "sm:block"} ${POS[spot]} ${className}`}
-      style={{ transform: `rotate(${rotate}deg)` }}
-      fill="#2F7D4F"
-      fillOpacity={0.035}
-      stroke="#2F7D4F"
-      strokeOpacity={0.16}
+      className={`pointer-events-none select-none absolute ${show} w-[var(--bs)] h-[var(--bs)] sm:w-[var(--bl)] sm:h-[var(--bl)] ${POS[spot]} ${className}`}
+      style={{ "--bl": `${size}px`, "--bs": `${Math.round(size * 0.55)}px`, rotate: `${rotate}deg` } as React.CSSProperties}
+      fill={t.c}
+      fillOpacity={t.fill}
+      stroke={t.c}
+      strokeOpacity={t.stroke}
       strokeWidth={0.9}
       strokeLinejoin="round"
       strokeLinecap="round"

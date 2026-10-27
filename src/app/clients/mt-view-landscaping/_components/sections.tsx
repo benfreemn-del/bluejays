@@ -8,8 +8,10 @@ import { Photo, Eyebrow, H2, GreenBtn, GhostBtn, head, body } from "./ui";
 /* ───────── reviews ───────── */
 export function Reviews({ limit = 6 }: { limit?: number }) {
   return (
-    <section id="reviews" className="bg-[#234E36] py-14 sm:py-20">
-      <div className="max-w-6xl mx-auto px-5">
+    <section id="reviews" className="relative overflow-hidden bg-[#234E36] py-14 sm:py-20">
+      <Botanical kind="maple" spot="br" tone="white" rotate={15} size={240} phone />
+      <Botanical kind="fern" spot="tl" tone="white" rotate={25} size={220} />
+      <div className="relative max-w-6xl mx-auto px-5">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
             <Eyebrow light>What neighbors say</Eyebrow>
@@ -55,8 +57,9 @@ export function Reviews({ limit = 6 }: { limit?: number }) {
 /* ───────── contact ───────── */
 export function Contact({ heading = "Tell us about your yard." }: { heading?: string }) {
   return (
-    <section id="contact" className="bg-[#F5F1E8] py-14 sm:py-20 scroll-mt-20">
-      <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-[1fr_1.25fr] gap-9 lg:gap-14">
+    <section id="contact" className="relative overflow-hidden bg-[#F5F1E8] py-14 sm:py-20 scroll-mt-20">
+      <Botanical kind="leaf" spot="br" tone="gold" rotate={-15} size={170} />
+      <div className="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-[1fr_1.25fr] gap-9 lg:gap-14">
         <div>
           <Eyebrow>Free quote</Eyebrow>
           <H2 className="mt-3 !text-[31px] sm:!text-[40px]">{heading}</H2>
@@ -121,8 +124,8 @@ export function CtaBand({ base, photoId = "p052", line }: { base: string; photoI
 export function FaqList({ faqs, title = "Common questions" }: { faqs: Faq[]; title?: string }) {
   return (
     <section className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-18">
-      <Botanical kind="maple" spot="bl" rotate={22} size={230} />
-      <Botanical kind="leaf" spot="tr" rotate={-30} size={190} />
+      <Botanical kind="maple" spot="bl" tone="teal" rotate={22} size={230} phone />
+      <Botanical kind="leaf" spot="tr" tone="gold" rotate={-30} size={190} />
       <div className="relative max-w-3xl mx-auto px-5">
         <Eyebrow>FAQ</Eyebrow>
         <H2 className="mt-3 !text-[30px] sm:!text-[38px]">{title}</H2>
@@ -175,7 +178,7 @@ export function ServiceCards({ base, slugs }: { base: string; slugs?: string[] }
 export function AreasServed({ base, current }: { base: string; current?: string }) {
   return (
     <section className="relative overflow-hidden bg-[#EDF3EC] py-12 sm:py-16">
-      <Botanical kind="maple" spot="br" rotate={14} size={220} />
+      <Botanical kind="maple" spot="br" tone="rust" rotate={14} size={220} phone />
       <div className="relative max-w-6xl mx-auto px-5">
         <Eyebrow>Where we work</Eyebrow>
         <H2 className="mt-3 !text-[28px] sm:!text-[36px]">Based in Auburn. Serving four counties.</H2>
@@ -220,8 +223,10 @@ export function Breadcrumbs({ base, items }: { base: string; items: { name: stri
 export function Footer({ base }: { base: string }) {
   const home = base || "/";
   return (
-    <footer className="bg-[#20241C] text-[#F5F1E8]/80">
-      <div className="max-w-6xl mx-auto px-5 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="relative overflow-hidden bg-[#20241C] text-[#F5F1E8]/80 [&>div]:relative">
+      <Botanical kind="maple" spot="tr" tone="white" rotate={-20} size={220} phone />
+      <Botanical kind="leaf" spot="bl" tone="white" rotate={35} size={180} />
+      <div className="relative max-w-6xl mx-auto px-5 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
           <div className="flex items-center gap-3">
             <img src={`${BASE_PATH}/logo-128.webp`} alt="" width={44} height={44} className="h-11 w-11 object-contain" />
