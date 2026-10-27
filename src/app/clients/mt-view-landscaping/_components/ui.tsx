@@ -9,26 +9,51 @@ export const head = "font-[family-name:var(--font-playfair)]";
 export const body = "font-[family-name:var(--font-inter)]";
 
 /**
- * Responsive photo. Every photo ships as -640 and -1600 webp; the "big"
- * ones (heroes, banners) also have -2400. width/height are set from the
- * real aspect so nothing jumps while loading.
+ * Responsive photo. Every photo ships as -640, -960 and -1600 webp; the
+ * "big" ones (heroes, banners) also have -2400 plus a 720x1120 phone crop
+ * (-m). width/height are set from the real aspect so nothing jumps.
+ *
+ * `hero`: the photo fills a tall box with object-cover. On phones a wide
+ * photo in a tall box needs ~2x the screen width in pixels, so phones get
+ * the pre-cropped portrait file instead (Lighthouse mobile LCP fix).
  */
 export function Photo({
   id,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   className = "",
   priority = false,
+  hero = false,
   alt,
 }: {
   id: string;
   sizes?: string;
   className?: string;
   priority?: boolean;
+  hero?: boolean;
   alt?: string;
 }) {
   const p = getPhoto(id);
-  const src = (w: number) => `${PHOTO_PATH}/${p.id}-${w}.webp`;
-  const srcSet = [`${src(640)} 640w`, `${src(1600)} 1600w`, ...(p.big ? [`${src(2400)} 2400w`] : [])].join(", ");
+  const src = (w: number | "m") => `${PHOTO_PATH}/${p.id}-${w}.webp`;
+  const srcSet = [`${src(640)} 640w`, `${src(960)} 960w`, `${src(1600)} 1600w`, ...(p.big ? [`${src(2400)} 2400w`] : [])].join(", ");
+  if (hero && p.big) {
+    return (
+      <picture>
+        <source media="(max-width: 767px)" srcSet={src("m")} />
+        <img
+          src={src(1600)}
+          srcSet={srcSet}
+          sizes={sizes}
+          width={p.w}
+          height={p.h}
+          alt={alt ?? p.alt}
+          className={className}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
+        />
+      </picture>
+    );
+  }
   return (
     <img
       src={src(1600)}
@@ -66,7 +91,7 @@ export function GhostBtn({ href, children, light = false }: { href: string; chil
 
 export function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   return (
-    <p className={`${body} text-[13px] tracking-[0.16em] uppercase font-bold ${light ? "text-[#BFE3C6]" : "text-[#2F7D4F]"}`}>
+    <p className={`${body} text-[13px] tracking-[0.16em] uppercase font-bold ${light ? "text-[#BFE3C6]" : "text-[#256B41]"}`}>
       {children}
     </p>
   );

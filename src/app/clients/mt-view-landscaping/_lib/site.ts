@@ -35,6 +35,12 @@ export const BIZ = {
   reviewHref: "https://www.google.com/maps?cid=9332232977784271999",
   counties: ["King", "Pierce", "Snohomish", "Kittitas"],
   hours: "Mon to Fri, 8 AM to 5 PM",
+  // Verified on the WA L&I contractor lookup 2026-10-26. Insurance renews yearly (policy
+  // on file ran to 10/30/2026): re-check the L&I page if the site ever shows "insured".
+  license: "MTVIEVL973QP",
+  licenseHref: "https://secure.lni.wa.gov/verify/Detail.aspx?UBI=602332722&LIC=MTVIEVL973QP&SAW=",
+  ubi: "602 332 722",
+  incorporated: 2003,
   googleRating: 5.0,
   googleReviewCount: 14, // update as reviews grow (Google Maps, 2026-10-26)
 };
@@ -65,7 +71,7 @@ export const SERVICES: Service[] = [
     title: "Landscape Design in Auburn, WA | Mountain View Landscape",
     h1: "Landscape Design in Auburn, WA",
     description:
-      "Custom landscape design in Auburn, WA. Tim draws every plan by hand and our own crew builds it. Family-run since 1976. Free quotes: (253) 638-0500.",
+      "Custom landscape design in Auburn, WA. Tim draws every plan by hand and our own crew builds it. Licensed & insured. Free quotes: (253) 638-0500.",
     hero: "p009",
     lede:
       "Every yard we build starts on paper. Tim walks your property, listens to how you want to use it, and draws the plan by hand before anyone picks up a shovel.",
@@ -104,7 +110,7 @@ export const SERVICES: Service[] = [
     title: "Patios & Hardscapes in Auburn, WA | Mountain View Landscape",
     h1: "Patios, Walkways & Hardscapes in Auburn, WA",
     description:
-      "Flagstone and bluestone patios, paver driveways, stone steps, and fire pits in Auburn, WA. Family-run since 1976. Free quotes: (253) 638-0500.",
+      "Flagstone and bluestone patios, paver driveways, stone steps, and fire pits in Auburn, WA. Licensed & insured. Free quotes: (253) 638-0500.",
     hero: "p033",
     lede:
       "Stone patios, paths, steps, and driveways are the bones of a good yard. We set them to last through Northwest winters and to look like they always belonged there.",
@@ -143,7 +149,7 @@ export const SERVICES: Service[] = [
     title: "Retaining Walls in Auburn, WA | Mountain View Landscape",
     h1: "Retaining Walls in Auburn, WA",
     description:
-      "Block retaining walls, terraced hillsides, and rockeries built with proper drainage in Auburn, WA. Family-run since 1976. Call (253) 638-0500.",
+      "Block retaining walls, terraced hillsides, and rockeries built with proper drainage in Auburn, WA. Licensed & insured. Call (253) 638-0500.",
     hero: "p131",
     lede:
       "Hillside lots are everywhere around here. A well-built wall turns a slope you cannot use into level lawn, garden terraces, and steps that are a pleasure to walk.",
@@ -182,7 +188,7 @@ export const SERVICES: Service[] = [
     title: "Ponds & Waterfalls in Auburn, WA | Mountain View Landscape",
     h1: "Ponds, Waterfalls & Water Features in Auburn, WA",
     description:
-      "Backyard ponds, streams, waterfalls, and basalt fountains in Auburn, WA, built by a family firm since 1976. See 50+ projects. (253) 638-0500.",
+      "Backyard ponds, streams, waterfalls, and basalt fountains in Auburn, WA, built by a licensed family firm. See 50+ projects. (253) 638-0500.",
     hero: "p091",
     lede:
       "Water is our favorite thing to build. Ponds, streams that wander across a yard, hillside waterfalls, and bubbling basalt columns by the front door: we have built them all, and they look good in every season, even under snow.",
@@ -226,7 +232,7 @@ export const SERVICES: Service[] = [
     title: "Sprinkler Systems in Auburn, WA | Mountain View Landscape",
     h1: "Sprinkler & Irrigation Systems in Auburn, WA",
     description:
-      "Sprinkler system installation, drip irrigation, and sprinkler repair in Auburn, WA. Family-run landscapers since 1976. Call (253) 638-0500.",
+      "Sprinkler system installation, drip irrigation, and sprinkler repair in Auburn, WA. Licensed, bonded & insured. Call (253) 638-0500.",
     hero: "p045",
     lede:
       "Northwest summers are drier than people expect. A good sprinkler system puts the right amount of water in the right places, so lawns stay green and new plants make it through July and August.",
@@ -265,7 +271,7 @@ export const SERVICES: Service[] = [
     title: "Sod Installation in Auburn, WA | Mountain View Landscape",
     h1: "Sod Installation & New Lawns in Auburn, WA",
     description:
-      "Sod installation in Auburn, WA with real grading, soil prep, and drainage so your new lawn roots in fast. Family-run since 1976. (253) 638-0500.",
+      "Sod installation in Auburn, WA with real grading, soil prep, and drainage so your new lawn roots in fast. Licensed & insured. (253) 638-0500.",
     hero: "p127",
     lede:
       "Sod gives you a finished lawn the day we leave. Done right, with real soil prep and grading, it roots in fast and stays thick for years.",
@@ -304,7 +310,7 @@ export const SERVICES: Service[] = [
     title: "Trees & Planting in Auburn, WA | Mountain View Landscape",
     h1: "Native Plants, Trees & Garden Planting in Auburn, WA",
     description:
-      "Northwest native planting, shade gardens, Japanese maples, and specimen trees installed in Auburn, WA. Family-run since 1976. (253) 638-0500.",
+      "Northwest native planting, shade gardens, Japanese maples, and specimen trees installed in Auburn, WA. Licensed & insured. (253) 638-0500.",
     hero: "p128",
     lede:
       "The right plant in the right spot grows into itself instead of fighting the site. We plant gardens built around Northwest natives and proven performers, plus specimen trees that become the centerpiece of a yard.",
@@ -346,7 +352,7 @@ export const SERVICES: Service[] = [
     title: "Landscape Lighting in Auburn, WA | Mountain View Landscape",
     h1: "Landscape Lighting in Auburn, WA",
     description:
-      "Low-voltage landscape lighting for paths, steps, driveways, patios, and ponds in Auburn, WA. Family-run since 1976. Call (253) 638-0500.",
+      "Low-voltage landscape lighting for paths, steps, driveways, patios, and ponds in Auburn, WA. Licensed & insured. Call (253) 638-0500.",
     hero: "p007",
     lede:
       "Good lighting lets you enjoy the yard after dark, makes steps and paths safe, and shows off the stone and trees you invested in. Our long winter evenings are when it matters most.",
@@ -414,7 +420,7 @@ export const SERVICES: Service[] = [
     title: "Custom Landscaping in Auburn, WA | Mountain View Landscape",
     h1: "Custom Landscape Projects",
     description:
-      "Estate landscapes, hillside waterfalls, and lakeside patios from Mountain View Landscape & Design, Auburn, WA, since 1976. (253) 638-0500.",
+      "Estate landscapes, hillside waterfalls, and lakeside patios from Mountain View Landscape & Design, Auburn, WA. Licensed & insured. (253) 638-0500.",
     hero: "p002",
     lede:
       "Some yards do not fit a category. Estate front yards with waterfalls, lakeside patios, hillside cascades beside the stairs: if you can picture it, we have probably built something like it.",
@@ -466,7 +472,7 @@ export const CITIES: City[] = [
     county: "King",
     title: "Landscaping in Auburn, WA | Mountain View Landscape",
     description:
-      "Auburn's family landscape company since 1976: design, patios, walls, ponds, sod, and yard care from our shop on SE 313th St. Call (253) 638-0500.",
+      "Auburn's family landscape company, licensed & insured: design, patios, walls, ponds, sod, and yard care from our shop on SE 313th St. Call (253) 638-0500.",
     hero: "p031",
     intro:
       "Auburn is home. Our shop is on SE 313th Street, and we have been building and caring for Auburn yards since Tim started in 1976.",
@@ -489,7 +495,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Kent"),
     description:
-      "Landscaping in Kent, WA: patios, retaining walls, water features, and sod from a family firm next door in Auburn since 1976. (253) 638-0500.",
+      "Landscaping in Kent, WA: patios, retaining walls, water features, and sod from a licensed family firm next door in Auburn. (253) 638-0500.",
     hero: "p036",
     intro:
       "Kent is right next door to our Auburn shop. We build patios, walls, water features, and full landscapes for homes on the East Hill, around Lake Meridian, and down in the valley.",
@@ -512,7 +518,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Covington"),
     description:
-      "Landscaping in Covington, WA: shade gardens for wooded lots, patios, walls, ponds, and lawns. Family-run in Auburn since 1976. (253) 638-0500.",
+      "Landscaping in Covington, WA: shade gardens for wooded lots, patios, walls, ponds, and lawns. Licensed family firm in Auburn. (253) 638-0500.",
     hero: "p128",
     intro:
       "Covington is minutes from our shop. Many homes here back onto tall firs and green belts, and we love building yards that fit that wooded setting.",
@@ -535,7 +541,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Maple Valley"),
     description:
-      "Landscaping in Maple Valley, WA: ponds, streams, flagstone patios, walls, and woodland planting. Family-run since 1976. (253) 638-0500.",
+      "Landscaping in Maple Valley, WA: ponds, streams, flagstone patios, walls, and woodland planting. Licensed & insured. (253) 638-0500.",
     hero: "p052",
     intro:
       "Maple Valley's big lots and tall evergreens are some of our favorite places to work. There is room here for streams, ponds, and patios that feel tucked into the woods.",
@@ -581,7 +587,7 @@ export const CITIES: City[] = [
     county: "King",
     title: cityTitle("Enumclaw"),
     description:
-      "Landscaping in Enumclaw, WA: waterfalls, stone patios, retaining walls, and hardy planting for the plateau. Family-run since 1976. (253) 638-0500.",
+      "Landscaping in Enumclaw, WA: waterfalls, stone patios, retaining walls, and hardy planting for the plateau. Licensed & insured. (253) 638-0500.",
     hero: "p054",
     intro:
       "Out on the Enumclaw plateau, with Mount Rainier on the horizon, yards deal with open wind, colder winters, and big views. We build landscapes that frame those views and stand up to the weather.",
@@ -617,7 +623,8 @@ export const REVIEWS = [
 export const HOME_FAQS: Faq[] = [
   { q: "What areas do you serve?", a: "We are based in Auburn and work across King, Pierce, Snohomish, and Kittitas counties, including Auburn, Kent, Covington, Maple Valley, Black Diamond, and Enumclaw." },
   { q: "Are quotes free?", a: "Yes. Call (253) 638-0500 or send the form and we will set up a free visit. No pressure." },
-  { q: "How long have you been in business?", a: `Tim Hunsaker has been landscaping since ${FOUNDED}. He started with his brothers as Shamrock Landscaping before he and Bonnie founded Mountain View.` },
+  { q: "How long have you been in business?", a: `Tim Hunsaker has been landscaping since ${FOUNDED}. He started with his brothers as Shamrock Landscaping, and he and Bonnie have run Mountain View as its own company since 2003.` },
+  { q: "Are you licensed and insured?", a: "Yes. Mountain View Landscaping & Design Inc. is a registered Washington contractor (license MTVIEVL973QP), bonded and insured, with no license violations on record. You can check it any time on the Washington L&I contractor lookup." },
   { q: "Do you do both design and installation?", a: "Yes. We design, build, and maintain. Tim draws every plan by hand, and our own crew builds it." },
   { q: "What are your hours?", a: "Monday to Friday starting at 8 AM. Leave a message or send the form any time and we will get back to you." },
 ];

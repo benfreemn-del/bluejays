@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Phone, EnvelopeSimple, MapPin, Star, ArrowRight, Clock, LockKey, Mountains, CaretRight } from "@phosphor-icons/react/dist/ssr";
+import { Phone, EnvelopeSimple, MapPin, Star, ArrowRight, Clock, LockKey, Mountains, CaretRight, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import MtViewContactForm from "../contact-form";
 import { BIZ, SERVICES, CITIES, REVIEWS, BASE_PATH, type Faq } from "../_lib/site";
 import { Photo, Eyebrow, H2, GreenBtn, GhostBtn, head, body } from "./ui";
@@ -78,8 +78,18 @@ export function Contact({ heading = "Tell us about your yard." }: { heading?: st
             </p>
           </div>
           <p className={`${body} text-[14px] font-medium text-[#5C6152] mt-6`}>
-            Serving {BIZ.counties.join(", ")} counties.
+            {`Serving ${BIZ.counties.join(", ")} counties.`}
           </p>
+          <a href={BIZ.licenseHref} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 mt-2 ${body} text-[14px] font-medium text-[#234E36] underline underline-offset-4 decoration-[#234E36]/30 hover:decoration-[#234E36]`}>
+            <ShieldCheck size={16} weight="fill" /> {`Licensed, bonded & insured · WA Lic. ${BIZ.license}`}
+          </a>
+          <iframe
+            title={`Map to ${BIZ.name}, ${BIZ.address}`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(`${BIZ.name}, ${BIZ.address}`)}&output=embed`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="mt-6 w-full h-[220px] rounded-xl border border-[#A8A294]/30"
+          />
         </div>
         <div className="bg-[#FBF8F1] border border-[#A8A294]/30 rounded-2xl p-7 sm:p-9 shadow-[0_18px_40px_rgba(32,36,28,0.06)]">
           <MtViewContactForm services={SERVICES.map((s) => s.name)} />
@@ -214,8 +224,11 @@ export function Footer({ base }: { base: string }) {
             <span className={`${head} font-semibold text-[19px] text-[#F5F1E8]`}>Mountain View</span>
           </div>
           <p className={`${body} text-[15px] leading-[1.6] mt-3 max-w-xs`}>
-            Family-run landscape design, building, and care around Puget Sound since 1976.
+            Family-run landscape design, building, and care around Puget Sound.
           </p>
+          <a href={BIZ.licenseHref} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 mt-3 ${body} text-[14px] text-[#F5F1E8]/80 hover:text-[#F5F1E8] underline underline-offset-4 decoration-[#F5F1E8]/30`}>
+            <ShieldCheck size={16} weight="fill" className="text-[#8FCB9B]" /> Licensed, bonded &amp; insured · WA Lic. {BIZ.license}
+          </a>
         </div>
         <div className={`${body} text-[15px] space-y-2`}>
           <p className="text-[#F5F1E8] font-bold mb-1">Reach us</p>

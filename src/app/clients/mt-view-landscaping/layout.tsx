@@ -32,7 +32,7 @@ const inter = Inter({
 const OG_IMAGE = `${SITE_URL}${BASE_PATH}/og-image.jpg`;
 const TITLE = "Mountain View Landscape & Design | Auburn, WA Landscaper";
 const DESCRIPTION =
-  "Family-run landscaper in Auburn, WA since 1976: landscape design, patios, retaining walls, ponds and waterfalls, sod, and yard care. Free quotes: (253) 638-0500.";
+  "Family landscaper in Auburn, WA with 50 years' experience. Licensed & insured. Design, patios, walls, ponds, sod, and yard care. Call (253) 638-0500.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -81,7 +81,8 @@ const businessSchema = {
   logo: `${SITE_URL}${BASE_PATH}/icon-512.png`,
   telephone: BIZ.phoneE164,
   email: BIZ.email,
-  foundingDate: String(FOUNDED),
+  foundingDate: "2003", // incorporation (WA UBI 602 332 722); Tim's experience dates to 1976
+  identifier: { "@type": "PropertyValue", propertyID: "WA L&I contractor license", value: "MTVIEVL973QP" },
   founder: [{ "@type": "Person", name: "Tim Hunsaker" }, { "@type": "Person", name: "Bonnie Hunsaker" }],
   address: {
     "@type": "PostalAddress",

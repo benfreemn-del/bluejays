@@ -6,7 +6,7 @@
  * is the Hunsakers' own work (128 photos, see _lib/photos.ts). Service and
  * city pages live in [slug]/, the full portfolio in gallery/.
  */
-import { Phone, ArrowRight, Tree, Users, Handshake, Star } from "@phosphor-icons/react/dist/ssr";
+import { Phone, ArrowRight, Tree, ShieldCheck, Handshake, Star } from "@phosphor-icons/react/dist/ssr";
 import Header from "./_components/header";
 import GalleryGrid from "./_components/gallery-grid";
 import { Photo, Eyebrow, H2, GreenBtn, GhostBtn, JsonLd, head, body } from "./_components/ui";
@@ -43,12 +43,12 @@ export default async function MtViewHome() {
 
       {/* ───── hero: their work, full bleed ───── */}
       <section className="relative isolate overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[78vh] flex items-end">
-        <Photo id="p124" priority sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
+        <Photo id="p124" priority hero sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/85 via-[#11140f]/35 to-[#11140f]/5" />
         {/* Left shade keeps the headline readable over the bright fountain; the house and garden stay bright on the right. */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#11140f]/75 via-[#11140f]/35 to-transparent" />
         <div className="max-w-6xl mx-auto px-5 pb-12 sm:pb-16 pt-32 w-full">
-          <Eyebrow light>Family-run since 1976 · Auburn, WA</Eyebrow>
+          <Eyebrow light>Landscaping since 1976 · Auburn, WA</Eyebrow>
           <h1 className="mt-4">
             <span className={`block ${body} text-[17px] sm:text-[19px] font-semibold text-[#F5F1E8]/90`}>
               Landscape design, stone, water features &amp; yard care
@@ -72,9 +72,9 @@ export default async function MtViewHome() {
       <section className="bg-[#234E36] text-[#F5F1E8]">
         <div className="max-w-6xl mx-auto px-5 py-5 grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
           {[
-            { icon: Tree, label: `${years} years in business` },
+            { icon: Tree, label: `${years} years of experience` },
             { icon: Star, label: `5.0 stars on Google` },
-            { icon: Users, label: "Family-run, same crew" },
+            { icon: ShieldCheck, label: "Licensed, bonded & insured" },
             { icon: Handshake, label: "Free quotes, no pressure" },
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center justify-center gap-2.5">
@@ -188,7 +188,7 @@ export default async function MtViewHome() {
             <div className={`${body} text-[18px] leading-[1.7] text-[#3E4435] mt-4 space-y-4`}>
               <p>
                 Tim has been landscaping since 1976. He started out with his brothers as Shamrock Landscaping, then he
-                and Bonnie built Mountain View together. That is {years} years of learning what grows, drains, and
+                and Bonnie built Mountain View into its own company in 2003. That is {years} years of learning what grows, drains, and
                 lasts in the Northwest.
               </p>
               <p>

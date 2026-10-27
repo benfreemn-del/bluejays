@@ -73,10 +73,10 @@ export default async function Page({ params }: Props) {
         <Header base={base} />
 
         <section className="relative isolate overflow-hidden min-h-[440px] sm:min-h-[520px] flex items-end">
-          <Photo id={service.hero} priority sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
+          <Photo id={service.hero} priority hero sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/90 via-[#11140f]/45 to-[#11140f]/5" />
           <div className="max-w-6xl mx-auto px-5 pb-12 pt-28 w-full">
-            <Eyebrow light>{service.name} · Family-run since 1976</Eyebrow>
+            <Eyebrow light>{service.name} · Licensed &amp; insured</Eyebrow>
             <h1 className={`${head} font-semibold text-[38px] sm:text-[52px] lg:text-[60px] leading-[1.05] text-white mt-3 max-w-4xl`}>{service.h1}</h1>
             <p className={`${body} text-[18px] sm:text-[19px] leading-[1.55] text-[#F5F1E8]/90 mt-4 max-w-2xl`}>{service.lede}</p>
             <div className="flex flex-wrap gap-3 mt-7">
@@ -170,7 +170,7 @@ export default async function Page({ params }: Props) {
       <Header base={base} />
 
       <section className="relative isolate overflow-hidden min-h-[440px] sm:min-h-[520px] flex items-end">
-        <Photo id={c.hero} priority sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
+        <Photo id={c.hero} priority hero sizes="100vw" className="absolute inset-0 -z-10 w-full h-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#11140f]/90 via-[#11140f]/45 to-[#11140f]/5" />
         <div className="max-w-6xl mx-auto px-5 pb-12 pt-28 w-full">
           <Eyebrow light><MapPin size={14} weight="fill" className="inline -mt-0.5" /> {c.name} · {c.county} County</Eyebrow>

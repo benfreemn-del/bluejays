@@ -55,7 +55,7 @@ export default async function GalleryPage() {
             </p>
           </div>
           <div className="mt-9">
-            <GalleryGrid ids={IDS} filters />
+            <GalleryGrid ids={IDS} filters eager={8} />
           </div>
           <div className="mt-10 text-center">
             <GreenBtn href="#contact">Want a yard like these? Get a free quote <ArrowRight size={17} weight="bold" /></GreenBtn>

@@ -143,7 +143,7 @@ export default function MtViewContactForm({
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-6 pt-4">
-        <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#A8A294] max-w-xs">
+        <p className="font-[family-name:var(--font-inter)] text-[13px] text-[#5F5B4E] max-w-xs">
           Free estimate. No obligation. We typically respond within 24 hours.
         </p>
         <button
@@ -177,7 +177,7 @@ function Field({
 }) {
   return (
     <label className="block group">
-      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
+      <span className="block font-[family-name:var(--font-inter)] text-[11px] tracking-[0.18em] uppercase text-[#5F5B4E] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
         {required && <span className="text-[#6B5A3E] ml-1">*</span>}
       </span>
@@ -204,7 +204,7 @@ function Select({
 }) {
   return (
     <label className="block group">
-      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
+      <span className="block font-[family-name:var(--font-inter)] text-[11px] tracking-[0.18em] uppercase text-[#5F5B4E] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
       </span>
       <select
@@ -235,7 +235,7 @@ function Textarea({
 }) {
   return (
     <label className="block group">
-      <span className="block font-[family-name:var(--font-inter)] text-[10px] tracking-[0.22em] uppercase text-[#A8A294] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
+      <span className="block font-[family-name:var(--font-inter)] text-[11px] tracking-[0.18em] uppercase text-[#5F5B4E] mb-3 transition-colors group-focus-within:text-[#3E4A36]">
         {label}
         {required && <span className="text-[#6B5A3E] ml-1">*</span>}
       </span>

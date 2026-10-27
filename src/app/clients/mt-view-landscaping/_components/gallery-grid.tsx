@@ -25,7 +25,7 @@ const FILTERS = [
  * `ids` = which photos, in order. `filters` turns on the category chips
  * (used on the /gallery page).
  */
-export default function GalleryGrid({ ids, filters = false }: { ids: string[]; filters?: boolean }) {
+export default function GalleryGrid({ ids, filters = false, eager = 0 }: { ids: string[]; filters?: boolean; eager?: number }) {
   const all: Photo[] = ids.map((id) => PHOTOS.find((p) => p.id === id)).filter((p): p is Photo => !!p);
   const [cat, setCat] = useState("all");
   const shown = cat === "all" ? all : all.filter((p) => p.cats.includes(cat));
@@ -65,7 +65,7 @@ export default function GalleryGrid({ ids, filters = false }: { ids: string[]; f
                 cat === f.key ? "bg-[#234E36] text-white border-[#234E36]" : "bg-[#FBF8F1] text-[#234E36] border-[#A8A294]/40 hover:border-[#2F7D4F]"
               }`}
             >
-              {f.label} <span className="opacity-60 font-medium">{counts(f.key)}</span>
+              {f.label} <span className={`font-medium ${cat === f.key ? "text-white/85" : "text-[#4A5A4E]"}`}>{counts(f.key)}</span>
             </button>
           ))}
         </div>
@@ -83,12 +83,13 @@ export default function GalleryGrid({ ids, filters = false }: { ids: string[]; f
           >
             <img
               src={`${PHOTO_PATH}/${p.id}-640.webp`}
-              srcSet={`${PHOTO_PATH}/${p.id}-640.webp 640w, ${PHOTO_PATH}/${p.id}-1600.webp 1600w`}
+              srcSet={`${PHOTO_PATH}/${p.id}-640.webp 640w, ${PHOTO_PATH}/${p.id}-960.webp 960w, ${PHOTO_PATH}/${p.id}-1600.webp 1600w`}
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               width={p.w}
               height={p.h}
               alt={p.alt}
-              loading="lazy"
+              loading={i < eager ? "eager" : "lazy"}
+              fetchPriority={i === 0 && eager > 0 ? "high" : undefined}
               decoding="async"
               className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
             />
