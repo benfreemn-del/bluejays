@@ -4,6 +4,7 @@
  */
 import type { Metadata } from "next";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import Botanical from "../_components/botanical";
 import Header from "../_components/header";
 import GalleryGrid from "../_components/gallery-grid";
 import { Eyebrow, GreenBtn, JsonLd, head, body } from "../_components/ui";
@@ -44,8 +45,9 @@ export default async function GalleryPage() {
         }}
       />
       <Header base={base} />
-      <section className="bg-[#E7EADF] pt-10 sm:pt-14 pb-14 sm:pb-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#E7EADF] pt-10 sm:pt-14 pb-14 sm:pb-20">
+        <Botanical kind="fern" spot="tr" rotate={-30} size={260} />
+        <div className="relative max-w-6xl mx-auto px-5">
           <Breadcrumbs base={base} items={[{ name: "Gallery" }]} />
           <div className="max-w-2xl mt-6">
             <Eyebrow>Our work</Eyebrow>

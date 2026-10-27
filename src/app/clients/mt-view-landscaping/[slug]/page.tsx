@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Phone, ArrowRight, CheckCircle, MapPin } from "@phosphor-icons/react/dist/ssr";
+import Botanical from "../_components/botanical";
 import Header from "../_components/header";
 import GalleryGrid from "../_components/gallery-grid";
 import { Photo, Eyebrow, H2, GreenBtn, GhostBtn, JsonLd, head, body } from "../_components/ui";
@@ -86,8 +87,9 @@ export default async function Page({ params }: Props) {
           </div>
         </section>
 
-        <section className="bg-[#FBF8F1] py-12 sm:py-16">
-          <div className="max-w-6xl mx-auto px-5">
+        <section className="relative overflow-hidden bg-[#FBF8F1] py-12 sm:py-16">
+          <Botanical kind="leaf" spot="bl" rotate={40} size={210} />
+          <div className="relative max-w-6xl mx-auto px-5">
             <Breadcrumbs base={base} items={[{ name: service.name }]} />
             <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 mt-6">
               <div className="space-y-8">
@@ -119,7 +121,7 @@ export default async function Page({ params }: Props) {
         </section>
 
         <section className="bg-[#E7EADF] py-14 sm:py-20">
-          <div className="max-w-6xl mx-auto px-5">
+          <div className="relative max-w-6xl mx-auto px-5">
             <Eyebrow>Our {service.name.toLowerCase()} work</Eyebrow>
             <H2 className="mt-3">Real projects, real yards.</H2>
             <p className={`${body} text-[17px] leading-[1.6] text-[#3E4435] mt-3 max-w-2xl`}>
@@ -135,7 +137,7 @@ export default async function Page({ params }: Props) {
         <FaqList faqs={service.faqs} title={`${service.name} questions`} />
 
         <section className="bg-[#F5F1E8] py-14 sm:py-18">
-          <div className="max-w-6xl mx-auto px-5">
+          <div className="relative max-w-6xl mx-auto px-5">
             <Eyebrow>Often paired with</Eyebrow>
             <H2 className="mt-3 !text-[28px] sm:!text-[36px]">More of what we do</H2>
             <div className="mt-8">
@@ -185,8 +187,9 @@ export default async function Page({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-[#FBF8F1] py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#FBF8F1] py-12 sm:py-16">
+        <Botanical kind="maple" spot="bl" rotate={24} size={210} />
+        <div className="relative max-w-6xl mx-auto px-5">
           <Breadcrumbs base={base} items={[{ name: `Landscaping in ${c.name}` }]} />
           <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 mt-6">
             <div className="space-y-8">

@@ -6,6 +6,7 @@
  * is the Hunsakers' own work (128 photos, see _lib/photos.ts). Service and
  * city pages live in [slug]/, the full portfolio in gallery/.
  */
+import Botanical from "./_components/botanical";
 import { Phone, ArrowRight, Tree, ShieldCheck, Handshake, Star } from "@phosphor-icons/react/dist/ssr";
 import Header from "./_components/header";
 import GalleryGrid from "./_components/gallery-grid";
@@ -113,8 +114,10 @@ export default async function MtViewHome() {
       </section>
 
       {/* ───── services ───── */}
-      <section id="services" className="bg-[#F5F1E8] py-14 sm:py-20 scroll-mt-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section id="services" className="relative overflow-hidden bg-[#F5F1E8] py-14 sm:py-20 scroll-mt-20">
+        <Botanical kind="maple" spot="tr" rotate={-18} />
+        <Botanical kind="fern" spot="br" rotate={20} size={300} wideOnly />
+        <div className="relative max-w-6xl mx-auto px-5">
           <div className="max-w-xl">
             <Eyebrow>What we do</Eyebrow>
             <H2 className="mt-3">One crew for the whole yard.</H2>
@@ -129,8 +132,9 @@ export default async function MtViewHome() {
       </section>
 
       {/* ───── we draw it first ───── */}
-      <section className="bg-[#FBF8F1] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-9 lg:gap-14 items-center">
+      <section className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-20">
+        <Botanical kind="leaf" spot="bl" rotate={35} size={220} />
+        <div className="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-9 lg:gap-14 items-center">
           <div className="order-2 lg:order-1">
             <Eyebrow>How it starts</Eyebrow>
             <H2 className="mt-3 !text-[30px] sm:!text-[40px]">We draw your yard by hand first.</H2>
@@ -203,8 +207,9 @@ export default async function MtViewHome() {
       </section>
 
       {/* ───── how it works ───── */}
-      <section className="bg-[#EDF3EC] py-14 sm:py-20">
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden bg-[#EDF3EC] py-14 sm:py-20">
+        <Botanical kind="fern" spot="tr" rotate={-35} size={260} />
+        <div className="relative max-w-6xl mx-auto px-5">
           <div className="max-w-xl">
             <Eyebrow>How it works</Eyebrow>
             <H2 className="mt-3">Four easy steps.</H2>

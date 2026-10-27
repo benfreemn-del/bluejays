@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import Botanical from "./botanical";
 import { Phone, EnvelopeSimple, MapPin, Star, ArrowRight, Clock, LockKey, Mountains, CaretRight, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import MtViewContactForm from "../contact-form";
 import { BIZ, SERVICES, CITIES, REVIEWS, BASE_PATH, type Faq } from "../_lib/site";
@@ -119,8 +120,10 @@ export function CtaBand({ base, photoId = "p052", line }: { base: string; photoI
 /* ───────── FAQ (no JS, native details) ───────── */
 export function FaqList({ faqs, title = "Common questions" }: { faqs: Faq[]; title?: string }) {
   return (
-    <section className="bg-[#FBF8F1] py-14 sm:py-18">
-      <div className="max-w-3xl mx-auto px-5">
+    <section className="relative overflow-hidden bg-[#FBF8F1] py-14 sm:py-18">
+      <Botanical kind="maple" spot="bl" rotate={22} size={230} />
+      <Botanical kind="leaf" spot="tr" rotate={-30} size={190} />
+      <div className="relative max-w-3xl mx-auto px-5">
         <Eyebrow>FAQ</Eyebrow>
         <H2 className="mt-3 !text-[30px] sm:!text-[38px]">{title}</H2>
         <div className="mt-8 divide-y divide-[#A8A294]/30 border-y border-[#A8A294]/30">
@@ -171,8 +174,9 @@ export function ServiceCards({ base, slugs }: { base: string; slugs?: string[] }
 /* ───────── areas served ───────── */
 export function AreasServed({ base, current }: { base: string; current?: string }) {
   return (
-    <section className="bg-[#EDF3EC] py-12 sm:py-16">
-      <div className="max-w-6xl mx-auto px-5">
+    <section className="relative overflow-hidden bg-[#EDF3EC] py-12 sm:py-16">
+      <Botanical kind="maple" spot="br" rotate={14} size={220} />
+      <div className="relative max-w-6xl mx-auto px-5">
         <Eyebrow>Where we work</Eyebrow>
         <H2 className="mt-3 !text-[28px] sm:!text-[36px]">Based in Auburn. Serving four counties.</H2>
         <p className={`${body} text-[17px] leading-[1.6] text-[#3E4435] mt-3 max-w-2xl`}>
